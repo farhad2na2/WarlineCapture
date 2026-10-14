@@ -1,0 +1,17 @@
+{
+  "result": "Passed",
+  "sourceHash": "25c87d32bc68ed35e9aef564ce54126f84c7a4723ed002e840777b493a5b00ec",
+  "focused": {
+    "log": "tests-661-pending-path-hauler-after-fix.log",
+    "wrapperExit": 0,
+    "marker": "[PendingPathHaulerValidation] result=Passed cases=3 nativeMissionAcceptance=Pending"
+  },
+  "existingRegressions": {
+    "log": "tests-662-shared-hauler-resource-regressions.log",
+    "wrapperExit": 0,
+    "marker": "[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=55"
+  },
+  "beforeFixFailure": "focused660-pending-path-hauler-regression-failure.json",
+  "change": "Removed obsolete global busy guard; path jobs use private snapshots and matching-request checks",
+  "nativeAcceptance": "Pending"
+}

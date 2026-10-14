@@ -1,0 +1,7 @@
+{
+  "wrapperExit": 124,
+  "completionReceipt": null,
+  "logCreated": false,
+  "reason": "Scheduled callback lost during script/domain reload before executeMethod started; later tests048 passed",
+  "editorPreserved": true
+}

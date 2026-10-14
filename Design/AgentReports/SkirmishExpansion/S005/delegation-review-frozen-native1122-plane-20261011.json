@@ -1,0 +1,42 @@
+{
+  "status": "ReadOnlyReviewCompleted_NoBlockingCompilerApiOrSequencingDefectIdentified_NativeCompileRunPending",
+  "fixture": {
+    "path": "/private/tmp/S005PaidTransportPlane1122.cs",
+    "sha256": "9503e6810122ebe5e2d15637cbf991a076c27bf72367da77cbb2c70135b1a9b3",
+    "method": "S005PaidTransportPlane1122.RunValidation"
+  },
+  "runner": {
+    "path": "/private/tmp/s005-run-paid-transport-plane-1122.py",
+    "sha256": "6eb1c5213685f506d7b464c936e079e4fd1a1c12bc3c4b82201db9f28389bb70"
+  },
+  "frozenManifestSha256": "03952f9db7a39e9c2f51e10430562bbc29d64a0ebe342936cf2848cc5dfbb83f",
+  "sourceProofFileHashesAllMatchCurrentSource": true,
+  "scope": "External frozen1122 fixture/runner review only; no Unity, drycompile, source edits, or execution.1120 remains frozen.",
+  "reviewed": [
+    "Current full-native validator candidates with native Touch rotation/ground contact/Confirm; one actual live owned Airport runtime and matching native faction1 runway row; construction expenditure; Plane440 paid reservation producer equals built Airport.",
+    "Actual sequential paid Rifle4,ApcFast1,Plane1 native queue requests9001/9002/9003; native member/role/group ownership assertions, selection via normal cards, normal Touch Move for Rifle/APC; Plane remains actual grounded.",
+    "Rifle native Soldier absence of CargoPassenger and APC native Vehicle component/link;24Soldier2Vehicle configured schema, exact five boarded actor links/Disabled/visual hidden; no passenger/order/pose/air-state injection.",
+    "Native Move receipt actual TakeoffRolling/Airborne plus40m displacement while links/hidden identities intact; stable bounded wheel Return receipt; same plane native grounded home<=1.5; native PassengerChip/ExitAll; exact body snapshots and only exact typed marker current-state predicate.",
+    "Full-source preflight/load/pre-dispatch/post equality, nested CLI load/native-idle success, wrapper/native exits, required closure/cleanup, all raw Touch rows zero violations/interventions/unexpected, five body/typed-marker identities and capacity snapshot conservation."
+  ],
+  "actionableEvidenceLimits": [
+    {
+      "priority": "scope",
+      "file": "/private/tmp/S005PaidTransportPlane1122.cs",
+      "lines": "286-302,657-661",
+      "finding": "FlightRows prove rolling, airborne displacement and final ground/home, but do not record distinct pre-roll native taxi motion. No positive taxi result can be claimed from1122 as currently instrumented. The existing cargo flight/return scope remains meaningful; if a distinct taxi proof is intended, add a read-only frame sampler before first load and re-freeze rather than infer it from the TakeoffRolling row."
+    },
+    {
+      "priority": "parser",
+      "file": "/private/tmp/s005-run-paid-transport-plane-1122.py",
+      "lines": "185-191",
+      "finding": "Flight transition parser builds bystage dictionary then compares its set; duplicate stages and out-of-order transitions are silently accepted. Frozen C# currently orders emissions correctly, so this is not a compiler/sequence blocker; checking exact ordered stage list plus monotonic frames would make the stated strict transition audit accurate."
+    }
+  ],
+  "pythonSyntax": "ast.parse Passed; runner not executed",
+  "nativeCompilerVerified": false,
+  "nativeRunVerified": false,
+  "playerReadinessCertified": false,
+  "noProductionEdits": true,
+  "noFrozenEdits": true
+}

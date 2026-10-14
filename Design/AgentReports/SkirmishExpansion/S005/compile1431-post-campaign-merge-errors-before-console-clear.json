@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 1,
+      "returned": 1,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[S005ManualFogFallback1432] failed=1 nativeGameplayUntouched=1 reason=Native public approach failed natural visibility within180s; manual timeout unchanged",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005ManualFogFallback1432:Tick () (at /private/tmp/s005-fa1432-home-defender-current-attack-ground/S005NormalStopManual1432Observer.cs:528)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-13T14:25:56.1814160Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

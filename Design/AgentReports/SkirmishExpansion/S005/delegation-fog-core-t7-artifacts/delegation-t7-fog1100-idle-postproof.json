@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return new { Project=UnityEngine.Application.dataPath, IsPlaying=UnityEditor.EditorApplication.isPlaying, IsCompiling=UnityEditor.EditorApplication.isCompiling, IsUpdating=UnityEditor.EditorApplication.isUpdating, ValidationRunning=Game.Editor.ExistingEditorValidation.IsRunning };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "Project": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets",
+        "IsPlaying": false,
+        "IsCompiling": false,
+        "IsUpdating": false,
+        "ValidationRunning": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

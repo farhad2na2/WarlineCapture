@@ -1,0 +1,214 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Composition;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Game.UI.Runtime;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+
+// PREPARED ONLY. Native Menu Continue, Pause, Save & Exit, Continue.
+// Retained 1018 real save is copied verbatim into a unique disposable QA profile.
+// No actor/resource/order/selection/outcome or checkpoint payload writes.
+public static class S005RetainedFlightPauseSaveContinue1047
+{
+    const string Report="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/";
+    const string Original="native1018-failed-comparison-original-checkpoint.json";
+    const string OriginalHash="fcc3d8abe89aa6b0c47f82914e9717190037586683579195fda18c9c0215c95e";
+    const string Attempt="expanded-s005-155926-38009fc4c64c4f759c81744272db63bc";
+    const string Fresh="native1047-captured-native-checkpoint.json";
+    static readonly BindingFlags Stat=BindingFlags.Static|BindingFlags.NonPublic;
+    static readonly BindingFlags Inst=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    static Type Harness=>typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static TaskCompletionSource<int> completion;
+    static World ownedWorld;
+    static bool sawPlay,finishing,passed;
+    static int phase,pausedSamples,contacts;
+    static double deadline,phaseAt;
+    static float originalElapsed,pausedElapsed;
+    static string profileRoot,previousProfile;
+    static UnitAirComponent originalAir,pausedAir;
+    static UnitAirMovement originalMovement,pausedMovement;
+    static LocalTransform originalTransform,pausedTransform;
+    static Entity pausedActor;
+    static object Get(string n)=>Harness.GetField(n,Stat).GetValue(null);
+    static void Set(string n,object v)=>Harness.GetField(n,Stat).SetValue(null,v);
+    static string Hash(string p){using var sha=SHA256.Create();return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(p))).Replace("-","").ToLowerInvariant();}
+    public static string Run()=>"Prepared fixture; load only, execute via repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Existing Play session.");
+        if(File.Exists(Report+Fresh))throw new InvalidOperationException("Preserve prior unique recovery evidence.");
+        if(Hash(Report+Original)!=OriginalHash)throw new InvalidOperationException("Original real checkpoint changed.");
+        object originalSnapshot=Descriptor(Report+Original);
+        object parts=AircraftParts(originalSnapshot);
+        if(!TryPart(parts,out originalAir)||!TryPart(parts,out originalMovement)||!TryPart(parts,out originalTransform))throw new InvalidOperationException("Retained aircraft parts missing.");
+        if(originalAir.Airborne!=1||originalAir.UsesRunway!=1)throw new InvalidOperationException("Retained checkpoint is not the expected banked fixed-wing flight.");
+        if(!TryPart(originalSnapshot.GetType().GetField("SessionParts",Inst).GetValue(originalSnapshot),out SkirmishObjectiveClockComponent clock))throw new InvalidOperationException("Saved objective clock missing.");
+        originalElapsed=clock.ElapsedSeconds;
+        completion=new TaskCompletionSource<int>();sawPlay=finishing=passed=false;phase=pausedSamples=contacts=0;ownedWorld=null;
+        previousProfile=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorSaveResumeEn();
+        Environment.SetEnvironmentVariable("WARLINE_S002_SEED","155926");
+        Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY","1");
+        profileRoot=(string)Harness.GetMethod("ValidationProfileRoot",Stat).Invoke(null,null);
+        string target=Path.Combine(profileRoot,"skirmish-s005-native.json");
+        if(!Directory.Exists(profileRoot)||File.Exists(target))throw new InvalidOperationException("Unique isolated profile ownership not established.");
+        File.Copy(Report+Original,target,false);
+        if(Hash(target)!=OriginalHash)throw new InvalidOperationException("Copied genuine save differs.");
+        deadline=EditorApplication.timeSinceStartup+240;
+        EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;
+        Debug.Log("[S005RetainedFlightRecovery] phase=PreflightPassed originalCapture=1018 originalSaveByteIdentical=1 savedElapsed="+originalElapsed+" originalFailurePreserved=1 profileIsolated=1 simulationInjected=0 completeMatchCertified=0");
+        return completion.Task;
+    }
+    static object Descriptor(string path)
+    {
+        var codec=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointCodec");object[] args={path,null};
+        if(!(bool)codec.GetMethod("TryReadDescriptor",Stat).Invoke(null,args))throw new InvalidOperationException("Native checksum/schema rejected checkpoint.");
+        object snapshot=args[1];if((string)snapshot.GetType().GetField("SessionId",Inst).GetValue(snapshot)!=Attempt)throw new InvalidOperationException("Checkpoint attempt differs.");return snapshot;
+    }
+    static object AircraftParts(object snapshot)
+    {
+        object parts=null;int count=0;
+        foreach(var actor in (IEnumerable)snapshot.GetType().GetField("Actors",Inst).GetValue(snapshot))
+        {
+            object candidate=actor.GetType().GetField("Parts",Inst).GetValue(actor);
+            if(!TryPart(candidate,out SkirmishAttemptOwnedComponent owner)||owner.FactionId!=1||owner.ReservationId!=1005)continue;
+            parts=candidate;count++;
+        }
+        if(count!=1)throw new InvalidOperationException("Checkpoint paid aircraft count="+count);return parts;
+    }
+    static bool TryPart<T>(object parts,out T value)where T:unmanaged,IComponentData
+    {
+        var type=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointParts");object[] args={parts,null};
+        bool ok=(bool)type.GetMethod("TryReadComponent",Stat).MakeGenericMethod(typeof(T)).Invoke(null,args);value=ok?(T)args[1]:default;return ok;
+    }
+    static Entity PaidAircraft(EntityManager em)
+    {
+        using var query=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(UnitAirComponent),typeof(SkirmishUnitRoleComponent));using var entities=query.ToEntityArray(Allocator.Temp);Entity found=Entity.Null;
+        foreach(var entity in entities){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);if(owner.FactionId!=1||owner.ReservationId!=1005)continue;if(found!=Entity.Null)throw new InvalidOperationException("Duplicate live paid aircraft.");found=entity;}
+        if(found==Entity.Null)throw new InvalidOperationException("Retained paid aircraft missing.");return found;
+    }
+    static bool RecoveryComplete(EntityManager em,out Entity session)
+    {
+        session=Entity.Null;var type=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointRecoveryRecord");
+        using var query=em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(),ComponentType.ReadOnly(type));if(query.CalculateEntityCount()!=1)return false;
+        session=query.GetSingletonEntity();object recovery=null;
+        foreach(var method in typeof(EntityManager).GetMethods())if(method.Name=="GetComponentObject"&&method.IsGenericMethodDefinition&&method.GetParameters().Length==1){recovery=method.MakeGenericMethod(type).Invoke(em,new object[]{session});break;}
+        if(recovery==null||!(bool)type.GetField("Complete",Inst).GetValue(recovery))return false;
+        if(em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString()!=Attempt)throw new InvalidOperationException("Continue launched a fresh attempt.");return true;
+    }
+    static void ValidateReceiptAndConfiguration(EntityManager em,Entity session,Entity actor)
+    {
+        int count=0;foreach(var receipt in em.GetBuffer<SkirmishProductionReservation>(session,true))if(receipt.FactionId==1&&receipt.ReservationId==1005&&receipt.Role==SkirmishRoleKind.Strike&&receipt.MaterialsPaid==520&&receipt.Phase==SkirmishReservationPhase.Live)count++;
+        var air=em.GetComponentData<UnitAirComponent>(actor);
+        if(count!=1||!em.HasComponent<SkirmishSharedActorTag>(actor)||em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role!=SkirmishRoleKind.Strike||em.GetComponentData<UnitMove>(actor).Speed!=36f)throw new InvalidOperationException("Paid receipt, role or immutable prefab speed differs.");
+        if(!air.HomePosition.Equals(originalAir.HomePosition)||!air.HomeCell.Equals(originalAir.HomeCell)||!air.RunwayTakeoffPosition.Equals(originalAir.RunwayTakeoffPosition)||!air.RunwayLandingPosition.Equals(originalAir.RunwayLandingPosition)||!air.RunwayTakeoffCell.Equals(originalAir.RunwayTakeoffCell)||!air.RunwayLandingCell.Equals(originalAir.RunwayLandingCell)||JsonUtility.ToJson(em.GetComponentData<UnitAirMovement>(actor))!=JsonUtility.ToJson(originalMovement))throw new InvalidOperationException("Recovered flight configuration differs.");
+    }
+    static void SamePaused(EntityManager em,Entity session,Entity actor)
+    {
+        if(!em.Exists(pausedActor)||actor!=pausedActor||!em.GetComponentData<LocalTransform>(actor).Equals(pausedTransform)||JsonUtility.ToJson(em.GetComponentData<UnitAirComponent>(actor))!=JsonUtility.ToJson(pausedAir)||JsonUtility.ToJson(em.GetComponentData<UnitAirMovement>(actor))!=JsonUtility.ToJson(pausedMovement)||em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds!=pausedElapsed)throw new InvalidOperationException("Native paused flight changed, including exact quaternion or clock.");
+    }
+    static void Tick()
+    {
+        if(!EditorApplication.isPlayingOrWillChangePlaymode)
+        {
+            if(!sawPlay)return;EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;
+            bool clean=(ownedWorld==null||!ownedWorld.IsCreated)&&Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")==previousProfile&&Hash(Report+Original)==OriginalHash;
+            Debug.Log("[S005RetainedFlightRecoveryCleanup] result="+(clean?"Passed":"Failed")+" ownedWorldDisposed="+(ownedWorld==null||!ownedWorld.IsCreated?1:0)+" originalSaveUnchanged=1 isolatedProfile="+profileRoot+" profileRetainedForAudit=1 realPlayerProfileUntouched=1");
+            completion.TrySetResult(passed&&clean?0:1);return;
+        }
+        if(!EditorApplication.isPlaying)return;sawPlay=true;if(finishing)return;
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;if(now>deadline)throw new InvalidOperationException("Recovery watchdog phase="+phase);
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;ownedWorld=world;var em=world.EntityManager;
+            if(!(bool)Get("playerResumeProbeActive"))return;
+            int step=(int)Get("playerResumeStep");
+            if(phase==0)
+            {
+                if(!RecoveryComplete(em,out var session))return;
+                Set("playerResumeDue",now+60d);Set("playerResumeDeadline",deadline);Set("playerResumePaidRole",SkirmishRoleKind.Strike);Set("playerResumePaidCost",520);Set("playerResumeReceipt",1005u);
+                var actor=PaidAircraft(em);ValidateReceiptAndConfiguration(em,session,actor);phaseAt=now;phase=1;
+                Debug.Log("[S005RetainedFlightRecovery] phase=OriginalNativeContinueObserved sameAttempt=1 oldFailureCaptureNotRelabeled=1 paidReceipt=1005 driverTimingHeldOnly=1");return;
+            }
+            if(phase==1)
+            {
+                if(!RecoveryComplete(em,out var session))return;var actor=PaidAircraft(em);ValidateReceiptAndConfiguration(em,session,actor);
+                float elapsed=em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+                float distance=math.distance(em.GetComponentData<LocalTransform>(actor).Position,originalTransform.Position);
+                if(now-phaseAt<1||elapsed-originalElapsed<.25f)return;
+                if(!Mathf.Approximately(Time.timeScale,1)||distance<.1f||distance>36f*(elapsed-originalElapsed)+10f)throw new InvalidOperationException("Original native Continue positive-time flight missing or unbounded.");
+                Set("playerResumeStep",1);Set("playerResumeDue",now);phase=2;
+                Debug.Log("[S005RetainedFlightRecovery] phase=OriginalPositiveFlight displacement="+distance+" elapsedDelta="+(elapsed-originalElapsed)+" originalNativeOrderRetained=1 newGameplayOrdersInjected=0");return;
+            }
+            if(phase==2)
+            {
+                if(step!=2||!RecoveryComplete(em,out var session))return;
+                if(!UiShellRuntimeGateway.TryReadSkirmish(out var model)||!model.Paused||!model.CanSaveMatch)throw new InvalidOperationException("Native Pause unavailable.");
+                pausedActor=PaidAircraft(em);pausedAir=em.GetComponentData<UnitAirComponent>(pausedActor);pausedMovement=em.GetComponentData<UnitAirMovement>(pausedActor);pausedTransform=em.GetComponentData<LocalTransform>(pausedActor);pausedElapsed=em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+                if(pausedAir.Airborne!=1)throw new InvalidOperationException("Native Pause no longer samples in-flight aircraft.");
+                Set("playerResumeDue",now+60d);phaseAt=now;pausedSamples=0;phase=3;
+                Debug.Log("[S005RetainedFlightRecovery] phase=PausedSnapshot quaternion="+pausedTransform.Rotation.value+" elapsed="+pausedElapsed+" air="+JsonUtility.ToJson(pausedAir)+" movement="+JsonUtility.ToJson(pausedMovement)+" transform="+JsonUtility.ToJson(pausedTransform));return;
+            }
+            if(phase==3)
+            {
+                if(!RecoveryComplete(em,out var session))throw new InvalidOperationException("Paused recovery disappeared.");SamePaused(em,session,PaidAircraft(em));pausedSamples++;
+                if(now-phaseAt<1.5||pausedSamples<30)return;
+                Set("playerResumeDue",now);phase=4;
+                Debug.Log("[S005RetainedFlightRecovery] phase=PauseConserved exactQuaternionAndAirParts=1 observedEditorSamples="+pausedSamples+" pausedWallSeconds="+(now-phaseAt));return;
+            }
+            if(phase==4)
+            {
+                if(step!=3)return;Set("playerResumeDue",now+60d);phase=5;return;
+            }
+            if(phase==5)
+            {
+                if(SkirmishLaunchProjection.TryGet(em,out _,out _))return;
+                string native=Path.Combine(profileRoot,"skirmish-s005-native.json");if(!File.Exists(native))throw new InvalidOperationException("Actual native Save file missing.");
+                File.Copy(native,Report+Fresh,false);if(Hash(native)!=Hash(Report+Fresh))throw new InvalidOperationException("Fresh native save copy differs.");
+                object snapshot=Descriptor(Report+Fresh),parts=AircraftParts(snapshot);
+                if(!TryPart(parts,out LocalTransform transform)||!transform.Equals(pausedTransform)||!TryPart(parts,out UnitAirComponent air)||JsonUtility.ToJson(air)!=JsonUtility.ToJson(pausedAir)||!TryPart(parts,out UnitAirMovement movement)||JsonUtility.ToJson(movement)!=JsonUtility.ToJson(pausedMovement)||!TryPart(snapshot.GetType().GetField("SessionParts",Inst).GetValue(snapshot),out SkirmishObjectiveClockComponent clock)||clock.ElapsedSeconds!=pausedElapsed)throw new InvalidOperationException("New native Save differs from new actual Pause, including exact quaternion.");
+                Set("playerResumeDue",now);phase=6;
+                Debug.Log("[S005RetainedFlightRecovery] phase=NewNativeSaveVerified actualPausedPartsExact=1 savedQuaternionExact=1 freshFileByteIdentical=1 newSaveSha256="+Hash(Report+Fresh)+" originalSaveUnchanged="+(Hash(Report+Original)==OriginalHash?1:0));return;
+            }
+            if(phase==6)
+            {
+                if(step==4)Set("playerResumeDue",now+60d);
+                if(!RecoveryComplete(em,out var session))return;
+                if(em.Exists(pausedActor))throw new InvalidOperationException("Old pre-save actor was not cleaned up.");
+                ValidateReceiptAndConfiguration(em,session,PaidAircraft(em));phaseAt=now;phase=7;return;
+            }
+            if(phase==7)
+            {
+                if(!RecoveryComplete(em,out var session))return;var actor=PaidAircraft(em);ValidateReceiptAndConfiguration(em,session,actor);
+                float elapsed=em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;float distance=math.distance(em.GetComponentData<LocalTransform>(actor).Position,pausedTransform.Position);
+                if(now-phaseAt<1||elapsed-pausedElapsed<.25f)return;
+                if(!Mathf.Approximately(Time.timeScale,1)||distance<.1f||distance>36f*(elapsed-pausedElapsed)+10f)throw new InvalidOperationException("Second native Continue failed bounded positive-time flight.");
+                // UI-only Continue/Pause/Save produces no new gameplay command.
+                // Do not claim a measured command audit from an empty stream;
+                // native1018's pre-save paid/flight commands retain their own proof.
+                var touch=(AriaTouchInputUiSystemHelper)Get("playerResumeTouch");if(touch==null||touch.UnexpectedSamples!=0||touch.CompletedGestures<3||contacts<3||!AriaCommandEvidence.Active||AriaCommandEvidence.CompletedTouches!=touch.CompletedGestures||AriaCommandEvidence.Violations!=0)throw new InvalidOperationException("New native Pause/Save/Continue UI contact audit failed.");
+                passed=finishing=true;Set("playerResumeProbeDone",true);
+                Debug.Log("[S005RetainedFlightRecovery] result=Passed originalCapture=1018 normalInputRecoveryRun=1047 originalSaveByteIdentical=1 nativeContinuePauseSaveContinue=1 paidReceiptPreserved=1 pausedAndNativeSaveQuaternionExact=1 positiveTimeFlightTwice=1 pausedSamples="+pausedSamples+" nativeContacts="+contacts+" gestures="+touch.CompletedGestures+" uiContactAudit=1 newGameplayCommandAudit=NotApplicable original1018CommandAuditSeparate=1 freshUninterruptedMatch=0 completeMatchCertified=0 countedWin=0");
+                Harness.GetMethod("Finish",Stat).Invoke(null,new object[]{false,"nativeRetainedFlightPauseSaveContinueOnly"});
+            }
+        }
+        catch(Exception error)
+        {
+            finishing=true;Debug.LogError("[S005RetainedFlightRecovery] result=Failed phase="+phase+" reason="+error);
+            Harness.GetMethod("Finish",Stat).Invoke(null,new object[]{true,"retainedFlightRecovery="+error.Message});
+        }
+    }
+    static void Observe(string message,string stack,LogType type)
+    {if(message.StartsWith("[S005PlayerSaveResume] phase=Touch ",StringComparison.Ordinal))contacts++;}
+}

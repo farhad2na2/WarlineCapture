@@ -1,0 +1,17 @@
+{"frame":1143,"operation":"AttackMove","receipt":10,"verified":true}
+{"frame":1504,"operation":"AttackMove","receipt":18,"verified":true}
+{"frame":1691,"operation":"AttackMove","receipt":22,"verified":true}
+{"frame":2163,"operation":"Placement","receipt":32,"verified":true}
+{"frame":2348,"operation":"Production","receipt":36,"verified":true}
+{"frame":2777,"operation":"Production","receipt":40,"verified":true}
+{"frame":3445,"operation":"Production","receipt":47,"verified":true}
+{"frame":6250,"operation":"Placement","receipt":58,"verified":true}
+{"frame":7517,"operation":"Placement","receipt":67,"verified":true}
+{"frame":9992,"operation":"Production","receipt":74,"verified":true}
+{"frame":14814,"operation":"Research","receipt":76,"verified":true}
+{"frame":23498,"operation":"Research","receipt":77,"verified":true}
+{"frame":30634,"operation":"Placement","receipt":87,"verified":true}
+{"frame":43544,"operation":"Production","receipt":92,"verified":true}
+{"frame":44421,"operation":"AttackMove","receipt":110,"verified":true}
+{"frame":44421,"operation":"ArmyAttack","receipt":110,"verified":true}
+{"frame":45556,"operation":"ReturnToBase","receipt":112,"verified":true}

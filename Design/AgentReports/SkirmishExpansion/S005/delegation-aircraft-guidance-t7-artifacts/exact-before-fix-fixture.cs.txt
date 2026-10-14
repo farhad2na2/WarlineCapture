@@ -1,0 +1,52 @@
+using System;
+using System.Reflection;
+using Game.UI.Runtime;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+
+// Unique external fixture: actual public owner disposal in idle Editor.
+// Destruction order is disclosed isolated setup; this is not actual Play-stop proof.
+public static class S005GuidanceLifecycleRepro20261011
+{
+    const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
+    public static string Run() => "Prepared external actual-owner disposal reproduction; execute only via repository wrapper.";
+    public static void RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Idle Editor required.");
+        if(Count()!=0)throw new InvalidOperationException("Another guidance owner is present; preserve it.");
+        var owner=new MainMenuPlayUI();
+        var assistant=typeof(MainMenuPlayUI).GetField("_matchHudAssistantUiSystem",Private).GetValue(owner);
+        var helper=assistant.GetType().GetField("_highlightPresentationSystem",Private).GetValue(assistant);
+        var hud=new GameObject("Guidance lifecycle isolated HUD",typeof(RectTransform),typeof(Canvas));
+        hud.GetComponent<Canvas>().renderMode=RenderMode.ScreenSpaceOverlay;
+        var pulse=new GameObject("Bound panel",typeof(RectTransform),typeof(Image));pulse.transform.SetParent(hud.transform,false);
+        int callbackCount=0,recreated=-1;
+        var callback=assistant.GetType().GetField("_panelOpenChanged",Private);
+        try
+        {
+            helper.GetType().GetMethod("Bind",BindingFlags.Instance|BindingFlags.Public).Invoke(helper,new object[]{pulse.GetComponent<Image>(),null,null,null});
+            if(Count()!=1)throw new InvalidOperationException("Initial actual helper overlay missing or duplicated.");
+            var canvas=(Canvas)helper.GetType().GetField("_screenTargetCanvas",Private).GetValue(helper);
+            UnityEngine.Object.DestroyImmediate(canvas.gameObject);
+            if(Count()!=0)throw new InvalidOperationException("Disclosed prior overlay destruction failed.");
+            callback.SetValue(assistant,(Action<bool>)(_=>{callbackCount++;recreated=Count();}));
+            owner.Dispose();
+            if(callbackCount!=1)throw new InvalidOperationException("Actual assistant-close disposal boundary not observed.");
+            if(Count()!=0)throw new InvalidOperationException("Persistent Editor overlay remains after disposal.");
+            if(recreated!=1)throw new InvalidOperationException("Old-candidate transient recreation not reproduced, observed="+recreated);
+            Debug.Log("[GuidanceLifecycleRepro] result=ReproducedTransientRecreation count=1 actualPublicOwnerDispose=1 callback=ActualAssistantClose isolatedPriorOverlayDestroyed=1 noPersistentEditorLeak=1 actualPlayStopPending=1");
+        }
+        finally
+        {
+            callback.SetValue(assistant,(Action<bool>)(_=>{}));
+            try{owner.Dispose();}finally{UnityEngine.Object.DestroyImmediate(hud);}
+        }
+    }
+    static int Count()
+    {
+        int count=0;
+        foreach(var c in Resources.FindObjectsOfTypeAll<Canvas>())if(c!=null&&c.name=="AriaGuidanceOverlay"&&c.gameObject.scene.IsValid())count++;
+        return count;
+    }
+}

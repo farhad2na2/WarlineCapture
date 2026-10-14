@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "command": "command clear_console",
+  "data": {
+    "command": "clear_console",
+    "parameters": {},
+    "result": {
+      "cleared": true
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

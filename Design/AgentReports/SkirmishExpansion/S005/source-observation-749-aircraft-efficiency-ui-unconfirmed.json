@@ -1,0 +1,13 @@
+{
+  "result": "ReadOnlySourceObservation",
+  "scope": "Potential legitimate Aircraft Efficiency purchase for future flight strategy",
+  "runtimePresent": true,
+  "runtimeSource": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
+  "normalInputSurfaceConfirmed": false,
+  "researchDispatchSource": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchSystem.cs",
+  "observation": "Current production source references AircraftEfficiency only in research service/effects/state/contracts. ResearchSystem normal request path queues Readiness only; no category purchase counted.",
+  "normalPurchasePerformed": false,
+  "effectAppliedOrInjected": false,
+  "sourceChanged": false,
+  "playerReady": false
+}

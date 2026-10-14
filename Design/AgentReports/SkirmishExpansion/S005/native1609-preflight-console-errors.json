@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 1,
+      "returned": 1,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[S005NormalSouthFlank1608] observerFailure=1 gameplayUnmodified=1",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005NormalSouthFlank1608Observer:ObserverFailure (System.Exception) (at /private/tmp/s005-full-south-flank1608-source-3751/S005NormalSouthFlank1608Observer.cs:206)\nS005NormalSouthFlank1608Observer:ObserveRendered () (at /private/tmp/s005-full-south-flank1608-source-3751/S005NormalSouthFlank1608Observer.cs:460)\nUnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)\n",
+          "timestampUtc": "2026-10-14T10:27:54.4750360Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

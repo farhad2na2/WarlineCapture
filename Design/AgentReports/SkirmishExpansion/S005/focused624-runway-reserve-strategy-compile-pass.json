@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "tests": 3,
+  "wrapperExit": 0,
+  "requiredMarker": "[SkirmishProducerMessageTests] result=Passed tests=3",
+  "log": "tests-624-runway-reserve-strategy-compile.log",
+  "currentSourceHash": "8ad5ba9dad5ecd9403cd3734bc403f1de8191ffd9e98e322987752cfd868d0df",
+  "changedFromNative623": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs"
+  ],
+  "allMaterialsUnchanged": true,
+  "scope": "Producer regressions and qualification compilation; no native flight or complete-match certification"
+}

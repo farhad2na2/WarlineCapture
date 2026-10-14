@@ -1,0 +1,26 @@
+{
+  "result": "Passed",
+  "sourceHash": "0b1962986b15fb05bfc723535dff7d0dcbf8a2b8011033db9c29ed2755c93d5d",
+  "wrapperExitCode": 0,
+  "sourceUnchanged": true,
+  "preSourceManifest": "tests-703-shared-parking-flight-recovery-regressions-pre-source-manifest.json",
+  "postSourceManifest": "tests-703-shared-parking-flight-recovery-pass-post-source-manifest.json",
+  "log": "tests-703-shared-parking-flight-recovery-regressions.log",
+  "logSha256": "49a1fa0c97e1a4f49adf6e015f6eb3f16343c47b5626d2d2761c60830a83e663",
+  "marker": "[RunwayDeliveryFlightRecoveryValidation] result=Passed flightCases=30 checkpointCases=10",
+  "flightCases": 30,
+  "checkpointCases": 10,
+  "scopes": [
+    "assigned parking completion despite queued Move/Hold",
+    "offset liftoff and frame-time/heading matrix",
+    "native flight maneuvers and return",
+    "serialization/fresh-world restoration including transit tag"
+  ],
+  "reproductions": [
+    "tests-699-production-taxi-player-command-reproduction.log",
+    "tests-702-delivery-taxi-checkpoint-reproduction.log"
+  ],
+  "nativeSameSourcePending": true,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

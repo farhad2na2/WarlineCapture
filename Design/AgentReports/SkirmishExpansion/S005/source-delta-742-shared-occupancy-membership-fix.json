@@ -1,0 +1,23 @@
+{
+  "fromSource": "bd1e220020aabf8c0097900c3caaa5c1495fc0df16be11259ef34f3788ad76ee",
+  "toSource": "fc2043066afb43cfd364259f378d664816bc947afd58514ca3e288e73eb6be86",
+  "changedFiles": [
+    "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
+    "Assets/Tests/Editor/DynamicOccupancyRebuildSystemTests.cs"
+  ],
+  "physicalMapConfigsAndMaterialsUnchanged": true,
+  "proof": {
+    "result": "Passed",
+    "sourceHash": "fc2043066afb43cfd364259f378d664816bc947afd58514ca3e288e73eb6be86",
+    "actualWrapperExit": 0,
+    "requiredPassMarker": "[DynamicOccupancyRebuildFocusedValidation] result=Passed tests=7",
+    "sourceUnchanged": true,
+    "pre": "tests-742-shared-occupancy-membership-green-pre-source-manifest.json",
+    "post": "tests-742-shared-occupancy-membership-green-post-source-manifest.json",
+    "redProof": "focused741-shared-occupancy-membership-red.json",
+    "log": "tests-742-shared-occupancy-membership-green.log",
+    "logSha256": "e62c39f87be42fcae29506dc3a82305a1473d1e189715f2587a9489820a85661",
+    "cases": 7,
+    "nativeMissionAcceptance": "Pending"
+  }
+}

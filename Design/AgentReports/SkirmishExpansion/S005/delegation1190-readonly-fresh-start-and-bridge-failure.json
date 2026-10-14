@@ -1,0 +1,45 @@
+{
+  "runId": 1190,
+  "scope": "One actual first native startup only; no ten-cycle readiness",
+  "raw": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1190-lifecycle-observation.jsonl",
+  "rawSha256": "36d752d1d3395ba99d819e62c4bb32a1fb4714c089bdce5b3c2637bacf3f0392",
+  "fresh": [
+    {
+      "attempt": "expanded-s005-104734-2df1b15ceb9e40c28d8d4f26ee8a1853",
+      "selected": 0,
+      "hold": 0,
+      "enemyHold": 0,
+      "groupCount": 14,
+      "elapsed": 0.3333333432674408,
+      "oldPhysical": 0,
+      "sameBudget": true,
+      "sameRoster": true,
+      "passed": true
+    }
+  ],
+  "strategy": [
+    {
+      "attempt": "expanded-s005-104734-2df1b15ceb9e40c28d8d4f26ee8a1853",
+      "strategyPriority": "AttackBase",
+      "lastGroupId": 8,
+      "hasStrategy": true
+    }
+  ],
+  "nonNoneGroups": [
+    {
+      "attempt": "expanded-s005-104734-2df1b15ceb9e40c28d8d4f26ee8a1853",
+      "groupId": 8,
+      "faction": 2,
+      "role": "Rocketeer",
+      "groupOrder": "Move",
+      "selected": 0,
+      "memberCount": 4,
+      "aliveCount": 4
+    }
+  ],
+  "error": [
+    "System.TypeLoadException: Could not load type 'Game.Composition.SkirmishLaunchProjection' from assembly 'Game.UI.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'.\n  at (wrapper managed-to-native) System.Reflection.Assembly.InternalGetType(System.Reflection.Assembly,System.Reflection.Module,string,bool,bool)\n  at System.Reflection.RuntimeAssembly.GetType (System.String name, System.Boolean throwOnError, System.Boolean ignoreCase) [0x00022] in <299d5c9ae27b4d27af003e5f456f4b13>:0 \n  at System.Reflection.Assembly.GetType (System.String name, System.Boolean throwOnError) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 \n  at S005Lifecycle1190+SkirmishLaunchProjectionBridge.IsActive (Unity.Entities.EntityManager em) [0x00001] in /private/tmp/S005Lifecycle1190.cs:225 \n  at S005Lifecycle1190.RenderFrame () [0x0011b] in /private/tmp/S005Lifecycle1190.cs:180 "
+  ],
+  "originalArtifactsPreserved": true,
+  "productionOrEnemyAIChanged": false
+}

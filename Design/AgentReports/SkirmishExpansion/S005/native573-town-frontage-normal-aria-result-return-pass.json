@@ -1,0 +1,22 @@
+{
+  "result": "Passed",
+  "playerReady": false,
+  "sourceHash": "be4e45b96c468826de1b7ccb745d9900c68e4c42570e4f2d7298be586e583deb",
+  "prePostIndependentMatched": true,
+  "locale": "en",
+  "seed": 104734,
+  "outcome": "Victory",
+  "clockElapsed": 218.505,
+  "playerBaseHp": 800,
+  "enemyBaseHp": 0,
+  "playerUnits": 24,
+  "normalMenuJourney": true,
+  "ariaConsent": true,
+  "terminalResultAndReturn": true,
+  "wrapperExit": "0",
+  "recordedContacts": 46,
+  "completedContacts": 46,
+  "contactErrors": [],
+  "all562MaterialsMatched": true,
+  "remaining": "Bilingual repeated-seed, manual, role/aircraft service, fresh Save/Resume, performance and visual/device acceptance gates remain pending"
+}

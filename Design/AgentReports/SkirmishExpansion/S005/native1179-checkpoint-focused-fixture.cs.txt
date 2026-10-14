@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using Game.Tests.Editor;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
+
+// External isolated native-system qualification. It never starts Play or a player journey.
+public static class S005CheckpointFocused1179
+{
+    const string Evidence = "/private/tmp/s005-checkpoint-focused1179.jsonl";
+    [Serializable] sealed class Row
+    {
+        public string stage,suite,scope="IsolatedCheckpointSystemsNotPlayerJourney",failure;
+        public int declaredCases,worldCount,sceneCount,sceneGameObjects;
+        public double seconds;
+        public bool isPlaying,isCompiling,defaultWorldPreserved,worldsPreserved,scenesPreserved,hierarchyPreserved;
+        public string[] worlds,scenes,hierarchy;
+    }
+    sealed class Census
+    {
+        public World DefaultWorld;
+        public string[] Worlds,Scenes,Hierarchy;
+    }
+    public static object Run()=>"Loaded only; execute through repository wrapper after native compile and idle proof.";
+    static Census ReadCensus()
+    {
+        var worlds=new List<string>();
+        foreach(var world in World.All)
+        {
+            if(!world.IsCreated)throw new InvalidOperationException("Disposed World remains in native World.All");
+            worlds.Add(world.SequenceNumber.ToString(CultureInfo.InvariantCulture)+":"+world.Name);
+        }
+        worlds.Sort(StringComparer.Ordinal);
+        var scenes=new List<string>();
+        for(int i=0;i<SceneManager.sceneCount;i++)
+        {
+            var scene=SceneManager.GetSceneAt(i);
+            scenes.Add(scene.handle+":"+scene.path+":"+scene.name+":loaded="+scene.isLoaded+":dirty="+scene.isDirty+
+                ":active="+(scene==SceneManager.GetActiveScene())+":roots="+(scene.isLoaded?scene.rootCount:-1));
+        }
+        var hierarchy=new List<string>();
+        foreach(var go in Resources.FindObjectsOfTypeAll<GameObject>())
+            if(go!=null&&go.scene.IsValid()&&go.scene.isLoaded)
+                hierarchy.Add(go.GetEntityId()+":"+go.scene.handle+":"+go.name);
+        hierarchy.Sort(StringComparer.Ordinal);
+        return new Census{DefaultWorld=World.DefaultGameObjectInjectionWorld,Worlds=worlds.ToArray(),Scenes=scenes.ToArray(),Hierarchy=hierarchy.ToArray()};
+    }
+    static Row MakeRow(string stage,string suite,int cases,Census before,Census after,double seconds,string failure=null)
+    {
+        return new Row{stage=stage,suite=suite,declaredCases=cases,seconds=seconds,failure=failure,
+            isPlaying=EditorApplication.isPlaying,isCompiling=EditorApplication.isCompiling,
+            worldCount=after.Worlds.Length,sceneCount=after.Scenes.Length,sceneGameObjects=after.Hierarchy.Length,
+            worlds=after.Worlds,scenes=after.Scenes,hierarchy=after.Hierarchy,
+            defaultWorldPreserved=ReferenceEquals(before.DefaultWorld,after.DefaultWorld),
+            worldsPreserved=before.Worlds.SequenceEqual(after.Worlds),scenesPreserved=before.Scenes.SequenceEqual(after.Scenes),
+            hierarchyPreserved=before.Hierarchy.SequenceEqual(after.Hierarchy)};
+    }
+    static void Record(Row row)=>File.AppendAllText(Evidence,JsonUtility.ToJson(row)+"\n");
+    static void Suite(string name,int declaredCases,Action run)
+    {
+        if(EditorApplication.isPlaying||EditorApplication.isCompiling)throw new InvalidOperationException("Small focused1179 requires actual idle Editor");
+        var before=ReadCensus();Record(MakeRow("Before",name,declaredCases,before,before,0));
+        var watch=Stopwatch.StartNew();
+        try
+        {
+            run();watch.Stop();var after=ReadCensus();var row=MakeRow("After",name,declaredCases,before,after,watch.Elapsed.TotalSeconds);Record(row);
+            if(!row.defaultWorldPreserved||!row.worldsPreserved||!row.scenesPreserved||!row.hierarchyPreserved||row.isPlaying||row.isCompiling)
+                throw new InvalidOperationException("Focused native suite changed persistent World/scene/hierarchy or Editor state: "+name);
+            if(watch.Elapsed.TotalSeconds>120)throw new TimeoutException("Focused suite exceeded120seconds: "+name);
+            Debug.Log("[S005CheckpointFocused1179Suite] result=Passed suite="+name+" declaredCases="+declaredCases+" nativeWorldSceneHierarchyPreserved=True seconds="+watch.Elapsed.TotalSeconds.ToString("F3",CultureInfo.InvariantCulture));
+        }
+        catch(Exception error)
+        {
+            watch.Stop();Record(MakeRow("FailedRetained",name,declaredCases,before,ReadCensus(),watch.Elapsed.TotalSeconds,error.ToString()));throw;
+        }
+    }
+    public static void RunValidation()
+    {
+        if(File.Exists(Evidence))throw new InvalidOperationException("Unique1179 evidence exists; preserve it and reserve a successor");
+        File.WriteAllText(Evidence,"{\"stage\":\"Scope\",\"declaredCases\":74,\"nativePlayerJourneys\":0,\"normalTenReplayCycles\":0,\"family20Matches\":0,\"performanceCertified\":false,\"deviceCertified\":false}\n");
+        Suite("Staging",51,SkirmishNativeRecoveryStagingValidation.RunFocusedValidation);
+        Suite("Transient",13,SkirmishNativeCheckpointTransientTests.RunFocusedValidation);
+        Suite("Support",5,SkirmishNativeSupportRecoveryTests.RunFocusedValidation);
+        Suite("Strike",5,SkirmishNativeStrikeRecoveryTests.RunFocusedValidation);
+        File.AppendAllText(Evidence,"{\"stage\":\"Closed\",\"result\":\"PassedScopedIsolatedCheckpointConservation\",\"suites\":4,\"declaredCases\":74,\"nativePlayerJourneys\":0,\"fullX36GateClosed\":false,\"normalTenReplayCycles\":0,\"family20Matches\":0,\"performanceCertified\":false,\"deviceCertified\":false}\n");
+        Debug.Log("[S005CheckpointFocused1179] result=Passed suites=4 declaredCases=74 nativeWorldSceneHierarchyPreserved=True nativePlayerJourneys=0 fullX36GateClosed=0 normalTenReplayCycles=0 family20Matches=0 performanceCertified=0 deviceCertified=0");
+    }
+}

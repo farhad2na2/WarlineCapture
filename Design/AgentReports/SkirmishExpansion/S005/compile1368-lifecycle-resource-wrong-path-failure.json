@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-lifecycle-resource1368-enabled-v1/S005LifecycleResource1368.cs",
+      "entry": "S005Lifecycle1368.Run",
+      "dry_run": "true",
+      "timeout_ms": "120000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 0,
+      "executeMs": 0,
+      "assemblyName": null,
+      "success": false,
+      "error": "File Not Found",
+      "errorDetails": "Source file not found: /private/tmp/s005-lifecycle-resource1368-enabled-v1/S005LifecycleResource1368.cs"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

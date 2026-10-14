@@ -1,0 +1,13 @@
+{
+  "sourceHash": "e35ea8533c2eca91a52f436419a4df39747afedf43575592f356ecbe9fb9a817",
+  "previousFullSourceHash": "f58ae1200e0537c452163bcab1ec8fdab74ed4cf675420d7b103e66be618a448",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs"
+  ],
+  "materialsIdentical": true,
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "scope": "Validation driver: select exact paid Strike actor through backward/forward squad paging with45-second selection watchdog; revalidate previously normally paid existing-map Airport sites against full current native rules, fallback to original bounded source scan. All commits/purchases remain normal input.",
+  "normalNativeConfirmation": "Pending",
+  "retainedFailure": "native797-normal-paid-strike-cycle-failure.json"
+}

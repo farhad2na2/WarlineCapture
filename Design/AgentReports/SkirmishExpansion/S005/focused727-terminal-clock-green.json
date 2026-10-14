@@ -1,0 +1,11 @@
+{
+  "result": "Passed",
+  "sourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+  "wrapperExit": 0,
+  "wrapperExitArtifact": "tests-727-terminal-clock-green.log.exit",
+  "log": "tests-727-terminal-clock-green.log",
+  "logSha256": "ef5b5d6831bc569353ac20473a15f641501b2a2c685e9529a3dc241c1b74a50c",
+  "sourceManifestUnchanged": true,
+  "scope": "Expanded objective suite including same-update terminal clock freeze and later projection preservation",
+  "nativeReadiness": "Pending"
+}

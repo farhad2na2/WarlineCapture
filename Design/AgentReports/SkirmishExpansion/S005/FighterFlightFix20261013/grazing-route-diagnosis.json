@@ -1,0 +1,29 @@
+{
+  "observations": [
+    {
+      "run": 1401,
+      "cycle": 2,
+      "frame": 3266,
+      "alertDistance": 31.27250099182129,
+      "forwardDot": 0.9680324792861938,
+      "closestStraightLineDistance": 30.884997973781584,
+      "totalBandSecondsAtObserved36mPerSecond": 0.46519908176767966,
+      "remainingBandSecondsAtAdmission": 0.36892653590699703,
+      "scope": "ReadOnlyStraightLineDiagnosticNotNativeQualification"
+    },
+    {
+      "run": 1402,
+      "cycle": 1,
+      "frame": 2970,
+      "alertDistance": 31.615604400634766,
+      "forwardDot": 0.9668291807174683,
+      "closestStraightLineDistance": 31.52919214453229,
+      "totalBandSecondsAtObserved36mPerSecond": 0.30383374836506577,
+      "remainingBandSecondsAtAdmission": 0.21680313008666688,
+      "scope": "ReadOnlyStraightLineDiagnosticNotNativeQualification"
+    }
+  ],
+  "productionDefectEstablished": false,
+  "fixtureChange": "Final public waypoint120 to60m; no map or aircraft changes",
+  "nativeSuccessorRequired": 1403
+}

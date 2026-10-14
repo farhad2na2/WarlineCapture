@@ -1,0 +1,20 @@
+{
+  "scope": "Read-only native target protocol review; no runtime/source/Unity calls",
+  "diagnosticEvidence": "Native1080 pending at review; unarmed flee remains fixture hypothesis, not production bug.",
+  "sourceSha256": {
+    "Assets/Game/Scripts/Systems/UnitAttackSystem.cs": "d86767734e478d9a37eb2d79187f5873b175b5badf1eba344530283e5f8e61cd",
+    "Assets/Game/Scripts/Systems/UnitEngagementSystem.cs": "3a032e175c06be30a747390b5c933ca4f765a9c53f7d32988e1d269be7db80e1",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs": "65a6689ae84fe751522cfbd1eb26aad9efd70db60031dda0510d7bdd0913545e",
+    "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs": "b57cc5450092670fa1ac22368d54278311ae5e1cc1b1f1c872733e988d400d84"
+  },
+  "noFleeProtocol": {
+    "target": "Actual retained native hostile ArmoredAPC, preserve native CanAttack=1, target-only AutoEngage=0; clear prior native movement/attack intent before each target relocation and after each effect.",
+    "fleeGate": "UnitAttackSystem.cs1105\u20131106 returns if target CanAttack!=0.",
+    "counterGate": "UnitAttackSystem.cs1187\u20131188 returns if target AutoEngage==0.",
+    "acquisitionGate": "UnitEngagementSystem.cs218\u2013221 skips AutoEngage0 without AttackMoveOrder.",
+    "clearIntent": "SkirmishWorldMovementService.cs64\u201385 calls shared ClearMovement; UnitMoveOrderSystem.cs224\u2013240 removes EngageTarget, AttackMoveOrder, UnitTarget/path/manual movement and Hold tags.",
+    "limits": "These are inspected native gates, not native execution proof. Other AI/strategy target orders must be disabled or detected; current fixture enemy strategy disabled. No damage/range/weapon/domain modifications."
+  },
+  "sourceAttribution": "All vehicles are single-member paid receipts: require exact paid actor SourceEntity, real legal target, positive new DirectFire event and actual HP loss. Homogeneous active-source audit must inspect target AutoEngage0 plus no EngageTarget/AttackMoveOrder; target remains armed, so a broad CanAttack-only audit must not silently call it suppressed. Require unchanged target ShotCounter and no actual raw target-source damage events during case.",
+  "successorPreparation": "Await actual1080 state/raw event evidence before asserting cause. Any successor must have new unique class/evidence and preserve1061/1080 exact bytes and failure records."
+}

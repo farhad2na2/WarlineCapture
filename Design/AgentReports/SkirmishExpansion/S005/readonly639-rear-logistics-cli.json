@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em = Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;\nusing(var q=em.CreateEntityQuery(typeof(Game.Components.GridConfig),typeof(Game.Components.GridWalkable),typeof(Game.Components.DynamicBlockerComponent),typeof(Game.Components.DynamicOccupancyComponent))) {\n if(q.CalculateEntityCount()!=1) throw new System.InvalidOperationException(\"Expected one native grid\");\n var ge=q.GetSingletonEntity(); var grid=em.GetComponentData<Game.Components.GridConfig>(ge);\n var walk=em.GetBuffer<Game.Components.GridWalkable>(ge,true).AsNativeArray();\n var blocked=em.GetComponentData<Game.Components.DynamicBlockerComponent>(ge).Blocked;\n var occupied=em.GetComponentData<Game.Components.DynamicOccupancyComponent>(ge).Occupied;\n var method=typeof(Game.Runtime.SkirmishScenarioSpawnSystem).Assembly.GetType(\"Game.Runtime.InitialUnitsSpawnSystem\");\n if(method==null) foreach(var assembly in System.AppDomain.CurrentDomain.GetAssemblies()) { method=assembly.GetType(\"Game.Runtime.InitialUnitsSpawnSystem\");if(method!=null)break; }\n if(method==null) throw new System.InvalidOperationException(\"Initial spawn owner type unavailable\");\n var find=method.GetMethod(\"TryFindInitialUnitSpawnCell\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);\n var results=new System.Collections.Generic.List<object>();\n foreach(var p in new [] {new Unity.Mathematics.int2(914,650),new Unity.Mathematics.int2(914,622),new Unity.Mathematics.int2(894,650),new Unity.Mathematics.int2(894,622),new Unity.Mathematics.int2(874,650),new Unity.Mathematics.int2(934,622)}) {\n var reserve=new Unity.Collections.NativeBitArray(grid.Width*grid.Height,Unity.Collections.Allocator.Temp,Unity.Collections.NativeArrayOptions.ClearMemory);\n try {\n using(var uq=em.CreateEntityQuery(typeof(Game.Components.UnitGrid),typeof(Game.Components.UnitFootprint))) using(var units=uq.ToEntityArray(Unity.Collections.Allocator.Temp)) foreach(var unit in units) {\n var size=Game.Components.UnitFootprintUtility.ClampSize(em.GetComponentData<Game.Components.UnitFootprint>(unit).Size);\n var min=Game.Components.UnitFootprintUtility.GetMinCell(em.GetComponentData<Game.Components.UnitGrid>(unit).Cell,size);\n for(int z=min.y;z<min.y+size.y;z++)for(int x=min.x;x<min.x+size.x;x++)if(x>=0&&z>=0&&x<grid.Width&&z<grid.Height)reserve.Set(z*grid.Width+x,true);\n }\n var cells=new System.Collections.Generic.List<string>();\n for(int i=0;i<6;i++) {object[] args={new Unity.Mathematics.Random((uint)(639+i)),grid,walk,blocked,occupied,reserve,p,12,new Unity.Mathematics.int2(3,3),false,new Unity.Mathematics.int2()};bool found=(bool)find.Invoke(null,args);reserve=(Unity.Collections.NativeBitArray)args[5];if(!found)break;cells.Add(args[10].ToString());}\n results.Add(new {center=p.ToString(),nativeSpawnCells=cells.Count,cells});\n }finally {reserve.Dispose();}\n }\n using(var sq=em.CreateEntityQuery(typeof(Game.Components.BuildingResourceStorageComponent),typeof(Unity.Transforms.LocalTransform))) using(var stores=sq.ToEntityArray(Unity.Collections.Allocator.Temp)) foreach(var store in stores) {\n var s=em.GetComponentData<Game.Components.BuildingResourceStorageComponent>(store); if(s.OwnerFactionId!=1)continue; var pos=em.GetComponentData<Unity.Transforms.LocalTransform>(store).Position;\n UnityEngine.Debug.Log(\"[S005RearSpawnReadOnly] storageId=\"+s.RuntimeBuildingId+\" position=\"+pos+\" oilRate=\"+s.OilBarrelsPerDay+\" fuelRate=\"+s.FuelBarrelsPerDay);\n }\n var json=Newtonsoft.Json.JsonConvert.SerializeObject(new {run=639,observationOnly=true,sourceModified=false,liveActorsModified=false,nativeSpawnSearch=true,vehiclesPerSample=6,footprintCells=\"3x3\",radiusCells=12,scope=\"Live snapshot legality only; no starting/replay/path/capacity certificate\",results},Newtonsoft.Json.Formatting.Indented);\n System.IO.File.WriteAllText(\"Design/AgentReports/SkirmishExpansion/S005/readonly639-rear-logistics-spawn-snapshot.json\",json);\n UnityEngine.Debug.Log(\"[S005RearSpawnReadOnly] \"+json);\n}"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": null
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

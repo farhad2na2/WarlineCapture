@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "status": "ExternalPrepared_NotApplied_NotNativeValidated",
+  "path": "Assets/Tests/Editor/M01FirstContactHudRestrictionTests.cs",
+  "baseSha256": "959e25eef5141623d417b57c9baaf21fb32e4d420b142f48c896ac708017a2c3",
+  "stagedSha256": "b2118411ee8e922798fffc6eae9919cb51bffa87724eb4541b7c127f683f902d",
+  "patchSha256": "36bcdf2609e8739ede6d8252357cc1d3da94485b91b829dc8e79dce7a2a8adfe",
+  "productionChanges": 0,
+  "suite": "M01FirstContactHudRestrictionTests.RunFocusedValidation",
+  "marker": "[M01FirstContactHudRestrictionValidation] result=Passed tests=9",
+  "scope": "Replace obsolete unavailable-Support-visible oracle with real noSupport native World; preserve all Build style/input lock restoration and zoom checks; restore original World/runtime gateway. No Support grant/session or production edits.",
+  "otherTestsReview": "Only this method mentions Support; other eight focused methods have no obsolete Support-visible oracle. ValidateScopeLockOwnership caller renamed consistently.",
+  "remainingValidation": "Root review/apply after active run closure, native compilation and complete9test suite required. Prior1217 failure preserved.",
+  "originalGatewayRestoration": "Exact prior IUiShellRuntimeGateway retained via existing private current field and restored through public Register; no production API change."
+}

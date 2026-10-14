@@ -1,0 +1,661 @@
+using System.Linq;
+using Game.Components;
+using Game.Composition;
+using Game.Editor;
+using Game.Missions.Contracts;
+using Game.Tactical.Contracts;
+using Game.UI.Runtime;
+using System.Collections.Generic;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using System;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine.EventSystems;
+using UnityEngine;
+
+public static class CampaignSelectionJourney1356
+{
+    static AriaTouchInputUiSystemHelper touch;
+    static ValidationBackgroundInputScope backgroundScope;
+    static string previousBackgroundValidation;
+    static void ConfigureBackgroundInput()
+    {
+        if(backgroundScope!=null)return;
+        backgroundScope=new ValidationBackgroundInputScope();
+        Debug.Log("[CampaignNativeInputFixture1356] sharedOwnedScope=1 background=IgnoreFocus editorRoute=AllDeviceInputAlwaysGoesToGameView gameplayInjected=0");
+    }
+    static void RestoreBackgroundInput()
+    {
+        Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",previousBackgroundValidation);
+        backgroundScope?.Dispose();
+    }
+    static void ObserveInputRoute()
+    {
+        var current=UnityEngine.InputSystem.Touchscreen.current;var contact=current?.primaryTouch;
+        string devices="";foreach(var d in UnityEngine.InputSystem.InputSystem.devices)if(d is UnityEngine.InputSystem.Touchscreen t)
+            devices+=t.deviceId+":"+t.name+":enabled="+t.enabled+":phase="+t.primaryTouch.phase.ReadValue()+":pressed="+t.primaryTouch.press.isPressed+":position="+t.primaryTouch.position.ReadValue()+"|";
+        File.AppendAllText("/private/tmp/campaign-m3-current1356-2df3/native1356-input-route.jsonl","{\"frame\":"+Time.frameCount+",\"wall\":"+EditorApplication.timeSinceStartup+",\"actuatorDeviceId\":"+touch.DeviceId+",\"actuatorBusy\":"+touch.IsBusy.ToString().ToLowerInvariant()+",\"acceptedSamples\":"+touch.AcceptedSamples+",\"currentTouchscreen\":\""+current?.deviceId+"/"+contact?.phase.ReadValue()+"/"+contact?.position.ReadValue()+"\",\"devices\":\""+devices+"\"}\n");
+    }
+    static TaskCompletionSource<int> completion;
+    static int frame=-1, gestures,defenseObserverEntry=-1;
+    static double due; static int cameraStep; static Vector3 cameraDestination; static double cameraSince; static int cameraRecoveryCount;
+    static bool failed,faOnly;static int activeMission,cardGestures,cardCaptureEntry; static double runDeadline;
+    static string originalSelectionDiagnostics;
+    static double staleSince; static int staleLesson=-1;
+    static double maxStale;static int staleDeferrals;
+    static readonly Type probe=typeof(CampaignTutorialEntryEditorProbe);
+    static object Read(string name)=>probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+    public static string Run()=>JsonUtility.ToJson(new ProofRow{stage="SelfCheck",entry=7,selected=4,held=4,attempt=1356,group="native-group",actualRendered=true,readOnly=true,terminalSnapshot=true,terminalFrame=10,terminalMission="saga.ch01.m03.radar_warning",terminalSession="native-terminal",terminalAttempt=1,terminalLocale="fa-IR",terminalOutcome="Victory",terminalLaunchOrigin="CampaignOperations",terminalReturnDestination="CampaignOperations",shellPresent=true,shellTransition=false,shellMode="MainMenu",shellPhase="MenuReady",shellRoute="Campaign",campaignValid=true,boundTitlePresented=true,boundTitleOwned=true,boundTitleOwner="typed-campaign-owner",boundTitleText="CAMPAIGN",boundTitleKey="ui.campaign.title",boundTitleSource="CAMPAIGN",boundTitlePath="Root/CampaignComposition/MenuTitlePanel/MenuTitle",boundTitleResolver="PresentedOwnedLocalizedMenuTitlePanel"});
+    public static Task<int> RunM01()=>Start(1);
+    public static Task<int> RunM02()=>Start(2);
+    public static Task<int> RunM03FA()=>Start(3,true);
+    public static Task<int> RunM03()=>Start(3);
+    public static Task<int> RunM04()=>Start(4);
+    public static Task<int> RunM05()=>Start(5);
+    static Task<int> Start(int mission,bool farsiOnly=false)
+    {
+        if(completion!=null&&!completion.Task.IsCompleted) throw new InvalidOperationException("Already active");
+        failed=false;faOnly=farsiOnly;runDeadline=EditorApplication.timeSinceStartup+420;defenseObserverEntry=-1;activeMission=mission;cardGestures=0;cardCaptureEntry=-1; gestures=0; frame=-1; due=0; touch=null;cameraStep=0;staleSince=0;staleLesson=-1;maxStale=0;staleDeferrals=0;cameraSince=0;cameraRecoveryCount=0;
+        foreach(var name in new[]{"deadline","waitUntil","lastSkip","missingDefenseInstructionSince","missingDefenseStatusSince"})
+            probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,0d);
+        foreach(var name in new[]{"lastStableStep","trainingWaitEntry","gatePoseCheckedEntry","defenseStatusCapture"})
+            probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,-1);
+        completion=new TaskCompletionSource<int>();
+        launchSeen.Clear();initialSeen.Clear();initialGroups.Clear();holdSeen.Clear();victorySeen.Clear();returnSeen.Clear();terminalSnapshots.Clear();postResultCensusAt=0;selectionPending=false;selectionKind=null;expectedSelectionGroup=null;proofFrame=-1;
+        proofPath="/private/tmp/campaign-m3-current1356-2df3/native1356-journey.jsonl";
+        using(var file=new StreamWriter(new FileStream(proofPath,FileMode.CreateNew,FileAccess.Write)))file.WriteLine("{\"stage\":\"ObserverInstalled\",\"readOnly\":true}");
+        previousBackgroundValidation=Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION");
+        Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");
+        originalSelectionDiagnostics=Environment.GetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS");
+        Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS","1");
+        probe.GetMethod("RunM"+mission.ToString("00")+"Journey").Invoke(null,null);
+        // QA entry choice only, before first menu tick. Production locale setup/deploy is unchanged.
+        if(faOnly) probe.GetField("entry",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,7);
+        File.WriteAllText("/private/tmp/campaign-m3-current1356-2df3/native1356-input-route.jsonl","{\"observer\":\"actual native device route\",\"writesGameplay\":false}\n");
+        Debug.Log("[CampaignScopedJourney] mission="+mission+" scope="+(faOnly?"fa-IR-only":"en-and-fa-IR")+" boundedWallSeconds=420 gameplayInjected=0 genericBilingualMarkerIsScopeAuthority=0");
+        // The companion owns native contact completion before the generic replay acts.
+        // Reorder only the two owned QA callbacks; no gameplay callbacks are changed.
+        var generic=(Canvas.WillRenderCanvases)Delegate.CreateDelegate(typeof(Canvas.WillRenderCanvases),
+            probe.GetMethod("TickGameView",BindingFlags.Static|BindingFlags.NonPublic));
+        Canvas.willRenderCanvases-=Frame;
+        Canvas.willRenderCanvases-=generic;
+        Canvas.willRenderCanvases+=Frame;
+        Canvas.willRenderCanvases-=ProofFrame;Canvas.willRenderCanvases+=ProofFrame;
+        Canvas.willRenderCanvases+=generic;
+        var genericTick=(EditorApplication.CallbackFunction)Delegate.CreateDelegate(typeof(EditorApplication.CallbackFunction),probe.GetMethod("Tick",BindingFlags.Static|BindingFlags.NonPublic));
+        EditorApplication.update-=genericTick;EditorApplication.update-=ReturnGuard;EditorApplication.update+=ReturnGuard;EditorApplication.update+=genericTick;
+        EditorApplication.update+=Finish;
+        return completion.Task;
+    }
+    static void Frame()
+    {
+        if(failed||!EditorApplication.isPlaying||(int)Read("stage")!=2)return;
+        ConfigureBackgroundInput();
+        var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>(FindObjectsInactive.Include);
+        var canvas=aria?.GetComponentInParent<Canvas>()?.rootCanvas;
+        if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1)return;
+        bool firstFrame=Time.frameCount!=frame;
+        if(firstFrame)frame=Time.frameCount;
+        if(firstFrame&&activeMission==3)
+        {
+            int currentEntry=(int)Read("entry");
+            if(defenseObserverEntry!=currentEntry)
+            {
+                CampaignDefenseEvidence1356.Install("/private/tmp/campaign-m3-current1356-2df3/native1356-defense-"+currentEntry+".jsonl");
+                CampaignNativeContinuousStatus1356.Install("/private/tmp/campaign-m3-current1356-2df3/native1356-threat-"+currentEntry+".jsonl");
+                defenseObserverEntry=currentEntry;
+            }
+        }
+        try
+        {
+            if(firstFrame){if(touch!=null)ObserveInputRoute();touch?.Tick(Time.unscaledTime);}
+            if(touch!=null&&(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0))
+                throw new InvalidOperationException("Selection native Touch audit failed");
+            
+            if(cameraStep!=0)
+            {
+                if(EditorApplication.timeSinceStartup-cameraSince>15)throw new InvalidOperationException("Normal-input FullMap camera recovery exceeded 15 seconds");
+                probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,EditorApplication.timeSinceStartup+.15);
+                if(touch?.IsBusy==true||EditorApplication.timeSinceStartup<due)return;
+                if(firstFrame)CameraOnly(cameraDestination);
+                return;
+            }
+            bool hasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target);
+            if(!hasTarget)return;
+            if(!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commands))return;
+            var match=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            object bootstrap=match?.GetType().GetProperty("MatchBootstrap",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(match);
+            object menu=bootstrap?.GetType().GetProperty("MainMenu").GetValue(bootstrap);
+            if(menu==null)return;
+            object assistant=menu.GetType().GetField("_matchHudAssistantUiSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(menu);
+            object highlight=assistant?.GetType().GetField("_highlightPresentationSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(assistant);
+            if(highlight==null)return;
+            bool stale=ObserveStaleSelectionCue(highlight,target,commands);
+            if(touch?.IsBusy==true)
+            {
+                // A second driver must not toggle controls during a native contact.
+                probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,EditorApplication.timeSinceStartup+.1);
+                return;
+            }
+            if(stale)return;
+            if(EditorApplication.timeSinceStartup<due)
+            {
+                probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,due);
+                return;
+            }
+            if(!firstFrame)return;
+            if(selectionPending)return;
+            int selectionEntry=(int)Read("entry");
+            if(activeMission==3&&initialSeen.Contains(selectionEntry)&&target.NeedsSelection&&target.DragSelection)
+            {
+                TryReserveCard(match,target);return;
+            }
+            if(!target.NeedsSelection)
+            {
+                if(commands.ActiveCommandMode is TacticalCommandMode.Move or TacticalCommandMode.Attack or TacticalCommandMode.Board)
+                {
+                    Vector3 point=match.WorldCamera.WorldToScreenPoint(target.Destination);
+                    var hits=new List<RaycastResult>(); EventSystem.current?.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
+                    var popup=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+                    if(cameraStep!=0||popup!=null&&popup.IsOpen||point.z<=0||!Screen.safeArea.Contains(point)||hits.Count>0)CameraOnly(target.Destination);
+                }
+                return;
+            }
+            if(activeMission==1&&target.DragSelection)
+            {
+                if(commands.ActiveCommandMode!=TacticalCommandMode.Select)return;
+                var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                var button=tray?.VisibleCardButton(0);
+                var guideRect=(RectTransform)highlight.GetType().GetField("_directTutorialTarget",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(highlight);
+                if(guideRect!=button?.transform)return;
+                int currentEntry=(int)Read("entry");
+                if(cardCaptureEntry!=currentEntry)
+                {
+                    cardCaptureEntry=currentEntry;probe.GetMethod("CaptureJourney",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{"presented-rifle-card-fallback"});
+                    due=EditorApplication.timeSinceStartup+.6;probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,due);
+                    Debug.Log("[CampaignNativeSelection] actualCardGuideObserved=1 body="+aria.BodyText.text+" inputInjected=0");return;
+                }
+                var qaArgs=new object[]{button,Vector2.zero};
+                if(button!=null&&button.interactable&&(bool)typeof(SkirmishS002AriaRunHarness).GetMethod("TryPresentedButtonPoint",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,qaArgs))
+                {
+                    var point=(Vector2)qaArgs[1];if(Gesture(point,point,0)){cardGestures++;Debug.Log("[CampaignNativeSelection] input=Touch presentedRifleSquadCard=1 required="+target.RequiredSelectionCount+" cardGestures="+cardGestures+" actorOrSelectionInjected=0 actualPresentedCardFallback=Verified");}return;
+                }
+                throw new InvalidOperationException("Normal presented rifle squad card unavailable");
+            }
+            if(commands.ActiveCommandMode!=TacticalCommandMode.Select)return;
+            // A normal HUD mode press suppresses world pointer input for a frame.
+            // Wait for that public-control transaction to finish before a new contact.
+            // Read input state only: never clear flags or synthesize a pointer release.
+            var selectionCommand=bootstrap.GetType().GetProperty("SelectionUiCommand").GetValue(bootstrap);
+            var input=selectionCommand.GetType().GetField("_inputSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(selectionCommand);
+            int ignoreFrame=(int)input.GetType().GetProperty("IgnoreWorldCommandsUntilFrame").GetValue(input);
+            bool captured=(bool)input.GetType().GetProperty("IgnoreUiClickUntilRelease").GetValue(input);
+            if(Time.frameCount<=ignoreFrame+1||captured)
+            {
+                probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,EditorApplication.timeSinceStartup+.1);
+                return;
+            }
+            Vector2 start,end;
+            var args=new object[]{Vector2.zero,Vector2.zero};
+            bool visibleDrag=(bool)highlight.GetType().GetMethod("TryObserveVisibleSelectionDrag",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(highlight,args);
+            if(visibleDrag)
+            {
+                start=(Vector2)args[0];end=(Vector2)args[1];
+            }
+            else
+            {
+                if(target.DragSelection)
+                {
+                    if(++cameraRecoveryCount>4)throw new InvalidOperationException("Group selection guide remains unavailable after four normal FullMap camera recoveries");
+                    Debug.Log("[CampaignNativeSelection] visibleGroupDragUnavailable=1 publicRequired="+target.RequiredSelectionCount+" publicSelection="+target.Selection+" tapFallback=0");
+                    cameraDestination=target.Selection;cameraSince=EditorApplication.timeSinceStartup;
+                    CameraOnly(cameraDestination);
+                    return;
+                }
+                if(!hasTarget||!target.NeedsSelection)return;
+                var world=match.WorldCamera.WorldToScreenPoint(target.Selection);
+                if(world.z<=0)return;
+                start=end=world;
+                if(!Screen.safeArea.Contains(start))return;
+                var hits=new List<RaycastResult>();
+                EventSystem.current?.RaycastAll(new PointerEventData(EventSystem.current){position=start},hits);
+                if(hits.Count>0)return; // A world selection tap must never activate a HUD command.
+
+            }
+            if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");}
+            if(!touch.TryGesture(start,end,visibleDrag?1.2f:.3f,visibleDrag?.8f:0f,Time.unscaledTime))return;
+            gestures++;cameraRecoveryCount=0;due=EditorApplication.timeSinceStartup+3;
+            if(activeMission==3&&target.DragSelection)
+            {
+                if(!visibleDrag||target.RequiredSelectionCount!=4)throw new InvalidOperationException("M3 initial selection must be real visible four-rifle drag");
+                selectionPending=true;selectionKind="InitialDrag";pendingSelectionEntry=(int)Read("entry");selectionAt=EditorApplication.timeSinceStartup;expectedSelectionGroup=ReadExpectedGroup();
+                WriteProof("InitialDragDispatched",null,0,0);
+            }
+            probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,due);
+            Debug.Log("[CampaignNativeSelection] input=Touch drag="+target.DragSelection+" expected="+target.RequiredSelectionCount+" gesture="+gestures+" start="+start+" end="+end+" actorOrSelectionInjected=0");
+        }
+        catch(Exception ex){failed=true;probe.GetField("failure",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,"Native selection companion: "+ex);Debug.LogException(ex);}
+    }
+    static bool ObserveStaleSelectionCue(object highlight, Game.UI.Contracts.UiMissionTutorialTarget target,
+        Game.UI.Contracts.UiMatchHudCommandStateModel commands)
+    {
+        var rect=(RectTransform)highlight.GetType().GetField("_directTutorialTarget",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(highlight);
+        var button=rect?.GetComponent<UnityEngine.UI.Button>();
+        bool stale=GameObject.Find("AriaAssistantTargetIndicatorRuntime")!=null && button?.name=="SelectCommand" && !target.NeedsSelection;
+        double now=EditorApplication.timeSinceStartup;
+        if(!stale)
+        {
+            if(staleSince!=0){maxStale=Math.Max(maxStale,now-staleSince);Debug.Log("[CampaignNativeSelection] stale-cue-settled seconds="+(now-staleSince).ToString("F3"));}
+            staleSince=0;staleLesson=-1;return false;
+        }
+        int lesson=(int)Read("journeyStep");
+        if(staleSince==0||staleLesson!=lesson)
+        {
+            staleSince=now;staleLesson=lesson;staleDeferrals++;
+            probe.GetMethod("CaptureJourney",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{"lesson-"+lesson+"-stale-selection-cue"});
+            Debug.Log("[CampaignNativeSelection] stale-cue-deferred lesson="+lesson+" needsSelection=0 mode="+commands.ActiveCommandMode+" actionInjected=0");
+        }
+        if(now-staleSince>3)throw new InvalidOperationException("Persistent Select cue while public selection is satisfied for over 3 seconds; lesson="+lesson);
+        probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,now+.1);
+        return true;
+    }
+    static bool Gesture(Vector2 from,Vector2 to,float travel)
+    {
+        if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native camera Touch unavailable");}
+        if(!touch.TryGesture(from,to,.15f,travel,Time.unscaledTime))return false;
+        gestures++;due=EditorApplication.timeSinceStartup+1.25;
+        probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,due);
+        return true;
+    }
+    static void CameraOnly(Vector3 destination)
+    {
+        var popup=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        if(popup==null||!popup.IsOpen)
+        {
+            cameraStep=0;
+            foreach(var map in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsSortMode.None))
+            {
+                if(map.GetComponentInParent<MatchHudFullMapPopupView>()!=null||map.MapRect==null)continue;
+                var canvas=map.GetComponentInParent<Canvas>();Camera cam=canvas!=null&&canvas.renderMode!=RenderMode.ScreenSpaceOverlay?canvas.worldCamera:null;
+                Vector2 point=RectTransformUtility.WorldToScreenPoint(cam,map.MapRect.TransformPoint(map.MapRect.rect.center));
+                if(Gesture(point,point,0)){cameraStep=1;cameraDestination=destination;cameraSince=EditorApplication.timeSinceStartup;Debug.Log("[CampaignNativeCamera] phase=Open input=Touch troopOrderInjected=0");}
+                return;
+            }
+            return;
+        }
+        if(cameraStep==2)
+        {
+            var args=new object[]{popup.CloseAction,Vector2.zero};
+            if(!(bool)typeof(SkirmishS002AriaRunHarness).GetMethod("TryPresentedButtonPoint",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,args))return;
+            if(Gesture((Vector2)args[1],(Vector2)args[1],0)){cameraStep=0;Debug.Log("[CampaignNativeCamera] phase=Close input=Touch troopOrderInjected=0");}
+            return;
+        }
+        var full=popup.Minimap;if(full==null)return;
+        var root=full.GetComponentInParent<Canvas>();Camera camera=root!=null&&root.renderMode!=RenderMode.ScreenSpaceOverlay?root.worldCamera:null;
+        if(!full.TryGetPresentedMapPoint(destination,camera,out var goal))return;
+        bool drag=full.ViewportRect!=null&&RectTransformUtility.RectangleContainsScreenPoint(full.ViewportRect,goal,camera);
+        Vector2 start=drag?RectTransformUtility.WorldToScreenPoint(camera,full.ViewportRect.TransformPoint(full.ViewportRect.rect.center)):goal;
+        Vector2 end=drag&&(start-goal).sqrMagnitude<=25?goal+Vector2.up*12:goal;
+        if(Gesture(start,end,drag?.45f:0)){cameraStep=2;Debug.Log("[CampaignNativeCamera] phase=Focus input=FullMapTouch publicDestination="+destination+" troopOrderInjected=0");}
+    }
+    static string proofPath,selectionKind,expectedSelectionGroup;
+    static int pendingSelectionEntry,proofFrame=-1;static double selectionAt;
+    static bool selectionPending;
+    static readonly HashSet<int> launchSeen=new(),initialSeen=new(),holdSeen=new(),victorySeen=new(),returnSeen=new();
+    static readonly Dictionary<int,string> initialGroups=new();
+    static readonly Dictionary<int,ProofRow> terminalSnapshots=new();
+    static double postResultCensusAt;
+    [Serializable]sealed class ProofRow
+    {
+        public string stage,locale,mission,session,phase,outcome,group,expectedGroup,selectionKind,title,source,screen,launchOrigin,returnDestination;
+        public int frame,entry,lesson,selected,held,elapsedMs,attempt,convoyElements,convoyResolved,hostileTotal,hostileDefeated;
+        public double wall;public bool readOnly=true,actualRendered,publicNeedsSelection;
+        public string shellMode,shellPhase,shellRoute,campaignSelectedMission,campaignTitleCandidates,boundTitleOwner,boundTitleText,boundTitleKey,boundTitleSource,boundTitlePath,boundTitleResolver;
+        public bool shellPresent,shellTransition,campaignValid,boundTitlePresented,boundTitleOwned,terminalSnapshot;
+        public int runtimeCount,terminalFrame,terminalAttempt,campaignScreenCount,renderedCampaignScreenCount;
+        public bool worldCreated;
+        public string terminalMission,terminalSession,terminalLocale,terminalOutcome,terminalLaunchOrigin,terminalReturnDestination;
+    }
+    static string ReadExpectedGroup()
+    {
+        var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return null;var em=world.EntityManager;
+        using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionGuidanceProjectionComponent));
+        if(q.CalculateEntityCount()!=1)return null;
+        var actor=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(q.GetSingletonEntity()).SourceEntity;
+        return em.Exists(actor)&&em.HasComponent<CampaignMissionUnitRoleComponent>(actor)?em.GetComponentData<CampaignMissionUnitRoleComponent>(actor).UnitGroupId.ToString():null;
+    }
+    static void TryReserveCard(MatchSceneView match,Game.UI.Contracts.UiMissionTutorialTarget target)
+    {
+        if(target.RequiredSelectionCount!=4)throw new InvalidOperationException("M3 replacement public target must retain four-rifle requirement");
+        var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var button=tray?.VisibleCardButton(0);var args=new object[]{button,Vector2.zero};
+        if(button==null||!button.IsActive()||!button.IsInteractable()||
+           !(bool)typeof(SkirmishS002AriaRunHarness).GetMethod("TryPresentedButtonPoint",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,args))return;
+        string group=ReadExpectedGroup();
+        if(string.IsNullOrEmpty(group))throw new InvalidOperationException("M3 public-guidance source lacks native group provenance");
+        if(cardGestures>=4)throw new InvalidOperationException("Presented rifle card did not select required native four-rifle group after four contacts");
+        if(Gesture((Vector2)args[1],(Vector2)args[1],0))
+        {
+            cardGestures++;selectionPending=true;selectionKind="ReserveCard";pendingSelectionEntry=(int)Read("entry");selectionAt=EditorApplication.timeSinceStartup;expectedSelectionGroup=group;
+            WriteProof("ReserveCardDispatched",group,0,0);
+            Debug.Log("[CampaignM3Reserve1356] input=Touch control=VisibleSoldiersCard required=4 expectedNativeGroup="+group+" actorOrSelectionInjected=0");
+        }
+    }
+    static bool Presented(TMPro.TMP_Text text)
+    {
+        if(text==null||!text.isActiveAndEnabled||!text.gameObject.activeInHierarchy||text.alpha<=.9f||text.canvasRenderer.cull||string.IsNullOrWhiteSpace(text.text))return false;
+        float alpha=1;for(var t=text.transform;t!=null;t=t.parent)foreach(var g in t.GetComponents<CanvasGroup>())alpha*=g.alpha;
+        if(alpha<=.9f)return false;
+        for(int i=0;i<text.textInfo.characterCount;i++)if(text.textInfo.characterInfo[i].isVisible)return true;
+        return false;
+    }
+    static string TitlePath(Transform t) => t==null?"":t.parent==null?t.name:TitlePath(t.parent)+"/"+t.name;
+    static TMPro.TMP_Text PresentedCampaignTitle(CampaignOperationsScreenView screen)
+    {
+        if(screen==null||!screen.isActiveAndEnabled)return null;
+        // The approved Campaign header is MenuTitlePanel/MenuTitle. ScreenTitle
+        // remains a serialized legacy reference deliberately hidden by authoring.
+        var labels=screen.GetComponentsInChildren<TMPro.TMP_Text>(true).Where(label=>
+            label.name=="MenuTitle"&&label.transform.parent?.name=="MenuTitlePanel"&&
+            label.GetComponentInParent<CampaignOperationsScreenView>()==screen&&
+            label.GetComponent<V3LocalizedTextBindingView>()?.LocalizationKey=="ui.campaign.title"&&
+            Presented(label)).ToArray();
+        return labels.Length==1?labels[0]:null;
+    }
+    static void WriteProof(string stage,string group,int selected,int held,string title=null,bool rendered=false)
+    {
+        if(proofPath==null)return;
+        var row=new ProofRow{stage=stage,group=group,selected=selected,held=held,title=title,actualRendered=rendered,frame=Time.frameCount,wall=EditorApplication.timeSinceStartup,locale=Game.Configs.GameLocalization.CurrentLocaleCode,entry=(int)Read("entry"),lesson=(int)Read("journeyStep"),selectionKind=selectionKind,expectedGroup=expectedSelectionGroup,source="ReadOnlyNativeCampaign"};
+        var world=World.DefaultGameObjectInjectionWorld;
+        row.worldCreated=world!=null&&world.IsCreated;
+        if(row.worldCreated)
+        {
+            var em=world.EntityManager;using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent));
+            row.runtimeCount=q.CalculateEntityCount();if(row.runtimeCount==1){var root=q.GetSingletonEntity();var r=em.GetComponentData<CampaignMissionRuntimeComponent>(root);row.mission=r.MissionId.ToString();row.session=r.SessionToken.ToString();row.attempt=r.AttemptOrdinal;row.launchOrigin=r.LaunchOrigin.ToString();row.returnDestination=r.ReturnDestination.ToString();row.phase=r.Phase.ToString();row.outcome=r.Outcome.ToString();var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);row.elapsedMs=facts.ElapsedMilliseconds;row.hostileTotal=facts.HostileTotalCount;row.hostileDefeated=facts.HostileDefeatedCount;
+                if(em.HasBuffer<CampaignMissionConvoyElementState>(root)){var elements=em.GetBuffer<CampaignMissionConvoyElementState>(root,true);row.convoyElements=elements.Length;foreach(var element in elements)if(element.Resolved!=0)row.convoyResolved++;}}
+        }
+        if(UiShellRuntimeGateway.TryReadShellState(out var shell)){row.shellPresent=true;row.shellMode=shell.CurrentMode.ToString();row.shellPhase=shell.Phase.ToString();row.shellRoute=shell.ActiveRoute.ToString();row.shellTransition=shell.IsTransitionRunning;}
+        if(UiShellRuntimeGateway.TryReadCampaignOperations(out var campaign)){row.campaignValid=campaign.IsValid;row.campaignSelectedMission=campaign.SelectedMission.MissionId;}
+        var screens=UnityEngine.Object.FindObjectsByType<CampaignOperationsScreenView>(FindObjectsInactive.Include);
+        row.campaignScreenCount=screens.Length;
+        foreach(var screen in screens)
+        {
+            var labels=screen.GetComponentsInChildren<TMPro.TMP_Text>(true).Where(label=>label==screen.ScreenTitle||label.GetComponent<V3LocalizedTextBindingView>()?.LocalizationKey=="ui.campaign.title");
+            foreach(var candidate in labels){int glyphs=0;for(int i=0;i<candidate.textInfo.characterCount;i++)if(candidate.textInfo.characterInfo[i].isVisible)glyphs++;row.campaignTitleCandidates+=TitlePath(candidate.transform)+" hierarchy="+candidate.gameObject.activeInHierarchy+" enabled="+candidate.isActiveAndEnabled+" glyphs="+glyphs+" text="+candidate.text+" presented="+Presented(candidate)+"|";}
+            var label=PresentedCampaignTitle(screen);if(label==null)continue;
+            row.renderedCampaignScreenCount++;row.boundTitlePresented=true;row.boundTitleOwned=label.GetComponentInParent<CampaignOperationsScreenView>()==screen;
+            row.boundTitleOwner=screen.name+":"+screen.GetEntityId();row.boundTitleText=label.text;row.boundTitlePath=TitlePath(label.transform);row.boundTitleResolver="PresentedOwnedLocalizedMenuTitlePanel";
+            var binding=label.GetComponent<V3LocalizedTextBindingView>();row.boundTitleKey=binding.LocalizationKey;row.boundTitleSource=binding.SourceValue;
+        }
+        if(terminalSnapshots.TryGetValue(row.entry,out var terminal)){row.terminalSnapshot=true;row.terminalFrame=terminal.frame;row.terminalMission=terminal.mission;row.terminalSession=terminal.session;row.terminalAttempt=terminal.attempt;row.terminalLocale=terminal.locale;row.terminalOutcome=terminal.outcome;row.terminalLaunchOrigin=terminal.launchOrigin;row.terminalReturnDestination=terminal.returnDestination;}
+        if(stage=="NativeVictoryRendered")terminalSnapshots[row.entry]=row;
+        if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))row.publicNeedsSelection=target.NeedsSelection;
+        File.AppendAllText(proofPath,JsonUtility.ToJson(row)+"\n");
+    }
+    static void ProofFrame()
+    {
+        if(failed||!EditorApplication.isPlaying||proofFrame==Time.frameCount)return;proofFrame=Time.frameCount;
+        try
+        {
+            ObservePostResultReturn(); // Menu provenance is independent of retired/reprojected M3 runtime.
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;var em=world.EntityManager;
+            using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent));if(q.CalculateEntityCount()!=1)return;
+            var root=q.GetSingletonEntity();var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);if(runtime.MissionId.ToString()!="saga.ch01.m03.radar_warning")return;
+            int entry=(int)Read("entry");
+            if((int)Read("stage")==2&&launchSeen.Add(entry))
+            {
+                WriteProof("CampaignLaunchObserved",null,0,0);
+                if(runtime.LaunchOrigin!=MissionLaunchOriginKind.CampaignOperations||runtime.Outcome!=MissionOutcomeKind.None||runtime.ReturnDestination!=MissionReturnDestinationKind.None)throw new InvalidOperationException("M3 launch must retain real CampaignOperations origin and native nonterminal return state");
+            }
+            using var units=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(Faction),typeof(UnitHealth),typeof(CampaignMissionUnitRoleComponent),typeof(UnitMove));
+            using var actors=units.ToEntityArray(Unity.Collections.Allocator.Temp);int count=0,held=0;string group=null;bool oneGroup=true;
+            foreach(var actor in actors)
+            {
+                var role=em.GetComponentData<CampaignMissionUnitRoleComponent>(actor);
+                if(em.GetComponentData<Faction>(actor).Id!=1||em.GetComponentData<UnitHealth>(actor).Current<=0||!role.SessionToken.Equals(runtime.SessionToken))continue;
+                if(role.MissionRoleId.ToString()!="role.friendly.command_squad") {oneGroup=false;continue;}
+                string g=role.UnitGroupId.ToString();if(group==null)group=g;else if(group!=g)oneGroup=false;count++;if(em.HasComponent<HoldPositionOrderTag>(actor))held++;
+            }
+            if(selectionPending&&touch?.IsBusy!=true)
+            {
+                bool exact=count==4&&oneGroup&&!string.IsNullOrEmpty(group)&&(string.IsNullOrEmpty(expectedSelectionGroup)||group==expectedSelectionGroup);
+                if(exact)
+                {
+                    WriteProof(selectionKind+"Accepted",group,count,held);
+                    if(selectionKind=="InitialDrag"){initialSeen.Add(pendingSelectionEntry);initialGroups[pendingSelectionEntry]=group;}
+                    selectionPending=false;
+                }
+                else if(EditorApplication.timeSinceStartup-selectionAt>3)
+                {
+                    WriteProof(selectionKind+"Rejected",group,count,held);
+                    if(selectionKind=="InitialDrag")throw new InvalidOperationException("Initial real drag failed exact four-owned-current-group selection");
+                    selectionPending=false; // A later ordinary card contact may cycle native visible squads.
+                }
+            }
+            if(count==4&&held==4&&oneGroup&&initialSeen.Contains(entry)&&holdSeen.Add(entry))WriteProof("NativeHoldFourAccepted",group,count,held);
+            if(runtime.Outcome==MissionOutcomeKind.Victory&&!victorySeen.Contains(entry))
+            {
+                if(runtime.LaunchOrigin!=MissionLaunchOriginKind.CampaignOperations||runtime.ReturnDestination!=MissionReturnDestinationKind.CampaignOperations)throw new InvalidOperationException("Native M3 Victory must retain exact CampaignOperations return destination");
+                var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
+                var title=view?.GetType().GetField("titleText",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(view) as TMPro.TMP_Text;
+                if(Presented(title)&&UiShellRuntimeGateway.TryReadMissionResult(out var result)&&!result.SettlementFailed)
+                {victorySeen.Add(entry);WriteProof("NativeVictoryRendered",group,count,held,title.text,true);}
+            }
+
+        }
+        catch(Exception error){failed=true;WriteProof("WitnessFailed",null,0,0,error.ToString());probe.GetField("failure",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,"M3 native journey witness: "+error);}
+    }
+    static void ObservePostResultReturn()
+    {
+        int entry=(int)Read("entry");
+        if((int)Read("stage")!=4||!victorySeen.Contains(entry)||returnSeen.Contains(entry))return;
+        if(EditorApplication.timeSinceStartup>=postResultCensusAt){postResultCensusAt=EditorApplication.timeSinceStartup+.25;WriteProof("PostResultShellCensus",null,0,0);}
+        if(!terminalSnapshots.TryGetValue(entry,out var terminal)||terminal.mission!="saga.ch01.m03.radar_warning"||terminal.outcome!="Victory"||terminal.launchOrigin!="CampaignOperations"||terminal.returnDestination!="CampaignOperations"||terminal.attempt<=0||string.IsNullOrEmpty(terminal.session)||terminal.locale!=Game.Configs.GameLocalization.CurrentLocaleCode)return;
+        if(!UiShellRuntimeGateway.TryReadShellState(out var shell)||shell.IsTransitionRunning||shell.CurrentMode!=Game.UI.Contracts.UiShellMode.MainMenu||shell.Phase!=Game.UI.Contracts.UiShellTransitionPhase.MenuReady||shell.ActiveRoute!=Game.UI.Contracts.UIRoute.Campaign)return;
+        if(!UiShellRuntimeGateway.TryReadCampaignOperations(out var campaign)||!campaign.IsValid)return;
+        var screens=UnityEngine.Object.FindObjectsByType<CampaignOperationsScreenView>(FindObjectsInactive.Include).Where(x=>PresentedCampaignTitle(x)!=null).ToArray();
+        if(screens.Length!=1)return;
+        returnSeen.Add(entry);WriteProof("CampaignReturnRendered",null,0,0,PresentedCampaignTitle(screens[0]).text,true);
+    }
+    static void ReturnGuard()
+    {
+        if(!EditorApplication.isPlaying||failed||(bool)Read("finished"))return;
+        int entry=(int)Read("entry");
+        if((int)Read("stage")==4&&victorySeen.Contains(entry)&&!returnSeen.Contains(entry))
+            probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,EditorApplication.timeSinceStartup+.1);
+    }
+    static void Finish()
+    {
+        if(!(bool)Read("finished"))
+        {
+            if(EditorApplication.timeSinceStartup>runDeadline)
+            {
+                failed=true;
+                probe.GetMethod("Complete",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{false,"Bounded normal-input Campaign diagnostic exceeded 420 wall seconds"});
+            }
+            return;
+        }
+        RestoreBackgroundInput();
+        if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isPlaying)return;
+        if(backgroundScope!=null&&!backgroundScope.TryCompleteRetirement())return;
+        Canvas.willRenderCanvases-=Frame;Canvas.willRenderCanvases-=ProofFrame;EditorApplication.update-=ReturnGuard;EditorApplication.update-=Finish;
+        bool pass=!failed&&Read("failure")==null&&gestures>0&&touch!=null&&touch.CompletedGestures==gestures&&touch.UnexpectedSamples==0&&touch.PhysicalInterventions==0&&(activeMission!=3||CampaignNativeContinuousStatus1356.EligibleSamples>0)&&initialSeen.Contains(faOnly?7:2)&&holdSeen.Contains(faOnly?7:2)&&victorySeen.Contains(faOnly?7:2)&&returnSeen.Contains(faOnly?7:2)&&(faOnly||(initialSeen.Contains(7)&&holdSeen.Contains(7)&&victorySeen.Contains(7)&&returnSeen.Contains(7)));
+        Debug.Log("[CampaignNativeSelection] result="+(pass?"Passed":"Failed")+" gestures="+gestures+" completed="+(touch?.CompletedGestures??0)+" unexpected="+(touch?.UnexpectedSamples??0)+" interventions="+(touch?.PhysicalInterventions??0)+" staleCueDeferrals="+staleDeferrals+" maximumStaleSeconds="+maxStale.ToString("F3")+" staleCueBoundSeconds=3 fullJourneyStrictTouchAudit=0");
+        Debug.Log("[CampaignScopedJourney] result="+(pass?"Passed":"Failed")+" mission="+activeMission+" scope="+(faOnly?"fa-IR-only":"en-and-fa-IR")+" retainedNativeVictoryResultReturnGates=1 strategyRebalance=0 countdownMissingBoundSeconds=1.5");
+        CampaignNativeContinuousStatus1356.Stop();CampaignDefenseEvidence1356.Stop();
+        touch?.Dispose();touch=null;RestoreBackgroundInput();
+        Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS",originalSelectionDiagnostics);
+        WriteProof(pass?"CompletePassed":"CompleteFailed",null,0,0);
+        Debug.Log("[CampaignM3Journey1356] result="+(pass?"Passed":"Failed")+" initialFourRifleDrag="+initialSeen.Count+" heldFourRifle="+holdSeen.Count+" nativeRenderedVictories="+victorySeen.Count+" renderedCampaignReturns="+returnSeen.Count+" scope="+(faOnly?"fa-IR-only":"en-and-fa-IR")+" fullJourneyStrictTouchAudit=0 gameplayOutcomeInjected=0");
+        backgroundScope=null;
+        completion.TrySetResult(pass?0:1);
+    }
+}
+
+public static class CampaignNativeContinuousStatus1356
+{
+    static string path; static double due,until;static int frame=-1;static double missingSince;static bool capturedMissing;static double eligibleMissingSince;static bool failedStatus;public static int EligibleSamples {get;private set;}
+    static readonly BindingFlags fields=BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public;
+    static object Read(object o,string name)=>o==null?null:o.GetType().GetField(name,fields)?.GetValue(o)??o.GetType().GetProperty(name,fields)?.GetValue(o);
+    static string Value(object o,string field)=>Convert.ToString(Read(o,field),CultureInfo.InvariantCulture);
+    static string State(UnityEngine.Object value)
+    {
+        if(value==null)return "null";
+        var c=value as Component;var go=value as GameObject??c?.gameObject;
+        return value.GetType().Name+":"+value.name+":id="+value.GetEntityId()+":self="+go?.activeSelf+":hierarchy="+go?.activeInHierarchy+":enabled="+(value is Behaviour b?b.enabled.ToString():"n/a");
+    }
+    public static string Run()=>"Loaded independent continuous status observer";
+    public static void Install(string file)
+    {
+        Stop();path=file;due=0;until=EditorApplication.timeSinceStartup+420;frame=-1;missingSince=0;capturedMissing=false;eligibleMissingSince=0;failedStatus=false;EligibleSamples=0;
+        File.WriteAllText(path,"{\"observer\":\"CampaignNativeContinuousStatus1356\",\"writesToGameState\":false,\"sampleSeconds\":0.1,\"boundedWallSeconds\":420}\n");
+        Canvas.willRenderCanvases+=Observe;
+    }
+    public static void Stop()=>Canvas.willRenderCanvases-=Observe;
+    [Serializable]sealed class Row
+    {
+        public int frame,entry,lesson;public double wall,worldElapsed,missingSeconds,predicateMissingSince;public float unityUnscaled,unityScaled,delta,unscaledDelta;
+        public string locale,mission,phase,outcome,session,title,statusText,visibleUntil,predicatePanel,boundHeader,boundTitle,visibility,localizedBinding,cacheState,suppressors,popups,wheels,fullMaps,worldTargeting,cameraGuide,cameraState,command,body,defenseModel;
+        public bool activePredicatePanel,headerRequested,cameraTour,passengerDrawerOpen,fieldGuide,legitimateOwnedSurface,eligibleDefense,readOnly=true;public int elapsedMs,attempt;
+    }
+    static void Observe()
+    {
+        if(EditorApplication.timeSinceStartup>until){Stop();return;}
+        if(!EditorApplication.isPlaying||Time.frameCount==frame||EditorApplication.timeSinceStartup<due)return;
+        frame=Time.frameCount;due=EditorApplication.timeSinceStartup+.1;
+        try
+        {
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;var em=world.EntityManager;
+            using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent));
+            if(q.CalculateEntityCount()!=1)return;var root=q.GetSingletonEntity();var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(runtime.MissionId.ToString()!="saga.ch01.m03.radar_warning")return;
+            var match=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();var boot=Read(match,"MatchBootstrap");var menu=Read(boot,"MainMenu");
+            var header=Read(menu,"_matchHudThreatJumpPanel") as GameObject;var label=Read(menu,"_matchHudThreatTitle") as TMPro.TMP_Text;var visibility=header?.GetComponent<MatchHudThreatVisibilityView>();
+            var predicate=GameObject.Find("ThreatJumpPanel");var predicateLabel=predicate?.GetComponentInChildren<TMPro.TMP_Text>();
+            var probe=typeof(CampaignTutorialEntryEditorProbe);object Probe(string name)=>probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic)?.GetValue(null);
+            var row=new Row{frame=frame,wall=EditorApplication.timeSinceStartup,worldElapsed=world.Time.ElapsedTime,unityUnscaled=Time.unscaledTime,unityScaled=Time.time,delta=Time.deltaTime,unscaledDelta=Time.unscaledDeltaTime,locale=Game.Configs.GameLocalization.CurrentLocaleCode,mission=runtime.MissionId.ToString(),phase=runtime.Phase.ToString(),outcome=runtime.Outcome.ToString(),session=runtime.SessionToken.ToString(),attempt=runtime.AttemptOrdinal,elapsedMs=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).ElapsedMilliseconds,entry=Probe("entry") is int e?e:-1,lesson=Probe("journeyStep") is int l?l:-1,predicateMissingSince=Probe("missingDefenseStatusSince") is double m?m:0,activePredicatePanel=predicate!=null,predicatePanel=State(predicate),boundHeader=State(header),boundTitle=State(label),visibility=State(visibility),title=label?.text,statusText=predicateLabel?.text,visibleUntil=Value(menu,"_matchHudThreatVisibleUntil"),headerRequested=Read(visibility,"requested") is bool requested&&requested,cameraTour=UiShellRuntimeGateway.TryReadMissionCameraTour()};
+            var binding=label?.GetComponent<V3LocalizedTextBindingView>();row.localizedBinding=State(binding)+" key="+binding?.LocalizationKey+" source="+binding?.SourceValue+" lastApplied="+Value(binding,"lastApplied")+" runtimeSource="+Value(binding,"runtimeSource");
+            var state=Read(Read(boot,"gameplayRuntimeUpdateSystem"),"_threatWarningPresentation");
+            row.cacheState="state="+(state==null?"null":state.GetType().Name)+" visible="+Value(state,"_defenseVisible")+" text="+Value(state,"_defenseText")+" session="+Value(state,"_defenseSession")+" attempt="+Value(state,"_defenseAttempt");
+            var suppressors=Read(visibility,"suppressors") as IEnumerable;if(suppressors!=null)foreach(object s in suppressors)row.suppressors+=State(s as UnityEngine.Object)+"|";
+            foreach(var p in UnityEngine.Object.FindObjectsByType<ThreatAlertV3PopupView>(FindObjectsInactive.Include))
+                row.popups+=State(p)+" route="+p.IsRoutePreview+" suppressedPanel="+State(Read(p,"_suppressedThreatPanel") as UnityEngine.Object)+" boundPanel="+State(Read(p,"_boundLegacyThreatPanel") as UnityEngine.Object)+" alert="+State(p.AlertSurface)+" routeSurface="+State(p.RoutePreviewSurface)+" routeStrip="+State(p.RoutePreviewStrip)+" worldOverlay="+State(p.RouteWorldOverlay)+"|";
+            foreach(var w in UnityEngine.Object.FindObjectsByType<CommandWheelPanelView>(FindObjectsInactive.Include))
+                row.wheels+=State(w)+" open="+w.IsOpen+" targeting="+State(Read(w,"targetingRoot") as UnityEngine.Object)+" threatRoot="+State(Read(w,"threatRoot") as UnityEngine.Object)+"|";
+            foreach(var f in UnityEngine.Object.FindObjectsByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include))row.fullMaps+=State(f)+" open="+f.IsOpen+"|";
+            var selection=Read(boot,"SelectionUiCommand");var input=Read(selection,"_inputSystem");
+            var targetArgs=new object[]{default(Game.Tactical.Contracts.TacticalCommandMode)};
+            bool hasWorldTarget=input!=null&&(bool)input.GetType().GetMethod("HasActiveWorldTargetCommandMode",fields).Invoke(input,targetArgs);
+            row.worldTargeting="active="+hasWorldTarget+" mode="+targetArgs[0]+" ignoredUntil="+Value(input,"IgnoreWorldCommandsUntilFrame")+" capturedUi="+Value(input,"IgnoreUiClickUntilRelease");
+            if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))row.command=command.ActiveCommandMode+" buildDrawer="+command.BuildDrawerVisible;
+            var panel=Read(menu,"_matchHudSelectionPanelView");row.passengerDrawerOpen=Read(panel,"IsPassengerDrawerOpen") is bool drawer&&drawer;
+            var assistant=Read(menu,"_matchHudAssistantUiSystem");var highlight=Read(assistant,"_highlightPresentationSystem");
+            row.cameraGuide="focusUntil="+Value(assistant,"_tutorialFocusPendingUntil")+" focusStep="+Value(assistant,"_tutorialFocusPendingStep")+" destinationFocusReady="+Value(assistant,"_marketDestinationFocusReadyAt")+" guideRect="+State(Read(highlight,"_directTutorialTarget") as UnityEngine.Object)+" directWorld="+Value(highlight,"_directTutorialWorldTarget")+" worldRequested="+Value(highlight,"_worldTargetShowRequested")+" awaitingMode="+Value(highlight,"_awaitingWorldTargetMode")+" guideWorldCamera="+State(Read(highlight,"_worldCamera") as UnityEngine.Object)+" cameraPosition="+match?.WorldCamera?.transform.position;
+            using var cameraQuery=em.CreateEntityQuery(typeof(RtsCameraStateComponent));if(cameraQuery.CalculateEntityCount()==1)row.cameraState=JsonUtility.ToJson(cameraQuery.GetSingleton<RtsCameraStateComponent>());
+            if(UiShellRuntimeGateway.TryReadMissionDefense(out var defense))row.defenseModel="active="+defense.IsActive+" warning="+defense.HasWarning+" canFocus="+defense.CanFocus+" returnCamera="+defense.CanReturnCamera+" attention="+defense.WarningNeedsAttention+" holdResume="+defense.RequiresHoldResume+" guidance="+defense.GuidanceId+" version="+defense.Version+" text="+defense.WarningText;
+            row.fieldGuide=UiShellRuntimeGateway.IsMissionFieldGuidePresenting();
+            row.body=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>(FindObjectsInactive.Include)?.CurrentInstructionBody;
+            bool missing=predicateLabel==null||string.IsNullOrWhiteSpace(predicateLabel.text);
+            if(missing){if(missingSince==0)missingSince=row.wall;row.missingSeconds=row.wall-missingSince;}else{missingSince=0;capturedMissing=false;}
+            row.legitimateOwnedSurface=row.cameraTour||row.passengerDrawerOpen||
+                UnityEngine.Object.FindObjectsByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include).Any(f=>f.IsOpen)||
+                UnityEngine.Object.FindObjectsByType<ThreatAlertV3PopupView>(FindObjectsInactive.Include).Any(p=>p.isActiveAndEnabled)||
+                UnityEngine.Object.FindObjectsByType<CommandWheelPanelView>(FindObjectsInactive.Include).Any(w=>w.isActiveAndEnabled&&(Read(w,"targetingRoot") as GameObject)?.activeInHierarchy==true);
+            bool eligible=runtime.Phase==Game.Missions.Contracts.MissionPhaseKind.Engage&&runtime.Outcome==Game.Missions.Contracts.MissionOutcomeKind.None&&em.HasComponent<CampaignMissionDefenseStateComponent>(root)&&(em.GetComponentData<CampaignMissionDefenseStateComponent>(root).AcknowledgedGuidanceMask&0x1FFu)==0x1FFu&&!row.legitimateOwnedSurface;
+            row.eligibleDefense=eligible;File.AppendAllText(path,JsonUtility.ToJson(row)+"\n");
+            if(eligible)EligibleSamples++;
+            if(eligible&&missing){if(eligibleMissingSince==0)eligibleMissingSince=row.wall;}
+            else eligibleMissingSince=0;
+            if(!failedStatus&&eligibleMissingSince>0&&row.wall-eligibleMissingSince>1.5)
+            {
+                failedStatus=true;
+                string error="Independent rendered M3 countdown/status missing over1.5seconds; generic input waitUntil cannot skip visibility acceptance";
+                probe.GetField("failure",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,error);
+                Debug.LogError("[CampaignNativeContinuousStatus1356] result=Failed "+error+" state="+JsonUtility.ToJson(row));
+                probe.GetMethod("CaptureJourney",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{"independent-status-missing-failure"});
+            }
+            if(eligibleMissingSince>0&&row.wall-eligibleMissingSince>=.8&&!capturedMissing)
+            {
+                capturedMissing=true;probe.GetMethod("CaptureJourney",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{"countdown-missing-before-1p5s"});
+                Debug.Log("[CampaignNativeContinuousStatus1356] missingCountdownSnapshot="+JsonUtility.ToJson(row));
+            }
+        }
+        catch(Exception e){File.WriteAllText(path+".observer-error.txt",e.ToString());typeof(CampaignTutorialEntryEditorProbe).GetField("failure",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,"Required independent M3 visibility observer failed: "+e);Stop();}
+    }
+}
+
+public static class CampaignDefenseEvidence1356
+{
+    static string path; static double due; static bool sawMission;
+    [Serializable] sealed class Actor
+    {
+        public string entity, position, group, role, target;
+        public int faction, element, health, maxHealth;
+        public bool exists, selected, holding, moving, engaged;
+        public float range; public byte autoEngage;
+    }
+    [Serializable] sealed class Observation
+    {
+        public double wallTime;public float gameTime;public string mission,phase,outcome;
+        public int elapsedMs,hostileTotal,hostileDefeated,squadLost;
+        public byte coreBreached,forwardPostDestroyed,rosterFault,postBound,postDamaged;
+        public bool publicHasTarget,publicNeedsSelection;public int requiredSelection;
+        public string commandMode,selection,destination,cohortRows;public int cohortCount,cohortSelected;public Actor[] actors;
+        public bool readOnly=true,actorOrOrderInjected=false;
+    }
+    public static string Run()=>"Loaded read-only Campaign defense observer; not attached";
+    public static void Install(string evidencePath)
+    {
+        EditorApplication.update-=Observe; path=evidencePath;due=0;sawMission=false;
+        File.WriteAllText(path,"{\"observer\":\"CampaignDefenseEvidence1356\",\"writesToGameState\":false}\n");
+        EditorApplication.update+=Observe;
+    }
+    public static void Stop()=>EditorApplication.update-=Observe;
+    static void Observe()
+    {
+        try
+        {
+            if(!EditorApplication.isPlaying){if(sawMission)Stop();return;}
+            double now=EditorApplication.timeSinceStartup;if(now<due)return;due=now+.25;
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;
+            var em=world.EntityManager;using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent));
+            if(q.CalculateEntityCount()!=1)return;var root=q.GetSingletonEntity();
+            var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(runtime.MissionId.ToString()!="saga.ch01.m03.radar_warning")return;
+            if(!em.HasBuffer<CampaignMissionDefenseMember>(root))return;sawMission=true;
+            var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            var o=new Observation{wallTime=now,gameTime=Time.unscaledTime,mission=runtime.MissionId.ToString(),phase=runtime.Phase.ToString(),outcome=runtime.Outcome.ToString(),elapsedMs=facts.ElapsedMilliseconds,hostileTotal=facts.HostileTotalCount,hostileDefeated=facts.HostileDefeatedCount,squadLost=facts.SquadLossCount,coreBreached=facts.CoreBreached,forwardPostDestroyed=facts.ForwardPostDestroyed,rosterFault=facts.HostileRosterIntegrityFault,postBound=facts.ForwardPostBound,postDamaged=facts.ForwardPostDamaged};
+            o.publicHasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var tutorial);
+            o.publicNeedsSelection=tutorial.NeedsSelection;o.requiredSelection=tutorial.RequiredSelectionCount;
+            o.selection=tutorial.Selection.ToString();o.destination=tutorial.Destination.ToString();
+            if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))o.commandMode=command.ActiveCommandMode.ToString();
+            var actors=new List<Actor>();
+            foreach(var member in em.GetBuffer<CampaignMissionDefenseMember>(root,true))
+            {
+                var e=member.Entity;var a=new Actor{entity=e.ToString(),faction=member.FactionId,element=member.ElementIndex,exists=em.Exists(e)};
+                if(a.exists)
+                {
+                    if(em.HasComponent<LocalTransform>(e))a.position=em.GetComponentData<LocalTransform>(e).Position.ToString();
+                    if(em.HasComponent<UnitHealth>(e)){var h=em.GetComponentData<UnitHealth>(e);a.health=h.Current;a.maxHealth=h.Max;}
+                    if(em.HasComponent<CampaignMissionUnitRoleComponent>(e)){var role=em.GetComponentData<CampaignMissionUnitRoleComponent>(e);a.group=role.UnitGroupId.ToString();a.role=role.MissionRoleId.ToString();}
+                    a.selected=em.HasComponent<SelectedUnitTag>(e);a.holding=em.HasComponent<HoldPositionOrderTag>(e);
+                    a.moving=em.HasComponent<UnitPathRequest>(e)||em.HasComponent<UnitPathFollow>(e);
+                    a.engaged=em.HasComponent<EngageTarget>(e);if(a.engaged)a.target=em.GetComponentData<EngageTarget>(e).Target.ToString();
+                    if(em.HasComponent<UnitAttack>(e))a.range=em.GetComponentData<UnitAttack>(e).Range;
+                    if(em.HasComponent<UnitCombat>(e))a.autoEngage=em.GetComponentData<UnitCombat>(e).AutoEngage;
+                }
+                actors.Add(a);
+            }
+            o.actors=actors.ToArray();o.cohortCount=actors.Count;o.cohortSelected=actors.FindAll(x=>x.selected).Count;
+            o.cohortRows=string.Join("|",actors.ConvertAll(x=>x.entity+" role="+x.role+" group="+x.group+" faction="+x.faction+" health="+x.health+"/"+x.maxHealth+" selected="+x.selected+" hold="+x.holding+" moving="+x.moving+" range="+x.range+" autoEngage="+x.autoEngage+" pos="+x.position+" target="+x.target));
+            File.AppendAllText(path,JsonUtility.ToJson(o)+"\n");
+            if(runtime.Outcome!=MissionOutcomeKind.None)Stop();
+        }
+        catch(Exception error){Stop();try{File.WriteAllText(path+".observer-error.txt",error.ToString());}catch{}}
+    }
+}

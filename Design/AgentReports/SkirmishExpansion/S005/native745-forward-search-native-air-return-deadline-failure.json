@@ -1,0 +1,39 @@
+{
+  "result": "Failed",
+  "failure": "Draw during native Return; home touchdown and second sortie not reached",
+  "sourceHash": "3e48d3106d52df52327e36c66fb35e97ca995dc6eb7a87fa630022d26fb23cef",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-745-forward-airport-normal-strategy-pre-source-manifest.json",
+  "postSourceManifest": "final-745-forward-airport-air-deadline-post-source-manifest.json",
+  "log": "native-745-current-manual-en-seed155926.log",
+  "logSha256": "effb69b76d72f9a950a94b9b6f65eee9671ce5264ab79f02a2b4235efc29eeed",
+  "trace": "s005-aria-live-155926-en-2fd2e35c679a470c901f18f2d5a4f915.jsonl",
+  "inputAudit": "native745-touch-contact-audit.json",
+  "actualWrapperExit": 2,
+  "actualWrapperExitArtifact": "native-745-current-manual-en-seed155926.log.exit",
+  "paidStrike": true,
+  "nativeParkingComplete": true,
+  "nativeTakeoffAndFire": true,
+  "returnInput": true,
+  "nativeTouchdownAtHome": false,
+  "secondSortie": false,
+  "normalSpending": 2320,
+  "lastUsableFuel": 699.14,
+  "lastEconomySeconds": 1074.33,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "sourceFitObservation": {
+    "strategy": "ForwardStaging midpoint of public bases",
+    "tested": 1948,
+    "nativeValidSampled": 3,
+    "scanExhausted": false,
+    "candidateCenters": [
+      "825.5,671",
+      "809.5,671",
+      "809.5,655"
+    ],
+    "selected": "825.5,671",
+    "closerForwardAirportFound": false,
+    "globalImpossibilityClaimed": false
+  }
+}

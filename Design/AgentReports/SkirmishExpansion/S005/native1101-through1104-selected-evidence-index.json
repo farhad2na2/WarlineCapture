@@ -1,0 +1,270 @@
+{
+  "scope": "Closed1101 scopedcargoPass/teardownwarning;1103 failedcompile-load noPlay;1104 scopedtruepaidbilateralAirportsPass;1102 drycompileonly held untilintegratedcandidate. No wholemission readiness.",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1101-paid-transport-dry-run-observation.json",
+      "sha256": "35caf162c2e96a8f43131553fd0ebe2bca80bb24ed054eb171f6a071ff90d68d",
+      "bytes": 365
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1102-boarded-recovery-dry-run.json",
+      "sha256": "3dccc5243eb9b6eed533a8999dfb35dcd719449e8e0a2b277a6b739d99071977",
+      "bytes": 3151
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1103-bilateral-airport-dry-run.json",
+      "sha256": "ec8aee1d48519ba650432fae6894f78118f03973ff3dec7a4c67d3dd3416db0e",
+      "bytes": 2527
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1104-bilateral-airport-dry-run-connected.json",
+      "sha256": "11e6a13f26db3490c1c942847faa9f696830d7ad634c392fd45f21d5a42a779e",
+      "bytes": 1623
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1104-bilateral-airport-dry-run.json",
+      "sha256": "166a43c3fe90761ac3013f9994fdc1dd9e9e3b1bee2353f4e5ddf44d2f800372",
+      "bytes": 330
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-helipad-roles1101.placement.jsonl",
+      "sha256": "2800485dbb18899f865214b99d7e0089d27ebcfd003746d0c26d42b476d06185",
+      "bytes": 1645
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-prepared-native1104-bilateral-paid-airport-prerequisite-20261011.json",
+      "sha256": "90b160c51adac0db7e1b17985aa0656e7f352eb4b95d013b2cd0c4ca2d18450b",
+      "bytes": 4591
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1101-paid-transport-post-independent-fingerprint.json",
+      "sha256": "2665d71d51b472e67eb19db490683438710468f78d804f32227df9c1ddb10aab",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1101-paid-transport-post-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1101-paid-transport-pre-dispatch-independent-fingerprint.json",
+      "sha256": "9b51f1cfa335cb1985ad435a2d064b5da0901bcbf428a1cd2db4b828b04d2830",
+      "bytes": 375
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1101-paid-transport-pre-dispatch-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1101-paid-transport-preflight-independent-fingerprint.json",
+      "sha256": "5f5a2559caea951d8f7945c9ec174592d5ab06b56e7d9a73993d6feda472fbcb",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1101-paid-transport-preflight-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1103-bilateral-airport-preflight-independent-fingerprint.json",
+      "sha256": "95019a2ac49a16407fda14a8af30bd9286c462b1ba55f41832e07845620199c4",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1103-bilateral-airport-preflight-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1104-bilateral-airport-post-independent-fingerprint.json",
+      "sha256": "cce4c8c8c2fa358c46f31c129910ebdf8f3065b9c139a18c1784a2a1af9e479f",
+      "bytes": 376
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1104-bilateral-airport-post-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1104-bilateral-airport-pre-dispatch-independent-fingerprint.json",
+      "sha256": "805a1a0e125b1a49cefaace341c0841dc98f74dd160864342f7100148fb986d6",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1104-bilateral-airport-pre-dispatch-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1104-bilateral-airport-preflight-independent-fingerprint.json",
+      "sha256": "8d7da10341a0453a198aaf9ed8f6e88cd49e6f876cf2cf1813ee8b166a4df6d3",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1104-bilateral-airport-preflight-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/load1101-paid-transport-fixture.json",
+      "sha256": "9caf5f027f15eac47c34cb8f7909f30cad35ef9750974d33c192aeeb1afffd1a",
+      "bytes": 1579
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/load1103-bilateral-airport-fixture.json",
+      "sha256": "5324935b0e57cfbe6d3a27c6f8f4f1e12a97a01e3861ff658ebdb8ab788ac34c",
+      "bytes": 2501
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/load1104-bilateral-airport-fixture.json",
+      "sha256": "4857f0e38d1f59a99856d4d1fe4764122110795e882af4562eca37018cf1fea7",
+      "bytes": 1671
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1101-isolated-paid-paid-transport.log",
+      "sha256": "0cead098d3c67388a98d3018bdbc67011c9e59aa0bba0a7ccb51f4b7d129e835",
+      "bytes": 240087
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1101-isolated-paid-paid-transport.log.dispatch.json",
+      "sha256": "fd08bac37852a6bf88d179952161fd8c8ea851df364c71241172926d7f046854",
+      "bytes": 995
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1101-isolated-paid-paid-transport.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1101-isolated-paid-paid-transport.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1104-bilateral-paid-airport-prerequisite.log",
+      "sha256": "90002eb4d3537fb2c3b8606deb3c24e26728cfc6fe1e0569a8881d80a28043c6",
+      "bytes": 116633
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1104-bilateral-paid-airport-prerequisite.log.dispatch.json",
+      "sha256": "2675563048753d51111bb78e873f6f51a57809bf3166f3446cde60506ac85139",
+      "bytes": 1013
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1104-bilateral-paid-airport-prerequisite.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1104-bilateral-paid-airport-prerequisite.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-helipad-placement-0-AfterCompletedGroundTouch.png",
+      "sha256": "381e9436ecbd50346106aea8ab0261af91c404d93209ac09f875ec3f2c4c90c7",
+      "bytes": 3003253
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-helipad-placement-0-BeforeCandidateTouchOrNativeNavigation.png",
+      "sha256": "58beb7dd0c57fe544796e1b75bd815fe2c1fa357f0980e7d4fd0fd7dea58f821",
+      "bytes": 3002607
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-isolated-paid-paid-transport-pass.json",
+      "sha256": "2334597bd4c8fbc57dc5703345686a654881b3834ba4de69e5bbde97ad3e9655",
+      "bytes": 173513
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-paid-helicopter-scoped-qualification-and-cleanup-review.json",
+      "sha256": "38586bc0209c65d19c527c6f24d25bcc3c1312431c59298b9caac7fc6f3a295f",
+      "bytes": 746
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-paid-transport-fixture.cs.txt",
+      "sha256": "66a3d460c46a3f04d9a420f6676c6fadbb04aec66c233a4986372b902152cea9",
+      "bytes": 60348
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-paid-transport-runner-start.json",
+      "sha256": "aa73d817b258b2da5632446b15211397aefaac3971b7c31063d406c70557f03b",
+      "bytes": 469
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-paid-transport.touch.jsonl",
+      "sha256": "c0609abef674f884a1d309b1c8d090146504a0a3c8c32f3072e1f6e4dd1e9d0f",
+      "bytes": 64104
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1101-readonly-post-cleanup-observation.json",
+      "sha256": "3a6487279fc2ce9cc5a9b0d688dc0d0786aa248425f962e497f10aab57322b6b",
+      "bytes": 400
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1103-bilateral-airport-fixture.cs.txt",
+      "sha256": "9a7459fae76149613ff25db3245e38baae7f42fe4be40bbbe4f649fe2d4afc9b",
+      "bytes": 49875
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1103-bilateral-airport-preparation-failure.json",
+      "sha256": "6c3ebf57392ed11317f6d19afdf700cdbd456af3bde09a984e3460d6ceeda023",
+      "bytes": 1458
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1103-bilateral-airport-runner-start.json",
+      "sha256": "003f3b1ec272c57a3de791e370aaed2efdad4dd1f8f9bc47ba3255b5b8fbdd03",
+      "bytes": 481
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-airport-placement-enemy-0-AfterCompletedGroundTouch-frame1362.png",
+      "sha256": "583320941ebe6e12ad759cfba75878c80ab07651df22dd75e43dadaf570a4d3d",
+      "bytes": 2360893
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-airport-placement-enemy-0-BeforeCandidateTouchOrNativeNavigation-frame1254.png",
+      "sha256": "e796ad54c40827d5cc5b8b033552ad18022e9a24d052867b2ce996965d99bfe2",
+      "bytes": 3243160
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-airport-placement-player-0-BeforeCandidateTouchOrNativeNavigation-frame525.png",
+      "sha256": "62a6ae8c8df8ded48e74d6f9541db7975c2964377b637cd920d2eafa7881eff7",
+      "bytes": 3202283
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-airport-placement-player-1-AfterCompletedGroundTouch-frame653.png",
+      "sha256": "f80cd55d7f87258d69a9bbbb58869061e3dd3cd3de47bf4f2ad647f5243f9aa9",
+      "bytes": 2413611
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-airport-placement-player-1-BeforeCandidateTouchOrNativeNavigation-frame635.png",
+      "sha256": "43a9c7c4e343947697d8e7e5fd85f575021104ef461f23756247ac593ccd2e68",
+      "bytes": 2603633
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-bilateral-airport-fixture.cs.txt",
+      "sha256": "4e07e87605b4b3f89412e78dd38cf9ab5c3d5e5b454b778d3d904afe625db15f",
+      "bytes": 49939
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-bilateral-airport-runner-start.json",
+      "sha256": "567a5cb5f2b3494aacc586b483faac9e1e85a7ac57e33d579df701e0f8a4308b",
+      "bytes": 481
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-bilateral-airport.placement.jsonl",
+      "sha256": "1639ed01631e521a4902131d8e083581deb2a585e9ac7a6ed3ebc5cdedb4ca03",
+      "bytes": 4928
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-bilateral-airport.touch.jsonl",
+      "sha256": "cd7229c8a792d2cfd64bfe478105b08b09257f0d3555643ca814b28269d6eb26",
+      "bytes": 21453
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1104-isolated-paid-bilateral-airport-pass.json",
+      "sha256": "c085ef2ccd6211e75ccdac168b7e6fc03efc5ac442a98e2f425b9cca9ae63180",
+      "bytes": 43969
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1287",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1258-ground-carrier-post-source-manifest.json",
+  "preflightManifest": "final-1287-normal-manual-r2-recovery-preflight-source-manifest.json",
+  "fixtureSha256": "0816f1b98b768c57190b71e43a7c83492d7bdf55bda3b152c26d95649adf14ce",
+  "executedRunnerSha256": "222cfa5e4b8422e3f4b6a757dcfa936d42059aa0d61aae6e7304dfa124e35791",
+  "method": "S005NormalManualR2Recovery1287Observer.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

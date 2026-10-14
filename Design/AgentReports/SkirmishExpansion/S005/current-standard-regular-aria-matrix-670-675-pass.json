@@ -1,0 +1,99 @@
+{
+  "mission": "S005",
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "result": "Passed",
+  "scope": "X30/X38 three Regular seeds in EN and FA, Standard; ARIA baseline only",
+  "winsByLocale": {
+    "en": 3,
+    "fa-IR": 3
+  },
+  "sameSourceAllRuns": true,
+  "normalInput": true,
+  "normalSpeed": true,
+  "tacticalHumanInterventions": 0,
+  "frozenResultAndReturn": true,
+  "runs": [
+    {
+      "seed": 104734,
+      "locale": "en",
+      "outcome": "Victory",
+      "matchSeconds": 229.698,
+      "playerBaseHp": 800,
+      "wrapperExit": 0,
+      "recordedContacts": 64,
+      "completedContacts": 64,
+      "nativeFinishedCancellations": 0,
+      "inputErrors": 0,
+      "proof": "native670-current-aria-en-seed104734-victory.json"
+    },
+    {
+      "seed": 104734,
+      "locale": "fa-IR",
+      "outcome": "Victory",
+      "matchSeconds": 231.321,
+      "playerBaseHp": 800,
+      "wrapperExit": 0,
+      "recordedContacts": 64,
+      "completedContacts": 63,
+      "nativeFinishedCancellations": 1,
+      "inputErrors": 0,
+      "proof": "native671-current-aria-fa-IR-seed104734-victory.json"
+    },
+    {
+      "seed": 130368,
+      "locale": "en",
+      "outcome": "Victory",
+      "matchSeconds": 223.191,
+      "playerBaseHp": 800,
+      "wrapperExit": 0,
+      "recordedContacts": 66,
+      "completedContacts": 65,
+      "nativeFinishedCancellations": 1,
+      "inputErrors": 0,
+      "proof": "native672-current-aria-en-seed130368-victory.json"
+    },
+    {
+      "seed": 130368,
+      "locale": "fa-IR",
+      "outcome": "Victory",
+      "matchSeconds": 224.008,
+      "playerBaseHp": 800,
+      "wrapperExit": 0,
+      "recordedContacts": 66,
+      "completedContacts": 66,
+      "nativeFinishedCancellations": 0,
+      "inputErrors": 0,
+      "proof": "native673-current-aria-fa-IR-seed130368-victory.json"
+    },
+    {
+      "seed": 155926,
+      "locale": "en",
+      "outcome": "Victory",
+      "matchSeconds": 218.574,
+      "playerBaseHp": 800,
+      "wrapperExit": 0,
+      "recordedContacts": 54,
+      "completedContacts": 54,
+      "nativeFinishedCancellations": 0,
+      "inputErrors": 0,
+      "proof": "native674-current-aria-en-seed155926-victory.json"
+    },
+    {
+      "seed": 155926,
+      "locale": "fa-IR",
+      "outcome": "Victory",
+      "matchSeconds": 217.829,
+      "playerBaseHp": 800,
+      "wrapperExit": 0,
+      "recordedContacts": 53,
+      "completedContacts": 52,
+      "nativeFinishedCancellations": 1,
+      "inputErrors": 0,
+      "proof": "native675-current-aria-fa-IR-seed155926-victory.json"
+    }
+  ],
+  "fullX38Certified": false,
+  "remainingX38Scope": "Support and no-Support coverage remains to be reconciled with native input evidence; no hidden presets certified",
+  "playerReady": false,
+  "realDeviceAcceptance": false
+}

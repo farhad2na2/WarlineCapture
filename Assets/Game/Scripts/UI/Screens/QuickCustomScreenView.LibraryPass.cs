@@ -637,9 +637,34 @@ namespace Game.UI.Runtime
                 RectTransform rect = image.rectTransform;
                 rect.anchorMin = rect.anchorMax = anchor[i];
                 rect.pivot = pivot[i];
-                rect.sizeDelta = new Vector2(36f, 36f);
-                rect.anchoredPosition = Vector2.zero;
+                rect.sizeDelta = new Vector2(28f, 28f);
+                rect.anchoredPosition = CornerInset(i);
                 rect.localEulerAngles = new Vector3(0f, 0f, rotation[i]);
+            }
+        }
+
+        private static void ClampOrnamentCorners(RectTransform panel)
+        {
+            if (panel == null)
+                return;
+            for (int i = 0; i < 4; i++)
+            {
+                if (panel.Find("OrnamentCorner" + i) is RectTransform rect)
+                {
+                    rect.sizeDelta = new Vector2(28f, 28f);
+                    rect.anchoredPosition = CornerInset(i);
+                }
+            }
+        }
+
+        private static Vector2 CornerInset(int index)
+        {
+            switch (index)
+            {
+                case 0: return new Vector2(8f, -8f);
+                case 1: return new Vector2(-8f, -8f);
+                case 2: return new Vector2(-8f, 8f);
+                default: return new Vector2(8f, 8f);
             }
         }
 

@@ -99,9 +99,9 @@ namespace Game.UI.Runtime
 
             var texture = new UnityEngine.Texture2D(Width, Height, UnityEngine.TextureFormat.RGBA32, false);
             var pixels = new UnityEngine.Color32[Width * Height];
-            var edge = new UnityEngine.Color32(196, 164, 92, 255);
-            var band = new UnityEngine.Color32(28, 36, 40, 255);
-            var fill = new UnityEngine.Color32(18, 24, 28, 255);
+            var edge = new UnityEngine.Color32(36, 42, 46, 255);
+            var band = new UnityEngine.Color32(22, 26, 30, 255);
+            var fill = new UnityEngine.Color32(12, 14, 16, 255);
             const int border = 8;
             const int bandWidth = 18;
             for (int y = 0; y < Height; y++)

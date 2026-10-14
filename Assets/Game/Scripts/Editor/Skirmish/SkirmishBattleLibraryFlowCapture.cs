@@ -266,6 +266,7 @@ namespace Game.Editor
             if (!info.Exists || info.Length < 2048)
                 throw new InvalidOperationException("Flow capture was empty: " + path);
             SkirmishBattleLibraryCapture.RejectFlatCapture(path);
+            SkirmishBattleLibraryCapture.RejectOverlayTint(path);
         }
 
         private sealed class FlowLocalization : IUiLocalization

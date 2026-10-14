@@ -216,4 +216,14 @@ namespace Game.UI.Runtime
         public static string ObjectiveTab(string objectiveId) => "ObjectiveTab_" + (objectiveId ?? string.Empty);
         public static string BattleCard(string scenarioId) => "BattleCard_" + (scenarioId ?? string.Empty);
     }
+
+    public delegate bool SkirmishCreditReader(out int credits);
+
+    /// <summary>
+    /// Composition installs the profile wallet. The screen never opens the save itself.
+    /// </summary>
+    public static class SkirmishLibraryWallet
+    {
+        public static SkirmishCreditReader ReadCredits { get; set; }
+    }
 }

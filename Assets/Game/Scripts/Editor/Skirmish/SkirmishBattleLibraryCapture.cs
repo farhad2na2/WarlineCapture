@@ -77,6 +77,7 @@ namespace Game.Editor
                             if (!info.Exists || info.Length < 2048)
                                 throw new InvalidOperationException("Capture was empty: " + path);
                             RejectFlatCapture(path);
+                            RejectOverlayTint(path);
                             written++;
                         }
                     }
@@ -96,6 +97,7 @@ namespace Game.Editor
                         if (!info.Exists || info.Length < 2048)
                             throw new InvalidOperationException("Capture was empty: " + path);
                         RejectFlatCapture(path);
+                        RejectOverlayTint(path);
                         written++;
                     }
                 }
@@ -254,6 +256,100 @@ namespace Game.Editor
             finally
             {
                 UnityEngine.Object.DestroyImmediate(probe);
+            }
+        }
+
+        internal static void RejectOverlayTint(string path)
+        {
+            var probe = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!probe.LoadImage(File.ReadAllBytes(path)))
+                    throw new InvalidOperationException("Capture could not be read: " + path);
+                Color32[] pixels = probe.GetPixels32();
+                int width = probe.width;
+                int height = probe.height;
+                if (pixels == null || width < 32 || height < 32)
+                    throw new InvalidOperationException("Capture had no art region: " + path);
+                RejectRegionTint(path, pixels, width, height, "map", 0.05f, 0.60f, 0.22f, 0.76f);
+                RejectRegionTint(path, pixels, width, height, "briefing", 0.66f, 0.96f, 0.22f, 0.76f);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(probe);
+            }
+        }
+
+        private static void RejectRegionTint(
+            string path,
+            Color32[] pixels,
+            int width,
+            int height,
+            string region,
+            float x0,
+            float x1,
+            float yTop0,
+            float yTop1)
+        {
+            int left = Mathf.Clamp(Mathf.FloorToInt(width * x0), 0, width - 1);
+            int right = Mathf.Clamp(Mathf.CeilToInt(width * x1), left + 1, width);
+            int top = Mathf.Clamp(Mathf.FloorToInt(height * yTop0), 0, height - 1);
+            int bottom = Mathf.Clamp(Mathf.CeilToInt(height * yTop1), top + 1, height);
+            int stepX = Math.Max(1, (right - left) / 48);
+            int stepY = Math.Max(1, (bottom - top) / 48);
+            int samples = 0;
+            int nearMean = 0;
+            int goldCast = 0;
+            double sumR = 0, sumG = 0, sumB = 0, sumL = 0, sumL2 = 0;
+            var sample = new System.Collections.Generic.List<Color32>(2500);
+            for (int yTop = top; yTop < bottom; yTop += stepY)
+            {
+                int y = height - 1 - yTop;
+                for (int x = left; x < right; x += stepX)
+                {
+                    Color32 pixel = pixels[y * width + x];
+                    sample.Add(pixel);
+                    sumR += pixel.r;
+                    sumG += pixel.g;
+                    sumB += pixel.b;
+                    double luminance = pixel.r * 0.299 + pixel.g * 0.587 + pixel.b * 0.114;
+                    sumL += luminance;
+                    sumL2 += luminance * luminance;
+                    if (pixel.r > pixel.b + 20 && pixel.g > pixel.b + 5)
+                        goldCast++;
+                    samples++;
+                }
+            }
+
+            if (samples < 32)
+                return;
+            double meanR = sumR / samples;
+            double meanG = sumG / samples;
+            double meanB = sumB / samples;
+            double meanL = sumL / samples;
+            double variance = Math.Max(0, sumL2 / samples - meanL * meanL);
+            double deviation = Math.Sqrt(variance);
+            for (int i = 0; i < sample.Count; i++)
+            {
+                Color32 pixel = sample[i];
+                if (Math.Abs(pixel.r - meanR) <= 18 && Math.Abs(pixel.g - meanG) <= 18 && Math.Abs(pixel.b - meanB) <= 18)
+                    nearMean++;
+            }
+
+            double uniform = nearMean / (double)samples;
+            double cast = goldCast / (double)samples;
+            bool goldMean = meanR > 90 && meanR > meanB + 25 && meanG > meanB + 10 && meanL > 30;
+            bool uniformGold = uniform > 0.82 && goldMean;
+            bool castWash = cast > 0.88 && deviation < 26 && meanR > meanB + 18;
+            if (uniformGold || castWash)
+            {
+                throw new InvalidOperationException(
+                    "Panel art is a uniform overlay tint: " + path +
+                    " region=" + region +
+                    " uniform=" + uniform.ToString("0.00") +
+                    " cast=" + cast.ToString("0.00") +
+                    " deviation=" + deviation.ToString("0.0") +
+                    " mean=" + (int)meanR + "," + (int)meanG + "," + (int)meanB);
             }
         }
 

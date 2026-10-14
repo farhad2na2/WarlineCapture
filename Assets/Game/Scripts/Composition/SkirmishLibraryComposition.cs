@@ -51,6 +51,11 @@ namespace Game.Composition
 
     internal static class SkirmishLibraryComposition
     {
+        static SkirmishLibraryComposition()
+        {
+            SkirmishLibraryWallet.ReadCredits = ProfileCreditReader.TryRead;
+        }
+
         public static SkirmishLibraryViewModel Create(IReadOnlyList<SkirmishBattleCatalogEntry> catalog) =>
             new(
                 catalog,
@@ -84,6 +89,27 @@ namespace Game.Composition
                 MapWidthMetres = definition.MapLayout != null ? definition.MapLayout.WorldWidthMetres : 0f,
                 MapDepthMetres = definition.MapLayout != null ? definition.MapLayout.WorldDepthMetres : 0f
             };
+        }
+
+        private static class ProfileCreditReader
+        {
+            public static bool TryRead(out int credits)
+            {
+                credits = 0;
+                try
+                {
+                    PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
+                    if (profile == null)
+                        return false;
+                    credits = profile.credits;
+                    return true;
+                }
+                catch (Exception)
+                {
+                    credits = 0;
+                    return false;
+                }
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Game.Configs;
 using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
-using Game.UI.Skirmish;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -1484,7 +1483,7 @@ namespace Game.UI.Runtime
             float splitTop = 40f;
             float splitHeight = height >= 420f ? 96f : 64f;
             float statsTop = splitTop + splitHeight + 6f;
-            float medalsTop = statsTop + (battlefield ? 52f : 8f);
+            float medalsTop = statsTop + (battlefield ? 80f : 8f);
             float difficultyTop = medalsTop + 48f;
             float columnWidth = (inner - 8f) * 0.5f;
 
@@ -1519,7 +1518,7 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(_briefingPreview.rectTransform, margin + columnWidth + 8f, splitTop, columnWidth, splitHeight);
 
             if (_statRow != null && battlefield)
-                PlaceTopLeft(_statRow, margin, statsTop, inner, 48f);
+                PlaceTopLeft(_statRow, margin, statsTop, inner, 76f);
             float theatreStack = splitTop + splitHeight + 8f;
             if (_recommendedPanel != null)
                 PlaceTopLeft(_recommendedPanel, margin, theatreStack, inner, 64f);

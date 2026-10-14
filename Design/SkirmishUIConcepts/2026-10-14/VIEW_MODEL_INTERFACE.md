@@ -23,10 +23,11 @@ Quick Battle keeps the view model's one outer click. The screen copies the selec
 
 Pass these to Programmer 1 if the briefing tiles or the mockup ratios must be live:
 
-- No per-scenario match duration on `SkirmishBriefingState` or `SkirmishBattleCatalogEntry`. The briefing does not show a TIME tile.
-- No force headcount. The briefing shows the catalog army profile (Ground, Air, Combined), not a headcount.
-- No certified size such as LARGE or SMALL. The briefing shows the catalog start profile (Field, Established), not a structure count.
-- The briefing tiles that are filled are objective, army, and start. Those three come from the catalog entry.
+- The briefing tiles are objective, army, and start, from the catalog entry.
+- `DeadlineSeconds` and `RecommendedSize` are shown only when `RecommendedSize` is not `None`, which is how a compiled definition is distinguished from the legacy 900-second fallback. The fallback is not shown as TIME 15:00.
+- `StartingStructureCount` is not shown. Programmer 1 records that the mockup SIZE integer has no source; Field 7 and Established 10 are structure counts, not a certified size.
+- Map width and depth are shown in metres only when both are greater than zero.
+- No force headcount on the catalog or the view model.
 - No credits on the view model. The briefing credits tile is hidden. `Game.UI.Runtime` does not reference `Game.Runtime`, so the library does not load `PlayerProfileSaveData` and does not write `0` over the account header. The header keeps `MainMenuAccountHeaderView`, which reads `TryReadMainMenuResources`.
 - No fixed `/24` or `/6` denominator. A header that must read `won/24`, or a tab that must read `won/6`, needs a field. The current contract says not to use the 24 grid slots or the 6 map cards as that denominator.
 - `ui.skirmish.theater.mp.title` is still "ARMOR APPROACH" / "گذر زرهی", and `ui.skirmish.theater.ap.title` is "CITY AIRFIELD". The theatre labels do not use those strings. They use the art copy names above.

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Skirmish.Contracts;
-using Game.UI.Skirmish;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -430,6 +429,60 @@ namespace Game.UI.Runtime
             SetTile(_statRow.Find("Objective"), fa ? "هدف" : "OBJECTIVE", objective);
             SetTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel);
             SetTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel);
+            PresentSourcedFacts(briefing);
+        }
+
+        private void PresentSourcedFacts(SkirmishBriefingState briefing)
+        {
+            bool sourced = briefing.RecommendedSize != SkirmishSizeId.None;
+            TMP_Text facts = EnsureSourcedFactsLabel();
+            if (facts == null)
+                return;
+            facts.gameObject.SetActive(sourced);
+            if (!sourced)
+                return;
+            string size = briefing.RecommendedSize == SkirmishSizeId.LargeWar
+                ? "Large war"
+                : briefing.RecommendedSize.ToString();
+            string clock = FormatClock(briefing.DeadlineSeconds);
+            string extent = briefing.MapWidthMetres > 0f && briefing.MapDepthMetres > 0f
+                ? Mathf.RoundToInt(briefing.MapWidthMetres).ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    + " × "
+                    + Mathf.RoundToInt(briefing.MapDepthMetres).ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    + " m"
+                : string.Empty;
+            string line = clock;
+            if (!string.IsNullOrEmpty(size))
+                line = string.IsNullOrEmpty(line) ? size : line + " · " + size;
+            if (!string.IsNullOrEmpty(extent))
+                line = string.IsNullOrEmpty(line) ? extent : line + " · " + extent;
+            SetCopy(facts, line, 15f, 20f);
+            facts.isRightToLeftText = false;
+            facts.textWrappingMode = TextWrappingModes.NoWrap;
+        }
+
+        private TMP_Text EnsureSourcedFactsLabel()
+        {
+            if (_statRow == null)
+                return null;
+            Transform existing = _statRow.Find("SourcedFacts");
+            if (existing != null)
+                return existing.GetComponent<TMP_Text>();
+            TMP_Text facts = CreateLabel(_statRow, "SourcedFacts", 16f);
+            PlaceTopLeft(facts.rectTransform, 0f, 50f, 740f, 22f);
+            facts.alignment = TextAlignmentOptions.MidlineLeft;
+            return facts;
+        }
+
+        private static string FormatClock(int seconds)
+        {
+            if (seconds <= 0)
+                return string.Empty;
+            int minutes = seconds / 60;
+            int remainder = seconds % 60;
+            return minutes.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                + ":"
+                + remainder.ToString("00", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         private static void PlaceTruthfulTile(Transform tile, float x, float width)

@@ -6,7 +6,6 @@ using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
-using Game.UI.Skirmish;
 using TMPro;
 using UnityEditor;
 using UnityEngine;

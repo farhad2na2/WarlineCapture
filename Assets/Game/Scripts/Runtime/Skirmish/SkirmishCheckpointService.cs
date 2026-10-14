@@ -21,7 +21,8 @@ namespace Game.Runtime
             if (state.IsLegacy != 0 || HasNativeActors(em, state.SessionId))
                 return false;
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            if (setup == null)
+            // The fixture-only v1 payload has no versioned AI planner/receipt state.
+            if (setup == null || setup.EnemyPolicy != null)
                 return false;
 
             var payload = new SkirmishCheckpointPayload
@@ -137,6 +138,7 @@ namespace Game.Runtime
                 return false;
 
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            if (setup?.EnemyPolicy != null) { reason = SkirmishReasonCode.UnsupportedCapability; return false; }
             if (!SkirmishCheckpointCodec.IsCompatible(document.Header, setup))
                 return false;
 

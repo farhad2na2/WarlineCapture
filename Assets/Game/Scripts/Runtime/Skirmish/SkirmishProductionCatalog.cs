@@ -20,9 +20,14 @@ namespace Game.Runtime
         private UnitPrefabRegistryAuthoringConfig registry;
         private readonly Dictionary<string, SkirmishRoleOverlay> roles = new(StringComparer.Ordinal);
         public SkirmishResolvedSetup Setup { get; private set; }
+        private readonly Dictionary<SkirmishRoleKind,float> productionDeliverySeconds = new();
 
         public static SkirmishProductionCatalog Create(SkirmishResolvedSetup setup,
-            BuildingPlacementSystemConfig baseline, BuildingPlacementSystemConfig scene)
+            BuildingPlacementSystemConfig baseline, BuildingPlacementSystemConfig scene) => Create(setup,baseline,scene,null);
+
+        public static SkirmishProductionCatalog Create(SkirmishResolvedSetup setup,
+            BuildingPlacementSystemConfig baseline, BuildingPlacementSystemConfig scene,
+            BuildingProductionQueueCompositionSystemHelper.TryGetUnitProductionMetadataDelegate timingResolver)
         {
             if (setup == null || baseline == null || scene == null || scene.UnitPrefabRegistryConfig == null)
                 throw new ArgumentException("The mission production catalog requires resolved setup and authored catalogs.");
@@ -60,6 +65,18 @@ namespace Game.Runtime
                     if (!buildings.Contains(producer)) buildings.Add(producer);
                     result.registry.UnitSpawnPrefabs.Add(unit);
                     result.roles.Add(unitKey, overlay);
+                    // Capture the same authored metadata used by the native queue;
+                    // optional callers without a resolver keep timing unavailable.
+                    if (timingResolver != null && timingResolver(unit,out var timing) &&
+                        float.IsFinite(timing.ProductionDurationSeconds) && timing.ProductionDurationSeconds > 0 &&
+                        float.IsFinite(timing.ProductionTransportArrivalSeconds) && timing.ProductionTransportArrivalSeconds >= 0)
+                    {
+                        bool groundExit = overlay.Producer == SkirmishProducerKind.GroundStaging ||
+                            (overlay.Producer == SkirmishProducerKind.IntelStation && overlay.RoleKind == SkirmishRoleKind.Drone);
+                        float seconds = timing.ProductionDurationSeconds +
+                            (groundExit || timing.ProductionTransportPrefab == null ? 0 : timing.ProductionTransportArrivalSeconds);
+                        if (float.IsFinite(seconds)) result.productionDeliverySeconds[overlay.RoleKind] = seconds;
+                    }
                     recipes.Add(new BuildingProductionRecipe {
                         ProducerPrefab = producer, UnitPrefab = unit, Quantity = Math.Max(1, overlay.SquadMembers),
                         MaterialsCost = overlay.MaterialsCost, CreditsCost = 0,
@@ -78,6 +95,8 @@ namespace Game.Runtime
         }
 
         public bool TryRole(string prefabKey, out SkirmishRoleOverlay overlay) => roles.TryGetValue(prefabKey, out overlay);
+        public bool TryReadProductionDeliverySeconds(SkirmishRoleKind role, out float seconds) =>
+            productionDeliverySeconds.TryGetValue(role,out seconds);
         public bool Allows(GameObject prefab, bool building) => prefab != null && Config != null &&
             (building ? Config.Spawnables.Contains(prefab) : registry.UnitSpawnPrefabs.Contains(prefab));
 

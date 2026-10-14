@@ -17,9 +17,11 @@ public sealed class UnitCombatFocusedEditModeTests
         {
             var tests = new UnitCombatFocusedEditModeTests();
             tests.StandardAttack_NonLethalHitDamagesTargetAndRecordsFeedbackState();
+            tests.StandardAttack_CooldownRecoversAcrossLostEngagementAndCanFireOnReacquisition();
+            tests.StandardAttack_NoEngagementRecoverySkipsIneligibleActorsAndDoesNotDoubleTick();
             tests.AttackVfxRequestResolution_PopulatesMuzzlePlaybackData();
             tests.AttackVfxRequestResolution_PopulatesImpactPlaybackData();
-            Debug.Log("[UnitCombatFocusedEditModeValidation] result=Passed tests=3");
+            Debug.Log("[UnitCombatFocusedEditModeValidation] result=Passed tests=5");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -87,6 +89,119 @@ public sealed class UnitCombatFocusedEditModeTests
         Assert.AreEqual(1f, cooldown.CooldownRemaining, 0.001f);
         Assert.AreEqual(1, trace.ShotCounter);
         Assert.Greater(trace.TimeRemaining, 0f);
+    }
+
+    [Test]
+    public void StandardAttack_CooldownRecoversAcrossLostEngagementAndCanFireOnReacquisition()
+    {
+        using var world = new World(nameof(StandardAttack_CooldownRecoversAcrossLostEngagementAndCanFireOnReacquisition));
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+        Entity target = CreateTarget(em, new int2(4, 4), new float3(4f, 0f, 4f), health: 100);
+        Entity attacker = CreateAttacker(em, new int2(4, 5), new float3(4f, 0f, 5f), target, damage: 35);
+        em.SetComponentData(attacker, new UnitAttackCooldownComponent { CooldownRemaining = 0.18f });
+        em.SetComponentData(attacker, new UnitAttackTraceComponent { TimeRemaining = 0.2f, ShotCounter = 7 });
+        em.SetComponentData(attacker, new UnitAttackAnimationComponent { TimeRemaining = 0.5f });
+        em.RemoveComponent<EngageTarget>(attacker);
+
+        SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+        Assert.That(em.GetComponentData<UnitAttackCooldownComponent>(attacker).CooldownRemaining,
+            Is.EqualTo(0.08f).Within(0.001f));
+        Assert.That(em.GetComponentData<UnitAttackTraceComponent>(attacker).TimeRemaining,
+            Is.EqualTo(0.1f).Within(0.001f));
+        Assert.AreEqual(100, em.GetComponentData<UnitHealth>(target).Current);
+        Assert.AreEqual(7, em.GetComponentData<UnitAttackTraceComponent>(attacker).ShotCounter);
+
+        world.SetTime(new TimeData(0.2d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+        Assert.That(em.GetComponentData<UnitAttackCooldownComponent>(attacker).CooldownRemaining,
+            Is.EqualTo(0f).Within(0.001f));
+        Assert.That(em.GetComponentData<UnitAttackTraceComponent>(attacker).TimeRemaining,
+            Is.EqualTo(0f).Within(0.001f));
+
+        em.AddComponentData(attacker, new EngageTarget
+        {
+            Target = target,
+            Cell = new int2(4, 4),
+            Position = new float3(4f, 0f, 4f),
+            IsCommanded = 1
+        });
+        world.SetTime(new TimeData(0.3d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+        Assert.AreEqual(65, em.GetComponentData<UnitHealth>(target).Current,
+            "Reacquisition should use the recovered cooldown to produce real damage.");
+        Assert.AreEqual(8, em.GetComponentData<UnitAttackTraceComponent>(attacker).ShotCounter);
+    }
+
+    [Test]
+    public void StandardAttack_NoEngagementRecoverySkipsIneligibleActorsAndDoesNotDoubleTick()
+    {
+        using var world = new World(nameof(StandardAttack_NoEngagementRecoverySkipsIneligibleActorsAndDoesNotDoubleTick));
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+        Entity target = CreateTarget(em, new int2(4, 4), new float3(4f, 0f, 4f), health: 100);
+        Entity engaged = CreateAttacker(em, new int2(4, 5), new float3(4f, 0f, 5f), target, damage: 35);
+        Entity recovering = CreateAttacker(em, new int2(5, 5), new float3(5f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(recovering);
+
+        Entity suppressed = CreateAttacker(em, new int2(6, 5), new float3(6f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(suppressed);
+        em.AddComponent<CampaignMissionCombatSuppressedTag>(suppressed);
+        Entity transit = CreateAttacker(em, new int2(7, 5), new float3(7f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(transit);
+        em.AddComponent<SupportPassengerTransitTag>(transit);
+        Entity dead = CreateAttacker(em, new int2(8, 5), new float3(8f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(dead);
+        em.AddComponent<UnitDeathAnimationComponent>(dead);
+        Entity blocker = CreateAttacker(em, new int2(9, 5), new float3(9f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(blocker);
+        em.AddComponent<StaticGridBlocker>(blocker);
+        Entity airMissile = CreateAttacker(em, new int2(10, 5), new float3(10f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(airMissile);
+        em.AddComponent<AirMissileLauncherComponent>(airMissile);
+        Entity disarmed = CreateAttacker(em, new int2(11, 5), new float3(11f, 0f, 5f), target, damage: 35);
+        em.RemoveComponent<EngageTarget>(disarmed);
+        em.SetComponentData(disarmed, new UnitCombat { CanAttack = 0, AutoEngage = 0 });
+
+        foreach (Entity actor in new[] { engaged, recovering, suppressed, transit, dead, blocker, airMissile, disarmed })
+        {
+            em.SetComponentData(actor, new UnitAttackCooldownComponent { CooldownRemaining = 0.18f });
+            em.SetComponentData(actor, new UnitAttackTraceComponent { TimeRemaining = 0.2f });
+        }
+
+        SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+        foreach (Entity actor in new[] { engaged, recovering })
+        {
+            Assert.That(em.GetComponentData<UnitAttackCooldownComponent>(actor).CooldownRemaining,
+                Is.EqualTo(0.08f).Within(0.001f), "Each eligible actor should receive exactly one timer tick.");
+            Assert.That(em.GetComponentData<UnitAttackTraceComponent>(actor).TimeRemaining,
+                Is.EqualTo(0.1f).Within(0.001f));
+        }
+        foreach (Entity actor in new[] { suppressed, transit, dead, blocker, airMissile, disarmed })
+        {
+            Assert.That(em.GetComponentData<UnitAttackCooldownComponent>(actor).CooldownRemaining,
+                Is.EqualTo(0.18f).Within(0.001f), "Excluded actors must retain their cooldown.");
+            Assert.That(em.GetComponentData<UnitAttackTraceComponent>(actor).TimeRemaining,
+                Is.EqualTo(0.2f).Within(0.001f));
+        }
+        Assert.AreEqual(100, em.GetComponentData<UnitHealth>(target).Current);
+
+        world.SetTime(new TimeData(0.1d, 0f));
+        attackSystem.Update(world.Unmanaged);
+        Assert.That(em.GetComponentData<UnitAttackCooldownComponent>(recovering).CooldownRemaining,
+            Is.EqualTo(0.08f).Within(0.001f), "Paused simulation must not advance recovery.");
+
+        Entity match = em.CreateEntity(typeof(SkirmishMatchState));
+        em.SetComponentData(match, new SkirmishMatchState { Phase = SkirmishPhase.Finished });
+        world.SetTime(new TimeData(0.2d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+        Assert.That(em.GetComponentData<UnitAttackCooldownComponent>(recovering).CooldownRemaining,
+            Is.EqualTo(0.08f).Within(0.001f), "A finished match must not advance recovery.");
+        Assert.AreEqual(100, em.GetComponentData<UnitHealth>(target).Current);
     }
 
     [Test]

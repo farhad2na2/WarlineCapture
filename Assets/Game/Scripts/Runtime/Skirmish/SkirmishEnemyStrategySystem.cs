@@ -56,6 +56,8 @@ namespace Game.Runtime
             if (setup == null)
                 return score;
             army ??= SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+            if (setup.EnemyPolicy != null && setup.ObjectiveKind == SkirmishObjectiveKind.BaseAssault)
+                return SkirmishEnemyCommanderService.Evaluate(em, session, setup, army);
             SkirmishPublicPerception perception = Perceive(em, session, owned);
             var current = em.HasComponent<SkirmishEnemyStrategyComponent>(session)
                 ? em.GetComponentData<SkirmishEnemyStrategyComponent>(session).Priority

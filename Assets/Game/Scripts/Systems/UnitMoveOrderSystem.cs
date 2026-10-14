@@ -83,6 +83,7 @@ namespace Game.Runtime
                     result.StructuralAdds++;
                 }
 
+                ReplaceCruisingFixedWingReturn(entityManager, ecb, entity, goal);
                 SetOrAdd(entityManager, ecb, entity, new UnitTarget { Cell = goal }, ref result);
 
                 if (!entityManager.HasComponent<UnitAirMovement>(entity))
@@ -173,6 +174,30 @@ namespace Game.Runtime
             {
                 ecb.Dispose();
             }
+        }
+
+        // A fresh Move replaces an automatic landing intent while still cruising.
+        // Retrying the same active native destination must retain its pass progress.
+        private static void ReplaceCruisingFixedWingReturn(
+            EntityManager em, EntityCommandBuffer ecb, Entity entity, int2 goal)
+        {
+            // GroupedManual is the selected player Move path; Scan and autonomous
+            // Immediate commands never call this helper.
+            if (!em.HasComponent<SelectedUnitTag>(entity) || !em.HasComponent<Faction>(entity) ||
+                !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+                !em.HasComponent<UnitAirMovement>(entity) || !em.HasComponent<UnitAirComponent>(entity))
+                return;
+            var air = em.GetComponentData<UnitAirComponent>(entity);
+            if (air.UsesRunway == 0 || air.Airborne == 0 || air.ReturningHome == 0 ||
+                air.TakeoffRolling != 0 || air.LandingRolling != 0)
+                return;
+            if (em.HasComponent<ManualMoveOrderTag>(entity) && em.HasComponent<UnitTarget>(entity) &&
+                em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal))
+                return;
+            air.ReturningHome = 0;
+            air.AttackRunActive = 0;
+            air.ReturnApproachInitialized = 0;
+            ecb.SetComponent(entity, air);
         }
 
         public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)

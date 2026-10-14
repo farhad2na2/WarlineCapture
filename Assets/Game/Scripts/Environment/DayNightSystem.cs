@@ -58,6 +58,9 @@ namespace Game.Runtime
         private ColorAdjustments _colorAdjustments;
         private WhiteBalance _whiteBalance;
         private Bloom _bloom;
+        private ColorAdjustments _ownedColorAdjustments;
+        private WhiteBalance _ownedWhiteBalance;
+        private Bloom _ownedBloom;
         private VolumeProfile _runtimeVolumeProfile;
         private VolumeProfile _sourceVolumeProfile;
         private bool _runtimeVisualsEnabled = true;
@@ -97,18 +100,21 @@ namespace Game.Runtime
             ApplyConfigIfAvailable();
 
             CaptureInitialEnvironmentState();
-            PrepareRuntimeSkybox();
-            PrepareVolumeOverrides();
-
             _currentHour = Mathf.Repeat(startHour, 24f);
             _dayCount = 1;
-            ApplyVisualState();
+            if (_runtimeVisualsEnabled)
+            {
+                PrepareRuntimeSkybox();
+                PrepareVolumeOverrides();
+                ApplyVisualState();
+            }
             _nextVisualRefreshTime = UnityEngine.Time.unscaledTime + VisualRefreshIntervalSeconds;
         }
 
         public void SetRuntimeVisualsEnabled(bool enabled)
         {
-            if (_runtimeVisualsEnabled == enabled)
+            if (_runtimeVisualsEnabled == enabled &&
+                (enabled || (_runtimeVolumeProfile == null && _runtimeSkyboxMaterial == null)))
                 return;
 
             _runtimeVisualsEnabled = enabled;
@@ -304,11 +310,11 @@ namespace Game.Runtime
                 return;
 
             if (!profile.TryGet(out _colorAdjustments))
-                _colorAdjustments = profile.Add<ColorAdjustments>(true);
+                _ownedColorAdjustments = _colorAdjustments = profile.Add<ColorAdjustments>(true);
             if (!profile.TryGet(out _whiteBalance))
-                _whiteBalance = profile.Add<WhiteBalance>(true);
+                _ownedWhiteBalance = _whiteBalance = profile.Add<WhiteBalance>(true);
             if (!profile.TryGet(out _bloom))
-                _bloom = profile.Add<Bloom>(true);
+                _ownedBloom = _bloom = profile.Add<Bloom>(true);
 
             _colorAdjustments.active = true;
             _colorAdjustments.postExposure.overrideState = true;
@@ -329,12 +335,20 @@ namespace Game.Runtime
             _whiteBalance = null;
             _bloom = null;
 
-            if (globalVolume != null)
+            if (_runtimeVolumeProfile != null && globalVolume != null &&
+                globalVolume.HasInstantiatedProfile() &&
+                ReferenceEquals(globalVolume.profile, _runtimeVolumeProfile))
                 globalVolume.profile = null;
 
             DestroyRuntimeObject(_runtimeVolumeProfile);
+            DestroyRuntimeObject(_ownedColorAdjustments);
+            DestroyRuntimeObject(_ownedWhiteBalance);
+            DestroyRuntimeObject(_ownedBloom);
             _runtimeVolumeProfile = null;
             _sourceVolumeProfile = null;
+            _ownedColorAdjustments = null;
+            _ownedWhiteBalance = null;
+            _ownedBloom = null;
         }
 
         private static void DestroyRuntimeObject(Object target)

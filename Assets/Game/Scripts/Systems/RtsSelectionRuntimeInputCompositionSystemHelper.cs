@@ -332,22 +332,27 @@ namespace Game.Runtime
 
             if (runtime.SelectionModeActive)
             {
-                if (!input.IsDraggingSelection && dragDistance >= context.DragThresholdPixels)
-                    input.IsDraggingSelection = true;
-
-                if (input.IsDraggingSelection)
+                // A drag that started on gameplay UI (including the full map's
+                // viewport) belongs to that control, even in Select mode.
+                if (!input.PointerPressedOverUi)
                 {
-                    Rect liveRect = GetScreenRect(input.DragStart, input.DragCurrent);
-                    if (!input.HasLiveSelectionRect || !ApproximatelyEqualRect(input.LastLiveSelectionRect, liveRect))
+                    if (!input.IsDraggingSelection && dragDistance >= context.DragThresholdPixels)
+                        input.IsDraggingSelection = true;
+
+                    if (input.IsDraggingSelection)
                     {
-                        input.QueueSelectionRectangleRequest(
-                            RtsSelectionPointerRequestKind.SelectionRectUpdated,
-                            liveRect,
-                            UnityEngine.Time.frameCount,
-                            VisibleUnitSelectionCameraSystemHelper.Filter.All);
-                        context.ProcessSelectionRectangleRequests?.Invoke();
-                        input.LastLiveSelectionRect = liveRect;
-                        input.HasLiveSelectionRect = true;
+                        Rect liveRect = GetScreenRect(input.DragStart, input.DragCurrent);
+                        if (!input.HasLiveSelectionRect || !ApproximatelyEqualRect(input.LastLiveSelectionRect, liveRect))
+                        {
+                            input.QueueSelectionRectangleRequest(
+                                RtsSelectionPointerRequestKind.SelectionRectUpdated,
+                                liveRect,
+                                UnityEngine.Time.frameCount,
+                                VisibleUnitSelectionCameraSystemHelper.Filter.All);
+                            context.ProcessSelectionRectangleRequests?.Invoke();
+                            input.LastLiveSelectionRect = liveRect;
+                            input.HasLiveSelectionRect = true;
+                        }
                     }
                 }
             }

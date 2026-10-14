@@ -89,6 +89,20 @@ namespace Game.Runtime
                 ecb.Dispose();
             }
 
+            // The world-selection command also clears the expanded squad tray's
+            // selection state. Its group records otherwise retain stale flags,
+            // so the next card tap deselects an already empty group.
+            using EntityQuery expandedSessions = em.CreateEntityQuery(
+                ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(),
+                ComponentType.ReadWrite<SkirmishArmySelectionComponent>(),
+                ComponentType.ReadWrite<SkirmishArmyGroupRecord>());
+            using NativeArray<Entity> sessions = expandedSessions.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < sessions.Length; i++)
+            {
+                if (SkirmishExpandedSessionControlService.IsExpanded(em, sessions[i]))
+                    SkirmishArmySelectionService.Clear(em, sessions[i]);
+            }
+
             return true;
         }
 

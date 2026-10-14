@@ -21,14 +21,16 @@ namespace Game.Runtime
             out bool airTransport,
             out bool transportLanded,
             out bool cargoPlaneTransport,
-            out Result rejectedResult)
+            out Result rejectedResult,
+            byte actingFaction = 0)
         {
             airTransport = false;
             transportLanded = false;
             cargoPlaneTransport = false;
             rejectedResult = default;
 
-            if (!IsBoardablePlayerTransport(em, transport))
+            if (!(actingFaction == 0 ? IsBoardablePlayerTransport(em, transport) :
+                TransportBoardingCapacitySystemHelper.IsBoardableTransport(em, transport, actingFaction)))
             {
                 if (shouldLogTransportBoarding)
                 {

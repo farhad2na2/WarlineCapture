@@ -58,6 +58,18 @@ namespace Game.Configs
             return false;
         }
 
+        public SkirmishDifficultyConfig GetDifficulty(Game.Skirmish.Contracts.SkirmishDifficultyId difficulty)
+        {
+            switch (difficulty)
+            {
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Recruit: return difficultyRecruit;
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Regular: return difficultyRegular;
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Veteran: return difficultyVeteran;
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Commander: return difficultyCommander;
+                default: return null;
+            }
+        }
+
         public SkirmishExpansionAuthoredSet ToAuthoredSet()
         {
             var set = new SkirmishExpansionAuthoredSet

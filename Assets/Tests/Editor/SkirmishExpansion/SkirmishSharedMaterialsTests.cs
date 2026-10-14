@@ -382,6 +382,7 @@ namespace Game.Tests.Editor
         [Test]
         public void S004CampaignLightingUsesAuthoredSunAndRestoresMatchLights()
         {
+            SharedRuntimeRenderPipelineLease.ShutdownSession();
             var match=UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity",UnityEditor.SceneManagement.OpenSceneMode.Single);
             var source=UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.SceneManagement.NewSceneSetup.EmptyScene,UnityEditor.SceneManagement.NewSceneMode.Additive);
             try
@@ -405,30 +406,121 @@ namespace Game.Tests.Editor
                 var lighting=root.AddComponent<Game.Composition.SkirmishS004CampaignLighting>();lighting.Configure(match,source);
                 Assert.AreEqual(match,UnityEngine.SceneManagement.SceneManager.GetActiveScene());
                 Assert.IsFalse(hostLight.enabled);Assert.IsTrue(sun.enabled);Assert.AreEqual(1.3f,sun.intensity);
-                Assert.AreEqual(rotation,sun.transform.rotation);Assert.AreEqual(new Color(.72f,.79f,.88f),RenderSettings.ambientSkyColor);Assert.AreSame(sun,RenderSettings.sun);
+                Assert.AreEqual(rotation,sun.transform.rotation);Assert.AreEqual(new Color(.79f,.86f,.96f),RenderSettings.ambientSkyColor);Assert.AreSame(sun,RenderSettings.sun);
                 Assert.IsFalse(RenderSettings.fog);
                 if(activePipeline!=null)
                 {
-                    Assert.AreNotSame(activePipeline,QualitySettings.renderPipeline);
-                    Assert.GreaterOrEqual(((UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset)QualitySettings.renderPipeline).shadowDistance,160f);
+                    var runtimePipeline=QualitySettings.renderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset;
+                    Assert.NotNull(runtimePipeline);
+                    Assert.AreNotSame(activePipeline,runtimePipeline);
+                    Assert.AreSame(activePipeline,SharedRuntimeRenderPipelineLease.SourceFor(runtimePipeline));
+                    Assert.GreaterOrEqual(runtimePipeline.shadowDistance,Application.isMobilePlatform?160f:260f);
                     Assert.AreEqual(originalShadowDistance,activePipeline.shadowDistance);
                     QualitySettings.renderPipeline=originalPipeline;
                     lighting.SendMessage("LateUpdate");
-                    Assert.AreNotSame(activePipeline,QualitySettings.renderPipeline);
-                    Assert.GreaterOrEqual(((UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset)QualitySettings.renderPipeline).shadowDistance,160f);
+                    Assert.AreSame(runtimePipeline,QualitySettings.renderPipeline,
+                        "An external reset should reselect the cached asset, not create another clone.");
+                    Assert.AreEqual(1,SharedRuntimeRenderPipelineLease.RuntimeAssetCount);
+                    lighting.SendMessage("OnDestroy");
+                    Assert.AreSame(runtimePipeline,QualitySettings.renderPipeline,
+                        "The selected quality clone must survive match teardown for Replay.");
+                    Assert.AreEqual(originalShadowDistance,runtimePipeline.shadowDistance);
+                    UnityEngine.Object.DestroyImmediate(lighting);
+                    var replayLighting=root.AddComponent<Game.Composition.SkirmishS004CampaignLighting>();
+                    replayLighting.Configure(match,source);
+                    Assert.AreSame(runtimePipeline,QualitySettings.renderPipeline);
+                    Assert.GreaterOrEqual(runtimePipeline.shadowDistance,Application.isMobilePlatform?160f:260f);
+                    replayLighting.SendMessage("OnDestroy");
+                    UnityEngine.Object.DestroyImmediate(replayLighting);
+                    Assert.AreEqual(originalShadowDistance,runtimePipeline.shadowDistance);
                 }
-                lighting.SendMessage("OnDestroy");
-                UnityEngine.Object.DestroyImmediate(lighting);
+                else
+                {
+                    lighting.SendMessage("OnDestroy");
+                    UnityEngine.Object.DestroyImmediate(lighting);
+                }
                 Assert.IsTrue(hostLight.enabled);Assert.AreEqual(Color.blue,RenderSettings.ambientSkyColor);Assert.AreSame(hostLight,RenderSettings.sun);
-                Assert.IsTrue(RenderSettings.fog);Assert.AreSame(originalPipeline,QualitySettings.renderPipeline);
+                Assert.IsTrue(RenderSettings.fog);
+                SharedRuntimeRenderPipelineLease.ShutdownSession();
+                Assert.AreSame(originalPipeline,QualitySettings.renderPipeline);
             }
             finally
             {
+                SharedRuntimeRenderPipelineLease.ShutdownSession();
                 UnityEngine.SceneManagement.SceneManager.SetActiveScene(match);
                 UnityEditor.SceneManagement.EditorSceneManager.CloseScene(source,true);
                 UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity",UnityEditor.SceneManagement.OpenSceneMode.Single);
             }
             Debug.Log("[S004CampaignLightingValidation] result=Passed authoredSunPreserved=1 matchLightsRestored=1");
+        }
+
+        [Test]
+        public void SharedRuntimePipelineReusesQualityAssetsAcrossCampaignReplays()
+        {
+            SharedRuntimeRenderPipelineLease.ShutdownSession();
+            var originalPipeline=QualitySettings.renderPipeline;
+            var profile=UnityEditor.AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(
+                "Assets/Game/Rendering/VisualQualityConfig.asset");
+            Assert.NotNull(profile);
+            var lowSource=profile.LowRenderPipelineAsset;
+            var highSource=profile.HighRenderPipelineAsset;
+            Assert.NotNull(lowSource);Assert.NotNull(highSource);
+            float lowSourceScale=lowSource.renderScale,highSourceScale=highSource.renderScale;
+            float lowSourceShadow=lowSource.shadowDistance,highSourceShadow=highSource.shadowDistance;
+            int lowSourceMsaa=lowSource.msaaSampleCount,highSourceMsaa=highSource.msaaSampleCount;
+            var campaignOwner=new object();
+            try
+            {
+                var lowRuntime=SharedRuntimeRenderPipelineLease.SelectQuality(lowSource,.5f);
+                Assert.AreSame(lowRuntime,QualitySettings.renderPipeline);
+                Assert.AreSame(lowSource,SharedRuntimeRenderPipelineLease.SourceFor(lowRuntime));
+                Assert.AreEqual(lowSourceMsaa,lowRuntime.msaaSampleCount);
+                Assert.IsTrue(SharedRuntimeRenderPipelineLease.AcquireCampaignShadows(campaignOwner));
+                Assert.GreaterOrEqual(lowRuntime.shadowDistance,Application.isMobilePlatform?160f:260f);
+
+                var highRuntime=SharedRuntimeRenderPipelineLease.SelectQuality(highSource,.75f);
+                Assert.AreNotSame(lowRuntime,highRuntime);
+                Assert.AreEqual(lowSourceShadow,lowRuntime.shadowDistance);
+                Assert.GreaterOrEqual(highRuntime.shadowDistance,Application.isMobilePlatform?160f:260f);
+                Assert.AreEqual(highSourceMsaa,highRuntime.msaaSampleCount);
+                SharedRuntimeRenderPipelineLease.ReleaseCampaignShadows(new object());
+                Assert.IsTrue(SharedRuntimeRenderPipelineLease.HasCampaignShadowOverride);
+                SharedRuntimeRenderPipelineLease.ReleaseCampaignShadows(campaignOwner);
+                Assert.AreEqual(highSourceShadow,highRuntime.shadowDistance);
+
+                var replayRuntime=SharedRuntimeRenderPipelineLease.SelectQuality(lowSource,.5f);
+                Assert.AreSame(lowRuntime,replayRuntime);
+                Assert.AreEqual(2,SharedRuntimeRenderPipelineLease.RuntimeAssetCount);
+                Assert.AreEqual(lowSourceScale,lowSource.renderScale);
+                Assert.AreEqual(highSourceScale,highSource.renderScale);
+                Assert.AreEqual(lowSourceShadow,lowSource.shadowDistance);
+                Assert.AreEqual(highSourceShadow,highSource.shadowDistance);
+            }
+            finally
+            {
+                SharedRuntimeRenderPipelineLease.ReleaseCampaignShadows(campaignOwner);
+                SharedRuntimeRenderPipelineLease.ShutdownSession();
+            }
+            Assert.AreSame(originalPipeline,QualitySettings.renderPipeline);
+        }
+
+        public static void RunSharedRuntimePipelineLeaseValidation()
+        {
+            try
+            {
+                var tests=new SkirmishSharedMaterialsTests();
+                tests.SharedRuntimePipelineReusesQualityAssetsAcrossCampaignReplays();
+                tests.S004CampaignLightingUsesAuthoredSunAndRestoresMatchLights();
+                global::AndroidVisualQualityValidationTests.RuntimeQualityTierMappingsAreComplete();
+                Debug.Log("[SharedRuntimePipelineLeaseValidation] result=Passed cases=3");
+                ValidationExit.Passed();
+            }
+            catch(Exception exception)
+            {
+                Debug.LogException(exception);
+                Debug.LogError("[SharedRuntimePipelineLeaseValidation] result=Failed");
+                ValidationExit.Failed();
+            }
         }
 
         private static void ValidateS004Environment()

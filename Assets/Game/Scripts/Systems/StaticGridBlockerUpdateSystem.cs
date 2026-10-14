@@ -34,15 +34,18 @@ namespace Game.Runtime
             ref NativeBitArray blocked,
             int2 min,
             int2 max,
-            int delta)
+            int delta,
+            in StaticGridBlockerSurfaceOpeningComponent opening)
         {
             int2 clampedMin = new int2(math.clamp(min.x, 0, grid.Width), math.clamp(min.y, 0, grid.Height));
             int2 clampedMax = new int2(math.clamp(max.x, 0, grid.Width), math.clamp(max.y, 0, grid.Height));
+            bool hasOpening = opening.IsValid;
             for (int y = clampedMin.y; y < clampedMax.y; y++)
             {
                 int row = y * grid.Width;
                 for (int x = clampedMin.x; x < clampedMax.x; x++)
-                    ApplyDelta(ref counts, ref blocked, row + x, delta);
+                    if (!hasOpening || !opening.ContainsFullCell(grid, x, y))
+                        ApplyDelta(ref counts, ref blocked, row + x, delta);
             }
         }
 
@@ -103,6 +106,8 @@ namespace Game.Runtime
             var friendlyPassLookup = SystemAPI.GetComponentLookup<FriendlyPassGridBlocker>(true);
             var authoredBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true);
             var buildingInfoLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true);
+            var openingLookup = SystemAPI.GetComponentLookup<StaticGridBlockerSurfaceOpeningComponent>(true);
+            var prevOpeningLookup = SystemAPI.GetComponentLookup<StaticGridBlockerPrevSurfaceOpeningComponent>(true);
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -118,7 +123,10 @@ namespace Game.Runtime
                     ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
                 ComputeBounds(origin, size.ValueRO, out var min, out var max);
                 byte friendlyPassFactionId = GetFriendlyPassFactionId(friendlyPassLookup, entity);
-                ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1);
+                var opening = openingLookup.HasComponent(entity) ? openingLookup[entity] : default;
+                ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1, opening);
+                if (openingLookup.HasComponent(entity))
+                    ecb.AddComponent(entity, new StaticGridBlockerPrevSurfaceOpeningComponent { Value = opening });
                 if (friendlyPassFactionId != byte.MaxValue)
                     ApplyFriendlyPassRect(grid, ref friendlyPassFactionIds, min, max, friendlyPassFactionId);
                 ecb.AddComponent(entity, new StaticBlockerPrevBounds
@@ -142,14 +150,25 @@ namespace Game.Runtime
                 byte oldFriendlyPassFactionId = prev.ValueRO.FriendlyPassFactionId;
                 byte friendlyPassFactionId = GetFriendlyPassFactionId(friendlyPassLookup, entity);
                 bool boundsChanged = min.x != oldMin.x || min.y != oldMin.y || max.x != oldMax.x || max.y != oldMax.y;
+                var oldOpening = prevOpeningLookup.HasComponent(entity) ? prevOpeningLookup[entity].Value : default;
+                var opening = openingLookup.HasComponent(entity) ? openingLookup[entity] : default;
+                bool openingChanged = !opening.SameGeometry(oldOpening);
                 bool friendlyPassChanged = oldFriendlyPassFactionId != friendlyPassFactionId;
-                if (!boundsChanged && !friendlyPassChanged)
+                if (!boundsChanged && !friendlyPassChanged && !openingChanged)
                     continue;
 
-                if (boundsChanged)
+                if (boundsChanged || openingChanged)
                 {
-                    ApplyRectDelta(grid, ref counts, ref blocked, oldMin, oldMax, -1);
-                    ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1);
+                    ApplyRectDelta(grid, ref counts, ref blocked, oldMin, oldMax, -1, oldOpening);
+                    ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1, opening);
+                    if (openingLookup.HasComponent(entity))
+                    {
+                        var previous = new StaticGridBlockerPrevSurfaceOpeningComponent { Value = opening };
+                        if (prevOpeningLookup.HasComponent(entity)) ecb.SetComponent(entity, previous);
+                        else ecb.AddComponent(entity, previous);
+                    }
+                    else if (prevOpeningLookup.HasComponent(entity))
+                        ecb.RemoveComponent<StaticGridBlockerPrevSurfaceOpeningComponent>(entity);
                 }
 
                 if (oldFriendlyPassFactionId != byte.MaxValue)
@@ -167,7 +186,10 @@ namespace Game.Runtime
                          .WithNone<StaticGridBlocker>()
                          .WithEntityAccess())
             {
-                ApplyRectDelta(grid, ref counts, ref blocked, prev.ValueRO.Min, prev.ValueRO.Max, -1);
+                var oldOpening = prevOpeningLookup.HasComponent(entity) ? prevOpeningLookup[entity].Value : default;
+                ApplyRectDelta(grid, ref counts, ref blocked, prev.ValueRO.Min, prev.ValueRO.Max, -1, oldOpening);
+                if (prevOpeningLookup.HasComponent(entity))
+                    ecb.RemoveComponent<StaticGridBlockerPrevSurfaceOpeningComponent>(entity);
                 if (prev.ValueRO.FriendlyPassFactionId != byte.MaxValue)
                     ApplyFriendlyPassRect(grid, ref friendlyPassFactionIds, prev.ValueRO.Min, prev.ValueRO.Max, byte.MaxValue);
 

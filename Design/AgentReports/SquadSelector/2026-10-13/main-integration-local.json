@@ -1,0 +1,28 @@
+{
+  "commit": "529bf749b5566d8a78ce55311c41b84463391b40",
+  "unrelatedDirtyFilesPreserved": 65,
+  "sharedMergedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+    "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaPlayDecisionSystem.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaPlayComponents.cs"
+  ],
+  "recoverableStash": "e6816598378778a5a1460a6f83c9e5cebcaaf3cb",
+  "sourceChangedForIntegratedValidation": true,
+  "freshRecompile": {
+    "failed": false,
+    "errors": []
+  },
+  "focusedCompatibility": {
+    "wrapperExit": 0,
+    "plannerCases": 111,
+    "checks": 17
+  },
+  "pendingGates": [
+    "Fresh complete normal-input mission on combined main source",
+    "Real device/player acceptance"
+  ]
+}

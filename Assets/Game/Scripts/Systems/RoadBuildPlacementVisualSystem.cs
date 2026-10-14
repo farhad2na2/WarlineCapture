@@ -13,6 +13,7 @@ namespace Game.Runtime
             public GameObject PlacementOutline;
             public Transform[] PlacementOutlineEdges;
             public MeshRenderer[] PlacementOutlineRenderers;
+            public Material[] PlacementOutlineMaterials;
         }
 
         protected override void OnCreate()
@@ -34,10 +35,14 @@ namespace Game.Runtime
             if (state == null)
                 return;
 
+            if (state.PlacementOutline != null || state.PlacementOutlineMaterials != null)
+                Dispose(state);
+
             state.PlacementOutline = new GameObject("PlacementOutline");
             state.PlacementOutline.transform.SetParent(runtimeRoot, false);
             state.PlacementOutlineEdges = new Transform[4];
             state.PlacementOutlineRenderers = new MeshRenderer[4];
+            state.PlacementOutlineMaterials = new Material[4];
 
             for (int i = 0; i < 4; i++)
             {
@@ -51,7 +56,9 @@ namespace Game.Runtime
                 var renderer = edge.GetComponent<MeshRenderer>();
                 renderer.shadowCastingMode = ShadowCastingMode.Off;
                 renderer.receiveShadows = false;
-                renderer.material = CreatePlacementMaterial();
+                Material material = CreatePlacementMaterial();
+                renderer.sharedMaterial = material;
+                state.PlacementOutlineMaterials[i] = material;
                 state.PlacementOutlineEdges[i] = edge.transform;
                 state.PlacementOutlineRenderers[i] = renderer;
             }
@@ -68,9 +75,19 @@ namespace Game.Runtime
             if (state.PlacementOutline != null)
                 Destroy(state.PlacementOutline);
 
+            if (state.PlacementOutlineMaterials != null)
+            {
+                foreach (Material material in state.PlacementOutlineMaterials)
+                {
+                    if (material != null)
+                        Destroy(material);
+                }
+            }
+
             state.PlacementOutline = null;
             state.PlacementOutlineEdges = null;
             state.PlacementOutlineRenderers = null;
+            state.PlacementOutlineMaterials = null;
         }
 
         public void UpdatePlacementOutline(
@@ -157,18 +174,16 @@ namespace Game.Runtime
 
         private void ApplyPlacementMaterialColor(State state, Color color)
         {
-            if (state?.PlacementOutlineRenderers == null)
+            if (state?.PlacementOutlineRenderers == null || state.PlacementOutlineMaterials == null)
                 return;
 
             Color transparentColor = color;
             transparentColor.a = 0.22f;
-            for (int i = 0; i < state.PlacementOutlineRenderers.Length; i++)
+            for (int i = 0; i < state.PlacementOutlineMaterials.Length; i++)
             {
-                var renderer = state.PlacementOutlineRenderers[i];
-                if (renderer == null)
+                Material material = state.PlacementOutlineMaterials[i];
+                if (material == null)
                     continue;
-
-                Material material = renderer.material;
                 if (material.HasProperty("_BaseColor"))
                     material.SetColor("_BaseColor", transparentColor);
                 if (material.HasProperty("_Color"))

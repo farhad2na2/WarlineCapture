@@ -16,6 +16,9 @@ namespace Game.UI.Runtime
         // negative and draw behind the HUD. Stay just above the ARIA hand.
         public const int NarrativeChrome = 32764;
         public const int ModalChrome = 32766;
+        // Confirmation and terminal actions can overlay an open Pause modal.
+        // This is the last valid signed 16-bit layer; never increment past it.
+        public const int ConfirmationChrome = short.MaxValue;
 
         public static void RaiseAboveTutorial(GameObject root, int sortingOrder = ModalChrome)
         {

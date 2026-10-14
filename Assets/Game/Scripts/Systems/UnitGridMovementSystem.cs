@@ -715,6 +715,12 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            // Paused updates must not change facing, path state, or vehicle kinematics.
+            if (SystemAPI.Time.DeltaTime <= 0f ||
+                (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
+                 gameplay.SimulationActive == 0))
+                return;
+
             double startTime = Time.realtimeSinceStartupAsDouble;
             try
             {

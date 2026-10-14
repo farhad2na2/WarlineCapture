@@ -475,6 +475,28 @@ namespace Game.Editor
             Step(); Check(plan.Intent == AriaSkirmishIntent.Attack && output.TargetId == 14 &&
                 output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
                 "no accepted orders still require the complete assault selection before explicit Attack");
+            // A source-pinned ARIA sweep can momentarily lack a presented page
+            // after roster losses while its accepted ArmyAttack is still travelling.
+            // The HUD Hold control remains visible, but no group is selected, so
+            // TryHoldSelection cannot accept it. Waiting preserves the assault.
+            view = new AriaSkirmishObservation { Active = true, ExpandedSession = true,
+                Time = 190, Infantry = 15, PlayerHealth = 800, EnemyHealth = 800,
+                EnemyDesignatedAlive = true, CombinedArmsField = true,
+                OwnStructureAttackUnits = 4,
+                Hold = new AriaTouchTarget { Available = true, Id = 77 } };
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, LastProgressAt = 190,
+                EnemyHealth = 800, PlayerHealth = 800, Infantry = 15 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing,
+                LastProgressAt = 190, LastObjectiveProgressAt = 190 };
+            for (int attempt = 0; attempt < 4; attempt++)
+            {
+                view.Time = 190 + attempt * 2;
+                Step(); AriaPlayDecisionSystem.Step(output, ref touch);
+                Check(plan.Intent == AriaSkirmishIntent.ObserveBattle &&
+                    output.Kind == AriaPlayObservationKind.Waiting && touch.Attempts == 0 &&
+                    touch.Phase != AriaPlayPhase.Blocked,
+                    "unselected in-flight assault observes battle instead of exhausting Hold retries");
+            }
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 
             void Step() => AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);

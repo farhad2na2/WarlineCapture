@@ -137,6 +137,65 @@ namespace Game.Tests.Editor
             finally { UnityEngine.Object.DestroyImmediate(sprite); UnityEngine.Object.DestroyImmediate(texture); }
         });
 
+        [Test]
+        public void PresentedCommandPointsMatchLaidOutMapEdgesAndCenter() => WithMap((view, rect) =>
+        {
+            SetPresentedGrid(view, new MatchHudMinimapProjectionGrid(Vector3.zero, 100, 100));
+            foreach (var world in new[] { Vector3.zero, new Vector3(50, 0, 50), new Vector3(100, 0, 100) })
+            {
+                Assert.IsTrue(view.TryGetPresentedMapPoint(world, null, out var point));
+                Vector2 expected = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(new Vector3(
+                    rect.rect.xMin + world.x / 100 * rect.rect.width, rect.rect.yMin + world.z / 100 * rect.rect.height, 0)));
+                Assert.That(Vector2.Distance(point, expected), Is.LessThan(.01f));
+            }
+        });
+
+        [TestCase(0f, 400f)]
+        [TestCase(400f, 0f)]
+        [TestCase(-400f, 400f)]
+        public void UnlaidOutMapCannotAdvertisePresentedCommandPoint(float width, float height) => WithMap((view, rect) =>
+        {
+            SetPresentedGrid(view, new MatchHudMinimapProjectionGrid(Vector3.zero, 100, 100));
+            rect.sizeDelta = new Vector2(width, height);
+            Assert.IsFalse(view.TryGetPresentedMapPoint(new Vector3(50, 0, 50), null, out var point));
+            Assert.That(point, Is.EqualTo(Vector2.zero));
+        });
+
+        [Test]
+        public void HiddenOrDisabledMapCannotAdvertisePresentedCommandPoint() => WithMap((view, rect) =>
+        {
+            SetPresentedGrid(view, new MatchHudMinimapProjectionGrid(Vector3.zero, 100, 100));
+            view.enabled = false;
+            Assert.IsFalse(view.TryGetPresentedMapPoint(Vector3.zero, null, out _));
+            view.enabled = true;
+            rect.gameObject.SetActive(false);
+            Assert.IsFalse(view.TryGetPresentedMapPoint(Vector3.zero, null, out _));
+        });
+
+        [Test]
+        public void CollapsedRenderedMapCannotAdvertiseItsCenter() => WithMap((view, rect) =>
+        {
+            SetPresentedGrid(view, new MatchHudMinimapProjectionGrid(Vector3.zero, 100, 100));
+            rect.localScale = new Vector3(0, 1, 1);
+            Assert.That(rect.rect.width, Is.GreaterThan(0), "The local rect alone is insufficient.");
+            Assert.IsFalse(view.TryGetPresentedMapPoint(new Vector3(50, 0, 50), null, out var point));
+            Assert.That(point, Is.EqualTo(Vector2.zero));
+        });
+
+        [Test]
+        public void NonfiniteProjectionCannotAdvertisePresentedCommandPoint() => WithMap((view, rect) =>
+        {
+            SetPresentedGrid(view, new MatchHudMinimapProjectionGrid(Vector3.zero, 100, 100));
+            Assert.IsFalse(view.TryGetPresentedMapPoint(new Vector3(float.NaN, 0, 50), null, out _));
+            Assert.IsFalse(view.TryGetPresentedMapPoint(new Vector3(float.PositiveInfinity, 0, 50), null, out _));
+            SetPresentedGrid(view, new MatchHudMinimapProjectionGrid(Vector3.zero, float.PositiveInfinity, 100));
+            Assert.IsFalse(view.TryGetPresentedMapPoint(Vector3.zero, null, out _));
+        });
+
+        private static void SetPresentedGrid(MatchHudMinimapView view, MatchHudMinimapProjectionGrid grid)
+            => typeof(MatchHudMinimapView).GetField("PresentedProjection", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic).SetValue(view, grid);
+
         private static void WithMap(Action<MatchHudMinimapView, RectTransform> test)
         {
             var root = new GameObject("MinimapTapTest", typeof(RectTransform), typeof(Canvas));
@@ -175,7 +234,14 @@ namespace Game.Tests.Editor
             suite.FullMapSpriteKeepsAllEdgesInsideClipAndFocusable(400f, 300f, 2f);
             suite.FullMapSpriteKeepsAllEdgesInsideClipAndFocusable(300f, 400f, .5f);
             suite.CompactMapRetainsItsExistingAspectPolicy();
-            Debug.Log("[MatchHudMinimapTapTests] result=Passed tests=12");
+            suite.PresentedCommandPointsMatchLaidOutMapEdgesAndCenter();
+            suite.UnlaidOutMapCannotAdvertisePresentedCommandPoint(0, 400);
+            suite.UnlaidOutMapCannotAdvertisePresentedCommandPoint(400, 0);
+            suite.UnlaidOutMapCannotAdvertisePresentedCommandPoint(-400, 400);
+            suite.HiddenOrDisabledMapCannotAdvertisePresentedCommandPoint();
+            suite.CollapsedRenderedMapCannotAdvertiseItsCenter();
+            suite.NonfiniteProjectionCannotAdvertisePresentedCommandPoint();
+            Debug.Log("[MatchHudMinimapTapTests] result=Passed tests=19");
         }
     }
 }

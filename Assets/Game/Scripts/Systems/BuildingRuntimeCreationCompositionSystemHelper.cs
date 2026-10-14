@@ -154,6 +154,7 @@ namespace Game.Runtime
                 building.ProducedUnitSlots = new Entity[building.ProductionSpawnLocalPositions.Length];
 
             context.InitializeVisuals?.Invoke(building);
+            if (hasEntityManager) BuildingRunwayPathingSurface.Attach(entityManager, building);
             AttachRuntimeLink(
                 context.RuntimeLinkInteractionSystem,
                 context.RuntimeLinkInteractionContext,

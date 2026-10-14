@@ -25,6 +25,13 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            // Frozen simulation must preserve the exact vehicle rotation. Even a
+            // zero-weight slerp can round its quaternion on a paused update.
+            if (SystemAPI.Time.DeltaTime <= 0f ||
+                (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
+                 gameplay.SimulationActive == 0))
+                return;
+
             new AlignJob
             {
                 DeltaTime = SystemAPI.Time.DeltaTime

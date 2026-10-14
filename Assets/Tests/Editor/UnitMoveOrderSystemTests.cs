@@ -32,6 +32,9 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.AttackMove_PartialAcceptanceKeepsRejectedMemberAndGroupHonest());
             RunCase(test => test.AttackMove_GroupBookkeepingRespectsFactionAttemptAndLegacyScope());
             RunCase(test => test.RegistryAttackIntentLeavesTravelAndCombatToSharedOwners());
+            RunCase(test => test.AttackMove_PublicEvidenceKeepsScopedAndUnscopedAcceptanceStrict());
+            RunCase(test => test.AttackMove_AutonomousHomingKeepsNativeOrdersWithoutNewCommandEvidence());
+            RunCase(test => test.AttackMove_RejectedAutonomousRefreshKeepsNativeHoldAndAuditUnchanged());
             RunCase(test => test.NativeAirAttackPreservesFuelRejectionAndExistingHold());
             RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
             RunCase(test => test.BuildSelectedCurrentFootprintCells_UsesClampedFootprintsWithinGrid());
@@ -52,7 +55,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=26");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=29");
         }
         catch (System.Exception ex)
         {
@@ -676,6 +679,116 @@ public sealed class UnitMoveOrderSystemTests
         Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyGroupRecord>(active)[0].LastOrder);
         Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(active)[1].LastOrder);
         Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(legacy)[0].LastOrder);
+    }
+
+    [Test]
+    public void AttackMove_PublicEvidenceKeepsScopedAndUnscopedAcceptanceStrict()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var session = AttackMoveSession("public-audit");
+        var unit = AttackMoveActor("public-audit", 1, 1, SkirmishRoleKind.Rocketeer);
+        AddAttackMoveGroup(session, 1, 1, SkirmishRoleKind.Rocketeer);
+        uint observedReceipt = 0; bool observedVerified = false; int events = 0;
+        System.Action<string, uint, bool> observe = (operation, receipt, verified) =>
+        { Assert.AreEqual("AttackMove", operation); observedReceipt = receipt; observedVerified = verified; events++; };
+        AriaCommandEvidence.Begin(); AriaCommandEvidence.Recorded += observe;
+        try
+        {
+            AriaCommandEvidence.ObserveRelease(40, Vector2.zero);
+            uint receipt = AriaCommandEvidence.ClaimRelease(40, Vector2.zero); Assert.AreNotEqual(0u, receipt);
+            using (AriaCommandEvidence.Enter(receipt))
+                Assert.IsTrue(AttackMoveSystem.IssueSelected(em, new int2(20, 20), new float3(20.5f, 0, 20.5f), 40).Accepted);
+            Assert.AreEqual(1, events); Assert.AreEqual(receipt, observedReceipt); Assert.IsTrue(observedVerified);
+            Assert.AreEqual(1, AriaCommandEvidence.AcceptedCommands); Assert.AreEqual(0, AriaCommandEvidence.Violations);
+            Assert.IsTrue(AriaCommandEvidence.TryReadAudit(1, 0, out var violations)); Assert.AreEqual(0, violations);
+            Assert.IsTrue(AttackMoveSystem.IssueSelected(em, new int2(21, 20), new float3(21.5f, 0, 20.5f), 41).Accepted);
+            Assert.AreEqual(2, events); Assert.AreEqual(0u, observedReceipt); Assert.IsFalse(observedVerified);
+            Assert.AreEqual(2, AriaCommandEvidence.AcceptedCommands); Assert.AreEqual(1, AriaCommandEvidence.Violations);
+            Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
+            Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyGroupRecord>(session)[0].LastOrder);
+        }
+        finally { AriaCommandEvidence.Recorded -= observe; AriaCommandEvidence.End(); }
+    }
+
+    [Test]
+    public void AttackMove_AutonomousHomingKeepsNativeOrdersWithoutNewCommandEvidence()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var session = AttackMoveSession("homing-audit");
+        var unit = AttackMoveActor("homing-audit", 1, 1, SkirmishRoleKind.Rocketeer);
+        AddAttackMoveGroup(session, 1, 1, SkirmishRoleKind.Rocketeer);
+        em.AddComponent<SkirmishSharedActorTag>(unit); em.AddComponent<CombatTargetPolicy>(unit);
+        var target = em.CreateEntity(typeof(LocalTransform), typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishContactSightComponent));
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(20.5f, 0, 20.5f)));
+        em.SetComponentData(target, new SkirmishAttemptOwnedComponent { SessionId = new FixedString64Bytes("homing-audit"), FactionId = 2 });
+        em.SetComponentData(target, new SkirmishContactSightComponent { Sight = SkirmishContactSight.Visible });
+        int events = 0; System.Action<string, uint, bool> observe = (_, __, ___) => events++;
+        AriaCommandEvidence.Begin(); AriaCommandEvidence.Recorded += observe;
+        try
+        {
+            AriaCommandEvidence.ObserveRelease(50, Vector2.zero);
+            uint receipt = AriaCommandEvidence.ClaimRelease(50, Vector2.zero);
+            using (AriaCommandEvidence.Enter(receipt))
+                Assert.IsTrue(SkirmishWorldMovementService.AssignIntent(em, unit, new float3(12.5f, 0, 12.5f), SkirmishGroupOrderKind.Attack));
+            var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit); intent.AttackTarget = target; em.SetComponentData(unit, intent);
+            Assert.AreEqual(1, events); Assert.AreEqual(1, AriaCommandEvidence.AcceptedCommands);
+            SkirmishWorldMovementService.Step(em, session, .2f, false);
+            intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+            Assert.AreEqual(20.5f, intent.DestinationX); Assert.AreEqual(20.5f, intent.DestinationZ); Assert.AreEqual(target, intent.AttackTarget);
+            Assert.IsTrue(em.HasComponent<UnitPathRequest>(unit)); Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
+            Assert.AreEqual(em.GetComponentData<UnitTarget>(unit).Cell, em.GetComponentData<AttackMoveOrder>(unit).Destination);
+            Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyGroupRecord>(session)[0].LastOrder);
+            em.SetComponentData(target, LocalTransform.FromPosition(new float3(22.5f, 0, 20.5f)));
+            SkirmishWorldMovementService.Step(em, session, .2f, false);
+            Assert.AreEqual(22.5f, em.GetComponentData<SkirmishMoveIntentComponent>(unit).DestinationX);
+            Assert.AreEqual(new int2(22, 20), em.GetComponentData<AttackMoveOrder>(unit).Destination);
+
+            // A moving visible target must not turn each homing refresh into a
+            // fresh Move that removes the native EngageTarget before its shot.
+            em.AddComponentData(unit, new EngageTarget { Target = target, IsCommanded = 1 });
+            em.SetComponentData(target, LocalTransform.FromPosition(new float3(24.5f, 0, 20.5f)));
+            SkirmishWorldMovementService.Step(em, session, .2f, false);
+            Assert.AreEqual(target, em.GetComponentData<EngageTarget>(unit).Target);
+            Assert.AreEqual(24.5f, em.GetComponentData<SkirmishMoveIntentComponent>(unit).DestinationX);
+            Assert.AreEqual(new int2(22, 20), em.GetComponentData<AttackMoveOrder>(unit).Destination,
+                "The combat motor owns pursuit while this exact target is engaged.");
+            em.SetComponentData(target, LocalTransform.FromPosition(new float3(25.5f, 0, 20.5f)));
+            SkirmishWorldMovementService.Step(em, session, .2f, false);
+            Assert.AreEqual(target, em.GetComponentData<EngageTarget>(unit).Target);
+            Assert.AreEqual(25.5f, em.GetComponentData<SkirmishMoveIntentComponent>(unit).DestinationX);
+
+            // If combat loses the engagement at the latest target position,
+            // the still-stale native travel goal must catch up without a new Touch.
+            em.RemoveComponent<EngageTarget>(unit);
+            SkirmishWorldMovementService.Step(em, session, .2f, false);
+            Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+            Assert.AreEqual(new int2(25, 20), em.GetComponentData<AttackMoveOrder>(unit).Destination);
+            Assert.AreEqual(new int2(25, 20), em.GetComponentData<UnitTarget>(unit).Cell);
+            Assert.AreEqual(1, events); Assert.AreEqual(1, AriaCommandEvidence.AcceptedCommands); Assert.AreEqual(0, AriaCommandEvidence.Violations);
+            Assert.IsTrue(AriaCommandEvidence.TryReadAudit(1, 0, out var violations)); Assert.AreEqual(0, violations);
+        }
+        finally { AriaCommandEvidence.Recorded -= observe; AriaCommandEvidence.End(); }
+    }
+
+    [Test]
+    public void AttackMove_RejectedAutonomousRefreshKeepsNativeHoldAndAuditUnchanged()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var session = AttackMoveSession("refresh-fuel");
+        var unit = AttackMoveActor("refresh-fuel", 1, 1, SkirmishRoleKind.Tank);
+        AddAttackMoveGroup(session, 1, 1, SkirmishRoleKind.Tank, SkirmishGroupOrderKind.Hold);
+        em.AddComponentData(unit, new UnitFuelConsumption { Enabled = 1, GroundFuelPerCell = 1 }); em.AddComponent<HoldPositionOrderTag>(unit);
+        AriaCommandEvidence.Begin();
+        try
+        {
+            using var units = new NativeArray<Entity>(new[] { unit }, Allocator.Temp);
+            var result = AttackMoveSystem.RefreshUnits(em, units, 1, new int2(20, 20), new float3(20.5f, 0, 20.5f), 60);
+            Assert.IsFalse(result.Accepted); Assert.AreEqual(TacticalCommandReasonCode.InsufficientFuel, result.ReasonCode);
+            Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit)); Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit));
+            Assert.AreEqual(SkirmishGroupOrderKind.Hold, em.GetBuffer<SkirmishArmyGroupRecord>(session)[0].LastOrder);
+            Assert.AreEqual(0, AriaCommandEvidence.AcceptedCommands); Assert.AreEqual(0, AriaCommandEvidence.Violations);
+        }
+        finally { AriaCommandEvidence.End(); }
     }
 
     private Entity AttackMoveSession(string id, byte legacy = 0)

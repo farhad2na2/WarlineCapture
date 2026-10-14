@@ -6,6 +6,7 @@ using Game.Missions.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Ecs;
+using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using TMPro;
 using Unity.Collections;
@@ -16,7 +17,7 @@ using UnityEngine.UI;
 
 public sealed class M01FirstContactHudRestrictionTests
 {
-    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=8";
+    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=9";
 
     [MenuItem("Game/Validation/Run M01 First Contact HUD Restrictions Focused")]
     public static void RunFocusedValidation()
@@ -27,7 +28,8 @@ public sealed class M01FirstContactHudRestrictionTests
             Run(CanonicalMissionRestrictionsProjectReadOnly, ref passed);
             Run(CinematicInteractionLockTracksOpeningReturn, ref passed);
             Run(ClearedCampaignStateDoesNotLockSkirmish, ref passed);
-            Run(RightRailDisablesAndGraysBuildAndSupport, ref passed);
+            Run(SkirmishIntroLocksPlayingHudUntilCompletionAndReplay, ref passed);
+            Run(RightRailDisablesBuildAndHidesUnavailableSupport, ref passed);
             Run(ResourceHeaderDisablesAndGraysEconomyButPreservesCivilianRisk, ref passed);
             Run(SquadTrayDisablesAndGraysNonAuthoredCategoriesButPreservesDefaults, ref passed);
             Run(SquadGuidancePointsAtExactSoldierButtonWithoutBlockingInput, ref passed);
@@ -155,11 +157,84 @@ public sealed class M01FirstContactHudRestrictionTests
     }
 
     [Test]
-    public static void RightRailDisablesAndGraysBuildAndSupport()
+    public static void SkirmishIntroLocksPlayingHudUntilCompletionAndReplay()
     {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = new("Skirmish intro HUD restriction test");
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity match = em.CreateEntity(typeof(SkirmishMatchState));
+            em.SetComponentData(match, new SkirmishMatchState { Phase = SkirmishPhase.Playing });
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var legacy), Is.True);
+            Assert.That(legacy.CinematicInteractionLocked, Is.False, "Absent intro retains legacy behavior.");
+
+            Entity boundary = em.CreateEntity(typeof(MatchIntroTransitionComponent), typeof(UiShellStateComponent));
+            var intro = new MatchIntroTransitionComponent
+            {
+                State = MatchIntroTransitionStateKind.EnteringHud,
+                Progress01 = .66f,
+                InputLocked = 1,
+                SequenceId = 4
+            };
+            em.SetComponentData(boundary, intro);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var entering), Is.True);
+            Assert.That(entering.CinematicInteractionLocked, Is.True,
+                "A Playing match must not present commands during the authoritative intro lock.");
+            Assert.That(em.GetComponentData<MatchIntroTransitionComponent>(boundary).InputLocked, Is.EqualTo(1));
+            Assert.That(em.GetComponentData<SkirmishMatchState>(match).Phase, Is.EqualTo(SkirmishPhase.Playing));
+
+            intro.State = MatchIntroTransitionStateKind.Complete;
+            intro.InputLocked = 0;
+            intro.Progress01 = 1f;
+            em.SetComponentData(boundary, intro);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var complete), Is.True);
+            Assert.That(complete.CinematicInteractionLocked, Is.False);
+
+            intro.State = MatchIntroTransitionStateKind.EnteringHud;
+            intro.InputLocked = 1;
+            intro.SequenceId++;
+            em.SetComponentData(boundary, intro);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var replay), Is.True);
+            Assert.That(replay.CinematicInteractionLocked, Is.True, "Replay must reapply the same intro gate.");
+
+            intro.InputLocked = 0;
+            em.SetComponentData(boundary, intro);
+            em.RemoveComponent<UiShellStateComponent>(boundary);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var invalid), Is.True);
+            Assert.That(invalid.CinematicInteractionLocked, Is.True, "An invalid intro boundary fails closed.");
+            em.AddComponent<UiShellStateComponent>(boundary);
+            Entity duplicate = em.CreateEntity(typeof(MatchIntroTransitionComponent));
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var ambiguous), Is.True);
+            Assert.That(ambiguous.CinematicInteractionLocked, Is.True, "Ambiguous intro ownership fails closed.");
+            em.DestroyEntity(duplicate);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restored), Is.True);
+            Assert.That(restored.CinematicInteractionLocked, Is.False);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
+    public static void RightRailDisablesBuildAndHidesUnavailableSupport()
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        var gatewayField = typeof(UiShellRuntimeGateway).GetField("current", BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.That(gatewayField, Is.Not.Null);
+        var previousGateway = (IUiShellRuntimeGateway)gatewayField.GetValue(null);
+        using World world = new("HUD restrictions without Support session");
         GameObject root = new("RightRail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
         try
         {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            Assert.That(UiShellRuntimeGateway.TryReadSupport(out _), Is.False,
+                "This fixture has no supported session and must not expose Support.");
             Button build = CreateButton(root.transform, "BuildCommand");
             Button support = CreateButton(root.transform, "SupportCommand");
             Button zoomIn = CreateButton(root.transform, "ZoomInButton");
@@ -174,19 +249,14 @@ public sealed class M01FirstContactHudRestrictionTests
                 supportDisabled: true,
                 hideUnrelatedControls: true);
             Assert.That(build.gameObject.activeSelf, Is.True);
-            Assert.That(support.gameObject.activeSelf, Is.True);
+            Assert.That(support.gameObject.activeSelf, Is.False, "Unavailable Support stays hidden.");
             Assert.That(build.interactable, Is.False);
-            Assert.That(support.interactable, Is.False);
             Assert.That(build.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
-            Assert.That(support.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
             var cinematicGroup = build.GetComponent<CanvasGroup>();
             Assert.That(cinematicGroup.interactable, Is.True, "Mission scope must not become a captured cinematic lock.");
             Assert.That(cinematicGroup.blocksRaycasts, Is.True);
             Assert.That(build.colors.disabledColor.a, Is.EqualTo(build.colors.normalColor.a));
-            Assert.That(support.colors.disabledColor.a, Is.EqualTo(support.colors.normalColor.a));
             Assert.That(build.GetComponent<Image>().material.shader.name,
-                Is.EqualTo("Warline/UI/Disabled Grayscale"));
-            Assert.That(support.GetComponent<Image>().material.shader.name,
                 Is.EqualTo("Warline/UI/Disabled Grayscale"));
             Assert.That(zoomIn.gameObject.activeSelf, Is.True);
             Assert.That(zoomOut.gameObject.activeSelf, Is.True);
@@ -195,20 +265,21 @@ public sealed class M01FirstContactHudRestrictionTests
             Assert.That(cinematicGroup.interactable, Is.False, "An active cinematic still owns its input lock.");
             cinematicGroup.interactable = cinematicGroup.blocksRaycasts = true;
             Assert.That(build.gameObject.activeSelf, Is.True, "Skirmish/default presentation must remain unchanged.");
-            Assert.That(support.gameObject.activeSelf, Is.True);
+            Assert.That(support.gameObject.activeSelf, Is.False, "Unavailable Support stays hidden.");
             Assert.That(build.interactable, Is.True);
-            Assert.That(support.interactable, Is.True);
             Assert.That(build.IsInteractable(), Is.True, "The new mission's Build becomes usable after cinematic return.");
         }
         finally
         {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellRuntimeGateway.Register(previousGateway);
             UnityEngine.Object.DestroyImmediate(root);
         }
     }
 
     public static void ValidateScopeLockOwnership()
     {
-        RightRailDisablesAndGraysBuildAndSupport();
+        RightRailDisablesBuildAndHidesUnavailableSupport();
         ClearingAbsentDisabledReasonPreservesCurrentVisuals();
         RightRailDoesNotOverrideMigratedFooterBuild();
         Debug.Log("[MissionScopeLockOwnership] result=Passed independent input locks and idempotent visual restoration");

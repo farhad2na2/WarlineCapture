@@ -58,6 +58,20 @@ namespace Game.Runtime
             Entity passenger,
             UnitTransportAirPickupSystem airPickupSystem,
             UnitMoveOrderSystem moveOrderSystem)
+            => TryIssueBoardOrderCore(em, transport, passenger, airPickupSystem, moveOrderSystem, Entity.Null, 0);
+
+        public Result TryIssueOwnedBoardOrderToPassenger(EntityManager em, Entity session, byte actingFaction,
+            Entity transport, Entity passenger, UnitTransportAirPickupSystem airPickupSystem, UnitMoveOrderSystem moveOrderSystem)
+        {
+            if (!SkirmishActorCommandAuthority.IsActiveOwnedActor(em, session, actingFaction, transport))
+                return Result.Rejected(TacticalCommandReasonCode.InvalidTransport);
+            if (!SkirmishActorCommandAuthority.IsActiveOwnedActor(em, session, actingFaction, passenger))
+                return Result.Rejected(TacticalCommandReasonCode.InvalidPassenger);
+            return TryIssueBoardOrderCore(em, transport, passenger, airPickupSystem, moveOrderSystem, session, actingFaction);
+        }
+
+        private Result TryIssueBoardOrderCore(EntityManager em, Entity transport, Entity passenger,
+            UnitTransportAirPickupSystem airPickupSystem, UnitMoveOrderSystem moveOrderSystem, Entity session, byte actingFaction)
         {
             EnsureEntityQueries(em);
             bool shouldLogTransportBoarding = TransportBoardingDiagnosticSystemHelper.ShouldQueueTransportBoardingDiagnostics(em);
@@ -70,14 +84,17 @@ namespace Game.Runtime
                     out bool airTransport,
                     out bool transportLanded,
                     out bool cargoPlaneTransport,
-                    out Result rejectedTransportResult))
+                    out Result rejectedTransportResult, actingFaction))
             {
                 return rejectedTransportResult;
             }
 
+            byte passengerKind; int cargoWeight;
             if (passenger == Entity.Null ||
                 !em.Exists(passenger) ||
-                !TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out int cargoWeight) ||
+                !(session == Entity.Null
+                    ? TryResolveBoardingPassengerKind(em, transport, passenger, out passengerKind, out cargoWeight)
+                    : TransportBoardingCapacitySystemHelper.TryResolveOwnedPassengerKind(em, transport, passenger, out passengerKind, out cargoWeight)) ||
                 passenger == transport)
             {
                 if (shouldLogTransportBoarding)

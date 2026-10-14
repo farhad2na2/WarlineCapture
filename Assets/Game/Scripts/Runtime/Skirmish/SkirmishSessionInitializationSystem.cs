@@ -50,6 +50,12 @@ namespace Game.Runtime
 
             SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
             ProjectRoles(em, entity, em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup);
+            if (!SkirmishEnemyPlannerService.EnsureSession(em, entity, em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup))
+            {
+                Fail(ref session, SkirmishReasonCode.IncompatibleSave);
+                em.SetComponentData(entity, session);
+                return;
+            }
             session.InitializationComplete = 1;
             session.Phase = SkirmishSessionPhase.Spawning;
             em.SetComponentData(entity, session);

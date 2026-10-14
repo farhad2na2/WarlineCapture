@@ -974,6 +974,8 @@ namespace Game.Runtime
                 return false;
             }
 
+            // Capture the shared queue append boundary; do not infer a latest reservation.
+            int pendingBefore = producerBuilding.PendingProductions?.Count ?? 0;
             if (!SkirmishPopulationPolicy.CanQueue(entityManager,context.RuntimeBuildings,producerBuilding,unitPrefab,productionIndex) ||
                 context.ProductionSystem == null ||
                 !context.ProductionSystem.TryQueuePlayerUnitFromBuilding(
@@ -988,6 +990,19 @@ namespace Game.Runtime
                 return false;
             }
 
+            // The queue already owns and committed payment. Correlation never changes
+            // its success/refund semantics; missing evidence is an abandoned planner intent.
+            if (request.FactionId == 2 && entityManager.Exists(request.RequestOwner) &&
+                entityManager.HasComponent<SkirmishEnemyProductionIntentV1Component>(request.RequestOwner) &&
+                entityManager.HasComponent<SkirmishProductionCatalogRecord>(request.RequestOwner) &&
+                (producerBuilding.PendingProductions?.Count ?? 0) == pendingBefore + 1)
+            {
+                var catalog = entityManager.GetComponentObject<SkirmishProductionCatalogRecord>(request.RequestOwner).Catalog;
+                var appended = producerBuilding.PendingProductions[pendingBefore];
+                if (catalog != null && catalog.TryRole(unitPrefab.name, out var role))
+                    SkirmishEnemyPaidProductionAdapter.RecordAcceptedDispatch(entityManager, in request, role.RoleKind,
+                        appended.ReceiptOwner, appended.ReceiptAttempt, appended.ReceiptId);
+            }
             request.ResultCode = 0;
             return true;
         }

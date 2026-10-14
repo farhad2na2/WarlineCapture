@@ -26,6 +26,40 @@ namespace Game.Editor
         private static int airProbeDefenseMapStep;
         private static int airProbeDefenseMapAttempts;
         private static int airProbeCameraCommandsBefore, airProbeCameraAttackMaskBefore;
+        private static int airProbeMapLayoutFrame = -1;
+        private static MatchHudMinimapView airProbeMapLayoutOwner;
+        private static Rect airProbeMapLayoutRect, airProbeViewportLayoutRect;
+
+        // Observe two distinct game frames before deriving input coordinates. Opening
+        // the popup can expose its view before its layout has a usable size.
+        private static bool GuardMapLayoutReady(MatchHudMinimapView map, Camera eventCamera)
+        {
+            if (map.MapRect == null || map.ViewportRect == null ||
+                !map.MapRect.gameObject.activeInHierarchy || !map.ViewportRect.gameObject.activeInHierarchy)
+                return false;
+            Rect ScreenRect(RectTransform rect)
+            {
+                var corners = new Vector3[4];
+                rect.GetWorldCorners(corners);
+                Vector2 lo = RectTransformUtility.WorldToScreenPoint(eventCamera, corners[0]);
+                Vector2 hi = RectTransformUtility.WorldToScreenPoint(eventCamera, corners[2]);
+                return new Rect(lo, hi - lo);
+            }
+            Rect bounds = ScreenRect(map.MapRect), viewport = ScreenRect(map.ViewportRect);
+            bool Usable(Rect rect) => float.IsFinite(rect.x) && float.IsFinite(rect.y) &&
+                float.IsFinite(rect.width) && float.IsFinite(rect.height) && rect.width > 1f && rect.height > 1f;
+            bool Same(Rect a, Rect b) => (a.position - b.position).sqrMagnitude <= .25f &&
+                (a.size - b.size).sqrMagnitude <= .25f;
+            if (!Usable(bounds) || !Usable(viewport)) { airProbeMapLayoutFrame = -1; return false; }
+            bool ready = airProbeMapLayoutOwner == map && airProbeMapLayoutFrame >= 0 &&
+                airProbeMapLayoutFrame < Time.frameCount && Same(bounds, airProbeMapLayoutRect) &&
+                Same(viewport, airProbeViewportLayoutRect);
+            airProbeMapLayoutOwner = map;
+            airProbeMapLayoutFrame = Time.frameCount;
+            airProbeMapLayoutRect = bounds;
+            airProbeViewportLayoutRect = viewport;
+            return ready;
+        }
 
         private static bool FocusPresentedGuardSite(double now, Vector3 site)
         {
@@ -33,6 +67,7 @@ namespace Game.Editor
             // The shell instantiates this popup only after the compact map tap.
             if (popup == null || !popup.IsOpen)
             {
+                airProbeMapLayoutFrame = -1;
                 foreach (var map in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsSortMode.None))
                 {
                     if (map.GetComponentInParent<MatchHudFullMapPopupView>() != null || map.MapRect == null) continue;
@@ -55,6 +90,7 @@ namespace Game.Editor
             if (fullMap == null) return false;
             var fullCanvas = fullMap.GetComponentInParent<Canvas>();
             Camera fullCamera = fullCanvas != null && fullCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? fullCanvas.worldCamera : null;
+            if (!GuardMapLayoutReady(fullMap, fullCamera)) return false;
             if (!fullMap.TryGetPresentedMapPoint(site, fullCamera, out var goal)) return false;
             if (airProbeDefenseMapAttempts >= 3)
             {
@@ -76,7 +112,9 @@ namespace Game.Editor
             if (helipadProbeTouch.TryGesture(from, end, .12f, drag ? .45f : 0f, Time.unscaledTime))
             {
                 Debug.Log("[S005AircraftBaseGuard] cameraInput=FullMapTouch world=" + site +
-                    " from=" + from + " to=" + end + " drag=" + drag);
+                    " from=" + from + " to=" + end + " drag=" + drag +
+                    " mapRect=" + airProbeMapLayoutRect + " viewportRect=" + airProbeViewportLayoutRect +
+                    " camera=" + (Camera.main != null ? Camera.main.transform.position.ToString() : "missing"));
                 airProbeDefenseMapAttempts++;
                 airProbeDefenseMapStep = 2;
                 helipadProbeNext = now + 1d;

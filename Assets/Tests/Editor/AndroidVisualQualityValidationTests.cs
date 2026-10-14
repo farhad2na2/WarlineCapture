@@ -13,6 +13,7 @@ using NUnit.Framework;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public sealed class AndroidVisualQualityValidationTests
 {
@@ -67,6 +68,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
             RunCase(() => DayNightRemainsAuthoritativeAcrossQualityChanges(), ref passed);
             RunCase(() => DayNightDisableRestoresAuthoredMissionEnvironment(), ref passed);
+            RunCase(() => PersistentDayNightSystemKeepsReplayDaylightAndReleasesOwnedOverrides(), ref passed);
             RunCase(() => RuntimeQualityTierMappingsAreComplete(), ref passed);
             RunCase(() => FullscreenMapSuspendsHiddenCompactMinimapRefresh(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
@@ -1028,8 +1030,100 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
+    public static void PersistentDayNightSystemKeepsReplayDaylightAndReleasesOwnedOverrides()
+    {
+        Type volumeType = Type.GetType(
+            "UnityEngine.Rendering.Volume, Unity.RenderPipelines.Core.Runtime");
+        Type volumeProfileType = Type.GetType(
+            "UnityEngine.Rendering.VolumeProfile, Unity.RenderPipelines.Core.Runtime");
+        Assert.NotNull(volumeType);
+        Assert.NotNull(volumeProfileType);
+
+        GameObject lightObject = new("ReplayDaylightLight", typeof(Light));
+        GameObject volumeObject = new("ReplayDaylightVolume");
+        ScriptableObject authoredProfile = ScriptableObject.CreateInstance(volumeProfileType);
+        World world = new("ReplayDaylightValidation");
+        Light light = lightObject.GetComponent<Light>();
+        light.type = LightType.Directional;
+        light.color = new Color(1f, 0.9f, 0.75f, 1f);
+        light.intensity = 1.4f;
+        Color authoredColor = light.color;
+        float authoredIntensity = light.intensity;
+        Component volume = volumeObject.AddComponent(volumeType);
+        WriteMember(volume, "sharedProfile", authoredProfile);
+        WriteMember(volume, "weight", 0.7f);
+
+        MethodInfo hasInstantiatedProfile = volumeType.GetMethod(
+            "HasInstantiatedProfile", BindingFlags.Instance | BindingFlags.Public);
+        MethodInfo initializeDayNight = typeof(DayNightSystem).GetMethod(
+            "Init", BindingFlags.Instance | BindingFlags.Public);
+        FieldInfo ownedWhiteBalance = typeof(DayNightSystem).GetField(
+            "_ownedWhiteBalance", BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo runtimeProfile = typeof(DayNightSystem).GetField(
+            "_runtimeVolumeProfile", BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo visualsEnabled = typeof(DayNightSystem).GetField(
+            "_runtimeVisualsEnabled", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(hasInstantiatedProfile);
+        Assert.NotNull(initializeDayNight);
+        Assert.NotNull(ownedWhiteBalance);
+        Assert.NotNull(runtimeProfile);
+        Assert.NotNull(visualsEnabled);
+
+        try
+        {
+            DayNightSystem dayNight = world.GetOrCreateSystemManaged<DayNightSystem>();
+            initializeDayNight.Invoke(dayNight, new object[] { null, light, volume });
+            UnityEngine.Object firstOwnedWhiteBalance =
+                (UnityEngine.Object)ownedWhiteBalance.GetValue(dayNight);
+            Assert.IsTrue(firstOwnedWhiteBalance != null);
+
+            dayNight.SetRuntimeVisualsEnabled(false);
+            Assert.IsTrue(firstOwnedWhiteBalance == null,
+                "Disabling must destroy the WhiteBalance created for the runtime profile.");
+            dayNight.Dispose();
+
+            // Match Replay reuses the ECS system after the previous scene shuts down.
+            initializeDayNight.Invoke(dayNight, new object[] { null, light, volume });
+            dayNight.SetRuntimeVisualsEnabled(false);
+            Assert.IsFalse(dayNight.RuntimeVisualsEnabled);
+            Assert.IsNull(runtimeProfile.GetValue(dayNight));
+            Assert.IsNull(ownedWhiteBalance.GetValue(dayNight));
+            Assert.IsFalse((bool)hasInstantiatedProfile.Invoke(volume, null));
+            Assert.AreSame(authoredProfile, ReadMember(volume, "sharedProfile"));
+            Assert.That(Convert.ToSingle(ReadMember(volume, "weight")), Is.EqualTo(0.7f).Within(0.0001f));
+            Assert.AreEqual(authoredColor, light.color);
+            Assert.That(light.intensity, Is.EqualTo(authoredIntensity).Within(0.0001f));
+
+            // A later legacy match may still opt into dynamic visuals.
+            dayNight.SetRuntimeVisualsEnabled(true);
+            UnityEngine.Object secondOwnedWhiteBalance =
+                (UnityEngine.Object)ownedWhiteBalance.GetValue(dayNight);
+            Assert.IsTrue(secondOwnedWhiteBalance != null);
+            Assert.IsTrue((bool)hasInstantiatedProfile.Invoke(volume, null));
+
+            // A stale disabled flag must not suppress cleanup of still-owned visuals.
+            visualsEnabled.SetValue(dayNight, false);
+            dayNight.SetRuntimeVisualsEnabled(false);
+            Assert.IsTrue(secondOwnedWhiteBalance == null);
+            Assert.IsFalse((bool)hasInstantiatedProfile.Invoke(volume, null));
+            dayNight.Dispose();
+            Assert.IsFalse((bool)hasInstantiatedProfile.Invoke(volume, null));
+            Assert.AreSame(authoredProfile, ReadMember(volume, "sharedProfile"));
+        }
+        finally
+        {
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(lightObject);
+            UnityEngine.Object.DestroyImmediate(volumeObject);
+            UnityEngine.Object.DestroyImmediate(authoredProfile);
+        }
+    }
+
+    [Test]
     public static void RuntimeQualityTierMappingsAreComplete()
     {
+        SharedRuntimeRenderPipelineLease.ShutdownSession();
+        var originalPipeline = QualitySettings.renderPipeline;
         VisualQualityProfileAsset profile =
             AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
         Assert.NotNull(profile, $"Missing visual quality profile at {VisualQualityProfilePath}.");
@@ -1048,6 +1142,15 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.NotNull(ultraPipeline);
         Assert.NotNull(highVolumeProfile);
         Assert.NotNull(ultraVolumeProfile);
+        var sourceScales = new Dictionary<UniversalRenderPipelineAsset, float>();
+        foreach (UnityEngine.Object asset in new[] { lowPipeline, mediumPipeline, highPipeline, ultraPipeline })
+        {
+            var source = asset as UniversalRenderPipelineAsset;
+            Assert.NotNull(source);
+            sourceScales[source] = source.renderScale;
+        }
+        Assert.AreEqual(1, ((UniversalRenderPipelineAsset)lowPipeline).msaaSampleCount);
+        Assert.AreEqual(1, ((UniversalRenderPipelineAsset)highPipeline).msaaSampleCount);
 
         Type cameraDataType = Type.GetType(
             "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
@@ -1094,6 +1197,7 @@ public sealed class AndroidVisualQualityValidationTests
                 expectedPostProcessing: false,
                 expectedAntialiasing: 0,
                 expectedShadowStrengthCap: profile.LowSunShadowStrength);
+            var lowRuntimePipeline = QualitySettings.renderPipeline;
             AssertRuntimeQualityTier(
                 system,
                 VisualQualityRuntimeMode.Medium,
@@ -1105,6 +1209,8 @@ public sealed class AndroidVisualQualityValidationTests
                 expectedPostProcessing: false,
                 expectedAntialiasing: configuredAntialiasing,
                 expectedShadowStrengthCap: profile.MediumSunShadowStrength);
+            Assert.AreSame(lowRuntimePipeline, QualitySettings.renderPipeline,
+                "Low and Medium share one Mobile source asset and must reuse its runtime clone.");
             AssertRuntimeQualityTier(
                 system,
                 VisualQualityRuntimeMode.High,
@@ -1127,14 +1233,24 @@ public sealed class AndroidVisualQualityValidationTests
                 profile.EnableCameraPostProcessing,
                 configuredAntialiasing,
                 profile.PremiumSunShadowStrength);
+            Assert.AreEqual(sourceScales.Count, SharedRuntimeRenderPipelineLease.RuntimeAssetCount);
+            foreach (var entry in sourceScales)
+                Assert.That(entry.Key.renderScale, Is.EqualTo(entry.Value).Within(0.001f),
+                    "A quality mode must not modify a serialized URP source asset.");
+            var activeRuntimePipeline = QualitySettings.renderPipeline;
+            system.Dispose();
+            Assert.AreSame(activeRuntimePipeline, QualitySettings.renderPipeline,
+                "The selected quality asset belongs to the app session, not the match ECS World.");
         }
         finally
         {
             world.Dispose();
+            SharedRuntimeRenderPipelineLease.ShutdownSession();
             UnityEngine.Object.DestroyImmediate(cameraObject);
             UnityEngine.Object.DestroyImmediate(volumeObject);
             UnityEngine.Object.DestroyImmediate(baselineVolumeProfile);
         }
+        Assert.AreSame(originalPipeline, QualitySettings.renderPipeline);
     }
 
     private static void AssertRuntimeQualityTier(
@@ -1152,10 +1268,13 @@ public sealed class AndroidVisualQualityValidationTests
         system.ApplyRuntimeMode(mode);
 
         Assert.AreEqual(mode, system.AppliedMode);
-        Assert.AreSame(expectedPipeline, QualitySettings.renderPipeline);
-        SerializedProperty renderScale = new SerializedObject(expectedPipeline).FindProperty("m_RenderScale");
-        Assert.NotNull(renderScale, $"{expectedPipeline.name} is missing m_RenderScale.");
-        Assert.That(renderScale.floatValue, Is.EqualTo(expectedRenderScale).Within(0.001f));
+        var runtimePipeline = QualitySettings.renderPipeline as UniversalRenderPipelineAsset;
+        Assert.NotNull(runtimePipeline);
+        Assert.AreNotSame(expectedPipeline, runtimePipeline);
+        Assert.AreSame(expectedPipeline, SharedRuntimeRenderPipelineLease.SourceFor(runtimePipeline));
+        Assert.That(runtimePipeline.renderScale, Is.EqualTo(expectedRenderScale).Within(0.001f));
+        Assert.AreEqual(((UniversalRenderPipelineAsset)expectedPipeline).msaaSampleCount,
+            runtimePipeline.msaaSampleCount);
         Assert.AreSame(expectedVolumeProfile, ReadMember(volume, "sharedProfile"));
         Assert.AreEqual(expectedPostProcessing, Convert.ToBoolean(ReadMember(cameraData, "renderPostProcessing")));
         Assert.AreEqual(expectedAntialiasing, Convert.ToInt32(ReadMember(cameraData, "antialiasing")));

@@ -76,8 +76,16 @@ namespace Game.Configs
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch, "setup.catalogId", setup.CatalogId));
             if (!string.IsNullOrEmpty(definitionId) && definition != null && definition.DefinitionId != definitionId)
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch, "definitionId", definition.DefinitionId));
-            if (definition != null && setup != null && definition.ContentHash != setup.ContentHash)
-                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch, "contentHash", setup.ContentHash));
+            if (definition != null && setup != null)
+            {
+                var policy = setup.EnemyPolicy;
+                bool contentMatches = policy == null
+                    ? definition.ContentHash == setup.ContentHash
+                    : policy.SourceContentHash == definition.ContentHash &&
+                      setup.ContentHash == (definition.ContentHash ?? string.Empty) + "/enemy-policy-v1/" + policy.Fingerprint;
+                if (!contentMatches)
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch, "contentHash", setup.ContentHash));
+            }
             if (!string.IsNullOrEmpty(evidence.ContentHash) &&
                 setup != null &&
                 evidence.ContentHash != setup.ContentHash)

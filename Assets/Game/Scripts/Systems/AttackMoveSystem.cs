@@ -25,6 +25,16 @@ namespace Game.Runtime
 
         public static TacticalCommandResult IssueUnits(EntityManager em, NativeArray<Entity> entities,
             byte actingFaction, int2 cell, float3 position, int frame)
+            => IssueUnitsCore(em, entities, actingFaction, cell, position, frame, true);
+
+        // Refreshes an already accepted intent through the identical native owners.
+        // It is not a new player command and must not consume/report a Touch receipt.
+        internal static TacticalCommandResult RefreshUnits(EntityManager em, NativeArray<Entity> entities,
+            byte actingFaction, int2 cell, float3 position, int frame)
+            => IssueUnitsCore(em, entities, actingFaction, cell, position, frame, false);
+
+        private static TacticalCommandResult IssueUnitsCore(EntityManager em, NativeArray<Entity> entities,
+            byte actingFaction, int2 cell, float3 position, int frame, bool recordAcceptedCommand)
         {
             using var fighters = new NativeList<Entity>(Allocator.Temp);
             foreach (var unit in entities)
@@ -44,7 +54,7 @@ namespace Game.Runtime
             var result = SelectedMoveOrderCommandSystem.TryIssueMoveOrderToCell(em, fighters.AsArray(), grids, surfaces,
                 default, cell, position, frame, faction, false, accepted);
             if (!result.CommandResult.Accepted) return result.CommandResult;
-            AriaCommandEvidence.Accepted("AttackMove", actingFaction);
+            if (recordAcceptedCommand) AriaCommandEvidence.Accepted("AttackMove", actingFaction);
             foreach (var unit in accepted)
             {
                 if (!em.HasComponent<UnitTarget>(unit)) continue;

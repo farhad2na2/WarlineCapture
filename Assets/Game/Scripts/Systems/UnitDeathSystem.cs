@@ -457,6 +457,9 @@ namespace Game.Runtime
             if (!em.Exists(entity))
                 return;
 
+            if (!TransportBoardingCommandSystem.CanFinalizeSharedGroundCarrier(em, entity))
+                return;
+
             SkirmishFogService.NotifyObservedDeath(em, entity);
             var destroySet = new HashSet<Entity> { entity };
             CollectDescendants(em, entity, destroySet);

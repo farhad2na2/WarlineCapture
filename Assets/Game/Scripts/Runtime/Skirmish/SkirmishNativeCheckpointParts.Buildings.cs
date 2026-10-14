@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Components;
+using Game.Skirmish.Contracts;
 using Unity.Collections;
 
 namespace Game.Runtime
@@ -69,7 +70,16 @@ namespace Game.Runtime
                     for (int i = 0; i < values.Length; i++)
                     {
                         var value = values[i];
-                        value.ProducerRuntimeId = Resolve(value.ProducerRuntimeId);
+                        // A completed/lost receipt still owns delivered-member capacity,
+                        // but its former producer may legitimately have been destroyed.
+                        // Active queues and every hauling reference remain mandatory.
+                        bool producerIsHistorical = value.Phase == SkirmishReservationPhase.Live ||
+                            value.Phase == SkirmishReservationPhase.Released ||
+                            value.Phase == SkirmishReservationPhase.Cancelled ||
+                            value.Phase == SkirmishReservationPhase.Lost;
+                        value.ProducerRuntimeId = producerIsHistorical && value.ProducerRuntimeId > 0 &&
+                            !runtimeIds.ContainsKey(value.ProducerRuntimeId)
+                            ? 0 : Resolve(value.ProducerRuntimeId);
                         values[i] = value;
                     }
                     part.Data = Convert.ToBase64String(raw.ToArray());

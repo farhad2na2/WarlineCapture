@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Components;
 using Game.Runtime;
+using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -256,9 +257,123 @@ namespace Game.Tests.Editor
             Assert.AreEqual(7u, p.NextResearchId);
         }
 
+        [Test]
+        public void RetiredProducerReceiptsRestoreCapacityHistoryWithoutRecreatingTheProducer()
+        {
+            using var source = new World(nameof(RetiredProducerReceiptsRestoreCapacityHistoryWithoutRecreatingTheProducer));
+            var em = source.EntityManager;
+            var session = em.CreateEntity();
+            var receipts = em.AddBuffer<SkirmishProductionReservation>(session);
+            foreach (var phase in new[] { SkirmishReservationPhase.Live, SkirmishReservationPhase.Released,
+                         SkirmishReservationPhase.Cancelled, SkirmishReservationPhase.Lost })
+                receipts.Add(new SkirmishProductionReservation
+                {
+                    ReservationId = (uint)receipts.Length + 1003u, Role = SkirmishRoleKind.ApcHeavy,
+                    Category = SkirmishPopulationCategory.Ground, MemberCount = 1,
+                    RemainingMembers = phase == SkirmishReservationPhase.Live ? 1 : 0,
+                    DeliveredMembers = phase == SkirmishReservationPhase.Cancelled ? 0 : 1,
+                    ProductionGroupId = 17, ProducerRuntimeId = 3, MaterialsPaid = 280,
+                    SupplyCost = 6, Phase = phase, FactionId = 1, Producer = SkirmishProducerKind.GroundStaging
+                });
+            receipts.Add(new SkirmishProductionReservation
+            {
+                ReservationId = 1007, Role = SkirmishRoleKind.ApcHeavy,
+                Category = SkirmishPopulationCategory.Ground, MemberCount = 1,
+                RemainingMembers = 1, DeliveredMembers = 1, ProductionGroupId = 20,
+                ProducerRuntimeId = 2, MaterialsPaid = 280, SupplyCost = 6,
+                Phase = SkirmishReservationPhase.Live, FactionId = 1, Producer = SkirmishProducerKind.GroundStaging
+            });
+            receipts.Add(new SkirmishProductionReservation
+            {
+                ReservationId = 1008, Role = SkirmishRoleKind.Rocketeer,
+                Category = SkirmishPopulationCategory.Infantry, MemberCount = 4,
+                RemainingMembers = 4, DeliveredMembers = 2, ProductionGroupId = 19,
+                ProducerRuntimeId = 2, MaterialsPaid = 120, SupplyCost = 4,
+                Phase = SkirmishReservationPhase.Producing, FactionId = 2, Producer = SkirmishProducerKind.Barracks
+            });
+            var capacity = new SkirmishCapacityComponent { FactionId = 1, GroundCap = 8,
+                GroundLive = 1, GroundReserved = 0, SupplyCap = 48, SupplyLive = 6 };
+            em.AddComponentData(session, capacity);
+            receipts = em.GetBuffer<SkirmishProductionReservation>(session);
+            var original = new SkirmishProductionReservation[receipts.Length];
+            for (int i = 0; i < receipts.Length; i++) original[i] = receipts[i];
+            var parts = SkirmishNativeCheckpointParts.Capture(em, session, _ => null);
+            parts = JsonUtility.FromJson<Record>(JsonUtility.ToJson(new Record { Parts = parts })).Parts;
+            var remapped = SkirmishNativeCheckpointParts.RemapBuildingIds(parts,
+                new Dictionary<int, int> { [2] = 42 });
+            using var destination = new World("retired-producer-recovery");
+            var restored = destination.EntityManager;
+            var fresh = restored.CreateEntity();
+            SkirmishNativeCheckpointParts.Apply(restored, fresh, remapped, _ => Entity.Null);
+            var actual = restored.GetBuffer<SkirmishProductionReservation>(fresh);
+            Assert.AreEqual(original.Length, actual.Length);
+            for (int i = 0; i < original.Length; i++)
+            {
+                var expected = original[i];
+                expected.ProducerRuntimeId = original[i].ProducerRuntimeId == 2 ? 42 : 0;
+                Assert.AreEqual(expected, actual[i], "Only the current native producer binding may change.");
+                Assert.AreEqual(original[i], em.GetBuffer<SkirmishProductionReservation>(session)[i],
+                    "Staging must not mutate the source receipt or promote/refund its capacity.");
+            }
+            Assert.AreEqual(capacity, restored.GetComponentData<SkirmishCapacityComponent>(fresh));
+            Assert.AreEqual(capacity, em.GetComponentData<SkirmishCapacityComponent>(session));
+            using var producers = restored.CreateEntityQuery(typeof(RuntimeBuildingCombatInfo));
+            Assert.IsTrue(producers.IsEmptyIgnoreFilter,
+                "Restoring historical receipts must not resurrect their destroyed building.");
+        }
+
+        [Test]
+        public void MissingActiveProducerAndHaulReferencesStillRejectBeforeApply()
+        {
+            using var world = new World(nameof(MissingActiveProducerAndHaulReferencesStillRejectBeforeApply));
+            var em = world.EntityManager;
+            var session = em.CreateEntity();
+            var receipts = em.AddBuffer<SkirmishProductionReservation>(session);
+            receipts.Add(new SkirmishProductionReservation { ReservationId = 1, MemberCount = 1,
+                RemainingMembers = 1, ProducerRuntimeId = 3, Phase = SkirmishReservationPhase.Reserved });
+            var ids = new Dictionary<int, int> { [2] = 42 };
+            foreach (var phase in new[] { SkirmishReservationPhase.Reserved, SkirmishReservationPhase.Producing,
+                         SkirmishReservationPhase.None, (SkirmishReservationPhase)255 })
+            {
+                var receipt = em.GetBuffer<SkirmishProductionReservation>(session)[0];
+                receipt.Phase = phase;
+                var activeReceipts = em.GetBuffer<SkirmishProductionReservation>(session);
+                activeReceipts[0] = receipt;
+                var parts = SkirmishNativeCheckpointParts.Capture(em, session, _ => null);
+                Assert.Throws<ArgumentException>(() => SkirmishNativeCheckpointParts.RemapBuildingIds(parts, ids));
+                Assert.AreEqual(receipt, em.GetBuffer<SkirmishProductionReservation>(session)[0]);
+            }
+            var historical = em.GetBuffer<SkirmishProductionReservation>(session)[0];
+            historical.Phase = SkirmishReservationPhase.Live;
+            var historicalReceipts = em.GetBuffer<SkirmishProductionReservation>(session);
+            historicalReceipts[0] = historical;
+            var invalidMapping = new Dictionary<int, int> { [3] = 0 };
+            Assert.Throws<ArgumentException>(() => SkirmishNativeCheckpointParts.RemapBuildingIds(
+                SkirmishNativeCheckpointParts.Capture(em, session, _ => null), invalidMapping),
+                "A present but malformed mapping is not a destroyed historical producer.");
+            var negative = em.GetBuffer<SkirmishProductionReservation>(session)[0];
+            negative.Phase = SkirmishReservationPhase.Live; negative.ProducerRuntimeId = -3;
+            var buffer = em.GetBuffer<SkirmishProductionReservation>(session);
+            buffer[0] = negative;
+            Assert.Throws<ArgumentException>(() => SkirmishNativeCheckpointParts.RemapBuildingIds(
+                SkirmishNativeCheckpointParts.Capture(em, session, _ => null), ids));
+            var hauler = em.CreateEntity(typeof(UnitResourceHaulOrder), typeof(UnitResourceHaulReservation));
+            em.SetComponentData(hauler, new UnitResourceHaulOrder { SourceBuildingId = 3, DestinationBuildingId = 2 });
+            em.SetComponentData(hauler, new UnitResourceHaulReservation { SourceBuildingId = 2, DestinationBuildingId = 3,
+                ReservedBarrels = 12, SourceReservationActive = 1, DestinationReservationActive = 1, ReservationId = 9 });
+            Assert.Throws<ArgumentException>(() => SkirmishNativeCheckpointParts.RemapBuildingIds(
+                SkirmishNativeCheckpointParts.Capture(em, hauler, _ => null), ids));
+            em.RemoveComponent<UnitResourceHaulOrder>(hauler);
+            Assert.Throws<ArgumentException>(() => SkirmishNativeCheckpointParts.RemapBuildingIds(
+                SkirmishNativeCheckpointParts.Capture(em, hauler, _ => null), ids));
+            Assert.AreEqual(3, em.GetComponentData<UnitResourceHaulReservation>(hauler).DestinationBuildingId);
+        }
+
         public static void RunFocusedValidation()
         {
             var suite = new SkirmishNativeCheckpointPartsTests();
+            suite.RetiredProducerReceiptsRestoreCapacityHistoryWithoutRecreatingTheProducer();
+            suite.MissingActiveProducerAndHaulReferencesStillRejectBeforeApply();
             suite.FreshWorldRestoresTransformsHealthAndCargoWithNewEntityHandles();
             suite.MissingReferenceRejectsBeforeHealthOrTagsChange();
             suite.CorruptLayoutsDuplicatePartsAndUnknownReferencesAreRejected();
@@ -269,7 +384,7 @@ namespace Game.Tests.Editor
             suite.DestroyedPassengerCarrierIsNeverDiscardedAsAnOptionalCombatTarget();
             suite.NativeCheckpointPreservesSeparateFactionResearchWithoutChangingPlayerLayout();
             suite.DeliveryTaxiRoundTripPreservesParkingAndQueuedPlayerDestination();
-            Debug.Log("[SkirmishNativeCheckpointPartsTests] result=Passed tests=10 nativeRecoveryComplete=0");
+            Debug.Log("[SkirmishNativeCheckpointPartsTests] result=Passed tests=12 nativeRecoveryComplete=0");
         }
 
         [Test]

@@ -339,6 +339,17 @@ namespace Game.Runtime
                 if (request.Status != BuildingRuntimeSpawnRequest.Pending)
                     continue;
 
+                bool enemyConstruction = SkirmishEnemyConstructionAdapter.IsConstructionRequest(request);
+                if (enemyConstruction && !SkirmishEnemyConstructionAdapter.CanProcess(em, request, out bool deferConstruction))
+                {
+                    if (deferConstruction) continue;
+                    processedRequests++;
+                    request.Status=BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode=BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em,boundaryEntity,i,request);
+                    continue;
+                }
+
                 if (!TryResolveConfiguredBuildingDefinition(definitionSystem, request.BuildingId.ToString(), out BuildingDefinition definition))
                 {
                     if (definitionSystem.ConfiguredSpawnableCount == 0)
@@ -384,7 +395,7 @@ namespace Game.Runtime
 
                 var requestSpawnContext = runtimeSpawnContext;
                 int grantBuildingRejected = 0, grantSurfaceRejected = 0, grantSidewalkRejected = 0, grantOriginalRejected = 0;
-                if (startingGrant && runtimeSpawnContext.TryGetGridData(out _, out var grantGrid, out _, out _))
+                if ((startingGrant || enemyConstruction) && runtimeSpawnContext.TryGetGridData(out _, out var grantGrid, out _, out _))
                 {
                     using var grantSurfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
                     if (grantSurfaces.CalculateEntityCount() != 1) continue;
@@ -400,6 +411,8 @@ namespace Game.Runtime
                     requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
                     {
                         var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
+                        if (enemyConstruction && !SkirmishEnemyConstructionAdapter.NativeRectFits(em,request,
+                            new int2(rect.x,rect.y),new int2(rect.width,rect.height))) { grantOriginalRejected++;return false; }
                         if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) { grantBuildingRejected++; return false; }
                         bool authoredRoad=_skirmishRoads.Overlaps(g,rect.position,rect.size),water=_skirmishRoads.OverlapsWater(g,rect.position,rect.size);
                         if(authoredRoad||water)
@@ -512,6 +525,13 @@ namespace Game.Runtime
                 request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
                 request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
                 WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                if (enemyConstruction && placed)
+                {
+                    SkirmishEnemyConstructionAdapter.RecordNativeResult(em, request);
+                    // Binding/adoption adds ECS components. Reacquire boundary data
+                    // before any later native row access, just as after placement.
+                    spawnRequests=EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em,boundaryEntity);
+                }
             }
 
             if (!forceScan)

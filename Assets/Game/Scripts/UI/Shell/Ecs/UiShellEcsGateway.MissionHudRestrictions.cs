@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Missions.Contracts;
 using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 
 namespace Game.UI.Shell.Ecs
@@ -32,7 +33,7 @@ namespace Game.UI.Shell.Ecs
                 using var members=units.ToEntityArray(Unity.Collections.Allocator.Temp);
                 foreach(var member in members)if(skirmishEm.GetComponentData<UnitHealth>(member).Current>0)mask|=1<<skirmishEm.GetComponentData<SkirmishSquadMember>(member).Slot;
                 restrictions=new UiMissionHudRestrictionsModel("skirmish.base_assault",false,false,false,true,true,
-                    skirmish.Phase!=SkirmishPhase.Playing,false,true,false,mask);
+                    skirmish.Phase!=SkirmishPhase.Playing || IsSkirmishIntroInputLocked(skirmishEm),false,true,false,mask);
                 return true;
             }
             if (!TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
@@ -98,6 +99,22 @@ namespace Game.UI.Shell.Ecs
             restrictions = new UiMissionHudRestrictionsModel(
                 runtime.MissionId.ToString(), false, false, false, false, false, true);
             return true;
+        }
+
+        private static bool IsSkirmishIntroInputLocked(EntityManager em)
+        {
+            // Match can be Playing while its HUD is still entering. Mirror the
+            // command owner's intro boundary rules so presentation cannot invite
+            // a command that the authoritative input gate must reject.
+            using var query = em.CreateEntityQuery(typeof(MatchIntroTransitionComponent));
+            int count = query.CalculateEntityCount();
+            if (count == 0)
+                return false;
+            if (count != 1)
+                return true;
+            Entity boundary = query.GetSingletonEntity();
+            return !em.HasComponent<UiShellStateComponent>(boundary) ||
+                em.GetComponentData<MatchIntroTransitionComponent>(boundary).InputLocked != 0;
         }
 
         private static int ReadExtractionSquadMask(EntityManager em,Entity root)

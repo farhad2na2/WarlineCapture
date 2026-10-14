@@ -245,6 +245,13 @@ namespace Game.Runtime
             Register<SkirmishEnemyStockComponent>();
             Register<SkirmishEnemyCapacityComponent>();
             Register<SkirmishEnemyStrategyComponent>();
+            Register<SkirmishEnemyCapabilityStateV1Component>();
+            RegisterBuffer<SkirmishEnemyCapabilityOperationV1>();
+            RegisterBuffer<SkirmishEnemyTransportPlanV1>();
+            Register<SkirmishEnemyPlannerV1Component>();
+            Register<SkirmishEnemyProductionIntentV1Component>();
+            Register<SkirmishEnemyConstructionIntentV1Component>(SkirmishEnemyConstructionCheckpoint.NormalizeCapture);
+            RegisterBuffer<SkirmishEnemyGroupAssignmentV1>();
             Register<SkirmishArmySelectionComponent>();
             Register<SkirmishFogStateComponent>();
             Register<SkirmishResultComponent>();

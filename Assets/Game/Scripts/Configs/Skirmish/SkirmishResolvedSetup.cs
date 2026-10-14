@@ -44,6 +44,7 @@ namespace Game.Configs
         public int ContentVersion;
         public string ContentHash;
         public uint SetupHash;
+        public SkirmishEnemyPolicySnapshot EnemyPolicy;
         public int Seed;
         public SkirmishDifficultyId DifficultyId;
         public SkirmishSizeId SizeId;

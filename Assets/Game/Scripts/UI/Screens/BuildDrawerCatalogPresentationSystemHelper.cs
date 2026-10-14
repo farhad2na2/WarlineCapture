@@ -365,6 +365,7 @@ namespace Game.UI.Runtime
             if (scroll == null || scroll.content != content)
                 return;
 
+            EnsureCatalogScrollSurface(scroll);
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
             float viewportHeight = scroll.viewport != null
                 ? scroll.viewport.rect.height : ((RectTransform)scroll.transform).rect.height;
@@ -373,6 +374,17 @@ namespace Game.UI.Runtime
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
             scroll.StopMovement();
             scroll.verticalNormalizedPosition = 1f;
+        }
+
+        internal static void EnsureCatalogScrollSurface(ScrollRect scroll)
+        {
+            // A gap between cards must deliver pointer drags to the enclosing
+            // ScrollRect, rather than to the drawer's battlefield-blocking scrim.
+            if (scroll == null || scroll.viewport == null ||
+                scroll.viewport.GetComponent<Graphic>() != null) return;
+            var surface = scroll.viewport.gameObject.AddComponent<Image>();
+            surface.color = Color.clear;
+            surface.raycastTarget = true;
         }
 
         private static void BindItem(Context context, BuildDrawerItemView item, BuildDrawerCatalogItem model)

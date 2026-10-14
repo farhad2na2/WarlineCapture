@@ -67,6 +67,7 @@ namespace Game.UI.Runtime
             HudIconButtonView.Apply(EnemyFocusButton, HudButtonIcon.EnemyBase, HudButtonRole.Stop,
                 "ENEMY BASE", "پایگاه دشمن", enemy, true);
             var shade=Panel("SkirmishResult",transform,false);modal=shade.gameObject;Stretch(shade);
+            UiChromeStack.RaiseAboveTutorial(shade.gameObject, UiChromeStack.ConfirmationChrome);
             shade.gameObject.AddComponent<Image>().color=new Color(0,0,0,.72f);
             resultCard=CampaignStyleResultCard.Mount(shade, interfaceFont);
             resultCard.Bind(

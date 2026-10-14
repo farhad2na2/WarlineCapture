@@ -27,7 +27,7 @@ namespace Game.Components
         public int CommandMode;
         public byte CommandAccepted;
         public int ReasonCode;
-        public FixedString64Bytes Message;
+        public FixedString512Bytes Message;
         public byte Visible;
     }
 }

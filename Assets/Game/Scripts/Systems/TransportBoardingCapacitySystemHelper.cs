@@ -11,11 +11,14 @@ namespace Game.Runtime
         private const int TransportPlaneVehicleMaxFootprintCells = 9;
 
         public static bool IsBoardablePlayerTransport(EntityManager em, Entity transport)
+            => IsBoardableTransport(em, transport, 1);
+
+        public static bool IsBoardableTransport(EntityManager em, Entity transport, byte faction)
         {
             return em.Exists(transport) &&
                    new UnitTransportCapacitySystem().TryEnsureTransportCapacity(em, transport) &&
                    em.HasComponent<Faction>(transport) &&
-                   FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(transport).Id) &&
+                   em.GetComponentData<Faction>(transport).Id == faction &&
                    em.HasComponent<UnitGrid>(transport) &&
                    em.HasComponent<UnitFootprint>(transport) &&
                    em.HasComponent<LocalTransform>(transport);
@@ -74,10 +77,13 @@ namespace Game.Runtime
         }
 
         public static bool IsPotentialVehicleCargoPassenger(EntityManager em, Entity entity, bool allowLoadedPassenger = false)
+            => IsPotentialVehicleCargoPassenger(em, entity, allowLoadedPassenger, 1);
+
+        private static bool IsPotentialVehicleCargoPassenger(EntityManager em, Entity entity, bool allowLoadedPassenger, byte faction)
         {
             if (!em.Exists(entity) ||
                 !em.HasComponent<Faction>(entity) ||
-                !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+                em.GetComponentData<Faction>(entity).Id != faction ||
                 !em.HasComponent<UnitGrid>(entity) ||
                 !em.HasComponent<UnitMove>(entity) ||
                 !em.HasComponent<UnitFootprint>(entity) ||
@@ -235,10 +241,13 @@ namespace Game.Runtime
         }
 
         public static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
+            => IsSoldierBoardingCandidate(em, entity, 1);
+
+        private static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity, byte faction)
         {
             if (!em.Exists(entity) ||
                 !em.HasComponent<Faction>(entity) ||
-                !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+                em.GetComponentData<Faction>(entity).Id != faction ||
                 !em.HasComponent<UnitGrid>(entity) ||
                 !em.HasComponent<UnitMove>(entity) ||
                 !em.HasComponent<UnitFootprint>(entity) ||
@@ -265,6 +274,26 @@ namespace Game.Runtime
             return !UnitVehicleMovementUtility.IsVehicle(
                 em.GetComponentData<UnitFootprint>(entity),
                 em.GetComponentData<UnitMovementBehavior>(entity));
+        }
+
+        public static bool TryResolveOwnedPassengerKind(EntityManager em, Entity transport, Entity passenger,
+            out byte kind, out int weight)
+        {
+            kind = UnitTransportPassengerKind.Soldier; weight = 0;
+            if (!SkirmishActorCommandAuthority.IsSameOwnedPair(em, transport, passenger)) return false;
+            byte faction = em.GetComponentData<Faction>(transport).Id;
+            if (IsSoldierBoardingCandidate(em, passenger, faction)) return true;
+            if (!IsCargoPlaneTransport(em, transport) || !IsPotentialVehicleCargoPassenger(em, passenger, false, faction)) return false;
+            kind = UnitTransportPassengerKind.Vehicle; weight = ResolveVehicleCargoWeight(em, passenger); return true;
+        }
+
+        public static bool IsSoldierBoardingCandidateForTransport(EntityManager em, Entity transport, Entity passenger)
+        {
+            if (!em.Exists(transport) || !em.HasComponent<Faction>(transport)) return false;
+            byte faction = em.GetComponentData<Faction>(transport).Id;
+            if (FactionIdentity.IsPlayerControlled(faction)) return IsSoldierBoardingCandidate(em, passenger);
+            return faction == 2 && SkirmishActorCommandAuthority.IsSameOwnedPair(em, transport, passenger) &&
+                IsSoldierBoardingCandidate(em, passenger, faction);
         }
 
         private static int ResolveVehicleCargoWeight(EntityManager em, Entity passenger)

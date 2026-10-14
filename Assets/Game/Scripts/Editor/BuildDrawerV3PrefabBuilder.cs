@@ -383,6 +383,9 @@ namespace Game.Editor
             scrollRect.vertical = true;
             RectTransform viewport = CreateTopLeft("Viewport", scroll, 0f, 0f, 824f, 690f);
             viewport.gameObject.AddComponent<RectMask2D>();
+            Image scrollSurface = viewport.gameObject.AddComponent<Image>();
+            scrollSurface.color = Color.clear;
+            scrollSurface.raycastTarget = true;
             RectTransform content = CreateTopLeft("Content", viewport, 0f, 0f, 824f, 690f);
             GridLayoutGroup grid = content.gameObject.AddComponent<GridLayoutGroup>();
             grid.cellSize = new Vector2(407f, 340f);

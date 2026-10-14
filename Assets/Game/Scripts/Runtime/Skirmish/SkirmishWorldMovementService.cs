@@ -50,7 +50,7 @@ namespace Game.Runtime
 
             // A rejected command leaves the existing intent and Hold state intact.
             result = TacticalCommandResult.Success();
-            bool accepted = sameDestination || TryReuseSharedPath(em, unit, destination, out result);
+            bool accepted = sameDestination || TryReuseSharedPath(em, unit, destination, false, out result);
             if (!accepted)
             {
                 if (hadIntent) em.SetComponentData(unit, savedIntent);
@@ -104,7 +104,7 @@ namespace Game.Runtime
                 if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).SessionId.Equals(sessionId))
                     continue;
                 var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
-                HomeAttackDestination(em, unit, ref intent);
+                HomeAttackDestination(em, unit, ref intent, hasGrid, in grid);
                 if (intent.Active == 0)
                     continue;
                 // Accepted production commands are owned by the shared Move/AttackMove
@@ -176,7 +176,9 @@ namespace Game.Runtime
         private static void HomeAttackDestination(
             EntityManager em,
             Entity unit,
-            ref SkirmishMoveIntentComponent intent)
+            ref SkirmishMoveIntentComponent intent,
+            bool hasGrid,
+            in GridConfig grid)
         {
             if (intent.Order != SkirmishGroupOrderKind.Attack)
                 return;
@@ -207,6 +209,13 @@ namespace Game.Runtime
             float dz = live.z - intent.DestinationZ;
             bool moved = dx * dx + dz * dz > 0.01f;
             byte active = intent.Active;
+            bool usesSharedCommands = SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+            // A native engagement already follows the live target. Reissuing its
+            // Attack Move here clears EngageTarget before the weapon can fire.
+            bool engagedWithTarget = usesSharedCommands && em.HasComponent<EngageTarget>(unit) &&
+                em.GetComponentData<EngageTarget>(unit).Target == target;
+            bool nativeGoalStale = usesSharedCommands && !engagedWithTarget &&
+                (!hasGrid || !HasCurrentNativeAttackGoal(em, unit, GridUtils.WorldToCell(grid, live)));
             if (em.HasComponent<LocalTransform>(unit))
             {
                 float3 position = em.GetComponentData<LocalTransform>(unit).Position;
@@ -215,13 +224,22 @@ namespace Game.Runtime
                     active = 1;
             }
 
-            if (!moved && active == intent.Active)
+            if (!moved && active == intent.Active && !nativeGoalStale)
                 return;
             intent.DestinationX = live.x;
             intent.DestinationZ = live.z;
             intent.Active = active;
             em.SetComponentData(unit, intent);
-            TryReuseSharedPath(em, unit, live, out _);
+            if (!engagedWithTarget)
+                TryReuseSharedPath(em, unit, live, true, out _);
+        }
+
+        private static bool HasCurrentNativeAttackGoal(EntityManager em, Entity unit, int2 liveCell)
+        {
+            if (em.HasComponent<AttackMoveOrder>(unit))
+                return em.GetComponentData<AttackMoveOrder>(unit).Destination.Equals(liveCell);
+            return em.HasComponent<UnitTarget>(unit) &&
+                   em.GetComponentData<UnitTarget>(unit).Cell.Equals(liveCell);
         }
 
         public static float3 DefaultAdvance(EntityManager em, Entity session)
@@ -358,7 +376,7 @@ namespace Game.Runtime
         }
 
         private static bool TryReuseSharedPath(EntityManager em, Entity unit, float3 destination,
-            out TacticalCommandResult result)
+            bool isOrderRefresh, out TacticalCommandResult result)
         {
             result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetUnreachable);
             if (!em.HasComponent<UnitMove>(unit))
@@ -378,7 +396,7 @@ namespace Game.Runtime
             int2 cell = GridUtils.WorldToCell(grid, destination);
             if (IsRegistryUnit(em, unit))
             {
-                return IssueRegistryPath(em, unit, cell, out result);
+                return IssueRegistryPath(em, unit, cell, isOrderRefresh, out result);
             }
 
             result = TacticalCommandResult.Success();
@@ -396,10 +414,10 @@ namespace Game.Runtime
         }
 
         private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
-            => IssueRegistryPath(em, unit, cell, out _);
+            => IssueRegistryPath(em, unit, cell, true, out _);
 
         private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell,
-            out TacticalCommandResult result)
+            bool isOrderRefresh, out TacticalCommandResult result)
         {
             result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetUnreachable);
             if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
@@ -410,8 +428,11 @@ namespace Game.Runtime
                     if (grids.CalculateEntityCount() != 1) return false;
                     using var units = new NativeList<Entity>(1, Allocator.Temp);
                     units.Add(unit);
-                    result = AttackMoveSystem.IssueUnits(em, units.AsArray(), em.GetComponentData<Faction>(unit).Id,
-                        cell, GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell), Time.frameCount);
+                    byte faction = em.GetComponentData<Faction>(unit).Id;
+                    float3 position = GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell);
+                    result = isOrderRefresh
+                        ? AttackMoveSystem.RefreshUnits(em, units.AsArray(), faction, cell, position, Time.frameCount)
+                        : AttackMoveSystem.IssueUnits(em, units.AsArray(), faction, cell, position, Time.frameCount);
                     return result.Accepted;
                 }
                 int requestId = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(em, unit, cell);

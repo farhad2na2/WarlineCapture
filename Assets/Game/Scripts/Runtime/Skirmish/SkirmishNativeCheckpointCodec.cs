@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Game.Components;
 using Game.Configs;
+using Game.Skirmish.Contracts;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -23,15 +24,32 @@ namespace Game.Runtime
         }
 
         internal static bool Validate(SkirmishNativeCheckpointSnapshotService.Snapshot snapshot,
+            SkirmishResolvedSetup setup) => ValidateCore(snapshot, setup, false);
+
+        // Read-only recognition of an intact pre-policy save for the friendly Continue failure flow.
+        // Never used by decode, recovery, or write; it grants no application permission.
+        internal static bool ValidatePolicylessCompatibility(SkirmishNativeCheckpointSnapshotService.Snapshot snapshot,
             SkirmishResolvedSetup setup)
         {
+            if (setup?.EnemyPolicy == null || setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault ||
+                !SkirmishNativeCheckpointParts.TryReadComponent(snapshot?.SessionParts, out SkirmishExpandedSessionComponent state) ||
+                state.ObjectiveKind != SkirmishObjectiveKind.BaseAssault || state.Phase != SkirmishSessionPhase.Playing || state.SpawnComplete == 0 ||
+                SkirmishEnemyCheckpointPolicy.HasAny(snapshot.SessionParts)) return false;
+            return ValidateCore(snapshot, setup, true);
+        }
+
+        private static bool ValidateCore(SkirmishNativeCheckpointSnapshotService.Snapshot snapshot,
+            SkirmishResolvedSetup setup, bool policylessCompatibility)
+        {
+            uint expectedHash = setup == null ? 0 : policylessCompatibility ? SkirmishSetupCompiler.ComputePolicylessHash(setup, setup.Seed) : setup.SetupHash;
+            string expectedContent = policylessCompatibility ? setup?.EnemyPolicy?.SourceContentHash : setup?.ContentHash;
             if (!BitConverter.IsLittleEndian || snapshot == null || setup == null || snapshot.Version != SkirmishNativeCheckpointSnapshotService.SchemaVersion ||
                 snapshot.Support == null || snapshot.Banks == null || (snapshot.Banks.Length != 0 && snapshot.Banks.Length != 2) ||
                 snapshot.Actors == null || snapshot.MapReferences == null || snapshot.DropVisuals == null || snapshot.Actors.Length == 0 ||
                 snapshot.Actors.Length > 16384 || snapshot.MapReferences.Length > 65536 ||
                 string.IsNullOrEmpty(snapshot.SessionId) || snapshot.SessionId.Length > 63 ||
-                snapshot.CatalogId != setup.CatalogId || snapshot.SetupHash != setup.SetupHash ||
-                !Equal(snapshot.ContentHash, setup.ContentHash) || !Equal(snapshot.OperationMapId, setup.OperationMapId) ||
+                snapshot.CatalogId != setup.CatalogId || snapshot.SetupHash != expectedHash ||
+                !Equal(snapshot.ContentHash, expectedContent) || !Equal(snapshot.OperationMapId, setup.OperationMapId) ||
                 !Equal(snapshot.LayoutId, setup.LayoutId) ||
                 double.IsNaN(snapshot.WorldTime) || double.IsInfinity(snapshot.WorldTime) || snapshot.WorldTime < 0 ||
                 float.IsNaN(snapshot.UnityTime) || float.IsInfinity(snapshot.UnityTime) || snapshot.UnityTime < 0)
@@ -72,9 +90,10 @@ namespace Game.Runtime
                     !SkirmishNativeCheckpointParts.TryReadComponent(snapshot.SessionParts, out SkirmishExpandedSessionComponent state) ||
                     state.IsLegacy != 0 || state.SessionId.ToString() != snapshot.SessionId ||
                     state.CatalogId.ToString() != setup.CatalogId || state.DefinitionId.ToString() != setup.DefinitionId ||
-                    state.ContentVersion != setup.ContentVersion || state.SetupHash != setup.SetupHash ||
+                    state.ContentVersion != setup.ContentVersion || state.SetupHash != expectedHash ||
                     state.Seed != setup.Seed || state.SizeId != setup.SizeId || state.DifficultyId != setup.DifficultyId)
                     return false;
+                if (!SkirmishEnemyCheckpointPolicy.Validate(snapshot, setup, policylessCompatibility)) return false;
                 bool sharedMaterials = false;
                 foreach (var part in snapshot.SessionParts)
                     if (part.Type == typeof(SkirmishSharedMaterialsInitialized).FullName) sharedMaterials = true;

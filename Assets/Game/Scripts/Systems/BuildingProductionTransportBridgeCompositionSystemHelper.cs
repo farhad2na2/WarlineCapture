@@ -134,6 +134,17 @@ namespace Game.Runtime
             if (isAirUnit && !isSpawnTransit)
                 return;
 
+            // Runway delivery taxi follows its separately initialized HomePosition.
+            // A ground path can remap the parking target, leaving an unintended
+            // flight order after taxi completes. Do not enqueue that internal path
+            // or overwrite any command the player queued during delivery.
+            if (isAirUnit && isSpawnTransit && em.HasComponent<UnitAirComponent>(entity))
+            {
+                UnitAirComponent air = em.GetComponentData<UnitAirComponent>(entity);
+                if (air.UsesRunway != 0 && air.HomeInitialized != 0)
+                    return;
+            }
+
             UnitMoveOrderRequestSystem.EnqueueAndProcessTargetPathMoveOrder(em, entity, goalCell);
         }
 

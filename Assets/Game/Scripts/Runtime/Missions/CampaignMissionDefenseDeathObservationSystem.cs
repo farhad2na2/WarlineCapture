@@ -34,6 +34,20 @@ namespace Game.Runtime
                 if (member.HealthInitialized != 0 && health.Current <= 0) member.Defeated = 1;
                 members[i] = member;
             }
+            // The delayed-wave owner runs before attacks. Refresh its derived
+            // completion bits after native deaths, before Runtime can enter the
+            // finale/result and stop further delayed-wave updates.
+            if (!em.HasBuffer<CampaignMissionConvoyElementState>(root)) return;
+            var elements = em.GetBuffer<CampaignMissionConvoyElementState>(root);
+            for (int i = 0; i < elements.Length; i++)
+            {
+                var element = elements[i];
+                bool resolved = element.Activated != 0;
+                for (int j = 0; j < members.Length; j++)
+                    if (members[j].ElementIndex == i && members[j].Defeated == 0) resolved = false;
+                element.Resolved = resolved ? (byte)1 : (byte)0;
+                elements[i] = element;
+            }
         }
     }
 }

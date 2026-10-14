@@ -611,7 +611,9 @@ namespace Game.Runtime
 
                 if (holdingPosition)
                 {
-                    stateRw.AttackRunActive = 0;
+                    // Returning fixed-wing aircraft reuse this phase for runway rejoin.
+                    if (stateRw.ReturningHome == 0)
+                        stateRw.AttackRunActive = 0;
                     if (stateRw.Airborne != 0 &&
                         stateRw.ReturningHome == 0 &&
                         stateRw.TakeoffRolling == 0 &&

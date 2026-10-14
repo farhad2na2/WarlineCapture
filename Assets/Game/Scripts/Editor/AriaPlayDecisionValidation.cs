@@ -88,7 +88,64 @@ namespace Game.Editor
             o.GoalId=1002;o.Time=170;AriaPlayDecisionSystem.Step(o,ref s);
             s.Phase=AriaPlayPhase.Observing;o.Time=200;AriaPlayDecisionSystem.Step(o,ref s);
             Check(s.Phase!=AriaPlayPhase.Blocked,"advancing the public objective renews the watchdog");
-            return "[AriaPlayDecisionValidation] result=Passed cases=19";
+            // The same off-screen catalog control may require several real drags.
+            s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            o = new AriaPlayObservationComponent { Kind = AriaPlayObservationKind.Control,
+                TargetId = 77, GoalId = 503, Position = new Vector2(100, 200),
+                Drag = 1, DragEnd = new Vector2(100, 500), ScrollTargetId = 9001,
+                ScrollDistanceViewports = 1.3f, Time = 1 };
+            AriaPlayDecisionSystem.Step(o, ref s);
+            o.Time = 2; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Touching && s.Attempts == 1, "first scroll gesture counts");
+            s.Phase = AriaPlayPhase.Verifying; s.GestureRequested = 0; s.Actions = 1; s.DueAt = 2.5f;
+            o.Time = 3; o.ScrollDistanceViewports = .8f; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Attempts == 0 && s.ScrollCreditedActions == 1 && s.Phase == AriaPlayPhase.Aiming,
+                "measured catalog movement renews the same target retry budget once");
+            o.Time = 4; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Touching && s.Attempts == 1,
+                "next drag remains available after measured progress");
+            s.Phase = AriaPlayPhase.Verifying; s.GestureRequested = 0; s.Actions = 2; s.DueAt = 4.5f;
+            o.Time = 5; o.ScrollDistanceViewports = .3f; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Attempts == 0 && s.ScrollCreditedActions == 2,
+                "second productive drag renews the same target without an arbitrary three-drag cap");
+            o.Time = 6; AriaPlayDecisionSystem.Step(o, ref s);
+            s.Phase = AriaPlayPhase.Verifying; s.GestureRequested = 0; s.Actions = 3; s.DueAt = 6.5f;
+            o.Time = 7; AriaPlayDecisionSystem.Step(o, ref s);
+            o.Time = 8; AriaPlayDecisionSystem.Step(o, ref s);
+            s.Phase = AriaPlayPhase.Verifying; s.GestureRequested = 0; s.Actions = 4; s.DueAt = 8.5f;
+            o.Time = 9; AriaPlayDecisionSystem.Step(o, ref s);
+            o.Time = 10; AriaPlayDecisionSystem.Step(o, ref s);
+            s.Phase = AriaPlayPhase.Verifying; s.GestureRequested = 0; s.Actions = 5; s.DueAt = 10.5f;
+            o.Time = 11; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Blocked && s.Attempts == 3,
+                "three completed drags without further movement remain bounded");
+            s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Verifying,
+                TargetId = 77, GoalId = 503, Attempts = 3, Actions = 5,
+                ScrollTargetId = 9001, ScrollCreditedActions = 5, BestScrollDistanceViewports = .3f,
+                ObjectiveWatchdogInitialized = 1, VisitedGoalMask = 1UL << (503 & 63),
+                LastObjectiveProgressAt = 1, LastProgressAt = 1 };
+            o.Time = 12; o.ScrollTargetId = 9002; o.ScrollDistanceViewports = 1.1f;
+            AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase != AriaPlayPhase.Blocked && s.Attempts == 0 && s.ScrollTargetId == 9002 &&
+                s.LastObjectiveProgressAt == 1, "new catalog item gets its own budget without forging objective progress");
+            s.Phase = AriaPlayPhase.Verifying; s.Attempts = 3; s.Actions = 6;
+            s.ScrollCreditedActions = 6; s.BestScrollDistanceViewports = 1.1f;
+            o.Time = 13; o.ScrollDistanceViewports = .3f;
+            AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Blocked,
+                "scroll movement without a new completed action cannot erase no-progress retries");
+            s.Phase = AriaPlayPhase.Verifying; s.Actions = 7; s.Attempts = 3;
+            s.ScrollCreditedActions = 6; s.BestScrollDistanceViewports = 1.1f;
+            o.Time = 14; o.ScrollDistanceViewports = 1.07f;
+            AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Blocked,
+                "sub-threshold catalog motion does not clear a no-progress block");
+            s.Phase = AriaPlayPhase.Verifying; s.Actions = 8; s.Attempts = 3;
+            o.ScrollDistanceViewports = .2f;
+            o.Time = 182; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Blocked && s.LastObjectiveProgressAt == 1,
+                "scroll progress cannot extend the objective watchdog");
+            return "[AriaPlayDecisionValidation] result=Passed cases=29";
         }
         private static void Check(bool condition, string reason)
         { if (!condition) throw new InvalidOperationException(reason); }

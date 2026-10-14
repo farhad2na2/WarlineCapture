@@ -72,6 +72,7 @@ namespace Game.Runtime
                 if (SkirmishProductionService.HasLivingProducer(em, session, producer, owned.FactionId))
                     continue;
                 SkirmishResearchService.NotifyProducerDestroyed(em, session, producer, owned.FactionId);
+                SkirmishEnemyConstructionAdapter.RecordProducerLoss(em, session, structure);
                 SkirmishProductionService.NotifyProducerDestroyed(em, session, producer, owned.FactionId);
             }
         }

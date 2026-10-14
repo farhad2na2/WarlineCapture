@@ -65,6 +65,10 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities(),
                 ref passed);
             RunValidationStep(
+                nameof(CommandWheelStopTracksGroupSelectionWithUnchangedFocusedVersion),
+                test => test.CommandWheelStopTracksGroupSelectionWithUnchangedFocusedVersion(),
+                ref passed);
+            RunValidationStep(
                 nameof(InstalledMatchHudRuntimeFeedbackBindsThroughMainMenuPlayUi),
                 test => test.InstalledMatchHudRuntimeFeedbackBindsThroughMainMenuPlayUi(),
                 ref passed);
@@ -151,6 +155,25 @@ public sealed class UIShellCurrentContentLoadTests
         catch (Exception exception)
         {
             Debug.LogError($"[UnitCommandWheelV3Validation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunCommandWheelStopFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(CommandWheelStopTracksGroupSelectionWithUnchangedFocusedVersion),
+                test => test.CommandWheelStopTracksGroupSelectionWithUnchangedFocusedVersion(),
+                ref passed);
+            Debug.Log($"[CommandWheelStopVersionValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[CommandWheelStopVersionValidation] result=Failed passed={passed}\n{exception}");
             ValidationExit.Exit(1);
         }
     }
@@ -769,6 +792,58 @@ public sealed class UIShellCurrentContentLoadTests
         if (controls.CommandWheelStopButton != null)
             Assert.IsFalse(controls.CommandWheelStopButton.interactable, "Command wheel Stop should keep sharing the Stop capability model.");
         Assert.IsTrue(controls.ScanButton.interactable, "Scan should enable when the read model allows scan.");
+    }
+
+    [Test]
+    public void CommandWheelStopTracksGroupSelectionWithUnchangedFocusedVersion()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
+        });
+
+        GameObject footer = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(footer).CommandControls;
+        Assert.NotNull(controls.CommandWheelStopButton);
+        var readModel = new FakeSelectionUiReadModel
+        {
+            CommandStateVersion = 7,
+            HasFocusedUnit = false,
+            HasSelectedUnits = false,
+            CanStop = false
+        };
+        content.BindGameplayRuntimeDependencies(
+            new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(_world.EntityManager)),
+            selectionUiReadModelSystem: readModel);
+        content.RefreshMatchHudCommandControlState();
+        Assert.IsFalse(controls.CommandWheelStopButton.interactable, "No selection must disable wheel Stop.");
+
+        readModel.HasSelectedUnits = true;
+        content.RefreshMatchHudCommandControlState();
+        Assert.IsTrue(controls.CommandWheelStopButton.interactable,
+            "Group Stop must enable even when the focused-unit command version stays unchanged.");
+
+        readModel.HasSelectedUnits = false;
+        content.RefreshMatchHudCommandControlState();
+        Assert.IsFalse(controls.CommandWheelStopButton.interactable,
+            "Deselecting the group must disable wheel Stop without a focused-version change.");
+
+        readModel.HasSelectedUnits = true;
+        readModel.HasFocusedUnit = true;
+        content.RefreshMatchHudCommandControlState();
+        Assert.IsFalse(controls.CommandWheelStopButton.interactable,
+            "An ineligible focused unit must keep wheel Stop disabled.");
+        readModel.CanStop = true;
+        content.RefreshMatchHudCommandControlState();
+        Assert.IsTrue(controls.CommandWheelStopButton.interactable,
+            "An eligible focused unit must enable wheel Stop without relying on a version bump.");
     }
 
     [Test]

@@ -96,7 +96,7 @@ namespace Game.Runtime
             for (int i = 0; i < count; i++)
             {
                 Entity passenger = selectedPassengers[i];
-                if (!TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger) || !em.HasComponent<UnitGrid>(passenger))
+                if (!TransportBoardingCapacitySystemHelper.IsSoldierBoardingCandidateForTransport(em, transport, passenger) || !em.HasComponent<UnitGrid>(passenger))
                     continue;
 
                 int2 passengerCell = em.GetComponentData<UnitGrid>(passenger).Cell;

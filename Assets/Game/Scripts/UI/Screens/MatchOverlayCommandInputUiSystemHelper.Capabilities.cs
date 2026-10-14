@@ -15,6 +15,11 @@ namespace Game.UI.Runtime
             {
                 _view.RefreshMissionRestrictions();
                 ISelectionUiReadModel readModel = selectionUiReadModel ?? _selectionUiReadModel;
+                // Group selection changes SelectedUnitTag without necessarily changing the
+                // focused-unit command version. Keep the wheel's Stop affordance current.
+                ApplyButtonInteractable(_view.CommandWheelStopButton,
+                    readModel == null || (readModel.HasAnySelectedUnits &&
+                        (!readModel.HasFocusedUnit || readModel.FocusedUnitCanStop)));
                 uint commandStateVersion = readModel != null ? readModel.CommandStateVersion : 0u;
                 if (commandStateVersion != 0u &&
                     _hasAppliedVersionedCommandState &&
@@ -27,7 +32,6 @@ namespace Game.UI.Runtime
                 // Unavailable commands still report the specific rejection reason through TryAcceptCapability.
                 ApplyButtonInteractable(_view.HoldButton, true);
                 ApplyButtonInteractable(_view.StopButton, true);
-                ApplyButtonInteractable(_view.CommandWheelStopButton, readModel == null || (readModel.HasAnySelectedUnits && (!readModel.HasFocusedUnit || readModel.FocusedUnitCanStop)));
                 // Keep Scan pressable so unavailable units surface an explicit rejection message.
                 ApplyButtonInteractable(_view.ScanButton, true);
                 // Keep Board pressable so no-selection and invalid-selection states can surface feedback.

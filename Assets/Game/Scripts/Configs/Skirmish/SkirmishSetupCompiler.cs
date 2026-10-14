@@ -113,6 +113,17 @@ namespace Game.Configs
             return compiled.Count > 0;
         }
 
+        // Initial capability rollout: Combined Arms field starts with no authored air.
+        // Air Mobile and Established starts retain their existing strategy/save identity
+        // until the corresponding strategic orchestration and regressions are qualified.
+        // This is an immutable initial-setup decision, never a catalog/seed or live R2 switch.
+        public static bool SupportsGroundCommanderRollout(SkirmishResolvedSetup setup) =>
+            setup != null && setup.ObjectiveKind == SkirmishObjectiveKind.BaseAssault &&
+            setup.ArmyProfileId == SkirmishArmyProfileId.CombinedArms &&
+            setup.StartPackageId == SkirmishStartPackageId.FieldBase &&
+            setup.Readiness == SkirmishReadinessStage.Field &&
+            setup.PlayerAir == 0 && setup.EnemyAir == 0;
+
         private static void ValidateIdentity(SkirmishScenarioDefinitionConfig definition, List<SkirmishCompileReason> reasons)
         {
             if (!new SkirmishCatalogId(definition.CatalogId).IsValid)
@@ -309,6 +320,20 @@ namespace Game.Configs
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
             SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
+            if (SupportsGroundCommanderRollout(setup))
+            {
+                var policyCatalog = SkirmishExpansionCatalogConfig.Load();
+                SkirmishDifficultyConfig difficultyConfig = policyCatalog != null &&
+                    policyCatalog.TryGetDefinition(setup.CatalogId, out var packagedDefinition) && packagedDefinition == definition
+                    ? policyCatalog.GetDifficulty(setup.DifficultyId) : null;
+                if (!SkirmishEnemyPolicyCompiler.TryCompile(setup, definition.MapLayout, out var policy, difficultyConfig))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference, "enemyPolicy", "Enemy policy could not resolve existing configuration/routes."));
+                else
+                {
+                    setup.EnemyPolicy = policy;
+                    setup.ContentHash = (setup.ContentHash ?? string.Empty) + "/enemy-policy-v1/" + policy.Fingerprint;
+                }
+            }
             setup.SetupHash = ComputeHash(setup, seed);
             setup.Report = BuildReport(setup);
             return setup;
@@ -532,6 +557,13 @@ namespace Game.Configs
 
         public static uint ComputeHash(SkirmishResolvedSetup setup, int seed)
         {
+            return ComputeHashCore(setup, seed, true);
+        }
+
+        public static uint ComputePolicylessHash(SkirmishResolvedSetup setup, int seed) => ComputeHashCore(setup, seed, false);
+
+        private static uint ComputeHashCore(SkirmishResolvedSetup setup, int seed, bool includePolicy)
+        {
             var builder = new StringBuilder();
             builder.Append(setup.CatalogId).Append('|')
                 .Append(setup.DefinitionId).Append('|')
@@ -543,6 +575,7 @@ namespace Game.Configs
                 .Append(setup.PlayerTankCount()).Append('|')
                 .Append(setup.MaterialsEach).Append('|')
                 .Append(setup.DeadlineSeconds);
+            if (includePolicy && setup.EnemyPolicy != null) builder.Append("|enemy-policy-v1|").Append(setup.EnemyPolicy.Fingerprint);
             unchecked
             {
                 uint hash = 2166136261;

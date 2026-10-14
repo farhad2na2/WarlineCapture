@@ -27,6 +27,8 @@ namespace Game.Editor
             Touchscreen physicalTouch = null;
             GameObject canvas = null, events = null;
             int clicks = 0;
+            DefaultInputActions fixtureActions = null;
+            var fixtureActionReferences = new System.Collections.Generic.List<InputActionReference>();
             var suspendedDevices = new System.Collections.Generic.List<InputDevice>();
             var oldSettings = InputSystem.settings;
             var fixtureSettings = UnityEngine.Object.Instantiate(oldSettings);
@@ -51,11 +53,30 @@ namespace Game.Editor
                 // Isolate pointer delivery from navigation actions cached during this Editor frame.
                 events.GetComponent<EventSystem>().sendNavigationEvents = false;
                 var module = events.GetComponent<InputSystemUIInputModule>();
+                // Own the action asset/references instead of using the package's
+                // shared default: its Dispose uses deferred Destroy in Edit mode.
+                fixtureActions = new DefaultInputActions();
+                InputActionReference Ref(InputAction action)
+                {
+                    var reference = InputActionReference.Create(action);
+                    fixtureActionReferences.Add(reference);
+                    return reference;
+                }
+                module.actionsAsset = fixtureActions.asset;
+                module.cancel = Ref(fixtureActions.UI.Cancel);
+                module.submit = Ref(fixtureActions.UI.Submit);
+                module.move = Ref(fixtureActions.UI.Navigate);
+                module.leftClick = Ref(fixtureActions.UI.Click);
+                module.rightClick = Ref(fixtureActions.UI.RightClick);
+                module.middleClick = Ref(fixtureActions.UI.MiddleClick);
+                module.point = Ref(fixtureActions.UI.Point);
+                module.scrollWheel = Ref(fixtureActions.UI.ScrollWheel);
+                module.trackedDeviceOrientation = Ref(fixtureActions.UI.TrackedDeviceOrientation);
+                module.trackedDevicePosition = Ref(fixtureActions.UI.TrackedDevicePosition);
                 // UIBehaviour callbacks are not invoked automatically for Edit-mode fixtures.
                 // Balance manual lifecycle calls explicitly during cleanup below.
                 typeof(InputSystemUIInputModule).GetMethod("OnEnable", System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.NonPublic).Invoke(module, null);
-                module.AssignDefaultActions();
                 module.actionsAsset.Enable();
                 canvas = new GameObject("AriaInputFixtureCanvas", typeof(Canvas), typeof(AriaInputFixtureRaycaster));
                 SceneManager.MoveGameObjectToScene(canvas, scene);
@@ -160,6 +181,7 @@ namespace Game.Editor
                 hand.Present(new AriaPlayModel(AriaPlayPhase.Touching, driver.ContactPosition, true, 0));
                 InvokeFixtureLifecycle(hand, "LateUpdate");
                 Require(Vector2.Distance(hand.rectTransform.position, driver.ContactPosition) < .01f, "hand fingertip matches press");
+                PumpInput(); module.Process(); // Separate UI consumption opportunity before moving.
                 driver.Tick(10.6f); PumpInput(); module.Process();
                 hand.Present(new AriaPlayModel(AriaPlayPhase.Touching, driver.ContactPosition, true, 0));
                 InvokeFixtureLifecycle(hand, "LateUpdate");
@@ -167,7 +189,8 @@ namespace Game.Editor
                 Require(driver.IsPressed && Vector2.Distance(driver.ContactPosition, point + Vector2.right * 40) < .1f, "drag contact follows accepted event");
                 driver.Stop(); PumpInput(); module.Process();
                 Require(clicks == 1, "cancelled drag does not click");
-                string result = "[AriaTouchInputValidation] result=Passed cases=22";
+                RunCadenceCases(driver, module, target, physical, point, () => clicks);
+                string result = "[AriaTouchInputValidation] result=Passed cases=28";
                 Debug.Log(result);
                 return result;
             }
@@ -189,11 +212,108 @@ namespace Game.Editor
                         System.Reflection.BindingFlags.NonPublic).Invoke(events.GetComponent<EventSystem>(), null);
                     UnityEngine.Object.DestroyImmediate(events);
                 }
+                foreach (var reference in fixtureActionReferences)
+                    if (reference != null) UnityEngine.Object.DestroyImmediate(reference);
+                if (fixtureActions != null && fixtureActions.asset != null)
+                {
+                    fixtureActions.asset.Disable();
+                    UnityEngine.Object.DestroyImmediate(fixtureActions.asset);
+                }
                 if (previousEvents != null) EventSystem.current = previousEvents;
                 SceneManager.SetActiveScene(previousScene);
                 EditorSceneManager.ClosePreviewScene(scene);
                 Require(ReferenceEquals(EventSystem.current, previousEvents), "fixture restores EventSystem registration");
             }
+        }
+
+        public static void RunTouchCadenceFocusedValidation()
+        {
+            Run();
+            Debug.Log("[AriaTouchCadenceValidation] result=Passed cases=6 existingCases=22");
+        }
+
+        private static void RunCadenceCases(AriaTouchInputUiSystemHelper driver, InputSystemUIInputModule module,
+            GameObject target, Mouse physical, Vector2 origin, Func<int> clicks)
+        {
+            // Match real parent drag / child control routing. Unity intentionally
+            // permits a click when pointerPress and pointerDrag are the same object.
+            var surface = new GameObject("TouchDragSurface", typeof(RectTransform), typeof(AriaInputFixtureDrag));
+            surface.transform.SetParent(target.transform.parent, false);
+            var surfaceRect = (RectTransform)surface.transform;
+            surfaceRect.anchorMin = Vector2.zero; surfaceRect.anchorMax = Vector2.one;
+            surfaceRect.offsetMin = surfaceRect.offsetMax = Vector2.zero;
+            target.transform.SetParent(surface.transform, false);
+            var drag = surface.GetComponent<AriaInputFixtureDrag>();
+            var child = target.GetComponent<AriaInputFixtureClicks>();
+            Vector2 destination = origin + Vector2.right * 80;
+            // Each event is consumed by the real UI module. The explicit empty
+            // Dynamic update corresponds to the next frame opportunity in Play.
+            void Pump() { PumpInput(); module.Process(); }
+            void Begin(float now, float travel)
+            {
+                if (!driver.IsRunning) Require(driver.Start(), "cadence start");
+                Require(driver.TryGesture(origin, destination, .15f, travel, now), "cadence drag enqueue");
+                Pump();
+            }
+            void FinalMove(float overdue)
+            {
+                uint accepted = driver.AcceptedSamples;
+                driver.Tick(overdue); Pump();
+                Require(driver.AcceptedSamples == accepted && driver.IsPressed, "same-consumption drag cannot advance");
+                driver.Tick(overdue); Pump();
+                Require(driver.IsPressed && driver.IsBusy && Vector2.Distance(driver.ContactPosition, destination) < .01f,
+                    "overdue drag must expose accepted final Moved before release");
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                int beforeClicks = clicks(), began = drag.Began, ended = drag.Ended, up = child.Up;
+                uint completed = driver.CompletedGestures;
+                float now = 20 + i * 10;
+                Begin(now, i == 1 ? 0 : .2f);
+                if (i == 2)
+                {
+                    Pump();
+                    driver.Tick(now + .25f); Pump();
+                    Require(driver.IsPressed && Vector2.Distance(driver.ContactPosition, origin + Vector2.right * 40) < .1f,
+                        "normal intermediate drag is retained");
+                }
+                FinalMove(now + 5);
+                Require(drag.Began == began + 1 && drag.Dragged > 0 && drag.Ended == ended && child.Up == up + 1,
+                    "real UI transfers child press to parent drag while touch remains held");
+                uint accepted = driver.AcceptedSamples;
+                driver.Tick(now + 5); Pump();
+                Require(driver.IsPressed && driver.AcceptedSamples == accepted && drag.Ended == ended,
+                    "final Moved survives its UI update without release");
+                driver.Tick(now + 5); Pump();
+                Require(!driver.IsBusy && driver.CompletedGestures == completed + 1 && drag.Ended == ended + 1 && child.Up == up + 1,
+                    "next UI opportunity completes one real drag");
+                Require(clicks() == beforeClicks, "drag cannot click its source control");
+                Require(Vector2.Distance(drag.LastDragPosition, destination) < .01f, "UI received final drag destination");
+            }
+
+            int baselineClicks = clicks(); uint baselineCompleted = driver.CompletedGestures;
+            Begin(60, .2f); FinalMove(65);
+            driver.Stop(); Pump(); driver.Tick(66); Pump();
+            Require(!driver.IsRunning && clicks() == baselineClicks && driver.CompletedGestures == baselineCompleted,
+                "cancel after final Moved has no delayed release/click/completion");
+
+            Begin(70, .2f); FinalMove(75);
+            uint interventions = driver.PhysicalInterventions;
+            InputSystem.QueueStateEvent(physical, new MouseState { position = origin }.WithButton(MouseButton.Left));
+            Pump();
+            InputSystem.QueueStateEvent(physical, new MouseState { position = origin }); Pump();
+            driver.Tick(76); Pump();
+            Require(driver.PlayerInterrupted && !driver.IsRunning && driver.PhysicalInterventions == interventions + 1 &&
+                clicks() == baselineClicks && driver.CompletedGestures == baselineCompleted,
+                "physical takeover after final Moved still cancels without click/completion");
+
+            Require(driver.Start(), "sparse tap start");
+            Require(driver.TryGesture(origin, origin, .15f, 0, 80), "sparse tap enqueue");
+            Pump(); driver.Tick(85); Pump();
+            Require(clicks() == baselineClicks + 1 && driver.CompletedGestures == baselineCompleted + 1 && !driver.IsBusy,
+                "sparse stationary tap retains ordinary one-click timing");
+            Require(driver.UnexpectedSamples == 0, "cadence changes cannot create unexpected touch samples");
+            driver.Stop(); Pump();
         }
 
         private static void InvokeFixtureLifecycle(Component component, string method)
@@ -229,9 +349,19 @@ namespace Game.Editor
             results.Add(new RaycastResult { gameObject = Target, module = this, distance = 0, index = results.Count, screenPosition = data.position });
         }
     }
-    public sealed class AriaInputFixtureClicks : MonoBehaviour, IPointerClickHandler
+    public sealed class AriaInputFixtureDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    {
+        public int Began, Dragged, Ended;
+        public Vector2 LastDragPosition;
+        public void OnBeginDrag(PointerEventData data) { Began++; }
+        public void OnDrag(PointerEventData data) { Dragged++; LastDragPosition = data.position; }
+        public void OnEndDrag(PointerEventData data) { Ended++; }
+    }
+    public sealed class AriaInputFixtureClicks : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
     {
         public string Trace;
+        public int Up;
+        public void OnPointerUp(PointerEventData data) { Up++; }
         public void OnPointerClick(PointerEventData data)
         { Trace += data.pointerId + ":" + data.button + ";"; }
     }

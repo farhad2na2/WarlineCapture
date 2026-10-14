@@ -78,6 +78,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.HoldPositionCommandSystem_PreservesAirTransientState());
             RunCase(test => test.HoldPositionCommandSystem_RejectsWithoutSelectedMoveUnit());
             RunCase(test => test.StopCommandSystem_StopsSelectedMovableUnitsAndClearsQueuedMoveCommands());
+            RunCase(test => test.StopCommandSystem_RetainsManualControlForAlreadyMovingSelectedUnit());
             RunCase(test => test.StopCommandSystem_StopsVehicleAndAirUnitsWithoutDeselecting());
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsFocusedPlayerUnitToRespawnSpawnPoint());
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsProducedUnitToProducingBuildingSpawnPoint());
@@ -97,6 +98,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(false));
             RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(true));
             RunCase(test => test.RuntimeInput_CapturedUiReleaseDoesNotSuppressNextWorldSelection());
+            RunCase(test => test.RuntimeInput_SelectModeUiDragPreservesSelectedActors());
+            RunCase(test => test.RuntimeInput_SelectModeWorldDragStillQueuesSelectionRectangle());
             RunCase(test => test.RuntimeInput_FullMapUiReleasePreservesNextBoardTarget(false));
             RunCase(test => test.RuntimeInput_FullMapUiReleasePreservesNextBoardTarget(true));
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
@@ -107,6 +110,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.MatchOverlayCommandInputUiSystemHelper_LeavesCommandTabPresentationToHudFeedback());
+            RunCase(test => test.PointerTargetCommandSystem_RestoredAttackModeUsesEcsStateForGroundTap());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
             RunCase(test => test.BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation());
             RunCase(test => test.BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats());
@@ -116,7 +120,11 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
             RunCase(test => test.AttackTargetLookup_RebindsAfterWorldReplacement());
             RunCase(test => test.AttackTargetLookup_SnapsAriaAttackPreviewToHighlightedEnemy());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=65");
+            RunCase(test => test.AttackTargetLookup_PrefersVisibleHostileAirOverNeutralSceneryAndOwnHitbox());
+            RunCase(test => test.VisibleHostileAirTarget_RejectsInvalidContacts());
+            RunCase(test => test.VisibleHostileAirTarget_RanksOverlapsDeterministically());
+            RunCase(test => test.AttackTargetLookup_KeepsGateVisualPriority());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=77");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -138,6 +146,39 @@ public sealed class RtsSelectionInputSystemTests
         finally
         {
             test.TearDown();
+        }
+    }
+
+    public static void RunStopRetainsManualControlValidation()
+    {
+        try
+        {
+            RunCase(test => test.StopCommandSystem_RetainsManualControlForAlreadyMovingSelectedUnit());
+            Debug.Log("[StopRetainsManualControlValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[StopRetainsManualControlValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunSelectModeUiDragValidation()
+    {
+        try
+        {
+            RunCase(test => test.RuntimeInput_SelectModeUiDragPreservesSelectedActors());
+            RunCase(test => test.RuntimeInput_SelectModeWorldDragStillQueuesSelectionRectangle());
+            Debug.Log("[SelectModeUiDragValidation] result=Passed tests=2");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SelectModeUiDragValidation] result=Failed");
+            ValidationExit.Exit(1);
         }
     }
 
@@ -1982,6 +2023,54 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void StopCommandSystem_RetainsManualControlForAlreadyMovingSelectedUnit()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity unit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(ManualMoveOrderTag),
+            typeof(UnitTarget),
+            typeof(UnitPathRequest),
+            typeof(EngageTarget),
+            typeof(UnitCombat));
+        em.AddComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(1, 2) });
+        em.SetComponentData(unit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
+        em.SetComponentData(unit, new UnitTarget { Cell = new int2(5, 6) });
+        em.SetComponentData(unit, new UnitPathRequest { Goal = new int2(7, 8) });
+        em.SetComponentData(unit, new EngageTarget { Target = Entity.Null, Cell = new int2(3, 4), IsCommanded = 1 });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper(em);
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.Stop, frame: 492));
+
+        bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+            em,
+            Entity.Null,
+            out RtsSelectionCommandIntentKind kind,
+            out bool accepted,
+            out TacticalCommandReasonCode reason,
+            out int issuedCount);
+
+        Assert.IsTrue(processed);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Stop, kind);
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.None, reason);
+        Assert.AreEqual(1, issuedCount);
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(unit));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit),
+            "Stop must retain manual control when clearing a pre-existing move order.");
+        Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        AssertNoQueuedCommandIntents(inputSystem);
+    }
+
+    [Test]
     public void StopCommandSystem_StopsVehicleAndAirUnitsWithoutDeselecting()
     {
         EntityManager em = _testWorld.EntityManager;
@@ -3145,6 +3234,59 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(1, focusCalls, "A completed gameplay-UI release must not consume the next world-unit selection.");
     }
 
+    [Test]
+    public void RuntimeInput_SelectModeUiDragPreservesSelectedActors()
+    {
+        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+        Entity first = em.CreateEntity(typeof(SelectedUnitTag));
+        Entity second = em.CreateEntity(typeof(SelectedUnitTag));
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        var runtime = new RuntimeGameplayStateSystem(em) { PlayRequested = true, SelectionModeActive = true };
+        int rectangleUpdates = 0;
+        var context = CreateRuntimeInputContext(runtime, input,
+            isPointerOverGameplayUi: _ => true,
+            processSelectionRectangleRequests: () =>
+            {
+                rectangleUpdates++;
+                em.RemoveComponent<SelectedUnitTag>(first);
+                em.RemoveComponent<SelectedUnitTag>(second);
+            });
+
+        Vector2 start = new(1050f, 552f);
+        InvokeRuntimePointerPressed(context, start);
+        Assert.IsTrue(input.PointerPressedOverUi);
+        InvokeRuntimePointerHeld(context, new Vector2(1127f, 552f));
+        InvokeRuntimePointerRelease(context, new Vector2(1127f, 552f));
+
+        Assert.AreEqual(0, rectangleUpdates, "A full-map viewport drag must stay owned by the UI.");
+        Assert.IsFalse(input.HasPendingSelectionRectangleRequests());
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(first));
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(second));
+        Assert.IsFalse(input.IsDraggingSelection);
+        Assert.IsFalse(input.HasLiveSelectionRect);
+    }
+
+    [Test]
+    public void RuntimeInput_SelectModeWorldDragStillQueuesSelectionRectangle()
+    {
+        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        var runtime = new RuntimeGameplayStateSystem(em) { PlayRequested = true, SelectionModeActive = true };
+        int rectangleUpdates = 0;
+        var context = CreateRuntimeInputContext(runtime, input,
+            isPointerOverGameplayUi: _ => false,
+            processSelectionRectangleRequests: () => rectangleUpdates++);
+
+        InvokeRuntimePointerPressed(context, new Vector2(500f, 400f));
+        Assert.IsFalse(input.PointerPressedOverUi);
+        InvokeRuntimePointerHeld(context, new Vector2(580f, 440f));
+
+        Assert.AreEqual(1, rectangleUpdates);
+        Assert.IsTrue(input.IsDraggingSelection);
+        Assert.IsTrue(input.HasLiveSelectionRect);
+        Assert.IsTrue(input.HasPendingSelectionRectangleRequests());
+    }
+
     [TestCase(false)]
     [TestCase(true)]
     public void RuntimeInput_FullMapUiReleasePreservesNextBoardTarget(bool closing)
@@ -3480,6 +3622,58 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void PointerTargetCommandSystem_RestoredAttackModeUsesEcsStateForGroundTap()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        input.ArmCommandMode(TacticalCommandMode.Attack, frame: 74, oneShot: true, requiresWorldTarget: true);
+
+        GameObject cameraObject = new("RtsSelectionInputSystemTests_RestoredAttackCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        try
+        {
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+            camera.transform.position = new Vector3(16f, 50f, 16f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Vector3 projected = camera.WorldToScreenPoint(new Vector3(20f, 0f, 20f));
+            Vector2 tap = new(projected.x, projected.y);
+            var pointer = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            var context = CreatePointerTargetContext(
+                camera, input,
+                (out EntityManager targetEm) => { targetEm = em; return true; },
+                () => false); // startup-local flag lost after Continue
+
+            Assert.IsTrue(pointer.TryRequestAttackOrderToClickedUnit(context, tap));
+            Assert.IsTrue(input.TryGetCommandBuffers(out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests, out _));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(RtsSelectionCommandIntentKind.Attack, requests[0].Kind);
+            Assert.AreEqual(RtsSelectionCommandTargetKind.Cell, requests[0].TargetKind);
+            Assert.AreEqual(1, requests[0].ExplicitAttackTargetMode);
+            Assert.IsTrue(input.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Attack));
+
+            // A cancel must win over a stale startup-local flag: no second ground advance.
+            input.ClearActiveCommandMode();
+            requests.Clear();
+            context = CreatePointerTargetContext(
+                camera, input,
+                (out EntityManager targetEm) => { targetEm = em; return true; },
+                () => true);
+            pointer.TryRequestAttackOrderToClickedUnit(context, tap);
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreNotEqual(RtsSelectionCommandTargetKind.Cell, requests[0].TargetKind);
+            Assert.AreEqual(0, requests[0].ExplicitAttackTargetMode);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
     public void PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets()
     {
         string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs");
@@ -3782,6 +3976,220 @@ public sealed class RtsSelectionInputSystemTests
         }
     }
 
+    public static void RunVisibleHostileAirAttackPickingValidation()
+    {
+        try
+        {
+            RunCase(test => test.AttackTargetLookup_PrefersVisibleHostileAirOverNeutralSceneryAndOwnHitbox());
+            RunCase(test => test.VisibleHostileAirTarget_RejectsInvalidContacts());
+            RunCase(test => test.VisibleHostileAirTarget_RanksOverlapsDeterministically());
+            RunCase(test => test.AttackTargetLookup_KeepsGateVisualPriority());
+            Debug.Log("[VisibleHostileAirAttackPickingValidation] result=Passed cases=4");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[VisibleHostileAirAttackPickingValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void AttackTargetLookup_PrefersVisibleHostileAirOverNeutralSceneryAndOwnHitbox()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        GameObject cameraObject = new("AttackHostileAirOverSceneryCamera");
+        try
+        {
+            Camera camera = CreateAttackAirTestCamera(cameraObject);
+            camera.transform.position = new Vector3(16f, 50f, -20f);
+            camera.transform.LookAt(new Vector3(16f, 0f, 16f));
+            Vector3 ground = new(16f, 0f, 16f);
+            Vector3 tapScreen = camera.WorldToScreenPoint(ground);
+            var tap = new Vector2(tapScreen.x, tapScreen.y);
+            Plane flightAltitude = new(Vector3.up, new Vector3(0f, 20f, 0f));
+            Vector3 AtAltitude(float screenOffset)
+            {
+                Ray ray = camera.ScreenPointToRay(tap + Vector2.right * screenOffset);
+                Assert.IsTrue(flightAltitude.Raycast(ray, out float distance));
+                return ray.GetPoint(distance);
+            }
+
+            Entity neutral = em.CreateEntity(typeof(OperationMapBuildingComponent), typeof(Faction),
+                typeof(UnitGrid), typeof(UnitFootprint), typeof(UnitHealth), typeof(LocalToWorld),
+                typeof(StaticGridBlocker));
+            em.SetComponentData(neutral, new Faction { Id = 0 });
+            em.SetComponentData(neutral, new UnitGrid { Cell = new int2(25, 16) });
+            em.SetComponentData(neutral, new UnitFootprint { Size = new int2(20, 2) });
+            em.SetComponentData(neutral, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(neutral, new LocalToWorld { Value = float4x4.Translate(new float3(25f, 0f, 16f)) });
+
+            Entity own = CreateAttackAirCandidate(em, (float3)AtAltitude(164.81f), FactionIdentity.PlayerFactionId);
+            em.SetComponentData(own, new UnitGrid { Cell = new int2(50, 50) });
+            em.AddComponent<SelectedUnitTag>(own);
+            em.AddComponentData(own, new UnitSelectionHitbox
+            {
+                Center = float3.zero,
+                Extents = new float3(14f, 1f, 3f)
+            });
+            Entity hostile = CreateAttackAirCandidate(em, (float3)AtAltitude(20.02f), FactionIdentity.EnemyFactionId);
+            em.SetComponentData(hostile, new UnitGrid { Cell = new int2(40, 40) });
+            em.SetComponentData(hostile, LocalTransform.FromPosition((float3)AtAltitude(58.92f)));
+            Vector3 renderedScreen = camera.WorldToScreenPoint(em.GetComponentData<LocalToWorld>(hostile).Position);
+            Vector3 logicalScreen = camera.WorldToScreenPoint(em.GetComponentData<LocalTransform>(hostile).Position);
+            Assert.That(Vector2.Distance(tap, (Vector2)renderedScreen), Is.EqualTo(20.02f).Within(0.1f));
+            Assert.That(Vector2.Distance(tap, (Vector2)logicalScreen), Is.EqualTo(58.92f).Within(0.1f));
+
+            var genericLookup = new FocusableUnitLookupCameraSystemHelper();
+            Assert.IsTrue(genericLookup.TryGetClickedUnitEntity(em, camera, new int2(16, 16), tap, out Entity flatCandidate));
+            Assert.AreEqual(neutral, flatCandidate, "The old flat-ground route must demonstrably return neutral scenery.");
+            Assert.IsTrue(genericLookup.TryGetClickedUnitEntityByScreenDistance(em, camera, tap, 54f, out Entity screenCandidate));
+            Assert.AreEqual(own, screenCandidate, "The old generic screen route must demonstrably prefer the own broad aircraft hitbox.");
+
+            var pointer = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            Assert.IsTrue(pointer.TryGetClickedAttackTargetEntity(
+                CreatePointerTargetContext(camera), tap, em, out Entity target));
+            Assert.AreEqual(hostile, target, "The rendered hostile aircraft must win over neutral ground and the own Fighter hitbox.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void VisibleHostileAirTarget_RejectsInvalidContacts()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        GameObject cameraObject = new("AttackHostileAirPolicyCamera");
+        try
+        {
+            Camera camera = CreateAttackAirTestCamera(cameraObject);
+            Entity target = CreateAttackAirCandidate(em, new float3(16f, 20f, 16f), FactionIdentity.EnemyFactionId);
+            Vector3 projected = camera.WorldToScreenPoint(new Vector3(16f, 0f, 16f));
+            var tap = new Vector2(projected.x, projected.y);
+            var pointer = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            Assert.IsTrue(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out Entity selected));
+            Assert.AreEqual(target, selected);
+
+            em.SetComponentData(target, new Faction { Id = FactionIdentity.PlayerFactionId });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Friendly air must not become an Attack target.");
+            em.SetComponentData(target, new Faction { Id = 0 });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Neutral air must not become an Attack target.");
+            em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
+            em.SetComponentData(target, new UnitHealth { Current = 0, Max = 100 });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Dead air must not become an Attack target.");
+            em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(target, new UnitAirComponent { Airborne = 0 });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Grounded air must keep the existing ground-click route.");
+            em.SetComponentData(target, new UnitAirComponent { Airborne = 1 });
+            em.AddComponent<UnitSpawnTransitTag>(target);
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Transit aircraft must not be targetable.");
+            em.RemoveComponent<UnitSpawnTransitTag>(target);
+            em.AddComponentData(target, new SkirmishAttemptOwnedComponent { FactionId = FactionIdentity.EnemyFactionId });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Fog-hidden aircraft must not be targetable.");
+            em.RemoveComponent<SkirmishAttemptOwnedComponent>(target);
+            em.SetComponentData(target, new LocalToWorld { Value = float4x4.Translate(new float3(21f, 20f, 16f)) });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "A center more than 54 pixels away must not snap.");
+            em.SetComponentData(target, new LocalToWorld { Value = float4x4.Translate(new float3(16f, 75f, 16f)) });
+            Assert.IsFalse(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out _), "Aircraft behind the camera must not snap.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void VisibleHostileAirTarget_RanksOverlapsDeterministically()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        GameObject cameraObject = new("AttackHostileAirOverlapCamera");
+        try
+        {
+            Camera camera = CreateAttackAirTestCamera(cameraObject);
+            Vector3 projected = camera.WorldToScreenPoint(new Vector3(16f, 0f, 16f));
+            var tap = new Vector2(projected.x, projected.y);
+            Entity first = CreateAttackAirCandidate(em, new float3(15.5f, 20f, 16f), FactionIdentity.EnemyFactionId);
+            Entity second = CreateAttackAirCandidate(em, new float3(16.5f, 20f, 16f), FactionIdentity.EnemyFactionId);
+            Entity broad = CreateAttackAirCandidate(em, new float3(30f, 20f, 16f), FactionIdentity.EnemyFactionId);
+            em.AddComponentData(broad, new UnitSelectionHitbox
+            {
+                Center = float3.zero,
+                Extents = new float3(15f, 1f, 3f)
+            });
+            var pointer = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            Assert.IsTrue(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out Entity selected));
+            Assert.AreEqual(first, selected, "Equidistant rendered centers must resolve by stable entity identity, not query order or a broad hitbox.");
+            em.SetComponentData(first, new UnitHealth { Current = 0, Max = 100 });
+            em.SetComponentData(second, new UnitHealth { Current = 0, Max = 100 });
+            Assert.IsTrue(pointer.TryGetClickedVisibleHostileAirAttackTarget(em, camera, tap, out selected));
+            Assert.AreEqual(broad, selected, "A visible hostile wing hit remains usable when no aircraft center is within 54 pixels.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void AttackTargetLookup_KeepsGateVisualPriority()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        Entity gate = CreateRuntimeBuildingCombatTarget(em);
+        em.AddComponentData(gate, new UnitSelectionHitbox
+        {
+            Center = float3.zero,
+            Extents = new float3(2f, 2f, 2f)
+        });
+        CreateAttackAirCandidate(em, new float3(12.5f, 20f, 11.5f), FactionIdentity.EnemyFactionId);
+        GameObject cameraObject = new("AttackGateBeforeAirCamera");
+        try
+        {
+            Camera camera = CreateAttackAirTestCamera(cameraObject);
+            Vector3 projected = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
+            var pointer = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            Assert.IsTrue(pointer.TryGetClickedAttackTargetEntity(
+                CreatePointerTargetContext(camera), new Vector2(projected.x, projected.y), em, out Entity selected));
+            Assert.AreEqual(gate, selected, "The existing gate-face visual route must retain priority over aircraft nearby.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    private static Camera CreateAttackAirTestCamera(GameObject cameraObject)
+    {
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 24f;
+        camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+        camera.transform.position = new Vector3(16f, 50f, 16f);
+        camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+        return camera;
+    }
+
+    private static Entity CreateAttackAirCandidate(EntityManager em, float3 position, byte faction)
+    {
+        Entity entity = em.CreateEntity(typeof(Faction), typeof(UnitAirComponent), typeof(UnitHealth),
+            typeof(LocalTransform), typeof(LocalToWorld), typeof(UnitGrid), typeof(UnitFootprint), typeof(UnitMove));
+        em.SetComponentData(entity, new Faction { Id = faction });
+        em.SetComponentData(entity, new UnitAirComponent { Airborne = 1 });
+        em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        em.SetComponentData(entity, new LocalToWorld { Value = float4x4.Translate(position) });
+        em.SetComponentData(entity, new UnitGrid { Cell = new int2((int)position.x, (int)position.z) });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(entity, new UnitMove { Speed = 1f });
+        return entity;
+    }
+
     private static void CreateGridConfig(EntityManager em)
     {
         Entity gridEntity = em.CreateEntity(typeof(GridConfig));
@@ -3815,11 +4223,15 @@ public sealed class RtsSelectionInputSystemTests
         return building;
     }
 
-    private static RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetContext(Camera camera)
+    private static RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetContext(
+        Camera camera,
+        RtsSelectionInputCompositionSystemHelper inputSystem = null,
+        RtsSelectionPointerTargetCommandCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager = null,
+        Func<bool> getExplicitAttackTargetModeActive = null)
     {
         return new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
             runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager),
-            inputSystem: null,
+            inputSystem: inputSystem,
             selectionStateSystem: new SelectionStateCompositionSystemHelper(),
             focusedUnitLifecycleSystem: null,
             focusableUnitLookupSystem: new FocusableUnitLookupCameraSystemHelper(),
@@ -3830,9 +4242,9 @@ public sealed class RtsSelectionInputSystemTests
             buildingPlacementInteractionSystem: null,
             buildingPlacementInteractionContext: default,
             worldCamera: camera,
-            tryGetEntityManager: null,
+            tryGetEntityManager: tryGetEntityManager,
             tryGetPointerPosition: null,
-            getExplicitAttackTargetModeActive: null,
+            getExplicitAttackTargetModeActive: getExplicitAttackTargetModeActive,
             setExplicitAttackTargetModeActive: null,
             applyHudCommandMode: null,
             applyHudCommandResult: null,
@@ -3924,7 +4336,9 @@ public sealed class RtsSelectionInputSystemTests
         Func<Entity, Vector2, bool> isBoardSelectedTransportPassengerTarget = null,
         Func<Vector2, bool> tryIssueScanOrder = null,
         Func<Vector2, bool> tryFocusUnit = null,
-        Func<Vector2, bool> tryIssueBoardTransportOrder = null)
+        Func<Vector2, bool> tryIssueBoardTransportOrder = null,
+        Func<Vector2, bool> isPointerOverGameplayUi = null,
+        Action processSelectionRectangleRequests = null)
     {
         return new RtsSelectionRuntimeInputCompositionSystemHelper.Context(
             runtimeGameplayStateSystem: runtimeState,
@@ -3937,7 +4351,7 @@ public sealed class RtsSelectionInputSystemTests
             getCameraDragging: getCameraDragging,
             setCameraDragging: setCameraDragging,
             isPointerOverAnyUi: _ => false,
-            isPointerOverGameplayUi: _ => false,
+            isPointerOverGameplayUi: isPointerOverGameplayUi ?? (_ => false),
             tryIssueAttackOrderToClickedUnit: null,
             tryIssueScanOrder: tryIssueScanOrder,
             orderMarkerSystem: null,
@@ -3951,7 +4365,7 @@ public sealed class RtsSelectionInputSystemTests
             tryFocusUnit: tryFocusUnit,
             panCamera: panCamera,
             issueMoveOrder: null,
-            processSelectionRectangleRequests: null,
+            processSelectionRectangleRequests: processSelectionRectangleRequests,
             clearCommandMode: null,
             logClickDiagnostic: null,
             buildClickDebugSummary: _ => "summary=test",

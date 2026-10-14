@@ -130,6 +130,37 @@ namespace Game.Runtime
             Entity damageQueue = Combat.CombatDamageObservationUtility.TryGetQueue(_damageQueueQuery);
             var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
             float dt = SystemAPI.Time.DeltaTime;
+            // A transiently lost engagement must not pause a weapon's recovery
+            // or leave its last tracer visible until another target is acquired.
+            // This query is disjoint from the engaged attack path below.
+            if (dt > 0f)
+            {
+                foreach (var (attackState, traceState, entity) in SystemAPI
+                             .Query<RefRW<UnitAttackCooldownComponent>, RefRW<UnitAttackTraceComponent>>()
+                             .WithAll<UnitAttack>()
+                             .WithAll<UnitAttackAnimationComponent>()
+                             .WithAll<LocalTransform>()
+                             .WithAll<UnitHealth>()
+                             .WithNone<EngageTarget>()
+                             .WithNone<StaticGridBlocker>()
+                             .WithNone<CampaignMissionCombatSuppressedTag>()
+                             .WithNone<SupportPassengerTransitTag>()
+                             .WithNone<UnitDeathAnimationComponent>()
+                             .WithEntityAccess())
+                {
+                    if (em.HasComponent<AirMissileLauncherComponent>(entity) ||
+                        (em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack == 0))
+                        continue;
+
+                    float cooldownRemaining = attackState.ValueRO.CooldownRemaining;
+                    if (cooldownRemaining > 0f)
+                        attackState.ValueRW.CooldownRemaining = math.max(0f, cooldownRemaining - dt);
+                    float traceRemaining = traceState.ValueRO.TimeRemaining;
+                    if (traceRemaining > 0f)
+                        traceState.ValueRW.TimeRemaining = math.max(0f, traceRemaining - dt);
+                }
+            }
+
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
             if (!_predictedHealth.IsCreated)
                 _predictedHealth = new NativeParallelHashMap<Entity, int>(InitialAttackScratchCapacity, Allocator.Persistent);

@@ -619,6 +619,7 @@ namespace Game.Runtime
 
         public static void DestroyAttemptOwned(EntityManager em, FixedString64Bytes sessionId)
         {
+            SkirmishEnemyConstructionAdapter.CleanupAttempt(em, sessionId);
             SkirmishNativeCheckpointTransientState.DestroySession(em, sessionId);
             using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
             {

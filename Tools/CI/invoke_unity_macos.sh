@@ -118,21 +118,29 @@ if [[ "$REUSE_EDITOR" -eq 1 ]]; then
         exit 64
     fi
     execute_method="$2"
-    if [[ -e "$LOG_FILE" || -e "$LOG_FILE.exit" || -e "$LOG_FILE.dispatch.json" ]]; then
+    if [[ -e "$LOG_FILE" || -e "$LOG_FILE.exit" || -e "$LOG_FILE.dispatch.json" || -e "$LOG_FILE.dispatch.cs" ]]; then
         echo "[UnityInvokeMac] ERROR: --reuse requires a new log path to preserve prior evidence." >&2
         exit 64
     fi
-    live_code="$(python3 - "$execute_method" "$LOG_FILE" <<'PY'
+    dispatch_source="$LOG_FILE.dispatch.cs"
+    # Preserve the exact owned callback as exclusive evidence. run_script has a
+    # distinct millisecond parameter; eval's timeout collides with CLI HTTP timeout.
+    python3 - "$execute_method" "$LOG_FILE" "$dispatch_source" <<'PYCODE'
 import json,sys
-print('double runAfter=UnityEditor.EditorApplication.timeSinceStartup+10; UnityEditor.EditorApplication.CallbackFunction callback=null; callback=() => { if(UnityEditor.EditorApplication.timeSinceStartup<runAfter)return; UnityEditor.EditorApplication.update -= callback; Game.Editor.ExistingEditorValidation.Run('+json.dumps(sys.argv[1])+','+json.dumps(sys.argv[2])+'); }; UnityEditor.EditorApplication.update += callback; return "scheduled";')
-PY
-)"
+code = 'public static class WarlineExistingValidationDispatch { public static string Run() { double runAfter=UnityEditor.EditorApplication.timeSinceStartup+10; UnityEditor.EditorApplication.CallbackFunction callback=null; callback=() => { if(UnityEditor.EditorApplication.timeSinceStartup<runAfter)return; UnityEditor.EditorApplication.update -= callback; Game.Editor.ExistingEditorValidation.Run('+json.dumps(sys.argv[1])+','+json.dumps(sys.argv[2])+'); }; UnityEditor.EditorApplication.update += callback; return "scheduled"; } }\n'
+with open(sys.argv[3], 'x', encoding='utf-8') as stream:
+    stream.write(code)
+PYCODE
+    dispatch_timeout_ms=30000
+    if [[ "$TIMEOUT_SECONDS" -lt 30 ]]; then
+        dispatch_timeout_ms=$((TIMEOUT_SECONDS * 1000))
+    fi
     echo "[UnityInvokeMac] LicensingMode: existing GUI Editor; project=$PROJECT_PATH"
     echo "[UnityInvokeMac] Existing executeMethod: $execute_method; LogFile: $LOG_FILE; TimeoutSeconds: $TIMEOUT_SECONDS"
     # CLI targets the exact existing project. Failure never falls back to opening another Editor.
     live_started_seconds=$SECONDS
     dispatch_status=0
-    dispatch_output="$(unity command eval --project-path "$PROJECT_PATH" --code "$live_code" --timeout "$TIMEOUT_SECONDS" --format json)" || dispatch_status=$?
+    dispatch_output="$(unity command run_script --project-path "$PROJECT_PATH" --file "$dispatch_source" --entry WarlineExistingValidationDispatch.Run --timeout_ms "$dispatch_timeout_ms" --timeout "$TIMEOUT_SECONDS" --format json)" || dispatch_status=$?
     printf '%s\n' "$dispatch_output" > "$LOG_FILE.dispatch.json"
     printf '%s\n' "$dispatch_output"
     # One monitor process retains the exact ownership/receipt checks and timeout.

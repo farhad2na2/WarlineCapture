@@ -31,6 +31,12 @@ namespace Game.Editor
         private static bool manualCameraFocusPending;
         private static bool manualCameraFocusStarted;
         private static Vector3 manualCameraFocusSite;
+        private static bool manualCompanionLeaseActive, manualCompanionRecoveryArmed;
+        private static double manualLastTouchAt;
+        private static uint manualLastObservedGestures;
+        private static int manualNoTouchRecoveries;
+        private static uint manualRecoveryIgnoreThrough;
+        private static bool manualRecoveryTapInProgress;
 
         public static void RunS004ManualAndExit()
         {
@@ -65,6 +71,12 @@ namespace Game.Editor
             manualOrderRetries = 0;
             manualCameraFocusPending = false;
             manualCameraFocusStarted = false;
+            manualCompanionLeaseActive = manualCompanionRecoveryArmed = false;
+            manualLastTouchAt = EditorApplication.timeSinceStartup;
+            manualLastObservedGestures = 0;
+            manualNoTouchRecoveries = 0;
+            manualRecoveryIgnoreThrough = 0;
+            manualRecoveryTapInProgress = false;
             AriaCommandEvidence.Recorded -= ObserveManualAttackMoveReceipt;
             AriaCommandEvidence.Recorded += ObserveManualAttackMoveReceipt;
             // Pre-save combat shares the already observed recruitment stream.
@@ -106,8 +118,95 @@ namespace Game.Editor
 
         private static void ObserveManualAttackMoveReceipt(string operation, uint receipt, bool verified)
         {
-            if (manualTouch != null && verified && operation is "AttackMove" or "ArmyAttack")
+            // Companion AttackMove receipts are evidence for their own lease,
+            // not an acknowledgement of the manual driver's pending order.
+            if (manualTouch != null && !manualCompanionLeaseActive && verified &&
+                (operation is "AttackMove" or "ArmyAttack"))
                 manualVerifiedAttackMoves++;
+        }
+
+        // Editor validation companions borrow the one existing Touch driver.
+        // A completed lease invalidates the old selection/camera sequence:
+        // re-read the presented roster and reframe through visible UI.
+        public static void NotifyS004ManualCompanionLease(bool active, string owner)
+        {
+            if (manualTouch == null) return;
+            manualCompanionLeaseActive = active;
+            manualLastTouchAt = EditorApplication.timeSinceStartup;
+            manualLastObservedGestures = manualTouch.CompletedGestures;
+            manualRecoveryIgnoreThrough = manualLastObservedGestures;
+            manualRecoveryTapInProgress = false;
+            manualNoTouchRecoveries = 0;
+            manualCompanionRecoveryArmed = !active;
+            if (!active)
+            {
+                manualCameraFocusPending = manualCameraFocusStarted = false;
+                manualCycleHasStructure = false;
+                manualStep = manualSlot = 0;
+            }
+            Debug.Log("[S004ManualHandoff] owner=" + owner + " active=" + (active ? 1 : 0) +
+                " completed=" + manualLastObservedGestures + " step=" + manualStep +
+                " slot=" + manualSlot);
+        }
+
+        private static void MarkManualProgress()
+        {
+            if (!manualCompanionRecoveryArmed || manualRecoveryTapInProgress) return;
+            manualCompanionRecoveryArmed = false;
+            manualNoTouchRecoveries = 0;
+            Debug.Log("[S004ManualHandoff] phase=ManualProgress completed=" +
+                manualTouch.CompletedGestures + " step=" + manualStep + " slot=" + manualSlot);
+        }
+
+        private static bool RecoverManualCompanionNoTouch(double now)
+        {
+            if (!manualCompanionRecoveryArmed || manualCompanionLeaseActive) return false;
+            uint completed = manualTouch.CompletedGestures;
+            if (completed != manualLastObservedGestures)
+            {
+                manualLastObservedGestures = completed;
+                manualLastTouchAt = now;
+                if (completed > manualRecoveryIgnoreThrough)
+                {
+                    MarkManualProgress();
+                    return false;
+                }
+            }
+            // The native roster scan deliberately waits up to 15 seconds
+            // between passes. Bound only the immediate post-handoff idle window.
+            if (manualTouch.IsBusy || now - manualLastTouchAt < 25d) return false;
+            if (++manualNoTouchRecoveries > 3)
+                throw new TimeoutException("Manual input made no Touch progress after companion handoff; public recovery attempts exhausted.");
+            var popup = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+            bool open = popup != null && popup.IsOpen;
+            var hud = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+            bool targetVisible = hud != null && hud.EnemyBaseMarkerVisible && hud.EnemyBaseTargetVisible;
+            bool hasMode = UiShellRuntimeGateway.TryReadMatchHudCommandState(out var mode);
+            bool selectNeeded = !open && hasMode &&
+                mode.ActiveCommandMode != Game.Tactical.Contracts.TacticalCommandMode.Select;
+            Debug.Log("[S004ManualHandoff] phase=NoTouchRecovery attempt=" + manualNoTouchRecoveries +
+                " completed=" + completed + " dueMargin=" + (manualDue - now).ToString("F2") +
+                " step=" + manualStep + " slot=" + manualSlot +
+                " cameraPending=" + manualCameraFocusPending + " mapOpen=" + open +
+                " targetVisible=" + targetVisible + " selectNeeded=" + selectNeeded);
+            manualLastTouchAt = now;
+            manualCameraFocusPending = manualCameraFocusStarted = false;
+            manualCycleHasStructure = false;
+            manualStep = manualSlot = 0;
+            Button recoveryButton = open ? popup.CloseAction : selectNeeded
+                ? UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>()?.SelectButton
+                : null;
+            if (recoveryButton == null)
+                throw new TimeoutException("Manual input idle after companion handoff; no visible public map-close or Select action can recover it.");
+            bool issued;
+            manualRecoveryTapInProgress = true;
+            try { issued = ManualTap(recoveryButton); }
+            finally { manualRecoveryTapInProgress = false; }
+            if (!issued)
+                throw new TimeoutException("Manual input idle after companion handoff; the presented public recovery control did not accept Touch.");
+            manualRecoveryIgnoreThrough = manualTouch.DispatchedGestures;
+            manualDue = now + .5d;
+            return true;
         }
 
         internal static void TickS004ManualPlayerFrame()
@@ -129,6 +228,8 @@ namespace Game.Editor
                     throw new InvalidOperationException("Manual controls input interrupted.");
                 double now = EditorApplication.timeSinceStartup;
                 if (now > manualDeadline) throw new TimeoutException("Manual mission did not finish within ten minutes.");
+                if (manualCompanionLeaseActive) return;
+                if (RecoverManualCompanionNoTouch(now)) return;
                 if (manualTouch.IsBusy || now < manualDue) return;
                 // The full-map modal hides the squad tray and public markers.
                 // Finish the latched camera gesture before interpreting that
@@ -363,13 +464,14 @@ namespace Game.Editor
                 bounds.xMin + bounds.width * .25f, bounds.yMin + bounds.height * (up ? .75f : .25f), 0)));
             if (!Screen.safeArea.Contains(from) || !Screen.safeArea.Contains(to)) return;
             if (manualTouch.TryGesture(from, to, .5f, .9f, Time.unscaledTime))
-            { manualActions++; manualDue = EditorApplication.timeSinceStartup + 1.5; }
+            { MarkManualProgress(); manualActions++; manualDue = EditorApplication.timeSinceStartup + 1.5; }
         }
         private static bool ManualTap(Button button) => TryPresentedButtonPoint(button, out var point) && ManualGesture(point);
 
         private static bool ManualGesture(Vector2 point)
         {
             if (!manualTouch.TryGesture(point, point, .15f, 0f, Time.unscaledTime)) return false;
+            MarkManualProgress();
             manualActions++;
             manualDue = EditorApplication.timeSinceStartup + .8d;
             return true;

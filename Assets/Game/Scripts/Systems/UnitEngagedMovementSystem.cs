@@ -29,6 +29,12 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            // Paused updates must not change facing, path state, or vehicle kinematics.
+            if (SystemAPI.Time.DeltaTime <= 0f ||
+                (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
+                 gameplay.SimulationActive == 0))
+                return;
+
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
             var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();

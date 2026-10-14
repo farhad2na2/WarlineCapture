@@ -50,6 +50,9 @@ namespace Game.Composition
                 !SkirmishCheckpointCodec.IsCompatible(document.Header, checkedSetup))
                 return false;
 
+            // Old fixture documents cannot reconstruct the versioned native enemy planner.
+            if (checkedSetup.EnemyPolicy != null) { reason = SkirmishReasonCode.UnsupportedCapability; return false; }
+
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
                     document.Header.CatalogId,
@@ -266,6 +269,10 @@ namespace Game.Composition
             RemoveIfPresent<SkirmishEnemyStockComponent>(em, session);
             RemoveIfPresent<SkirmishEnemyCapacityComponent>(em, session);
             RemoveIfPresent<SkirmishEnemyStrategyComponent>(em, session);
+            RemoveIfPresent<SkirmishEnemyPlannerV1Component>(em, session);
+            RemoveIfPresent<SkirmishEnemyProductionIntentV1Component>(em, session);
+            if (em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(session))
+                em.RemoveComponent<SkirmishEnemyGroupAssignmentV1>(session);
             RemoveIfPresent<SkirmishObjectiveClockComponent>(em, session);
             RemoveIfPresent<SkirmishBaseAssaultFactComponent>(em, session);
             RemoveIfPresent<SkirmishObjectiveStateComponent>(em, session);

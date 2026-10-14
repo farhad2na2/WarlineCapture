@@ -411,6 +411,38 @@ public sealed class MatchHudCurrentOrderBannerTests
         }
     }
 
+    [Test]
+    public void SelectionBoundary_PersianStopResultSurvivesEcsFeedbackQueue()
+    {
+        const string stopMessage = "دستورها لغو شد؛ شلیک خودکار قطع شد. برای دفاع دوباره، «حفظ» رو بزن.";
+        using World world = new("LocalizedStopFeedbackTestWorld");
+        FakeRuntimeFeedbackView view = new(TacticalCommandMode.Stop, null);
+        SelectionHudFeedbackUiSystemHelper boundary = new();
+        boundary.BindBattleHudRuntimeFeedback(new BattleHudRuntimeFeedbackSink(view));
+
+        boundary.ApplyCommandResult(world.EntityManager, TacticalCommandResult.Success(stopMessage));
+
+        Assert.That(view.HasLastCommandResult, Is.True);
+        Assert.That(view.LastCommandResult.Accepted, Is.True);
+        Assert.That(view.LastCommandResult.Message, Is.EqualTo(stopMessage));
+    }
+
+    [Test]
+    public void SelectionBoundary_OversizedLocalizedResultRetainsVisibleFeedback()
+    {
+        using World world = new("OversizedLocalizedFeedbackTestWorld");
+        FakeRuntimeFeedbackView view = new(TacticalCommandMode.Stop, null);
+        SelectionHudFeedbackUiSystemHelper boundary = new();
+        boundary.BindBattleHudRuntimeFeedback(new BattleHudRuntimeFeedbackSink(view));
+
+        boundary.ApplyCommandResult(world.EntityManager, TacticalCommandResult.Success(new string('ش', 300)));
+
+        Assert.That(view.HasLastCommandResult, Is.True);
+        Assert.That(view.LastCommandResult.Accepted, Is.True);
+        Assert.That(view.LastCommandResult.Message, Is.Not.Empty);
+        Assert.That(view.LastCommandResult.Message, Does.EndWith("…"));
+    }
+
     public static void RunFocusedValidation()
     {
         MatchHudCurrentOrderBannerTests tests = new();
@@ -433,8 +465,10 @@ public sealed class MatchHudCurrentOrderBannerTests
         tests.SelectionBoundary_CommandModeFlowsThroughRuntimeFeedbackSink();
         tests.SelectionBoundary_BoardCommandModeFlowsThroughRuntimeFeedbackSink();
         tests.SelectionBoundary_ClearCommandModeHidesRuntimeFeedbackBanner();
+        tests.SelectionBoundary_PersianStopResultSurvivesEcsFeedbackQueue();
+        tests.SelectionBoundary_OversizedLocalizedResultRetainsVisibleFeedback();
 
-        Debug.Log("[MatchHudCurrentOrderBannerValidation] result=Passed tests=18");
+        Debug.Log("[MatchHudCurrentOrderBannerValidation] result=Passed tests=20");
     }
 
     private static Sprite CreateSprite()

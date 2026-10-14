@@ -42,10 +42,10 @@ namespace Game.Editor
         private const string RegistryPath = "Assets/Game/Configs/Scene/Game_UnitPrefabRegistry_Config.asset";
         private const double WallClockBudgetSeconds = 1500d;
 
-        private static UnityEngine.InputSystem.InputSettings previousInputSettings, validationInputSettings;
-        private static bool previousRunInBackground;
+        private static ValidationBackgroundInputScope backgroundInputScope;
         private static double nativeShadersSettledAt = -1d;
         private static bool nativeShadersReady;
+        private static bool nativeOpeningRenderViewAccepted;
         private static bool finishingEvidence;
         private static System.Threading.Tasks.Task<string> finishSourceHash;
         private static bool finishAbort;
@@ -73,23 +73,16 @@ namespace Game.Editor
 
         private static void ConfigureBackgroundInput()
         {
-            if (validationInputSettings != null || Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION") != "1") return;
-            previousInputSettings = UnityEngine.InputSystem.InputSystem.settings;
-            validationInputSettings = UnityEngine.Object.Instantiate(previousInputSettings);
-            validationInputSettings.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
-            validationInputSettings.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
-            UnityEngine.InputSystem.InputSystem.settings = validationInputSettings;
-            previousRunInBackground = Application.runInBackground;
-            Application.runInBackground = true;
+            if (Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION") != "1") return;
+            if (backgroundInputScope != null && backgroundInputScope.IsActive) return;
+            backgroundInputScope?.Dispose();
+            backgroundInputScope = new ValidationBackgroundInputScope();
         }
 
         private static void RestoreBackgroundInput()
         {
-            if (validationInputSettings == null) return;
-            UnityEngine.InputSystem.InputSystem.settings = previousInputSettings;
-            Application.runInBackground = previousRunInBackground;
-            UnityEngine.Object.Destroy(validationInputSettings);
-            validationInputSettings = previousInputSettings = null;
+            backgroundInputScope?.Dispose();
+            backgroundInputScope = null;
         }
 
         private static int stage;
@@ -459,6 +452,16 @@ namespace Game.Editor
                 metrics.EnabledSlotCount == state.ActiveSlotCount && metrics.Capacity >= state.ActiveSlotCount;
         }
 
+        // Packed-view completeness is an opening invariant. Later camera movement may
+        // legitimately leave the current view with no active packed slots.
+        public static bool NativeRenderingStartupGateAllows(EntityManager em, ref bool openingViewAccepted)
+        {
+            if (openingViewAccepted) return true;
+            if (!NativeRenderingIsReady(em)) return false;
+            openingViewAccepted = true;
+            return true;
+        }
+
         private static string SelectedReportDirectory() => catalogId switch
         {
             "S005" => "Design/AgentReports/SkirmishExpansion/S005/",
@@ -503,6 +506,7 @@ namespace Game.Editor
         {
             nativeShadersReady = false;
             nativeShadersSettledAt = -1d;
+            nativeOpeningRenderViewAccepted = false;
             string error;
             bool accepted = TryCreateSelectedPayload(requestedCatalog, requestedSeed, requestedLocale, out _, out error);
             if (!accepted)
@@ -768,7 +772,7 @@ namespace Game.Editor
                         readyShell.Phase is not (UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle))
                     { next = now + .5d; return; }
                     if (!NativeShadersAreReady(now)) return;
-                    if (!NativeRenderingIsReady(em))
+                    if (!NativeRenderingStartupGateAllows(em, ref nativeOpeningRenderViewAccepted))
                     {
                         Debug.LogError("[SkirmishNativeRendering] result=Failed reason=incompletePackedRenderInitialization");
                         Finish(true, "incompletePackedRenderInitialization");

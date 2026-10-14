@@ -10,6 +10,7 @@ namespace Game.UI.Contracts
         public bool Available;
         public bool Drag;
         public Vector2 DragEnd;
+        // Presented off-screen catalog and squad cards provide scroll progress.
         public int ScrollTargetId;
         public float ScrollDistanceViewports;
     }

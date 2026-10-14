@@ -1,0 +1,6 @@
+{
+  "result": "Failed",
+  "wrapperExit": 1,
+  "reason": "Newly pulled type missing from stale Editor assemblies; last recompile status was not current-source proof",
+  "action": "Documented CLI force recompile and repeat same wrapper method; Editor preserved"
+}

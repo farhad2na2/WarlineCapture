@@ -148,6 +148,18 @@ namespace Game.Tests.Editor
                 in evidence, out var accepted, out var acceptedReasons));
             Assert.AreEqual(SkirmishPublicationStatus.Playable, accepted);
             Assert.IsEmpty(acceptedReasons);
+            Assert.IsNotNull(setup.EnemyPolicy);
+            Assert.AreEqual(definition.ContentHash, setup.EnemyPolicy.SourceContentHash);
+            Assert.AreEqual(definition.ContentHash + "/enemy-policy-v1/" + setup.EnemyPolicy.Fingerprint, setup.ContentHash);
+            string compiledContentHash = setup.ContentHash;
+            setup.ContentHash = definition.ContentHash;
+            evidence.ContentHash = setup.ContentHash;
+            Assert.IsFalse(SkirmishPublicationValidator.TryEvaluate(row, definition, setup,
+                in evidence, out _, out var policylessReasons));
+            Assert.IsTrue(policylessReasons.Any(r => r.Field == "contentHash"),
+                "A policy-bearing setup cannot publish under the source-only content identity.");
+            setup.ContentHash = compiledContentHash;
+            evidence.ContentHash = compiledContentHash;
             // This exercises evaluation only; it must never publish the packaged row.
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
             evidence.SetupHash ^= 1;
@@ -179,6 +191,38 @@ namespace Game.Tests.Editor
             rendered.OverflowCount = 0; rendered.ActiveSlotCount = 0; em.SetComponentData(database, rendered);
             em.SetComponentData(database, new OperationMapRenderVirtualizationMetricsComponent { Capacity = 4 });
             Assert.IsFalse(Game.Editor.SkirmishS002AriaRunHarness.NativeRenderingIsReady(em), "An empty packed view must fail native validation.");
+        }
+
+        [Test]
+        public void NativeStartupRenderGateAcceptsFirstCompleteViewThenIgnoresCameraEmptyView()
+        {
+            using var world = new World("S005RenderingStartupLatch");
+            var em = world.EntityManager;
+            var database = em.CreateEntity(typeof(OperationMapRenderDatabaseComponent),
+                typeof(OperationMapRenderPackedReadinessComponent),
+                typeof(OperationMapRenderVirtualizationStateComponent),
+                typeof(OperationMapRenderVirtualizationMetricsComponent));
+            bool openingViewAccepted = false;
+            Assert.IsFalse(Game.Editor.SkirmishS002AriaRunHarness.NativeRenderingStartupGateAllows(em, ref openingViewAccepted));
+            Assert.IsFalse(openingViewAccepted, "Incomplete opening view cannot set the latch.");
+
+            em.SetComponentData(database, new OperationMapRenderVirtualizationStateComponent
+                { Initialized = 1, InitialViewApplied = 1, RebuildCount = 1, ActiveSlotCount = 2 });
+            em.SetComponentData(database, new OperationMapRenderVirtualizationMetricsComponent
+                { Capacity = 4, EnabledSlotCount = 2 });
+            Assert.IsTrue(Game.Editor.SkirmishS002AriaRunHarness.NativeRenderingStartupGateAllows(em, ref openingViewAccepted));
+            Assert.IsTrue(openingViewAccepted);
+
+            // A later camera-dependent view can be empty without undoing opening initialization.
+            em.SetComponentData(database, new OperationMapRenderVirtualizationStateComponent
+                { Initialized = 1, InitialViewApplied = 1, RebuildCount = 2, ActiveSlotCount = 0 });
+            em.SetComponentData(database, new OperationMapRenderVirtualizationMetricsComponent { Capacity = 4 });
+            Assert.IsFalse(Game.Editor.SkirmishS002AriaRunHarness.NativeRenderingIsReady(em));
+            Assert.IsTrue(Game.Editor.SkirmishS002AriaRunHarness.NativeRenderingStartupGateAllows(em, ref openingViewAccepted));
+            bool freshRun = false;
+            Assert.IsFalse(Game.Editor.SkirmishS002AriaRunHarness.NativeRenderingStartupGateAllows(em, ref freshRun),
+                "A new run must reject the same incomplete view.");
+            Assert.IsFalse(freshRun);
         }
 
         [Test]
@@ -421,6 +465,7 @@ namespace Game.Tests.Editor
             var suite = new SkirmishCombinedArmsTests();
             suite.CombinedRosterPreservesArmorAndAirWithPaidReadiness();
             suite.NativeValidationRejectsAnIncompleteRenderDatabase();
+            suite.NativeStartupRenderGateAcceptsFirstCompleteViewThenIgnoresCameraEmptyView();
             suite.InvalidatedCandidateCannotCountItsFinishedVictory();
             suite.FreshBakePackedRenderPartsRetainExactSubmeshOwnership();
             suite.SiegeNativeWeaponUsesMissionDamageAndRange();
@@ -431,6 +476,14 @@ namespace Game.Tests.Editor
             suite.S005PublicationRequiresCompleteBaselineAndCombinedArmsEvidence();
             SkirmishExpandedDefinitionTests.RunFocusedValidation();
             Debug.Log("[SkirmishCombinedArmsTests] result=Passed matrixConfigurations=12 existingMissionRegressions=Passed publication=InProgress");
+        }
+
+        public static void RunNativeRenderingStartupGateFocusedValidation()
+        {
+            var suite = new SkirmishCombinedArmsTests();
+            suite.NativeValidationRejectsAnIncompleteRenderDatabase();
+            suite.NativeStartupRenderGateAcceptsFirstCompleteViewThenIgnoresCameraEmptyView();
+            Debug.Log("[SkirmishNativeRenderingStartupGateTests] result=Passed cases=2");
         }
     }
 }

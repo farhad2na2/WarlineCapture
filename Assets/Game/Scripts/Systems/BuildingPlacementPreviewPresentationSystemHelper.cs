@@ -27,6 +27,7 @@ namespace Game.Runtime
 
         private GameObject _placementOutline;
         private MeshRenderer _placementOutlineRenderer;
+        private Material _placementOutlineMaterial;
         private MaterialPropertyBlock _previewPropertyBlock;
         private readonly List<WallPreviewRun> _wallPreviewRuns = new();
         private Action<UnityEngine.Object> _destroyRuntimeObject;
@@ -62,7 +63,8 @@ namespace Game.Runtime
             _placementOutlineRenderer = box.GetComponent<MeshRenderer>();
             _placementOutlineRenderer.shadowCastingMode = ShadowCastingMode.Off;
             _placementOutlineRenderer.receiveShadows = false;
-            _placementOutlineRenderer.sharedMaterial = CreatePlacementMaterial();
+            _placementOutlineMaterial = CreatePlacementMaterial();
+            _placementOutlineRenderer.sharedMaterial = _placementOutlineMaterial;
 
             ApplyPlacementMaterialColor(_validColor);
             _placementOutline.SetActive(false);
@@ -72,9 +74,12 @@ namespace Game.Runtime
         {
             if (_placementOutline != null)
                 DestroyRuntimeObject(_placementOutline);
+            if (_placementOutlineMaterial != null)
+                DestroyRuntimeObject(_placementOutlineMaterial);
 
             _placementOutline = null;
             _placementOutlineRenderer = null;
+            _placementOutlineMaterial = null;
             _destroyRuntimeObject = null;
         }
 
@@ -302,12 +307,12 @@ namespace Game.Runtime
 
         private void ApplyPlacementMaterialColor(Color color)
         {
-            if (_placementOutlineRenderer == null)
+            if (_placementOutlineRenderer == null || _placementOutlineMaterial == null)
                 return;
 
             Color c = color;
             c.a = 0.28f;
-            Material material = _placementOutlineRenderer.sharedMaterial;
+            Material material = _placementOutlineMaterial;
             if (material.HasProperty("_BaseColor"))
                 material.SetColor("_BaseColor", c);
             if (material.HasProperty("_Color"))

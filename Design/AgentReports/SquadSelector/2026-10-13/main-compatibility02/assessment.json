@@ -1,0 +1,8 @@
+{
+  "result": "Passed",
+  "wrapperExit": 0,
+  "freshRecompile": "completed, failed=false, errors=[]",
+  "plannerCases": 111,
+  "compatibilityChecks": 17,
+  "scope": "Combined main source focused compatibility; full integrated mission/device acceptance remains separate"
+}

@@ -58,8 +58,9 @@ namespace Game.Runtime
                             }
                         }
 
-                        if (!em.HasComponent<ManualMoveOrderTag>(entity))
-                            ecb.AddComponent<ManualMoveOrderTag>(entity);
+                        // Clearing queues removal of an existing ManualMoveOrderTag. Re-add it
+                        // after that removal even when the actor was already moving manually.
+                        ecb.AddComponent<ManualMoveOrderTag>(entity);
                         issuedCount++;
                     }
                 }

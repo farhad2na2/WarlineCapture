@@ -75,6 +75,94 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishReasonCode.InvalidSelection, enemy.Reason);
         }
 
+        [Test]
+        public void WorldDeselectClearsOffPageGroupsAndOneCardTapSelectsAgain()
+        {
+            using var world = new World(nameof(WorldDeselectClearsOffPageGroupsAndOneCardTapSelectsAgain));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            uint rifle = FirstPlayerGroup(em, session, SkirmishRoleKind.Rifle).GroupId;
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGetPagedGroup(
+                em, session, 1, 1, 2, out SkirmishArmyGroupRecord offPageTank));
+            uint tank = offPageTank.GroupId;
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, rifle, false, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, tank, true, out _));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+            Assert.AreEqual(2, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
+
+            Entity queue = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+            em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue).Add(
+                new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.DeselectAll });
+            Assert.IsTrue(RtsSelectionDeselectAllCommandSystem.ProcessPendingRequests(em));
+            Assert.AreEqual(0, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, rifle, out var clearedRifle));
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, tank, out var clearedTank));
+            Assert.AreEqual(0, clearedRifle.Selected);
+            Assert.AreEqual(0, clearedTank.Selected);
+
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, tank));
+            Assert.AreEqual(1, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.IsTrue(SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, tank));
+            Assert.IsFalse(SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, rifle));
+            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+        }
+
+        [Test]
+        public void SelectedCardTapDeselectsAndSecondTapSelects()
+        {
+            using var world = new World(nameof(SelectedCardTapDeselectsAndSecondTapSelects));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            uint rifle = FirstPlayerGroup(em, session, SkirmishRoleKind.Rifle).GroupId;
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, rifle));
+            Assert.AreEqual(4, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, rifle));
+            Assert.AreEqual(0, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, rifle));
+            Assert.AreEqual(4, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+        }
+
+        [Test]
+        public void CardTapUsesLiveTagsWhenCachedGroupFlagsDisagree()
+        {
+            using var world = new World(nameof(CardTapUsesLiveTagsWhenCachedGroupFlagsDisagree));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            uint rifle = FirstPlayerGroup(em, session, SkirmishRoleKind.Rifle).GroupId;
+            uint gunner = FirstPlayerGroup(em, session, SkirmishRoleKind.Gunner).GroupId;
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, rifle, false, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, gunner, true, out _));
+
+            // Simulate a world clear of only one group before the next card tap.
+            using (var selected = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(SkirmishArmyGroupMembershipComponent)))
+            using (var members = selected.ToEntityArray(Allocator.Temp))
+            {
+                foreach (Entity member in members)
+                    if (em.GetComponentData<SkirmishArmyGroupMembershipComponent>(member).GroupId == rifle)
+                        em.RemoveComponent<SelectedUnitTag>(member);
+            }
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, rifle));
+            Assert.IsTrue(SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, rifle));
+            Assert.IsTrue(SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, gunner));
+
+            // The converse stale state must also let a selected card turn off.
+            DynamicBuffer<SkirmishArmyGroupRecord> groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+            for (int i = 0; i < groups.Length; i++)
+            {
+                if (groups[i].GroupId != gunner) continue;
+                SkirmishArmyGroupRecord record = groups[i];
+                record.Selected = 0;
+                groups[i] = record;
+                break;
+            }
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, gunner));
+            Assert.IsFalse(SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, gunner));
+            Assert.IsTrue(SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, rifle));
+        }
+
         private sealed class PresentedTray : IMatchHudSquadTrayView
         {
             public int Rejections;
@@ -426,6 +514,9 @@ namespace Game.Tests.Editor
                 var suite = new SkirmishExpandedArmyTests();
                 suite.S002StartingForcesFormStablePlayerGroups();
                 suite.LegalSelectionAndPagingUseSharedSelectionTags();
+                suite.WorldDeselectClearsOffPageGroupsAndOneCardTapSelectsAgain();
+                suite.SelectedCardTapDeselectsAndSecondTapSelects();
+                suite.CardTapUsesLiveTagsWhenCachedGroupFlagsDisagree();
                 suite.PresentedTrayClickUsesPageGroupWithoutLegacyReselection();
                 suite.SharedFogGatesAttackEligibility();
                 suite.GroundMoveExcludesAirAndHoldStampsGroup();

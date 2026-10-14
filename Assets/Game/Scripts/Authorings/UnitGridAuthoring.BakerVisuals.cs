@@ -275,7 +275,12 @@ namespace Game.Authoring
                 if (door == null)
                     return;
 
-                Vector3 doorLocalPosition = door.localPosition;
+                // Door_X may be nested beneath a translated/scaled Model root.
+                // Runtime boarding anchors are consumed in the unit root frame.
+                // Re-bake when the door or any parent transform changes.
+                DependsOn(authoring.transform);
+                DependsOn(door);
+                Vector3 doorLocalPosition = authoring.transform.InverseTransformPoint(door.position);
                 doorLocalPosition.x = 0f;
                 Vector3 openEuler = door.localEulerAngles;
                 Vector3 closedEuler = openEuler;

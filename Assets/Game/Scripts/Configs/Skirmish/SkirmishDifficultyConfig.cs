@@ -24,6 +24,20 @@ namespace Game.Configs
         public int EstablishedOpeningRestraintSeconds => establishedOpeningRestraintSeconds;
         public int ContentVersion => contentVersion;
 
+        public static bool TryGetPolicyValues(SkirmishDifficultyId difficulty, out float responseMin,
+            out float responseMax, out float scoutMin, out float scoutMax, out int fieldOpening, out int establishedOpening)
+        {
+            responseMin = responseMax = scoutMin = scoutMax = 0; fieldOpening = establishedOpening = 0;
+            switch (difficulty)
+            {
+                case SkirmishDifficultyId.Recruit: responseMin = 5; responseMax = 8; scoutMin = 45; scoutMax = 60; fieldOpening = 90; establishedOpening = 60; return true;
+                case SkirmishDifficultyId.Regular: responseMin = 3; responseMax = 5; scoutMin = 25; scoutMax = 40; fieldOpening = 60; establishedOpening = 40; return true;
+                case SkirmishDifficultyId.Veteran: responseMin = 1.5f; responseMax = 3; scoutMin = 15; scoutMax = 25; fieldOpening = 45; establishedOpening = 25; return true;
+                case SkirmishDifficultyId.Commander: responseMin = .8f; responseMax = 2; scoutMin = 10; scoutMax = 20; fieldOpening = 30; establishedOpening = 15; return true;
+                default: return false;
+            }
+        }
+
         public void Configure(SkirmishDifficultyId configured)
         {
             kind = configured;

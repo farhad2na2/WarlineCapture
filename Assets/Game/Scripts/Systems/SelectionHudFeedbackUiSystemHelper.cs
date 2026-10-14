@@ -288,7 +288,7 @@ namespace Game.Runtime
                 Kind = SelectionHudFeedbackKind.CommandResult,
                 CommandAccepted = result.Accepted ? (byte)1 : (byte)0,
                 ReasonCode = (int)result.ReasonCode,
-                Message = ToFixed64(result.Message)
+                Message = ToFixed512(result.Message)
             });
         }
 
@@ -2076,6 +2076,40 @@ namespace Game.Runtime
             if (string.IsNullOrEmpty(value))
                 return result;
             result.Append(value.Length <= 61 ? value : value.Substring(0, 61));
+            return result;
+        }
+
+        private static FixedString512Bytes ToFixed512(string value)
+        {
+            FixedString512Bytes result = default;
+            if (string.IsNullOrEmpty(value) || result.Append(value) == FormatError.None)
+                return result;
+
+            // FixedString capacity counts UTF-8 bytes, while string.Length counts UTF-16
+            // code units. Keep a valid, visible prefix when localized feedback exceeds it.
+            const int ellipsis = 0x2026;
+            int prefixCapacity = result.Capacity - new Unicode.Rune(ellipsis).LengthInUtf8Bytes();
+            for (int i = 0; i < value.Length; i++)
+            {
+                int codePoint;
+                if (char.IsHighSurrogate(value[i]) &&
+                    i + 1 < value.Length &&
+                    char.IsLowSurrogate(value[i + 1]))
+                {
+                    codePoint = char.ConvertToUtf32(value[i], value[++i]);
+                }
+                else
+                {
+                    codePoint = char.IsSurrogate(value[i]) ? 0xFFFD : value[i];
+                }
+
+                Unicode.Rune rune = new(codePoint);
+                if (result.Length + rune.LengthInUtf8Bytes() > prefixCapacity)
+                    break;
+                result.Append(rune);
+            }
+
+            result.Append(new Unicode.Rune(ellipsis));
             return result;
         }
 

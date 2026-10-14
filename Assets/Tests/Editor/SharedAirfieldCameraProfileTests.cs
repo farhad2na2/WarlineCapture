@@ -41,6 +41,7 @@ public sealed class SharedAirfieldCameraProfileTests
             typeof(Game.Composition.SkirmishS004CampaignLighting).GetMethod("OnDestroy",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(lighting, null);
             Object.DestroyImmediate(go);
+            SharedRuntimeRenderPipelineLease.ShutdownSession();
         }
         Assert.AreEqual(originalSky, RenderSettings.ambientSkyColor, "Disposal must restore the previous scene environment.");
         Assert.AreEqual(originalEquator, RenderSettings.ambientEquatorColor);

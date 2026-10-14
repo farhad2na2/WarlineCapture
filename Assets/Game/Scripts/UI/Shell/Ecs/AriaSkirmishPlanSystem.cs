@@ -846,13 +846,16 @@ namespace Game.UI.Shell.Ecs
                 Target(view.Attack, false, ref output);
                 return;
             }
-            if (view.Hold.Available)
+            // A visible Hold button is not an actionable order without a living
+            // selection. Let an already-issued assault continue toward the base
+            // instead of spending three touch retries on an unselected command.
+            if (view.Hold.Available && view.SelectionVisible && view.ExpandedSelectedGroups > 0)
             {
                 plan.Intent = AriaSkirmishIntent.Hold;
                 Target(view.Hold, false, ref output);
                 return;
             }
-            plan.Intent = AriaSkirmishIntent.Inspect;
+            plan.Intent = AriaSkirmishIntent.ObserveBattle;
             output.Kind = AriaPlayObservationKind.Waiting;
         }
 

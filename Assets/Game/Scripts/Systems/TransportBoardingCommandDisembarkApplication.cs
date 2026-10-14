@@ -12,6 +12,92 @@ namespace Game.Runtime
 {
     public partial struct TransportBoardingCommandSystem
     {
+        // Keep a current shared Skirmish ground carrier reconstructible until its
+        // cargo has left through the same legal placement used by Exit All.
+        internal static bool CanFinalizeSharedGroundCarrier(EntityManager em, Entity transport)
+        {
+            if (!em.HasComponent<SkirmishAttemptOwnedComponent>(transport) ||
+                em.HasComponent<UnitAirComponent>(transport) || em.HasComponent<UnitAirMovement>(transport) ||
+                !em.HasBuffer<UnitTransportPassengerElement>(transport)) return true;
+            var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(transport);
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            Entity session = Entity.Null;
+            using (var roots = sessions.ToEntityArray(Allocator.Temp))
+                foreach (var root in roots)
+                {
+                    var state = em.GetComponentData<SkirmishExpandedSessionComponent>(root);
+                    if (state.IsLegacy == 0 && state.SessionId.Equals(owner.SessionId))
+                    {
+                        if (session != Entity.Null) return false;
+                        session = root;
+                    }
+                }
+            if (session == Entity.Null) return true;
+
+            var cargo = new List<Entity>();
+            using var passengers = em.CreateEntityQuery(new EntityQueryDesc {
+                All = new[] { ComponentType.ReadOnly<UnitTransportPassenger>() },
+                Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IgnoreComponentEnabledState });
+            using (var actors = passengers.ToEntityArray(Allocator.Temp))
+                foreach (var actor in actors)
+                {
+                    if (em.GetComponentData<UnitTransportPassenger>(actor).Transport != transport) continue;
+                    if (!em.HasComponent<SkirmishAttemptOwnedComponent>(actor)) return false;
+                    var passengerOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                    if (!passengerOwner.SessionId.Equals(owner.SessionId) ||
+                        passengerOwner.FactionId != owner.FactionId || passengerOwner.StableObjectId.Length == 0)
+                        return false;
+                    cargo.Add(actor);
+                }
+            // Validate both directions before native disembark changes any buffers.
+            using (var entries = em.GetBuffer<UnitTransportPassengerElement>(transport, true).ToNativeArray(Allocator.Temp))
+            {
+                var seen = new HashSet<Entity>();
+                foreach (var entry in entries)
+                {
+                    if (!em.Exists(entry.Passenger)) continue;
+                    if (!cargo.Contains(entry.Passenger) || !seen.Add(entry.Passenger)) return false;
+                }
+                if (seen.Count != cargo.Count) return false;
+            }
+            if (cargo.Count == 0) return true;
+            // Wreck cleanup also runs with zero delta; never unload cargo while paused.
+            if (em.WorldUnmanaged.Time.DeltaTime <= 0 ||
+                (em.HasComponent<SkirmishObjectiveClockComponent>(session) &&
+                 em.GetComponentData<SkirmishObjectiveClockComponent>(session).Paused != 0)) return false;
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (!gameplay.IsEmptyIgnoreFilter && (gameplay.CalculateEntityCount() != 1 ||
+                gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)) return false;
+            using var grid = em.CreateEntityQuery(typeof(GridConfig), typeof(GridWalkable),
+                typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            if (grid.CalculateEntityCount() != 1) return false;
+            TryDisembarkTransport(em, transport, new UnitTransportCapacitySystem(),
+                new UnitMoveOrderSystem(), grid, default, 0);
+            // Native Exit All reserves within one carrier. Publish actual released
+            // footprints immediately so another wreck in this same cleanup batch
+            // cannot select those cells before the occupancy rebuild runs.
+            var gridEntity = grid.GetSingletonEntity();
+            var config = em.GetComponentData<GridConfig>(gridEntity);
+            var occupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
+            bool pending = false;
+            foreach (var actor in cargo)
+            {
+                if (!em.Exists(actor)) continue;
+                if (em.HasComponent<UnitTransportPassenger>(actor) &&
+                    em.GetComponentData<UnitTransportPassenger>(actor).Transport == transport)
+                { pending = true; continue; }
+                if (em.HasComponent<Disabled>(actor) || !em.HasComponent<UnitGrid>(actor)) continue;
+                var size = UnitFootprintUtility.ClampSize(em.HasComponent<UnitFootprint>(actor)
+                    ? em.GetComponentData<UnitFootprint>(actor).Size : new int2(1, 1));
+                var min = UnitFootprintUtility.GetMinCell(em.GetComponentData<UnitGrid>(actor).Cell, size);
+                var max = min + size;
+                for (int y = math.max(0, min.y); y < math.min(config.Height, max.y); y++)
+                    for (int x = math.max(0, min.x); x < math.min(config.Width, max.x); x++)
+                        occupancy.Occupied.Set(y * config.Width + x, true);
+            }
+            return !pending;
+        }
+
         private static DisembarkResult TryDisembarkTransport(
             EntityManager em,
             Entity transport,

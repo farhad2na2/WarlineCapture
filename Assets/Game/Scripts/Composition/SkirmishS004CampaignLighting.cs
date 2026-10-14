@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 namespace Game.Composition
@@ -15,8 +14,7 @@ namespace Game.Composition
         private EnvironmentState authoredEnvironment;
         private Scene sourceScene;
         private bool configured;
-        private RenderPipelineAsset previousPipeline;
-        private UniversalRenderPipelineAsset matchPipeline;
+        private bool hasRenderingLease;
         public static bool Supports(Game.Configs.OperationMapDefinition map) => map != null &&
             (map.OperationMapId == "opmap.skirmish.cityedgeairfield_prepared" ||
              map.SourceBinding.SourceOperationMapId == "opmap.skirmish.cityedgeairfield_prepared" ||
@@ -52,7 +50,7 @@ namespace Game.Composition
             // A fixed daylight fill separates warm buildings from cool shadows.
             RenderSettings.ambientMode=AmbientMode.Trilight;
             ApplyDaylightFill();
-            ApplySelectedRenderingProfile();
+            hasRenderingLease=Game.Runtime.SharedRuntimeRenderPipelineLease.AcquireCampaignShadows(this);
             foreach(var light in Object.FindObjectsByType<Light>(FindObjectsInactive.Include,FindObjectsSortMode.None))
                 if(light.type==LightType.Directional && light.gameObject.scene==matchScene)
                 { matchLights.Add((light,light.enabled));light.enabled=false; }
@@ -86,41 +84,22 @@ namespace Game.Composition
                 RenderSettings.fog=false;
                 ApplyDaylightFill();
             }
-            // Quality selection can finish after the operation map loads, or
-            // change during play. Preserve that selection's scale and features
-            // while adapting shadows to this map's tactical camera distance.
-            if(configured && GraphicsSettings.currentRenderPipeline!=matchPipeline)
-                ApplySelectedRenderingProfile();
-        }
-        private void ApplySelectedRenderingProfile()
-        {
-            if(GraphicsSettings.currentRenderPipeline is not UniversalRenderPipelineAsset pipeline) return;
-            previousPipeline=QualitySettings.renderPipeline;
-            var old=matchPipeline;
-            matchPipeline=Instantiate(pipeline);
-            matchPipeline.name="Campaign Map Rendering";
-            matchPipeline.hideFlags=HideFlags.DontSave;
-            // The oblique desktop camera sees town frontage beyond 160 metres.
-            // Keep those silhouettes inside its shadow coverage; retain the
-            // existing mobile distance until a device profile is accepted.
-            matchPipeline.shadowDistance=Mathf.Max(pipeline.shadowDistance,Application.isMobilePlatform?160f:260f);
-            if(!Application.isMobilePlatform)
-            {
-                matchPipeline.mainLightShadowmapResolution=Mathf.Max(pipeline.mainLightShadowmapResolution,2048);
-                matchPipeline.shadowCascadeCount=Mathf.Max(pipeline.shadowCascadeCount,2);
-            }
-            QualitySettings.renderPipeline=matchPipeline;
-            if(old!=null) { if(Application.isPlaying) Destroy(old);else DestroyImmediate(old); }
+            // Quality selection can finish after source binding. The shared
+            // runtime asset keeps that selection and its shadow override
+            // through Replay without another per-match pipeline switch.
+            if(!hasRenderingLease)
+                hasRenderingLease=Game.Runtime.SharedRuntimeRenderPipelineLease.AcquireCampaignShadows(this);
+            else
+                Game.Runtime.SharedRuntimeRenderPipelineLease.EnsureSelected();
         }
         private void OnDestroy()
         {
             if(!configured) return;
             foreach(var item in matchLights) if(item.light!=null) item.light.enabled=item.enabled;
-            if(matchPipeline!=null)
+            if(hasRenderingLease)
             {
-                if(QualitySettings.renderPipeline==matchPipeline) QualitySettings.renderPipeline=previousPipeline;
-                if(Application.isPlaying) Destroy(matchPipeline); else DestroyImmediate(matchPipeline);
-                matchPipeline=null;
+                Game.Runtime.SharedRuntimeRenderPipelineLease.ReleaseCampaignShadows(this);
+                hasRenderingLease=false;
             }
             if(previousActive.IsValid() && previousActive.isLoaded && SceneManager.GetActiveScene()==previousActive) previous.Apply();
             configured=false;

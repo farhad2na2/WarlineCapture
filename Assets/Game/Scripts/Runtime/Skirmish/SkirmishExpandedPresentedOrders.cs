@@ -179,7 +179,8 @@ namespace Game.Runtime
         {
             if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
                 !SkirmishArmyGroupSystem.TryGet(em, session, groupId, out var record)) return false;
-            return record.Selected != 0
+            if (record.FactionId != 1 || record.AliveCount <= 0) return false;
+            return SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, groupId)
                 ? SkirmishArmySelectionService.TryDeselectGroup(em, session, groupId)
                 : TryPresentedGroup(em, session, groupId);
         }
@@ -256,16 +257,7 @@ namespace Game.Runtime
 
         private static bool AnyPlayerSelected(EntityManager em, Entity session)
         {
-            if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
-                return false;
-            DynamicBuffer<SkirmishArmyGroupRecord> groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
-            for (int i = 0; i < groups.Length; i++)
-            {
-                if (groups[i].FactionId == 1 && groups[i].Selected != 0 && groups[i].AliveCount > 0)
-                    return true;
-            }
-
-            return false;
+            return SkirmishArmySelectionService.HasSelectedLivingPlayerMember(em, session, 0);
         }
 
 

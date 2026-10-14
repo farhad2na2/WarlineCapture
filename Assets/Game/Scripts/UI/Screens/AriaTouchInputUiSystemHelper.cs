@@ -16,6 +16,9 @@ namespace Game.UI.Runtime
         private Touchscreen screen;
         private InputDevice consumedDevice;
         private bool disposed, queued, activeGesture, pressed;
+        private bool spatialDrag, finalMoveAccepted;
+        private uint lastAcceptedInputUpdate;
+        private int lastAcceptedFrame;
         private Vector2 origin, destination;
         private float startedAt, holdSeconds, travelSeconds;
         private int nextTouchId, touchId;
@@ -83,6 +86,8 @@ namespace Game.UI.Runtime
             touchId = ++nextTouchId;
             if (touchId <= 0) touchId = nextTouchId = 1;
             activeGesture = true;
+            spatialDrag = from.x != to.x || from.y != to.y;
+            finalMoveAccepted = false;
             DispatchedGestures++;
             Evidence?.Invoke(this, "Dispatched", from);
             Queue(from, TouchPhase.Began);
@@ -94,11 +99,18 @@ namespace Game.UI.Runtime
             if (!IsRunning || !activeGesture || queued) return;
             float elapsed = now - startedAt;
             if (elapsed < holdSeconds) return;
+            // A drag phase must survive a UI consumption opportunity. Low-cadence
+            // callers can otherwise skip Moved, or collapse it with release in one
+            // frame. Edit fixtures explicitly pump separate InputSystem/UI updates.
+            if (spatialDrag && (Application.isPlaying
+                    ? Time.frameCount == lastAcceptedFrame
+                    : InputState.updateCount == lastAcceptedInputUpdate)) return;
             if (travelSeconds > 0 && elapsed < holdSeconds + travelSeconds)
             {
                 float t = Mathf.Clamp01((elapsed - holdSeconds) / travelSeconds);
                 Queue(Vector2.Lerp(origin, destination, t), TouchPhase.Moved);
             }
+            else if (spatialDrag && !finalMoveAccepted) Queue(destination, TouchPhase.Moved);
             else Queue(destination, TouchPhase.Ended);
         }
 
@@ -157,6 +169,10 @@ namespace Game.UI.Runtime
                 // The trajectory supplies the same point to the touch device and visual.
                 ContactPosition = pendingPosition;
                 AcceptedSamples++;
+                lastAcceptedFrame = Time.frameCount;
+                lastAcceptedInputUpdate = InputState.updateCount;
+                if (queuedPhase == TouchPhase.Moved && pendingPosition.x == destination.x && pendingPosition.y == destination.y)
+                    finalMoveAccepted = true;
                 pressed = queuedPhase != TouchPhase.Ended;
                 if (!pressed) { activeGesture = false; CompletedGestures++; }
                 Evidence?.Invoke(this, queuedPhase.ToString(), ContactPosition);

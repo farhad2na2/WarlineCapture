@@ -35,6 +35,8 @@ namespace Game.Runtime
 
             MarkGroup(em, session, groupId, 1);
             int selected = ApplyTags(em, session, groupId, true);
+            if (selected == 0)
+                MarkGroup(em, session, groupId, 0);
             Recount(em, session);
             decision.Accepted = selected > 0;
             decision.IssuedCount = selected;
@@ -45,7 +47,8 @@ namespace Game.Runtime
         public static bool TryDeselectGroup(EntityManager em, Entity session, uint groupId)
         {
             if (!SkirmishArmyGroupSystem.TryGet(em, session, groupId, out var record) ||
-                record.FactionId != 1 || record.Selected == 0) return false;
+                record.FactionId != 1 ||
+                (record.Selected == 0 && !HasSelectedLivingPlayerMember(em, session, groupId))) return false;
             MarkGroup(em, session, groupId, 0);
             ApplyTags(em, session, groupId, false);
             Recount(em, session);
@@ -85,22 +88,57 @@ namespace Game.Runtime
             if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
                 return;
 
-            var selectedGroups = new NativeList<uint>(8, Allocator.Temp);
             DynamicBuffer<SkirmishArmyGroupRecord> buffer = em.GetBuffer<SkirmishArmyGroupRecord>(session);
             for (int i = 0; i < buffer.Length; i++)
             {
                 SkirmishArmyGroupRecord record = buffer[i];
                 if (record.Selected == 0)
                     continue;
-                selectedGroups.Add(record.GroupId);
                 record.Selected = 0;
                 buffer[i] = record;
             }
 
-            for (int i = 0; i < selectedGroups.Length; i++)
-                ApplyTags(em, session, selectedGroups[i], false);
-            selectedGroups.Dispose();
+            // Clear live selection even when a prior world command left the
+            // record flags out of sync with the actual unit tags.
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(
+                typeof(SelectedUnitTag),
+                typeof(SkirmishArmyGroupMembershipComponent),
+                typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity unit = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId == 1 && owned.SessionId.Equals(sessionId))
+                    em.RemoveComponent<SelectedUnitTag>(unit);
+            }
             Recount(em, session);
+        }
+
+        // A zero groupId asks whether any living player group is selected.
+        public static bool HasSelectedLivingPlayerMember(EntityManager em, Entity session, uint groupId)
+        {
+            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return false;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(
+                typeof(SelectedUnitTag),
+                typeof(SkirmishArmyGroupMembershipComponent),
+                typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity unit = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId != 1 || !owned.SessionId.Equals(sessionId) ||
+                    (groupId != 0 && em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId != groupId))
+                    continue;
+                if (SkirmishArmyGroupSystem.IsAlive(em, unit))
+                    return true;
+            }
+
+            return false;
         }
 
         public static int SelectedLivingCount(EntityManager em, Entity session)

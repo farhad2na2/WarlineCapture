@@ -30,9 +30,28 @@ namespace Game.UI.Runtime
         }
         private AriaTouchTarget ObserveCatalogTarget(BuildDrawerCategory category, string prefabKey)
         {
-            return ObserveScrollableButton(watchCatalog?.ResolveCatalogTarget(category, prefabKey));
+            return ObserveScrollableButton(watchCatalog?.ResolveCatalogTarget(category, prefabKey),
+                CatalogItemId(category, prefabKey));
         }
-        private AriaTouchTarget ObserveScrollableButton(Button button)
+        private static int CatalogItemId(BuildDrawerCategory category, string prefabKey)
+        {
+            // Stable across pooled/recreated catalog buttons in this match.
+            // FNV-1a over the typed category and UTF-16 key bytes; never return zero.
+            unchecked
+            {
+                uint hash = 2166136261u;
+                hash = (hash ^ (byte)category) * 16777619u;
+                if (prefabKey != null)
+                    foreach (char c in prefabKey)
+                    {
+                        hash = (hash ^ (byte)c) * 16777619u;
+                        hash = (hash ^ (byte)(c >> 8)) * 16777619u;
+                    }
+                int id = (int)(hash & 0x7fffffffu);
+                return id == 0 ? 1 : id;
+            }
+        }
+        private AriaTouchTarget ObserveScrollableButton(Button button, int logicalItemId)
         {
             var target = ObserveWatchButton(button);
             if (target.Available || button == null || !button.IsActive() || !button.IsInteractable()) return target;
@@ -53,8 +72,15 @@ namespace Game.UI.Runtime
             watchRaycast.position = from; watchHits.Clear();
             UnityEngine.EventSystems.EventSystem.current.RaycastAll(watchRaycast, watchHits);
             if (watchHits.Count == 0 || watchHits[0].gameObject.GetComponentInParent<ScrollRect>() != scroll) return default;
+            // Measure the actual rendered catalog movement toward this button. A long
+            // catalog can need several successful drags while the scroll actuator ID
+            // remains unchanged; the logical catalog key distinguishes those tasks.
+            float remaining = up ? bounds.yMin - local.y : local.y - bounds.yMax;
+            float distanceViewports = Mathf.Max(0f, remaining) / Mathf.Max(1f, bounds.height);
             return new AriaTouchTarget { Id = scroll.GetEntityId().GetHashCode() ^ (up ? 1 : 2),
-                Position = from, DragEnd = to, Drag = true, Available = true };
+                Position = from, DragEnd = to, Drag = true, Available = true,
+                ScrollTargetId = logicalItemId,
+                ScrollDistanceViewports = distanceViewports };
         }
         private void ObserveSkirmishWatch(UiSkirmishModel model)
         {

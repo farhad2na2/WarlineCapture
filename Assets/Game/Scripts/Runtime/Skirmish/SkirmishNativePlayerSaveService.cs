@@ -44,7 +44,21 @@ namespace Game.Runtime
                 return Path.Combine(Application.persistentDataPath, "skirmish-s005-native.json");
             }
         }
-        public static bool HasSaved(string catalogId) => TryRead(catalogId, out _, out _);
+        public static bool HasSaved(string catalogId) => TryRead(catalogId, out _, out _) || HasRecognizedPolicylessSave(catalogId);
+
+        private static bool HasRecognizedPolicylessSave(string catalogId)
+        {
+            if (catalogId != "S005" || ContentAccessRuntime.Evaluate("skirmish.s005") != Game.Missions.Contracts.ContentAccessState.Allowed ||
+                !SkirmishNativeCheckpointCodec.TryReadDescriptor(SavePath, out var saved) || saved.CatalogId != catalogId ||
+                !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishExpandedSessionComponent state) ||
+                state.Phase != SkirmishSessionPhase.Playing || state.SpawnComplete == 0) return false;
+            var catalog = SkirmishExpansionCatalogConfig.Load();
+            return catalog != null && catalog.TryGetDefinition(catalogId, out var definition) && definition != null &&
+                SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out _) &&
+                SkirmishSetupCompiler.TryCompile(definition, state.DifficultyId, state.SizeId, state.Seed,
+                    new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds ?? Array.Empty<string>() }, matrix,
+                    out var setup, out _) && SkirmishNativeCheckpointCodec.ValidatePolicylessCompatibility(saved, setup);
+        }
         public static bool HasSaveFailed(EntityManager em, Entity session) => em.Exists(session) &&
             em.HasComponent<SkirmishNativeSaveFeedback>(session) && em.GetComponentObject<SkirmishNativeSaveFeedback>(session).Failed;
         public static bool CanSave(EntityManager em, Entity session) => em.Exists(session) &&

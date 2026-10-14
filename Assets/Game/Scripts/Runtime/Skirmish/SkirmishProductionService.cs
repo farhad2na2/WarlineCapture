@@ -184,7 +184,19 @@ namespace Game.Runtime
         }
 
         public static SkirmishProductionDecision EvaluateQueue(EntityManager em, Entity session,
-            string roleId, int squadCount, SkirmishArmyProfileConfig army, byte factionId)
+            string roleId, int squadCount, SkirmishArmyProfileConfig army, byte factionId) =>
+            EvaluateQueueInternal(em,session,roleId,squadCount,army,factionId,null);
+
+        // Pure investment quote only. A projected unlock never authorizes a native
+        // payment/queue: all acting APIs retain their current-readiness evaluation.
+        public static SkirmishProductionDecision EvaluateQueueAtReadiness(EntityManager em, Entity session,
+            string roleId, int squadCount, SkirmishArmyProfileConfig army, byte factionId,
+            SkirmishReadinessStage projectedReadiness) =>
+            EvaluateQueueInternal(em,session,roleId,squadCount,army,factionId,projectedReadiness);
+
+        private static SkirmishProductionDecision EvaluateQueueInternal(EntityManager em, Entity session,
+            string roleId, int squadCount, SkirmishArmyProfileConfig army, byte factionId,
+            SkirmishReadinessStage? projectedReadiness)
         {
             SkirmishProductionDecision decision = default;
             if (em == default || !em.HasComponent<SkirmishResolvedSetupRecord>(session))
@@ -228,7 +240,7 @@ namespace Game.Runtime
                 SupplyCap = snapshot.SupplyCap
             };
             decision = SkirmishProductionEligibility.Evaluate(
-                request, army, LiveReadiness(em, session, setup.Readiness, factionId), setup.RoleOverlays);
+                request, army, projectedReadiness ?? LiveReadiness(em, session, setup.Readiness, factionId), setup.RoleOverlays);
             if (decision.Accepted && SkirmishRoleIds.Category(roleKind) == SkirmishPopulationCategory.LogisticsSupport &&
                 CountLogisticsSupport(em, session, factionId) + decision.MemberCount > setup.LogisticsSupportCapEach)
             {

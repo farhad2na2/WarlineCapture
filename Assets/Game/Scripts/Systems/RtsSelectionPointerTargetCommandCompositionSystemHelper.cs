@@ -132,6 +132,7 @@ namespace Game.Runtime
         private EntityQuery _gridConfigQuery;
         private EntityQuery _mapSurfaceQuery;
         private EntityQuery _runtimeBuildingCombatQuery;
+        private EntityQuery _visibleHostileAirAttackQuery;
         private EntityQuery _campaignGuidanceQuery;
         private readonly MapSurfaceSampler _mapSurfaceQuerySystem = new();
         private readonly MapSurfaceSlopeClassifier _mapSurfaceSlopeClassificationSystem = new();
@@ -308,7 +309,12 @@ namespace Game.Runtime
 
         public bool TryRequestAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
         {
-            bool explicitAttackTargetModeActive = context.GetExplicitAttackTargetModeActive?.Invoke() == true;
+            // The ECS command mode survives Save/Continue. The startup-local flag may not,
+            // so resolve a world Attack tap from the same state that routed the release here.
+            bool explicitAttackTargetModeActive = context.InputSystem != null
+                ? context.InputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode) &&
+                  activeMode == TacticalCommandMode.Attack
+                : context.GetExplicitAttackTargetModeActive?.Invoke() == true;
             if (!TryQueueResolvedAttackCommand(
                     context,
                     screenPosition,
@@ -844,6 +850,16 @@ namespace Game.Runtime
             if (TryGetClickedRuntimeBuildingVisual(em, context.WorldCamera, screenPosition, out bestEntity))
                 return true;
 
+            // The ground ray can land on neutral scenery while a hostile aircraft
+            // is visibly under the tap. Keep gate visuals first, then resolve only
+            // live, visible airborne enemies before the general Select lookup.
+            if (TryGetClickedVisibleHostileAirAttackTarget(em, context.WorldCamera, screenPosition, out bestEntity))
+            {
+                context.LogSelectionDiagnostic?.Invoke(
+                    $"attackTargetLookup result=True route=VisibleHostileAirScreen pos={screenPosition} entity={DescribeClickedEntity(em, bestEntity)} radius={UnitClickScreenFallbackRadiusPixels}");
+                return true;
+            }
+
             if (TryGetClickedUnitEntityFromBoundary(context, screenPosition, em, out bestEntity))
             {
                 // The shared focus lookup also contains neutral city scenery.
@@ -951,6 +967,79 @@ namespace Game.Runtime
             Vector3 worldPoint = ray.GetPoint(distance);
             cell = GridUtils.WorldToCell(grid, worldPoint);
             return GridUtils.InBounds(cell, grid.Width, grid.Height);
+        }
+
+        // Attack-only visual lookup. Select keeps its broader friendly/neutral hitbox rules.
+        // The returned entity still passes through the normal direct-target/command gate.
+        internal bool TryGetClickedVisibleHostileAirAttackTarget(
+            EntityManager em, Camera camera, Vector2 screenPosition, out Entity bestEntity)
+        {
+            bestEntity = Entity.Null;
+            if (camera == null)
+                return false;
+
+            EnsureEntityQueries(em);
+            em.CompleteDependencyBeforeRO<Faction>();
+            em.CompleteDependencyBeforeRO<UnitAirComponent>();
+            em.CompleteDependencyBeforeRO<UnitHealth>();
+            em.CompleteDependencyBeforeRO<LocalTransform>();
+            em.CompleteDependencyBeforeRO<LocalToWorld>();
+            em.CompleteDependencyBeforeRO<UnitSelectionHitbox>();
+            float radiusSq = UnitClickScreenFallbackRadiusPixels * UnitClickScreenFallbackRadiusPixels;
+            bool bestCenterHit = false;
+            float bestDistanceSq = float.MaxValue;
+            float bestHitboxArea = float.MaxValue;
+            using NativeArray<Entity> entities = _visibleHostileAirAttackQuery.ToEntityArray(Allocator.Temp);
+            foreach (Entity candidate in entities)
+            {
+                if (em.HasComponent<UnitSpawnTransitTag>(candidate) ||
+                    em.GetComponentData<UnitAirComponent>(candidate).Airborne == 0 ||
+                    em.GetComponentData<UnitHealth>(candidate).Current <= 0 ||
+                    !FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(candidate).Id) ||
+                    !SkirmishFogConsumerUtility.PlayerVisible(em, candidate) ||
+                    !AssistantPreviewAttackTargetUtility.IsDirectResolvedAttackTarget(em, candidate))
+                    continue;
+
+                LocalToWorld rendered = em.GetComponentData<LocalToWorld>(candidate);
+                Vector3 center = camera.WorldToScreenPoint(rendered.Position);
+                if (center.z <= 0f)
+                    continue;
+                Vector3 torso = camera.WorldToScreenPoint(
+                    new Vector3(rendered.Position.x, rendered.Position.y + 0.85f, rendered.Position.z));
+                float centerSq = Mathf.Min(
+                    ((Vector2)center - screenPosition).sqrMagnitude,
+                    torso.z > 0f ? ((Vector2)torso - screenPosition).sqrMagnitude : float.MaxValue);
+                bool centerHit = centerSq <= radiusSq;
+                float hitboxSq = float.MaxValue;
+                float hitboxArea = float.MaxValue;
+                bool hitboxHit = !centerHit &&
+                    em.HasComponent<UnitSelectionHitbox>(candidate) &&
+                    FocusableUnitLookupCameraSystemHelper.TryGetSelectionHitboxScreenDistanceSq(
+                        camera, rendered.Value, em.GetComponentData<UnitSelectionHitbox>(candidate),
+                        screenPosition, out hitboxSq, out hitboxArea) &&
+                    hitboxSq <= radiusSq;
+                if (!centerHit && !hitboxHit)
+                    continue;
+
+                float distanceSq = centerHit ? centerSq : hitboxSq;
+                bool better = bestEntity == Entity.Null ||
+                    (centerHit && !bestCenterHit) ||
+                    (centerHit == bestCenterHit &&
+                     (distanceSq < bestDistanceSq - 0.01f ||
+                      (Mathf.Abs(distanceSq - bestDistanceSq) <= 0.01f &&
+                       (!centerHit && hitboxArea < bestHitboxArea - 0.01f ||
+                        (centerHit || Mathf.Abs(hitboxArea - bestHitboxArea) <= 0.01f) &&
+                        (candidate.Index < bestEntity.Index ||
+                         candidate.Index == bestEntity.Index && candidate.Version < bestEntity.Version)))));
+                if (!better)
+                    continue;
+
+                bestEntity = candidate;
+                bestCenterHit = centerHit;
+                bestDistanceSq = distanceSq;
+                bestHitboxArea = hitboxArea;
+            }
+            return bestEntity != Entity.Null;
         }
 
         private bool TryGetClickedRuntimeBuildingVisual(
@@ -1646,6 +1735,22 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<UnitHealth>(),
                 ComponentType.ReadOnly<LocalTransform>());
+            _visibleHostileAirAttackQuery = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitAirComponent>(),
+                    ComponentType.ReadOnly<UnitHealth>(),
+                    ComponentType.ReadOnly<LocalTransform>(),
+                    ComponentType.ReadOnly<LocalToWorld>()
+                },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<Prefab>(),
+                    ComponentType.ReadOnly<StaticGridBlocker>()
+                }
+            });
             _campaignGuidanceQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<CampaignMissionGuidanceProjectionComponent>());
         }

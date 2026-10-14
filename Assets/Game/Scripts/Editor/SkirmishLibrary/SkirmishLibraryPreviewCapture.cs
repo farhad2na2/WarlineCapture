@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -38,6 +39,15 @@ namespace Game.Editor
         private static readonly Color MatchSunColor = new Color(1f, 0.977f, 0.935f, 1f);
         private const float MatchSunIntensity = 1.25f;
 
+        private const int CardWidth = 1024;
+        private const int CardHeight = 576;
+        private const int PlateWidth = 1920;
+        private const int PlateHeight = 1080;
+        private const int Supersample = 2;
+        private const int MaxImportSize = 2048;
+        private static readonly string[] RefineryKeywords =
+            { "refinery", "industrial", "silo", "storagetank", "storage_tank", "fueltank", "fuel_tank", "chimney", "smokestack", "pipeline", "factory", "cracking" };
+
         private static readonly string[] BattlefieldOrder = { "DB", "CC", "MP", "IB", "AP" };
 
         public static void Run()
@@ -60,7 +70,9 @@ namespace Game.Editor
                 Debug.Log(
                     "[SkirmishLibraryPreviewCapture] result=Passed previews=" + previews +
                     " plates=" + plates +
-                    " size=" + SkirmishLibraryPreviewAssets.Width + "x" + SkirmishLibraryPreviewAssets.Height);
+                    " card=" + CardWidth + "x" + CardHeight +
+                    " plate=" + PlateWidth + "x" + PlateHeight +
+                    " supersample=" + Supersample + "x msaa=8");
             }
             catch (Exception exception)
             {
@@ -113,6 +125,10 @@ namespace Game.Editor
                     ScenePath = scenePath,
                     OutputAssetPath = output,
                     Camera = camera,
+                    Width = CardWidth,
+                    Height = CardHeight,
+                    CardSubject = enemy,
+                    RefineCard = true,
                     LogLine = "[SkirmishLibraryPreviewCapture] preview=" + entry.ScenarioId +
                               " framing=card" +
                               " established=" + (established ? "1" : "0") +
@@ -159,11 +175,19 @@ namespace Game.Editor
                 string scenePath = RequireScene(map, mapId);
                 OperationMapCameraConfig camera = RequirePlanningCamera(map);
                 string output = SkirmishLibraryPreviewAssets.PlatePath(mapId);
+                bool refinery = mapId == "IB";
+                Vector3 hint = camera.Position;
+                if (refinery && TryMapFocus(map, false, out Vector3 ibPlayer, out Vector3 ibEnemy))
+                    hint = (ibPlayer + ibEnemy) * 0.5f;
                 shots.Add(new Shot
                 {
                     ScenePath = scenePath,
                     OutputAssetPath = output,
                     Camera = camera,
+                    Width = PlateWidth,
+                    Height = PlateHeight,
+                    FocusKeywords = refinery ? RefineryKeywords : null,
+                    FocusHint = hint,
                     LogLine = "[SkirmishLibraryPreviewCapture] plate=" + mapId +
                               " framing=plate" +
                               " scene=" + scenePath +
@@ -197,6 +221,10 @@ namespace Game.Editor
                 ScenePath = scenePath,
                 OutputAssetPath = output,
                 Camera = camera,
+                Width = PlateWidth,
+                Height = PlateHeight,
+                FocusKeywords = Array.Empty<string>(),
+                FocusHint = camera.Position,
                 LogLine = "[SkirmishLibraryPreviewCapture] plate=" + mapId +
                           " framing=" + (overview ? "overview" : "top-down") +
                           " source=" + map.OperationMapId +
@@ -461,36 +489,34 @@ namespace Game.Editor
             Vector3 enemy,
             bool established)
         {
-            Vector3 look = Vector3.Lerp(player, enemy, 0.62f);
+            // The scenario objective (enemy base / target) is the subject; approach from the player's side.
+            Vector3 look = Vector3.Lerp(enemy, player, 0.12f);
             Vector3 back = player - enemy;
             back.y = 0f;
             if (back.sqrMagnitude < 0.01f)
                 back = Vector3.back;
             back.Normalize();
-            Vector3 side = Vector3.Cross(Vector3.up, back);
-            if (side.sqrMagnitude < 0.01f)
-                side = Vector3.right;
-            side.Normalize();
+
+            // Deterministic per-scenario azimuth so cards that share a map and objective stay distinguishable.
+            int hash = 17;
+            string id = scenarioId ?? string.Empty;
+            for (int i = 0; i < id.Length; i++)
+                hash = hash * 31 + id[i];
+            float azimuth = ((hash & 0x7fffffff) % 7 - 3) * 14f + (established ? 38f : -22f);
+            back = Quaternion.AngleAxis(azimuth, Vector3.up) * back;
 
             float separation = Vector2.Distance(new Vector2(player.x, player.z), new Vector2(enemy.x, enemy.z));
-            float distance = Mathf.Clamp(separation * 0.38f, 80f, 280f);
-            float heightFactor = 0.32f;
-            float fov = 36f;
-            if (established)
-            {
-                distance *= 0.55f;
-                heightFactor = 0.42f;
-                fov = 32f;
-            }
-
-            Vector3 position = look + back * distance + side * (distance * 0.28f) + Vector3.up * (distance * heightFactor);
+            float distance = Mathf.Clamp(separation * 0.16f, 80f, 120f) * (established ? 0.85f : 1f);
+            float pitch = established ? 48f : 42f;
+            Vector3 position = look + back * (distance * Mathf.Cos(pitch * Mathf.Deg2Rad)) +
+                               Vector3.up * (distance * Mathf.Sin(pitch * Mathf.Deg2Rad));
             Quaternion rotation = Quaternion.LookRotation(look - position, Vector3.up);
             return new OperationMapCameraConfig(
-                "camera.skirmish.card." + (scenarioId ?? "scenario").ToLowerInvariant(),
+                "camera.skirmish.card." + id.ToLowerInvariant(),
                 position,
                 rotation.eulerAngles,
                 false,
-                fov,
+                42f,
                 0f,
                 false);
         }
@@ -521,20 +547,23 @@ namespace Game.Editor
 
         private static OperationMapCameraConfig FrameTopDown(string mapId, Vector3 min, Vector3 max)
         {
+            // Oblique overview (not flat ortho) so relief and structures read with depth like the match camera.
             Vector3 center = (min + max) * 0.5f;
             float width = Mathf.Max(1f, max.x - min.x);
             float depth = Mathf.Max(1f, max.z - min.z);
-            float aspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
-            float ortho = Mathf.Max(depth * 0.5f, (width * 0.5f) / aspect) * 1.02f;
-            float height = Mathf.Max(max.y, min.y) + 50f;
-            Quaternion look = Quaternion.LookRotation(Vector3.down, Vector3.forward);
+            float extent = Mathf.Max(width / (PlateWidth / (float)PlateHeight), depth) * 0.5f;
+            const float fov = 40f;
+            const float pitch = 52f;
+            float distance = extent / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) * 0.95f;
+            Vector3 dir = Quaternion.Euler(pitch, 20f, 0f) * Vector3.forward;
+            Vector3 position = center - dir * distance;
             return new OperationMapCameraConfig(
-                "camera.skirmish." + mapId.ToLowerInvariant() + ".topdown",
-                new Vector3(center.x, height, center.z),
-                look.eulerAngles,
-                true,
-                60f,
-                ortho,
+                "camera.skirmish." + mapId.ToLowerInvariant() + ".overview",
+                position,
+                Quaternion.LookRotation(dir, Vector3.up).eulerAngles,
+                false,
+                fov,
+                0f,
                 false);
         }
 
@@ -580,6 +609,26 @@ namespace Game.Editor
             var cameraObject = new GameObject("SkirmishLibraryPreviewCamera");
             Camera camera = cameraObject.AddComponent<Camera>();
             ApplyMatchCamera(camera);
+
+            for (int i = 0; i < shots.Count; i++)
+            {
+                if (!shots[i].RefineCard)
+                    continue;
+                Shot card = shots[i];
+                card.Camera = CenterOnStructures(card.Camera, card.CardSubject, out string cardLog);
+                card.LogLine += " " + cardLog;
+                shots[i] = card;
+            }
+
+            for (int i = 0; i < shots.Count; i++)
+            {
+                if (shots[i].FocusKeywords == null)
+                    continue;
+                Shot focused = shots[i];
+                focused.Camera = FrameKeywordFocus(focused, out string focusLog);
+                focused.LogLine += " " + focusLog;
+                shots[i] = focused;
+            }
 
             try
             {
@@ -687,18 +736,14 @@ namespace Game.Editor
             if (volumeType == null)
                 throw new InvalidOperationException("URP Volume type is unavailable.");
 
+            // Every battlefield gets the identical match grade: mute scene volumes, then add one global match volume.
             MonoBehaviour[] behaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(
                 FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < behaviours.Length; i++)
             {
                 MonoBehaviour behaviour = behaviours[i];
-                if (behaviour == null || behaviour.GetType() != volumeType)
-                    continue;
-                object shared = volumeType.GetProperty("sharedProfile")?.GetValue(behaviour);
-                if (shared != profile)
-                    continue;
-                AssignVolume(behaviour, profile);
-                return null;
+                if (behaviour != null && behaviour.GetType() == volumeType)
+                    volumeType.GetProperty("weight")?.SetValue(behaviour, 0f);
             }
 
             var volumeObject = new GameObject("SkirmishLibraryMatchVolume");
@@ -718,6 +763,9 @@ namespace Game.Editor
                 isGlobal.boolValue = true;
             if (weight != null)
                 weight.floatValue = 1f;
+            SerializedProperty priority = serialized.FindProperty("m_Priority") ?? serialized.FindProperty("priority");
+            if (priority != null)
+                priority.floatValue = 1000f;
             sharedProfile.objectReferenceValue = profile;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
@@ -733,8 +781,7 @@ namespace Game.Editor
             camera.nearClipPlane = 0.3f;
             camera.farClipPlane = 8000f;
             camera.allowHDR = true;
-            camera.allowMSAA = false;
-            camera.aspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
+            camera.allowMSAA = true;
 
             Type dataType = Type.GetType(
                 "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
@@ -742,6 +789,11 @@ namespace Game.Editor
                 throw new InvalidOperationException("URP camera data is unavailable.");
             Component data = camera.GetComponent(dataType) ?? camera.gameObject.AddComponent(dataType);
             dataType.GetProperty("renderPostProcessing")?.SetValue(data, true);
+            Type aaType = Type.GetType(
+                "UnityEngine.Rendering.Universal.AntialiasingMode, Unity.RenderPipelines.Universal.Runtime");
+            PropertyInfo aa = dataType.GetProperty("antialiasing");
+            if (aaType != null && aa != null)
+                aa.SetValue(data, Enum.Parse(aaType, "SubpixelMorphologicalAntiAliasing"));
         }
 
         private static void DisableHudAndFog()
@@ -817,41 +869,49 @@ namespace Game.Editor
         {
             ApplyMatchCamera(camera);
             OperationMapCameraConfig pose = shot.Camera;
+            int width = shot.Width > 0 ? shot.Width : CardWidth;
+            int height = shot.Height > 0 ? shot.Height : CardHeight;
             camera.orthographic = pose.Orthographic;
             camera.fieldOfView = pose.FieldOfView > 0f ? pose.FieldOfView : 60f;
             camera.orthographicSize = pose.OrthographicSize > 0f ? pose.OrthographicSize : 50f;
-            camera.aspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
+            camera.aspect = width / (float)height;
             camera.transform.SetPositionAndRotation(pose.Position, Quaternion.Euler(pose.EulerAngles));
 
-            var target = new RenderTexture(
-                SkirmishLibraryPreviewAssets.Width,
-                SkirmishLibraryPreviewAssets.Height,
-                24,
-                RenderTextureFormat.ARGB32);
+            // Render at 2x with 8x MSAA, then downsample in two linear-filtered halving steps (box filter).
+            var hiDesc = new RenderTextureDescriptor(width * Supersample, height * Supersample, RenderTextureFormat.ARGB32, 24)
+            {
+                msaaSamples = 8,
+                sRGB = true
+            };
+            var hi = new RenderTexture(hiDesc) { filterMode = FilterMode.Bilinear };
+            var lo = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB)
+            {
+                filterMode = FilterMode.Bilinear
+            };
+            var resolved = new RenderTexture(width * Supersample, height * Supersample, 0, RenderTextureFormat.ARGB32,
+                RenderTextureReadWrite.sRGB) { filterMode = FilterMode.Bilinear };
             Texture2D image = null;
             RenderTexture previous = RenderTexture.active;
             try
             {
-                target.Create();
-                camera.targetTexture = target;
+                hi.Create();
+                lo.Create();
+                resolved.Create();
+                camera.targetTexture = hi;
                 camera.Render();
-                RenderTexture.active = target;
-                image = new Texture2D(
-                    SkirmishLibraryPreviewAssets.Width,
-                    SkirmishLibraryPreviewAssets.Height,
-                    TextureFormat.RGBA32,
-                    false);
-                image.ReadPixels(
-                    new Rect(0f, 0f, SkirmishLibraryPreviewAssets.Width, SkirmishLibraryPreviewAssets.Height),
-                    0,
-                    0);
+                camera.targetTexture = null;
+                Graphics.Blit(hi, resolved);
+                Graphics.Blit(resolved, lo);
+                RenderTexture.active = lo;
+                image = new Texture2D(width, height, TextureFormat.RGBA32, false);
+                image.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
                 image.Apply();
                 if (!write)
                     return;
                 string absolute = ProjectPath(shot.OutputAssetPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(absolute) ?? absolute);
                 File.WriteAllBytes(absolute, image.EncodeToPNG());
-                Debug.Log(shot.LogLine);
+                Debug.Log(shot.LogLine + " size=" + width + "x" + height);
             }
             finally
             {
@@ -859,9 +919,131 @@ namespace Game.Editor
                 camera.targetTexture = null;
                 if (image != null)
                     UnityEngine.Object.DestroyImmediate(image);
-                target.Release();
-                UnityEngine.Object.DestroyImmediate(target);
+                foreach (RenderTexture texture in new[] { hi, lo, resolved })
+                {
+                    texture.Release();
+                    UnityEngine.Object.DestroyImmediate(texture);
+                }
             }
+        }
+
+        private static OperationMapCameraConfig FrameKeywordFocus(Shot shot, out string log)
+        {
+            Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            var points = new List<Vector3>();
+            bool all = shot.FocusKeywords.Length == 0;
+            float radius = all ? float.MaxValue : 700f;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || !renderer.enabled)
+                    continue;
+                if (!all && !MatchesKeyword(renderer.transform, shot.FocusKeywords))
+                    continue;
+                Vector3 c = renderer.bounds.center;
+                if (new Vector2(c.x - shot.FocusHint.x, c.z - shot.FocusHint.z).magnitude > radius)
+                    continue;
+                points.Add(c);
+            }
+
+            if (points.Count < 3)
+            {
+                log = "focus=keywords matches=" + points.Count + " fallback=planning";
+                return shot.Camera;
+            }
+
+            float[] xs = new float[points.Count];
+            float[] zs = new float[points.Count];
+            float[] ys = new float[points.Count];
+            for (int i = 0; i < points.Count; i++)
+            {
+                xs[i] = points[i].x;
+                zs[i] = points[i].z;
+                ys[i] = points[i].y;
+            }
+
+            Array.Sort(xs);
+            Array.Sort(zs);
+            Array.Sort(ys);
+            float Pct(float[] a, float p) => a[Mathf.Clamp(Mathf.RoundToInt(p * (a.Length - 1)), 0, a.Length - 1)];
+            float lowP = all ? 0.2f : 0.1f;
+            var min = new Vector3(Pct(xs, lowP), Pct(ys, 0.5f), Pct(zs, lowP));
+            var max = new Vector3(Pct(xs, 1f - lowP), Pct(ys, 0.5f), Pct(zs, 1f - lowP));
+            var center = new Vector3((min.x + max.x) * 0.5f, Pct(ys, 0.25f), (min.z + max.z) * 0.5f);
+            float extent = Mathf.Clamp(Mathf.Max((max.x - min.x) / (PlateWidth / (float)PlateHeight), max.z - min.z) * 0.5f, 60f, all ? 520f : 260f);
+            const float fov = 40f;
+            float pitch = all ? 50f : 38f;
+            float distance = extent / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) * 1.15f;
+            Vector3 dir = Quaternion.Euler(pitch, 35f, 0f) * Vector3.forward;
+            log = "focus=" + (all ? "content" : "refinery") + " matches=" + points.Count + " center=" + Format(center) + " extent=" +
+                  extent.ToString("0", CultureInfo.InvariantCulture);
+            return new OperationMapCameraConfig(
+                shot.Camera.CameraId + (all ? ".content" : ".refinery"),
+                center - dir * distance,
+                Quaternion.LookRotation(dir, Vector3.up).eulerAngles,
+                false,
+                fov,
+                0f,
+                false);
+        }
+
+        // Runtime-spawned bases are absent from the static scene, so slide the card onto the nearest built-up
+        // cluster around the objective to keep a readable subject instead of empty sand.
+        private static OperationMapCameraConfig CenterOnStructures(OperationMapCameraConfig pose, Vector3 subject, out string log)
+        {
+            Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            var xs = new List<float>();
+            var zs = new List<float>();
+            const float radius = 160f;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || !renderer.enabled)
+                    continue;
+                Bounds b = renderer.bounds;
+                if (b.size.y < 4f || b.size.x > 80f || b.size.z > 80f)
+                    continue;
+                if (new Vector2(b.center.x - subject.x, b.center.z - subject.z).magnitude > radius)
+                    continue;
+                xs.Add(b.center.x);
+                zs.Add(b.center.z);
+            }
+
+            if (xs.Count < 12)
+            {
+                log = "card_subject=anchor structures=" + xs.Count;
+                return pose;
+            }
+
+            xs.Sort();
+            zs.Sort();
+            var target = new Vector3(xs[xs.Count / 2], subject.y, zs[zs.Count / 2]);
+            Vector3 shift = target - subject;
+            shift.y = 0f;
+            log = "card_subject=structures structures=" + xs.Count + " shift=" + Format(shift);
+            return new OperationMapCameraConfig(
+                pose.CameraId,
+                pose.Position + shift,
+                pose.EulerAngles,
+                pose.Orthographic,
+                pose.FieldOfView,
+                pose.OrthographicSize,
+                false);
+        }
+
+        private static bool MatchesKeyword(Transform transform, string[] keywords)
+        {
+            for (int depth = 0; transform != null && depth < 4; depth++, transform = transform.parent)
+            {
+                string name = transform.name;
+                for (int k = 0; k < keywords.Length; k++)
+                {
+                    if (name.IndexOf(keywords[k], StringComparison.OrdinalIgnoreCase) >= 0)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         private static void ImportSprites(List<Shot> shots)
@@ -876,7 +1058,11 @@ namespace Game.Editor
                 importer.textureType = TextureImporterType.Sprite;
                 importer.spriteImportMode = SpriteImportMode.Single;
                 importer.mipmapEnabled = false;
-                importer.alphaIsTransparency = true;
+                importer.alphaIsTransparency = false;
+                importer.maxTextureSize = MaxImportSize;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.filterMode = FilterMode.Bilinear;
+                importer.wrapMode = TextureWrapMode.Clamp;
                 importer.npotScale = TextureImporterNPOTScale.None;
                 importer.SaveAndReimport();
             }
@@ -907,6 +1093,12 @@ namespace Game.Editor
             public string OutputAssetPath;
             public OperationMapCameraConfig Camera;
             public string LogLine;
+            public int Width;
+            public int Height;
+            public string[] FocusKeywords;
+            public Vector3 FocusHint;
+            public bool RefineCard;
+            public Vector3 CardSubject;
         }
     }
 }

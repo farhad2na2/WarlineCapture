@@ -1,0 +1,15 @@
+{
+  "source_manifest": [
+    {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "sha256": "88a9f25805cc1035656c803b534fcdadcdc0bfaa0a54820b9ce5796d65809e6d"
+    },
+    {
+      "path": "Tools/CI/invoke_unity_process_exit_test.py",
+      "sha256": "829bbb6179e9d143a91404fc6040aadd0ba0a3f2399486fbd5ea220450aadb1f"
+    }
+  ],
+  "native_unity_execution": false,
+  "cases_passed": 11,
+  "note": "Owned synthetic children only; escalating wrapper process-tree tests. Existing crash/fatal/timeout/exit priority preserved."
+}

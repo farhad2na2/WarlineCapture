@@ -112,6 +112,7 @@ function Find-UnityLoggedFailure {
         'The re-connection attempt was UN-successful\.',
         'Test run completed\. Exiting with code [1-9][0-9]* \(Failed\)\.',
         'Aborting batchmode due to failure',
+        '(?m)^[^\r\n]*\.cs\([0-9]+,[0-9]+\):[ \t]*error CS[0-9]+:[^\r\n]*',
         'Crash!!!',
         'A crash has been intercepted by the crash handler\.'
     )

@@ -1,0 +1,9 @@
+{
+  "result": "Failed",
+  "scope": "Isolated native UI test setup, not normal-input lifecycle",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "originalTestSha256": "1c3b22113b7c1347c58ffa359b09f12efa23350a09c107d0c383fba534496b2f",
+  "reason": "Edit-mode EventSystem.OnEnable had not registered current; test dereferenced null current. Corrected fixture uses disposable instance and explicit test-only raycaster lifecycle. Production source unchanged.",
+  "playerReady": false
+}

@@ -1,0 +1,35 @@
+{
+  "status": "IntegratedNativeCompileAndTestsPending",
+  "manifestSha256": "259d65037cef4a15ab737198aa890d19ccec93465aaec921ee88918de326054a",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs",
+      "base_sha256": "d478d03e54a48662e40665152ff476b27c951c07c423423ea44bff56ce4367c7",
+      "staged_sha256": "7adecd80dfc6648317b7b4ad0060c6d17b484e170df6e3eab3ba4583cc40d0a8",
+      "base_path": "/private/tmp/s005-touch-cadence-v1/base/Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs",
+      "staged_path": "/private/tmp/s005-touch-cadence-v1/Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "base_sha256": "0cc709583d7bb2deb892129f292ae0c8bde3e5ae2d8d686076b01c41f38e03b6",
+      "staged_sha256": "1014fbd0aa1c39dcab0442093e4e8d3e231ebbbbf50e1b93ccbe3c8d7897342a",
+      "base_path": "/private/tmp/s005-touch-cadence-v1/base/Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "staged_path": "/private/tmp/s005-touch-cadence-v1/Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.Observation.cs",
+      "base_sha256": "20b5cd4bae8f363a6de967185a03ad34d9d5ee538d0f3e1c0055087fa0bac16c",
+      "staged_sha256": "1c0f1fe8fa75fb774c2dd44266e356d2c6094b69a6214684f63fc2aafb209af7",
+      "base_path": "/private/tmp/s005-touch-cadence-v1/base/Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.Observation.cs",
+      "staged_path": "/private/tmp/s005-touch-cadence-v1/Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.Observation.cs"
+    },
+    {
+      "path": "Assets/Tests/Editor/MatchHudMinimapTapTests.cs",
+      "base_sha256": "5b4d604abf65f227041e341020b15077af110c88e6974374b9c921cbb3c596c9",
+      "staged_sha256": "071a0d15fa80d778da583ea1ff6d412e5edade57cdb6c1048253e2a10d12d543",
+      "base_path": "/private/tmp/s005-touch-cadence-v1/base/Assets/Tests/Editor/MatchHudMinimapTapTests.cs",
+      "staged_path": "/private/tmp/s005-touch-cadence-v1/Assets/Tests/Editor/MatchHudMinimapTapTests.cs"
+    }
+  ],
+  "native1232CausationProven": false
+}

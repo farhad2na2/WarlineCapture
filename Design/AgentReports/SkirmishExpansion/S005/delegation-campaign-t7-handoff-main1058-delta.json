@@ -1,0 +1,37 @@
+[
+  {
+    "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "T7": "edad552b09065841351d5bf4a28dccd061da7aadba301487bb2b39f86ac32b42",
+    "main1058": "1979b9dcc11f4352d430316bc03d07da178485b973179cda1c45445c3e12ccc8"
+  },
+  {
+    "path": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+    "T7": "72a95c2ce6ee9ff02a000e0dac81b2a7e757e5c1158eefaedc7e84d06bb40fb4",
+    "main1058": "60a5095e7ce3cdcdca268e72789b60a2d1d6c761de154365b5dd60b662346d8c"
+  },
+  {
+    "path": "Assets/Settings/Pipeline/EditorPipelineManager.asset",
+    "T7": "34e985203cb5d2f2e4c58197fac489a93a1403e26704a4d40415b7691ad4e613",
+    "main1058": "9a324c6b5a0292158f2cc09a82b31f390b576f3547857952c239f1c8ff10ac2b"
+  },
+  {
+    "path": "Assets/Tests/Editor/AirPauseConservationTests.cs",
+    "T7": null,
+    "main1058": "3a4cdadadd817f233bc6b8933d187f022996e5e305bd724120acf8f108919f65"
+  },
+  {
+    "path": "Assets/Tests/Editor/AirPauseConservationTests.cs.meta",
+    "T7": null,
+    "main1058": "1532945120886966cef05c99db5416b0547373dc226991dae7b9c6f7e19efe3e"
+  },
+  {
+    "path": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+    "T7": "46334afcc3c58dff1bc91dcf8bdff76ab46f91dd4c2b3440d34dfcdc6a443ac1",
+    "main1058": "4d8905f129c000e6ebddbcff4d0753305345db9109ff6f900de89bb8bb8a7d58"
+  },
+  {
+    "path": "ProjectSettings/QualitySettings.asset",
+    "T7": "67bdaed4f7210652978b969e44487e407e94f8ba0edac284762d32ba1b2f8449",
+    "main1058": "f4324caa2b7b019ef74a1b8c04dce4fb462cc9a7cda227115e1203a8c211b25e"
+  }
+]

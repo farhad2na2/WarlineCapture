@@ -1,0 +1,66 @@
+import hashlib,json,pathlib,re,subprocess,time
+
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+p=root/'Design/AgentReports/SkirmishExpansion/S005'
+report=p/'TECHNICAL_READINESS_CURRENT.json'
+state=json.loads(report.read_text())
+assert state['activeRun'] is None
+air=p/'native945-980-normal-paid-strike-taxi-save-continue-pass.json'
+assert air.exists() and json.loads(air.read_text())['result'].startswith('Passed')
+pre='final-980-retained-strike-taxi-continue-post-source-manifest.json'
+before=json.loads((p/pre).read_text())
+code='Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs'
+asset='Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset'
+assert hashlib.sha256((root/code).read_bytes()).hexdigest()==before['files'][code]
+assert hashlib.sha256((root/asset).read_bytes()).hexdigest()==before['files'][asset]
+log='native-970-m02-logical-build-lot-repair.log'
+assert not (p/log).exists()
+
+def cli(args,name):
+    r=subprocess.run(['rtk','proxy','unity','command',*args,'--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True)
+    (p/name).write_text(r.stdout)
+    d=json.loads(r.stdout)
+    assert r.returncode==0 and d['success'],r.stdout
+    result=d['data']['result']
+    if isinstance(result,str) and result.startswith('{'):result=json.loads(result)
+    if isinstance(result,dict):assert result.get('success',True),r.stdout
+    return result
+
+state.update(activeRun='native970',activeLog=log,activeScope='Logical M2 anchor repair; existing physical source preserved',activePreManifest=pre)
+report.write_text(json.dumps(state,indent=2)+'\n')
+(root/code).write_text(pathlib.Path('/private/tmp/M02EstablishBaseForwardPostWindowValidation-proposed.cs.txt').read_text())
+cli(['recompile'],'compile970-m02-recompile-request.json')
+for attempt in range(60):
+    time.sleep(2)
+    status=cli(['recompile_status'],'compile970-m02-recompile-status.json')
+    if isinstance(status,dict) and status.get('status') in ['completed','up_to_date']:
+        assert not status.get('failed') and not status.get('errors'),status
+        break
+else:raise RuntimeError('M2 recompilation did not complete')
+loaded=cli(['run_script','--file','/private/tmp/M02LogicalBuildLotRepair970.cs','--entry','M02LogicalBuildLotRepair970.Run','--timeout_ms','30000'],'load970-m02-repair-driver.json')
+assert loaded['success']
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','300','--log',str(p/log),'--','-executeMethod','M02LogicalBuildLotRepair970.RunValidation'],cwd=root).returncode
+(p/(log+'.wrapper-exit')).write_text(str(wrapper)+'\n')
+bridge=int((p/(log+'.exit')).read_text()) if (p/(log+'.exit')).exists() else None
+subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py','final-970-m02-logical-build-lot-repair-post'],cwd=root,check=True)
+post='final-970-m02-logical-build-lot-repair-post-source-manifest.json'
+after=json.loads((p/post).read_text())
+changed=sorted(k for k in set(before['files'])|set(after['files']) if before['files'].get(k)!=after['files'].get(k))
+sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+t=(p/log).read_text(errors='replace')
+errors=[]
+if wrapper!=0 or bridge!=0:errors.append('Wrapper/native bridge failure')
+if changed!=sorted([code,asset]) or before['materials']!=after['materials']:errors.append('Source delta exceeds the two authorized logical M2 repair files')
+for marker in ['[M02EstablishBaseForwardPostWindowValidation] result=Passed','[M02LogicalBuildLotRepair970] result=Passed']:
+    if marker not in t:errors.append('Missing '+marker)
+if re.search(r'error CS\d+',t):errors.append('Compiler errors')
+name='native970-m02-logical-build-lot-repair-'+('pass' if not errors else 'failure')+'.json'
+proof=dict(result='Passed' if not errors else 'Failed',scope='Logical M2 construction-anchor repair; native bilingual mission regression pending',sourceHash=sha,preManifest=pre,postManifest=post,changedFiles=changed,materialsUnchanged=before['materials']==after['materials'],allOtherSourceFilesUnchanged=changed==sorted([code,asset]),actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest(),errors=errors,normalPlayerJourneyCertified=False,technicallyReady=False,playerReady=False)
+(p/name).write_text(json.dumps(proof,indent=2)+'\n')
+state=json.loads(report.read_text())
+state.update(sourceHash=sha,currentSourceFingerprint=post.replace('-source-manifest.json','-independent-fingerprint.json'),sourceFingerprint=post.replace('-source-manifest.json','-independent-fingerprint.json'),activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,currentM02LogicalRepairProof=name,technicallyReady=False,playerReady=False)
+state['currentS005CandidateSourceApplicability']=dict(proof=name,scope='Full source changed only in Campaign M2 logical configuration and its Editor builder. All S005 runtime, setup, physical maps, UI, packages, project settings and materials are byte-identical to the native945/946 source.',wholeSourceIdentical=False,s005CandidateSourceUnchanged=not errors,nativeCurrentWholeSourceAcceptanceClaimed=False)
+report.write_text(json.dumps(state,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as f:f.write(f'\nNative970 logical Campaign M2 build-lot repair {proof["result"]}; full source delta limited to its Editor builder and logical definition={not errors}. Existing physical map/materials and S005 candidate dependencies unchanged. Native M1–M5 regression remains pending. Proof `{name}`.\n')
+print(json.dumps(proof),flush=True)
+raise SystemExit(0 if not errors else 3)

@@ -1,0 +1,27 @@
+import hashlib,json,pathlib,re,shutil,subprocess,sys
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture');p=root/'Design/AgentReports/SkirmishExpansion/S005'
+assert len(sys.argv)==2, 'Usage: rtk proxy python3 /private/tmp/s005-run-drone-1051.py <current-pre-source-manifest.json>'
+pre=sys.argv[1];assert pathlib.Path(pre).name==pre and (p/pre).is_file()
+f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text());assert s['activeRun'] is None
+script=pathlib.Path('/private/tmp/S005DroneProducerSmoke1051.cs')
+archived=p/'native1051-drone-producer-fixture.cs.txt';shutil.copy2(script,archived)
+r=subprocess.run(['rtk','proxy','unity','command','run_script','--file',str(script),'--entry','S005DroneProducerSmoke1051.Run','--timeout_ms','30000','--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True)
+(p/'load1051-drone-producer-fixture.json').write_text(r.stdout);d=json.loads(r.stdout);assert r.returncode==0 and d['success'] and d['data']['result']['success'];print('Drone native producer smoke loaded',flush=True)
+log='native-1051-drone-intelstation-no-airport-smoke.log';assert not(p/log).exists()
+s.update(activeRun='native1051',activeLog=log,activeScope='S005DroneProducerSmoke1051.RunValidation',activePreManifest=pre);f.write_text(json.dumps(s,indent=2)+'\n')
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','420','--log',str(p/log),'--','-executeMethod','S005DroneProducerSmoke1051.RunValidation'],cwd=root).returncode
+(p/(log+'.wrapper-exit')).write_text(str(wrapper)+'\n')
+bridge=int((p/(log+'.exit')).read_text()) if (p/(log+'.exit')).exists() else None
+if bridge is None:print('No native completion; preserve active owned run and investigate',flush=True);sys.exit(4)
+post='final-1051-drone-producer-post';subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],cwd=root,check=True);post+='-source-manifest.json'
+same=json.loads((p/pre).read_text())==json.loads((p/post).read_text());sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash'];t=(p/log).read_text(errors='replace')
+errors=[]
+if wrapper!=0 or bridge!=0:errors.append('Wrapper/native bridge failure')
+if not same:errors.append('Full source changed')
+for marker in ['[S005DroneProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0','[S005DroneNativeSelection] result=Passed','[S005DroneNativeMovement] result=Passed','[S005DronePaidQueueDeath] result=Passed','[S005DroneMovementCleanup] result=Passed']:
+ if marker not in t:errors.append('Missing '+marker)
+proof=dict(result='Failed' if errors else 'PassedScopedIsolatedDroneProducer',scope='Isolated funded Established-readiness Drone production from legal native IntelStation without Airport; actual paid queue API and native Touch selection/movement; no normal whole mission or full air lifecycle certificate',sourceHash=sha,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest(),fixture=archived.name,fixtureSha256=hashlib.sha256(archived.read_bytes()).hexdigest(),touchEvidence='delegation-aircraft-drone1051.touch.jsonl',fundingInjected=True,readinessGranted='Established',enemyStrategyDisabled=True,deathStimulus='HealthZero',actorPositionsSelectionOrdersInjected=False,normalMissionCertified=False,fullLifecycleCertified=False,technicallyReady=False,playerReady=False,errors=errors,nativeMarkers=[x for x in t.splitlines() if x.startswith(('[S005DroneProducer]','[S005DroneMovement]','[S005DroneMovementCleanup]','[S005DronePaidQueueDeath]'))])
+name='native1051-drone-intelstation-no-airport-'+('failure' if errors else 'pass')+'.json';(p/name).write_text(json.dumps(proof,indent=2)+'\n')
+s=json.loads(f.read_text());assert s['activeRun']=='native1051';s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,currentDroneProducerSmoke=name);f.write_text(json.dumps(s,indent=2)+'\n')
+with(p/'CURRENT_ACCEPTANCE.md').open('a') as m:m.write('\nNative1051: isolated Drone IntelStation/no-Airport smoke '+proof['result']+'; funding/readiness/death disclosed, no whole mission or full lifecycle certificate. Proof `'+name+'`.\n')
+print(json.dumps(dict(proof=name,result=proof['result'],errors=errors)),flush=True);sys.exit(3 if errors else 0)

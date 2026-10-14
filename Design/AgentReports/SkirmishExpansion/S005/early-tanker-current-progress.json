@@ -1,0 +1,31 @@
+{
+  "sourceHash": "d609f4034eb368adc4ce356af3e8e9afe2ac88ee13a3900cc7892fe5a5e5216d",
+  "preFingerprint": "final-469-early-tankers-pre-independent-fingerprint.json",
+  "compile": "Passed",
+  "currentRegressionsPassed": true,
+  "nextNativeRun": 473,
+  "native467Failure": "native467-late-tanker-failure.json",
+  "playerReady": false,
+  "activeNativeRun": 473,
+  "nativeStatus": "Running",
+  "currentAutomatedEvidence": [
+    {
+      "log": "tests-470-early-tanker-selection.log",
+      "sha256": "65253728356752d853e2b6b6eeb39212838595815f4548545ae4476d73fb978d",
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    },
+    {
+      "log": "tests-471-early-tanker-army.log",
+      "sha256": "004f2713dcda22dc5846708ef099e27e67163070f1d68bb799119609246e4249",
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    },
+    {
+      "log": "tests-472-early-tanker-economy-profile.log",
+      "sha256": "c7cc739da358331d1b8a92916e521d1893d46b7f848d20219440f521f8405507",
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    }
+  ]
+}

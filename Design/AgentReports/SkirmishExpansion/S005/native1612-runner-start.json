@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1612",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "post-1605-localized-hud-focused-source-manifest.json",
+  "preflightManifest": "final-1612-normal-paid-south-flank-preflight-source-manifest.json",
+  "fixtureSha256": "08bc10df9502f484d8f926a1eef529e4beb07fd3db5c9d3aa56d5733735213af",
+  "executedRunnerSha256": "e68ebcfc9906548fd2cabd08441f753595d71d79812f12c7235937bb3b381580",
+  "method": "S005NormalSouthFlank1612Observer.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

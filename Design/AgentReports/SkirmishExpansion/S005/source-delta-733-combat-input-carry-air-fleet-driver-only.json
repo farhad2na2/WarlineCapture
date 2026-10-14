@@ -1,0 +1,16 @@
+{
+  "fromSourceHash": "b3d184967db510b1e821713b4850ed46d321419dbe301e082320a8e970ca5ffb",
+  "toSourceHash": "2a81b1c316f92e1d431bfb0e85ba577bd9be4373cda2a614622c7411aa136cbb",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeConfigsPhysicalSourcesAndAllMaterialHashesUnchanged": true,
+  "changes": [
+    "Keep verified real input recorder and attack receipts across same-attempt combat Continue; strict recorder/gesture/receipt checks preserved.",
+    "Aircraft qualification compares paid three-oil/three-tanker fleet with same two-refinery industry, cap6, ordinary prices, fuel reserve and deadline."
+  ],
+  "airComparisonBasis": "native709-offline-refinery-fuel-backlog-analysis.json",
+  "nativeReadiness": "Pending"
+}

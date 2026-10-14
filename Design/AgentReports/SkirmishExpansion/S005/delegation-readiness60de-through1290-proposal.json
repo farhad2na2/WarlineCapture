@@ -1,0 +1,20 @@
+{
+  "status": "FrozenExternalProposalOnly_NotApplied",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "candidate": "/private/tmp/s005-readiness60de-through1290-proposal",
+  "manifestSha256": "7f1ef4b54b4205488fccd665f00a8042fb14af5bc631fafb3e4fe7c2377df92b",
+  "acceptancePatch": "/private/tmp/s005-readiness60de-through1290-proposal/CURRENT_ACCEPTANCE.patch",
+  "acceptancePatchSha256": "54251f2f57497637175025c9be564dc40a4f5a2ee19ebc207f5d68c2a198fc2a",
+  "keyedUpdater": "/private/tmp/s005-readiness60de-through1290-proposal/update-readiness.py",
+  "keyedUpdaterSha256": "ee1304183fb9609f3bb080d0f7fe32334cd035207dcbe4c70169ce1b27f93bd1",
+  "payloadSha256": "b98121a755ea85ebabc66315cb149510319fa50278af7199cbe1a9be455afff0",
+  "archive": "delegation-readiness60de-through1290-proposal.zip",
+  "archiveSha256": "3bf8abd698403481e9094fc9cb01cdfb4e6d4094b4852da3f77a093e1ab2cfc4",
+  "roundtripPassed": true,
+  "offlineControls": 36,
+  "historicalSuffixUnchanged": true,
+  "sharedReadinessWrites": false,
+  "applyBlockedWhileNative1291Active": true,
+  "laterClosedEvidenceRequiresRefreshedProposal": true,
+  "playerReady": false
+}

@@ -1,0 +1,62 @@
+{
+  "result": "PassedScopedNormalPassiveEnemyPressure",
+  "scope": "FA104734 unchanged Standard Regular R1 native public Menu launch; no player orders, ordinary defender auto-engagement; natural playerbase destruction Defeat<1080, localized bound rendered result and real typed MainMenu return",
+  "sourceHash": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1220-checkpoint-pre-source-manifest.json",
+  "postManifest": "final-1219-passive-pressure-post-source-manifest.json",
+  "actualWrapperExit": 0,
+  "nativeExit": 0,
+  "fixtureSha256": "f59f157b44e4d0eb3cc461560da4f24506e31fbbfebac7078dace4ffd53f5315",
+  "executedRunnerSha256": "66e4660e3157b97a3d9464de8a5e2e2744bc54d9e2db6955ef8448e050c69864",
+  "log": "native-1219-passive-pressure-fa-seed104734.log",
+  "logSha256": "6d159f972703698ee8078c2f761e63d401a6ef9a336a000fb5d06d633070c919",
+  "observation": "native1219-passive-pressure-observation.jsonl",
+  "observationSha256": "efcf0d7e7f3cbf502c161b56ddde8974cf904c1cb29e24085a6350b398ed4d9e",
+  "normalResourcesPosesDamageVisibilityClocksOutcomeInjected": false,
+  "enemyAIOrNativeDefensiveCombatDisabled": false,
+  "qaOneWinWatcherAndManualAutoCombatCoordinated": true,
+  "observedFeatures": {
+    "nativeInitialEnemyActorsMoved": true,
+    "paidEnemyReservationsObserved": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007
+    ],
+    "nativePaidEnemyDeliveredReservationsObserved": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006
+    ],
+    "paidIntentStatesObserved": [
+      "AcceptedWaiting",
+      "Delivered",
+      "RequestPending"
+    ],
+    "enemyDutiesObserved": [
+      "Escort",
+      "HomeReserve",
+      "MainAssault",
+      "Recover",
+      "Scout"
+    ],
+    "lastObservedPlayerUnitsLost": 12,
+    "lastObservedEnemyUnitsLost": 21,
+    "playerBaseMinimumObservedHp": 0,
+    "nativeElapsedAtDefeat": 731.3532104492188,
+    "paidReplacementScoutDefenseRecoveryQualified": false
+  },
+  "countedPlayerWins": 0,
+  "englishDefeatCertified": false,
+  "allEnemyPlanStepsCertified": false,
+  "realPlayerDeviceAcceptance": false,
+  "playerReady": false,
+  "errors": []
+}

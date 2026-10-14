@@ -1,0 +1,45 @@
+{
+  "result": "Failed",
+  "run": 207,
+  "sourceHash": "e6332a314c54f95bb4a18058b3c9e00916c1e3cf0f71d596a63f85d115517581",
+  "scope": "Native boarded heavy APC Save/Continue",
+  "probeBeforePauseCount": 1,
+  "savedBoardedPassengers": [
+    {
+      "id": "role.rifle.1.0.0",
+      "scale": 1.0,
+      "refs": [
+        {
+          "Offset": 0,
+          "ObjectId": "production.1001.0"
+        }
+      ]
+    },
+    {
+      "id": "role.rifle.1.0.1",
+      "scale": 1.0,
+      "refs": [
+        {
+          "Offset": 0,
+          "ObjectId": "production.1001.0"
+        }
+      ]
+    },
+    {
+      "id": "role.rifle.1.0.2",
+      "scale": 1.0,
+      "refs": [
+        {
+          "Offset": 0,
+          "ObjectId": "production.1001.0"
+        }
+      ]
+    }
+  ],
+  "countedWin": 0,
+  "playerReady": false,
+  "log": "native-207-boarded-apc-save-resume-en.log",
+  "diagnosis": "Native paused save contains three passengers with correct references; earlier moving-world probe recorded one before two additional soldiers boarded. Fix records frozen passenger count at actual Pause before Save. Failed run is preserved.",
+  "wrapperExit": 1,
+  "receiptExit": 1
+}

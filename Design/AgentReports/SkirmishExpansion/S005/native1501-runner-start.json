@@ -1,0 +1,16 @@
+{
+  "explicitHeavyLaneOwner": "main1501",
+  "sourceHash": "58812256a6ec7f0590e66aeef96092f666864939765262a97a9892db3254a915",
+  "preManifest": "post-air-picker-candidate-source-manifest.json",
+  "preflightManifest": "final-1501-paid-cargo-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1501-paid-cargo-pre-dispatch-source-manifest.json",
+  "method": "S005PaidTransportPlane1501.RunValidation",
+  "fixtureSha256": "dadf81a1131d11d8edcce5eb66910f688f983d8e4ca3d028408a39d7897dacd7",
+  "runnerSha256": "2854e30f4209582622e5fff410a08c848de588ce0a1eccd07ecc39ff096b44c1",
+  "dryCompileProof": "compile1501-paid-cargo-dry-run.json",
+  "dryCompileProofSha256": "45329110cca8ff2c86fdc87b1d08c54f67bcd2082b407a246a430e334542e5fd",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

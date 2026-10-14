@@ -1,0 +1,42 @@
+{
+  "mission": "S005",
+  "result": "FailedInfrastructure",
+  "playerReady": false,
+  "run": 678,
+  "expectedSourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "sourceMatchCertified": true,
+  "log": "native-678-current-manual-fa-seed104734.log",
+  "trace": "s005-aria-live-104734-fa-f142ed3741154466b296c16022d7f378.jsonl",
+  "error": "IOException: Disk full while writing actor evidence; native run cannot count as a pass",
+  "cleanup": {
+    "removedGeneratedOutputs": [
+      {
+        "path": "build/MapVariantPreparedPlayer/WarlinePreparation.app",
+        "bytes": 2714441177,
+        "date": "2026-09-29",
+        "gitIgnored": true,
+        "verifiedNotRunning": true
+      },
+      {
+        "path": "build/AndroidAPK/WarlineCapture_BackUpThisFolder_ButDontShipItWithYourGame",
+        "bytes": 1640904635,
+        "date": "2026-08-24",
+        "contents": [
+          "Managed",
+          "il2cppOutput"
+        ],
+        "gitIgnored": true
+      }
+    ],
+    "totalRemovedBytes": 4355345812,
+    "sourceAssetsEvidenceApkPreserved": true,
+    "unityCachesRemoved": false,
+    "unityProcessesTerminated": false
+  },
+  "abort": "Both CLI requests timed out while the disk-full modal blocked the main thread; selected native Try Again after cleanup; owned Editor then exited with code 2. No process was killed.",
+  "finalWrapperExit": 2,
+  "recoveryFreeSpaceGiB": 11,
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "preManifest": "final-677-current-savecontinue-fa-seed104734-post-source-manifest.json",
+  "postManifest": "final-678-manual-controls-disk-full-failure-post-source-manifest.json"
+}

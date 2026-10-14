@@ -1,0 +1,48 @@
+{
+  "result": "Failed",
+  "sourceHash": "6faf5d61251773fea3707abb5f1148951ace0d95e00bd0d2aaaedb85e5b97a5e",
+  "independentSourceUnchanged": true,
+  "all562MaterialsUnchanged": true,
+  "wrapperExit": 2,
+  "artifact": "b5795e6e748a479eb00934e52c87d254",
+  "reason": "Real normal-time Draw before round-trip refuel reserve and second sortie",
+  "observed": {
+    "paidStrike": 520,
+    "receipt": 1006,
+    "nativeRunwayHome": true,
+    "launch": true,
+    "nativeFiring": true,
+    "returnInput": true,
+    "touchdownAtHome": true,
+    "touchdownFuel": 16,
+    "refuelReserve": false,
+    "secondSortie": false
+  },
+  "inputAudit": {
+    "recordedContacts": 127,
+    "completedContacts": 127,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 121
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-b5795e6e748a479eb00934e52c87d254.jsonl.touch.jsonl",
+    "sha256": "ba8bfdbef7aa6487bf1faf312331c6be7ebf52c1715d415c36110c7f8a8dbba2"
+  },
+  "placementSearch": {
+    "oilPumpTested": 308,
+    "industryMaximumTested": 774,
+    "airportTested": 5779,
+    "airportSearchFrames": 1558,
+    "simulationYielded": true
+  },
+  "next": "Use an additional regular160-material refinery and2 paid Tankers through normal construction/recruitment. Existing per-refinery Skirmish recipe is120 fuel/minute; do not change recipe/budget/time.",
+  "playerReady": false
+}

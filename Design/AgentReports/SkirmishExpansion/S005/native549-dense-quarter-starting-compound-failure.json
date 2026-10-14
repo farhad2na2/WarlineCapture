@@ -1,0 +1,9 @@
+{
+  "validation": "native549",
+  "passed": false,
+  "reason": "Enemy starting refinery placement failed near preferred origin (1379,897)",
+  "prePostSourceHashMatched": true,
+  "sourceHash": "1158289fce97eb9ed183b4d79a6f497f153b545709675fcd6f023884aa697eec",
+  "physicalSourceModified": false,
+  "playerReady": false
+}

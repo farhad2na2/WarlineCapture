@@ -1,0 +1,66 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005PaidTransport1072.cs",
+  "fixtureSha256": "0c08b6378c8fbcc8ce1f209af29ff934496ff57b046a9c4669c62be015abed41",
+  "runner": "/private/tmp/s005-run-paid-transport-1072.py",
+  "runnerSha256": "cdd95cdfe43db3fda9264421fa16acdbcf7381e0dda9bad29982b9f19dc33c0e",
+  "pythonSyntax": "Passed",
+  "sourceEditsOrUnityCallsByReviewer": false,
+  "carriers": [
+    "ApcFast",
+    "ApcArmored",
+    "TransportHeli"
+  ],
+  "passengers": "One whole actual paid Rifle squad per carrier; native authored quantity4 and current cost/producer/capacity checks. No individual picking or HeavyAPC replay.",
+  "protocolReuse": [
+    "Native931 PlayerResumeProbe.cs:658 TickBoardedPlayerSave selects presented Rifle card, Board wheel then carrier world Touch, observes actual links/hidden visuals.",
+    "Native931 PlayerResumeProbe.cs:733 VerifyAndUnloadRestoredPassengers uses actual PassengerChip/ExitAllButton; public frontage Move if dense local geometry prevents unload.",
+    "1072 reuses existing native Touch driver, presented card selection, real public world Touch, actual native passenger controls, and read-only buffers; no direct passenger/selection/order writes."
+  ],
+  "checks": [
+    "Actual producer and paid native receipt/member lifecycle/overlay match for all6 deliveries",
+    "Each newly paid Rifle cohort/carrier has native Touch selection and Move receipt/displacement before pair use",
+    "Whole paid Rifle cohort boards specific paid carrier by real Board Touch; every stored passenger linked and hidden",
+    "Records checkpoint handoff only after actual links/hidden complete",
+    "Loaded native Touch Move receipt and >=5m horizontal displacement, arrival within8m of selected public base frontage destination; links/hidden retained",
+    "Real PassengerChip plus ExitAll Touch, native buffer empty, alive visible passengers unlinked and original hidden visual scales restored",
+    "Exact faction/fixed cap and all8 live/reserved counters plus reservation sequence unchanged BeforeBoard/AfterBoard/AfterLoadedMove/AfterUnload",
+    "Disclosed HealthZero native pair death must clear all8 counters, release flags and idempotency; owned Play cleanup"
+  ],
+  "capacityEvidence": "Five logged snapshots for eachcarrier: BeforeBoard,AfterBoard,AfterLoadedMove,AfterUnload,AfterPairDeath. Runner requires exact ordered15 rows and independently verifies counts/conservation. No sum of unit and supply usage assumed1.",
+  "checkpointHandoff": {
+    "stage": "S005TransportCheckpointHandoff marker at complete native boarded cohort, before loaded travel",
+    "performed": false,
+    "noCheckpointFieldOrPassengerLinkInjection": true,
+    "whyDeferred": "Existing931 PlayerResumeCarrier is hardcoded ApcHeavy and playerResumePaidRole env parser excludesFast/Armored/TransportHeli. Reusing it as-is would silently select wrong role or fail carrier lookup.",
+    "minimumHonestExtension": "Generalize external carrier lookup by paid reservation+requested role and store all stable passenger IDs/session. Follow existing native pause then Save button then fresh normal Continue flow. Resolve restored actual carrier/passenger stable IDs from runtime, verify old entities removed and native hidden/link buffers restored; resume ordinary Unload. Never synthesize snapshot fields or links.",
+    "existingSharedProof": "HeavyAPC931 actual paid normal Save/Continue/unload already exists; this technical preparation does not promote it to a fresh current-source whole transport certificate."
+  },
+  "isolatedSetup": [
+    "FullArsenal,1800materials and own stored fuel/oil fills before queue",
+    "Opening units retired and enemy strategy disabled/restored",
+    "HealthZero stimulates death; full normal-input match/results/return not certified"
+  ],
+  "neverInjected": [
+    "Own actor positions",
+    "Passenger links or buffers",
+    "Checkpoint fields/save content",
+    "SelectedUnitTag",
+    "Board/Move/Unload orders or outcomes",
+    "Weapon/resources prices/caps/rates",
+    "Physical map geometry"
+  ],
+  "mapSafety": "No physical changes. Public frontage destination comes from existing931 HUD objective direction; ordinary native Move/path/boarding/disembark placement decide legality. Unreachable route or blocked unload fails/times out; no forced exit/placement fallback. Actual map clearance is not statically certified by this fixture.",
+  "runnerGuards": "Unique1072 outputs/exactfixture SHA, parent main1072 heavy-lane acknowledgement, idle state, current preflight/pre-dispatch/post source equality, checked GUI reuse wrapper720s with600s fixturewatchdog, fail-closed native receipts/pass markers/Touch audit/capacity snapshots; no alternate route.",
+  "dryRunCompileInstruction": "Parent when main idle: rtk proxy unity command run_script --file /private/tmp/S005PaidTransport1072.cs --entry S005PaidTransport1072.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "launchInstruction": "Root afterT7 release and compile review: rtk proxy python3 /private/tmp/s005-run-paid-transport-1072.py <CURRENT-PRE-source-manifest.json> --heavy-lane-owner main1072",
+  "limits": [
+    "Not compiled/loaded/executed by reviewer",
+    "Checkpoint is an identified handoff, not performed",
+    "TransportHeli native Board/landing/ExitAll lifecycle may reveal failures; no synthetic fallback",
+    "Three pairs may exceed600s if native delivery/navigation blocks; preserved failure is actionable",
+    "No damage-survival/transport-plane/whole-mission/player-device acceptance"
+  ],
+  "technicallyReady": false,
+  "playerReady": false
+}

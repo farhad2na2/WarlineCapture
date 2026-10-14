@@ -1,0 +1,45 @@
+{
+  "result": "FailedStrictSouthFlankRunnerInterrupted",
+  "runId": 1593,
+  "sourceHash": "3d53b35bad4091b54c70b2d0b4f649addacd9a49354aa457f0498602cfd70b12",
+  "fullSourceUnchanged": true,
+  "nativeExit": 0,
+  "wrapperExit": null,
+  "wrapperExitObserved": false,
+  "runnerPostprocessingCompleted": false,
+  "normalVictoryRenderedAndMainMenuReturnObserved": true,
+  "strictSouthFlankQualified": false,
+  "stopEvidence": {
+    "wheelCeaseFirePresentedFrame": 2025,
+    "publicTouchDispatchedFrame": 2026,
+    "publicTouchBeganFrame": 2027,
+    "publicTouchEndedFrame": 2031,
+    "nativeUiHit": "MatchHudCommandControls:CommandWheelStop",
+    "acceptedStopReceiptObserved": false,
+    "leaseFailureFrame": 2116,
+    "leaseFailureReason": "Cease Fire lacked fresh native accepted Stop UI result, closed wheel, or exact four stationary AutoEngage-off Rocketeers"
+  },
+  "frozenSouthFlankQualifierResult": "Failed: Route did not restore unchanged native driver after exact public Barracks damage",
+  "scopedIndependentObservations": "Early handoff, catalog Touch, camera close, rendered close and rendered command qualifiers pass; 132/132 Touch contacts paired. These do not establish full southern-flank qualification.",
+  "terminalMarkers": [
+    "[S004ManualReceiptAudit] result=Passed measured=1 touches=120 commands=19 violations=0 unexpected=0 interventions=0",
+    "[S004ManualNative] result=Passed outcome=Victory seconds=420.548",
+    "[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU",
+    "[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU",
+    "[SkirmishValidationExit] result=Requested code=0",
+    "[ExistingEditorValidation] result=Passed executeMethod=S005NormalSouthFlank1593Observer.RunValidation"
+  ],
+  "evidenceSha256": {
+    "native-1593-normal-paid-south-flank-fa-seed155926.log": "3c05cc61958c73f3047c47436eb2ff11778252abc9968c7f5bed2be55bda87dc",
+    "native-1593-normal-paid-south-flank-fa-seed155926.log.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "post-wheel-stop-focused-pass-stability-source-source-manifest.json": "bc76f190752ba980ae51b6e71a073d61954d3db40e9540097f1c087300d45f4a",
+    "final-1593-normal-paid-south-flank-post-source-manifest.json": "bc76f190752ba980ae51b6e71a073d61954d3db40e9540097f1c087300d45f4a",
+    "native1593-interrupted-after-close-idle.json": "5f4c461614ead481f9a8a5919af99bc879f1959ff0bf28495ca9dd7d5517ecf9",
+    "native1593-manual-fog-fallback.jsonl": "fff94246bcbc2d2a28463993ed2120a1e18508727aaa5b5836b8757dc4da4df6",
+    "native1593-south-flank.jsonl": "175cd167cf105d3a19d7188333de76925a66320084800b2857338847dbd45c81",
+    "native1593-fresh-rocketeer-planner.jsonl": "02381315db3808983f7dadf92b98eb81186eaa878603949c2ff93450e11931d9",
+    "s005-aria-live-155926-fa-49a8abe136834e298bc4f26526c08480.jsonl.touch.jsonl": "6b7bca068494fa8a82d4ae6318ef937063663c0ae9a22a5b5283fc9d0cf5d7e0"
+  },
+  "technicallyReady": false,
+  "playerReady": false
+}

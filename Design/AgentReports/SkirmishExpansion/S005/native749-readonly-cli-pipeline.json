@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "command": "pipeline list",
+  "data": {
+    "instances": [
+      {
+        "projectName": "WarlineCapture",
+        "projectPath": "/Users/farhad/Projects/WarlineCapture",
+        "pid": 67518,
+        "isRunning": true,
+        "hasPipelinePackage": true,
+        "pipelineVersion": "0.6.0-exp.1",
+        "updateAvailable": true,
+        "pipelineServer": {
+          "port": 7801,
+          "isReachable": true,
+          "apiUrl": "http://127.0.0.1:7801/api/editor_status"
+        },
+        "safeMode": null
+      }
+    ],
+    "latestVersion": "0.8.0-exp.1",
+    "summary": {
+      "totalInstances": 1,
+      "runningInstances": 1,
+      "instancesWithPipeline": 1,
+      "reachableServers": 1,
+      "instancesInSafeMode": 0,
+      "instancesWithUpdateAvailable": 1
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

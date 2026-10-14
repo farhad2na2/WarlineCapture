@@ -1,0 +1,17 @@
+{
+  "status": "IncompleteOrFailed",
+  "results": [
+    {
+      "suite": "economy",
+      "method": "Game.Tests.Editor.SkirmishEnemyEconomyTests.RunFocusedValidation",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "marker": "[SkirmishEnemyEconomyTests] result=Passed tests=11",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1240-economy.log",
+      "logSha256": "e7967661bb048f95ffac2c2ab4823cea0f33f8505def56995e8f9e763cf0870e"
+    }
+  ],
+  "scope": "Focused native shared behavior checks only; no normal mission victory or player readiness"
+}

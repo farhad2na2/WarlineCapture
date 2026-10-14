@@ -1,0 +1,8 @@
+{
+  "result": "FailedAsExpected",
+  "wrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "log": "tests-660-pending-path-hauler-before-fix.log",
+  "failure": "Seeded tanker never receives a haul order while hasPendingPathJob=true",
+  "scope": "Isolated regression; no native readiness claim"
+}

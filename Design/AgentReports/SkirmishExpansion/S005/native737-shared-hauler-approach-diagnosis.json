@@ -1,0 +1,39 @@
+{
+  "mission": "S005",
+  "scope": "Shared building service approach selection",
+  "nativeRun": 737,
+  "observations": {
+    "paidTankersStalledForMultipleSamples": true,
+    "staleTargetPathOrRetryStateObserved": false,
+    "vehicleArrivalDistance": 0.05,
+    "vehicleFootprint": [
+      3,
+      3
+    ],
+    "occupancySystemEnabledAndUpdated": true,
+    "paidTankerCentersAbsentFromCachedOccupancyInCapturedSnapshot": true,
+    "nativeOccupancyCacheRootCauseEstablished": false
+  },
+  "reproducedDefects": [
+    {
+      "proof": "focused735-service-approach-red.json",
+      "description": "Distant clear parking selected after every real transfer bay is blocked; native arrival cannot load there.",
+      "focusedFixProof": "focused735-736-shared-service-approach-pass.json",
+      "nativeAirGateClosed": false
+    },
+    {
+      "proof": "focused738-live-vehicle-service-bay-red.json",
+      "description": "Approach scoring accepts a bay occupied by a live hard vehicle when its occupancy bit is absent; native pathfinding also checks live footprints.",
+      "fix": "Use the same live-unit query filters and existing UnitPathPlacementValidation alongside original terrain, occupancy and service-range checks.",
+      "nativeConfirmation": "Pending"
+    }
+  ],
+  "policyPreserved": {
+    "physicalCampaignMapChanged": false,
+    "facilityRecipesOrPrioritiesChanged": false,
+    "budgetsCostsCapsDeadlinesChanged": false,
+    "vehiclePaddingOrTransferDistanceWeakened": false
+  },
+  "ruledOutTuning": "ROSTER_AND_ECONOMY_IMPLEMENTATION.md:77 explicitly keeps one Materials batch funded before Fuel. Multiple factories do not justify silently replacing that priority rule.",
+  "next": "Confirm live-footprint-aware approaches with normal paid fleet and native takeoff/fire/Return/refuel/second-sortie sequence."
+}

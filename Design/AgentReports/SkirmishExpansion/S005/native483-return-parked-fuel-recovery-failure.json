@@ -1,0 +1,34 @@
+{
+  "sourceHash": "73ef0467cdb106d5156f080f89950d5dde9b73b314c933e60d963f54ae1e11a8",
+  "fullSourceUnchanged": true,
+  "preFingerprint": "final-479-aria-opening-fixed-pre-independent-fingerprint.json",
+  "postFingerprint": "final-484-native-return-post-independent-fingerprint.json",
+  "log": "native-483-three-oil-two-fuel-return-repair.log",
+  "logSha256": "081ca7829300ca11d8625c091e4e34f21b7e0d09d7d06c2a774236d22ae29902",
+  "wrapperExit": 1,
+  "outcome": "Draw",
+  "seconds": 1080.028,
+  "paidStrikeReceipt": 1006,
+  "firstSortieNativeFire": true,
+  "nativeReturnTouchdownAndPark": true,
+  "refuelReserveReached": false,
+  "secondSortie": false,
+  "enemyBaseHealthAfterShot": 800,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "inputAudit": {
+    "trace": "s005-aria-live-155926-en-4dc724562cee4838a1c47b8844bf2915.jsonl.touch.jsonl",
+    "sha256": "52391cc5b762fc0a902e8912597335910f64d9d4897352a4b07a6fcf328c23a7",
+    "recordedContacts": 110,
+    "phases": {
+      "Unattributed": 110
+    },
+    "errors": [],
+    "strictRecordedContacts": true,
+    "nativeMenuContactsRecorded": false,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only; native outcome, result-return, source identity and wrapper pass must be checked separately."
+  },
+  "reason": "Paid Strike landed and parked after the low-Fuel return repair; usable fuel stayed near 0\u201314 and never reached another sortie reserve before natural Draw. Native firing did not establish enemy-base damage."
+}

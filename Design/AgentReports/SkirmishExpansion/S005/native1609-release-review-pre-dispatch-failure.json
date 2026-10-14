@@ -1,0 +1,14 @@
+{
+  "result": "FailedBeforeReleaseAndBeforeNativeRun",
+  "stage": "External connected release review of preserved Unity console errors",
+  "sourceHash": "3751581fe7fb8acd2c7c6c865956fbb675b8ebd9e828473db803718d87d8282d",
+  "cause": "The external Python release reviewer used datetime.fromisoformat on a Unity timestamp with seven fractional digits (2026-10-14T10:27:54.4750360Z) and rejected a valid preserved native1608 error before comparing its age to the native1609 preflight.",
+  "fixtureDryCompileSucceeded": true,
+  "fixtureCompilerErrors": 0,
+  "native1609Started": false,
+  "releaseReceiptCreated": false,
+  "editorPlayModeStarted": false,
+  "sourceChanged": false,
+  "nextAction": "Repair only the external reviewer timestamp parsing with controls, reseal the package, repeat exact release review and offline runner validation before native dispatch.",
+  "playerReady": false
+}

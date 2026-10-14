@@ -1,0 +1,41 @@
+{
+  "result": "Failed",
+  "reason": "advancedAirTimingTargetMissedByThisStrategy",
+  "sourceHash": "2953728b711b45a6e7bb0be21192ff4bde25850a9c1b0f4513311d28765e6863",
+  "seed": 155926,
+  "locale": "en",
+  "normalBudget": true,
+  "normalInput": true,
+  "observedAtSeconds": 755.6646,
+  "materials": 100,
+  "researchMaterialsPaid": 720,
+  "airportBuilt": false,
+  "strikeDelivered": false,
+  "cyclePassed": false,
+  "endedBy": "Previously authorized AbortFailedValidationAndExit after measured timing failure; no Draw claimed",
+  "preManifest": "final-647-stable-placement-rear-spawn-post-source-manifest.json",
+  "postManifest": "final-648-failed-air-timing-post-source-manifest.json",
+  "sourceManifestUnchanged": true,
+  "log": "native-648-stable-placement-rear-spawn-strike-cycle.log",
+  "trace": "s005-aria-live-155926-en-c15f789e3705435493ae05881d132f69.jsonl",
+  "inputAudit": {
+    "recordedContacts": 114,
+    "completedContacts": 114,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 108
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-c15f789e3705435493ae05881d132f69.jsonl.touch.jsonl",
+    "sha256": "066a4041672cce7a24b741842ee8186b6bf196ee8e17e98126793452f91d90cf"
+  },
+  "scope": "This paid placement strategy failed the timing target; no global source impossibility claim",
+  "followup": "Rank refinery sites against oil supply, then fuel storage against the new refinery; retain native legality and normal purchases."
+}

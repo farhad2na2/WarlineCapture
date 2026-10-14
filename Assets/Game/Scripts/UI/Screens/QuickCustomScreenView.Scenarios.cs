@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Configs;
 using Game.UI.Contracts;
+using Game.UI.Skirmish;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,6 +34,16 @@ namespace Game.UI.Runtime
         private readonly List<Button> _mapTabButtons = new();
         private string _selectedScenarioId;
         private string _mapFilter = string.Empty;
+        private SkirmishLibraryViewModel _libraryViewModel;
+
+        public ISkirmishLibraryViewModel Library
+        {
+            get
+            {
+                EnsureLibraryViewModel();
+                return _libraryViewModel;
+            }
+        }
         private string _searchFilter = string.Empty;
         private TMP_FontAsset _libraryLabelFont;
         private bool _librarySearchWired;
@@ -80,6 +91,7 @@ namespace Game.UI.Runtime
             Bind(_config);
             if (entry.IsPlayable)
                 _configStore?.Apply(ReadConfigFromControls());
+            TouchLibrary(library => library.SelectScenarioId(entry.ScenarioId));
         }
 
         public void SelectMapCollection(string mapId)
@@ -87,6 +99,29 @@ namespace Game.UI.Runtime
             _mapFilter = mapId ?? string.Empty;
             EnsureLibraryCards();
             PresentScenarioChoices();
+            TouchLibrary(library => library.SelectMapCollection(_mapFilter));
+        }
+
+        private void EnsureLibraryViewModel()
+        {
+            if (_libraryViewModel != null)
+                return;
+            if (_catalogEntries.Count == 0)
+                ReloadCatalogEntries();
+            _libraryViewModel = SkirmishLibraryViewModel.CreateDefault(_catalogEntries);
+        }
+
+        private void TouchLibrary(Action<ISkirmishLibraryViewModel> action)
+        {
+            try
+            {
+                EnsureLibraryViewModel();
+                action(_libraryViewModel);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("Skirmish library update skipped: " + exception.Message);
+            }
         }
 
         private void PresentScenarioChoices()
@@ -276,6 +311,16 @@ namespace Game.UI.Runtime
         private void OnLibrarySearchChanged(string value)
         {
             _searchFilter = value ?? string.Empty;
+            EnsureLibraryViewModel();
+            SkirmishLibraryFilter filter = _libraryViewModel.Filter;
+            filter.SearchText = _searchFilter;
+            _libraryViewModel.ApplyFilter(filter);
+            if (!string.IsNullOrEmpty(_searchFilter) && !string.IsNullOrEmpty(_libraryViewModel.Briefing.ScenarioId))
+            {
+                _selectedScenarioId = _libraryViewModel.Briefing.ScenarioId;
+                _mapFilter = _libraryViewModel.Battlefield.MapId ?? string.Empty;
+            }
+
             EnsureLibraryCards();
             PresentScenarioChoices();
         }

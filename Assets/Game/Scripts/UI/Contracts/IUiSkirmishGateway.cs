@@ -28,6 +28,10 @@ namespace Game.UI.Contracts
         public string ResultElapsed;
         public int PlayerUnitsLost, EnemyUnitsLost, PlayerBuildingsLost, EnemyBuildingsLost;
         public bool PlayerBaseHeld, EnemyBaseDestroyed;
+        // First medal earned by the settlement that produced this result. Empty unless IsFirstAward.
+        public string MedalScenarioId;
+        public byte MedalDifficulty;
+        public bool MedalIsFirstAward;
     }
     public struct UiExpandedSquadPage
     {

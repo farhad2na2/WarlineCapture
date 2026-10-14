@@ -1,8 +1,10 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Game.Configs;
 using Game.UI.Contracts;
+using Game.UI.Skirmish;
 
 namespace Game.UI.Runtime
 {
@@ -307,9 +309,28 @@ namespace Game.UI.Runtime
                         PresentResumeFailure();
                     return;
                 }
+
+                if (!LibraryAllowsLaunch(selected.ScenarioId))
+                    return;
             }
 
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);
+        }
+
+        private bool LibraryAllowsLaunch(string scenarioId)
+        {
+            try
+            {
+                ISkirmishLibraryViewModel library = Library;
+                if (!library.SelectScenarioId(scenarioId))
+                    return true;
+                return library.Launch();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("Skirmish library launch check skipped: " + exception.Message);
+                return true;
+            }
         }
 
         private void WireEvents()

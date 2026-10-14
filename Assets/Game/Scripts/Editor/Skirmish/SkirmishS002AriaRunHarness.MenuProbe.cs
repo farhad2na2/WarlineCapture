@@ -2,6 +2,7 @@
 using System;
 using Game.Configs;
 using Game.UI.Runtime;
+using Game.UI.Skirmish;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,9 @@ namespace Game.Editor
     {
         private static AriaTouchInputUiSystemHelper menuTouch;
         private static int menuStep;
+        private static int menuLibraryBeat;
+        private static string menuLibraryMap = "DB";
+        private static string menuLibraryObjective = "BA";
         private static double menuDue;
         private static double menuDeadline;
         private static Button menuStableTarget;
@@ -125,6 +129,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S004_STOP_PROBE", stopProbe ? "1" : null);
             Environment.SetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE", manual ? "1" : null);
             menuStep = 0;
+            menuLibraryBeat = 0;
             RunFocusedAriaAndExit();
         }
 
@@ -147,6 +152,7 @@ namespace Game.Editor
             {
                 ConfigureBackgroundInput();
                 menuStep = 0;
+                menuLibraryBeat = 0;
                 menuDeadline = EditorApplication.timeSinceStartup + 90d;
                 menuStableTarget = null;
                 menuStableSince = menuLastTapAt = 0;
@@ -215,6 +221,8 @@ namespace Game.Editor
             }
             else if (menuStep == 1)
             {
+                if (AdvancePresentedLibraryNavigation(buttons))
+                    return;
                 foreach (var b in buttons)
                     if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
                     { if (MenuTap(b)) menuStep = 4; return; }
@@ -253,7 +261,9 @@ namespace Game.Editor
             {
                 if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
                     foreach (var b in buttons)
-                        if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
+                        if ((b.name == "ScenarioCard_" + catalogId ||
+                             b.name == SkirmishLibraryControlNames.BattleCard(catalogId)) &&
+                            TryPresentedButtonPoint(b, out _))
                         {
                             if (MenuTap(b)) Debug.Log("[S004MenuJourney] phase=ScenarioRetry input=Touch reason=LibraryStillVisible");
                             return;
@@ -284,6 +294,102 @@ namespace Game.Editor
                         }
                 }
             }
+        }
+
+        private static bool AdvancePresentedLibraryNavigation(Button[] buttons)
+        {
+            if (!HasNewLibraryChrome(buttons))
+                return false;
+            ResolveLibraryTarget();
+            if (menuLibraryBeat == 0)
+            {
+                Button pin = FindNamed(buttons, SkirmishLibraryControlNames.TheaterPin(menuLibraryMap));
+                if (pin == null)
+                    menuLibraryBeat = 1;
+                else if (MenuTap(pin))
+                {
+                    Debug.Log("[S004MenuJourney] phase=TheaterPin input=Touch map=" + menuLibraryMap +
+                        " navigation=TheaterZoom");
+                    menuLibraryBeat = 1;
+                }
+
+                return true;
+            }
+
+            if (menuLibraryBeat == 1)
+            {
+                Button zoom = FindNamed(buttons, SkirmishLibraryControlNames.ZoomIn);
+                if (zoom != null && MenuTap(zoom))
+                {
+                    Debug.Log("[S004MenuJourney] phase=ZoomIn input=Touch navigation=TheaterZoom map=" + menuLibraryMap);
+                    menuLibraryBeat = 2;
+                }
+
+                return true;
+            }
+
+            if (menuLibraryBeat == 2)
+            {
+                Button tab = FindNamed(buttons, SkirmishLibraryControlNames.ObjectiveTab(menuLibraryObjective));
+                if (tab == null)
+                    menuLibraryBeat = 3;
+                else if (MenuTap(tab))
+                {
+                    Debug.Log("[S004MenuJourney] phase=ObjectiveTab input=Touch objective=" + menuLibraryObjective);
+                    menuLibraryBeat = 3;
+                }
+
+                return true;
+            }
+
+            Button card = FindNamed(buttons, SkirmishLibraryControlNames.BattleCard(catalogId)) ??
+                          FindNamed(buttons, "ScenarioCard_" + catalogId);
+            if (card != null && MenuTap(card))
+            {
+                Debug.Log("[S004MenuJourney] phase=BattleCard input=Touch scenario=" + catalogId);
+                menuStep = 4;
+            }
+
+            return true;
+        }
+
+        private static bool HasNewLibraryChrome(Button[] buttons)
+        {
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                string name = buttons[i] != null ? buttons[i].name : string.Empty;
+                if (name == SkirmishLibraryControlNames.ZoomIn ||
+                    name == SkirmishLibraryControlNames.QuickBattle ||
+                    name.StartsWith("TheaterPin_", StringComparison.Ordinal) ||
+                    name.StartsWith("ObjectiveTab_", StringComparison.Ordinal) ||
+                    name.StartsWith("BattleCard_", StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void ResolveLibraryTarget()
+        {
+            SkirmishBattleCatalogConfig catalog = SkirmishBattleCatalogConfig.Load();
+            if (catalog != null && catalog.TryGet(catalogId, out SkirmishBattleCatalogEntry entry))
+            {
+                if (!string.IsNullOrEmpty(entry.MapId))
+                    menuLibraryMap = entry.MapId;
+                if (!string.IsNullOrEmpty(entry.ObjectiveId))
+                    menuLibraryObjective = entry.ObjectiveId;
+            }
+        }
+
+        private static Button FindNamed(Button[] buttons, string name)
+        {
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i] != null && buttons[i].name == name && TryPresentedButtonPoint(buttons[i], out _))
+                    return buttons[i];
+            }
+
+            return null;
         }
 
         private static bool MenuTap(Button b)

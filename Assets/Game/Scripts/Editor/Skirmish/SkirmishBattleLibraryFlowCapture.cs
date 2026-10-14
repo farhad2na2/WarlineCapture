@@ -169,7 +169,11 @@ namespace Game.Editor
             Shot(view, camera, target, width, height, Path.Combine(folder, "05-map-" + suffix + ".png"));
             AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "MAP toggle did not select the map.");
 
-            Click(Require(instance, SkirmishLibraryControlNames.LayoutGrid));
+            Button gridButton = Require(instance, SkirmishLibraryControlNames.LayoutGrid);
+            AssertStep(
+                gridButton.name == SkirmishLibraryControlNames.LayoutGrid,
+                "GRID click target was " + gridButton.name + ".");
+            Click(gridButton);
             Shot(view, camera, target, width, height, Path.Combine(folder, "06-grid-" + suffix + ".png"));
             AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Grid, "GRID toggle did not select the grid.");
             AssertStep(view.Library.Briefing.ScenarioId == "S001", "GRID toggle cleared S001.");
@@ -215,17 +219,20 @@ namespace Game.Editor
         private static Button Require(GameObject root, string name)
         {
             Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            Button parentFallback = null;
             for (int i = 0; i < transforms.Length; i++)
             {
                 if (transforms[i].name != name)
                     continue;
-                Button button = transforms[i].GetComponent<Button>();
-                if (button == null)
-                    button = transforms[i].GetComponentInParent<Button>();
-                if (button != null)
-                    return button;
+                Button direct = transforms[i].GetComponent<Button>();
+                if (direct != null)
+                    return direct;
+                if (parentFallback == null)
+                    parentFallback = transforms[i].GetComponentInParent<Button>();
             }
 
+            if (parentFallback != null)
+                return parentFallback;
             throw new InvalidOperationException("Missing button " + name + ".");
         }
 
@@ -233,11 +240,11 @@ namespace Game.Editor
         {
             if (button == null || !button.isActiveAndEnabled || !button.interactable)
                 throw new InvalidOperationException("Button is not interactive: " + (button != null ? button.name : "null"));
-            var data = new PointerEventData(EventSystem.current);
+            var data = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
             ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerEnterHandler);
             ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerDownHandler);
             ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerUpHandler);
-            ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerClickHandler);
+            button.onClick.Invoke();
         }
 
         private static void Shot(QuickCustomScreenView view, Camera camera, RenderTexture target, int width, int height, string path)

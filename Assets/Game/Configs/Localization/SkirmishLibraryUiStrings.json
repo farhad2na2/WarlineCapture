@@ -442,11 +442,11 @@
     },
     {
       "key": "ui.skirmish.s004.title",
-      "source": "Desert Base · Base Assault · Air Mobile · Established Base (ui.skirmish.s004.title)",
+      "source": "Air Mobile",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه کویری یورش پایگاه هوایی پایگاه آماده"
+          "value": "هوایی"
         }
       ]
     },
@@ -482,11 +482,11 @@
     },
     {
       "key": "ui.skirmish.s005.title",
-      "source": "Desert Base · Base Assault · Combined Arms · Field Base (ui.skirmish.s005.title)",
+      "source": "Combined Arms",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه کویری یورش پایگاه ترکیبی پایگاه میدانی"
+          "value": "ترکیبی"
         }
       ]
     },
@@ -522,11 +522,11 @@
     },
     {
       "key": "ui.skirmish.s006.title",
-      "source": "Desert Base · Base Assault · Combined Arms · Established Base",
+      "source": "Combined Arms",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه کویری یورش پایگاه ترکیبی پایگاه آماده"
+          "value": "ترکیبی"
         }
       ]
     },

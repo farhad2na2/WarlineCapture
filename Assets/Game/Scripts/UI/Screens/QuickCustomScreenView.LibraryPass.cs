@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Skirmish.Contracts;
@@ -268,13 +267,13 @@ namespace Game.UI.Runtime
                 label.alignment = TextAlignmentOptions.Center;
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(label, shortLabel, 15f, 20f);
-                var count = CreateLabel(button.transform, "Count", 14f);
-                PlaceTopLeft(count.rectTransform, 2f, 68f, 80f, 20f);
+                SetCopy(label, shortLabel, 16f, 20f);
+                var count = CreateLabel(button.transform, "Count", 16f);
+                PlaceTopLeft(count.rectTransform, 2f, 68f, 80f, 22f);
                 count.alignment = TextAlignmentOptions.Center;
                 count.isRightToLeftText = false;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
-                SetCopy(count, objective.WonCount + "/" + objective.PublishedCount, 13f, 16f);
+                SetCopy(count, objective.WonCount + "/" + objective.PublishedCount, 16f, 20f);
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
             }
@@ -398,50 +397,48 @@ namespace Game.UI.Runtime
         {
             if (_statRow == null)
                 return;
-            Transform credits = _statRow.Find("Credits");
-            if (credits != null)
-                credits.gameObject.SetActive(false);
+            HideLegacyStat(_statRow, "Time");
+            HideLegacyStat(_statRow, "Forces");
+            HideLegacyStat(_statRow, "Size");
+            HideLegacyStat(_statRow, "Credits");
+            EnsureStatTile(_statRow, "Objective", 0f, fa ? "هدف" : "OBJECTIVE");
+            EnsureStatTile(_statRow, "Army", 0f, fa ? "ارتش" : "ARMY");
+            EnsureStatTile(_statRow, "Start", 0f, fa ? "آغاز" : "START");
             string army = hasCard ? card.ArmyProfile : string.Empty;
             string start = hasCard ? card.StartProfile : string.Empty;
+            string objectiveId = hasCard ? card.ObjectiveId : string.Empty;
             if (TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry entry))
             {
                 if (string.IsNullOrEmpty(army))
                     army = entry.ArmyProfile;
                 if (string.IsNullOrEmpty(start))
                     start = entry.StartProfile;
+                if (string.IsNullOrEmpty(objectiveId))
+                    objectiveId = entry.ObjectiveId;
             }
-            SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string forces);
-            if (string.IsNullOrEmpty(forces))
-                forces = string.IsNullOrEmpty(army) ? (fa ? "زمینی" : "GROUND") : army;
-            int seconds = Mathf.Max(0, Mathf.RoundToInt(SkirmishPresetConfig.MatchDurationSeconds));
-            string time = (seconds / 60).ToString("00", CultureInfo.InvariantCulture) + ":"
-                + (seconds % 60).ToString("00", CultureInfo.InvariantCulture);
-            SetTile(_statRow.Find("Time"), fa ? "زمان" : "TIME", time);
-            SetTile(_statRow.Find("Forces"), fa ? "نیرو" : "FORCES", forces);
-            SetTile(_statRow.Find("Size"), fa ? "اندازه" : "SIZE", StartStructureCount(start).ToString(CultureInfo.InvariantCulture));
-            TMP_Text timeValue = _statRow.Find("Time/Value")?.GetComponent<TMP_Text>();
-            if (timeValue != null)
-                timeValue.isRightToLeftText = false;
+
+            SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out string objective, out _);
+            SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
+            SkirmishBattleLibraryArt.ProfileCopy(start, fa, out string startLabel);
+            float width = _statRow.rect.width > 200f ? _statRow.rect.width : _statRow.sizeDelta.x;
+            if (width < 200f)
+                width = 760f;
+            float tileWidth = (width - 16f) / 3f;
+            PlaceTruthfulTile(_statRow.Find("Objective"), 0f, tileWidth);
+            PlaceTruthfulTile(_statRow.Find("Army"), tileWidth + 8f, tileWidth);
+            PlaceTruthfulTile(_statRow.Find("Start"), (tileWidth + 8f) * 2f, tileWidth);
+            SetTile(_statRow.Find("Objective"), fa ? "هدف" : "OBJECTIVE", objective);
+            SetTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel);
+            SetTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel);
         }
 
-        private static int StartStructureCount(string start)
+        private static void PlaceTruthfulTile(Transform tile, float x, float width)
         {
-            var package = ScriptableObject.CreateInstance<SkirmishStartPackageConfig>();
-            try
-            {
-                if (string.Equals(start, "E", StringComparison.OrdinalIgnoreCase))
-                    package.ConfigureEstablished();
-                else
-                    package.ConfigureField();
-                return Mathf.Max(1, package.StandardStructureCount);
-            }
-            finally
-            {
-                if (Application.isPlaying)
-                    UnityEngine.Object.Destroy(package);
-                else
-                    UnityEngine.Object.DestroyImmediate(package);
-            }
+            if (tile == null)
+                return;
+            tile.gameObject.SetActive(true);
+            if (tile is RectTransform rect)
+                PlaceTopLeft(rect, x, 0f, width, 48f);
         }
 
         private static int CountMedals(SkirmishMedalMask mask)
@@ -504,7 +501,7 @@ namespace Game.UI.Runtime
             PlaceTopLeft(hint.rectTransform, 0f, 44f, 500f, 28f);
             hint.alignment = TextAlignmentOptions.MidlineLeft;
             hint.textWrappingMode = TextWrappingModes.NoWrap;
-            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 14f, 16f);
+            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 18f, 24f);
         }
 
         private void StyleCommandButtons(bool battlefield)

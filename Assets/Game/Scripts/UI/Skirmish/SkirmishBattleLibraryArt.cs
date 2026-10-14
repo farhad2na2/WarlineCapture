@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -146,6 +147,64 @@ namespace Game.UI.Runtime
                 default:
                     label = fa ? "عادی" : "REGULAR";
                     return;
+            }
+        }
+
+        public static string Fallback(string key, bool fa)
+        {
+            if (string.IsNullOrEmpty(key) || !key.StartsWith("ui.skirmish.library.", StringComparison.Ordinal))
+                return string.Empty;
+            string rest = key.Substring("ui.skirmish.library.".Length);
+            if (rest.StartsWith("map.", StringComparison.Ordinal))
+            {
+                string body = rest.Substring(4);
+                bool geography = body.EndsWith(".geo", StringComparison.Ordinal);
+                string mapId = (geography ? body.Substring(0, body.Length - 4) : body).ToUpperInvariant();
+                Copy(mapId, fa, out string title, out string place);
+                return geography ? place : title;
+            }
+
+            if (rest.StartsWith("objective.", StringComparison.Ordinal))
+            {
+                ObjectiveCopy(rest.Substring(10).ToUpperInvariant(), fa, out _, out string shortLabel);
+                return shortLabel;
+            }
+
+            if (rest.StartsWith("army.", StringComparison.Ordinal) || rest.StartsWith("start.", StringComparison.Ordinal))
+            {
+                ProfileCopy(rest.Substring(rest.IndexOf('.') + 1).ToUpperInvariant(), fa, out string label);
+                return label;
+            }
+
+            if (rest.StartsWith("difficulty.", StringComparison.Ordinal))
+            {
+                DifficultyCopy(ParseDifficulty(rest.Substring(11)), fa, out string label);
+                return label;
+            }
+
+            switch (rest)
+            {
+                case "locked.not_owned":
+                    return fa
+                        ? "این نبرد در بسته اصلی است. برای شروع، آن را از فروشگاه بگیر."
+                        : "This battle is in the core package. Open the store to add it.";
+                case "locked.unavailable":
+                    return fa ? "این نبرد الان شروع نمی‌شود." : "This battle cannot be started.";
+                case "locked.planned":
+                    return fa ? "این نبرد هنوز در حال ساخت است." : "This battle is still in development.";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        private static Game.Skirmish.Contracts.SkirmishDifficultyId ParseDifficulty(string name)
+        {
+            switch ((name ?? string.Empty).ToLowerInvariant())
+            {
+                case "recruit": return Game.Skirmish.Contracts.SkirmishDifficultyId.Recruit;
+                case "veteran": return Game.Skirmish.Contracts.SkirmishDifficultyId.Veteran;
+                case "commander": return Game.Skirmish.Contracts.SkirmishDifficultyId.Commander;
+                default: return Game.Skirmish.Contracts.SkirmishDifficultyId.Regular;
             }
         }
     }

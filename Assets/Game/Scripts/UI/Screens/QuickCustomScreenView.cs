@@ -303,6 +303,9 @@ namespace Game.UI.Runtime
             if (baseAssaultPreset)
             {
                 EnsureLibraryCards();
+                EnsureLibraryViewModel();
+                if (_libraryViewModel.Launch())
+                    return;
                 if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable)
                     return;
                 _config.ScenarioIndex = selected.PlayableScenarioIndex;

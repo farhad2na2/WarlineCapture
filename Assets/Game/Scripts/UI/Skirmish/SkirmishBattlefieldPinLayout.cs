@@ -41,6 +41,30 @@ namespace Game.UI.Runtime
             new Vector2(0.03f, -0.04f)
         };
 
+        public static bool TryGet(string pinId, out Vector2 centreFromTopLeft)
+        {
+            centreFromTopLeft = new Vector2(0.5f, 0.5f);
+            if (string.IsNullOrEmpty(pinId))
+                return false;
+            int first = pinId.IndexOf('.');
+            int second = first >= 0 ? pinId.IndexOf('.', first + 1) : -1;
+            if (first <= 0 || second <= first + 1)
+                return false;
+            string map = pinId.Substring(0, first);
+            string objective = pinId.Substring(first + 1, second - first - 1);
+            if (!int.TryParse(pinId.Substring(second + 1), out int slot) || slot < 0 || slot >= Arc.Length)
+                return false;
+            int mapIndex = Index(Maps, map);
+            int objectiveIndex = Index(Objectives, objective);
+            if (mapIndex < 0 || objectiveIndex < 0)
+                return false;
+            Vector2 point = Arc[slot] + MapNudge[mapIndex] + ObjectiveNudge[objectiveIndex];
+            point.x = Mathf.Clamp(point.x, 0.18f, 0.82f);
+            point.y = Mathf.Clamp(point.y, 0.18f, 0.76f);
+            centreFromTopLeft = point;
+            return true;
+        }
+
         public static bool TryGet(string mapId, string objectiveId, string army, string start, out Vector2 centreFromTopLeft)
         {
             int map = Index(Maps, mapId);

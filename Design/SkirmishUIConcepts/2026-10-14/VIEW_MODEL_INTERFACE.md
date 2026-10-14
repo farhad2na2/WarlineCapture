@@ -1,92 +1,91 @@
-# Skirmish battle library view-model seam
+# Skirmish library view model
 
-Programmer 2 (WP3 art and WP4 SCN-13) binds the screen to this seam. Programmer 1 owns the medal ledger (WP1) and the real projection (WP2). The types below are the contract. The catalog adapter is a temporary reader so the screen compiles and can be captured before WP2 lands.
+Programmer 1 owns the real `SkirmishLibraryViewModel`. This file is the contract the SCN-13 screen binds to now. The stub below keeps the screen compiling and capturable. It does not award medals, choose Recommended Next, or pick Quick Battle.
+
+File: `Assets/Game/Scripts/UI/Screens/SkirmishLibrary/SkirmishLibraryViewModel.cs`
+Namespace: `Game.UI.Skirmish`
+Owner: `QuickCustomScreenView` (`LibraryViewModel`, replace with `UseLibraryViewModel`).
+
+`SelectScenarioId` and `SelectMapCollection` on the view stay `void`. They forward to the interface, whose methods return `bool`.
 
 ## Types
 
-Assembly `Game.UI.Runtime`, namespace `Game.UI.Runtime`.
+`SkirmishLibraryLevel`: `Theater`, `Battlefield`.
+`SkirmishBattlefieldLayout`: `Map`, `Grid`.
+`SkirmishCardAccess`: `Playable`, `NotOwned`, `Unavailable`, `Planned` (development builds only).
+`SkirmishMedalMask : byte`: `None = 0`, `Recruit = 1`, `Regular = 2`, `Veteran = 4`, `Commander = 8`.
 
-| Type | Role |
-|---|---|
-| `ISkirmishBattleLibraryProjection` | `Project(in SkirmishLibraryQuery)` returns a `SkirmishLibrarySnapshot`. |
-| `SkirmishBattleLibraryCatalogAdapter` | Temporary projection. Reads the catalog, `ISkirmishMedalReadModel` and `SkirmishLibraryAccessEvaluator`. Does not award medals and does not choose Recommended Next. |
-| `ISkirmishMedalReadModel` | WP1 read model. `Has`, `BattlesWon(map)`, `BattlesWon(map, objective)`, `TotalsByDifficulty`. `BattlesWon` counts scenarios with at least one medal. |
-| `SkirmishMedalReadModelEmpty` | Assigned by default. Every count is zero. |
-| `ISkirmishBattleLibraryAdvisor` | `TryRecommendNext` and `TryQuickBattle`. |
-| `SkirmishBattleLibraryAdvisorUnimplemented` | Assigned by default. Both methods return false. The screen then shows “No recommendation yet.” Quick Battle opens the selected battlefield briefing and does not launch. |
-| `SkirmishBattleLibraryServices` | Static replacement points: `Medals`, `Advisor`, `Access`. |
-| `SkirmishLibraryAccessEvaluator` | `(catalogId, catalogPlayable) -> SkirmishLibraryCardAccess`. `SkirmishBattleLibraryAccessHost` in `Game.Composition` maps `ContentAccessRuntime.Evaluate("skirmish." + id)`. |
+`SkirmishMedalTotals`: `Recruit`, `Regular`, `Veteran`, `Commander`.
+`SkirmishTheaterPinState`: `MapId`, `TitleLocKey`, `SubtitleLocKey`, `PlatePreviewKey`, `PublishedCount`, `WonCount`, `Medals`, `HasOwnedPlayable`, `IsRecommended`.
+`SkirmishTheaterState`: `Pins` (release hides battlefields with no Playable scenario), `SelectedMapId`, `RecommendedScenarioId`.
+`SkirmishObjectiveTabState`: `ObjectiveId`, `TitleLocKey`, `PublishedCount`, `WonCount`.
+`SkirmishBattleCardState`: scenario, map, objective, army, start, loc keys, `PreviewSpriteKey`, `PinId` (`MapId.ObjectiveId.0-5`), `Medals`, `Access`, `LockedReasonLocKey` (null when Playable), `IsSelected`, `IsRecommended`.
+`SkirmishBattlefieldState`: `MapId`, `Layout`, `Tabs`, `SelectedObjectiveId`, `MapCards` (6 for the tab), `GridCards` (24, row-major `BA, FC, BT, CE` × `G-F, G-E, A-F, A-E, C-F, C-E`). Null slots are empty cells.
+`SkirmishBriefingState`: loc keys, `Medals`, `AvailableDifficulties`, `SelectedDifficulty`, `Access`, `LockedReasonLocKey`, `StoreRouteProductId` (NotOwned; the full briefing stays visible), `CanLaunch`.
+`SkirmishLibraryFilter`: `SearchText`, `ObjectiveId`, `ArmyProfile`, `StartProfile`, `MedalMissing`.
 
-`SkirmishLibraryCardAccess`: `OwnedPlayable`, `NotOwned`, `Unavailable`, `Planned`. Medals never change access. Release builds omit `Planned`. Development builds show them as unavailable.
+`SkirmishDifficultyId` is the existing enum in `Game.Skirmish.Contracts`. It is not declared again.
 
-`SkirmishLibraryLevel` is Theatre or Battlefield. `SkirmishLibraryPlateMode` is Map or Grid. Grid is not a route.
+## Interface
 
-## What Programmer 1 replaces
+`ISkirmishLibraryViewModel`
 
-1. Assign `SkirmishBattleLibraryServices.Medals` to the ledger read model after WP1.
-2. Replace `SkirmishBattleLibraryCatalogAdapter` with the WP2 projection, or assign an advisor that implements Recommended Next (first owned Playable scenario without a Regular medal, catalog order, battlefield with fewest wins; do not recommend NotOwned unless nothing owned remains).
-3. Implement `TryQuickBattle` as a random owned Playable scenario at the remembered `SkirmishDifficultyId`. Never a Custom run. The screen selects that scenario and opens the briefing. It does not launch.
-4. Put the authority’s reason string on `SkirmishLibraryCardModel.UnavailableReason` when the access state needs the existing reason text. The screen uses that string when it is non-empty.
+- `event Action Changed`
+- `Level`, `Theater`, `Battlefield` (null on the theatre), `Briefing` (null when nothing is selected), `Filter`
+- `bool SelectMapCollection(string mapId)` — `""` returns to the theatre
+- `bool SelectObjective(string objectiveId)`
+- `void SetLayout(SkirmishBattlefieldLayout layout)`
+- `bool SelectScenarioId(string scenarioId)` — opens that battlefield and tab
+- `void SelectDifficulty(SkirmishDifficultyId difficulty)`
+- `void ZoomIn()`
+- `void BackToTheater()`
+- `string QuickBattle()` — select and open the briefing, do not launch
+- `void ApplyFilter(SkirmishLibraryFilter filter)`
+- `bool Launch()` — the real view model queues through `SkirmishExpandedLaunchResolver`. False leaves the screen's existing `LaunchMatch` path in place.
+- `void RestoreFromPrefs()`
+- `void SaveToPrefs()`
 
-The screen keeps `SelectScenarioId` and `SelectMapCollection`. `SelectScenarioId` still selects the catalog row and, when the row is playable, writes `Warline.Skirmish.LastScenarioId` and the scenario index. It also opens that row’s battlefield. `SelectMapCollection("")` returns to the theatre. A battlefield id highlights that battlefield and still filters the dormant list.
+## Stub
 
-## Session keys
+`SkirmishLibraryStubViewModel` reads the catalog for structure only.
 
-Beside the existing scenario key:
+- Medal masks and won counts stay empty.
+- `RecommendedScenarioId` stays null. `IsRecommended` stays false.
+- `QuickBattle()` returns null. The screen then opens the selected battlefield and does not launch.
+- `Launch()` returns false. UI cannot reference `SkirmishExpandedLaunchResolver` (`Game.Composition`). When Programmer 1's view model returns true, `QuickCustomScreenView.LaunchMatch` does not launch a second time.
+- `SkirmishBattleLibraryAccessHost` assigns `SkirmishLibraryStubViewModel.Access` from `ContentAccessRuntime.Evaluate("skirmish." + id)`.
+- Pin coordinates stay in `SkirmishBattlefieldPinLayout.TryGet(pinId)`.
 
-| Key | Value |
-|---|---|
-| `Warline.Skirmish.LibraryLevel` | `0` theatre, `1` battlefield |
-| `Warline.Skirmish.LibraryMap` | `DB`, `CC`, `MP`, `IB`, `AP` |
-| `Warline.Skirmish.LibraryObjective` | `BA`, `FC`, `BT`, `CE` |
-| `Warline.Skirmish.LibraryPlate` | `0` map, `1` grid |
-| `Warline.Skirmish.LibraryDifficulty` | `SkirmishDifficultyId` byte (`Regular` = 2) |
+Session keys the stub reads: `Warline.Skirmish.LibraryLevel`, `LibraryMap`, `LibraryObjective`, `LibraryPlate`, `LibraryDifficulty`, plus the existing `Warline.Skirmish.LastScenarioId`.
 
-`QuickCustomScreenView.SelectedLibraryDifficulty` exposes the selector. This change does not rewrite the match-launch difficulty payload.
+## Result type
 
-## Art
+`SkirmishMedalAwardResult` (`ScenarioId`, `Difficulty`, `IsFirstAward`) belongs to Programmer 1's result screen. It is not declared in this file, and there is no ledger.
 
-Textures live in `Assets/Game/Resources/SkirmishBattleLibrary/` so `Resources.Load` works in the player.
+## Name notes
 
-| File | Source |
-|---|---|
-| `theater_collage.png` | Illustrated collage. No baked lettering. Region rectangles are in `SkirmishBattleLibraryArt.TheaterRegions`. |
-| `plate_db.png` | Campaign opening crop, desert / city edge (`native996` M01). |
-| `plate_cc.png` | Dense-city full map. |
-| `plate_mp.png` | Armor Break approach crop (`native1026` M05). Copy does not call it a mountain pass. |
-| `plate_ib.png` | RefineryDistrict crop (`SupplyLine/native-pump-gate.png`). |
-| `plate_ap.png` | CityEdgeAirfield crop (`native889`). |
-| `preview_s001`–`s003` | Desert Base crops for the published rows. |
-| `preview_s004` | CityEdgeAirfield crop. S004 keeps that binding. |
-| `preview_s025`, `preview_s073` | Dense-city crops. S073 stays on the shared city source. |
-| `medal_*.png` | Recruit bronze, Regular silver, Veteran gold, Commander red star, plus an empty ring. |
-
-Planned scenarios use the battlefield plate. Pin centres are `SkirmishBattlefieldPinLayout` (six per objective). They are not painted into the plates.
-
-Grid columns are the same six army/start slots (Ground, Air, Combined × Field, Established). A scenario that is not published leaves an empty cell. Cards are not packed to the left.
+- View methods `SelectScenarioId` / `SelectMapCollection` are `void`. The interface methods with the same names return `bool`. They are different types, so this is not a compile clash.
+- The stub is not named `SkirmishLibraryViewModel`, so Programmer 1 can add that class beside the interface.
+- The previous `Game.UI.Runtime` projection types (`ISkirmishBattleLibraryProjection`, `ISkirmishMedalReadModel`, `ISkirmishBattleLibraryAdvisor`, `SkirmishLibraryLevel` in that namespace) are removed.
 
 ## Editor capture
 
 Programmer 2 runs this on the Mac with the repository wrapper. Do not pass `-batchmode`.
 
 ```bash
-Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/warline-skirmish-library-capture.log -- \
-  -quit -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunFocusedValidation
-```
-
-Pass marker: `[SkirmishBattleLibraryCapture] result=Passed`
-
-PNGs: `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/{theater|map|grid}-{16x9|20x9|4x3}-{en|fa-IR}.png` (18 files).
-
-Rebuild the SCN-13 prefab first if the plate nodes are missing from the asset:
-
-```bash
 Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/warline-skirmish-library-prefab.log -- \
   -quit -executeMethod Game.Editor.SkirmishSetupPrefabBuilder.Build
 ```
 
-Prefab marker: `[SkirmishSetupPrefabBuilder] result=Passed`
+Markers: `[SkirmishSetupPrefabBuilder] result=Passed` and `[SkirmishBattleLibraryPlate] result=Passed`.
 
-Plate marker: `[SkirmishBattleLibraryPlate] result=Passed`
+```bash
+Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/warline-skirmish-library-capture.log -- \
+  -quit -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunFocusedValidation
+```
+
+Marker: `[SkirmishBattleLibraryCapture] result=Passed`.
+
+PNGs: `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/{theater|map|grid}-{16x9|20x9|4x3}-{en|fa-IR}.png` (18 files).
 
 These captures are Editor renders. They are not visual sign-off, a normal-input playthrough, or device acceptance.

@@ -1,36 +1,36 @@
 using Game.Missions.Contracts;
 using Game.Runtime;
-using Game.UI.Runtime;
+using Game.UI.Skirmish;
 using UnityEngine;
 
 namespace Game.Composition
 {
     /// <summary>
-    /// Binds the existing content-access authority into the battle-library seam.
-    /// This does not award medals and does not implement the WP2 projection.
+    /// Binds content access into the stub view model. Programmer 1's view model
+    /// reads the same authority itself. This does not award medals.
     /// </summary>
     static class SkirmishBattleLibraryAccessHost
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
         {
-            SkirmishBattleLibraryServices.Access = Evaluate;
+            SkirmishLibraryStubViewModel.Access = Evaluate;
         }
 
-        static SkirmishLibraryCardAccess Evaluate(string catalogId, bool catalogPlayable)
+        static SkirmishCardAccess Evaluate(string catalogId, bool catalogPlayable)
         {
             if (!catalogPlayable || string.IsNullOrEmpty(catalogId))
-                return SkirmishLibraryCardAccess.Planned;
+                return SkirmishCardAccess.Planned;
 
             string canonical = "skirmish." + catalogId.ToLowerInvariant();
             switch (ContentAccessRuntime.Evaluate(canonical))
             {
                 case ContentAccessState.Allowed:
-                    return SkirmishLibraryCardAccess.OwnedPlayable;
+                    return SkirmishCardAccess.Playable;
                 case ContentAccessState.NotOwned:
-                    return SkirmishLibraryCardAccess.NotOwned;
+                    return SkirmishCardAccess.NotOwned;
                 default:
-                    return SkirmishLibraryCardAccess.Unavailable;
+                    return SkirmishCardAccess.Unavailable;
             }
         }
     }

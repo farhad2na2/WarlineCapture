@@ -100,10 +100,8 @@ namespace Game.UI.Runtime
         public void SelectMapCollection(string mapId)
         {
             _mapFilter = mapId ?? string.Empty;
-            if (string.IsNullOrEmpty(_mapFilter))
-                _libraryLevel = SkirmishLibraryLevel.Theater;
-            else if (IsLibraryMap(_mapFilter))
-                _libraryMap = _mapFilter.ToUpperInvariant();
+            EnsureLibraryViewModel();
+            _libraryViewModel.SelectMapCollection(_mapFilter);
             EnsureLibraryCards();
             PresentScenarioChoices();
             TouchLibrary(library => library.SelectMapCollection(_mapFilter));

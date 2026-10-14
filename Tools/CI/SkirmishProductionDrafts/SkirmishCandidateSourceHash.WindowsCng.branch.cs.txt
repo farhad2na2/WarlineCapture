@@ -1,0 +1,68 @@
+#elif UNITY_EDITOR_WIN
+            // Windows CNG hashes the same bytes as the managed fallback. Keep
+            // file enumeration, native ordinal order and BinaryWriter manifest
+            // unchanged. One provider per census; a fresh hash per file.
+            private IntPtr algorithm;
+            private const string BCryptLibrary = "bcrypt.dll";
+            [DllImport(BCryptLibrary, CharSet = CharSet.Unicode, ExactSpelling = true)]
+            private static extern int BCryptOpenAlgorithmProvider(out IntPtr algorithm, string algorithmId, string implementation, uint flags);
+            [DllImport(BCryptLibrary, ExactSpelling = true)]
+            private static extern int BCryptCreateHash(IntPtr algorithm, out IntPtr hash, IntPtr hashObject, uint hashObjectLength, IntPtr secret, uint secretLength, uint flags);
+            [DllImport(BCryptLibrary, ExactSpelling = true)]
+            private static extern int BCryptHashData(IntPtr hash, [In] byte[] input, uint inputLength, uint flags);
+            [DllImport(BCryptLibrary, ExactSpelling = true)]
+            private static extern int BCryptFinishHash(IntPtr hash, [Out] byte[] output, uint outputLength, uint flags);
+            [DllImport(BCryptLibrary, ExactSpelling = true)]
+            private static extern int BCryptDestroyHash(IntPtr hash);
+            [DllImport(BCryptLibrary, ExactSpelling = true)]
+            private static extern int BCryptCloseAlgorithmProvider(IntPtr algorithm, uint flags);
+
+            public StreamingFileDigest()
+            {
+                CheckNtStatus(BCryptOpenAlgorithmProvider(out algorithm, "SHA256", null, 0), "BCryptOpenAlgorithmProvider");
+            }
+
+            public byte[] Compute(Stream stream, byte[] buffer)
+            {
+                if (algorithm == IntPtr.Zero) throw new ObjectDisposedException(nameof(StreamingFileDigest));
+                if (stream == null) throw new ArgumentNullException(nameof(stream));
+                if (buffer == null || buffer.Length == 0) throw new ArgumentException("A nonempty hashing buffer is required.", nameof(buffer));
+                IntPtr hash = IntPtr.Zero;
+                Exception primary = null;
+                try
+                {
+                    // Windows 7+ owns/frees object memory when object/length are
+                    // NULL/0. DestroyHash runs even after stream/native failure.
+                    CheckNtStatus(BCryptCreateHash(algorithm, out hash, IntPtr.Zero, 0, IntPtr.Zero, 0, 0), "BCryptCreateHash");
+                    int read;
+                    while ((read = stream.Read(buffer, 0, buffer.Length)) != 0)
+                        CheckNtStatus(BCryptHashData(hash, buffer, (uint)read, 0), "BCryptHashData");
+                    var digest = new byte[32];
+                    CheckNtStatus(BCryptFinishHash(hash, digest, (uint)digest.Length, 0), "BCryptFinishHash");
+                    return digest;
+                }
+                catch (Exception error) { primary = error; throw; }
+                finally
+                {
+                    if (hash != IntPtr.Zero)
+                    {
+                        int status = BCryptDestroyHash(hash);
+                        // Preserve the original read/hash error, including any
+                        // secondary cleanup failure rather than replacing it.
+                        if (primary != null && status < 0) primary.Data["BCryptDestroyHash.NTSTATUS"] = status;
+                        else CheckNtStatus(status, "BCryptDestroyHash");
+                    }
+                }
+            }
+
+            public void Dispose()
+            {
+                if (algorithm == IntPtr.Zero) return;
+                CheckNtStatus(BCryptCloseAlgorithmProvider(algorithm, 0), "BCryptCloseAlgorithmProvider");
+                algorithm = IntPtr.Zero;
+            }
+
+            private static void CheckNtStatus(int status, string operation)
+            {
+                if (status < 0) throw new CryptographicException(operation + " failed with NTSTATUS 0x" + unchecked((uint)status).ToString("X8"));
+            }

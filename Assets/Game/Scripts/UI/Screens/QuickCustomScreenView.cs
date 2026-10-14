@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Game.Configs;
 using Game.UI.Contracts;
-using Game.UI.Skirmish;
 
 namespace Game.UI.Runtime
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Game.UI.Skirmish
+namespace Game.UI.Runtime
 {
     /// <summary>
     /// Theater, then one battlefield, then one card. Does not launch.

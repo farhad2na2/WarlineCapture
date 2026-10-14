@@ -2,7 +2,6 @@
 using System;
 using Game.Configs;
 using Game.UI.Runtime;
-using Game.UI.Skirmish;
 using TMPro;
 using UnityEditor;
 using UnityEngine;

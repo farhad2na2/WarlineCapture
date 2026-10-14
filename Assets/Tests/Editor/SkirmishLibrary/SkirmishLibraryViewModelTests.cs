@@ -5,7 +5,7 @@ using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
-using Game.UI.Skirmish;
+using Game.UI.Runtime;
 using NUnit.Framework;
 using Unity.Entities;
 

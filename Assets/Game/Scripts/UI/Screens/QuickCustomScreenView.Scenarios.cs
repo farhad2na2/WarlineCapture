@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Game.Configs;
 using Game.UI.Contracts;
-using Game.UI.Skirmish;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

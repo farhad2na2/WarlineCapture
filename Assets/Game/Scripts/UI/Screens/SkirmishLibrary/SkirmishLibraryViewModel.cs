@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Skirmish.Contracts;
-using Game.UI.Runtime;
 using UnityEngine;
 
-namespace Game.UI.Skirmish
+namespace Game.UI.Runtime
 {
     public delegate SkirmishLibraryViewModel SkirmishLibraryFactory(IReadOnlyList<SkirmishBattleCatalogEntry> catalog);
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Game.Configs;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
-using Game.UI.Skirmish;
+using Game.UI.Runtime;
 
 namespace Game.Composition
 {

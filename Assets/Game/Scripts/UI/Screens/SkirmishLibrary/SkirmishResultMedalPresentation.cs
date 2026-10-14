@@ -1,6 +1,6 @@
 using System;
 
-namespace Game.UI.Skirmish
+namespace Game.UI.Runtime
 {
     public readonly struct SkirmishResultMedalLine
     {

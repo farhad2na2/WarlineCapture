@@ -8,7 +8,6 @@ using Game.Missions.Contracts;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Runtime;
-using Game.UI.Skirmish;
 using NUnit.Framework;
 using TMPro;
 using Unity.Entities;

@@ -1,8 +1,7 @@
 using System;
 using Game.Skirmish.Contracts;
-using Game.UI.Runtime;
 
-namespace Game.UI.Skirmish
+namespace Game.UI.Runtime
 {
     public enum SkirmishLibraryLevel
     {

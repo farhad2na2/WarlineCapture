@@ -1,7 +1,6 @@
 using System;
 using Game.Configs;
 using Game.UI.Contracts;
-using Game.UI.Skirmish;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

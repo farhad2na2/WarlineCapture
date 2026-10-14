@@ -1,6 +1,6 @@
 using System;
 
-namespace Game.UI.Skirmish
+namespace Game.UI.Runtime
 {
     /// <summary>
     /// Remembers the scenario a finished match should reopen, then applies it

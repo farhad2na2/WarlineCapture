@@ -21,7 +21,7 @@ def git(root, *arguments):
                           check=True, stdout=subprocess.PIPE).stdout
 
 
-def prepare(root, output, run_id):
+def prepare(root, output, run_id, native_identity=False):
     if not re.fullmatch(r"[0-9]{4,}", run_id) or int(run_id) <= 1631:
         raise ValueError("Use a unique numeric run ID above the historical 1631 draft.")
     if output.exists():
@@ -47,6 +47,15 @@ def prepare(root, output, run_id):
     source = source.replace(archived_report, report)
     # Rename the immutable evidence identity, observer classes and callback owners together.
     source = source.replace("1628", run_id)
+    if native_identity:
+        fields="        public uint reservation;\n        public bool localizedObjectiveCopy"
+        if source.count(fields)!=1:
+            raise ValueError("Exact native binding row field boundary absent")
+        source=source.replace(fields,"        public uint nativeSetupHash; public int definitionVersion; public string nativeContentIdentity=\"\";\n"+fields)
+        binding="stage=\"ActualResolvedBinding\",catalog=setup.CatalogId,definition=setup.DefinitionId,size="
+        if source.count(binding)!=1:
+            raise ValueError("Exact ActualResolvedBinding authority boundary absent")
+        source=source.replace(binding,"stage=\"ActualResolvedBinding\",catalog=setup.CatalogId,definition=setup.DefinitionId,definitionVersion=setup.ContentVersion,nativeSetupHash=setup.SetupHash,nativeContentIdentity=setup.ContentHash,size=")
     required = ["r.ReservationId==paid", "r.FactionId==1", "r.MaterialsPaid==280",
                 "r.DeliveredMembers==1", "r.MemberCount==1", "o.ReservationId!=paid",
                 "scoutMoveRequestId!=scoutMoveBaseline+1", "observedMovePath",
@@ -65,6 +74,7 @@ def prepare(root, output, run_id):
                 "candidate": candidate.name,
                 "candidateSha256": hashlib.sha256(candidate.read_bytes()).hexdigest(),
                 "dispatchEnabled": False, "loadedInUnity": False,
+                "nativeIdentityFieldsCaptured": native_identity,
                 "normalMissionCertified": False, "playerReady": False,
                 "portableReportPathReplacements": path_replacements,
                 "patches": ["Actual public nonzero receipt instead of hard-coded 1004",
@@ -85,5 +95,6 @@ if __name__ == "__main__":
     parser.add_argument("--project", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--native-identity", action="store_true", help="Emit actual native uint32 setup/content/version fields; requires identity-aware qualifier")
     args = parser.parse_args()
-    prepare(args.project.resolve(), args.output.resolve(), args.run_id)
+    prepare(args.project.resolve(), args.output.resolve(), args.run_id, args.native_identity)

@@ -22,7 +22,7 @@ class WindowsRunnerPortability(unittest.TestCase):
         self.observer=self.prepared/"observer نمونه.cs.txt"
         self.observer.write_bytes(b"abc")
         self.sha="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
-        self.preparation=dict(runId="1632",candidate=self.observer.name,candidateSha256=self.sha)
+        self.preparation=dict(runId="1632",candidate=self.observer.name,candidateSha256=self.sha,nativeIdentityFieldsCaptured=True)
         # Windows PowerShell must correctly decode BOM and non-ASCII file paths.
         self.write_preparation()
         (self.root/"source.txt").write_bytes(b"synthetic source")

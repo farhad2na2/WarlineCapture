@@ -25,6 +25,7 @@ $job=Get-Content -Raw -Encoding UTF8 -LiteralPath $JobFile | ConvertFrom-Json
 $claim=Get-Content -Raw -Encoding UTF8 -LiteralPath $ClaimFile | ConvertFrom-Json
 $runId=[string]$preparation.runId
 if($runId -notmatch '^\d{4,}$' -or [int]$runId -le 1631){throw "Fresh S005 run ID required"}
+if($preparation.nativeIdentityFieldsCaptured -ne $true){throw "Identity-aware native setup/content observer required; historical draft cannot dispatch"}
 if($job.catalog_id -ne "S005" -or $job.seed -ne 155926 -or $job.locale -ne "FA" -or
    $job.control_mode -ne "manual" -or $job.size -ne "Standard" -or $job.difficulty -ne "Regular"){
     throw "Job differs from exact prepared S005 configuration"

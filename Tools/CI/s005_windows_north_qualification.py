@@ -9,6 +9,7 @@ import hashlib
 
 from audit_skirmish_native_contacts import audit
 from s005_windows_source_snapshot import candidate_hash
+from skirmish_native_identity import from_native_census, verify_job
 
 ANCHORS = ["anchor.skirmish.db.ruins_" + suffix for suffix in
            ("own", "west", "north", "east", "far")]
@@ -31,7 +32,7 @@ def rows(path):
     return [json.loads(line) for line in Path(path).read_text(encoding="utf-8-sig").splitlines() if line.strip()]
 
 
-def qualify(data, log, wrapper_exit, source_unchanged, run_id):
+def qualify(data, log, wrapper_exit, source_unchanged, run_id, job=None):
     errors = []
 
     def require(condition, reason):
@@ -53,6 +54,16 @@ def qualify(data, log, wrapper_exit, source_unchanged, run_id):
     bindings = stage("observation", "ActualResolvedBinding")
     require(len(bindings) == 1, "Exactly one actual S005 binding required")
     binding = bindings[0] if len(bindings) == 1 else {}
+    native_identity=None
+    try:
+        native_identity=from_native_census(catalog_id=binding["catalog"],definition_id=binding["definition"],
+            definition_version=binding["definitionVersion"],difficulty=binding["difficulty"],size=binding["size"],
+            seed=binding["seed"],native_locale=binding["locale"],native_setup_hash_uint32=binding["nativeSetupHash"],
+            native_content_identity=binding["nativeContentIdentity"])
+        if not isinstance(job,dict):raise ValueError("Pinned job required for actual native setup/content join")
+        verify_job(job,native_identity)
+    except (KeyError,TypeError,ValueError) as error:
+        errors.append("Actual native setup/content identity: "+str(error))
     attempt = binding.get("attempt")
     require(bool(attempt) and all(binding.get(k) == v for k, v in EXPECTED.items()),
             "Native setup/attempt differs from pinned S005 north configuration")
@@ -236,6 +247,7 @@ def qualify(data, log, wrapper_exit, source_unchanged, run_id):
     return dict(result="PassedScopedNormalNorthFlank" if not errors else "Failed", qualified=not errors,
                 run_id=str(run_id), attempt=attempt, errors=errors, contacts=contacts,
                 native_qualification="pending_independent_native_review", playerReady=False,
+                native_setup_identity=native_identity,
                 deviceAcceptance=False, realPlayerAcceptance=False)
 
 
@@ -291,7 +303,7 @@ if __name__ == "__main__":
             if not build or build_hash != snapshot.get("build_sha256") or build_hash != job["build_sha256"]:
                 raise ValueError("Compiled assembly byte manifest differs")
         result = qualify(read_evidence(args.report, args.run_id), args.log.read_text(errors="replace"),
-                         args.wrapper_exit, bool(before) and before == after, args.run_id)
+                         args.wrapper_exit, bool(before) and before == after, args.run_id, job)
         result.update(job_sha256=digest,attempt_id=claim["attempt_id"],candidate_sha256=job["candidate_sha256"],build_sha256=job["build_sha256"])
     except (OSError, KeyError, TypeError, ValueError) as error:
         result = dict(result="Failed", qualified=False, run_id=args.run_id,

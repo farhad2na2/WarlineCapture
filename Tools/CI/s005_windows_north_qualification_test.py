@@ -7,13 +7,23 @@ import unittest
 
 from s005_windows_north_qualification import ANCHORS, EXPECTED, MARKERS, ROUTE, qualify
 from s005_windows_source_snapshot import candidate_hash
+from skirmish_native_identity import from_native_census, sha256, content_identity
+
+
+def pinned_job(data):
+    raw=data["observation"][0]
+    identity=from_native_census(catalog_id=raw["catalog"],definition_id=raw["definition"],definition_version=raw["definitionVersion"],
+        difficulty=raw["difficulty"],size=raw["size"],seed=raw["seed"],native_locale=raw["locale"],
+        native_setup_hash_uint32=raw["nativeSetupHash"],native_content_identity=raw["nativeContentIdentity"])
+    return {**{k:identity[k] for k in ("catalog_id","definition_id","definition_version","difficulty","size","seed","locale")},
+            "setup_sha256":sha256(identity),"content_sha256":sha256(content_identity(identity))}
 
 
 def synthetic():
     attempt = "synthetic-never-native"
     data = {key: [] for key in ("observation", "home", "north", "fog", "direct", "stop", "scan",
                                 "reinforcement", "contacts", "commands", "planner")}
-    data["observation"] = [dict(stage="ActualResolvedBinding", attempt=attempt, **EXPECTED),
+    data["observation"] = [dict(stage="ActualResolvedBinding", attempt=attempt, definitionVersion=2,nativeSetupHash=3294967295,nativeContentIdentity="synthetic.native.content.only",**EXPECTED),
         dict(stage="NormalDriverFlags", normalDriverFlags=True),
         dict(stage="NativePaidReservation", faction=1, role="ApcHeavy", materialsPaid=280, expectedCost=280,
              deliveredMembers=1, members=1, reservation=1003),
@@ -90,7 +100,7 @@ class QualificationControls(unittest.TestCase):
 
     def test_synthetic_shape_has_scoped_pass_but_no_readiness(self):
         data, log = synthetic()
-        result = qualify(data, log, 0, True, "1632")
+        result = qualify(data, log, 0, True, "1632",pinned_job(data))
         self.assertEqual(result["errors"], [])
         self.assertTrue(result["qualified"])
         self.assertFalse(result["playerReady"])
@@ -98,6 +108,7 @@ class QualificationControls(unittest.TestCase):
 
     def test_corrupted_raw_gates_reject(self):
         base, log = synthetic()
+        job=pinned_job(base)
         mutations = [
             ("paid receipt", lambda d: d["observation"][3].update(reservation=1004)),
             ("paid budget", lambda d: d["observation"][2].update(materialsPaid=0)),
@@ -131,10 +142,25 @@ class QualificationControls(unittest.TestCase):
             with self.subTest(name=name):
                 data = copy.deepcopy(base)
                 mutate(data)
-                self.assertFalse(qualify(data, log, 0, True, "1632")["qualified"])
-        self.assertFalse(qualify(base, log, 1, True, "1632")["qualified"])
-        self.assertFalse(qualify(base, log, 0, False, "1632")["qualified"])
-        self.assertFalse(qualify(base, log.replace(MARKERS[-1], ""), 0, True, "1632")["qualified"])
+                self.assertFalse(qualify(data, log, 0, True, "1632",job)["qualified"])
+        self.assertFalse(qualify(base, log, 1, True, "1632",job)["qualified"])
+        self.assertFalse(qualify(base, log, 0, False, "1632",job)["qualified"])
+        self.assertFalse(qualify(base, log.replace(MARKERS[-1], ""), 0, True, "1632",job)["qualified"])
+
+    def test_actual_native_identity_must_join_job_without_padding(self):
+        base,log=synthetic();job=pinned_job(base)
+        for key,value in (("nativeSetupHash",0),("nativeSetupHash","3294967295"),("nativeSetupHash",True),
+                          ("nativeSetupHash",4294967296),("nativeContentIdentity","changed"),("definitionVersion",3),
+                          ("locale","FA")):
+            with self.subTest(key=key,value=value):
+                data=copy.deepcopy(base);data["observation"][0][key]=value
+                self.assertFalse(qualify(data,log,0,True,"1632",job)["qualified"])
+        for key in ("setup_sha256","content_sha256"):
+            wrong={**job,key:"0"*64}
+            self.assertFalse(qualify(base,log,0,True,"1632",wrong)["qualified"])
+        data=copy.deepcopy(base);del data["observation"][0]["nativeSetupHash"]
+        self.assertFalse(qualify(data,log,0,True,"1632",job)["qualified"])
+        self.assertFalse(qualify(base,log,0,True,"1632")["qualified"])
 
     def test_actual_native1628_failure_cannot_be_grafted_into_success(self):
         root = Path(__file__).resolve().parents[2]
@@ -149,7 +175,7 @@ class QualificationControls(unittest.TestCase):
         for synthetic_graft in (False, True):
             data, log = synthetic() if synthetic_graft else ({}, "")
             data.update(archived)
-            result = qualify(data, log, 0, True, "1628")
+            result = qualify(data, log, 0, True, "1628",pinned_job(synthetic()[0]))
             self.assertFalse(result["qualified"])
             self.assertIn("Raw failure retained in home", result["errors"])
 

@@ -242,7 +242,12 @@ namespace Game.Editor
                 next = now + 2d;
                 return false;
             }
-            string prefix = "/private/tmp/" + catalogId.ToLowerInvariant() + "-native-" + GameLocalization.CurrentLocaleCode + "-" + width + "x" + height;
+            string reviewDirectory = Environment.GetEnvironmentVariable("WARLINE_NATIVE_REVIEW_DIRECTORY");
+            if (string.IsNullOrWhiteSpace(reviewDirectory))
+                reviewDirectory = Application.platform == RuntimePlatform.OSXEditor ? "/private/tmp" : Path.GetTempPath();
+            reviewDirectory = Path.GetFullPath(reviewDirectory);
+            Directory.CreateDirectory(reviewDirectory);
+            string prefix = Path.Combine(reviewDirectory, catalogId.ToLowerInvariant() + "-native-" + GameLocalization.CurrentLocaleCode + "-" + width + "x" + height);
             if (nativeReviewStage == 0)
             {
                 foreach (var mapView in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))

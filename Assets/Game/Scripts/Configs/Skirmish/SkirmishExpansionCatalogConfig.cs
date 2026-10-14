@@ -74,6 +74,9 @@ namespace Game.Configs
         {
             var set = new SkirmishExpansionAuthoredSet
             {
+                Definitions = definitions == null
+                    ? Array.Empty<SkirmishScenarioDefinitionConfig>()
+                    : (SkirmishScenarioDefinitionConfig[])definitions.Clone(),
                 ObjectiveBa = objectiveBa,
                 ArmyGround = armyGround,
                 ArmyAir = armyAir,
@@ -94,9 +97,9 @@ namespace Game.Configs
                 LayoutDbBa = layoutDbBa,
                 Publication = publication
             };
-            for (int i = 0; i < definitions.Length; i++)
+            for (int i = 0; i < set.Definitions.Count; i++)
             {
-                SkirmishScenarioDefinitionConfig definition = definitions[i];
+                SkirmishScenarioDefinitionConfig definition = set.Definitions[i];
                 if (definition == null)
                     continue;
                 switch (definition.CatalogId)

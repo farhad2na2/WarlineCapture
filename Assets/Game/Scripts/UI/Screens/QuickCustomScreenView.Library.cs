@@ -14,10 +14,10 @@ namespace Game.UI.Runtime
         private const float LibraryFontFloor = 22f;
         private const float LibraryPinWidth = 252f;
         private const float LibraryPinHeight = 168f;
-        private const float LibraryGridCardWidth = 146f;
+        private const float LibraryGridCardWidth = 156f;
         private const float LibraryGridCardHeight = 148f;
         private const float LibraryGridOriginX = 92f;
-        private const float LibraryGridStride = 154f;
+        private const float LibraryGridStride = 164f;
 
         private string _armyFilter = string.Empty;
         private string _startFilter = string.Empty;
@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
         private Button _libraryFavouritesButton;
         private Button _libraryAdvancedButton;
         private static Sprite _libraryMedallion;
+        private static Sprite _zoneMedallion;
         private static Sprite _zoneGlow;
         private static Sprite _zoneRibbon;
         private static Sprite _solidSprite;
@@ -770,19 +771,21 @@ namespace Game.UI.Runtime
         {
             if (subtitle == null)
                 return;
-            subtitle.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
-            subtitle.isRightToLeftText = fa;
+            float floor = ReferenceSubtitleFloor();
+            float max = Mathf.Max(18f, floor);
             subtitle.color = new Color(0.9f, 0.93f, 0.9f, 1f);
-            SetCopy(subtitle, copy, 16f, 18f);
+            SetCopy(subtitle, copy, floor, max);
+            subtitle.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+            subtitle.isRightToLeftText = fa && ContainsArabicScript(copy);
             subtitle.textWrappingMode = TextWrappingModes.Normal;
             subtitle.overflowMode = TextOverflowModes.Ellipsis;
             subtitle.enableAutoSizing = true;
-            subtitle.fontSizeMin = 16f;
-            subtitle.fontSizeMax = 18f;
+            subtitle.fontSizeMin = floor;
+            subtitle.fontSizeMax = max;
             subtitle.maxVisibleLines = 2;
             V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
-                binding.ConfigureFontBounds(16f, 18f);
+                binding.ConfigureFontBounds(floor, max);
         }
 
         private void PresentBattlefieldTabs(string selectedMapId, bool fa)
@@ -839,7 +842,7 @@ namespace Game.UI.Runtime
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             const float titleHeight = 22f;
-            const float subtitleHeight = 48f;
+            float subtitleHeight = pin ? 24f : 48f;
             const float badgeHeight = 22f;
             float stack = titleHeight + subtitleHeight + badgeHeight + 14f;
             float previewHeight = Mathf.Max(48f, height - stack);
@@ -866,7 +869,8 @@ namespace Game.UI.Runtime
             scrim.raycastTarget = false;
             var badge = new GameObject("ScenarioBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             badge.transform.SetParent(button.transform, false);
-            PlaceTopLeft(badge.rectTransform, 4f, 4f, 58f, 22f);
+            float badgeX = fa && pin ? width - 62f : 4f;
+            PlaceTopLeft(badge.rectTransform, badgeX, 4f, 58f, 22f);
             badge.color = new Color(0.05f, 0.07f, 0.08f, 0.88f);
             badge.raycastTarget = false;
             var idLabel = CreateLabel(badge.transform, "ScenarioId", 14f);
@@ -888,6 +892,8 @@ namespace Game.UI.Runtime
             title.overflowMode = TextOverflowModes.Overflow;
             title.isRightToLeftText = fa;
             SetCopy(title, objectiveLabel, 14f, 18f);
+            title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            title.isRightToLeftText = fa && ContainsArabicScript(objectiveLabel);
             var subtitle = CreateLabel(button.transform, "Subtitle", 16f);
             PlaceTopLeft(subtitle.rectTransform, 6f, textY + titleHeight, width - 12f, subtitleHeight);
             string subtitleCopy = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
@@ -902,11 +908,14 @@ namespace Game.UI.Runtime
                 SetCopy(recommended, fa ? "پیشنهاد" : "NEXT", 11f, 13f);
             }
 
-            AddMedalIcons(button.transform, card.Medals, 6f, textY + titleHeight + subtitleHeight + 2f, 18f);
+            const float medalSize = 18f;
+            float medalRun = 4f * (medalSize + 2f);
+            float medalX = fa && pin ? width - 8f - medalRun : 6f;
+            AddMedalIcons(button.transform, card.Medals, medalX, textY + titleHeight + subtitleHeight + 2f, medalSize);
             if (card.Access == SkirmishCardAccess.NotOwned || card.Access == SkirmishCardAccess.Unavailable)
             {
                 var lockLabel = CreateLabel(button.transform, "Lock", 13f);
-                PlaceTopLeft(lockLabel.rectTransform, width - 52f, textY, 46f, titleHeight);
+                PlaceTopLeft(lockLabel.rectTransform, fa && pin ? 6f : width - 52f, textY, 46f, titleHeight);
                 lockLabel.alignment = TextAlignmentOptions.Center;
                 lockLabel.textWrappingMode = TextWrappingModes.NoWrap;
                 SetCopy(lockLabel, fa ? "قفل" : "LOCK", 12f, 14f);
@@ -2528,12 +2537,12 @@ namespace Game.UI.Runtime
             group.childScaleHeight = false;
             int index = 0;
             Transform summary = column.Find("TheatreSummary");
-            index = StackColumnChild(summary as RectTransform, index, 44f, !battlefield && summary != null);
+            index = StackColumnChild(summary as RectTransform, index, 76f, !battlefield && summary != null);
             bool previewShown = battlefield && _briefingPreview != null && _briefingPreview.gameObject.activeSelf;
             index = StackColumnChild(_briefingPreview != null ? _briefingPreview.rectTransform : null, index, 188f, previewShown);
             Transform title = rules.Find("BriefingColumn/Title") ?? rules.Find("Title");
             index = StackColumnChild(title as RectTransform, index, 40f, title != null);
-            index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 108f, scenarioDescription != null);
+            index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 80f, scenarioDescription != null);
             index = StackColumnChild(_progressTrack, index, 84f, !battlefield && _progressTrack != null);
             index = StackColumnChild(_statRow, index, 84f, battlefield && _statRow != null);
             index = StackColumnChild(_medalRow, index, 104f, _medalRow != null);
@@ -2681,19 +2690,40 @@ namespace Game.UI.Runtime
             {
                 plate = new GameObject("TheatreSummary", typeof(RectTransform)).GetComponent<RectTransform>();
                 plate.SetParent(column, false);
-                CreateLabel(plate, "Summary", 36f);
             }
+
+            if (plate.Find("Heading") == null)
+                CreateLabel(plate, "Heading", 22f);
+            if (plate.Find("Summary") == null)
+                CreateLabel(plate, "Summary", 36f);
 
             plate.gameObject.SetActive(true);
             int won = _libraryViewModel.Theater.OverallWonCount;
             int published = _libraryViewModel.Theater.OverallPublishedCount;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            const float ornamentInset = 32f;
+            TMP_Text heading = plate.Find("Heading")?.GetComponent<TMP_Text>();
+            if (heading != null)
+            {
+                PlaceSummaryLine(heading.rectTransform, 0f, 28f, fa, ornamentInset);
+                string battles = UpperLatin(LibraryText("ui.skirmish.library.battles_won", fa));
+                SetCopy(heading, battles, 18f, 22f);
+                heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                heading.isRightToLeftText = fa;
+                heading.textWrappingMode = TextWrappingModes.NoWrap;
+                heading.overflowMode = TextOverflowModes.Overflow;
+                heading.color = new Color(0.93f, 0.78f, 0.38f, 1f);
+                heading.enableAutoSizing = true;
+                heading.fontSizeMin = 18f;
+                heading.fontSizeMax = 22f;
+                heading.maxVisibleLines = 1;
+            }
+
             TMP_Text summary = plate.Find("Summary")?.GetComponent<TMP_Text>();
-            if (summary != null)
-                Stretch(summary.rectTransform, 8f, 4f, 2f, 2f);
-            SetCopy(summary, won + " / " + published, 28f, 36f);
             if (summary == null)
                 return;
+            PlaceSummaryLine(summary.rectTransform, 30f, 40f, fa, ornamentInset);
+            SetCopy(summary, won + " / " + published, 28f, 36f);
             summary.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             summary.isRightToLeftText = false;
             summary.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2703,6 +2733,28 @@ namespace Game.UI.Runtime
             summary.fontSizeMin = 28f;
             summary.fontSizeMax = 36f;
             summary.maxVisibleLines = 1;
+        }
+
+        private static void PlaceSummaryLine(RectTransform rect, float y, float height, bool fa, float inset)
+        {
+            if (rect == null)
+                return;
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.offsetMin = new Vector2(fa ? 8f : inset, -(y + height));
+            rect.offsetMax = new Vector2(fa ? -inset : -8f, -y);
+        }
+
+        private float ReferenceSubtitleFloor()
+        {
+            float scale = 1f;
+            MainMenuV3SectionLayoutView layout = GetComponent<MainMenuV3SectionLayoutView>()
+                ?? GetComponentInParent<MainMenuV3SectionLayoutView>()
+                ?? GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (layout != null && layout.LastAppliedScale > 0.05f)
+                scale = layout.LastAppliedScale;
+            return Mathf.Clamp(16f / scale, 16f, 20f);
         }
 
         private RectTransform EnsureSoftShadow(RectTransform panel, float offsetX, float offsetY)
@@ -3641,7 +3693,7 @@ namespace Game.UI.Runtime
                 : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 44f, 40f, 108f, 84f, 104f, 272f };
+                : new[] { 76f, 40f, 80f, 84f, 104f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -3689,7 +3741,7 @@ namespace Game.UI.Runtime
                 scenarioDescription.maxVisibleLines = battlefield ? 4 : 3;
                 scenarioDescription.enableAutoSizing = true;
                 scenarioDescription.fontSizeMin = 15f;
-                scenarioDescription.fontSizeMax = battlefield ? 22f : 24f;
+                scenarioDescription.fontSizeMax = battlefield ? 22f : 20f;
             }
 
             VerticalLayoutGroup group = column.GetComponent<VerticalLayoutGroup>();
@@ -4314,7 +4366,7 @@ namespace Game.UI.Runtime
 
                 preview.gameObject.SetActive(true);
                 preview.texture = texture;
-                preview.color = new Color(1f, 0.78f, 0.48f, 1f);
+                preview.color = new Color(1f, 0.96f, 0.88f, 1f);
                 preview.raycastTarget = false;
                 preview.enabled = true;
                 PlaceTopLeft(preview.rectTransform, 12f, previewY + 4f, Mathf.Max(80f, textWidth - 8f), previewCap);
@@ -4599,12 +4651,22 @@ namespace Game.UI.Runtime
                     footerOwner == _libraryFavouritesButton ||
                     footerOwner == _libraryAdvancedButton ||
                     footerOwner.name == "BackButton");
+                bool cardTitle = text.name == "Title" && text.transform.parent.GetComponent<Button>() != null;
                 if (subtitle)
                 {
-                    RelaxLibraryText(text, 16f, 18f, true);
+                    float floor = ReferenceSubtitleFloor();
+                    RelaxLibraryText(text, floor, Mathf.Max(18f, floor), true);
                     text.overflowMode = TextOverflowModes.Ellipsis;
                     text.maxVisibleLines = 2;
                     text.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+                    text.isRightToLeftText = fa && ContainsArabicScript(text.text);
+                }
+                else if (cardTitle)
+                {
+                    text.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                    text.isRightToLeftText = fa && ContainsArabicScript(text.text);
+                    text.textWrappingMode = TextWrappingModes.NoWrap;
+                    text.overflowMode = TextOverflowModes.Overflow;
                 }
                 else if (zoneTab || gridRow)
                     RelaxLibraryText(text, 11f, 16f, true);
@@ -4749,6 +4811,35 @@ namespace Game.UI.Runtime
             }
 
             return false;
+        }
+
+        private static Sprite ZoneMedallionSprite()
+        {
+            if (_zoneMedallion != null)
+                return _zoneMedallion;
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            var fill = new Color32(18, 22, 26, 255);
+            var gold = new Color32(236, 196, 96, 255);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
+                    if (distance > 1f)
+                        continue;
+                    pixels[y * size + x] = distance > 0.82f ? gold : fill;
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneMedallion = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _zoneMedallion.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneMedallion;
         }
 
         private static Sprite LibraryMedallion()

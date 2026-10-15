@@ -386,7 +386,9 @@ namespace Game.Editor
             var bounds = new Bounds(enemy, Vector3.one * 30f);
             foreach (Vector3 p in enemyCluster) bounds.Encapsulate(p);
             float separation = new Vector2(enemy.x - home.x, enemy.z - home.z).magnitude;
-            bool both = separation < 380f;
+            // S001 and S025 start close to the enemy; framing both bases made the enemy base tiny, so frame the enemy base alone.
+            bool enemyOnly = id == "S001" || id == "S025";
+            bool both = !enemyOnly && separation < 380f;
             if (both)
                 foreach (Vector3 p in playerCluster) bounds.Encapsulate(p);
 
@@ -403,8 +405,8 @@ namespace Game.Editor
             Vector3 size = bounds.size;
             float radius = Mathf.Max(size.x, size.z) * 0.5f + 25f;
             float fit = radius / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Min(1f, aspect * 0.75f);
-            float distance = Mathf.Clamp(fit * 0.62f, 120f, 420f);
-            Vector3 look = both ? Vector3.Lerp(bounds.center, enemy, 0.35f) : enemy;
+            float distance = Mathf.Clamp(fit * (enemyOnly ? 0.5f : 0.62f), enemyOnly ? 90f : 120f, 420f);
+            Vector3 look = both ? Vector3.Lerp(bounds.center, enemy, 0.35f) : enemyOnly ? bounds.center : enemy;
             look.y = Mathf.Min(enemy.y, home.y);
             Vector3 dir = (-back * Mathf.Cos(pitch * Mathf.Deg2Rad) + Vector3.down * Mathf.Sin(pitch * Mathf.Deg2Rad)).normalized;
             Vector3 position = look - dir * distance;

@@ -1120,10 +1120,23 @@ namespace Game.Editor
                 return shot.Camera;
             }
 
-            var center = new Vector3((best.x + 0.5f) * cell, shot.FocusHint.y, (best.y + 0.5f) * cell);
+            // Pull the centre toward the building mass of the 3x3 block (height-weighted) so open sand
+            // at the block edge drops out of frame, and frame slightly tighter.
+            Vector2 weighted = Vector2.zero;
+            float weight = 0f;
+            for (int dx = -1; dx <= 1; dx++)
+            for (int dz = -1; dz <= 1; dz++)
+            {
+                var k = new Vector2Int(best.x + dx, best.y + dz);
+                if (!heights.TryGetValue(k, out float h)) continue;
+                weighted += new Vector2((k.x + 0.5f) * cell, (k.y + 0.5f) * cell) * h;
+                weight += h;
+            }
+            Vector2 c2 = weight > 0f ? weighted / weight : new Vector2((best.x + 0.5f) * cell, (best.y + 0.5f) * cell);
+            var center = new Vector3(c2.x, shot.FocusHint.y, c2.y);
             const float fov = 40f;
             const float pitch = 48f;
-            float distance = 125f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
+            float distance = 72f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
             Vector3 dir = Quaternion.Euler(pitch, 30f, 0f) * Vector3.forward;
             log = "focus=dense sectors=" + counts.Count + " center=" + Format(center) + " score=" +
                   bestScore.ToString("0", CultureInfo.InvariantCulture);

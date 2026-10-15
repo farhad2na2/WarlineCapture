@@ -14,17 +14,19 @@ namespace Game.UI.Runtime
         private const float LibraryFontFloor = 22f;
         private const float LibraryPinWidth = 252f;
         private const float LibraryPinHeight = 168f;
-        private const float LibraryGridCardGap = 4f;
-        private const float LibraryGridRightPad = 8f;
-        private const float LibraryGridOriginX = 92f;
-        private const float LibraryGridRowGap = 4f;
-        private const float LibraryGridTitleHeight = 34f;
+        private const float LibraryGridCardGap = 3f;
+        private const float LibraryGridRightPad = 6f;
+        private const float LibraryGridOriginX = 64f;
+        private const float LibraryGridRowGap = 2f;
+        private const float LibraryGridTitleHeight = 28f;
         private const float LibraryGridSubtitleHeight = 44f;
-        private const float LibraryGridMedalSize = 16f;
-        private const float LibraryGridTextGap = 4f;
-        private const float LibraryGridMedalGap = 2f;
+        private const float LibraryGridMedalSize = 14f;
+        private const float LibraryGridTextGap = 2f;
+        private const float LibraryGridMedalGap = 1f;
         private const float LibraryGridCardBottom = 4f;
-        private const float LibraryGridPreviewShare = 0.5f;
+        private const float LibraryGridContentTop = 2f;
+        private const float LibraryGridContentBottom = 6f;
+        private const float LibraryGridPreviewFloor = 0.40f;
         private const float LibraryPinSubtitleHeight = 36f;
         private const int LibraryGridLogicalColumns = 6;
 
@@ -698,16 +700,16 @@ namespace Game.UI.Runtime
                 return;
             MeasureLibraryGrid(out float gridWidth, out float gridHeight);
             int columns = LibraryGridLogicalColumns;
-            float cardWidth = GridCardWidth(gridWidth, columns);
-            ResolveGridCard(out float cardHeight, out float previewHeight);
             int objectives = field.Tabs.Length;
-            const float headerTop = 58f;
-            const float headerHeight = 40f;
-            float scrollTop = headerTop + headerHeight + 6f;
-            float viewport = Mathf.Max(80f, gridHeight - scrollTop);
-            const float contentTop = 2f;
-            const float contentBottom = 16f;
+            const float headerTop = 56f;
+            const float headerHeight = 34f;
+            float scrollTop = headerTop + headerHeight + 4f;
+            float viewport = Mathf.Max(120f, gridHeight - scrollTop);
+            ResolveGridCard(viewport, objectives, out float cardHeight, out float previewHeight);
             float stack = objectives * cardHeight + Mathf.Max(0, objectives - 1) * LibraryGridRowGap;
+            float contentHeight = LibraryGridContentTop + stack + LibraryGridContentBottom;
+            bool scrolls = contentHeight > viewport + 2f;
+            float cardWidth = GridCardWidth(gridWidth, columns, scrolls ? LibraryGridRightPad + 16f : LibraryGridRightPad);
 
             PresentBattlefieldTabs(field.MapId, fa);
             string[] armies = { "G", "A", "C" };
@@ -721,7 +723,7 @@ namespace Game.UI.Runtime
                     float iconX = fa ? columnX + cardWidth - 20f : columnX + 2f;
                     var headerIcon = new GameObject("ColumnIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     headerIcon.transform.SetParent(_libraryGrid, false);
-                    PlaceTopLeft(headerIcon.rectTransform, iconX, headerTop + 11f, 18f, 18f);
+                    PlaceTopLeft(headerIcon.rectTransform, iconX, headerTop + 8f, 18f, 18f);
                     ShowIcon(headerIcon, SkirmishBattleLibraryArt.ArmyIcon(armies[armyIndex]), Color.white);
                     SkirmishBattleLibraryArt.ProfileCopy(armies[armyIndex], fa, out string armyLabel);
                     SkirmishBattleLibraryArt.ProfileCopy(starts[startIndex], fa, out string startLabel);
@@ -733,7 +735,7 @@ namespace Game.UI.Runtime
                     header.isRightToLeftText = fa;
                     header.color = new Color(0.96f, 0.93f, 0.82f, 1f);
                     string headerCopy = fa ? armyLabel + " · " + startLabel : armyLabel + "\n" + startLabel;
-                    SetCopy(header, headerCopy, fa ? 16f : 14f, fa ? 22f : 18f);
+                    SetCopy(header, headerCopy, fa ? 16f : 14f, fa ? 20f : 17f);
                     ShowColumnHeader(header, fa);
                 }
             }
@@ -749,7 +751,7 @@ namespace Game.UI.Runtime
             for (int row = 0; row < objectives; row++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[row];
-                float y = contentTop + row * (cardHeight + LibraryGridRowGap);
+                float y = LibraryGridContentTop + row * (cardHeight + LibraryGridRowGap);
                 var zone = new GameObject("ZoneRow_" + objective.ObjectiveId, typeof(RectTransform)).GetComponent<RectTransform>();
                 zone.SetParent(content, false);
                 PlaceTopLeft(zone, 0f, y, gridWidth, cardHeight);
@@ -762,40 +764,40 @@ namespace Game.UI.Runtime
                     float x = LibraryGridOriginX + column * (cardWidth + LibraryGridCardGap);
                     SkirmishBattleCardState card = field.GridCards[index];
                     RectTransform widget = IsEmptyCard(card)
-                        ? CreateEmptyGridCell(zone, objective.ObjectiveId, armies[column / 2], starts[column % 2], card.PreviewSpriteKey, slots, cardWidth)
+                        ? CreateEmptyGridCell(zone, objective.ObjectiveId, armies[column / 2], starts[column % 2], card.PreviewSpriteKey, card.MapId, slots, cardWidth)
                         : CreateBattleCard(zone, card, false, cardWidth, cardHeight, slots);
                     PlaceTopLeft(widget, x, 0f, cardWidth, cardHeight);
                     AddSiblingShadow(widget);
                 }
             }
 
-            float contentHeight = contentTop + stack + contentBottom;
             content.sizeDelta = new Vector2(0f, contentHeight);
-            bool scrolls = contentHeight > viewport + 2f;
             scroll.vertical = scrolls;
             scroll.horizontal = false;
+            if (scrolls)
+                scroll.verticalScrollbar = CreateGridScrollbar(scroll.transform as RectTransform);
             if (_libraryGrid != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(_libraryGrid);
             Canvas.ForceUpdateCanvases();
             if (scrolls)
-                scroll.verticalNormalizedPosition = 1f;
+                scroll.verticalNormalizedPosition = IsWideLibraryFrame(_libraryGrid) ? 1f : 0f;
         }
 
         private void PresentGridRowLabel(Transform parent, SkirmishObjectiveTabState objective, bool fa, float y)
         {
             var rowIcon = new GameObject("RowIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             rowIcon.transform.SetParent(parent, false);
-            PlaceTopLeft(rowIcon.rectTransform, 8f, y + 8f, 36f, 36f);
+            PlaceTopLeft(rowIcon.rectTransform, 2f, y + 4f, 24f, 24f);
             ShowIcon(rowIcon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
             SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string rowName);
-            var rowLabel = CreateLabel(parent, "Row_" + objective.ObjectiveId, 14f);
-            PlaceTopLeft(rowLabel.rectTransform, 2f, y + 36f, LibraryGridOriginX - 8f, 40f);
+            var rowLabel = CreateLabel(parent, "Row_" + objective.ObjectiveId, 13f);
+            PlaceTopLeft(rowLabel.rectTransform, 1f, y + 26f, LibraryGridOriginX - 6f, 28f);
             rowLabel.alignment = TextAlignmentOptions.Center;
             rowLabel.textWrappingMode = TextWrappingModes.Normal;
             rowLabel.overflowMode = TextOverflowModes.Ellipsis;
             SetCopy(rowLabel, rowName, 13f, 16f);
             var rowCount = CreateLabel(parent, "RowCount_" + objective.ObjectiveId, 13f);
-            PlaceTopLeft(rowCount.rectTransform, 4f, y + 62f, LibraryGridOriginX - 10f, 18f);
+            PlaceTopLeft(rowCount.rectTransform, 2f, y + 56f, LibraryGridOriginX - 8f, 16f);
             rowCount.alignment = TextAlignmentOptions.Center;
             rowCount.isRightToLeftText = false;
             rowCount.textWrappingMode = TextWrappingModes.NoWrap;
@@ -842,6 +844,45 @@ namespace Game.UI.Runtime
             return content;
         }
 
+        private static Scrollbar CreateGridScrollbar(RectTransform scrollRoot)
+        {
+            var bar = new GameObject("GridScrollbar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Scrollbar)).GetComponent<Scrollbar>();
+            RectTransform rect = bar.GetComponent<RectTransform>();
+            rect.SetParent(scrollRoot, false);
+            rect.anchorMin = new Vector2(1f, 0f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 0.5f);
+            rect.sizeDelta = new Vector2(12f, -12f);
+            rect.anchoredPosition = new Vector2(-4f, 0f);
+            Image track = bar.GetComponent<Image>();
+            track.color = new Color(0.10f, 0.08f, 0.06f, 0.92f);
+            track.raycastTarget = true;
+            var handleImage = new GameObject("Handle", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            handleImage.transform.SetParent(rect, false);
+            handleImage.color = new Color(0.93f, 0.78f, 0.38f, 1f);
+            handleImage.raycastTarget = true;
+            RectTransform handle = handleImage.rectTransform;
+            handle.anchorMin = new Vector2(0f, 0f);
+            handle.anchorMax = new Vector2(1f, 1f);
+            handle.offsetMin = new Vector2(2f, 2f);
+            handle.offsetMax = new Vector2(-2f, -2f);
+            bar.handleRect = handle;
+            bar.targetGraphic = handleImage;
+            bar.direction = Scrollbar.Direction.BottomToTop;
+            return bar;
+        }
+
+        private static bool IsWideLibraryFrame(Transform node)
+        {
+            Canvas canvas = node != null ? node.GetComponentInParent<Canvas>() : null;
+            RectTransform rect = canvas != null && canvas.rootCanvas != null
+                ? canvas.rootCanvas.transform as RectTransform
+                : null;
+            if (rect == null || rect.rect.height < 200f)
+                return true;
+            return rect.rect.width / rect.rect.height >= 1.6f;
+        }
+
         private void MeasureLibraryGrid(out float width, out float height)
         {
             if (_libraryGrid != null && (_libraryGrid.rect.width < 200f || _libraryGrid.rect.height < 200f))
@@ -850,17 +891,29 @@ namespace Game.UI.Runtime
             height = _libraryGrid != null && _libraryGrid.rect.height > 200f ? _libraryGrid.rect.height : 740f;
         }
 
-        private static void ResolveGridCard(out float cardHeight, out float previewHeight)
+        private static void ResolveGridCard(float viewport, int rows, out float cardHeight, out float previewHeight)
         {
             float chrome = LibraryGridTextGap + LibraryGridTitleHeight + LibraryGridSubtitleHeight +
                 LibraryGridMedalGap + LibraryGridMedalSize + LibraryGridCardBottom;
-            previewHeight = chrome * LibraryGridPreviewShare / (1f - LibraryGridPreviewShare);
-            cardHeight = previewHeight + chrome;
+            int count = Mathf.Max(1, rows);
+            float available = viewport - LibraryGridContentTop - LibraryGridContentBottom -
+                Mathf.Max(0, count - 1) * LibraryGridRowGap;
+            float fitted = available / count;
+            float minCard = chrome / (1f - LibraryGridPreviewFloor);
+            cardHeight = fitted >= minCard ? Mathf.Floor(fitted) : minCard;
+            float naturalPreview = cardHeight - chrome;
+            if (naturalPreview > cardHeight * 0.45f)
+            {
+                previewHeight = chrome * 0.45f / 0.55f;
+                cardHeight = previewHeight + chrome;
+            }
+            else
+                previewHeight = naturalPreview;
         }
 
-        private static float GridCardWidth(float gridWidth, int columns)
+        private static float GridCardWidth(float gridWidth, int columns, float rightPad)
         {
-            float available = gridWidth - LibraryGridOriginX - LibraryGridRightPad;
+            float available = gridWidth - LibraryGridOriginX - rightPad;
             float gaps = LibraryGridCardGap * Mathf.Max(0, columns - 1);
             return columns > 0 ? Mathf.Max(1f, (available - gaps) / columns) : available;
         }
@@ -875,7 +928,7 @@ namespace Game.UI.Runtime
             header.overflowMode = TextOverflowModes.Overflow;
             header.enableAutoSizing = true;
             header.fontSizeMin = fa ? 16f : 14f;
-            header.fontSizeMax = fa ? 22f : 18f;
+            header.fontSizeMax = fa ? 20f : 17f;
             header.maxVisibleLines = fa ? 1 : 2;
             header.margin = new Vector4(1f, 0f, 1f, 0f);
             V3LocalizedTextBindingView binding = header.GetComponent<V3LocalizedTextBindingView>();
@@ -887,8 +940,8 @@ namespace Game.UI.Runtime
         {
             if (subtitle == null)
                 return;
-            float floor = ReferenceSubtitleFloor();
-            float max = Mathf.Max(20f, floor);
+            float floor = singleLine ? ReferenceSubtitleFloor() : 14f;
+            float max = singleLine ? Mathf.Max(20f, floor) : 16f;
             subtitle.color = new Color(0.9f, 0.93f, 0.9f, 1f);
             SetCopy(subtitle, copy, floor, max);
             subtitle.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
@@ -961,7 +1014,7 @@ namespace Game.UI.Runtime
             float subtitleHeight = pin ? LibraryPinSubtitleHeight : gridSlots.Subtitle > 1f ? gridSlots.Subtitle : LibraryGridSubtitleHeight;
             float gridPreview = gridSlots.Preview;
             if (gridPreview <= 1f)
-                ResolveGridCard(out _, out gridPreview);
+                ResolveGridCard(740f, 4, out _, out gridPreview);
             float previewHeight = pin
                 ? Mathf.Max(48f, height - (titleHeight + subtitleHeight + 22f + 14f))
                 : gridPreview;
@@ -978,7 +1031,10 @@ namespace Game.UI.Runtime
             if (pin)
                 PlaceFittedPreview(preview, previewKey, 3f, 3f, width - 6f, previewHeight);
             else
-                PlaceCoverPreview(preview, previewKey, width, previewHeight);
+            {
+                Texture2D shown = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
+                PlaceCoverPreview(preview, width, previewHeight, shown, dimmed);
+            }
             preview.transform.SetAsFirstSibling();
             var scrim = new GameObject("FooterScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             scrim.transform.SetParent(button.transform, false);
@@ -1006,18 +1062,19 @@ namespace Game.UI.Runtime
             SkirmishBattleLibraryArt.ObjectiveCopy(card.ObjectiveId, fa, out _, out string objectiveLabel);
             SkirmishBattleLibraryArt.ProfileCopy(card.ArmyProfile, fa, out string armyLabel);
             SkirmishBattleLibraryArt.ProfileCopy(card.StartProfile, fa, out string startLabel);
-            float textY = previewHeight + 4f;
+            float textGap = pin ? 4f : LibraryGridTextGap;
+            float textY = previewHeight + textGap;
             var title = CreateLabel(button.transform, "Title", 15f);
-            PlaceTopLeft(title.rectTransform, 6f, textY, width - 12f, titleHeight);
+            PlaceTopLeft(title.rectTransform, 4f, textY, width - 8f, titleHeight);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Overflow;
             title.isRightToLeftText = fa;
-            SetCopy(title, objectiveLabel, pin ? 14f : 20f, pin ? 18f : 22f);
+            SetCopy(title, objectiveLabel, pin ? 14f : 15f, pin ? 18f : 18f);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.isRightToLeftText = fa && ContainsArabicScript(objectiveLabel);
             var subtitle = CreateLabel(button.transform, "Subtitle", 16f);
-            PlaceTopLeft(subtitle.rectTransform, 6f, textY + titleHeight, width - 12f, subtitleHeight);
+            PlaceTopLeft(subtitle.rectTransform, 4f, textY + titleHeight, width - 8f, subtitleHeight);
             string subtitleCopy = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
             ShowCardSubtitle(subtitle, subtitleCopy, fa, pin);
             if (card.IsRecommended)
@@ -1032,8 +1089,9 @@ namespace Game.UI.Runtime
 
             float medalSize = pin ? 18f : gridSlots.Medal > 1f ? gridSlots.Medal : LibraryGridMedalSize;
             float medalRun = 4f * (medalSize + 2f);
-            float medalX = fa && pin ? width - 8f - medalRun : 6f;
-            AddMedalIcons(button.transform, card.Medals, medalX, textY + titleHeight + subtitleHeight + 2f, medalSize);
+            float medalX = fa && pin ? width - 8f - medalRun : 4f;
+            float medalGap = pin ? 2f : LibraryGridMedalGap;
+            AddMedalIcons(button.transform, card.Medals, medalX, textY + titleHeight + subtitleHeight + medalGap, medalSize);
             if (card.Access == SkirmishCardAccess.NotOwned || card.Access == SkirmishCardAccess.Unavailable)
             {
                 var lockLabel = CreateLabel(button.transform, "Lock", 13f);
@@ -1050,7 +1108,7 @@ namespace Game.UI.Runtime
             return rect;
         }
 
-        private RectTransform CreateEmptyGridCell(Transform parent, string objectiveId, string army, string start, string previewKey, GridCardSlots slots, float width)
+        private RectTransform CreateEmptyGridCell(Transform parent, string objectiveId, string army, string start, string previewKey, string mapId, GridCardSlots slots, float width)
         {
             var rect = new GameObject("EmptyCell", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
             rect.SetParent(parent, false);
@@ -1061,30 +1119,31 @@ namespace Game.UI.Runtime
             preview.transform.SetParent(rect, false);
             float previewHeight = slots.Preview;
             if (previewHeight <= 1f)
-                ResolveGridCard(out _, out previewHeight);
+                ResolveGridCard(740f, 4, out _, out previewHeight);
             float titleHeight = slots.Title > 1f ? slots.Title : LibraryGridTitleHeight;
             float subtitleHeight = slots.Subtitle > 1f ? slots.Subtitle : LibraryGridSubtitleHeight;
             float medalSize = slots.Medal > 1f ? slots.Medal : LibraryGridMedalSize;
-            PlaceCoverPreview(preview, ScenarioPreviewKey(previewKey), width, previewHeight);
+            Texture2D gridPreview = ResolveGridPreview(previewKey, null, mapId, out bool dimmed);
+            PlaceCoverPreview(preview, width, previewHeight, gridPreview, dimmed);
             preview.transform.SetAsFirstSibling();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string objectiveLabel);
             SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
             SkirmishBattleLibraryArt.ProfileCopy(start, fa, out string startLabel);
             string detail = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
-            float textY = previewHeight + 4f;
-            var title = CreateLabel(rect, "Title", 20f);
-            PlaceTopLeft(title.rectTransform, 6f, textY, width - 12f, titleHeight);
+            float textY = previewHeight + LibraryGridTextGap;
+            var title = CreateLabel(rect, "Title", 16f);
+            PlaceTopLeft(title.rectTransform, 4f, textY, width - 8f, titleHeight);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Overflow;
-            SetCopy(title, objectiveLabel, 20f, 22f);
+            SetCopy(title, objectiveLabel, 15f, 18f);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.isRightToLeftText = fa && ContainsArabicScript(objectiveLabel);
-            var subtitle = CreateLabel(rect, "Subtitle", 17f);
-            PlaceTopLeft(subtitle.rectTransform, 6f, textY + titleHeight, width - 12f, subtitleHeight);
+            var subtitle = CreateLabel(rect, "Subtitle", 15f);
+            PlaceTopLeft(subtitle.rectTransform, 4f, textY + titleHeight, width - 8f, subtitleHeight);
             ShowCardSubtitle(subtitle, detail, fa, false);
-            AddMedalIcons(rect, SkirmishMedalMask.None, 6f, textY + titleHeight + subtitleHeight + 2f, medalSize);
+            AddMedalIcons(rect, SkirmishMedalMask.None, 4f, textY + titleHeight + subtitleHeight + LibraryGridMedalGap, medalSize);
             return rect;
         }
 
@@ -3504,14 +3563,40 @@ namespace Game.UI.Runtime
             PlaceTopLeft(image.rectTransform, originX, originY, fittedWidth, fittedHeight);
         }
 
-        private static void PlaceCoverPreview(RawImage image, string key, float width, float height)
+        private static Texture2D ResolveGridPreview(string key, string scenarioId, string mapId, out bool dimmed)
+        {
+            dimmed = false;
+            Texture2D scenario = LoadScenarioPreview(key);
+            if (scenario == null)
+                scenario = LoadScenarioPreview(string.IsNullOrEmpty(scenarioId) ? null : "skirmish.preview." + scenarioId);
+            if (scenario != null)
+                return scenario;
+            dimmed = true;
+            string map = string.IsNullOrEmpty(mapId) ? "DB" : mapId;
+            Texture2D plate = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(map));
+            if (plate != null)
+                return plate;
+            Texture2D graded = SkirmishLibraryPreviewAssets.Load("skirmish.blur." + map);
+            if (graded != null)
+                return graded;
+            return SkirmishLibraryPreviewAssets.Load("skirmish.zone." + map);
+        }
+
+        private static Texture2D LoadScenarioPreview(string key)
+        {
+            if (string.IsNullOrEmpty(key) || key.IndexOf("skirmish.preview.", StringComparison.Ordinal) < 0)
+                return null;
+            Texture2D texture = SkirmishLibraryPreviewAssets.Load(key);
+            if (texture == null || texture.name == "SkirmishLibraryPlaceholder")
+                return null;
+            return texture;
+        }
+
+        private static void PlaceCoverPreview(RawImage image, float width, float height, Texture2D texture, bool dimmed)
         {
             if (image == null)
                 return;
             image.raycastTarget = false;
-            Texture2D texture = string.IsNullOrEmpty(key) ? null : SkirmishLibraryPreviewAssets.Load(key);
-            if (texture == null && !string.IsNullOrEmpty(key))
-                texture = SkirmishLibraryPreviewAssets.Placeholder();
             PlaceTopLeft(image.rectTransform, 0f, 0f, width, height);
             if (texture == null || width < 2f || height < 2f || texture.width < 1 || texture.height < 1)
             {
@@ -3523,7 +3608,7 @@ namespace Game.UI.Runtime
 
             image.enabled = true;
             image.texture = texture;
-            image.color = Color.white;
+            image.color = dimmed ? new Color(0.62f, 0.56f, 0.48f, 1f) : Color.white;
             float frameAspect = width / height;
             float textureAspect = texture.width / (float)texture.height;
             if (frameAspect >= textureAspect)
@@ -4820,33 +4905,45 @@ namespace Game.UI.Runtime
                     (text.transform.parent.GetComponent<Button>() != null || parentName == "EmptyCell");
                 if (subtitle)
                 {
-                    float floor = ReferenceSubtitleFloor();
                     float box = text.rectTransform != null ? text.rectTransform.sizeDelta.y : 0f;
-                    bool singleLine = box > 0f && box < 40f;
-                    RelaxLibraryText(text, floor, Mathf.Max(20f, floor), !singleLine);
+                    bool gridSubtitle = box >= 40f;
+                    float floor = gridSubtitle ? 14f : ReferenceSubtitleFloor();
+                    float max = gridSubtitle ? 16f : Mathf.Max(20f, floor);
+                    RelaxLibraryText(text, floor, max, gridSubtitle);
                     text.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                     text.isRightToLeftText = fa && ContainsArabicScript(text.text);
-                    if (singleLine)
-                    {
-                        text.textWrappingMode = TextWrappingModes.NoWrap;
-                        text.overflowMode = TextOverflowModes.Overflow;
-                        text.maxVisibleLines = 1;
-                    }
-                    else
+                    if (gridSubtitle)
                     {
                         text.textWrappingMode = TextWrappingModes.Normal;
                         text.overflowMode = TextOverflowModes.Ellipsis;
                         text.maxVisibleLines = 2;
                     }
+                    else
+                    {
+                        text.textWrappingMode = TextWrappingModes.NoWrap;
+                        text.overflowMode = TextOverflowModes.Overflow;
+                        text.maxVisibleLines = 1;
+                    }
 
                     V3LocalizedTextBindingView subtitleBinding = text.GetComponent<V3LocalizedTextBindingView>();
                     if (subtitleBinding != null)
-                        subtitleBinding.ConfigureFontBounds(floor, Mathf.Max(20f, floor));
+                        subtitleBinding.ConfigureFontBounds(floor, max);
                 }
                 else if (cardTitle)
                 {
                     float titleBox = text.rectTransform != null ? text.rectTransform.sizeDelta.y : 0f;
-                    if (titleBox >= 30f && titleBox <= 42f)
+                    if (titleBox >= 24f && titleBox < 32f)
+                    {
+                        text.enableAutoSizing = true;
+                        text.fontSizeMin = 15f;
+                        text.fontSizeMax = 18f;
+                        if (text.fontSize < 15f)
+                            text.fontSize = 15f;
+                        V3LocalizedTextBindingView compactTitle = text.GetComponent<V3LocalizedTextBindingView>();
+                        if (compactTitle != null)
+                            compactTitle.ConfigureFontBounds(15f, 18f);
+                    }
+                    else if (titleBox >= 32f && titleBox <= 42f)
                     {
                         text.enableAutoSizing = true;
                         text.fontSizeMin = 20f;

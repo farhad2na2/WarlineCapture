@@ -420,9 +420,21 @@ namespace Game.Editor
             RectTransform viewport = scroll != null && scroll.viewport != null ? scroll.viewport : gridRect;
             RectTransform content = scroll != null ? scroll.content : null;
             bool scrolls = content != null && content.rect.height > viewport.rect.height + 2f;
+            bool wideFrame = IsWideLibraryFrame(grid);
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
-            RejectGridCardsOutside(grid, viewport, content, scrolls, locale);
+            RejectGridCardsOutside(grid, viewport, content, scrolls, wideFrame, locale);
             RejectGridZoneRows(grid, locale);
+        }
+
+        private static bool IsWideLibraryFrame(Transform node)
+        {
+            Canvas canvas = node != null ? node.GetComponentInParent<Canvas>() : null;
+            RectTransform rect = canvas != null && canvas.rootCanvas != null
+                ? canvas.rootCanvas.transform as RectTransform
+                : null;
+            if (rect == null || rect.rect.height < 200f)
+                return false;
+            return rect.rect.width / rect.rect.height >= 1.6f;
         }
 
         private static void RejectGridZoneRows(Transform grid, string locale)
@@ -507,14 +519,23 @@ namespace Game.Editor
                     "Grid card has no preview locale=" + locale + " zone=" + zone + " path=" + ImagePath(card));
             }
 
+            RawImage picture = preview.GetComponent<RawImage>();
+            if (picture == null || picture.texture == null || picture.texture.name == "SkirmishLibraryPlaceholder")
+            {
+                throw new InvalidOperationException(
+                    "Grid preview is not scenario or theatre plate art locale=" + locale +
+                    " zone=" + zone +
+                    " path=" + ImagePath(card));
+            }
+
             float cardWidth = Span(card, true);
             float cardHeight = Span(card, false);
             float previewWidth = Span(previewRect, true);
             float previewHeight = Span(previewRect, false);
-            if (cardHeight < 2f || previewHeight < cardHeight * 0.45f)
+            if (cardHeight < 2f || previewHeight < cardHeight * 0.40f)
             {
                 throw new InvalidOperationException(
-                    "Grid preview is under 45% of the card locale=" + locale +
+                    "Grid preview is under 40% of the card locale=" + locale +
                     " zone=" + zone +
                     " path=" + ImagePath(card) +
                     " preview=" + previewHeight.ToString("0.0") +
@@ -606,7 +627,7 @@ namespace Game.Editor
             }
         }
 
-        private static void RejectGridCardsOutside(Transform parent, RectTransform viewport, RectTransform content, bool scrolls, string locale)
+        private static void RejectGridCardsOutside(Transform parent, RectTransform viewport, RectTransform content, bool scrolls, bool wideFrame, string locale)
         {
             for (int i = 0; i < parent.childCount; i++)
             {
@@ -617,14 +638,14 @@ namespace Game.Editor
                 var cardRect = child as RectTransform;
                 if (!card || cardRect == null)
                 {
-                    RejectGridCardsOutside(child, viewport, content, scrolls, locale);
+                    RejectGridCardsOutside(child, viewport, content, scrolls, wideFrame, locale);
                     continue;
                 }
 
                 RequireInside(viewport, cardRect, locale, "viewport", true);
                 if (content != null)
                     RequireInside(content, cardRect, locale, "scroll content", false);
-                if (!scrolls)
+                if (!scrolls || wideFrame)
                     RequireInside(viewport, cardRect, locale, "viewport", false);
                 Image[] images = child.GetComponentsInChildren<Image>(true);
                 for (int imageIndex = 0; imageIndex < images.Length; imageIndex++)
@@ -635,7 +656,7 @@ namespace Game.Editor
                     RequireInside(viewport, image.rectTransform, locale, "viewport", true);
                     if (content != null)
                         RequireInside(content, image.rectTransform, locale, "scroll content", false);
-                    if (!scrolls)
+                    if (!scrolls || wideFrame)
                         RequireInside(viewport, image.rectTransform, locale, "viewport", false);
                 }
             }

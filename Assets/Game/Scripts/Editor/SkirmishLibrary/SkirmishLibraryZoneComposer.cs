@@ -123,8 +123,8 @@ namespace Game.Editor
                 }
             }
 
-            pixels = Median(pixels, ZoneWidth, ZoneHeight, 2);
-            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 4, 3.4f, 0.55f);
+            pixels = Median(pixels, ZoneWidth, ZoneHeight, 4);
+            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 5, 5.0f, 0.40f);
             for (int i = 0; i < pixels.Length; i++)
                 pixels[i] = Grade(pixels[i]);
             Vignette(pixels);

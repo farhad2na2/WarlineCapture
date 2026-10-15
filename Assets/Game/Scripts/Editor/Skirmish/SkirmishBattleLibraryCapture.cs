@@ -464,6 +464,19 @@ namespace Game.Editor
                     throw new InvalidOperationException(
                         "Briefing column expected one MedalRow in state " + state + " and found " + medalRows + ": " + listed);
                 }
+
+                if (!theatre)
+                {
+                    Transform seed = column.Find("SeedHelp");
+                    TMP_Text seedText = seed != null ? seed.GetComponent<TMP_Text>() : null;
+                    string seedValue = seedText != null ? seedText.text : string.Empty;
+                    bool hidden = seedText != null && seedText.maxVisibleLines <= 0;
+                    if (seed == null || !seed.gameObject.activeInHierarchy || hidden || string.IsNullOrWhiteSpace(seedValue))
+                    {
+                        throw new InvalidOperationException(
+                            "Battlefield SeedHelp text is empty in state " + state + ": " + listed);
+                    }
+                }
             }
 
             var report = new System.Text.StringBuilder();

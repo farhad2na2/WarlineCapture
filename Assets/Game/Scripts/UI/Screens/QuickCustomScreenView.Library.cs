@@ -31,6 +31,7 @@ namespace Game.UI.Runtime
         private static Sprite _zoneRibbon;
         private static Sprite _solidSprite;
         private float _sideWonRatio;
+        private string _recommendedScenarioId = string.Empty;
         private bool _advancedOpen;
         private bool _librarySearchApplied;
         private bool _libraryChromeReady;
@@ -677,6 +678,7 @@ namespace Game.UI.Runtime
             PresentBattlefieldTabs(field.MapId, fa);
             string[] armies = { "G", "A", "C" };
             string[] starts = { "F", "E" };
+            var headerWidgets = new List<Transform>();
             for (int armyIndex = 0; armyIndex < armies.Length; armyIndex++)
             {
                 for (int startIndex = 0; startIndex < starts.Length; startIndex++)
@@ -685,21 +687,19 @@ namespace Game.UI.Runtime
                     float columnX = LibraryGridOriginX + column * LibraryGridStride;
                     var headerIcon = new GameObject("ColumnIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     headerIcon.transform.SetParent(_libraryGrid, false);
-                    PlaceTopLeft(headerIcon.rectTransform, columnX + (fa ? LibraryGridCardWidth - 26f : 2f), 62f, 22f, 22f);
+                    PlaceTopLeft(headerIcon.rectTransform, columnX + (LibraryGridCardWidth - 16f) * 0.5f, 56f, 16f, 16f);
                     ShowIcon(headerIcon, SkirmishBattleLibraryArt.ArmyIcon(armies[armyIndex]), Color.white);
+                    headerWidgets.Add(headerIcon.transform);
                     SkirmishBattleLibraryArt.ProfileCopy(armies[armyIndex], fa, out string armyLabel);
                     SkirmishBattleLibraryArt.ProfileCopy(starts[startIndex], fa, out string startLabel);
-                    var header = CreateLabel(_libraryGrid, "Column_" + column, 18f);
-                    float headerX = fa ? columnX : columnX + 26f;
-                    PlaceTopLeft(header.rectTransform, headerX, 58f, LibraryGridCardWidth - 28f, 40f);
+                    var header = CreateLabel(_libraryGrid, "Column_" + column, 14f);
+                    PlaceTopLeft(header.rectTransform, columnX + 2f, 72f, LibraryGridCardWidth - 4f, 38f);
                     header.alignment = TextAlignmentOptions.Center;
                     header.isRightToLeftText = fa;
-                    header.textWrappingMode = TextWrappingModes.NoWrap;
-                    header.overflowMode = TextOverflowModes.Ellipsis;
-                    SetCopy(header, armyLabel + "\n" + startLabel, 14f, 18f);
-                    header.isRightToLeftText = fa;
-                    header.textWrappingMode = TextWrappingModes.NoWrap;
-                    header.overflowMode = TextOverflowModes.Ellipsis;
+                    header.color = new Color(0.96f, 0.93f, 0.82f, 1f);
+                    SetCopy(header, armyLabel + "\n" + startLabel, 12f, 15f);
+                    ShowColumnHeader(header, fa);
+                    headerWidgets.Add(header.transform);
                 }
             }
 
@@ -738,6 +738,30 @@ namespace Game.UI.Runtime
                     AddSiblingShadow(widget);
                 }
             }
+
+            for (int i = 0; i < headerWidgets.Count; i++)
+            {
+                if (headerWidgets[i] != null)
+                    headerWidgets[i].SetAsLastSibling();
+            }
+        }
+
+        private static void ShowColumnHeader(TMP_Text header, bool fa)
+        {
+            if (header == null)
+                return;
+            header.alignment = TextAlignmentOptions.Center;
+            header.isRightToLeftText = fa;
+            header.textWrappingMode = TextWrappingModes.Normal;
+            header.overflowMode = TextOverflowModes.Overflow;
+            header.enableAutoSizing = true;
+            header.fontSizeMin = 12f;
+            header.fontSizeMax = 15f;
+            header.maxVisibleLines = 2;
+            header.margin = new Vector4(1f, 0f, 1f, 0f);
+            V3LocalizedTextBindingView binding = header.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(12f, 15f);
         }
 
         private void PresentBattlefieldTabs(string selectedMapId, bool fa)
@@ -990,8 +1014,9 @@ namespace Game.UI.Runtime
                 TMP_Text heading = _recommendedPanel.Find("Heading")?.GetComponent<TMP_Text>();
                 TMP_Text body = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
                 SetCopy(heading, fa ? "پیشنهاد بعدی" : "RECOMMENDED NEXT");
-                KeepSingleLine(heading, 13f, 16f);
+                KeepSingleLine(heading, 14f, 18f);
                 string recommendation = FocusedRecommendation(theater, field);
+                _recommendedScenarioId = recommendation ?? string.Empty;
                 SetCopy(body, string.IsNullOrEmpty(recommendation)
                     ? (fa ? "هنوز پیشنهادی نیست." : "No recommendation yet.")
                     : RecommendationLabel(recommendation, fa));
@@ -1081,22 +1106,41 @@ namespace Game.UI.Runtime
             _progressTrack.gameObject.SetActive(true);
             TMP_Text caption = _progressTrack.Find("Caption")?.GetComponent<TMP_Text>();
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
-            SetCopy(caption, fa ? "نبردهای برده" : "BATTLES WON", 14f, 22f);
-            SetCopy(count, pin.WonCount + " / " + pin.PublishedCount, 14f, 22f);
+            SetCopy(caption, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 18f);
+            SetCopy(count, pin.WonCount + " / " + pin.PublishedCount, 14f, 20f);
             _sideWonRatio = pin.PublishedCount > 0 ? Mathf.Clamp01(pin.WonCount / (float)pin.PublishedCount) : 0f;
-            const float captionWidth = 168f;
-            const float countWidth = 96f;
-            const float pairGap = 6f;
-            float pairX = 8f;
-            if (fa && _progressTrack.rect.width > captionWidth + countWidth + 24f)
-                pairX = _progressTrack.rect.width - 8f - captionWidth - pairGap - countWidth;
+            PlaceSideBattlesCopy();
+            EnsureThinProgressBar(_progressTrack, 16f);
+            PaintSideProgress();
+        }
+
+        private void PlaceSideBattlesCopy()
+        {
+            if (_progressTrack == null || !_progressTrack.gameObject.activeInHierarchy)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            float width = _progressTrack.rect.width;
+            if (width < 120f)
+                width = _progressTrack.sizeDelta.x > 120f ? _progressTrack.sizeDelta.x : 360f;
+            float textWidth = Mathf.Max(96f, width - 16f);
+            TMP_Text caption = _progressTrack.Find("Caption")?.GetComponent<TMP_Text>();
+            TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
+            if (caption != null && string.IsNullOrWhiteSpace(caption.text))
+                SetCopy(caption, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 18f);
             if (caption != null)
             {
                 caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 caption.isRightToLeftText = fa;
-                caption.overflowMode = TextOverflowModes.Ellipsis;
+                caption.overflowMode = TextOverflowModes.Overflow;
                 caption.textWrappingMode = TextWrappingModes.NoWrap;
-                PlaceTopLeft(caption.rectTransform, fa ? pairX + countWidth + pairGap : pairX, 0f, captionWidth, 32f);
+                caption.enableAutoSizing = true;
+                caption.fontSizeMin = 14f;
+                caption.fontSizeMax = 18f;
+                caption.maxVisibleLines = 1;
+                V3LocalizedTextBindingView binding = caption.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(14f, 18f);
+                PlaceTopLeft(caption.rectTransform, 8f, 0f, textWidth, 28f);
             }
 
             if (count != null)
@@ -1105,11 +1149,9 @@ namespace Game.UI.Runtime
                 count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 count.overflowMode = TextOverflowModes.Overflow;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
-                PlaceTopLeft(count.rectTransform, fa ? pairX : pairX + captionWidth + pairGap, 2f, countWidth, 28f);
+                count.maxVisibleLines = 1;
+                PlaceTopLeft(count.rectTransform, 8f, 28f, textWidth, 22f);
             }
-
-            EnsureThinProgressBar(_progressTrack, 18f);
-            PaintSideProgress();
         }
 
         private void PaintSideProgress()
@@ -1124,12 +1166,13 @@ namespace Game.UI.Runtime
                 bar = EnsureThinProgressBar(_progressTrack, 18f);
             if (bar == null || _progressFill == null)
                 return;
-            const float barWidth = 270f;
+            float trackWidth = _progressTrack.rect.width;
+            if (trackWidth < 120f)
+                trackWidth = 360f;
+            float barWidth = Mathf.Min(270f, trackWidth - 16f);
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            float barX = 8f;
-            if (fa && _progressTrack.rect.width > barWidth + 16f)
-                barX = _progressTrack.rect.width - 8f - barWidth;
-            PlaceTopLeft(bar, barX, 38f, barWidth, 18f);
+            float barX = fa ? Mathf.Max(8f, trackWidth - 8f - barWidth) : 8f;
+            PlaceTopLeft(bar, barX, 52f, barWidth, 16f);
             RectMask2D mask = bar.GetComponent<RectMask2D>();
             if (mask != null)
                 mask.enabled = false;
@@ -1158,7 +1201,7 @@ namespace Game.UI.Runtime
                 ratio = parsed;
             float inner = barWidth - 6f;
             float fillWidth = ratio >= 0.999f ? inner : Mathf.Max(12f, inner * ratio);
-            PlaceTopLeft(_progressFill.rectTransform, 3f, 3f, fillWidth, 12f);
+            PlaceTopLeft(_progressFill.rectTransform, 2f, 2f, fillWidth, 12f);
             _progressFill.transform.SetAsLastSibling();
         }
 
@@ -1512,21 +1555,29 @@ namespace Game.UI.Runtime
             float slotWidth = slot.sizeDelta.x > 40f ? slot.sizeDelta.x : slot.rect.width;
             if (slotWidth < 40f)
                 slotWidth = 148f;
-            RectTransform icon = slot.Find("Icon") as RectTransform;
+            float icon = iconSize;
+            float countBox = countWidth;
+            float labelWidth = slotWidth - (4f + icon + 6f + 6f + 4f + countBox);
+            if (labelWidth < 96f)
+            {
+                icon = Mathf.Min(icon, 18f);
+                countBox = Mathf.Min(countBox, 22f);
+                labelWidth = Mathf.Max(40f, slotWidth - (4f + icon + 6f + 6f + 4f + countBox));
+            }
+
+            RectTransform iconRect = slot.Find("Icon") as RectTransform;
             RectTransform caption = slot.Find("Caption") as RectTransform;
             RectTransform count = slot.Find("Count") as RectTransform;
-            float iconX = fa ? slotWidth - 4f - iconSize : 4f;
-            float countX = fa ? 4f : slotWidth - 4f - countWidth;
-            float labelX = fa ? 4f + countWidth + 6f : 4f + iconSize + 6f;
-            float labelEnd = fa ? iconX - 6f : countX - 6f;
-            float labelWidth = Mathf.Max(28f, labelEnd - labelX);
-            PlaceTopLeft(icon, iconX, 11f, iconSize, iconSize);
+            float iconX = fa ? slotWidth - 4f - icon : 4f;
+            float countX = fa ? 4f : slotWidth - 4f - countBox;
+            float labelX = fa ? 4f + countBox + 6f : 4f + icon + 6f;
+            PlaceTopLeft(iconRect, iconX, 12f, icon, icon);
             PlaceTopLeft(caption, labelX, 8f, labelWidth, 30f);
-            PlaceTopLeft(count, countX, 11f, countWidth, 24f);
-            HoldFixed(icon, iconSize, iconSize, 0f);
+            PlaceTopLeft(count, countX, 12f, countBox, 22f);
+            HoldFixed(iconRect, icon, icon, 0f);
             HoldFixed(caption, labelWidth, 30f, 0f);
-            HoldFixed(count, countWidth, 24f, 0f);
-            Image image = icon != null ? icon.GetComponent<Image>() : null;
+            HoldFixed(count, countBox, 22f, 0f);
+            Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;
             if (image != null)
             {
                 image.preserveAspect = true;
@@ -1536,14 +1587,20 @@ namespace Game.UI.Runtime
             TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
             if (captionText != null)
             {
+                float fitted = Mathf.Clamp(labelWidth / 5.4f, 10f, 15f);
                 captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 captionText.isRightToLeftText = fa;
-                captionText.overflowMode = TextOverflowModes.Ellipsis;
+                captionText.overflowMode = TextOverflowModes.Overflow;
                 captionText.textWrappingMode = TextWrappingModes.NoWrap;
-                captionText.enableAutoSizing = true;
-                captionText.fontSizeMin = 11f;
-                captionText.fontSizeMax = 16f;
+                captionText.enableAutoSizing = false;
+                captionText.fontSize = fitted;
+                captionText.fontSizeMin = fitted;
+                captionText.fontSizeMax = fitted;
+                captionText.maxVisibleLines = 1;
                 captionText.margin = Vector4.zero;
+                V3LocalizedTextBindingView binding = captionText.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(fitted, fitted);
             }
 
             TMP_Text countText = count != null ? count.GetComponent<TMP_Text>() : null;
@@ -2357,7 +2414,7 @@ namespace Game.UI.Runtime
             if (_recommendedPanel != null)
             {
                 _recommendedPanel.SetParent(column, false);
-                FitLayout(_recommendedPanel, 0f, 68f, 0f);
+                FitLayout(_recommendedPanel, 0f, 200f, 0f);
             }
 
             if (_briefingPreview != null)
@@ -2379,7 +2436,7 @@ namespace Game.UI.Runtime
             if (_progressTrack != null)
             {
                 _progressTrack.SetParent(column, false);
-                FitLayout(_progressTrack, 0f, 64f, 1f);
+                FitLayout(_progressTrack, 0f, 78f, 1f);
             }
 
             if (_medalRow != null)
@@ -2442,11 +2499,11 @@ namespace Game.UI.Runtime
             Transform title = rules.Find("BriefingColumn/Title") ?? rules.Find("Title");
             index = StackColumnChild(title as RectTransform, index, 40f, title != null);
             index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 120f, scenarioDescription != null);
-            index = StackColumnChild(_progressTrack, index, 64f, !battlefield && _progressTrack != null);
+            index = StackColumnChild(_progressTrack, index, 78f, !battlefield && _progressTrack != null);
             index = StackColumnChild(_statRow, index, 84f, battlefield && _statRow != null);
             index = StackColumnChild(_medalRow, index, 104f, _medalRow != null);
             index = StackColumnChild(_difficultyRow, index, 116f, battlefield && _difficultyRow != null);
-            StackColumnChild(_recommendedPanel, index, 124f, !battlefield && _recommendedPanel != null);
+            StackColumnChild(_recommendedPanel, index, 200f, !battlefield && _recommendedPanel != null, true);
             if (_medalGrid != null)
             {
                 _medalGrid.gameObject.SetActive(false);
@@ -2493,7 +2550,7 @@ namespace Game.UI.Runtime
                 mask.enabled = false;
         }
 
-        private static int StackColumnChild(RectTransform rect, int index, float height, bool show)
+        private static int StackColumnChild(RectTransform rect, int index, float height, bool show, bool expand = false)
         {
             if (rect == null)
                 return index;
@@ -2505,7 +2562,7 @@ namespace Game.UI.Runtime
             element.flexibleWidth = 1f;
             element.minHeight = show ? height : 0f;
             element.preferredHeight = show ? height : 0f;
-            element.flexibleHeight = 0f;
+            element.flexibleHeight = show && expand ? 1f : 0f;
             if (!show)
                 return index;
             rect.SetSiblingIndex(index);
@@ -2634,7 +2691,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < texts.Length; i++)
             {
                 TMP_Text text = texts[i];
-                if (text == null || !text.gameObject.activeInHierarchy)
+                if (text == null || !text.gameObject.activeInHierarchy || RelaxesLibraryFloor(text))
                     continue;
                 text.enableAutoSizing = true;
                 if (text.fontSizeMax < LibraryFontFloor)
@@ -3368,7 +3425,7 @@ namespace Game.UI.Runtime
         {
             if (text == null)
                 return;
-            if (text.name != "Subtitle" && text.name != "Value" && !text.name.StartsWith("Column_", StringComparison.Ordinal))
+            if (text.name != "Subtitle" && text.name != "Value" && !RelaxesLibraryFloor(text))
                 min = Mathf.Max(LibraryFontFloor, min);
             max = Mathf.Max(min, max);
             var binding = text.GetComponent<V3LocalizedTextBindingView>() ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>();
@@ -3431,7 +3488,7 @@ namespace Game.UI.Runtime
                 : new[] { "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 40f, 120f, 64f, 104f, 124f };
+                : new[] { 40f, 120f, 78f, 104f, 200f };
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -3462,18 +3519,25 @@ namespace Game.UI.Runtime
                     break;
                 }
 
-                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null);
+                bool expand = child != null && child.name == "RecommendedNext";
+                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null, expand);
             }
 
             if (scenarioDescription != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                if (battlefield)
+                    BindBattlefieldSeed(fa);
+                scenarioDescription.gameObject.SetActive(true);
                 scenarioDescription.margin = new Vector4(24f, 8f, 24f, 8f);
                 scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
                 scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
                 scenarioDescription.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                 scenarioDescription.isRightToLeftText = fa;
-                scenarioDescription.maxVisibleLines = battlefield ? 0 : 3;
+                scenarioDescription.maxVisibleLines = battlefield ? 4 : 3;
+                scenarioDescription.enableAutoSizing = true;
+                scenarioDescription.fontSizeMin = 15f;
+                scenarioDescription.fontSizeMax = battlefield ? 22f : 24f;
             }
 
             VerticalLayoutGroup group = column.GetComponent<VerticalLayoutGroup>();
@@ -3489,7 +3553,40 @@ namespace Game.UI.Runtime
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(column);
+            if (scenarioDescription != null)
+                scenarioDescription.ForceMeshUpdate();
+            ArrangeMedalGrid(_medalRow, UiShellRuntimeGateway.Localization.IsRightToLeft);
+            PlaceSideBattlesCopy();
             PaintSideProgress();
+            if (!battlefield)
+                FitRecommendedPreview();
+        }
+
+        private void BindBattlefieldSeed(bool fa)
+        {
+            if (scenarioDescription == null)
+                return;
+            SkirmishBriefingState briefing = _libraryViewModel != null ? _libraryViewModel.Briefing : default;
+            if (string.IsNullOrEmpty(briefing.ScenarioId))
+                return;
+            string purpose = MixedText(LibraryPurpose(briefing, fa), fa);
+            string reason = LibraryReason(briefing, fa);
+            string copy = string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason;
+            if (string.IsNullOrWhiteSpace(copy))
+                return;
+            SetCopy(scenarioDescription, copy, 15f, 22f);
+        }
+
+        private static bool RelaxesLibraryFloor(TMP_Text text)
+        {
+            if (text == null)
+                return false;
+            if (text.name.StartsWith("Column_", StringComparison.Ordinal))
+                return true;
+            string parent = text.transform.parent != null ? text.transform.parent.name : string.Empty;
+            if (text.name == "Caption" && parent.StartsWith("Slot", StringComparison.Ordinal))
+                return true;
+            return text.name == "Caption" && parent == "BattlesWonTrack";
         }
 
         private bool IsBriefingColumnChild(Transform child, Transform medalKeep, bool battlefield, string descriptionName)
@@ -4022,11 +4119,17 @@ namespace Game.UI.Runtime
             RawImage preview = _recommendedPanel.Find("Preview")?.GetComponent<RawImage>();
             string key = string.IsNullOrEmpty(scenarioId) ? null : "skirmish.preview." + scenarioId;
             Texture2D texture = string.IsNullOrEmpty(key) ? null : SkirmishLibraryPreviewAssets.Load(key);
+            if (texture == null && !string.IsNullOrEmpty(key))
+                texture = SkirmishLibraryPreviewAssets.Placeholder();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             float panelWidth = _recommendedPanel.rect.width > 80f ? _recommendedPanel.rect.width : _recommendedPanel.sizeDelta.x;
             if (panelWidth < 80f)
                 panelWidth = 360f;
+            float panelHeight = _recommendedPanel.rect.height > 80f ? _recommendedPanel.rect.height : _recommendedPanel.sizeDelta.y;
+            if (panelHeight < 160f)
+                panelHeight = 220f;
             bool showPreview = texture != null;
+            float previewHeight = showPreview ? Mathf.Clamp(panelHeight - 92f, 96f, panelHeight - 72f) : 0f;
             if (!showPreview)
             {
                 if (preview != null)
@@ -4038,6 +4141,7 @@ namespace Game.UI.Runtime
                 {
                     preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                     preview.transform.SetParent(_recommendedPanel, false);
+                    preview.transform.SetAsFirstSibling();
                 }
 
                 preview.gameObject.SetActive(true);
@@ -4045,28 +4149,29 @@ namespace Game.UI.Runtime
                 preview.color = Color.white;
                 preview.raycastTarget = false;
                 preview.enabled = true;
-                float previewX = fa ? Mathf.Max(8f, panelWidth - 128f) : 8f;
-                PlaceTopLeft(preview.rectTransform, previewX, 36f, 112f, 64f);
-                CoverCrop(preview, 112f, 64f);
+                PlaceTopLeft(preview.rectTransform, 8f, 4f, Mathf.Max(80f, panelWidth - 16f), previewHeight);
+                CoverCrop(preview, Mathf.Max(80f, panelWidth - 16f), previewHeight);
             }
 
-            float textX = showPreview && !fa ? 128f : 8f;
-            float textWidth = showPreview ? Mathf.Max(80f, panelWidth - 144f) : Mathf.Max(80f, panelWidth - 16f);
+            float textY = showPreview ? previewHeight + 8f : 4f;
+            float textWidth = Mathf.Max(80f, panelWidth - 16f);
             if (_recommendedPanel.Find("Heading") is RectTransform heading)
             {
-                PlaceTopLeft(heading, textX, 4f, textWidth, 28f);
+                PlaceTopLeft(heading, 8f, textY, textWidth, 28f);
                 TMP_Text headingText = heading.GetComponent<TMP_Text>();
                 if (headingText != null)
                 {
                     headingText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                     headingText.isRightToLeftText = fa;
                     headingText.overflowMode = TextOverflowModes.Ellipsis;
+                    headingText.maxVisibleLines = 1;
                 }
             }
 
             if (_recommendedPanel.Find("Body") is RectTransform body)
             {
-                PlaceTopLeft(body, textX, 34f, textWidth, 80f);
+                float bodyHeight = Mathf.Max(36f, panelHeight - textY - 36f);
+                PlaceTopLeft(body, 8f, textY + 28f, textWidth, bodyHeight);
                 TMP_Text bodyText = body.GetComponent<TMP_Text>();
                 if (bodyText != null)
                 {
@@ -4074,8 +4179,18 @@ namespace Game.UI.Runtime
                     bodyText.isRightToLeftText = fa;
                     bodyText.textWrappingMode = TextWrappingModes.Normal;
                     bodyText.overflowMode = TextOverflowModes.Ellipsis;
+                    bodyText.maxVisibleLines = 4;
                 }
             }
+        }
+
+        private void FitRecommendedPreview()
+        {
+            if (_recommendedPanel == null || !_recommendedPanel.gameObject.activeInHierarchy)
+                return;
+            if (string.IsNullOrEmpty(_recommendedScenarioId) && _libraryViewModel != null)
+                _recommendedScenarioId = FocusedRecommendation(_libraryViewModel.Theater, _libraryViewModel.Battlefield);
+            PresentRecommendedPreview(_recommendedScenarioId);
         }
 
         private void PresentLaunchTransition(string scenarioId)
@@ -4326,16 +4441,13 @@ namespace Game.UI.Runtime
                 }
                 else if (columnHeader)
                 {
-                    RelaxLibraryText(text, 14f, 18f, false);
-                    text.alignment = TextAlignmentOptions.Center;
-                    text.isRightToLeftText = fa && ContainsArabicScript(text.text);
-                    text.textWrappingMode = TextWrappingModes.NoWrap;
-                    text.overflowMode = TextOverflowModes.Ellipsis;
+                    ShowColumnHeader(text, fa);
                 }
                 else if (medalCaption || stripCaption)
                 {
-                    RelaxLibraryText(text, 11f, 15f, true);
+                    RelaxLibraryText(text, 10f, 15f, false);
                     text.overflowMode = TextOverflowModes.Overflow;
+                    text.maxVisibleLines = 1;
                 }
                 else if (difficulty)
                     RelaxLibraryText(text, 12f, 18f, true);

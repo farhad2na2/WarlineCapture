@@ -14,6 +14,8 @@ namespace Game.UI.Runtime
         public const float FooterBand = 112f;
         public const float Gap = 14f;
         public const float NarrowAspect = 1.55f;
+        /// <summary>Theatre pulls the map across the gap and 2px into the briefing so the seam does not show.</summary>
+        public const float TheatreSeamOverlap = 2f;
 
         public static void Resolve(
             float width,
@@ -54,6 +56,31 @@ namespace Game.UI.Runtime
                 mapX = OriginX;
                 briefingX = OriginX + mapWidth + Gap;
             }
+        }
+
+        /// <summary>
+        /// Theatre map width is the resolved width plus <see cref="Gap"/> and <see cref="TheatreSeamOverlap"/>.
+        /// Battlefield map and grid keep the resolved gap.
+        /// </summary>
+        public static void CloseTheatreSeam(
+            bool theatre,
+            bool briefingOnLeft,
+            ref float mapX,
+            ref float mapWidth,
+            ref float briefingX,
+            float briefingWidth)
+        {
+            if (!theatre)
+                return;
+            if (briefingOnLeft)
+            {
+                mapX = briefingX + briefingWidth - TheatreSeamOverlap;
+                mapWidth += Gap + TheatreSeamOverlap;
+                return;
+            }
+
+            mapWidth += Gap + TheatreSeamOverlap;
+            briefingX = mapX + mapWidth - TheatreSeamOverlap;
         }
     }
 }

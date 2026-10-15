@@ -1601,6 +1601,8 @@ namespace Game.Editor
             RectTransform compositionRect = composition as RectTransform;
             float width = compositionRect != null ? compositionRect.rect.width : 0f;
             float height = compositionRect != null ? compositionRect.rect.height : 0f;
+            QuickCustomScreenView view = instance.GetComponent<QuickCustomScreenView>();
+            bool theatre = view != null && view.Library != null && view.Library.Level != SkirmishLibraryLevel.Battlefield;
             SkirmishLibraryFrame.Resolve(
                 width,
                 height,
@@ -1611,6 +1613,7 @@ namespace Game.Editor
                 out float briefingWidth,
                 out float panelY,
                 out float panelHeight);
+            SkirmishLibraryFrame.CloseTheatreSeam(theatre, !fa, ref mapX, ref mapWidth, ref briefingX, briefingWidth);
             ExpectPanel(map, "map", mapX, -panelY, mapWidth, panelHeight);
             ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingWidth, panelHeight);
             RequireFilled(map, "map");

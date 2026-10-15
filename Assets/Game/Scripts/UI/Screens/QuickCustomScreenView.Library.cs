@@ -3371,21 +3371,13 @@ namespace Game.UI.Runtime
                 out float panelY,
                 out float panelHeight);
             bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
-            if (theater)
-            {
-                const float overlap = 2f;
-                if (briefingOnLeft)
-                {
-                    mapX = briefingX + briefingWidth - overlap;
-                    mapWidth += SkirmishLibraryFrame.Gap + overlap;
-                }
-                else
-                {
-                    mapWidth += SkirmishLibraryFrame.Gap + overlap;
-                    briefingX = mapX + mapWidth - overlap;
-                }
-            }
-
+            SkirmishLibraryFrame.CloseTheatreSeam(
+                theater,
+                briefingOnLeft,
+                ref mapX,
+                ref mapWidth,
+                ref briefingX,
+                briefingWidth);
             PlaceTopLeft(map, mapX, panelY, mapWidth, panelHeight);
             PlaceTopLeft(briefing, briefingX, panelY, briefingWidth, panelHeight);
             EnsureOpaquePanel(map);

@@ -120,39 +120,57 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// One convex polygon per district, top-left normalised on the 1280×720 painting.
-        /// Order matches <see cref="MapIds"/>. Neighbours keep a gap so the shapes do not overlap.
-        /// Desert Base contains the upper-left fort (0.25, 0.15) and Airfield Plains contains the
-        /// lower-centre runway (0.52, 0.78). Runtime scales them only with the cover crop.
+        /// Order matches <see cref="MapIds"/>. Corners are chamfered so the stroke reads as a
+        /// hex edge instead of a trapezoid. Neighbours keep a gap. Desert Base contains the
+        /// upper-left fort (0.25, 0.15) and Airfield Plains contains the runway (0.52, 0.78).
+        /// Each wide-frame card sits inside its district, off that edge.
         /// </summary>
         public static readonly Vector2[][] TheaterDistrictPolygons =
         {
             new[]
             {
-                new Vector2(0.04f, 0.04f), new Vector2(0.40f, 0.03f), new Vector2(0.44f, 0.20f),
-                new Vector2(0.36f, 0.28f), new Vector2(0.22f, 0.32f), new Vector2(0.08f, 0.28f),
-                new Vector2(0.03f, 0.18f)
+                new Vector2(0.072f, 0.206f), new Vector2(0.074f, 0.185f), new Vector2(0.090f, 0.156f), new Vector2(0.108f, 0.141f),
+                new Vector2(0.234f, 0.050f), new Vector2(0.254f, 0.037f), new Vector2(0.295f, 0.026f), new Vector2(0.326f, 0.024f),
+                new Vector2(0.528f, 0.024f), new Vector2(0.556f, 0.026f), new Vector2(0.581f, 0.044f), new Vector2(0.584f, 0.063f),
+                new Vector2(0.584f, 0.201f), new Vector2(0.582f, 0.222f), new Vector2(0.564f, 0.251f), new Vector2(0.544f, 0.266f),
+                new Vector2(0.401f, 0.359f), new Vector2(0.378f, 0.372f), new Vector2(0.337f, 0.384f), new Vector2(0.309f, 0.385f),
+                new Vector2(0.124f, 0.385f), new Vector2(0.098f, 0.383f), new Vector2(0.075f, 0.365f), new Vector2(0.072f, 0.346f)
             },
             new[]
             {
-                new Vector2(0.56f, 0.03f), new Vector2(0.96f, 0.04f), new Vector2(0.97f, 0.18f),
-                new Vector2(0.90f, 0.28f), new Vector2(0.76f, 0.32f), new Vector2(0.62f, 0.28f),
-                new Vector2(0.56f, 0.20f)
+                new Vector2(0.619f, 0.221f), new Vector2(0.620f, 0.201f), new Vector2(0.623f, 0.183f), new Vector2(0.629f, 0.165f),
+                new Vector2(0.674f, 0.045f), new Vector2(0.686f, 0.029f), new Vector2(0.734f, 0.021f), new Vector2(0.748f, 0.020f),
+                new Vector2(0.812f, 0.020f), new Vector2(0.831f, 0.023f), new Vector2(0.919f, 0.047f), new Vector2(0.932f, 0.064f),
+                new Vector2(0.946f, 0.172f), new Vector2(0.948f, 0.203f), new Vector2(0.948f, 0.341f), new Vector2(0.948f, 0.360f),
+                new Vector2(0.947f, 0.379f), new Vector2(0.946f, 0.383f), new Vector2(0.939f, 0.395f), new Vector2(0.934f, 0.397f),
+                new Vector2(0.908f, 0.398f), new Vector2(0.880f, 0.398f), new Vector2(0.676f, 0.398f), new Vector2(0.648f, 0.396f),
+                new Vector2(0.622f, 0.379f), new Vector2(0.619f, 0.359f)
             },
             new[]
             {
-                new Vector2(0.03f, 0.40f), new Vector2(0.40f, 0.38f), new Vector2(0.42f, 0.50f),
-                new Vector2(0.34f, 0.58f), new Vector2(0.12f, 0.60f), new Vector2(0.03f, 0.50f)
+                new Vector2(0.013f, 0.550f), new Vector2(0.015f, 0.530f), new Vector2(0.032f, 0.508f), new Vector2(0.052f, 0.502f),
+                new Vector2(0.191f, 0.469f), new Vector2(0.212f, 0.465f), new Vector2(0.235f, 0.466f), new Vector2(0.244f, 0.470f),
+                new Vector2(0.293f, 0.503f), new Vector2(0.300f, 0.510f), new Vector2(0.306f, 0.532f), new Vector2(0.307f, 0.552f),
+                new Vector2(0.307f, 0.692f), new Vector2(0.304f, 0.711f), new Vector2(0.281f, 0.729f), new Vector2(0.254f, 0.731f),
+                new Vector2(0.066f, 0.731f), new Vector2(0.039f, 0.729f), new Vector2(0.016f, 0.711f), new Vector2(0.013f, 0.691f)
             },
             new[]
             {
-                new Vector2(0.56f, 0.38f), new Vector2(0.97f, 0.40f), new Vector2(0.97f, 0.52f),
-                new Vector2(0.86f, 0.58f), new Vector2(0.64f, 0.58f), new Vector2(0.54f, 0.48f)
+                new Vector2(0.653f, 0.594f), new Vector2(0.653f, 0.574f), new Vector2(0.653f, 0.549f), new Vector2(0.656f, 0.538f),
+                new Vector2(0.711f, 0.477f), new Vector2(0.721f, 0.469f), new Vector2(0.749f, 0.469f), new Vector2(0.774f, 0.476f),
+                new Vector2(0.940f, 0.535f), new Vector2(0.964f, 0.545f), new Vector2(0.984f, 0.570f), new Vector2(0.987f, 0.591f),
+                new Vector2(0.987f, 0.731f), new Vector2(0.984f, 0.751f), new Vector2(0.961f, 0.769f), new Vector2(0.936f, 0.771f),
+                new Vector2(0.752f, 0.771f), new Vector2(0.726f, 0.771f), new Vector2(0.698f, 0.771f), new Vector2(0.690f, 0.771f),
+                new Vector2(0.653f, 0.770f), new Vector2(0.653f, 0.767f), new Vector2(0.653f, 0.750f), new Vector2(0.653f, 0.731f)
             },
             new[]
             {
-                new Vector2(0.16f, 0.70f), new Vector2(0.36f, 0.66f), new Vector2(0.58f, 0.66f),
-                new Vector2(0.74f, 0.70f), new Vector2(0.78f, 0.74f), new Vector2(0.70f, 0.90f),
-                new Vector2(0.28f, 0.92f), new Vector2(0.14f, 0.78f)
+                new Vector2(0.336f, 0.566f), new Vector2(0.339f, 0.547f), new Vector2(0.365f, 0.530f), new Vector2(0.394f, 0.527f),
+                new Vector2(0.599f, 0.527f), new Vector2(0.628f, 0.530f), new Vector2(0.649f, 0.547f), new Vector2(0.649f, 0.566f),
+                new Vector2(0.649f, 0.702f), new Vector2(0.649f, 0.722f), new Vector2(0.649f, 0.741f), new Vector2(0.649f, 0.756f),
+                new Vector2(0.606f, 0.857f), new Vector2(0.592f, 0.873f), new Vector2(0.528f, 0.897f), new Vector2(0.510f, 0.898f),
+                new Vector2(0.430f, 0.882f), new Vector2(0.412f, 0.866f), new Vector2(0.346f, 0.757f), new Vector2(0.338f, 0.741f),
+                new Vector2(0.336f, 0.722f), new Vector2(0.336f, 0.703f)
             }
         };
 

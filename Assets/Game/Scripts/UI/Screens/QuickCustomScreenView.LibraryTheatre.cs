@@ -397,6 +397,169 @@ namespace Game.UI.Runtime
             return count;
         }
 
+        private static void NudgeCardsOffOwnEdges(List<TheatreZoneSlot> slots, Rect safe)
+        {
+            if (slots == null)
+                return;
+            const float margin = 4f;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TheatreZoneSlot slot = slots[i];
+                if (slot.Hex == null || !EdgeCrossesCard(slot.Hex, slot.Card))
+                    continue;
+                Rect current = slot.Card;
+                Rect best = current;
+                float bestDist = float.MaxValue;
+                bool found = false;
+                float xMax = safe.xMax - current.width;
+                float yMax = safe.yMax - current.height;
+                for (float y = safe.yMin; y <= yMax + 0.1f; y += 8f)
+                {
+                    for (float x = safe.xMin; x <= xMax + 0.1f; x += 8f)
+                    {
+                        var cand = new Rect(x, y, current.width, current.height);
+                        if (EdgeCrossesCard(slot.Hex, cand) || CardBoundaryGap(slot.Hex, cand) < margin)
+                            continue;
+                        bool blocked = false;
+                        for (int j = 0; j < slots.Count; j++)
+                        {
+                            if (j != i && CardClearance(cand, slots[j].Card) + 0.01f < ZoneSeparateGap)
+                            {
+                                blocked = true;
+                                break;
+                            }
+                        }
+
+                        if (blocked)
+                            continue;
+                        float dx = cand.center.x - current.center.x;
+                        float dy = cand.center.y - current.center.y;
+                        float dist = dx * dx + dy * dy;
+                        if (!CardInsidePolygon(cand, slot.Hex))
+                            dist += 10000000f;
+                        if (dist >= bestDist)
+                            continue;
+                        bestDist = dist;
+                        best = cand;
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                    continue;
+                slot.Card = best;
+                slots[i] = slot;
+            }
+        }
+
+        private static bool EdgeCrossesCard(Vector2[] poly, Rect card)
+        {
+            if (poly == null)
+                return false;
+            for (int i = 0; i < poly.Length; i++)
+            {
+                Vector2 a = poly[i];
+                Vector2 b = poly[(i + 1) % poly.Length];
+                if (SegmentHitsRect(a, b, card))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool SegmentHitsRect(Vector2 a, Vector2 b, Rect rect)
+        {
+            if (PointInRect(a, rect) || PointInRect(b, rect))
+                return true;
+            Vector2 c0 = new Vector2(rect.xMin, rect.yMin);
+            Vector2 c1 = new Vector2(rect.xMax, rect.yMin);
+            Vector2 c2 = new Vector2(rect.xMax, rect.yMax);
+            Vector2 c3 = new Vector2(rect.xMin, rect.yMax);
+            return SegmentsCross(a, b, c0, c1) || SegmentsCross(a, b, c1, c2)
+                || SegmentsCross(a, b, c2, c3) || SegmentsCross(a, b, c3, c0);
+        }
+
+        private static bool PointInRect(Vector2 point, Rect rect)
+        {
+            return point.x >= rect.xMin && point.x <= rect.xMax && point.y >= rect.yMin && point.y <= rect.yMax;
+        }
+
+        private static bool SegmentsCross(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+        {
+            float ab = Orient(a, b, c);
+            float ab2 = Orient(a, b, d);
+            float cd = Orient(c, d, a);
+            float cd2 = Orient(c, d, b);
+            return ab * ab2 < 0f && cd * cd2 < 0f;
+        }
+
+        private static float Orient(Vector2 a, Vector2 b, Vector2 c)
+        {
+            return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        }
+
+        private static float CardBoundaryGap(Vector2[] poly, Rect card)
+        {
+            if (EdgeCrossesCard(poly, card))
+                return 0f;
+            float best = float.MaxValue;
+            Vector2[] corners =
+            {
+                new Vector2(card.xMin, card.yMin),
+                new Vector2(card.xMax, card.yMin),
+                new Vector2(card.xMax, card.yMax),
+                new Vector2(card.xMin, card.yMax)
+            };
+            for (int i = 0; i < corners.Length; i++)
+            {
+                Vector2 a = corners[i];
+                Vector2 b = corners[(i + 1) % corners.Length];
+                for (int step = 0; step <= 4; step++)
+                {
+                    float t = step / 4f;
+                    var point = new Vector2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+                    best = Mathf.Min(best, DistanceToPolygonEdge(point, poly));
+                }
+            }
+
+            return best;
+        }
+
+        private static bool CardInsidePolygon(Rect card, Vector2[] poly)
+        {
+            Vector2[] corners =
+            {
+                new Vector2(card.xMin, card.yMin),
+                new Vector2(card.xMax, card.yMin),
+                new Vector2(card.xMax, card.yMax),
+                new Vector2(card.xMin, card.yMax)
+            };
+            for (int i = 0; i < corners.Length; i++)
+            {
+                if (!PointInsidePolygon(corners[i], poly))
+                    return false;
+            }
+
+            return !EdgeCrossesCard(poly, card);
+        }
+
+        private static bool PointInsidePolygon(Vector2 point, Vector2[] poly)
+        {
+            bool inside = false;
+            for (int i = 0, j = poly.Length - 1; i < poly.Length; j = i++)
+            {
+                Vector2 a = poly[i];
+                Vector2 b = poly[j];
+                if ((a.y > point.y) == (b.y > point.y))
+                    continue;
+                float x = (b.x - a.x) * (point.y - a.y) / (b.y - a.y) + a.x;
+                if (point.x < x)
+                    inside = !inside;
+            }
+
+            return inside;
+        }
+
         private static bool RectHitsAnyHex(Rect rect, List<TheatreZoneSlot> slots)
         {
             Rect shrunk = new Rect(rect.x + 1f, rect.y + 1f, rect.width - 2f, rect.height - 2f);
@@ -495,6 +658,7 @@ namespace Game.UI.Runtime
                 SeparateCards(slots, safe);
             }
 
+            NudgeCardsOffOwnEdges(slots, safe);
             NudgeCues(slots, safe);
         }
 
@@ -935,11 +1099,11 @@ namespace Game.UI.Runtime
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
             PlaceDistrictHalo(root, local, color);
             float stroke = selected ? 4f : 3.5f;
-            Color glow = Color.Lerp(color, Color.white, 0.62f);
-            glow.a = 0.92f;
+            Color glow = Color.Lerp(color, Color.white, 0.78f);
+            glow.a = 0.98f;
             Color ink = selected ? Color.Lerp(color, Color.white, 0.35f) : Color.Lerp(color, Color.white, 0.12f);
             ink.a = 1f;
-            DrawHexEdges(root, local, glow, 12f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, glow, 16f, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             for (int i = 0; i < local.Length; i++)
             {
@@ -954,7 +1118,7 @@ namespace Game.UI.Runtime
 
         private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
         {
-            const float pad = 14f;
+            const float pad = 22f;
             Sprite halo = BuildDistrictHalo(localPoints, pad);
             if (halo == null || root == null)
                 return;
@@ -963,8 +1127,8 @@ namespace Game.UI.Runtime
             image.transform.SetParent(root, false);
             image.sprite = halo;
             image.type = Image.Type.Simple;
-            Color glow = Color.Lerp(color, Color.white, 0.72f);
-            glow.a = 0.78f;
+            Color glow = Color.Lerp(color, Color.white, 0.84f);
+            glow.a = 0.92f;
             image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
@@ -983,7 +1147,7 @@ namespace Game.UI.Runtime
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
             // Edge band only. A filled blur stacks on the 0.23 tint and hides the painting.
-            const float reach = 13f;
+            const float reach = 18f;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -1496,8 +1660,7 @@ namespace Game.UI.Runtime
                 cue.ForceMeshUpdate();
             }
 
-            if (fa && pin != null)
-                SeatFaCue(parent, pin, frameW, frameH, inset, ref cueRect);
+            SeatCueClear(parent, pin, frameW, frameH, inset, ref cueRect);
             PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
 
             Transform plate = parent.Find("CuePlate");
@@ -1653,7 +1816,7 @@ namespace Game.UI.Runtime
             return cue;
         }
 
-        private static void SeatFaCue(
+        private static void SeatCueClear(
             RectTransform parent,
             RectTransform pin,
             float frameW,
@@ -1661,55 +1824,150 @@ namespace Game.UI.Runtime
             float inset,
             ref Rect cue)
         {
-            if (parent == null || pin == null)
+            if (parent == null)
                 return;
+            const float margin = 12f;
+            var cards = new List<Rect>(8);
+            var pins = new List<Rect>(8);
+            CollectOverlayRects(parent, "ZoneCard_", cards);
+            CollectOverlayRects(parent, "ZonePin_", pins);
+            if (pin != null && TrySeatCueAroundPin(pin, frameW, frameH, inset, margin, cue, cards, pins, ref cue))
+                return;
+            Rect topLeft = new Rect(inset, inset, cue.width, cue.height);
+            Rect topRight = new Rect(frameW - inset - cue.width, inset, cue.width, cue.height);
+            Rect bottomLeft = new Rect(inset, frameH - inset - cue.height, cue.width, cue.height);
+            Rect bottomRight = new Rect(frameW - inset - cue.width, frameH - inset - cue.height, cue.width, cue.height);
+            if (TryAcceptCue(topLeft, frameW, frameH, inset, margin, cards, pins, ref cue)
+                || TryAcceptCue(topRight, frameW, frameH, inset, margin, cards, pins, ref cue)
+                || TryAcceptCue(bottomLeft, frameW, frameH, inset, margin, cards, pins, ref cue)
+                || TryAcceptCue(bottomRight, frameW, frameH, inset, margin, cards, pins, ref cue))
+                return;
+        }
+
+        private static bool TrySeatCueAroundPin(
+            RectTransform pin,
+            float frameW,
+            float frameH,
+            float inset,
+            float margin,
+            Rect cue,
+            List<Rect> cards,
+            List<Rect> pins,
+            ref Rect placed)
+        {
             float pinLeft = pin.anchoredPosition.x;
             float pinTop = -pin.anchoredPosition.y;
             float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
             float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
-            const float gap = 8f;
-            var candidates = new List<Rect>(60);
-            Rect above = cue;
-            above.x = pinLeft + pinW * 0.5f - cue.width * 0.5f;
-            above.y = pinTop - gap - cue.height;
-            candidates.Add(above);
-            Rect beside = cue;
-            beside.x = pinLeft - gap - cue.width;
-            beside.y = pinTop + pinH * 0.5f - cue.height * 0.5f;
-            candidates.Add(beside);
-            for (int step = 1; step <= 28; step++)
-            {
-                Rect slide = beside;
-                slide.x = beside.x - step * 12f;
-                candidates.Add(slide);
-                Rect shifted = above;
-                shifted.x = above.x - step * 12f;
-                candidates.Add(shifted);
-            }
-
-            for (int i = 0; i < candidates.Count; i++)
-            {
-                Rect clamped = ClampCue(candidates[i], frameW, frameH, inset);
-                if (!CueMissesPins(parent, clamped) || !CueMissesCards(parent, clamped))
-                    continue;
-                cue = clamped;
-                return;
-            }
+            float pinCenterX = pinLeft + pinW * 0.5f;
+            float pinCenterY = pinTop + pinH * 0.5f;
+            int limit = Mathf.CeilToInt(Mathf.Max(frameW, frameH));
+            if (TryCueSide(limit, frameW, frameH, inset, margin, cards, pins, ref placed, (dist, slide) => new Rect(
+                    pinCenterX - cue.width * 0.5f + slide,
+                    pinTop - margin - cue.height - dist,
+                    cue.width,
+                    cue.height)))
+                return true;
+            if (TryCueSide(limit, frameW, frameH, inset, margin, cards, pins, ref placed, (dist, slide) => new Rect(
+                    pinLeft - margin - cue.width - dist,
+                    pinCenterY - cue.height * 0.5f + slide,
+                    cue.width,
+                    cue.height)))
+                return true;
+            if (TryCueSide(limit, frameW, frameH, inset, margin, cards, pins, ref placed, (dist, slide) => new Rect(
+                    pinLeft + pinW + margin + dist,
+                    pinCenterY - cue.height * 0.5f + slide,
+                    cue.width,
+                    cue.height)))
+                return true;
+            return TryCueSide(limit, frameW, frameH, inset, margin, cards, pins, ref placed, (dist, slide) => new Rect(
+                pinCenterX - cue.width * 0.5f + slide,
+                pinTop + pinH + margin + dist,
+                cue.width,
+                cue.height));
         }
 
-        private static bool CueMissesCards(RectTransform parent, Rect cue)
+        private static bool TryCueSide(
+            int limit,
+            float frameW,
+            float frameH,
+            float inset,
+            float margin,
+            List<Rect> cards,
+            List<Rect> pins,
+            ref Rect placed,
+            System.Func<float, float, Rect> spot)
         {
-            for (int i = 0; i < parent.childCount; i++)
+            for (int dist = 0; dist <= limit; dist += 12)
             {
-                Transform child = parent.GetChild(i);
-                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
-                    continue;
-                var cardRect = new Rect(card.anchoredPosition.x, -card.anchoredPosition.y, card.sizeDelta.x, card.sizeDelta.y);
-                if (Overlaps(cue, cardRect, 0f))
+                for (int slide = 0; slide <= limit; slide += 12)
+                {
+                    if (slide == 0)
+                    {
+                        if (TryAcceptCue(spot(dist, 0f), frameW, frameH, inset, margin, cards, pins, ref placed))
+                            return true;
+                        continue;
+                    }
+
+                    if (TryAcceptCue(spot(dist, -slide), frameW, frameH, inset, margin, cards, pins, ref placed)
+                        || TryAcceptCue(spot(dist, slide), frameW, frameH, inset, margin, cards, pins, ref placed))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryAcceptCue(
+            Rect candidate,
+            float frameW,
+            float frameH,
+            float inset,
+            float margin,
+            List<Rect> cards,
+            List<Rect> pins,
+            ref Rect placed)
+        {
+            if (candidate.x < inset - 0.5f || candidate.y < inset - 0.5f)
+                return false;
+            if (candidate.xMax > frameW - inset + 0.5f || candidate.yMax > frameH - inset + 0.5f)
+                return false;
+            if (!CueClears(candidate, cards, margin) || !CueClears(candidate, pins, margin))
+                return false;
+            placed = candidate;
+            return true;
+        }
+
+        private static bool CueClears(Rect cue, List<Rect> blockers, float margin)
+        {
+            for (int i = 0; i < blockers.Count; i++)
+            {
+                Rect block = blockers[i];
+                float dx = AxisGap(cue.xMin, cue.xMax, block.xMin, block.xMax);
+                float dy = AxisGap(cue.yMin, cue.yMax, block.yMin, block.yMax);
+                if (dx < margin && dy < margin)
                     return false;
             }
 
             return true;
+        }
+
+        private static void CollectOverlayRects(RectTransform parent, string prefix, List<Rect> rects)
+        {
+            if (rects == null)
+                return;
+            rects.Clear();
+            if (parent == null)
+                return;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith(prefix, StringComparison.Ordinal) || child is not RectTransform block)
+                    continue;
+                float width = block.sizeDelta.x > 2f ? block.sizeDelta.x : ZonePinSize;
+                float height = block.sizeDelta.y > 2f ? block.sizeDelta.y : ZonePinSize;
+                rects.Add(new Rect(block.anchoredPosition.x, -block.anchoredPosition.y, width, height));
+            }
         }
 
         private static void PlaceCueClearOfPin(

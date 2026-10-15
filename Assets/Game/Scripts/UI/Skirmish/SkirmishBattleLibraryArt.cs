@@ -15,26 +15,28 @@ namespace Game.UI.Runtime
         public static readonly string[] ObjectiveIds = { "BA", "FC", "BT", "CE" };
 
         /// <summary>
-        /// Hit zones for the one painted collage. They follow the organic territories
-        /// and must stay borderless so the plate is the only outline.
+        /// Hit zones on the painted 16:9 theatre base, top-left normalised.
+        /// Order matches MapIds: Desert Base upper-left, City Crossroads upper-right,
+        /// Mountain Pass mid-left, Industrial Basin mid-right, Airfield Plains lower-centre.
+        /// Runtime draws the outlines; the painting has none.
         /// </summary>
         public static readonly Rect[] TheaterRegions =
         {
-            new Rect(0.00f, 0.00f, 0.43f, 0.54f),
-            new Rect(0.38f, 0.00f, 0.34f, 0.50f),
-            new Rect(0.66f, 0.00f, 0.34f, 0.48f),
-            new Rect(0.00f, 0.46f, 0.48f, 0.54f),
-            new Rect(0.42f, 0.44f, 0.58f, 0.56f)
+            new Rect(0.00f, 0.00f, 0.50f, 0.34f),
+            new Rect(0.50f, 0.00f, 0.50f, 0.34f),
+            new Rect(0.00f, 0.34f, 0.48f, 0.32f),
+            new Rect(0.48f, 0.34f, 0.52f, 0.32f),
+            new Rect(0.00f, 0.66f, 1.00f, 0.34f)
         };
 
-        /// <summary>Label centres on theater_collage.png, top-left normalised, clear of the shared edges.</summary>
+        /// <summary>Pin centres on the painted theatre base, top-left normalised. The name card sits just below.</summary>
         public static readonly Vector2[] TheaterLabelCentres =
         {
-            new Vector2(0.18f, 0.26f),
-            new Vector2(0.54f, 0.20f),
-            new Vector2(0.84f, 0.22f),
-            new Vector2(0.20f, 0.74f),
-            new Vector2(0.70f, 0.74f)
+            new Vector2(0.25f, 0.15f),
+            new Vector2(0.75f, 0.15f),
+            new Vector2(0.24f, 0.48f),
+            new Vector2(0.74f, 0.48f),
+            new Vector2(0.52f, 0.78f)
         };
 
         public static string TheaterPlate => ResourceRoot + "theater_collage";

@@ -15,6 +15,10 @@ namespace Game.UI.Runtime
         public static string PlatePath(string mapId) =>
             Root + "/Plates/skirmish.plate." + mapId + ".png";
 
+        public const string TheatreBaseKey = "skirmish.theatre.base";
+
+        public static string TheatreBasePath => Root + "/Theatre/" + TheatreBaseKey + ".png";
+
         public static string ResolvePreviewKey(string scenarioId, bool playable, string mapId)
         {
             if (playable && !string.IsNullOrEmpty(scenarioId))
@@ -65,6 +69,8 @@ namespace Game.UI.Runtime
                 return Root + "/Zones/" + key + ".png";
             if (key.StartsWith(blur, System.StringComparison.Ordinal))
                 return Root + "/Blurs/" + key + ".png";
+            if (string.Equals(key, TheatreBaseKey, System.StringComparison.Ordinal))
+                return TheatreBasePath;
             return null;
         }
 

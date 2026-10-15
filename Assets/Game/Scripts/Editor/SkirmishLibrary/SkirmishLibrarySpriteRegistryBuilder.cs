@@ -39,6 +39,7 @@ namespace Game.Editor
                 var entries = new List<SkirmishLibrarySpriteRegistry.Entry>();
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Previews");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Plates");
+                Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Theatre");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Zones");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Blurs");
                 SkirmishLibrarySpriteRegistry.Entry[] next = entries.ToArray();

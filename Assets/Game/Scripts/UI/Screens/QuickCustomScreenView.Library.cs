@@ -389,11 +389,21 @@ namespace Game.UI.Runtime
                 ?.GetComponent<RawImage>();
             if (map == null)
                 return;
+            RectTransform clip = map.rectTransform.parent as RectTransform;
+            if (!TryFrameSize(clip, out float plateWidth, out float plateHeight))
+            {
+                plateWidth = 1064f;
+                plateHeight = 559f;
+            }
+
             if (!battlefield)
             {
-                Texture2D collage = Resources.Load<Texture2D>(SkirmishBattleLibraryArt.TheaterPlate);
-                map.texture = collage != null ? collage : SkirmishLibraryPreviewAssets.Placeholder();
+                Texture2D painted = LoadTheatreBase();
+                map.texture = painted != null ? painted : SkirmishLibraryPreviewAssets.Placeholder();
                 map.color = Color.white;
+                map.uvRect = new Rect(0f, 0f, 1f, 1f);
+                PlaceTheatreContain(map.rectTransform, plateWidth, plateHeight, TextureAspect(map.texture));
+                map.rectTransform.localScale = Vector3.one;
             }
             else
             {
@@ -401,21 +411,12 @@ namespace Game.UI.Runtime
                 string key = TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin)
                     ? pin.PlatePreviewKey
                     : null;
-                RectTransform clip = map.rectTransform.parent as RectTransform;
-                if (!TryFrameSize(clip, out float plateWidth, out float plateHeight))
-                {
-                    plateWidth = 1064f;
-                    plateHeight = 559f;
-                }
-
                 ApplyBoundPreview(map, key, plateWidth, plateHeight);
+                Stretch(map.rectTransform);
             }
-            if (!battlefield)
-                map.uvRect = new Rect(0f, 0f, 1f, 1f);
             AspectRatioFitter fitter = map.GetComponent<AspectRatioFitter>();
             if (fitter != null)
                 fitter.enabled = false;
-            Stretch(map.rectTransform);
         }
 
         private void PresentRegions(SkirmishTheaterState theater, bool fa)
@@ -431,8 +432,7 @@ namespace Game.UI.Runtime
             {
                 if (map != null)
                     map.enabled = true;
-                Transform previewRoot = map != null && map.transform.parent != null ? map.transform.parent.parent : null;
-                SetActive(previewRoot != null ? previewRoot.Find("TheaterLabels") : null, false);
+                HideTheaterLabels(map);
                 return;
             }
 
@@ -442,24 +442,32 @@ namespace Game.UI.Runtime
             ground.color = new Color(0.07f, 0.07f, 0.06f, 1f);
             ground.raycastTarget = false;
 
-            var zones = new GameObject("TheaterZones", typeof(RectTransform)).GetComponent<RectTransform>();
-            zones.SetParent(_libraryRegions, false);
-            Stretch(zones);
-            Texture2D painted = SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
+            RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
+            if (!TryFrameSize(plate, out float plateWidth, out float plateHeight))
+            {
+                plateWidth = 1024f;
+                plateHeight = 540f;
+            }
+
+            Texture2D painted = LoadTheatreBase();
             bool anyZone = painted != null;
+            float aspect = TextureAspect(painted);
+            ContainTheatre(plateWidth, plateHeight, aspect, out float fitX, out float fitY, out float fitW, out float fitH);
+            var fit = new GameObject("TheaterFit", typeof(RectTransform)).GetComponent<RectTransform>();
+            fit.SetParent(_libraryRegions, false);
+            PlaceTopLeft(fit, fitX, fitY, fitW, fitH);
+            fit.localScale = Vector3.one;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-                raw.transform.SetParent(zones, false);
+                raw.transform.SetParent(fit, false);
                 Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = Color.white;
+                raw.uvRect = new Rect(0f, 0f, 1f, 1f);
                 raw.raycastTarget = false;
-                RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
-                float plateWidth = plate != null && plate.rect.width > 2f ? plate.rect.width : 1024f;
-                float plateHeight = plate != null && plate.rect.height > 2f ? plate.rect.height : 540f;
-                CoverCrop(raw, plateWidth, plateHeight);
-                OutlineSelectedZone(zones, theater.SelectedMapId, plateWidth, plateHeight);
+                raw.rectTransform.localScale = Vector3.one;
+                OutlineSelectedZone(fit, theater.SelectedMapId);
             }
             else
             {
@@ -471,18 +479,16 @@ namespace Game.UI.Runtime
                         continue;
                     anyZone = true;
                     var raw = new GameObject("Zone_" + pin.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-                    raw.transform.SetParent(zones, false);
+                    raw.transform.SetParent(fit, false);
                     Stretch(raw.rectTransform);
                     raw.texture = feather;
                     bool zoneSelected = string.Equals(pin.MapId, theater.SelectedMapId, StringComparison.OrdinalIgnoreCase);
                     raw.color = zoneSelected ? new Color(1.25f, 1.05f, 0.72f, 1f) : new Color(0.62f, 0.5f, 0.38f, 1f);
+                    raw.uvRect = new Rect(0f, 0f, 1f, 1f);
                     raw.raycastTarget = false;
-                    RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
-                    float plateWidth = plate != null && plate.rect.width > 2f ? plate.rect.width : 1024f;
-                    float plateHeight = plate != null && plate.rect.height > 2f ? plate.rect.height : 540f;
-                    CoverCrop(raw, plateWidth, plateHeight);
+                    raw.rectTransform.localScale = Vector3.one;
                     if (zoneSelected)
-                        StrokeSelectedZone(zones, raw, feather, plateWidth, plateHeight);
+                        StrokeSelectedZone(fit, raw, feather);
                 }
             }
 
@@ -490,10 +496,9 @@ namespace Game.UI.Runtime
                 map.enabled = !anyZone;
 
             var hits = new GameObject("TheaterHits", typeof(RectTransform)).GetComponent<RectTransform>();
-            hits.SetParent(_libraryRegions, false);
+            hits.SetParent(fit, false);
             Stretch(hits);
-            RectTransform plateRect = map != null ? map.rectTransform.parent as RectTransform : null;
-            RectTransform labels = EnsureTheaterLabelHost(plateRect);
+            RectTransform labels = EnsureTheaterLabelHost(plate, fitX, fitY, fitW, fitH);
             ClearChildren(labels);
             for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
             {
@@ -586,38 +591,81 @@ namespace Game.UI.Runtime
             }
         }
 
-        private RectTransform EnsureTheaterLabelHost(RectTransform plate)
+        private static void HideTheaterLabels(RawImage map)
         {
-            Transform preview = plate != null ? plate.parent : _libraryRegions;
-            if (preview == null)
+            Transform clip = map != null ? map.transform.parent : null;
+            SetActive(clip != null ? clip.Find("TheaterLabels") : null, false);
+            Transform preview = clip != null ? clip.parent : null;
+            SetActive(preview != null ? preview.Find("TheaterLabels") : null, false);
+        }
+
+        private static Texture2D LoadTheatreBase()
+        {
+            Texture2D painted = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);
+            if (painted != null)
+                return painted;
+            return SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
+        }
+
+        private static float TextureAspect(Texture texture)
+        {
+            if (texture != null && texture.width > 0 && texture.height > 0)
+                return texture.width / (float)texture.height;
+            return 16f / 9f;
+        }
+
+        private static void ContainTheatre(
+            float frameWidth,
+            float frameHeight,
+            float sourceAspect,
+            out float x,
+            out float y,
+            out float width,
+            out float height)
+        {
+            if (sourceAspect < 0.01f)
+                sourceAspect = 16f / 9f;
+            width = frameWidth;
+            height = width / sourceAspect;
+            if (height > frameHeight)
+            {
+                height = frameHeight;
+                width = height * sourceAspect;
+            }
+
+            x = (frameWidth - width) * 0.5f;
+            y = (frameHeight - height) * 0.5f;
+        }
+
+        private static void PlaceTheatreContain(RectTransform rect, float frameWidth, float frameHeight, float sourceAspect)
+        {
+            ContainTheatre(frameWidth, frameHeight, sourceAspect, out float x, out float y, out float width, out float height);
+            PlaceTopLeft(rect, x, y, width, height);
+        }
+
+        private RectTransform EnsureTheaterLabelHost(RectTransform plate, float x, float y, float width, float height)
+        {
+            if (plate == null)
                 return _libraryRegions;
-            Transform existing = preview.Find("TheaterLabels");
+            Transform legacy = plate.parent != null ? plate.parent.Find("TheaterLabels") : null;
+            if (legacy != null)
+                legacy.SetParent(plate, false);
+            Transform existing = plate.Find("TheaterLabels");
             RectTransform host = existing as RectTransform;
             if (host == null)
             {
                 host = new GameObject("TheaterLabels", typeof(RectTransform)).GetComponent<RectTransform>();
-                host.SetParent(preview, false);
+                host.SetParent(plate, false);
             }
 
-            if (plate != null)
-            {
-                host.anchorMin = plate.anchorMin;
-                host.anchorMax = plate.anchorMax;
-                host.pivot = plate.pivot;
-                host.offsetMin = plate.offsetMin;
-                host.offsetMax = plate.offsetMax;
-            }
-            else
-            {
-                Stretch(host);
-            }
-
+            PlaceTopLeft(host, x, y, width, height);
+            host.localScale = Vector3.one;
             host.gameObject.SetActive(true);
             host.SetAsLastSibling();
             return host;
         }
 
-        private static void OutlineSelectedZone(Transform parent, string mapId, float frameWidth, float frameHeight)
+        private static void OutlineSelectedZone(Transform parent, string mapId)
         {
             if (parent == null || string.IsNullOrEmpty(mapId))
                 return;
@@ -629,12 +677,13 @@ namespace Game.UI.Runtime
             Stretch(marker.rectTransform);
             marker.texture = feather;
             marker.color = new Color(1.22f, 1.08f, 0.78f, 1f);
+            marker.uvRect = new Rect(0f, 0f, 1f, 1f);
             marker.raycastTarget = false;
-            CoverCrop(marker, frameWidth, frameHeight);
-            StrokeSelectedZone(parent, marker, feather, frameWidth, frameHeight);
+            marker.rectTransform.localScale = Vector3.one;
+            StrokeSelectedZone(parent, marker, feather);
         }
 
-        private static void StrokeSelectedZone(Transform parent, RawImage zone, Texture2D texture, float frameWidth, float frameHeight)
+        private static void StrokeSelectedZone(Transform parent, RawImage zone, Texture2D texture)
         {
             Vector2[] offsets =
             {
@@ -650,8 +699,9 @@ namespace Game.UI.Runtime
                 stroke.rectTransform.anchoredPosition = offsets[i];
                 stroke.texture = texture;
                 stroke.color = new Color(1f, 0.86f, 0.22f, 1f);
+                stroke.uvRect = new Rect(0f, 0f, 1f, 1f);
                 stroke.raycastTarget = false;
-                CoverCrop(stroke, frameWidth, frameHeight);
+                stroke.rectTransform.localScale = Vector3.one;
             }
         }
 
@@ -4442,6 +4492,8 @@ namespace Game.UI.Runtime
                 texture = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
             if (texture == null)
                 texture = SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
+            if (texture == null && !battlefield)
+                texture = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);
             if (texture == null)
                 texture = SkirmishLibraryPreviewAssets.Load("skirmish.blur.theater");
             image.texture = texture != null ? texture : SkirmishLibraryPreviewAssets.Placeholder();

@@ -92,6 +92,13 @@ namespace Game.UI.Runtime
         private const float SafeTop = 28f;
         private const float SafeRight = 28f;
         private const float SafeBottom = 40f;
+        /// <summary>ZoneHexPad. The outline rect is the hex bounds plus this pad. Capture measures that rect.</summary>
+        public const float OutlinePad = 6f;
+        /// <summary>RequireTheaterOverlay inset. Corners must sit inside the clip shrunk by this, with <see cref="MapInsetSlop"/>.</summary>
+        public const float MapInset = 12f;
+        public const float MapInsetSlop = 2f;
+        /// <summary>Height the v35 halves were authored at. Capture's aspect check divides by this.</summary>
+        private const float V35AuthorHeight = 620f;
         private const float PinSize = 34f;
         private const float Edge = 12f;
         private const float CardGap = 14f;
@@ -116,10 +123,97 @@ namespace Game.UI.Runtime
         {
             if (frameWidth < 2f || frameHeight < 2f)
                 return 0f;
-            V35Half(mapId, frameWidth / frameHeight, out float halfWidth, out float halfHeight);
+            AuthoredHalf(mapId, frameWidth, frameHeight, out float halfWidth, out float halfHeight);
             if (halfHeight < 1f)
                 return 0f;
             return halfWidth / halfHeight;
+        }
+
+        /// <summary>
+        /// Theatre map clip on a capture canvas after the search bar and the floating title
+        /// are removed. Matches <c>SkirmishLibraryFrame</c> plus the theatre clip insets
+        /// (top 8, bottom 128) inside the header and footer bands.
+        /// </summary>
+        public static void CaptureMapSize(float canvasWidth, float canvasHeight, out float mapWidth, out float mapHeight)
+        {
+            const float originX = 14f;
+            const float headerBand = 108f;
+            const float footerBand = 112f;
+            const float gap = 14f;
+            const float narrowAspect = 1.55f;
+            const float seam = 2f;
+            const float clipTop = 8f;
+            const float clipBottom = 128f;
+            if (canvasWidth < 200f)
+                canvasWidth = 1672f;
+            if (canvasHeight < 200f)
+                canvasHeight = 941f;
+            float panelHeight = Math.Max(480f, canvasHeight - headerBand - footerBand);
+            bool narrow = canvasWidth / Math.Max(1f, canvasHeight) < narrowAspect;
+            float share = narrow ? 0.26f : 0.32f;
+            float minBriefing = narrow ? 280f : 460f;
+            float maxBriefing = narrow ? 380f : 600f;
+            float briefingWidth = Clamp(canvasWidth * share, minBriefing, maxBriefing);
+            mapWidth = canvasWidth - originX * 2f - gap - briefingWidth;
+            if (mapWidth < 480f)
+            {
+                mapWidth = 480f;
+                briefingWidth = Math.Max(240f, canvasWidth - originX * 2f - gap - mapWidth);
+            }
+
+            mapWidth += gap + seam;
+            mapHeight = panelHeight - clipTop - clipBottom;
+        }
+
+        /// <summary>
+        /// Capture's outline rule. The outline rect is the hex bounds plus <see cref="OutlinePad"/>.
+        /// Clip local space is y-up with the pivot on the top-left, so a plate point (x, y) is local (x, -y).
+        /// The glow stroke and the halo are children; this check measures the outline rect, which is what
+        /// <c>RequireTheaterOverlay</c> measures.
+        /// </summary>
+        public static bool OutlineInside(Vec2[] hex, float plateWidth, float plateHeight, out float localX, out float localY)
+        {
+            localX = 0f;
+            localY = 0f;
+            if (hex == null || hex.Length < 3 || plateWidth < 2f || plateHeight < 2f)
+                return false;
+            float minX = hex[0].X;
+            float maxX = hex[0].X;
+            float minY = hex[0].Y;
+            float maxY = hex[0].Y;
+            for (int i = 1; i < hex.Length; i++)
+            {
+                minX = Math.Min(minX, hex[i].X);
+                maxX = Math.Max(maxX, hex[i].X);
+                minY = Math.Min(minY, hex[i].Y);
+                maxY = Math.Max(maxY, hex[i].Y);
+            }
+
+            minX -= OutlinePad;
+            maxX += OutlinePad;
+            minY -= OutlinePad;
+            maxY += OutlinePad;
+            float xMin = MapInset;
+            float xMax = plateWidth - MapInset;
+            float yTop = -MapInset;
+            float yBottom = -plateHeight + MapInset;
+            float[] xs = { minX, maxX, minX, maxX };
+            float[] ys = { minY, minY, maxY, maxY };
+            bool inside = true;
+            for (int i = 0; i < xs.Length; i++)
+            {
+                float lx = xs[i];
+                float ly = -ys[i];
+                bool outside = lx < xMin - MapInsetSlop || lx > xMax + MapInsetSlop
+                    || ly < yBottom - MapInsetSlop || ly > yTop + MapInsetSlop;
+                if (!outside)
+                    continue;
+                localX = lx;
+                localY = ly;
+                inside = false;
+            }
+
+            return inside;
         }
 
         public static float MeasuredHexAspect(Vec2[] hex)
@@ -312,10 +406,9 @@ namespace Game.UI.Runtime
         {
             var placed = new Placement[MapIds.Length];
             var hexes = new Vec2[MapIds.Length][];
-            float aspect = frameHeight > 2f ? frameWidth / frameHeight : 1.6f;
             for (int i = 0; i < MapIds.Length; i++)
             {
-                V35Half(MapIds[i], aspect, out float halfW, out float halfH);
+                AuthoredHalf(MapIds[i], frameWidth, frameHeight, out float halfW, out float halfH);
                 float fullArea = HexArea(halfW, halfH);
                 float areaScale = fullArea > 40800f ? (float)Math.Sqrt(40800.0 / fullArea) : 1f;
                 float scale = FitInteriorScale(halfW, halfH, areaScale);
@@ -378,8 +471,80 @@ namespace Game.UI.Runtime
             }
 
             for (int i = 0; i < placed.Length; i++)
+                ContainOutline(ref placed[i], frameWidth, frameHeight);
+
+            for (int i = 0; i < placed.Length; i++)
                 hexes[i] = FlatHex(placed[i].Cx, placed[i].Cy, placed[i].Hw, placed[i].Hh);
             return hexes;
+        }
+
+        /// <summary>
+        /// v35 halves scaled the way the capture aspect check expects: width against the
+        /// bucket's reference plate, height against the 620px authoring plate.
+        /// </summary>
+        private static void AuthoredHalf(string mapId, float frameWidth, float frameHeight, out float halfWidth, out float halfHeight)
+        {
+            float aspect = frameHeight > 2f ? frameWidth / frameHeight : 1.6f;
+            V35Half(mapId, aspect, out halfWidth, out halfHeight);
+            float reference = aspect >= 2.4f ? 1774f : aspect >= 1.9f ? 1294f : 1039.6f;
+            float scaleX = reference > 1f ? frameWidth / reference : 1f;
+            float scaleY = frameHeight > 2f ? frameHeight / V35AuthorHeight : 1f;
+            halfWidth *= scaleX;
+            halfHeight *= scaleY;
+        }
+
+        /// <summary>
+        /// Pulls the hex into the map inset. Translation first, then a uniform shrink so the
+        /// aspect stays on the authored ratio and the pin stays inside.
+        /// </summary>
+        private static void ContainOutline(ref Placement placement, float frameWidth, float frameHeight)
+        {
+            float scale = 1f;
+            for (int step = 0; step < 48; step++)
+            {
+                float halfW = placement.Hw * scale;
+                float halfH = placement.Hh * scale;
+                float minCx = MapInset + OutlinePad + halfW;
+                float maxCx = frameWidth - MapInset - OutlinePad - halfW;
+                float minCy = MapInset + OutlinePad + halfH;
+                float maxCy = frameHeight - MapInset - OutlinePad - halfH;
+                if (minCx > maxCx || minCy > maxCy)
+                {
+                    scale *= 0.96f;
+                    continue;
+                }
+
+                float towardX = Clamp(placement.PinX + placement.DirX * placement.Shift, minCx, maxCx);
+                float towardY = Clamp(placement.PinY + placement.DirY * placement.Shift, minCy, maxCy);
+                if (PinHeld(placement.PinX, placement.PinY, towardX, towardY, halfW, halfH))
+                {
+                    placement.Cx = towardX;
+                    placement.Cy = towardY;
+                    placement.Hw = halfW;
+                    placement.Hh = halfH;
+                    return;
+                }
+
+                float onPinX = Clamp(placement.PinX, minCx, maxCx);
+                float onPinY = Clamp(placement.PinY, minCy, maxCy);
+                if (PinHeld(placement.PinX, placement.PinY, onPinX, onPinY, halfW, halfH))
+                {
+                    placement.Cx = onPinX;
+                    placement.Cy = onPinY;
+                    placement.Hw = halfW;
+                    placement.Hh = halfH;
+                    return;
+                }
+
+                scale *= 0.96f;
+            }
+        }
+
+        private static bool PinHeld(float pinX, float pinY, float centerX, float centerY, float halfW, float halfH)
+        {
+            Vec2[] hex = FlatHex(centerX, centerY, halfW, halfH);
+            var pin = new Vec2(pinX, pinY);
+            return PointInPolygon(pin, hex) && DistanceToEdge(pin, hex) >= 8f;
         }
 
         private static void Direction(int index, out float dirX, out float dirY)
@@ -679,6 +844,8 @@ namespace Game.UI.Runtime
             for (int i = 0; i < hexes.Length; i++)
             {
                 if (PolygonArea(hexes[i]) < 40000f)
+                    return false;
+                if (!OutlineInside(hexes[i], plateWidth, plateHeight, out _, out _))
                     return false;
                 if (OnPlateInterior(hexes[i], plateWidth, plateHeight) < 8)
                     return false;

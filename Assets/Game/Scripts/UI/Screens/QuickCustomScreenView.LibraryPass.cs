@@ -225,6 +225,7 @@ namespace Game.UI.Runtime
             LockMedalArtwork();
             ApplyBriefingColumnState();
             PresentZoomHint(fa, battlefield);
+            PresentTheatreSummary();
             RaiseLaunchTransition();
         }
 

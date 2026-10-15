@@ -147,6 +147,7 @@ namespace Game.UI.Runtime
                 });
             }
 
+            TheatreSeatGeometry.ShotReserve = plateWidth >= 600f;
             PlaceZoneSlots(slots, safe, plateWidth, plateHeight, fa);
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
             for (int i = 0; i < slots.Count; i++)
@@ -2215,6 +2216,76 @@ namespace Game.UI.Runtime
                 else if (text.name == "ZoomCue")
                     RaiseTheatreLine(text, 14f, 24f);
             }
+
+            DumpTheatreSeat(regions);
+        }
+
+        /// <summary>
+        /// Writes the plate, insets, reserve, viewport and name boxes the seating pass just used.
+        /// The dotnet harness replays this file instead of guessing the capture canvas.
+        /// </summary>
+        private static void DumpTheatreSeat(Transform regions)
+        {
+            if (regions == null)
+                return;
+            Transform fit = regions.Find("TheaterFit");
+            RectTransform space = fit as RectTransform ?? regions as RectTransform;
+            if (space == null || !TryFrameSize(space, out float plateWidth, out float plateHeight))
+                return;
+            var cards = new List<RectTransform>(8);
+            var nameTexts = new List<TMP_Text>(8);
+            bool fa = false;
+            for (int i = 0; i < space.childCount; i++)
+            {
+                Transform child = space.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
+                    continue;
+                if (child is not RectTransform card)
+                    continue;
+                TMP_Text name = child.Find("ZoneName")?.GetComponent<TMP_Text>();
+                if (name != null)
+                    fa = name.isRightToLeftText;
+                cards.Add(card);
+                nameTexts.Add(name);
+            }
+
+            TheatreSeatGeometry.ShotReserve = plateWidth >= 600f;
+            if (string.IsNullOrEmpty(TheatreSeatGeometry.DumpDirectory) || cards.Count == 0)
+                return;
+            Rect detailRect = SeatingDetailRect(plateWidth, plateHeight, fa);
+            var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(
+                plateWidth, plateHeight, fa, plateWidth >= 600f);
+            TheatreSeatGeometry.Box cue = default;
+            if (space.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
+                cue = PlateBoxOf(cueRect);
+            TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
+            var boxes = new TheatreSeatGeometry.Box[cards.Count];
+            for (int i = 0; i < cards.Count; i++)
+                boxes[i] = PlateBoxOf(cards[i]);
+            var measures = new TheatreSeatGeometry.NameMeasure[cards.Count];
+            for (int i = 0; i < cards.Count; i++)
+            {
+                TMP_Text name = nameTexts[i];
+                if (name != null)
+                    name.ForceMeshUpdate();
+                measures[i] = new TheatreSeatGeometry.NameMeasure
+                {
+                    MapId = cards[i].name.Substring("ZoneCard_".Length),
+                    Text = name != null ? name.text : string.Empty,
+                    Font = name != null ? name.fontSize : 0f,
+                    BoxWidth = name != null ? name.rectTransform.rect.width : 0f,
+                    BoxHeight = name != null ? name.rectTransform.rect.height : 0f,
+                    PreferredWidth = name != null ? name.preferredWidth : 0f,
+                    PreferredHeight = name != null ? name.preferredHeight : 0f,
+                    Band = TheatreSeatGeometry.NameBandHeight(boxes[i], boxes, i, detail, cue, hint, plateHeight),
+                    CardWidth = cards[i].sizeDelta.x,
+                    CardHeight = cards[i].sizeDelta.y
+                };
+            }
+
+            string json = TheatreSeatGeometry.FormatDump(plateWidth, plateHeight, detail, viewport, measures);
+            TheatreSeatGeometry.TryWriteDump(TheatreSeatGeometry.DumpFileName(), json);
         }
 
         private const float ZoneNameFontCeiling = 26f;

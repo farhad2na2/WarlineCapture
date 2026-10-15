@@ -58,6 +58,7 @@ namespace Game.Editor
 
                 string folder = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), OutputDirectory));
                 Directory.CreateDirectory(folder);
+                TheatreSeatGeometry.DumpDirectory = folder;
                 int written = 0;
                 for (int localeIndex = 0; localeIndex < Locales.Length; localeIndex++)
                 {
@@ -84,6 +85,7 @@ namespace Game.Editor
             }
             finally
             {
+                TheatreSeatGeometry.DumpDirectory = null;
                 if (!string.IsNullOrEmpty(previousLocale))
                     GameLocalization.SetLocale(previousLocale, false);
             }
@@ -141,6 +143,8 @@ namespace Game.Editor
                 view.FocusTheaterOnMap("DB");
                 instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true)?.ClearSimulatedInsets();
                 instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+                string shotLocale = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase) ? "fa" : "en";
+                TheatreSeatGeometry.SetShot("16:9", "none", shotLocale, true, width, height, 0f, 0f, 0f, 0f);
                 view.PresentLibraryCapture("theater");
                 SkirmishBattleLibraryCapture.RejectUnresolvedSprites(view.Library);
 

@@ -59,8 +59,9 @@ namespace Game.Editor
 
         internal static void NoteTheatre(string message)
         {
-            if (!string.IsNullOrEmpty(message))
-                TheatreViolations.Add(message);
+            if (string.IsNullOrEmpty(message))
+                return;
+            TheatreViolations.Add(TheatreSeatGeometry.Stamp(message));
         }
 
         internal static void FinishTheatreReport()
@@ -115,6 +116,7 @@ namespace Game.Editor
 
                 string folder = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), OutputDirectory));
                 Directory.CreateDirectory(folder);
+                TheatreSeatGeometry.DumpDirectory = folder;
                 int written = 0;
                 for (int localeIndex = 0; localeIndex < Locales.Length; localeIndex++)
                 {
@@ -166,6 +168,7 @@ namespace Game.Editor
             }
             finally
             {
+                TheatreSeatGeometry.DumpDirectory = null;
                 if (!string.IsNullOrEmpty(previousLocale))
                     GameLocalization.SetLocale(previousLocale, false);
             }
@@ -217,6 +220,21 @@ namespace Game.Editor
                 var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
                 safeFrame?.ClearSimulatedInsets();
                 instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+                string ratio = string.IsNullOrEmpty(size.Name) ? "unset" : size.Name.Replace('x', ':');
+                string shotLocale = GameLocalization.IsRightToLeft ? "fa" : "en";
+                float insetLeft = notch ? 132f : 0f;
+                float insetTop = notch ? 84f : 0f;
+                TheatreSeatGeometry.SetShot(
+                    ratio,
+                    notch ? "notch" : "none",
+                    shotLocale,
+                    true,
+                    size.Width,
+                    size.Height,
+                    insetLeft,
+                    insetTop,
+                    0f,
+                    0f);
                 view.PresentLibraryCapture(state);
                 RejectUnresolvedSprites(view.Library);
                 Canvas.ForceUpdateCanvases();

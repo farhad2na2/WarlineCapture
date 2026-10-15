@@ -1069,7 +1069,7 @@ namespace Game.Editor
         private static OperationMapCameraConfig FrameDenseSector(Shot shot, out string log)
         {
             Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
-            const float cell = 120f;
+            const float cell = 80f;
             const float radius = 650f;
             var counts = new Dictionary<Vector2Int, int>();
             var heights = new Dictionary<Vector2Int, float>();
@@ -1095,13 +1095,17 @@ namespace Game.Editor
             foreach (KeyValuePair<Vector2Int, int> pair in counts)
             {
                 // Score a 2x2 sector block so the frame covers a connected built-up area.
+                // 3x3 block centred on the sector; an empty (sand) sector anywhere in the
+                // block zeroes most of its score so the frame lands on continuous city fabric.
                 float score = 0f;
-                for (int dx = 0; dx <= 1; dx++)
-                for (int dz = 0; dz <= 1; dz++)
+                int filled = 0;
+                for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++)
                 {
                     var k = new Vector2Int(pair.Key.x + dx, pair.Key.y + dz);
-                    if (heights.TryGetValue(k, out float h)) score += h;
+                    if (counts.TryGetValue(k, out int c) && c >= 6) { filled++; score += heights[k]; }
                 }
+                score *= filled == 9 ? 1f : filled / 30f;
 
                 if (score > bestScore)
                 {
@@ -1116,10 +1120,10 @@ namespace Game.Editor
                 return shot.Camera;
             }
 
-            var center = new Vector3((best.x + 1f) * cell, shot.FocusHint.y, (best.y + 1f) * cell);
+            var center = new Vector3((best.x + 0.5f) * cell, shot.FocusHint.y, (best.y + 0.5f) * cell);
             const float fov = 40f;
-            const float pitch = 40f;
-            float distance = 180f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
+            const float pitch = 48f;
+            float distance = 125f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
             Vector3 dir = Quaternion.Euler(pitch, 30f, 0f) * Vector3.forward;
             log = "focus=dense sectors=" + counts.Count + " center=" + Format(center) + " score=" +
                   bestScore.ToString("0", CultureInfo.InvariantCulture);

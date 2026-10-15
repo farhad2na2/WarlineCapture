@@ -230,8 +230,16 @@ namespace Game.Editor
 
                 if (stage == 2)
                 {
+                    // Preview cards show the authored enemy base, so lift the player's fog on it.
+                    RevealSessionContacts(em);
                     if (now - readyAt < SettleSeconds || ShaderUtil.anythingCompiling)
                         return;
+                    // Wait (bounded) for the session's structure visuals to finish binding.
+                    if (VisualPending(em) && now - readyAt < SettleSeconds + 40d)
+                        return;
+                    Debug.Log("[SkirmishLibraryPlayCapture] settle scenario=" + id + " seconds=" +
+                              (now - readyAt).ToString("0.0", CultureInfo.InvariantCulture) + " " + ExpandedDiagnostic(em) +
+                              " visualPending=" + (VisualPending(em) ? 1 : 0));
                     Time.timeScale = 0f;
                     Gather(em, out List<Vector3> enemyBuildings, out List<Vector3> player, out List<Vector3> enemyAll);
                     Capture(id, enemyBuildings, player, enemyAll);
@@ -307,10 +315,44 @@ namespace Game.Editor
                 else if (faction >= FactionIdentity.EnemyFactionId)
                 {
                     enemyAll.Add(p);
-                    if (em.HasComponent<BuildingRuntimeStateTag>(entities[i]))
-                        enemyBuildings.Add(p);
                 }
             }
+
+            // Runtime buildings carry their owner and grid footprint on the combat info;
+            // place them from the grid so the framing follows the visible structures.
+            using EntityQuery grids = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            if (grids.CalculateEntityCount() != 1) return;
+            GridConfig grid = grids.GetSingleton<GridConfig>();
+            using EntityQuery buildings = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeBuildingCombatInfo>());
+            using NativeArray<RuntimeBuildingCombatInfo> infos = buildings.ToComponentDataArray<RuntimeBuildingCombatInfo>(Allocator.Temp);
+            for (int i = 0; i < infos.Length; i++)
+            {
+                RuntimeBuildingCombatInfo info = infos[i];
+                if (info.IsWall != 0 || info.OwnerFactionId < FactionIdentity.EnemyFactionId) continue;
+                enemyBuildings.Add(new Vector3(
+                    grid.Origin.x + (info.OriginCell.x + info.FootprintCells.x * 0.5f) * grid.CellSize,
+                    grid.Origin.y,
+                    grid.Origin.z + (info.OriginCell.y + info.FootprintCells.y * 0.5f) * grid.CellSize));
+            }
+        }
+
+        private static bool VisualPending(EntityManager em)
+        {
+            using EntityQuery q = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
+            return q.CalculateEntityCount() == 1 && q.GetSingleton<SkirmishExpandedSessionComponent>().SpawnVisualPending != 0;
+        }
+
+        private static void RevealSessionContacts(EntityManager em)
+        {
+            // Freeze the shared fog pass so it cannot re-hide revealed contacts before the render.
+            World world = World.DefaultGameObjectInjectionWorld;
+            SystemHandle fog = world.GetExistingSystem<SkirmishSharedFogUpdateSystem>();
+            if (fog != SystemHandle.Null)
+                world.Unmanaged.ResolveSystemStateRef(fog).Enabled = false;
+            using EntityQuery owned = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>());
+            using NativeArray<Entity> contacts = owned.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < contacts.Length; i++)
+                SkirmishFogService.Reveal(em, contacts[i]);
         }
 
         private static Vector3 Median(List<Vector3> points)
@@ -336,7 +378,7 @@ namespace Game.Editor
         {
             List<Vector3> enemySource = enemyBuildings.Count > 0 ? enemyBuildings : enemyAll;
             Vector3 enemy = Median(enemySource);
-            List<Vector3> enemyCluster = Near(enemySource, enemy, 220f);
+            List<Vector3> enemyCluster = Near(enemySource, enemy, 160f);
             Vector3 home = Median(player);
             List<Vector3> playerCluster = Near(player, home, 160f);
 
@@ -344,7 +386,7 @@ namespace Game.Editor
             var bounds = new Bounds(enemy, Vector3.one * 30f);
             foreach (Vector3 p in enemyCluster) bounds.Encapsulate(p);
             float separation = new Vector2(enemy.x - home.x, enemy.z - home.z).magnitude;
-            bool both = separation < 700f;
+            bool both = separation < 380f;
             if (both)
                 foreach (Vector3 p in playerCluster) bounds.Encapsulate(p);
 
@@ -354,13 +396,13 @@ namespace Game.Editor
             back.Normalize();
             back = Quaternion.AngleAxis(25f, Vector3.up) * back;
             const float fov = 40f;
-            const float pitch = 47f;
+            const float pitch = 55f;
             float aspect = CardWidth / (float)CardHeight;
             Vector3 size = bounds.size;
             float radius = Mathf.Max(size.x, size.z) * 0.5f + 25f;
             float fit = radius / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Min(1f, aspect * 0.75f);
-            float distance = Mathf.Clamp(fit * 0.85f, 130f, 900f);
-            Vector3 look = bounds.center;
+            float distance = Mathf.Clamp(fit * 0.62f, 120f, 420f);
+            Vector3 look = both ? Vector3.Lerp(bounds.center, enemy, 0.35f) : enemy;
             look.y = Mathf.Min(enemy.y, home.y);
             Vector3 dir = (-back * Mathf.Cos(pitch * Mathf.Deg2Rad) + Vector3.down * Mathf.Sin(pitch * Mathf.Deg2Rad)).normalized;
             Vector3 position = look - dir * distance;
@@ -375,12 +417,22 @@ namespace Game.Editor
             var cameraObject = new GameObject("SkirmishLibraryPlayCaptureCamera");
             try
             {
-                Camera camera = cameraObject.AddComponent<Camera>();
+                // Render through the match's own main camera (its URP data, stack and volumes),
+                // with its controllers frozen, so the explicit framing below is honoured.
                 Camera main = Camera.main;
+                Camera camera;
                 if (main != null)
                 {
-                    camera.CopyFrom(main);
-                    camera.targetDisplay = 0;
+                    foreach (MonoBehaviour behaviour in main.GetComponents<MonoBehaviour>())
+                        if (behaviour != null && !behaviour.GetType().Name.StartsWith("UniversalAdditional", StringComparison.Ordinal))
+                            behaviour.enabled = false;
+                    if (main.transform.parent != null)
+                        main.transform.SetParent(null, true);
+                    camera = main;
+                }
+                else
+                {
+                    camera = cameraObject.AddComponent<Camera>();
                 }
 
                 int uiLayer = LayerMask.NameToLayer("UI");

@@ -87,6 +87,17 @@ namespace Game.Runtime
                              overlay.RoleKind == SkirmishRoleKind.Drone)
                     });
                 }
+                // Starting structures are granted through the same configured-spawnable
+                // definitions as producers; a non-producer start (e.g. the Satellite Dish
+                // in S002 EstablishedBase) must be bound or the grant preflight rejects it.
+                if (setup.Structures != null)
+                    foreach (var structure in setup.Structures)
+                    {
+                        string key = SkirmishStructureIds.VisualKey(structure.StructureId);
+                        if (!string.IsNullOrEmpty(key) && availableBuildings.TryGetValue(key, out var structurePrefab) &&
+                            !buildings.Contains(structurePrefab))
+                            buildings.Add(structurePrefab);
+                    }
                 result.Config = BuildingPlacementSystemConfig.CreateRuntimeCatalogOverlay(
                     baseline, result.registry, buildings, recipes.ToArray());
                 return result;

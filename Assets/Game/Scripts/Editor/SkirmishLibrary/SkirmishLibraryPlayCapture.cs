@@ -40,6 +40,10 @@ namespace Game.Editor
         private const int Supersample = 2;
         private const double ScenarioTimeoutSeconds = 240d;
         private const double SettleSeconds = 4d;
+        private const double CloseUpSettleSeconds = 12d;
+
+        // Cards reframed as a low, close oblique on the enemy base with its defenders in view.
+        private static bool IsCloseUp(string id) => id == "S002" || id == "S003" || id == "S025";
 
         private static int stage;
         private static double deadline;
@@ -185,6 +189,13 @@ namespace Game.Editor
                         return;
                     }
 
+                    // Same as the game's Launch (UiRuntimeAdapters.QueueMatchRoute): queue, then route the shell to Match.
+                    if (!Game.UI.Runtime.UiShellRuntimeGateway.TryEnqueueRouteRequest(
+                            Game.UI.Contracts.UiShellRouteIntent.EnterMatch, Game.UI.Contracts.UIRoute.Match, false))
+                    {
+                        Fail(id, "matchRouteRejected");
+                        return;
+                    }
                     Debug.Log("[SkirmishLibraryPlayCapture] queued scenario=" + id + " index=" + scenarioIndex + " seed=" + Seed);
                     stage = 1;
                     return;
@@ -200,10 +211,6 @@ namespace Game.Editor
 
                 if (stage == 1)
                 {
-                    SkirmishLaunchProjection.TryEnterMatch(em);
-                    SkirmishLaunchProjection.TryBeginGameplayIfLoaded();
-                    SkirmishLaunchProjection.TryRequestPlay(em);
-                    SkirmishLaunchProjection.TryArmExpandedSimulation(em);
                     bool simulation = SkirmishLaunchProjection.IsSimulationActive(em);
                     Gather(em, out List<Vector3> enemyBuildings, out List<Vector3> player, out List<Vector3> enemyAll);
                     if (now >= diagnosticAt)
@@ -227,8 +234,18 @@ namespace Game.Editor
 
                 if (stage == 2)
                 {
-                    if (now - readyAt < SettleSeconds || ShaderUtil.anythingCompiling)
+                    // Preview cards show the authored enemy base, so lift the player's fog on it.
+                    RevealSessionContacts(em);
+                    // Close-up cards show the defenders, so let enemy units spawn and settle longer.
+                    double settle = IsCloseUp(id) ? CloseUpSettleSeconds : SettleSeconds;
+                    if (now - readyAt < settle || ShaderUtil.anythingCompiling)
                         return;
+                    // Wait (bounded) for the session's structure visuals to finish binding.
+                    if (VisualPending(em) && now - readyAt < SettleSeconds + 40d)
+                        return;
+                    Debug.Log("[SkirmishLibraryPlayCapture] settle scenario=" + id + " seconds=" +
+                              (now - readyAt).ToString("0.0", CultureInfo.InvariantCulture) + " " + ExpandedDiagnostic(em) +
+                              " visualPending=" + (VisualPending(em) ? 1 : 0));
                     Time.timeScale = 0f;
                     Gather(em, out List<Vector3> enemyBuildings, out List<Vector3> player, out List<Vector3> enemyAll);
                     Capture(id, enemyBuildings, player, enemyAll);
@@ -256,6 +273,15 @@ namespace Game.Editor
                 }
             }
 
+            using (var sq = em.CreateEntityQuery(typeof(Game.Components.SkirmishExpandedSessionComponent)))
+            {
+                if (sq.CalculateEntityCount() == 1)
+                {
+                    Entity se = sq.GetSingletonEntity();
+                    text += " sharedReady=" + (em.HasComponent<SkirmishSharedBuildingsReady>(se) ? 1 : 0) +
+                            " buildingRequests=" + (em.HasBuffer<SkirmishStartingBuildingRequest>(se) ? em.GetBuffer<SkirmishStartingBuildingRequest>(se).Length : -1);
+                }
+            }
             using var map = em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
             using var surface = em.CreateEntityQuery(typeof(MapSurfaceComponent));
             using var prefabs = em.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
@@ -295,10 +321,44 @@ namespace Game.Editor
                 else if (faction >= FactionIdentity.EnemyFactionId)
                 {
                     enemyAll.Add(p);
-                    if (em.HasComponent<BuildingRuntimeStateTag>(entities[i]))
-                        enemyBuildings.Add(p);
                 }
             }
+
+            // Runtime buildings carry their owner and grid footprint on the combat info;
+            // place them from the grid so the framing follows the visible structures.
+            using EntityQuery grids = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            if (grids.CalculateEntityCount() != 1) return;
+            GridConfig grid = grids.GetSingleton<GridConfig>();
+            using EntityQuery buildings = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeBuildingCombatInfo>());
+            using NativeArray<RuntimeBuildingCombatInfo> infos = buildings.ToComponentDataArray<RuntimeBuildingCombatInfo>(Allocator.Temp);
+            for (int i = 0; i < infos.Length; i++)
+            {
+                RuntimeBuildingCombatInfo info = infos[i];
+                if (info.IsWall != 0 || info.OwnerFactionId < FactionIdentity.EnemyFactionId) continue;
+                enemyBuildings.Add(new Vector3(
+                    grid.Origin.x + (info.OriginCell.x + info.FootprintCells.x * 0.5f) * grid.CellSize,
+                    grid.Origin.y,
+                    grid.Origin.z + (info.OriginCell.y + info.FootprintCells.y * 0.5f) * grid.CellSize));
+            }
+        }
+
+        private static bool VisualPending(EntityManager em)
+        {
+            using EntityQuery q = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
+            return q.CalculateEntityCount() == 1 && q.GetSingleton<SkirmishExpandedSessionComponent>().SpawnVisualPending != 0;
+        }
+
+        private static void RevealSessionContacts(EntityManager em)
+        {
+            // Freeze the shared fog pass so it cannot re-hide revealed contacts before the render.
+            World world = World.DefaultGameObjectInjectionWorld;
+            SystemHandle fog = world.GetExistingSystem<SkirmishSharedFogUpdateSystem>();
+            if (fog != SystemHandle.Null)
+                world.Unmanaged.ResolveSystemStateRef(fog).Enabled = false;
+            using EntityQuery owned = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>());
+            using NativeArray<Entity> contacts = owned.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < contacts.Length; i++)
+                SkirmishFogService.Reveal(em, contacts[i]);
         }
 
         private static Vector3 Median(List<Vector3> points)
@@ -320,11 +380,27 @@ namespace Game.Editor
             return result.Count > 0 ? result : points;
         }
 
+        private const float KnotRadius = 55f;
+
+        private static Vector3 BestStructureKnot(List<Vector3> structures, Vector3 fallback)
+        {
+            Vector3 best = fallback;
+            int bestCount = -1;
+            foreach (Vector3 c in structures)
+            {
+                int n = 0;
+                foreach (Vector3 q in structures)
+                    if (new Vector2(q.x - c.x, q.z - c.z).magnitude <= KnotRadius) n++;
+                if (n > bestCount) { bestCount = n; best = c; }
+            }
+            return best;
+        }
+
         private static void Capture(string id, List<Vector3> enemyBuildings, List<Vector3> player, List<Vector3> enemyAll)
         {
             List<Vector3> enemySource = enemyBuildings.Count > 0 ? enemyBuildings : enemyAll;
             Vector3 enemy = Median(enemySource);
-            List<Vector3> enemyCluster = Near(enemySource, enemy, 220f);
+            List<Vector3> enemyCluster = Near(enemySource, enemy, 160f);
             Vector3 home = Median(player);
             List<Vector3> playerCluster = Near(player, home, 160f);
 
@@ -332,23 +408,39 @@ namespace Game.Editor
             var bounds = new Bounds(enemy, Vector3.one * 30f);
             foreach (Vector3 p in enemyCluster) bounds.Encapsulate(p);
             float separation = new Vector2(enemy.x - home.x, enemy.z - home.z).magnitude;
-            bool both = separation < 700f;
-            if (both)
-                foreach (Vector3 p in playerCluster) bounds.Encapsulate(p);
+            // S001 and S025 start close to the enemy; framing both bases made the enemy base tiny, so frame the enemy base alone.
+            bool closeUp = IsCloseUp(id);
+            bool enemyOnly = closeUp || id == "S001";
+            bool both = !enemyOnly && separation < 380f;
+            int closeUpCount = 0;
+            if (closeUp)
+            {
+                // These bases are sparse, so frame one tight group of visible structures (with any units beside it)
+                // instead of the whole spread. S003 keeps its own low side angle (-95 deg) so it never repeats S002's view.
+                Vector3 knot = BestStructureKnot(enemySource, enemy);
+                bounds = new Bounds(knot, Vector3.one * 16f);
+                foreach (Vector3 q in enemySource)
+                    if (new Vector2(q.x - knot.x, q.z - knot.z).magnitude <= KnotRadius) { bounds.Encapsulate(q); closeUpCount++; }
+                enemy = new Vector3(bounds.center.x, enemy.y, bounds.center.z);
+            }
 
             Vector3 back = home - enemy;
             back.y = 0f;
             if (back.sqrMagnitude < 1f) back = Vector3.back;
             back.Normalize();
-            back = Quaternion.AngleAxis(25f, Vector3.up) * back;
+            // S002 and S003 share the Desert Base enemy pads; give S003 (Field) its own low side angle.
+            bool fieldAngle = id == "S003";
+            back = Quaternion.AngleAxis(fieldAngle ? -95f : id == "S002" ? 40f : 25f, Vector3.up) * back;
             const float fov = 40f;
-            const float pitch = 47f;
+            float pitch = id == "S002" ? 38f : id == "S025" ? 36f : fieldAngle ? 35f : 55f;
             float aspect = CardWidth / (float)CardHeight;
             Vector3 size = bounds.size;
             float radius = Mathf.Max(size.x, size.z) * 0.5f + 25f;
             float fit = radius / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Min(1f, aspect * 0.75f);
-            float distance = Mathf.Clamp(fit * 0.85f, 130f, 900f);
-            Vector3 look = bounds.center;
+            float distance = closeUp
+                ? Mathf.Clamp((Mathf.Max(size.x, size.z) * 0.5f + 10f) * 0.85f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad), 40f, 95f)
+                : Mathf.Clamp(fit * (enemyOnly ? 0.5f : 0.62f), enemyOnly ? 90f : 120f, 420f);
+            Vector3 look = both ? Vector3.Lerp(bounds.center, enemy, 0.35f) : enemyOnly ? bounds.center : enemy;
             look.y = Mathf.Min(enemy.y, home.y);
             Vector3 dir = (-back * Mathf.Cos(pitch * Mathf.Deg2Rad) + Vector3.down * Mathf.Sin(pitch * Mathf.Deg2Rad)).normalized;
             Vector3 position = look - dir * distance;
@@ -363,12 +455,22 @@ namespace Game.Editor
             var cameraObject = new GameObject("SkirmishLibraryPlayCaptureCamera");
             try
             {
-                Camera camera = cameraObject.AddComponent<Camera>();
+                // Render through the match's own main camera (its URP data, stack and volumes),
+                // with its controllers frozen, so the explicit framing below is honoured.
                 Camera main = Camera.main;
+                Camera camera;
                 if (main != null)
                 {
-                    camera.CopyFrom(main);
-                    camera.targetDisplay = 0;
+                    foreach (MonoBehaviour behaviour in main.GetComponents<MonoBehaviour>())
+                        if (behaviour != null && !behaviour.GetType().Name.StartsWith("UniversalAdditional", StringComparison.Ordinal))
+                            behaviour.enabled = false;
+                    if (main.transform.parent != null)
+                        main.transform.SetParent(null, true);
+                    camera = main;
+                }
+                else
+                {
+                    camera = cameraObject.AddComponent<Camera>();
                 }
 
                 int uiLayer = LayerMask.NameToLayer("UI");
@@ -381,6 +483,12 @@ namespace Game.Editor
                 camera.allowHDR = true;
                 camera.aspect = aspect;
                 camera.transform.SetPositionAndRotation(position, Quaternion.LookRotation(dir, Vector3.up));
+                // Match camera controllers can pin explicit view/projection matrices; drop them so the transform above is used.
+                camera.ResetWorldToCameraMatrix();
+                camera.ResetProjectionMatrix();
+                camera.ResetCullingMatrix();
+                Debug.Log("[SkirmishLibraryPlayCapture] camera=" + camera.name + " pos=" + Fmt(camera.transform.position) + " y=" + camera.transform.position.y.ToString("0", CultureInfo.InvariantCulture) +
+                          " viewPos=" + Fmt(camera.cameraToWorldMatrix.GetColumn(3)) + " stack=" + Camera.allCamerasCount);
                 Type dataType = Type.GetType(
                     "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
                 if (dataType != null)
@@ -389,16 +497,26 @@ namespace Game.Editor
                     dataType.GetProperty("renderPostProcessing")?.SetValue(data, true);
                 }
 
+                // Close-up cards use the same grade as the DB plate (daylight fill + Military_Demo_Gameplay volume).
+                GameObject gradeVolume = null;
+                if (closeUp)
+                {
+                    SkirmishS004CampaignLighting.ApplyDaylightFill();
+                    gradeVolume = SkirmishLibraryPreviewCapture.EnsureMatchVolume();
+                }
+
                 byte[] png = null;
                 for (int pass = 0; pass < 3; pass++)
                     png = RenderPng(camera);
+                if (gradeVolume != null)
+                    UnityEngine.Object.DestroyImmediate(gradeVolume);
                 string output = SkirmishLibraryPreviewAssets.PreviewPath(id);
                 string absolute = Path.Combine(Path.GetDirectoryName(Application.dataPath) ?? string.Empty, output);
                 Directory.CreateDirectory(Path.GetDirectoryName(absolute) ?? absolute);
                 File.WriteAllBytes(absolute, png);
                 Debug.Log("[SkirmishLibraryPlayCapture] card=" + id + " enemyBase=" + Fmt(enemy) + " playerStart=" + Fmt(home) +
                           " enemyBuildings=" + enemyBuildings.Count + " enemyEntities=" + enemyAll.Count +
-                          " playerEntities=" + player.Count + " framedBoth=" + (both ? 1 : 0) +
+                          " playerEntities=" + player.Count + " framedBoth=" + (both ? 1 : 0) + " closeUpPoints=" + closeUpCount +
                           " distance=" + distance.ToString("0", CultureInfo.InvariantCulture) +
                           " size=" + CardWidth + "x" + CardHeight + " output=" + output);
             }

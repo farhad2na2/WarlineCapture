@@ -48,6 +48,8 @@ namespace Game.Editor
         private static readonly string[] RefineryKeywords =
             { "refinery", "industrial", "silo", "storagetank", "storage_tank", "fueltank", "fuel_tank", "chimney", "smokestack", "pipeline", "factory", "cracking" };
 
+        private const string DenseSectorKey = "__dense_sector__";
+
         private static readonly string[] BattlefieldOrder = { "DB", "CC", "MP", "IB", "AP" };
 
         public static void Run()
@@ -176,8 +178,9 @@ namespace Game.Editor
                 OperationMapCameraConfig camera = RequirePlanningCamera(map);
                 string output = SkirmishLibraryPreviewAssets.PlatePath(mapId);
                 bool refinery = mapId == "IB";
+                bool dense = mapId == "CC";
                 Vector3 hint = camera.Position;
-                if (refinery && TryMapFocus(map, false, out Vector3 ibPlayer, out Vector3 ibEnemy))
+                if ((refinery || dense) && TryMapFocus(map, false, out Vector3 ibPlayer, out Vector3 ibEnemy))
                     hint = (ibPlayer + ibEnemy) * 0.5f;
                 shots.Add(new Shot
                 {
@@ -186,7 +189,7 @@ namespace Game.Editor
                     Camera = camera,
                     Width = PlateWidth,
                     Height = PlateHeight,
-                    FocusKeywords = refinery ? RefineryKeywords : null,
+                    FocusKeywords = refinery ? RefineryKeywords : dense ? new[] { DenseSectorKey } : null,
                     FocusHint = hint,
                     LogLine = "[SkirmishLibraryPreviewCapture] plate=" + mapId +
                               " framing=plate" +
@@ -224,6 +227,9 @@ namespace Game.Editor
                 Width = PlateWidth,
                 Height = PlateHeight,
                 FocusKeywords = Array.Empty<string>(),
+                GradeContrast = mapId == "MP" ? 1.14f : 1f,
+                GradeExposure = mapId == "MP" ? 0.93f : 1f,
+                GradeSaturation = mapId == "MP" ? 1.12f : 1f,
                 FocusHint = camera.Position,
                 LogLine = "[SkirmishLibraryPreviewCapture] plate=" + mapId +
                           " framing=" + (overview ? "overview" : "top-down") +
@@ -908,6 +914,7 @@ namespace Game.Editor
                 image.Apply();
                 if (!write)
                     return;
+                ApplyGrade(image, shot);
                 string absolute = ProjectPath(shot.OutputAssetPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(absolute) ?? absolute);
                 File.WriteAllBytes(absolute, image.EncodeToPNG());
@@ -927,8 +934,35 @@ namespace Game.Editor
             }
         }
 
+        // Small per-plate trim so the paler campaign-derived plates sit at the same exposure/contrast as DB.
+        private static void ApplyGrade(Texture2D image, Shot shot)
+        {
+            float contrast = shot.GradeContrast <= 0f ? 1f : shot.GradeContrast;
+            float exposure = shot.GradeExposure <= 0f ? 1f : shot.GradeExposure;
+            float saturation = shot.GradeSaturation <= 0f ? 1f : shot.GradeSaturation;
+            if (Mathf.Approximately(contrast, 1f) && Mathf.Approximately(exposure, 1f) && Mathf.Approximately(saturation, 1f))
+                return;
+            Color32[] pixels = image.GetPixels32();
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color c = pixels[i];
+                float luma = c.r * 0.2126f + c.g * 0.7152f + c.b * 0.0722f;
+                Color g = Color.Lerp(new Color(luma, luma, luma, 1f), c, saturation);
+                g.r = Mathf.Clamp01(((g.r * exposure) - 0.5f) * contrast + 0.5f);
+                g.g = Mathf.Clamp01(((g.g * exposure) - 0.5f) * contrast + 0.5f);
+                g.b = Mathf.Clamp01(((g.b * exposure) - 0.5f) * contrast + 0.5f);
+                g.a = 1f;
+                pixels[i] = g;
+            }
+
+            image.SetPixels32(pixels);
+            image.Apply();
+        }
+
         private static OperationMapCameraConfig FrameKeywordFocus(Shot shot, out string log)
         {
+            if (shot.FocusKeywords.Length == 1 && shot.FocusKeywords[0] == DenseSectorKey)
+                return FrameDenseSector(shot, out log);
             Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
             var points = new List<Vector3>();
             bool all = shot.FocusKeywords.Length == 0;
@@ -1031,6 +1065,74 @@ namespace Game.Editor
                 false);
         }
 
+        // City Crossroads: pick the most built-up 120 m sectors (tall structures) near the battlefield and frame them.
+        private static OperationMapCameraConfig FrameDenseSector(Shot shot, out string log)
+        {
+            Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            const float cell = 120f;
+            const float radius = 650f;
+            var counts = new Dictionary<Vector2Int, int>();
+            var heights = new Dictionary<Vector2Int, float>();
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || !renderer.enabled)
+                    continue;
+                Bounds b = renderer.bounds;
+                if (b.size.y < 7f || b.size.x > 90f || b.size.z > 90f)
+                    continue;
+                if (new Vector2(b.center.x - shot.FocusHint.x, b.center.z - shot.FocusHint.z).magnitude > radius)
+                    continue;
+                var key = new Vector2Int(Mathf.FloorToInt(b.center.x / cell), Mathf.FloorToInt(b.center.z / cell));
+                counts.TryGetValue(key, out int n);
+                counts[key] = n + 1;
+                heights.TryGetValue(key, out float h);
+                heights[key] = h + b.size.y;
+            }
+
+            Vector2Int best = default;
+            float bestScore = -1f;
+            foreach (KeyValuePair<Vector2Int, int> pair in counts)
+            {
+                // Score a 2x2 sector block so the frame covers a connected built-up area.
+                float score = 0f;
+                for (int dx = 0; dx <= 1; dx++)
+                for (int dz = 0; dz <= 1; dz++)
+                {
+                    var k = new Vector2Int(pair.Key.x + dx, pair.Key.y + dz);
+                    if (heights.TryGetValue(k, out float h)) score += h;
+                }
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    best = pair.Key;
+                }
+            }
+
+            if (bestScore <= 0f)
+            {
+                log = "focus=dense sectors=0 fallback=planning";
+                return shot.Camera;
+            }
+
+            var center = new Vector3((best.x + 1f) * cell, shot.FocusHint.y, (best.y + 1f) * cell);
+            const float fov = 40f;
+            const float pitch = 40f;
+            float distance = 180f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
+            Vector3 dir = Quaternion.Euler(pitch, 30f, 0f) * Vector3.forward;
+            log = "focus=dense sectors=" + counts.Count + " center=" + Format(center) + " score=" +
+                  bestScore.ToString("0", CultureInfo.InvariantCulture);
+            return new OperationMapCameraConfig(
+                shot.Camera.CameraId + ".dense",
+                center - dir * distance,
+                Quaternion.LookRotation(dir, Vector3.up).eulerAngles,
+                false,
+                fov,
+                0f,
+                false);
+        }
+
         private static bool MatchesKeyword(Transform transform, string[] keywords)
         {
             for (int depth = 0; transform != null && depth < 4; depth++, transform = transform.parent)
@@ -1098,6 +1200,9 @@ namespace Game.Editor
             public string[] FocusKeywords;
             public Vector3 FocusHint;
             public bool RefineCard;
+            public float GradeContrast;
+            public float GradeExposure;
+            public float GradeSaturation;
             public Vector3 CardSubject;
         }
     }

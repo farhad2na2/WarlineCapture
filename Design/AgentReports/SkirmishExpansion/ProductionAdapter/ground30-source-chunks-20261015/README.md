@@ -12,7 +12,7 @@ All four source-isolated Unity 6000.5.8f1 collections completed through the chec
 
 **Collected, unqualified. No mission readiness or source-fit certification is established.** Successful collection does not mean that the measured layouts fit. All observed failures remain in the archives.
 
-The checked joint merge completed with `[Ground30SourceChunks] result=CollectedUnqualified missions=30 sizeRows=90 sourceFitCertified=0`. The merged output can be reconstructed from the four archived run directories using the corresponding pinned merge tool; each archive includes its wrapper receipt, exact tool pins, source/DLL endpoints, raw source report, lifecycle journal, and validation logs. The adjacent receipts pin the archives themselves.
+The checked joint merge completed with `[Ground30SourceChunks] result=CollectedUnqualified missions=30 sizeRows=90 sourceFitCertified=0`. Each archive includes its wrapper receipt, exact tool pins, source/DLL endpoints, raw source report, lifecycle journal, and validation logs. The adjacent receipts pin the archives themselves. Re-running the authoritative merge also requires the original pinned tooling, authoring inputs, and OneSize prerequisite referenced by those receipts; these four archives alone are not a portable executable validation bundle.
 
 All four collections share candidate `d23c0206a541301aac31ed8c1478844eb06282048ed15446c7f040feff83b5d7` and compiled build `f96f1ab510791bfca1d8ff23e1c1413a47c3bde172c4a7c23e86583ab55c1433`. This was a mixed working candidate; this evidence checkpoint does not adopt all of that candidate's runtime changes into main.
 

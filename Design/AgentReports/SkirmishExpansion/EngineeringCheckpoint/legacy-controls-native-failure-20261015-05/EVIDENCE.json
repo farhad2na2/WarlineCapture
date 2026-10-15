@@ -1,0 +1,195 @@
+{
+  "status": "BothAttemptsFailed_NotNativeControlsPass",
+  "firstAttempt": {
+    "wrapperExit": 1,
+    "failure": "Restricted-context Windows system-information access denied and licensing IPC refused; before controls"
+  },
+  "secondAttempt": {
+    "wrapperExit": 1,
+    "licensingRecovered": true,
+    "failure": "InvalidDataException Exact existing Resources preset/source missing at RequireBinding line31",
+    "firstRuntimeCatalogIdNotExplicitlyLogged": true,
+    "legacyControlsPassed": false,
+    "laterFramePrefixOpeningWarmupNotReached": true
+  },
+  "executedImplementationManifestSha256": "c609f39608876b8f74d323e8ca7d71f7666f3e829d570ec3df381f43e85e23c7",
+  "all16CurrentImplementationBytesStillMatchFailedCandidate": true,
+  "completeSourceDllSnapshotAtFailedAttemptNotCaptured": true,
+  "sourceFitCertified": false,
+  "cameraAccepted": false,
+  "missionQualified": false,
+  "wrapperOwnedCleanupWarningsPreserved": true,
+  "archiveSha256": "bc84462bcff7eec07bd7735b1bd9bb7e8ef53665f465a3997b1a4c28c2bf6450",
+  "members": [
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/checked-child-exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/run-checked.ps1",
+      "sha256": "ce05b4b47e7dc5a35bb90b25717fc800b2bcada95f41060c4c407ec56f96c35b",
+      "bytes": 2615
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/IMPORT_RECEIPT.json",
+      "sha256": "45ce66f7117ef5f4ed7258ef8b28af7dab55df3731dad5596aea64e822cc2a55",
+      "bytes": 6780
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/resolver.log",
+      "sha256": "14a5436d6455850f0c5b244b45272e974c0d7601e6e18df1fbb6aef2b785987d",
+      "bytes": 676
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/unity.log",
+      "sha256": "258a1d9ebb6ebd91f9cb50673efe2c7514cf29e602d0feeab01c4a446e1ea55a",
+      "bytes": 1773
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-04-legacy-logical-witness/unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/checked-child-exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/run-checked.ps1",
+      "sha256": "4b91968f259694eedf46d6a617ec461dfe2922c13bab4fd28d44e65b25863404",
+      "bytes": 2653
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/IMPORT_RECEIPT.json",
+      "sha256": "45ce66f7117ef5f4ed7258ef8b28af7dab55df3731dad5596aea64e822cc2a55",
+      "bytes": 6780
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/RECOVERY.json",
+      "sha256": "907fbebd5a59e0c936c26945ded5d152fdf0a5bc6d64d8f623961a2a3fdbac11",
+      "bytes": 357
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/resolver.log",
+      "sha256": "aac7d16d4460c4d8c74f7dc98bc26456c7ae332d7561591f414bcba09a9ff700",
+      "bytes": 686
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/unity.log",
+      "sha256": "960af36a47fb1139cbe34166bfe0cc2cf2f5e8aa6c4e7136b139d196bfe396b4",
+      "bytes": 238236
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-05-legacy-logical-witness-gui-retry/unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyWitnessLogicalFrame/manifest.json",
+      "sha256": "c609f39608876b8f74d323e8ca7d71f7666f3e829d570ec3df381f43e85e23c7",
+      "bytes": 6874
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "2c8c535e2e69ad5ea2f906d03e46b8d6bbfc24abbb41b1cd641b19e8fc5c041f",
+      "bytes": 17874
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "244da2885c534bf379f710f15817133b0a399f13b01eb0d95940f3bda1d390c1",
+      "bytes": 18824
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+      "bytes": 18146
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "2d6cac73496e5b25d272a84fea394fbc8f8e5a4ef40ac3a6f9c77fba7da0955f",
+      "bytes": 94815
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d",
+      "bytes": 35036
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2",
+      "bytes": 11801
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs",
+      "sha256": "5eec7f52601c34916296499073a29cd48b66f098fc99081ccf44f79b130d2848",
+      "bytes": 10138
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "sha256": "3966bf263453550f29dbce482dbb1081d9a1c3284470bda379a1b839fdc47f2e",
+      "bytes": 5166
+    },
+    {
+      "path": "Tools/CI/skirmish_production_queue.py",
+      "sha256": "22f508c8c945e1c8e2f48a7c1e328328364d97d6627eff10f4eca74c581019e2",
+      "bytes": 18801
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs.meta",
+      "sha256": "c9cddc1d959f6b4148eb12e0134013e8f1b21851dbc929c6791277dfcca41f80",
+      "bytes": 62
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs.meta",
+      "sha256": "2e23b5b84a46fe023e8b8fc025e34c8d096f98de2968690eb53dcb9edddd97a3",
+      "bytes": 62
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs.meta",
+      "sha256": "dbe1f2229b67f8b719f196ff1060c213371142d4831320ae754ea492f312593e",
+      "bytes": 62
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c",
+      "bytes": 5789
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "sha256": "b8501cac55fd30bce71d1bcdeb6c453963f79bbb166cca20e7d513a21b43e11c",
+      "bytes": 59920
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "bytes": 21301
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs",
+      "sha256": "f5a322371dbf3bab456b62d18e53752128f9606820314413461e7f4fb5ff3672",
+      "bytes": 14261
+    }
+  ]
+}

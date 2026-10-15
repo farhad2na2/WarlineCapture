@@ -1,0 +1,22 @@
+{
+  "manifest": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/manifest.json",
+  "manifest_sha256": "e3e55662b37b5e6784ce2a83b53cbb3dc9c9285068663cfb8beb57c9dfc14059",
+  "proof": "Logs/SkirmishProduction/Offline/logical-frame-419si_nl/result.json",
+  "proof_sha256": "c5dcfe4098006d866b652f67b7d952f097bb6a9a52d870a7e08606b11b8e91b1",
+  "source_review": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/INDEPENDENT_SOURCE_REVIEW.json",
+  "source_review_sha256": "b0da472398e88ab7887c00f497a4e298de063d7c4da090c96c0c50ecb754a1af",
+  "result": "PassedFocusedEditorBoundedLogicalFrame",
+  "sources": 832,
+  "references": 353,
+  "mismatches": 0,
+  "no_fallback": true,
+  "controls_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunBoundedLogicalFrameControls",
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120BoundedLogicalFrameRefinement",
+  "source_fit_certified": false,
+  "native_executed": false,
+  "assets_edited": false,
+  "required_controls_marker": "[BoundedLogicalFrameControls] result=Passed controls=6 frameCandidates=4 physicalSourceChanged=0 sourceFitCertified=0",
+  "required_collection_marker": "[All120SimultaneousLogicalRefinement] result=Collected catalog=S026 sourceFitCertified=0 output=",
+  "existing_core_meta": "Preserve existing",
+  "new_partial_meta": "Root-owned Unity import; no invented GUID"
+}

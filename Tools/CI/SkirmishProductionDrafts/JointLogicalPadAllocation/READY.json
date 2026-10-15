@@ -1,0 +1,46 @@
+{
+  "manifest_sha256": "57b074178528d02dc7750541edca827a2e7507a8445e2d9ba8bcf9464c8c103a",
+  "proof": "Logs/SkirmishProduction/Offline/joint-logical-pads-kn7779ma/result.json",
+  "proof_sha256": "c690b77f094fd2ec738da44b81044d4762cbc0447e51fbf3fd9b4e91a1ff9e17",
+  "records": [
+    {
+      "assembly": "Game.Editor",
+      "sources": 837,
+      "reference_arguments": 354,
+      "exit_code": 0
+    },
+    {
+      "assembly": "Game.Tests.Editor",
+      "sources": 760,
+      "reference_arguments": 332,
+      "exit_code": 0
+    }
+  ],
+  "input_pin_count": 1965,
+  "mismatches": [],
+  "no_fallback": true,
+  "parent_proof": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\legacy-opening-diagnostic-9ux4rqc2\\result.json",
+  "parent_sha256": "2ea04027ebff18deeb2edc6dbbd56377fc4989b9f280e81556fa7a49787ce307",
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120JointLogicalPadRefinement",
+  "combined_no_quit_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunJointLogicalRefinementLegacyAndOpeningWitness",
+  "environment": {
+    "WARLINE_ALL120_REFINEMENT_CATALOG": "S026",
+    "WARLINE_ALL120_REFINEMENT_OUTPUT": "Fresh absolute Logs/SkirmishProduction output JSON",
+    "WARLINE_S005_OPENING_GROUP_OUTPUT": "Separate fresh absolute opening witness output for combined entry"
+  },
+  "required_collector_markers": [
+    "[JointLogicalPadControls] result=Passed controls=10 candidateWindow=9 maximumStrictPasses=2 sourceFitCertified=0",
+    "[All120SimultaneousLogicalRefinement] result=Collected catalog=S026 sourceFitCertified=0"
+  ],
+  "combined_route": "Joint collector (owned World cleanup) -> SkirmishLegacyProductionControls.RunFocusedValidation -> existing normal Menu late-ECS witness",
+  "required_combined_cli_flag": "-warlineProfilerMarkers",
+  "required_process_result": "Actual checked wrapper exit0, existing Legacy and complete witness/Closed markers; no -quit for asynchronous witness",
+  "maximum_candidates": 9,
+  "maximum_discovery_plus_strict_per_candidate": 3,
+  "final_route_requirement": "Every joint strict candidate requires all actual facility-reserved native queries exact; moved staging additionally requires exact pre-discovery queries",
+  "native_controls_executed": false,
+  "source_fit_certified": false,
+  "mission_ready": false,
+  "broad113_admitted": false,
+  "independent_review": "Pending final source review; no adoption authority implied by owning compilation"
+}

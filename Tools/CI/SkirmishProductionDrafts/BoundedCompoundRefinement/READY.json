@@ -1,0 +1,27 @@
+{
+  "result": "ReadyForRootImportAndNativeS026BoundedSearch",
+  "manifest_sha256": "2487c28f37ecb1c73af91aca36ccdccac38bd89cc4bb38d7c7d471b98d3177a9",
+  "proof": "Logs\\SkirmishProduction\\Offline\\compound-b4mpxcj5\\result.json",
+  "proof_sha256": "804a32e8d647c5b11dd64af1b3ec81184bbf3f12d73ab90cc2327d55df360a26",
+  "source_count": 831,
+  "reference_count": 353,
+  "no_fallback": true,
+  "source_reference_mismatches": 0,
+  "current_batch_parent_join_sha256": "f1e53f6cb7b2ff14e5bc1e727ad3df075d5336a8eb3fc9a47a73a08be7aa2539",
+  "independent_source_review_sha256": "0e28709336f473c2ac5d4a5679770050e9a4dd860885740e3ef01a7a39ac8e1d",
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120BoundedCompoundRefinement",
+  "environment": {
+    "WARLINE_ALL120_REFINEMENT_CATALOG": "S026",
+    "WARLINE_ALL120_REFINEMENT_OUTPUT": "Fresh absolute persistent path under Logs/SkirmishProduction, not existingS026output"
+  },
+  "required_markers": [
+    "[BoundedLogicalCompoundSearchControls] result=Passed controls=7 physicalSourceChanged=0 nativePlacementAcceptance=Pending",
+    "[All120SimultaneousLogicalRefinement] result=Collected catalog=S026 sourceFitCertified=0 output="
+  ],
+  "wrapper_exit_zero_required": true,
+  "logical_fit_requires": "Inspect strictThreeSizePlacementPass and all3 strict size facility/army/route facts; Collected is not fit",
+  "native_executed": false,
+  "assets_edited": false,
+  "mission_readiness": "Pending",
+  "meta_disposition": "Existing core meta preserved; new partial requires root-owned new meta"
+}

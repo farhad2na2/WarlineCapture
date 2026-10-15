@@ -40,7 +40,7 @@ namespace Game.Editor
             terminalInterventions = terminalUnexpectedSamples = 0;
             terminalMatch = match;
             terminalSession = session;
-            terminalAttempt = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            terminalAttempt = ReadProductionTerminalAttempt(em,session,in match);
             terminalOldBattlefield.Clear();
             using (var oldState = em.CreateEntityQuery(new EntityQueryDesc
             {
@@ -55,6 +55,7 @@ namespace Game.Editor
             terminalAction = Environment.GetEnvironmentVariable("WARLINE_TERMINAL_ACTION") ?? "MAIN MENU";
             if (terminalAction != "MAIN MENU" && terminalAction != "REPLAY" && terminalAction != "ADJUST SETUP")
                 throw new ArgumentException("Unsupported terminal action: " + terminalAction);
+            if (productionCanary?.Request.IsLegacyPreset == true && terminalAction != "MAIN MENU") throw new InvalidOperationException("Legacy production proof uses normal MainMenu return only");
             terminalElapsed = elapsed;
             terminalWall = EditorApplication.timeSinceStartup - playingSince;
             terminalTimeScale = Time.timeScale;
@@ -89,7 +90,7 @@ namespace Game.Editor
                 {
                     if (!SkirmishLaunchProjection.TryGet(em, out var session, out var match) || session != terminalSession ||
                         match.Phase != SkirmishPhase.Finished || match.Outcome != terminalMatch.Outcome ||
-                        !em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.Equals(terminalAttempt) ||
+                        !ReadProductionTerminalAttempt(em,session,in match).Equals(terminalAttempt) ||
                         Mathf.Abs(SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, session, in match) - terminalElapsed) > .05f ||
                         DesignatedBaseHp(em, session, 1) != terminalPlayerHp || DesignatedBaseHp(em, session, 2) != terminalEnemyHp ||
                         SkirmishLaunchProjection.IsSimulationActive(em))
@@ -99,6 +100,11 @@ namespace Game.Editor
                         var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
                         if (clock.Playing != 0 || clock.Paused == 0)
                         { EndTerminalProbe(false, "terminalClockNotFrozen"); return; }
+                    }
+                    if (productionCanary?.Request.IsLegacyPreset == true)
+                    {
+                        if (!SkirmishLegacyProductionIdentity.ReadSavedResultMatches(in match,out _)) return;
+                        RecordProductionResolvedSnapshot(em,session,in match,false,terminalElapsed,"TerminalSnapshot");
                     }
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
                     terminalResultPresentation = SkirmishTerminalPresentationObservation.ReadResult(view, terminalAttempt.ToString(), match.Outcome);

@@ -1,0 +1,15 @@
+{
+  "result": "IndependentSourceReviewClear",
+  "manifest_sha256": "d0ed6823fc72b67fd16dd8faaa69355f642ffc8cf26533eaef23b3a167c9e2f9",
+  "source_sha256": "b8501cac55fd30bce71d1bcdeb6c453963f79bbb166cca20e7d513a21b43e11c",
+  "before_matches": true,
+  "delta": "Two replacements only: explicit placementWitness Begin assigns now+480 after normal startup arming; first view keeps min(existing480deadline,now+180). Other entries retain original startup and180 capture behavior. Common Tick sets its startup limit only when deadline==0, so this explicit diagnostic value persists.",
+  "bounds_review": [
+    "Existing expired/nonpositive deadline refusal retained before first candidate view.",
+    "Math.Min prevents late-ready capture from extending beyond total480 and retains at most180 post-ready.",
+    "Only placementWitness argument/field activates either adjustment; ordinary startup/gameplay deadlines unchanged.",
+    "Runtime exception gate, original views/lineage/EOF captures, input/scene ownership and cleanup unchanged."
+  ],
+  "owning_proof": "Producer running isolated prefix831 one-overlay; no independent compiler/native execution",
+  "source_fit_certified": false
+}

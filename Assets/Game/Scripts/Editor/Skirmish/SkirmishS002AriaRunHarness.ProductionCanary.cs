@@ -35,7 +35,8 @@ namespace Game.Editor
                 Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM"),productionBatch==null,productionBatch?.Matrix);
             var packaged = SkirmishExpansionCatalogConfig.Load();
             SkirmishScenarioDefinitionConfig definition;
-            if (packaged == null || !packaged.TryGetDefinition(request.CatalogId, out definition) ||
+            if (request.IsLegacyPreset) SkirmishLegacyProductionIdentity.RequireBinding(request.CatalogId);
+            else if (packaged == null || !packaged.TryGetDefinition(request.CatalogId, out definition) ||
                 definition.DefinitionId != (string)request.Job["definition_id"] ||
                 definition.ContentVersion != (int)request.Job["definition_version"])
                 throw new InvalidDataException("Actual packaged canary definition/version differs.");
@@ -93,6 +94,7 @@ namespace Game.Editor
             in SkirmishMatchState match, bool simulationActive, float elapsed, string kind)
         {
             if (productionCanary == null) return;
+            if (productionCanary.Request.IsLegacyPreset) { RecordProductionLegacySnapshot(em,session,in match,simulationActive,elapsed,kind); return; }
             var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             // Read actual resolved native values/current localization. Never derive
@@ -172,12 +174,14 @@ namespace Game.Editor
                 facts["presented_menu_title"] = menu.actualTitle;
                 facts["presented_menu_locale"] = menu.locale;
             }
+            facts["legacy_result_saved_verified"] = productionCanary.Request.IsLegacyPreset && productionCanary.LegacySavedResultVerified;
             productionCanary.Record("TerminalReturnOwnerCompleted", facts);
         }
 
         private sealed class ProductionCanaryContext
         {
             internal readonly SkirmishProductionCanaryRequest Request;
+            internal bool LegacySavedResultVerified;
             private JObject verifiedNativeIdentity;
             private string verifiedNativeConfigHash;
             internal void CaptureVerifiedIdentity(JObject identity,string configHash)
@@ -195,7 +199,7 @@ namespace Game.Editor
                 if((string)verifiedNativeIdentity["catalog_id"]!=facts.CatalogId||(int)verifiedNativeIdentity["seed"]!=facts.Seed||
                     (string)verifiedNativeIdentity["locale"]!=(facts.Locale=="en"?"EN":"FA")||
                     actualSourceHash!=(string)Request.Job["candidate_sha256"])throw new InvalidDataException("Native run provenance differs from exact claimed attempt");
-                facts.DefinitionVersion=(int)verifiedNativeIdentity["definition_version"];facts.CodeHash=actualSourceHash;facts.ConfigHash=verifiedNativeConfigHash;return true;
+                facts.DefinitionVersion=Request.IsLegacyPreset?0:(int)verifiedNativeIdentity["definition_version"];facts.CodeHash=actualSourceHash;facts.ConfigHash=verifiedNativeConfigHash;return true;
             }
             private readonly Dictionary<string, string> environment = new Dictionary<string, string>(StringComparer.Ordinal);
             private readonly SceneSetup[] sceneSetup;

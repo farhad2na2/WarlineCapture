@@ -1,0 +1,76 @@
+{
+  "status": "FailedStartupTimeoutBeforeFourViews",
+  "checkedCallerExit": 1,
+  "unityWrapperExit": 2,
+  "actualViews": 0,
+  "normalMenuJourneyPassed": true,
+  "completeSourceAndBuildDictionariesUnchanged": true,
+  "candidateSha256": "10aa2b7d299b13d106c0c7e15350a97f87c7ddcf5d8f51e617f9219f60b70e91",
+  "buildSha256": "7dc2845e6fd8d8cc4109ba08194794b8c3607b508af02c3b47f54c74c6f9f600",
+  "internalStartupDeadlineSeconds": 120,
+  "profilerMarkersEnabled": true,
+  "profilerDeepSettingUnavailableBecauseNoWitnessView": true,
+  "cameraAccepted": false,
+  "placementAccepted": false,
+  "playerReady": false,
+  "noPerformanceCauseClaim": true,
+  "lateJobTempAllocWarningsPreserved": true,
+  "archiveSha256": "38cfb80698c6663bf790ed0edb8c405850d13dfe8b677d88429abe59be623f68",
+  "members": [
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/source-before.json",
+      "sha256": "8a156d41d79d3507458293e5ac8a8bf8027b7bccb7e20080e4c2ecc42515bf1d",
+      "bytes": 9149182
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/source-after.json",
+      "sha256": "8a156d41d79d3507458293e5ac8a8bf8027b7bccb7e20080e4c2ecc42515bf1d",
+      "bytes": 9149182
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/checked-child-exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/opening-placement-witness.jsonl",
+      "sha256": "fee1e039fa0e5308a03e898a486e7632cf932ab7457f3aeba963e85b59a2673c",
+      "bytes": 189
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/startup-exit.jsonl",
+      "sha256": "cd810474290681d3498e3d2e37e159657e4c1bbf2638ab341a53923c95277094",
+      "bytes": 6139
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/run-checked.ps1",
+      "sha256": "8f6630b41206a2087e6c634f872fe642158c634df74c933ad51423d4f136bf88",
+      "bytes": 2470
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/resolver.log",
+      "sha256": "6e1948bb805b610e693ce26472f6754f2a2e985957ceacf08c1e825c8b5c4013",
+      "bytes": 661
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/unity.log",
+      "sha256": "7c0a468e57c23abf2d1330d96da17c930e0ac9f45de11fe6a4a91ec931ca51ed",
+      "bytes": 450276
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-02-capture/unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ]
+}

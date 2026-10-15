@@ -78,13 +78,26 @@ def outside_assets(path, project):
 def preflight(job, project, sampling_authority=None):
     require(isinstance(job, dict), "job must be an object")
     fields = {"schema_version", "job_id", "catalog_id", "definition_id", "definition_version", "candidate_sha256", "build_sha256", "setup_sha256", "content_sha256", "source_manifest", "packet_path", "packet_sha256", "seed", "locale", "size", "difficulty", "control_mode", "required_stages", "timeout_seconds"}
+    legacy = type(job.get("schema_version")) is int and job["schema_version"] == 2
+    bindings = {"S001": (0, "SkirmishBaseAssault"), "S025": (1, "SkirmishCityCrossroads"), "S073": (3, "SkirmishIndustrialBasin")}
+    if legacy:
+        fields = fields - {"definition_id", "definition_version"} | {"legacy_preset_index", "legacy_preset_resource", "legacy_preset_sha256"}
     require(set(job) == fields, "job fields missing or unknown: " + str(sorted(set(job) ^ fields)))
-    require(type(job["schema_version"]) is int and job["schema_version"] == VERSION, "unsupported schema_version")
+    require(type(job["schema_version"]) is int and job["schema_version"] in (1, 2), "unsupported schema_version")
     identifier(job["job_id"])
     catalog = job["catalog_id"]
     require(isinstance(catalog, str) and re.fullmatch(r"S\d{3}", catalog) and 1 <= int(catalog[1:]) <= 120, "catalog must be S001..S120")
-    require(job["definition_id"] == "skirmish." + catalog.lower(), "catalog/definition mismatch")
-    require(type(job["definition_version"]) is int and job["definition_version"] > 0, "definition_version must be positive integer")
+    if legacy:
+        require(sampling_authority is not None and catalog in bindings, "legacy requires protected preset and complete canonical sampling authority")
+        index, resource = bindings[catalog]
+        require(type(job["legacy_preset_index"]) is int and job["legacy_preset_index"] == index and job["legacy_preset_resource"] == resource, "legacy coded binding differs")
+        preset = relative_file(project, "Assets/Game/Resources/" + resource + ".asset")
+        require(sha(job["legacy_preset_sha256"]) and preset.is_file() and digest(preset) == job["legacy_preset_sha256"], "legacy actual preset bytes differ")
+        require(job["seed"] > 0 and job["size"] == "Standard" and job["difficulty"] == "Regular", "requested legacy sampling labels differ; native settings remain separate")
+    else:
+        require(catalog not in bindings, "protected preset cannot be represented by fabricated expanded definition")
+        require(job["definition_id"] == "skirmish." + catalog.lower(), "catalog/definition mismatch")
+        require(type(job["definition_version"]) is int and job["definition_version"] > 0, "definition_version must be positive integer")
     for field in ("candidate_sha256", "build_sha256", "setup_sha256", "content_sha256", "packet_sha256"):
         require(sha(job[field]), field + " must be lowercase SHA256")
     require(type(job["seed"]) is int and 0 <= job["seed"] <= 2147483647, "seed must be int32, never bool/string")
@@ -126,7 +139,7 @@ def preflight(job, project, sampling_authority=None):
         require(job["seed"] in allowed, "seed does not match packet/configuration")
     else:
         sampling_authority.validate_job(job)
-    return {"schema_version": VERSION, "job_sha256": fingerprint(job), "preflight": "passed", "native_qualification": "pending"}
+    return {"schema_version": job["schema_version"], "job_sha256": fingerprint(job), "preflight": "passed", "native_qualification": "pending"}
 
 
 def enqueue(queue, job, project, sampling_authority=None):

@@ -1,0 +1,19 @@
+{
+  "result": "IndependentSourceReviewClear_ProofPending",
+  "manifest_sha256": "5c54f24413331dab552c5f2add662cea628dac3cb8fce1d05ba2352f5227e26c",
+  "source_sha256": "e18922373e16078d0b3f48618823dc4e2a75ac12962cd3fd813bfbd910f6ba03",
+  "resolved_finding": "Sole successor delta closes ownedrecorders when previously bound DefaultWorld is null/disposed; pre-first-world wait preserved. Originalf622/proof preserved.",
+  "reviewed": [
+    "ExplicitexistingCLI flag plus newwitness-only entry, ordinary nativewitness called unchanged.",
+    "512owned/1024handlefacts/12samples and four early/late discovery opportunities bounded; available/omitted/duplicate/name-only/unit/rawzero/count-invalid/errors/overhead facts explicit.",
+    "Runtime referencehelper TryGet does no ECS write and disposes its query. Reflected fields match actual private NamedProfilerRecorder publicName/Recorder schema. Borrowed recorder copies never started/stopped/disposed.",
+    "All own recorders disposed on dispatch/observationfailure, boundworldloss/change, attemptchange, PlayExit orquitting. Disposal errors explicit; no cleanup equivalence/cause claim.",
+    "No globalprofiler/deep-profile/clock/ARIA/orders/gameplaysetting writes. Recordercollection overhead explicitly recorded; not exclusive CPU attribution.",
+    "Compiler driver binds exact835/e67 parent835sources/353uniqueRefs hashes, then oneNEWEditor source and stable postchecks; no ambientfallback."
+  ],
+  "findings": [],
+  "owning_proof": "Producerfinal5c54 rerun active, originalf622passed preserved; no reviewer compiler/native run",
+  "native_execution": false,
+  "cause_established": false,
+  "readiness": false
+}

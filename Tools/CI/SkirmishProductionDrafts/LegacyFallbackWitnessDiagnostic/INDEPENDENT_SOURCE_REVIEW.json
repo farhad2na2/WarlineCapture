@@ -1,0 +1,15 @@
+{
+  "result": "IndependentSourceReviewClear_ExactProofAcknowledged",
+  "manifest_sha256": "c3588da14e009f5ecc6e6f736d939252cc9ef6b7ce865cdd4eff5ee330f53285",
+  "targets": 4,
+  "source_before_pins_match": true,
+  "review": "Only additive Controls facade beyond clearedfallback4: existing Legacyfocusedcontrols then Dispatch marker then correct Harness lateEcs normalwitnessentry. No catch/skip/outcome injection or asynchronous completion/pass claim. Existingfallbackother3sources unchanged. Requires no-quit checkedwrapper, real asynchronous finalmarkers/errorgate+actualexit and freshcompiledsnapshot before realjobs.",
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/legacy-opening-diagnostic-9ux4rqc2/result.json",
+    "sha256": "2ea04027ebff18deeb2edc6dbbd56377fc4989b9f280e81556fa7a49787ce307",
+    "producer_scope": "Exact836Editor/760Tests,zero mismatch/noFallback; no reviewercompiler/native"
+  },
+  "native_execution": false,
+  "sampling_coverage_credit": 0,
+  "complete_mission_certified": false
+}

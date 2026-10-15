@@ -18,6 +18,7 @@ namespace Game.Editor
         public string Locale { get { return (string)Job["locale"] == "EN" ? "en" : "fa-IR"; } }
         public bool Manual { get { return (string)Job["control_mode"] == "manual"; } }
         public int Seed { get { return (int)Job["seed"]; } }
+        public bool IsLegacyPreset => (int)Job["schema_version"] == 2;
 
         private SkirmishProductionCanaryRequest(string root, string jobPath, string claimPath, JObject job, JObject claim)
         {
@@ -32,14 +33,16 @@ namespace Game.Editor
             var root = Path.GetFullPath(projectRoot);
             jobPath = Path.GetFullPath(jobPath); claimPath = Path.GetFullPath(claimPath);
             var job = ReadObject(jobPath); var claim = ReadObject(claimPath);
-            Exact(job, "schema_version job_id catalog_id definition_id definition_version candidate_sha256 build_sha256 setup_sha256 content_sha256 source_manifest packet_path packet_sha256 seed locale size difficulty control_mode required_stages timeout_seconds");
+            bool legacy = job["schema_version"]?.Type == JTokenType.Integer && (int)job["schema_version"] == 2;
+            Exact(job, "schema_version job_id catalog_id " + (legacy ? "legacy_preset_index legacy_preset_resource legacy_preset_sha256" : "definition_id definition_version") + " candidate_sha256 build_sha256 setup_sha256 content_sha256 source_manifest packet_path packet_sha256 seed locale size difficulty control_mode required_stages timeout_seconds");
             Exact(claim, "attempt_id token worker started_utc job_sha256 artifact_directory");
-            Integer(job, "schema_version", 1, 1); Integer(job, "definition_version", 1, int.MaxValue);
+            Integer(job, "schema_version", 1, 2); if (!legacy) Integer(job, "definition_version", 1, int.MaxValue);
             Integer(job, "seed", 1, int.MaxValue); Integer(job, "timeout_seconds", 1, 14400);
             Require(Regex.IsMatch(Text(job, "job_id"), "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"), "Unsafe job ID.");
             var catalog = Text(job, "catalog_id");
             Require(matrix != null || catalog == "S004" || catalog == "S005", "Only S004/S005 canary dispatch exists without an explicit matrix plan.");
-            Require(Text(job, "definition_id") == "skirmish." + catalog.ToLowerInvariant(), "Definition mismatch.");
+            if (legacy) { Require(matrix != null, "Legacy jobs require an exact complete sampling plan"); SkirmishLegacyProductionIdentity.ValidateJob(job); }
+            else { Require(!SkirmishLegacyProductionIdentity.IsProtected(catalog), "Protected presets cannot manufacture expanded identity"); Require(Text(job, "definition_id") == "skirmish." + catalog.ToLowerInvariant(), "Definition mismatch."); }
             Require(Text(job, "size") == "Standard" && Text(job, "difficulty") == "Regular", "Only Regular/Standard canary dispatch exists.");
             Require(new[] { "EN", "FA" }.Contains(Text(job, "locale")), "Locale must be EN/FA.");
             Require(new[] { "manual", "aria" }.Contains(Text(job, "control_mode")), "Unknown control mode.");
@@ -122,6 +125,7 @@ namespace Game.Editor
 
         public static JObject NativeContentIdentity(JObject setup)
         {
+            if ((string)setup?["identity_kind"] == "SkirmishLegacyPresetNativeIdentity") return SkirmishLegacyProductionIdentity.ContentIdentity(setup);
             ValidateNativeSetupIdentity(setup);
             return new JObject { ["schema_version"] = 1, ["identity_kind"] = "SkirmishNativeContentIdentity",
                 ["catalog_id"] = setup["catalog_id"].DeepClone(), ["definition_id"] = setup["definition_id"].DeepClone(),
@@ -131,6 +135,7 @@ namespace Game.Editor
 
         public void VerifyNativeSetupIdentity(JObject actual)
         {
+            if (IsLegacyPreset) { SkirmishLegacyProductionIdentity.VerifyJobIdentity(Job, actual); return; }
             ValidateNativeSetupIdentity(actual);
             foreach (var key in new[] { "catalog_id", "definition_id", "definition_version", "difficulty", "size", "seed", "locale" })
                 Require(JToken.DeepEquals(Job[key], actual[key]), "Actual native configuration differs: " + key);

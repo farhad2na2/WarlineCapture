@@ -61,8 +61,8 @@ namespace Game.Editor
 
         // The caller owns definition/layout lifetime. This core creates only
         // proposal metadata and uses the same native allocator for every family.
-        public static JObject RefineLoadedCandidate(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
-            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null)
+        static JObject RefineLoadedCandidateCore(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
+            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false)
         {
             using var live=em.CreateEntityQuery(typeof(SkirmishMatchState));
             Require(live.IsEmptyIgnoreFilter,"Refinement requires disposable source world, never live gameplay");
@@ -121,18 +121,35 @@ namespace Game.Editor
                 }
                 output["baselineNativeApproaches"]=baselineRoutes;
                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));
+                if(requireExactJointBaseline&&baselineRoutes.OfType<JObject>().Any(r=>!JointRoutesExact(r)))
+                {output["jointRouteRefused"]="Actual all-profile baseline contains nonexact native path; no facility search or fit claim";return output;}
                 // Discovery can relocate the entire roster inside declared logical
                 // compounds. Derived hulls must then pass the ordinary strict-pad
                 // allocator and complete army occupancy on another pass.
-                for(int pass=0;pass<3;pass++)
+                var originalCompounds=compoundOverride??CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]);
+                string originalLogicalFrame=JsonUtility.ToJson(owner.Layout);
+                if(refinementLogicalFrameSearchRequested)
                 {
-                    bool discovery=pass==0;bool complete=true;
+                    Require(!ProtectedRefinementCatalog(owner.Definition.CatalogId),"Protected coded layout cannot be widened");
+                    output["logicalFrameSearchScope"]="Current_Plus32_Plus64_Plus128_ExistingPhysicalSourceOnly";
+                    output["originalLogicalFrameJson"]=originalLogicalFrame;
+                }
+                var activeCompounds=(JObject)originalCompounds.DeepClone();
+                int compoundAttempt=0,strictPasses=0;bool discoveryPending=true;
+                for(int pass=0;pass<(refinementCompoundSearchRequested?6:3);pass++)
+                {
+                    bool discovery=discoveryPending;bool complete=true,incompleteFacilities=false;
                     var sizes=new JArray();passes.Add(new JObject{["pass"]=pass,["discoveryOnly"]=discovery,["sizes"]=sizes});
                     foreach(var budget in budgets)
                     {
                         var row=new JObject{["catalogId"]=mission["catalog_id"],["size"]=budget.Size.ToString(),
                             ["group"]=mission["collector_source_group"],["newLogicalCandidateMaterialized"]=true,
-                            ["candidateCompoundWorldRects"]=CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]),
+                            ["candidateCompoundWorldRects"]=activeCompounds.DeepClone(),
+                            ["originalCandidateCompoundWorldRects"]=originalCompounds.DeepClone(),
+                            ["boundedLogicalCompoundSearch"]=refinementCompoundSearchRequested,["compoundEnvelopeAttempt"]=compoundAttempt,
+                            ["requestedCompoundExpansionMetres"]=refinementLogicalFrameSearchRequested?RefinementLogicalFrameMargins[compoundAttempt]:RefinementCompoundMargins[compoundAttempt],
+                            ["logicalFrameSearch"]=refinementLogicalFrameSearchRequested,
+                            ["actualLogicalFrameJson"]=refinementLogicalFrameSearchRequested?JsonUtility.ToJson(owner.Layout):null,
                             ["allSizeFacilities"]=Ground30PreferredFacilities(budget,owner.Layout,grid)};
                         sizes.Add(row);
                         try
@@ -143,7 +160,7 @@ namespace Game.Editor
                         bool allFacilities=facilities!=null&&facilities.Count==budget.Structures.Length&&
                             facilities.All(f=>(bool?)f["entireConfigurationFound"]==true);
                         row["completeFacilities"]=allFacilities;
-                        if(!allFacilities){complete=false;row["packingStatus"]="NotQueried_IncompleteFacilities";continue;}
+                        if(!allFacilities){complete=false;incompleteFacilities=true;row["packingStatus"]="NotQueried_IncompleteFacilities";continue;}
                         using var typedPlacement=new Game.Runtime.SkirmishTypedSpawnConstraint(em,gridEntity,grid,owner.Layout);
                         var packing=Ground30PackBudget(budget,owner.Layout,em,gridEntity,grid,surface,facilities,typedPlacement);
                         row["postFacilityForcePacking"]=packing;
@@ -153,6 +170,8 @@ namespace Game.Editor
                             (int?)f["insideTypedPadCount"]==(int?)f["requestedCount"]);
                         row["allActorsInsidePads"]=allActors;complete&=allActors;
                         row["routeQueriesWithSameFacilityReservations"]=Ground30RouteQueries(budget,owner.Layout,em,gridEntity,grid,surface,facilities);
+                        if(requireExactJointRoutes&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
+                        {row["jointRouteRefused"]="Nonexact native route with actual facility blockers";complete=false;}
                         }
                         catch(Exception failure){row["sizeError"]=failure.ToString();throw;}
                         finally{checkpoint?.Invoke(new JObject{["catalogId"]=mission["catalog_id"],["pass"]=pass,["discoveryOnly"]=discovery,["size"]=budget.Size.ToString(),["facts"]=row.DeepClone()});}
@@ -166,8 +185,26 @@ namespace Game.Editor
                         // service circulation and real live occupancy validation.
                         break;
                     }
+                    if(refinementCompoundSearchRequested&&discovery&&incompleteFacilities)
+                    {
+                        bool expanded=refinementLogicalFrameSearchRequested
+                            ?TryNextRefinementLogicalFrame(originalLogicalFrame,originalCompounds,compoundAttempt+1,owner.Layout,source,grid,out var nextCompounds,out string searchError)
+                            :TryExpandedRefinementCompounds(originalCompounds,compoundAttempt+1,owner.Layout,source,grid,out nextCompounds,out searchError);
+                        if(expanded)
+                        {
+                            compoundAttempt++;activeCompounds=nextCompounds;
+                            output["boundedCompoundSearchStatus"]=refinementLogicalFrameSearchRequested
+                                ?"RetryingDiscoveryWithinExplicitWidenedLogicalSourceAndGridBounds"
+                                :"RetryingDiscoveryWithinCurrentLogicalSourceAndGridBounds";
+                            continue;
+                        }
+                        output["boundedCompoundSearchStatus"]="ExhaustedOrRefused_NoFitClaim";
+                        output["boundedCompoundSearchRefusal"]=searchError;
+                    }
                     if(!TryApplyRefinementHulls(owner.Layout,sizes,grid,out string hullError))
                     {output["unresolved"]=hullError;break;}
+                    discoveryPending=false;
+                    if(!discovery&&++strictPasses>=2)break;
                 }
                 output["proposedLayoutJson"]=JsonUtility.ToJson(owner.Layout);
                 output["proposedLayoutSemanticSha256"]=SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(owner.Layout);

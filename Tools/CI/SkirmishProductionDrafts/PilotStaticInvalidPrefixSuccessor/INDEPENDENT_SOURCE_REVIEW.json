@@ -1,0 +1,19 @@
+{
+  "result": "BoundedSourceReviewClear",
+  "manifest": "Tools/CI/SkirmishProductionDrafts/PilotStaticInvalidPrefixSuccessor/manifest.json",
+  "manifest_sha256": "b7a3c74d953b5ea0b5d8084caceec6d37f1156aebd5f8c631d2e30a3ff09cd53",
+  "source_sha256": "7760fad1a6e9a1204c7eabcf65a587e9e6e040d24f25318e2f045d1313b979ab",
+  "before_sha256": "0dca4cbde1225a67ea21b4d17fd6a2dc047ac892ef87edf8b3022818fca8149b",
+  "findings": [],
+  "reviewed": [
+    "Probe-local cache.AuthoredBuildings replaces duplicate identical Ensure; no global/crossWorld state added.",
+    "Source mask composition matches existing production RebuildPlacementInvalidPrefix: startup road footprint, authored building/scenery, road/sidewalk and water masks, same roads/blocker/runtime-blocker exclusion. Authored Append/Overlaps and road Append/Overlaps consume the same masks.",
+    "Native initial search invokes prefix on full effective placement rectangle. Surviving candidates still invoke unchanged NativeValid/Valid, slope/source/typed compound/pad, repair/circulation and current shared reservation checks.",
+    "RequiresRoadPlacement OR IsWallGateDefinition bypasses early prefix; final normal road gate rules remain unchanged.",
+    "Six drafted controls include900 rectangle comparisons, actual normal search first-fit parity and reservation, QA-only rejection, road-gate bypass predicate, bounds/free cell and changed-mask rebuild. Controls have not executed; no type/native proof claimed."
+  ],
+  "proof": "Held until root30788 releases current DLL ownership",
+  "native_executed": false,
+  "speedup_measured": false,
+  "source_fit_certified": false
+}

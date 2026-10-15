@@ -485,6 +485,7 @@ namespace Game.Editor
                 var request=productionCanary.Request;
                 if(catalog!=request.CatalogId||selectedSeed!=request.Seed||selectedLocale!=request.Locale)
                     throw new InvalidOperationException("Payload differs from exact claimed normal journey");
+                if(request.IsLegacyPreset) { SkirmishLegacyProductionIdentity.ValidateJob(request.Job); payload=default; error=null; return true; }
                 return SkirmishAriaAcceptancePayload.TryCreate(catalog,(string)request.Job["definition_id"],
                     (int)request.Job["definition_version"],SkirmishSizeId.Standard,SkirmishDifficultyId.Regular,
                     selectedSeed,selectedLocale,out payload,out error);
@@ -712,7 +713,7 @@ namespace Game.Editor
                     bool selected = TryCreateSelectedPayload(catalogId, seed, locale, out payload, out _);
                     if (!selected)
                         return;
-                    Debug.Log("[SkirmishS002AriaRun] selected " + payload.FormatSelectedConfiguration());
+                    Debug.Log("[SkirmishS002AriaRun] selected " + (productionCanary?.Request.IsLegacyPreset==true ? "LegacyPreset catalog="+catalogId+" seed="+seed+" nativeSettings=CodedPreset" : payload.FormatSelectedConfiguration()));
                     if (TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
                         Debug.Log(SkirmishAcceptanceCensusCapture.FormatLog(census));
                     stage = 1;
@@ -1198,7 +1199,7 @@ namespace Game.Editor
         private static int DesignatedBaseHp(EntityManager em, Entity session, byte faction)
         {
             if (!em.HasComponent<SkirmishExpandedSessionComponent>(session))
-                return -1;
+                return productionCanary?.Request.IsLegacyPreset==true ? SkirmishLegacyProductionIdentity.BaseHp(em,em.GetComponentData<SkirmishMatchState>(session),faction) : -1;
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             using EntityQuery query = em.CreateEntityQuery(
                 typeof(SkirmishObjectiveRoleComponent),
@@ -1487,8 +1488,10 @@ namespace Game.Editor
                 facts.ConfigHash = census.ConfigHash;
             }
 
-            bool appended = SkirmishS002AriaRunLog.TryAppendTerminalRow(runsPath, in facts, out string row, out string error);
-            bool counted = appended && nativeProvenance && (productionBatch==null||productionBatch.RuntimeErrorsClean) && SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, RowResult(row));
+            bool legacyJob=productionCanary?.Request.IsLegacyPreset==true;
+            string row,error;
+            bool appended = legacyJob ? TryAppendLegacyProductionTerminal(runsPath,in facts,out row,out error) : SkirmishS002AriaRunLog.TryAppendTerminalRow(runsPath, in facts, out row, out error);
+            bool counted = !legacyJob && appended && nativeProvenance && (productionBatch==null||productionBatch.RuntimeErrorsClean) && SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, RowResult(row));
             string log = string.Format(
                 CultureInfo.InvariantCulture,
                 "[SkirmishS002AriaRun] appended={0} countedWin={1} error={2}\n{3}\n",
@@ -1505,7 +1508,7 @@ namespace Game.Editor
             AriaCommandEvidence.End();
             UiShellRuntimeGateway.StopAriaPlay();
             EditorApplication.ExitPlaymode();
-            bool operational=matrixJob&&(productionBatch==null||productionBatch.RuntimeErrorsClean)&&SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,appended,terminalSnapshotValid);
+            bool operational=matrixJob&&(productionBatch==null||productionBatch.RuntimeErrorsClean)&&(legacyJob ? SkirmishLegacyProductionIdentity.IsOperationallyComplete(in facts,appended,terminalSnapshotValid,nativeProvenance&&productionCanary.LegacySavedResultVerified) : SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,appended,terminalSnapshotValid));
             if(matrixJob)Debug.Log("[SkirmishProductionOperationalRun] result="+(operational?"Completed":"Failed")+
                 " outcome="+outcome+" countedWin="+(counted?1:0)+" queueSuccessEnabled=0");
             RequestQuitIfAsked(matrixJob?(operational?0:2):(counted?0:2));

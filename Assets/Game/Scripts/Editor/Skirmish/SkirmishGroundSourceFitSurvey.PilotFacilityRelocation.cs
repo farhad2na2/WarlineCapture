@@ -27,12 +27,11 @@ namespace Game.Editor
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
             var output=new JArray();report["normalFacilityRelocationProposals"]=output;
             report["normalFacilityRelocationScope"]="ActualProductionSearchAndStaticSourceCaches_NoLiveGameplayCertificate";
-            var authored=new BuildingPlacementAuthoredBuildingCache();authored.Ensure(em,grid);
-            report["normalFacilityPackedGeometryCacheReady"]=authored.IsReady;
-            if(!authored.IsReady)
-            {report["normalFacilityRelocationStatus"]="UnavailableActualPackedOrAuthoredWorldGeometry";return;}
             using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
             var cache=new BuildingPlacementInvalidCellCacheCompositionSystemHelper();cache.EnsureAuthoredGeometry(em,surfaces,grid);
+            report["normalFacilityPackedGeometryCacheReady"]=cache.AuthoredBuildings.IsReady;
+            if(!cache.AuthoredBuildings.IsReady)
+            {report["normalFacilityRelocationStatus"]="UnavailableActualPackedOrAuthoredWorldGeometry";return;}
             var walkable=em.GetBuffer<GridWalkable>(gridEntity,true);
             Require(walkable.Length==grid.Width*grid.Height,"Complete actual baked blocking projection required");
             using var blocked=new NativeBitArray(walkable.Length,Allocator.Persistent,NativeArrayOptions.ClearMemory);
@@ -49,6 +48,19 @@ namespace Game.Editor
             var search=new BuildingRuntimeSpawnCompositionSystemHelper();
             var dependency=new BuildingGameplayDependencyCompositionSystemHelper();
             var startup=new BuildingPlacementStartupSystemHelper();
+            // Immutable source-only early rejection. No typed QA or prior accepted
+            // reservation enters this prefix; surviving candidates still call Valid.
+            var staticMask=new bool[grid.Width*grid.Height];
+            startup.FillRoadFootprintMask(grid,staticMask);
+            cache.AuthoredBuildings.AppendTo(staticMask);
+            cache.RoadSurfaces.AppendTo(staticMask);
+            cache.RoadSurfaces.AppendWaterTo(staticMask);
+            int[] staticPrefix=null;
+            BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(grid,roads,blocker,staticMask,
+                dependency.IsRuntimeBlockerCell,ref staticPrefix,out int prefixWidth,out int prefixHeight,out bool prefixReady);
+            Require(prefixReady,"Actual immutable source prefix required");
+            report["normalFacilityStaticInvalidPrefixReady"]=true;
+            report["normalFacilityStaticInvalidPrefixScope"]="ExactProbeSourceRoadWaterSceneryWalkability_ExcludesQaAndReservations";
             var sourceRows=((JArray)report["allSizeFacilities"]).OfType<JObject>().ToArray();
             foreach(var configuration in sourceRows.GroupBy(row=>((string)row["catalogId"],(string)row["size"])))
             {
@@ -141,14 +153,17 @@ namespace Game.Editor
                         bool valid=NativeValid(d,origin,footprint,rotated,g,nativeRoads,nativeBlockers);
                         if(!valid)sourceRejected++;return valid;
                     }
+                    bool CachedSourceInvalid(Vector2Int candidate,Vector2Int size)=>
+                        PilotStaticPrefixAllowed(definition)&&BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(
+                            staticPrefix,prefixWidth,prefixHeight,candidate,size);
                     var context=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
-                        geometry.GetPlacementFootprint,Effective,Valid,cache.HasCachedInvalidCellInFootprint,null,null,null,null);
+                        geometry.GetPlacementFootprint,Effective,Valid,CachedSourceInvalid,null,null,null,null);
                     var footprint=geometry.GetPlacementFootprint(definition,false);
                     var center=GridUtils.WorldToCell(grid,new float3((float)preferred["x"],0,(float)preferred["z"]));
                     var origin=new Vector2Int(center.x-footprint.x/2,center.y-footprint.y/2);
                     result["actualModelFootprintCells"]=new JArray(footprint.x,footprint.y);
                     var nativeContext=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
-                        geometry.GetPlacementFootprint,Effective,NativeValid,cache.HasCachedInvalidCellInFootprint,null,null,null,null);
+                        geometry.GetPlacementFootprint,Effective,NativeValid,CachedSourceInvalid,null,null,null,null);
                     bool nativeFound=search.TryFindValidInitialBuildingOrigin(nativeContext,definition,origin,false,grid,roads,blocker,out var nativeOrigin);
                     result["normalStaticPlacementWithoutAdditionalQa"]=new JObject{["found"]=nativeFound,
                         ["scope"]="ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
@@ -229,6 +244,66 @@ namespace Game.Editor
             report["packingAfterRelocationScope"]="CompleteFacilityConfigurationsOnly_ActualStaticReservations_NoLiveOccupancy";
             report["normalFacilityRelocationStatus"]="CollectedStaticProposals_LiveSourceFitAndReadabilityPending";
         }
+        static bool PilotStaticPrefixAllowed(BuildingDefinition definition)=>
+            !BuildingBarrierUtilitySystemHelper.RequiresRoadPlacement(definition)&&
+            !BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition);
+
+        public static void RunPilotStaticPrefixAndOpeningWitnessPreparation()
+        {
+            RunPilotStaticPlacementPrefixControls();
+            SkirmishS002AriaRunHarness.RunS005OpeningPlacementWitnessPreparation();
+            Debug.Log("[PilotStaticPrefixAndOpeningWitnessPreparation] result=Passed prefix=6 opening=18 warmup=1 gameplayCertified=0");
+        }
+
+        public static void RunPilotStaticPlacementPrefixControls()
+        {
+            using var world=new World("PilotStaticPrefixControls");var em=world.EntityManager;
+            var owner=em.CreateEntity();em.AddBuffer<GridRoad>(owner);
+            var roads=em.GetBuffer<GridRoad>(owner);roads.ResizeUninitialized(64);
+            for(int i=0;i<64;i++)roads[i]=default;
+            roads[2*8+2]=new GridRoad{Value=1};
+            using var bits=new NativeBitArray(64,Allocator.Temp,NativeArrayOptions.ClearMemory);bits.Set(5*8+5,true);
+            var blockers=new DynamicBlockerComponent{Blocked=bits};
+            var grid=new GridConfig{Width=8,Height=8,CellSize=1};
+            var sourceMask=new bool[64];sourceMask[3*8+4]=true;sourceMask[1*8+6]=true;
+            int[] prefix=null;
+            BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(grid,roads,blockers,sourceMask,null,
+                ref prefix,out int width,out int height,out bool ready);
+            Require(ready,"Source prefix control must initialize");
+            bool SourceMask(GridConfig g,Vector2Int o,Vector2Int s)
+            {for(int y=o.y;y<o.y+s.y;y++)for(int x=o.x;x<o.x+s.x;x++)if(sourceMask[y*8+x])return true;return false;}
+            bool Brute(RectInt rect)=>BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
+                rect,grid,roads,blockers,false,null,0,0,null,SourceMask,null);
+            bool Cached(Vector2Int o,Vector2Int s)=>BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(prefix,width,height,o,s);
+            int comparisons=0;
+            for(int y=-1;y<=8;y++)for(int x=-1;x<=8;x++)for(int h=1;h<=3;h++)for(int w=1;w<=3;w++)
+            {var rect=new RectInt(x,y,w,h);Require(Brute(rect)==!Cached(rect.position,rect.size),"Exact source-prefix/brute rectangle equivalence");comparisons++;}
+            var definition=new BuildingDefinition{FootprintCells=new Vector2Int(2,2)};
+            var search=new BuildingRuntimeSpawnCompositionSystemHelper();var reservation=new RectInt(0,0,2,2);
+            var qa=new RectInt(0,0,8,8);
+            bool Final(BuildingDefinition d,Vector2Int o,Vector2Int size,bool r,GridConfig g,DynamicBuffer<GridRoad> rr,DynamicBlockerComponent bb)
+            {var rect=new RectInt(o,size);return PilotCompoundContains(qa,rect)&&!reservation.Overlaps(rect)&&Brute(rect);}
+            BuildingRuntimeSpawnCompositionSystemHelper.Context Context(bool use)=>new(null,null,null,null,default,null,
+                (d,r)=>d.FootprintCells,(d,o,g,r)=>new RectInt(o,d.FootprintCells),Final,
+                use?Cached:null,null,null,null,null);
+            bool off=search.TryFindValidInitialBuildingOrigin(Context(false),definition,Vector2Int.zero,false,grid,roads,blockers,out var a);
+            bool on=search.TryFindValidInitialBuildingOrigin(Context(true),definition,Vector2Int.zero,false,grid,roads,blockers,out var b);
+            Require(off&&on&&a==b&&!reservation.Overlaps(new RectInt(a,definition.FootprintCells)),"Native first-fit order and reservation refusal preserved");
+            qa=reservation;
+            Require(!search.TryFindValidInitialBuildingOrigin(Context(false),definition,Vector2Int.zero,false,grid,roads,blockers,out _)&&
+                !search.TryFindValidInitialBuildingOrigin(Context(true),definition,Vector2Int.zero,false,grid,roads,blockers,out _),"QA-only no-fit remains failure");
+            var roadPrefab=new GameObject("Building_Road_Barrier");
+            try{Require(!PilotStaticPrefixAllowed(new BuildingDefinition{Prefab=roadPrefab})&&
+                !PilotStaticPrefixAllowed(new BuildingDefinition{DisplayName="Road_Barrier"})&&PilotStaticPrefixAllowed(definition),"Normal road gate exceptions must bypass prefix");}
+            finally{UnityEngine.Object.DestroyImmediate(roadPrefab);}
+            Require(!Cached(new Vector2Int(0,0),Vector2Int.one)&&Cached(new Vector2Int(-1,0),Vector2Int.one),"Free and outside-grid refusal");
+            sourceMask[0]=true;
+            BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(grid,roads,blockers,sourceMask,null,
+                ref prefix,out width,out height,out ready);
+            Require(ready&&Cached(Vector2Int.zero,Vector2Int.one),"Changed source must rebuild rather than reuse stale prefix");
+            Debug.Log("[PilotStaticPlacementPrefixControls] result=Passed controls=6 rectangleComparisons="+comparisons+" nativeSearchParity=1 sourceFitCertified=0");
+        }
+
         static void ProbePilotNormalTerrainFallback(JObject input,JObject[] requests,SkirmishMapLayoutConfig layout,
             SkirmishRoleCatalogConfig roles,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JArray facilities,JObject report)
         {

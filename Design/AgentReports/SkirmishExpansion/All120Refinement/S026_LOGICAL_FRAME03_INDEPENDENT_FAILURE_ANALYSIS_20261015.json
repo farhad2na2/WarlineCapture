@@ -1,0 +1,2573 @@
+{
+  "scope": "IndependentActualS026LogicalFrame03VersusBounded02",
+  "actual_wrapper_exit_root_confirmed": 0,
+  "report": {
+    "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json",
+    "sha256": "320ad0fe59ba6b277190dccc2a2ab9b4ed1c888b298d952e12cbbd2db8866d40"
+  },
+  "sourcePins": {
+    "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+    "sourceAssetSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+    "gridPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+    "gridAssetSha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+    "surfacePath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+    "surfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+    "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "sourceSceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+    "authoredSubSceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0"
+  },
+  "cleanupVerified": true,
+  "sourcePinsRecheckedAfterMeasurement": true,
+  "result": "TwelveDiscoveryRows_AllFacilitiesIncomplete_NoStrictForceOrFinalCompilerAdmission",
+  "frame_invariance": {
+    "anchors": 24,
+    "pads": 18,
+    "routes": 3,
+    "maximum_anchor_world_coordinate_delta_metres": 6.103515625e-05,
+    "pad_metadata_identical": true,
+    "routes_identical": true,
+    "deployments_identical": true,
+    "interpretation": "Frame actually expanded; native gate enforces .002m worldprojection tolerance. Only float re-encoding delta6.1e-5m; no logicalpad or route move."
+  },
+  "rows": [
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass0.LargeWar.size.json",
+      "sha256": "4b8b0b081211bf8f9bc96c40775973beb56c08f35cdb3c926a3a944b6aaf3b69",
+      "pass": 0,
+      "size": "LargeWar",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 897.2105102539062,
+        "originZ": 566.7999877929688,
+        "worldWidthMetres": 549.7896118164062,
+        "worldDepthMetres": 171.20001220703125
+      },
+      "compounds": {
+        "1": [
+          897.2105,
+          581.9,
+          1019.4035,
+          702.8
+        ],
+        "2": [
+          1303.39648,
+          597.2,
+          1447.00012,
+          678.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 67,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 70,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 36,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1497,
+              "z": 658,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": false
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 68,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass0.Standard.size.json",
+      "sha256": "ab3b731923edac419a2d2cbe0df1e218ded8c190ab3fde1aa9bf17bf2ba21c2c",
+      "pass": 0,
+      "size": "Standard",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 897.2105102539062,
+        "originZ": 566.7999877929688,
+        "worldWidthMetres": 549.7896118164062,
+        "worldDepthMetres": 171.20001220703125
+      },
+      "compounds": {
+        "1": [
+          897.2105,
+          581.9,
+          1019.4035,
+          702.8
+        ],
+        "2": [
+          1303.39648,
+          597.2,
+          1447.00012,
+          678.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 17,
+      "requestedFacilities": 20,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 67,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 70,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 36,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass0.War.size.json",
+      "sha256": "7c1a6ec4cd7ea98b6791294aa92716419f13b250b7fa7568c8f07d66e6c49919",
+      "pass": 0,
+      "size": "War",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 897.2105102539062,
+        "originZ": 566.7999877929688,
+        "worldWidthMetres": 549.7896118164062,
+        "worldDepthMetres": 171.20001220703125
+      },
+      "compounds": {
+        "1": [
+          897.2105,
+          581.9,
+          1019.4035,
+          702.8
+        ],
+        "2": [
+          1303.39648,
+          597.2,
+          1447.00012,
+          678.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 67,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 70,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 36,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1497,
+              "z": 658,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": false
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 68,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 0,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass1.LargeWar.size.json",
+      "sha256": "42eb7fefe1ee749f1bdf0664460493e0652afa7225fb2930b9d813b259ba6fca",
+      "pass": 1,
+      "size": "LargeWar",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 865.2105102539062,
+        "originZ": 534.7999877929688,
+        "worldWidthMetres": 613.7896118164062,
+        "worldDepthMetres": 235.20001220703125
+      },
+      "compounds": {
+        "1": [
+          865.2105,
+          549.9,
+          1051.40356,
+          734.8
+        ],
+        "2": [
+          1271.39648,
+          565.2,
+          1479.00012,
+          710.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 57,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 60,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1497,
+              "z": 658,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": false
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 58,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass1.Standard.size.json",
+      "sha256": "7e9c52fce70b9ad27808f8ad0567bd126fc066f9c807c02a035757fbcf5e3784",
+      "pass": 1,
+      "size": "Standard",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 865.2105102539062,
+        "originZ": 534.7999877929688,
+        "worldWidthMetres": 613.7896118164062,
+        "worldDepthMetres": 235.20001220703125
+      },
+      "compounds": {
+        "1": [
+          865.2105,
+          549.9,
+          1051.40356,
+          734.8
+        ],
+        "2": [
+          1271.39648,
+          565.2,
+          1479.00012,
+          710.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 17,
+      "requestedFacilities": 20,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 57,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 60,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass1.War.size.json",
+      "sha256": "84f32440f961d1982a009d2c1d4406ca5add492a1129fd8c870d587aac752081",
+      "pass": 1,
+      "size": "War",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 865.2105102539062,
+        "originZ": 534.7999877929688,
+        "worldWidthMetres": 613.7896118164062,
+        "worldDepthMetres": 235.20001220703125
+      },
+      "compounds": {
+        "1": [
+          865.2105,
+          549.9,
+          1051.40356,
+          734.8
+        ],
+        "2": [
+          1271.39648,
+          565.2,
+          1479.00012,
+          710.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 57,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 60,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1497,
+              "z": 658,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": false
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 58,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass2.LargeWar.size.json",
+      "sha256": "97944cb2c74b12df3b020fecf49566fd27c9e99bd7e242472c228ba8af1a60a3",
+      "pass": 2,
+      "size": "LargeWar",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 833.2105102539062,
+        "originZ": 502.79998779296875,
+        "worldWidthMetres": 677.7896118164062,
+        "worldDepthMetres": 299.20001220703125
+      },
+      "compounds": {
+        "1": [
+          833.2105,
+          517.9,
+          1083.40356,
+          766.8
+        ],
+        "2": [
+          1239.39648,
+          533.2,
+          1511.00012,
+          742.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 57,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 60,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1497,
+              "z": 658,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": false
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 58,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass2.Standard.size.json",
+      "sha256": "8dbf3ab779c65773a9f8e933bce06cdbf9fa7e67bfb4d8a30af8418f580ea155",
+      "pass": 2,
+      "size": "Standard",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 833.2105102539062,
+        "originZ": 502.79998779296875,
+        "worldWidthMetres": 677.7896118164062,
+        "worldDepthMetres": 299.20001220703125
+      },
+      "compounds": {
+        "1": [
+          833.2105,
+          517.9,
+          1083.40356,
+          766.8
+        ],
+        "2": [
+          1239.39648,
+          533.2,
+          1511.00012,
+          742.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 17,
+      "requestedFacilities": 20,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 57,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 60,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass2.War.size.json",
+      "sha256": "c2f215e2d6581bf93204e7c42030d9467502d402aaf552a7f90303709b61416f",
+      "pass": 2,
+      "size": "War",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 833.2105102539062,
+        "originZ": 502.79998779296875,
+        "worldWidthMetres": 677.7896118164062,
+        "worldDepthMetres": 299.20001220703125
+      },
+      "compounds": {
+        "1": [
+          833.2105,
+          517.9,
+          1083.40356,
+          766.8
+        ],
+        "2": [
+          1239.39648,
+          533.2,
+          1511.00012,
+          742.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.refinery",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 57,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 60,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 105
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1497,
+              "z": 658,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": false,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": false
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 58,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 59
+          },
+          "overlappingSpawnRallyPads": [],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass3.LargeWar.size.json",
+      "sha256": "cef94926e9e00fcac7cb389005ecadac1d2024609c08d128586ebbdfc49005aa",
+      "pass": 3,
+      "size": "LargeWar",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 769.2105102539062,
+        "originZ": 438.79998779296875,
+        "worldWidthMetres": 805.7896118164062,
+        "worldDepthMetres": 427.20001220703125
+      },
+      "compounds": {
+        "1": [
+          769.2105,
+          453.900024,
+          1147.40356,
+          830.8
+        ],
+        "2": [
+          1175.39648,
+          469.2,
+          1575.00012,
+          806.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 19,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 165
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 117
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass3.Standard.size.json",
+      "sha256": "2fec6d4bd8cbc9bc2cab4f64a44234fe837e6cf670af253a0b045f023b354e32",
+      "pass": 3,
+      "size": "Standard",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 769.2105102539062,
+        "originZ": 438.79998779296875,
+        "worldWidthMetres": 805.7896118164062,
+        "worldDepthMetres": 427.20001220703125
+      },
+      "compounds": {
+        "1": [
+          769.2105,
+          453.900024,
+          1147.40356,
+          830.8
+        ],
+        "2": [
+          1175.39648,
+          469.2,
+          1575.00012,
+          806.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 18,
+      "requestedFacilities": 20,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 165
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        }
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass3.War.size.json",
+      "sha256": "67372e494fde74c84f23c93d2f3b13d7c414e9c3d4ad4a8de51a596700b52d48",
+      "pass": 3,
+      "size": "War",
+      "discoveryOnly": true,
+      "logicalFrame": {
+        "originX": 769.2105102539062,
+        "originZ": 438.79998779296875,
+        "worldWidthMetres": 805.7896118164062,
+        "worldDepthMetres": 427.20001220703125
+      },
+      "compounds": {
+        "1": [
+          769.2105,
+          453.900024,
+          1147.40356,
+          830.8
+        ],
+        "2": [
+          1175.39648,
+          469.2,
+          1575.00012,
+          806.0
+        ]
+      },
+      "completeFacilities": false,
+      "foundFacilities": 19,
+      "requestedFacilities": 22,
+      "packingStatus": "NotQueried_IncompleteFacilities",
+      "failures": [
+        {
+          "structureId": "building.fabrication_depot",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1366,
+              "z": 672,
+              "width": 19,
+              "depth": 16
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 165
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.helipad",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1369,
+              "z": 668,
+              "width": 16,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 36,
+            "sourceGeometrySurfaceOrPriorReservation": 149
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        },
+        {
+          "structureId": "building.refinery.module",
+          "faction": 2,
+          "normalSourceOnly": {
+            "found": true,
+            "scope": "ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+            "acceptedAsCandidateFacility": false,
+            "resolvedEffectiveRect": {
+              "x": 1361,
+              "z": 672,
+              "width": 25,
+              "depth": 15
+            },
+            "insideDeclaredCompound": true,
+            "insideActualTypedPad": false,
+            "overlapsAdditionalQaClearance": true
+          },
+          "rejectionsAfterStaticPrefix": {
+            "outsideCompound": 0,
+            "outsideTypedPad": 0,
+            "circulationPadConflict": 10,
+            "sourceGeometrySurfaceOrPriorReservation": 117
+          },
+          "overlappingSpawnRallyPads": [
+            {
+              "padId": "pad.skirmish.db.spawn_infantry_enemy",
+              "x": 1354,
+              "z": 653,
+              "width": 24,
+              "depth": 25
+            }
+          ],
+          "overlappingApproachCells": 0
+        }
+      ]
+    }
+  ],
+  "old_bounded02_final_rows": [
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-02-bounded/S026.json.authoring.S026.pass3.LargeWar.size.json",
+      "sha256": "149e491ab42214577dc549695ec39c54f2b6a2541b1f07134d3d95db8b6767d6",
+      "size": "LargeWar",
+      "compound": {
+        "1": [
+          897.2105,
+          566.800049,
+          1083.40356,
+          738.0
+        ],
+        "2": [
+          1239.39648,
+          566.800049,
+          1447.00012,
+          738.0
+        ]
+      },
+      "failures": [
+        "building.refinery",
+        "building.fabrication_depot",
+        "building.helipad",
+        "building.refinery.module"
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-02-bounded/S026.json.authoring.S026.pass3.Standard.size.json",
+      "sha256": "36a582ff1f1802de7134058aea7e8a4683e588428426c5b577c1a09adf349455",
+      "size": "Standard",
+      "compound": {
+        "1": [
+          897.2105,
+          566.800049,
+          1083.40356,
+          738.0
+        ],
+        "2": [
+          1239.39648,
+          566.800049,
+          1447.00012,
+          738.0
+        ]
+      },
+      "failures": [
+        "building.refinery",
+        "building.fabrication_depot",
+        "building.helipad"
+      ]
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-02-bounded/S026.json.authoring.S026.pass3.War.size.json",
+      "sha256": "530e916ba152fe0c802c74ed605482b52c9ace98794efc3ae041da9424bfa000",
+      "size": "War",
+      "compound": {
+        "1": [
+          897.2105,
+          566.800049,
+          1083.40356,
+          738.0
+        ],
+        "2": [
+          1239.39648,
+          566.800049,
+          1447.00012,
+          738.0
+        ]
+      },
+      "failures": [
+        "building.refinery",
+        "building.fabrication_depot",
+        "building.helipad",
+        "building.refinery.module"
+      ]
+    }
+  ],
+  "conclusions": [
+    "Enemyrightcompound now1575 rather than1447. New pass3 refinery found at1497,658 footprint25x15; this is real bounded authoring progress, not complete fit.",
+    "Remaining allsizes enemyfabricationdepot19x16 andhelipad16x15; War/LargeWar additionally refinerymodule25x15. Pass3 outsideCompound/outsideTypedPad rejection counts zero for each.",
+    "Normal source-only firstlegal rectangles depot1366,672,19x16; helipad1369,668,16x15; module1361,672,25x15 are inside compound but intersect unchanged infantryspawn1354..1378 x653..678. None intersects current approachreservationcells. Allthree rectangles overlap eachother, so cannot accept them simultaneously by merely deleting/moving a keepclear gate.",
+    "SourceGeometrySurfaceOrPriorReservation counter merges causes, so remaining rejectedsites cannot be attributed solely to physicalgeometry. Prefix now removes immutableinvalidcells before Valid; old02/new03 rejectioncount totals are not comparable as absolute searchwork/sourceimprovement.",
+    "Current actualfirstfit is greedy/sharedreservation-dependent; refinery nowclaims eastpatch and module firstlegal moves back to infantrypatch. Moreframe growth alone cannot resolve unchanged spawn reservation or create multiple legal plots."
+  ],
+  "baseline_approach_queries": [
+    {
+      "queryRows": 60,
+      "statusCounts": {
+        "NativeQueryFoundExactGoal": 43,
+        "NativeQueryFailed": 17
+      },
+      "failedQueries": [
+        {
+          "queryId": 1,
+          "fromCell": [
+            1054,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 5,
+          "fromCell": [
+            982,
+            706
+          ],
+          "toCell": [
+            1072,
+            717
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 10,
+          "fromCell": [
+            970,
+            650
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 12,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1220,
+            582
+          ],
+          "failureCode": 10,
+          "expansions": 374
+        },
+        {
+          "queryId": 16,
+          "fromCell": [
+            1054,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 1876
+        },
+        {
+          "queryId": 17,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1268,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 111
+        },
+        {
+          "queryId": 26,
+          "fromCell": [
+            1006,
+            598
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 8,
+          "expansions": 0
+        },
+        {
+          "queryId": 27,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1220,
+            582
+          ],
+          "failureCode": 10,
+          "expansions": 205
+        },
+        {
+          "queryId": 31,
+          "fromCell": [
+            1268,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 32,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1054,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 42,
+          "fromCell": [
+            1220,
+            582
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 43,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 44,
+          "fromCell": [
+            1006,
+            598
+          ],
+          "toCell": [
+            970,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 46,
+          "fromCell": [
+            1268,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 2638
+        },
+        {
+          "queryId": 47,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1054,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 111
+        },
+        {
+          "queryId": 57,
+          "fromCell": [
+            1220,
+            582
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 8,
+          "expansions": 0
+        },
+        {
+          "queryId": 58,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 10,
+          "expansions": 965
+        }
+      ]
+    },
+    {
+      "queryRows": 60,
+      "statusCounts": {
+        "NativeQueryFoundExactGoal": 43,
+        "NativeQueryFailed": 17
+      },
+      "failedQueries": [
+        {
+          "queryId": 1,
+          "fromCell": [
+            1054,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 5,
+          "fromCell": [
+            982,
+            706
+          ],
+          "toCell": [
+            1072,
+            717
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 10,
+          "fromCell": [
+            970,
+            650
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 12,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1220,
+            582
+          ],
+          "failureCode": 10,
+          "expansions": 374
+        },
+        {
+          "queryId": 16,
+          "fromCell": [
+            1054,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 1876
+        },
+        {
+          "queryId": 17,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1268,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 111
+        },
+        {
+          "queryId": 26,
+          "fromCell": [
+            1006,
+            598
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 8,
+          "expansions": 0
+        },
+        {
+          "queryId": 27,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1220,
+            582
+          ],
+          "failureCode": 10,
+          "expansions": 205
+        },
+        {
+          "queryId": 31,
+          "fromCell": [
+            1268,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 32,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1054,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 42,
+          "fromCell": [
+            1220,
+            582
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 43,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 44,
+          "fromCell": [
+            1006,
+            598
+          ],
+          "toCell": [
+            970,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 46,
+          "fromCell": [
+            1268,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 2638
+        },
+        {
+          "queryId": 47,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1054,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 111
+        },
+        {
+          "queryId": 57,
+          "fromCell": [
+            1220,
+            582
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 8,
+          "expansions": 0
+        },
+        {
+          "queryId": 58,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 10,
+          "expansions": 965
+        }
+      ]
+    },
+    {
+      "queryRows": 60,
+      "statusCounts": {
+        "NativeQueryFoundExactGoal": 43,
+        "NativeQueryFailed": 17
+      },
+      "failedQueries": [
+        {
+          "queryId": 1,
+          "fromCell": [
+            1054,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 5,
+          "fromCell": [
+            982,
+            706
+          ],
+          "toCell": [
+            1072,
+            717
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 10,
+          "fromCell": [
+            970,
+            650
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 12,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1220,
+            582
+          ],
+          "failureCode": 10,
+          "expansions": 374
+        },
+        {
+          "queryId": 16,
+          "fromCell": [
+            1054,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 1876
+        },
+        {
+          "queryId": 17,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1268,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 111
+        },
+        {
+          "queryId": 26,
+          "fromCell": [
+            1006,
+            598
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 8,
+          "expansions": 0
+        },
+        {
+          "queryId": 27,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1220,
+            582
+          ],
+          "failureCode": 10,
+          "expansions": 205
+        },
+        {
+          "queryId": 31,
+          "fromCell": [
+            1268,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 32,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1054,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 42,
+          "fromCell": [
+            1220,
+            582
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 43,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 44,
+          "fromCell": [
+            1006,
+            598
+          ],
+          "toCell": [
+            970,
+            650
+          ],
+          "failureCode": 9,
+          "expansions": 451
+        },
+        {
+          "queryId": 46,
+          "fromCell": [
+            1268,
+            650
+          ],
+          "toCell": [
+            1161,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 2638
+        },
+        {
+          "queryId": 47,
+          "fromCell": [
+            1161,
+            650
+          ],
+          "toCell": [
+            1054,
+            650
+          ],
+          "failureCode": 10,
+          "expansions": 111
+        },
+        {
+          "queryId": 57,
+          "fromCell": [
+            1220,
+            582
+          ],
+          "toCell": [
+            1101,
+            582
+          ],
+          "failureCode": 8,
+          "expansions": 0
+        },
+        {
+          "queryId": 58,
+          "fromCell": [
+            1101,
+            582
+          ],
+          "toCell": [
+            1006,
+            598
+          ],
+          "failureCode": 10,
+          "expansions": 965
+        }
+      ]
+    }
+  ],
+  "next_lawful_fit_strategy": [
+    "Hold113. On same existingCampaigngeometry/widenedframe, author explicit new S026logicalspawn/economy/AirReturn anchors/pads instead of further frame-only growth. Preserve fixedcounts/caps/normal searchradius.",
+    "Treat [1354,653,24,25] as a measured conflicting spawn reservation, not inherently badterrain. Use native unitplacement/packing and sourcegrid to find a relocated full-size spawn envelope with retained searchoffset/footprint margins; do not shrinkto seed1 actorunion. Reserve route/circulation/repair and allsize facilities together.",
+    "Use the actual source-only plots only as bounded discovery candidates. In authoring, plan the hardest plots jointly (helipad16x15, depot19x16, bothrefineries25x15 where required), with complete shared reservations. Adjust legal Economy/AirReturn preferred anchors so ordinary unchanged80-160cell search can reach distinct plots; no globalfallback or searchradius expansion.",
+    "After candidate logicaledits, rerun allthree sizes in original ordinary canonical facility order then strict typed pads/fullcanonicalarmy/nativepaths under same reservations; compare normalruntime seed/offset parity and keep requiredfreshseed tests pending. A custom discoveryallocation order is proposalonly until normalorder strictpasses.",
+    "Existing baselineapproaches already have failures (per60queries43exact/17failed); re-author legal routeanchors on samegeometry and prove exactgoals/footprints/independence before readiness. No straightline or enclosingbox promotion.",
+    "If no simultaneous legal source-bound allocation exists, select another authorized existingCampaignsource with newexplicit sourcepins and remeasure fullvectors. Do not classify the wholecurrentCampaignsource incompatible from these few preferred windows or alterphysicalmaps."
+  ],
+  "remaining_native_gates": [
+    "Exact three independent approaches/no shared interior bottleneck",
+    "Full compound/service circulation and live occupancy",
+    "Authored source-bound engineering view and definition logical binding",
+    "Actual defender tower weapon/range/line-of-fire against all player start zones",
+    "Native default/min/max infantry and parked/cruising aircraft camera evidence",
+    "Normal mission and device acceptance"
+  ],
+  "source_fit_certified": false,
+  "normal_mission_ready": false,
+  "assets_changed": false,
+  "native_runs_by_reviewer": 0
+}

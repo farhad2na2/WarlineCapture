@@ -1,0 +1,223 @@
+{
+  "status": "CollectedUnqualified_AllFourFramesExhausted",
+  "actualWrapperExit": 0,
+  "nativeFrameControls": 6,
+  "frames": 4,
+  "sizeRows": 12,
+  "completeFacilityRows": 0,
+  "strictThreeSizePlacementPass": null,
+  "sourcePinsRechecked": true,
+  "nativeCleanupVerified": true,
+  "full41598SourceManifestUnchanged": true,
+  "expectedCompilationBoundary": "Only Game.Editor and Game.Tests.Editor changed from835 to836; exact DLL changes retained in parity receipt",
+  "finalBuildSha256": "d2af897a59d85d4cce96c01d250ea9d972ea5015ff4e4d45433fde512af72baf",
+  "fullOldNewSnapshotCliByteParity": true,
+  "sourceCandidateSha256": "8b1224a1c6a195b7921bcdaac0ebc9baa8ea8b2acfcb5e83a34df37af351c402",
+  "physicalSourceChanged": false,
+  "cameraAccepted": false,
+  "missionQualified": false,
+  "sequential113Admitted": false,
+  "archiveSha256": "5fa8f3cccdf8fffb7ab78b776303f8351300f6edb81c44f00847bce4b630b6fc",
+  "members": [
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/archive-result.py",
+      "sha256": "3874fe8380ffd5d9d2fcc00a62af2a38a983607dad218369aab3b6740129fbf8",
+      "bytes": 3157
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/before-tools/Tools/CI/s005_windows_source_snapshot.py",
+      "sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+      "bytes": 4064
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/checked-child-exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/import-late-census.py",
+      "sha256": "95083e41d1eb2a4e0642989d7bd4d9b6faff0046947be69949c26c0f7a2339d3",
+      "bytes": 1856
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/import-parallel-snapshot.py",
+      "sha256": "fe80fff07488d3a70217db20ce0329a4c8eeba9c07e3a06c2389af723e56574a",
+      "bytes": 1894
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/LATE_CENSUS_IMPORT.json",
+      "sha256": "aed36f7388ca897e0e04e9b2399a13fc8c521302b86284fca1d7e1f1f4aeb67f",
+      "bytes": 1761
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/old-snapshot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/old-snapshot.stdout.log",
+      "sha256": "c2be0a64d89447c8ae050ebabe32ec7d6a9bd96778ab17214c915f0f6121d64d",
+      "bytes": 68
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/parallel-snapshot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/parallel-snapshot.stdout.log",
+      "sha256": "c2be0a64d89447c8ae050ebabe32ec7d6a9bd96778ab17214c915f0f6121d64d",
+      "bytes": 68
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/PARALLEL_TOOL_IMPORT.json",
+      "sha256": "3926f9afafbb25939aaebf29a3ed83043157f6b441da8f9d59ddb474a0cbf7e5",
+      "bytes": 798
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/PREFLIGHT.json",
+      "sha256": "3a900cf1f51a743c122f6957027a0b6ca175f8c81c36cd4ac3ca6d2c6827be1d",
+      "bytes": 499
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/resolver.log",
+      "sha256": "5dd795205d955acc315185d0138fee9b1dec4a0566b3797be9b451e76e7e9c9a",
+      "bytes": 665
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/run-checked.ps1",
+      "sha256": "9bf15dfb7ebfb9b15f9c5ab17197f07947e27146669d784ef8b4b7d914b7fe9c",
+      "bytes": 2041
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/run-snapshot-host-parity.py",
+      "sha256": "b83abbcca46ca66bdc759ca4cf99ce873c9cdd6244e23843ba848d7ff6a635f8",
+      "bytes": 5811
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json",
+      "sha256": "320ad0fe59ba6b277190dccc2a2ab9b4ed1c888b298d952e12cbbd2db8866d40",
+      "bytes": 1297012
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.mission.json",
+      "sha256": "5d69e90d25043b90e8d2a5af395c21c3d443793ff51c238eb73f1833a5de9bdf",
+      "bytes": 1292009
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass0.LargeWar.size.json",
+      "sha256": "4b8b0b081211bf8f9bc96c40775973beb56c08f35cdb3c926a3a944b6aaf3b69",
+      "bytes": 82386
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass0.Standard.size.json",
+      "sha256": "ab3b731923edac419a2d2cbe0df1e218ded8c190ab3fde1aa9bf17bf2ba21c2c",
+      "bytes": 77057
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass0.War.size.json",
+      "sha256": "7c1a6ec4cd7ea98b6791294aa92716419f13b250b7fa7568c8f07d66e6c49919",
+      "bytes": 82036
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass1.LargeWar.size.json",
+      "sha256": "42eb7fefe1ee749f1bdf0664460493e0652afa7225fb2930b9d813b259ba6fca",
+      "bytes": 82500
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass1.Standard.size.json",
+      "sha256": "7e9c52fce70b9ad27808f8ad0567bd126fc066f9c807c02a035757fbcf5e3784",
+      "bytes": 77178
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass1.War.size.json",
+      "sha256": "84f32440f961d1982a009d2c1d4406ca5add492a1129fd8c870d587aac752081",
+      "bytes": 82150
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass2.LargeWar.size.json",
+      "sha256": "97944cb2c74b12df3b020fecf49566fd27c9e99bd7e242472c228ba8af1a60a3",
+      "bytes": 82417
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass2.Standard.size.json",
+      "sha256": "8dbf3ab779c65773a9f8e933bce06cdbf9fa7e67bfb4d8a30af8418f580ea155",
+      "bytes": 77105
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass2.War.size.json",
+      "sha256": "c2f215e2d6581bf93204e7c42030d9467502d402aaf552a7f90303709b61416f",
+      "bytes": 82067
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass3.LargeWar.size.json",
+      "sha256": "cef94926e9e00fcac7cb389005ecadac1d2024609c08d128586ebbdfc49005aa",
+      "bytes": 82774
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass3.Standard.size.json",
+      "sha256": "2fec6d4bd8cbc9bc2cab4f64a44234fe837e6cf670af253a0b045f023b354e32",
+      "bytes": 77458
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/S026.json.authoring.S026.pass3.War.size.json",
+      "sha256": "67372e494fde74c84f23c93d2f3b13d7c414e9c3d4ad4a8de51a596700b52d48",
+      "bytes": 82424
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/snapshot-host-parity-result.json",
+      "sha256": "7bb5898bb0b0222bcd7ca83c4f01a2e644c41b1a85c5758568dce8a212dd651d",
+      "bytes": 71517
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/SNAPSHOT_CONTEXT_COMPARISON.json",
+      "sha256": "d014aa6ec3b36d52d985f0581e37fbacc6a911f13c49aaa53af28d3d792d16c6",
+      "bytes": 198
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-after-parallel.json",
+      "sha256": "56c5f2c6b26f830c1f8c61bdfa5f3eb1569483203881fdac6e4d161dfdbe10df",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-after.json",
+      "sha256": "56c5f2c6b26f830c1f8c61bdfa5f3eb1569483203881fdac6e4d161dfdbe10df",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-before-host.json",
+      "sha256": "63403a45a193ad4969f39b36123b64546b4a7d705400e357b3c01350a6a4a650",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-before.json",
+      "sha256": "63403a45a193ad4969f39b36123b64546b4a7d705400e357b3c01350a6a4a650",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/unity.log",
+      "sha256": "61fc558913a33dfc285a8b7d8290e77b53b7d1d420aaf9e4370c963e076235a7",
+      "bytes": 387160
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/All120Refinement/S026_LOGICAL_FRAME03_INDEPENDENT_FAILURE_ANALYSIS_20261015.json",
+      "sha256": "9b12e5b9afb36d85ae6e217a16f427083782798a7061a38101cb785102f01c86",
+      "bytes": 79310
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "result": "IndependentSourceReviewClear_ProofPending",
+  "manifest_sha256": "f9e8f33ad1745d203b6888b6dc7aec2beddb390a190bc8dcaef271f4c0cb13b6",
+  "targets_checked": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+    "Tools/CI/prepare_skirmish_legacy_production_jobs.py"
+  ],
+  "findings": [],
+  "reviewed": [
+    "RequireBinding still demands exact protected catalog/index/Resources path; only incorrect unconditional preset.operationMap requirement removed, with expected/observed preset diagnostics.",
+    "S001-only absentmap route resolves sole actual MatchSceneView script block/catalog reference from unchangedMatch.unity and real OperationMapCatalog.TryValidate/TryResolve for normalfallbackID. Densecitycandidate override refuses; no preset/map/scene writes, loaderstub or newWorld. CC/IB retain explicitpreset source.",
+    "CaptureLive calls actual OperationMapLaunchResolver and checks fallback definitionnull/mission/scenario/map identities, plus all available liveMatchSceneView catalog source matches. Exact sourceasset/raw/content/dependency and schema2 resolution facts remain setup/content hash bound.",
+    "Prewarm uses same resolver; actual3 source controls addmetadata validation/ordinaryqueue source join; oldmetadata schemas/provenance absent refused by builder. Native runtime success not inferred.",
+    "Regular/Standard equivalence and samplingcoverage remain false/zero; no gameplay or difficulty change."
+  ],
+  "owning_proof": "Pending producer exact836parent overlay; no reviewer compiler/native execution",
+  "native_execution": false,
+  "source_fit_certified": false,
+  "sampling_coverage_credit": 0
+}

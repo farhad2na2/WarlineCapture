@@ -1,0 +1,319 @@
+{
+  "scope": "ActualEngineeringNativeAndUnqualifiedFitWitness",
+  "actual_checked_exit": 0,
+  "actual_wrapper_exit": 0,
+  "required_literal_markers": [
+    "[JointLogicalPadControls] result=Passed controls=10 candidateWindow=9 maximumStrictPasses=2 sourceFitCertified=0",
+    "[All120SimultaneousLogicalRefinement] result=Collected catalog=S026 sourceFitCertified=0",
+    "[SkirmishLegacySourceResolutionControls] result=Passed explicitPresets=2 compatibilityFallbacks=1 ordinarySelections=3 nativeJobs=0",
+    "[SkirmishLegacyProductionControls] result=Passed presets=3 ordinaryQueues=3 identityMutations=15 savedResultMutations=7 nativeJobs=0 samplingCoverageCredit=0",
+    "[S005OpeningPlacementWitness] result=CapturedUnqualified views=4 geometryOnly=1 placementAccepted=0 occlusionAccepted=0 wrapperExitStillRequired=1",
+    "[S005MeasuredOpeningCandidates] result=CapturedUnqualified views=4 profileChanged=0 commandsIssued=0 selectionChanged=0 runtimeGateAtQuitRequired=1",
+    "[S005OpeningGroupCandidates] result=CapturedUnqualified views=4 profileChanged=0 commandsIssued=0 selectionChanged=0 wrapperExitStillRequired=1",
+    "[S005MeasuredOpeningRuntimeGate] result=Passed errors=0 viewsCompleted=4 wrapperExitStillRequired=1",
+    "[S005StartupExitDiagnostic] result=ObservedStartupAndEditMode diagnosticOnly=1 wrapperExitStillRequired=1",
+    "[SkirmishS003Startup] result=Passed reason=sharedStartupDiagnostic",
+    "[LateEcsRecorderCensus] result=CollectedDiagnosticOnly",
+    "[UnityInvoke] ExitCode: 0"
+  ],
+  "archive": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/actual-native18282-unqualified-evidence.zip",
+    "sha256": "0c2e5663f38069e360f86ea7b19953ec2b7580c4b09f9b0d5c9d579491aebdfe",
+    "bytes": 17560617
+  },
+  "members": [
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/CANDIDATE_CONTEXT.json",
+      "sha256": "f1b551cc56a9c232cbb826471444b55d639aaae442b95c1a17c4e3cd675b69fa",
+      "bytes": 3000
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/checked-child-exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/checked-run-receipt.json",
+      "sha256": "0beb4da5b63b3886a07492eb276f1ae5efaffc3f42311b36c04cc5c392413eba",
+      "bytes": 735
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "bytes": 21301
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "sha256": "3966bf263453550f29dbce482dbb1081d9a1c3284470bda379a1b839fdc47f2e",
+      "bytes": 5166
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2",
+      "bytes": 11801
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d",
+      "bytes": 35036
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c",
+      "bytes": 5789
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/IMPORT_RECEIPT.json",
+      "sha256": "af7f71c21fe9802f9e46a9ea6f838e3a8c103ea5fa94b5576b1bb2d5cc112d65",
+      "bytes": 4152
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/opening-placement-witness.jsonl",
+      "sha256": "749e9f7401a69b402f4c9be0cce8e9057e988be4e3afba4f7b88d69a81ceb1c8",
+      "bytes": 2567559
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/opening-placement-witness.jsonl.ecs-recorders.jsonl",
+      "sha256": "35a1c6fd5acec5847633eca41e87bb7ab53dfe90ed65196669b2268e8c3becc9",
+      "bytes": 1736742
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/opening-placement-witness.jsonl.group1-yaw121-frame182.png",
+      "sha256": "caa5c97572cc41ab84a48adfd2aa725425ad4da15ed660ccb7a7c4f2691485bb",
+      "bytes": 3301027
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/opening-placement-witness.jsonl.group1-yaw301-frame196.png",
+      "sha256": "76b4ab101451a155b69a15c614748f3b217cf2666f7b3cdbb0472d532fbf3bb2",
+      "bytes": 3439805
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/opening-placement-witness.jsonl.group2-yaw127-frame209.png",
+      "sha256": "64a783ed0f473ebc9a61461e7c093fed26de94f349d27719b3b54daf33ed498d",
+      "bytes": 2953612
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/opening-placement-witness.jsonl.group2-yaw307-frame223.png",
+      "sha256": "5cabf69a0f5302b4f90fdb6f01ae5709ab5a6ea4d9081bf56af3d039654ec8a5",
+      "bytes": 3091813
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/required-markers.json",
+      "sha256": "36c3be4139cc10505e63a5ec57c7afd7d602113430525a58a562103898bb67e7",
+      "bytes": 1389
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/resolver.log",
+      "sha256": "393f692bf548a0aa5f1505f2a11bbca4143faf785ae473dcc93cfdd77da6c263",
+      "bytes": 674
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/run-checked.ps1",
+      "sha256": "fd870778c21370390444d293dea8497364f54fb6aa0d4d604bcd22fa6e179815",
+      "bytes": 8210
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json",
+      "sha256": "351772406992bef07c85c5afd4e5067e0fae4c7f6c992788e74b19b20570033a",
+      "bytes": 4180343
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.mission.json",
+      "sha256": "2fc85ad7e7a395f7b839e113f1ff4232fc0d41c7f79a9869dc78c7b510b6f312",
+      "bytes": 4175325
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass0.LargeWar.size.json",
+      "sha256": "e534e876cd0a0f7a9b44b577701b850b48cd8289dc12eb7db2a2d5e30d1974a7",
+      "bytes": 70507
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass0.Standard.size.json",
+      "sha256": "1899365c2005838325e246e4a5af8671f155a98c1a00cdf6612e2bc556c2b37f",
+      "bytes": 65191
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass0.War.size.json",
+      "sha256": "4d91ba555ae12e86fef8add2f66b663e728a2204d4c66d9c056efd40f4e62998",
+      "bytes": 70157
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass12.LargeWar.size.json",
+      "sha256": "26ae367eb520555fdc6bf80550ad8a220e1b578294efc1640b291aa48e8e6ae7",
+      "bytes": 70424
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass12.Standard.size.json",
+      "sha256": "cc7715c79b8efd632d65c72b60da1d3278ff9403b296ecbad12748b09716a28f",
+      "bytes": 65269
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass12.War.size.json",
+      "sha256": "9ef3a89708257762405b745639fca387a503378f7edf111f41868393f4f65465",
+      "bytes": 70074
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass3.LargeWar.size.json",
+      "sha256": "778a69b5b06a7f1983d5fdeb0fedef642b9cd718cd6ee9b45d98347ae13ee3d8",
+      "bytes": 70423
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass3.Standard.size.json",
+      "sha256": "1532c95b545073ac5db94d2eade0481e955a9be2e47e03ce74dea3260cbcaf73",
+      "bytes": 65268
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass3.War.size.json",
+      "sha256": "38dfd2c762f5b00cbbfdfcc0713d23f39dd5b32221ca32bb79ac86bd86d6bdb1",
+      "bytes": 70073
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass6.LargeWar.size.json",
+      "sha256": "1dc60414276e808d48574d912115c4c07e128275f20e0875188a0bd161adb679",
+      "bytes": 70423
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass6.Standard.size.json",
+      "sha256": "c5dc9725abb0333b13bb5f0921e3f165448b4ce78537880c8a1ec8bb55af4fa7",
+      "bytes": 65268
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass6.War.size.json",
+      "sha256": "c21bf6be7e90f767ce85de5e7fe92ea48a96a2fd5969a43bbf7e3f094b988675",
+      "bytes": 70073
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass9.LargeWar.size.json",
+      "sha256": "27a0ef4b871a42f51cc3270a5bed7da7ecdc1dca39cdfed37ef593f514f4ce4d",
+      "bytes": 70585
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass9.Standard.size.json",
+      "sha256": "4104ad318a58324fb8b6c12866f85264427900af9cc203789a83276caaf877b4",
+      "bytes": 65429
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass9.War.size.json",
+      "sha256": "6214de0f9aac53d71ad4ea42ba44bda701a7d0bf94ac5a8659ff995106e2d7cc",
+      "bytes": 70235
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.readonly-analysis.json",
+      "sha256": "f811e955955bfa4e59d8dd5952eef4e7bfae7923798a783b425841d81f11f5d3",
+      "bytes": 174594
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-next-logical-preferences.plan.json",
+      "sha256": "d5b2125ca2706044c1ea0f6018abcacd0701fcf6b4e64dafcf0b968d49fa8f69",
+      "bytes": 4026
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/source-after.json",
+      "sha256": "f0b1ae8ae70e921ad15252f4152497a853fe5638eb365f4c491627a96a3d0708",
+      "bytes": 9152318
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/source-before.json",
+      "sha256": "e766278b870ecba2936def608e94865fc0fe8aa86bd8456f524a88cde9e004bc",
+      "bytes": 9152318
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/SOURCE_EQUALITY_RECEIPT.json",
+      "sha256": "e30c0a6d6d64032deae24aa0d1f2cd4687bd1cbb93220d3f0c124ef3cca50bab",
+      "bytes": 934
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/startup-exit.jsonl",
+      "sha256": "3b131385dd60e76951047be8e3ce1a0466ca3dd326717ac9235fc2792c7ef1bb",
+      "bytes": 5804
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/unity.log",
+      "sha256": "c1eb073db2548a1b4186643f5c827e764ede49c8b0b344858590ad575514fa61",
+      "bytes": 1528825
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/UPSTREAM_ADOPTION.json",
+      "sha256": "540fd40550370c2c027ae1fcbce04e03e0a09f9692e9fff64dfdf19436b3c222",
+      "bytes": 2575
+    }
+  ],
+  "source_equality_receipt": {
+    "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/SOURCE_EQUALITY_RECEIPT.json",
+    "sha256": "e30c0a6d6d64032deae24aa0d1f2cd4687bd1cbb93220d3f0c124ef3cca50bab",
+    "bytes": 934
+  },
+  "source_count": 41604,
+  "source_manifest_equal": true,
+  "candidate_sha256": "86b814a121399adcef02f5df463bb492f82e846343678be614edfb938a7be7d5",
+  "build_before": "d2af897a59d85d4cce96c01d250ea9d972ea5015ff4e4d45433fde512af72baf",
+  "build_after": "1a029bf9c032e88f4bb6c8b0d72e57116e7e3a41f887c7f124c269be867a72f4",
+  "dll_count": 192,
+  "dll_changes": [
+    "Library/ScriptAssemblies/Game.Composition.dll",
+    "Library/ScriptAssemblies/Game.Editor.dll",
+    "Library/ScriptAssemblies/Game.Tests.Editor.dll",
+    "Library/ScriptAssemblies/Game.Tests.PlayMode.dll",
+    "Library/ScriptAssemblies/Game.UI.Runtime.dll",
+    "Library/ScriptAssemblies/Game.UI.Shell.Ecs.dll"
+  ],
+  "dll_equality_claimed": false,
+  "compile_attribution": "Integrated upstream menu and transitive assemblies rebuilt; six actual DLL changes, source bytes unchanged",
+  "profiler": {
+    "enabled": false,
+    "warlineProfilerMarkersArgument": true,
+    "settingsChanged": false,
+    "driverAssembly": "UnityEditor.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "deepProfiling": false,
+    "deepProfilingGetter": "Boolean get_deepProfiling()"
+  },
+  "recorder_cleanup": {
+    "kind": "Closed",
+    "reason": "ExitingPlayMode",
+    "discoveries": 4,
+    "samples": 12,
+    "errors": 0,
+    "disposedRecorders": 512,
+    "remainingOwnedRecorders": 0,
+    "disposeErrors": [],
+    "missionCertified": false,
+    "schema": 1,
+    "frame": 253,
+    "renderedFrame": 253,
+    "worldSequence": "1072",
+    "worldName": "Default World",
+    "attempt": "expanded-s005-155926-855ef3d2b0094154a16e8f8f21d26854",
+    "previousWriteMilliseconds": 124.77640000000001,
+    "gameplayOrProfilerSettingsChanged": false
+  },
+  "source_fit": {
+    "result": "All9CandidatesExhausted",
+    "durable_size_rows": 15,
+    "strict_passes": 0,
+    "qualified": false
+  },
+  "camera": {
+    "actual_views": 4,
+    "native_runtime_errors": 0,
+    "G1": "Roof/tree obstruction remains unresolved",
+    "G2": "Root visual inspection clear; no overall camera acceptance granted"
+  },
+  "queue_jobs": 0,
+  "baseline_credit": 0,
+  "mission_ready": false
+}

@@ -269,15 +269,18 @@ namespace Game.Editor
             {
                 if(kind=="NormalMenuLaunchObserved"||kind=="NativeResolvedSnapshot"||kind=="TerminalSnapshot")
                 {
-                    if((string)facts["phase"]=="Finished"&&(string)facts["result_session_id"]!=(string)facts["native_session_id"])
+                    bool legacy=productionCanary?.Request.IsLegacyPreset==true;
+                    if(legacy != ((string)facts["native_identity_kind"]=="LegacyPreset")) throw new InvalidDataException("Native identity kind differs from claim");
+                    if(!legacy&&(string)facts["phase"]=="Finished"&&(string)facts["result_session_id"]!=(string)facts["native_session_id"])
                         throw new InvalidDataException("Frozen native result session differs.");
-                    if((string)facts["phase"]=="Finished"&&(string)facts["result_outcome"]!=(string)facts["outcome"])
+                    if(!legacy&&(string)facts["phase"]=="Finished"&&(string)facts["result_outcome"]!=(string)facts["outcome"])
                         throw new InvalidDataException("Frozen native result outcome differs.");
                     contract.NativeSnapshot((string)facts["native_world_sequence"],(string)facts["native_session_id"],(string)facts["phase"],
-                        (string)facts["outcome"],facts["result_frozen"]?.Type==JTokenType.Integer&&(int)facts["result_frozen"]!=0);
+                        (string)facts["outcome"],legacy ? facts["legacy_match_frozen"]?.Type==JTokenType.Boolean&&(bool)facts["legacy_match_frozen"] : facts["result_frozen"]?.Type==JTokenType.Integer&&(int)facts["result_frozen"]!=0);
                 }
                 if(kind=="TerminalReturnOwnerCompleted")
                 {
+                    if(productionCanary?.Request.IsLegacyPreset==true && (facts["legacy_result_saved_verified"]?.Type!=JTokenType.Boolean||!(bool)facts["legacy_result_saved_verified"])) throw new InvalidDataException("Actual legacy saved result proof missing");
                     if(Matrix!=null&&(facts["native_terminal_session_count"]?.Type!=JTokenType.Integer||
                         (int)facts["native_terminal_session_count"]!=0||
                         facts["native_outcome_matches_rendered_title"]?.Type!=JTokenType.Boolean||
@@ -408,6 +411,7 @@ namespace Game.Editor
                     var guids=new HashSet<string>(StringComparer.Ordinal);
                     foreach(string id in plannedJobs==null?new[]{"S004","S005"}:plannedJobs.Select(v=>(string)v["catalog_id"]).Distinct(StringComparer.Ordinal))
                     {
+                        if(SkirmishLegacyProductionIdentity.IsProtected(id)) { guids.Add(SkirmishLegacyProductionIdentity.ResolveSource(id,out _).NavigationMetadata.AuthoredSubSceneGuid); continue; }
                         if(catalog==null||!catalog.TryGetDefinition(id,out var definition)||definition.CampaignMap==null)
                             throw new InvalidDataException("Actual packaged canary source definition missing");
                         guids.Add(definition.CampaignMap.NavigationMetadata.AuthoredSubSceneGuid);

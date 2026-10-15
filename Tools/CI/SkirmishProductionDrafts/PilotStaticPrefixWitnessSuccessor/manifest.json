@@ -1,0 +1,28 @@
+{
+  "scope": "ProbeLocalImmutableSourceInvalidPrefix_NoGameplayPolicyChange",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "before_sha256": "0dca4cbde1225a67ea21b4d17fd6a2dc047ac892ef87edf8b3022818fca8149b",
+      "sha256": "c349413d5b540ab159f7676539a16ff7c58e97b190d60b74be12208f87f59b0a",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "controls_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunPilotStaticPlacementPrefixControls",
+  "controls": 6,
+  "rectangle_comparisons": 900,
+  "proof": "Pending exact witness1354 parent Editor overlay; native30788 now terminal",
+  "native_executed": false,
+  "assets_edited": false,
+  "speedup_measured": false,
+  "source_fit_certified": false,
+  "parent_manifest": "Tools/CI/SkirmishProductionDrafts/PilotStaticInvalidPrefixSuccessor/manifest.json",
+  "parent_manifest_sha256": "b7a3c74d953b5ea0b5d8084caceec6d37f1156aebd5f8c631d2e30a3ff09cd53",
+  "preparation_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunPilotStaticPrefixAndOpeningWitnessPreparation",
+  "required_markers": [
+    "[PilotStaticPlacementPrefixControls] result=Passed controls=6 rectangleComparisons=900 nativeSearchParity=1 sourceFitCertified=0",
+    "[S005OpeningPlacementWitnessPreparation] result=Passed original=11 measured=3 witness=4 warmup=1 gameplayCertified=0",
+    "[PilotStaticPrefixAndOpeningWitnessPreparation] result=Passed prefix=6 opening=18 warmup=1 gameplayCertified=0"
+  ]
+}

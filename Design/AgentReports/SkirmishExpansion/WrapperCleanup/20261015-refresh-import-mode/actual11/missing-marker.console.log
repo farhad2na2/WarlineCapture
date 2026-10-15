@@ -1,0 +1,18 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\OwnedRefreshProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\missing-marker.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\missing-marker.log -quit -buildTarget StandaloneWindows64 -refreshImportMode InProcess -executeMethod Probe.Missing
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\missing-marker.log -quit -buildTarget StandaloneWindows64 -refreshImportMode InProcess -executeMethod Probe.Missing
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\missing-marker.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\missing-marker.stderr.log
+[UnityInvoke] ExitCode: 0
+[ArchitectureValidation] 'Probe.Missing' log is missing required pass marker: [OwnedRefreshProbe] result=Passed
+At D:\Projects\WarlineCapture\Tools\CI\InvokeUnityExecuteMethodValidation.ps1:85 char:5
++     throw "[ArchitectureValidation] '$ExecuteMethod' log is missing r ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: ([ArchitectureVa...] result=Passed:String) [], RuntimeException
+    + FullyQualifiedErrorId : [ArchitectureValidation] 'Probe.Missing' log is missing required pass marker: [OwnedRefr 
+   eshProbe] result=Passed
+ 

@@ -17,6 +17,12 @@ param(
     [Parameter(Mandatory = $false)]
     [string] $BuildTarget = "",
 
+    # Session-only Asset Database import mode experiment; empty preserves defaults.
+    [Parameter(Mandatory = $false)]
+    [AllowEmptyString()]
+    [ValidateSet("", "InProcess", "OutOfProcessPerQueue", "OutOfProcess")]
+    [string] $RefreshImportMode = "",
+
     [Parameter(Mandatory = $false)]
     [switch] $GuiLicensing,
 
@@ -31,6 +37,9 @@ Remove-Item -LiteralPath $LogFile -Force -ErrorAction Ignore
 $unityArguments = @("-quit")
 if (-not [string]::IsNullOrWhiteSpace($BuildTarget)) {
     $unityArguments += @("-buildTarget", $BuildTarget)
+}
+if (-not [string]::IsNullOrEmpty($RefreshImportMode)) {
+    $unityArguments += @("-refreshImportMode", $RefreshImportMode)
 }
 $unityArguments += @("-executeMethod", $ExecuteMethod)
 

@@ -227,6 +227,24 @@ namespace Game.UI.Runtime
             ApplyBriefingColumnState();
             PresentZoomHint(fa, battlefield);
             RaiseLaunchTransition();
+            if (!_refittingGrid &&
+                battlefield &&
+                LibraryLayout == SkirmishBattlefieldLayout.Grid &&
+                _libraryViewModel != null &&
+                _libraryGrid != null &&
+                _libraryGrid.gameObject.activeInHierarchy)
+            {
+                _refittingGrid = true;
+                try
+                {
+                    PresentGrid(_libraryViewModel.Battlefield, fa);
+                    FinishLibraryText();
+                }
+                finally
+                {
+                    _refittingGrid = false;
+                }
+            }
         }
 
         private void EnsureStatTile(RectTransform row, string name, float x, string captionText)

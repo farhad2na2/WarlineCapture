@@ -175,6 +175,7 @@ namespace Game.Editor
                 RejectMissingGlyphs(instance);
                 RejectUntranslatedFa(instance, path);
                 RejectEmptyCardSubtitles(instance);
+                RejectGridCardsOutside(instance);
                 RejectBlankImages(instance, state);
                 RejectExtraLibraryRoots();
                 if (notch && safeFrame != null)
@@ -404,6 +405,80 @@ namespace Game.Editor
                         "Visible card subtitle draws no glyphs locale=" + locale + " path=" + ImagePath(text.transform) + " text=" + shown);
                 }
             }
+        }
+
+        internal static void RejectGridCardsOutside(GameObject root)
+        {
+            if (root == null)
+                return;
+            Transform grid = FindNamed(root.transform, "LibraryGrid");
+            var gridRect = grid as RectTransform;
+            if (gridRect == null || !grid.gameObject.activeInHierarchy)
+                return;
+            ScrollRect scroll = grid.GetComponent<ScrollRect>() ?? grid.GetComponentInChildren<ScrollRect>(true);
+            RectTransform viewport = scroll != null && scroll.viewport != null ? scroll.viewport : gridRect;
+            RectTransform content = scroll != null ? scroll.content : null;
+            string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
+            for (int i = 0; i < grid.childCount; i++)
+            {
+                Transform child = grid.GetChild(i);
+                if (child == null || !child.gameObject.activeInHierarchy)
+                    continue;
+                bool card = child.name == "EmptyCell" || child.GetComponent<Button>() != null;
+                var cardRect = child as RectTransform;
+                if (!card || cardRect == null)
+                    continue;
+                RequireInside(viewport, cardRect, locale, "viewport");
+                if (content != null)
+                    RequireInside(content, cardRect, locale, "scroll content");
+                Image[] images = child.GetComponentsInChildren<Image>(true);
+                for (int imageIndex = 0; imageIndex < images.Length; imageIndex++)
+                {
+                    Image image = images[imageIndex];
+                    if (image == null || !image.gameObject.activeInHierarchy || !image.name.StartsWith("Medal", StringComparison.Ordinal))
+                        continue;
+                    RequireInside(viewport, image.rectTransform, locale, "viewport");
+                    if (content != null)
+                        RequireInside(content, image.rectTransform, locale, "scroll content");
+                }
+            }
+        }
+
+        private static void RequireInside(RectTransform bounds, RectTransform item, string locale, string container)
+        {
+            const float slop = 2f;
+            Vector3[] corners = new Vector3[4];
+            item.GetWorldCorners(corners);
+            Rect rect = bounds.rect;
+            for (int i = 0; i < corners.Length; i++)
+            {
+                Vector3 local = bounds.InverseTransformPoint(corners[i]);
+                if (local.x >= rect.xMin - slop && local.x <= rect.xMax + slop &&
+                    local.y >= rect.yMin - slop && local.y <= rect.yMax + slop)
+                    continue;
+                throw new InvalidOperationException(
+                    "Grid card is outside the " + container +
+                    " locale=" + locale +
+                    " gridHeight=" + rect.height.ToString("0.0") +
+                    " path=" + ImagePath(item) +
+                    " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));
+            }
+        }
+
+        private static Transform FindNamed(Transform root, string name)
+        {
+            if (root == null)
+                return null;
+            if (root.name == name)
+                return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindNamed(root.GetChild(i), name);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
         }
 
         private static bool IsArabicScript(char value)

@@ -8,24 +8,26 @@ namespace Game.Editor
 {
     /// <summary>
     /// Paints one warm theatre plate from the existing Campaign plates. The colour
-    /// fill is averaged to a quarter scale, blurred there, then posterised to the
-    /// five bright amber steps with hard thresholds and no dither. A bilinear
-    /// upscale and a second hard grade turn the block edges into smooth contours
-    /// while the fields stay flat. Borders are drawn afterwards at full resolution.
-    /// It does not author new terrain.
+    /// fill is averaged and blurred at quarter scale, bilinearly enlarged, blurred
+    /// one pixel at full resolution, then posterised once. The hard grade runs
+    /// after the upscale so the flat fields follow smooth curves. Borders are drawn
+    /// afterwards. It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
+        public const int ComposerVersion = 2;
         public const int ZoneWidth = 960;
         public const int ZoneHeight = 540;
         public const int BlurWidth = 160;
         public const int BlurHeight = 90;
+        private static int _rewritten;
         private const float Warp = 0.065f;
         private const int BorderBand = 10;
         private const int DarkStroke = 3;
 
         public static void Generate()
         {
+            _rewritten = 0;
             string zoneFolder = SkirmishLibraryPreviewAssets.Root + "/Zones";
             string blurFolder = SkirmishLibraryPreviewAssets.Root + "/Blurs";
             EnsureFolder(zoneFolder);
@@ -54,6 +56,7 @@ namespace Game.Editor
                 }
 
                 WriteTheaterBlur(blurFolder, composite);
+                Debug.Log("[SkirmishLibraryZoneComposer] version=" + ComposerVersion + " rewritten=" + _rewritten);
             }
             finally
             {
@@ -457,7 +460,8 @@ namespace Game.Editor
             byte[] png = texture.EncodeToPNG();
             Object.DestroyImmediate(texture);
             string absolute = Path.Combine(Path.GetDirectoryName(Application.dataPath) ?? string.Empty, assetPath);
-            if (SameBytes(absolute, png))
+            TextureImporter current = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            if (StampMatches(current) && SameBytes(absolute, png))
                 return;
             File.WriteAllBytes(absolute, png);
             AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
@@ -471,7 +475,19 @@ namespace Game.Editor
             importer.npotScale = TextureImporterNPOTScale.None;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
+            importer.userData = Stamp();
             importer.SaveAndReimport();
+            _rewritten++;
+        }
+
+        private static string Stamp()
+        {
+            return "skirmish-zone-composer=" + ComposerVersion;
+        }
+
+        private static bool StampMatches(TextureImporter importer)
+        {
+            return importer != null && string.Equals(importer.userData, Stamp(), System.StringComparison.Ordinal);
         }
 
         private static bool SameBytes(string absolute, byte[] next)

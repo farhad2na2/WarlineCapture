@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -9,8 +8,6 @@ namespace Game.UI.Runtime
         public const int Height = 288;
         public const string Root = "Assets/Game/Art/SkirmishLibrary";
         private static Texture2D _placeholder;
-        private static readonly Dictionary<Texture, Texture2D> PosterGrades =
-            new Dictionary<Texture, Texture2D>(TextureReferenceComparer.Instance);
 
         public static string PreviewPath(string scenarioId) =>
             Root + "/Previews/skirmish.preview." + scenarioId + ".png";
@@ -117,45 +114,6 @@ namespace Game.UI.Runtime
             return texture;
         }
 
-        /// <summary>
-        /// Same five amber steps as the painted theatre fill. The photo is averaged,
-        /// blurred, graded, bilinearly enlarged, then graded again so the preview
-        /// matches the map without a dark multiply.
-        /// </summary>
-        public static Texture2D PosterGrade(Texture source)
-        {
-            if (source == null || source.width < 2 || source.height < 2)
-                return null;
-            if (PosterGrades.TryGetValue(source, out Texture2D cached) && cached != null)
-                return cached;
-
-            const int width = 256;
-            const int height = 144;
-            Color32[] pixels = BlitPixels(source, width, height);
-            if (pixels == null || pixels.Length != width * height)
-                return null;
-            pixels = PosterizeFill(pixels, width, height, 1);
-            var graded = new Texture2D(width, height, TextureFormat.RGBA32, false);
-            graded.SetPixels32(pixels);
-            graded.Apply(false, true);
-            graded.filterMode = FilterMode.Bilinear;
-            graded.wrapMode = TextureWrapMode.Clamp;
-            graded.name = "SkirmishLibraryPosterGrade";
-            graded.hideFlags = HideFlags.HideAndDontSave;
-            PosterGrades[source] = graded;
-            return graded;
-        }
-
-        private sealed class TextureReferenceComparer : IEqualityComparer<Texture>
-        {
-            public static readonly TextureReferenceComparer Instance = new TextureReferenceComparer();
-
-            public bool Equals(Texture x, Texture y) => ReferenceEquals(x, y);
-
-            public int GetHashCode(Texture obj) =>
-                ReferenceEquals(obj, null) ? 0 : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
-        }
-
         public static Color32 Grade(Color32 sample)
         {
             float luminance = (sample.r * 0.30f + sample.g * 0.52f + sample.b * 0.18f) / 255f;
@@ -179,35 +137,11 @@ namespace Game.UI.Runtime
             Color32[] small = DownscaleBox(source, width, height, smallWidth, smallHeight);
             if (blurRadius > 0)
                 small = BoxBlur(small, smallWidth, smallHeight, blurRadius);
-            for (int i = 0; i < small.Length; i++)
-                small[i] = Grade(small[i]);
             Color32[] full = UpscaleBilinear(small, smallWidth, smallHeight, width, height);
+            full = BoxBlur(full, width, height, 1);
             for (int i = 0; i < full.Length; i++)
                 full[i] = Grade(full[i]);
             return full;
-        }
-
-        private static Color32[] BlitPixels(Texture source, int width, int height)
-        {
-            RenderTexture rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
-            RenderTexture previous = RenderTexture.active;
-            Texture2D readable = null;
-            try
-            {
-                Graphics.Blit(source, rt);
-                RenderTexture.active = rt;
-                readable = new Texture2D(width, height, TextureFormat.RGBA32, false);
-                readable.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
-                readable.Apply(false, false);
-                return readable.GetPixels32();
-            }
-            finally
-            {
-                RenderTexture.active = previous;
-                RenderTexture.ReleaseTemporary(rt);
-                if (readable != null)
-                    Object.DestroyImmediate(readable);
-            }
         }
 
         private static Color32[] DownscaleBox(Color32[] source, int width, int height, int smallWidth, int smallHeight)

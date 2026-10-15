@@ -765,7 +765,8 @@ namespace Game.Editor
             var names = new RectTransform[mapIds.Length];
             for (int i = 0; i < mapIds.Length; i++)
             {
-                RequireTheaterOverlay(regions, clip, "ZoneOutline_" + mapIds[i], "outline", mapIds[i], locale);
+                RectTransform outline = RequireTheaterOverlay(regions, clip, "ZoneOutline_" + mapIds[i], "outline", mapIds[i], locale);
+                RejectZonePolygon(outline, clip, mapIds[i], locale);
                 RequireTheaterOverlay(regions, clip, "ZonePin_" + mapIds[i], "pin", mapIds[i], locale);
                 RectTransform card = RequireTheaterOverlay(regions, clip, "ZoneCard_" + mapIds[i], "zone card", mapIds[i], locale);
                 cards[i] = card;
@@ -785,9 +786,156 @@ namespace Game.Editor
                 TMP_Text cueText = cue.GetComponent<TMP_Text>();
                 if (cueText != null)
                     RejectReadableLine(cueText, "zoom hint", "selected", locale);
+                RejectCueClearOfPins(regions, cue, locale);
             }
 
             RejectTheaterOverlap(cards, names, cue, locale);
+            RejectZoneCardSpacing(cards, clip, locale);
+        }
+
+        private static void RejectCueClearOfPins(Transform regions, RectTransform cue, string locale)
+        {
+            if (regions == null || cue == null)
+                return;
+            Transform[] nodes = regions.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                Transform node = nodes[i];
+                if (node == null || !node.name.StartsWith("ZonePin_", StringComparison.Ordinal) || !node.gameObject.activeInHierarchy)
+                    continue;
+                var pin = node as RectTransform;
+                if (pin == null || !WorldOverlap(cue, pin, 0f))
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre zoom hint intersects a pin locale=" + locale + " pin=" + pin.name + ".");
+            }
+        }
+
+        private static void RejectZonePolygon(RectTransform outline, RectTransform clip, string mapId, string locale)
+        {
+            V3PolygonGraphic polygon = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
+            if (polygon == null || polygon.PointCount < 6 || polygon.FilledArea < 1200f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre polygon for " + mapId + " has no visible area locale=" + locale +
+                    " points=" + (polygon != null ? polygon.PointCount.ToString() : "0") +
+                    " area=" + (polygon != null ? polygon.FilledArea.ToString("0") : "0") + ".");
+            }
+
+            if (polygon.color.a < 0.14f || polygon.color.a > 0.24f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
+                    " locale=" + locale + ". Expected about 0.18.");
+            }
+
+            bool stroke = false;
+            bool glow = false;
+            for (int i = 0; i < outline.childCount; i++)
+            {
+                Transform child = outline.GetChild(i);
+                if (child == null || child.name != "HexEdge" || child is not RectTransform edge || !edge.gameObject.activeInHierarchy)
+                    continue;
+                float thickness = edge.sizeDelta.y;
+                if (thickness >= 3f && thickness <= 4.5f)
+                    stroke = true;
+                if (thickness >= 8f)
+                    glow = true;
+            }
+
+            if (!stroke || !glow)
+            {
+                throw new InvalidOperationException(
+                    "Theatre polygon for " + mapId + " is missing its hex stroke or glow locale=" + locale + ".");
+            }
+
+            if (clip == null)
+                return;
+            Rect clipRect = clip.rect;
+            Vector3[] corners = new Vector3[4];
+            outline.GetWorldCorners(corners);
+            float minX = float.PositiveInfinity;
+            float maxX = float.NegativeInfinity;
+            float minY = float.PositiveInfinity;
+            float maxY = float.NegativeInfinity;
+            for (int i = 0; i < corners.Length; i++)
+            {
+                Vector3 local = clip.InverseTransformPoint(corners[i]);
+                minX = Mathf.Min(minX, local.x);
+                maxX = Mathf.Max(maxX, local.x);
+                minY = Mathf.Min(minY, local.y);
+                maxY = Mathf.Max(maxY, local.y);
+            }
+
+            float width = Mathf.Min(maxX, clipRect.xMax) - Mathf.Max(minX, clipRect.xMin);
+            float height = Mathf.Min(maxY, clipRect.yMax) - Mathf.Max(minY, clipRect.yMin);
+            if (width <= 1f || height <= 1f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre polygon for " + mapId + " is outside the map locale=" + locale + ".");
+            }
+        }
+
+        private static void RejectZoneCardSpacing(RectTransform[] cards, RectTransform clip, string locale)
+        {
+            if (cards == null)
+                return;
+            const float gap = 12f;
+            const float inset = 12f;
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (cards[i] == null)
+                    continue;
+                if (clip != null)
+                {
+                    Vector3[] corners = new Vector3[4];
+                    cards[i].GetWorldCorners(corners);
+                    Rect clipRect = clip.rect;
+                    clipRect.xMin += inset;
+                    clipRect.xMax -= inset;
+                    clipRect.yMin += inset;
+                    clipRect.yMax -= inset;
+                    for (int c = 0; c < corners.Length; c++)
+                    {
+                        Vector3 local = clip.InverseTransformPoint(corners[c]);
+                        if (local.x < clipRect.xMin || local.x > clipRect.xMax || local.y < clipRect.yMin || local.y > clipRect.yMax)
+                        {
+                            throw new InvalidOperationException(
+                                "Theatre zone card is closer than 12px to the map edge locale=" + locale +
+                                " card=" + cards[i].name +
+                                " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));
+                        }
+                    }
+                }
+
+                Rect left = WorldBounds(cards[i]);
+                for (int j = i + 1; j < cards.Length; j++)
+                {
+                    if (cards[j] == null)
+                        continue;
+                    Rect right = WorldBounds(cards[j]);
+                    float dx = SeparatingGap(left.xMin, left.xMax, right.xMin, right.xMax);
+                    float dy = SeparatingGap(left.yMin, left.yMax, right.yMin, right.yMax);
+                    float clearance = dx >= 0f && dy >= 0f
+                        ? Mathf.Min(dx, dy)
+                        : dx >= 0f ? dx : dy;
+                    if (clearance >= gap)
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre zone cards are closer than 12px locale=" + locale +
+                        " " + cards[i].name + " " + cards[j].name +
+                        " gap=" + clearance.ToString("0.0") + ".");
+                }
+            }
+        }
+
+        private static float SeparatingGap(float aMin, float aMax, float bMin, float bMax)
+        {
+            if (aMax <= bMin)
+                return bMin - aMax;
+            if (bMax <= aMin)
+                return aMin - bMax;
+            return -1f;
         }
 
         private static RectTransform RequireTheaterOverlay(
@@ -889,18 +1037,38 @@ namespace Game.Editor
             if (!found)
                 throw new InvalidOperationException("Theatre pin data is missing for " + mapId + " locale=" + locale + ".");
 
-            string expected = pin.WonCount + "/" + pin.PublishedCount;
+            bool pending = pin.PublishedCount <= 0;
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            string expected = pending
+                ? SkirmishBattleLibraryArt.ComingSoon(fa)
+                : pin.WonCount + "/" + pin.PublishedCount;
             count.ForceMeshUpdate();
-            string shown = StripBidiMarks(count.text);
-            if (shown != expected)
+            string shown = StripBidiMarks(count.text).Trim();
+            bool matches = pending
+                ? SkirmishBattleLibraryArt.IsComingSoon(shown)
+                : shown == expected;
+            if (!matches)
             {
                 throw new InvalidOperationException(
                     "Theatre zone count for " + mapId + " is '" + count.text + "' locale=" + locale +
                     ". Expected " + expected + " (medals won / playable scenarios).");
             }
 
-            RememberZoneCount(locale, mapId, shown, "zone card");
-            float ratio = pin.PublishedCount > 0 ? pin.WonCount / (float)pin.PublishedCount : 0f;
+            RejectReadableLine(count, "zone count", mapId, locale);
+            RememberZoneCount(locale, mapId, expected, "zone card");
+            if (pending)
+            {
+                if (fill.enabled || fill.fillAmount > 0.001f)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre progress arc for " + mapId + " is filled locale=" + locale +
+                        " but the zone has no playable scenarios.");
+                }
+
+                return;
+            }
+
+            float ratio = pin.WonCount / (float)pin.PublishedCount;
             if (Mathf.Abs(fill.fillAmount - Mathf.Clamp01(ratio)) > 0.02f)
             {
                 throw new InvalidOperationException(
@@ -956,7 +1124,12 @@ namespace Game.Editor
             if (count == null)
                 return;
             string mapId = view.LibraryViewModel.Theater.SelectedMapId ?? string.Empty;
-            string shown = StripBidiMarks(count.text).Replace(" ", string.Empty);
+            string shown = StripBidiMarks(count.text).Trim();
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            if (SkirmishBattleLibraryArt.IsComingSoon(shown))
+                shown = SkirmishBattleLibraryArt.ComingSoon(fa);
+            else
+                shown = shown.Replace(" ", string.Empty);
             RememberZoneCount(locale, mapId, shown, "zone progress");
         }
 
@@ -1028,7 +1201,11 @@ namespace Game.Editor
 
             if (rows == 0)
                 return;
-            RememberZoneCount(locale, mapId, won + "/" + published, "grid rows");
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            string shown = published <= 0
+                ? SkirmishBattleLibraryArt.ComingSoon(fa)
+                : won + "/" + published;
+            RememberZoneCount(locale, mapId, shown, "grid rows");
         }
 
         private static void RememberZoneCount(string locale, string mapId, string count, string source)
@@ -1048,7 +1225,10 @@ namespace Game.Editor
         {
             won = 0;
             published = 0;
-            string cleaned = StripBidiMarks(text).Replace(" ", string.Empty);
+            string cleaned = StripBidiMarks(text).Trim();
+            if (SkirmishBattleLibraryArt.IsComingSoon(cleaned))
+                return true;
+            cleaned = cleaned.Replace(" ", string.Empty);
             int slash = cleaned.IndexOf('/');
             if (slash <= 0 || slash >= cleaned.Length - 1)
                 return false;
@@ -1193,9 +1373,13 @@ namespace Game.Editor
 
         private static bool WorldOverlap(RectTransform a, RectTransform b)
         {
+            return WorldOverlap(a, b, 2f);
+        }
+
+        private static bool WorldOverlap(RectTransform a, RectTransform b, float slop)
+        {
             Rect left = WorldBounds(a);
             Rect right = WorldBounds(b);
-            const float slop = 2f;
             return left.xMin < right.xMax - slop && right.xMin < left.xMax - slop &&
                 left.yMin < right.yMax - slop && right.yMin < left.yMax - slop;
         }

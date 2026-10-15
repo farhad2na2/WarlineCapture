@@ -49,6 +49,8 @@ namespace Game.UI.Runtime
         private const float ZoneCueHeight = 28f;
         private const float ZoneStackGap = 6f;
         private const float ZoneHexPad = 6f;
+        private const float ZoneCardGap = 12f;
+        private const float ZoneFrameInset = 12f;
 
         /// <summary>
         /// One theatre district after the painting's cover transform. Polygon points are screen pixels
@@ -89,6 +91,7 @@ namespace Game.UI.Runtime
         private static Sprite _zoneGlow;
         private static Sprite _zoneRibbon;
         private static Sprite _zoneStroke;
+        private static Sprite _zoneSolid;
         private static Sprite _zoneCap;
         private static Sprite _zoneRing;
         private static Sprite _solidSprite;
@@ -549,8 +552,8 @@ namespace Game.UI.Runtime
                 for (int point = 0; point < polygon.Length; point++)
                     polygon[point] = MapPaintingPoint(polygon[point], cropU, cropV, cropW, cropH, plateWidth, plateHeight);
                 polygon = ClipPolygonToFrame(polygon, plateWidth, plateHeight);
-                if (polygon.Length < 3)
-                    continue;
+                if (polygon.Length < 6 || PolygonArea(polygon) < 1200f)
+                    polygon = VisibleDistrictHex(MapPaintingPoint(centre, cropU, cropV, cropW, cropH, plateWidth, plateHeight), plateWidth, plateHeight);
                 Vector2 cardAnchor = i < SkirmishBattleLibraryArt.TheaterCardAnchors.Length
                     ? SkirmishBattleLibraryArt.TheaterCardAnchors[i]
                     : centre;
@@ -765,7 +768,11 @@ namespace Game.UI.Runtime
                 float cardY = Mathf.Clamp(slot.CardAnchor.y - ZoneCardHeight * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZoneCardHeight));
                 slot.Card = new Rect(cardX, cardY, ZoneCardWidth, ZoneCardHeight);
                 float cueX = Mathf.Clamp(slot.Pin.center.x - ZoneCueWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
-                float cueY = Mathf.Clamp(slot.Pin.yMax + ZoneStackGap, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZoneCueHeight));
+                float cueY = slot.Pin.yMax + ZoneStackGap + 4f;
+                if (cueY + ZoneCueHeight > safe.yMax)
+                    cueX = slot.Pin.xMax + ZoneStackGap + 4f;
+                cueX = Mathf.Clamp(cueX, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
+                cueY = Mathf.Clamp(cueY, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZoneCueHeight));
                 slot.Cue = new Rect(cueX, cueY, ZoneCueWidth, ZoneCueHeight);
                 slots[i] = slot;
             }
@@ -786,62 +793,183 @@ namespace Game.UI.Runtime
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot slot = slots[i];
-                if (!Overlaps(slot.Card, slot.Pin, -2f))
+                if (!CardsTooClose(slot.Card, slot.Pin))
                     continue;
                 Rect card = slot.Card;
-                Vector2 pin = slot.Pin.center;
-                Vector2 centre = card.center;
-                if (Mathf.Abs(centre.x - pin.x) >= Mathf.Abs(centre.y - pin.y))
-                    card.x = centre.x >= pin.x ? slot.Pin.xMax + 8f : slot.Pin.xMin - 8f - card.width;
-                else
-                    card.y = centre.y >= pin.y ? slot.Pin.yMax + 8f : slot.Pin.yMin - 8f - card.height;
-                card.x = Mathf.Clamp(card.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - card.width));
-                card.y = Mathf.Clamp(card.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - card.height));
+                Rect pin = slot.Pin;
+                bool pushX = AxisGap(card.xMin, card.xMax, pin.xMin, pin.xMax) >=
+                    AxisGap(card.yMin, card.yMax, pin.yMin, pin.yMax);
+                if (!PushCardFromRect(ref card, pin, safe, pushX) && !PushCardFromRect(ref card, pin, safe, !pushX))
+                    continue;
                 slot.Card = card;
                 slots[i] = slot;
             }
         }
 
+        private static bool PushCardFromRect(ref Rect card, Rect blocker, Rect safe, bool pushX)
+        {
+            Rect next = card;
+            if (pushX)
+            {
+                float right = blocker.xMax + ZoneCardGap;
+                float left = blocker.xMin - ZoneCardGap - card.width;
+                next.x = card.center.x >= blocker.center.x ? right : left;
+            }
+            else
+            {
+                float below = blocker.yMax + ZoneCardGap;
+                float above = blocker.yMin - ZoneCardGap - card.height;
+                next.y = card.center.y >= blocker.center.y ? below : above;
+            }
+
+            next.x = Mathf.Clamp(next.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - next.width));
+            next.y = Mathf.Clamp(next.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - next.height));
+            if (CardsTooClose(next, blocker))
+                return false;
+            card = next;
+            return true;
+        }
+
         private static void SeparateCards(List<TheatreZoneSlot> slots, Rect safe)
         {
-            for (int pass = 0; pass < 12; pass++)
+            for (int pass = 0; pass < 24; pass++)
             {
                 bool moved = false;
                 for (int i = 0; i < slots.Count; i++)
                 {
                     for (int j = i + 1; j < slots.Count; j++)
                     {
+                        if (!CardsTooClose(slots[i].Card, slots[j].Card))
+                            continue;
                         Rect a = slots[i].Card;
                         Rect b = slots[j].Card;
-                        if (!Overlaps(a, b, 6f))
-                            continue;
-                        int lower = a.yMin <= b.yMin ? j : i;
-                        int upper = lower == j ? i : j;
-                        TheatreZoneSlot lowerSlot = slots[lower];
-                        TheatreZoneSlot upperSlot = slots[upper];
-                        float pushed = upperSlot.Card.yMax + 8f;
-                        if (pushed + lowerSlot.Card.height <= safe.yMax)
-                        {
-                            Rect card = lowerSlot.Card;
-                            card.y = pushed;
-                            lowerSlot.Card = card;
-                            slots[lower] = lowerSlot;
-                        }
-                        else
-                        {
-                            Rect card = upperSlot.Card;
-                            card.y = Mathf.Max(safe.yMin, lowerSlot.Card.yMin - 8f - card.height);
-                            upperSlot.Card = card;
-                            slots[upper] = upperSlot;
-                        }
-
-                        moved = true;
+                        float dx = AxisGap(a.xMin, a.xMax, b.xMin, b.xMax);
+                        float dy = AxisGap(a.yMin, a.yMax, b.yMin, b.yMax);
+                        bool pushX = dx >= dy;
+                        if (SeparatePair(slots, i, j, safe, pushX) || SeparatePair(slots, i, j, safe, !pushX))
+                            moved = true;
                     }
                 }
 
                 if (!moved)
                     break;
             }
+        }
+
+        private static bool SeparatePair(List<TheatreZoneSlot> slots, int i, int j, Rect safe, bool pushX)
+        {
+            Rect a = slots[i].Card;
+            Rect b = slots[j].Card;
+            int later = pushX
+                ? (a.center.x <= b.center.x ? j : i)
+                : (a.center.y <= b.center.y ? j : i);
+            int earlier = later == j ? i : j;
+            var snapshot = new Rect[slots.Count];
+            for (int n = 0; n < slots.Count; n++)
+                snapshot[n] = slots[n].Card;
+            int before = PlacementScore(slots);
+            TheatreZoneSlot laterSlot = slots[later];
+            TheatreZoneSlot earlierSlot = slots[earlier];
+            Rect card = laterSlot.Card;
+            Rect other = earlierSlot.Card;
+            if (pushX)
+            {
+                float pushed = other.xMax + ZoneCardGap;
+                if (pushed + card.width <= safe.xMax)
+                    card.x = pushed;
+                else
+                    other.x = Mathf.Max(safe.xMin, card.xMin - ZoneCardGap - other.width);
+            }
+            else
+            {
+                float pushed = other.yMax + ZoneCardGap;
+                if (pushed + card.height <= safe.yMax)
+                    card.y = pushed;
+                else
+                    other.y = Mathf.Max(safe.yMin, card.yMin - ZoneCardGap - other.height);
+            }
+
+            card.x = Mathf.Clamp(card.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - card.width));
+            card.y = Mathf.Clamp(card.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - card.height));
+            other.x = Mathf.Clamp(other.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - other.width));
+            other.y = Mathf.Clamp(other.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - other.height));
+            laterSlot.Card = card;
+            earlierSlot.Card = other;
+            slots[later] = laterSlot;
+            slots[earlier] = earlierSlot;
+            if (PlacementScore(slots) < before)
+                return true;
+            for (int n = 0; n < slots.Count; n++)
+            {
+                TheatreZoneSlot restore = slots[n];
+                restore.Card = snapshot[n];
+                slots[n] = restore;
+            }
+
+            return false;
+        }
+
+        private static int PlacementScore(List<TheatreZoneSlot> slots)
+        {
+            int score = 0;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (CardsTooClose(slots[i].Card, slots[i].Pin))
+                    score += 10;
+                for (int j = i + 1; j < slots.Count; j++)
+                {
+                    if (CardsTooClose(slots[i].Card, slots[j].Card))
+                        score += 10;
+                }
+            }
+
+            return score;
+        }
+
+        private static bool CardsTooClose(Rect a, Rect b)
+        {
+            float dx = AxisGap(a.xMin, a.xMax, b.xMin, b.xMax);
+            float dy = AxisGap(a.yMin, a.yMax, b.yMin, b.yMax);
+            return dx < ZoneCardGap && dy < ZoneCardGap;
+        }
+
+        private static float AxisGap(float aMin, float aMax, float bMin, float bMax)
+        {
+            if (aMax <= bMin)
+                return bMin - aMax;
+            if (bMax <= aMin)
+                return aMin - bMax;
+            return -Mathf.Min(aMax - bMin, bMax - aMin);
+        }
+
+        private static float PolygonArea(Vector2[] points)
+        {
+            if (points == null || points.Length < 3)
+                return 0f;
+            float sum = 0f;
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector2 a = points[i];
+                Vector2 b = points[(i + 1) % points.Length];
+                sum += a.x * b.y - b.x * a.y;
+            }
+
+            return Mathf.Abs(sum) * 0.5f;
+        }
+
+        private static Vector2[] VisibleDistrictHex(Vector2 centre, float frameWidth, float frameHeight)
+        {
+            const float radius = 78f;
+            float cx = Mathf.Clamp(centre.x, ZoneFrameInset + radius, Mathf.Max(ZoneFrameInset + radius, frameWidth - ZoneFrameInset - radius));
+            float cy = Mathf.Clamp(centre.y, ZoneFrameInset + radius, Mathf.Max(ZoneFrameInset + radius, frameHeight - ZoneFrameInset - radius));
+            var hex = new Vector2[6];
+            for (int i = 0; i < hex.Length; i++)
+            {
+                float angle = (60f * i - 90f) * Mathf.Deg2Rad;
+                hex[i] = new Vector2(cx + Mathf.Cos(angle) * radius, cy + Mathf.Sin(angle) * radius * 0.82f);
+            }
+
+            return hex;
         }
 
         private static void NudgeCues(List<TheatreZoneSlot> slots, Rect safe)
@@ -943,8 +1071,8 @@ namespace Game.UI.Runtime
                 float length = Mathf.Sqrt(dx * dx + dy * dy);
                 var edge = new GameObject("HexEdge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 edge.transform.SetParent(root, false);
-                edge.sprite = ZoneStrokeSprite();
-                edge.type = Image.Type.Sliced;
+                edge.sprite = ZoneSolidSprite();
+                edge.type = Image.Type.Simple;
                 edge.color = color;
                 edge.raycastTarget = false;
                 RectTransform rect = edge.rectTransform;
@@ -974,20 +1102,20 @@ namespace Game.UI.Runtime
             float dy = to.y - from.y;
             float length = Mathf.Sqrt(dx * dx + dy * dy);
             float start = ZonePinSize * 0.5f + 2f;
-            float draw = length - start - 4f;
-            if (draw < 10f)
+            float draw = length - start - 2f;
+            if (draw < 4f || length < 1f)
                 return;
             var line = new GameObject("ZoneLeader_" + slot.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             line.transform.SetParent(parent, false);
-            line.sprite = ZoneStrokeSprite();
-            line.type = Image.Type.Sliced;
-            line.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.92f);
+            line.sprite = ZoneSolidSprite();
+            line.type = Image.Type.Simple;
+            line.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
             line.raycastTarget = false;
             RectTransform rect = line.rectTransform;
             rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
             rect.pivot = new Vector2(0f, 0.5f);
             Vector2 origin = from + (to - from) * (start / length);
-            rect.sizeDelta = new Vector2(draw, 2.5f);
+            rect.sizeDelta = new Vector2(draw, 3f);
             rect.anchoredPosition = new Vector2(origin.x, -origin.y);
             rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-dy, dx) * Mathf.Rad2Deg);
             rect.localScale = Vector3.one;
@@ -1100,20 +1228,29 @@ namespace Game.UI.Runtime
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
             int total = Mathf.Max(0, slot.Playable);
-            fill.fillAmount = total > 0 ? Mathf.Clamp01(slot.Won / (float)total) : 0f;
+            bool pending = total <= 0;
+            fill.fillAmount = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
             fill.color = slot.Zone;
             fill.raycastTarget = false;
+            fill.enabled = !pending;
+            track.enabled = !pending;
+            if (pending)
+                PlaceTopLeft(track.rectTransform, textX, 44f, textW, 34f);
             var count = CreateLabel(track.transform, "ZoneCount", 12f);
             Stretch(count.rectTransform);
-            count.alignment = TextAlignmentOptions.Center;
-            count.isRightToLeftText = false;
+            count.alignment = pending
+                ? (fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft)
+                : TextAlignmentOptions.Center;
+            count.isRightToLeftText = pending && fa;
             count.textWrappingMode = TextWrappingModes.NoWrap;
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
-            SetCopy(count, slot.Won + "/" + total, 11f, 14f);
-            count.alignment = TextAlignmentOptions.Center;
-            count.isRightToLeftText = false;
+            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 13f : 11f, pending ? 16f : 14f);
+            count.alignment = pending
+                ? (fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft)
+                : TextAlignmentOptions.Center;
+            count.isRightToLeftText = pending && fa;
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
@@ -1123,14 +1260,22 @@ namespace Game.UI.Runtime
         {
             if (preview == null)
                 return;
-            Texture2D painted = LoadTheatreBase();
-            preview.texture = painted != null ? painted : SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
             preview.color = Color.white;
-            if (painted == null)
+            preview.uvRect = new Rect(0f, 0f, 1f, 1f);
+            Texture2D plate = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(mapId));
+            if (plate == null)
+                plate = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
+            if (plate != null)
             {
+                preview.texture = plate;
                 CoverCrop(preview, ZoneThumbSize, ZoneThumbSize);
                 return;
             }
+
+            Texture2D painted = LoadTheatreBase();
+            preview.texture = painted;
+            if (painted == null)
+                return;
 
             int index = 0;
             for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
@@ -1301,11 +1446,28 @@ namespace Game.UI.Runtime
             rowLabel.overflowMode = TextOverflowModes.Ellipsis;
             SetCopy(rowLabel, rowName, 13f, 16f);
             var rowCount = CreateLabel(parent, "RowCount_" + objective.ObjectiveId, 13f);
-            PlaceTopLeft(rowCount.rectTransform, 2f, y + 56f, LibraryGridOriginX - 8f, 16f);
+            bool pending = objective.PublishedCount <= 0;
+            if (pending)
+            {
+                PlaceTopLeft(rowCount.rectTransform, 1f, y + 50f, LibraryGridOriginX - 4f, 42f);
+                rowCount.textWrappingMode = TextWrappingModes.Normal;
+                rowCount.maxVisibleLines = 2;
+            }
+            else
+            {
+                PlaceTopLeft(rowCount.rectTransform, 2f, y + 56f, LibraryGridOriginX - 8f, 16f);
+                rowCount.textWrappingMode = TextWrappingModes.NoWrap;
+                rowCount.maxVisibleLines = 1;
+            }
+
             rowCount.alignment = TextAlignmentOptions.Center;
-            rowCount.isRightToLeftText = false;
-            rowCount.textWrappingMode = TextWrappingModes.NoWrap;
-            SetCopy(rowCount, objective.WonCount + "/" + objective.PublishedCount, 16f, 20f);
+            rowCount.isRightToLeftText = pending && fa;
+            rowCount.overflowMode = TextOverflowModes.Overflow;
+            SetCopy(
+                rowCount,
+                pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : objective.WonCount + "/" + objective.PublishedCount,
+                pending ? 12f : 16f,
+                pending ? 14f : 20f);
         }
 
         private RectTransform CreateGridScroll(float top, out ScrollRect scroll)
@@ -1858,8 +2020,13 @@ namespace Game.UI.Runtime
             TMP_Text caption = _progressTrack.Find("Caption")?.GetComponent<TMP_Text>();
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
             SetCopy(caption, LibraryText("ui.skirmish.library.zone_progress", fa), 14f, 18f);
-            SetCopy(count, pin.WonCount + " / " + pin.PublishedCount, 14f, 20f);
-            _sideWonRatio = pin.PublishedCount > 0 ? Mathf.Clamp01(pin.WonCount / (float)pin.PublishedCount) : 0f;
+            bool pending = pin.PublishedCount <= 0;
+            SetCopy(
+                count,
+                pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : pin.WonCount + " / " + pin.PublishedCount,
+                14f,
+                20f);
+            _sideWonRatio = pending ? 0f : Mathf.Clamp01(pin.WonCount / (float)pin.PublishedCount);
             PlaceSideBattlesCopy();
             EnsureThinProgressBar(_progressTrack, 16f);
             PaintSideProgress();
@@ -1898,12 +2065,13 @@ namespace Game.UI.Runtime
 
             if (count != null)
             {
-                count.isRightToLeftText = false;
+                bool pending = SkirmishBattleLibraryArt.IsComingSoon(count.text);
+                count.isRightToLeftText = pending && fa;
                 count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 count.overflowMode = TextOverflowModes.Overflow;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
                 count.maxVisibleLines = 1;
-                PlaceTopLeft(count.rectTransform, 8f, 38f, textWidth, 22f);
+                PlaceTopLeft(count.rectTransform, 8f, 38f, textWidth, pending ? 32f : 22f);
             }
         }
 
@@ -1967,13 +2135,23 @@ namespace Game.UI.Runtime
             Outline outline = bar.GetComponent<Outline>();
             if (outline != null)
                 outline.enabled = false;
-            float ratio = Mathf.Clamp01(_sideWonRatio);
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
-            if (WonRatio(count != null ? count.text : null, out float parsed))
+            bool pending = count != null && SkirmishBattleLibraryArt.IsComingSoon(count.text);
+            float ratio = pending ? 0f : Mathf.Clamp01(_sideWonRatio);
+            if (!pending && WonRatio(count != null ? count.text : null, out float parsed))
                 ratio = parsed;
             float inner = barWidth - 6f;
-            float fillWidth = ratio >= 0.999f ? inner : Mathf.Max(12f, inner * ratio);
-            PlaceTopLeft(_progressFill.rectTransform, 2f, 2f, fillWidth, 12f);
+            if (pending || ratio <= 0.001f)
+            {
+                _progressFill.enabled = false;
+                PlaceTopLeft(_progressFill.rectTransform, 2f, 2f, 0f, 12f);
+            }
+            else
+            {
+                _progressFill.enabled = true;
+                float fillWidth = ratio >= 0.999f ? inner : Mathf.Max(12f, inner * ratio);
+                PlaceTopLeft(_progressFill.rectTransform, 2f, 2f, fillWidth, 12f);
+            }
             _progressFill.transform.SetAsLastSibling();
         }
 
@@ -3411,19 +3589,25 @@ namespace Game.UI.Runtime
                 plate.SetBorder(theater ? Color.clear : new Color(67f / 255f, 78f / 255f, 82f / 255f, 1f), theater ? 0f : 3f);
             if (!theater)
                 return;
+            // The faint left edge is the map drop-shadow feather (it starts 4px left of the panel
+            // and its sliced core darkens the first ~18px) plus the briefing shadow and the panel shadow.
             if (briefing != null && map.parent != null)
+                HideEdgeShadow(map.parent.Find(briefing.name + "DropShadow"));
+            if (map.parent != null)
             {
-                Image briefingShadow = map.parent.Find(briefing.name + "DropShadow")?.GetComponent<Image>();
-                if (briefingShadow != null)
-                    briefingShadow.enabled = false;
+                HideEdgeShadow(map.parent.Find(map.name + "DropShadow"));
+                HideEdgeShadow(map.parent.Find(map.name + "Shadow"));
             }
+        }
 
-            RectTransform mapShadow = map.parent != null ? map.parent.Find(map.name + "DropShadow") as RectTransform : null;
-            if (mapShadow != null)
-                PlaceBehind(mapShadow, map);
-            RectTransform panelShadow = map.parent != null ? map.parent.Find(map.name + "Shadow") as RectTransform : null;
-            if (panelShadow != null)
-                PlaceBehind(panelShadow, map);
+        private static void HideEdgeShadow(Transform shadow)
+        {
+            if (shadow == null)
+                return;
+            Graphic graphic = shadow.GetComponent<Graphic>();
+            if (graphic != null)
+                graphic.enabled = false;
+            shadow.gameObject.SetActive(false);
         }
 
         private void FitZoomCue()
@@ -3482,21 +3666,18 @@ namespace Game.UI.Runtime
                 }
             }
 
-            float left = rect.anchoredPosition.x;
-            float top = -rect.anchoredPosition.y;
-            if (pin != null)
-            {
-                left = pin.anchoredPosition.x + pin.sizeDelta.x * 0.5f - width * 0.5f;
-                top = -pin.anchoredPosition.y + pin.sizeDelta.y + ZoneStackGap;
-            }
-
             float frameW = parent != null ? parent.rect.width : 0f;
             float frameH = parent != null ? parent.rect.height : 0f;
             if (frameW < 2f && parent != null)
                 frameW = parent.sizeDelta.x;
             if (frameH < 2f && parent != null)
                 frameH = parent.sizeDelta.y;
-            const float inset = 16f;
+            const float inset = 12f;
+            const float pinGap = 8f;
+            float left = rect.anchoredPosition.x;
+            float top = -rect.anchoredPosition.y;
+            if (pin != null)
+                PlaceCueClearOfPin(pin, width, height, frameW, frameH, inset, pinGap, ref left, ref top);
             if (frameW > width + inset * 2f)
                 left = Mathf.Clamp(left, inset, frameW - inset - width);
             if (frameH > height + inset * 2f)
@@ -3505,24 +3686,40 @@ namespace Game.UI.Runtime
             if (parent == null)
                 return;
             Rect cueRect = new Rect(left, top, width, height);
-            for (int pass = 0; pass < 6; pass++)
+            for (int pass = 0; pass < 8; pass++)
             {
                 bool hit = false;
                 for (int i = 0; i < parent.childCount; i++)
                 {
                     Transform child = parent.GetChild(i);
-                    if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
+                    if (child == null)
                         continue;
-                    var card = child as RectTransform;
-                    if (card == null)
+                    bool card = child.name.StartsWith("ZoneCard_", StringComparison.Ordinal);
+                    bool pinHit = child.name.StartsWith("ZonePin_", StringComparison.Ordinal);
+                    if (!card && !pinHit)
                         continue;
-                    Rect cardRect = new Rect(card.anchoredPosition.x, -card.anchoredPosition.y, card.sizeDelta.x, card.sizeDelta.y);
-                    if (!Overlaps(cueRect, cardRect, 2f))
+                    var block = child as RectTransform;
+                    if (block == null)
+                        continue;
+                    Rect blockRect = new Rect(block.anchoredPosition.x, -block.anchoredPosition.y, block.sizeDelta.x, block.sizeDelta.y);
+                    if (!Overlaps(cueRect, blockRect, 0f))
                         continue;
                     hit = true;
-                    cueRect.y = cueRect.center.y <= cardRect.center.y
-                        ? cardRect.yMin - cueRect.height - 4f
-                        : cardRect.yMax + 4f;
+                    if (pinHit)
+                    {
+                        float below = blockRect.yMax + pinGap;
+                        float beside = blockRect.xMax + pinGap;
+                        if (below + cueRect.height <= frameH - inset)
+                            cueRect.y = below;
+                        else
+                            cueRect.x = beside;
+                    }
+                    else
+                    {
+                        cueRect.y = cueRect.center.y <= blockRect.center.y
+                            ? blockRect.yMin - cueRect.height - pinGap
+                            : blockRect.yMax + pinGap;
+                    }
                 }
 
                 if (frameW > cueRect.width + inset * 2f)
@@ -3533,6 +3730,9 @@ namespace Game.UI.Runtime
                     break;
             }
 
+            ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
+            ShiftCueOffCards(parent, frameW, frameH, inset, ref cueRect);
+            ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
             PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
             cue.ForceMeshUpdate();
             float natural = Mathf.Max(cue.preferredWidth, cue.GetPreferredValues().x);
@@ -3544,8 +3744,142 @@ namespace Game.UI.Runtime
                 cueRect.x = center - fitted * 0.5f;
                 if (frameW > cueRect.width + inset * 2f)
                     cueRect.x = Mathf.Clamp(cueRect.x, inset, frameW - inset - cueRect.width);
+                ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
+                ShiftCueOffCards(parent, frameW, frameH, inset, ref cueRect);
+                ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
                 PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
                 cue.ForceMeshUpdate();
+            }
+        }
+
+        private static void ShiftCueOffCards(RectTransform parent, float frameW, float frameH, float inset, ref Rect cue)
+        {
+            if (parent == null)
+                return;
+            for (int pass = 0; pass < 4; pass++)
+            {
+                bool hit = false;
+                for (int i = 0; i < parent.childCount; i++)
+                {
+                    Transform child = parent.GetChild(i);
+                    if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
+                        continue;
+                    var cardRect = new Rect(card.anchoredPosition.x, -card.anchoredPosition.y, card.sizeDelta.x, card.sizeDelta.y);
+                    if (!Overlaps(cue, cardRect, 2f))
+                        continue;
+                    hit = true;
+                    float toRight = cardRect.xMax + 8f;
+                    float toLeft = cardRect.xMin - 8f - cue.width;
+                    bool rightFits = frameW <= cue.width + inset * 2f || toRight + cue.width <= frameW - inset;
+                    bool leftFits = frameW <= cue.width + inset * 2f || toLeft >= inset;
+                    if (rightFits && (!leftFits || cue.center.x >= cardRect.center.x))
+                        cue.x = toRight;
+                    else if (leftFits)
+                        cue.x = toLeft;
+                }
+
+                cue = ClampCue(cue, frameW, frameH, inset);
+                if (!hit)
+                    break;
+            }
+        }
+
+        private static void ClearCueFromPins(
+            RectTransform parent,
+            float frameW,
+            float frameH,
+            float inset,
+            float gap,
+            ref Rect cue)
+        {
+            if (parent == null)
+                return;
+            for (int pass = 0; pass < 6; pass++)
+            {
+                bool hit = false;
+                for (int i = 0; i < parent.childCount; i++)
+                {
+                    Transform child = parent.GetChild(i);
+                    if (child == null || !child.name.StartsWith("ZonePin_", StringComparison.Ordinal) || child is not RectTransform pin)
+                        continue;
+                    float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+                    float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+                    var pinRect = new Rect(pin.anchoredPosition.x, -pin.anchoredPosition.y, pinW, pinH);
+                    if (!Overlaps(cue, pinRect, 0f))
+                        continue;
+                    hit = true;
+                    Rect below = cue;
+                    below.y = pinRect.yMax + gap;
+                    below.x = pinRect.center.x - cue.width * 0.5f;
+                    Rect right = cue;
+                    right.x = pinRect.xMax + gap;
+                    right.y = pinRect.center.y - cue.height * 0.5f;
+                    Rect left = cue;
+                    left.x = pinRect.xMin - gap - cue.width;
+                    left.y = right.y;
+                    if (CueMissesPins(parent, ClampCue(below, frameW, frameH, inset)))
+                        cue = ClampCue(below, frameW, frameH, inset);
+                    else if (CueMissesPins(parent, ClampCue(right, frameW, frameH, inset)))
+                        cue = ClampCue(right, frameW, frameH, inset);
+                    else
+                        cue = ClampCue(left, frameW, frameH, inset);
+                }
+
+                if (!hit)
+                    break;
+            }
+        }
+
+        private static bool CueMissesPins(RectTransform parent, Rect cue)
+        {
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZonePin_", StringComparison.Ordinal) || child is not RectTransform pin)
+                    continue;
+                float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+                float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+                var pinRect = new Rect(pin.anchoredPosition.x, -pin.anchoredPosition.y, pinW, pinH);
+                if (Overlaps(cue, pinRect, 0f))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static Rect ClampCue(Rect cue, float frameW, float frameH, float inset)
+        {
+            if (frameW > cue.width + inset * 2f)
+                cue.x = Mathf.Clamp(cue.x, inset, frameW - inset - cue.width);
+            if (frameH > cue.height + inset * 2f)
+                cue.y = Mathf.Clamp(cue.y, inset, frameH - inset - cue.height);
+            return cue;
+        }
+
+        private static void PlaceCueClearOfPin(
+            RectTransform pin,
+            float width,
+            float height,
+            float frameW,
+            float frameH,
+            float inset,
+            float gap,
+            ref float left,
+            ref float top)
+        {
+            float pinLeft = pin.anchoredPosition.x;
+            float pinTop = -pin.anchoredPosition.y;
+            float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+            float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+            left = pinLeft + pinW * 0.5f - width * 0.5f;
+            top = pinTop + pinH + gap;
+            bool belowFits = frameH < height + inset * 2f || top + height <= frameH - inset;
+            if (!belowFits)
+            {
+                top = pinTop + pinH * 0.5f - height * 0.5f;
+                left = pinLeft + pinW + gap;
+                if (frameW > width + inset * 2f && left + width > frameW - inset)
+                    left = pinLeft - gap - width;
             }
         }
 
@@ -3676,7 +4010,9 @@ namespace Game.UI.Runtime
             image.enabled = true;
             float panelTop = -panel.anchoredPosition.y;
             PlaceTopLeft(shadow, panel.anchoredPosition.x + offsetX - 12f, panelTop + offsetY - 8f, panel.sizeDelta.x + 32f, panel.sizeDelta.y + 36f);
-            shadow.SetSiblingIndex(panel.GetSiblingIndex());
+            int panelIndex = panel.GetSiblingIndex();
+            if (shadow.GetSiblingIndex() > panelIndex)
+                shadow.SetSiblingIndex(panelIndex);
             return shadow;
         }
 
@@ -3767,7 +4103,7 @@ namespace Game.UI.Runtime
                 stripTop = strip.anchoredPosition.y + occupied;
             }
 
-            rect.anchoredPosition = new Vector2(18f, stripTop + 40f);
+            rect.anchoredPosition = new Vector2(36f, stripTop + 48f);
             rect.sizeDelta = new Vector2(-36f, 36f);
             rect.SetAsLastSibling();
             hint.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
@@ -4586,7 +4922,8 @@ namespace Game.UI.Runtime
         {
             if (text == null)
                 return;
-            if (text.name != "Subtitle" && text.name != "Value" && !RelaxesLibraryFloor(text))
+            if (text.name != "Subtitle" && text.name != "Value" && !RelaxesLibraryFloor(text) &&
+                !SkirmishBattleLibraryArt.IsComingSoon(value))
                 min = Mathf.Max(LibraryFontFloor, min);
             max = Mathf.Max(min, max);
             var binding = text.GetComponent<V3LocalizedTextBindingView>() ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>();
@@ -4757,6 +5094,9 @@ namespace Game.UI.Runtime
             if (text.name == "Subtitle" || text.name == "PendingLabel" || text.name == "ZoomCue" ||
                 text.name == "ZoneName" || text.name == "ZoneCount" ||
                 text.name.StartsWith("Column_", StringComparison.Ordinal))
+                return true;
+            if (text.name.StartsWith("RowCount_", StringComparison.Ordinal) &&
+                SkirmishBattleLibraryArt.IsComingSoon(text.text))
                 return true;
             string parent = text.transform.parent != null ? text.transform.parent.name : string.Empty;
             return text.name == "Caption" && parent.StartsWith("Slot", StringComparison.Ordinal);
@@ -4934,6 +5274,8 @@ namespace Game.UI.Runtime
             RaiseDepth(composition, "SafeAreaEdgeBottom");
             RaiseDepth(composition, "SafeAreaNotch");
             FitLibrarySearch();
+            bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+            SealTheatreMapEdge(preview as RectTransform, rules as RectTransform, theater);
         }
 
         private void FitLibrarySearch()
@@ -5739,9 +6081,11 @@ namespace Game.UI.Runtime
                 }
                 else if (text.name == "ZoneCount")
                 {
-                    RelaxLibraryText(text, 11f, 14f, false);
+                    bool pending = SkirmishBattleLibraryArt.IsComingSoon(text.text);
+                    RelaxLibraryText(text, pending ? 13f : 11f, pending ? 16f : 14f, false);
                     text.overflowMode = TextOverflowModes.Overflow;
-                    text.isRightToLeftText = false;
+                    text.textWrappingMode = TextWrappingModes.NoWrap;
+                    text.isRightToLeftText = pending && fa;
                 }
                 else if (zoneName)
                 {
@@ -6005,6 +6349,22 @@ namespace Game.UI.Runtime
                 false);
             _zoneRibbon.hideFlags = HideFlags.HideAndDontSave;
             return _zoneRibbon;
+        }
+
+        private static Sprite ZoneSolidSprite()
+        {
+            if (_zoneSolid != null)
+                return _zoneSolid;
+            var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+            var pixels = new Color32[16];
+            for (int i = 0; i < pixels.Length; i++)
+                pixels[i] = new Color32(255, 255, 255, 255);
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneSolid = Sprite.Create(texture, new Rect(0f, 0f, 4f, 4f), new Vector2(0.5f, 0.5f), 4f);
+            _zoneSolid.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneSolid;
         }
 
         private static Sprite ZoneStrokeSprite()

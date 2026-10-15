@@ -224,6 +224,7 @@ namespace Game.UI.Runtime
             PlaceLibraryHeader();
             FitBriefingPicture();
             ClampStrayMedalBars();
+            LockMedalArtwork();
             RaiseLaunchTransition();
         }
 
@@ -395,9 +396,7 @@ namespace Game.UI.Runtime
                 fill.pivot = new Vector2(0f, 0.5f);
             }
 
-            float stripWidth = _overallStrip.rect.width;
-            if (stripWidth < 200f)
-                stripWidth = _overallStrip.sizeDelta.x > 200f ? _overallStrip.sizeDelta.x : 900f;
+            float stripWidth = TheatreStripWidth();
             float slotWidth = Mathf.Clamp(stripWidth * 0.16f, 112f, 168f);
             float labelBand = Mathf.Max(140f, stripWidth - slotWidth * 4f - 8f);
             TMP_Text battles = _overallStrip.Find("Caption")?.GetComponent<TMP_Text>();
@@ -435,11 +434,8 @@ namespace Game.UI.Runtime
             for (int i = 0; i < tiers.Length; i++)
             {
                 Transform slot = _overallStrip.Find("Medal" + i);
-                if (slot is not RectTransform slotRect)
+                if (slot == null)
                     continue;
-                PlaceTopLeft(slotRect, labelBand + i * slotWidth, 2f, slotWidth - 6f, 62f);
-                if (slot.Find("Icon") is RectTransform icon)
-                    PlaceTopLeft(icon, fa ? slotWidth - 28f : 2f, 2f, 22f, 22f);
                 TMP_Text tier = slot.Find("Count")?.GetComponent<TMP_Text>();
                 SetCopy(tier, tiers[i].ToString(), 13f, 18f);
                 if (tier != null)
@@ -447,7 +443,6 @@ namespace Game.UI.Runtime
                     tier.isRightToLeftText = false;
                     tier.alignment = TextAlignmentOptions.MidlineLeft;
                     tier.overflowMode = TextOverflowModes.Overflow;
-                    PlaceTopLeft(tier.rectTransform, fa ? 2f : 26f, 2f, 36f, 22f);
                 }
 
                 SkirmishBattleLibraryArt.DifficultyCopy(tierNames[i], fa, out string tierLabel);
@@ -459,7 +454,87 @@ namespace Game.UI.Runtime
                 caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 caption.overflowMode = TextOverflowModes.Overflow;
                 caption.textWrappingMode = TextWrappingModes.NoWrap;
-                PlaceTopLeft(caption.rectTransform, 2f, 26f, Mathf.Max(48f, slotWidth - 12f), 30f);
+            }
+
+            LayoutTheatreMedals(fa);
+        }
+
+        private void LayoutTheatreMedals(bool fa)
+        {
+            if (_overallStrip == null)
+                return;
+            float stripWidth = TheatreStripWidth();
+            float slotWidth = Mathf.Clamp(stripWidth * 0.16f, 112f, 168f);
+            float labelBand = Mathf.Max(140f, stripWidth - slotWidth * 4f - 8f);
+            for (int i = 0; i < 4; i++)
+            {
+                if (_overallStrip.Find("Medal" + i) is RectTransform slot)
+                    PlaceStripMedal(slot, i, fa, labelBand + i * slotWidth, slotWidth);
+            }
+        }
+
+        private float TheatreStripWidth()
+        {
+            if (_overallStrip == null)
+                return 900f;
+            if (_overallStrip.parent is RectTransform parent)
+            {
+                float parentWidth = PointSpan(parent);
+                if (parentWidth >= 200f)
+                    return parentWidth - 16f;
+            }
+
+            float stripWidth = PointSpan(_overallStrip);
+            return stripWidth >= 200f ? stripWidth : 900f;
+        }
+
+        private void PlaceStripMedal(RectTransform slot, int index, bool fa, float origin, float slotWidth)
+        {
+            if (slot == null)
+                return;
+            float inner = Mathf.Max(64f, slotWidth - 6f);
+            PlaceTopLeft(slot, origin, 2f, inner, 62f);
+            ReleaseFromLayout(slot);
+            const float iconSize = 24f;
+            const float countWidth = 36f;
+            float iconX = fa ? inner - iconSize - 4f : 4f;
+            float countX = fa ? 4f : iconSize + 8f;
+            StopExpanding(slot);
+            if (slot.Find("Icon") is RectTransform icon)
+            {
+                PlaceTopLeft(icon, iconX, 4f, iconSize, iconSize);
+                PinSquare(icon, iconSize);
+                BindMedalIcon(icon.GetComponent<Image>(), index);
+            }
+
+            if (slot.Find("Count") is RectTransform count)
+            {
+                PlaceTopLeft(count, countX, 4f, countWidth, iconSize);
+                ReleaseFromLayout(count);
+                TMP_Text countText = count.GetComponent<TMP_Text>();
+                if (countText != null)
+                {
+                    countText.isRightToLeftText = false;
+                    countText.alignment = TextAlignmentOptions.MidlineLeft;
+                    countText.overflowMode = TextOverflowModes.Overflow;
+                }
+            }
+
+            if (slot.Find("Caption") is RectTransform caption)
+            {
+                PlaceTopLeft(caption, 4f, 32f, Mathf.Max(48f, inner - 8f), 26f);
+                ReleaseFromLayout(caption);
+                TMP_Text captionText = caption.GetComponent<TMP_Text>();
+                if (captionText != null)
+                {
+                    captionText.isRightToLeftText = fa;
+                    captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                    captionText.overflowMode = TextOverflowModes.Overflow;
+                    captionText.textWrappingMode = TextWrappingModes.NoWrap;
+                    captionText.enableAutoSizing = true;
+                    captionText.fontSizeMin = 11f;
+                    captionText.fontSizeMax = 15f;
+                }
             }
         }
 

@@ -159,6 +159,7 @@ namespace Game.Editor
                 true,
                 null,
                 widthTargets.ToArray());
+            screen.LockBattleLibraryMedals();
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)

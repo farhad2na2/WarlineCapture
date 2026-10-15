@@ -149,6 +149,11 @@ namespace Game.UI.Runtime
             _libraryChromeReady = true;
         }
 
+        public void LockBattleLibraryMedals()
+        {
+            LockMedalArtwork();
+        }
+
         public void FocusTheaterOnMap(string mapId)
         {
             if (!baseAssaultPreset || string.IsNullOrEmpty(mapId))
@@ -1187,27 +1192,33 @@ namespace Game.UI.Runtime
         {
             if (slot == null)
                 return;
-            HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>();
-            if (row != null)
-                row.enabled = false;
-            HorizontalLayoutGroup parent = slot.parent != null ? slot.parent.GetComponent<HorizontalLayoutGroup>() : null;
-            if (parent != null)
-                parent.enabled = false;
-            float width = _medalRow != null && _medalRow.rect.width > 240f ? _medalRow.rect.width : 548f;
+            StopExpanding(slot);
+            if (slot.parent is RectTransform parent)
+                StopExpanding(parent);
+            float width = MedalRowWidth();
             float slotWidth = (width - 8f) * 0.5f;
             const float slotHeight = 46f;
+            const float iconSize = 24f;
+            const float countWidth = 32f;
+            const float gap = 4f;
             PlaceTopLeft(slot, (index % 2) * (slotWidth + 8f), (index / 2) * (slotHeight + 6f), slotWidth, slotHeight);
-            const float iconSize = 22f;
-            const float countWidth = 30f;
-            float iconX = fa ? slotWidth - iconSize - 2f : 2f;
-            float countX = fa ? 2f : slotWidth - countWidth - 2f;
-            float captionX = fa ? countWidth + 6f : iconSize + 6f;
-            float captionWidth = Mathf.Max(36f, slotWidth - iconSize - countWidth - 14f);
+            ReleaseFromLayout(slot);
+            float iconX = fa ? slotWidth - iconSize - gap : gap;
+            float countX = fa ? gap : slotWidth - countWidth - gap;
+            float captionX = fa ? gap + countWidth + gap : gap + iconSize + gap;
+            float captionLimit = fa ? iconX : countX;
+            float captionWidth = Mathf.Max(0f, captionLimit - captionX - gap);
             if (slot.Find("Icon") is RectTransform icon)
-                PlaceTopLeft(icon, iconX, 8f, iconSize, iconSize);
+            {
+                PlaceTopLeft(icon, iconX, 11f, iconSize, iconSize);
+                PinSquare(icon, iconSize);
+                BindMedalIcon(icon.GetComponent<Image>(), index);
+            }
+
             if (slot.Find("Caption") is RectTransform caption)
             {
                 PlaceTopLeft(caption, captionX, 4f, captionWidth, 38f);
+                ReleaseFromLayout(caption);
                 TMP_Text captionText = caption.GetComponent<TMP_Text>();
                 if (captionText != null)
                 {
@@ -1224,6 +1235,7 @@ namespace Game.UI.Runtime
             if (slot.Find("Count") is RectTransform count)
             {
                 PlaceTopLeft(count, countX, 8f, countWidth, 30f);
+                ReleaseFromLayout(count);
                 TMP_Text countText = count.GetComponent<TMP_Text>();
                 if (countText != null)
                 {
@@ -1234,21 +1246,121 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static void FitMedalSlot(RectTransform slot)
+        private void LockMedalArtwork()
         {
-            var row = slot.GetComponent<HorizontalLayoutGroup>() ?? slot.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.padding = new RectOffset(2, 2, 2, 2);
-            row.spacing = 4f;
-            row.childAlignment = TextAnchor.MiddleLeft;
-            row.childControlWidth = true;
-            row.childControlHeight = true;
-            row.childForceExpandWidth = false;
-            row.childForceExpandHeight = true;
-            FitLayout(slot.Find("Icon") as RectTransform, 22f, 28f, 0f);
-            LayoutElement captionLayout = FitLayout(slot.Find("Caption") as RectTransform, 72f, 28f, 1f);
-            if (captionLayout != null)
-                captionLayout.minWidth = 72f;
-            FitLayout(slot.Find("Count") as RectTransform, 18f, 28f, 0f);
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            if (_medalRow != null)
+            {
+                StopExpanding(_medalRow);
+                float rowWidth = MedalRowWidth();
+                float rowY = _medalRow.anchoredPosition.y < -0.5f ? -_medalRow.anchoredPosition.y : 6f;
+                float rowHeight = _medalRow.sizeDelta.y > 48f ? _medalRow.sizeDelta.y : 104f;
+                PlaceTopLeft(_medalRow, 6f, rowY, rowWidth, rowHeight);
+                ReleaseFromLayout(_medalRow);
+                for (int i = 0; i < 4; i++)
+                {
+                    if (_medalRow.Find("Slot" + i) is RectTransform slot)
+                        PlaceMedalSlot(slot, i, fa);
+                }
+            }
+
+            LayoutTheatreMedals(fa);
+        }
+
+        private float MedalRowWidth()
+        {
+            RectTransform column = transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn") as RectTransform;
+            RectTransform briefing = column != null ? column.parent as RectTransform : null;
+            float panel = PointSpan(briefing);
+            if (panel >= 200f)
+                return Mathf.Max(160f, panel - 26f);
+
+            if (_medalRow != null)
+            {
+                float rowWidth = PointSpan(_medalRow);
+                if (rowWidth >= 160f)
+                    return rowWidth;
+            }
+
+            return 548f;
+        }
+
+        private static float PointSpan(RectTransform rect)
+        {
+            if (rect == null)
+                return 0f;
+            bool point = Mathf.Abs(rect.anchorMax.x - rect.anchorMin.x) < 0.01f;
+            if (point && rect.sizeDelta.x >= 160f)
+                return rect.sizeDelta.x;
+            if (rect.rect.width >= 160f)
+                return rect.rect.width;
+            if (rect.sizeDelta.x >= 160f)
+                return rect.sizeDelta.x;
+            return 0f;
+        }
+
+        private static void BindMedalIcon(Image image, int index)
+        {
+            if (image == null)
+                return;
+            Color tint = image.color.a > 0.2f ? image.color : Color.white;
+            ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, MedalTier(index)), tint);
+            image.preserveAspect = true;
+            image.type = Image.Type.Simple;
+            if (image.sprite == null)
+            {
+                image.enabled = false;
+                image.gameObject.SetActive(false);
+            }
+        }
+
+        private static SkirmishDifficultyId MedalTier(int index)
+        {
+            switch (index)
+            {
+                case 1: return SkirmishDifficultyId.Regular;
+                case 2: return SkirmishDifficultyId.Veteran;
+                case 3: return SkirmishDifficultyId.Commander;
+                default: return SkirmishDifficultyId.Recruit;
+            }
+        }
+
+        private static void StopExpanding(RectTransform rect)
+        {
+            if (rect == null)
+                return;
+            HorizontalLayoutGroup group = rect.GetComponent<HorizontalLayoutGroup>();
+            if (group == null)
+                return;
+            group.childControlWidth = false;
+            group.childControlHeight = false;
+            group.childForceExpandWidth = false;
+            group.childForceExpandHeight = false;
+            group.enabled = false;
+        }
+
+        private static void PinSquare(RectTransform rect, float size)
+        {
+            if (rect == null)
+                return;
+            LayoutElement element = rect.GetComponent<LayoutElement>() ?? rect.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+            element.minWidth = size;
+            element.minHeight = size;
+            element.preferredWidth = size;
+            element.preferredHeight = size;
+            element.flexibleWidth = 0f;
+            element.flexibleHeight = 0f;
+        }
+
+        private static void ReleaseFromLayout(RectTransform rect)
+        {
+            if (rect == null)
+                return;
+            LayoutElement element = rect.GetComponent<LayoutElement>() ?? rect.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+            element.flexibleWidth = 0f;
+            element.flexibleHeight = 0f;
         }
 
         private void PresentDifficulty(SkirmishBriefingState briefing, bool fa)
@@ -1709,32 +1821,44 @@ namespace Game.UI.Runtime
         {
             if (row == null)
                 return;
-            var group = row.GetComponent<HorizontalLayoutGroup>() ?? row.gameObject.AddComponent<HorizontalLayoutGroup>();
-            group.padding = new RectOffset(0, 0, 0, 0);
-            group.spacing = 6f;
-            group.childAlignment = TextAnchor.MiddleLeft;
-            group.childControlWidth = true;
-            group.childControlHeight = true;
-            group.childForceExpandWidth = true;
-            group.childForceExpandHeight = true;
-            if (row.childCount > 0)
-                return;
+            StopExpanding(row);
+            if (row.childCount == 0)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    var slot = new GameObject("Slot" + i, typeof(RectTransform)).GetComponent<RectTransform>();
+                    slot.SetParent(row, false);
+                    var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                    icon.transform.SetParent(slot, false);
+                    icon.preserveAspect = true;
+                    icon.raycastTarget = false;
+                    ShowIcon(icon, SkirmishBattleLibraryArt.Medal(true, MedalTier(i)), Color.white);
+                    var caption = CreateBoundLabel(slot, "Caption", "ui.skirmish.library_medal_" + i, "MEDAL");
+                    caption.alignment = TextAlignmentOptions.MidlineLeft;
+                    caption.overflowMode = TextOverflowModes.Overflow;
+                    caption.textWrappingMode = TextWrappingModes.Normal;
+                    var count = CreateBoundLabel(slot, "Count", "ui.skirmish.library_medal_count", "0");
+                    count.alignment = TextAlignmentOptions.Center;
+                    count.isRightToLeftText = false;
+                    count.overflowMode = TextOverflowModes.Overflow;
+                }
+            }
+
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             for (int i = 0; i < 4; i++)
             {
-                var slot = new GameObject("Slot" + i, typeof(RectTransform), typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();
-                slot.SetParent(row, false);
-                var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                icon.transform.SetParent(slot, false);
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
-                var caption = CreateBoundLabel(slot, "Caption", "ui.skirmish.library_medal_" + i, "MEDAL");
-                caption.alignment = TextAlignmentOptions.MidlineLeft;
-                KeepSingleLine(caption, 11f, 16f);
-                var count = CreateBoundLabel(slot, "Count", "ui.skirmish.library_medal_count", "0");
-                count.alignment = TextAlignmentOptions.MidlineRight;
-                count.isRightToLeftText = false;
-                KeepSingleLine(count, 12f, 16f);
-                FitMedalSlot(slot);
+                Transform slot = row.Find("Slot" + i);
+                if (slot == null)
+                    continue;
+                StopExpanding(slot as RectTransform);
+                if (slot.Find("Icon") is RectTransform icon)
+                {
+                    PinSquare(icon, 24f);
+                    BindMedalIcon(icon.GetComponent<Image>(), i);
+                }
+
+                if (slot is RectTransform slotRect)
+                    PlaceMedalSlot(slotRect, i, fa);
             }
         }
 

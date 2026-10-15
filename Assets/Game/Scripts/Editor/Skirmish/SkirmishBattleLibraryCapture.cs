@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
@@ -44,8 +46,8 @@ namespace Game.Editor
 
         private static void Capture(bool quit)
         {
-            var created = new System.Collections.Generic.List<UnityEngine.Object>();
             string previousLocale = GameLocalization.CurrentLocaleCode;
+            var shots = new List<CaptureIdentity>();
             try
             {
                 var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
@@ -73,12 +75,8 @@ namespace Game.Editor
                             string path = Path.Combine(
                                 folder,
                                 States[stateIndex] + "-" + Sizes[sizeIndex].Name + "-" + Locales[localeIndex] + ".png");
-                            Render(prefab, Sizes[sizeIndex], States[stateIndex], path, created, false);
-                            var info = new FileInfo(path);
-                            if (!info.Exists || info.Length < 2048)
-                                throw new InvalidOperationException("Capture was empty: " + path);
-                            RejectFlatCapture(path);
-                            RejectOverlayTint(path);
+                            Render(prefab, Sizes[sizeIndex], States[stateIndex], path, false);
+                            AcceptShot(path, States[stateIndex], Locales[localeIndex], shots);
                             written++;
                         }
                     }
@@ -93,18 +91,15 @@ namespace Game.Editor
                         string path = Path.Combine(
                             folder,
                             States[stateIndex] + "-16x9-" + Locales[localeIndex] + "-notch.png");
-                        Render(prefab, notchSize, States[stateIndex], path, created, true);
-                        var info = new FileInfo(path);
-                        if (!info.Exists || info.Length < 2048)
-                            throw new InvalidOperationException("Capture was empty: " + path);
-                        RejectFlatCapture(path);
-                        RejectOverlayTint(path);
+                        Render(prefab, notchSize, States[stateIndex], path, true);
+                        AcceptShot(path, States[stateIndex], Locales[localeIndex], shots);
                         written++;
                     }
                 }
 
                 if (written != 24)
                     throw new InvalidOperationException("Expected 24 captures, wrote " + written + ".");
+                RejectDuplicateCaptures(shots);
                 Debug.Log(PassMarker + " files=" + written + " folder=" + OutputDirectory);
                 if (quit)
                     EditorApplication.Exit(0);
@@ -119,84 +114,191 @@ namespace Game.Editor
             }
             finally
             {
-                for (int i = created.Count - 1; i >= 0; i--)
-                {
-                    if (created[i] != null)
-                        UnityEngine.Object.DestroyImmediate(created[i]);
-                }
-
                 if (!string.IsNullOrEmpty(previousLocale))
                     GameLocalization.SetLocale(previousLocale, false);
             }
         }
 
-        private static void Render(GameObject prefab, CaptureSize size, string state, string path, System.Collections.Generic.List<UnityEngine.Object> created, bool notch)
+        private static void Render(GameObject prefab, CaptureSize size, string state, string path, bool notch)
         {
-            var cameraObject = new GameObject("SkirmishLibraryCaptureCamera");
-            created.Add(cameraObject);
-            var camera = cameraObject.AddComponent<Camera>();
-            camera.orthographic = true;
-            camera.orthographicSize = size.Height * 0.5f;
-            camera.aspect = size.Width / (float)size.Height;
-            camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.02f, 0.05f, 0.06f, 1f);
-            camera.nearClipPlane = 0.3f;
-            camera.farClipPlane = 200f;
-            camera.transform.position = new Vector3(0f, 0f, -100f);
+            GameObject cameraObject = null;
+            GameObject canvasObject = null;
+            RenderTexture target = null;
+            try
+            {
+                cameraObject = new GameObject("SkirmishLibraryCaptureCamera");
+                var camera = cameraObject.AddComponent<Camera>();
+                camera.orthographic = true;
+                camera.orthographicSize = size.Height * 0.5f;
+                camera.aspect = size.Width / (float)size.Height;
+                camera.clearFlags = CameraClearFlags.SolidColor;
+                camera.backgroundColor = new Color(0.02f, 0.05f, 0.06f, 1f);
+                camera.nearClipPlane = 0.3f;
+                camera.farClipPlane = 200f;
+                camera.transform.position = new Vector3(0f, 0f, -100f);
 
-            var canvasObject = new GameObject("SkirmishLibraryCaptureCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
-            created.Add(canvasObject);
-            var canvasRect = canvasObject.GetComponent<RectTransform>();
-            canvasRect.pivot = new Vector2(0.5f, 0.5f);
-            canvasRect.position = Vector3.zero;
-            canvasRect.sizeDelta = new Vector2(size.Width, size.Height);
-            canvasRect.localScale = Vector3.one;
-            var canvas = canvasObject.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
-            canvas.worldCamera = camera;
+                canvasObject = new GameObject("SkirmishLibraryCaptureCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+                var canvasRect = canvasObject.GetComponent<RectTransform>();
+                canvasRect.pivot = new Vector2(0.5f, 0.5f);
+                canvasRect.position = Vector3.zero;
+                canvasRect.sizeDelta = new Vector2(size.Width, size.Height);
+                canvasRect.localScale = Vector3.one;
+                var canvas = canvasObject.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.WorldSpace;
+                canvas.worldCamera = camera;
 
-            var instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
-            created.Add(instance);
-            var root = instance.GetComponent<RectTransform>();
-            root.anchorMin = Vector2.zero;
-            root.anchorMax = Vector2.one;
-            root.offsetMin = Vector2.zero;
-            root.offsetMax = Vector2.zero;
-            root.localScale = Vector3.one;
-            root.localPosition = Vector3.zero;
+                var instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
+                var root = instance.GetComponent<RectTransform>();
+                root.anchorMin = Vector2.zero;
+                root.anchorMax = Vector2.one;
+                root.offsetMin = Vector2.zero;
+                root.offsetMax = Vector2.zero;
+                root.localScale = Vector3.one;
+                root.localPosition = Vector3.zero;
 
-            var view = instance.GetComponent<QuickCustomScreenView>();
-            var serialized = new SerializedObject(view);
-            serialized.FindProperty("baseAssaultPreset").boolValue = true;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            view.Bind(default);
-            view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
-            var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
-            if (notch && safeFrame != null)
-                safeFrame.SetSimulatedInsets(size.Width, size.Height, 36f, 72f, 36f, 28f);
-            else
-                safeFrame?.ClearSimulatedInsets();
-            instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
-            view.PresentLibraryCapture(state);
-            RejectUnresolvedSprites(view.Library);
-            Canvas.ForceUpdateCanvases();
-            RejectCollapsedLayout(instance);
-            foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
-                text.ForceMeshUpdate();
-            RejectMissingGlyphs(instance);
+                var view = instance.GetComponent<QuickCustomScreenView>();
+                var serialized = new SerializedObject(view);
+                serialized.FindProperty("baseAssaultPreset").boolValue = true;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                view.Bind(default);
+                view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
+                var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
+                if (notch && safeFrame != null)
+                    safeFrame.SetSimulatedInsets(size.Width, size.Height, 36f, 72f, 36f, 28f);
+                else
+                    safeFrame?.ClearSimulatedInsets();
+                instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+                view.PresentLibraryCapture(state);
+                RejectUnresolvedSprites(view.Library);
+                Canvas.ForceUpdateCanvases();
+                instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+                RejectCollapsedLayout(instance);
+                foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
+                    text.ForceMeshUpdate();
+                RejectMissingGlyphs(instance);
+                RejectUntranslatedFa(instance, path);
+                RejectExtraLibraryRoots();
+                IsolateCaptureLayer(canvasObject, camera);
 
-            var target = new RenderTexture(size.Width, size.Height, 24, RenderTextureFormat.ARGB32);
-            created.Add(target);
-            camera.targetTexture = target;
-            camera.Render();
-            RenderTexture previous = RenderTexture.active;
-            RenderTexture.active = target;
-            var image = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
-            image.ReadPixels(new Rect(0f, 0f, size.Width, size.Height), 0, 0);
-            image.Apply();
-            RenderTexture.active = previous;
-            File.WriteAllBytes(path, image.EncodeToPNG());
-            UnityEngine.Object.DestroyImmediate(image);
+                target = new RenderTexture(size.Width, size.Height, 24, RenderTextureFormat.ARGB32);
+                camera.targetTexture = target;
+                camera.Render();
+                RenderTexture previous = RenderTexture.active;
+                RenderTexture.active = target;
+                var image = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
+                image.ReadPixels(new Rect(0f, 0f, size.Width, size.Height), 0, 0);
+                image.Apply();
+                RenderTexture.active = previous;
+                File.WriteAllBytes(path, image.EncodeToPNG());
+                UnityEngine.Object.DestroyImmediate(image);
+            }
+            finally
+            {
+                if (target != null)
+                {
+                    target.Release();
+                    UnityEngine.Object.DestroyImmediate(target);
+                }
+
+                if (canvasObject != null)
+                    UnityEngine.Object.DestroyImmediate(canvasObject);
+                if (cameraObject != null)
+                    UnityEngine.Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        internal static void AcceptShot(string path, string state, string locale, List<CaptureIdentity> shots)
+        {
+            var info = new FileInfo(path);
+            if (!info.Exists || info.Length < 2048)
+                throw new InvalidOperationException("Capture was empty: " + path);
+            RejectFlatCapture(path);
+            RejectOverlayTint(path);
+            shots.Add(new CaptureIdentity(path, state, locale));
+        }
+
+        internal static void RejectExtraLibraryRoots()
+        {
+            QuickCustomScreenView[] views = UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            int count = 0;
+            for (int i = 0; i < views.Length; i++)
+            {
+                if (views[i] == null || EditorUtility.IsPersistent(views[i]))
+                    continue;
+                count++;
+            }
+
+            if (count != 1)
+                throw new InvalidOperationException("Expected one SCN-13 root at render, found " + count + ".");
+        }
+
+        internal static void IsolateCaptureLayer(GameObject canvas, Camera camera)
+        {
+            const int layer = 31;
+            SetCaptureLayer(canvas, layer);
+            if (camera != null)
+                camera.cullingMask = 1 << layer;
+        }
+
+        private static void SetCaptureLayer(GameObject root, int layer)
+        {
+            if (root == null)
+                return;
+            root.layer = layer;
+            Transform transform = root.transform;
+            for (int i = 0; i < transform.childCount; i++)
+                SetCaptureLayer(transform.GetChild(i).gameObject, layer);
+        }
+
+        internal static void RejectDuplicateCaptures(List<CaptureIdentity> shots)
+        {
+            if (shots == null)
+                return;
+            var seen = new Dictionary<string, CaptureIdentity>(StringComparer.Ordinal);
+            for (int i = 0; i < shots.Count; i++)
+            {
+                CaptureIdentity shot = shots[i];
+                string hash = HashFile(shot.Path);
+                if (!seen.TryGetValue(hash, out CaptureIdentity previous))
+                {
+                    seen.Add(hash, shot);
+                    continue;
+                }
+
+                bool sameState = string.Equals(previous.State, shot.State, StringComparison.Ordinal);
+                bool sameLocale = string.Equals(previous.Locale, shot.Locale, StringComparison.OrdinalIgnoreCase);
+                if (sameState && sameLocale)
+                    continue;
+                throw new InvalidOperationException(
+                    "Capture files are identical across different states or locales: " +
+                    Path.GetFileName(previous.Path) + " and " + Path.GetFileName(shot.Path) +
+                    " hash=" + hash.Substring(0, 8));
+            }
+        }
+
+        private static string HashFile(string path)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(File.ReadAllBytes(path));
+                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+            }
+        }
+
+        internal readonly struct CaptureIdentity
+        {
+            public readonly string Path;
+            public readonly string State;
+            public readonly string Locale;
+
+            public CaptureIdentity(string path, string state, string locale)
+            {
+                Path = path;
+                State = state ?? string.Empty;
+                Locale = locale ?? string.Empty;
+            }
         }
 
         internal static void RejectMissingGlyphs(GameObject root)
@@ -225,6 +327,37 @@ namespace Game.Editor
                         "FA text is missing a glyph on " + text.name + " U+" + code.ToString("X4") + " text=" + shown);
                 }
             }
+        }
+
+        internal static void RejectUntranslatedFa(GameObject root, string path)
+        {
+            if (root == null || !GameLocalization.IsRightToLeft)
+                return;
+            TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null || !text.gameObject.activeInHierarchy || string.IsNullOrEmpty(text.text))
+                    continue;
+                string value = text.text;
+                for (int c = 0; c < value.Length; c++)
+                {
+                    if (IsArabicScript(value[c]))
+                        return;
+                }
+            }
+
+            throw new InvalidOperationException("FA shot has no Arabic-script glyphs: " + path);
+        }
+
+        private static bool IsArabicScript(char value)
+        {
+            int code = value;
+            return (code >= 0x0600 && code <= 0x06FF)
+                || (code >= 0x0750 && code <= 0x077F)
+                || (code >= 0x08A0 && code <= 0x08FF)
+                || (code >= 0xFB50 && code <= 0xFDFF)
+                || (code >= 0xFE70 && code <= 0xFEFF);
         }
 
         internal static void RejectCollapsedLayout(GameObject instance)

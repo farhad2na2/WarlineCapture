@@ -162,11 +162,13 @@ namespace Game.UI.Runtime
                     _libraryViewModel.SelectMapCollection(string.IsNullOrEmpty(LibraryMapId) ? "DB" : LibraryMapId);
                     _libraryViewModel.ZoomIn();
                     _libraryViewModel.SetLayout(SkirmishBattlefieldLayout.Map);
+                    _libraryViewModel.SelectScenarioId("S001");
                     break;
                 case "grid":
                     _libraryViewModel.SelectMapCollection(string.IsNullOrEmpty(LibraryMapId) ? "DB" : LibraryMapId);
                     _libraryViewModel.ZoomIn();
                     _libraryViewModel.SetLayout(SkirmishBattlefieldLayout.Grid);
+                    _libraryViewModel.SelectScenarioId("S001");
                     break;
                 default:
                     _libraryViewModel.BackToTheater();
@@ -280,6 +282,7 @@ namespace Game.UI.Runtime
                 PresentScreenHeading(theater, field, fa, battlefield);
                 ApplyLibraryDepth();
                 RebuildBriefingColumn();
+                FitBriefingPicture();
             }
             finally
             {
@@ -455,7 +458,7 @@ namespace Game.UI.Runtime
 
             var ring = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(LayoutElement)).GetComponent<Image>();
             ring.transform.SetParent(card, false);
-            ring.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.ProgressRing);
+            ShowIcon(ring, SkirmishBattleLibraryArt.ProgressRing, zoneColor);
             ring.preserveAspect = true;
             ring.raycastTarget = false;
             ring.type = Image.Type.Filled;
@@ -555,9 +558,7 @@ namespace Game.UI.Runtime
                     var headerIcon = new GameObject("ColumnIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     headerIcon.transform.SetParent(_libraryGrid, false);
                     PlaceTopLeft(headerIcon.rectTransform, LibraryGridOriginX + column * LibraryGridStride + 8f, 52f, 24f, 24f);
-                    headerIcon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.ArmyIcon(armies[armyIndex]));
-                    headerIcon.preserveAspect = true;
-                    headerIcon.raycastTarget = false;
+                    ShowIcon(headerIcon, SkirmishBattleLibraryArt.ArmyIcon(armies[armyIndex]), Color.white);
                     SkirmishBattleLibraryArt.ProfileCopy(armies[armyIndex], fa, out string armyLabel);
                     SkirmishBattleLibraryArt.ProfileCopy(starts[startIndex], fa, out string startLabel);
                     var header = CreateLabel(_libraryGrid, "Column_" + column, 16f);
@@ -577,9 +578,7 @@ namespace Game.UI.Runtime
                 var rowIcon = new GameObject("RowIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 rowIcon.transform.SetParent(_libraryGrid, false);
                 PlaceTopLeft(rowIcon.rectTransform, 8f, y + 8f, 36f, 36f);
-                rowIcon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId));
-                rowIcon.preserveAspect = true;
-                rowIcon.raycastTarget = false;
+                ShowIcon(rowIcon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
                 SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string rowName);
                 var rowLabel = CreateLabel(_libraryGrid, "Row_" + objective.ObjectiveId, 14f);
                 PlaceTopLeft(rowLabel.rectTransform, 4f, y + 40f, LibraryGridOriginX - 10f, 22f);
@@ -662,8 +661,7 @@ namespace Game.UI.Runtime
             button.interactable = !string.IsNullOrEmpty(card.ScenarioId);
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(button.transform, false);
-            Stretch(preview.rectTransform, 3f, 3f, 3f, footer);
-            ApplyBoundPreview(preview, card.PreviewSpriteKey, width - 6f, height - 3f - footer);
+            PlaceFittedPreview(preview, ScenarioPreviewKey(card.PreviewSpriteKey), 3f, 3f, width - 6f, height - 3f - footer);
             preview.transform.SetAsFirstSibling();
             var scrim = new GameObject("FooterScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             scrim.transform.SetParent(button.transform, false);
@@ -742,8 +740,7 @@ namespace Game.UI.Runtime
             plate.raycastTarget = false;
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(rect, false);
-            Stretch(preview.rectTransform, 3f, 3f, 3f, 22f);
-            ApplyBoundPreview(preview, previewKey, LibraryGridCardWidth - 6f, LibraryGridCardHeight - 3f - 22f);
+            PlaceFittedPreview(preview, ScenarioPreviewKey(previewKey), 3f, 3f, LibraryGridCardWidth - 6f, LibraryGridCardHeight - 3f - 22f);
             preview.transform.SetAsFirstSibling();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string objectiveLabel);
@@ -765,17 +762,22 @@ namespace Game.UI.Runtime
         {
             var tag = new GameObject("NewTag", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             tag.transform.SetParent(parent, false);
-            PlaceTopLeft(tag.rectTransform, width - 52f, 4f, 46f, 18f);
-            tag.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.NewBadge);
-            tag.color = new Color(0.16f, 0.2f, 0.18f, 0.94f);
+            tag.transform.SetAsLastSibling();
+            PlaceTopLeft(tag.rectTransform, Mathf.Max(4f, width - 54f), 4f, 48f, 20f);
+            Sprite badge = LoadLibraryIcon(SkirmishBattleLibraryArt.NewBadge);
+            tag.sprite = badge;
+            tag.preserveAspect = badge != null;
+            tag.color = new Color(0.95f, 0.62f, 0.12f, 1f);
             tag.raycastTarget = false;
             var badgeLabel = CreateLabel(tag.transform, "NewLabel", 12f);
-            Stretch(badgeLabel.rectTransform, 2f, 2f, 1f, 1f);
+            Stretch(badgeLabel.rectTransform, 2f, 1f, 1f, 1f);
             badgeLabel.alignment = TextAlignmentOptions.Center;
-            badgeLabel.color = new Color(0.96f, 0.94f, 0.84f, 1f);
+            badgeLabel.color = new Color(0.12f, 0.07f, 0.02f, 1f);
             KeepSingleLine(badgeLabel, 11f, 13f);
-            SetCopy(badgeLabel, fa ? "نو" : "NEW", 11f, 13f);
-            KeepSingleLine(badgeLabel, 11f, 13f);
+            badgeLabel.overflowMode = TextOverflowModes.Overflow;
+            SetCopy(badgeLabel, fa ? "نو" : "NEW", 11f, 14f);
+            KeepSingleLine(badgeLabel, 11f, 14f);
+            badgeLabel.overflowMode = TextOverflowModes.Overflow;
         }
 
         private void AddMedalIcons(Transform parent, SkirmishMedalMask medals, float x, float y, float size = 24f)
@@ -798,10 +800,7 @@ namespace Game.UI.Runtime
                 image.transform.SetParent(parent, false);
                 PlaceTopLeft(image.rectTransform, x + i * (size + 2f), y, size, size);
                 bool earned = MedalEarned(medals, difficulties[i]);
-                image.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true, difficulties[i]));
-                image.color = earned ? Color.white : new Color(1f, 1f, 1f, 0.32f);
-                image.preserveAspect = true;
-                image.raycastTarget = false;
+                ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, 0.78f));
             }
         }
 
@@ -920,10 +919,7 @@ namespace Game.UI.Runtime
                 if (image == null)
                     image = slot.GetComponentInChildren<Image>(true);
                 if (image != null)
-                {
-                    image.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true, difficulties[i]));
-                    image.color = earned ? Color.white : new Color(1f, 1f, 1f, 0.32f);
-                }
+                    ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, 0.78f));
                 TMP_Text count = slot.Find("Count")?.GetComponent<TMP_Text>();
                 SetCopy(count, battlefield ? string.Empty : counts[i].ToString(), 14f, 18f);
                 KeepSingleLine(count, 12f, 16f);
@@ -931,8 +927,10 @@ namespace Game.UI.Runtime
                     count.isRightToLeftText = false;
                 SkirmishBattleLibraryArt.DifficultyCopy(difficulties[i], fa, out string label);
                 TMP_Text caption = slot.Find("Caption")?.GetComponent<TMP_Text>();
-                SetCopy(caption, label, 12f, 16f);
-                KeepSingleLine(caption, 11f, 16f);
+                SetCopy(caption, label, 11f, 13f);
+                KeepSingleLine(caption, 11f, 13f);
+                if (caption != null)
+                    caption.overflowMode = TextOverflowModes.Overflow;
                 if (slot is RectTransform slotRect)
                     FitMedalSlot(slotRect);
             }
@@ -948,9 +946,11 @@ namespace Game.UI.Runtime
             row.childControlHeight = true;
             row.childForceExpandWidth = false;
             row.childForceExpandHeight = true;
-            FitLayout(slot.Find("Icon") as RectTransform, 28f, 28f, 0f);
-            FitLayout(slot.Find("Caption") as RectTransform, 36f, 28f, 1f);
-            FitLayout(slot.Find("Count") as RectTransform, 28f, 28f, 0f);
+            FitLayout(slot.Find("Icon") as RectTransform, 22f, 28f, 0f);
+            LayoutElement captionLayout = FitLayout(slot.Find("Caption") as RectTransform, 72f, 28f, 1f);
+            if (captionLayout != null)
+                captionLayout.minWidth = 72f;
+            FitLayout(slot.Find("Count") as RectTransform, 18f, 28f, 0f);
         }
 
         private void PresentDifficulty(SkirmishBriefingState briefing, bool fa)
@@ -1688,16 +1688,17 @@ namespace Game.UI.Runtime
             if (_briefingPreview != null)
             {
                 _briefingPreview.transform.SetParent(column, false);
-                var previewLayout = FitLayout(_briefingPreview.rectTransform, 0f, 180f, 0f);
-                previewLayout.minHeight = 160f;
-                previewLayout.flexibleHeight = battlefield ? 1f : 0f;
-                previewLayout.preferredHeight = battlefield ? 280f : 0f;
+                var previewLayout = FitLayout(_briefingPreview.rectTransform, 0f, battlefield ? 200f : 0f, 0f);
+                previewLayout.minHeight = battlefield ? 180f : 0f;
+                previewLayout.preferredHeight = battlefield ? 200f : 0f;
+                previewLayout.flexibleHeight = 0f;
+                previewLayout.ignoreLayout = !battlefield;
             }
 
             if (_statRow != null)
             {
                 _statRow.SetParent(column, false);
-                FitLayout(_statRow, 0f, 72f, 0f);
+                FitLayout(_statRow, 0f, 76f, 0f);
             }
 
             if (_medalRow != null)
@@ -1715,7 +1716,7 @@ namespace Game.UI.Runtime
             if (_medalGrid != null)
             {
                 _medalGrid.SetParent(column, false);
-                FitLayout(_medalGrid, 0f, 78f, 0f);
+                FitLayout(_medalGrid, 0f, 96f, 0f);
             }
 
             if (_libraryStoreButton != null)
@@ -1749,7 +1750,7 @@ namespace Game.UI.Runtime
             var element = rect.GetComponent<LayoutElement>() ?? rect.gameObject.AddComponent<LayoutElement>();
             element.preferredWidth = preferredWidth;
             element.preferredHeight = preferredHeight;
-            element.minHeight = preferredHeight > 0f ? Mathf.Min(preferredHeight, 28f) : 0f;
+            element.minHeight = preferredHeight > 0f ? preferredHeight : 0f;
             element.flexibleWidth = flexibleWidth;
             element.flexibleHeight = 0f;
             return element;
@@ -2017,6 +2018,120 @@ namespace Game.UI.Runtime
         }
 
         private static bool IsEmptyCard(SkirmishBattleCardState card) => string.IsNullOrEmpty(card.ScenarioId);
+
+        private static readonly Dictionary<string, Sprite> LibraryIconCache = new Dictionary<string, Sprite>();
+
+        private static Sprite LoadLibraryIcon(string resourcePath)
+        {
+            if (string.IsNullOrEmpty(resourcePath))
+                return null;
+            if (LibraryIconCache.TryGetValue(resourcePath, out Sprite cached) && cached != null)
+                return cached;
+            Sprite sprite = Resources.Load<Sprite>(resourcePath);
+            if (sprite == null)
+            {
+                Texture2D texture = Resources.Load<Texture2D>(resourcePath);
+                if (texture != null && texture.isReadable)
+                {
+                    sprite = Sprite.Create(
+                        texture,
+                        new Rect(0f, 0f, texture.width, texture.height),
+                        new Vector2(0.5f, 0.5f),
+                        100f);
+                    sprite.hideFlags = HideFlags.HideAndDontSave;
+                }
+            }
+
+            if (sprite != null)
+                LibraryIconCache[resourcePath] = sprite;
+            return sprite;
+        }
+
+        private static void ShowIcon(Image image, string resourcePath, Color tint)
+        {
+            if (image == null)
+                return;
+            Sprite sprite = LoadLibraryIcon(resourcePath);
+            image.sprite = sprite;
+            image.enabled = sprite != null;
+            image.preserveAspect = true;
+            image.type = Image.Type.Simple;
+            image.color = tint;
+            image.raycastTarget = false;
+        }
+
+        private static string ScenarioPreviewKey(string key)
+        {
+            if (string.IsNullOrEmpty(key) || key.IndexOf("skirmish.preview.", StringComparison.Ordinal) < 0)
+                return null;
+            return key;
+        }
+
+        private static void PlaceFittedPreview(RawImage image, string key, float x, float y, float frameWidth, float frameHeight)
+        {
+            if (image == null)
+                return;
+            image.raycastTarget = false;
+            image.uvRect = new Rect(0f, 0f, 1f, 1f);
+            Texture2D texture = string.IsNullOrEmpty(key) ? null : SkirmishLibraryPreviewAssets.Load(key);
+            if (texture == null || frameWidth < 2f || frameHeight < 2f)
+            {
+                image.texture = null;
+                image.enabled = false;
+                return;
+            }
+
+            image.enabled = true;
+            image.texture = texture;
+            image.color = Color.white;
+            float aspect = texture.width / (float)Mathf.Max(1, texture.height);
+            float fittedWidth = frameWidth;
+            float fittedHeight = fittedWidth / aspect;
+            if (fittedHeight > frameHeight)
+            {
+                fittedHeight = frameHeight;
+                fittedWidth = fittedHeight * aspect;
+            }
+
+            float originX = x + (frameWidth - fittedWidth) * 0.5f;
+            float originY = y + (frameHeight - fittedHeight) * 0.5f;
+            PlaceTopLeft(image.rectTransform, originX, originY, fittedWidth, fittedHeight);
+        }
+
+        private void FitBriefingPicture()
+        {
+            if (_briefingPreview == null || !_briefingPreview.gameObject.activeInHierarchy)
+                return;
+            RawImage picture = _briefingPreview.transform.Find("Picture")?.GetComponent<RawImage>();
+            Texture texture = picture != null ? picture.texture : null;
+            if (picture == null || texture == null || texture.width < 1 || texture.height < 1)
+                return;
+            Rect slot = _briefingPreview.rectTransform.rect;
+            float slotWidth = slot.width > 2f ? slot.width : _briefingPreview.rectTransform.sizeDelta.x;
+            float slotHeight = slot.height > 2f ? slot.height : _briefingPreview.rectTransform.sizeDelta.y;
+            if (slotWidth < 2f)
+                slotWidth = 540f;
+            if (slotHeight < 2f)
+                slotHeight = 200f;
+            float aspect = texture.width / (float)texture.height;
+            float fittedWidth = slotWidth;
+            float fittedHeight = fittedWidth / aspect;
+            if (fittedHeight > slotHeight)
+            {
+                fittedHeight = slotHeight;
+                fittedWidth = fittedHeight * aspect;
+            }
+
+            picture.uvRect = new Rect(0f, 0f, 1f, 1f);
+            picture.color = Color.white;
+            picture.raycastTarget = false;
+            PlaceTopLeft(
+                picture.rectTransform,
+                (slotWidth - fittedWidth) * 0.5f,
+                (slotHeight - fittedHeight) * 0.5f,
+                fittedWidth,
+                fittedHeight);
+        }
 
         private static void ApplyBoundPreview(RawImage image, string key, float frameWidth, float frameHeight)
         {

@@ -38,8 +38,8 @@ namespace Game.Editor
 
         private static void Capture(bool quit)
         {
-            var created = new List<UnityEngine.Object>();
             string previousLocale = GameLocalization.CurrentLocaleCode;
+            var shots = new List<SkirmishBattleLibraryCapture.CaptureIdentity>();
             try
             {
                 var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
@@ -60,11 +60,12 @@ namespace Game.Editor
                 for (int localeIndex = 0; localeIndex < Locales.Length; localeIndex++)
                 {
                     GameLocalization.SetLocale(Locales[localeIndex], false);
-                    written += RunLocale(prefab, Locales[localeIndex], folder, created);
+                    written += RunLocale(prefab, Locales[localeIndex], folder, shots);
                 }
 
                 if (written != 14)
                     throw new InvalidOperationException("Expected 14 flow captures, wrote " + written + ".");
+                SkirmishBattleLibraryCapture.RejectDuplicateCaptures(shots);
                 Debug.Log(PassMarker + " files=" + written + " folder=" + OutputDirectory);
                 if (quit)
                     EditorApplication.Exit(0);
@@ -79,114 +80,127 @@ namespace Game.Editor
             }
             finally
             {
-                for (int i = created.Count - 1; i >= 0; i--)
-                {
-                    if (created[i] != null)
-                        UnityEngine.Object.DestroyImmediate(created[i]);
-                }
-
                 if (!string.IsNullOrEmpty(previousLocale))
                     GameLocalization.SetLocale(previousLocale, false);
             }
         }
 
-        private static int RunLocale(GameObject prefab, string locale, string folder, List<UnityEngine.Object> created)
+        private static int RunLocale(
+            GameObject prefab,
+            string locale,
+            string folder,
+            List<SkirmishBattleLibraryCapture.CaptureIdentity> shots)
         {
             const int width = 1920;
             const int height = 1080;
-            var cameraObject = new GameObject("SkirmishLibraryFlowCamera");
-            created.Add(cameraObject);
-            var camera = cameraObject.AddComponent<Camera>();
-            camera.orthographic = true;
-            camera.orthographicSize = height * 0.5f;
-            camera.aspect = width / (float)height;
-            camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.02f, 0.05f, 0.06f, 1f);
-            camera.nearClipPlane = 0.3f;
-            camera.farClipPlane = 200f;
-            camera.transform.position = new Vector3(0f, 0f, -100f);
+            GameObject cameraObject = null;
+            GameObject canvasObject = null;
+            RenderTexture target = null;
+            try
+            {
+                cameraObject = new GameObject("SkirmishLibraryFlowCamera");
+                var camera = cameraObject.AddComponent<Camera>();
+                camera.orthographic = true;
+                camera.orthographicSize = height * 0.5f;
+                camera.aspect = width / (float)height;
+                camera.clearFlags = CameraClearFlags.SolidColor;
+                camera.backgroundColor = new Color(0.02f, 0.05f, 0.06f, 1f);
+                camera.nearClipPlane = 0.3f;
+                camera.farClipPlane = 200f;
+                camera.transform.position = new Vector3(0f, 0f, -100f);
 
-            var canvasObject = new GameObject("SkirmishLibraryFlowCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
-            created.Add(canvasObject);
-            var canvasRect = canvasObject.GetComponent<RectTransform>();
-            canvasRect.pivot = new Vector2(0.5f, 0.5f);
-            canvasRect.position = Vector3.zero;
-            canvasRect.sizeDelta = new Vector2(width, height);
-            canvasRect.localScale = Vector3.one;
-            var canvas = canvasObject.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
-            canvas.worldCamera = camera;
+                canvasObject = new GameObject("SkirmishLibraryFlowCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+                var canvasRect = canvasObject.GetComponent<RectTransform>();
+                canvasRect.pivot = new Vector2(0.5f, 0.5f);
+                canvasRect.position = Vector3.zero;
+                canvasRect.sizeDelta = new Vector2(width, height);
+                canvasRect.localScale = Vector3.one;
+                var canvas = canvasObject.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.WorldSpace;
+                canvas.worldCamera = camera;
 
-            var instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
-            created.Add(instance);
-            var root = instance.GetComponent<RectTransform>();
-            root.anchorMin = Vector2.zero;
-            root.anchorMax = Vector2.one;
-            root.offsetMin = Vector2.zero;
-            root.offsetMax = Vector2.zero;
-            root.localScale = Vector3.one;
-            root.localPosition = Vector3.zero;
+                var instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
+                var root = instance.GetComponent<RectTransform>();
+                root.anchorMin = Vector2.zero;
+                root.anchorMax = Vector2.one;
+                root.offsetMin = Vector2.zero;
+                root.offsetMax = Vector2.zero;
+                root.localScale = Vector3.one;
+                root.localPosition = Vector3.zero;
 
-            var view = instance.GetComponent<QuickCustomScreenView>();
-            var serialized = new SerializedObject(view);
-            serialized.FindProperty("baseAssaultPreset").boolValue = true;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
-            view.Bind(default);
-            view.FocusTheaterOnMap("DB");
-            instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true)?.ClearSimulatedInsets();
-            instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
-            view.PresentLibraryCapture("theater");
-            SkirmishBattleLibraryCapture.RejectUnresolvedSprites(view.Library);
+                var view = instance.GetComponent<QuickCustomScreenView>();
+                var serialized = new SerializedObject(view);
+                serialized.FindProperty("baseAssaultPreset").boolValue = true;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
+                view.Bind(default);
+                view.FocusTheaterOnMap("DB");
+                instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true)?.ClearSimulatedInsets();
+                instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+                view.PresentLibraryCapture("theater");
+                SkirmishBattleLibraryCapture.RejectUnresolvedSprites(view.Library);
 
-            var target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
-            created.Add(target);
-            camera.targetTexture = target;
+                target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+                camera.targetTexture = target;
 
-            string suffix = locale == "fa-IR" ? "fa-IR" : "en";
-            Shot(view, camera, target, width, height, Path.Combine(folder, "01-theater-" + suffix + ".png"));
-            AssertStep(view.Library.Level == SkirmishLibraryLevel.Theater, "Theatre did not stay on the theatre.");
-            AssertStep(view.Library.Theater.SelectedMapId == "DB", "Theatre did not focus Desert Base.");
-            AssertOverallProgress(instance, view);
+                string suffix = locale == "fa-IR" ? "fa-IR" : "en";
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "01-theater-" + suffix + ".png"), "theater", suffix, shots);
+                AssertStep(view.Library.Level == SkirmishLibraryLevel.Theater, "Theatre did not stay on the theatre.");
+                AssertStep(view.Library.Theater.SelectedMapId == "DB", "Theatre did not focus Desert Base.");
+                AssertOverallProgress(instance, view);
 
-            Click(Require(instance, SkirmishLibraryControlNames.ZoomIn));
-            Shot(view, camera, target, width, height, Path.Combine(folder, "02-zoom-" + suffix + ".png"));
-            AssertStep(view.Library.Level == SkirmishLibraryLevel.Battlefield, "Zoom In did not open the battlefield.");
-            Transform hiddenStrip = instance.transform.Find("SkirmishSetupComposition/OperationPreview/OverallProgressStrip");
-            AssertStep(hiddenStrip == null || !hiddenStrip.gameObject.activeInHierarchy, "Overall progress strip stayed on the battlefield.");
-            AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "Zoom In did not open the map.");
-            AssertStep(view.Library.Battlefield.MapId == "DB", "Zoom In did not open Desert Base.");
+                Click(Require(instance, SkirmishLibraryControlNames.ZoomIn));
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "02-zoom-" + suffix + ".png"), "zoom", suffix, shots);
+                AssertStep(view.Library.Level == SkirmishLibraryLevel.Battlefield, "Zoom In did not open the battlefield.");
+                Transform hiddenStrip = instance.transform.Find("SkirmishSetupComposition/OperationPreview/OverallProgressStrip");
+                AssertStep(hiddenStrip == null || !hiddenStrip.gameObject.activeInHierarchy, "Overall progress strip stayed on the battlefield.");
+                AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "Zoom In did not open the map.");
+                AssertStep(view.Library.Battlefield.MapId == "DB", "Zoom In did not open Desert Base.");
 
-            Click(Require(instance, SkirmishLibraryControlNames.ObjectiveTab("BA")));
-            Shot(view, camera, target, width, height, Path.Combine(folder, "03-objective-" + suffix + ".png"));
-            AssertStep(view.Library.Battlefield.SelectedObjectiveId == "BA", "Objective tab did not select BA.");
+                Click(Require(instance, SkirmishLibraryControlNames.ObjectiveTab("BA")));
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "03-objective-" + suffix + ".png"), "zoom", suffix, shots);
+                AssertStep(view.Library.Battlefield.SelectedObjectiveId == "BA", "Objective tab did not select BA.");
 
-            Click(Require(instance, SkirmishLibraryControlNames.BattleCard("S001")));
-            Shot(view, camera, target, width, height, Path.Combine(folder, "04-card-" + suffix + ".png"));
-            AssertStep(view.Library.Briefing.ScenarioId == "S001", "Card did not select S001.");
-            AssertStep(view.Library.Briefing.CanLaunch, "S001 cannot launch.");
+                Click(Require(instance, SkirmishLibraryControlNames.BattleCard("S001")));
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "04-card-" + suffix + ".png"), "card", suffix, shots);
+                AssertStep(view.Library.Briefing.ScenarioId == "S001", "Card did not select S001.");
+                AssertStep(view.Library.Briefing.CanLaunch, "S001 cannot launch.");
 
-            Click(Require(instance, SkirmishLibraryControlNames.LayoutMap));
-            Shot(view, camera, target, width, height, Path.Combine(folder, "05-map-" + suffix + ".png"));
-            AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "MAP toggle did not select the map.");
+                Click(Require(instance, SkirmishLibraryControlNames.LayoutMap));
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "05-map-" + suffix + ".png"), "card", suffix, shots);
+                AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "MAP toggle did not select the map.");
 
-            Button gridButton = Require(instance, SkirmishLibraryControlNames.LayoutGrid);
-            AssertStep(
-                gridButton.name == SkirmishLibraryControlNames.LayoutGrid,
-                "GRID click target was " + gridButton.name + ".");
-            Click(gridButton);
-            Shot(view, camera, target, width, height, Path.Combine(folder, "06-grid-" + suffix + ".png"));
-            AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Grid, "GRID toggle did not select the grid.");
-            AssertStep(view.Library.Briefing.ScenarioId == "S001", "GRID toggle cleared S001.");
+                Button gridButton = Require(instance, SkirmishLibraryControlNames.LayoutGrid);
+                AssertStep(
+                    gridButton.name == SkirmishLibraryControlNames.LayoutGrid,
+                    "GRID click target was " + gridButton.name + ".");
+                Click(gridButton);
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "06-grid-" + suffix + ".png"), "grid", suffix, shots);
+                AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Grid, "GRID toggle did not select the grid.");
+                AssertStep(view.Library.Briefing.ScenarioId == "S001", "GRID toggle cleared S001.");
 
-            Click(Require(instance, SkirmishLibraryControlNames.StartBattle));
-            Shot(view, camera, target, width, height, Path.Combine(folder, "07-launch-" + suffix + ".png"));
-            AssertStep(view.LibraryLaunchRequested, "Start Battle did not request a launch.");
-            AssertStep(view.Library.Briefing.CanLaunch, "Start Battle left the briefing unable to launch.");
-            AssertStep(
-                SkirmishLibraryLaunchContext.Difficulty == view.Library.Briefing.SelectedDifficulty,
-                "Start Battle did not publish the briefing difficulty to the launch context.");
-            return 7;
+                Click(Require(instance, SkirmishLibraryControlNames.StartBattle));
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "07-launch-" + suffix + ".png"), "grid", suffix, shots);
+                AssertStep(view.LibraryLaunchRequested, "Start Battle did not request a launch.");
+                AssertStep(view.Library.Briefing.CanLaunch, "Start Battle left the briefing unable to launch.");
+                AssertStep(
+                    SkirmishLibraryLaunchContext.Difficulty == view.Library.Briefing.SelectedDifficulty,
+                    "Start Battle did not publish the briefing difficulty to the launch context.");
+                return 7;
+            }
+            finally
+            {
+                if (target != null)
+                {
+                    target.Release();
+                    UnityEngine.Object.DestroyImmediate(target);
+                }
+
+                if (canvasObject != null)
+                    UnityEngine.Object.DestroyImmediate(canvasObject);
+                if (cameraObject != null)
+                    UnityEngine.Object.DestroyImmediate(cameraObject);
+            }
         }
 
         private static void AssertStep(bool condition, string message)
@@ -248,14 +262,28 @@ namespace Game.Editor
             button.onClick.Invoke();
         }
 
-        private static void Shot(QuickCustomScreenView view, Camera camera, RenderTexture target, int width, int height, string path)
+        private static void Shot(
+            QuickCustomScreenView view,
+            Camera camera,
+            GameObject canvas,
+            RenderTexture target,
+            int width,
+            int height,
+            string path,
+            string state,
+            string locale,
+            List<SkirmishBattleLibraryCapture.CaptureIdentity> shots)
         {
             Canvas.ForceUpdateCanvases();
+            view.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             TMP_Text[] texts = view.GetComponentsInChildren<TMP_Text>(true);
             for (int i = 0; i < texts.Length; i++)
                 texts[i].ForceMeshUpdate();
             SkirmishBattleLibraryCapture.RejectMissingGlyphs(view.gameObject);
+            SkirmishBattleLibraryCapture.RejectUntranslatedFa(view.gameObject, path);
             SkirmishBattleLibraryCapture.RejectCollapsedLayout(view.gameObject);
+            SkirmishBattleLibraryCapture.RejectExtraLibraryRoots();
+            SkirmishBattleLibraryCapture.IsolateCaptureLayer(canvas, camera);
             camera.Render();
             RenderTexture previous = RenderTexture.active;
             RenderTexture.active = target;
@@ -265,11 +293,7 @@ namespace Game.Editor
             RenderTexture.active = previous;
             File.WriteAllBytes(path, image.EncodeToPNG());
             UnityEngine.Object.DestroyImmediate(image);
-            var info = new FileInfo(path);
-            if (!info.Exists || info.Length < 2048)
-                throw new InvalidOperationException("Flow capture was empty: " + path);
-            SkirmishBattleLibraryCapture.RejectFlatCapture(path);
-            SkirmishBattleLibraryCapture.RejectOverlayTint(path);
+            SkirmishBattleLibraryCapture.AcceptShot(path, state, locale, shots);
         }
 
         private sealed class FlowLocalization : IUiLocalization

@@ -128,6 +128,9 @@ namespace Game.UI.Runtime
                 MaskRect(plateRect);
             }
 
+            if (preview is RectTransform previewRect)
+                MaskRect(previewRect);
+
             if (_libraryGrid != null)
                 MaskRect(_libraryGrid);
             if (rules is RectTransform rulesRect)
@@ -197,9 +200,7 @@ namespace Game.UI.Runtime
                 _crestImage = new GameObject("Crest", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 _crestImage.transform.SetParent(title, false);
                 PlaceTopLeft(_crestImage.rectTransform, 8f, 4f, 48f, 48f);
-                _crestImage.preserveAspect = true;
-                _crestImage.raycastTarget = false;
-                _crestImage.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.Crest);
+                ShowIcon(_crestImage, SkirmishBattleLibraryArt.Crest, Color.white);
             }
             else if (title != null)
                 _crestImage = title.Find("Crest")?.GetComponent<Image>();
@@ -212,6 +213,7 @@ namespace Game.UI.Runtime
             PlaceLibraryChrome();
             StyleCommandButtons(LibraryLevel == SkirmishLibraryLevel.Battlefield);
             PlaceLibraryFooter();
+            FitBriefingPicture();
         }
 
         private void EnsureStatTile(RectTransform row, string name, float x, string captionText)
@@ -257,9 +259,7 @@ namespace Game.UI.Runtime
                 var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 icon.transform.SetParent(button.transform, false);
                 PlaceTopLeft(icon.rectTransform, 22f, 6f, 40f, 40f);
-                icon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId));
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
+                ShowIcon(icon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
                 SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
                 var label = CreateLabel(button.transform, "Label", 16f);
                 PlaceTopLeft(label.rectTransform, 2f, 46f, 80f, 24f);
@@ -336,9 +336,7 @@ namespace Game.UI.Runtime
                 var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 icon.transform.SetParent(slot, false);
                 PlaceTopLeft(icon.rectTransform, 0f, 8f, 32f, 32f);
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
-                icon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true, difficulties[i]));
+                ShowIcon(icon, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), Color.white);
                 var tier = CreateLabel(slot, "Count", 18f);
                 PlaceTopLeft(tier.rectTransform, 36f, 8f, 60f, 32f);
                 tier.alignment = TextAlignmentOptions.MidlineLeft;
@@ -512,7 +510,16 @@ namespace Game.UI.Runtime
                 return;
             tile.gameObject.SetActive(true);
             if (tile is RectTransform rect)
-                PlaceTopLeft(rect, x, 0f, width, 48f);
+                PlaceTopLeft(rect, x, 0f, width, 68f);
+            float inner = Mathf.Max(20f, width - 12f);
+            TMP_Text captionText = tile.Find("Caption")?.GetComponent<TMP_Text>();
+            if (captionText != null)
+                PlaceTopLeft(captionText.rectTransform, 6f, 4f, inner, 20f);
+            TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
+            if (valueText != null)
+                PlaceTopLeft(valueText.rectTransform, 6f, 26f, inner, 34f);
+            if (tile.GetComponent<RectMask2D>() == null)
+                tile.gameObject.AddComponent<RectMask2D>();
         }
 
         private static int CountMedals(SkirmishMedalMask mask)
@@ -529,25 +536,57 @@ namespace Game.UI.Runtime
         {
             if (tile == null)
                 return;
-            SetCopy(tile.Find("Caption")?.GetComponent<TMP_Text>(), caption, 13f, 16f);
-            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), value, 15f, 20f);
+            TMP_Text captionText = tile.Find("Caption")?.GetComponent<TMP_Text>();
+            TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
+            SetCopy(captionText, caption, 12f, 15f);
+            SetCopy(valueText, value, 14f, 20f);
+            if (captionText != null)
+            {
+                captionText.textWrappingMode = TextWrappingModes.NoWrap;
+                captionText.overflowMode = TextOverflowModes.Ellipsis;
+            }
+
+            if (valueText != null)
+            {
+                valueText.textWrappingMode = TextWrappingModes.NoWrap;
+                valueText.overflowMode = TextOverflowModes.Ellipsis;
+                float width = tile is RectTransform row && row.sizeDelta.x > 20f ? row.sizeDelta.x - 12f : 80f;
+                PlaceTopLeft(valueText.rectTransform, 6f, 26f, width, 34f);
+            }
         }
 
         private void PresentBriefingPreview(SkirmishBriefingState briefing, bool hasPin, SkirmishTheaterPinState pin, bool battlefield)
         {
             if (_briefingPreview == null)
                 return;
-            string key = battlefield ? BriefingPreviewKey(briefing) : hasPin ? pin.PlatePreviewKey : null;
-            RectTransform previewRect = _briefingPreview.rectTransform;
-            float frameWidth = previewRect.rect.width;
-            float frameHeight = previewRect.rect.height;
-            if (frameWidth < 2f || frameHeight < 2f)
+            string key = battlefield ? ScenarioPreviewKey(BriefingPreviewKey(briefing)) : null;
+            Texture2D texture = string.IsNullOrEmpty(key) ? null : SkirmishLibraryPreviewAssets.Load(key);
+            bool show = battlefield && texture != null;
+            _briefingPreview.texture = null;
+            _briefingPreview.enabled = false;
+            _briefingPreview.color = new Color(0.05f, 0.07f, 0.08f, 1f);
+            _briefingPreview.gameObject.SetActive(show);
+            LayoutElement element = _briefingPreview.GetComponent<LayoutElement>();
+            if (element != null)
             {
-                frameWidth = previewRect.sizeDelta.x;
-                frameHeight = previewRect.sizeDelta.y;
+                element.ignoreLayout = !show;
+                element.minHeight = show ? 180f : 0f;
+                element.preferredHeight = show ? 200f : 0f;
+                element.flexibleHeight = 0f;
             }
 
-            ApplyBoundPreview(_briefingPreview, key, frameWidth, frameHeight);
+            RawImage picture = _briefingPreview.transform.Find("Picture")?.GetComponent<RawImage>();
+            if (picture == null)
+            {
+                picture = new GameObject("Picture", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+                picture.transform.SetParent(_briefingPreview.transform, false);
+            }
+
+            picture.texture = show ? texture : null;
+            picture.enabled = show;
+            picture.color = Color.white;
+            picture.uvRect = new Rect(0f, 0f, 1f, 1f);
+            picture.raycastTarget = false;
         }
 
         private void PresentTheaterDetail(bool fa)
@@ -561,9 +600,7 @@ namespace Game.UI.Runtime
                 var icon = new GameObject("ObjectiveIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 icon.transform.SetParent(_medalGrid, false);
                 PlaceTopLeft(icon.rectTransform, i * 128f, 0f, 36f, 36f);
-                icon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId));
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
+                ShowIcon(icon, SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), Color.white);
                 var label = CreateLabel(_medalGrid, "ObjectiveLabel", 15f);
                 PlaceTopLeft(label.rectTransform, i * 128f + 40f, 4f, 84f, 32f);
                 label.alignment = TextAlignmentOptions.MidlineLeft;
@@ -573,10 +610,12 @@ namespace Game.UI.Runtime
             }
 
             var hint = CreateLabel(_medalGrid, "ZoomHint", 15f);
-            PlaceTopLeft(hint.rectTransform, 0f, 44f, 500f, 28f);
+            PlaceTopLeft(hint.rectTransform, 0f, 44f, 540f, 40f);
             hint.alignment = TextAlignmentOptions.MidlineLeft;
             hint.textWrappingMode = TextWrappingModes.NoWrap;
-            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 18f, 24f);
+            hint.overflowMode = TextOverflowModes.Overflow;
+            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 15f, 20f);
+            hint.overflowMode = TextOverflowModes.Overflow;
         }
 
         private void StyleCommandButtons(bool battlefield)
@@ -620,12 +659,9 @@ namespace Game.UI.Runtime
         {
             if (panel == null || panel.Find("OrnamentCorner0") != null)
                 return;
-            Sprite corner = Resources.Load<Sprite>(SkirmishBattleLibraryArt.Corner);
+            Sprite corner = LoadLibraryIcon(SkirmishBattleLibraryArt.Corner);
             if (corner == null)
                 return;
-            float[] rotation = { 0f, -90f, 180f, 90f };
-            Vector2[] anchor = { new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(1f, 0f), new Vector2(0f, 0f) };
-            Vector2[] pivot = { new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(1f, 0f), new Vector2(0f, 0f) };
             for (int i = 0; i < 4; i++)
             {
                 var image = new GameObject("OrnamentCorner" + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -634,12 +670,7 @@ namespace Game.UI.Runtime
                 image.preserveAspect = true;
                 image.raycastTarget = false;
                 image.color = new Color(0.93f, 0.78f, 0.38f, 1f);
-                RectTransform rect = image.rectTransform;
-                rect.anchorMin = rect.anchorMax = anchor[i];
-                rect.pivot = pivot[i];
-                rect.sizeDelta = new Vector2(28f, 28f);
-                rect.anchoredPosition = CornerInset(i);
-                rect.localEulerAngles = new Vector3(0f, 0f, rotation[i]);
+                PlaceOrnament(image.rectTransform, i);
             }
         }
 
@@ -650,22 +681,50 @@ namespace Game.UI.Runtime
             for (int i = 0; i < 4; i++)
             {
                 if (panel.Find("OrnamentCorner" + i) is RectTransform rect)
-                {
-                    rect.sizeDelta = new Vector2(28f, 28f);
-                    rect.anchoredPosition = CornerInset(i);
-                }
+                    PlaceOrnament(rect, i);
             }
         }
 
-        private static Vector2 CornerInset(int index)
+        private static void PlaceOrnament(RectTransform rect, int index)
         {
+            if (rect == null)
+                return;
+            const float size = 22f;
+            const float margin = 18f;
+            float center = size * 0.5f + margin;
+            Vector2 anchor;
+            Vector2 position;
+            float rotation;
             switch (index)
             {
-                case 0: return new Vector2(8f, -8f);
-                case 1: return new Vector2(-8f, -8f);
-                case 2: return new Vector2(-8f, 8f);
-                default: return new Vector2(8f, 8f);
+                case 0:
+                    anchor = new Vector2(0f, 1f);
+                    position = new Vector2(center, -center);
+                    rotation = 0f;
+                    break;
+                case 1:
+                    anchor = new Vector2(1f, 1f);
+                    position = new Vector2(-center, -center);
+                    rotation = -90f;
+                    break;
+                case 2:
+                    anchor = new Vector2(1f, 0f);
+                    position = new Vector2(-center, center);
+                    rotation = 180f;
+                    break;
+                default:
+                    anchor = new Vector2(0f, 0f);
+                    position = new Vector2(center, center);
+                    rotation = 90f;
+                    break;
             }
+
+            rect.anchorMin = rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(size, size);
+            rect.anchoredPosition = position;
+            rect.localEulerAngles = new Vector3(0f, 0f, rotation);
+            rect.localScale = Vector3.one;
         }
 
         private static void TintCommand(Button button, Color top, Color bottom)

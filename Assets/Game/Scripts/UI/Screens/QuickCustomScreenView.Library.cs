@@ -2005,16 +2005,11 @@ namespace Game.UI.Runtime
                 canvasBlack.gameObject.SetActive(false);
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             string mapId = LibraryMapId;
-            string key = battlefield ? "skirmish.blur." + mapId : "skirmish.blur.theater";
-            Texture2D texture = SkirmishLibraryPreviewAssets.Load(key);
+            Texture2D texture = battlefield
+                ? SkirmishLibraryPreviewAssets.Load("skirmish.blur." + mapId)
+                : SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);
             if (texture == null && battlefield)
                 texture = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
-            if (texture == null)
-                texture = SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
-            if (texture == null && !battlefield)
-                texture = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);
-            if (texture == null)
-                texture = SkirmishLibraryPreviewAssets.Load("skirmish.blur.theater");
             image.texture = texture != null ? texture : SkirmishLibraryPreviewAssets.Placeholder();
             image.color = new Color(0.16f, 0.15f, 0.14f, 1f);
             image.uvRect = new Rect(0f, 0f, 1f, 1f);

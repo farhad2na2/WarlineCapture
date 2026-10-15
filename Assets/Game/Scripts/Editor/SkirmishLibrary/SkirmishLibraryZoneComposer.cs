@@ -7,9 +7,9 @@ using UnityEngine;
 namespace Game.Editor
 {
     /// <summary>
-    /// Copies the painted theatre base into the zone plate and cuts one window per
-    /// district. Map and Grid fallbacks still blur the Campaign plates. The theatre
-    /// fill is not a photo collage and is not posterised.
+    /// Cuts one window per district from the painted theatre base. The base file is
+    /// read only: this composer does not rewrite it, copy it to a theatre plate, or
+    /// bake a darkened theatre blur. Map and Grid fallbacks still blur the Campaign plates.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
@@ -37,7 +37,6 @@ namespace Game.Editor
                 int width = painted.width;
                 int height = painted.height;
                 byte[] owner = BuildOwner(regions, width, height);
-                WriteSprite(zoneFolder + "/skirmish.zone.theater.png", theatre, width, height);
                 for (int i = 0; i < mapIds.Length; i++)
                 {
                     WriteZoneWindow(zoneFolder, mapIds[i], (byte)i, owner, theatre, width, height);
@@ -49,7 +48,6 @@ namespace Game.Editor
                         new Vector2Int(plates[i].width, plates[i].height));
                 }
 
-                WriteTheaterBlur(blurFolder, theatre, width, height);
                 Debug.Log("[SkirmishLibraryZoneComposer] version=" + ComposerVersion + " rewritten=" + _rewritten);
             }
             finally
@@ -154,23 +152,6 @@ namespace Game.Editor
             pixels = BoxBlur(pixels, BlurWidth, BlurHeight, 3);
             pixels = BoxBlur(pixels, BlurWidth, BlurHeight, 2);
             WriteSprite(folder + "/" + fileName + ".png", pixels, BlurWidth, BlurHeight);
-        }
-
-        private static void WriteTheaterBlur(string folder, Color32[] composite, int width, int height)
-        {
-            var pixels = new Color32[BlurWidth * BlurHeight];
-            for (int y = 0; y < BlurHeight; y++)
-            {
-                int sourceY = Mathf.Clamp(Mathf.RoundToInt((y + 0.5f) / BlurHeight * (height - 1)), 0, height - 1);
-                for (int x = 0; x < BlurWidth; x++)
-                {
-                    int sourceX = Mathf.Clamp(Mathf.RoundToInt((x + 0.5f) / BlurWidth * (width - 1)), 0, width - 1);
-                    pixels[y * BlurWidth + x] = Darken(composite[sourceY * width + sourceX], 0.62f);
-                }
-            }
-
-            pixels = BoxBlur(pixels, BlurWidth, BlurHeight, 2);
-            WriteSprite(folder + "/skirmish.blur.theater.png", pixels, BlurWidth, BlurHeight);
         }
 
         private static Color32 Sample(Color32[] plate, Vector2Int size, float u, float v)

@@ -16,7 +16,7 @@ namespace Game.UI.Runtime
         {
             Texture2D painted = LoadTheatreBase();
             map.texture = painted != null ? painted : SkirmishLibraryPreviewAssets.Placeholder();
-            map.color = new Color(0.72f, 0.74f, 0.76f, 1f);
+            map.color = TheatrePaintDim();
             Stretch(map.rectTransform);
             map.rectTransform.localScale = Vector3.one;
             ApplyTheatreCover(map, plateWidth, plateHeight);
@@ -76,7 +76,7 @@ namespace Game.UI.Runtime
                 raw.transform.SetParent(fit, false);
                 Stretch(raw.rectTransform);
                 raw.texture = painted;
-                raw.color = new Color(0.72f, 0.74f, 0.76f, 1f);
+                raw.color = TheatrePaintDim();
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
                 ApplyTheatreCover(raw, plateWidth, plateHeight);
@@ -84,7 +84,7 @@ namespace Game.UI.Runtime
                 shade.transform.SetParent(fit, false);
                 Stretch(shade.rectTransform);
                 shade.sprite = ZoneVignetteSprite();
-                shade.color = new Color(0.02f, 0.03f, 0.04f, 0.92f);
+                shade.color = new Color(0.02f, 0.03f, 0.04f, 0.35f);
                 shade.raycastTarget = false;
                 shade.rectTransform.localScale = Vector3.one;
             }
@@ -141,12 +141,13 @@ namespace Game.UI.Runtime
             }
 
             PlaceZoneSlots(slots, safe);
+            bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
             for (int i = 0; i < slots.Count; i++)
                 DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
             for (int i = 0; i < slots.Count; i++)
             {
                 PlaceZonePin(fit, slots[i], fa);
-                PlaceZoneCard(fit, slots[i], fa);
+                PlaceZoneCard(fit, slots[i], fa, wideFrame);
             }
 
             for (int i = 0; i < slots.Count; i++)
@@ -177,12 +178,14 @@ namespace Game.UI.Runtime
             SetActive(preview != null ? preview.Find("TheaterLabels") : null, false);
         }
 
+        private static Color TheatrePaintDim()
+        {
+            return new Color(0.94f, 0.95f, 0.96f, 1f);
+        }
+
         private static Texture2D LoadTheatreBase()
         {
-            Texture2D painted = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);
-            if (painted != null)
-                return painted;
-            return SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
+            return SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);
         }
 
         private static float TextureAspect(Texture texture)
@@ -928,12 +931,12 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             Color fill = color;
-            fill.a = 0.20f;
+            fill.a = 0.23f;
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
             PlaceDistrictHalo(root, local, color);
             float stroke = selected ? 4f : 3.5f;
-            Color glow = color;
-            glow.a = 0.85f;
+            Color glow = Color.Lerp(color, Color.white, 0.62f);
+            glow.a = 0.92f;
             Color ink = selected ? Color.Lerp(color, Color.white, 0.35f) : Color.Lerp(color, Color.white, 0.12f);
             ink.a = 1f;
             DrawHexEdges(root, local, glow, 12f, ZoneStrokeSprite());
@@ -960,7 +963,9 @@ namespace Game.UI.Runtime
             image.transform.SetParent(root, false);
             image.sprite = halo;
             image.type = Image.Type.Simple;
-            image.color = new Color(color.r, color.g, color.b, 0.82f);
+            Color glow = Color.Lerp(color, Color.white, 0.72f);
+            glow.a = 0.78f;
+            image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
             image.rectTransform.localScale = Vector3.one;
@@ -977,31 +982,21 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            var solid = new float[width * height];
+            // Edge band only. A filled blur stacks on the 0.23 tint and hides the painting.
+            const float reach = 13f;
             float originX = minX - pad;
             float originY = minY - pad;
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
-                    if (!PointInPolygon(point, localPoints))
-                        continue;
-                    solid[y * width + x] = 1f;
-                }
-            }
-
-            int radius = Mathf.Clamp(Mathf.RoundToInt(5f * scale), 2, 7);
-            float[] blurred = BoxBlurAlpha(solid, width, height, radius);
-            blurred = BoxBlurAlpha(blurred, width, height, radius);
             var pixels = new Color32[width * height];
             for (int y = 0; y < height; y++)
             {
-                int source = y * width;
                 int target = (height - 1 - y) * width;
                 for (int x = 0; x < width; x++)
                 {
-                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(blurred[source + x] * 255f), 0, 255);
+                    var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
+                    float dist = DistanceToPolygonEdge(point, localPoints);
+                    float band = 1f - Mathf.Clamp01(dist / reach);
+                    band = band * band * (3f - 2f * band);
+                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(band * 255f), 0, 255);
                     pixels[target + x] = new Color32(255, 255, 255, alpha);
                 }
             }
@@ -1015,58 +1010,20 @@ namespace Game.UI.Runtime
             return sprite;
         }
 
-        private static float[] BoxBlurAlpha(float[] source, int width, int height, int radius)
+        private static float DistanceToPolygonEdge(Vector2 point, Vector2[] polygon)
         {
-            var horizontal = new float[source.Length];
-            var output = new float[source.Length];
-            int window = radius * 2 + 1;
-            for (int y = 0; y < height; y++)
-            {
-                int row = y * width;
-                float sum = 0f;
-                for (int x = -radius; x <= radius; x++)
-                    sum += source[row + Mathf.Clamp(x, 0, width - 1)];
-                for (int x = 0; x < width; x++)
-                {
-                    horizontal[row + x] = sum / window;
-                    int leave = Mathf.Clamp(x - radius, 0, width - 1);
-                    int enter = Mathf.Clamp(x + radius + 1, 0, width - 1);
-                    sum += source[row + enter] - source[row + leave];
-                }
-            }
-
-            for (int x = 0; x < width; x++)
-            {
-                float sum = 0f;
-                for (int y = -radius; y <= radius; y++)
-                    sum += horizontal[Mathf.Clamp(y, 0, height - 1) * width + x];
-                for (int y = 0; y < height; y++)
-                {
-                    output[y * width + x] = sum / window;
-                    int leave = Mathf.Clamp(y - radius, 0, height - 1);
-                    int enter = Mathf.Clamp(y + radius + 1, 0, height - 1);
-                    sum += horizontal[enter * width + x] - horizontal[leave * width + x];
-                }
-            }
-
-            return output;
-        }
-
-        private static bool PointInPolygon(Vector2 point, Vector2[] polygon)
-        {
-            bool inside = false;
-            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            float best = float.MaxValue;
+            for (int i = 0; i < polygon.Length; i++)
             {
                 Vector2 a = polygon[i];
-                Vector2 b = polygon[j];
-                if ((a.y > point.y) == (b.y > point.y))
-                    continue;
-                float x = (b.x - a.x) * (point.y - a.y) / ((b.y - a.y) + 0.0001f) + a.x;
-                if (point.x < x)
-                    inside = !inside;
+                Vector2 b = polygon[(i + 1) % polygon.Length];
+                Vector2 edge = b - a;
+                float lengthSq = edge.sqrMagnitude;
+                float t = lengthSq < 0.0001f ? 0f : Mathf.Clamp01(Vector2.Dot(point - a, edge) / lengthSq);
+                best = Mathf.Min(best, Vector2.Distance(point, a + edge * t));
             }
 
-            return inside;
+            return best;
         }
 
         private static void DrawHexEdges(RectTransform root, Vector2[] points, Color color, float thickness, Sprite sprite)
@@ -1190,7 +1147,7 @@ namespace Game.UI.Runtime
             cue.color = new Color(1f, 0.97f, 0.9f, 1f);
         }
 
-        private void PlaceZoneCard(Transform parent, TheatreZoneSlot slot, bool fa)
+        private void PlaceZoneCard(Transform parent, TheatreZoneSlot slot, bool fa, bool wideFrame)
         {
             var card = new GameObject("ZoneCard_" + slot.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             card.transform.SetParent(parent, false);
@@ -1202,7 +1159,8 @@ namespace Game.UI.Runtime
             card.rectTransform.localScale = Vector3.one;
 
             float cardW = slot.Card.width;
-            const float thumb = 84f;
+            float cardH = slot.Card.height;
+            float thumb = wideFrame ? 96f : 92f;
             float thumbX = fa ? cardW - 10f - thumb : 10f;
             float textX = fa ? 12f : 10f + thumb + 12f;
             float textW = Mathf.Max(80f, cardW - thumb - 32f);
@@ -1229,7 +1187,9 @@ namespace Game.UI.Runtime
             medallion.sprite = LibraryMedallion();
             medallion.color = Color.white;
             medallion.raycastTarget = false;
-            PlaceTopLeft(medallion.rectTransform, thumbX - 6f, 6f, thumb + 12f, thumb + 12f);
+            float frame = thumb + 12f;
+            float frameY = Mathf.Max(1f, (cardH - frame) * 0.5f);
+            PlaceTopLeft(medallion.rectTransform, thumbX - 6f, frameY, frame, frame);
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
             var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
@@ -1239,14 +1199,14 @@ namespace Game.UI.Runtime
             preview.color = Color.white;
             preview.raycastTarget = false;
 
-            const float ring = 56f;
+            float ring = wideFrame ? 64f : 56f;
             float ringX = fa ? textX : textX + textW - ring;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = ZoneRingSprite();
             track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.9f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, 48f, ring, ring);
+            PlaceTopLeft(track.rectTransform, ringX, wideFrame ? 46f : 48f, ring, ring);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1262,7 +1222,7 @@ namespace Game.UI.Runtime
             fill.color = Color.Lerp(slot.Zone, Color.white, 0.35f);
             fill.raycastTarget = false;
             fill.enabled = !pending;
-            track.enabled = true;
+            track.enabled = !pending;
             float barX = fa ? textX + ring + 8f : textX;
             float barW = Mathf.Max(36f, textW - ring - 8f);
             var bar = new GameObject("ProgressBar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -1536,6 +1496,10 @@ namespace Game.UI.Runtime
                 cue.ForceMeshUpdate();
             }
 
+            if (fa && pin != null)
+                SeatFaCue(parent, pin, frameW, frameH, inset, ref cueRect);
+            PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
+
             Transform plate = parent.Find("CuePlate");
             if (plate is RectTransform plateRect)
                 PlaceTopLeft(plateRect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
@@ -1687,6 +1651,65 @@ namespace Game.UI.Runtime
             if (frameH > cue.height + inset * 2f)
                 cue.y = Mathf.Clamp(cue.y, inset, frameH - inset - cue.height);
             return cue;
+        }
+
+        private static void SeatFaCue(
+            RectTransform parent,
+            RectTransform pin,
+            float frameW,
+            float frameH,
+            float inset,
+            ref Rect cue)
+        {
+            if (parent == null || pin == null)
+                return;
+            float pinLeft = pin.anchoredPosition.x;
+            float pinTop = -pin.anchoredPosition.y;
+            float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+            float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+            const float gap = 8f;
+            var candidates = new List<Rect>(60);
+            Rect above = cue;
+            above.x = pinLeft + pinW * 0.5f - cue.width * 0.5f;
+            above.y = pinTop - gap - cue.height;
+            candidates.Add(above);
+            Rect beside = cue;
+            beside.x = pinLeft - gap - cue.width;
+            beside.y = pinTop + pinH * 0.5f - cue.height * 0.5f;
+            candidates.Add(beside);
+            for (int step = 1; step <= 28; step++)
+            {
+                Rect slide = beside;
+                slide.x = beside.x - step * 12f;
+                candidates.Add(slide);
+                Rect shifted = above;
+                shifted.x = above.x - step * 12f;
+                candidates.Add(shifted);
+            }
+
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                Rect clamped = ClampCue(candidates[i], frameW, frameH, inset);
+                if (!CueMissesPins(parent, clamped) || !CueMissesCards(parent, clamped))
+                    continue;
+                cue = clamped;
+                return;
+            }
+        }
+
+        private static bool CueMissesCards(RectTransform parent, Rect cue)
+        {
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
+                    continue;
+                var cardRect = new Rect(card.anchoredPosition.x, -card.anchoredPosition.y, card.sizeDelta.x, card.sizeDelta.y);
+                if (Overlaps(cue, cardRect, 0f))
+                    return false;
+            }
+
+            return true;
         }
 
         private static void PlaceCueClearOfPin(
@@ -2038,9 +2061,9 @@ namespace Game.UI.Runtime
                     float dx = (x - center.x) / center.x;
                     float dy = (y - center.y) / center.y;
                     float distance = Mathf.Sqrt(dx * dx + dy * dy);
-                    float edge = Mathf.Clamp01((distance - 0.35f) / 0.85f);
+                    float edge = Mathf.Clamp01((distance - 0.55f) / 0.70f);
                     edge = edge * edge;
-                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(0.18f, 0.78f, edge) * 255f), 0, 255);
+                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(0f, 0.45f, edge) * 255f), 0, 255);
                     pixels[y * size + x] = new Color32(0, 0, 0, alpha);
                 }
             }

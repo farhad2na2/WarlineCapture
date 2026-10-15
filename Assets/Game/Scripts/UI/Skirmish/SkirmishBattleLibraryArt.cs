@@ -120,41 +120,39 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// One convex polygon per district, top-left normalised on the 1280×720 painting.
-        /// Order matches <see cref="MapIds"/>. Each shape fills its painted district. Desert Base
-        /// contains the upper-left fort (0.25, 0.15) and Airfield Plains contains the lower-centre
-        /// runway (0.52, 0.78). Runtime scales them only with the cover crop.
+        /// Order matches <see cref="MapIds"/>. Neighbours keep a gap so the shapes do not overlap.
+        /// Desert Base contains the upper-left fort (0.25, 0.15) and Airfield Plains contains the
+        /// lower-centre runway (0.52, 0.78). Runtime scales them only with the cover crop.
         /// </summary>
         public static readonly Vector2[][] TheaterDistrictPolygons =
         {
             new[]
             {
-                new Vector2(0.04f, 0.02f), new Vector2(0.46f, 0.02f), new Vector2(0.50f, 0.20f),
-                new Vector2(0.42f, 0.34f), new Vector2(0.28f, 0.40f), new Vector2(0.12f, 0.36f),
-                new Vector2(0.02f, 0.18f)
+                new Vector2(0.04f, 0.04f), new Vector2(0.40f, 0.03f), new Vector2(0.44f, 0.20f),
+                new Vector2(0.36f, 0.28f), new Vector2(0.22f, 0.32f), new Vector2(0.08f, 0.28f),
+                new Vector2(0.03f, 0.18f)
             },
             new[]
             {
-                new Vector2(0.52f, 0.02f), new Vector2(0.98f, 0.02f), new Vector2(0.98f, 0.20f),
-                new Vector2(0.90f, 0.34f), new Vector2(0.72f, 0.40f), new Vector2(0.56f, 0.36f),
-                new Vector2(0.50f, 0.18f)
+                new Vector2(0.56f, 0.03f), new Vector2(0.96f, 0.04f), new Vector2(0.97f, 0.18f),
+                new Vector2(0.90f, 0.28f), new Vector2(0.76f, 0.32f), new Vector2(0.62f, 0.28f),
+                new Vector2(0.56f, 0.20f)
             },
             new[]
             {
-                new Vector2(0.02f, 0.34f), new Vector2(0.42f, 0.32f), new Vector2(0.50f, 0.48f),
-                new Vector2(0.44f, 0.62f), new Vector2(0.22f, 0.70f), new Vector2(0.06f, 0.64f),
-                new Vector2(0.02f, 0.48f)
+                new Vector2(0.03f, 0.40f), new Vector2(0.40f, 0.38f), new Vector2(0.42f, 0.50f),
+                new Vector2(0.34f, 0.58f), new Vector2(0.12f, 0.60f), new Vector2(0.03f, 0.50f)
             },
             new[]
             {
-                new Vector2(0.52f, 0.32f), new Vector2(0.94f, 0.32f), new Vector2(0.98f, 0.48f),
-                new Vector2(0.96f, 0.64f), new Vector2(0.74f, 0.70f), new Vector2(0.56f, 0.64f),
-                new Vector2(0.50f, 0.48f)
+                new Vector2(0.56f, 0.38f), new Vector2(0.97f, 0.40f), new Vector2(0.97f, 0.52f),
+                new Vector2(0.86f, 0.58f), new Vector2(0.64f, 0.58f), new Vector2(0.54f, 0.48f)
             },
             new[]
             {
-                new Vector2(0.16f, 0.58f), new Vector2(0.40f, 0.54f), new Vector2(0.62f, 0.56f),
-                new Vector2(0.82f, 0.64f), new Vector2(0.78f, 0.84f), new Vector2(0.40f, 0.90f),
-                new Vector2(0.18f, 0.74f)
+                new Vector2(0.16f, 0.70f), new Vector2(0.36f, 0.66f), new Vector2(0.58f, 0.66f),
+                new Vector2(0.74f, 0.70f), new Vector2(0.78f, 0.74f), new Vector2(0.70f, 0.90f),
+                new Vector2(0.28f, 0.92f), new Vector2(0.14f, 0.78f)
             }
         };
 
@@ -166,7 +164,8 @@ namespace Game.UI.Runtime
             return copy;
         }
 
-        public static string TheaterPlate => ResourceRoot + "theater_collage";
+        /// <summary>The painted theatre base. There is no collage plate.</summary>
+        public static string TheaterPlate => SkirmishLibraryPreviewAssets.TheatreBaseKey;
         public static string Backdrop => ResourceRoot + "theater_backdrop";
         public static string ProgressRing => ResourceRoot + "progress_ring";
 

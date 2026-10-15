@@ -201,6 +201,8 @@ namespace Game.Editor
                 image.ReadPixels(new Rect(0f, 0f, size.Width, size.Height), 0, 0);
                 image.Apply();
                 RenderTexture.active = previous;
+                if (string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
+                    RejectDistrictPainting(image, canvasRect, instance);
                 File.WriteAllBytes(path, image.EncodeToPNG());
                 UnityEngine.Object.DestroyImmediate(image);
             }
@@ -777,6 +779,7 @@ namespace Game.Editor
             }
 
             RejectDistrictHalo(regions, mapIds, locale);
+            RejectDistrictsSeparate(regions, mapIds, locale);
 
             RejectZoneProgressMatchesCard(root, view, locale);
             RejectStripMatchesZoneTotals(root, view, locale);
@@ -1374,6 +1377,290 @@ namespace Game.Editor
                 }
             }
 
+        }
+
+        private static void RejectDistrictsSeparate(Transform regions, string[] mapIds, string locale)
+        {
+            if (regions == null || mapIds == null)
+                return;
+            var shapes = new Vector2[mapIds.Length][];
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform node = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
+                shapes[i] = node is RectTransform outline ? OutlineWorldPoints(outline) : Array.Empty<Vector2>();
+            }
+
+            const float slop = 0.75f;
+            for (int i = 0; i < shapes.Length; i++)
+            {
+                for (int j = i + 1; j < shapes.Length; j++)
+                {
+                    if (!PolygonsOverlap(shapes[i], shapes[j], slop))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre districts overlap locale=" + locale +
+                        " " + mapIds[i] + " " + mapIds[j] + ".");
+                }
+            }
+        }
+
+        private static void RejectDistrictPainting(Texture2D image, RectTransform canvas, GameObject root)
+        {
+            if (image == null || canvas == null || root == null)
+                return;
+            Transform regions = FindNamed(root.transform, "LibraryRegions");
+            if (regions == null || !regions.gameObject.activeInHierarchy)
+                return;
+            Color32[] pixels = image.GetPixels32();
+            int width = image.width;
+            int height = image.height;
+            if (pixels == null || pixels.Length < width * height)
+                return;
+            string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            var blockers = new List<Rect>();
+            CollectBlockers(regions, "ZoneCard_", blockers);
+            CollectBlockers(regions, "ZonePin_", blockers);
+            CollectBlockers(regions, "ZoomCue", blockers);
+            Transform plate = FindNamed(regions, "CuePlate");
+            if (plate is RectTransform plateRect && plateRect.gameObject.activeInHierarchy)
+                blockers.Add(WorldBounds(plateRect));
+
+            float worst = float.MaxValue;
+            string worstId = mapIds.Length > 0 ? mapIds[0] : "zone";
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform node = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
+                if (node is not RectTransform outline)
+                    continue;
+                Vector2[] shape = OutlineWorldPoints(outline);
+                float variance = InteriorLuminanceDeviation(pixels, width, height, canvas, shape, blockers, mapIds[i], locale);
+                if (variance >= worst)
+                    continue;
+                worst = variance;
+                worstId = mapIds[i];
+            }
+
+            const float floor = 8f;
+            if (worst < floor)
+            {
+                throw new InvalidOperationException(
+                    "Theatre district " + worstId + " hides the painted map locale=" + locale +
+                    " variance=" + worst.ToString("0.0") + ". Expected the painting to stay visible inside the tint.");
+            }
+        }
+
+        private static void CollectBlockers(Transform regions, string prefix, List<Rect> blockers)
+        {
+            if (regions == null || blockers == null || string.IsNullOrEmpty(prefix))
+                return;
+            bool exact = prefix == "ZoomCue";
+            Transform[] nodes = regions.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                Transform node = nodes[i];
+                if (node == null || !node.gameObject.activeInHierarchy || node is not RectTransform rect)
+                    continue;
+                bool match = exact
+                    ? node.name == prefix
+                    : node.name.StartsWith(prefix, StringComparison.Ordinal);
+                if (!match)
+                    continue;
+                blockers.Add(WorldBounds(rect));
+            }
+        }
+
+        private static float InteriorLuminanceDeviation(
+            Color32[] pixels,
+            int width,
+            int height,
+            RectTransform canvas,
+            Vector2[] shape,
+            List<Rect> blockers,
+            string mapId,
+            string locale)
+        {
+            if (shape == null || shape.Length < 3)
+            {
+                throw new InvalidOperationException(
+                    "Theatre district " + mapId + " has no interior to sample locale=" + locale + ".");
+            }
+            float minX = shape[0].x;
+            float maxX = shape[0].x;
+            float minY = shape[0].y;
+            float maxY = shape[0].y;
+            for (int i = 1; i < shape.Length; i++)
+            {
+                minX = Mathf.Min(minX, shape[i].x);
+                maxX = Mathf.Max(maxX, shape[i].x);
+                minY = Mathf.Min(minY, shape[i].y);
+                maxY = Mathf.Max(maxY, shape[i].y);
+            }
+
+            const float edgeInset = 26f;
+            const float step = 18f;
+            const int radius = 6;
+            var samples = new List<float>();
+            for (float y = minY + edgeInset; y <= maxY - edgeInset; y += step)
+            {
+                for (float x = minX + edgeInset; x <= maxX - edgeInset; x += step)
+                {
+                    var point = new Vector2(x, y);
+                    if (!PointInPolygon(point, shape) || DistanceToPolygonEdge(point, shape) < edgeInset)
+                        continue;
+                    if (Blocked(point, blockers))
+                        continue;
+                    Vector3 local = canvas.InverseTransformPoint(new Vector3(point.x, point.y, canvas.position.z));
+                    int px = Mathf.FloorToInt(local.x + width * 0.5f);
+                    int py = Mathf.FloorToInt(local.y + height * 0.5f);
+                    if (px < radius || py < radius || px >= width - radius || py >= height - radius)
+                        continue;
+                    samples.Add(NeighborhoodDeviation(pixels, width, px, py, radius));
+                }
+            }
+
+            if (samples.Count < 8)
+            {
+                throw new InvalidOperationException(
+                    "Theatre district " + mapId + " interior could not be sampled locale=" + locale +
+                    " points=" + samples.Count + ".");
+            }
+
+            samples.Sort();
+            return samples[samples.Count / 2];
+        }
+
+        private static float NeighborhoodDeviation(Color32[] pixels, int width, int px, int py, int radius)
+        {
+            double sum = 0d;
+            double sumSq = 0d;
+            int count = 0;
+            for (int y = py - radius; y <= py + radius; y++)
+            {
+                int row = y * width;
+                for (int x = px - radius; x <= px + radius; x++)
+                {
+                    Color32 pixel = pixels[row + x];
+                    double luminance = pixel.r * 0.299 + pixel.g * 0.587 + pixel.b * 0.114;
+                    sum += luminance;
+                    sumSq += luminance * luminance;
+                    count++;
+                }
+            }
+
+            double mean = sum / count;
+            return (float)Math.Sqrt(Math.Max(0d, sumSq / count - mean * mean));
+        }
+
+        private static bool Blocked(Vector2 point, List<Rect> blockers)
+        {
+            if (blockers == null)
+                return false;
+            for (int i = 0; i < blockers.Count; i++)
+            {
+                Rect rect = blockers[i];
+                if (point.x >= rect.xMin - 2f && point.x <= rect.xMax + 2f &&
+                    point.y >= rect.yMin - 2f && point.y <= rect.yMax + 2f)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static Vector2[] OutlineWorldPoints(RectTransform outline)
+        {
+            V3PolygonGraphic polygon = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
+            if (polygon == null || polygon.PointCount < 3)
+                return Array.Empty<Vector2>();
+            var points = new Vector2[polygon.PointCount];
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector2 local = polygon.LocalPoint(i);
+                Vector3 world = outline.TransformPoint(new Vector3(local.x, local.y, 0f));
+                points[i] = new Vector2(world.x, world.y);
+            }
+
+            return points;
+        }
+
+        private static bool PolygonsOverlap(Vector2[] left, Vector2[] right, float slop)
+        {
+            if (left == null || right == null || left.Length < 3 || right.Length < 3)
+                return false;
+            if (Separated(left, right, new Vector2(1f, 0f), slop) || Separated(left, right, new Vector2(0f, 1f), slop))
+                return false;
+            for (int pass = 0; pass < 2; pass++)
+            {
+                Vector2[] source = pass == 0 ? left : right;
+                for (int i = 0; i < source.Length; i++)
+                {
+                    Vector2 edge = source[(i + 1) % source.Length] - source[i];
+                    float length = edge.magnitude;
+                    if (length < 0.001f)
+                        continue;
+                    var axis = new Vector2(-edge.y / length, edge.x / length);
+                    if (Separated(left, right, axis, slop))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool Separated(Vector2[] left, Vector2[] right, Vector2 axis, float slop)
+        {
+            float aMin = float.MaxValue;
+            float aMax = float.MinValue;
+            for (int i = 0; i < left.Length; i++)
+            {
+                float dot = Vector2.Dot(left[i], axis);
+                aMin = Mathf.Min(aMin, dot);
+                aMax = Mathf.Max(aMax, dot);
+            }
+
+            float bMin = float.MaxValue;
+            float bMax = float.MinValue;
+            for (int i = 0; i < right.Length; i++)
+            {
+                float dot = Vector2.Dot(right[i], axis);
+                bMin = Mathf.Min(bMin, dot);
+                bMax = Mathf.Max(bMax, dot);
+            }
+
+            return aMax <= bMin + slop || bMax <= aMin + slop;
+        }
+
+        private static bool PointInPolygon(Vector2 point, Vector2[] polygon)
+        {
+            bool inside = false;
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                Vector2 a = polygon[i];
+                Vector2 b = polygon[j];
+                if ((a.y > point.y) == (b.y > point.y))
+                    continue;
+                float x = (b.x - a.x) * (point.y - a.y) / ((b.y - a.y) + 0.0001f) + a.x;
+                if (point.x < x)
+                    inside = !inside;
+            }
+
+            return inside;
+        }
+
+        private static float DistanceToPolygonEdge(Vector2 point, Vector2[] polygon)
+        {
+            float best = float.MaxValue;
+            for (int i = 0; i < polygon.Length; i++)
+            {
+                Vector2 a = polygon[i];
+                Vector2 b = polygon[(i + 1) % polygon.Length];
+                Vector2 edge = b - a;
+                float lengthSq = edge.sqrMagnitude;
+                float t = lengthSq < 0.0001f ? 0f : Mathf.Clamp01(Vector2.Dot(point - a, edge) / lengthSq);
+                best = Mathf.Min(best, Vector2.Distance(point, a + edge * t));
+            }
+
+            return best;
         }
 
         private static void RejectTheaterOverlap(

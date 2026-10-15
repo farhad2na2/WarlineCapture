@@ -185,6 +185,13 @@ namespace Game.Editor
                         return;
                     }
 
+                    // Same as the game's Launch (UiRuntimeAdapters.QueueMatchRoute): queue, then route the shell to Match.
+                    if (!Game.UI.Runtime.UiShellRuntimeGateway.TryEnqueueRouteRequest(
+                            Game.UI.Contracts.UiShellRouteIntent.EnterMatch, Game.UI.Contracts.UIRoute.Match, false))
+                    {
+                        Fail(id, "matchRouteRejected");
+                        return;
+                    }
                     Debug.Log("[SkirmishLibraryPlayCapture] queued scenario=" + id + " index=" + scenarioIndex + " seed=" + Seed);
                     stage = 1;
                     return;
@@ -200,10 +207,6 @@ namespace Game.Editor
 
                 if (stage == 1)
                 {
-                    SkirmishLaunchProjection.TryEnterMatch(em);
-                    SkirmishLaunchProjection.TryBeginGameplayIfLoaded();
-                    SkirmishLaunchProjection.TryRequestPlay(em);
-                    SkirmishLaunchProjection.TryArmExpandedSimulation(em);
                     bool simulation = SkirmishLaunchProjection.IsSimulationActive(em);
                     Gather(em, out List<Vector3> enemyBuildings, out List<Vector3> player, out List<Vector3> enemyAll);
                     if (now >= diagnosticAt)
@@ -256,6 +259,15 @@ namespace Game.Editor
                 }
             }
 
+            using (var sq = em.CreateEntityQuery(typeof(Game.Components.SkirmishExpandedSessionComponent)))
+            {
+                if (sq.CalculateEntityCount() == 1)
+                {
+                    Entity se = sq.GetSingletonEntity();
+                    text += " sharedReady=" + (em.HasComponent<SkirmishSharedBuildingsReady>(se) ? 1 : 0) +
+                            " buildingRequests=" + (em.HasBuffer<SkirmishStartingBuildingRequest>(se) ? em.GetBuffer<SkirmishStartingBuildingRequest>(se).Length : -1);
+                }
+            }
             using var map = em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
             using var surface = em.CreateEntityQuery(typeof(MapSurfaceComponent));
             using var prefabs = em.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));

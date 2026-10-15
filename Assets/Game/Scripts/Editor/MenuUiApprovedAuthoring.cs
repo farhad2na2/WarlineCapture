@@ -84,12 +84,18 @@ namespace Game.Editor
             if(screen=="operations") Operations(root);
             if(screen=="commander") Commander(root);
             Header(root,screen);
+            if(screen=="main-menu") HomeRightToLeft(root);
             foreach(var text in root.GetComponentsInChildren<TMP_Text>(true))
             {
                 text.enableAutoSizing=false;
                 if(text.transform.parent?.name=="CommanderStatsPanel")text.textWrappingMode=TextWrappingModes.Normal;
                 if(text.name=="MenuTitle"||text.name=="ScreenTitle")text.alignment=TextAlignmentOptions.MidlineLeft;
-                text.fontSize=text.text=="YOUR COMMANDER"||text.name=="MenuTitle" ? 30 : text.fontSize>=44 ? 52 : text.fontSize>=32 ? 38 : 30;
+                bool home=screen=="main-menu";
+                string parentName=text.transform.parent?.name;
+                bool ariaStatus=home&&text.name=="Description"&&parentName=="AriaPanel";
+                bool heroTitle=home&&text.name=="Title"&&parentName=="Card_Campaign";
+                bool creditsLabel=home&&text.name=="Label"&&parentName=="CreditsVisualPanel";
+                text.fontSize=heroTitle ? 60 : creditsLabel ? 24 : ariaStatus ? 24 : text.text=="YOUR COMMANDER"||text.name=="MenuTitle" ? 30 : text.fontSize>=44 ? 52 : text.fontSize>=32 ? 38 : 30;
                 text.fontSizeMin=text.fontSize; text.fontSizeMax=text.fontSize;
                 text.GetComponent<V3LocalizedTextBindingView>()?.ConfigureFontBounds(text.fontSize,text.fontSize);
             }
@@ -115,7 +121,24 @@ namespace Game.Editor
             credits.Find("Label")?.gameObject.SetActive(false);
             Place(credits.Find("Value") as RectTransform,82,8,264,70);
             Place(Find(root,"SettingsButton"),1166,10,118,86);
-            if(screen=="main-menu") { Place(Find(root,"HeaderLogoPanel"),14,10,800,86); return; }
+            if(screen=="main-menu")
+            {
+                // Same cell as the Back + title row on inner screens; the logo keeps the loading-screen inset.
+                var plate=Find(root,"HeaderLogoPanel");
+                Place(plate,14,10,1642,86);
+                var logo=plate?.Find("SharedMainMenuLogo") as RectTransform;
+                Place(logo,14,10,270,66);
+                if(logo!=null)logo.localScale=Vector3.one;
+                // One bar: Credits and Settings split the right column inside the logo plate.
+                Place(credits,1296,10,230,86);
+                Place(credits.Find("Label") as RectTransform,82,2,136,34);
+                credits.Find("Label")?.gameObject.SetActive(true);
+                if(credits.Find("Label")?.GetComponent<TMP_Text>() is TMP_Text label)label.color=new Color32(160,172,176,255);
+                Place(credits.Find("Value") as RectTransform,82,34,136,48);
+                Place(credits.Find("Accent") as RectTransform,3,81,224,3);
+                Place(Find(root,"SettingsButton"),1538,10,118,86);
+                return;
+            }
             Hide(root,"WarlineLogo","TitleDivider","TitleSection");
             var back=Find(root,screen=="campaign"?"MissionBackButton":"BackButton")??Find(root,"HeaderBackButton");
             if(back!=null)
@@ -141,27 +164,69 @@ namespace Game.Editor
                 var border=hero.GetComponent<V3GradientGraphic>();
                 if(border!=null)border.Configure(Color.clear,Color.clear,Border,2);
                 var outline=Panel(hero,"CampaignOutline",0,0,hero.rect.width,hero.rect.height);Stretch(outline,0);
-                outline.GetComponent<V3GradientGraphic>().Configure(Color.clear,Color.clear,Border,2);
+                outline.GetComponent<V3GradientGraphic>().Configure(Color.clear,Color.clear,Border,3);
                 outline.GetComponent<V3GradientGraphic>().raycastTarget=false;
             }
             var shade=Find(root,"CampaignReadability");
-            if(shade!=null)shade.GetComponent<V3GradientGraphic>()?.Configure(new Color(0,0,0,.25f),new Color(0,0,0,.96f),Color.clear,0);
+            // Darkest behind the copy column (lower start edge); the scene stays clear on the far side.
+            if(shade!=null)shade.GetComponent<V3GradientGraphic>()?.ConfigureCorners(new Color(0,0,0,.55f),Color.clear,new Color(0,0,0,.96f),new Color(0,0,0,.3f),Color.clear,0);
             var campaign=Find(root,"Card_Campaign");
-            Place(campaign?.Find("CampaignLabel") as RectTransform,32,264,1170,42);
-            Place(campaign?.Find("Chapter") as RectTransform,32,308,1170,40);
-            Place(campaign?.Find("Title") as RectTransform,32,348,1170,62);
-            Place(campaign?.Find("Purpose") as RectTransform,32,412,1170,80);
-            Place(campaign?.Find("ContinueButton") as RectTransform,32,501,650,72);
-            Place(campaign?.Find("StoryArchiveButton") as RectTransform,710,501,360,72);
+            Place(campaign?.Find("CampaignLabel") as RectTransform,32,236,1170,42);
+            Place(campaign?.Find("Chapter") as RectTransform,32,278,1170,40);
+            Place(campaign?.Find("Title") as RectTransform,32,318,1170,76);
+            Place(campaign?.Find("Purpose") as RectTransform,32,400,1170,80);
+            if(campaign?.Find("Title")?.GetComponent<TMP_Text>() is TMP_Text heroTitle)heroTitle.fontStyle|=FontStyles.UpperCase;
+            Place(campaign?.Find("ContinueButton") as RectTransform,32,491,650,82);
+            Place(campaign?.Find("StoryArchiveButton") as RectTransform,710,491,360,82);
             if(campaign?.Find("Purpose")?.GetComponent<TMP_Text>() is TMP_Text purpose)purpose.overflowMode=TextOverflowModes.Overflow;
             var aria=Find(root,"AriaPanel");
-            Place(aria?.Find("Title") as RectTransform,20,3,190,62);
-            Place(aria?.Find("Description") as RectTransform,20,68,182,148);
+            // Copy column ends before the drawn portrait (preserved aspect, 202 wide, from x=154).
+            Place(aria?.Find("Title") as RectTransform,20,3,126,62);
+            Place(aria?.Find("Description") as RectTransform,20,68,126,148);
+            Place(aria?.Find("Portrait") as RectTransform,150,12,210,270);
             // Status copy and unaccented border distinguish the informational ARIA tile.
             aria?.GetComponent<V3GradientGraphic>()?.Configure(Top,Bottom,Border,2);
             var commander=Find(root,"CommanderPanel");
             Copy(commander,"Title","YOUR COMMANDER");
             Place(commander?.Find("IdentityName") as RectTransform,18,62,200,130);
+        }
+        // Persian mirrors panel internals the section frame does not drive. Commander copy stays in
+        // the dark left column because the six saved commander scenes place the figure right of centre.
+        private static void HomeRightToLeft(GameObject root)
+        {
+            // The shell instantiates each section separately, so every section owns its own rules.
+            var rules=new Dictionary<Transform,(List<MainMenuRtlTarget> Targets,List<MainMenuRtlText> Texts)>();
+            (List<MainMenuRtlTarget> Targets,List<MainMenuRtlText> Texts) SectionOf(Transform target)
+            {
+                Transform section=target;
+                while(section.parent!=null&&section.parent!=root.transform)section=section.parent;
+                if(!rules.TryGetValue(section,out var list))rules.Add(section,list=(new List<MainMenuRtlTarget>(),new List<MainMenuRtlText>()));
+                return list;
+            }
+            void Add(Transform target,bool mirror,bool flip=false,float width=0)
+            {
+                if(target is RectTransform rect)SectionOf(rect).Targets.Add(new MainMenuRtlTarget(rect,mirror,flip,width));
+            }
+            // Noto Arabic's line box nearly doubles the Latin pitch and pushes the second line onto Continue.
+            var purpose=Find(root,"Card_Campaign")?.Find("Purpose")?.GetComponent<TMP_Text>();
+            if(purpose!=null)SectionOf(purpose.transform).Texts.Add(new MainMenuRtlText(purpose,-55));
+            Add(Find(root,"CampaignReadability"),false,true);
+            var credits=Find(root,"CreditsVisualPanel");
+            foreach(string child in new[]{"Icon","Label","Value","Accent"})Add(credits?.Find(child),true);
+            if(credits?.Find("Value")?.GetComponent<TMP_Text>() is TMP_Text creditValue)SectionOf(creditValue.transform).Texts.Add(new MainMenuRtlText(creditValue,mirrorAlignment:true));
+            Add(Find(root,"HeaderLogoPanel")?.Find("SharedMainMenuLogo"),true);
+            foreach(string card in new[]{"Card_Operations","Card_Skirmish"})
+                foreach(string child in new[]{"IconCell","Title","Subtitle","Chevron"})Add(Find(root,card)?.Find(child),true);
+            foreach(string button in new[]{"StoreButton","OpenArmoryButton"})
+                foreach(string child in new[]{"Icon","Label"})Add(Find(root,button)?.Find(child),true);
+            var aria=Find(root,"AriaPanel");
+            foreach(string child in new[]{"Title","Description","Portrait"})Add(aria?.Find(child),true);
+            Add(aria?.Find("CopyShade"),true,true);
+            var commander=Find(root,"CommanderPanel");
+            Add(commander?.Find("Title"),false,false,166);
+            Add(commander?.Find("IdentityName"),false,false,166);
+            foreach(var section in rules)
+                (section.Key.GetComponent<MainMenuRtlLayoutView>()??section.Key.gameObject.AddComponent<MainMenuRtlLayoutView>()).Configure(section.Value.Targets.ToArray(),section.Value.Texts.ToArray());
         }
         private static void Campaign(GameObject root)
         {
@@ -380,11 +445,12 @@ namespace Game.Editor
                 {
                     if(r.name=="Card_Campaign") {w=1;h=1;}
                     if(r.parent?.name=="Card_Campaign" && (r.GetComponent<TMP_Text>()!=null||r.name.EndsWith("Button")))y=1;
-                    if(r.name=="AriaPanel"){x=1;y=.5f;h=.5f;}
-                    if(r.name=="CommanderPanel"){x=1;h=.5f;}
+                    if(r.name=="AriaPanel"){x=1;h=.5f;}
+                    if(r.name=="CommanderPanel"){x=1;y=.5f;h=.5f;}
                     if(r.parent?.name=="CommanderPanel"&&r.name=="ViewCommanderButton")y=.5f;
                     if(r.name=="Card_Operations"||r.name=="Card_Skirmish")y=1;
                     if(r.name=="StoreButton"||r.name=="OpenArmoryButton"){x=1;y=1;}
+                    if(r.name=="HeaderLogoPanel")w=1;
                 }
                 if(screen=="campaign")
                 {
@@ -430,7 +496,8 @@ namespace Game.Editor
                 if(r.name=="MenuTitlePanel"||r.name=="ScreenTitlePanel")w=1;
                 if(screen=="commander"&&r.parent?.name=="CommanderStatsPanel"&&r.name.StartsWith("Divider"))x=r.anchoredPosition.x/860f;
                 if(r.name=="Credits"||r.name=="CreditsChip"||r.name=="SettingsButton")x=1;
-                bool mirror=top||r.parent?.name=="MissionSelectState"||(screen=="skirmish"&&(r.name=="MapPreviewClip"||r.name=="SeedHelp"));
+                bool mirror=top||r.parent?.name=="MissionSelectState"||(screen=="skirmish"&&(r.name=="MapPreviewClip"||r.name=="SeedHelp"))||
+                    (screen=="main-menu"&&r.parent?.name=="Card_Campaign"&&(r.GetComponent<TMP_Text>()!=null||r.name.EndsWith("Button")));
                 // Stretch anchors already inherit their parent; never drive those a second time.
                 if(r.anchorMin!=r.anchorMax)continue;
                 if(x!=0||w!=0||y!=0||h!=0||mirror)rules.Add(new MenuFrameTarget(r,new Vector2(x,y),new Vector2(w,h),mirror));

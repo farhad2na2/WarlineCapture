@@ -462,6 +462,9 @@ namespace Game.Editor
             var cover = comic.gameObject.AddComponent<AspectRatioFitter>();
             cover.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
             cover.aspectRatio = 16f / 9f;
+            // The hero draws its own copy of the plate; the backdrop only tints the gutters.
+            Image gutterShade = CreateImage("GutterShade", root, null, new Color(0.012f, 0.03f, 0.04f, 0.84f), false);
+            Stretch(gutterShade.rectTransform);
             Image headerShade = CreateImage("HeaderShade", root, null, new Color(0.01f, 0.025f, 0.03f, 0.72f), false);
             headerShade.rectTransform.anchorMin = new Vector2(0f, 1f);
             headerShade.rectTransform.anchorMax = Vector2.one;
@@ -574,14 +577,14 @@ namespace Game.Editor
         private static void BuildModeCards(Transform root, Image comicBackdrop)
         {
             BuildCampaignCard(root, comicBackdrop);
-            BuildCompactModeCard(root, "Card_Operations", 14f, 705f, 628f, 216f, "OPERATIONS", operationsArt, Green, UIRoute.Operations, ModeIcon.Operations);
-            BuildCompactModeCard(root, "Card_Skirmish", 654f, 705f, 628f, 216f, "SKIRMISH", skirmishArt, Red, UIRoute.QuickCustomSetup, ModeIcon.Skirmish);
+            BuildCompactModeCard(root, "Card_Operations", 14f, 705f, 629f, 216f, "OPERATIONS", operationsArt, Green, UIRoute.Operations, ModeIcon.Operations);
+            BuildCompactModeCard(root, "Card_Skirmish", 655f, 705f, 629f, 216f, "SKIRMISH", skirmishArt, Red, UIRoute.QuickCustomSetup, ModeIcon.Skirmish);
         }
 
 
         private static void BuildCampaignCard(Transform root, Image comicBackdrop)
         {
-            RectTransform card = CreateTopLeftRect("Card_Campaign", root, 14f, 108f, 1268f, 585f);
+            RectTransform card = CreateTopLeftRect("Card_Campaign", root, 14f, 108f, 1270f, 585f);
             Image art = CreateImage("CampaignArt", card, null, Color.white, false);
             Stretch(art.rectTransform);
             art.rectTransform.pivot = new Vector2(0.5f, 1f);
@@ -594,18 +597,18 @@ namespace Game.Editor
             Stretch(shade.rectTransform);
             TMP_Text label = CreateText("CampaignLabel", card, "CAMPAIGN", 30f, boldFont, TextAlignmentOptions.MidlineLeft, Amber);
             SetTopLeft(label.rectTransform, 32, 276, 1170, 42);
-            ExpandTextWithParent(label.rectTransform, 1268);
+            ExpandTextWithParent(label.rectTransform, 1270);
             TMP_Text chapter = CreateText("Chapter", card, "", 26f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetTopLeft(chapter.rectTransform, 32, 319, 1170, 40);
-            ExpandTextWithParent(chapter.rectTransform, 1268);
+            ExpandTextWithParent(chapter.rectTransform, 1270);
             TMP_Text title = CreateText("Title", card, "CAMPAIGN", 52f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetTopLeft(title.rectTransform, 32, 357, 1170, 68);
-            ExpandTextWithParent(title.rectTransform, 1268);
+            ExpandTextWithParent(title.rectTransform, 1270);
             title.enableAutoSizing=true; title.fontSizeMin=32; title.fontSizeMax=52;
             title.textWrappingMode=TextWrappingModes.Normal;
             TMP_Text purpose = CreateText("Purpose", card, "Review your Campaign missions.", 27f, mediumFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetTopLeft(purpose.rectTransform, 32, 426, 1170, 54);
-            ExpandTextWithParent(purpose.rectTransform, 1268);
+            ExpandTextWithParent(purpose.rectTransform, 1270);
             purpose.textWrappingMode=TextWrappingModes.Normal; purpose.enableAutoSizing=true; purpose.fontSizeMin=20; purpose.fontSizeMax=27;
             RectTransform action = CreateTopLeftRect("ContinueButton", card, 32, 487, 650, 82);
             var fill=action.gameObject.AddComponent<V3GradientGraphic>();
@@ -711,25 +714,25 @@ namespace Game.Editor
             if (iconKind == ModeIcon.Operations)
             {
                 Image operationsIconImage = CreateImage("OperationsCompass", iconCell, operationsIcon, Color.white, false);
-                SetTopLeft(operationsIconImage.rectTransform, 4f, 7f, 94f, 94f);
+                SetTopLeft(operationsIconImage.rectTransform, 4f, (height - 6f - 94f) * .5f, 94f, 94f);
                 operationsIconImage.preserveAspect = true;
 
             }
             else
             {
                 Image skirmishIconImage = CreateImage("SkirmishBlades", iconCell, skirmishIcon, Color.white, false);
-                SetTopLeft(skirmishIconImage.rectTransform, 8f, 14f, 86f, 90f);
+                SetTopLeft(skirmishIconImage.rectTransform, 8f, (height - 6f - 90f) * .5f, 86f, 90f);
                 skirmishIconImage.preserveAspect = true;
             }
             TMP_Text label = CreateText("Title", card, title, 48f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(label.rectTransform, 120f, 18f, width - 180f, 70f);
+            SetTopLeft(label.rectTransform, 120f, 46f, width - 180f, 70f);
             ExpandTextWithParent(label.rectTransform,width);
             TMP_Text chevron = CreateText("Chevron", card, "›", 82f, boldFont, TextAlignmentOptions.Center, TextPrimary);
             SetTopLeft(chevron.rectTransform, width - 66f, 2f, 54f, height - 4f);
             chevron.rectTransform.anchorMin=chevron.rectTransform.anchorMax=new Vector2(1,1);
             chevron.rectTransform.pivot=new Vector2(1,1); chevron.rectTransform.anchoredPosition=new Vector2(-12,-2);
-            TMP_Text subtitle = CreateText("Subtitle", card, iconKind == ModeIcon.Operations ? "Multi-mission strategic operations" : "Standalone tactical battles", 25f, mediumFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(subtitle.rectTransform, 120, 95, width-195, 90);
+            TMP_Text subtitle = CreateText("Subtitle", card, iconKind == ModeIcon.Operations ? "Multi-mission operations" : "Standalone tactical battles", 25f, mediumFont, TextAlignmentOptions.TopLeft, TextPrimary);
+            SetTopLeft(subtitle.rectTransform, 120, 120, width-195, 64);
             ExpandTextWithParent(subtitle.rectTransform,width);
             subtitle.textWrappingMode=TextWrappingModes.Normal; subtitle.enableAutoSizing=true; subtitle.fontSizeMin=20; subtitle.fontSizeMax=25;
             label.enableAutoSizing=true; label.fontSizeMin=32; label.fontSizeMax=48;
@@ -748,7 +751,7 @@ namespace Game.Editor
 
         private static void BuildAriaPanel(Transform root)
         {
-            RectTransform panel = CreateTopLeftRect("AriaPanel", root, RightColumnX, 408f, RightColumnWidth, 285f);
+            RectTransform panel = CreateTopLeftRect("AriaPanel", root, RightColumnX, 108f, RightColumnWidth, 285f);
             V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(2, 18, 28, 252), new Color32(2, 24, 36, 252), new Color32(0, 7, 12, 254), new Color32(1, 12, 18, 254), Cyan, 3f);
             Image backdrop = CreateImage("SceneBackground", panel, AssetDatabase.LoadAssetAtPath<Sprite>(AriaBackdropPath), Color.white, false);
@@ -767,7 +770,7 @@ namespace Game.Editor
 
         private static void BuildCommanderPanel(Transform root)
         {
-            RectTransform panel=CreateTopLeftRect("CommanderPanel", root, RightColumnX,108,RightColumnWidth,288);
+            RectTransform panel=CreateTopLeftRect("CommanderPanel", root, RightColumnX,405,RightColumnWidth,288);
             var fill=panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.Configure(GraphiteTop,GraphiteBottom,Border,3);
             Image portrait=CreateImage("CommanderSceneVariant",panel,null,Color.white,false);
@@ -785,7 +788,7 @@ namespace Game.Editor
             var view=portrait.gameObject.AddComponent<MainMenuCommanderVariantView>();
             view.Configure(portrait,variants.ToArray(),"0"); view.ConfigureIdentity(name);
             RectTransform action=CreateTopLeftRect("ViewCommanderButton",panel,12,206,336,80);
-            var actionFill=action.gameObject.AddComponent<V3GradientGraphic>(); actionFill.Configure(new Color32(46,143,39,255),new Color32(9,65,34,255),Green,2);
+            var actionFill=action.gameObject.AddComponent<V3GradientGraphic>(); actionFill.Configure(GraphiteTop,GraphiteBottom,Green,3);
             TMP_Text actionText=CreateText("Label",action,"VIEW COMMANDER   ›",27,boldFont,TextAlignmentOptions.Center,TextPrimary); Stretch(actionText.rectTransform);
             actionText.enableAutoSizing=true; actionText.fontSizeMin=20; actionText.fontSizeMax=27;
             AddRouteHotspot(action,UIRoute.CommanderProfile,"CommanderPanelHotspot");
@@ -796,15 +799,17 @@ namespace Game.Editor
         private static void BuildFooter(Transform root)
         {
             BuildSecondaryButton(root,"StoreButton",705,"STORE",storeIcon,UIRoute.CommandExchange);
-            BuildSecondaryButton(root,"OpenArmoryButton",821,"ARMORY",armoryIcon,UIRoute.Armory);
+            BuildSecondaryButton(root,"OpenArmoryButton",705+SecondaryButtonHeight+PanelGap,"ARMORY",armoryIcon,UIRoute.Armory);
         }
+        // Two stacked buttons and their gap span exactly the mode-card row (705..921).
+        private const float SecondaryButtonHeight = 102f;
         private static void BuildSecondaryButton(Transform root,string name,float y,string title,Sprite iconSprite,UIRoute route)
         {
-            RectTransform rect=CreateTopLeftRect(name,root,RightColumnX,y,RightColumnWidth,100);
+            RectTransform rect=CreateTopLeftRect(name,root,RightColumnX,y,RightColumnWidth,SecondaryButtonHeight);
             var fill=rect.gameObject.AddComponent<V3GradientGraphic>(); fill.Configure(new Color32(6,105,172,255),new Color32(4,38,89,255),Cyan,2);
-            RectTransform icon=CreateTopLeftRect("Icon",rect,14,10,82,80);
+            RectTransform icon=CreateTopLeftRect("Icon",rect,14,(SecondaryButtonHeight-80)*.5f,82,80);
             if(route == UIRoute.Armory) BuildArmoryEmblem(icon); else BuildContentCollectionEmblem(icon);
-            TMP_Text label=CreateText("Label",rect,title+"   ›",32,boldFont,TextAlignmentOptions.Center,TextPrimary); SetTopLeft(label.rectTransform,102,5,242,90);
+            TMP_Text label=CreateText("Label",rect,title+"   ›",32,boldFont,TextAlignmentOptions.Center,TextPrimary); SetTopLeft(label.rectTransform,102,(SecondaryButtonHeight-90)*.5f,242,90);
             AddRouteHotspot(rect,route);
             rect.gameObject.AddComponent<MainMenuDisclosureView>().Configure(route == UIRoute.Armory ? 3u : 0x1fu);
         }

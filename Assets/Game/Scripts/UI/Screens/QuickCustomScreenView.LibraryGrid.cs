@@ -43,7 +43,7 @@ namespace Game.UI.Runtime
                 for (int startIndex = 0; startIndex < starts.Length; startIndex++)
                 {
                     int column = armyIndex * 2 + startIndex;
-                    float columnX = LibraryGridOriginX + column * (cardWidth + LibraryGridCardGap);
+                    float columnX = LibraryLabelColumnWidth() + column * (cardWidth + LibraryGridCardGap);
                     float iconX = fa ? columnX + cardWidth - 20f : columnX + 2f;
                     var headerIcon = new GameObject("ColumnIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     headerIcon.transform.SetParent(_libraryGrid, false);
@@ -85,7 +85,7 @@ namespace Game.UI.Runtime
                     int index = row * columns + column;
                     if (index >= field.GridCards.Length)
                         break;
-                    float x = LibraryGridOriginX + column * (cardWidth + LibraryGridCardGap);
+                    float x = LibraryLabelColumnWidth() + column * (cardWidth + LibraryGridCardGap);
                     SkirmishBattleCardState card = field.GridCards[index];
                     RectTransform widget = IsEmptyCard(card)
                         ? CreateEmptyGridCell(zone, objective.ObjectiveId, armies[column / 2], starts[column % 2], card.PreviewSpriteKey, card.MapId, slots, cardWidth)
@@ -115,7 +115,7 @@ namespace Game.UI.Runtime
             ShowIcon(rowIcon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
             SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string rowName);
             var rowLabel = CreateLabel(parent, "Row_" + objective.ObjectiveId, 13f);
-            PlaceTopLeft(rowLabel.rectTransform, 1f, y + 26f, LibraryGridOriginX - 6f, 28f);
+            PlaceTopLeft(rowLabel.rectTransform, 1f, y + 26f, LibraryLabelColumnWidth() - 6f, 28f);
             rowLabel.alignment = TextAlignmentOptions.Center;
             rowLabel.textWrappingMode = TextWrappingModes.Normal;
             rowLabel.overflowMode = TextOverflowModes.Ellipsis;
@@ -124,13 +124,13 @@ namespace Game.UI.Runtime
             bool pending = objective.PublishedCount <= 0;
             if (pending)
             {
-                PlaceTopLeft(rowCount.rectTransform, 1f, y + 50f, LibraryGridOriginX - 4f, 42f);
+                PlaceTopLeft(rowCount.rectTransform, 1f, y + 50f, LibraryLabelColumnWidth() - 4f, 42f);
                 rowCount.textWrappingMode = TextWrappingModes.Normal;
                 rowCount.maxVisibleLines = 2;
             }
             else
             {
-                PlaceTopLeft(rowCount.rectTransform, 2f, y + 56f, LibraryGridOriginX - 8f, 16f);
+                PlaceTopLeft(rowCount.rectTransform, 2f, y + 56f, LibraryLabelColumnWidth() - 8f, 16f);
                 rowCount.textWrappingMode = TextWrappingModes.NoWrap;
                 rowCount.maxVisibleLines = 1;
             }
@@ -250,9 +250,9 @@ namespace Game.UI.Runtime
             previewHeight = Mathf.Max(1f, cardHeight - chrome);
         }
 
-        private static float GridCardWidth(float gridWidth, int columns, float rightPad)
+        private float GridCardWidth(float gridWidth, int columns, float rightPad)
         {
-            float available = gridWidth - LibraryGridOriginX - rightPad;
+            float available = gridWidth - LibraryLabelColumnWidth() - rightPad;
             float gaps = LibraryGridCardGap * Mathf.Max(0, columns - 1);
             return columns > 0 ? Mathf.Max(1f, (available - gaps) / columns) : available;
         }

@@ -629,7 +629,7 @@ namespace Game.UI.Runtime
                 plateRect.anchorMax = new Vector2(1f, 1f);
                 plateRect.pivot = new Vector2(0f, 1f);
                 plateRect.offsetMin = new Vector2(theater ? 0f : 8f, theater ? 128f : 8f);
-                plateRect.offsetMax = new Vector2(theater ? 0f : -8f, -112f);
+                plateRect.offsetMax = new Vector2(theater ? 0f : -8f, theater ? -8f : -112f);
                 MaskRect(plateRect);
             }
 
@@ -651,8 +651,11 @@ namespace Game.UI.Runtime
                 pinRect.offsetMax = new Vector2(-8f, -8f);
             }
 
-            if (battleLibrarySearch != null)
+            if (battleLibrarySearch != null && theater)
+                battleLibrarySearch.gameObject.SetActive(false);
+            if (battleLibrarySearch != null && !theater)
             {
+                battleLibrarySearch.gameObject.SetActive(true);
                 RectTransform search = battleLibrarySearch.GetComponent<RectTransform>();
                 if (preview != null && search.parent != preview)
                     search.SetParent(preview, false);
@@ -679,9 +682,13 @@ namespace Game.UI.Runtime
 
             if (mapNameText != null)
             {
-                PlaceTopLeft(mapNameText.rectTransform, 12f, 6f, 680f, 40f);
-                mapNameText.textWrappingMode = TextWrappingModes.NoWrap;
-                mapNameText.overflowMode = TextOverflowModes.Overflow;
+                mapNameText.gameObject.SetActive(!theater);
+                if (!theater)
+                {
+                    PlaceTopLeft(mapNameText.rectTransform, 12f, 6f, 680f, 40f);
+                    mapNameText.textWrappingMode = TextWrappingModes.NoWrap;
+                    mapNameText.overflowMode = TextOverflowModes.Overflow;
+                }
             }
 
             if (preview != null)
@@ -828,7 +835,7 @@ namespace Game.UI.Runtime
                 ?? GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout != null && layout.LastAppliedScale > 0.05f)
                 scale = layout.LastAppliedScale;
-            return Mathf.Clamp(17f / scale, 17f, 22f);
+            return Mathf.Max(22f, 17f / scale);
         }
 
         private RectTransform EnsureSoftShadow(RectTransform panel, float offsetX, float offsetY)
@@ -1846,10 +1853,29 @@ namespace Game.UI.Runtime
             SealTheatreMapEdge(preview as RectTransform, rules as RectTransform, theater);
         }
 
+        private float LibraryLabelColumnWidth()
+        {
+            float type = ReferenceSubtitleFloor();
+            return Mathf.Max(LibraryGridOriginX, LibraryGridOriginX * type / 22f);
+        }
+
         private void FitLibrarySearch()
         {
+            bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+            if (theater)
+            {
+                if (battleLibrarySearch != null)
+                    battleLibrarySearch.gameObject.SetActive(false);
+                if (mapNameText != null)
+                    mapNameText.gameObject.SetActive(false);
+                return;
+            }
+
             if (battleLibrarySearch == null)
                 return;
+            battleLibrarySearch.gameObject.SetActive(true);
+            if (mapNameText != null)
+                mapNameText.gameObject.SetActive(true);
             RectTransform search = battleLibrarySearch.GetComponent<RectTransform>();
             if (search == null)
                 return;

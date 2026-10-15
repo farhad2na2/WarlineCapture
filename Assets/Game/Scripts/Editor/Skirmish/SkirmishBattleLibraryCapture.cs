@@ -808,46 +808,73 @@ namespace Game.Editor
         {
             if (regions == null || mapIds == null)
                 return;
-            var shapes = new Vector2[mapIds.Length][];
-            var cards = new Rect[mapIds.Length];
+            var shapes = new TheatreSeatGeometry.Vec2[mapIds.Length][];
+            var cards = new TheatreSeatGeometry.Box[mapIds.Length];
             var present = new bool[mapIds.Length];
+            RectTransform space = null;
             for (int i = 0; i < mapIds.Length; i++)
             {
                 Transform cardNode = FindNamed(regions, "ZoneCard_" + mapIds[i]);
                 Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
                 if (cardNode is not RectTransform card || outlineNode is not RectTransform outline)
                     continue;
+                space = outline.parent as RectTransform ?? space;
+                if (space == null)
+                    continue;
                 present[i] = true;
-                cards[i] = WorldBounds(card);
-                shapes[i] = OutlineWorldPoints(outline);
+                cards[i] = PlateBox(space, card);
+                V3PolygonGraphic graphic = outline.GetComponent<V3PolygonGraphic>();
+                int count = graphic != null ? graphic.PointCount : 0;
+                var plate = new TheatreSeatGeometry.Vec2[count];
+                for (int point = 0; point < count; point++)
+                {
+                    Vector2 authored = graphic.LocalPoint(point);
+                    Vector3 world = outline.TransformPoint(new Vector3(authored.x, authored.y, 0f));
+                    Vector2 local = PlatePoint(space, world);
+                    plate[point] = new TheatreSeatGeometry.Vec2(local.x, local.y);
+                }
+
+                shapes[i] = plate;
             }
 
             for (int i = 0; i < mapIds.Length; i++)
             {
                 if (!present[i])
                     continue;
-                bool insideOwn = CardRestsInside(cards[i], shapes[i], 8f);
-                bool hitsAny = false;
-                for (int j = 0; j < mapIds.Length; j++)
-                {
-                    if (!present[j] || shapes[j] == null)
-                        continue;
-                    if (j == i && insideOwn)
-                        continue;
-                    if (!WorldRectHitsPolygon(cards[i], shapes[j]) && PerimeterGap(cards[i], shapes[j]) >= 1f)
-                        continue;
-                    hitsAny = true;
-                    break;
-                }
-
-                if (insideOwn && !hitsAny)
-                    continue;
-                if (!insideOwn && !hitsAny)
+                if (TheatreSeatGeometry.SeatHolds(cards[i], shapes[i], shapes))
                     continue;
                 throw new InvalidOperationException(
                     "Theatre zone card straddles a district edge locale=" + locale +
                     " card=ZoneCard_" + mapIds[i] + ".");
             }
+        }
+
+        private static TheatreSeatGeometry.Box PlateBox(RectTransform space, RectTransform rect)
+        {
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            Vector2 first = PlatePoint(space, corners[0]);
+            float minX = first.x;
+            float maxX = first.x;
+            float minY = first.y;
+            float maxY = first.y;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = PlatePoint(space, corners[i]);
+                minX = Mathf.Min(minX, point.x);
+                maxX = Mathf.Max(maxX, point.x);
+                minY = Mathf.Min(minY, point.y);
+                maxY = Mathf.Max(maxY, point.y);
+            }
+
+            return new TheatreSeatGeometry.Box(minX, minY, Mathf.Max(0f, maxX - minX), Mathf.Max(0f, maxY - minY));
+        }
+
+        private static Vector2 PlatePoint(RectTransform space, Vector3 world)
+        {
+            Vector3 local = space.InverseTransformPoint(world);
+            Rect rect = space.rect;
+            return new Vector2(local.x - rect.xMin, rect.yMax - local.y);
         }
 
         private static void RejectDetailPanelClear(
@@ -1142,11 +1169,11 @@ namespace Game.Editor
                     " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
-            if (polygon.color.a < 0.14f || polygon.color.a > 0.24f)
+            if (polygon.color.a < 0.27f || polygon.color.a > 0.37f)
             {
                 throw new InvalidOperationException(
                     "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
-                    " locale=" + locale + ". Expected about 0.18.");
+                    " locale=" + locale + ". Expected about 0.32.");
             }
 
             bool stroke = false;
@@ -1317,11 +1344,11 @@ namespace Game.Editor
             string locale)
         {
             Vector2 size = card.sizeDelta;
-            if (size.x < 280f || size.x > 320f || size.y < 96f || size.y > 110f)
+            if (size.x < 124f || size.x > 160f || size.y < 156f || size.y > 212f)
             {
                 throw new InvalidOperationException(
                     "Theatre zone card for " + mapId + " is " + size.x.ToString("0") + "x" + size.y.ToString("0") +
-                    " locale=" + locale + ". Expected about 280-320 by 96-110 at 1080p.");
+                    " locale=" + locale + ". Expected a portrait tile about 124-160 by 156-212.");
             }
 
             TMP_Text name = card.Find("ZoneName")?.GetComponent<TMP_Text>();

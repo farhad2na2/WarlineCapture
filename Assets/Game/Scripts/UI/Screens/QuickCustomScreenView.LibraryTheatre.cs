@@ -206,7 +206,8 @@ namespace Game.UI.Runtime
         {
             if (sourceAspect < 0.01f)
                 sourceAspect = 16f / 9f;
-            float frameAspect = frameWidth > 2f && frameHeight > 2f ? frameWidth / frameHeight : sourceAspect;
+            float coverHeight = TheatreSeatGeometry.CoverFrameHeight(frameWidth, frameHeight);
+            float frameAspect = frameWidth > 2f && coverHeight > 2f ? frameWidth / coverHeight : sourceAspect;
             if (frameAspect >= sourceAspect)
             {
                 width = 1f;
@@ -255,9 +256,13 @@ namespace Game.UI.Runtime
             float frameWidth,
             float frameHeight)
         {
+            float coverHeight = TheatreSeatGeometry.CoverFrameHeight(frameWidth, frameHeight);
+            float y = (normalized.y - cropV) / Mathf.Max(0.001f, cropH) * coverHeight;
+            if (coverHeight > 2f && frameHeight > coverHeight + 0.5f)
+                y *= frameHeight / coverHeight;
             return new Vector2(
                 (normalized.x - cropU) / Mathf.Max(0.001f, cropW) * frameWidth,
-                (normalized.y - cropV) / Mathf.Max(0.001f, cropH) * frameHeight);
+                y);
         }
 
         private static Vector2[] ClipPolygonToFrame(Vector2[] points, float frameWidth, float frameHeight)
@@ -334,13 +339,13 @@ namespace Game.UI.Runtime
         /// </summary>
         private static Vector2[] DistrictHex(string mapId, float frameWidth, float frameHeight)
         {
-            float aspect = frameHeight > 2f ? frameWidth / frameHeight : 1.6f;
-            DistrictHexSpec spec = aspect >= 2.4f
-                ? WideDistrictHex(mapId)
-                : aspect >= 1.9f ? LandscapeDistrictHex(mapId) : SquareDistrictHex(mapId);
-            float sx = spec.ReferenceWidth > 2f ? frameWidth / spec.ReferenceWidth : 1f;
-            float sy = frameHeight > 2f ? frameHeight / 620f : 1f;
-            return FlatHex(spec.CenterX * sx, spec.CenterY * sy, spec.HalfWidth * sx, spec.HalfHeight * sy);
+            TheatreSeatGeometry.Vec2[] hex = TheatreSeatGeometry.DistrictHex(mapId, frameWidth, frameHeight);
+            if (hex == null || hex.Length < 3)
+                return Array.Empty<Vector2>();
+            var points = new Vector2[hex.Length];
+            for (int i = 0; i < hex.Length; i++)
+                points[i] = new Vector2(hex[i].X, hex[i].Y);
+            return points;
         }
 
         private static DistrictHexSpec LandscapeDistrictHex(string mapId)
@@ -820,6 +825,8 @@ namespace Game.UI.Runtime
         private static void PlaceZoneSlots(List<TheatreZoneSlot> slots, Rect safe, float plateWidth, float plateHeight, bool fa)
         {
             if (slots == null)
+                return;
+            if (TryApplyArrangedSeats(slots, plateWidth, plateHeight, fa))
                 return;
             // The detail panel overlays the map. Hexes and the first card seats stay on the
             // full plate; only a card that meets the panel is moved, and only that card may shrink.
@@ -1443,7 +1450,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             Color fill = color;
-            fill.a = 0.23f;
+            fill.a = 0.32f;
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
             PlaceDistrictHalo(root, local, color);
             float stroke = selected ? 4f : 3.5f;
@@ -1732,75 +1739,55 @@ namespace Game.UI.Runtime
 
             float cardW = slot.Card.width;
             float cardH = slot.Card.height;
-            float thumb = wideFrame ? 96f : 92f;
-            float nameH = 40f;
-            float barH = 14f;
-            float barY = 86f;
-            if (thumb + 12f > cardH - 4f)
-            {
-                thumb = Mathf.Max(64f, cardH - 20f);
-                nameH = 30f;
-                barH = 10f;
-                barY = cardH - barH - 4f;
-            }
-
-            float thumbX = fa ? cardW - 10f - thumb : 10f;
-            float frame = thumb + 12f;
-            float frameX = thumbX - 6f;
-            const float nameEdge = 10f;
-            const float nameGap = 6f;
-            float textX = fa ? nameEdge : frameX + frame + nameGap;
-            float textRight = fa ? frameX - nameGap : cardW - nameEdge;
-            float textW = Mathf.Max(72f, textRight - textX);
-            var name = CreateLabel(card.transform, "ZoneName", 22f);
-            PlaceTopLeft(name.rectTransform, textX, 6f, textW, nameH);
-            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            const float pad = 6f;
+            float nameH = cardH >= 190f ? 40f : 34f;
+            float ring = cardH >= 190f ? 56f : 44f;
+            if (wideFrame)
+                ring += 4f;
+            float artH = Mathf.Max(56f, cardH - pad - 4f - nameH - 4f - ring - pad);
+            float artW = Mathf.Max(48f, cardW - pad * 2f);
+            float nameY = pad + artH + 4f;
+            var name = CreateLabel(card.transform, "ZoneName", 18f);
+            PlaceTopLeft(name.rectTransform, pad, nameY, artW, nameH);
+            name.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             name.isRightToLeftText = fa;
-            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.textWrappingMode = TextWrappingModes.Normal;
             name.overflowMode = TextOverflowModes.Overflow;
-            name.maxVisibleLines = 1;
+            name.maxVisibleLines = 2;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 18f, 26f);
-            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-            name.isRightToLeftText = fa;
-            name.textWrappingMode = TextWrappingModes.NoWrap;
-            name.overflowMode = TextOverflowModes.Overflow;
-            name.maxVisibleLines = 1;
-            name.fontStyle = FontStyles.Bold;
-            name.color = new Color(1f, 0.97f, 0.9f, 1f);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 22f);
 
             var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
             medallion.transform.SetParent(card.transform, false);
-            medallion.sprite = LibraryMedallion();
+            medallion.sprite = ZoneSolidSprite();
             medallion.color = Color.white;
             medallion.raycastTarget = false;
-            float frameY = Mathf.Max(1f, (cardH - frame) * 0.5f);
-            PlaceTopLeft(medallion.rectTransform, frameX, frameY, frame, frame);
+            PlaceTopLeft(medallion.rectTransform, pad, pad, artW, artH);
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
             var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(medallion.transform, false);
-            PlaceTopLeft(preview.rectTransform, 10f, 10f, thumb - 8f, thumb - 8f);
+            PlaceTopLeft(preview.rectTransform, 2f, 2f, Mathf.Max(8f, artW - 4f), Mathf.Max(8f, artH - 4f));
             ApplyDistrictThumbnail(preview, slot.MapId);
             preview.color = Color.white;
             preview.raycastTarget = false;
 
-            float ring = wideFrame ? 64f : 56f;
-            float ringY = wideFrame ? 46f : 48f;
-            if (ringY + ring > barY - 2f)
-            {
-                ring = Mathf.Clamp(barY - nameH - 12f, 36f, ring);
-                ringY = Mathf.Max(nameH + 2f, barY - ring - 4f);
-            }
-
-            float ringX = fa ? textX : textX + textW - ring;
+            int total = Mathf.Max(0, slot.Playable);
+            bool pending = total <= 0;
+            float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
+            float ringY = nameY + nameH + 4f;
+            float ringX = pending ? pad : (cardW - ring) * 0.5f;
+            float ringW = pending ? artW : ring;
+            float ringH = pending ? Mathf.Max(28f, cardH - ringY - pad) : ring;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
-            track.sprite = ZoneRingSprite();
-            track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.9f);
+            track.sprite = pending ? ZoneSolidSprite() : ZoneRingSprite();
+            track.color = pending
+                ? new Color(0.04f, 0.05f, 0.06f, 0.92f)
+                : new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.9f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, ringY, ring, ring);
+            PlaceTopLeft(track.rectTransform, ringX, ringY, ringW, ringH);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1809,54 +1796,22 @@ namespace Game.UI.Runtime
             fill.fillMethod = Image.FillMethod.Radial360;
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
-            int total = Mathf.Max(0, slot.Playable);
-            bool pending = total <= 0;
-            float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
             fill.fillAmount = ratio;
             fill.color = Color.Lerp(slot.Zone, Color.white, 0.35f);
             fill.raycastTarget = false;
             fill.enabled = !pending;
-            track.enabled = !pending;
-            float barX = fa ? textX + ring + 8f : textX;
-            float barW = Mathf.Max(36f, textW - ring - 8f);
-            var bar = new GameObject("ProgressBar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            bar.transform.SetParent(card.transform, false);
-            bar.sprite = ZoneSolidSprite();
-            bar.color = new Color(0.04f, 0.05f, 0.06f, 0.9f);
-            bar.raycastTarget = false;
-            PlaceTopLeft(bar.rectTransform, barX, barY, barW, barH);
-            var barFill = new GameObject("BarFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            barFill.transform.SetParent(bar.transform, false);
-            Stretch(barFill.rectTransform);
-            barFill.sprite = ZoneSolidSprite();
-            barFill.type = Image.Type.Filled;
-            barFill.fillMethod = Image.FillMethod.Horizontal;
-            barFill.fillOrigin = fa ? (int)Image.OriginHorizontal.Right : (int)Image.OriginHorizontal.Left;
-            barFill.fillAmount = ratio;
-            barFill.color = slot.Zone;
-            barFill.raycastTarget = false;
-            barFill.enabled = !pending;
-            bar.enabled = !pending;
-            if (pending)
-                PlaceTopLeft(track.rectTransform, textX, 52f, textW, 42f);
-            var count = CreateLabel(track.transform, "ZoneCount", pending ? 18f : 22f);
-            Stretch(count.rectTransform);
-            count.alignment = pending
-                ? (fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft)
-                : TextAlignmentOptions.Center;
+            var count = CreateLabel(track.transform, "ZoneCount", pending ? 16f : 18f);
+            Stretch(count.rectTransform, pending ? 6f : 2f, pending ? 2f : 2f, pending ? 4f : 2f, pending ? 2f : 2f);
+            count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
             count.textWrappingMode = TextWrappingModes.NoWrap;
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
-            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 16f : 18f, pending ? 22f : 26f);
-            count.alignment = pending
-                ? (fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft)
-                : TextAlignmentOptions.Center;
+            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 14f : 14f, pending ? 20f : 22f);
+            count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
-            count.overflowMode = TextOverflowModes.Overflow;
-            count.fontStyle = FontStyles.Bold;
-            count.color = Color.white;
+            count.maxVisibleLines = 1;
         }
 
         private static void ApplyDistrictThumbnail(RawImage preview, string mapId)
@@ -1961,9 +1916,21 @@ namespace Game.UI.Runtime
             if (cue == null)
             {
                 RaiseTheatreReadability(_libraryRegions);
+                LogTheatreSeats(_libraryRegions, UiShellRuntimeGateway.Localization.IsRightToLeft);
                 return;
             }
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            RectTransform placedCue = cue.rectTransform;
+            if (placedCue.sizeDelta.x >= 200f && placedCue.sizeDelta.y >= 40f)
+            {
+                Transform cuePlate = cue.transform.parent != null ? cue.transform.parent.Find("CuePlate") : null;
+                if (cuePlate is RectTransform cuePlateRect)
+                    PlaceTopLeft(cuePlateRect, placedCue.anchoredPosition.x, -placedCue.anchoredPosition.y, placedCue.sizeDelta.x, placedCue.sizeDelta.y);
+                RaiseTheatreReadability(_libraryRegions);
+                LogTheatreSeats(cue.transform.parent, fa);
+                return;
+            }
+
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2005,6 +1972,7 @@ namespace Game.UI.Runtime
             if (parent == null)
             {
                 RaiseTheatreReadability(_libraryRegions);
+                LogTheatreSeats(_libraryRegions, fa);
                 return;
             }
             Rect cueRect = new Rect(left, top, width, height);
@@ -2114,6 +2082,86 @@ namespace Game.UI.Runtime
             if (plate is RectTransform plateRect)
                 PlaceTopLeft(plateRect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
             RaiseTheatreReadability(parent);
+            LogTheatreSeats(parent, fa);
+        }
+
+        private static bool TryApplyArrangedSeats(List<TheatreZoneSlot> slots, float plateWidth, float plateHeight, bool fa)
+        {
+            string selected = "DB";
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (slots[i].Selected && !string.IsNullOrEmpty(slots[i].MapId))
+                    selected = slots[i].MapId;
+            }
+
+            TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(
+                plateWidth, plateHeight, fa, plateWidth >= 600f, selected);
+            if (!layout.CardsLegal || !layout.CueNear || !layout.HexAspectLegal || layout.Seats == null)
+                return false;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TheatreZoneSlot slot = slots[i];
+                int index = -1;
+                for (int seatIndex = 0; seatIndex < layout.Seats.Length; seatIndex++)
+                {
+                    if (!string.Equals(layout.Seats[seatIndex].MapId, slot.MapId, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    index = seatIndex;
+                    break;
+                }
+
+                if (index < 0 || layout.Seats[index].Card.W < 1f)
+                    return false;
+                TheatreSeatGeometry.Seat seat = layout.Seats[index];
+                slot.Pin = new Rect(seat.Pin.X, seat.Pin.Y, seat.Pin.W, seat.Pin.H);
+                slot.Card = new Rect(seat.Card.X, seat.Card.Y, seat.Card.W, seat.Card.H);
+                slot.Cue = new Rect(layout.Cue.X, layout.Cue.Y, layout.Cue.W, layout.Cue.H);
+                if (seat.Hex != null && seat.Hex.Length >= 3)
+                {
+                    var hex = new Vector2[seat.Hex.Length];
+                    for (int point = 0; point < seat.Hex.Length; point++)
+                        hex[point] = new Vector2(seat.Hex[point].X, seat.Hex[point].Y);
+                    slot.Hex = hex;
+                }
+
+                slots[i] = slot;
+            }
+
+            return true;
+        }
+
+        private static void LogTheatreSeats(Transform parent, bool fa)
+        {
+            if (parent == null)
+                return;
+            string locale = fa ? "fa" : "en";
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
+                    continue;
+                if (child is not RectTransform rect)
+                    continue;
+                string mapId = child.name.Substring("ZoneCard_".Length);
+                var box = new TheatreSeatGeometry.Box(
+                    rect.anchoredPosition.x,
+                    -rect.anchoredPosition.y,
+                    rect.sizeDelta.x,
+                    rect.sizeDelta.y);
+                Debug.Log(TheatreSeatGeometry.FormatSeat(locale, mapId, box, true));
+            }
+
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || child.name != "ZoomCue" || child is not RectTransform cueRect)
+                    continue;
+                Debug.Log("[TheatreSeat] locale=" + locale
+                    + " cue x=" + cueRect.anchoredPosition.x.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                    + " y=" + (-cueRect.anchoredPosition.y).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                    + " w=" + cueRect.sizeDelta.x.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                    + " h=" + cueRect.sizeDelta.y.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture));
+            }
         }
 
         private static void RaiseTheatreReadability(Transform regions)
@@ -2136,10 +2184,10 @@ namespace Game.UI.Runtime
                 if (text.name == "ZoneCount")
                 {
                     bool pending = SkirmishBattleLibraryArt.IsRenderedComingSoon(text.text);
-                    RaiseTheatreLine(text, pending ? 16f : 18f, pending ? 22f : 26f);
+                    RaiseTheatreLine(text, 14f, pending ? 20f : 22f);
                 }
                 else if (text.name == "ZoomCue")
-                    RaiseTheatreLine(text, 18f, 24f);
+                    RaiseTheatreLine(text, 14f, 24f);
             }
         }
 
@@ -2760,18 +2808,18 @@ namespace Game.UI.Runtime
 
         private static bool ZoneCardSeatHolds(Rect card, string mapId, float frameWidth, float frameHeight)
         {
-            Vector2[] own = DistrictHex(mapId, frameWidth, frameHeight);
-            if (CardInsidePolygon(card, own) && CardBoundaryGap(own, card) + 0.01f >= 8f)
-                return true;
             string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            var hexes = new TheatreSeatGeometry.Vec2[mapIds.Length][];
+            int ownIndex = 0;
             for (int i = 0; i < mapIds.Length; i++)
             {
-                Vector2[] hex = DistrictHex(mapIds[i], frameWidth, frameHeight);
-                if (RectHitsPolygon(card, hex) || CardBoundaryGap(hex, card) < 1f)
-                    return false;
+                hexes[i] = TheatreSeatGeometry.DistrictHex(mapIds[i], frameWidth, frameHeight);
+                if (string.Equals(mapIds[i], mapId, StringComparison.OrdinalIgnoreCase))
+                    ownIndex = i;
             }
 
-            return true;
+            var box = new TheatreSeatGeometry.Box(card.x, card.y, card.width, card.height);
+            return TheatreSeatGeometry.SeatHolds(box, hexes[ownIndex], hexes);
         }
 
         private static bool CueClears(Rect cue, List<Rect> blockers, float margin)
@@ -2853,11 +2901,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.25f, 0.78f, 0.82f, 1f);
-                case "MP": return new Color(0.42f, 0.78f, 0.38f, 1f);
-                case "IB": return new Color(0.90f, 0.48f, 0.18f, 1f);
-                case "AP": return new Color(0.32f, 0.58f, 0.92f, 1f);
-                default: return new Color(0.93f, 0.68f, 0.22f, 1f);
+                case "CC": return new Color(0.02f, 0.72f, 0.70f, 1f);
+                case "MP": return new Color(0.55f, 0.22f, 0.82f, 1f);
+                case "IB": return new Color(0.95f, 0.40f, 0.05f, 1f);
+                case "AP": return new Color(0.12f, 0.42f, 0.95f, 1f);
+                default: return new Color(0.98f, 0.78f, 0.08f, 1f);
             }
         }
 

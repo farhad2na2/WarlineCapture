@@ -522,7 +522,7 @@ namespace Game.UI.Runtime
             TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
             if (captionText != null)
             {
-                float fitted = Mathf.Clamp(labelWidth / 5.4f, 10f, 15f);
+                float fitted = Mathf.Max(10f, labelWidth / 5.4f);
                 captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 captionText.isRightToLeftText = fa;
                 captionText.overflowMode = TextOverflowModes.Overflow;

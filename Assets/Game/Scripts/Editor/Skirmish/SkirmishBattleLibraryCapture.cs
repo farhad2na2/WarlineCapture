@@ -528,6 +528,10 @@ namespace Game.Editor
                     " path=" + ImagePath(card));
             }
 
+            Color tint = picture.color;
+            bool finalArt = tint.r > 0.9f && tint.g > 0.9f && tint.b > 0.9f;
+            RejectPendingPreviewTag(card, finalArt, locale, zone);
+
             float cardWidth = Span(card, true);
             float cardHeight = Span(card, false);
             float previewWidth = Span(previewRect, true);
@@ -573,6 +577,54 @@ namespace Game.Editor
                     "Grid preview is not at the top of the card locale=" + locale +
                     " zone=" + zone +
                     " path=" + ImagePath(card));
+            }
+        }
+
+        private static void RejectPendingPreviewTag(RectTransform card, bool finalArt, string locale, string zone)
+        {
+            Transform pending = card.Find("PreviewPending");
+            bool shown = pending != null && pending.gameObject.activeInHierarchy;
+            if (finalArt)
+            {
+                if (shown)
+                {
+                    throw new InvalidOperationException(
+                        "Final scenario preview is marked pending locale=" + locale +
+                        " zone=" + zone +
+                        " path=" + ImagePath(card));
+                }
+
+                return;
+            }
+
+            TMP_Text label = shown ? pending.GetComponentInChildren<TMP_Text>(true) : null;
+            if (!shown || label == null || !label.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(label.text))
+            {
+                throw new InvalidOperationException(
+                    "Dimmed grid preview has no pending tag locale=" + locale +
+                    " zone=" + zone +
+                    " path=" + ImagePath(card));
+            }
+
+            label.ForceMeshUpdate();
+            int visible = 0;
+            TMP_TextInfo info = label.textInfo;
+            if (info != null && info.characterInfo != null)
+            {
+                int count = Mathf.Min(info.characterCount, info.characterInfo.Length);
+                for (int c = 0; c < count; c++)
+                {
+                    if (info.characterInfo[c].isVisible)
+                        visible++;
+                }
+            }
+
+            if (visible == 0)
+            {
+                throw new InvalidOperationException(
+                    "Pending preview tag draws no glyphs locale=" + locale +
+                    " zone=" + zone +
+                    " path=" + ImagePath(label.transform));
             }
         }
 

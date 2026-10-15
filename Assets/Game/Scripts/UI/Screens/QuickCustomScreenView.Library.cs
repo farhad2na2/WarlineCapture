@@ -27,6 +27,10 @@ namespace Game.UI.Runtime
         private const float LibraryGridContentTop = 2f;
         private const float LibraryGridContentBottom = 6f;
         private const float LibraryGridPreviewFloor = 0.40f;
+        private const float LibraryGridRoomyCardWidth = 230f;
+        private const float LibraryGridRoomyTextWidth = 210f;
+        private const float LibraryGridRoomyTitleHeight = 36f;
+        private const float LibraryGridRoomySubtitleHeight = 36f;
         private const float LibraryPinSubtitleHeight = 36f;
         private const int LibraryGridLogicalColumns = 6;
 
@@ -710,6 +714,7 @@ namespace Game.UI.Runtime
             float contentHeight = LibraryGridContentTop + stack + LibraryGridContentBottom;
             bool scrolls = contentHeight > viewport + 2f;
             float cardWidth = GridCardWidth(gridWidth, columns, scrolls ? LibraryGridRightPad + 16f : LibraryGridRightPad);
+            bool roomy = cardWidth >= LibraryGridRoomyCardWidth;
 
             PresentBattlefieldTabs(field.MapId, fa);
             string[] armies = { "G", "A", "C" };
@@ -744,8 +749,8 @@ namespace Game.UI.Runtime
             var slots = new GridCardSlots
             {
                 Preview = previewHeight,
-                Title = LibraryGridTitleHeight,
-                Subtitle = LibraryGridSubtitleHeight,
+                Title = roomy ? LibraryGridRoomyTitleHeight : LibraryGridTitleHeight,
+                Subtitle = roomy ? LibraryGridRoomySubtitleHeight : LibraryGridSubtitleHeight,
                 Medal = LibraryGridMedalSize
             };
             for (int row = 0; row < objectives; row++)
@@ -900,15 +905,8 @@ namespace Game.UI.Runtime
                 Mathf.Max(0, count - 1) * LibraryGridRowGap;
             float fitted = available / count;
             float minCard = chrome / (1f - LibraryGridPreviewFloor);
-            cardHeight = fitted >= minCard ? Mathf.Floor(fitted) : minCard;
-            float naturalPreview = cardHeight - chrome;
-            if (naturalPreview > cardHeight * 0.45f)
-            {
-                previewHeight = chrome * 0.45f / 0.55f;
-                cardHeight = previewHeight + chrome;
-            }
-            else
-                previewHeight = naturalPreview;
+            cardHeight = fitted >= minCard ? fitted : minCard;
+            previewHeight = Mathf.Max(1f, cardHeight - chrome);
         }
 
         private static float GridCardWidth(float gridWidth, int columns, float rightPad)
@@ -940,18 +938,21 @@ namespace Game.UI.Runtime
         {
             if (subtitle == null)
                 return;
-            float floor = singleLine ? ReferenceSubtitleFloor() : 14f;
-            float max = singleLine ? Mathf.Max(20f, floor) : 16f;
+            float textWidth = subtitle.rectTransform != null ? subtitle.rectTransform.sizeDelta.x : 0f;
+            bool roomy = !singleLine && textWidth >= LibraryGridRoomyTextWidth;
+            float floor = singleLine ? ReferenceSubtitleFloor() : roomy ? 16f : 14f;
+            float max = singleLine ? Mathf.Max(20f, floor) : roomy ? 20f : 16f;
             subtitle.color = new Color(0.9f, 0.93f, 0.9f, 1f);
             SetCopy(subtitle, copy, floor, max);
             subtitle.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             subtitle.isRightToLeftText = fa && ContainsArabicScript(copy);
-            subtitle.textWrappingMode = singleLine ? TextWrappingModes.NoWrap : TextWrappingModes.Normal;
-            subtitle.overflowMode = singleLine ? TextOverflowModes.Overflow : TextOverflowModes.Ellipsis;
+            bool oneLine = singleLine || roomy;
+            subtitle.textWrappingMode = oneLine ? TextWrappingModes.NoWrap : TextWrappingModes.Normal;
+            subtitle.overflowMode = oneLine ? TextOverflowModes.Overflow : TextOverflowModes.Ellipsis;
             subtitle.enableAutoSizing = true;
             subtitle.fontSizeMin = floor;
             subtitle.fontSizeMax = max;
-            subtitle.maxVisibleLines = singleLine ? 1 : 2;
+            subtitle.maxVisibleLines = oneLine ? 1 : 2;
             V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(floor, max);
@@ -1034,6 +1035,7 @@ namespace Game.UI.Runtime
             {
                 Texture2D shown = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
                 PlaceCoverPreview(preview, width, previewHeight, shown, dimmed);
+                MarkPendingPreview(button.transform, fa, dimmed, width, previewHeight);
             }
             preview.transform.SetAsFirstSibling();
             var scrim = new GameObject("FooterScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -1127,6 +1129,7 @@ namespace Game.UI.Runtime
             PlaceCoverPreview(preview, width, previewHeight, gridPreview, dimmed);
             preview.transform.SetAsFirstSibling();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            MarkPendingPreview(rect, fa, dimmed, width, previewHeight);
             SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string objectiveLabel);
             SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
             SkirmishBattleLibraryArt.ProfileCopy(start, fa, out string startLabel);
@@ -1145,6 +1148,36 @@ namespace Game.UI.Runtime
             ShowCardSubtitle(subtitle, detail, fa, false);
             AddMedalIcons(rect, SkirmishMedalMask.None, 4f, textY + titleHeight + subtitleHeight + LibraryGridMedalGap, medalSize);
             return rect;
+        }
+
+        private void MarkPendingPreview(Transform card, bool fa, bool dimmed, float width, float previewHeight)
+        {
+            if (!dimmed || card == null || previewHeight < 24f)
+                return;
+            const float bar = 20f;
+            var tag = new GameObject("PreviewPending", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            tag.transform.SetParent(card, false);
+            PlaceTopLeft(tag.rectTransform, 0f, previewHeight - bar, width, bar);
+            tag.color = new Color(0.10f, 0.07f, 0.04f, 0.92f);
+            tag.raycastTarget = false;
+            var label = CreateLabel(tag.transform, "PendingLabel", 11f);
+            Stretch(label.rectTransform, 6f, 6f, 1f, 1f);
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = new Color(0.96f, 0.86f, 0.55f, 1f);
+            label.isRightToLeftText = fa;
+            SetCopy(label, fa ? "پیش‌نمایش در انتظار" : "Preview pending", 9f, 12f);
+            label.alignment = TextAlignmentOptions.Center;
+            label.isRightToLeftText = fa;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Overflow;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 9f;
+            label.fontSizeMax = 12f;
+            label.maxVisibleLines = 1;
+            V3LocalizedTextBindingView binding = label.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(9f, 12f);
+            tag.transform.SetAsLastSibling();
         }
 
         private void AddNewTag(Transform parent, bool fa, float width)
@@ -4031,11 +4064,24 @@ namespace Game.UI.Runtime
             SetCopy(scenarioDescription, copy, 15f, 22f);
         }
 
+        private static bool IsGridLibraryCard(TMP_Text text)
+        {
+            Transform node = text != null ? text.transform.parent : null;
+            while (node != null)
+            {
+                if (node.name.StartsWith("ZoneRow_", StringComparison.Ordinal))
+                    return true;
+                node = node.parent;
+            }
+
+            return false;
+        }
+
         private static bool RelaxesLibraryFloor(TMP_Text text)
         {
             if (text == null)
                 return false;
-            if (text.name == "Subtitle" || text.name.StartsWith("Column_", StringComparison.Ordinal))
+            if (text.name == "Subtitle" || text.name == "PendingLabel" || text.name.StartsWith("Column_", StringComparison.Ordinal))
                 return true;
             string parent = text.transform.parent != null ? text.transform.parent.name : string.Empty;
             return text.name == "Caption" && parent.StartsWith("Slot", StringComparison.Ordinal);
@@ -4903,16 +4949,32 @@ namespace Game.UI.Runtime
                     footerOwner.name == "BackButton");
                 bool cardTitle = text.name == "Title" &&
                     (text.transform.parent.GetComponent<Button>() != null || parentName == "EmptyCell");
-                if (subtitle)
+                if (text.name == "PendingLabel")
                 {
-                    float box = text.rectTransform != null ? text.rectTransform.sizeDelta.y : 0f;
-                    bool gridSubtitle = box >= 40f;
-                    float floor = gridSubtitle ? 14f : ReferenceSubtitleFloor();
-                    float max = gridSubtitle ? 16f : Mathf.Max(20f, floor);
-                    RelaxLibraryText(text, floor, max, gridSubtitle);
+                    text.alignment = TextAlignmentOptions.Center;
+                    text.isRightToLeftText = fa;
+                    text.textWrappingMode = TextWrappingModes.NoWrap;
+                    text.overflowMode = TextOverflowModes.Overflow;
+                    text.enableAutoSizing = true;
+                    text.fontSizeMin = 9f;
+                    text.fontSizeMax = 12f;
+                    text.maxVisibleLines = 1;
+                    V3LocalizedTextBindingView pendingBinding = text.GetComponent<V3LocalizedTextBindingView>();
+                    if (pendingBinding != null)
+                        pendingBinding.ConfigureFontBounds(9f, 12f);
+                }
+                else if (subtitle)
+                {
+                    float width = text.rectTransform != null ? text.rectTransform.sizeDelta.x : 0f;
+                    bool gridCard = IsGridLibraryCard(text);
+                    bool roomy = gridCard && width >= LibraryGridRoomyTextWidth;
+                    bool wrappedGrid = gridCard && !roomy;
+                    float floor = wrappedGrid ? 14f : roomy ? 16f : ReferenceSubtitleFloor();
+                    float max = wrappedGrid ? 16f : roomy ? 20f : Mathf.Max(20f, floor);
+                    RelaxLibraryText(text, floor, max, wrappedGrid);
                     text.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                     text.isRightToLeftText = fa && ContainsArabicScript(text.text);
-                    if (gridSubtitle)
+                    if (wrappedGrid)
                     {
                         text.textWrappingMode = TextWrappingModes.Normal;
                         text.overflowMode = TextOverflowModes.Ellipsis;

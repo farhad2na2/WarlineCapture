@@ -283,6 +283,7 @@ namespace Game.Editor
                 texts[i].ForceMeshUpdate();
             SkirmishBattleLibraryCapture.RejectMissingGlyphs(view.gameObject);
             SkirmishBattleLibraryCapture.RejectUntranslatedFa(view.gameObject, path);
+            SkirmishBattleLibraryCapture.RejectEmptyCardSubtitles(view.gameObject);
             SkirmishBattleLibraryCapture.RejectCollapsedLayout(view.gameObject);
             SkirmishBattleLibraryCapture.RejectBlankImages(view.gameObject, state);
             SkirmishBattleLibraryCapture.RejectExtraLibraryRoots();

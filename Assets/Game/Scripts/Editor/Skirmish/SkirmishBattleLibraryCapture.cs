@@ -174,6 +174,7 @@ namespace Game.Editor
                     text.ForceMeshUpdate();
                 RejectMissingGlyphs(instance);
                 RejectUntranslatedFa(instance, path);
+                RejectEmptyCardSubtitles(instance);
                 RejectBlankImages(instance, state);
                 RejectExtraLibraryRoots();
                 if (notch && safeFrame != null)
@@ -360,6 +361,49 @@ namespace Game.Editor
             }
 
             throw new InvalidOperationException("FA shot has no Arabic-script glyphs: " + path);
+        }
+
+        internal static void RejectEmptyCardSubtitles(GameObject root)
+        {
+            if (root == null)
+                return;
+            string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
+            TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null || text.name != "Subtitle" || !text.gameObject.activeInHierarchy)
+                    continue;
+                Transform parent = text.transform.parent;
+                if (parent == null || !parent.gameObject.activeInHierarchy)
+                    continue;
+                bool card = parent.GetComponent<UnityEngine.UI.Button>() != null || parent.name == "EmptyCell";
+                if (!card)
+                    continue;
+                string value = text.text;
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new InvalidOperationException(
+                        "Visible card subtitle is empty locale=" + locale + " path=" + ImagePath(text.transform));
+                text.ForceMeshUpdate();
+                int visible = 0;
+                TMP_TextInfo info = text.textInfo;
+                if (info != null && info.characterInfo != null)
+                {
+                    int count = Mathf.Min(info.characterCount, info.characterInfo.Length);
+                    for (int c = 0; c < count; c++)
+                    {
+                        if (info.characterInfo[c].isVisible)
+                            visible++;
+                    }
+                }
+
+                if (visible == 0)
+                {
+                    string shown = value.Length > 48 ? value.Substring(0, 48) : value;
+                    throw new InvalidOperationException(
+                        "Visible card subtitle draws no glyphs locale=" + locale + " path=" + ImagePath(text.transform) + " text=" + shown);
+                }
+            }
         }
 
         private static bool IsArabicScript(char value)

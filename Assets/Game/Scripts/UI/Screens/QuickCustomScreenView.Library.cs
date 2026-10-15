@@ -15,9 +15,13 @@ namespace Game.UI.Runtime
         private const float LibraryPinWidth = 252f;
         private const float LibraryPinHeight = 168f;
         private const float LibraryGridCardWidth = 156f;
-        private const float LibraryGridCardHeight = 148f;
+        private const float LibraryGridCardHeight = 154f;
         private const float LibraryGridOriginX = 92f;
         private const float LibraryGridStride = 164f;
+        private const float LibraryGridPreviewHeight = 36f;
+        private const float LibraryGridTitleHeight = 34f;
+        private const float LibraryGridSubtitleHeight = 56f;
+        private const float LibraryPinSubtitleHeight = 36f;
 
         private string _armyFilter = string.Empty;
         private string _startFilter = string.Empty;
@@ -767,22 +771,22 @@ namespace Game.UI.Runtime
                 binding.ConfigureFontBounds(12f, 15f);
         }
 
-        private void ShowCardSubtitle(TMP_Text subtitle, string copy, bool fa)
+        private void ShowCardSubtitle(TMP_Text subtitle, string copy, bool fa, bool singleLine)
         {
             if (subtitle == null)
                 return;
             float floor = ReferenceSubtitleFloor();
-            float max = Mathf.Max(18f, floor);
+            float max = Mathf.Max(20f, floor);
             subtitle.color = new Color(0.9f, 0.93f, 0.9f, 1f);
             SetCopy(subtitle, copy, floor, max);
             subtitle.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             subtitle.isRightToLeftText = fa && ContainsArabicScript(copy);
-            subtitle.textWrappingMode = TextWrappingModes.Normal;
-            subtitle.overflowMode = TextOverflowModes.Ellipsis;
+            subtitle.textWrappingMode = singleLine ? TextWrappingModes.NoWrap : TextWrappingModes.Normal;
+            subtitle.overflowMode = singleLine ? TextOverflowModes.Overflow : TextOverflowModes.Ellipsis;
             subtitle.enableAutoSizing = true;
             subtitle.fontSizeMin = floor;
             subtitle.fontSizeMax = max;
-            subtitle.maxVisibleLines = 2;
+            subtitle.maxVisibleLines = singleLine ? 1 : 2;
             V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(floor, max);
@@ -841,11 +845,11 @@ namespace Game.UI.Runtime
             }
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            const float titleHeight = 22f;
-            float subtitleHeight = pin ? 24f : 48f;
-            const float badgeHeight = 22f;
-            float stack = titleHeight + subtitleHeight + badgeHeight + 14f;
-            float previewHeight = Mathf.Max(48f, height - stack);
+            float titleHeight = pin ? 22f : LibraryGridTitleHeight;
+            float subtitleHeight = pin ? LibraryPinSubtitleHeight : LibraryGridSubtitleHeight;
+            float previewHeight = pin
+                ? Mathf.Max(48f, height - (titleHeight + subtitleHeight + 22f + 14f))
+                : LibraryGridPreviewHeight;
             bool playable = card.Access == SkirmishCardAccess.Playable;
             TintButton(button, card.IsSelected, playable, true);
             button.interactable = !string.IsNullOrEmpty(card.ScenarioId);
@@ -869,7 +873,7 @@ namespace Game.UI.Runtime
             scrim.raycastTarget = false;
             var badge = new GameObject("ScenarioBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             badge.transform.SetParent(button.transform, false);
-            float badgeX = fa && pin ? width - 62f : 4f;
+            float badgeX = fa ? width - 62f : 4f;
             PlaceTopLeft(badge.rectTransform, badgeX, 4f, 58f, 22f);
             badge.color = new Color(0.05f, 0.07f, 0.08f, 0.88f);
             badge.raycastTarget = false;
@@ -891,13 +895,13 @@ namespace Game.UI.Runtime
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Overflow;
             title.isRightToLeftText = fa;
-            SetCopy(title, objectiveLabel, 14f, 18f);
+            SetCopy(title, objectiveLabel, pin ? 14f : 20f, pin ? 18f : 22f);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.isRightToLeftText = fa && ContainsArabicScript(objectiveLabel);
             var subtitle = CreateLabel(button.transform, "Subtitle", 16f);
             PlaceTopLeft(subtitle.rectTransform, 6f, textY + titleHeight, width - 12f, subtitleHeight);
             string subtitleCopy = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
-            ShowCardSubtitle(subtitle, subtitleCopy, fa);
+            ShowCardSubtitle(subtitle, subtitleCopy, fa, pin);
             if (card.IsRecommended)
             {
                 var recommended = CreateLabel(button.transform, "Recommended", 12f);
@@ -937,23 +941,26 @@ namespace Game.UI.Runtime
             plate.raycastTarget = false;
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(rect, false);
-            PlaceFittedPreview(preview, ScenarioPreviewKey(previewKey), 3f, 3f, LibraryGridCardWidth - 6f, 56f);
+            PlaceFittedPreview(preview, ScenarioPreviewKey(previewKey), 3f, 3f, LibraryGridCardWidth - 6f, LibraryGridPreviewHeight);
             preview.transform.SetAsFirstSibling();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string objectiveLabel);
             SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
             SkirmishBattleLibraryArt.ProfileCopy(start, fa, out string startLabel);
             string detail = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
-            var title = CreateLabel(rect, "Title", 14f);
-            PlaceTopLeft(title.rectTransform, 6f, 60f, LibraryGridCardWidth - 12f, 22f);
+            float textY = LibraryGridPreviewHeight + 4f;
+            var title = CreateLabel(rect, "Title", 20f);
+            PlaceTopLeft(title.rectTransform, 6f, textY, LibraryGridCardWidth - 12f, LibraryGridTitleHeight);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Overflow;
-            SetCopy(title, objectiveLabel, 14f, 18f);
-            var subtitle = CreateLabel(rect, "Subtitle", 16f);
-            PlaceTopLeft(subtitle.rectTransform, 6f, 82f, LibraryGridCardWidth - 12f, 48f);
-            ShowCardSubtitle(subtitle, detail, fa);
-            AddMedalIcons(rect, SkirmishMedalMask.None, 6f, 130f, 18f);
+            SetCopy(title, objectiveLabel, 20f, 22f);
+            title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            title.isRightToLeftText = fa && ContainsArabicScript(objectiveLabel);
+            var subtitle = CreateLabel(rect, "Subtitle", 17f);
+            PlaceTopLeft(subtitle.rectTransform, 6f, textY + LibraryGridTitleHeight, LibraryGridCardWidth - 12f, LibraryGridSubtitleHeight);
+            ShowCardSubtitle(subtitle, detail, fa, false);
+            AddMedalIcons(rect, SkirmishMedalMask.None, 6f, textY + LibraryGridTitleHeight + LibraryGridSubtitleHeight + 2f, 18f);
             return rect;
         }
 
@@ -2754,7 +2761,7 @@ namespace Game.UI.Runtime
                 ?? GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout != null && layout.LastAppliedScale > 0.05f)
                 scale = layout.LastAppliedScale;
-            return Mathf.Clamp(16f / scale, 16f, 20f);
+            return Mathf.Clamp(17f / scale, 17f, 22f);
         }
 
         private RectTransform EnsureSoftShadow(RectTransform panel, float offsetX, float offsetY)
@@ -4365,7 +4372,8 @@ namespace Game.UI.Runtime
                 }
 
                 preview.gameObject.SetActive(true);
-                preview.texture = texture;
+                Texture poster = SkirmishLibraryPreviewAssets.PosterGrade(texture);
+                preview.texture = poster != null ? poster : texture;
                 preview.color = Color.white;
                 preview.raycastTarget = false;
                 preview.enabled = true;
@@ -4651,18 +4659,48 @@ namespace Game.UI.Runtime
                     footerOwner == _libraryFavouritesButton ||
                     footerOwner == _libraryAdvancedButton ||
                     footerOwner.name == "BackButton");
-                bool cardTitle = text.name == "Title" && text.transform.parent.GetComponent<Button>() != null;
+                bool cardTitle = text.name == "Title" &&
+                    (text.transform.parent.GetComponent<Button>() != null || parentName == "EmptyCell");
                 if (subtitle)
                 {
                     float floor = ReferenceSubtitleFloor();
-                    RelaxLibraryText(text, floor, Mathf.Max(18f, floor), true);
-                    text.overflowMode = TextOverflowModes.Ellipsis;
-                    text.maxVisibleLines = 2;
+                    float box = text.rectTransform != null ? text.rectTransform.sizeDelta.y : 0f;
+                    bool singleLine = box > 0f && box < 48f;
+                    RelaxLibraryText(text, floor, Mathf.Max(20f, floor), !singleLine);
                     text.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                     text.isRightToLeftText = fa && ContainsArabicScript(text.text);
+                    if (singleLine)
+                    {
+                        text.textWrappingMode = TextWrappingModes.NoWrap;
+                        text.overflowMode = TextOverflowModes.Overflow;
+                        text.maxVisibleLines = 1;
+                    }
+                    else
+                    {
+                        text.textWrappingMode = TextWrappingModes.Normal;
+                        text.overflowMode = TextOverflowModes.Ellipsis;
+                        text.maxVisibleLines = 2;
+                    }
+
+                    V3LocalizedTextBindingView subtitleBinding = text.GetComponent<V3LocalizedTextBindingView>();
+                    if (subtitleBinding != null)
+                        subtitleBinding.ConfigureFontBounds(floor, Mathf.Max(20f, floor));
                 }
                 else if (cardTitle)
                 {
+                    float titleWidth = text.rectTransform != null ? text.rectTransform.sizeDelta.x : 0f;
+                    if (titleWidth > 40f && titleWidth < 180f)
+                    {
+                        text.enableAutoSizing = true;
+                        text.fontSizeMin = 20f;
+                        text.fontSizeMax = 22f;
+                        if (text.fontSize < 20f)
+                            text.fontSize = 20f;
+                        V3LocalizedTextBindingView titleBinding = text.GetComponent<V3LocalizedTextBindingView>();
+                        if (titleBinding != null)
+                            titleBinding.ConfigureFontBounds(20f, 22f);
+                    }
+
                     text.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                     text.isRightToLeftText = fa && ContainsArabicScript(text.text);
                     text.textWrappingMode = TextWrappingModes.NoWrap;

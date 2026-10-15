@@ -9,8 +9,9 @@ namespace Game.Editor
     /// <summary>
     /// Paints one warm theatre plate from the existing Campaign plates. The colour
     /// fill is averaged to a quarter scale, blurred there, then posterised to the
-    /// five bright amber steps with hard thresholds and no dither. Nearest upscale
-    /// keeps each step flat. Borders are drawn afterwards at full resolution.
+    /// five bright amber steps with hard thresholds and no dither. A bilinear
+    /// upscale and a second hard grade turn the block edges into smooth contours
+    /// while the fields stay flat. Borders are drawn afterwards at full resolution.
     /// It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
@@ -330,63 +331,7 @@ namespace Game.Editor
 
         private static Color32[] FlattenFill(Color32[] source, int width, int height)
         {
-            int smallWidth = Mathf.Max(1, width / 4);
-            int smallHeight = Mathf.Max(1, height / 4);
-            Color32[] small = DownscaleBox(source, width, height, smallWidth, smallHeight);
-            small = BoxBlur(small, smallWidth, smallHeight, 3);
-            for (int i = 0; i < small.Length; i++)
-                small[i] = Grade(small[i]);
-            return UpscaleNearest(small, smallWidth, smallHeight, width, height);
-        }
-
-        private static Color32[] DownscaleBox(Color32[] source, int width, int height, int smallWidth, int smallHeight)
-        {
-            var dest = new Color32[smallWidth * smallHeight];
-            for (int y = 0; y < smallHeight; y++)
-            {
-                int y0 = y * height / smallHeight;
-                int y1 = Mathf.Max(y0 + 1, (y + 1) * height / smallHeight);
-                for (int x = 0; x < smallWidth; x++)
-                {
-                    int x0 = x * width / smallWidth;
-                    int x1 = Mathf.Max(x0 + 1, (x + 1) * width / smallWidth);
-                    int red = 0;
-                    int green = 0;
-                    int blue = 0;
-                    int count = 0;
-                    for (int sy = y0; sy < y1; sy++)
-                    {
-                        for (int sx = x0; sx < x1; sx++)
-                        {
-                            Color32 sample = source[sy * width + sx];
-                            red += sample.r;
-                            green += sample.g;
-                            blue += sample.b;
-                            count++;
-                        }
-                    }
-
-                    dest[y * smallWidth + x] = new Color32((byte)(red / count), (byte)(green / count), (byte)(blue / count), 255);
-                }
-            }
-
-            return dest;
-        }
-
-        private static Color32[] UpscaleNearest(Color32[] source, int smallWidth, int smallHeight, int width, int height)
-        {
-            var dest = new Color32[width * height];
-            for (int y = 0; y < height; y++)
-            {
-                int sy = Mathf.Clamp(y * smallHeight / height, 0, smallHeight - 1);
-                for (int x = 0; x < width; x++)
-                {
-                    int sx = Mathf.Clamp(x * smallWidth / width, 0, smallWidth - 1);
-                    dest[y * width + x] = source[sy * smallWidth + sx];
-                }
-            }
-
-            return dest;
+            return SkirmishLibraryPreviewAssets.PosterizeFill(source, width, height, 3);
         }
 
         private static void WriteZoneWindow(string folder, string mapId, byte regionIndex, byte[] owner, Color32[] composite)
@@ -406,21 +351,7 @@ namespace Game.Editor
 
         private static Color32 Grade(Color32 sample)
         {
-            float luminance = (sample.r * 0.30f + sample.g * 0.52f + sample.b * 0.18f) / 255f;
-            int step = luminance < 0.38f ? 0 : luminance < 0.52f ? 1 : luminance < 0.64f ? 2 : luminance < 0.76f ? 3 : 4;
-            return PosterStep(step);
-        }
-
-        private static Color32 PosterStep(int step)
-        {
-            switch (step)
-            {
-                case 0: return new Color32(90, 28, 10, 255);
-                case 1: return new Color32(190, 90, 22, 255);
-                case 2: return new Color32(220, 132, 32, 255);
-                case 3: return new Color32(236, 168, 64, 255);
-                default: return new Color32(252, 214, 140, 255);
-            }
+            return SkirmishLibraryPreviewAssets.Grade(sample);
         }
 
         private static void WriteBlur(string folder, string fileName, Color32[] plate, Vector2Int plateSize)

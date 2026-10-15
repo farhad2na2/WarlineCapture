@@ -120,7 +120,12 @@ namespace Game.UI.Runtime
         public const float CardReach = 120f;
         /// <summary>Halo is drawn this far outside the hex vertices. The clip mask cuts anything past the plate.</summary>
         public const float HaloReach = 22f;
-        private const float MedalGap = 4f;
+        /// <summary>Laid-out gap. The check rejects anything under <see cref="MedalGapMinimum"/>.</summary>
+        private const float MedalGap = 8f;
+        public const float MedalGapMinimum = 6f;
+        public const float PortraitMaxHeight = 212f;
+        public const float NameFontCeiling = 22f;
+        public const float NameFontFloor = 16f;
 
         public static Vec2[] DistrictHex(string mapId, float frameWidth, float frameHeight)
         {
@@ -260,6 +265,22 @@ namespace Game.UI.Runtime
             return new Box(x, margin, width, height);
         }
 
+        /// <summary>
+        /// Map viewport. With the reserve off this is the whole plate. With the reserve on it is
+        /// the open rect beside the detail panel, and the painting is cover-fit into that rect.
+        /// </summary>
+        public static Box OpenViewport(float plateWidth, float plateHeight, bool fa, bool reserveOn)
+        {
+            if (plateWidth < 2f || plateHeight < 2f)
+                return new Box(0f, 0f, Math.Max(2f, plateWidth), Math.Max(2f, plateHeight));
+            Box detail = DetailRect(plateWidth, plateHeight, fa, reserveOn);
+            if (detail.W < 1f)
+                return new Box(0f, 0f, plateWidth, plateHeight);
+            if (fa)
+                return new Box(detail.XMax, 0f, Math.Max(2f, plateWidth - detail.XMax), plateHeight);
+            return new Box(0f, 0f, Math.Max(2f, detail.XMin), plateHeight);
+        }
+
         public static Box ZoomHintRect(float plateWidth, float plateHeight)
         {
             float top = plateHeight - ZoomHintTopGap;
@@ -290,6 +311,8 @@ namespace Game.UI.Runtime
                 return;
             bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
             int count = MapIds.Length;
+            bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            GrowCardsForNames(cards, hexes, count, detail, hasCue ? cue : default, hasHint ? hint : default, plateHeight, fa, wideFrame);
             if (hexes == null)
                 hexes = new Vec2[count][];
             if (cards == null)
@@ -337,7 +360,8 @@ namespace Game.UI.Runtime
                             " card=ZoneCard_" + mapId + ".");
                     }
 
-                    NoteName(violations, cards[i], mapId, fa, locale);
+                    float band = NameBandHeight(cards[i], cards, i, detail, hasCue ? cue : default, hasHint ? hint : default, plateHeight);
+                    NoteName(violations, cards[i], hexes[i], hexes, mapId, fa, wideFrame, band, locale);
                     NoteLeader(violations, pins[i], cards[i], detail, mapId, locale);
                     if (hasCue)
                         NoteLeaderCue(violations, pins[i], cards[i], cue, mapId, locale);
@@ -360,7 +384,20 @@ namespace Game.UI.Runtime
                     }
                 }
 
-                float expected = HexAspect(mapId, plateWidth, plateHeight);
+                float aspectWidth = plateWidth;
+                float aspectHeight = plateHeight;
+                if (detail.W > 1f)
+                {
+                    bool panelOnLeft = detail.Center.X < plateWidth * 0.5f;
+                    Box view = OpenViewport(plateWidth, plateHeight, panelOnLeft, true);
+                    if (view.W > 2f && view.H > 2f)
+                    {
+                        aspectWidth = view.W;
+                        aspectHeight = view.H;
+                    }
+                }
+
+                float expected = HexAspect(mapId, aspectWidth, aspectHeight);
                 float measured = MeasuredHexAspect(hexes[i]);
                 if (expected >= 0.2f && measured > 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
                 {
@@ -454,6 +491,11 @@ namespace Game.UI.Runtime
 
             if (detail.W > 1f)
             {
+                Box glowZone = new Box(
+                    detail.X - HaloReach,
+                    detail.Y - HaloReach,
+                    detail.W + HaloReach * 2f,
+                    detail.H + HaloReach * 2f);
                 for (int i = 0; i < count; i++)
                 {
                     if (cards[i].W > 1f && Overlaps(cards[i], detail, 0f))
@@ -461,6 +503,29 @@ namespace Game.UI.Runtime
                         violations.Add(
                             "Theatre zone card intersects the detail panel locale=" + locale +
                             " card=ZoneCard_" + MapIds[i] + ".");
+                    }
+
+                    if (pins[i].W > 1f && Overlaps(pins[i], detail, 0f))
+                    {
+                        violations.Add(
+                            "Theatre pin intersects the detail panel locale=" + locale +
+                            " pin=ZonePin_" + MapIds[i] + ".");
+                    }
+
+                    if (hexes[i] == null)
+                        continue;
+                    if (PolygonHitsRect(hexes[i], detail))
+                    {
+                        violations.Add(
+                            "Theatre district hex intersects the detail panel locale=" + locale +
+                            " district=" + MapIds[i] + ".");
+                    }
+
+                    if (PolygonHitsRect(hexes[i], glowZone))
+                    {
+                        violations.Add(
+                            "Theatre district glow intersects the detail panel locale=" + locale +
+                            " district=" + MapIds[i] + ".");
                     }
                 }
             }
@@ -554,63 +619,212 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static void NoteName(IList<string> violations, Box card, string mapId, bool fa, string locale)
+        private static void NoteName(
+            IList<string> violations,
+            Box card,
+            Vec2[] own,
+            Vec2[][] districts,
+            string mapId,
+            bool fa,
+            bool wide,
+            float bandHeight,
+            string locale)
         {
             string title = ZoneTitle(mapId, fa);
             float width = Math.Max(1f, card.W - 12f);
-            float height = card.H >= 190f ? 48f : 40f;
-            if (NameFits(title, width, height, out float preferred))
+            if (TryFitZoneName(title, card, bandHeight, wide, own, districts, out _, out float nameHeight, out _))
                 return;
             violations.Add(
                 "Theatre zone name draws past its box for " + mapId + " locale=" + locale +
-                " preferred=" + preferred.ToString("0.0", CultureInfo.InvariantCulture) +
+                " preferred=" + nameHeight.ToString("0.0", CultureInfo.InvariantCulture) +
                 " width=" + width.ToString("0.0", CultureInfo.InvariantCulture) +
                 " text=" + title + ".");
         }
 
-        private static bool NameFits(string text, float width, float height, out float preferred)
+        /// <summary>
+        /// Two-line district title. The name rect is the wrapped preferred height. The portrait
+        /// may grow up to its band, and the font steps down to <see cref="NameFontFloor"/>.
+        /// </summary>
+        public static bool TryFitZoneName(
+            string text,
+            float cardWidth,
+            float cardHeight,
+            float bandHeight,
+            bool wide,
+            out float fontSize,
+            out float nameHeight,
+            out float grownHeight)
         {
-            preferred = 0f;
+            return TryFitZoneName(text, new Box(0f, 0f, cardWidth, cardHeight), bandHeight, wide, null, null, out fontSize, out nameHeight, out grownHeight);
+        }
+
+        private static bool TryFitZoneName(
+            string text,
+            Box card,
+            float bandHeight,
+            bool wide,
+            Vec2[] own,
+            Vec2[][] districts,
+            out float fontSize,
+            out float nameHeight,
+            out float grownHeight)
+        {
+            fontSize = NameFontFloor;
+            nameHeight = 0f;
+            grownHeight = card.H;
             if (string.IsNullOrEmpty(text))
                 return true;
-            for (float size = 22f; size >= 16f; size -= 1f)
+            float width = Math.Max(1f, card.W - 12f);
+            float factor = NameLineFactor(text);
+            float band = Math.Max(card.H, Math.Min(PortraitMaxHeight, bandHeight));
+            for (float size = NameFontCeiling; size >= NameFontFloor - 0.01f; size -= 1f)
             {
-                float longest = 0f;
-                float line = 0f;
-                int lines = 1;
-                string[] words = text.Split(' ');
-                bool wordFits = true;
-                for (int i = 0; i < words.Length; i++)
+                if (!MeasureName(text, width, size, out int lines, out float longest, out float word))
                 {
-                    float word = TextWidth(words[i], size);
-                    if (word > width + 2f)
-                    {
-                        preferred = word;
-                        wordFits = false;
-                        break;
-                    }
-
-                    float next = line <= 0f ? word : line + TextWidth(" ", size) + word;
-                    if (line > 0f && next > width + 2f)
-                    {
-                        lines++;
-                        line = word;
-                    }
-                    else
-                    {
-                        line = next;
-                    }
-
-                    if (line > longest)
-                        longest = line;
+                    nameHeight = word;
+                    continue;
                 }
 
-                preferred = longest;
-                if (wordFits && lines <= 2 && longest <= width + 2f && lines * (size + 2f) <= height + 2f)
-                    return true;
+                float needed = lines * size * factor + 2f;
+                float grown = card.H;
+                if (MaxNameBoxHeight(grown, wide) + 1f < needed)
+                {
+                    grown = band;
+                    if (MaxNameBoxHeight(grown, wide) + 1f < needed)
+                    {
+                        nameHeight = needed;
+                        fontSize = size;
+                        grownHeight = grown;
+                        continue;
+                    }
+
+                    while (grown - 1f >= card.H && MaxNameBoxHeight(grown - 1f, wide) + 1f >= needed)
+                        grown -= 1f;
+                }
+
+                var grownBox = new Box(card.X, card.Y, card.W, grown);
+                if (own != null && districts != null && !SeatHolds(grownBox, own, districts))
+                    continue;
+                fontSize = size;
+                nameHeight = needed;
+                grownHeight = grown;
+                return longest <= width + 2f;
             }
 
             return false;
+        }
+
+        /// <summary>How far a top-left card may extend downward before it meets another seat, the cue, or the plate.</summary>
+        public static float NameBandHeight(Box card, Box[] cards, int index, Box detail, Box cue, Box hint, float plateHeight)
+        {
+            float bottom = plateHeight - Edge;
+            if (hint.W > 1f && RangesOverlap(card.XMin, card.XMax, hint.XMin, hint.XMax))
+                bottom = Math.Min(bottom, hint.YMin - 1f);
+            if (detail.W > 1f && RangesOverlap(card.XMin, card.XMax, detail.XMin, detail.XMax))
+                bottom = Math.Min(bottom, detail.YMin - 1f);
+            if (cue.W > 1f && RangesOverlap(card.XMin, card.XMax, cue.XMin, cue.XMax) && cue.YMin >= card.YMin - 1f)
+                bottom = Math.Min(bottom, cue.YMin - 12f);
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == index || cards[i].W < 1f)
+                        continue;
+                    if (!RangesOverlap(card.XMin - 12f, card.XMax + 12f, cards[i].XMin, cards[i].XMax))
+                        continue;
+                    if (cards[i].YMin + 1f < card.YMin)
+                        continue;
+                    bottom = Math.Min(bottom, cards[i].YMin - 12f);
+                }
+            }
+
+            float room = bottom - card.Y;
+            return Math.Max(card.H, Math.Min(PortraitMaxHeight, room));
+        }
+
+        /// <summary>Name-box height a portrait can give once the thumbnail keeps 44px and the ring keeps its size.</summary>
+        public static float MaxNameBoxHeight(float cardHeight, bool wide)
+        {
+            float ring = (cardHeight >= 190f ? 56f : 44f) + (wide ? 4f : 0f);
+            return cardHeight - 6f - 44f - 4f - ring - 4f - 6f;
+        }
+
+        private static void GrowCardsForNames(
+            Box[] cards,
+            Vec2[][] hexes,
+            int count,
+            Box detail,
+            Box cue,
+            Box hint,
+            float plateHeight,
+            bool fa,
+            bool wide)
+        {
+            if (cards == null)
+                return;
+            int n = Math.Min(count, cards.Length);
+            var bands = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                if (cards[i].W < 1f)
+                    continue;
+                bands[i] = NameBandHeight(cards[i], cards, i, detail, cue, hint, plateHeight);
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                if (cards[i].W < 1f)
+                    continue;
+                string title = ZoneTitle(MapIds[i], fa);
+                Vec2[] own = hexes != null && i < hexes.Length ? hexes[i] : null;
+                if (!TryFitZoneName(title, cards[i], bands[i], wide, own, hexes, out _, out _, out float grown))
+                    continue;
+                if (grown <= cards[i].H + 0.5f)
+                    continue;
+                cards[i] = new Box(cards[i].X, cards[i].Y, cards[i].W, grown);
+            }
+        }
+
+        private static float NameLineFactor(string text)
+        {
+            return 1.25f;
+        }
+
+        private static bool MeasureName(string text, float width, float size, out int lines, out float longest, out float wordWidth)
+        {
+            lines = 1;
+            longest = 0f;
+            wordWidth = 0f;
+            string[] words = text.Split(' ');
+            float line = 0f;
+            for (int i = 0; i < words.Length; i++)
+            {
+                float word = TextWidth(words[i], size);
+                if (word > wordWidth)
+                    wordWidth = word;
+                if (word > width + 2f)
+                    return false;
+                float next = line <= 0f ? word : line + TextWidth(" ", size) + word;
+                if (line > 0f && next > width + 2f)
+                {
+                    lines++;
+                    line = word;
+                }
+                else
+                {
+                    line = next;
+                }
+
+                if (line > longest)
+                    longest = line;
+            }
+
+            return lines <= 2;
+        }
+
+        private static bool RangesOverlap(float a0, float a1, float b0, float b1)
+        {
+            return a0 < b1 && b0 < a1;
         }
 
         private static string ZoneTitle(string mapId, bool fa)
@@ -743,7 +957,7 @@ namespace Game.UI.Runtime
             {
                 StripMedal(plateWidth, fa, i, out _, out Box label, out Box count);
                 float gap = HorizontalGap(label, count);
-                if (gap < MedalGap)
+                if (gap < MedalGapMinimum)
                 {
                     violations.Add(
                         "Theatre medal label overlaps its count locale=" + locale +
@@ -902,6 +1116,59 @@ namespace Game.UI.Runtime
             }
         }
 
+        private static void ShiftSeats(Vec2[][] hexes, Box[] pins, Box[] cards, ref Box cue, float dx, float dy)
+        {
+            if (Math.Abs(dx) < 0.01f && Math.Abs(dy) < 0.01f)
+                return;
+            if (hexes != null)
+            {
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    if (hexes[i] == null)
+                        continue;
+                    for (int p = 0; p < hexes[i].Length; p++)
+                        hexes[i][p] = new Vec2(hexes[i][p].X + dx, hexes[i][p].Y + dy);
+                }
+            }
+
+            if (pins != null)
+            {
+                for (int i = 0; i < pins.Length; i++)
+                    pins[i] = ShiftBox(pins[i], dx, dy);
+            }
+
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                    cards[i] = ShiftBox(cards[i], dx, dy);
+            }
+
+            cue = ShiftBox(cue, dx, dy);
+        }
+
+        private static Box ShiftBox(Box box, float dx, float dy)
+        {
+            if (box.W < 1f && box.H < 1f)
+                return box;
+            return new Box(box.X + dx, box.Y + dy, box.W, box.H);
+        }
+
+        private static bool PolygonHitsRect(Vec2[] polygon, Box rect)
+        {
+            if (polygon == null || polygon.Length < 3 || rect.W < 1f || rect.H < 1f)
+                return false;
+            for (int i = 0; i < polygon.Length; i++)
+            {
+                Vec2 point = polygon[i];
+                if (point.X >= rect.XMin && point.X <= rect.XMax && point.Y >= rect.YMin && point.Y <= rect.YMax)
+                    return true;
+                if (SegmentHitsRect(point, polygon[(i + 1) % polygon.Length], rect))
+                    return true;
+            }
+
+            return PointInPolygon(rect.Center, polygon);
+        }
+
         private static bool Overlaps(Box left, Box right, float slop)
         {
             return left.XMin < right.XMax - slop && right.XMin < left.XMax - slop &&
@@ -941,28 +1208,52 @@ namespace Game.UI.Runtime
                 SelectedMapId = selectedMapId,
                 Seats = new Seat[MapIds.Length]
             };
-            Vec2[][] hexes = BuildAll(plateWidth, plateHeight);
+            Box view = OpenViewport(plateWidth, plateHeight, fa, reserveOn);
+            bool reframed = view.X > 0.5f || view.W < plateWidth - 0.5f;
+            float frameWidth = Math.Max(2f, view.W);
+            float frameHeight = Math.Max(2f, view.H);
+            Vec2[][] hexes = BuildAll(frameWidth, frameHeight, reframed);
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
-                pins[i] = PinBox(i, plateWidth, plateHeight);
+                pins[i] = PinBox(i, frameWidth, frameHeight, reframed);
                 layout.Seats[i].MapId = MapIds[i];
                 layout.Seats[i].Hex = hexes[i];
                 layout.Seats[i].Pin = pins[i];
             }
 
             Box detail = DetailRect(plateWidth, plateHeight, fa, reserveOn);
+            Box packDetail = reframed ? default : detail;
             int selected = IndexOf(selectedMapId);
             if (selected < 0)
                 selected = 0;
             Box[] placed = null;
             Box seatedCue = default;
-            TryPack(plateWidth, plateHeight, hexes, pins, detail, selected, out placed, out seatedCue);
+            TryPack(frameWidth, frameHeight, hexes, pins, packDetail, selected, out placed, out seatedCue);
+            if (reframed)
+                ShiftSeats(hexes, pins, placed, ref seatedCue, view.X, view.Y);
+            if (placed != null)
+            {
+                bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+                GrowCardsForNames(
+                    placed,
+                    hexes,
+                    MapIds.Length,
+                    detail,
+                    default,
+                    ZoomHintRect(plateWidth, plateHeight),
+                    plateHeight,
+                    fa,
+                    wide);
+            }
+
             bool cardsLegal = placed != null;
             if (placed == null)
                 placed = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
+                layout.Seats[i].Hex = hexes[i];
+                layout.Seats[i].Pin = pins[i];
                 layout.Seats[i].Card = placed[i];
                 layout.Seats[i].Legal = placed[i].W > 1f && SeatHolds(placed[i], hexes[i], hexes)
                     && Clears(placed[i], detail) && OnPlate(placed[i], plateWidth, plateHeight);
@@ -998,7 +1289,7 @@ namespace Game.UI.Runtime
                     && CueAccepted(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight);
             layout.Cue = cue;
             layout.CueNear = cueNear;
-            layout.HexAspectLegal = AspectsHold(hexes, plateWidth, plateHeight)
+            layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
                 && DistrictsLegal(hexes, pins, plateWidth, plateHeight);
             layout.LogLines = BuildLog(fa ? "fa" : "en", layout);
             return layout;
@@ -1064,6 +1355,11 @@ namespace Game.UI.Runtime
 
         private static Vec2[][] BuildAll(float frameWidth, float frameHeight)
         {
+            return BuildAll(frameWidth, frameHeight, false);
+        }
+
+        private static Vec2[][] BuildAll(float frameWidth, float frameHeight, bool plainCover)
+        {
             var placed = new Placement[MapIds.Length];
             var hexes = new Vec2[MapIds.Length][];
             for (int i = 0; i < MapIds.Length; i++)
@@ -1074,7 +1370,7 @@ namespace Game.UI.Runtime
                 float scale = FitInteriorScale(halfW, halfH, areaScale);
                 halfW *= scale;
                 halfH *= scale;
-                Box pin = PinBox(i, frameWidth, frameHeight);
+                Box pin = PinBox(i, frameWidth, frameHeight, plainCover);
                 Direction(i, out float dirX, out float dirY);
                 float shift = MaxShift(pin.Center.X, pin.Center.Y, halfW, halfH, dirX, dirY);
                 placed[i] = new Placement
@@ -1131,7 +1427,7 @@ namespace Game.UI.Runtime
             }
 
             for (int i = 0; i < placed.Length; i++)
-                ContainOutline(ref placed[i], frameWidth, frameHeight);
+                ContainOutline(ref placed[i], frameWidth, frameHeight, plainCover);
 
             for (int i = 0; i < placed.Length; i++)
                 hexes[i] = FlatHex(placed[i].Cx, placed[i].Cy, placed[i].Hw, placed[i].Hh);
@@ -1157,7 +1453,7 @@ namespace Game.UI.Runtime
         /// Pulls the hex into the map inset. Translation first, then a uniform shrink so the
         /// aspect stays on the authored ratio and the pin stays inside.
         /// </summary>
-        private static void ContainOutline(ref Placement placement, float frameWidth, float frameHeight)
+        private static void ContainOutline(ref Placement placement, float frameWidth, float frameHeight, bool plainCover)
         {
             float scale = 1f;
             for (int step = 0; step < 48; step++)
@@ -1170,6 +1466,8 @@ namespace Game.UI.Runtime
                 float minCy = edge + halfH;
                 float maxCy = frameHeight - edge - halfH;
                 Box hint = ZoomHintRect(frameWidth, frameHeight);
+                if (plainCover)
+                    hint = new Box(0f, hint.Y, frameWidth, hint.H);
                 float hintLimit = hint.YMin - 1f - halfH;
                 if (hintLimit < maxCy)
                     maxCy = hintLimit;
@@ -2133,8 +2431,13 @@ namespace Game.UI.Runtime
 
         private static Box PinBox(int index, float plateWidth, float plateHeight)
         {
-            float coverHeight = CoverFrameHeight(plateWidth, plateHeight);
-            Cover(plateWidth, plateHeight, out float u, out float v, out float cropW, out float cropH);
+            return PinBox(index, plateWidth, plateHeight, false);
+        }
+
+        private static Box PinBox(int index, float plateWidth, float plateHeight, bool plainCover)
+        {
+            float coverHeight = plainCover ? plateHeight : CoverFrameHeight(plateWidth, plateHeight);
+            CoverCrop(plateWidth, plateHeight, plainCover, out float u, out float v, out float cropW, out float cropH);
             Vec2 label = LabelCentres[index];
             float px = (label.X - u) / Math.Max(0.001f, cropW) * plateWidth;
             float py = (label.Y - v) / Math.Max(0.001f, cropH) * coverHeight;
@@ -2145,9 +2448,10 @@ namespace Game.UI.Runtime
             return new Box(x, y, PinSize, PinSize);
         }
 
-        private static void Cover(float frameWidth, float frameHeight, out float u, out float v, out float width, out float height)
+        /// <summary>Cover crop of the painting. <paramref name="plain"/> skips the full-plate detail reserve crop.</summary>
+        public static void CoverCrop(float frameWidth, float frameHeight, bool plain, out float u, out float v, out float width, out float height)
         {
-            float coverHeight = CoverFrameHeight(frameWidth, frameHeight);
+            float coverHeight = plain ? frameHeight : CoverFrameHeight(frameWidth, frameHeight);
             float frameAspect = frameWidth > 2f && coverHeight > 2f ? frameWidth / coverHeight : SourceAspect;
             if (frameAspect >= SourceAspect)
             {

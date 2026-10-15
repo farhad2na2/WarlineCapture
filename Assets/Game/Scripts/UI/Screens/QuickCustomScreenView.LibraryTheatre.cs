@@ -70,16 +70,25 @@ namespace Game.UI.Runtime
                 out float cropW,
                 out float cropH);
 
+            bool reserve = plateWidth >= 600f;
+            TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
+            bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 raw.transform.SetParent(fit, false);
-                Stretch(raw.rectTransform);
+                if (reframed)
+                    PlaceTopLeft(raw.rectTransform, viewport.X, viewport.Y, viewport.W, viewport.H);
+                else
+                    Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = TheatrePaintDim();
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                ApplyTheatreCover(raw, plateWidth, plateHeight);
+                if (reframed)
+                    ApplyPlainTheatreCover(raw, viewport.W, viewport.H);
+                else
+                    ApplyTheatreCover(raw, plateWidth, plateHeight);
                 var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 shade.transform.SetParent(fit, false);
                 Stretch(shade.rectTransform);
@@ -244,6 +253,20 @@ namespace Game.UI.Runtime
                 out float v,
                 out float width,
                 out float height);
+            image.uvRect = new Rect(u, 1f - (v + height), width, height);
+        }
+
+        private static void ApplyPlainTheatreCover(RawImage image, float frameWidth, float frameHeight)
+        {
+            if (image == null)
+                return;
+            if (frameWidth < 2f || frameHeight < 2f)
+            {
+                image.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            TheatreSeatGeometry.CoverCrop(frameWidth, frameHeight, true, out float u, out float v, out float width, out float height);
             image.uvRect = new Rect(u, 1f - (v + height), width, height);
         }
 
@@ -2201,6 +2224,236 @@ namespace Game.UI.Runtime
         /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
         /// toward 280x96 fits its own title down from that ceiling, and may break after a space.
         /// </summary>
+        private static void FitPortraitNameBoxes(Transform regions)
+        {
+            if (regions == null)
+                return;
+            TMP_Text[] texts = regions.GetComponentsInChildren<TMP_Text>(true);
+            var names = new List<TMP_Text>(8);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text != null && text.name == "ZoneName" && text.gameObject.activeInHierarchy && ZoneCardIsCompact(text))
+                    names.Add(text);
+            }
+
+            if (names.Count == 0)
+                return;
+            RectTransform plate = names[0].rectTransform.parent != null
+                ? names[0].rectTransform.parent.parent as RectTransform
+                : null;
+            if (plate == null || !TryFrameSize(plate, out float plateWidth, out float plateHeight))
+                return;
+            bool fa = names[0].isRightToLeftText;
+            bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            var cards = new List<RectTransform>(names.Count);
+            for (int i = 0; i < names.Count; i++)
+            {
+                if (names[i].rectTransform.parent is RectTransform card)
+                    cards.Add(card);
+            }
+
+            var boxes = new TheatreSeatGeometry.Box[cards.Count];
+            for (int i = 0; i < cards.Count; i++)
+                boxes[i] = PlateBoxOf(cards[i]);
+            Rect detailRect = SeatingDetailRect(plateWidth, plateHeight, fa);
+            var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            TheatreSeatGeometry.Box cue = default;
+            if (plate.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
+                cue = PlateBoxOf(cueRect);
+            TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
+            for (int i = 0; i < names.Count && i < cards.Count; i++)
+                FitOnePortraitName(names[i], cards[i], boxes, i, detail, cue, hint, plateHeight, wide);
+        }
+
+        private static TheatreSeatGeometry.Box PlateBoxOf(RectTransform rect)
+        {
+            if (rect == null)
+                return default;
+            return new TheatreSeatGeometry.Box(rect.anchoredPosition.x, -rect.anchoredPosition.y, rect.sizeDelta.x, rect.sizeDelta.y);
+        }
+
+        private static void FitOnePortraitName(
+            TMP_Text name,
+            RectTransform card,
+            TheatreSeatGeometry.Box[] boxes,
+            int index,
+            TheatreSeatGeometry.Box detail,
+            TheatreSeatGeometry.Box cue,
+            TheatreSeatGeometry.Box hint,
+            float plateHeight,
+            bool wide)
+        {
+            if (name == null || card == null)
+                return;
+            float cardW = card.sizeDelta.x;
+            float cardH = card.sizeDelta.y;
+            float band = TheatreSeatGeometry.NameBandHeight(boxes[index], boxes, index, detail, cue, hint, plateHeight);
+            float boxWidth = Mathf.Max(8f, cardW - 12f);
+            string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
+            var binding = name.GetComponent<V3LocalizedTextBindingView>();
+            for (float size = TheatreSeatGeometry.NameFontCeiling; size >= TheatreSeatGeometry.NameFontFloor - 0.01f; size -= 1f)
+            {
+                if (binding != null)
+                    binding.ConfigureFontBounds(size, size);
+                name.enableAutoSizing = true;
+                name.fontSizeMin = size;
+                name.fontSizeMax = size;
+                name.fontSize = size;
+                name.fontStyle = FontStyles.Bold;
+                name.text = source;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.overflowMode = TextOverflowModes.Overflow;
+                name.maxVisibleLines = 1;
+                name.ForceMeshUpdate();
+                bool oneLine = name.preferredWidth <= boxWidth + 1.5f;
+                if (!oneLine)
+                {
+                    name.textWrappingMode = TextWrappingModes.Normal;
+                    name.maxVisibleLines = 2;
+                    WrapZoneName(name, size);
+                    name.fontSizeMin = size;
+                    name.fontSizeMax = size;
+                    name.fontSize = size;
+                    name.maxVisibleLines = 2;
+                    name.textWrappingMode = TextWrappingModes.Normal;
+                    name.ForceMeshUpdate();
+                }
+
+                float needed = Mathf.Ceil(name.preferredHeight + 2f);
+                float grown = cardH;
+                if (TheatreSeatGeometry.MaxNameBoxHeight(grown, wide) + 1f < needed)
+                {
+                    float target = grown;
+                    while (target + 1f <= band && TheatreSeatGeometry.MaxNameBoxHeight(target, wide) + 1f < needed)
+                        target += 1f;
+                    if (TheatreSeatGeometry.MaxNameBoxHeight(Mathf.Min(band, target), wide) + 1f < needed)
+                        continue;
+                    grown = Mathf.Min(band, target);
+                }
+
+                ApplyPortraitNameLayout(card, name, needed, grown, wide, oneLine);
+                name.lineSpacing = 0f;
+                name.ForceMeshUpdate();
+                if (PortraitNameFitsRect(name, source))
+                    return;
+            }
+
+            TightenPortraitName(name, card, source, wide);
+        }
+
+        private static void TightenPortraitName(TMP_Text name, RectTransform card, string source, bool wide)
+        {
+            if (name == null || card == null)
+                return;
+            float size = TheatreSeatGeometry.NameFontFloor;
+            var binding = name.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            name.fontSizeMin = size;
+            name.fontSizeMax = size;
+            name.fontSize = size;
+            name.text = source;
+            name.textWrappingMode = TextWrappingModes.Normal;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.maxVisibleLines = 2;
+            WrapZoneName(name, size);
+            name.maxVisibleLines = 2;
+            name.textWrappingMode = TextWrappingModes.Normal;
+            float limit = Mathf.Max(28f, TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide));
+            for (float spacing = 0f; spacing >= -36f; spacing -= 4f)
+            {
+                name.lineSpacing = spacing;
+                name.ForceMeshUpdate();
+                float needed = Mathf.Ceil(name.preferredHeight + 2f);
+                if (needed > limit + 1f)
+                    continue;
+                ApplyPortraitNameLayout(card, name, needed, card.sizeDelta.y, wide, false);
+                name.lineSpacing = spacing;
+                name.ForceMeshUpdate();
+                if (PortraitNameFitsRect(name, source))
+                    return;
+            }
+        }
+
+        private static bool PortraitNameFitsRect(TMP_Text name, string source)
+        {
+            if (name == null || name.rectTransform == null)
+                return false;
+            if (name.isTextTruncated || name.isTextOverflowing)
+                return false;
+            if (name.preferredHeight > name.rectTransform.rect.height + 1.5f)
+                return false;
+            return PortraitNameCovers(name, source);
+        }
+
+        private static bool PortraitNameCovers(TMP_Text text, string source)
+        {
+            if (text == null)
+                return false;
+            int expected = 0;
+            string flat = source ?? string.Empty;
+            for (int i = 0; i < flat.Length; i++)
+            {
+                if (char.IsLetterOrDigit(flat[i]))
+                    expected++;
+            }
+
+            TMP_TextInfo info = text.textInfo;
+            if (info == null || info.characterInfo == null)
+                return expected == 0;
+            int visible = 0;
+            int count = Mathf.Min(info.characterCount, info.characterInfo.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (!info.characterInfo[i].isVisible)
+                    continue;
+                if (char.IsLetterOrDigit(info.characterInfo[i].character))
+                    visible++;
+            }
+
+            return visible >= expected;
+        }
+
+        private static void ApplyPortraitNameLayout(RectTransform card, TMP_Text name, float nameH, float cardH, bool wide, bool oneLine)
+        {
+            if (card == null || name == null)
+                return;
+            float cardW = card.sizeDelta.x;
+            float cardX = card.anchoredPosition.x;
+            float cardY = -card.anchoredPosition.y;
+            PlaceTopLeft(card, cardX, cardY, cardW, cardH);
+            const float pad = 6f;
+            float artW = Mathf.Max(48f, cardW - pad * 2f);
+            RectTransform ring = card.Find("ProgressRing") as RectTransform;
+            bool banner = ring != null && ring.sizeDelta.x > ring.sizeDelta.y + 8f;
+            float ringSide = banner
+                ? Mathf.Max(28f, ring.sizeDelta.y)
+                : (cardH >= 190f ? 56f : 44f) + (wide ? 4f : 0f);
+            float artH = cardH - pad - 4f - nameH - 4f - ringSide - pad;
+            if (artH < 44f)
+                artH = 44f;
+            if (oneLine)
+                nameH = Mathf.Max(nameH, cardH >= 190f ? 40f : 34f);
+            float nameY = pad + artH + 4f;
+            PlaceTopLeft(name.rectTransform, pad, nameY, artW, nameH);
+            RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
+            if (thumb != null)
+            {
+                PlaceTopLeft(thumb, pad, pad, artW, artH);
+                if (thumb.Find("Thumbnail") is RectTransform preview)
+                    PlaceTopLeft(preview, 2f, 2f, Mathf.Max(8f, artW - 4f), Mathf.Max(8f, artH - 4f));
+            }
+
+            if (ring == null)
+                return;
+            float ringY = nameY + nameH + 4f;
+            if (banner)
+                PlaceTopLeft(ring, pad, ringY, artW, Mathf.Max(28f, cardH - ringY - pad));
+            else
+                PlaceTopLeft(ring, (cardW - ringSide) * 0.5f, ringY, ringSide, ringSide);
+        }
+
         private static void FitZoneNames(Transform regions)
         {
             var names = new List<TMP_Text>(8);
@@ -2226,6 +2479,7 @@ namespace Game.UI.Runtime
             }
 
             ApplyZoneNameSize(names, chosen, wrapOverflow: !fitted);
+            FitPortraitNameBoxes(regions);
         }
 
         private static bool ZoneCardIsCompact(TMP_Text name)

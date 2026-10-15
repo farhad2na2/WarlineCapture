@@ -1786,7 +1786,7 @@ namespace Game.Editor
                 if (dy >= 0f)
                     continue;
                 float gap = SeparatingGap(label.xMin, label.xMax, tally.xMin, tally.xMax);
-                if (gap >= 4f)
+                if (gap >= TheatreSeatGeometry.MedalGapMinimum)
                     continue;
                 string tier = caption.GetComponent<TMP_Text>() != null ? caption.GetComponent<TMP_Text>().text : "Medal" + i;
                 throw new InvalidOperationException(

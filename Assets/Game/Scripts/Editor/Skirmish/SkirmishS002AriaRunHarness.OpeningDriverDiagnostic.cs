@@ -89,7 +89,7 @@ namespace Game.Editor
                     ["zoom_in"]=OpeningButton(rail.ZoomInButton),["zoom_out"]=OpeningButton(rail.ZoomOutButton),["gesture_route"]="DiscreteClick" });
             foreach(var minimap in UnityEngine.Object.FindObjectsByType<Game.UI.Runtime.MatchHudMinimapView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
                 rows.Add(new JObject { ["owner_type"]="MatchHudMinimapView",["owner_active"]=minimap.isActiveAndEnabled,
-                    ["zoom_in"]=OpeningButton(minimap.ZoomInButton),["zoom_out"]=OpeningButton(minimap.ZoomOutButton),["gesture_route"]="PointerPressHeld" });
+                    ["zoom_in"]=OpeningButton(minimap.ZoomInButton),["zoom_out"]=OpeningButton(minimap.ZoomOutButton),["gesture_route"]=minimap.HasNormalCameraZoomControls?"DiscreteCameraLevelClick":"PointerPressHeldMapProjection",["normal_camera_zoom_bound"]=minimap.HasNormalCameraZoomControls });
             return rows;
         }
         static JObject OpeningButton(UnityEngine.UI.Button button)

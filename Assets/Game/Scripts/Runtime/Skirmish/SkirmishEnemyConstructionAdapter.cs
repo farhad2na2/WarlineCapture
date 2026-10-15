@@ -308,7 +308,7 @@ namespace Game.Runtime
             if(em==default || !em.Exists(session) || !em.HasComponent<SkirmishResolvedSetupRecord>(session) ||
                 !em.HasComponent<SkirmishEnemyPlannerV1Component>(session))return false;
             setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            if(setup?.EnemyPolicy==null || setup.EnemyFaction!=2 || setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault)return false;
+            if(setup?.EnemyPolicy==null || setup.EnemyFaction!=2 || (setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault&&!SkirmishEnemyObjectivePolicyScope.Supports(setup)))return false;
             var p=em.GetComponentData<SkirmishEnemyPlannerV1Component>(session);
             return p.Initialized==1 && p.PolicyVersion==setup.EnemyPolicy.Version && p.PolicyHash==setup.EnemyPolicy.Hash &&
                 p.PolicyFingerprint.ToString()==setup.EnemyPolicy.Fingerprint;

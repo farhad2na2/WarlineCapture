@@ -79,6 +79,7 @@ namespace Game.UI.Runtime
         {
             if (!UiShellRuntimeGateway.TryReadSkirmish(out _) || !UiShellRuntimeGateway.ReadAriaPlay().Active) return fallback;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            if (TryPublicObjectiveInstruction(UiShellRuntimeGateway.ReadAriaSkirmishIntent(), fa, out string objectiveInstruction)) return objectiveInstruction;
             return UiShellRuntimeGateway.ReadAriaSkirmishIntent() switch
             {
                 AriaSkirmishIntent.BuildDefense => fa ? "اول نزدیک پایگاه برج نگهبانی می‌سازم تا نیروهامون فرصت جمع شدن داشته باشن." : "I'll build watchtowers near our base so our troops have time to gather.",

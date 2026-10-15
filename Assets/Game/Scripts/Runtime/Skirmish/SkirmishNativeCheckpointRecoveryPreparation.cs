@@ -16,6 +16,7 @@ namespace Game.Runtime
             internal Entity Session;
             internal bool Committed;
             internal SkirmishNativeObjectiveCheckpoint.Prepared Objective;
+            internal SkirmishNativeRepairCheckpoint.Prepared Repairs;
             internal SkirmishNativeCheckpointTransientState.Bindings Transients;
             internal readonly Dictionary<Entity, float> HiddenPassengers = new();
             internal readonly Dictionary<Entity, SkirmishNativeCheckpointParts.Part[]> Parts = new();
@@ -39,6 +40,7 @@ namespace Game.Runtime
             if (state.IsLegacy != 0 || state.SessionId.ToString() != saved.SessionId || state.SetupHash != setup.SetupHash ||
                 state.CatalogId.ToString() != setup.CatalogId || state.DefinitionId.ToString() != setup.DefinitionId ||
                 state.ContentVersion != setup.ContentVersion) return false;
+            if(!SkirmishNativeRepairCheckpointGuard.TryValidateWorld(em,session,out failure))return false;
             try
             {
                 if (!string.IsNullOrEmpty(saved.MapMetadataHash))
@@ -174,6 +176,7 @@ namespace Game.Runtime
                     value.Parts.Add(Resolve("bank/" + bank.Faction), Parts(bank.Parts));
                 if (setup.ObjectiveKind != Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
                     !SkirmishNativeObjectiveCheckpoint.TryPrepare(em,session,saved,setup,out value.Objective,out failure)) return false;
+                if(!SkirmishNativeRepairCheckpoint.TryPrepare(em,session,saved.Repairs,saved,setup,out value.Repairs,out failure))return false;
                 prepared = value;
                 failure = string.Empty;
                 return true;

@@ -33,6 +33,7 @@ namespace Game.Runtime
             public readonly int2 MarkerCell;
             public readonly float3 MarkerPosition;
             public readonly byte MarkerFactionId;
+            public readonly uint PublicAcceptedGroup;
 
             private Result(
                 TacticalCommandResult commandResult,
@@ -40,7 +41,7 @@ namespace Game.Runtime
                 bool showWorldMarkers,
                 int2 markerCell,
                 float3 markerPosition,
-                byte markerFactionId)
+                byte markerFactionId, uint publicAcceptedGroup=0)
             {
                 CommandResult = commandResult;
                 EmitScreenMarker = emitScreenMarker;
@@ -48,11 +49,12 @@ namespace Game.Runtime
                 MarkerCell = markerCell;
                 MarkerPosition = markerPosition;
                 MarkerFactionId = markerFactionId;
+                PublicAcceptedGroup=publicAcceptedGroup;
             }
 
-            public static Result Success(int2 markerCell, float3 markerPosition, byte markerFactionId)
+            public static Result Success(int2 markerCell, float3 markerPosition, byte markerFactionId, uint publicAcceptedGroup=0)
             {
-                return new Result(TacticalCommandResult.Success(), true, true, markerCell, markerPosition, markerFactionId);
+                return new Result(TacticalCommandResult.Success(), true, true, markerCell, markerPosition, markerFactionId, publicAcceptedGroup);
             }
 
             public static Result Rejected(TacticalCommandReasonCode reasonCode)
@@ -216,6 +218,8 @@ namespace Game.Runtime
             NativeArray<Entity> entities = selectedEntities;
             var reservedGoalCells = new HashSet<int>();
             HashSet<int> selectedCurrentCells = moveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
+            using NativeList<Entity> publicAcceptedUnits=SkirmishPublicOrderFeedback.ShouldObserve(em)?new NativeList<Entity>(Allocator.Temp):default;
+            using NativeList<int2> publicAcceptedGoals=publicAcceptedUnits.IsCreated?new NativeList<int2>(Allocator.Temp):default;
             var issuedGoals = new int2[entities.Length];
             var skipIssue = new bool[entities.Length];
             bool issuedMoveOrder = false;
@@ -273,6 +277,7 @@ namespace Game.Runtime
                 if (skipIssue[i])
                 {
                     if (acceptedUnits.IsCreated) { acceptedUnits.Add(entities[i]); issuedMoveOrder = true; }
+                    if(publicAcceptedUnits.IsCreated){publicAcceptedUnits.Add(entities[i]);publicAcceptedGoals.Add(issuedGoals[i]);}
                     continue;
                 }
 
@@ -317,6 +322,7 @@ namespace Game.Runtime
                 }
 
                 if (acceptedUnits.IsCreated) acceptedUnits.Add(entity);
+                if(publicAcceptedUnits.IsCreated){publicAcceptedUnits.Add(entity);publicAcceptedGoals.Add(issuedGoal);}
                 structuralAdds += commandResult.StructuralAdds;
                 structuralRemoves += commandResult.StructuralRemoves;
                 pathRequestCount += commandResult.PathRequests;
@@ -367,7 +373,7 @@ namespace Game.Runtime
                     $"groundCandidates={groundPathCandidateCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves}");
             }
 
-            return Result.Success(goal, clickWorldPoint, factionId);
+            return Result.Success(goal, clickWorldPoint, factionId,SkirmishPublicOrderFeedback.VerifyCompleteMoveGroup(em,entities,publicAcceptedUnits,publicAcceptedGoals));
         }
 
         private static UnitMoveOrderSystem.MoveOrderCommandResult ToMoveOrderCommandResult(UnitMoveOrderResultElement result)
@@ -482,6 +488,7 @@ namespace Game.Runtime
                 }
 
                 if (result.CommandResult.Accepted) AriaCommandEvidence.Accepted("Move", FactionIdentity.PlayerFactionId);
+                SkirmishPublicOrderFeedback.PublishMove(em,request,result);
                 AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
             }
 
@@ -552,6 +559,7 @@ namespace Game.Runtime
                         request.Frame,
                         ResolveMarkerFaction(em, entities));
                 if (result.CommandResult.Accepted) AriaCommandEvidence.Accepted("Move", FactionIdentity.PlayerFactionId);
+                SkirmishPublicOrderFeedback.PublishMove(em,request,result);
                 AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
             }
 

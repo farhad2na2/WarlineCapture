@@ -11,7 +11,7 @@ namespace Game.Runtime
         public static bool EnsureSession(EntityManager em, Entity session, SkirmishResolvedSetup setup)
         {
             if (setup?.EnemyPolicy == null) return true;
-            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault || !em.Exists(session)) return false;
+            if ((setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault && !SkirmishEnemyObjectivePolicyScope.Supports(setup)) || !em.Exists(session)) return false;
             var policy = setup.EnemyPolicy;
             if (em.HasComponent<SkirmishEnemyPlannerV1Component>(session))
             {

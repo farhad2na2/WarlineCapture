@@ -49,6 +49,8 @@ namespace Game.Runtime
             if (localThreat) state.HomeThreatClearedAt = now + policy.StrategicCadenceSeconds * 2;
             bool defend = localThreat || (state.CurrentPlan == SkirmishEnemyPlanKind.DefendHome && now < state.HomeThreatClearedAt);
             bool emergency = takingDamage && facts.HomeMaximum > 0 && facts.HomeHealth * 3 < facts.HomeMaximum;
+            int repairDispatched=SkirmishEnemyVehicleRepairPolicy.Step(em,session,facts,math.max(1,policy.MaxDispatchPerDecision-1),out var repairReserved);
+            SkirmishEnemyVehicleRepairPolicy.RemoveReserved(facts,repairReserved);
             var package = SkirmishEnemyGroupAllocation.Allocate(facts, (int)(policy.ReserveSupplyFraction * 100));
             var rally = new float3(setup.EnemyRallyPadX, 0, setup.EnemyRallyPadZ);
             bool assembled = package.Viable && Assembled(package, rally);
@@ -74,7 +76,7 @@ namespace Game.Runtime
             else state.CurrentScore = currentScore;
 
             int capabilityDispatched;
-            var capabilityRole = SkirmishEnemyCapabilityService.Tick(em,session,setup,army,facts,package,defend,now,ref state,out capabilityDispatched,defend?math.max(0,policy.MaxDispatchPerDecision-1):policy.MaxDispatchPerDecision);
+            var capabilityRole = SkirmishEnemyCapabilityService.Tick(em,session,setup,army,facts,package,defend,now,ref state,out capabilityDispatched,math.max(0,(defend?math.max(0,policy.MaxDispatchPerDecision-1):policy.MaxDispatchPerDecision)-repairDispatched),repairDecisionReserved:repairReserved);
             var capabilityGoal = SkirmishEnemyCapabilityService.ProgressionGoal(
                 SkirmishEnemyCapabilityService.ReadOwnActors(em,session),facts,package,defend,setup.DeadlineSeconds-now,army);
             var wanted = WantedRole(facts, package, setup,ownLiving);
@@ -106,7 +108,7 @@ namespace Game.Runtime
                 }
             }
             var defenders = AllocateDefenders(facts, package, state.CurrentPlan == SkirmishEnemyPlanKind.DefendHome);
-            int dispatched = capabilityDispatched;
+            int dispatched = capabilityDispatched+repairDispatched;
             var capabilityReserved = SkirmishEnemyCapabilityService.ReservedGroups(em,session);
             bool scoutDue = now >= state.NextScoutAt;
             bool scoutDispatched = false;
@@ -246,7 +248,8 @@ namespace Game.Runtime
             SkirmishEnemyGroupAllocation.Package package, SkirmishResolvedSetup setup,
             IReadOnlyDictionary<SkirmishRoleKind,int> ownLiving = null)
         {
-            if (facts.Visible.Exists(c => c.Category == SkirmishPopulationCategory.Air) &&
+            if (SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId)?.Allows(SkirmishRoleIds.AntiAir) == true &&
+                facts.Visible.Exists(c => c.Category == SkirmishPopulationCategory.Air) &&
                 !facts.Groups.Exists(g => g.Role == SkirmishRoleKind.AntiAir)) return SkirmishRoleKind.AntiAir;
             if (!facts.Groups.Exists(g => g.StructureCapable && SkirmishEnemyGroupAllocation.Healthy(g))) return SkirmishRoleKind.Rocketeer;
             if (!package.Viable) return SkirmishRoleKind.Rifle;
@@ -258,7 +261,8 @@ namespace Game.Runtime
             {
                 if (force.FactionId != setup.EnemyFaction ||
                     (force.RoleKind != SkirmishRoleKind.Rifle && force.RoleKind != SkirmishRoleKind.Gunner &&
-                     force.RoleKind != SkirmishRoleKind.Rocketeer && force.RoleKind != SkirmishRoleKind.Tank)) continue;
+                     force.RoleKind != SkirmishRoleKind.Rocketeer && force.RoleKind != SkirmishRoleKind.Tank &&
+                     !SkirmishGenericGroundEnemyRollout.IsReplenishableCombatRole(setup,force.RoleKind))) continue;
                 int living = 0;
                 foreach (var group in facts.Groups) if (group.Role == force.RoleKind) living += group.Members;
                 if (ownLiving != null) living = ownLiving.TryGetValue(force.RoleKind,out int ownCount) ? ownCount : 0;
@@ -366,6 +370,11 @@ namespace Game.Runtime
             // only to public objective terrain through the native Move validator.
             return completed ? new float3(setup.PlayerBaseWorldX, 0, setup.PlayerBaseWorldZ) : point;
         }
+        internal static bool TryIssueObjectiveGroupOrder(EntityManager em,Entity session,SkirmishEnemyPerceptionBuilder.Group group,
+            SkirmishEnemyDuty duty,SkirmishGroupOrderKind order,Entity target,FixedString64Bytes targetId,float3 destination,float now,
+            ref SkirmishEnemyPlannerV1Component state,ref SkirmishEnemyGroupAssignmentV1 assignment,SkirmishEnemyPolicySnapshot policy)
+            =>Issue(em,session,group,duty,order,target,targetId,destination,now,ref state,ref assignment,policy);
+
         private static bool Issue(EntityManager em, Entity session, SkirmishEnemyPerceptionBuilder.Group group,
             SkirmishEnemyDuty duty, SkirmishGroupOrderKind order, Entity target, FixedString64Bytes targetId,
             float3 destination, float now, ref SkirmishEnemyPlannerV1Component state,

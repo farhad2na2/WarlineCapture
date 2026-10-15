@@ -56,7 +56,7 @@ namespace Game.Tests.Editor
             SkirmishNativeObjectivePartialFailureCheckpointTests.RunFocusedValidation();
             SkirmishGenericMissionDispatchTests.RunFocusedValidation();
             VerifyImmutableLegacyTwelve();
-            Debug.Log("[SkirmishMissionLogicalSubsystemValidation] result=Passed focusedTests=77 legacyConfigurations=12 nativeMissionReadiness=Pending");
+            Debug.Log("[SkirmishMissionLogicalSubsystemValidation] result=Passed focusedTests=80 legacyConfigurations=12 nativeMissionReadiness=Pending");
         }
     }
 }

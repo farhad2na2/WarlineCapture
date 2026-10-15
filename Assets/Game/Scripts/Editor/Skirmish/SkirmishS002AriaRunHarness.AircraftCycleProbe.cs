@@ -23,6 +23,7 @@ namespace Game.Editor
         private static int airProbeFirstFuel, airProbeSecondFuel, airProbeTouchdownFuel, airProbeRequiredReserve;
         private static int airProbeDefenseSlot, airProbeDefenseStep;
         private static int airProbeDefensePage, airProbeDefenseOrders;
+        private static readonly S005ObservedSquadPageReceipt airProbeDefensePaging=new S005ObservedSquadPageReceipt();
         private static int airProbeDefenseMapStep;
         private static int airProbeDefenseMapAttempts;
         private static int airProbeCameraCommandsBefore, airProbeCameraAttackMaskBefore;
@@ -130,11 +131,23 @@ namespace Game.Editor
             if (tray == null) return false;
             if (airProbeDefenseSlot >= 5)
             {
-                if (!fixedWingCycleOnly || !page.NextPage) return true;
+                if (!fixedWingCycleOnly || !page.NextPage&&!airProbeDefensePaging.IsPending) return true;
                 if (airProbeDefensePage >= 8)
                     throw new InvalidOperationException("Opening defense squad paging did not finish.");
-                if (SwipeHelipadSquadPage(tray, true, now))
-                { airProbeDefensePage++; airProbeDefenseSlot = airProbeDefenseStep = 0; }
+                var receipt=airProbeDefensePaging.Observe(page.PageIndex,tray.LogicalPageIndex,page.RosterRevision,
+                    helipadProbeTouch.IsBusy,helipadProbeTouch.CompletedGestures,now);
+                if(receipt==S005SquadPageReceiptState.Advanced)
+                {
+                    airProbeDefensePage++;airProbeDefenseSlot=airProbeDefenseStep=0;
+                    Debug.Log("[S005SquadPageReceipt] result=Advanced actualPage="+page.PageIndex+" renderedPage="+tray.LogicalPageIndex+" completedContacts="+helipadProbeTouch.CompletedGestures);
+                }
+                else if(receipt==S005SquadPageReceiptState.Failed)
+                    throw new InvalidOperationException("Opening defense squad swipe did not advance the actual presented page: "+airProbeDefensePaging.Failure);
+                else if(receipt==S005SquadPageReceiptState.Ready&&SwipeHelipadSquadPage(tray,true,now))
+                {
+                    airProbeDefensePaging.Dispatch(page.PageIndex,page.RosterRevision,helipadProbeTouch.CompletedGestures,now);
+                    Debug.Log("[S005SquadPageReceipt] result=Dispatched actualPage="+page.PageIndex+" renderedPage="+tray.LogicalPageIndex+" targetPage="+(page.PageIndex+1));
+                }
                 return false;
             }
             int bit = 1 << airProbeDefenseSlot;

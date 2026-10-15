@@ -54,6 +54,8 @@ namespace Game.Editor
         public float Aspect;
         public float[] ProjectionColumnMajor, WorldToCameraColumnMajor;
         public SkirmishCameraRenderBoundsFact[] RenderBounds;
+        public SkirmishCameraPosedMeshReader.Fact[] PosedMeshes;
+        public string ProjectionGeometrySource;
         public float HeightPixels => ProjectedPixels.height;
         public float WidthFraction => ProjectedPixels.width / CameraPixels.width;
         public float HeightFraction => ProjectedPixels.height / CameraPixels.height;
@@ -131,17 +133,25 @@ namespace Game.Editor
                 if (!visited.Add(entity) || !em.Exists(entity) || em.HasComponent<Disabled>(entity) || em.HasComponent<DisableRendering>(entity)) continue;
                 if (em.HasBuffer<LinkedEntityGroup>(entity))
                     foreach (var child in em.GetBuffer<LinkedEntityGroup>(entity)) pending.Enqueue(child.Value);
+                if(em.HasBuffer<Child>(entity))foreach(var child in em.GetBuffer<Child>(entity,true))pending.Enqueue(child.Value);
                 if (!em.HasComponent<WorldRenderBounds>(entity)) continue;
                 var value = em.GetComponentData<WorldRenderBounds>(entity).Value;
                 var worldBounds = new Bounds(value.Center, value.Extents * 2);
                 rawBounds.Add(new SkirmishCameraRenderBoundsFact { EntityIndex = entity.Index, EntityVersion = entity.Version, WorldBounds = worldBounds });
                 result.RenderBounds = rawBounds.ToArray(); // Preserve raw failed depth sample too.
-                if (!TryProject(camera, worldBounds, out var next)) return Fail(result, "NativeBoundsInvalidOrDepthClipped");
-                projected = found ? Rect.MinMaxRect(Mathf.Min(projected.xMin, next.xMin), Mathf.Min(projected.yMin, next.yMin),
-                    Mathf.Max(projected.xMax, next.xMax), Mathf.Max(projected.yMax, next.yMax)) : next;
-                found = true; result.RenderBoundsCount++;
             }
-            if (!found) return Fail(result, "NativeActiveRenderBoundsMissing");
+            // Retain safety/culling bounds only as raw diagnostics. The measurement
+            // uses actual drawn vertices at the actual GPU animation frame.
+            if(!SkirmishCameraPosedMeshReader.TryCollect(em,root,out var meshes,out string meshError))return Fail(result,meshError);
+            result.PosedMeshes=meshes;result.ProjectionGeometrySource="ActualActiveDrawnPosedMeshVertices";
+            foreach(var mesh in meshes)
+            {
+                if(!SkirmishCameraPosedMeshReader.TryProjectDraw(camera,mesh,out var next))return Fail(result,"PosedMeshVerticesInvalidOrDepthClipped");
+                projected=found?Rect.MinMaxRect(Mathf.Min(projected.xMin,next.xMin),Mathf.Min(projected.yMin,next.yMin),
+                    Mathf.Max(projected.xMax,next.xMax),Mathf.Max(projected.yMax,next.yMax)):next;
+                found=true;result.RenderBoundsCount++;
+            }
+            if(!found)return Fail(result,"NativeActiveDrawnMeshMissing");
             result.ProjectedPixels = projected; result.Valid = true; return result;
         }
 

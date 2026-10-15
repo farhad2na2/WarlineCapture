@@ -100,7 +100,9 @@ namespace Game.Runtime
                 return (domains & SkirmishTargetDomain.Structure) != 0;
             if (category == SkirmishPopulationCategory.Infantry)
                 return (domains & SkirmishTargetDomain.Infantry) != 0;
-            if (category == SkirmishPopulationCategory.Ground)
+            // ObjectiveSupport currently contains only mode-owned ground cargo trucks.
+            // Their population remains outside combat/Supply budgets.
+            if (category == SkirmishPopulationCategory.Ground || category == SkirmishPopulationCategory.ObjectiveSupport)
                 return (domains & SkirmishTargetDomain.Ground) != 0;
             if (category == SkirmishPopulationCategory.Air)
                 return (domains & SkirmishTargetDomain.Air) != 0;

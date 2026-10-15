@@ -179,7 +179,10 @@ namespace Game.UI.Runtime
         public void BindMatchHudMinimap(MatchHudMinimapView minimapView)
         {
             if (_matchHudMinimapView != null)
+            {
                 _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
+                _matchHudMinimapView.UnbindNormalCameraZoom();
+            }
 
             _matchHudMinimapView = minimapView;
             _nextCompactMinimapUpdateTime = 0f;
@@ -197,7 +200,10 @@ namespace Game.UI.Runtime
                 useStableFullMapProjection: false);
 
             if (_matchHudMinimapView != null)
+            {
                 _matchHudMinimapView.FullMapOpenRequested += RequestFullMapPopup;
+                _matchHudMinimapView.BindNormalCameraZoom(RequestMatchHudZoomIn,RequestMatchHudZoomOut,ReadMatchHudZoomControlState);
+            }
         }
 
         public void BindMatchHudFullMapPopup(MatchHudFullMapPopupView popupView)
@@ -725,6 +731,7 @@ namespace Game.UI.Runtime
         {
             _nextZoomControlRefreshTime = now + ZoomControlRefreshIntervalSeconds;
             _matchHudRightQuickRailView?.RefreshZoomControls();
+            _matchHudMinimapView?.RefreshNormalCameraZoomControls();
         }
 
         private MatchHudZoomControlState ReadMatchHudZoomControlState()

@@ -1,0 +1,8 @@
+{
+  "result": "CompileFailed",
+  "wrapperExit": 1,
+  "error": "CS0407 root aggregate passed string-returning AriaTouchInputValidation.Run as Action",
+  "correction": "Explicit statement lambda discards success report; original assertions/exceptions unchanged",
+  "runtimeControlsReached": false,
+  "archiveSha256": "d21174aaf28115519f1e341ddcfce09637eef0ec89f96b05648c17543640e645"
+}

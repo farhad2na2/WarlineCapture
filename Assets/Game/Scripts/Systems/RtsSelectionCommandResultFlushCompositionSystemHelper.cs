@@ -341,6 +341,7 @@ namespace Game.Runtime
                 TryEmitCommandAudio(context, processedKind, accepted: false);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+                if(context.ApplyHudCommandResult!=null && processedKind==RtsSelectionCommandIntentKind.HoldPosition)SkirmishPublicOrderFeedback.MarkPresented(em,processedKind,0,Time.frameCount);
                 if (hasCommandMode)
                     context.ClearHudCommandMode?.Invoke();
                 return true;
@@ -356,6 +357,7 @@ namespace Game.Runtime
                     TryEmitCommandConfirmationVoice(context, processedKind, accepted: true);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+                if(context.ApplyHudCommandResult!=null && processedKind==RtsSelectionCommandIntentKind.HoldPosition)SkirmishPublicOrderFeedback.MarkPresented(em,processedKind,0,Time.frameCount);
                 return true;
             }
 
@@ -375,6 +377,7 @@ namespace Game.Runtime
                     TryEmitCommandConfirmationVoice(context, processedKind, accepted: true);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+                if(context.ApplyHudCommandResult!=null && processedKind==RtsSelectionCommandIntentKind.HoldPosition)SkirmishPublicOrderFeedback.MarkPresented(em,processedKind,0,Time.frameCount);
                 if (context.SelectionStateCompositionSystemHelper != null)
                     context.RefreshFocusedUnit?.Invoke(em, context.SelectionStateCompositionSystemHelper);
                 return true;
@@ -385,6 +388,7 @@ namespace Game.Runtime
                 TryEmitCommandConfirmationVoice(context, processedKind, accepted: true);
             context.ApplyHudCommandResult?.Invoke(
                 BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+                if(context.ApplyHudCommandResult!=null && processedKind==RtsSelectionCommandIntentKind.HoldPosition)SkirmishPublicOrderFeedback.MarkPresented(em,processedKind,0,Time.frameCount);
             return true;
         }
 
@@ -800,6 +804,7 @@ namespace Game.Runtime
                     context.CompleteHudGuidedWorldTarget?.Invoke(TacticalCommandMode.Move);
                     context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+                    if(context.ApplyHudCommandResult!=null)SkirmishPublicOrderFeedback.MarkPresented(em,result.Kind,result.RequestId,result.Frame);
                     if (clearCommandMode)
                         context.ClearHudCommandMode?.Invoke();
                     else
@@ -810,6 +815,7 @@ namespace Game.Runtime
                     if (clearCommandMode)
                         context.ClearHudCommandMode?.Invoke();
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+                    if(context.ApplyHudCommandResult!=null)SkirmishPublicOrderFeedback.MarkPresented(em,result.Kind,result.RequestId,result.Frame);
                 }
                 if (result.EmitScreenMarker != 0)
                     context.RequestMoveOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
@@ -1198,6 +1204,7 @@ namespace Game.Runtime
                         result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
                             ? GameText.Get("tactical.feedback.exiting_unit", "Exiting unit.")
                             : GameText.Get("tactical.feedback.exiting_passengers", "Exiting passengers.")));
+                    if(context.ApplyHudCommandResult!=null){SkirmishOriginalUnloadPresentation.MarkPresented(em,result);SkirmishPublicOrderFeedback.MarkPresented(em,result.Kind,result.RequestId,result.Frame);}
                     continue;
                 }
 

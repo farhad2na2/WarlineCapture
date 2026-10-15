@@ -281,6 +281,54 @@ namespace Game.Tests.Editor
             }
             Debug.Log("[SkirmishLegacyLayoutBaseline] result=Captured count=4 nativeGameplayCertified=0");
         }
+        private static void AddSyntheticObjectiveBays(SkirmishMapLayoutConfig layout)
+        {
+            var data=new SerializedObject(layout);var anchors=data.FindProperty("anchors");var pads=data.FindProperty("pads");
+            for(int i=0;i<3;i++)
+            {
+                string role="convoy.origin."+(i+1);float u=.2f+i*.2f,v=.65f;
+                float x=layout.OriginX+u*layout.WorldWidthMetres,z=layout.OriginZ+v*layout.WorldDepthMetres;
+                int index=anchors.arraySize;anchors.arraySize++;var a=anchors.GetArrayElementAtIndex(index);
+                a.FindPropertyRelative("AnchorId").stringValue=role;a.FindPropertyRelative("RoleId").stringValue=role;
+                a.FindPropertyRelative("NormalizedU").floatValue=u;a.FindPropertyRelative("NormalizedV").floatValue=v;
+                a.FindPropertyRelative("WorldX").floatValue=x;a.FindPropertyRelative("WorldZ").floatValue=z;
+                index=pads.arraySize;pads.arraySize++;var p=pads.GetArrayElementAtIndex(index);
+                p.FindPropertyRelative("PadId").stringValue=role;p.FindPropertyRelative("AnchorId").stringValue=role;p.FindPropertyRelative("RoleId").stringValue=role;
+                p.FindPropertyRelative("Kind").intValue=(int)SkirmishLegalPadKind.ObjectiveTruckSpawn;p.FindPropertyRelative("FactionId").intValue=1;
+                p.FindPropertyRelative("CenterX").floatValue=x;p.FindPropertyRelative("CenterZ").floatValue=z;
+                p.FindPropertyRelative("WidthMetres").floatValue=layout.WorldWidthMetres*.05f;p.FindPropertyRelative("DepthMetres").floatValue=layout.WorldDepthMetres*.05f;
+            }
+            data.ApplyModifiedPropertiesWithoutUndo();
+        }
+        [Test] public void ExactThreeRoleAddressedConvoyBaysBindWithoutAmbiguousKindLookup()
+        {
+            var definition=Fixture(ArmorBreakPath,out var setup);AddSyntheticObjectiveBays(definition.MapLayout);
+            var reasons=new List<SkirmishCompileReason>();Assert.IsTrue(SkirmishMeasuredLayoutBinder.TryBind(setup,definition,reasons,out _),Format(reasons));
+            foreach(string role in new[]{"convoy.origin.1","convoy.origin.2","convoy.origin.3"})
+            {Assert.IsTrue(definition.MapLayout.TryGetPad(role,out var pad));Assert.AreEqual(role,pad.RoleId);Assert.AreEqual(1,pad.FactionId);}
+        }
+        [Test] public void InvalidOrPartialConvoyRoleBaysFailBeforeSetupMutation()
+        {
+            foreach(string condition in new[]{"duplicate","foreign","unknown","partial"})
+            {
+                var definition=Fixture(ArmorBreakPath,out var setup);AddSyntheticObjectiveBays(definition.MapLayout);string before=JsonUtility.ToJson(setup);
+                var data=new SerializedObject(definition.MapLayout);var pads=data.FindProperty("pads");var last=pads.GetArrayElementAtIndex(pads.arraySize-1);
+                if(condition=="duplicate")last.FindPropertyRelative("RoleId").stringValue="convoy.origin.1";
+                if(condition=="foreign")last.FindPropertyRelative("FactionId").intValue=2;
+                if(condition=="unknown")last.FindPropertyRelative("RoleId").stringValue="convoy.origin.4";
+                if(condition=="partial")pads.DeleteArrayElementAtIndex(pads.arraySize-1);data.ApplyModifiedPropertiesWithoutUndo();
+                Assert.IsFalse(SkirmishMeasuredLayoutBinder.TryBind(setup,definition,new List<SkirmishCompileReason>(),out _),condition);Assert.AreEqual(before,JsonUtility.ToJson(setup),condition);
+            }
+        }
+        [Test] public void DuplicateOrdinaryFactionKindPadsRemainRejected()
+        {
+            var definition=Fixture(ArmorBreakPath,out var setup);string before=JsonUtility.ToJson(setup);
+            var data=new SerializedObject(definition.MapLayout);var pads=data.FindProperty("pads");int source=-1;
+            for(int i=0;i<pads.arraySize;i++)if(pads.GetArrayElementAtIndex(i).FindPropertyRelative("Kind").intValue==(int)SkirmishLegalPadKind.GroundStaging&&
+                pads.GetArrayElementAtIndex(i).FindPropertyRelative("FactionId").intValue==1){source=i;break;}
+            Assert.GreaterOrEqual(source,0);pads.InsertArrayElementAtIndex(source);pads.GetArrayElementAtIndex(source).FindPropertyRelative("PadId").stringValue="duplicate.ground";
+            data.ApplyModifiedPropertiesWithoutUndo();Assert.IsFalse(SkirmishMeasuredLayoutBinder.TryBind(setup,definition,new List<SkirmishCompileReason>(),out _));Assert.AreEqual(before,JsonUtility.ToJson(setup));
+        }
         public static void RunFocusedValidation()
         {
             var suite = new SkirmishMeasuredLayoutBinderTests();
@@ -291,11 +339,14 @@ namespace Game.Tests.Editor
                 suite.RecreatedSourceMetadataAndPlacementObjectsKeepSemanticFingerprint,
                 suite.LegacyPreservationRequiresPackagedFourLayoutAndSourceContract,
                 suite.ReverseEquivalentAndSamePositionRoutesFailBeforeSetupMutation,
-                suite.InvalidRouteKindLengthAndTimingFailBeforeSetupMutation };
+                suite.InvalidRouteKindLengthAndTimingFailBeforeSetupMutation,
+                suite.ExactThreeRoleAddressedConvoyBaysBindWithoutAmbiguousKindLookup,
+                suite.InvalidOrPartialConvoyRoleBaysFailBeforeSetupMutation,
+                suite.DuplicateOrdinaryFactionKindPadsRemainRejected };
             try
             {
                 foreach (var test in tests) { try { test(); } finally { suite.Cleanup(); } }
-                Debug.Log("[SkirmishMeasuredLayoutBinderTests] result=Passed tests=8");
+                Debug.Log("[SkirmishMeasuredLayoutBinderTests] result=Passed tests=11");
             }
             catch (Exception e) { Debug.LogError("[SkirmishMeasuredLayoutBinderTests] result=Failed\n" + e); throw; }
         }

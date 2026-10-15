@@ -18,8 +18,8 @@ namespace Game.Tests.Editor
             VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs", "8678eac8964c8d48d5e9bb36f8c4a2f40343e375a864e5749be76da36c95bdc5");
             VerifySource("SkirmishS002AriaRunHarness.NormalPaidTransportCruiseExtension.cs", "a248fab5f6385b4f02df073e4da3d2ddcd6b24cc7cc2343d2f53fb99ca0dc656");
             VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneFollowTouchSeam.cs", "e97c1036069fb8f87c0d99309f6c7500de61f7a3a6c447d21c9b00f3aaf61fa0");
-            VerifySource("SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs", "a154d9fe6f21c0692ca92783dec46a8909ced4fdbb5d7d00a8727b3519821051");
-            VerifySource("SkirmishS002AriaRunHarness.OpeningDriverDiagnostic.cs", "84eb5a5f938ffa49f0066c8f5a438cc51f5f87b340b8a0cc50ef3e32b9ad607c");
+            VerifySource("SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs", "0ee0682a541b7c0f2a3f1ba38a2f58f6fa5a1eb1f86883883c136bc2871b2ae8");
+            VerifySource("SkirmishS002AriaRunHarness.OpeningDriverDiagnostic.cs", "cd17610e3773a38df12b88a19bd0dc824f1c0236b95bc52259cec30448d91a6a");
             VerifySource("S005SceneArtifactWarmup.cs", "89b2e7c67026cec9f8e0df821b2345ff1dde19c38ca720cd1b1421d04825d6fb");
             VerifySource("SkirmishS002AriaRunHarness.cs", "e0f96b44d4faebb2099a045c62d5d214b99944456819d6d62ad27120b5348376");
             VerifySource("SkirmishS002AriaRunHarness.NativeRenderingDiagnostic.cs", "a67a381913142bb4b81291d65401a02e12d6072a03fd9985078bac4cd2fa4b29");

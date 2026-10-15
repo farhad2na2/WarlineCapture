@@ -18,6 +18,13 @@ namespace Game.UI.Shell.Ecs
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
+            if (view.PublicObjective.Applicable)
+            {
+                plan.Intent = view.PublicObjective.Intent;
+                StepPublicObjective(view, view.PublicObjective, ref plan.ObjectiveTouch, ref touch, ref output);
+                if (plan.ObjectiveTouch.Stage == 4) plan.Intent = AriaSkirmishIntent.ObserveObjective;
+                return;
+            }
             if (view.ExpandedSession)
             {
                 // Blocked remains stopped until the player explicitly retries ARIA.

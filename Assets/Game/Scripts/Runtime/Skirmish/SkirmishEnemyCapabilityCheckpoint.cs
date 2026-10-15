@@ -48,6 +48,9 @@ namespace Game.Runtime
                     if(!found)return false;
                 }
                 else if(op.Kind!=SkirmishEnemyCapabilityKind.Transport)return false;
+                else if((SkirmishGenericGroundEnemyRollout.Supports(setup)||SkirmishEnemyObjectivePolicyScope.Supports(setup))&&op.Role==SkirmishRoleKind.TransportHeli&&
+                    !SkirmishGenericGroundEnemyRollout.IsAuthoredStartingTransport(setup,op.SourceStableId.ToString(),op.Role,setup.EnemyFaction)&&
+                    !SkirmishEnemyObjectivePolicyScope.IsAuthoredStartingTransport(setup,op.SourceStableId.ToString(),op.Role,setup.EnemyFaction))return false;
                 // Stable-only references can naturally outlive a casualty between
                 // commander ticks. Missing actors are reconciled as lost, never recreated.
                 if(actors.TryGetValue(op.SourceStableId.ToString(),out var source))
@@ -55,6 +58,9 @@ namespace Game.Runtime
                     if(!SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out SkirmishAttemptOwnedComponent own)||own.FactionId!=2||own.ReservationId!=op.ReservationId||
                        !SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out SkirmishUnitRoleComponent role)||role.Role!=op.Role||
                        !SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out SkirmishArmyGroupMembershipComponent membership)||membership.GroupId!=op.GroupId)return false;
+                    if(op.ReservationId==0&&op.Role==SkirmishRoleKind.TransportHeli&&
+                        (SkirmishGenericGroundEnemyRollout.Supports(setup)||SkirmishEnemyObjectivePolicyScope.Supports(setup))&&
+                        SpawnableKeyText.Normalize(source.PrefabKey)!=SpawnableKeyText.Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(op.Role)))return false;
                     if(op.Kind==SkirmishEnemyCapabilityKind.Transport&&
                         (!SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out UnitTransportCapacity capacity)||capacity.SoldierCapacity<=0))return false;
                     if(op.Kind==SkirmishEnemyCapabilityKind.CombatAir&&!SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out UnitAirComponent _))return false;

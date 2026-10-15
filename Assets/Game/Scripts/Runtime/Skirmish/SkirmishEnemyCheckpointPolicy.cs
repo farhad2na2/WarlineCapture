@@ -24,7 +24,7 @@ namespace Game.Runtime
             if (!SkirmishEnemyConstructionCheckpoint.Validate(saved, setup)) return false;
             if (policylessCompatibility || setup.EnemyPolicy == null) return !HasAny(saved.SessionParts);
             if (!SkirmishEnemyCapabilityCheckpoint.Validate(saved,setup)) return false;
-            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault ||
+            if ((setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault && !SkirmishEnemyObjectivePolicyScope.Supports(setup)) ||
                 !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishEnemyPlannerV1Component planner) ||
                 !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishEnemyProductionIntentV1Component intent) ||
                 !SkirmishNativeCheckpointParts.TryReadBuffer(saved.SessionParts, out SkirmishEnemyGroupAssignmentV1[] assignments) ||

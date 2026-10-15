@@ -18,6 +18,8 @@ namespace Game.UI.Shell.Contracts.Ecs
     {
         public AriaPlayPhase Phase;
         public int TargetId, GoalId, Attempts, Actions;
+        public int LastCompletedTargetId, LastCompletedFrame;
+        public Vector2 LastCompletedPosition;
         public int ScrollTargetId, ScrollCreditedActions;
         public float BestScrollDistanceViewports;
         public Vector2 Target, Contact, DragEnd;

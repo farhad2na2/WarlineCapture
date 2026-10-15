@@ -240,6 +240,8 @@ namespace Game.UI.Runtime
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
             ObserveGroupRectangle(ref view);
+            ObservePublicObjective(ref view);
+            ObserveFieldRepair(ref view);
             UiShellRuntimeGateway.PublishAriaSkirmishObservation(view);
         }
         private static int ReadDisplayedCount(string text)

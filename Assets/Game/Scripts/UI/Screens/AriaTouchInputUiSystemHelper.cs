@@ -16,7 +16,7 @@ namespace Game.UI.Runtime
         private Touchscreen screen;
         private InputDevice consumedDevice;
         private bool disposed, queued, activeGesture, pressed;
-        private bool spatialDrag, finalMoveAccepted;
+        private bool spatialDrag, finalMoveAccepted, intermediateMoveAccepted;
         private uint lastAcceptedInputUpdate;
         private int lastAcceptedFrame;
         private Vector2 origin, destination;
@@ -87,7 +87,7 @@ namespace Game.UI.Runtime
             if (touchId <= 0) touchId = nextTouchId = 1;
             activeGesture = true;
             spatialDrag = from.x != to.x || from.y != to.y;
-            finalMoveAccepted = false;
+            finalMoveAccepted = intermediateMoveAccepted = false;
             DispatchedGestures++;
             Evidence?.Invoke(this, "Dispatched", from);
             Queue(from, TouchPhase.Began);
@@ -105,9 +105,28 @@ namespace Game.UI.Runtime
             if (spatialDrag && (Application.isPlaying
                     ? Time.frameCount == lastAcceptedFrame
                     : InputState.updateCount == lastAcceptedInputUpdate)) return;
+            if (spatialDrag && !intermediateMoveAccepted)
+            {
+                // ScrollRect captures its drag origin at BeginDrag, not at the
+                // initial press. An overdue first move at the final destination
+                // therefore starts a zero-distance scroll. Prime with one real
+                // intermediate pointer sample, then expose the final sample on
+                // another UI opportunity. No scroll value or callback is set.
+                float distance=Vector2.Distance(origin,destination);
+                float threshold=UnityEngine.EventSystems.EventSystem.current!=null
+                    ?UnityEngine.EventSystems.EventSystem.current.pixelDragThreshold:5;
+                float progress=Mathf.Min(.9f,(Mathf.Max(1,threshold)+1)/Mathf.Max(distance,.001f));
+                Queue(Vector2.Lerp(origin,destination,progress),TouchPhase.Moved);
+                return;
+            }
             if (travelSeconds > 0 && elapsed < holdSeconds + travelSeconds)
             {
                 float t = Mathf.Clamp01((elapsed - holdSeconds) / travelSeconds);
+                if(spatialDrag)
+                {
+                    float threshold=UnityEngine.EventSystems.EventSystem.current!=null?UnityEngine.EventSystems.EventSystem.current.pixelDragThreshold:5;
+                    t=Mathf.Max(t,Mathf.Min(.9f,(Mathf.Max(1,threshold)+1)/Mathf.Max(Vector2.Distance(origin,destination),.001f)));
+                }
                 Queue(Vector2.Lerp(origin, destination, t), TouchPhase.Moved);
             }
             else if (spatialDrag && !finalMoveAccepted) Queue(destination, TouchPhase.Moved);
@@ -171,6 +190,7 @@ namespace Game.UI.Runtime
                 AcceptedSamples++;
                 lastAcceptedFrame = Time.frameCount;
                 lastAcceptedInputUpdate = InputState.updateCount;
+                if(queuedPhase==TouchPhase.Moved&&(pendingPosition-origin).sqrMagnitude>0)intermediateMoveAccepted=true;
                 if (queuedPhase == TouchPhase.Moved && pendingPosition.x == destination.x && pendingPosition.y == destination.y)
                     finalMoveAccepted = true;
                 pressed = queuedPhase != TouchPhase.Ended;

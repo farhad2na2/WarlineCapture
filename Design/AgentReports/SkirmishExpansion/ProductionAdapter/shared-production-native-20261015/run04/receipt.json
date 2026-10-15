@@ -1,0 +1,40 @@
+{
+  "result": "Failed",
+  "wrapperExit": 1,
+  "passedMarkers": [
+    "[SkirmishConvoyLogicalAssetsAuthoringEntry] result=Passed created=0 physicalAssetsCreated=0 readiness=Pending",
+    "[SkirmishLogicalLegacyIdentity] result=Passed configurations=12 immutableBeforePin=1",
+    "[SkirmishMeasuredLayoutBinderTests] result=Passed tests=11",
+    "[SkirmishObjectiveAreaConfigTests] result=Passed tests=15 nativeSourceFitCertified=0",
+    "[SkirmishNativeObjectiveCollectorTests] result=Passed tests=15 nativeMissionReadiness=Pending",
+    "[SkirmishConvoyTruckRuntimeTests] result=Passed tests=5 nativeMissionReadiness=Pending",
+    "[SkirmishNativeObjectiveTickTests] result=Passed tests=5 nativeMissionReadiness=Pending",
+    "[SkirmishNativeObjectiveCheckpointValidation] result=Passed tests=6 missionCertified=0 freshNativeJourney=0",
+    "[SkirmishMissionLogicalBindingValidation] result=Passed tests=13 sourceFit=0 readablePixelsAccepted=0 nativeMission=0",
+    "[SkirmishNativeObjectivePartialFailureCheckpointTests] result=Passed tests=1 nativeMission=0",
+    "[SkirmishGenericMissionDispatchTests] result=Passed tests=9 nativeMissionReadiness=Pending",
+    "[SkirmishLogicalLegacyIdentity] result=Passed configurations=12 immutableBeforePin=1",
+    "[SkirmishMissionLogicalSubsystemValidation] result=Passed focusedTests=80 legacyConfigurations=12 nativeMissionReadiness=Pending",
+    "[SkirmishGenericGroundEnemyTests] result=Passed tests=6 nativeMissionReadiness=Pending",
+    "[SkirmishEnemyObjectiveValidation] result=Passed tests=22 nativeMissionReadiness=Pending",
+    "[SkirmishConvoyCommandDomainTests] result=Passed tests=5 nativeMissionReadiness=Pending",
+    "[VehicleRepairRules] result=Passed tests=8",
+    "[SkirmishEnemyVehicleRepairPolicyTests] result=Passed tests=9 normalMissionAcceptance=0",
+    "[SkirmishCameraPosedMeshReaderTests] result=Passed tests=11 visualAcceptance=0",
+    "[SkirmishCameraFramingMeasurementTests] result=Passed tests=7 actualMissionCapture=0 readabilityCertified=0",
+    "[MatchHudNormalCameraZoom] result=Passed controls=3",
+    "[S005ObservedSquadPageReceipt] result=Passed controls=9 nativeMissionPending=1"
+  ],
+  "suiteFailures": [
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=SkirmishSharedObjectivePublicWaveValidation failure=NUnit.Framework.AssertionException:   MissingReference:missionLogicalBinding:Explicit role framing/elevation/normal-view capture requirements missing.",
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=SkirmishActiveRepairRecoveryValidation failure=System.InvalidOperationException: EntityQuery cannot be disposed. Note that queries created with GetEntityQuery() should not be manually disposed; they are owned by the system, and will be destroyed along with the system itself.",
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=SkirmishPublicObjectiveHudTests failure=NUnit.Framework.AssertionException:   Incomplete or contradictory public objective shape.",
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=SkirmishPublicUnloadNativeTests failure=NUnit.Framework.AssertionException:   Incomplete or contradictory public objective shape.",
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=SkirmishPublicRepairHudTests failure=NUnit.Framework.AssertionException:   Incomplete or contradictory public objective shape.",
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=AriaTouchInputValidation failure=System.InvalidOperationException: ARIA input: drag contact follows accepted event",
+    "[SkirmishSharedProductionWaveValidation] suiteFailed=SkirmishGroundSourceFitSurvey failure=System.NullReferenceException: Object reference not set to an instance of an object"
+  ],
+  "finalRequiredMarkerFound": false,
+  "normalMissionReadiness": false,
+  "archiveSha256": "bb0e9b0260de70ae87a8bd297ec15d839f64a3ee77b3c84bdef0f5877208b5c7"
+}

@@ -259,6 +259,7 @@ namespace Game.UI.Runtime
             SetText(titleText, UiLocalizedText.SelectionLabel(model.Title));
             SetText(subtitleText, model.Subtitle);
             SetText(currentOrderText, model.CurrentOrder);
+            RefreshFieldRepairContext(model.CurrentOrder);
             SetText(healthText, model.HealthText);
             SetSelectionPortrait(FirstNonNull(model.PortraitSprite, ResolveFallbackPortraitSprite(model.PortraitKind)));
             SetHealthFill(model.Health01);

@@ -365,7 +365,7 @@ namespace Game.Configs
                 setup.LayoutBindingFingerprint = bindingFingerprint;
             }
             // Failed generic binding adds reasons; outer TryCompile discards setup.
-            if (SupportsGroundCommanderRollout(setup))
+            if (SupportsGroundCommanderRollout(setup) || (!preserveLegacyBinding && SkirmishGenericGroundEnemyRollout.Supports(setup)))
             {
                 var policyCatalog = SkirmishExpansionCatalogConfig.Load();
                 SkirmishDifficultyConfig difficultyConfig = policyCatalog != null &&
@@ -384,6 +384,16 @@ namespace Game.Configs
                 if (!SkirmishMissionLogicalBindingCompiler.TryCompile(definition,setup,out var logicalBinding,out string logicalError))
                     reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference,"missionLogicalBinding",logicalError));
                 else setup.MissionLogicalBindingFingerprint = logicalBinding.Fingerprint;
+            }
+            if (SkirmishEnemyObjectivePolicyScope.Supports(setup))
+            {
+                if (!SkirmishEnemyPolicyCompiler.TryCompile(setup,definition.MapLayout,out var objectivePolicy))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference,"enemyObjectivePolicy","Exact non-BA enemy policy inputs unavailable."));
+                else
+                {
+                    setup.EnemyPolicy=objectivePolicy;
+                    setup.ContentHash=(setup.ContentHash??string.Empty)+"/enemy-objective-policy-v1/"+objectivePolicy.Fingerprint;
+                }
             }
             setup.SetupHash = ComputeHash(setup, seed);
             setup.Report = BuildReport(setup);

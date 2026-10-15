@@ -10,6 +10,7 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(SkirmishArmyGroupSystem))]
+    [UpdateAfter(typeof(SkirmishNativeObjectiveTickSystem))]
     public partial struct SkirmishEnemyStrategySystem : ISystem
     {
         // A structure must be inside the defended base area and close enough to
@@ -56,6 +57,8 @@ namespace Game.Runtime
             if (setup == null)
                 return score;
             army ??= SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+            if(setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault)
+                return SkirmishEnemyObjectiveCommanderService.Evaluate(em,session,setup,army);
             if (setup.EnemyPolicy != null && setup.ObjectiveKind == SkirmishObjectiveKind.BaseAssault)
                 return SkirmishEnemyCommanderService.Evaluate(em, session, setup, army);
             SkirmishPublicPerception perception = Perceive(em, session, owned);

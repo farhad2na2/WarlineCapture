@@ -68,31 +68,40 @@ namespace Game.Editor
                     throw new InvalidOperationException("Opening view is not the authored default perspective; retain native failure.");
                 QueueOpeningFraming("opening-default");openingFramingStage=1;return true;
             }
-            var rails=UnityEngine.Object.FindObjectsByType<MatchHudRightQuickRailView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
-            if(rails.Length!=1||!rails[0].isActiveAndEnabled||rails[0].ZoomInButton==null||rails[0].ZoomOutButton==null)
+            UnityEngine.UI.Button zoomIn=null,zoomOut=null;
+            int cameraOwners=0;
+            foreach(var rail in UnityEngine.Object.FindObjectsByType<MatchHudRightQuickRailView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+                if(rail.isActiveAndEnabled&&rail.ZoomInButton!=null&&rail.ZoomOutButton!=null&&
+                    rail.ZoomInButton.gameObject.activeInHierarchy&&rail.ZoomOutButton.gameObject.activeInHierarchy)
+                {cameraOwners++;zoomIn=rail.ZoomInButton;zoomOut=rail.ZoomOutButton;}
+            foreach(var minimap in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+                if(minimap.isActiveAndEnabled&&minimap.HasNormalCameraZoomControls&&
+                    minimap.ZoomInButton!=null&&minimap.ZoomOutButton!=null&&
+                    minimap.ZoomInButton.gameObject.activeInHierarchy&&minimap.ZoomOutButton.gameObject.activeInHierarchy)
+                {cameraOwners++;zoomIn=minimap.ZoomInButton;zoomOut=minimap.ZoomOutButton;}
+            if(cameraOwners!=1)
             {
-                WriteOpeningDriverDiagnostic("ZoomRouteUnavailableAfterDefaultCapture");
-                throw new InvalidOperationException("Default camera captured; unique discrete quick-rail zoom route unavailable. Actual quick-rail/minimap controls and distinct gesture routes are preserved in opening-driver evidence; no timeout or substituted camera input.");
+                WriteOpeningDriverDiagnostic("CameraZoomOwnerUnavailableOrAmbiguousAfterDefaultCapture");
+                throw new InvalidOperationException("Default camera captured; exactly one presented ordinary camera zoom owner required. Map-projection hold controls cannot substitute for camera zoom.");
             }
-            var rail=rails[0];
-            if(openingFramingStage==1){if(PlayerResumeTap(rail.ZoomOutButton)){openingFramingStage=2;openingFramingSettledFrames=0;}return true;}
+            if(openingFramingStage==1){if(PlayerResumeTap(zoomOut)){openingFramingStage=2;openingFramingSettledFrames=0;}return true;}
             if(openingFramingStage==2){
                 // ZoomOut boundary-aware result may be less than authored max.
                 // Disabled actual button proves endstop only for control sequencing,
                 // never visual acceptance; the raw camera value remains authoritative.
-                if(rail.ZoomOutButton==null||rail.ZoomOutButton.interactable)return true;
+                if(zoomOut==null||zoomOut.interactable)return true;
                 QueueOpeningFraming("opening-public-zoom-out-endstop");openingFramingStage=3;return true;
             }
-            if(openingFramingStage==3){if(PlayerResumeTap(rail.ZoomInButton)){openingFramingStage=4;openingFramingSettledFrames=0;}return true;}
+            if(openingFramingStage==3){if(PlayerResumeTap(zoomIn)){openingFramingStage=4;openingFramingSettledFrames=0;}return true;}
             if(openingFramingStage==4){
                 if(Mathf.Abs(camera.transform.position.y-profile.NormalHeight)>.1f)return true;
-                if(PlayerResumeTap(rail.ZoomInButton)){openingFramingStage=5;openingFramingSettledFrames=0;}return true;
+                if(PlayerResumeTap(zoomIn)){openingFramingStage=5;openingFramingSettledFrames=0;}return true;
             }
             if(openingFramingStage==5){
-                if(rail.ZoomInButton==null||rail.ZoomInButton.interactable||Mathf.Abs(camera.transform.position.y-profile.MinHeight)>.1f)return true;
+                if(zoomIn==null||zoomIn.interactable||Mathf.Abs(camera.transform.position.y-profile.MinHeight)>.1f)return true;
                 QueueOpeningFraming("opening-public-zoom-in-min");openingFramingStage=6;return true;
             }
-            if(openingFramingStage==6){if(PlayerResumeTap(rail.ZoomOutButton)){openingFramingStage=7;openingFramingSettledFrames=0;}return true;}
+            if(openingFramingStage==6){if(PlayerResumeTap(zoomOut)){openingFramingStage=7;openingFramingSettledFrames=0;}return true;}
             if(openingFramingStage==7){
                 if(Mathf.Abs(camera.transform.position.y-profile.NormalHeight)>.1f)return true;
                 QueueOpeningFraming("opening-default-restored");openingFramingStage=8;return true;

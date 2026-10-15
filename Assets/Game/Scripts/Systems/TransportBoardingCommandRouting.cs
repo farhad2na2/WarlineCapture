@@ -92,6 +92,7 @@ namespace Game.Runtime
                         transportCapacitySystem,
                         moveOrderSystem)
                 };
+                SkirmishOriginalUnloadPresentation.ObserveResult(em,result);
                 TransportBoardingCommandRoutingSystemHelper.AddCommandResult(em, commandEntity, commandResults, result);
                 TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
             }
@@ -174,6 +175,7 @@ namespace Game.Runtime
                         moveOrderSystem)
                 };
 
+                SkirmishOriginalUnloadPresentation.ObserveResult(em,result);
                 TransportBoardingCommandRoutingSystemHelper.AddCommandResult(em, commandEntity, commandResults, result);
                 TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
             }

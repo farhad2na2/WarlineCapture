@@ -675,7 +675,7 @@ namespace Game.Runtime
             return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
             {
                 Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
-                Frame = frame,
+                Frame = frame,ScreenPosition=ReadState().LastKnownPointerPosition,HasScreenPosition=ReadState().HasLastKnownPointerPosition,
                 TargetEntity = transport,
                 HasTargetEntity = transport != Entity.Null ? (byte)1 : (byte)0
             });

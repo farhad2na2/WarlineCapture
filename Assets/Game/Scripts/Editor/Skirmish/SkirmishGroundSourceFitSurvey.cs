@@ -36,6 +36,8 @@ namespace Game.Editor
             string allowed = Path.Combine(root, "Logs", "SkirmishProduction") + Path.DirectorySeparatorChar;
             if (string.IsNullOrEmpty(output) || !Path.IsPathRooted(output) || !Path.GetFullPath(output).StartsWith(allowed, StringComparison.OrdinalIgnoreCase) || File.Exists(output))
                 throw new InvalidOperationException("Fresh absolute Logs/SkirmishProduction output required");
+            RunPilotLogicalAuthoringControls();
+            RunPilotCompoundReservationControls();
             var input = JObject.Parse(File.ReadAllText(Inventory));
             Require((int?)input["schema"] == 1 && Hash((string)input["budgetAuthority"]) == (string)input["matrixAssetSha256"], "Pinned matrix changed");
             var report = new JObject { ["schema"] = 1, ["scope"] = "ReadOnlyPinnedSourceFitSurvey", ["inventorySha256"] = Hash(Inventory),
@@ -192,24 +194,22 @@ namespace Game.Editor
             var requests = ((JArray)input["requests"]).OfType<JObject>().Where(r => (string)r["mapGroup"] == group).ToArray();
             foreach (var request in requests) Require(Hash((string)request["packetPath"]) == (string)request["packetSha256"], "Packet changed");
             row["canonicalRequests"] = new JArray(requests.Select(r => new JObject { ["catalogId"] = r["catalogId"].DeepClone(), ["rows"] = r["canonicalSetupRows"].DeepClone() }));
+            using var candidateOwner = new PilotCandidateOwner();
+            SkirmishMapLayoutConfig layout;
             if (!(input["layoutSnapshots"]?[group] is JObject snapshot))
+                layout = CreatePilotLogicalCandidate(source, group, row, candidateOwner);
+            else
             {
-                row["layoutStatus"] = "UnresolvedNoTwoCompoundLayout";
-                row["nativeCompoundsAndRoutes"] = "PendingAuthoredTypedCoordinates";
-                row["existingCampaignAnchors"] = EditorJsonUtility.ToJson(source);
-                SurveyUnconfiguredCompoundCandidates(source,row);
-                row["collectionCompleted"] = true;
-                return;
+                string layoutPath = (string)snapshot["templatePath"];
+                Require(Hash(layoutPath) == (string)snapshot["templateAssetSha256"], "Existing projected template changed");
+                Require(Hash((string)snapshot["candidateDraftPath"]) == (string)snapshot["candidateDraftSha256"], "Logical candidate bytes changed");
+                layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(layoutPath);
+                Require(layout != null && !EditorUtility.IsDirty(layout), "Existing clean projected template required");
+                row["layoutTemplatePath"] = layoutPath; row["layoutTemplateSha256"] = Hash(layoutPath);
+                row["candidateDraftSha256"] = snapshot["candidateDraftSha256"].DeepClone();
+                row["layoutStatus"] = "UnmeasuredReuseCandidate";
+                row["projectedAnchors"] = snapshot["anchors"].DeepClone(); row["projectedPads"] = snapshot["pads"].DeepClone();
             }
-            string layoutPath = (string)snapshot["templatePath"];
-            Require(Hash(layoutPath) == (string)snapshot["templateAssetSha256"], "Existing projected template changed");
-            Require(Hash((string)snapshot["candidateDraftPath"]) == (string)snapshot["candidateDraftSha256"], "Logical candidate bytes changed");
-            var layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(layoutPath);
-            Require(layout != null && !EditorUtility.IsDirty(layout), "Existing clean projected template required");
-            row["layoutTemplatePath"] = layoutPath; row["layoutTemplateSha256"] = Hash(layoutPath);
-            row["candidateDraftSha256"] = snapshot["candidateDraftSha256"].DeepClone();
-            row["layoutStatus"] = "UnmeasuredReuseCandidate";
-            row["projectedAnchors"] = snapshot["anchors"].DeepClone(); row["projectedPads"] = snapshot["pads"].DeepClone();
             using var world = StreamingWorld();
             Load(world, source.NavigationMetadata.AuthoredSubSceneGuid);
             Load(world, AssetDatabase.AssetPathToGUID(Support));
@@ -318,12 +318,17 @@ namespace Game.Editor
                     }
                 }
             SurveyLogicalEndpointCandidates(em,gridEntity,grid,surface,layout,row);
+            ProbePilotFailedRouteDetours(em, gridEntity, grid, surface, source, layout, row);
             row["allSizeForcePacking"] = SurveyForcePacking(input, requests, layout, profiles.Roles, em, gridEntity, grid, surface, facilities);
+            ProbePilotServiceAccess(em, gridEntity, grid, surface, layout, row);
+            RecordPilotPlacementGates(row);
+            ProbePilotNormalFacilityRelocation(input,requests,layout,profiles.Roles,em,gridEntity,grid,surface,row);
+            ProbePilotNormalTerrainFallback(input,requests,layout,profiles.Roles,em,gridEntity,grid,surface,facilities,row);
             row["collectionCompleted"] = true;
         }
 
         static JArray SurveyForcePacking(JObject input, JObject[] requests, SkirmishMapLayoutConfig layout, SkirmishRoleCatalogConfig roles,
-            EntityManager em, Entity gridEntity, GridConfig grid, MapSurfaceComponent surface, JArray facilities)
+            EntityManager em, Entity gridEntity, GridConfig grid, MapSurfaceComponent surface, JArray facilities, bool applyNormalTerrainFallback = false)
         {
             var output = new JArray(); var walkable = em.GetBuffer<GridWalkable>(gridEntity, true).AsNativeArray();
             var roster = new[] { ("rifle", SkirmishRoleIds.Rifle), ("gunner", SkirmishRoleIds.Gunner), ("rocketeer", SkirmishRoleIds.Rocketeer),
@@ -362,20 +367,33 @@ namespace Game.Editor
                         { result["status"] = "TypedForcePadMissing"; continue; }
                         var footprint = em.GetComponentData<UnitFootprint>(prefab).Size;
                         var center = GridUtils.WorldToCell(grid, new float3(px, 0, pz)); var positions = new JArray(); result["candidateCells"] = positions;
-                        int found = 0, traversable = 0; bool air = em.HasComponent<UnitAirMovement>(prefab);
+                        int found = 0, traversable = 0, insidePad = 0; bool air = em.HasComponent<UnitAirMovement>(prefab);
                         bool vehicle = em.HasComponent<UnitMovementBehavior>(prefab) && em.GetComponentData<UnitMovementBehavior>(prefab).UsesVehicleMotion != 0;
                         var validation = new MapSurfaceTraversalValidation();
                         for (int actor = 0; actor < quantity; actor++)
                         {
                             if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref random, grid, walkable, blocked, occupied, ref reserved, center, 12, footprint, air, out var cell)) break;
+                            var initialCell=cell;
+                            bool fallbackAccepted=!applyNormalTerrainFallback || air || SkirmishSpawnPlacement.EnsureTraversable(em,grid,walkable,blocked,occupied,ref reserved,prefab,footprint,ref cell);
+                            if(!fallbackAccepted){positions.Add(new JObject {["initialX"]=initialCell.x,["initialZ"]=initialCell.y,["normalFallbackAccepted"]=false});break;}
                             found++;
+                            bool contained=!applyNormalTerrainFallback || PilotFootprintInsideProjectedPad(layout,pad,grid,cell,footprint);
+                            if(contained)insidePad++;
                             bool terrain = air || validation.CanTraverseFootprint(surface, 1, grid, cell, footprint, vehicle);
                             if (terrain) traversable++;
-                            positions.Add(new JObject { ["x"] = cell.x, ["z"] = cell.y, ["surfaceTraversable"] = terrain });
+                            var position=new JObject { ["x"] = cell.x, ["z"] = cell.y, ["surfaceTraversable"] = terrain };
+                            if(applyNormalTerrainFallback){position["initialX"]=initialCell.x;position["initialZ"]=initialCell.y;position["normalFallbackAccepted"]=true;position["insideActualProjectedTypedPad"]=contained;}
+                            positions.Add(position);
                         }
                         result["nativeFootprintX"] = footprint.x; result["nativeFootprintZ"] = footprint.y;
                         result["foundCount"] = found; result["surfaceTraversableCount"] = traversable;
                         result["status"] = found == quantity && traversable == quantity ? "ProposedPackingFound_RuntimeFitPending" : "ProposedPackingRejected";
+                        if(applyNormalTerrainFallback)
+                        {
+                            result["scope"]="ActualNormalTerrainFallbackOnCopiedBakedGrid_ValidationOnlyMatchContext";
+                            result["insideActualProjectedTypedPadCount"]=insidePad;
+                            result["status"]=found==quantity&&traversable==quantity&&insidePad==quantity?"NormalStaticFallbackInsideTypedPad_LiveFitPending":"NormalStaticFallbackRejectedOrOutsideTypedPad";
+                        }
                     }
                 }
                 finally { reserved.Dispose(); }
@@ -436,7 +454,7 @@ namespace Game.Editor
         }
         static NativeArray<T> Array<T>(int count, List<IDisposable> allocations) where T : unmanaged
         { var value = new NativeArray<T>(count, Allocator.Persistent); allocations.Add(value); return value; }
-        static void QueryPath(EntityManager em, Entity gridEntity, GridConfig grid, MapSurfaceComponent surface, Entity prefab, int2 from, int2 to, JObject result)
+        static void QueryPath(EntityManager em, Entity gridEntity, GridConfig grid, MapSurfaceComponent surface, Entity prefab, int2 from, int2 to, JObject result, byte queryFaction = 1)
         {
             var allocations = new List<IDisposable>(); var scratch = new UnitPathScratchWorkspace();
             using var stream = new NativeStream(1, Allocator.Persistent);
@@ -446,7 +464,7 @@ namespace Game.Editor
                 var entities = Array<Entity>(1, allocations); var units = Array<UnitGrid>(1, allocations); units[0] = new UnitGrid { Cell = from };
                 var sizes = Array<UnitFootprint>(1, allocations); sizes[0] = em.GetComponentData<UnitFootprint>(prefab);
                 var behaviors = Array<UnitMovementBehavior>(1, allocations); behaviors[0] = em.GetComponentData<UnitMovementBehavior>(prefab);
-                var factions = Array<byte>(1, allocations); factions[0] = 1;
+                var factions = Array<byte>(1, allocations); factions[0] = queryFaction;
                 var manual = Array<byte>(1, allocations); manual[0] = 1;
                 var skipped = Array<byte>(1, allocations); skipped[0] = 1;
                 var requests = Array<UnitPathRequest>(1, allocations); requests[0] = new UnitPathRequest { Goal = to };
@@ -469,6 +487,7 @@ namespace Game.Editor
                 result["status"] = status[0] == 1 && goals[0].Equals(to) ? "NativeQueryFoundExactGoal" : "NativeQueryFailed";
                 result["failureCode"] = failures[0]; result["expansions"] = expansions[0]; result["pathCells"] = points;
                 result["footprintX"] = sizes[0].Size.x; result["footprintZ"] = sizes[0].Size.y;
+                result["nativeQueryFaction"] = queryFaction;
                 result["dynamicBlockersIncluded"] = false; result["liveOccupancyIncluded"] = false;
             }
             finally { foreach (var value in allocations) value.Dispose(); scratch.Dispose(); }

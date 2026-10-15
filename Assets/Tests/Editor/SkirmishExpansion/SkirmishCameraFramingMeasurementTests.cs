@@ -85,6 +85,14 @@ namespace Game.Tests.Editor
             em.AddComponentData(actor, new UnitDetailedVisualReference { Root = root });
             em.AddBuffer<LinkedEntityGroup>(root).Add(new LinkedEntityGroup { Value = mesh });
             em.AddComponentData(mesh, new WorldRenderBounds { Value = new AABB { Center = new float3(0, 0, 10), Extents = new float3(1) } });
+            var actualMesh=new Mesh();var actualMaterial=new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            try
+            {
+            actualMesh.vertices=new[]{new Vector3(-1,-1,-1),new Vector3(1,1,-1),new Vector3(0,0,1)};
+            actualMesh.SetIndices(new[]{0,1,2},MeshTopology.Triangles,0);
+            em.AddSharedComponentManaged(mesh,new RenderMeshArray(new[]{actualMaterial},new[]{actualMesh}));
+            em.AddComponentData(mesh,MaterialMeshInfo.FromRenderMeshArrayIndices(0,0));
+            em.AddComponentData(mesh,new LocalToWorld{Value=float4x4.Translate(new float3(0,0,10))});
             var result = SkirmishCameraFramingMeasurement.Capture(em, actor, camera);
             Assert.IsTrue(result.Valid, result.Failure); Assert.AreEqual("synthetic-rifle", result.StableActorId); Assert.AreEqual(1, result.RenderBoundsCount);
             Assert.AreEqual(root.Index, result.ActiveRootIndex); Assert.AreEqual(root.Version, result.ActiveRootVersion);
@@ -101,6 +109,9 @@ namespace Game.Tests.Editor
             em.SetComponentData(actor, new UnitRenderVisualComponent { Current = (byte)UnitRenderVisualKind.Far, Desired = (byte)UnitRenderVisualKind.Far });
             result = SkirmishCameraFramingMeasurement.Capture(em, actor, camera);
             Assert.IsFalse(result.Valid); Assert.AreEqual("NativeVisualIsFarImpostorOrUnknown", result.Failure);
+            }
+            finally{UnityEngine.Object.DestroyImmediate(actualMaterial);UnityEngine.Object.DestroyImmediate(actualMesh);}
+
         }
         private static SkirmishCameraActorMeasurement Sample() => new SkirmishCameraActorMeasurement { Valid = true,
             CameraPosition = new Vector3(0, 20, 0), FieldOfView = 60, CameraPixels = new Rect(80,40,800,600),

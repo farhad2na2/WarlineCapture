@@ -27,8 +27,8 @@ namespace Game.Tests.Editor
             private readonly IDisposable authoredScope,libraryScope;
             public Fixture(string id="S026",bool published=true,bool activateScopes=true,bool attachView=true)
             {
-                var actual=SkirmishExpansionCatalogConfig.Load();Assert.IsNotNull(actual);
-                var profiles=actual.ToAuthoredSet();var layout=UnityEngine.Object.Instantiate(profiles.DefinitionS005.MapLayout);Owned.Add(layout);
+                var actual=Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);Assert.IsNotNull(actual);
+                var profiles=actual.ToAuthoredSet();Assert.IsNotNull(profiles.DefinitionS005,"Packaged template must not come from a scoped authored catalog.");var layout=UnityEngine.Object.Instantiate(profiles.DefinitionS005.MapLayout);Owned.Add(layout);
                 string path=id=="S049"||id=="S050"?"Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset":
                     id=="S074"?"Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset":
                     id=="S097"||id=="S098"?"Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset":
@@ -71,13 +71,36 @@ namespace Game.Tests.Editor
             }
             public void Dispose(){libraryScope?.Dispose();authoredScope?.Dispose();for(int i=Owned.Count-1;i>=0;i--)UnityEngine.Object.DestroyImmediate(Owned[i]);}
         }
+        // Nested recovery needs another native World, not another global catalog
+        // override. Keep the exact outer frozen definition alive until both finish.
+        private static Fixture activeQueuedFixture;
         public static void WithViewBoundQueuedSession(Action<EntityManager,Entity> assertion)
         {
-            using var fixture=new Fixture();using var world=new World("ViewBoundGenericQueuedFixture");
+            if(activeQueuedFixture!=null)
+            {
+                WithFreshQueuedWorld(activeQueuedFixture,assertion);
+                return;
+            }
+            using var fixture=new Fixture();
+            activeQueuedFixture=fixture;
+            try{WithFreshQueuedWorld(fixture,assertion);}
+            finally{activeQueuedFixture=null;}
+        }
+        private static void WithFreshQueuedWorld(Fixture fixture,Action<EntityManager,Entity> assertion)
+        {
+            Assert.AreSame(fixture.Authored,SkirmishExpansionCatalogConfig.Load());
+            Assert.AreSame(fixture.Library,SkirmishBattleCatalogConfig.Load());
+            var defaultWorld=World.DefaultGameObjectInjectionWorld;
+            using var world=new World("ViewBoundGenericQueuedFixture");
             var config=QuickGameConfig.Defaults;config.ScenarioIndex=fixture.Index;
             Assert.IsTrue(SkirmishLaunchProjection.TryQueue(world.EntityManager,config));
             using var sessions=world.EntityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
-            assertion(world.EntityManager,sessions.GetSingletonEntity());
+            var session=sessions.GetSingletonEntity();
+            Assert.AreSame(fixture.Definition,world.EntityManager.GetComponentObject<SkirmishLaunchDefinitionRecord>(session).Definition);
+            assertion(world.EntityManager,session);
+            Assert.AreSame(fixture.Authored,SkirmishExpansionCatalogConfig.Load());
+            Assert.AreSame(fixture.Library,SkirmishBattleCatalogConfig.Load());
+            Assert.AreSame(defaultWorld,World.DefaultGameObjectInjectionWorld);
         }
         public static void WithSourceBoundUnqueuedDefinition(string catalogId,Action<SkirmishScenarioDefinitionConfig,List<UnityEngine.Object>> assertion)
         {
@@ -125,6 +148,32 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(f.Definition.ScenarioSetupId,selection.ScenarioId.ToString());
                 Assert.AreEqual(f.Definition.CampaignMap.OperationMapId,selection.OperationMapId.ToString());
             }
+            AssertNestedQueueKeepsExactOuterDefinitionAndScopes();
+        }
+        private static void AssertNestedQueueKeepsExactOuterDefinitionAndScopes()
+        {
+            var authoredBefore=SkirmishExpansionCatalogConfig.Load();
+            var libraryBefore=SkirmishBattleCatalogConfig.Load();
+            var defaultWorld=World.DefaultGameObjectInjectionWorld;
+            WithViewBoundQueuedSession((outer,outerSession)=>
+            {
+                var authored=SkirmishExpansionCatalogConfig.Load();var library=SkirmishBattleCatalogConfig.Load();
+                var definition=outer.GetComponentObject<SkirmishLaunchDefinitionRecord>(outerSession).Definition;
+                var setup=outer.GetComponentObject<SkirmishResolvedSetupRecord>(outerSession).Setup;
+                var attempt=outer.GetComponentData<SkirmishExpandedSessionComponent>(outerSession).SessionId;
+                WithViewBoundQueuedSession((fresh,freshSession)=>
+                {
+                    Assert.AreNotEqual(outer.World.SequenceNumber,fresh.World.SequenceNumber);
+                    Assert.AreNotEqual(attempt,fresh.GetComponentData<SkirmishExpandedSessionComponent>(freshSession).SessionId);
+                    Assert.AreSame(definition,fresh.GetComponentObject<SkirmishLaunchDefinitionRecord>(freshSession).Definition);
+                    var freshSetup=fresh.GetComponentObject<SkirmishResolvedSetupRecord>(freshSession).Setup;
+                    Assert.AreNotSame(setup,freshSetup);Assert.AreEqual(setup.SetupHash,freshSetup.SetupHash);
+                });
+                Assert.IsTrue(outer.Exists(outerSession));Assert.AreSame(authored,SkirmishExpansionCatalogConfig.Load());
+                Assert.AreSame(library,SkirmishBattleCatalogConfig.Load());Assert.AreSame(defaultWorld,World.DefaultGameObjectInjectionWorld);
+            });
+            Assert.AreSame(authoredBefore,SkirmishExpansionCatalogConfig.Load());
+            Assert.AreSame(libraryBefore,SkirmishBattleCatalogConfig.Load());Assert.AreSame(defaultWorld,World.DefaultGameObjectInjectionWorld);
         }
         [Test] public void PayloadIdentityMutationsRejectBeforeAnySessionMutation()
         {

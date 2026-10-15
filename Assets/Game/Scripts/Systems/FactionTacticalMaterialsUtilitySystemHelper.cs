@@ -133,6 +133,16 @@ namespace Game.Runtime
             return FactionTacticalMaterialsMutationResult.Applied;
         }
 
+        public static FactionTacticalMaterialsMutationResult TryRefundRepair(ref FactionTacticalMaterialsComponent materials,int amount)
+        {
+            if(amount<=0)return FactionTacticalMaterialsMutationResult.InvalidAmount;
+            if(!HasValidState(materials))return FactionTacticalMaterialsMutationResult.InvalidState;
+            if(amount>materials.Capacity-materials.Current)return FactionTacticalMaterialsMutationResult.CapacityExceeded;
+            if(amount>materials.LifetimeSpent||amount>materials.LifetimeRepairSpent)return FactionTacticalMaterialsMutationResult.InvalidState;
+            materials.Current+=amount;materials.LifetimeSpent-=amount;materials.LifetimeRepairSpent-=amount;
+            IncrementVersion(ref materials);return FactionTacticalMaterialsMutationResult.Applied;
+        }
+
         public static FactionTacticalMaterialsMutationResult TryRefundQueue(
             ref FactionTacticalMaterialsComponent materials, int amount, FactionTacticalMaterialsSpendKind kind)
         {

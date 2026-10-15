@@ -13,7 +13,7 @@ namespace Game.Configs
             out SkirmishEnemyPolicySnapshot policy, SkirmishDifficultyConfig difficultyConfig = null)
         {
             policy = null;
-            if (setup == null || setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault) return false;
+            if (setup == null || (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault && !SkirmishEnemyObjectivePolicyScope.Supports(setup))) return false;
             if (!SkirmishDifficultyConfig.TryGetPolicyValues(setup.DifficultyId, out float responseMin,
                 out float responseMax, out float scoutMin, out float scoutMax, out int fieldOpening,
                 out int establishedOpening) ||
@@ -101,6 +101,8 @@ namespace Game.Configs
                   Append(canonical,pad.X);Append(canonical,pad.Z);Append(canonical,pad.AX);Append(canonical,pad.AZ);
                   Append(canonical,pad.BX);Append(canonical,pad.BZ); }
             }
+            if(setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault)
+            {Append(canonical,"public-objective-v1");Append(canonical,(byte)setup.ObjectiveKind);Append(canonical,setup.MissionLogicalBindingFingerprint);}
             string text = canonical.ToString();
             string fingerprint;
             using (var sha = SHA256.Create()) fingerprint = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-", "").ToLowerInvariant();

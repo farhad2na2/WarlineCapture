@@ -113,13 +113,23 @@ namespace Game.Configs
 
             var padIds = new HashSet<string>(StringComparer.Ordinal);
             var padKinds = new HashSet<string>(StringComparer.Ordinal);
+            var objectiveTruckRoles = new HashSet<string>(StringComparer.Ordinal);
             foreach (var pad in layout.Pads)
             {
                 if (string.IsNullOrEmpty(pad.PadId) || !padIds.Add(pad.PadId) || !anchorIds.Contains(pad.AnchorId) ||
                     !Positive(pad.WidthMetres) || !Positive(pad.DepthMetres) ||
                     pad.FactionId > 2 || pad.Kind == SkirmishLegalPadKind.None)
                     Add(reasons, pad.PadId, "Typed pad declaration invalid.");
-                if (pad.FactionId != 0 && !padKinds.Add(pad.FactionId + "/" + pad.Kind))
+                if (pad.Kind == SkirmishLegalPadKind.ObjectiveTruckSpawn)
+                {
+                    // These three mode-owned bays are resolved by exact public
+                    // role, never by the nonunique faction/kind convenience API.
+                    if (pad.FactionId != 1 ||
+                        (pad.RoleId != "convoy.origin.1" && pad.RoleId != "convoy.origin.2" && pad.RoleId != "convoy.origin.3") ||
+                        !objectiveTruckRoles.Add(pad.RoleId) || !layout.TryGetAnchor(pad.RoleId, out var bayAnchor) || bayAnchor.AnchorId != pad.AnchorId)
+                        Add(reasons, pad.PadId, "Objective truck bays require unique exact convoy origin roles and faction 1 anchor bindings.");
+                }
+                else if (pad.FactionId != 0 && !padKinds.Add(pad.FactionId + "/" + pad.Kind))
                     Add(reasons, pad.PadId, "Ambiguous faction/kind pad lookup.");
                 foreach (int dx in new[] { -1, 1 }) foreach (int dz in new[] { -1, 1 })
                     if (!layout.TryProjectLocalToMap(pad.CenterX + dx * pad.WidthMetres * .5f,
@@ -127,6 +137,8 @@ namespace Game.Configs
                         Add(reasons, pad.PadId, "Declared pad corner leaves actual source bounds.");
             }
 
+            if (objectiveTruckRoles.Count != 0 && objectiveTruckRoles.Count != 3)
+                Add(reasons, "convoy.origin", "All three distinct objective truck bays are required.");
             var points = new Vector2[8];
             int point = 0;
             foreach (byte faction in new byte[] { 1, 2 })

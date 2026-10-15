@@ -193,6 +193,7 @@ namespace Game.Runtime
             em.SetComponentData(runtimeEntity, runtimeState);
 
             accepted = true;
+            if (holdPosition) SkirmishPublicOrderFeedback.PublishHold(em,true);
             return true;
         }
 

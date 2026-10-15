@@ -732,7 +732,7 @@ namespace Game.Editor
             }
         }
 
-        private static GameObject EnsureMatchVolume()
+        internal static GameObject EnsureMatchVolume()
         {
             ScriptableObject profile = AssetDatabase.LoadAssetAtPath<ScriptableObject>(MatchVolumeProfilePath);
             if (profile == null)

@@ -40,6 +40,10 @@ namespace Game.Editor
         private const int Supersample = 2;
         private const double ScenarioTimeoutSeconds = 240d;
         private const double SettleSeconds = 4d;
+        private const double CloseUpSettleSeconds = 12d;
+
+        // Cards reframed as a low, close oblique on the enemy base with its defenders in view.
+        private static bool IsCloseUp(string id) => id == "S002" || id == "S003" || id == "S025";
 
         private static int stage;
         private static double deadline;
@@ -232,7 +236,9 @@ namespace Game.Editor
                 {
                     // Preview cards show the authored enemy base, so lift the player's fog on it.
                     RevealSessionContacts(em);
-                    if (now - readyAt < SettleSeconds || ShaderUtil.anythingCompiling)
+                    // Close-up cards show the defenders, so let enemy units spawn and settle longer.
+                    double settle = IsCloseUp(id) ? CloseUpSettleSeconds : SettleSeconds;
+                    if (now - readyAt < settle || ShaderUtil.anythingCompiling)
                         return;
                     // Wait (bounded) for the session's structure visuals to finish binding.
                     if (VisualPending(em) && now - readyAt < SettleSeconds + 40d)
@@ -374,6 +380,22 @@ namespace Game.Editor
             return result.Count > 0 ? result : points;
         }
 
+        private const float KnotRadius = 55f;
+
+        private static Vector3 BestStructureKnot(List<Vector3> structures, Vector3 fallback)
+        {
+            Vector3 best = fallback;
+            int bestCount = -1;
+            foreach (Vector3 c in structures)
+            {
+                int n = 0;
+                foreach (Vector3 q in structures)
+                    if (new Vector2(q.x - c.x, q.z - c.z).magnitude <= KnotRadius) n++;
+                if (n > bestCount) { bestCount = n; best = c; }
+            }
+            return best;
+        }
+
         private static void Capture(string id, List<Vector3> enemyBuildings, List<Vector3> player, List<Vector3> enemyAll)
         {
             List<Vector3> enemySource = enemyBuildings.Count > 0 ? enemyBuildings : enemyAll;
@@ -387,10 +409,20 @@ namespace Game.Editor
             foreach (Vector3 p in enemyCluster) bounds.Encapsulate(p);
             float separation = new Vector2(enemy.x - home.x, enemy.z - home.z).magnitude;
             // S001 and S025 start close to the enemy; framing both bases made the enemy base tiny, so frame the enemy base alone.
-            bool enemyOnly = id == "S001" || id == "S025";
+            bool closeUp = IsCloseUp(id);
+            bool enemyOnly = closeUp || id == "S001";
             bool both = !enemyOnly && separation < 380f;
-            if (both)
-                foreach (Vector3 p in playerCluster) bounds.Encapsulate(p);
+            int closeUpCount = 0;
+            if (closeUp)
+            {
+                // These bases are sparse, so frame one tight group of visible structures (with any units beside it)
+                // instead of the whole spread. S003 keeps its own low side angle (-95 deg) so it never repeats S002's view.
+                Vector3 knot = BestStructureKnot(enemySource, enemy);
+                bounds = new Bounds(knot, Vector3.one * 16f);
+                foreach (Vector3 q in enemySource)
+                    if (new Vector2(q.x - knot.x, q.z - knot.z).magnitude <= KnotRadius) { bounds.Encapsulate(q); closeUpCount++; }
+                enemy = new Vector3(bounds.center.x, enemy.y, bounds.center.z);
+            }
 
             Vector3 back = home - enemy;
             back.y = 0f;
@@ -398,14 +430,16 @@ namespace Game.Editor
             back.Normalize();
             // S002 and S003 share the Desert Base enemy pads; give S003 (Field) its own low side angle.
             bool fieldAngle = id == "S003";
-            back = Quaternion.AngleAxis(fieldAngle ? -95f : 25f, Vector3.up) * back;
+            back = Quaternion.AngleAxis(fieldAngle ? -95f : id == "S002" ? 40f : 25f, Vector3.up) * back;
             const float fov = 40f;
-            float pitch = fieldAngle ? 36f : 55f;
+            float pitch = id == "S002" ? 38f : id == "S025" ? 36f : fieldAngle ? 35f : 55f;
             float aspect = CardWidth / (float)CardHeight;
             Vector3 size = bounds.size;
             float radius = Mathf.Max(size.x, size.z) * 0.5f + 25f;
             float fit = radius / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Min(1f, aspect * 0.75f);
-            float distance = Mathf.Clamp(fit * (enemyOnly ? 0.5f : 0.62f), enemyOnly ? 90f : 120f, 420f);
+            float distance = closeUp
+                ? Mathf.Clamp((Mathf.Max(size.x, size.z) * 0.5f + 10f) * 0.85f / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad), 40f, 95f)
+                : Mathf.Clamp(fit * (enemyOnly ? 0.5f : 0.62f), enemyOnly ? 90f : 120f, 420f);
             Vector3 look = both ? Vector3.Lerp(bounds.center, enemy, 0.35f) : enemyOnly ? bounds.center : enemy;
             look.y = Mathf.Min(enemy.y, home.y);
             Vector3 dir = (-back * Mathf.Cos(pitch * Mathf.Deg2Rad) + Vector3.down * Mathf.Sin(pitch * Mathf.Deg2Rad)).normalized;
@@ -449,6 +483,12 @@ namespace Game.Editor
                 camera.allowHDR = true;
                 camera.aspect = aspect;
                 camera.transform.SetPositionAndRotation(position, Quaternion.LookRotation(dir, Vector3.up));
+                // Match camera controllers can pin explicit view/projection matrices; drop them so the transform above is used.
+                camera.ResetWorldToCameraMatrix();
+                camera.ResetProjectionMatrix();
+                camera.ResetCullingMatrix();
+                Debug.Log("[SkirmishLibraryPlayCapture] camera=" + camera.name + " pos=" + Fmt(camera.transform.position) + " y=" + camera.transform.position.y.ToString("0", CultureInfo.InvariantCulture) +
+                          " viewPos=" + Fmt(camera.cameraToWorldMatrix.GetColumn(3)) + " stack=" + Camera.allCamerasCount);
                 Type dataType = Type.GetType(
                     "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
                 if (dataType != null)
@@ -457,16 +497,26 @@ namespace Game.Editor
                     dataType.GetProperty("renderPostProcessing")?.SetValue(data, true);
                 }
 
+                // Close-up cards use the same grade as the DB plate (daylight fill + Military_Demo_Gameplay volume).
+                GameObject gradeVolume = null;
+                if (closeUp)
+                {
+                    SkirmishS004CampaignLighting.ApplyDaylightFill();
+                    gradeVolume = SkirmishLibraryPreviewCapture.EnsureMatchVolume();
+                }
+
                 byte[] png = null;
                 for (int pass = 0; pass < 3; pass++)
                     png = RenderPng(camera);
+                if (gradeVolume != null)
+                    UnityEngine.Object.DestroyImmediate(gradeVolume);
                 string output = SkirmishLibraryPreviewAssets.PreviewPath(id);
                 string absolute = Path.Combine(Path.GetDirectoryName(Application.dataPath) ?? string.Empty, output);
                 Directory.CreateDirectory(Path.GetDirectoryName(absolute) ?? absolute);
                 File.WriteAllBytes(absolute, png);
                 Debug.Log("[SkirmishLibraryPlayCapture] card=" + id + " enemyBase=" + Fmt(enemy) + " playerStart=" + Fmt(home) +
                           " enemyBuildings=" + enemyBuildings.Count + " enemyEntities=" + enemyAll.Count +
-                          " playerEntities=" + player.Count + " framedBoth=" + (both ? 1 : 0) +
+                          " playerEntities=" + player.Count + " framedBoth=" + (both ? 1 : 0) + " closeUpPoints=" + closeUpCount +
                           " distance=" + distance.ToString("0", CultureInfo.InvariantCulture) +
                           " size=" + CardWidth + "x" + CardHeight + " output=" + output);
             }

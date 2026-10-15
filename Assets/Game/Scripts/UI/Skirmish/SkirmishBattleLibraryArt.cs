@@ -119,11 +119,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// One convex polygon per district, top-left normalised on the 1280×720 painting.
-        /// Order matches <see cref="MapIds"/>. Corners are chamfered so the stroke reads as a
-        /// hex edge instead of a trapezoid. Neighbours keep a gap. Desert Base contains the
-        /// upper-left fort (0.25, 0.15) and Airfield Plains contains the runway (0.52, 0.78).
-        /// Each wide-frame card sits inside its district, off that edge.
+        /// Legacy painting-space outlines. The theatre runtime builds screen-space hexagons
+        /// instead, so these are no longer the drawn district edges.
         /// </summary>
         public static readonly Vector2[][] TheaterDistrictPolygons =
         {

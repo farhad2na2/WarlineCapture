@@ -797,6 +797,107 @@ namespace Game.Editor
 
             RejectTheaterOverlap(cards, names, cue, locale);
             RejectZoneCardSpacing(cards, clip, locale);
+            RejectCardCentresInDistricts(regions, mapIds, locale);
+            RejectCueNearSelectedPin(view, regions, cue, locale);
+            RejectZoomHintOffDistrictEdges(root, regions, mapIds, locale);
+        }
+
+        private static void RejectCardCentresInDistricts(Transform regions, string[] mapIds, string locale)
+        {
+            if (regions == null || mapIds == null)
+                return;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform cardNode = FindNamed(regions, "ZoneCard_" + mapIds[i]);
+                Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
+                if (cardNode is not RectTransform card || outlineNode is not RectTransform outline)
+                    continue;
+                Vector2 centre = WorldBounds(card).center;
+                Vector2[] shape = OutlineWorldPoints(outline);
+                if (shape.Length >= 3 && PointInPolygon(centre, shape))
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre zone card centre is outside its district locale=" + locale +
+                    " card=" + card.name + ".");
+            }
+        }
+
+        private static void RejectCueNearSelectedPin(QuickCustomScreenView view, Transform regions, RectTransform cue, string locale)
+        {
+            if (view == null || regions == null || cue == null || view.LibraryViewModel == null)
+                return;
+            string mapId = view.LibraryViewModel.Theater.SelectedMapId;
+            if (string.IsNullOrEmpty(mapId))
+                return;
+            Transform pinNode = FindNamed(regions, "ZonePin_" + mapId);
+            Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapId);
+            if (pinNode is not RectTransform pin)
+                return;
+            Vector2 cueCentre = WorldBounds(cue).center;
+            Vector2 pinCentre = WorldBounds(pin).center;
+            const float near = 160f;
+            if (Vector2.Distance(cueCentre, pinCentre) <= near)
+                return;
+            Vector2[] shape = outlineNode is RectTransform outline ? OutlineWorldPoints(outline) : Array.Empty<Vector2>();
+            if (shape.Length >= 3 && PointInPolygon(cueCentre, shape))
+                return;
+            throw new InvalidOperationException(
+                "Theatre zoom hint is far from the selected pin locale=" + locale +
+                " map=" + mapId +
+                " distance=" + Vector2.Distance(cueCentre, pinCentre).ToString("0") + ".");
+        }
+
+        private static void RejectZoomHintOffDistrictEdges(GameObject root, Transform regions, string[] mapIds, string locale)
+        {
+            if (root == null || regions == null || mapIds == null)
+                return;
+            Transform hintNode = FindNamed(root.transform, "ZoomHint");
+            if (hintNode is not RectTransform hint || !hint.gameObject.activeInHierarchy)
+                return;
+            Rect hintBounds = WorldBounds(hint);
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
+                if (outlineNode is not RectTransform outline)
+                    continue;
+                Vector2[] shape = OutlineWorldPoints(outline);
+                for (int p = 0; p < shape.Length; p++)
+                {
+                    Vector2 a = shape[p];
+                    Vector2 b = shape[(p + 1) % shape.Length];
+                    if (!SegmentHitsRect(a, b, hintBounds))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre district edge crosses the zoom hint locale=" + locale +
+                        " district=" + mapIds[i] + ".");
+                }
+            }
+        }
+
+        private static bool SegmentHitsRect(Vector2 a, Vector2 b, Rect rect)
+        {
+            if (rect.Contains(a) || rect.Contains(b))
+                return true;
+            Vector2 c0 = new Vector2(rect.xMin, rect.yMin);
+            Vector2 c1 = new Vector2(rect.xMax, rect.yMin);
+            Vector2 c2 = new Vector2(rect.xMax, rect.yMax);
+            Vector2 c3 = new Vector2(rect.xMin, rect.yMax);
+            return SegmentsCross(a, b, c0, c1) || SegmentsCross(a, b, c1, c2)
+                || SegmentsCross(a, b, c2, c3) || SegmentsCross(a, b, c3, c0);
+        }
+
+        private static bool SegmentsCross(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+        {
+            float ab = Orient(a, b, c);
+            float ab2 = Orient(a, b, d);
+            float cd = Orient(c, d, a);
+            float cd2 = Orient(c, d, b);
+            return ab * ab2 < 0f && cd * cd2 < 0f;
+        }
+
+        private static float Orient(Vector2 a, Vector2 b, Vector2 c)
+        {
+            return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
         }
 
         private static void RejectCueClearOfPins(Transform regions, RectTransform cue, string locale)

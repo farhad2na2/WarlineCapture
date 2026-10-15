@@ -780,6 +780,7 @@ namespace Game.Editor
 
             RejectDistrictHalo(regions, mapIds, locale);
             RejectDistrictsSeparate(regions, mapIds, locale);
+            RejectDistrictHexAspect(regions, mapIds, locale);
 
             RejectZoneProgressMatchesCard(root, view, locale);
             RejectStripMatchesZoneTotals(root, view, locale);
@@ -1683,6 +1684,114 @@ namespace Game.Editor
                 }
             }
 
+        }
+
+        private static void RejectDistrictHexAspect(Transform regions, string[] mapIds, string locale)
+        {
+            if (regions == null || mapIds == null)
+                return;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform node = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
+                if (node is not RectTransform outline)
+                    continue;
+                V3PolygonGraphic polygon = outline.GetComponent<V3PolygonGraphic>();
+                if (polygon == null || polygon.PointCount < 3)
+                    continue;
+                float minX = float.MaxValue;
+                float maxX = float.MinValue;
+                float minY = float.MaxValue;
+                float maxY = float.MinValue;
+                for (int p = 0; p < polygon.PointCount; p++)
+                {
+                    Vector2 local = polygon.LocalPoint(p);
+                    minX = Mathf.Min(minX, local.x);
+                    maxX = Mathf.Max(maxX, local.x);
+                    minY = Mathf.Min(minY, local.y);
+                    maxY = Mathf.Max(maxY, local.y);
+                }
+
+                float height = Mathf.Max(1f, maxY - minY);
+                float measured = (maxX - minX) / height;
+                RectTransform frame = outline.parent as RectTransform;
+                float frameW = 0f;
+                float frameH = 0f;
+                if (frame != null)
+                {
+                    frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
+                    frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
+                }
+
+                if ((frameW < 2f || frameH < 2f) && regions is RectTransform plate)
+                {
+                    frameW = plate.rect.width > 2f ? plate.rect.width : plate.sizeDelta.x;
+                    frameH = plate.rect.height > 2f ? plate.rect.height : plate.sizeDelta.y;
+                }
+
+                float expected = V35HexAspect(mapIds[i], frameW, frameH);
+                if (expected < 0.2f)
+                    continue;
+                if (Mathf.Abs(measured / expected - 1f) <= 0.10f)
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre district hex is stretched locale=" + locale +
+                    " map=" + mapIds[i] +
+                    " ratio=" + measured.ToString("0.00") +
+                    " expected=" + expected.ToString("0.00") + ".");
+            }
+        }
+
+        /// <summary>Width/height of the v35 flat hex at this plate. The detail reserve does not enter.</summary>
+        private static float V35HexAspect(string mapId, float frameWidth, float frameHeight)
+        {
+            if (frameWidth < 2f || frameHeight < 2f)
+                return 0f;
+            float aspect = frameWidth / frameHeight;
+            float halfWidth;
+            float halfHeight;
+            float reference;
+            if (aspect >= 2.4f)
+            {
+                reference = 1774f;
+                switch (mapId)
+                {
+                    case "CC": halfWidth = 250f; halfHeight = 110f; break;
+                    case "MP": halfWidth = 210f; halfHeight = 110f; break;
+                    case "IB": halfWidth = 210f; halfHeight = 110f; break;
+                    case "AP": halfWidth = 180f; halfHeight = 62f; break;
+                    default: halfWidth = 250f; halfHeight = 110f; break;
+                }
+            }
+            else if (aspect >= 1.9f)
+            {
+                reference = 1294f;
+                switch (mapId)
+                {
+                    case "CC": halfWidth = 230f; halfHeight = 115f; break;
+                    case "MP": halfWidth = 200f; halfHeight = 115f; break;
+                    case "IB": halfWidth = 190f; halfHeight = 110f; break;
+                    case "AP": halfWidth = 156f; halfHeight = 78f; break;
+                    default: halfWidth = 250f; halfHeight = 120f; break;
+                }
+            }
+            else
+            {
+                reference = 1039.6f;
+                switch (mapId)
+                {
+                    case "CC": halfWidth = 200f; halfHeight = 105f; break;
+                    case "MP": halfWidth = 170f; halfHeight = 100f; break;
+                    case "IB": halfWidth = 165f; halfHeight = 100f; break;
+                    case "AP": halfWidth = 155f; halfHeight = 100f; break;
+                    default: halfWidth = 270f; halfHeight = 115f; break;
+                }
+            }
+
+            float scaleX = frameWidth / reference;
+            float scaleY = frameHeight / 620f;
+            if (halfHeight * scaleY < 1f)
+                return 0f;
+            return (halfWidth * scaleX) / (halfHeight * scaleY);
         }
 
         private static void RejectDistrictsSeparate(Transform regions, string[] mapIds, string locale)

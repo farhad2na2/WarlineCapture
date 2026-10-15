@@ -328,128 +328,55 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// District outline in the map clip (y down). Wide frames stay flat-top hexes.
-        /// The square frame, and the landscape districts that have to clear the detail
-        /// panel, use a convex plate polygon so the whole card can sit inside.
+        /// Flat-top hex in the map clip (y down). Half-height sets the 60° sides, so the outline
+        /// stays a hexagon rather than a chamfered box. Values are the v35 capture specs.
+        /// The detail panel is an overlay and does not reshape these outlines.
         /// </summary>
         private static Vector2[] DistrictHex(string mapId, float frameWidth, float frameHeight)
         {
             float aspect = frameHeight > 2f ? frameWidth / frameHeight : 1.6f;
+            DistrictHexSpec spec = aspect >= 2.4f
+                ? WideDistrictHex(mapId)
+                : aspect >= 1.9f ? LandscapeDistrictHex(mapId) : SquareDistrictHex(mapId);
+            float sx = spec.ReferenceWidth > 2f ? frameWidth / spec.ReferenceWidth : 1f;
             float sy = frameHeight > 2f ? frameHeight / 620f : 1f;
-            if (aspect >= 2.4f)
-            {
-                DistrictHexSpec spec = WideDistrictHex(mapId);
-                float sx = spec.ReferenceWidth > 2f ? frameWidth / spec.ReferenceWidth : 1f;
-                return FlatHex(spec.CenterX * sx, spec.CenterY * sy, spec.HalfWidth * sx, spec.HalfHeight * sy);
-            }
-
-            if (aspect >= 1.9f && (mapId == "DB" || mapId == "AP"))
-            {
-                DistrictHexSpec spec = LandscapeDistrictHex(mapId);
-                float sx = spec.ReferenceWidth > 2f ? frameWidth / spec.ReferenceWidth : 1f;
-                return FlatHex(spec.CenterX * sx, spec.CenterY * sy, spec.HalfWidth * sx, spec.HalfHeight * sy);
-            }
-
-            float reference = aspect >= 1.9f ? 1294f : 1039.6f;
-            Vector2[] plate = aspect >= 1.9f ? LandscapeOpenPolygon(mapId) : SquareOpenPolygon(mapId);
-            return ScalePlatePolygon(plate, reference, frameWidth, frameHeight);
+            return FlatHex(spec.CenterX * sx, spec.CenterY * sy, spec.HalfWidth * sx, spec.HalfHeight * sy);
         }
 
         private static DistrictHexSpec LandscapeDistrictHex(string mapId)
         {
-            if (mapId == "AP")
-                return HexSpec(1294f, 760f, 468f, 280f, 76f);
-            return HexSpec(1294f, 260f, 150f, 200f, 100f);
+            switch (mapId)
+            {
+                case "CC": return HexSpec(1294f, 990f, 140f, 230f, 115f);
+                case "MP": return HexSpec(1294f, 300f, 390f, 200f, 115f);
+                case "IB": return HexSpec(1294f, 1020f, 385f, 190f, 110f);
+                case "AP": return HexSpec(1294f, 665f, 466f, 156f, 78f);
+                default: return HexSpec(1294f, 330f, 145f, 250f, 120f);
+            }
         }
 
         private static DistrictHexSpec WideDistrictHex(string mapId)
         {
             switch (mapId)
             {
-                case "CC": return HexSpec(1774f, 1420f, 145f, 280f, 109f);
-                case "MP": return HexSpec(1774f, 420f, 332f, 240f, 68f);
-                case "IB": return HexSpec(1774f, 1500f, 332f, 240f, 68f);
-                case "AP": return HexSpec(1774f, 980f, 478f, 330f, 66f);
-                default: return HexSpec(1774f, 480f, 145f, 290f, 109f);
+                case "CC": return HexSpec(1774f, 1340f, 146f, 250f, 110f);
+                case "MP": return HexSpec(1774f, 420f, 400f, 210f, 110f);
+                case "IB": return HexSpec(1774f, 1320f, 400f, 210f, 110f);
+                case "AP": return HexSpec(1774f, 900f, 482f, 180f, 62f);
+                default: return HexSpec(1774f, 460f, 146f, 250f, 110f);
             }
         }
 
-        private static Vector2[] LandscapeOpenPolygon(string mapId)
+        private static DistrictHexSpec SquareDistrictHex(string mapId)
         {
             switch (mapId)
             {
-                case "CC":
-                    return new[]
-                    {
-                        new Vector2(800f, 100f), new Vector2(950f, 60f), new Vector2(990f, 60f),
-                        new Vector2(1238f, 102f), new Vector2(1238f, 218f), new Vector2(930f, 230f),
-                        new Vector2(800f, 230f)
-                    };
-                case "MP":
-                    return new[]
-                    {
-                        new Vector2(24f, 290f), new Vector2(430f, 290f), new Vector2(430f, 360f),
-                        new Vector2(370f, 466f), new Vector2(70f, 466f), new Vector2(24f, 360f)
-                    };
-                default:
-                    return new[]
-                    {
-                        new Vector2(800f, 288f), new Vector2(976f, 256f), new Vector2(1276f, 256f),
-                        new Vector2(1276f, 376f), new Vector2(976f, 376f), new Vector2(800f, 372f)
-                    };
+                case "CC": return HexSpec(1039.6f, 800f, 130f, 200f, 105f);
+                case "MP": return HexSpec(1039.6f, 200f, 390f, 170f, 100f);
+                case "IB": return HexSpec(1039.6f, 840f, 390f, 165f, 100f);
+                case "AP": return HexSpec(1039.6f, 520f, 430f, 155f, 100f);
+                default: return HexSpec(1039.6f, 300f, 140f, 270f, 115f);
             }
-        }
-
-        private static Vector2[] SquareOpenPolygon(string mapId)
-        {
-            switch (mapId)
-            {
-                case "CC":
-                    return new[]
-                    {
-                        new Vector2(708f, 48f), new Vector2(900f, 36f), new Vector2(1022f, 70f),
-                        new Vector2(1022f, 228f), new Vector2(1016f, 230f), new Vector2(718f, 230f),
-                        new Vector2(708f, 228f)
-                    };
-                case "MP":
-                    return new[]
-                    {
-                        new Vector2(200f, 250f), new Vector2(392f, 236f), new Vector2(700f, 236f),
-                        new Vector2(700f, 348f), new Vector2(392f, 348f), new Vector2(210f, 318f)
-                    };
-                case "IB":
-                    return new[]
-                    {
-                        new Vector2(722f, 324f), new Vector2(748f, 248f), new Vector2(1008f, 248f),
-                        new Vector2(1018f, 324f), new Vector2(1018f, 436f), new Vector2(722f, 436f)
-                    };
-                case "AP":
-                    return new[]
-                    {
-                        new Vector2(340f, 460f), new Vector2(352f, 348f), new Vector2(648f, 348f),
-                        new Vector2(770f, 500f), new Vector2(784f, 543f), new Vector2(420f, 543f),
-                        new Vector2(360f, 500f)
-                    };
-                default:
-                    return new[]
-                    {
-                        new Vector2(20f, 114f), new Vector2(24f, 48f), new Vector2(200f, 36f),
-                        new Vector2(390f, 70f), new Vector2(390f, 228f), new Vector2(318f, 230f),
-                        new Vector2(20f, 230f)
-                    };
-            }
-        }
-
-        private static Vector2[] ScalePlatePolygon(Vector2[] plate, float referenceWidth, float frameWidth, float frameHeight)
-        {
-            if (plate == null || plate.Length == 0)
-                return Array.Empty<Vector2>();
-            float sx = referenceWidth > 2f ? frameWidth / referenceWidth : 1f;
-            float sy = frameHeight > 2f ? frameHeight / 620f : 1f;
-            var scaled = new Vector2[plate.Length];
-            for (int i = 0; i < plate.Length; i++)
-                scaled[i] = new Vector2(plate[i].x * sx, plate[i].y * sy);
-            return scaled;
         }
 
         private static DistrictHexSpec HexSpec(float referenceWidth, float centerX, float centerY, float halfWidth, float halfHeight)
@@ -894,20 +821,19 @@ namespace Game.UI.Runtime
         {
             if (slots == null)
                 return;
-            // Same inset as ReserveTheatreDetail. No-ops when that call already ran, so the
-            // detail-panel rebase applies the shrink once.
-            safe = ShrinkSeatingForDetail(safe, plateWidth, fa);
-            float reserve = SeatingDetailReserve(plateWidth);
+            // The detail panel overlays the map. Hexes and the first card seats stay on the
+            // full plate; only a card that meets the panel is moved, and only that card may shrink.
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot slot = slots[i];
-                float centreX = slot.Anchor.x;
-                if (fa && slot.MapId == "DB" && reserve > 0f)
-                    centreX = Mathf.Max(centreX, reserve + 56f);
-                float pinX = Mathf.Clamp(centreX - ZonePinSize * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZonePinSize));
+                float pinX = Mathf.Clamp(slot.Anchor.x - ZonePinSize * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZonePinSize));
                 float pinY = Mathf.Clamp(slot.Anchor.y - ZonePinSize * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZonePinSize));
                 slot.Pin = new Rect(pinX, pinY, ZonePinSize, ZonePinSize);
-                slot.Card = ExplicitZoneCard(slot.MapId, plateWidth, plateHeight, fa);
+                const float cardWidth = 320f;
+                const float cardHeight = 110f;
+                float cardX = Mathf.Clamp(slot.CardAnchor.x - cardWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - cardWidth));
+                float cardY = Mathf.Clamp(slot.CardAnchor.y - cardHeight * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - cardHeight));
+                slot.Card = new Rect(cardX, cardY, cardWidth, cardHeight);
                 float cueX = Mathf.Clamp(slot.Pin.center.x - ZoneCueWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
                 float cueY = slot.Pin.yMax + ZoneStackGap + 4f;
                 if (cueY + ZoneCueHeight > safe.yMax)
@@ -918,6 +844,8 @@ namespace Game.UI.Runtime
                 slots[i] = slot;
             }
 
+            SeatCardsInsideDistricts(slots, safe);
+            SeatCardsClearOfDetail(slots, safe, plateWidth, plateHeight, fa);
             NudgeCues(slots, safe);
         }
 
@@ -964,90 +892,122 @@ namespace Game.UI.Runtime
             return new Rect(x, margin, width, height);
         }
 
-        private static Rect ExplicitZoneCard(string mapId, float frameWidth, float frameHeight, bool fa)
+        private const float ZoneLeaderCapReference = 180f;
+
+        /// <summary>
+        /// Keeps a v35 320x110 seat when it misses the detail panel and does not straddle.
+        /// A card that meets the panel, or that cannot rest inside its hex or clear of every hex,
+        /// moves to the nearest legal spot by its own pin. Only that card may shrink toward 280x96.
+        /// </summary>
+        private static void SeatCardsClearOfDetail(List<TheatreZoneSlot> slots, Rect safe, float plateWidth, float plateHeight, bool fa)
         {
-            float aspect = frameHeight > 2f ? frameWidth / frameHeight : 1.6f;
-            float reference = aspect >= 2.4f ? 1774f : aspect >= 1.9f ? 1294f : 1039.6f;
-            float sx = reference > 2f ? frameWidth / reference : 1f;
-            float sy = frameHeight > 2f ? frameHeight / 620f : 1f;
-            ZoneCardSeat(aspect, fa, mapId, out float x, out float y, out float width, out float height);
-            return new Rect(x * sx, y * sy, width * sx, height * sy);
+            if (slots == null)
+                return;
+            Rect detail = SeatingDetailRect(plateWidth, plateHeight, fa);
+            float frameWidth = safe.xMax + TheatreSafeRight;
+            float frameHeight = safe.yMax + TheatreSafeBottom;
+            float cap = ZoneLeaderCap(plateWidth, plateHeight);
+            var held = new bool[slots.Count];
+            var move = new bool[slots.Count];
+            for (int i = 0; i < slots.Count; i++)
+            {
+                bool hitsDetail = detail.width > 1f && Overlaps(slots[i].Card, detail, 0f);
+                bool holds = ZoneCardSeatHolds(slots[i].Card, slots[i].MapId, frameWidth, frameHeight);
+                move[i] = hitsDetail || !holds;
+                held[i] = !move[i];
+            }
+
+            // Smaller districts first, so a wide neighbour does not take the only pocket.
+            int[] order = { 4, 3, 2, 1, 0 };
+            for (int n = 0; n < order.Length; n++)
+            {
+                int i = order[n];
+                if (i < 0 || i >= slots.Count || !move[i])
+                    continue;
+                if (!TryReseatCard(slots, i, detail, frameWidth, frameHeight, fa, cap, held, out Rect seated)
+                    && !TryReseatCard(slots, i, detail, frameWidth, frameHeight, fa, cap * 1.75f, held, out seated)
+                    && !TryReseatCard(slots, i, detail, frameWidth, frameHeight, fa, 4000f, held, out seated))
+                    continue;
+                TheatreZoneSlot slot = slots[i];
+                slot.Card = seated;
+                slots[i] = slot;
+                held[i] = true;
+            }
         }
 
-        private static void ZoneCardSeat(float aspect, bool fa, string mapId, out float x, out float y, out float width, out float height)
+        private static float ZoneLeaderCap(float plateWidth, float plateHeight)
         {
-            if (aspect >= 2.4f)
+            float aspect = plateHeight > 2f ? plateWidth / plateHeight : 1.6f;
+            float reference = aspect >= 2.4f ? 1774f : aspect >= 1.9f ? 1294f : 1039.6f;
+            float scaleX = reference > 2f ? plateWidth / reference : 1f;
+            float scaleY = plateHeight > 2f ? plateHeight / 620f : 1f;
+            return ZoneLeaderCapReference * Mathf.Max(1f, scaleX, scaleY);
+        }
+
+        private static bool TryReseatCard(
+            List<TheatreZoneSlot> slots,
+            int index,
+            Rect detail,
+            float frameWidth,
+            float frameHeight,
+            bool fa,
+            float leaderCap,
+            bool[] held,
+            out Rect seated)
+        {
+            TheatreZoneSlot slot = slots[index];
+            seated = slot.Card;
+            bool found = false;
+            float bestScore = float.MaxValue;
+            Vector2 pin = slot.Pin.center;
+            // Full v35 size first. Shrink only when this card has no legal seat at the larger size.
+            float[] widths = { 320f, 304f, 288f, 280f };
+            float[] heights = { 110f, 104f, 100f, 96f };
+            const float edge = 12f;
+            for (int size = 0; size < widths.Length; size++)
             {
-                width = 320f;
-                height = 110f;
-                if (fa)
+                float cardWidth = widths[size];
+                float cardHeight = heights[size];
+                float yMax = frameHeight - edge - cardHeight;
+                float xMax = frameWidth - edge - cardWidth;
+                for (float y = edge; y <= yMax + 0.1f; y += 8f)
                 {
-                    switch (mapId)
+                    for (float x = edge; x <= xMax + 0.1f; x += 8f)
                     {
-                        case "CC": x = 1196f; y = 76f; return;
-                        case "MP": x = 666f; y = 268f; return;
-                        case "IB": x = 1348f; y = 272f; return;
-                        case "AP": x = 762f; y = 420f; return;
-                        default: x = 318f; y = 412f; return;
+                        var cand = new Rect(x, y, cardWidth, cardHeight);
+                        if (detail.width > 1f && Overlaps(cand, detail, 0f))
+                            continue;
+                        if (!CardClearsPins(cand, slots) || !CardClearsSeated(cand, slots, held))
+                            continue;
+                        if (!ZoneCardSeatHolds(cand, slot.MapId, frameWidth, frameHeight))
+                            continue;
+                        float leader = LeaderLength(pin, cand);
+                        if (leader > leaderCap)
+                            continue;
+                        bool inside = CardInsidePolygon(cand, slot.Hex) && CardBoundaryGap(slot.Hex, cand) + 0.01f >= 8f;
+                        // The open side is the side facing away from the detail panel.
+                        bool closedSide = fa ? cand.center.x < pin.x - 24f : cand.center.x > pin.x + 24f;
+                        float score = leader + (inside ? 0f : 36f) + (closedSide ? 48f : 0f);
+                        if (score >= bestScore)
+                            continue;
+                        bestScore = score;
+                        seated = cand;
+                        found = true;
                     }
                 }
 
-                switch (mapId)
-                {
-                    case "CC": x = 820f; y = 28f; return;
-                    case "MP": x = 268f; y = 404f; return;
-                    case "IB": x = 928f; y = 268f; return;
-                    case "AP": x = 762f; y = 420f; return;
-                    default: x = 286f; y = 132f; return;
-                }
+                if (found)
+                    return true;
             }
 
-            width = 280f;
-            height = 96f;
-            if (aspect >= 1.9f)
-            {
-                if (fa)
-                {
-                    switch (mapId)
-                    {
-                        case "CC": x = 948f; y = 112f; return;
-                        case "MP": x = 480f; y = 290f; return;
-                        case "IB": x = 987f; y = 268f; return;
-                        case "AP": x = 530f; y = 402f; return;
-                        default: x = 480f; y = 176f; return;
-                    }
-                }
+            return false;
+        }
 
-                switch (mapId)
-                {
-                    case "CC": x = 500f; y = 40f; return;
-                    case "MP": x = 80f; y = 360f; return;
-                    case "IB": x = 500f; y = 152f; return;
-                    case "AP": x = 530f; y = 402f; return;
-                    default: x = 106f; y = 112f; return;
-                }
-            }
-
-            if (fa)
-            {
-                switch (mapId)
-                {
-                    case "CC": x = 728f; y = 124f; return;
-                    case "MP": x = 400f; y = 244f; return;
-                    case "IB": x = 730f; y = 332f; return;
-                    case "AP": x = 360f; y = 356f; return;
-                    default: x = 400f; y = 12f; return;
-                }
-            }
-
-            switch (mapId)
-            {
-                case "CC": x = 400f; y = 12f; return;
-                case "MP": x = 28f; y = 408f; return;
-                case "IB": x = 400f; y = 124f; return;
-                case "AP": x = 360f; y = 356f; return;
-                default: x = 28f; y = 124f; return;
-            }
+        private static float LeaderLength(Vector2 pin, Rect card)
+        {
+            float x = Mathf.Clamp(pin.x, card.xMin, card.xMax);
+            float y = Mathf.Clamp(pin.y, card.yMin, card.yMax);
+            return Vector2.Distance(pin, new Vector2(x, y));
         }
 
         private static void NudgeCardsOffPins(List<TheatreZoneSlot> slots, Rect safe)
@@ -2113,16 +2073,25 @@ namespace Game.UI.Runtime
                 cue.ForceMeshUpdate();
             }
 
-            Vector2[] selectedDistrict = DistrictHex(selectedId, frameW, frameH);
             Rect detail = SeatingDetailRect(frameW, frameH, fa);
-            bool cueSeated = SeatCueNearPin(parent, pin, selectedDistrict, frameW, frameH, inset, detail, ref cueRect);
+            float worldScaleX = Mathf.Max(0.05f, Mathf.Abs(parent.lossyScale.x));
+            float worldScaleY = Mathf.Max(0.05f, Mathf.Abs(parent.lossyScale.y));
+            const float nearLimit = 160f;
+            Rect fullCue = cueRect;
+            bool cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
             if (!cueSeated)
             {
-                float naturalWidth = cueRect.width;
-                for (float candidateWidth = naturalWidth - 20f; candidateWidth >= 340f; candidateWidth -= 20f)
+                NudgeCardsForCue(parent, pin, frameW, frameH, cueRect, detail);
+                cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
+            }
+
+            if (!cueSeated)
+            {
+                float naturalWidth = fullCue.width;
+                for (float candidateWidth = naturalWidth - 20f; candidateWidth >= 200f; candidateWidth -= 20f)
                 {
                     cueRect.width = candidateWidth;
-                    if (!SeatCueNearPin(parent, pin, selectedDistrict, frameW, frameH, inset, detail, ref cueRect))
+                    if (!SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect))
                         continue;
                     cueSeated = true;
                     break;
@@ -2131,9 +2100,13 @@ namespace Game.UI.Runtime
 
             if (!cueSeated)
             {
+                cueRect.width = 200f;
                 NudgeCardsForCue(parent, pin, frameW, frameH, cueRect, detail);
-                SeatCueNearPin(parent, pin, selectedDistrict, frameW, frameH, inset, detail, ref cueRect);
+                cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
             }
+
+            if (!cueSeated)
+                cueRect = fullCue;
 
             PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
 
@@ -2155,7 +2128,11 @@ namespace Game.UI.Runtime
                 if (text == null || !text.gameObject.activeInHierarchy)
                     continue;
                 if (text.name == "ZoneName")
+                {
+                    if (!ZoneCardIsCompact(text))
+                        RaiseTheatreLine(text, 18f, 26f);
                     continue;
+                }
                 if (text.name == "ZoneCount")
                 {
                     bool pending = SkirmishBattleLibraryArt.IsRenderedComingSoon(text.text);
@@ -2170,9 +2147,8 @@ namespace Game.UI.Runtime
         private const float ZoneNameFontFloor = 16f;
 
         /// <summary>
-        /// One title size for every zone card. Steps down from the ceiling until each name's
-        /// TextMesh Pro preferred width fits the box the card actually left beside the medallion.
-        /// A title that still overflows at the floor breaks after its space onto a second line.
+        /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
+        /// toward 280x96 fits its own title down from that ceiling, and may break after a space.
         /// </summary>
         private static void FitZoneNames(Transform regions)
         {
@@ -2181,7 +2157,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < texts.Length; i++)
             {
                 TMP_Text text = texts[i];
-                if (text != null && text.name == "ZoneName" && text.gameObject.activeInHierarchy)
+                if (text != null && text.name == "ZoneName" && text.gameObject.activeInHierarchy && ZoneCardIsCompact(text))
                     names.Add(text);
             }
 
@@ -2199,6 +2175,14 @@ namespace Game.UI.Runtime
             }
 
             ApplyZoneNameSize(names, chosen, wrapOverflow: !fitted);
+        }
+
+        private static bool ZoneCardIsCompact(TMP_Text name)
+        {
+            RectTransform card = name != null ? name.rectTransform.parent as RectTransform : null;
+            if (card == null)
+                return false;
+            return card.sizeDelta.x < 312f || card.sizeDelta.y < 106f;
         }
 
         private static bool ZoneNamesFit(List<TMP_Text> names, float size)
@@ -2515,17 +2499,19 @@ namespace Game.UI.Runtime
         private static bool SeatCueNearPin(
             RectTransform parent,
             RectTransform pin,
-            Vector2[] district,
+            string selectedId,
             float frameW,
             float frameH,
             float inset,
             Rect detail,
+            float nearLimit,
+            float worldScaleX,
+            float worldScaleY,
             ref Rect cue)
         {
             if (parent == null || pin == null)
                 return false;
             const float margin = 12f;
-            const float near = 160f;
             var cards = new List<Rect>(8);
             var pins = new List<Rect>(8);
             CollectOverlayRects(parent, "ZoneCard_", cards);
@@ -2536,21 +2522,21 @@ namespace Game.UI.Runtime
             float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
             float pinX = pinLeft + pinW * 0.5f;
             float pinY = pinTop + pinH * 0.5f;
-            if (TryCueNear(near, true, pinX, pinY, pinLeft, pinTop, pinW, pinH, district, frameW, frameH, inset, margin, detail, cue, cards, pins, ref cue))
-                return true;
-            return TryCueNear(near, false, pinX, pinY, pinLeft, pinTop, pinW, pinH, district, frameW, frameH, inset, margin, detail, cue, cards, pins, ref cue);
+            return TryCueNear(parent, nearLimit, worldScaleX, worldScaleY, selectedId, pinX, pinY, pinLeft, pinTop, pinW, pinH, frameW, frameH, inset, margin, detail, cue, cards, pins, ref cue);
         }
 
         private static bool TryCueNear(
-            float near,
-            bool requireNear,
+            RectTransform parent,
+            float nearLimit,
+            float worldScaleX,
+            float worldScaleY,
+            string selectedId,
             float pinX,
             float pinY,
             float pinLeft,
             float pinTop,
             float pinW,
             float pinH,
-            Vector2[] district,
             float frameW,
             float frameH,
             float inset,
@@ -2561,6 +2547,7 @@ namespace Game.UI.Runtime
             List<Rect> pins,
             ref Rect placed)
         {
+            var pinCentre = new Vector2(pinX, pinY);
             for (int dist = 0; dist <= 180; dist += 4)
             {
                 for (int slide = 0; slide <= 180; slide += 4)
@@ -2580,11 +2567,9 @@ namespace Game.UI.Runtime
                         {
                             Rect spot = spots[i];
                             Vector2 centre = spot.center;
-                            float reach = Vector2.Distance(centre, new Vector2(pinX, pinY));
-                            bool inside = district != null && PointInsidePolygon(centre, district);
-                            if (requireNear && reach > near)
+                            if (CueWorldReach(centre, pinCentre, worldScaleX, worldScaleY) > nearLimit)
                                 continue;
-                            if (!requireNear && !inside)
+                            if (!CueReadsAsSelected(parent, centre, pinCentre, selectedId, frameW, frameH))
                                 continue;
                             if (TryAcceptCue(spot, frameW, frameH, inset, margin, detail, cards, pins, ref placed))
                                 return true;
@@ -2594,6 +2579,49 @@ namespace Game.UI.Runtime
             }
 
             return false;
+        }
+
+        private static float CueWorldReach(Vector2 centre, Vector2 pin, float worldScaleX, float worldScaleY)
+        {
+            float dx = (centre.x - pin.x) * worldScaleX;
+            float dy = (centre.y - pin.y) * worldScaleY;
+            return Mathf.Sqrt(dx * dx + dy * dy);
+        }
+
+        /// <summary>
+        /// The cue has to read as the selected district: its centre stays out of every other hex
+        /// and is not closer to another pin.
+        /// </summary>
+        private static bool CueReadsAsSelected(RectTransform parent, Vector2 centre, Vector2 pin, string selectedId, float frameW, float frameH)
+        {
+            float own = Vector2.Distance(centre, pin);
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                if (string.Equals(mapIds[i], selectedId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                Vector2[] other = DistrictHex(mapIds[i], frameW, frameH);
+                if (other != null && other.Length >= 3 && PointInsidePolygon(centre, other))
+                    return false;
+            }
+
+            if (parent == null)
+                return true;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZonePin_", StringComparison.Ordinal) || child is not RectTransform otherPin)
+                    continue;
+                if (string.Equals(child.name, "ZonePin_" + selectedId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                float otherW = otherPin.sizeDelta.x > 2f ? otherPin.sizeDelta.x : ZonePinSize;
+                float otherH = otherPin.sizeDelta.y > 2f ? otherPin.sizeDelta.y : ZonePinSize;
+                var otherCentre = new Vector2(otherPin.anchoredPosition.x + otherW * 0.5f, -otherPin.anchoredPosition.y + otherH * 0.5f);
+                if (Vector2.Distance(centre, otherCentre) + 0.5f < own)
+                    return false;
+            }
+
+            return true;
         }
 
         private static void NudgeCardsForCue(
@@ -2608,10 +2636,26 @@ namespace Game.UI.Runtime
                 return;
             float pinTop = -pin.anchoredPosition.y;
             float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
-            float pinX = pin.anchoredPosition.x + (pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize) * 0.5f;
-            var probe = new Rect(pinX - cue.width * 0.5f, pinTop + pinH + 12f, cue.width, cue.height);
-            if (frameW > probe.width + 24f)
-                probe.x = Mathf.Clamp(probe.x, 12f, frameW - 12f - probe.width);
+            float pinLeft = pin.anchoredPosition.x;
+            float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+            float pinX = pinLeft + pinW * 0.5f;
+            float pinY = pinTop + pinH * 0.5f;
+            Rect[] probes =
+            {
+                new Rect(pinX - cue.width * 0.5f, pinTop + pinH + 12f, cue.width, cue.height),
+                new Rect(pinX - cue.width * 0.5f, pinTop - 12f - cue.height, cue.width, cue.height),
+                new Rect(pinLeft + pinW + 12f, pinY - cue.height * 0.5f, cue.width, cue.height),
+                new Rect(pinLeft - 12f - cue.width, pinY - cue.height * 0.5f, cue.width, cue.height)
+            };
+            for (int p = 0; p < probes.Length; p++)
+            {
+                Rect probe = ClampCue(probes[p], frameW, frameH, 12f);
+                NudgeCardsOffProbe(parent, frameW, frameH, probe, detail);
+            }
+        }
+
+        private static void NudgeCardsOffProbe(RectTransform parent, float frameW, float frameH, Rect probe, Rect detail)
+        {
             for (int i = 0; i < parent.childCount; i++)
             {
                 Transform child = parent.GetChild(i);
@@ -2621,35 +2665,48 @@ namespace Game.UI.Runtime
                 if (CueClears(cardRect, probe, 12f))
                     continue;
                 string mapId = child.name.Substring("ZoneCard_".Length);
-                for (int step = 1; step <= 8; step++)
+                bool pushX = AxisGap(cardRect.xMin, cardRect.xMax, probe.xMin, probe.xMax) >=
+                    AxisGap(cardRect.yMin, cardRect.yMax, probe.yMin, probe.yMax);
+                bool cleared = false;
+                for (int axis = 0; axis < 2 && !cleared; axis++)
                 {
-                    var next = new Rect(cardRect.x, cardRect.y + step * 6f, cardRect.width, cardRect.height);
-                    if (next.yMax > frameH - TheatreSafeBottom)
-                        break;
-                    if (!CueMissesDetail(next, detail) || !ZoneCardSeatHolds(next, mapId, frameW, frameH))
-                        continue;
-                    if (!CueClears(next, probe, 12f))
-                        continue;
-                    bool blocked = false;
-                    for (int j = 0; j < parent.childCount; j++)
+                    bool horizontal = axis == 0 ? pushX : !pushX;
+                    for (int step = 1; step <= 16; step++)
                     {
-                        if (j == i)
-                            continue;
-                        Transform other = parent.GetChild(j);
-                        if (other == null || !other.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || other is not RectTransform otherRect)
-                            continue;
-                        var otherCard = new Rect(otherRect.anchoredPosition.x, -otherRect.anchoredPosition.y, otherRect.sizeDelta.x, otherRect.sizeDelta.y);
-                        if (CardClearance(next, otherCard) + 0.01f < ZoneSeparateGap)
-                        {
-                            blocked = true;
+                        Rect next = cardRect;
+                        float delta = step * 8f;
+                        if (horizontal)
+                            next.x += next.center.x >= probe.center.x ? delta : -delta;
+                        else
+                            next.y += next.center.y >= probe.center.y ? delta : -delta;
+                        if (next.xMin < 12f || next.yMin < 12f || next.xMax > frameW - 12f || next.yMax > frameH - 12f)
                             break;
+                        if (!CueMissesDetail(next, detail) || !ZoneCardSeatHolds(next, mapId, frameW, frameH))
+                            continue;
+                        if (!CueClears(next, probe, 12f))
+                            continue;
+                        bool blocked = false;
+                        for (int j = 0; j < parent.childCount; j++)
+                        {
+                            if (j == i)
+                                continue;
+                            Transform other = parent.GetChild(j);
+                            if (other == null || !other.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || other is not RectTransform otherRect)
+                                continue;
+                            var otherCard = new Rect(otherRect.anchoredPosition.x, -otherRect.anchoredPosition.y, otherRect.sizeDelta.x, otherRect.sizeDelta.y);
+                            if (CardClearance(next, otherCard) + 0.01f < ZoneSeparateGap)
+                            {
+                                blocked = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if (blocked || !CardClearsLivePins(parent, next))
-                        continue;
-                    PlaceTopLeft(card, next.x, next.y, next.width, next.height);
-                    break;
+                        if (blocked || !CardClearsLivePins(parent, next))
+                            continue;
+                        PlaceTopLeft(card, next.x, next.y, next.width, next.height);
+                        cleared = true;
+                        break;
+                    }
                 }
             }
         }
@@ -2709,7 +2766,8 @@ namespace Game.UI.Runtime
             string[] mapIds = SkirmishBattleLibraryArt.MapIds;
             for (int i = 0; i < mapIds.Length; i++)
             {
-                if (RectHitsPolygon(card, DistrictHex(mapIds[i], frameWidth, frameHeight)))
+                Vector2[] hex = DistrictHex(mapIds[i], frameWidth, frameHeight);
+                if (RectHitsPolygon(card, hex) || CardBoundaryGap(hex, card) < 1f)
                     return false;
             }
 

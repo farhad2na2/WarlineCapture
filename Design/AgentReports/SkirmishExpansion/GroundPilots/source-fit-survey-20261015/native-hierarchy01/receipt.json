@@ -1,0 +1,13 @@
+{
+  "result": "Collected",
+  "actual_checked_wrapper_exit": 0,
+  "rifle_nodes": 8,
+  "truck_tray_nodes": 11,
+  "non_root_health": 0,
+  "non_root_attempt_owners": 0,
+  "missing_nodes": 0,
+  "actorsInstantiated": false,
+  "actorsDestroyed": false,
+  "departureCertified": false,
+  "playerReady": false
+}

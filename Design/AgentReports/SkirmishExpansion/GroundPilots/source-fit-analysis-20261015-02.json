@@ -1,0 +1,942 @@
+{
+  "schema_version": 1,
+  "archive_sha256": "373a9127d4bd77364e803c6c27eb92956fd13d9ada65d6eba8df69eb0609f0cf",
+  "native_survey_sha256": "cd42028f24ccdf22b8ce85f128bd550b17dc32b76d9bc69be879020892e95fe5",
+  "native_fit_certified": false,
+  "physical_map_changes": false,
+  "sources": [
+    {
+      "group": "CC",
+      "source_path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "source_sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8"
+    },
+    {
+      "group": "AP",
+      "source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+      "source_sha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+      "native_exact_goals": 24,
+      "native_failure_codes": {
+        "7": 3,
+        "5": 9,
+        "10": 9
+      },
+      "failed_original_rows": [
+        {
+          "routeId": "route.skirmish.db.main",
+          "role": "Tank",
+          "leg": 2,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 7,
+          "expansions": 0,
+          "pathCells": [
+            [
+              569,
+              540
+            ],
+            [
+              585,
+              538
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.main",
+          "role": "Tank",
+          "leg": 4,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              783,
+              540
+            ],
+            [
+              799,
+              531
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.main",
+          "role": "Siege",
+          "leg": 2,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 7,
+          "expansions": 0,
+          "pathCells": [
+            [
+              569,
+              540
+            ],
+            [
+              585,
+              538
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.main",
+          "role": "Siege",
+          "leg": 4,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              783,
+              540
+            ],
+            [
+              799,
+              531
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.main",
+          "role": "ApcHeavy",
+          "leg": 2,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 7,
+          "expansions": 0,
+          "pathCells": [
+            [
+              569,
+              540
+            ],
+            [
+              585,
+              538
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.main",
+          "role": "ApcHeavy",
+          "leg": 4,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              783,
+              540
+            ],
+            [
+              799,
+              531
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_a",
+          "role": "Tank",
+          "leg": 6,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              855,
+              596
+            ],
+            [
+              871,
+              585
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_a",
+          "role": "Siege",
+          "leg": 6,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              855,
+              596
+            ],
+            [
+              871,
+              585
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_a",
+          "role": "ApcHeavy",
+          "leg": 6,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              855,
+              596
+            ],
+            [
+              871,
+              585
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Tank",
+          "leg": 1,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 1804,
+          "pathCells": [
+            [
+              485,
+              540
+            ],
+            [
+              501,
+              524
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Tank",
+          "leg": 2,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 1663,
+          "pathCells": [
+            [
+              521,
+              488
+            ],
+            [
+              537,
+              486
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Tank",
+          "leg": 3,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 720,
+          "pathCells": [
+            [
+              616,
+              472
+            ],
+            [
+              613,
+              488
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Tank",
+          "leg": 5,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              831,
+              488
+            ],
+            [
+              847,
+              504
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Siege",
+          "leg": 1,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 1804,
+          "pathCells": [
+            [
+              485,
+              540
+            ],
+            [
+              501,
+              524
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Siege",
+          "leg": 2,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 1663,
+          "pathCells": [
+            [
+              521,
+              488
+            ],
+            [
+              537,
+              486
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Siege",
+          "leg": 3,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 720,
+          "pathCells": [
+            [
+              616,
+              472
+            ],
+            [
+              613,
+              488
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "Siege",
+          "leg": 5,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              831,
+              488
+            ],
+            [
+              847,
+              504
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "ApcHeavy",
+          "leg": 1,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 1804,
+          "pathCells": [
+            [
+              485,
+              540
+            ],
+            [
+              501,
+              524
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "ApcHeavy",
+          "leg": 2,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 1663,
+          "pathCells": [
+            [
+              521,
+              488
+            ],
+            [
+              537,
+              486
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "ApcHeavy",
+          "leg": 3,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 10,
+          "expansions": 720,
+          "pathCells": [
+            [
+              616,
+              472
+            ],
+            [
+              613,
+              488
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        },
+        {
+          "routeId": "route.skirmish.db.flank_b",
+          "role": "ApcHeavy",
+          "leg": 5,
+          "scope": "ActualPathfindBatchJob_BakedGridSurfaceOnly",
+          "liveOccupancyCertified": false,
+          "status": "NativeQueryFailed",
+          "failureCode": 5,
+          "expansions": 0,
+          "pathCells": [
+            [
+              831,
+              488
+            ],
+            [
+              847,
+              504
+            ]
+          ],
+          "footprintX": 3,
+          "footprintZ": 3,
+          "dynamicBlockersIncluded": false,
+          "liveOccupancyIncluded": false
+        }
+      ],
+      "failure_semantics": {
+        "5": "requested goal center unwalkable",
+        "7": "requested native footprint placement invalid",
+        "10": "search exhausted inside native bounds; not an endpoint-only rejection"
+      }
+    },
+    {
+      "group": "MP",
+      "source_path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+      "source_sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+      "compound_engineering_dimensions_metres": [
+        96,
+        80
+      ],
+      "compound_rectangle_proposals": {
+        "individual_rectangles": [
+          {
+            "side": "west",
+            "originCellXZ": [
+              584,
+              232
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1372.0,
+              532.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "west",
+            "originCellXZ": [
+              584,
+              376
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1372.0,
+              676.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "west",
+            "originCellXZ": [
+              584,
+              424
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1372.0,
+              724.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "west",
+            "originCellXZ": [
+              568,
+              280
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1356.0,
+              580.0
+            ],
+            "authoredBlockedCells": 24,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              600,
+              232
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1388.0,
+              532.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              600,
+              376
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1388.0,
+              676.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              632,
+              8
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1420.0,
+              308.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              632,
+              56
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1420.0,
+              356.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          }
+        ],
+        "separated_pair": [
+          {
+            "side": "west",
+            "originCellXZ": [
+              584,
+              376
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1372.0,
+              676.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              888,
+              376
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              1676.0,
+              676.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          }
+        ],
+        "minimum_pair_x_separation_metres": 300
+      },
+      "required_next_native_checks": [
+        "actual baked blockers and exact production surface decoder",
+        "all canonical facility footprints and full force packing",
+        "exact native heavy routes",
+        "packed scenery intersection",
+        "normal camera and paid heli/recon lifecycle"
+      ]
+    },
+    {
+      "group": "IB",
+      "source_path": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+      "source_sha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+      "compound_engineering_dimensions_metres": [
+        96,
+        80
+      ],
+      "compound_rectangle_proposals": {
+        "individual_rectangles": [
+          {
+            "side": "west",
+            "originCellXZ": [
+              416,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              464.0,
+              356.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "west",
+            "originCellXZ": [
+              464,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              512.0,
+              356.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "west",
+            "originCellXZ": [
+              576,
+              300
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              624.0,
+              340.0
+            ],
+            "authoredBlockedCells": 39,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "west",
+            "originCellXZ": [
+              512,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              560.0,
+              356.0
+            ],
+            "authoredBlockedCells": 62,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              768,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              816.0,
+              356.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              880,
+              524
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              928.0,
+              564.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              848,
+              300
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              896.0,
+              340.0
+            ],
+            "authoredBlockedCells": 12,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              720,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              768.0,
+              356.0
+            ],
+            "authoredBlockedCells": 48,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          }
+        ],
+        "separated_pair": [
+          {
+            "side": "west",
+            "originCellXZ": [
+              416,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              464.0,
+              356.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          },
+          {
+            "side": "east",
+            "originCellXZ": [
+              768,
+              316
+            ],
+            "sizeCellsXZ": [
+              96,
+              80
+            ],
+            "centerWorldXZ": [
+              816.0,
+              356.0
+            ],
+            "authoredBlockedCells": 0,
+            "scope": "SerializedCurrentGridOnly_NotBakedPlacementSurfaceOrScenery",
+            "nativeFitCertified": false
+          }
+        ],
+        "minimum_pair_x_separation_metres": 300
+      },
+      "required_next_native_checks": [
+        "actual baked blockers and exact production surface decoder",
+        "all canonical facility footprints and full force packing",
+        "exact native heavy routes",
+        "packed scenery intersection",
+        "normal camera and paid heli/recon lifecycle"
+      ]
+    }
+  ]
+}

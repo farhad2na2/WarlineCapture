@@ -146,7 +146,7 @@ namespace Game.UI.Runtime
             if (art != null)
             {
                 art.sprite = plate;
-                art.enabled = plate != null && backdrop == null;
+                art.enabled = plate != null;
             }
         }
 

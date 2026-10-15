@@ -210,9 +210,16 @@ namespace Game.UI.Runtime
         {
             if (_libraryPresenting)
                 return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             PlaceLibraryChrome();
-            StyleCommandButtons(LibraryLevel == SkirmishLibraryLevel.Battlefield);
+            StyleCommandButtons(battlefield);
             PlaceLibraryFooter();
+            ComposeBriefingColumn(battlefield);
+            ApplyLibraryDepth();
+            PresentZoomHint(fa, battlefield);
+            EnforceLibraryFontFloor();
+            RemoveBlankPanelImages();
             FitBriefingPicture();
         }
 
@@ -302,7 +309,7 @@ namespace Game.UI.Runtime
             PlaceTopLeft(caption.rectTransform, 10f, 8f, 210f, 28f);
             caption.alignment = TextAlignmentOptions.MidlineLeft;
             caption.textWrappingMode = TextWrappingModes.NoWrap;
-            caption.overflowMode = TextOverflowModes.Ellipsis;
+            caption.overflowMode = TextOverflowModes.Overflow;
 
             var count = CreateLabel(_overallStrip, "Count", 18f);
             PlaceTopLeft(count.rectTransform, 220f, 8f, 110f, 28f);
@@ -347,8 +354,6 @@ namespace Game.UI.Runtime
 
         private void PresentProgress(SkirmishTheaterState theater, bool fa)
         {
-            if (_progressTrack != null)
-                _progressTrack.gameObject.SetActive(false);
             if (_overallStrip == null)
                 return;
             bool show = LibraryLevel != SkirmishLibraryLevel.Battlefield;
@@ -510,14 +515,23 @@ namespace Game.UI.Runtime
                 return;
             tile.gameObject.SetActive(true);
             if (tile is RectTransform rect)
-                PlaceTopLeft(rect, x, 0f, width, 68f);
+                PlaceTopLeft(rect, x, 0f, width, 80f);
             float inner = Mathf.Max(20f, width - 12f);
             TMP_Text captionText = tile.Find("Caption")?.GetComponent<TMP_Text>();
             if (captionText != null)
-                PlaceTopLeft(captionText.rectTransform, 6f, 4f, inner, 20f);
+            {
+                PlaceTopLeft(captionText.rectTransform, 6f, 2f, inner, 28f);
+                captionText.overflowMode = TextOverflowModes.Overflow;
+                captionText.fontSizeMin = 22f;
+            }
+
             TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
             if (valueText != null)
-                PlaceTopLeft(valueText.rectTransform, 6f, 26f, inner, 34f);
+            {
+                PlaceTopLeft(valueText.rectTransform, 6f, 32f, inner, 42f);
+                valueText.overflowMode = TextOverflowModes.Overflow;
+                valueText.fontSizeMin = 22f;
+            }
             if (tile.GetComponent<RectMask2D>() == null)
                 tile.gameObject.AddComponent<RectMask2D>();
         }
@@ -538,18 +552,18 @@ namespace Game.UI.Runtime
                 return;
             TMP_Text captionText = tile.Find("Caption")?.GetComponent<TMP_Text>();
             TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
-            SetCopy(captionText, caption, 12f, 15f);
-            SetCopy(valueText, value, 14f, 20f);
+            SetCopy(captionText, caption, LibraryFontFloor, 24f);
+            SetCopy(valueText, value, LibraryFontFloor, 28f);
             if (captionText != null)
             {
                 captionText.textWrappingMode = TextWrappingModes.NoWrap;
-                captionText.overflowMode = TextOverflowModes.Ellipsis;
+                captionText.overflowMode = TextOverflowModes.Overflow;
             }
 
             if (valueText != null)
             {
                 valueText.textWrappingMode = TextWrappingModes.NoWrap;
-                valueText.overflowMode = TextOverflowModes.Ellipsis;
+                valueText.overflowMode = TextOverflowModes.Overflow;
                 float width = tile is RectTransform row && row.sizeDelta.x > 20f ? row.sizeDelta.x - 12f : 80f;
                 PlaceTopLeft(valueText.rectTransform, 6f, 26f, width, 34f);
             }
@@ -560,7 +574,11 @@ namespace Game.UI.Runtime
             if (_briefingPreview == null)
                 return;
             string key = battlefield ? ScenarioPreviewKey(BriefingPreviewKey(briefing)) : null;
+            if (battlefield && string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(briefing.ScenarioId))
+                key = "skirmish.preview." + briefing.ScenarioId;
             Texture2D texture = string.IsNullOrEmpty(key) ? null : SkirmishLibraryPreviewAssets.Load(key);
+            if (texture == null && battlefield && !string.IsNullOrEmpty(key))
+                texture = SkirmishLibraryPreviewAssets.Placeholder();
             bool show = battlefield && texture != null;
             _briefingPreview.texture = null;
             _briefingPreview.enabled = false;
@@ -591,31 +609,11 @@ namespace Game.UI.Runtime
 
         private void PresentTheaterDetail(bool fa)
         {
-            if (_medalGrid == null)
-                return;
-            ClearChildren(_medalGrid);
-            for (int i = 0; i < SkirmishBattleLibraryArt.ObjectiveIds.Length; i++)
+            if (_medalGrid != null)
             {
-                string objectiveId = SkirmishBattleLibraryArt.ObjectiveIds[i];
-                var icon = new GameObject("ObjectiveIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                icon.transform.SetParent(_medalGrid, false);
-                PlaceTopLeft(icon.rectTransform, i * 128f, 0f, 36f, 36f);
-                ShowIcon(icon, SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), Color.white);
-                var label = CreateLabel(_medalGrid, "ObjectiveLabel", 15f);
-                PlaceTopLeft(label.rectTransform, i * 128f + 40f, 4f, 84f, 32f);
-                label.alignment = TextAlignmentOptions.MidlineLeft;
-                label.textWrappingMode = TextWrappingModes.NoWrap;
-                SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string shortLabel);
-                SetCopy(label, shortLabel, 14f, 16f);
+                ClearChildren(_medalGrid);
+                _medalGrid.gameObject.SetActive(false);
             }
-
-            var hint = CreateLabel(_medalGrid, "ZoomHint", 15f);
-            PlaceTopLeft(hint.rectTransform, 0f, 44f, 540f, 40f);
-            hint.alignment = TextAlignmentOptions.MidlineLeft;
-            hint.textWrappingMode = TextWrappingModes.NoWrap;
-            hint.overflowMode = TextOverflowModes.Overflow;
-            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 15f, 20f);
-            hint.overflowMode = TextOverflowModes.Overflow;
         }
 
         private void StyleCommandButtons(bool battlefield)

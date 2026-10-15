@@ -26,6 +26,7 @@ namespace Game.Editor
             _rebuilding = true;
             try
             {
+                SkirmishLibraryZoneComposer.Generate();
                 EnsureFolder("Assets/Game/Resources/SkirmishLibrary");
                 SkirmishLibrarySpriteRegistry registry = AssetDatabase.LoadAssetAtPath<SkirmishLibrarySpriteRegistry>(AssetPath);
                 if (registry == null)
@@ -37,6 +38,8 @@ namespace Game.Editor
                 var entries = new List<SkirmishLibrarySpriteRegistry.Entry>();
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Previews");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Plates");
+                Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Zones");
+                Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Blurs");
                 registry.Replace(entries.ToArray());
                 EditorUtility.SetDirty(registry);
                 AssetDatabase.SaveAssets();

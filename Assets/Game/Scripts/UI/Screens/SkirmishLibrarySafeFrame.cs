@@ -21,6 +21,11 @@ namespace Game.UI.Runtime
         private float _right;
         private float _bottom;
         private RectTransform _notch;
+        private bool _hasBase;
+        private Vector3 _baseScale;
+        private Vector3 _basePosition;
+
+        public bool HoldsLayout { get; private set; }
 
         private void OnEnable()
         {
@@ -51,12 +56,31 @@ namespace Game.UI.Runtime
         public void ClearSimulatedInsets()
         {
             _simulated = false;
+            HoldsLayout = false;
+            _hasBase = false;
             if (_notch != null)
                 _notch.gameObject.SetActive(false);
+            HideCutout("CaptureSafeLeft");
+            HideCutout("CaptureSafeTop");
+        }
+
+        /// <summary>
+        /// Applies the simulated safe area after the last section layout and keeps a later
+        /// layout pass from putting the composition back.
+        /// </summary>
+        public void CommitSimulatedInset()
+        {
+            HoldsLayout = true;
+            if (layout != null)
+                layout.LayoutApplied -= Apply;
+            _hasBase = false;
+            Apply();
         }
 
         public void Apply()
         {
+            if (rect == null)
+                rect = transform as RectTransform;
             if (rect == null)
                 return;
 
@@ -97,9 +121,14 @@ namespace Game.UI.Runtime
                 return;
 
             float fit = Mathf.Clamp(Mathf.Min(1f - horizontal, 1f - vertical), 0.72f, 1f);
-            float scale = layout != null && layout.LastAppliedScale > 0f
-                ? layout.LastAppliedScale * fit
-                : rect.localScale.x * fit;
+            if (!_hasBase)
+            {
+                _baseScale = rect.localScale;
+                _basePosition = rect.position;
+                _hasBase = true;
+            }
+
+            float scale = _baseScale.x * fit;
             rect.localScale = new Vector3(scale, scale, 1f);
 
             RectTransform canvas = rect.parent as RectTransform;
@@ -109,7 +138,48 @@ namespace Game.UI.Runtime
                 (left - right) / canvasWidth * canvas.rect.width * 0.5f,
                 (bottom - top) / canvasHeight * canvas.rect.height * 0.5f,
                 0f));
-            rect.position += shift;
+            rect.position = _basePosition + shift;
+            if (_simulated)
+                ShowCaptureCutout(canvas);
+        }
+
+        private void ShowCaptureCutout(RectTransform canvas)
+        {
+            float width = Mathf.Max(1f, canvas.rect.width);
+            float height = Mathf.Max(1f, canvas.rect.height);
+            float leftPx = _left / Mathf.Max(1f, _canvasWidth) * width;
+            float topPx = _top / Mathf.Max(1f, _canvasHeight) * height;
+            EnsureCutout(canvas, "CaptureSafeLeft", new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(leftPx, 0f), new Vector2(0f, 0f));
+            EnsureCutout(canvas, "CaptureSafeTop", new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, topPx), new Vector2(0f, 0f));
+        }
+
+        private void EnsureCutout(RectTransform canvas, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 size, Vector2 position)
+        {
+            Transform existing = canvas.Find(name);
+            RectTransform cutout = existing as RectTransform;
+            if (cutout == null)
+            {
+                var image = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                image.transform.SetParent(canvas, false);
+                image.color = new Color(0.01f, 0.012f, 0.016f, 1f);
+                image.raycastTarget = false;
+                cutout = image.rectTransform;
+            }
+
+            cutout.gameObject.SetActive(true);
+            cutout.anchorMin = anchorMin;
+            cutout.anchorMax = anchorMax;
+            cutout.pivot = pivot;
+            cutout.sizeDelta = size;
+            cutout.anchoredPosition = position;
+            cutout.SetAsLastSibling();
+        }
+
+        private void HideCutout(string name)
+        {
+            Transform cutout = rect != null && rect.parent != null ? rect.parent.Find(name) : null;
+            if (cutout != null)
+                cutout.gameObject.SetActive(false);
         }
 
         private void ShowEdges(bool visible)

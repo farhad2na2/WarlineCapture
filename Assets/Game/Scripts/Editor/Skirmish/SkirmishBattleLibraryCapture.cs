@@ -82,7 +82,7 @@ namespace Game.Editor
                     }
                 }
 
-                var notchSize = new CaptureSize("16x9", 1920, 1080);
+                var notchSize = new CaptureSize("20x9", 2400, 1080);
                 for (int localeIndex = 0; localeIndex < Locales.Length; localeIndex++)
                 {
                     GameLocalization.SetLocale(Locales[localeIndex], false);
@@ -90,7 +90,7 @@ namespace Game.Editor
                     {
                         string path = Path.Combine(
                             folder,
-                            States[stateIndex] + "-16x9-" + Locales[localeIndex] + "-notch.png");
+                            States[stateIndex] + "-20x9-" + Locales[localeIndex] + "-notch.png");
                         Render(prefab, notchSize, States[stateIndex], path, true);
                         AcceptShot(path, States[stateIndex], Locales[localeIndex], shots);
                         written++;
@@ -163,10 +163,7 @@ namespace Game.Editor
                 view.Bind(default);
                 view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
                 var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
-                if (notch && safeFrame != null)
-                    safeFrame.SetSimulatedInsets(size.Width, size.Height, 36f, 72f, 36f, 28f);
-                else
-                    safeFrame?.ClearSimulatedInsets();
+                safeFrame?.ClearSimulatedInsets();
                 instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
                 view.PresentLibraryCapture(state);
                 RejectUnresolvedSprites(view.Library);
@@ -177,7 +174,13 @@ namespace Game.Editor
                     text.ForceMeshUpdate();
                 RejectMissingGlyphs(instance);
                 RejectUntranslatedFa(instance, path);
+                RejectBlankImages(instance);
                 RejectExtraLibraryRoots();
+                if (notch && safeFrame != null)
+                {
+                    safeFrame.SetSimulatedInsets(size.Width, size.Height, 132f, 84f, 0f, 0f);
+                    safeFrame.CommitSimulatedInset();
+                }
                 IsolateCaptureLayer(canvasObject, camera);
 
                 target = new RenderTexture(size.Width, size.Height, 24, RenderTextureFormat.ARGB32);
@@ -269,6 +272,15 @@ namespace Game.Editor
 
                 bool sameState = string.Equals(previous.State, shot.State, StringComparison.Ordinal);
                 bool sameLocale = string.Equals(previous.Locale, shot.Locale, StringComparison.OrdinalIgnoreCase);
+                bool notchMismatch = IsNotchCapture(previous.Path) != IsNotchCapture(shot.Path);
+                if (sameState && sameLocale && notchMismatch)
+                {
+                    throw new InvalidOperationException(
+                        "Notch capture matches its plain counterpart: " +
+                        Path.GetFileName(previous.Path) + " and " + Path.GetFileName(shot.Path) +
+                        " hash=" + hash.Substring(0, 8));
+                }
+
                 if (sameState && sameLocale)
                     continue;
                 throw new InvalidOperationException(
@@ -360,6 +372,51 @@ namespace Game.Editor
                 || (code >= 0xFE70 && code <= 0xFEFF);
         }
 
+        private static bool IsNotchCapture(string path)
+        {
+            return !string.IsNullOrEmpty(path) &&
+                Path.GetFileName(path).IndexOf("-notch", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        internal static void RejectBlankImages(GameObject instance)
+        {
+            if (instance == null)
+                return;
+            Transform composition = instance.transform.Find("SkirmishSetupComposition");
+            RejectBlankImages(composition != null ? composition.Find("BaseAssaultRules") : null);
+            RejectBlankImages(composition != null ? composition.Find("OperationPreview") : null);
+        }
+
+        private static void RejectBlankImages(Transform root)
+        {
+            if (root == null)
+                return;
+            Image[] images = root.GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (!SkirmishLibraryBlankImage.IsBlank(image))
+                    continue;
+                throw new InvalidOperationException(
+                    "Visible image has no sprite and a default white or grey colour: " + ImagePath(image.transform));
+            }
+        }
+
+        private static string ImagePath(Transform transform)
+        {
+            if (transform == null)
+                return "image";
+            string path = transform.name;
+            Transform cursor = transform.parent;
+            while (cursor != null)
+            {
+                path = cursor.name + "/" + path;
+                cursor = cursor.parent;
+            }
+
+            return path;
+        }
+
         internal static void RejectCollapsedLayout(GameObject instance)
         {
             Transform composition = instance != null ? instance.transform.Find("SkirmishSetupComposition") : null;
@@ -376,17 +433,27 @@ namespace Game.Editor
             var map = composition.Find("OperationPreview") as RectTransform;
             var briefing = composition.Find("BaseAssaultRules") as RectTransform;
             float extra = layout.LastAppliedExtraWidth;
+            float gap = SkirmishSetupPrefabBuilder.BriefingPanelX
+                - SkirmishSetupPrefabBuilder.MapPanelX
+                - SkirmishSetupPrefabBuilder.MapPanelWidth;
+            bool fa = GameLocalization.IsRightToLeft;
+            float mapX = fa
+                ? SkirmishSetupPrefabBuilder.MapPanelX + SkirmishSetupPrefabBuilder.BriefingPanelWidth + gap
+                : SkirmishSetupPrefabBuilder.MapPanelX;
+            float briefingX = fa
+                ? SkirmishSetupPrefabBuilder.MapPanelX
+                : SkirmishSetupPrefabBuilder.BriefingPanelX + extra;
             ExpectPanel(
                 map,
                 "map",
-                SkirmishSetupPrefabBuilder.MapPanelX,
+                mapX,
                 -SkirmishSetupPrefabBuilder.MapPanelY,
                 SkirmishSetupPrefabBuilder.MapPanelWidth + extra,
                 SkirmishSetupPrefabBuilder.MapPanelHeight);
             ExpectPanel(
                 briefing,
                 "briefing",
-                SkirmishSetupPrefabBuilder.BriefingPanelX + extra,
+                briefingX,
                 -SkirmishSetupPrefabBuilder.BriefingPanelY,
                 SkirmishSetupPrefabBuilder.BriefingPanelWidth,
                 SkirmishSetupPrefabBuilder.BriefingPanelHeight);

@@ -191,6 +191,9 @@ namespace Game.UI.Runtime
         {
             if (_applying || referenceResolution.x <= 0f || referenceResolution.y <= 0f)
                 return;
+            SkirmishLibrarySafeFrame held = GetComponent<SkirmishLibrarySafeFrame>();
+            if (held != null && held.HoldsLayout)
+                return;
 
             Canvas canvas = GetComponentInParent<Canvas>();
             RectTransform canvasRect = canvas != null ? canvas.rootCanvas.transform as RectTransform : null;

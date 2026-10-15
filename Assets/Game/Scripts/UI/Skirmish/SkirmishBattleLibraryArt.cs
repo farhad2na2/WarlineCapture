@@ -228,6 +228,8 @@ namespace Game.UI.Runtime
                     return string.Empty;
                 case "battles_won":
                     return fa ? "نبردهای برده" : "Battles won";
+                case "zone_progress":
+                    return fa ? "پیشرفت منطقه" : "ZONE PROGRESS";
                 default:
                     return string.Empty;
             }

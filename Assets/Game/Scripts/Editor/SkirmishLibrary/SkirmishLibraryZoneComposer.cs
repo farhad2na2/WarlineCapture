@@ -8,10 +8,10 @@ namespace Game.Editor
 {
     /// <summary>
     /// Paints one warm theatre plate from the existing Campaign plates. The colour
-    /// fill is averaged to a quarter scale, posterised to the five bright amber
-    /// steps, bilinear-upscaled and lightly blurred, then snapped back onto that
-    /// palette so the blur cannot turn sepia. Borders are drawn afterwards at
-    /// full resolution. It does not author new terrain.
+    /// fill is averaged to a quarter scale, blurred there, then posterised to the
+    /// five bright amber steps with hard thresholds and no dither. Nearest upscale
+    /// keeps each step flat. Borders are drawn afterwards at full resolution.
+    /// It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
@@ -333,13 +333,10 @@ namespace Game.Editor
             int smallWidth = Mathf.Max(1, width / 4);
             int smallHeight = Mathf.Max(1, height / 4);
             Color32[] small = DownscaleBox(source, width, height, smallWidth, smallHeight);
+            small = BoxBlur(small, smallWidth, smallHeight, 3);
             for (int i = 0; i < small.Length; i++)
                 small[i] = Grade(small[i]);
-            Color32[] large = UpscaleBilinear(small, smallWidth, smallHeight, width, height);
-            large = BoxBlur(large, width, height, 1);
-            for (int i = 0; i < large.Length; i++)
-                large[i] = Grade(large[i]);
-            return large;
+            return UpscaleNearest(small, smallWidth, smallHeight, width, height);
         }
 
         private static Color32[] DownscaleBox(Color32[] source, int width, int height, int smallWidth, int smallHeight)
@@ -376,39 +373,20 @@ namespace Game.Editor
             return dest;
         }
 
-        private static Color32[] UpscaleBilinear(Color32[] source, int smallWidth, int smallHeight, int width, int height)
+        private static Color32[] UpscaleNearest(Color32[] source, int smallWidth, int smallHeight, int width, int height)
         {
             var dest = new Color32[width * height];
             for (int y = 0; y < height; y++)
             {
-                float v = (y + 0.5f) * smallHeight / height - 0.5f;
-                int y0 = Mathf.Clamp(Mathf.FloorToInt(v), 0, smallHeight - 1);
-                int y1 = Mathf.Min(y0 + 1, smallHeight - 1);
-                float fy = Mathf.Clamp01(v - y0);
+                int sy = Mathf.Clamp(y * smallHeight / height, 0, smallHeight - 1);
                 for (int x = 0; x < width; x++)
                 {
-                    float u = (x + 0.5f) * smallWidth / width - 0.5f;
-                    int x0 = Mathf.Clamp(Mathf.FloorToInt(u), 0, smallWidth - 1);
-                    int x1 = Mathf.Min(x0 + 1, smallWidth - 1);
-                    float fx = Mathf.Clamp01(u - x0);
-                    Color32 c00 = source[y0 * smallWidth + x0];
-                    Color32 c10 = source[y0 * smallWidth + x1];
-                    Color32 c01 = source[y1 * smallWidth + x0];
-                    Color32 c11 = source[y1 * smallWidth + x1];
-                    dest[y * width + x] = new Color32(
-                        LerpChannel(LerpChannel(c00.r, c10.r, fx), LerpChannel(c01.r, c11.r, fx), fy),
-                        LerpChannel(LerpChannel(c00.g, c10.g, fx), LerpChannel(c01.g, c11.g, fx), fy),
-                        LerpChannel(LerpChannel(c00.b, c10.b, fx), LerpChannel(c01.b, c11.b, fx), fy),
-                        255);
+                    int sx = Mathf.Clamp(x * smallWidth / width, 0, smallWidth - 1);
+                    dest[y * width + x] = source[sy * smallWidth + sx];
                 }
             }
 
             return dest;
-        }
-
-        private static byte LerpChannel(byte from, byte to, float t)
-        {
-            return (byte)Mathf.Clamp(Mathf.RoundToInt(from + (to - from) * t), 0, 255);
         }
 
         private static void WriteZoneWindow(string folder, string mapId, byte regionIndex, byte[] owner, Color32[] composite)

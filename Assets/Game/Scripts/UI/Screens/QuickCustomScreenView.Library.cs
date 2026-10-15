@@ -1124,7 +1124,7 @@ namespace Game.UI.Runtime
             _progressTrack.gameObject.SetActive(true);
             TMP_Text caption = _progressTrack.Find("Caption")?.GetComponent<TMP_Text>();
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
-            SetCopy(caption, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 18f);
+            SetCopy(caption, LibraryText("ui.skirmish.library.zone_progress", fa), 14f, 18f);
             SetCopy(count, pin.WonCount + " / " + pin.PublishedCount, 14f, 20f);
             _sideWonRatio = pin.PublishedCount > 0 ? Mathf.Clamp01(pin.WonCount / (float)pin.PublishedCount) : 0f;
             PlaceSideBattlesCopy();
@@ -1144,7 +1144,7 @@ namespace Game.UI.Runtime
             TMP_Text caption = _progressTrack.Find("Caption")?.GetComponent<TMP_Text>();
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
             float labelSize = ColumnLabelSize();
-            string battles = UpperLatin(LibraryText("ui.skirmish.library.battles_won", fa));
+            string battles = UpperLatin(LibraryText("ui.skirmish.library.zone_progress", fa));
             SetCopy(caption, battles, labelSize, labelSize);
             if (caption != null)
             {
@@ -4366,7 +4366,7 @@ namespace Game.UI.Runtime
 
                 preview.gameObject.SetActive(true);
                 preview.texture = texture;
-                preview.color = new Color(1f, 0.96f, 0.88f, 1f);
+                preview.color = Color.white;
                 preview.raycastTarget = false;
                 preview.enabled = true;
                 PlaceTopLeft(preview.rectTransform, 12f, previewY + 4f, Mathf.Max(80f, textWidth - 8f), previewCap);

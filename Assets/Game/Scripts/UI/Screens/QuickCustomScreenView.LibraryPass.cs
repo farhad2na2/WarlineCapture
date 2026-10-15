@@ -161,7 +161,7 @@ namespace Game.UI.Runtime
 
                 if (_progressTrack.Find("Caption") == null)
                 {
-                    var caption = CreateBoundLabel(_progressTrack, "Caption", "ui.skirmish.library_battles_won", "BATTLES WON");
+                    var caption = CreateBoundLabel(_progressTrack, "Caption", "ui.skirmish.library.zone_progress", "ZONE PROGRESS");
                     PlaceTopLeft(caption.rectTransform, 0f, 0f, 340f, 28f);
                     caption.fontSize = 18f;
                     caption.alignment = TextAlignmentOptions.MidlineLeft;
@@ -405,14 +405,46 @@ namespace Game.UI.Runtime
                 fill.pivot = new Vector2(0f, 0.5f);
             }
 
+            float stripWidth = TheatreStripWidth();
+            string progress = won + " / " + published;
             TMP_Text battles = _overallStrip.Find("Caption")?.GetComponent<TMP_Text>();
-            if (battles != null)
-                battles.gameObject.SetActive(false);
+            SetCopy(battles, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 20f);
             TMP_Text count = _overallStrip.Find("Count")?.GetComponent<TMP_Text>();
+            SetCopy(count, progress, 15f, 22f);
+            const float captionWidth = 168f;
+            const float countWidth = 96f;
+            const float pairGap = 6f;
+            float pairX = fa ? stripWidth - 8f - captionWidth - pairGap - countWidth : 8f;
+            if (battles != null)
+            {
+                battles.gameObject.SetActive(true);
+                battles.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                battles.isRightToLeftText = fa;
+                battles.overflowMode = TextOverflowModes.Overflow;
+                battles.textWrappingMode = TextWrappingModes.NoWrap;
+                PlaceTopLeft(battles.rectTransform, fa ? pairX + countWidth + pairGap : pairX, 4f, captionWidth, 32f);
+            }
+
             if (count != null)
-                count.gameObject.SetActive(false);
-            if (_overallFill != null && _overallFill.transform.parent != null)
-                _overallFill.transform.parent.gameObject.SetActive(false);
+            {
+                count.gameObject.SetActive(true);
+                count.isRightToLeftText = false;
+                count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                count.text = progress;
+                PlaceTopLeft(count.rectTransform, fa ? pairX : pairX + captionWidth + pairGap, 6f, countWidth, 28f);
+            }
+
+            if (_overallFill != null && _overallFill.transform.parent is RectTransform bar)
+            {
+                bar.gameObject.SetActive(true);
+                PlaceTopLeft(bar, pairX, 46f, captionWidth + pairGap + countWidth, 22f);
+                Image track = bar.GetComponent<Image>();
+                if (track != null)
+                    track.color = new Color(0.05f, 0.07f, 0.08f, 1f);
+                Outline rim = bar.GetComponent<Outline>() ?? bar.gameObject.AddComponent<Outline>();
+                rim.effectColor = new Color(0.93f, 0.78f, 0.38f, 1f);
+                rim.effectDistance = new Vector2(1.5f, -1.5f);
+            }
 
             SkirmishMedalTotals medals = theater.OverallMedalTotals;
             int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
@@ -456,9 +488,13 @@ namespace Game.UI.Runtime
             if (_overallStrip == null)
                 return;
             float stripWidth = TheatreStripWidth();
-            float slotWidth = Mathf.Clamp((stripWidth - 24f) / 4f, 140f, 240f);
+            const float captionWidth = 168f;
+            const float summaryCountWidth = 96f;
+            const float pairGap = 6f;
+            float reserved = 8f + captionWidth + pairGap + summaryCountWidth + 16f;
+            float slotWidth = Mathf.Clamp((stripWidth - reserved) / 4f, 150f, 220f);
             float run = slotWidth * 4f;
-            float origin = fa ? Mathf.Max(8f, stripWidth - 8f - run) : 8f;
+            float origin = fa ? stripWidth - reserved - run : reserved;
             for (int i = 0; i < 4; i++)
             {
                 if (_overallStrip.Find("Medal" + i) is not RectTransform slot)
@@ -488,7 +524,7 @@ namespace Game.UI.Runtime
             if (slot == null)
                 return;
             float inner = Mathf.Max(96f, slotWidth - 8f);
-            PlaceTopLeft(slot, origin, 22f, inner, 44f);
+            PlaceTopLeft(slot, origin, 4f, inner, 44f);
             LayoutElement element = slot.GetComponent<LayoutElement>();
             if (element != null)
                 element.ignoreLayout = false;

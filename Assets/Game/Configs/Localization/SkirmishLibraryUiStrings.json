@@ -11,6 +11,16 @@
       ]
     },
     {
+      "key": "ui.skirmish.library.zone_progress",
+      "source": "ZONE PROGRESS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیشرفت منطقه"
+        }
+      ]
+    },
+    {
       "key": "ui.skirmish.theater.mp.title",
       "source": "ARMOR APPROACH",
       "translations": [

@@ -8,8 +8,9 @@ namespace Game.Editor
 {
     /// <summary>
     /// Paints one warm theatre plate from the existing Campaign plates. Each pixel
-    /// keeps a single plate, then five flat amber steps, a thin region border and
-    /// a light vignette. It does not author new terrain.
+    /// keeps a single plate, then five bright amber poster steps. A one-pixel
+    /// median after that grade knocks out speckle without leaving the palette.
+    /// Borders are painted last, at full strength. It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
@@ -123,7 +124,13 @@ namespace Game.Editor
                 }
             }
 
-            pixels = FlattenPaint(pixels, ZoneWidth, ZoneHeight);
+            pixels = Median(pixels, ZoneWidth, ZoneHeight, 4);
+            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 5, 5.0f, 0.40f);
+            for (int i = 0; i < pixels.Length; i++)
+                pixels[i] = Grade(pixels[i]);
+            pixels = Median(pixels, ZoneWidth, ZoneHeight, 1);
+            for (int i = 0; i < pixels.Length; i++)
+                pixels[i] = Grade(pixels[i]);
             Vignette(pixels);
             PaintThickBorders(pixels, owner);
             return pixels;
@@ -317,93 +324,13 @@ namespace Game.Editor
                     float gain = 1f - 0.12f * shade;
                     int index = y * ZoneWidth + x;
                     Color32 sample = pixels[index];
-                    pixels[index] = new Color32(
+                    pixels[index] = Grade(new Color32(
                         (byte)Mathf.Clamp(Mathf.RoundToInt(sample.r * gain), 0, 255),
                         (byte)Mathf.Clamp(Mathf.RoundToInt(sample.g * gain), 0, 255),
                         (byte)Mathf.Clamp(Mathf.RoundToInt(sample.b * gain), 0, 255),
-                        255);
+                        255));
                 }
             }
-        }
-
-        private static Color32[] FlattenPaint(Color32[] source, int width, int height)
-        {
-            int smallWidth = Mathf.Max(1, width / 4);
-            int smallHeight = Mathf.Max(1, height / 4);
-            Color32[] small = DownscaleBox(source, width, height, smallWidth, smallHeight);
-            for (int i = 0; i < small.Length; i++)
-                small[i] = Grade(small[i]);
-            Color32[] large = UpscaleBilinear(small, smallWidth, smallHeight, width, height);
-            return BoxBlur(large, width, height, 1);
-        }
-
-        private static Color32[] DownscaleBox(Color32[] source, int width, int height, int smallWidth, int smallHeight)
-        {
-            var dest = new Color32[smallWidth * smallHeight];
-            for (int y = 0; y < smallHeight; y++)
-            {
-                int y0 = y * height / smallHeight;
-                int y1 = Mathf.Max(y0 + 1, (y + 1) * height / smallHeight);
-                for (int x = 0; x < smallWidth; x++)
-                {
-                    int x0 = x * width / smallWidth;
-                    int x1 = Mathf.Max(x0 + 1, (x + 1) * width / smallWidth);
-                    int red = 0;
-                    int green = 0;
-                    int blue = 0;
-                    int count = 0;
-                    for (int sy = y0; sy < y1; sy++)
-                    {
-                        for (int sx = x0; sx < x1; sx++)
-                        {
-                            Color32 sample = source[sy * width + sx];
-                            red += sample.r;
-                            green += sample.g;
-                            blue += sample.b;
-                            count++;
-                        }
-                    }
-
-                    dest[y * smallWidth + x] = new Color32((byte)(red / count), (byte)(green / count), (byte)(blue / count), 255);
-                }
-            }
-
-            return dest;
-        }
-
-        private static Color32[] UpscaleBilinear(Color32[] source, int smallWidth, int smallHeight, int width, int height)
-        {
-            var dest = new Color32[width * height];
-            for (int y = 0; y < height; y++)
-            {
-                float v = (y + 0.5f) * smallHeight / height - 0.5f;
-                int y0 = Mathf.Clamp(Mathf.FloorToInt(v), 0, smallHeight - 1);
-                int y1 = Mathf.Min(y0 + 1, smallHeight - 1);
-                float fy = Mathf.Clamp01(v - y0);
-                for (int x = 0; x < width; x++)
-                {
-                    float u = (x + 0.5f) * smallWidth / width - 0.5f;
-                    int x0 = Mathf.Clamp(Mathf.FloorToInt(u), 0, smallWidth - 1);
-                    int x1 = Mathf.Min(x0 + 1, smallWidth - 1);
-                    float fx = Mathf.Clamp01(u - x0);
-                    Color32 c00 = source[y0 * smallWidth + x0];
-                    Color32 c10 = source[y0 * smallWidth + x1];
-                    Color32 c01 = source[y1 * smallWidth + x0];
-                    Color32 c11 = source[y1 * smallWidth + x1];
-                    dest[y * width + x] = new Color32(
-                        LerpChannel(LerpChannel(c00.r, c10.r, fx), LerpChannel(c01.r, c11.r, fx), fy),
-                        LerpChannel(LerpChannel(c00.g, c10.g, fx), LerpChannel(c01.g, c11.g, fx), fy),
-                        LerpChannel(LerpChannel(c00.b, c10.b, fx), LerpChannel(c01.b, c11.b, fx), fy),
-                        255);
-                }
-            }
-
-            return dest;
-        }
-
-        private static byte LerpChannel(byte from, byte to, float t)
-        {
-            return (byte)Mathf.Clamp(Mathf.RoundToInt(from + (to - from) * t), 0, 255);
         }
 
         private static Color32[] Median(Color32[] source, int width, int height, int radius)

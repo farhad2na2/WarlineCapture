@@ -223,9 +223,9 @@ namespace Game.UI.Runtime
             FitBriefingPicture();
             ClampStrayMedalBars();
             LockMedalArtwork();
+            PresentTheatreSummary();
             ApplyBriefingColumnState();
             PresentZoomHint(fa, battlefield);
-            PresentTheatreSummary();
             RaiseLaunchTransition();
         }
 

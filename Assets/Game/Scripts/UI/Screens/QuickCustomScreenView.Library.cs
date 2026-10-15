@@ -770,19 +770,19 @@ namespace Game.UI.Runtime
         {
             if (subtitle == null)
                 return;
-            subtitle.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            subtitle.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             subtitle.isRightToLeftText = fa;
             subtitle.color = new Color(0.9f, 0.93f, 0.9f, 1f);
-            SetCopy(subtitle, copy, 18f, 22f);
-            subtitle.textWrappingMode = TextWrappingModes.NoWrap;
-            subtitle.overflowMode = TextOverflowModes.Overflow;
+            SetCopy(subtitle, copy, 16f, 18f);
+            subtitle.textWrappingMode = TextWrappingModes.Normal;
+            subtitle.overflowMode = TextOverflowModes.Ellipsis;
             subtitle.enableAutoSizing = true;
-            subtitle.fontSizeMin = 18f;
-            subtitle.fontSizeMax = 22f;
-            subtitle.maxVisibleLines = 1;
+            subtitle.fontSizeMin = 16f;
+            subtitle.fontSizeMax = 18f;
+            subtitle.maxVisibleLines = 2;
             V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
-                binding.ConfigureFontBounds(18f, 22f);
+                binding.ConfigureFontBounds(16f, 18f);
         }
 
         private void PresentBattlefieldTabs(string selectedMapId, bool fa)
@@ -839,7 +839,7 @@ namespace Game.UI.Runtime
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             const float titleHeight = 22f;
-            const float subtitleHeight = 24f;
+            const float subtitleHeight = 48f;
             const float badgeHeight = 22f;
             float stack = titleHeight + subtitleHeight + badgeHeight + 14f;
             float previewHeight = Mathf.Max(48f, height - stack);
@@ -888,8 +888,8 @@ namespace Game.UI.Runtime
             title.overflowMode = TextOverflowModes.Overflow;
             title.isRightToLeftText = fa;
             SetCopy(title, objectiveLabel, 14f, 18f);
-            var subtitle = CreateLabel(button.transform, "Subtitle", 18f);
-            PlaceTopLeft(subtitle.rectTransform, 4f, textY + titleHeight, width - 8f, subtitleHeight);
+            var subtitle = CreateLabel(button.transform, "Subtitle", 16f);
+            PlaceTopLeft(subtitle.rectTransform, 6f, textY + titleHeight, width - 12f, subtitleHeight);
             string subtitleCopy = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
             ShowCardSubtitle(subtitle, subtitleCopy, fa);
             if (card.IsRecommended)
@@ -941,10 +941,10 @@ namespace Game.UI.Runtime
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Overflow;
             SetCopy(title, objectiveLabel, 14f, 18f);
-            var subtitle = CreateLabel(rect, "Subtitle", 18f);
-            PlaceTopLeft(subtitle.rectTransform, 4f, 82f, LibraryGridCardWidth - 8f, 24f);
+            var subtitle = CreateLabel(rect, "Subtitle", 16f);
+            PlaceTopLeft(subtitle.rectTransform, 6f, 82f, LibraryGridCardWidth - 12f, 48f);
             ShowCardSubtitle(subtitle, detail, fa);
-            AddMedalIcons(rect, SkirmishMedalMask.None, 6f, 118f, 18f);
+            AddMedalIcons(rect, SkirmishMedalMask.None, 6f, 130f, 18f);
             return rect;
         }
 
@@ -2527,11 +2527,13 @@ namespace Game.UI.Runtime
             group.childScaleWidth = false;
             group.childScaleHeight = false;
             int index = 0;
+            Transform summary = column.Find("TheatreSummary");
+            index = StackColumnChild(summary as RectTransform, index, 44f, !battlefield && summary != null);
             bool previewShown = battlefield && _briefingPreview != null && _briefingPreview.gameObject.activeSelf;
             index = StackColumnChild(_briefingPreview != null ? _briefingPreview.rectTransform : null, index, 188f, previewShown);
             Transform title = rules.Find("BriefingColumn/Title") ?? rules.Find("Title");
             index = StackColumnChild(title as RectTransform, index, 40f, title != null);
-            index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 120f, scenarioDescription != null);
+            index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 108f, scenarioDescription != null);
             index = StackColumnChild(_progressTrack, index, 84f, !battlefield && _progressTrack != null);
             index = StackColumnChild(_statRow, index, 84f, battlefield && _statRow != null);
             index = StackColumnChild(_medalRow, index, 104f, _medalRow != null);
@@ -2660,10 +2662,14 @@ namespace Game.UI.Runtime
         private void PresentTheatreSummary()
         {
             Transform preview = transform.Find("SkirmishSetupComposition/OperationPreview");
-            if (preview == null)
+            Transform column = transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn");
+            Transform stray = preview != null ? preview.Find("TheatreSummary") : null;
+            if (stray != null)
+                DestroyUi(stray.gameObject);
+            if (column == null)
                 return;
             bool show = LibraryLevel != SkirmishLibraryLevel.Battlefield && _libraryViewModel != null;
-            var plate = preview.Find("TheatreSummary") as RectTransform;
+            var plate = column.Find("TheatreSummary") as RectTransform;
             if (!show)
             {
                 if (plate != null)
@@ -2673,41 +2679,29 @@ namespace Game.UI.Runtime
 
             if (plate == null)
             {
-                var image = new GameObject("TheatreSummary", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                image.transform.SetParent(preview, false);
-                image.raycastTarget = false;
-                plate = image.rectTransform;
-                CreateLabel(plate, "Summary", 42f);
+                plate = new GameObject("TheatreSummary", typeof(RectTransform)).GetComponent<RectTransform>();
+                plate.SetParent(column, false);
+                CreateLabel(plate, "Summary", 36f);
             }
 
             plate.gameObject.SetActive(true);
-            PlaceTopLeft(plate, 18f, 16f, 248f, 72f);
-            plate.SetAsLastSibling();
-            Image plateImage = plate.GetComponent<Image>();
-            if (plateImage != null)
-            {
-                plateImage.sprite = SolidSprite();
-                plateImage.type = Image.Type.Simple;
-                plateImage.color = new Color(0.05f, 0.04f, 0.03f, 0.78f);
-                plateImage.enabled = true;
-            }
-
             int won = _libraryViewModel.Theater.OverallWonCount;
             int published = _libraryViewModel.Theater.OverallPublishedCount;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             TMP_Text summary = plate.Find("Summary")?.GetComponent<TMP_Text>();
             if (summary != null)
-                Stretch(summary.rectTransform, 10f, 8f, 4f, 4f);
-            SetCopy(summary, won + " / " + published, 36f, 48f);
+                Stretch(summary.rectTransform, 8f, 4f, 2f, 2f);
+            SetCopy(summary, won + " / " + published, 28f, 36f);
             if (summary == null)
                 return;
-            summary.alignment = TextAlignmentOptions.MidlineLeft;
+            summary.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             summary.isRightToLeftText = false;
             summary.textWrappingMode = TextWrappingModes.NoWrap;
             summary.overflowMode = TextOverflowModes.Overflow;
             summary.color = new Color(0.98f, 0.91f, 0.64f, 1f);
             summary.enableAutoSizing = true;
-            summary.fontSizeMin = 36f;
-            summary.fontSizeMax = 48f;
+            summary.fontSizeMin = 28f;
+            summary.fontSizeMax = 36f;
             summary.maxVisibleLines = 1;
         }
 
@@ -3644,10 +3638,10 @@ namespace Game.UI.Runtime
                 _medalRow = keptMedal;
             var order = battlefield
                 ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
-                : new[] { "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
+                : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 40f, 120f, 84f, 104f, 272f };
+                : new[] { 44f, 40f, 108f, 84f, 104f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -3739,7 +3733,7 @@ namespace Game.UI.Runtime
         {
             if (text == null)
                 return false;
-            if (text.name.StartsWith("Column_", StringComparison.Ordinal))
+            if (text.name == "Subtitle" || text.name.StartsWith("Column_", StringComparison.Ordinal))
                 return true;
             string parent = text.transform.parent != null ? text.transform.parent.name : string.Empty;
             return text.name == "Caption" && parent.StartsWith("Slot", StringComparison.Ordinal);
@@ -3768,6 +3762,8 @@ namespace Game.UI.Runtime
                 return false;
             }
 
+            if (child.name == "TheatreSummary")
+                return true;
             if (child.name == "BattlesWonTrack")
                 return _progressTrack == null || child == _progressTrack;
             if (child.name == "RecommendedNext")
@@ -4605,9 +4601,10 @@ namespace Game.UI.Runtime
                     footerOwner.name == "BackButton");
                 if (subtitle)
                 {
-                    RelaxLibraryText(text, 18f, 22f, false);
-                    text.overflowMode = TextOverflowModes.Overflow;
-                    text.maxVisibleLines = 1;
+                    RelaxLibraryText(text, 16f, 18f, true);
+                    text.overflowMode = TextOverflowModes.Ellipsis;
+                    text.maxVisibleLines = 2;
+                    text.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                 }
                 else if (zoneTab || gridRow)
                     RelaxLibraryText(text, 11f, 16f, true);

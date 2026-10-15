@@ -422,6 +422,188 @@ namespace Game.Editor
             bool scrolls = content != null && content.rect.height > viewport.rect.height + 2f;
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
             RejectGridCardsOutside(grid, viewport, content, scrolls, locale);
+            RejectGridZoneRows(grid, locale);
+        }
+
+        private static void RejectGridZoneRows(Transform grid, string locale)
+        {
+            var rows = new List<Transform>();
+            CollectZoneRows(grid, rows);
+            if (rows.Count == 0)
+                throw new InvalidOperationException("Grid has no zone rows locale=" + locale);
+            var ids = new HashSet<string>();
+            var tops = new HashSet<int>();
+            for (int i = 0; i < rows.Count; i++)
+            {
+                Transform row = rows[i];
+                string id = row.name.Length > "ZoneRow_".Length ? row.name.Substring("ZoneRow_".Length) : string.Empty;
+                if (string.IsNullOrEmpty(id) || !ids.Add(id))
+                    throw new InvalidOperationException("Grid zone row is duplicated locale=" + locale + " row=" + row.name);
+                var rowRect = row as RectTransform;
+                if (rowRect != null && !tops.Add(Mathf.RoundToInt(rowRect.anchoredPosition.y)))
+                    throw new InvalidOperationException("Grid zone rows share a line locale=" + locale + " row=" + id);
+                int cards = 0;
+                int labels = 0;
+                float rowY = 0f;
+                bool haveY = false;
+                for (int childIndex = 0; childIndex < row.childCount; childIndex++)
+                {
+                    Transform child = row.GetChild(childIndex);
+                    if (child == null || !child.gameObject.activeInHierarchy)
+                        continue;
+                    bool card = child.name == "EmptyCell" || child.name.StartsWith("BattleCard_", StringComparison.Ordinal);
+                    if (card && child is RectTransform cardRect)
+                    {
+                        if (!haveY)
+                        {
+                            rowY = cardRect.anchoredPosition.y;
+                            haveY = true;
+                        }
+                        else if (Mathf.Abs(cardRect.anchoredPosition.y - rowY) > 2f)
+                        {
+                            throw new InvalidOperationException(
+                                "Zone row wraps onto another line locale=" + locale +
+                                " row=" + id +
+                                " path=" + ImagePath(child));
+                        }
+
+                        cards++;
+                        RejectGridPreviewDominant(cardRect, locale, id);
+                    }
+
+                    if (child.name.StartsWith("Row_", StringComparison.Ordinal) &&
+                        !child.name.StartsWith("RowCount_", StringComparison.Ordinal) &&
+                        child.name != "RowIcon")
+                        labels++;
+                }
+
+                if (cards != 6)
+                {
+                    throw new InvalidOperationException(
+                        "Zone row does not contain its six cards on one row locale=" + locale +
+                        " row=" + id +
+                        " cards=" + cards);
+                }
+
+                if (labels != 1)
+                {
+                    throw new InvalidOperationException(
+                        "Zone row label is not one line locale=" + locale +
+                        " row=" + id +
+                        " labels=" + labels);
+                }
+            }
+
+            RejectOrphanGridCards(grid, false, locale);
+        }
+
+        private static void RejectGridPreviewDominant(RectTransform card, string locale, string zone)
+        {
+            Transform preview = card.Find("Preview");
+            var previewRect = preview as RectTransform;
+            if (previewRect == null)
+            {
+                throw new InvalidOperationException(
+                    "Grid card has no preview locale=" + locale + " zone=" + zone + " path=" + ImagePath(card));
+            }
+
+            float cardWidth = Span(card, true);
+            float cardHeight = Span(card, false);
+            float previewWidth = Span(previewRect, true);
+            float previewHeight = Span(previewRect, false);
+            if (cardHeight < 2f || previewHeight < cardHeight * 0.45f)
+            {
+                throw new InvalidOperationException(
+                    "Grid preview is under 45% of the card locale=" + locale +
+                    " zone=" + zone +
+                    " path=" + ImagePath(card) +
+                    " preview=" + previewHeight.ToString("0.0") +
+                    " card=" + cardHeight.ToString("0.0"));
+            }
+
+            if (previewWidth < cardWidth - 4f)
+            {
+                throw new InvalidOperationException(
+                    "Grid preview is not the full card width locale=" + locale +
+                    " zone=" + zone +
+                    " path=" + ImagePath(card) +
+                    " preview=" + previewWidth.ToString("0.0") +
+                    " card=" + cardWidth.ToString("0.0"));
+            }
+
+            Vector3[] previewCorners = new Vector3[4];
+            Vector3[] cardCorners = new Vector3[4];
+            previewRect.GetWorldCorners(previewCorners);
+            card.GetWorldCorners(cardCorners);
+            float previewTop = previewCorners[1].y;
+            float cardTop = cardCorners[1].y;
+            for (int i = 0; i < 4; i++)
+            {
+                if (previewCorners[i].y > previewTop)
+                    previewTop = previewCorners[i].y;
+                if (cardCorners[i].y > cardTop)
+                    cardTop = cardCorners[i].y;
+            }
+
+            float scale = Mathf.Max(0.01f, card.lossyScale.y);
+            if (Mathf.Abs(cardTop - previewTop) > 3f * scale)
+            {
+                throw new InvalidOperationException(
+                    "Grid preview is not at the top of the card locale=" + locale +
+                    " zone=" + zone +
+                    " path=" + ImagePath(card));
+            }
+        }
+
+        private static float Span(RectTransform rect, bool horizontal)
+        {
+            if (rect == null)
+                return 0f;
+            float live = horizontal ? rect.rect.width : rect.rect.height;
+            float authored = horizontal ? rect.sizeDelta.x : rect.sizeDelta.y;
+            return live > 2f ? live : authored;
+        }
+
+        private static void RejectOrphanGridCards(Transform parent, bool insideRow, string locale)
+        {
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.gameObject.activeInHierarchy)
+                    continue;
+                bool card = child.name == "EmptyCell" || child.name.StartsWith("BattleCard_", StringComparison.Ordinal);
+                if (card)
+                {
+                    if (!insideRow)
+                    {
+                        throw new InvalidOperationException(
+                            "Grid card is outside its zone row locale=" + locale + " path=" + ImagePath(child));
+                    }
+
+                    continue;
+                }
+
+                bool row = child.name.StartsWith("ZoneRow_", StringComparison.Ordinal);
+                RejectOrphanGridCards(child, insideRow || row, locale);
+            }
+        }
+
+        private static void CollectZoneRows(Transform parent, List<Transform> rows)
+        {
+            if (parent == null)
+                return;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.gameObject.activeInHierarchy)
+                    continue;
+                if (child.name.StartsWith("ZoneRow_", StringComparison.Ordinal))
+                    rows.Add(child);
+                else if (child.name.StartsWith("BattleCard_", StringComparison.Ordinal) || child.name == "EmptyCell")
+                    continue;
+                else
+                    CollectZoneRows(child, rows);
+            }
         }
 
         private static void RejectGridCardsOutside(Transform parent, RectTransform viewport, RectTransform content, bool scrolls, string locale)

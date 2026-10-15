@@ -2,6 +2,10 @@
 .DS_Store
 Assets/**/.DS_Store
 
+# Theatre seat harness build output
+Tools/TheatreSeatCheck/bin/
+Tools/TheatreSeatCheck/obj/
+
 # Unity generated folders
 [Ll]ibrary/
 /.g/

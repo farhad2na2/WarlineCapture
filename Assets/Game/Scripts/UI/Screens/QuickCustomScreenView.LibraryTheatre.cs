@@ -2130,8 +2130,10 @@ namespace Game.UI.Runtime
                 plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
             TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(
                 plateWidth, plateHeight, fa, reserve, selected);
-            if (!layout.CardsLegal || !layout.CueNear || !layout.HexAspectLegal || layout.Seats == null)
+            TheatreSeatGeometry.NoteSeating(plateWidth, plateHeight, fa, reserve, selected, layout);
+            if (layout.Seats == null)
                 return false;
+            bool cardsOk = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal;
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot slot = slots[i];
@@ -2144,12 +2146,10 @@ namespace Game.UI.Runtime
                     break;
                 }
 
-                if (index < 0 || layout.Seats[index].Card.W < 1f)
+                if (index < 0)
                     return false;
                 TheatreSeatGeometry.Seat seat = layout.Seats[index];
                 slot.Pin = new Rect(seat.Pin.X, seat.Pin.Y, seat.Pin.W, seat.Pin.H);
-                slot.Card = new Rect(seat.Card.X, seat.Card.Y, seat.Card.W, seat.Card.H);
-                slot.Cue = new Rect(layout.Cue.X, layout.Cue.Y, layout.Cue.W, layout.Cue.H);
                 if (seat.Hex != null && seat.Hex.Length >= 3)
                 {
                     var hex = new Vector2[seat.Hex.Length];
@@ -2158,10 +2158,16 @@ namespace Game.UI.Runtime
                     slot.Hex = hex;
                 }
 
+                if (cardsOk && seat.Card.W >= 1f)
+                {
+                    slot.Card = new Rect(seat.Card.X, seat.Card.Y, seat.Card.W, seat.Card.H);
+                    slot.Cue = new Rect(layout.Cue.X, layout.Cue.Y, layout.Cue.W, layout.Cue.H);
+                }
+
                 slots[i] = slot;
             }
 
-            return true;
+            return cardsOk;
         }
 
         private static void LogTheatreSeats(Transform parent, bool fa)
@@ -2224,77 +2230,6 @@ namespace Game.UI.Runtime
                     RaiseTheatreLine(text, 14f, 24f);
             }
 
-            DumpTheatreSeat(regions);
-        }
-
-        /// <summary>
-        /// Writes the plate, insets, reserve, viewport and name boxes the seating pass just used.
-        /// The dotnet harness replays this file instead of guessing the capture canvas.
-        /// </summary>
-        private static void DumpTheatreSeat(Transform regions)
-        {
-            if (regions == null)
-                return;
-            Transform fit = regions.Find("TheaterFit");
-            RectTransform space = fit as RectTransform ?? regions as RectTransform;
-            if (space == null || !TryFrameSize(space, out float plateWidth, out float plateHeight))
-                return;
-            var cards = new List<RectTransform>(8);
-            var nameTexts = new List<TMP_Text>(8);
-            bool fa = false;
-            for (int i = 0; i < space.childCount; i++)
-            {
-                Transform child = space.GetChild(i);
-                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
-                    continue;
-                if (child is not RectTransform card)
-                    continue;
-                TMP_Text name = child.Find("ZoneName")?.GetComponent<TMP_Text>();
-                if (name != null)
-                    fa = name.isRightToLeftText;
-                cards.Add(card);
-                nameTexts.Add(name);
-            }
-
-            bool reserve = TheatreSeatGeometry.DetailReserveOn(
-                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
-            TheatreSeatGeometry.ShotReserve = reserve;
-            if (string.IsNullOrEmpty(TheatreSeatGeometry.DumpDirectory) || cards.Count == 0)
-                return;
-            Rect detailRect = SeatingDetailRect(plateWidth, plateHeight, fa);
-            var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
-            TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(
-                plateWidth, plateHeight, fa, reserve);
-            TheatreSeatGeometry.Box cue = default;
-            if (space.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
-                cue = PlateBoxOf(cueRect);
-            TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
-            var boxes = new TheatreSeatGeometry.Box[cards.Count];
-            for (int i = 0; i < cards.Count; i++)
-                boxes[i] = PlateBoxOf(cards[i]);
-            var measures = new TheatreSeatGeometry.NameMeasure[cards.Count];
-            for (int i = 0; i < cards.Count; i++)
-            {
-                TMP_Text name = nameTexts[i];
-                if (name != null)
-                    name.ForceMeshUpdate();
-                measures[i] = new TheatreSeatGeometry.NameMeasure
-                {
-                    MapId = cards[i].name.Substring("ZoneCard_".Length),
-                    Text = name != null ? name.text : string.Empty,
-                    Font = name != null ? name.fontSize : 0f,
-                    BoxWidth = name != null ? name.rectTransform.rect.width : 0f,
-                    BoxHeight = name != null ? name.rectTransform.rect.height : 0f,
-                    PreferredWidth = name != null ? name.preferredWidth : 0f,
-                    PreferredHeight = name != null ? name.preferredHeight : 0f,
-                    Band = TheatreSeatGeometry.NameBandHeight(boxes[i], boxes, i, detail, cue, hint, plateHeight),
-                    CardWidth = cards[i].sizeDelta.x,
-                    CardHeight = cards[i].sizeDelta.y
-                };
-            }
-
-            string json = TheatreSeatGeometry.FormatDump(plateWidth, plateHeight, detail, viewport, measures);
-            TheatreSeatGeometry.TryWriteDump(TheatreSeatGeometry.DumpFileName(), json);
         }
 
         private const float ZoneNameFontCeiling = 26f;

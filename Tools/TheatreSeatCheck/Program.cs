@@ -111,28 +111,39 @@ internal static class Program
         else
             TheatreSeatGeometry.CaptureMapSize(canvasWidth, canvasHeight, out plateWidth, out plateHeight);
 
+        // Capture builds a fresh library for every shot. The recommended district is Industrial Basin
+        // (S073 holds a Recruit medal and fewer wins than Desert Base). City Crossroads fails the same
+        // 4:3 reserve, so the plain canvases seat every district. Other plates stay on Desert Base,
+        // which is the seat the 16:9 and 20:9 screens already show.
+        string[] maps = notch == "none"
+            ? TheatreSeatGeometry.MapIds
+            : new[] { "DB" };
         for (int locale = 0; locale < 2; locale++)
         {
             bool fa = locale == 1;
             for (int reserve = 0; reserve < 2; reserve++)
             {
-                Evaluate(
-                    ratio,
-                    notch,
-                    fa,
-                    reserve == 1,
-                    canvasWidth,
-                    canvasHeight,
-                    left,
-                    top,
-                    right,
-                    bottom,
-                    plateWidth,
-                    plateHeight,
-                    notch == "none",
-                    ref seated,
-                    ref blocked,
-                    ref failed);
+                for (int map = 0; map < maps.Length; map++)
+                {
+                    Evaluate(
+                        ratio,
+                        notch,
+                        fa,
+                        reserve == 1,
+                        canvasWidth,
+                        canvasHeight,
+                        left,
+                        top,
+                        right,
+                        bottom,
+                        plateWidth,
+                        plateHeight,
+                        notch == "none" && maps[map] == "DB",
+                        maps[map],
+                        ref seated,
+                        ref blocked,
+                        ref failed);
+                }
             }
         }
     }
@@ -163,6 +174,7 @@ internal static class Program
                     plateWidth,
                     plateHeight,
                     false,
+                    "DB",
                     ref seated,
                     ref blocked,
                     ref failed);
@@ -184,16 +196,20 @@ internal static class Program
         float plateWidth,
         float plateHeight,
         bool logSeats,
+        string selected,
         ref int seated,
         ref int blocked,
         ref int failed)
     {
         string locale = fa ? "fa" : "en";
+        if (string.IsNullOrEmpty(selected))
+            selected = "DB";
         bool fourByThree = string.Equals(ratio, "4:3", StringComparison.Ordinal);
         bool applied = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, reserveOn, fourByThree);
         TheatreSeatGeometry.SetShot(ratio, notch, locale, applied, canvasWidth, canvasHeight, left, top, right, bottom);
-        TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, applied, "DB");
-        string[] violations = TheatreSeatGeometry.CollectViolations(plateWidth, plateHeight, fa, applied, "DB");
+        TheatreSeatGeometry.ShotSelected = selected;
+        TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, applied, selected);
+        string[] violations = TheatreSeatGeometry.CollectViolations(plateWidth, plateHeight, fa, applied, selected);
         bool outlines = OutlinesHold(layout, plateWidth, plateHeight);
         bool ok = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal && outlines
             && layout.Seats != null && layout.Seats.Length == 5 && violations.Length == 0
@@ -227,6 +243,7 @@ internal static class Program
             + " cards=" + layout.CardsLegal
             + " cue=" + layout.CueNear
             + " aspect=" + layout.HexAspectLegal
+            + " sel=" + selected
             + " DB=" + card
             + " violations=" + violations.Length);
         if (!ok)
@@ -296,7 +313,7 @@ internal static class Program
             new TheatreSeatGeometry.NameMeasure
             {
                 MapId = "DB",
-                Text = "DESERT BASE",
+                Text = "DESERT\nBASE",
                 Font = 16f,
                 BoxWidth = 112f,
                 BoxHeight = 44f,
@@ -308,20 +325,38 @@ internal static class Program
             }
         };
         string json = TheatreSeatGeometry.FormatDump(1039.6f, 724f, detail, view, names);
-        bool read = TheatreSeatGeometry.TryReadDump(json, out float plateWidth, out float plateHeight, out bool reserve, out string ratio, out string notch, out string locale);
+        bool read = TheatreSeatGeometry.TryReadDump(
+            json, out float plateWidth, out float plateHeight, out bool reserve, out string ratio, out string notch, out string locale, out string selected);
+        bool rawBreak = false;
+        int textAt = json.IndexOf("\"text\":", StringComparison.Ordinal);
+        if (textAt >= 0)
+        {
+            int end = json.IndexOf("\"font\"", textAt, StringComparison.Ordinal);
+            string slice = end > textAt ? json.Substring(textAt, end - textAt) : json.Substring(textAt);
+            rawBreak = slice.IndexOf('\n') >= 0 || slice.IndexOf('\r') >= 0;
+        }
+
+        string dirty = json.Replace("\\n", "\n");
+        bool dirtyRejected = !TheatreSeatGeometry.TryReadDump(
+            dirty, out _, out _, out _, out _, out _, out _, out _);
         bool ok = read
             && reserve
             && ratio == "4:3"
             && notch == "notch"
             && locale == "en"
+            && selected == "DB"
+            && !rawBreak
+            && dirtyRejected
+            && json.IndexOf("\\n", StringComparison.Ordinal) >= 0
             && Math.Abs(plateWidth - 1039.6f) < 0.05f
             && Math.Abs(plateHeight - 724f) < 0.05f
             && json.IndexOf("\"portraitMinW\": 112", StringComparison.Ordinal) >= 0
-            && json.IndexOf("DESERT BASE", StringComparison.Ordinal) >= 0;
+            && json.IndexOf("DESERT\\nBASE", StringComparison.Ordinal) >= 0;
         Console.WriteLine((ok ? "PASS" : "FAIL") + " dump round-trip plate="
             + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
-            + " " + ratio + " notch=" + notch + " " + locale + " reserve=" + reserve);
+            + " " + ratio + " notch=" + notch + " " + locale + " reserve=" + reserve
+            + " dirty=" + (dirtyRejected ? "rejected" : "accepted"));
         return ok;
     }
 
@@ -338,7 +373,8 @@ internal static class Program
         for (int i = 0; i < files.Length; i++)
         {
             string json = File.ReadAllText(files[i]);
-            if (!TheatreSeatGeometry.TryReadDump(json, out float plateWidth, out float plateHeight, out bool reserve, out string ratio, out string notch, out string locale))
+            if (!TheatreSeatGeometry.TryReadDump(
+                json, out float plateWidth, out float plateHeight, out bool reserve, out string ratio, out string notch, out string locale, out string selected))
             {
                 failed++;
                 Console.WriteLine("FAIL replay unreadable " + files[i]);
@@ -360,6 +396,7 @@ internal static class Program
                 plateWidth,
                 plateHeight,
                 false,
+                selected,
                 ref seated,
                 ref blocked,
                 ref failed);

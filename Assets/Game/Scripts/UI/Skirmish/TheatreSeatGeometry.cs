@@ -301,6 +301,7 @@ namespace Game.UI.Runtime
         public static string ShotRatio = "unset";
         public static string ShotNotch = "none";
         public static string ShotLocale = "en";
+        public static string ShotSelected = "DB";
         public static bool ShotReserve;
         public static float ShotCanvasWidth;
         public static float ShotCanvasHeight;
@@ -352,12 +353,17 @@ namespace Game.UI.Runtime
                 + " reserve=" + (ShotReserve ? "on" : "off");
         }
 
-        public static string DumpFileName()
+        public static string DumpFileName(float plateWidth, float plateHeight, string selected)
         {
             string ratio = string.IsNullOrEmpty(ShotRatio) ? "unset" : ShotRatio.Replace(':', 'x');
             string notch = string.IsNullOrEmpty(ShotNotch) ? "none" : ShotNotch;
             string locale = string.IsNullOrEmpty(ShotLocale) ? "en" : ShotLocale;
-            return "seat-" + ratio + "-" + notch + "-" + locale + "-reserve-" + (ShotReserve ? "on" : "off") + ".json";
+            string map = string.IsNullOrEmpty(selected) ? "DB" : selected;
+            return "seat-" + ratio + "-" + notch + "-" + locale
+                + "-reserve-" + (ShotReserve ? "on" : "off")
+                + "-plate-" + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
+                + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
+                + "-sel-" + map + ".json";
         }
 
         /// <summary>Safe-frame fit. Zero insets leave the canvas unchanged. Matches <c>SkirmishLibrarySafeFrame</c>.</summary>
@@ -438,6 +444,7 @@ namespace Game.UI.Runtime
             text.Append("  \"ratio\": \"").Append(Json(ShotRatio)).Append("\",\n");
             text.Append("  \"notch\": \"").Append(Json(ShotNotch)).Append("\",\n");
             text.Append("  \"locale\": \"").Append(Json(ShotLocale)).Append("\",\n");
+            text.Append("  \"selected\": \"").Append(Json(ShotSelected)).Append("\",\n");
             text.Append("  \"reserve\": ").Append(ShotReserve ? "true" : "false").Append(",\n");
             text.Append("  \"canvas\": [").Append(Num(ShotCanvasWidth)).Append(", ").Append(Num(ShotCanvasHeight)).Append("],\n");
             text.Append("  \"insets\": { \"left\": ").Append(Num(ShotInsetLeft))
@@ -518,7 +525,15 @@ namespace Game.UI.Runtime
             return true;
         }
 
-        public static bool TryReadDump(string json, out float plateWidth, out float plateHeight, out bool reserve, out string ratio, out string notch, out string locale)
+        public static bool TryReadDump(
+            string json,
+            out float plateWidth,
+            out float plateHeight,
+            out bool reserve,
+            out string ratio,
+            out string notch,
+            out string locale,
+            out string selected)
         {
             plateWidth = 0f;
             plateHeight = 0f;
@@ -526,11 +541,13 @@ namespace Game.UI.Runtime
             ratio = "unset";
             notch = "none";
             locale = "en";
-            if (string.IsNullOrEmpty(json))
+            selected = "DB";
+            if (string.IsNullOrEmpty(json) || !JsonStringsAreClean(json))
                 return false;
             ratio = ReadString(json, "ratio", ratio);
             notch = ReadString(json, "notch", notch);
             locale = ReadString(json, "locale", locale);
+            selected = ReadString(json, "selected", selected);
             reserve = json.IndexOf("\"reserve\": true", StringComparison.Ordinal) >= 0
                 || json.IndexOf("\"reserve\":true", StringComparison.Ordinal) >= 0;
             int plate = json.IndexOf("\"plate\"", StringComparison.Ordinal);
@@ -541,11 +558,113 @@ namespace Game.UI.Runtime
             return plateWidth > 2f && plateHeight > 2f;
         }
 
+        /// <summary>
+        /// Writes the plate, reserve and selected district that <see cref="Arrange"/> just used.
+        /// The file name includes the plate, so a later pass at another size cannot replace it.
+        /// </summary>
+        public static void NoteSeating(float plateWidth, float plateHeight, bool fa, bool reserve, string selected, Layout layout)
+        {
+            ShotReserve = reserve;
+            ShotSelected = string.IsNullOrEmpty(selected) ? "DB" : selected;
+            if (string.IsNullOrEmpty(DumpDirectory))
+                return;
+            Box detail = DetailRect(plateWidth, plateHeight, fa, reserve);
+            Box viewport = OpenViewport(plateWidth, plateHeight, fa, reserve);
+            var names = new NameMeasure[MapIds.Length];
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                Box card = layout.Seats != null && i < layout.Seats.Length ? layout.Seats[i].Card : default;
+                names[i] = new NameMeasure
+                {
+                    MapId = MapIds[i],
+                    Text = ZoneTitle(MapIds[i], fa),
+                    CardWidth = card.W,
+                    CardHeight = card.H
+                };
+            }
+
+            TryWriteDump(
+                DumpFileName(plateWidth, plateHeight, ShotSelected),
+                FormatDump(plateWidth, plateHeight, detail, viewport, names));
+        }
+
         private static string Json(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return string.Empty;
-            return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+            var text = new StringBuilder(value.Length + 8);
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                switch (c)
+                {
+                    case '\\':
+                        text.Append("\\\\");
+                        break;
+                    case '"':
+                        text.Append("\\\"");
+                        break;
+                    case '\n':
+                        text.Append("\\n");
+                        break;
+                    case '\r':
+                        text.Append("\\r");
+                        break;
+                    case '\t':
+                        text.Append("\\t");
+                        break;
+                    default:
+                        if (c < 0x20)
+                        {
+                            text.Append("\\u");
+                            text.Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+                        }
+                        else
+                            text.Append(c);
+                        break;
+                }
+            }
+
+            return text.ToString();
+        }
+
+        private static bool JsonStringsAreClean(string json)
+        {
+            bool inString = false;
+            bool escape = false;
+            for (int i = 0; i < json.Length; i++)
+            {
+                char c = json[i];
+                if (!inString)
+                {
+                    if (c == '"')
+                        inString = true;
+                    continue;
+                }
+
+                if (escape)
+                {
+                    escape = false;
+                    continue;
+                }
+
+                if (c == '\\')
+                {
+                    escape = true;
+                    continue;
+                }
+
+                if (c == '"')
+                {
+                    inString = false;
+                    continue;
+                }
+
+                if (c < 0x20)
+                    return false;
+            }
+
+            return !inString;
         }
 
         private static string Num(float value)
@@ -1977,7 +2096,9 @@ namespace Game.UI.Runtime
             cue = default;
             if (TryPackKeep(plateWidth, plateHeight, hexes, pins, detail, selected, 18, 50000, false, out cards, out cue))
                 return true;
-            return TryPackKeep(plateWidth, plateHeight, hexes, pins, detail, selected, 48, 250000, true, out cards, out cue);
+            if (TryPackKeep(plateWidth, plateHeight, hexes, pins, detail, selected, 48, 250000, true, out cards, out cue))
+                return true;
+            return TryPackBesideSelection(plateWidth, plateHeight, hexes, pins, detail, selected, out cards, out cue);
         }
 
         private static bool TryPackKeep(
@@ -2762,6 +2883,117 @@ namespace Game.UI.Runtime
             return found.ToArray();
         }
 
+        /// <summary>
+        /// Used only after the ordinary pack misses. City Crossroads and Industrial Basin
+        /// on the 4:3 reserve viewport have no 220px cue that clears their hex, so this
+        /// tries a shorter pill and a finer grid. Plates that already packed never reach it.
+        /// </summary>
+        private static bool TryPackBesideSelection(
+            float plateWidth,
+            float plateHeight,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box detail,
+            int selected,
+            out Box[] cards,
+            out Box cue)
+        {
+            cards = null;
+            cue = default;
+            float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
+            float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
+            float[] cueWidths = { CueWidth, 196f, 172f, 148f, 124f };
+            for (int pass = 0; pass < 2; pass++)
+            {
+                bool wide = pass == 1;
+                int keep = wide ? 48 : 18;
+                int budget = wide ? 250000 : 50000;
+                for (int size = 0; size < widths.Length; size++)
+                {
+                    if (!SeatPortraits(
+                        plateWidth, plateHeight, hexes, pins, detail, default,
+                        widths[size], heights[size], keep, budget, wide, out cards))
+                        continue;
+                    for (int c = 0; c < cueWidths.Length; c++)
+                    {
+                        if (!TryPlaceCueWidth(
+                            plateWidth, plateHeight, pins, cards, hexes, detail, selected, cueWidths[c], out cue))
+                            continue;
+                        if (!CueAccepted(cue, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                            continue;
+                        if (LeaderHitsRect(pins, cards, cue))
+                            continue;
+                        return true;
+                    }
+                }
+
+                for (int c = 0; c < cueWidths.Length; c++)
+                {
+                    Box[] spots = CueGrid(plateWidth, plateHeight, pins, hexes, detail, selected, cueWidths[c]);
+                    for (int s = 0; s < spots.Length; s++)
+                    {
+                        for (int size = 0; size < widths.Length; size++)
+                        {
+                            if (!SeatPortraits(
+                                plateWidth, plateHeight, hexes, pins, detail, spots[s],
+                                widths[size], heights[size], keep, budget, wide, out cards))
+                                continue;
+                            if (LeaderHitsRect(pins, cards, spots[s]))
+                                continue;
+                            cue = spots[s];
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            cards = null;
+            cue = default;
+            return false;
+        }
+
+        private static Box[] CueGrid(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float cueWidth)
+        {
+            var found = new List<Box>(6);
+            Box pin = pins[selected];
+            Vec2 pinCentre = pin.Center;
+            for (int dist = 0; dist <= 150 && found.Count < 6; dist += 10)
+            {
+                for (int slide = -140; slide <= 140 && found.Count < 6; slide += 10)
+                {
+                    Box[] spots =
+                    {
+                        new Box(pinCentre.X - cueWidth * 0.5f + slide, pin.YMax + 8f + dist, cueWidth, CueHeight),
+                        new Box(pinCentre.X - cueWidth * 0.5f + slide, pin.Y - 8f - CueHeight - dist, cueWidth, CueHeight),
+                        new Box(pin.XMax + 8f + dist, pinCentre.Y - CueHeight * 0.5f + slide, cueWidth, CueHeight),
+                        new Box(pin.X - 8f - cueWidth - dist, pinCentre.Y - CueHeight * 0.5f + slide, cueWidth, CueHeight)
+                    };
+                    for (int i = 0; i < spots.Length && found.Count < 6; i++)
+                    {
+                        Box spot = spots[i];
+                        if (spot.X < Edge || spot.Y < Edge || spot.XMax > plateWidth - Edge || spot.YMax > plateHeight - Edge)
+                            continue;
+                        if (CueReach(spot, pin) > CueNearLimit)
+                            continue;
+                        if (!CueReadsAsSelected(spot.Center, pinCentre, hexes, pins, selected))
+                            continue;
+                        if (!Clears(spot, detail) || !ClearsPins(spot, pins) || EdgeCrosses(spot, hexes))
+                            continue;
+                        found.Add(spot);
+                    }
+                }
+            }
+
+            return found.ToArray();
+        }
+
         private static bool TryPlaceCue(
             float plateWidth,
             float plateHeight,
@@ -2772,9 +3004,23 @@ namespace Game.UI.Runtime
             int selected,
             out Box cue)
         {
+            return TryPlaceCueWidth(plateWidth, plateHeight, pins, cards, hexes, detail, selected, CueWidth, out cue);
+        }
+
+        private static bool TryPlaceCueWidth(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float cueWidth,
+            out Box cue)
+        {
             Box pin = pins[selected];
             Vec2 pinCentre = pin.Center;
-            cue = new Box(pin.X, pin.YMax + 8f, CueWidth, CueHeight);
+            cue = new Box(pin.X, pin.YMax + 8f, cueWidth, CueHeight);
             for (int dist = 0; dist <= 140; dist += 4)
             {
                 for (int slide = 0; slide <= 120; slide += 8)
@@ -2785,10 +3031,10 @@ namespace Game.UI.Runtime
                         float offset = slides[s];
                         Box[] spots =
                         {
-                            new Box(pinCentre.X - CueWidth * 0.5f + offset, pin.YMax + 12f + dist, CueWidth, CueHeight),
-                            new Box(pinCentre.X - CueWidth * 0.5f + offset, pin.Y - 12f - CueHeight - dist, CueWidth, CueHeight),
-                            new Box(pin.XMax + 12f + dist, pinCentre.Y - CueHeight * 0.5f + offset, CueWidth, CueHeight),
-                            new Box(pin.X - 12f - CueWidth - dist, pinCentre.Y - CueHeight * 0.5f + offset, CueWidth, CueHeight)
+                            new Box(pinCentre.X - cueWidth * 0.5f + offset, pin.YMax + 12f + dist, cueWidth, CueHeight),
+                            new Box(pinCentre.X - cueWidth * 0.5f + offset, pin.Y - 12f - CueHeight - dist, cueWidth, CueHeight),
+                            new Box(pin.XMax + 12f + dist, pinCentre.Y - CueHeight * 0.5f + offset, cueWidth, CueHeight),
+                            new Box(pin.X - 12f - cueWidth - dist, pinCentre.Y - CueHeight * 0.5f + offset, cueWidth, CueHeight)
                         };
                         for (int i = 0; i < spots.Length; i++)
                         {

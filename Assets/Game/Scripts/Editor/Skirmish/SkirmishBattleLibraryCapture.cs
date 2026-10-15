@@ -797,29 +797,234 @@ namespace Game.Editor
 
             RejectTheaterOverlap(cards, names, cue, locale);
             RejectZoneCardSpacing(cards, clip, locale);
-            RejectCardCentresInDistricts(regions, mapIds, locale);
+            RejectZoneCardsInsideOrClear(regions, mapIds, locale);
             RejectCueNearSelectedPin(view, regions, cue, locale);
             RejectZoomHintOffDistrictEdges(root, regions, mapIds, locale);
+            RejectDetailPanelClear(regions, cards, cue, mapIds, locale);
         }
 
-        private static void RejectCardCentresInDistricts(Transform regions, string[] mapIds, string locale)
+        private static void RejectZoneCardsInsideOrClear(Transform regions, string[] mapIds, string locale)
         {
             if (regions == null || mapIds == null)
                 return;
+            var shapes = new Vector2[mapIds.Length][];
+            var cards = new Rect[mapIds.Length];
+            var present = new bool[mapIds.Length];
             for (int i = 0; i < mapIds.Length; i++)
             {
                 Transform cardNode = FindNamed(regions, "ZoneCard_" + mapIds[i]);
                 Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
                 if (cardNode is not RectTransform card || outlineNode is not RectTransform outline)
                     continue;
-                Vector2 centre = WorldBounds(card).center;
-                Vector2[] shape = OutlineWorldPoints(outline);
-                if (shape.Length >= 3 && PointInPolygon(centre, shape))
+                present[i] = true;
+                cards[i] = WorldBounds(card);
+                shapes[i] = OutlineWorldPoints(outline);
+            }
+
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                if (!present[i])
+                    continue;
+                bool insideOwn = CardRestsInside(cards[i], shapes[i], 8f);
+                bool hitsAny = false;
+                for (int j = 0; j < mapIds.Length; j++)
+                {
+                    if (!present[j] || shapes[j] == null)
+                        continue;
+                    if (j == i && insideOwn)
+                        continue;
+                    if (!WorldRectHitsPolygon(cards[i], shapes[j]) && PerimeterGap(cards[i], shapes[j]) >= 1f)
+                        continue;
+                    hitsAny = true;
+                    break;
+                }
+
+                if (insideOwn && !hitsAny)
+                    continue;
+                if (!insideOwn && !hitsAny)
                     continue;
                 throw new InvalidOperationException(
-                    "Theatre zone card centre is outside its district locale=" + locale +
-                    " card=" + card.name + ".");
+                    "Theatre zone card straddles a district edge locale=" + locale +
+                    " card=ZoneCard_" + mapIds[i] + ".");
             }
+        }
+
+        private static void RejectDetailPanelClear(
+            Transform regions,
+            RectTransform[] cards,
+            RectTransform cue,
+            string[] mapIds,
+            string locale)
+        {
+            if (regions == null || !TryTheatreDetailWorld(regions, locale, out Rect detail))
+                return;
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (cards[i] == null || !RectsOverlap(WorldBounds(cards[i]), detail, 0f))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre zone card intersects the detail panel locale=" + locale +
+                        " card=" + cards[i].name + ".");
+                }
+            }
+
+            if (cue != null && RectsOverlap(WorldBounds(cue), detail, 0f))
+            {
+                throw new InvalidOperationException(
+                    "Theatre zoom hint intersects the detail panel locale=" + locale + ".");
+            }
+
+            if (mapIds == null)
+                return;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform pinNode = FindNamed(regions, "ZonePin_" + mapIds[i]);
+                Transform cardNode = FindNamed(regions, "ZoneCard_" + mapIds[i]);
+                if (pinNode is not RectTransform pin || cardNode is not RectTransform card)
+                    continue;
+                Rect pinBounds = WorldBounds(pin);
+                Rect cardBounds = WorldBounds(card);
+                Vector2 from = pinBounds.center;
+                Vector2 to = NearestPointOnRect(cardBounds, from);
+                if (!SegmentHitsRect(from, to, detail))
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre leader intersects the detail panel locale=" + locale +
+                    " map=" + mapIds[i] + ".");
+            }
+        }
+
+        private static bool TryTheatreDetailWorld(Transform regions, string locale, out Rect detail)
+        {
+            detail = default;
+            if (regions is not RectTransform plate)
+                return false;
+            Transform panel = FindNamed(regions, "TheatreDetailPanel");
+            if (panel is RectTransform panelRect && panelRect.gameObject.activeInHierarchy)
+            {
+                detail = WorldBounds(panelRect);
+                return detail.width > 1f && detail.height > 1f;
+            }
+
+            float plateWidth = plate.rect.width;
+            float plateHeight = plate.rect.height;
+            if (plateWidth < 600f || plateHeight < 2f)
+                return false;
+            float reserve = Mathf.Clamp(plateWidth * 0.22f, 230f, 290f);
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            const float margin = 10f;
+            float width = reserve - margin * 2f;
+            float height = Mathf.Max(200f, plateHeight - margin * 2f);
+            float x = fa ? margin : plateWidth - reserve + margin;
+            float left = plate.rect.xMin + x;
+            float top = plate.rect.yMax - margin;
+            Vector3 c0 = plate.TransformPoint(new Vector3(left, top, 0f));
+            Vector3 c1 = plate.TransformPoint(new Vector3(left + width, top, 0f));
+            Vector3 c2 = plate.TransformPoint(new Vector3(left + width, top - height, 0f));
+            Vector3 c3 = plate.TransformPoint(new Vector3(left, top - height, 0f));
+            detail = Rect.MinMaxRect(
+                Mathf.Min(Mathf.Min(c0.x, c1.x), Mathf.Min(c2.x, c3.x)),
+                Mathf.Min(Mathf.Min(c0.y, c1.y), Mathf.Min(c2.y, c3.y)),
+                Mathf.Max(Mathf.Max(c0.x, c1.x), Mathf.Max(c2.x, c3.x)),
+                Mathf.Max(Mathf.Max(c0.y, c1.y), Mathf.Max(c2.y, c3.y)));
+            return detail.width > 1f && detail.height > 1f;
+        }
+
+        private static bool CardRestsInside(Rect card, Vector2[] shape, float margin)
+        {
+            if (shape == null || shape.Length < 3)
+                return false;
+            const int steps = 4;
+            Vector2[] corners =
+            {
+                new Vector2(card.xMin, card.yMin),
+                new Vector2(card.xMax, card.yMin),
+                new Vector2(card.xMax, card.yMax),
+                new Vector2(card.xMin, card.yMax)
+            };
+            for (int edge = 0; edge < corners.Length; edge++)
+            {
+                Vector2 a = corners[edge];
+                Vector2 b = corners[(edge + 1) % corners.Length];
+                for (int step = 0; step < steps; step++)
+                {
+                    Vector2 point = Vector2.Lerp(a, b, step / (float)steps);
+                    if (!PointInPolygon(point, shape) || DistanceToPolygonEdge(point, shape) < margin)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static float PerimeterGap(Rect card, Vector2[] shape)
+        {
+            if (shape == null || shape.Length < 3)
+                return float.MaxValue;
+            float best = float.MaxValue;
+            Vector2[] corners =
+            {
+                new Vector2(card.xMin, card.yMin),
+                new Vector2(card.xMax, card.yMin),
+                new Vector2(card.xMax, card.yMax),
+                new Vector2(card.xMin, card.yMax)
+            };
+            for (int edge = 0; edge < corners.Length; edge++)
+            {
+                Vector2 a = corners[edge];
+                Vector2 b = corners[(edge + 1) % corners.Length];
+                for (int step = 0; step <= 4; step++)
+                {
+                    Vector2 point = Vector2.Lerp(a, b, step / 4f);
+                    best = Mathf.Min(best, DistanceToPolygonEdge(point, shape));
+                }
+            }
+
+            return best;
+        }
+
+        private static bool WorldRectHitsPolygon(Rect rect, Vector2[] shape)
+        {
+            if (shape == null || shape.Length < 3)
+                return false;
+            Vector2[] corners =
+            {
+                new Vector2(rect.xMin, rect.yMin),
+                new Vector2(rect.xMax, rect.yMin),
+                new Vector2(rect.xMax, rect.yMax),
+                new Vector2(rect.xMin, rect.yMax)
+            };
+            for (int i = 0; i < corners.Length; i++)
+            {
+                if (PointInPolygon(corners[i], shape))
+                    return true;
+            }
+
+            for (int i = 0; i < shape.Length; i++)
+            {
+                if (rect.Contains(shape[i]))
+                    return true;
+                Vector2 next = shape[(i + 1) % shape.Length];
+                if (SegmentHitsRect(shape[i], next, rect))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static Vector2 NearestPointOnRect(Rect rect, Vector2 point)
+        {
+            return new Vector2(
+                Mathf.Clamp(point.x, rect.xMin, rect.xMax),
+                Mathf.Clamp(point.y, rect.yMin, rect.yMax));
+        }
+
+        private static bool RectsOverlap(Rect left, Rect right, float slop)
+        {
+            return left.xMin < right.xMax - slop && right.xMin < left.xMax - slop &&
+                left.yMin < right.yMax - slop && right.yMin < left.yMax - slop;
         }
 
         private static void RejectCueNearSelectedPin(QuickCustomScreenView view, Transform regions, RectTransform cue, string locale)

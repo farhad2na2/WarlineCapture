@@ -57,6 +57,12 @@ namespace Game.UI.Runtime
                 return PreviewPath(key.Substring(preview.Length));
             if (key.StartsWith(plate, System.StringComparison.Ordinal))
                 return PlatePath(key.Substring(plate.Length));
+            const string zone = "skirmish.zone.";
+            const string blur = "skirmish.blur.";
+            if (key.StartsWith(zone, System.StringComparison.Ordinal))
+                return Root + "/Zones/" + key + ".png";
+            if (key.StartsWith(blur, System.StringComparison.Ordinal))
+                return Root + "/Blurs/" + key + ".png";
             return null;
         }
 
@@ -73,57 +79,8 @@ namespace Game.UI.Runtime
             SkirmishLibrarySpriteRegistry registry = SkirmishLibrarySpriteRegistry.Load();
             if (registry != null && registry.TryGetTexture(key, out UnityEngine.Texture2D texture) && texture != null)
                 return texture;
-#if UNITY_EDITOR
-            return ReadGeneratedTexture(key);
-#else
-            return null;
-#endif
-        }
-
-#if UNITY_EDITOR
-        private static readonly System.Collections.Generic.Dictionary<string, UnityEngine.Texture2D> GeneratedTextures =
-            new System.Collections.Generic.Dictionary<string, UnityEngine.Texture2D>(System.StringComparer.Ordinal);
-
-        /// <summary>
-        /// Zone and blur plates are regenerated beside the Campaign plates and are not registry source.
-        /// The editor reads those PNGs directly so a Build does not have to rewrite the sprite registry.
-        /// </summary>
-        private static UnityEngine.Texture2D ReadGeneratedTexture(string key)
-        {
-            if (GeneratedTextures.TryGetValue(key, out UnityEngine.Texture2D cached) && cached != null)
-                return cached;
-            string assetPath = GeneratedPath(key);
-            if (string.IsNullOrEmpty(assetPath) || !HasAsset(assetPath))
-                return null;
-            string root = System.IO.Path.GetDirectoryName(UnityEngine.Application.dataPath);
-            byte[] bytes = System.IO.File.ReadAllBytes(System.IO.Path.Combine(root ?? string.Empty, assetPath));
-            var texture = new UnityEngine.Texture2D(2, 2, UnityEngine.TextureFormat.RGBA32, false);
-            if (!texture.LoadImage(bytes))
-            {
-                UnityEngine.Object.DestroyImmediate(texture);
-                return null;
-            }
-
-            texture.name = key;
-            texture.hideFlags = UnityEngine.HideFlags.HideAndDontSave;
-            GeneratedTextures[key] = texture;
-            return texture;
-        }
-
-        private static string GeneratedPath(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                return null;
-            if (key.StartsWith(Root + "/Zones/", System.StringComparison.Ordinal) ||
-                key.StartsWith(Root + "/Blurs/", System.StringComparison.Ordinal))
-                return key;
-            if (key.StartsWith("skirmish.zone.", System.StringComparison.Ordinal))
-                return Root + "/Zones/" + key + ".png";
-            if (key.StartsWith("skirmish.blur.", System.StringComparison.Ordinal))
-                return Root + "/Blurs/" + key + ".png";
             return null;
         }
-#endif
 
         public static UnityEngine.Texture2D Placeholder()
         {

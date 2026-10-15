@@ -69,7 +69,7 @@ namespace Game.Editor
                 throw new FileNotFoundException("Theatre zone plate is missing: " + assetPath);
             byte[] bytes = File.ReadAllBytes(absolute);
             var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            if (!texture.LoadImage(bytes))
+            if (!UnityEngine.ImageConversion.LoadImage(texture, bytes))
                 throw new InvalidDataException("Theatre zone plate could not be read: " + assetPath);
             return texture;
         }

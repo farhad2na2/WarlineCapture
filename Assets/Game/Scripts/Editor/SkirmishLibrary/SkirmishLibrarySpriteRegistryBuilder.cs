@@ -8,8 +8,8 @@ using UnityEngine;
 namespace Game.Editor
 {
     /// <summary>
-    /// Rebuilds the runtime sprite registry from the tracked preview and plate folders.
-    /// Zone and blur plates stay generated files and are not written into the registry.
+    /// Rebuilds the runtime sprite registry from preview, plate, zone and blur folders.
+    /// Zone and blur PNGs are generated during Rebuild. Player builds load them through this registry.
     /// Prefab build, preview capture, and imports of those PNGs all call Rebuild.
     /// </summary>
     public static class SkirmishLibrarySpriteRegistryBuilder
@@ -39,6 +39,8 @@ namespace Game.Editor
                 var entries = new List<SkirmishLibrarySpriteRegistry.Entry>();
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Previews");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Plates");
+                Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Zones");
+                Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Blurs");
                 SkirmishLibrarySpriteRegistry.Entry[] next = entries.ToArray();
                 if (registry.Matches(next))
                     return;

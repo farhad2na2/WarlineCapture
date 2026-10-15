@@ -352,11 +352,11 @@ namespace Game.UI.Runtime
                 tier.alignment = TextAlignmentOptions.MidlineLeft;
                 tier.textWrappingMode = TextWrappingModes.NoWrap;
                 tier.isRightToLeftText = false;
-                var caption = CreateLabel(slot, "Caption", 12f);
-                PlaceTopLeft(caption.rectTransform, 36f, 26f, 62f, 20f);
-                caption.alignment = TextAlignmentOptions.MidlineLeft;
-                caption.overflowMode = TextOverflowModes.Ellipsis;
-                caption.isRightToLeftText = false;
+                var tierCaption = CreateLabel(slot, "Caption", 12f);
+                PlaceTopLeft(tierCaption.rectTransform, 36f, 26f, 62f, 20f);
+                tierCaption.alignment = TextAlignmentOptions.MidlineLeft;
+                tierCaption.overflowMode = TextOverflowModes.Ellipsis;
+                tierCaption.isRightToLeftText = false;
             }
         }
 

@@ -27,7 +27,7 @@ namespace Game.Editor
             JobHash = Hash(Encoding.UTF8.GetBytes(Canonical(job)));
         }
 
-        public static SkirmishProductionCanaryRequest Read(string projectRoot, string jobPath, string claimPath)
+        public static SkirmishProductionCanaryRequest Read(string projectRoot, string jobPath, string claimPath, bool verifySourceBytes = true)
         {
             var root = Path.GetFullPath(projectRoot);
             jobPath = Path.GetFullPath(jobPath); claimPath = Path.GetFullPath(claimPath);
@@ -59,7 +59,9 @@ namespace Game.Editor
                 var entry = token as JObject; Require(entry != null, "Malformed source manifest row.");
                 Exact(entry, "path sha256"); var relative = Text(entry, "path");
                 Require(paths.Add(relative) && IsHash(Text(entry, "sha256")), "Duplicate source path/hash invalid.");
-                Require(FileHash(Relative(root, relative)) == (string)entry["sha256"], "Source file missing/changed: " + relative);
+                var resolved = Relative(root, relative);
+                if (verifySourceBytes)
+                    Require(FileHash(resolved) == (string)entry["sha256"], "Source file missing/changed: " + relative);
             }
             var packet = Text(job, "packet_path");
             Require(packet == "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md", "Canary must use governing DB_BA packet.");

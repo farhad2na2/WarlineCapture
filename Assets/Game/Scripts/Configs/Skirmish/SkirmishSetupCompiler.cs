@@ -410,7 +410,7 @@ namespace Game.Configs
                 setup.LayoutBindingFingerprint = bindingFingerprint;
             }
             // Failed generic binding adds reasons; outer TryCompile discards setup.
-            if (SupportsGroundCommanderRollout(setup) || (!preserveLegacyBinding && SkirmishGenericGroundEnemyRollout.Supports(setup)))
+            if (SupportsGroundCommanderRollout(setup) || (!preserveLegacyBinding && (SkirmishGenericGroundEnemyRollout.Supports(setup) || SkirmishGenericAirCombinedEnemyRollout.Supports(setup))))
             {
                 var policyCatalog = SkirmishExpansionCatalogConfig.Load();
                 SkirmishDifficultyConfig difficultyConfig = policyCatalog != null &&
@@ -591,6 +591,19 @@ namespace Game.Configs
             if (vector.RefineryModulesEach >= 2)
                 AddMirrored(structures, definition, SkirmishStructureIds.RefineryModule, "economy.player", "economy.enemy", 0f, 24f);
 
+            // MATCH_SETUP canonical BT/CE defenders have two EXTRA approach
+            // towers. Established's mirrored service tower is independent.
+            if(definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.Breakthrough||
+               definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.ConvoyEscort)
+            {
+                foreach(var pair in new[]{
+                    (SkirmishStructureIds.DefenseApproachA,"defense.approach.a"),
+                    (SkirmishStructureIds.DefenseApproachB,"defense.approach.b")})
+                {
+                    string anchor=definition.MapLayout.TryGetAnchor(pair.Item2,out var actual)?actual.AnchorId:pair.Item2;
+                    structures.Add(Structure(2,pair.Item1,anchor,string.Empty,false));
+                }
+            }
             return structures.ToArray();
         }
 

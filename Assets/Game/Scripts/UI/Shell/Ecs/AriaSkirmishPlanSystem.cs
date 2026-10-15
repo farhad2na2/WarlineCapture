@@ -11,8 +11,33 @@ namespace Game.UI.Shell.Ecs
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            foreach (var (view, plan, touch, output) in SystemAPI.Query<RefRO<AriaSkirmishObservationComponent>, RefRW<AriaSkirmishPlanComponent>, RefRW<AriaPlaySessionComponent>, RefRW<AriaPlayObservationComponent>>())
-                if (view.ValueRO.Value.Active) Step(view.ValueRO.Value, ref plan.ValueRW, ref touch.ValueRW, ref output.ValueRW);
+            var em=state.EntityManager;
+            using var cleanup=new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+            foreach (var (view, plan, owner, storage) in SystemAPI.Query<RefRW<AriaSkirmishObservationComponent>, RefRW<AriaSkirmishPlanComponent>, RefRO<AriaSkirmishObservationOwner>>().WithEntityAccess())
+            {
+                var boundary=owner.ValueRO.Boundary;
+                if(!em.Exists(boundary)||!em.HasComponent<UiShellRootComponent>(boundary))
+                {cleanup.DestroyEntity(storage);continue;}
+                if(!em.HasComponent<AriaPlaySessionComponent>(boundary)||!em.HasComponent<AriaPlayObservationComponent>(boundary)||
+                    !em.HasComponent<UiShellStateComponent>(boundary)||em.GetComponentData<UiShellStateComponent>(boundary).ActiveRoute!=UIRoute.Match||
+                    owner.ValueRO.TransitionSequence!=em.GetComponentData<UiShellStateComponent>(boundary).TransitionSequenceId)
+                {
+                    plan.ValueRW=default;
+                    if(view.ValueRO.Value.Active)
+                    {
+                        view.ValueRW=default;
+                        if(em.HasComponent<AriaPlaySessionComponent>(boundary))em.SetComponentData(boundary,default(AriaPlaySessionComponent));
+                        if(em.HasComponent<AriaPlayObservationComponent>(boundary))em.SetComponentData(boundary,default(AriaPlayObservationComponent));
+                    }
+                    continue;
+                }
+                if(!view.ValueRO.Value.Active){plan.ValueRW=default;continue;}
+                var touch=em.GetComponentData<AriaPlaySessionComponent>(boundary);
+                var output=em.GetComponentData<AriaPlayObservationComponent>(boundary);
+                Step(view.ValueRO.Value,ref plan.ValueRW,ref touch,ref output);
+                em.SetComponentData(boundary,touch);em.SetComponentData(boundary,output);
+            }
+            cleanup.Playback(em);
         }
         public static void Step(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
@@ -20,6 +45,10 @@ namespace Game.UI.Shell.Ecs
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
             if (view.PublicObjective.Applicable)
             {
+                if (StepPublicBoarding(view,ref plan,ref touch,ref output)) return;
+                if (StepOffensiveAir(view,ref plan,ref touch,ref output)) return;
+                if (StepPublicScan(view,ref plan,ref touch,ref output)) return;
+                if (StepPublicObjectiveSupport(view,ref plan,ref touch,ref output)) return;
                 plan.Intent = view.PublicObjective.Intent;
                 StepPublicObjective(view, view.PublicObjective, ref plan.ObjectiveTouch, ref touch, ref output);
                 if (plan.ObjectiveTouch.Stage == 4) plan.Intent = AriaSkirmishIntent.ObserveObjective;

@@ -19,12 +19,18 @@ namespace Game.UI.Contracts
         Recruit, SelectSquad, FindBase, Attack, TargetBase, ObserveBattle, FindThreat, TargetThreat,
         GroupForce, DefendBase, BuildDefense, Advance, Hold, Inspect, Scout, Handback,
         BuildAirPad, WaitForAirPadSite, ReturnAircraft, ServiceAircraft,
-        ControlZone, OpenObjectiveCorridor, EvacuateOriginals, EscortOriginalTruck, InspectObjective, ObserveObjective, UnloadOriginals, RepairVehicle
+        ControlZone, OpenObjectiveCorridor, EvacuateOriginals, EscortOriginalTruck, InspectObjective, ObserveObjective, UnloadOriginals, RepairVehicle, ServiceOriginalTruck, StopDamagedTruck
     }
     [System.Serializable]
     public struct AriaSkirmishObservation
     {
         public AriaObjectiveTouchObservation PublicObjective;
+        public AriaObjectiveSupportObservation ObjectiveSupport;
+        public AriaAircraftServiceObservation AircraftService;
+        public AriaPublicScanObservation PublicScan;
+        public AriaPublicBoardingObservation PublicBoarding;
+        public AriaOffensiveAirObservation OffensiveAir;
+        public AriaAirRecruitObservation AirRecruit;
         public bool Active, Finished, DrawerOpen, SelectionVisible, AttackMode, MapOpen, MapContactInView, SelectionMode, FocusThreatDrag, FocusGroupDrag, FocusAdvanceDrag, PlacementOpen, AdvancePreferred, ThreatNearForce, AssaultAtBase;
         public bool ExpandedSession, PlayerDesignatedAlive, EnemyDesignatedAlive, CanAffordRifle, CanAffordRocketeer, CanAffordTank;
         public bool CanAffordAntiAir, PadReady, AirQueueOffered, PadPresent, ReadinessEligible, CanUpgradeReadiness;

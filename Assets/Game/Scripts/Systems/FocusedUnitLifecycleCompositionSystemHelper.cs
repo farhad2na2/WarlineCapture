@@ -135,11 +135,13 @@ namespace Game.Runtime
             System.Action<EntityManager, Entity> applyHudSelection,
             System.Action<int> applyHudSquadSelection)
         {
+            if(selectedEntities!=null)for(int i=0;i<selectedCount&&i<selectedEntities.Count;i++)if(RtsCameraSystem.ObserveNormalGroundSelection(em,selectedEntities[i]))break;
             Entity focusedUnit = selectedCount == 1 && selectedEntities != null && selectedEntities.Count > 0
                 ? selectedEntities[0]
                 : Entity.Null;
 
             selectionStateSystem.SetFocusedUnit(focusedUnit);
+            if(focusedUnit!=Entity.Null)RtsCameraSystem.ObserveNormalOwnAircraftSelection(em,focusedUnit);
             if (focusedUnit != Entity.Null)
                 applyHudSelection?.Invoke(em, focusedUnit);
             else
@@ -202,6 +204,8 @@ namespace Game.Runtime
                 $"cache={selectionStateSystem.CachedSelectedMoveEntities.Count}");
 
             selectionStateSystem.SetFocusedUnit(entity);
+            RtsCameraSystem.ObserveNormalGroundSelection(em,entity);
+            RtsCameraSystem.ObserveNormalOwnAircraftSelection(em,entity);
             if (em.HasComponent<UnitAirMovement>(entity))
                 UnitAttackOrderRequestSystem.EnqueueAndProcessClearAccidentalAirSelectionMove(em, entity);
 

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "scope": "Read-only native outcome/result title and localized Main Menu acceptance; queue success disabled",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishS002AriaRunHarness.TerminalProbe.cs.txt",
+      "before_sha256": "57b9b3f6662eb5b416a905423e3ad6903bfa001b5f5f0eee71cc70e414ed3ea0",
+      "sha256": "4dc0808d473debfc7a093f9cba10745c9c796e852037727bab4a4d169bac2269"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishS002AriaRunHarness.ProductionCanary.cs.txt",
+      "before_sha256": "9e5c2d03ff94f3104e2d81ad239b339b59bda4e1ab58282c7aef74cc1bf57407",
+      "sha256": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishTerminalPresentationObservation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishTerminalPresentationObservation.cs.txt",
+      "before_sha256": null,
+      "sha256": "f7089c5d5a8744e90da69fa4eb6978fb1efe73956d08e2a1a52704f54d731908",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTerminalPresentationObservationTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishTerminalPresentationObservationTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "9e33cbae0cfd6e0c85898257baf82e0f7e622658d896a21c9c5bc734404fb4c7",
+      "assembly": "Game.Tests.Editor"
+    }
+  ]
+}

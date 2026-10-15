@@ -129,7 +129,7 @@ namespace Game.Runtime
             Entity commandEntity = commandQueueQuery.GetSingletonEntity();
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
                 em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-            if (!RemoveImmediateRequests(commandRequests, out processedKind, out uint inputReceipt))
+            if (!RemoveImmediateRequests(commandRequests, out processedKind, out uint inputReceipt, out var returnRequest))
                 return false;
 
             if (processedKind == RtsSelectionCommandIntentKind.ReturnToBase)
@@ -143,6 +143,7 @@ namespace Game.Runtime
                     buildingRuntimeStateQuery,
                     selectedQuery,
                     focusedUnit,
+                    returnRequest,
                     out accepted,
                     out rejectionReason,
                     out issuedCount);
@@ -205,6 +206,7 @@ namespace Game.Runtime
             EntityQuery buildingRuntimeStateQuery,
             EntityQuery selectedQuery,
             Entity focusedUnit,
+            in RtsSelectionCommandIntentRequestElement request,
             out bool accepted,
             out TacticalCommandReasonCode rejectionReason,
             out int issuedCount)
@@ -232,7 +234,10 @@ namespace Game.Runtime
             {
                 foundPlayerUnit = true;
                 if (UnitReturnToBaseCommandService.TryIssue(em, queueEntity, buildingRuntimeStateQuery, focusedUnit))
+                {
                     issuedCount = 1;
+                    SkirmishPublicAircraftReturnFeedback.ObserveAccepted(em,focusedUnit,request);
+                }
             }
             else if (!selectedQuery.IsEmptyIgnoreFilter)
             {
@@ -242,7 +247,10 @@ namespace Game.Runtime
                     Entity entity = selectedEntities[i];
                     foundPlayerUnit = true;
                     if (UnitReturnToBaseCommandService.TryIssue(em, queueEntity, buildingRuntimeStateQuery, entity))
+                    {
                         issuedCount++;
+                        SkirmishPublicAircraftReturnFeedback.ObserveAccepted(em,entity,request);
+                    }
                 }
             }
 
@@ -286,11 +294,12 @@ namespace Game.Runtime
         private static bool RemoveImmediateRequests(
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
             out RtsSelectionCommandIntentKind lastKind,
-            out uint inputReceipt)
+            out uint inputReceipt,
+            out RtsSelectionCommandIntentRequestElement lastRequest)
         {
             bool removedAny = false;
             lastKind = RtsSelectionCommandIntentKind.None;
-            inputReceipt = 0;
+            inputReceipt = 0;lastRequest=default;
             for (int i = 0; i < commandRequests.Length;)
             {
                 RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
@@ -303,7 +312,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                lastKind = kind;
+                lastKind = kind;lastRequest=commandRequests[i];
                 inputReceipt = commandRequests[i].InputReceipt;
                 commandRequests.RemoveAt(i);
                 removedAny = true;

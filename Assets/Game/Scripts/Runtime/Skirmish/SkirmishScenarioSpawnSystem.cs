@@ -154,6 +154,9 @@ namespace Game.Runtime
                 return false;
             }
 
+            if(!SkirmishTypedSpawnConstraint.TryForLaunch(em,session,setup,out var typedPlacement))
+            {reason=SkirmishReasonCode.MissingReference;return false;}
+            using var typedPlacementOwner=typedPlacement;
             // Exact original IDs derive from the complete compiled force array.
             // Validate before any spawn-ledger/economy mutation; CE without a real
             // mode-owned Cargo Truck binding fails instead of borrowing logistics.
@@ -239,7 +242,7 @@ namespace Game.Runtime
                         perMemberSupply,
                         prefabKey,
                         prefabLookup,
-                        setup);
+                        setup,typedPlacement);
                     if (spawned == Entity.Null)
                     {
                         UnityEngine.Debug.LogError("[SkirmishStartingForce] failed prefab=" + prefabKey +
@@ -386,7 +389,7 @@ namespace Game.Runtime
             int perMemberSupply,
             string prefabKey,
             Dictionary<string, Entity> prefabLookup,
-            SkirmishResolvedSetup setup)
+            SkirmishResolvedSetup setup,SkirmishTypedSpawnConstraint typedPlacement=null)
         {
             bool fromPrefab = TryResolvePrefabEntity(prefabLookup, prefabKey, out Entity prefabEntity);
             if (!fromPrefab && Application.isPlaying)
@@ -421,7 +424,9 @@ namespace Game.Runtime
                         : force.SpawnWorldX != 0f || force.SpawnWorldZ != 0f
                             ? new Vector3(force.SpawnWorldX, 0f, force.SpawnWorldZ)
                             : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
-                if (!TryPlaceOnMap(em, owned, position, setup?.Seed ?? 0))
+                if(typedPlacement!=null&&!typedPlacement.TryRequestedWorld(force,member,out position))
+                {em.DestroyEntity(owned);return Entity.Null;}
+                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement))
                 {
                     em.DestroyEntity(owned);
                     return Entity.Null;
@@ -489,20 +494,28 @@ namespace Game.Runtime
         }
 
         private static bool TryPlaceOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed)
+            =>TryPlaceTypedOnMap(em,entity,position,missionSeed,default,null);
+
+        private static bool TryPlaceTypedOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed,SkirmishResolvedForceEntry force,SkirmishTypedSpawnConstraint typedPlacement)
         {
             var pos = new float3(position.x, position.y, position.z);
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if(typedPlacement!=null&&grids.CalculateEntityCount()!=1)return false;
             if (!grids.IsEmptyIgnoreFilter)
             {
                 Entity gridEntity = grids.GetSingletonEntity();
                 GridConfig grid = grids.GetSingleton<GridConfig>();
                 int2 cell = GridUtils.WorldToCell(grid, pos);
+                if(typedPlacement!=null&&!SkirmishTypedSpawnConstraint.HasCompleteAllocator(em,gridEntity,grid))return false;
                 if (em.HasBuffer<GridWalkable>(gridEntity) &&
                     em.HasComponent<DynamicBlockerComponent>(gridEntity) &&
                     em.HasComponent<DynamicOccupancyComponent>(gridEntity))
                 {
                     var blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
-                    var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+                    var actualOccupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+                    NativeBitArray constrained=default;
+                    if(typedPlacement!=null&&!typedPlacement.TryMask(force,actualOccupied,out constrained))return false;
+                    var occupied=typedPlacement==null?actualOccupied:constrained;
                     var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
                     var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp, NativeArrayOptions.ClearMemory);
                     try
@@ -524,11 +537,7 @@ namespace Game.Runtime
                         if (!em.HasComponent<SkirmishAttemptOwnedComponent>(entity)) return false;
                         var stableId = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).StableObjectId;
                         if (stableId.Length == 0) return false;
-                        uint placementSeed = 2166136261u ^ unchecked((uint)missionSeed);
-                        for (int i = 0; i < stableId.Length; i++)
-                            placementSeed = unchecked((placementSeed ^ stableId[i]) * 16777619u);
-                        placementSeed = math.hash(new uint3(unchecked((uint)cell.x), unchecked((uint)cell.y), placementSeed));
-                        var rng = new Unity.Mathematics.Random(math.max(1u, placementSeed));
+                        var rng = SkirmishTypedSpawnConstraint.PlacementRandom(missionSeed,stableId,cell);
                         int2 footprint = em.HasComponent<UnitFootprint>(entity)
                             ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
                         if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
@@ -539,7 +548,7 @@ namespace Game.Runtime
                                 blocked, occupied, ref reserved, entity, footprint, ref cell)) return false;
                         pos = GridUtils.CellToWorldCenter(grid, cell);
                     }
-                    finally { reserved.Dispose(); }
+                    finally { reserved.Dispose();if(constrained.IsCreated)constrained.Dispose(); }
                 }
                 if (GridUtils.InBounds(cell, grid.Width, grid.Height))
                 {

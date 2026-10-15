@@ -76,7 +76,8 @@ namespace Game.Runtime
                 source.BuildingDefinitionPrefabSystemHelper.TryResolveConfiguredUnitResourceCosts,
                 source.RuntimeFactionResourceSystemHelper.TrySpendConstructionResources,
                 source.RuntimeFactionResourceSystemHelper.TryRestoreConstructionResources,
-                source.BuildingGameplayDependencyCompositionSystemHelper.FocusProductionDelivery);
+                source.BuildingGameplayDependencyCompositionSystemHelper.FocusProductionDelivery,
+                source.BuildingGameplayDependencyCompositionSystemHelper.TryFocusProducedAircraft);
             return productionSource;
         }
 

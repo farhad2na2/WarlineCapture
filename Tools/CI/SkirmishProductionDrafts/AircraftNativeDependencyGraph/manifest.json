@@ -1,0 +1,22 @@
+{
+  "scope": "AdditiveActualUnityImporterDependencyGraphsAndRawSourceMetaPins",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRootProvenance.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AircraftNativeDependencyGraph/SkirmishAircraftRootProvenance.cs.txt",
+      "before_sha256": "f64f2578a52afa4dfeef5e756e62fe45df555b73a6c49e1992393ca8405392de",
+      "sha256": "f59eb9452efd0f51f03f918ec090f89205f880671d9462d94088a7887393049d",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.CollectCanonicalAircraftRootProvenance",
+  "environment": "WARLINE_AIRCRAFT_ROOT_SUPPORT_OUTPUT",
+  "required_marker": "[CanonicalAircraftRootSupportProvenance] result=Collected rolesExpected=7 templateOnly=1 defaultWorldPreserved=1 cameraAccepted=0",
+  "existing_owned_adapter_unchanged": true,
+  "native_executed": false,
+  "type_compile_pending": true,
+  "cameraAccepted": false,
+  "absent_lod_explicit": true,
+  "virtual_or_missing_bytes_explicit": true,
+  "note": "Importer graph is measured at the fresh collection; source/meta pins are raw bytes, never a runtime geometry or readiness certification."
+}

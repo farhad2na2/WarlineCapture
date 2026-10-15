@@ -84,11 +84,7 @@ namespace Game.Runtime
             if (wanted == SkirmishRoleKind.None) wanted = capabilityRole;
             // Invest in a supported native ground counter only from legal visible
             // armored pressure and a viable screened package, never hidden state.
-            var readinessGoal = package.Viable && package.Reserve.Count > 0 &&
-                facts.Visible.Exists(c => !c.Structure && c.Category == SkirmishPopulationCategory.Ground &&
-                    (c.Role == SkirmishRoleKind.Tank || c.Role == SkirmishRoleKind.ApcHeavy || c.Role == SkirmishRoleKind.Siege)) &&
-                !facts.Groups.Exists(g => g.Role == SkirmishRoleKind.Tank)
-                ? SkirmishRoleKind.Tank : SkirmishRoleKind.None;
+            var readinessGoal = GroundReadinessGoal(facts,package,army);
             if (readinessGoal == SkirmishRoleKind.None && WantedRole(facts,package,setup,ownLiving) == SkirmishRoleKind.None)
                 readinessGoal = capabilityGoal;
             var economic = SkirmishEnemyEconomicCoordinator.Tick(em,session,wanted,
@@ -244,6 +240,15 @@ namespace Game.Runtime
             if (package.Assault.Contains(group)) return SkirmishEnemyDuty.MainAssault;
             return SkirmishEnemyDuty.Escort;
         }
+        internal static SkirmishRoleKind GroundReadinessGoal(SkirmishEnemyPerceptionBuilder.Snapshot facts,
+            SkirmishEnemyGroupAllocation.Package package,SkirmishArmyProfileConfig army)
+        {
+            return army != null && army.Allows(SkirmishRoleIds.Tank) && package.Viable && package.Reserve.Count > 0 &&
+                facts.Visible.Exists(c => !c.Structure && c.Category == SkirmishPopulationCategory.Ground &&
+                    (c.Role == SkirmishRoleKind.Tank || c.Role == SkirmishRoleKind.ApcHeavy || c.Role == SkirmishRoleKind.Siege)) &&
+                !facts.Groups.Exists(g => g.Role == SkirmishRoleKind.Tank)
+                ? SkirmishRoleKind.Tank : SkirmishRoleKind.None;
+        }
         public static SkirmishRoleKind WantedRole(SkirmishEnemyPerceptionBuilder.Snapshot facts,
             SkirmishEnemyGroupAllocation.Package package, SkirmishResolvedSetup setup,
             IReadOnlyDictionary<SkirmishRoleKind,int> ownLiving = null)
@@ -262,7 +267,8 @@ namespace Game.Runtime
                 if (force.FactionId != setup.EnemyFaction ||
                     (force.RoleKind != SkirmishRoleKind.Rifle && force.RoleKind != SkirmishRoleKind.Gunner &&
                      force.RoleKind != SkirmishRoleKind.Rocketeer && force.RoleKind != SkirmishRoleKind.Tank &&
-                     !SkirmishGenericGroundEnemyRollout.IsReplenishableCombatRole(setup,force.RoleKind))) continue;
+                     !SkirmishGenericGroundEnemyRollout.IsReplenishableCombatRole(setup,force.RoleKind) &&
+                     !SkirmishGenericAirCombinedEnemyRollout.IsReplenishableCombatRole(setup,force.RoleKind))) continue;
                 int living = 0;
                 foreach (var group in facts.Groups) if (group.Role == force.RoleKind) living += group.Members;
                 if (ownLiving != null) living = ownLiving.TryGetValue(force.RoleKind,out int ownCount) ? ownCount : 0;

@@ -21,6 +21,15 @@ namespace Game.Runtime
         }
         public static void PublishMove(EntityManager em,in RtsSelectionCommandIntentRequestElement request,in SelectedMoveOrderCommandSystem.Result result)
         {
+            if(!result.CommandResult.Accepted)
+            {
+                // A rejection carries exact selected-group/contact/request scope,
+                // never an accepted destination or partial-member success claim.
+                if(request.HasScreenPosition!=0&&TryUniqueOwnGroup(em,out var rejectedSession,out uint rejectedGroup))
+                    Publish(em,rejectedSession,new SkirmishPublicOrderFeedbackComponent{GroupId=rejectedGroup,Kind=RtsSelectionCommandIntentKind.Move,
+                        RequestId=request.RequestId,Frame=request.Frame,ScreenPosition=request.ScreenPosition,Accepted=0,HasWorldPosition=0});
+                return;
+            }
             if(result.PublicAcceptedGroup==0||!TryUniqueOwnGroup(em,out var session,out uint group)||group!=result.PublicAcceptedGroup)return;
             Publish(em,session,new SkirmishPublicOrderFeedbackComponent { GroupId=group,Kind=RtsSelectionCommandIntentKind.Move,
                 RequestId=request.RequestId,Frame=request.Frame,ScreenPosition=request.ScreenPosition,
@@ -46,10 +55,10 @@ namespace Game.Runtime
             var attempt=sessions.GetSingleton<SkirmishExpandedSessionComponent>();
             return attempt.IsLegacy==0&&attempt.Phase==Game.Skirmish.Contracts.SkirmishSessionPhase.Playing&&attempt.ObjectiveKind!=Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault;
         }
-        public static uint VerifyCompleteMoveGroup(EntityManager em,NativeArray<Entity> selected,NativeList<Entity> accepted,NativeList<int2> expectedGoals)
+        public static uint VerifyCompleteMoveGroup(EntityManager em,NativeArray<Entity> selected,NativeList<Entity> accepted,NativeList<int2> expectedGoals,bool observeBaseAssault=false)
         {
             if(!accepted.IsCreated||!expectedGoals.IsCreated||accepted.Length!=expectedGoals.Length||accepted.Length!=selected.Length||
-                !TryUniqueOwnGroup(em,out _,out uint group))return 0;
+                !TryUniqueOwnGroup(em,out _,out uint group,observeBaseAssault))return 0;
             var actual=new HashSet<Entity>();foreach(var actor in selected)if(!actual.Add(actor))return 0;
             for(int i=0;i<accepted.Length;i++)
             {
@@ -65,13 +74,13 @@ namespace Game.Runtime
             if(prior==uint.MaxValue)return;row.Revision=prior+1;
             if(em.HasComponent<SkirmishPublicOrderFeedbackComponent>(session))em.SetComponentData(session,row);else em.AddComponentData(session,row);
         }
-        static bool TryUniqueOwnGroup(EntityManager em,out Entity session,out uint group)
+        static bool TryUniqueOwnGroup(EntityManager em,out Entity session,out uint group,bool observeBaseAssault=false)
         {
             session=Entity.Null;group=0;
             using var sessions=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
             if(sessions.CalculateEntityCount()!=1)return false;
             session=sessions.GetSingletonEntity();var attempt=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
-            if(attempt.IsLegacy!=0||attempt.Phase!=Game.Skirmish.Contracts.SkirmishSessionPhase.Playing||attempt.ObjectiveKind==Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault)return false;
+            if(attempt.IsLegacy!=0||attempt.Phase!=Game.Skirmish.Contracts.SkirmishSessionPhase.Playing||(!observeBaseAssault&&attempt.ObjectiveKind==Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault))return false;
             using var selected=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(UnitHealth),typeof(Faction));
             using var actors=selected.ToEntityArray(Allocator.Temp);
             int selectedCount=0;

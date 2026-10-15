@@ -468,7 +468,8 @@ namespace Game.Editor
             return true;
         }
 
-        private static string SelectedReportDirectory() => catalogId switch
+        private static string SelectedReportDirectory() => productionCanary != null
+            ? productionCanary.Request.ArtifactDirectory : catalogId switch
         {
             "S005" => "Design/AgentReports/SkirmishExpansion/S005/",
             SkirmishAcceptanceCensusCapture.S004CatalogId => SkirmishAcceptanceScaffold.S004RelativeReportEvidenceDirectory,
@@ -530,6 +531,7 @@ namespace Game.Editor
             string launchFingerprint = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
             launchFingerprintTimer.Stop();
             Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=" + launchFingerprintTimer.Elapsed.TotalMilliseconds.ToString("R", CultureInfo.InvariantCulture) + " sha256=" + launchFingerprint);
+            RecordProductionBatchFingerprint("Begin",launchFingerprint,launchFingerprintTimer.Elapsed.TotalMilliseconds);
             SessionState.SetString(CandidateHashKey, launchFingerprint);
             stage = 0;
             finishingEvidence = false;
@@ -612,6 +614,7 @@ namespace Game.Editor
 
         private static string ValidationProfileRoot()
         {
+            if(productionCanary!=null)return Path.Combine(productionCanary.Request.ArtifactDirectory,"save-profile");
             return Path.Combine(Path.GetTempPath(), "aria-play-validation-profile",
                 SessionState.GetString(Key + ".artifactId", "missing-artifact"));
         }
@@ -806,6 +809,8 @@ namespace Game.Editor
                     }
                     if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1")
                     {
+                        if (TickS005OpeningGroupCandidates(em,session)) return;
+                        if (TickS005WarmRenderExitDiagnostic(em,session)) return;
                         if (elapsed < 2f) { next = now + 0.5d; return; }
                         if (nativeProductionStage > 0)
                         {
@@ -1001,6 +1006,7 @@ namespace Game.Editor
             bool simulationActive,
             float elapsed)
         {
+            RecordProductionResolvedSnapshot(em, session, in match, simulationActive, elapsed, "NativeResolvedSnapshot");
             Directory.CreateDirectory(EvidenceDirectory());
             float clockElapsed = elapsed;
             byte clockPaused = 0;
@@ -1075,12 +1081,15 @@ namespace Game.Editor
         private static void AppendInputDiagnostic(EntityManager em, float elapsed)
         {
             using var query = em.CreateEntityQuery(typeof(AriaSkirmishObservationComponent),
-                typeof(AriaPlaySessionComponent), typeof(AriaSkirmishPlanComponent), typeof(AriaPlayObservationComponent));
+                typeof(AriaSkirmishObservationOwner), typeof(AriaSkirmishPlanComponent));
             if (query.CalculateEntityCount() != 1) return;
-            Entity boundary = query.GetSingletonEntity();
-            var view = em.GetComponentData<AriaSkirmishObservationComponent>(boundary).Value;
+            Entity storage=query.GetSingletonEntity();
+            Entity boundary=em.GetComponentData<AriaSkirmishObservationOwner>(storage).Boundary;
+            if(!Game.UI.Shell.Ecs.AriaSkirmishObservationStorage.TryGet(em,boundary,out var current)||current!=storage||
+                !em.HasComponent<AriaPlaySessionComponent>(boundary)||!em.HasComponent<AriaPlayObservationComponent>(boundary))return;
+            var view = em.GetComponentData<AriaSkirmishObservationComponent>(storage).Value;
             var input = em.GetComponentData<AriaPlaySessionComponent>(boundary);
-            var plan = em.GetComponentData<AriaSkirmishPlanComponent>(boundary);
+            var plan = em.GetComponentData<AriaSkirmishPlanComponent>(storage);
             var target = em.GetComponentData<AriaPlayObservationComponent>(boundary);
             var sample = new InputDiagnostic
             {
@@ -1233,6 +1242,7 @@ namespace Game.Editor
 
         private static void Finish(bool abort, string abortReason)
         {
+            StopS005GuardObservation();
             if (finishingEvidence) return;
             finishingEvidence = true;
             EditorApplication.update -= Tick;
@@ -1267,6 +1277,7 @@ namespace Game.Editor
             finishSourceHash = null;
             finishFingerprintTimer?.Stop();
             Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=Finish elapsedMilliseconds=" + (finishFingerprintTimer?.Elapsed.TotalMilliseconds ?? -1d).ToString("R", CultureInfo.InvariantCulture) + " taskStatus=" + completed.Status + (completed.Status == System.Threading.Tasks.TaskStatus.RanToCompletion ? " sha256=" + completed.Result : string.Empty));
+            productionBatchFinishHashMilliseconds=finishFingerprintTimer?.Elapsed.TotalMilliseconds??-1;
             finishFingerprintTimer = null;
             if (completed.IsFaulted || completed.IsCanceled)
             {
@@ -1279,6 +1290,8 @@ namespace Game.Editor
 
         private static void FinishEvidence(bool abort, string abortReason, string currentSourceHash)
         {
+            try { RecordProductionBatchFingerprint("End",currentSourceHash,productionBatchFinishHashMilliseconds); }
+            catch(Exception fingerprintError) { abort=true;abortReason="productionBatchFingerprint:"+fingerprintError.GetType().Name;Debug.LogError(fingerprintError); }
             if (currentSourceHash != SessionState.GetString(CandidateHashKey, ""))
             {
                 abort = true;
@@ -1537,13 +1550,25 @@ namespace Game.Editor
             SessionState.EraseBool(QuitPendingKey);
             SessionState.EraseInt(QuitCodeKey);
             EditorApplication.update -= FinishQuitAfterPlayMode;
+            try
+            {
+                RestoreS004EditorJourneyOptions();
+                RestoreProductionCanaryAfterOwnedPlay();
+            }
+            catch (Exception cleanupError)
+            {
+                exitCode = 2;
+                Debug.LogError("[SkirmishProductionCanaryCleanup] result=Failed error=" + cleanupError);
+                // Preserve context/artifacts for investigation; complete wrapper as failed.
+            }
+            if(TryCompleteProductionBatchJob(exitCode)) return;
             Debug.Log("[SkirmishValidationExit] result=Requested code=" + exitCode);
-            RestoreS004EditorJourneyOptions();
             if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)
             {
                 MissionEditorValidationExit.Complete(exitCode == 0);
                 return;
             }
+            productionBatchExitOwner?.RecordActualExitInvocation(exitCode);
             EditorApplication.Exit(exitCode);
         }
 

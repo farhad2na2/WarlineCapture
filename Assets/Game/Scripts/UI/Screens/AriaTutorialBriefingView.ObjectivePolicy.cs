@@ -13,6 +13,8 @@ namespace Game.UI.Runtime
                 AriaSkirmishIntent.EscortOriginalTruck => fa ? "کامیون‌های مأموریت را به مقصد می‌بریم و از آن‌ها محافظت می‌کنیم." : "I'll move the objective trucks toward the destination and keep escorts with them.",
                 AriaSkirmishIntent.InspectObjective => fa ? "اول مسیر و هدف قابل مشاهده را بررسی می‌کنم؛ جابه‌جایی دوربین دستور حرکت نیست." : "I'll inspect the public route first. Moving the camera does not order our troops.",
                 AriaSkirmishIntent.ObserveObjective => fa ? "دستور پذیرفته شده است. پیشرفت هدف و وضعیت نیروها را نگاه می‌کنم." : "The order was accepted. I'll watch objective progress and our units.",
+                AriaSkirmishIntent.StopDamagedTruck => fa ? "کامیون به‌شدت آسیب دیده است. با فرمان توقف نگهش می‌دارم تا وضعیت تعمیر را بررسی کنید." : "This truck is critically damaged. I will use Hold so you can check the repair conditions.",
+                AriaSkirmishIntent.ServiceOriginalTruck => fa ? "کامیون آسیب‌دیده را با فرمان حرکت به محل تعمیر خودی می‌برم و با توقف نگه می‌دارم. سپس هزینه تعمیر را بررسی می‌کنم." : "I will use Move to reach our service pad and Hold to stop the damaged truck, then check the repair quote.",
                 AriaSkirmishIntent.RepairVehicle => fa ? "هزینه و زمان تعمیر را می‌بینم. پیشرفت تعمیر و سلامت خودرو را بررسی می‌کنم." : "I can see the repair cost and time. I will watch repair progress and vehicle health.",
                 AriaSkirmishIntent.UnloadOriginals => fa ? "سربازهای مشخص‌شده باید روی زمین پیاده شوند تا بتوانند خارج شوند." : "Our designated soldiers must unload onto legal ground before they can evacuate.",
                 _ => null

@@ -1,0 +1,754 @@
+{
+  "raw": "Logs/SkirmishProduction/OpeningGroupCandidates/20261015-shared152-01/opening-group-candidates.jsonl",
+  "raw_sha256": "3202a7294f0171d554c4f919ed6d6845c641251c667715e0c323194fb45b8c49",
+  "safe_pixels": [
+    400.0,
+    250.0,
+    1900.0,
+    845.0
+  ],
+  "safe_authority": "Conservative manual PNG estimate; native HUD RectTransform readback unavailable in this JSONL",
+  "pitch": 65,
+  "fov": 46,
+  "heights_are_absolute_camera_world_y": true,
+  "scope": "Recorded posed AABB corner containment only; AABB projected height is an upper bound on actual drawn-vertex height, so .03 success requires native exact vertices. No occlusion acceptance.",
+  "captured_projection_crosschecks": [
+    {
+      "frame": 179,
+      "actor": "role.rifle.1.0.0",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 179,
+      "actor": "role.rifle.1.0.1",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 179,
+      "actor": "role.rifle.1.0.3",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 179,
+      "actor": "role.rifle.1.0.2",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 191,
+      "actor": "role.rifle.1.0.0",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 191,
+      "actor": "role.rifle.1.0.1",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 191,
+      "actor": "role.rifle.1.0.3",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 191,
+      "actor": "role.rifle.1.0.2",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 210,
+      "actor": "role.rifle.1.0.7",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 210,
+      "actor": "role.rifle.1.0.4",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 210,
+      "actor": "role.rifle.1.0.5",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 210,
+      "actor": "role.rifle.1.0.6",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 228,
+      "actor": "role.rifle.1.0.7",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 228,
+      "actor": "role.rifle.1.0.4",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 228,
+      "actor": "role.rifle.1.0.5",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    },
+    {
+      "frame": 228,
+      "actor": "role.rifle.1.0.6",
+      "captured_exact_vertex_rect_contained_by_reprojected_aabb": true
+    }
+  ],
+  "qualified": false,
+  "groups": [
+    {
+      "group": 1,
+      "source_frame": 179,
+      "candidates": [
+        {
+          "height": 18,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 18,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 18,
+          "yaw": 121,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 18,
+          "yaw": 301,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 121,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 301,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 24,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 24,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 24,
+          "yaw": 121,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 24,
+          "yaw": 301,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 28,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 28,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 28,
+          "yaw": 121,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            944.5144464035677,
+            28,
+            642.6205504317927
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1521.954717783306,
+              263.33675572555904,
+              1589.4673188418544,
+              334.0867006684499
+            ],
+            [
+              1016.9068965638403,
+              718.2125345011821,
+              1061.754000981925,
+              792.8988185222149
+            ],
+            [
+              1033.8602148295968,
+              762.3448509292123,
+              1077.1717787127982,
+              837.3270337888976
+            ],
+            [
+              707.253062008311,
+              261.3390726803288,
+              775.8511402056838,
+              331.75360813490965
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.06519864393942672,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 28,
+          "yaw": 301,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            968.659108178591,
+            28,
+            630.9089324840272
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              784.1039815730913,
+              759.4020261074702,
+              838.342177237422,
+              834.1292876842733
+            ],
+            [
+              1252.2857492583685,
+              327.0228030164715,
+              1300.5625020922785,
+              400.804599543709
+            ],
+            [
+              1237.8824137980728,
+              265.66532363625316,
+              1286.223413483425,
+              339.57734711260605
+            ],
+            [
+              1463.17803896299,
+              756.6816753018942,
+              1515.5503108702712,
+              831.003875649532
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.06831647826596063,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 30,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 30,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 30,
+          "yaw": 121,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            943.603050047012,
+            30,
+            643.0654806052117
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1494.617436003292,
+              287.6097053445377,
+              1555.1411463171335,
+              353.10182919674355
+            ],
+            [
+              1025.7586943864862,
+              709.3752635200576,
+              1067.376140993512,
+              778.7975860321341
+            ],
+            [
+              1041.4519300974184,
+              750.8776550060104,
+              1081.7353304323838,
+              820.5740260280827
+            ],
+            [
+              741.4984174566849,
+              285.66359871310624,
+              803.3841224292025,
+              350.86860242961103
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.06037500344120814,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 30,
+          "yaw": 301,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            969.570504535147,
+            30,
+            630.4640023106082
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              807.978305342404,
+              748.1395470313767,
+              857.8374038648501,
+              817.6142716908737
+            ],
+            [
+              1244.8849736168454,
+              345.50474863403446,
+              1288.9963456566427,
+              414.1715253022403
+            ],
+            [
+              1231.404080381677,
+              289.06586326080577,
+              1275.5493917846777,
+              357.85884350762194
+            ],
+            [
+              1443.7458826118593,
+              745.6306775888927,
+              1491.6784785984737,
+              814.7539049205394
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.06358034876685727,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        }
+      ]
+    },
+    {
+      "group": 2,
+      "source_frame": 210,
+      "candidates": [
+        {
+          "height": 18,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 18,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 18,
+          "yaw": 127,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 18,
+          "yaw": 307,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 20,
+          "yaw": 127,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            956.6672901153561,
+            20,
+            645.9124821755006
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1525.3583846786282,
+              721.4081059878704,
+              1608.0478739062287,
+              827.6387358493591
+            ],
+            [
+              1273.348966706341,
+              541.8642221573585,
+              1340.26938997428,
+              644.9657075739744
+            ],
+            [
+              1098.2115865779301,
+              275.1423726130519,
+              1167.4311633220843,
+              375.02679753258667
+            ],
+            [
+              689.2991838642779,
+              716.611263818465,
+              774.6478957759368,
+              822.1817586884865
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.09248557862919884,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 20,
+          "yaw": 307,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            972.6335841876648,
+            20,
+            635.9638688661404
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              605.1712819849031,
+              279.69257398619504,
+              711.908859538787,
+              383.6459467028799
+            ],
+            [
+              953.3135201289747,
+              488.8070878796516,
+              1027.8032155807336,
+              591.006256217627
+            ],
+            [
+              1134.530500567053,
+              718.091749251846,
+              1191.7460545509027,
+              823.6775637103824
+            ],
+            [
+              1591.0181695348058,
+              280.18837860185573,
+              1694.782573143575,
+              383.5606426410915
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.09462885957219942,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 24,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 24,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 24,
+          "yaw": 127,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            954.9474985860267,
+            24,
+            646.9880014954081
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1465.8494844385364,
+              698.774617874701,
+              1530.6149911232283,
+              786.2096536812443
+            ],
+            [
+              1252.7529806273365,
+              548.3029312056902,
+              1306.2732756308417,
+              633.4892069396287
+            ],
+            [
+              1108.1931678467226,
+              332.8832856664051,
+              1164.2780046090982,
+              414.2738944702216
+            ],
+            [
+              766.5915770007811,
+              694.8115562391193,
+              834.2251824629654,
+              781.7932083021512
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.07536167481834863,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 24,
+          "yaw": 307,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            974.3533757169944,
+            24,
+            634.8883495462328
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              710.6319207768702,
+              334.58994433636326,
+              791.4758304871935,
+              420.49159070943335
+            ],
+            [
+              988.8875184020935,
+              504.4446067786095,
+              1048.6249932451476,
+              589.0783418414387
+            ],
+            [
+              1137.1245088832425,
+              696.066485785407,
+              1184.931457202647,
+              783.060235148795
+            ],
+            [
+              1511.6616258055806,
+              334.74309815285784,
+              1589.311741076626,
+              420.248260864516
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.07836456950261964,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 28,
+          "yaw": 35,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 28,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 28,
+          "yaw": 127,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            953.2277070566971,
+            28,
+            648.0635208153155
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1422.627434603605,
+              682.3879877105081,
+              1475.5763821257376,
+              756.6570522413006
+            ],
+            [
+              1238.0508398601432,
+              552.8828205691877,
+              1282.5840142647971,
+              625.4601175630486
+            ],
+            [
+              1114.9488474419213,
+              371.1386828655838,
+              1162.0908636111787,
+              440.908298708807
+            ],
+            [
+              821.6750874458105,
+              679.0129595079661,
+              877.48049522428,
+              752.9516261810887
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.06460149615113261,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 28,
+          "yaw": 307,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            976.0731672463239,
+            28,
+            633.8128302263253
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              781.8864135878548,
+              372.5198833851156,
+              846.5830171634448,
+              445.6955402692279
+            ],
+            [
+              1013.5641882683467,
+              515.5055162642213,
+              1063.383971524782,
+              587.7265516759625
+            ],
+            [
+              1138.9734925632501,
+              680.1018750955222,
+              1180.0294674987542,
+              754.0502098442255
+            ],
+            [
+              1456.5086449018709,
+              372.50189226428313,
+              1518.0555592606581,
+              445.39022972977114
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.06687132908494549,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 30,
+          "yaw": 35,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            958.0479034028314,
+            30,
+            627.9014754269272
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1243.6617362369682,
+              250.02486224598312,
+              1302.6888154715984,
+              310.78960648275245
+            ],
+            [
+              1099.7341786845964,
+              445.12365241741446,
+              1154.4460957784995,
+              509.38401737354326
+            ],
+            [
+              925.7107078459677,
+              551.0035021414224,
+              984.6242429116867,
+              616.8270316104313
+            ],
+            [
+              1253.2682444753423,
+              776.8958853689138,
+              1301.5969368893227,
+              844.9830074190836
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.05626365207108271,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 30,
+          "yaw": 215,
+          "aabb_safe_fit": false
+        },
+        {
+          "height": 30,
+          "yaw": 127,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            952.3678112920323,
+            30,
+            648.6012804752693
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              1405.1683301482515,
+              675.7812208884425,
+              1453.623716805946,
+              744.8452372681327
+            ],
+            [
+              1232.172146794777,
+              554.7103207701616,
+              1273.2428993421115,
+              622.2868390905453
+            ],
+            [
+              1117.5691426205854,
+              386.0742397374727,
+              1161.2306907493098,
+              451.25442698535244
+            ],
+            [
+              843.6793226408175,
+              672.6395601243596,
+              894.9491229372886,
+              741.4167153878872
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.0603520252295183,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        },
+        {
+          "height": 30,
+          "yaw": 307,
+          "aabb_safe_fit": true,
+          "camera_world": [
+            976.9330630109887,
+            30,
+            633.2750705663717
+          ],
+          "member_aabb_pixel_rects": [
+            [
+              809.4969451882582,
+              387.4039725767699,
+              868.2372769043402,
+              455.5298556337964
+            ],
+            [
+              1023.2694798068059,
+              519.9047935371765,
+              1069.261264561804,
+              587.1916109044371
+            ],
+            [
+              1139.7121830515578,
+              673.6608963506546,
+              1178.072428261384,
+              742.4467485263455
+            ],
+            [
+              1434.793318559169,
+              387.33349819736105,
+              1490.4454999617062,
+              455.2105432751745
+            ]
+          ],
+          "minimum_aabb_height_fraction": 0.062302608673389444,
+          "aabb_minimum_03_satisfied": true,
+          "actual_drawn_vertex_readability_and_occlusion_accepted": false
+        }
+      ]
+    }
+  ]
+}

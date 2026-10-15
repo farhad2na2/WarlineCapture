@@ -279,6 +279,8 @@ namespace Game.Skirmish.Contracts
         public const string FabricationDepot = "building.fabrication_depot";
         public const string Watchtower = "building.watchtower";
         public const string WatchtowerApproach = "building.watchtower.approach";
+        public const string DefenseApproachA = "building.watchtower.defense_approach_a";
+        public const string DefenseApproachB = "building.watchtower.defense_approach_b";
         public const string SatelliteDish = "building.satellite_dish";
 
         public static string VisualKey(string structureId)
@@ -297,7 +299,7 @@ namespace Game.Skirmish.Contracts
                 return "Building_Fuel_Bladder";
             if (structureId == FabricationDepot)
                 return "Building_Ammunition_Depot";
-            if (structureId == Watchtower || structureId == WatchtowerApproach)
+            if (structureId == Watchtower || structureId == WatchtowerApproach || structureId == DefenseApproachA || structureId == DefenseApproachB)
                 return "Building_GuardTower";
             if (structureId == SatelliteDish)
                 return "Building_Satelite_Dish";

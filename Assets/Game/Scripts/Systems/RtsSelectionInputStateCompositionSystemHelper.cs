@@ -102,6 +102,7 @@ namespace Game.Runtime
             request.RequestId = queue.LastRequestId;
             em.SetComponentData(entity, queue);
             SkirmishOriginalUnloadPresentation.CaptureBefore(em,request);
+            SkirmishPublicBoardingPresentation.CaptureBefore(em,request);
             em.GetBuffer<RtsSelectionCommandIntentRequestElement>(entity).Add(request);
             return true;
         }

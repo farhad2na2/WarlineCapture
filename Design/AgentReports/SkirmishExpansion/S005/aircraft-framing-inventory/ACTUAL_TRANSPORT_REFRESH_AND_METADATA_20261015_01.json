@@ -1,0 +1,38 @@
+{
+  "refresh_receipt": {
+    "scope": "MeasuredDependencyStampsOnly",
+    "beforeSha256": "cdb8a88b59c1f85b30803f956b6b0b368519bed3459726c2180b7669f045d99a",
+    "afterSha256": "3903e2a1a93af11e7254bbd3bf5a1dcf9849b83e403505f8ae19450daa54b9ae",
+    "guid": "e1c957a562f0236489ae9702b153f317",
+    "sources": 3,
+    "draws": 57,
+    "geometryChanged": false,
+    "cameraAccepted": false
+  },
+  "old_hashes": [
+    "5a7ed5170e3fd30dd3f9bbce7b492417",
+    "e818d8073e8c3c88c5ef8b5e4576dba4",
+    "f88c0245326e8481d70851d6f70de374"
+  ],
+  "new_hashes": [
+    "e8912be3c6f66f57dbc65b5a653b86ff",
+    "a1ec5c7ad8214a3954c39b20758dabd1",
+    "c77d6b9f838c5dbf48b5bc19bff425b4"
+  ],
+  "only_three_stamps_differ_after_CRLF_normalization": true,
+  "meta_raw_bytes_identical": true,
+  "metadata_outputs": {
+    "Assets/Game/Resources/SkirmishCanonicalAircraftGeometry_V1.asset": {
+      "sha256": "5028f5eea8aef4d31caee2d1a730cd8704c29a6a020f97784ae3e9533edfcb80",
+      "meta_sha256": "ddfcc5a0b285833d72d8b8837507e97122245fee3eedf656b1bc272663e6780f",
+      "length": 88756
+    },
+    "Assets/Game/Resources/SkirmishAircraftRotorGeometry_V1.asset": {
+      "sha256": "0eb796b92051e4ac6d16e09769a227cf687b0fbc38b8f1f79517ce151e1bcf5d",
+      "meta_sha256": "bcbae4fd31fd4cfe0d11e61ef7a6f84cd7389649f23ce76ba58cf97501c34394",
+      "length": 21656
+    }
+  },
+  "overall_native_validation": "Failed67435_fixtureBufferLifetime_and_typedSpawnAssertion",
+  "native_camera_or_mission_acceptance": false
+}

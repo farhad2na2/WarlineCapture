@@ -24,6 +24,7 @@ namespace Game.UI.Runtime
             if (frame.PresentationEpoch != publicObjectiveEpoch) { publicObjectiveChoice=default;publicObjectiveEpoch=frame.PresentationEpoch;nextPublicObjectiveDecision=0; }
             if (goal.Perspective != SkirmishPublicGoalPerspective.Capture && goal.Perspective != SkirmishPublicGoalPerspective.Evacuate && goal.Perspective != SkirmishPublicGoalPerspective.Escort)
             { view.PublicObjective=new AriaObjectiveTouchObservation{Applicable=true};return; }
+            ObservePublicObjectiveSupport(ref view,frame);
             var result = new AriaObjectiveTouchObservation { Applicable=true, Supported=true, Presented=true,
                 Intent=AriaSkirmishIntent.ObserveObjective,
                 Finished=goal.Outcome!=SkirmishOutcomeKind.None, CameraSettled=frame.CameraSettled, Paused=frame.Paused,

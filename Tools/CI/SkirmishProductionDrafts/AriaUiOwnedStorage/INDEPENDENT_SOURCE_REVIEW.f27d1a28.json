@@ -1,0 +1,48 @@
+{
+  "outcome": "SourceReviewClearNativePending",
+  "manifest_sha256": "f27d1a28b35a1b25bf673ef0da0331c16ddfc2c75fb3ae3c6d807d2a4f5685d8",
+  "targets": [
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "source_sha256": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "before_sha256": "6baaa5655936e5fbc459b620123d1a2d397a2c8b51dbef77cf513a92ef251375"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs",
+      "source_sha256": "70c83c7f5bc0fd9613ac24b8361f822d94a200c9ced2ce666dc0ec3b8a391f63",
+      "before_sha256": "8463942295169681e6f7c744d36554642fcd639eeb9dae22c5b9a8ffd2fe0943"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "source_sha256": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "before_sha256": "a73a97339fe73d0b7e79bad40d50d47ee77e4a95e8b26c2df64d5881bc805428"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source_sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "before_sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs",
+      "source_sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "before_sha256": null
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs",
+      "source_sha256": "6655c5cd61c14d4fe2f7d1dad2cca3fae721cfd9b082cd76d6e4ebddc0659d2f",
+      "before_sha256": null
+    }
+  ],
+  "review": [
+    "Large observation and full plan reside on separate UI-owned archetype without truncation; original root retains normal touch and feedback authority",
+    "All actual live consumers migrated: gateway publish/read/start/stop, planner OnUpdate, and normal AppendInputDiagnostic",
+    "Owner identity uses current Entity version and route transition sequence in supplied EntityManager with no static cross-World Entity cache",
+    "Immediate intent requires active Match view and exact transition; orphan storage destroyed after query iteration",
+    "Prior active scope contact/output cleared before republish overwrites sequence/frame/time or active-to-inactive, closing reviewer finding",
+    "Inactive Campaign touch remains preserved",
+    "Seven controls bootstrap actual UiShellStateSystem plus Assistant root owners and exercise real planner update and gateway publication/readback, root replacement, duplicate refusal, start/stop, route and republish ordering"
+  ],
+  "proof_attribution": "S005 second four-owner proof active; await terminal exact evidence; no independent compiler/native run",
+  "native_acceptance": "Pending full controls plus normal HUD opening with no chunk/runtime exceptions",
+  "assets_or_git_mutated": false
+}

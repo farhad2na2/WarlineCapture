@@ -60,7 +60,8 @@ namespace Game.Runtime
                         !em.HasComponent<UnitSourcePrefabKey>(actor)||
                         SpawnableKeyText.Normalize(em.GetComponentData<UnitSourcePrefabKey>(actor).Value.ToString())!=SpawnableKeyText.Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role))||
                         !SkirmishGenericGroundEnemyRollout.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId)&&
-                        !SkirmishEnemyObjectivePolicyScope.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId))continue;
+                        !SkirmishEnemyObjectivePolicyScope.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId)&&
+                        !SkirmishGenericAirCombinedEnemyRollout.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId))continue;
                 }
                 result.Add(new OwnActor{Entity=actor,StableId=own.StableObjectId,ReservationId=own.ReservationId,
                     GroupId=group,Role=role,

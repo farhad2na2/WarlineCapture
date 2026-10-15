@@ -41,6 +41,7 @@ namespace Game.Tests.Editor
                     profiles.Economy,profiles.Upgrades,profiles.Intel,
                     kind==SkirmishObjectiveKind.ConvoyEscort?RequireConvoyRoles():profiles.Roles,definition.MapLayout,
                     featureIds:new[]{"ground","intel","transport","advanced_ground",kind==SkirmishObjectiveKind.Breakthrough?"objective_bt":"objective_ce"});
+                SkirmishObjectiveApproachTowerTests.AttachSyntheticDefensePads(definition.MapLayout);
                 if(kind==SkirmishObjectiveKind.ConvoyEscort)AttachSyntheticConvoyBays(definition.MapLayout);
                 Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error),error);
                 var manifest=new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds};

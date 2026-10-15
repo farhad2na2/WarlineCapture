@@ -114,6 +114,7 @@ namespace Game.Configs
             var padIds = new HashSet<string>(StringComparer.Ordinal);
             var padKinds = new HashSet<string>(StringComparer.Ordinal);
             var objectiveTruckRoles = new HashSet<string>(StringComparer.Ordinal);
+            var defenseRoles = new HashSet<string>(StringComparer.Ordinal);
             foreach (var pad in layout.Pads)
             {
                 if (string.IsNullOrEmpty(pad.PadId) || !padIds.Add(pad.PadId) || !anchorIds.Contains(pad.AnchorId) ||
@@ -128,6 +129,13 @@ namespace Game.Configs
                         (pad.RoleId != "convoy.origin.1" && pad.RoleId != "convoy.origin.2" && pad.RoleId != "convoy.origin.3") ||
                         !objectiveTruckRoles.Add(pad.RoleId) || !layout.TryGetAnchor(pad.RoleId, out var bayAnchor) || bayAnchor.AnchorId != pad.AnchorId)
                         Add(reasons, pad.PadId, "Objective truck bays require unique exact convoy origin roles and faction 1 anchor bindings.");
+                }
+                else if(pad.Kind==SkirmishLegalPadKind.DefenseApproach)
+                {
+                    if((definition.ObjectiveConfig.Kind!=SkirmishObjectiveKind.Breakthrough&&definition.ObjectiveConfig.Kind!=SkirmishObjectiveKind.ConvoyEscort)||
+                        pad.FactionId!=2||(pad.RoleId!="defense.approach.a"&&pad.RoleId!="defense.approach.b")||
+                        !defenseRoles.Add(pad.RoleId)||!layout.TryGetAnchor(pad.RoleId,out var defenseAnchor)||defenseAnchor.AnchorId!=pad.AnchorId)
+                        Add(reasons,pad.PadId,"Defense approaches require unique exact faction2 mode-owned anchors/pads.");
                 }
                 else if (pad.FactionId != 0 && !padKinds.Add(pad.FactionId + "/" + pad.Kind))
                     Add(reasons, pad.PadId, "Ambiguous faction/kind pad lookup.");

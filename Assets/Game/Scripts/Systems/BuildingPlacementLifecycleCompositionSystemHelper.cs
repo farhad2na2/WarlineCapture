@@ -9,6 +9,9 @@ namespace Game.Runtime
     {
         public sealed class PlacementState : BuildingPlacementInputUiSystemHelper.IPlacementState
         {
+            static int nextCameraToken;
+            public int CameraToken { get; } = System.Threading.Interlocked.Increment(ref nextCameraToken);
+            public Action ReleaseCamera { get; set; }
             public BuildingDefinition Definition { get; set; }
             public GameObject PreviewInstance { get; set; }
             public Vector2Int OriginCell { get; set; }
@@ -237,11 +240,15 @@ namespace Game.Runtime
         public void ReleasePreviewOwnership(PlacementState placement)
         {
             if (placement != null && ReferenceEquals(placement, ActivePlacement))
+            {
+                var release=placement.ReleaseCamera;placement.ReleaseCamera=null;release?.Invoke();
                 placement.PreviewInstance = null;
+            }
         }
 
         public void Cancel(CancelContext context)
         {
+            if(ActivePlacement!=null){var release=ActivePlacement.ReleaseCamera;ActivePlacement.ReleaseCamera=null;release?.Invoke();}
             if (ActivePlacement?.PreviewInstance != null)
                 context.DestroyPreview?.Invoke(ActivePlacement.PreviewInstance);
 

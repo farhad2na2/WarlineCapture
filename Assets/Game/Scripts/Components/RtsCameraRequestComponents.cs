@@ -32,7 +32,12 @@ namespace Game.Components
         SetMatchIntroZoomSettlePending = 25,
         SetSmoothPerspectiveTarget = 26,
         ClearSmoothPerspectiveTarget = 27,
-        UpdateSmoothPerspective = 28
+        UpdateSmoothPerspective = 28,
+        FocusAircraft = 29,
+        ZoomAircraft = 30,
+        ClearAircraftFocus = 31,
+        ApplyPlacementPreviewPose = 32,
+        ReleasePlacementPreviewPose = 33
     }
 
     public struct RtsCameraRequestQueueComponent : IComponentData
@@ -59,6 +64,8 @@ namespace Game.Components
     {
         public RtsCameraRequestKind Kind;
         public int RequestId;
+        public int PlacementToken;
+        public Entity TargetEntity;
         public float2 ScreenDelta;
         public float3 WorldPosition;
         public float4 Rotation;

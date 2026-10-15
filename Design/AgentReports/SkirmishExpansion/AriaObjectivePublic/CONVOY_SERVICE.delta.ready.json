@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "imported": false,
+  "qualified": false,
+  "scope": "Intended autonomous CE service changes only; unchanged inherited rows omitted",
+  "original_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.ready.json",
+  "original_manifest_sha256": "73ec1bc80fdbe157de7dc337a7ac0e063850a366df2f34dc336f8f885dc1bccd",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishMatchView.PublicObjectiveAria.cs",
+      "before_sha256": "e59a479f21b85aab6377700615e0fdbeda00bfd2eadca9bb01b7e71c7dd73427",
+      "sha256": "f9f7d5fe567991b29da45c71085cb12427023ec44c8345fce666563c0a346ce4"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/AriaTutorialBriefingView.ObjectivePolicy.cs",
+      "before_sha256": "262952cbdfda8bdcf428d1070e17e908c0ae1b3602292d9828a3ff03275d325a",
+      "sha256": "c40ac69e7567a76acf30db6ad14223911fa1ef4f1916dfe93da367e2f731f90e"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiSkirmishPublicObjectiveModel.cs",
+      "before_sha256": "04c6a32ec4082d591b435ec6852cc1b0d0d9f982eb29d9dd487ab8b15a25ff04",
+      "sha256": "4b0d63c932264acd304504b554e3bead18e9799c2257b88eb25523a8ee53c680"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiShellEcsGateway.PublicObjective.cs",
+      "before_sha256": "39a2bda98566f57cec524c2f5efdf3ebef91316b9812e5d8a6fed56f6777add4",
+      "sha256": "e0753aa4fd4342950dd1f2ce42281d12bd0d7cfc3fad9790df12c7f472002c34"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishMatchView.PublicObjectiveHud.cs",
+      "before_sha256": "5b8bbb6b9afd5d24fe5d56a69cf5c562baa406e6c3013cabd7c7fc00442b0b07",
+      "sha256": "ea1d277e7eb51c9f7e030d0e7c328836f64ac4e9c749cd09a4ce6c0e80c7a862"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishPublicOrderFeedback.cs",
+      "before_sha256": "67200c638d9ce7fc541be926e7f240f54a644131ee8da409da11a73acf22e88e",
+      "sha256": "564f8d910db904fa296e8b827e5a60d44942022b37226e03f9ffda035bdda044"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/AriaSkirmishContracts.cs",
+      "before_sha256": "289e729b5e1ad18d8049315fd3cdea628ae1973e22971e3caf0fee7d83148058",
+      "sha256": "524587175587fe88f7b32b2de4de77852b7111cf1c608d69779e7f9c6dfbf764"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "before_sha256": "145b984a4511d9ad34c7e74789371ce198d5f1db168cc805b6092df736481d78",
+      "sha256": "5c78cf71d61bda8d09d0eb89fbc19b84065d01f40779995353b3a8a8f8e88b23"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+      "before_sha256": "4c81be332c52136e2a564c9b01fb53153b4c8dbb768128e7f51e4b7ee846780f",
+      "sha256": "91affdefe1169c6f831e6d3a825e9ccd78d309e920c659093fd487f0fe698b93"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiPublicConvoyServiceModel.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiPublicConvoyServiceModel.cs",
+      "before_sha256": null,
+      "sha256": "00c60a351b2b069e1e991d592445a9256f2e427162b6c80cb3ae3018cac54edf"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ConvoyService.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiShellEcsGateway.ConvoyService.cs",
+      "before_sha256": null,
+      "sha256": "37c6b8b3b0416f93429e48f8c4177593eca95f4b9acfe601c93c58071290f49f"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ConvoyService.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishMatchView.ConvoyService.cs",
+      "before_sha256": null,
+      "sha256": "e22e7b80a19994b5069fc30cc511fc4df50ed6696cc1721f229e6ce24a941a52"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/SkirmishConvoyServiceJourney.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishConvoyServiceJourney.cs",
+      "before_sha256": null,
+      "sha256": "da373079e82223f5119cf38ec7f1415aefb8c9c92192e566c1a0c7568f87aef6"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/MatchHudAssistantUiSystemHelper.ConvoyService.cs",
+      "before_sha256": null,
+      "sha256": "04c131b05c51bba28b2ae2889297a5e0d4ec6779866a5bb5ba50520e95cd2fa1"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyServiceJourneyTests.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishConvoyServiceJourneyTests.cs",
+      "before_sha256": null,
+      "sha256": "95421fedd674d35f852d2c681898bd41122fa48f2462ac5409c7c43041c75b33"
+    }
+  ],
+  "omitted_noop_targets": [
+    {
+      "target": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPlayerObjectivePolicyUtilitySystemHelper.cs",
+      "original_sha256": "fc4311d9dd5a98b6322d1e8ca5c6eff8841baf8048b1295b1e4eaaae6c2ff5b5"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaObjectiveTouchContracts.cs",
+      "original_sha256": "b4d286d75bae0ddc74e006eab2291a7e53d7ad05209219e133cac705fb939b8d"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.Objective.cs",
+      "original_sha256": "fd19d4bd42e42284583cdd76044dde6ac05668757958dd0412b19314791420da"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs",
+      "original_sha256": "ff50ad53db4714ccb1ba1ae5558ba23e12d9cc12540f12f565e5373b667dcad0"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishPublicObjectiveOutlineGraphic.cs",
+      "original_sha256": "dbb2e74ab6203d5ae6fdbad971df75e78a12cb2c7cb84937e1074ff0a628a255"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjectiveMap.cs",
+      "original_sha256": "c6753ee95b09b7bcb02831a04e259375575de791da5d49401d47a57e3c948db4"
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicOrderFeedbackComponent.cs",
+      "original_sha256": "3b9581ba2d685f8765836b96c77351d14a767df80c59e8f0a27567e618ea2c23"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicObjectiveHudTests.cs",
+      "original_sha256": "78c6579d0c7723c1a4514a36429503df352c350fb6858deb2dc303dee547cfe2"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.PublicTransport.cs",
+      "original_sha256": "135b52652a6813a36192dcad4087a27813a5e5c5525a1006ba2f67cf1eca05f4"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.PublicTransport.cs",
+      "original_sha256": "2250b053ceb90b1c8244a9aa43a515a85a90e3dc5ca7de5e0831fc975ecf333c"
+    },
+    {
+      "target": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicOriginalTransportGroup.cs",
+      "original_sha256": "e6e227099fa955950328f844c19097e908360b47a2d5dfa4826e475349d33838"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOriginalTransportProjection.cs",
+      "original_sha256": "195c1c3d486cd2a7c7aba0193596466065e055fdfe6278751f12e13e70046ea4"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicOriginalTransportProjectionTests.cs",
+      "original_sha256": "b80ceed330337856ff939febd66ac14db3bc31d87f798770187a65dcc7420929"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalUnloadPresentation.cs",
+      "original_sha256": "d86089144273f780e207573704d59c1fff97cee31303405e55a3249218c43c90"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicTransport.cs",
+      "original_sha256": "a865f54ba2260ba9929e22c28fd0acb23faea325fb9739cedd7be8d331c29ce6"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicUnloadNativeTests.cs",
+      "original_sha256": "dbf2727ae60ecd8ba062da022dd4e6e42c5c4a18b893d0750281622c65ce37c2"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "original_sha256": "1541101bcd88fbf0f89f0f430358763496be802c0d2561092782790e51e392c2"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "original_sha256": "d7dfb98ca906c146d679222ab28fea408e53124072e4745b26b88179d4c52d72"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Watch.cs",
+      "original_sha256": "8b1580267ec9f44f39b8f0fb3d20690a459d4829175214ce668cd51551b08754"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.cs",
+      "original_sha256": "7a7aca29db4111a9c9d325902cc090082962c16bec7445bee7cee82b3ed84583"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaPlayComponents.cs",
+      "original_sha256": "c5c4906d4763ee2731165587e2f0002a7ed7aea1fbf1adb4d9c0a6aa1c4f423e"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaPlayInputSystem.cs",
+      "original_sha256": "e4596cc07016f00921fd4a9275244265ad074513bf4bcb039accdfaf4f5ec50a"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "original_sha256": "066caffbd9411e1b42a4c06cb1e62e24b5dddc3cc455c60ca102da83cb2517b8"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "original_sha256": "ff35fdb1447204c25b23399057cca4189190b2c218a35c9a55d33d6f6f57fb1e"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs",
+      "original_sha256": "2c34a52e06451df7d72beba80d135881b1c99700640208f4418266bbb1343746"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
+      "original_sha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+      "original_sha256": "b5c3f556b8c0e75f002ce062e5ddca97e4ab95d626015fe667b4e70b2b8a3740"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs",
+      "original_sha256": "535b2ecd675c23ea72dc1a0aac5d0c9cd628b16acb8fae53576505668552b98e"
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/VehicleRepairComponents.cs",
+      "original_sha256": "07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3"
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishNativeRepairSourceIdentity.cs",
+      "original_sha256": "8690e3ab03133cfa5d0865b1311fec1ef3b52e64a1a60f5faf102118a3eb3618"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "original_sha256": "22509c509bdbed4fc24b79cdc21df0032473890e01e7163733f43d000b201f4d"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryCommit.cs",
+      "original_sha256": "74f1165ed62173e371c42fd80366f1cd845b81f358441944a54eb5599c1d03c8"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs",
+      "original_sha256": "011b245a54487615bc4280283b80966888589793dc669c915c7ba0258f961fcc"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSnapshotService.cs",
+      "original_sha256": "0d2338207393dab7c0ef7c3492b77400079a3b2e472ec03d6bd11ea24c20250a"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairCheckpoint.cs",
+      "original_sha256": "e668e65568295ddf038c331aba3ce4b80d648bf7dea91d7500f33ab6702bf087"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairCheckpointGuard.cs",
+      "original_sha256": "ff42ecd9800d9a047aafcfaea264543791932dc83cb1c4da054a6380dee0d13a"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairWireCodec.cs",
+      "original_sha256": "d21212b245f26d8ddec11e6e5d972eb21b82f58770706d7f886f9e6d88506656"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairWireHash.cs",
+      "original_sha256": "ea42184c0f5b1b99a2ba8a8ffad9c32d2273a053378d838b31d4e2f9b695c187"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs",
+      "original_sha256": "3d83cf7f9e44d3ea8f115428846a3f2ac0ac3a3dd78762c2f20a2613d0aa9b55"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/VehicleRepairRules.cs",
+      "original_sha256": "43d1cc13c12c7db4b008ef17c66d8897d1e2015b1d2ffb89e9435f335c67631b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/Combat/Observation/CombatDamageObservationSystem.cs",
+      "original_sha256": "49012a11cbd9b3bc19c39ce2c0e4ae1b2b3da6a51129e8d1d22694e20fa3b2c1"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
+      "original_sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs",
+      "original_sha256": "769c268c257b0d940348f23d548115247d8b1e6766aae0e199df50f917e242a0"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/VehicleFieldRepairSystem.cs",
+      "original_sha256": "4b228828cb96f42bd969fa68585d1c38a55531942baed7a6a3d68d13fde7c3b2"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActiveRepairRecoveryIntegrationTests.cs",
+      "original_sha256": "8c65a3f638f870a74db39b0f9cab53dd391a9e0c8a8eea044c274b8dfc3d3bac"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActiveRepairRecoveryValidation.cs",
+      "original_sha256": "d28cf937bc02f42a4f2c72f0a7e43e291ec6f6d1543de4fa7114b3c5990ddb0c"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRepairCheckpointHelperTests.cs",
+      "original_sha256": "b8e20e9e56e1ec4467e300ee704a46c889dd1d95b3817c105114857ae869968b"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRepairWireTests.cs",
+      "original_sha256": "fe0b0abf66cec93f2dae33d488860c4f4442460709fd1b0b626d8fb2d3a2dd8d"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs",
+      "original_sha256": "dbf5c2c7b0c8708c3b9b35e958c0fd26465015bf32a418537dfafa792e04de87"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/VehicleRepairRulesTests.cs",
+      "original_sha256": "fbef855760d90537c2f66457eaf99f8991fc3b0fc5da939b1bb329d5146cc8b2"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiVehicleRepairModel.cs",
+      "original_sha256": "d3348519393b7f19ffe5c71dccbf2009245cc66b51c600a89df4a71c5d425a40"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldRepair.cs",
+      "original_sha256": "beed2913a2f23433ce2bc42ef564655f2734abac6e109bf6df24ea3ed4d1d55b"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.FieldRepair.cs",
+      "original_sha256": "3e4500281d0e5930babb505ae48782b30cdefeea03cc11d04826165cabdb24ed"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicRepairHudTests.cs",
+      "original_sha256": "1565be9a9f60082023a00554955d1c10eee5436457bee9814454d353a10e27dd"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Art/V3GradientGraphic.Appearance.cs",
+      "original_sha256": "47bec50449cbb08c6fffe1bd9b653bf48b3d71aba67d042617ed27890a4996fd"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
+      "original_sha256": "b926bbd0d83b34396900c5bf2f46f9a238e04b22bd86e16eca9e683f3f826499"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.ContentSize.cs",
+      "original_sha256": "5e2c3954ba0a92fd47c78ee995b87c8aea4d38fa02838298cf06ccb4b28bf317"
+    }
+  ],
+  "evidence": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_",
+  "offline": {
+    "actual_owning_assemblies": 10,
+    "actual_touch_controls": 26,
+    "actual_journey_controls": 23,
+    "analyzers_omitted_per_owner": 18,
+    "native_journey_executed": false
+  },
+  "required_native": [
+    {
+      "method": "Game.Tests.Editor.SkirmishConvoyServiceJourneyTests.RunFocusedValidation",
+      "marker": "[SkirmishConvoyServiceJourney] result=Passed controls=23 nativeMissionPending=1"
+    }
+  ],
+  "integration": "Apply only exact intended before-pins. Preserve all current codec/wire/shared repairs and current normal camera controls. Rebase intended targets explicitly if their before-pins change.",
+  "pending": [
+    "Native UI and exact original-truck selection/contact routing",
+    "Actual typed own service pad path and full-group accepted destinations",
+    "Actual quoted Materials reservation, repair progress/refund/heal and resume delivery",
+    "ARIA Stop/manual takeover and bounded handback in a normal mission",
+    "EN/FA mobile layout and real screenshots",
+    "Full FC/BT/CE missions, result/return and device acceptance"
+  ]
+}

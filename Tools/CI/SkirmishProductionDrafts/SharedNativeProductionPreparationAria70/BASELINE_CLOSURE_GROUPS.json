@@ -1,0 +1,392 @@
+{
+  "initial129_targets": 129,
+  "explicit_additions": 31,
+  "final_targets": 160,
+  "qa_harness_and_controls": [
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs",
+      "reason": "Strict f733+129 Runtime CS0246 at AttackOrderCommandSystem.cs302",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "0bde2b46fcfc48685b230a8681a908f88b51a3479888bbea040931048a4a0244"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyServiceJourneyTests.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "95421fedd674d35f852d2c681898bd41122fa48f2462ac5409c7c43041c75b33"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "reason": "Approved current main2ada lifecycle plus its opening startup hook",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/manifest.json",
+      "sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "reason": "Approved current main2ada lifecycle plus its opening startup hook",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/manifest.json",
+      "sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "reason": "Approved exact normal Menu launch priority and native production launch observation",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/MenuLaunchPriority/manifest.json",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchContract.cs",
+      "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "c470d4ccd6310c0ecf2ff69734ce086817e6d1f2f47d35ba1cfb35b3cfaf348b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchManifest.cs",
+      "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "543b849a45bb9c2c7238bca024e57cbbcd5bc25b83ac872213b28ef5f085c381"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "7b52175c37767996289bbba55e0c95d1478d55599dc6468d6036af8c09116c55"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "10ffe6e4ed4827a4c9377eb67ef327181d0221055921d313f4941822b31c6e26"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "d995c47820a4023aec136b8ec887c2b1d7716304d9c81e04923aef70a64ba4c6"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "aefc70d29c983bb7a064964092b1c284490687db7780180556ce4937d13b1d96"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs",
+      "reason": "Approved unchanged startup diagnostic and warm-stage hooks required by composed main",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/manifest.json",
+      "sha256": "c40af611e4c23d5a4eea40d451b8a9b8c0890f99f6e845f87df6abee0c461f75"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs",
+      "reason": "Approved unchanged startup diagnostic and warm-stage hooks required by composed main",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/manifest.json",
+      "sha256": "1875c21974c6aca56f5b94c5231c2d226bbcf91f40baeacdb6807dd6e8fe87e7"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs",
+      "reason": "Joint00c bounded observer/checkpoint dependency of Q PilotFacilityRelocation",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/PilotAndGround30SourceChunks/manifest.json",
+      "sha256": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b"
+    }
+  ],
+  "production_runtime_and_ui": [
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "f9f7d5fe567991b29da45c71085cb12427023ec44c8345fce666563c0a346ce4"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "c40ac69e7567a76acf30db6ad14223911fa1ef4f1916dfe93da367e2f731f90e"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "4b0d63c932264acd304504b554e3bead18e9799c2257b88eb25523a8ee53c680"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "e0753aa4fd4342950dd1f2ce42281d12bd0d7cfc3fad9790df12c7f472002c34"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "753fb5024c832f78b82fd421dabbe5929c5549340445622e4bca14b5595c759b"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "91affdefe1169c6f831e6d3a825e9ccd78d309e920c659093fd487f0fe698b93"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiPublicConvoyServiceModel.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "00c60a351b2b069e1e991d592445a9256f2e427162b6c80cb3ae3018cac54edf"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ConvoyService.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "37c6b8b3b0416f93429e48f8c4177593eca95f4b9acfe601c93c58071290f49f"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ConvoyService.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "e22e7b80a19994b5069fc30cc511fc4df50ed6696cc1721f229e6ce24a941a52"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/SkirmishConvoyServiceJourney.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "da373079e82223f5119cf38ec7f1415aefb8c9c92192e566c1a0c7568f87aef6"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs",
+      "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+      "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "sha256": "04c131b05c51bba28b2ae2889297a5e0d4ec6779866a5bb5ba50520e95cd2fa1"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "0d1875e3801c098412c9f8bf90b617b4db6e5b752a5db60f4c9076fa732698e7"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+      "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "sha256": "e26011b3277eb6909bc917ba5d74b80bdeef96036cb162e1792fc6e7dce7003b"
+    }
+  ],
+  "physical_source_location_groups": {
+    "Runtime": [
+      {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs",
+        "reason": "Strict f733+129 Runtime CS0246 at AttackOrderCommandSystem.cs302",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "0bde2b46fcfc48685b230a8681a908f88b51a3479888bbea040931048a4a0244"
+      },
+      {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "753fb5024c832f78b82fd421dabbe5929c5549340445622e4bca14b5595c759b"
+      },
+      {
+        "target": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "0d1875e3801c098412c9f8bf90b617b4db6e5b752a5db60f4c9076fa732698e7"
+      },
+      {
+        "target": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "e26011b3277eb6909bc917ba5d74b80bdeef96036cb162e1792fc6e7dce7003b"
+      }
+    ],
+    "UI": [
+      {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "f9f7d5fe567991b29da45c71085cb12427023ec44c8345fce666563c0a346ce4"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "c40ac69e7567a76acf30db6ad14223911fa1ef4f1916dfe93da367e2f731f90e"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "4b0d63c932264acd304504b554e3bead18e9799c2257b88eb25523a8ee53c680"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "e0753aa4fd4342950dd1f2ce42281d12bd0d7cfc3fad9790df12c7f472002c34"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "91affdefe1169c6f831e6d3a825e9ccd78d309e920c659093fd487f0fe698b93"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Shell/UiPublicConvoyServiceModel.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "00c60a351b2b069e1e991d592445a9256f2e427162b6c80cb3ae3018cac54edf"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ConvoyService.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "37c6b8b3b0416f93429e48f8c4177593eca95f4b9acfe601c93c58071290f49f"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ConvoyService.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "e22e7b80a19994b5069fc30cc511fc4df50ed6696cc1721f229e6ce24a941a52"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Screens/SkirmishConvoyServiceJourney.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "da373079e82223f5119cf38ec7f1415aefb8c9c92192e566c1a0c7568f87aef6"
+      },
+      {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "04c131b05c51bba28b2ae2889297a5e0d4ec6779866a5bb5ba50520e95cd2fa1"
+      }
+    ],
+    "Tests": [
+      {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyServiceJourneyTests.cs",
+        "reason": "Reviewed CE service baseline required by ARIA58 public HUD/service journey",
+        "approved_package": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+        "sha256": "95421fedd674d35f852d2c681898bd41122fa48f2462ac5409c7c43041c75b33"
+      },
+      {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "aefc70d29c983bb7a064964092b1c284490687db7780180556ce4937d13b1d96"
+      }
+    ],
+    "Editor": [
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+        "reason": "Approved current main2ada lifecycle plus its opening startup hook",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/manifest.json",
+        "sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+        "reason": "Approved current main2ada lifecycle plus its opening startup hook",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/manifest.json",
+        "sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+        "reason": "Approved exact normal Menu launch priority and native production launch observation",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/MenuLaunchPriority/manifest.json",
+        "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+        "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+        "sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchContract.cs",
+        "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+        "sha256": "c470d4ccd6310c0ecf2ff69734ce086817e6d1f2f47d35ba1cfb35b3cfaf348b"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchManifest.cs",
+        "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+        "sha256": "543b849a45bb9c2c7238bca024e57cbbcd5bc25b83ac872213b28ef5f085c381"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+        "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+        "sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+        "reason": "Explicit BatchV3 core/request authority and restore/exit lifecycle dependency",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+        "sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "7b52175c37767996289bbba55e0c95d1478d55599dc6468d6036af8c09116c55"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "10ffe6e4ed4827a4c9377eb67ef327181d0221055921d313f4941822b31c6e26"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs",
+        "reason": "Approved Guard full-member observation/input lifecycle and exact receipt controls",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+        "sha256": "d995c47820a4023aec136b8ec887c2b1d7716304d9c81e04923aef70a64ba4c6"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs",
+        "reason": "Approved unchanged startup diagnostic and warm-stage hooks required by composed main",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/manifest.json",
+        "sha256": "c40af611e4c23d5a4eea40d451b8a9b8c0890f99f6e845f87df6abee0c461f75"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs",
+        "reason": "Approved unchanged startup diagnostic and warm-stage hooks required by composed main",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/manifest.json",
+        "sha256": "1875c21974c6aca56f5b94c5231c2d226bbcf91f40baeacdb6807dd6e8fe87e7"
+      },
+      {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs",
+        "reason": "Joint00c bounded observer/checkpoint dependency of Q PilotFacilityRelocation",
+        "approved_package": "Tools/CI/SkirmishProductionDrafts/PilotAndGround30SourceChunks/manifest.json",
+        "sha256": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b"
+      }
+    ]
+  },
+  "clarification": "QA group includes AriaMoveExecutionEvidence.cs, a passive evidence type in Runtime, plus Editor/Tests sources. Physical location groups are listed independently."
+}

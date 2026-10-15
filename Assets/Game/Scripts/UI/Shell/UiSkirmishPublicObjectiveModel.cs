@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public sealed class UiSkirmishPublicObjectiveModel
+    public sealed partial class UiSkirmishPublicObjectiveModel
     {
         public bool Applicable, Available, Paused, CommandFeedbackReady;
         public string AttemptId, UnavailableText,PolicyUnavailableText;

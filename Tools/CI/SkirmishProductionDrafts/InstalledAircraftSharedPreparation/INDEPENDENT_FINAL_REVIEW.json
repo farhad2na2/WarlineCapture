@@ -1,0 +1,47 @@
+{
+  "result": "IndependentFinalReviewClear",
+  "composition": {
+    "path": "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/composition.manifest.json",
+    "sha256": "bc9fa8e9fb1acd84d0d2bd9e9dc2e4c2655d3056b2c23c5aadc147f0eb4ea1b8"
+  },
+  "sourceAndCurrentBeforePinsChecked": 15,
+  "inputManifestPinsChecked": 6,
+  "sourceReview": [
+    "Blade buffer reacquired after structural changes;55 assertions unchanged",
+    "Typed pad fixture inverse-scaled to intended world metres with actual edge projection checks;runtime mask unchanged",
+    "Verify installed Transport/canonical/rotor and exact fresh report SHA/provenance; no creators or old hash refresh",
+    "All independent installed/framing55/terminal6/logical19/ARIA70 failures retained before final pass",
+    "Reviewed All1209 scope unchanged; authoring controls then normal scene warmup; no sourcegroup collection during preparation"
+  ],
+  "proof": {
+    "path": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/installed-resume-owning-nrt4blbn/result.json",
+    "sha256": "daa1c1d107884e694171af47bd4dbd68bd585ca5d6c47369be97c7026e4c1aee",
+    "result": "PassedStrict160EditorTestsExplicit15",
+    "owners": [
+      {
+        "name": "Game.Editor",
+        "exitCode": 0,
+        "sources": 828,
+        "refs": 353
+      },
+      {
+        "name": "Game.Tests.Editor",
+        "exitCode": 0,
+        "sources": 758,
+        "refs": 332
+      }
+    ],
+    "consumed": 15,
+    "mismatches": 0,
+    "noFallback": true,
+    "noAmbientAssets": true
+  },
+  "wrapper": {
+    "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-02-verify-authoring-warmup/run-checked.ps1",
+    "sha256": "f64780de24ba27a45aed3f0d74c44ac7abeaae0e686092b9af570dbb7ed24d14",
+    "review": "Exact installed-verification entry; fresh report SHA readback;checked wrapper actual0 then required original independent markers except intentionally omitted generator/old camera facade, six installed/authoring/warmup markers, suiteFailed refusal. No generation/refresh entry dispatched."
+  },
+  "snapshotAfterWrapperExitAttribution": "Required subsequent root timing policy; actual snapshot not inferred from pre-exit marker",
+  "nativeExecution": "Pending root next checked wrapper",
+  "assetsNativeGitWrites": false
+}

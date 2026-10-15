@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "scope": "TestOnlyActualWorldMetreFixturePadCorrection",
+  "files": [
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTypedSpawnConstraintTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TypedSpawnFixtureWorldScaleSuccessor/SkirmishTypedSpawnConstraintTests.cs.txt",
+      "before_sha256": "f62d55508eea88ea630b12f80fd14104bc4ac315ad1400b09483892bd57daa6a",
+      "sha256": "1a5e995bff4d4a8fb66eebb2af1e7c0f5ab43a660b62cbe78d2e7de02da19a89",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "entry": "Game.Tests.Editor.SkirmishTypedSpawnConstraintTests.RunFocusedValidation",
+  "marker": "[SkirmishTypedSpawnConstraintTests] result=Passed controls=5 nativeMissionAcceptance=Pending",
+  "native_failure": {
+    "log": "Logs/SkirmishProduction/SharedNativePreparation/20261015-01/unity.log",
+    "line": 49,
+    "failure": "ExpectedFalse at center mask; source frame scales local4.5square into3.072x1.084world rectangle"
+  },
+  "runtime_changed": false,
+  "assertions_weakened": false,
+  "owning_proof": "Pending",
+  "native_controls": "Pending"
+}

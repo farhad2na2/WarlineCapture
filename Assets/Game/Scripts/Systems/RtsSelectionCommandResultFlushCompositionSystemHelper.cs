@@ -1204,7 +1204,7 @@ namespace Game.Runtime
                         result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
                             ? GameText.Get("tactical.feedback.exiting_unit", "Exiting unit.")
                             : GameText.Get("tactical.feedback.exiting_passengers", "Exiting passengers.")));
-                    if(context.ApplyHudCommandResult!=null){SkirmishOriginalUnloadPresentation.MarkPresented(em,result);SkirmishPublicOrderFeedback.MarkPresented(em,result.Kind,result.RequestId,result.Frame);}
+                    if(context.ApplyHudCommandResult!=null){SkirmishOriginalUnloadPresentation.MarkPresented(em,result);SkirmishPublicBoardingPresentation.ObserveResult(em,result,true);SkirmishPublicOrderFeedback.MarkPresented(em,result.Kind,result.RequestId,result.Frame);}
                     continue;
                 }
 

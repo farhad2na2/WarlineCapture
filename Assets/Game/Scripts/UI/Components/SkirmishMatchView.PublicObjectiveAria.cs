@@ -11,6 +11,8 @@ namespace Game.UI.Runtime
     public sealed class AriaPresentedObjectiveFrame
     {
         public SkirmishPublicGoalSnapshot Goal;
+        public AriaPresentedConvoyService ConvoyService;
+        public UiSkirmishPublicObjectiveModel OwnModel;
         public SkirmishPublicPlayerGroup[] Groups = Array.Empty<SkirmishPublicPlayerGroup>();
         public SkirmishPublicPlayerApproach[] Approaches = Array.Empty<SkirmishPublicPlayerApproach>();
         public AriaPresentedObjectiveTarget[] Targets = Array.Empty<AriaPresentedObjectiveTarget>();

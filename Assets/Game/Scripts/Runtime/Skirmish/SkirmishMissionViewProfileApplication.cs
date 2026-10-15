@@ -73,17 +73,29 @@ namespace Game.Runtime
             else if (visual.Current == (byte)UnitRenderVisualKind.Mid && em.HasComponent<UnitMidLodInstanceReference>(actor)) root = em.GetComponentData<UnitMidLodInstanceReference>(actor).Instance;
             else if (visual.Current == (byte)UnitRenderVisualKind.Low && em.HasComponent<UnitLowLodInstanceReference>(actor)) root = em.GetComponentData<UnitLowLodInstanceReference>(actor).Instance;
             if (root == Entity.Null || !em.Exists(root)) return false;
-            var visited = new HashSet<Entity>(); var pending = new Queue<Entity>(); pending.Enqueue(root);
-            bool found = false;
-            while (pending.Count > 0)
+            if(em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.TransportPlane)
+                return TryReadRigidAircraftVisibleHierarchy(em,root,RenderBoundsGateway.Provider as IRenderVisibleGeometryPresentation,out combined);
+            return TryReadCanonicalAircraftVisibleHierarchy(em,actor,root,RenderBoundsGateway.Provider as IRenderAircraftVisibleGeometryPresentation,out combined);
+        }
+
+        public static bool RequiresRigidAircraftFraming(EntityManager em,Entity actor)=>em.Exists(actor)&&
+            em.HasComponent<SkirmishUnitRoleComponent>(actor)&&SkirmishRoleIds.Category(em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role)==SkirmishPopulationCategory.Air&&TryResolve(em,out _);
+
+        public static bool TryReadRigidAircraftVisibleHierarchy(EntityManager em,Entity root,IRenderVisibleGeometryPresentation provider,out Bounds combined)
+        {
+            combined=default;if(provider==null||root==Entity.Null||!em.Exists(root))return false;
+            var visited=new HashSet<Entity>();var pending=new Queue<Entity>();pending.Enqueue(root);bool found=false;
+            while(pending.Count>0)
             {
-                var entity = pending.Dequeue();
-                if (!visited.Add(entity) || !em.Exists(entity) || em.HasComponent<Disabled>(entity)) continue;
-                if (em.HasBuffer<LinkedEntityGroup>(entity)) foreach (var child in em.GetBuffer<LinkedEntityGroup>(entity)) pending.Enqueue(child.Value);
-                if (!RenderBoundsGateway.Provider.TryReadWorldBounds(em, entity, out var bounds)) continue;
-                if (!Finite(bounds.center) || !Finite(bounds.extents) || bounds.extents.x <= 0 || bounds.extents.y <= 0 || bounds.extents.z <= 0) return false;
-                if (!found) combined = bounds; else combined.Encapsulate(bounds);
-                found = true;
+                var entity=pending.Dequeue();if(!visited.Add(entity))continue;
+                if(visited.Count>4096||!em.Exists(entity))return false;
+                if(em.HasComponent<Disabled>(entity))continue;
+                if(em.HasBuffer<LinkedEntityGroup>(entity))foreach(var child in em.GetBuffer<LinkedEntityGroup>(entity,true))pending.Enqueue(child.Value);
+                if(em.HasBuffer<Unity.Transforms.Child>(entity))foreach(var child in em.GetBuffer<Unity.Transforms.Child>(entity,true))pending.Enqueue(child.Value);
+                if(!provider.TryReadVisibleGeometryBounds(em,entity,out var bounds,out bool hasDraw,out _))return false;
+                if(!hasDraw)continue;
+                if(!Finite(bounds.center)||!Finite(bounds.extents)||bounds.extents.x<0||bounds.extents.y<0||bounds.extents.z<0)return false;
+                if(!found)combined=bounds;else combined.Encapsulate(bounds);found=true;
             }
             return found;
         }
@@ -91,7 +103,7 @@ namespace Game.Runtime
         public static bool TryApplyAircraftFollowPose(EntityManager em, Entity actor, Camera camera, ref TacticalFollowCameraPoseComponent pose)
         {
             if (camera == null || !TryAircraftBounds(em,actor,out var profile,out var combined) ||
-                !TryAircraftPose(combined,profile,camera.aspect,camera.nearClipPlane,out var position,out var rotation)) return false;
+                !TryAircraftPose(combined,profile,camera.aspect,camera.nearClipPlane,em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.TransportPlane?profile.AircraftMinimumDistance:camera.nearClipPlane*2+combined.extents.magnitude,out var position,out var rotation)) return false;
             pose.DesiredPosition = position; pose.DesiredRotation = new Unity.Mathematics.quaternion(rotation.x,rotation.y,rotation.z,rotation.w);
             pose.LookAt = combined.center; pose.FieldOfView = profile.AircraftFieldOfView; pose.Orthographic = 0; pose.OrthographicSize = 0;
             return true;
@@ -102,14 +114,18 @@ namespace Game.Runtime
         public static bool TryAircraftPose(Bounds bounds, Game.Configs.SkirmishMissionViewProfile profile,
             float aspect, float nearClip, out Vector3 position, out Quaternion rotation)
         {
+            return TryAircraftPose(bounds,profile,aspect,nearClip,profile!=null?profile.AircraftMinimumDistance:0,out position,out rotation);
+        }
+        static bool TryAircraftPose(Bounds bounds,Game.Configs.SkirmishMissionViewProfile profile,float aspect,float nearClip,float minimumDistance,out Vector3 position,out Quaternion rotation)
+        {
             position = default; rotation = default;
-            if (profile == null || !profile.IsValid || !float.IsFinite(aspect) || aspect <= 0 || !float.IsFinite(nearClip) || nearClip <= 0 ||
+            if (!float.IsFinite(minimumDistance)||minimumDistance<=0||profile == null || !profile.IsValid || !float.IsFinite(aspect) || aspect <= 0 || !float.IsFinite(nearClip) || nearClip <= 0 ||
                 !Finite(bounds.center) || !Finite(bounds.extents) || bounds.extents.x <= 0 || bounds.extents.y <= 0 || bounds.extents.z <= 0) return false;
             rotation = Quaternion.Euler(profile.AircraftPitch, profile.Yaw, 0);
             Vector3 right = rotation * Vector3.right, up = rotation * Vector3.up, forward = rotation * Vector3.forward;
             float tangent = Mathf.Tan(profile.AircraftFieldOfView * Mathf.Deg2Rad * .5f);
             float fraction = profile.PlaneMaximumViewportDimension;
-            float distance = profile.AircraftMinimumDistance;
+            float distance = minimumDistance;
             for (int i = 0; i < 8; i++)
             {
                 var point = Vector3.Scale(bounds.extents, new Vector3((i&1)==0?-1:1, (i&2)==0?-1:1, (i&4)==0?-1:1));
@@ -122,10 +138,23 @@ namespace Game.Runtime
             position = bounds.center - forward * distance;
             return Finite(position);
         }
-        private static bool SupportedAircraft(Game.Configs.SkirmishMissionViewProfile profile,SkirmishRoleKind role) =>
-            (profile.AuthoredNonBaseAssault || profile.AuthoredGenericBaseAssault) ? SkirmishRoleIds.Category(role) == SkirmishPopulationCategory.Air ||
-                role == SkirmishRoleKind.TransportPlane || role == SkirmishRoleKind.TransportHeli || role == SkirmishRoleKind.Drone :
-                role == SkirmishRoleKind.TransportPlane;
+        private static bool SupportedAircraft(Game.Configs.SkirmishMissionViewProfile profile,SkirmishRoleKind role)=>SkirmishRoleIds.Category(role)==SkirmishPopulationCategory.Air;
+        static bool TryReadCanonicalAircraftVisibleHierarchy(EntityManager em,Entity actor,Entity root,IRenderAircraftVisibleGeometryPresentation provider,out Bounds combined)
+        {
+            combined=default;if(provider==null||root==Entity.Null||!em.Exists(root))return false;
+            var seen=new HashSet<Entity>();var queue=new Queue<Entity>();queue.Enqueue(root);bool found=false;
+            while(queue.Count>0)
+            {
+                var node=queue.Dequeue();if(!seen.Add(node))continue;if(seen.Count>4096||!em.Exists(node))return false;
+                if(em.HasComponent<Disabled>(node))continue;
+                if(em.HasBuffer<LinkedEntityGroup>(node))foreach(var child in em.GetBuffer<LinkedEntityGroup>(node,true))queue.Enqueue(child.Value);
+                if(em.HasBuffer<Unity.Transforms.Child>(node))foreach(var child in em.GetBuffer<Unity.Transforms.Child>(node,true))queue.Enqueue(child.Value);
+                if(!provider.TryReadAircraftVisibleGeometryBounds(em,actor,node,out var bounds,out bool drawn,out _))return false;
+                if(!drawn)continue;if(!Finite(bounds.center)||!Finite(bounds.extents)||bounds.extents.x<0||bounds.extents.y<0||bounds.extents.z<0)return false;
+                if(!found)combined=bounds;else combined.Encapsulate(bounds);found=true;
+            }
+            return found;
+        }
         private static bool Finite(Vector3 value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
     }
 }

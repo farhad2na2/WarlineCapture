@@ -1,0 +1,1948 @@
+{
+  "schema_version": 1,
+  "scope": "Exact isolated f733 source capability adoption; asset/provenance closure remains a separate native gate",
+  "baseline": "f733f9763e987b97a8663c24fc6c50929df4895d",
+  "files": [
+    {
+      "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab",
+      "source": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab",
+      "before_sha256": "a001382a66ffb83b39e85b19010ee822e945f5c1c42c56b3821d421512c380f4",
+      "sha256": "a001382a66ffb83b39e85b19010ee822e945f5c1c42c56b3821d421512c380f4",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab.meta",
+        "sha256": "8e916f002face0a602a2150d68f4acb12b63165fb65b6c6ce095534a31a85ff7",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab",
+      "source": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab",
+      "before_sha256": "d4b0050eed247b25e1a79c25ba00419bfb6ea93d3d418d165a0c5d4b7cb6d7f7",
+      "sha256": "d4b0050eed247b25e1a79c25ba00419bfb6ea93d3d418d165a0c5d4b7cb6d7f7",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab.meta",
+        "sha256": "688088ed98e895cc20cc7e26549b7ef6e9f99137ff2c1665e54d76bfbb3246b1",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
+      "source": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
+      "before_sha256": "efc514a45864a1bdcb44c33861aef98a6c6b192747cc48ecff5e9f99d18cca68",
+      "sha256": "efc514a45864a1bdcb44c33861aef98a6c6b192747cc48ecff5e9f99d18cca68",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs.meta",
+        "sha256": "3881e34b64e313d487eb0948e050fa3b809bf8241c055efd323a76367a021bdc",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishAircraftRotorGeometryConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishAircraftRotorGeometryConfig.cs.txt",
+      "before_sha256": null,
+      "sha256": "d5cad85b96d692654c1528c64d32049a1c20409f2e5f0220a3b1b4207fa14631",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishAircraftRotorGeometryConfig.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishCanonicalAircraftGeometryConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishCanonicalAircraftGeometryConfig.cs.txt",
+      "before_sha256": null,
+      "sha256": "971e8c3aeeaa01225d90d73beb2173cf0fd5e82c8b8346d067adfa7183bcaae7",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishCanonicalAircraftGeometryConfig.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRigidAircraftGeometryConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishRigidAircraftGeometryConfig.cs.txt",
+      "before_sha256": "9f2a72f8c62904ac3c939231d4ba3a2c7b7aa81522a32489bc81ac0816c5e9f6",
+      "sha256": "52e5a72b302769c94e0aeb01fa92abdbf6856120ea67a006ab805c65ccb3505c",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRigidAircraftGeometryConfig.cs.meta",
+        "sha256": "f2619d78b8acbcaa0bb0a118ff426afb56449cc030e8d642c575fb66bdeb51a3",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRotorGeometryAuthoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishAircraftRotorGeometryAuthoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "103fa980f1407772094dddbe9d0c5a078149e53401bfaec85effd5a8b6d1a3ca",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRotorGeometryAuthoring.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCanonicalAircraftGeometryAuthoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishCanonicalAircraftGeometryAuthoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "9e04015193c67e295980f01ed38dd43e0081d6f4606625da28e28e5c3eb51079",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCanonicalAircraftGeometryAuthoring.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishRigidAircraftGeometryAuthoring.cs",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishRigidAircraftGeometryAuthoring.cs",
+      "before_sha256": "ffd76952eda28c9552df165bbd4fd3b0c0dc3fcec0f3a552887f878bb7b410c7",
+      "sha256": "ffd76952eda28c9552df165bbd4fd3b0c0dc3fcec0f3a552887f878bb7b410c7",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishRigidAircraftGeometryAuthoring.cs.meta",
+        "sha256": "1e1735bd7d9ec6fa854d566f593e5b8c50f8cf09a31e245f9b2c33b6af996e7b",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/CanonicalAircraftVisibleGeometryPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/CanonicalAircraftVisibleGeometryPresentation.cs.txt",
+      "before_sha256": null,
+      "sha256": "8d4b8f1ed86879d96894f3c432880a1364a99bd44d3113db284c108cbf1ecabd",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/CanonicalAircraftVisibleGeometryPresentation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderAircraftVisibleGeometryPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/IRenderAircraftVisibleGeometryPresentation.cs.txt",
+      "before_sha256": null,
+      "sha256": "1054036e10260f8c9d2903becba7185af914e66bd751f848d37da5b486d469f1",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderAircraftVisibleGeometryPresentation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderVisibleGeometryPresentation.cs",
+      "source": "Assets/Game/Scripts/Rendering/Contracts/IRenderVisibleGeometryPresentation.cs",
+      "before_sha256": "cfa2b953a3fcb51f17b35a2e158b63a03d6df4554afddf1d9d1f4757b547d91b",
+      "sha256": "cfa2b953a3fcb51f17b35a2e158b63a03d6df4554afddf1d9d1f4757b547d91b",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderVisibleGeometryPresentation.cs.meta",
+        "sha256": "bafeb3714e3416e1110beb2e2beeaddab3a2ba800d694844a969594c384a4ff5",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/Contracts/SkirmishRigidRotorSweep.cs",
+      "source": "Assets/Game/Scripts/Rendering/Contracts/SkirmishRigidRotorSweep.cs",
+      "before_sha256": "a5f75fa8d32dbf701fa375383555b2c91af1c4756adab87d23b6e7434b0a64eb",
+      "sha256": "a5f75fa8d32dbf701fa375383555b2c91af1c4756adab87d23b6e7434b0a64eb",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/Contracts/SkirmishRigidRotorSweep.cs.meta",
+        "sha256": "27735b48965c85098a0d840ec5375d094fb35030269dd3dc6b55586bf2f1b09b",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RenderBoundsPresentation.cs.txt",
+      "before_sha256": "de7375d338bdf41ae6d7c3c69d81c54a08889fe7311c58be2c1ce9ca05aa622d",
+      "sha256": "82bf379f5bb3e5ae55705f608c3e4a26ed915afffeec7488c79b9448cecfb5a4",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs.meta",
+        "sha256": "6a2afb72aaf3609e2f3af1c7f5e7c4ac249cdde925fd662402b3d5991432f415",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/RigidAircraftVisibleGeometryPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RigidAircraftVisibleGeometryPresentation.cs.txt",
+      "before_sha256": "2e964501156d3b7e5ed9167bab03c79ecfa7b4a86f687825794e039a0aa3c963",
+      "sha256": "d117975ab0f8d90ca1829475e85a74c52a06d8257e214d4d93706a3b28512737",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/RigidAircraftVisibleGeometryPresentation.cs.meta",
+        "sha256": "872e96f7dcdec96d79302fa67a911e2e39f39e60710ebb4a6016fd257db7febc",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/SkirmishAircraftRotorDrawPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishAircraftRotorDrawPresentation.cs.txt",
+      "before_sha256": null,
+      "sha256": "d7ec6949a891ccf55bb00eb0d2c148d1ad76019b2be121b6c38b49fbbc2057b2",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/SkirmishAircraftRotorDrawPresentation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishMissionViewProfileApplication.cs.txt",
+      "before_sha256": "344d4440e82dda73605560a80b5d11f0251df19bc88e74e0d36cfae0880e0d22",
+      "sha256": "ed8cd00685e06b7d62e0e0afd177a2c1bc9a876251635c53f0556bb15d38db94",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs.meta",
+        "sha256": "17972657ad8b91fa5d72662631ec79fae8364d10b6fda9f8800adf1e7a21d0e1",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPlacementCameraFit.cs",
+      "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPlacementCameraFit.cs",
+      "before_sha256": "503663a2db8413877b4ced3891c638322064d8e1943a9804251a83777f3d0300",
+      "sha256": "503663a2db8413877b4ced3891c638322064d8e1943a9804251a83777f3d0300",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPlacementCameraFit.cs.meta",
+        "sha256": "e67ac33ebf455be6dfcddddaae6e0ed2a357f0acdd35843954096794e7a4f16d",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs",
+      "before_sha256": "39281b2082095b95247c967e46051b2424786cb39a7f1aa76f73d9ac6e46b2d7",
+      "sha256": "39281b2082095b95247c967e46051b2424786cb39a7f1aa76f73d9ac6e46b2d7",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs.meta",
+        "sha256": "e7b36cc986852c4b14c60a0b3028b2ed628518999f2eec9a86ffbd3698a7b6bd",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+      "before_sha256": "38cc9c3666d1ef8e1376a795729d0f91eb451ecd69fe98b5779d3e1defc7e6f4",
+      "sha256": "38cc9c3666d1ef8e1376a795729d0f91eb451ecd69fe98b5779d3e1defc7e6f4",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs.meta",
+        "sha256": "e42bbed7189aa29f1518ba6e0461744ca31dcdb0bbc73a36aea56ca1866da063",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs",
+      "before_sha256": "ab91531efbac4d3fec798efd91d8a34464e9cf480e5d773832df7bd15985510a",
+      "sha256": "ab91531efbac4d3fec798efd91d8a34464e9cf480e5d773832df7bd15985510a",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs.meta",
+        "sha256": "3040c2b2065ca3a25c88f5f4186ca8751fc994e312301d51c4bad546930c1e0b",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
+      "before_sha256": "0c4d200f3807042c6b7f3e30c0db545838b87ff9fba1edf8f5be8a999bbb4be6",
+      "sha256": "0c4d200f3807042c6b7f3e30c0db545838b87ff9fba1edf8f5be8a999bbb4be6",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs.meta",
+        "sha256": "36ff5fb179ef393db2a6cdfbdfe87057645efd1d9ad66ad57072b55a947ae5c6",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+      "before_sha256": "219744641ac1de1e5316d4cdc6a3f6236b08e42abad9986f982ba1540a8fe037",
+      "sha256": "219744641ac1de1e5316d4cdc6a3f6236b08e42abad9986f982ba1540a8fe037",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs.meta",
+        "sha256": "6f97955f67d512de757b1c2e28b08444a34927e243cd5f3a6262cb2d601bbab8",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+      "before_sha256": "b8b6b9080698cdf2974716179d79b9aabb04bfa502209ed1a5fdb8e2a85c73a7",
+      "sha256": "b8b6b9080698cdf2974716179d79b9aabb04bfa502209ed1a5fdb8e2a85c73a7",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs.meta",
+        "sha256": "0de6a55463a2b1f9824ea06ef6d55a9fa849ed89cbf95aa0725e9dcbfea3ae13",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs",
+      "before_sha256": "0bf9a1432c40c4702fc1d130aaa2f081fda7021f91f7ee6a60f7bdde68a378bd",
+      "sha256": "0bf9a1432c40c4702fc1d130aaa2f081fda7021f91f7ee6a60f7bdde68a378bd",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs.meta",
+        "sha256": "7de0ef030c754ffd26a9d8ce4456819912093c51d40f4bfe1d963891424b9249",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/FocusedUnitLifecycleCompositionSystemHelper.cs.txt",
+      "before_sha256": "c9e7b5dcc8e96dcc3501995a0d852d333cf5db1e423d63516c80a15c24fcf62e",
+      "sha256": "bfac5e01f50770a755664b71f7bd1bf7117ebd7ee28bda62b74bfaabf97bd525",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs.meta",
+        "sha256": "f8f82c14e7806177feae5a48baa76a0592b04bba569f5ba297836d95f31a4d10",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RtsCameraRequestSystem.cs.txt",
+      "before_sha256": "725ac4dff80479ab048427589417a05c60d6819f788ee86cf6aff19365deb78d",
+      "sha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs.meta",
+        "sha256": "8aa2f9e092ff4282cb641e5b367669286d2ad821095f59f2e0fe9ea5d305f720",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RtsCameraSystem.AircraftFocus.cs.txt",
+      "before_sha256": "5bb4731764ff2b4187dabf04bedec380aee58fb2f0f19fed6bd52699b5c4db4a",
+      "sha256": "ae0bf6a9081e8d5e7138c7760a6c74bd6d9516f623c14e96357b8d75e7361c38",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs.meta",
+        "sha256": "b45d1935031094e9f3bf3f7b8c6978e5a38d044633b92be87da5a12cb6804560",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs",
+      "source": "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs",
+      "before_sha256": "0719c8828e4348e708c25dc22905dfb127b335b697574f68941839a2d5f6f3fb",
+      "sha256": "0719c8828e4348e708c25dc22905dfb127b335b697574f68941839a2d5f6f3fb",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs.meta",
+        "sha256": "7505514acc37611753ea53ac10273fbcadacb24ecca4f60561a7d074ce4b5c3e",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.AircraftFocus.cs",
+      "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.AircraftFocus.cs",
+      "before_sha256": "491f5186c984d9c960ade316885d1fee8c021223cc18ddfbd83b5e9d52cca4ba",
+      "sha256": "491f5186c984d9c960ade316885d1fee8c021223cc18ddfbd83b5e9d52cca4ba",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.AircraftFocus.cs.meta",
+        "sha256": "aafd1fd954b8c919e0182e09e150821d26547d9104dc89fe04fdb085231a90e7",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Placement.cs",
+      "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Placement.cs",
+      "before_sha256": "c3bd9824cc96ce9ec916e1409ff0ba29c5f41dc5198c8704b62464b627b961d2",
+      "sha256": "c3bd9824cc96ce9ec916e1409ff0ba29c5f41dc5198c8704b62464b627b961d2",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Placement.cs.meta",
+        "sha256": "d2300aec1e579c3efbb6925b3fd2d6ce6fd484e8c421f6c4eda8260f9cbc7e39",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+      "before_sha256": "32a45375e1981705f3677f9bb72746acb2b48cd31d3aa69f82b95aa048c3a7c3",
+      "sha256": "32a45375e1981705f3677f9bb72746acb2b48cd31d3aa69f82b95aa048c3a7c3",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs.meta",
+        "sha256": "2861c3d999c8878b155414bf1fcd774ae0532d26cd1428036bf211aa6646cf66",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
+      "before_sha256": "26baca41312d4d3d1a5de1318435132b29208244a5cac5b03f9244ac6e94bf23",
+      "sha256": "26baca41312d4d3d1a5de1318435132b29208244a5cac5b03f9244ac6e94bf23",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs.meta",
+        "sha256": "e219ddd019b971fd9c2f5217cc29c3998eb881b02234e2ed3e230fb558fa3325",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs",
+      "source": "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs",
+      "before_sha256": "63cb986cb6ea782aa07d2bcf010ef3d637d400c36b910d44553d3f16175ccc9e",
+      "sha256": "63cb986cb6ea782aa07d2bcf010ef3d637d400c36b910d44553d3f16175ccc9e",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs.meta",
+        "sha256": "abb1d4c5ac4520a19c3dc11a2bfa1bf8077e383967255804b58326ff83871e37",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs",
+      "source": "Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs",
+      "before_sha256": "f7a9a0a084850fd450106a929188b8db5d8b29b34344d460eb7ccccb26e82b7e",
+      "sha256": "f7a9a0a084850fd450106a929188b8db5d8b29b34344d460eb7ccccb26e82b7e",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs.meta",
+        "sha256": "5601127d8499b0143387ac59a5b4f32debccbdfd085cdabcbe74713c5b36269d",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusTests.cs",
+      "before_sha256": "9a1d2fe00834cbfea648fa0533f847cfd98b9cb7605cfc60f6db5a1b57d63171",
+      "sha256": "9a1d2fe00834cbfea648fa0533f847cfd98b9cb7605cfc60f6db5a1b57d63171",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusTests.cs.meta",
+        "sha256": "98d9a3d5f592e0c558167e1e743a7138d90953c170aa85f6666fab8273f59652",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredRotorAircraftFramingTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishMeasuredRotorAircraftFramingTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "b497bd6b0a940fb8c50cfaaa74cf04bb0b0f63a0872eedb5c0044c137e88ee8f",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredRotorAircraftFramingTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPlacementCameraFitTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPlacementCameraFitTests.cs",
+      "before_sha256": "9249b9f0bdf63d3aa84d35cd488d788bc0325fe529fc6762a263c8b4d52b907a",
+      "sha256": "9249b9f0bdf63d3aa84d35cd488d788bc0325fe529fc6762a263c8b4d52b907a",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPlacementCameraFitTests.cs.meta",
+        "sha256": "894ba9ba90c8e46f6ece0fa59501e0a7c69174fc32f97e347cd467256cd2b479",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidAircraftGeometryTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidAircraftGeometryTests.cs",
+      "before_sha256": "7f11069ea69e517aaf151076d14e289fdaa9ec019b1268264efb5bf9bdc3351d",
+      "sha256": "7f11069ea69e517aaf151076d14e289fdaa9ec019b1268264efb5bf9bdc3351d",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidAircraftGeometryTests.cs.meta",
+        "sha256": "d4ad170397328e48b62e7276c33294033a4d7fe17895258b0c426f9e5588169c",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidRotorSweepTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidRotorSweepTests.cs",
+      "before_sha256": "1987f7d7d9d272404885bc04d6b26279ccbbe75dea57f4327891b8470377938d",
+      "sha256": "1987f7d7d9d272404885bc04d6b26279ccbbe75dea57f4327891b8470377938d",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_EXACT40_ADOPTION_20261015.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidRotorSweepTests.cs.meta",
+        "sha256": "fca389f211476c6b9affd5a52a4d30ccf3d2f6a721e0031c84b1b5fef0459d5a",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishS002AriaRunHarness.TerminalProbe.cs.txt",
+      "before_sha256": "57b9b3f6662eb5b416a905423e3ad6903bfa001b5f5f0eee71cc70e414ed3ea0",
+      "sha256": "4dc0808d473debfc7a093f9cba10745c9c796e852037727bab4a4d169bac2269",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs.meta",
+        "sha256": "f2b92ccbe8a3985230d5d203c38a25c5860a3c999fcaa673b29ae3d8cf89e608",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishS002AriaRunHarness.ProductionCanary.cs.txt",
+      "before_sha256": "9e5c2d03ff94f3104e2d81ad239b339b59bda4e1ab58282c7aef74cc1bf57407",
+      "sha256": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs.meta",
+        "sha256": "e358f2016c4aff461a7041013a61dae604cbacd4cd23483fe7c4a304e958e0c4",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishTerminalPresentationObservation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishTerminalPresentationObservation.cs.txt",
+      "before_sha256": null,
+      "sha256": "f7089c5d5a8744e90da69fa4eb6978fb1efe73956d08e2a1a52704f54d731908",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishTerminalPresentationObservation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTerminalPresentationObservationTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/SkirmishTerminalPresentationObservationTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "9e33cbae0cfd6e0c85898257baf82e0f7e622658d896a21c9c5bc734404fb4c7",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/TerminalPresentationProof/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTerminalPresentationObservationTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftCameraTerminalPreparation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AircraftCameraTerminalPreparation/SkirmishAircraftCameraTerminalPreparation.cs.txt",
+      "before_sha256": null,
+      "sha256": "9cbb7e542175c85247c96cd96d6ab8019e9095f3cd9a17f7fc0ff400c16ac7c1",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AircraftCameraTerminalPreparation/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftCameraTerminalPreparation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs.txt",
+      "before_sha256": "524587175587fe88f7b32b2de4de77852b7111cf1c608d69779e7f9c6dfbf764",
+      "sha256": "9bf894d5cc47fb0897fddb0ff8548fea19f8e2a99c8e5a78578802c25ded5aaf",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs.meta",
+        "sha256": "56c9246e759ecce2089aa96f53602bd91b6514bb94f6615ba38b609ef5549f81",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs.txt",
+      "before_sha256": "1541101bcd88fbf0f89f0f430358763496be802c0d2561092782790e51e392c2",
+      "sha256": "6baaa5655936e5fbc459b620123d1a2d397a2c8b51dbef77cf513a92ef251375",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs.meta",
+        "sha256": "c29f9727aaa196e55d8305a30c5558e79945677b413285fb7d0bfbb7fced7ed8",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs.txt",
+      "before_sha256": "d7dfb98ca906c146d679222ab28fea408e53124072e4745b26b88179d4c52d72",
+      "sha256": "a73a97339fe73d0b7e79bad40d50d47ee77e4a95e8b26c2df64d5881bc805428",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs.meta",
+        "sha256": "f82adb0538b6fc879a5c6b924bba20d1d6f56fefb9d78dfa0bd7be48d1341d93",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaObjectiveSupport/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs.txt",
+      "before_sha256": "ff50ad53db4714ccb1ba1ae5558ba23e12d9cc12540f12f565e5373b667dcad0",
+      "sha256": "fc106cdfc6215d1545e106580f7844c832c98f7a82be6b32b99441eee14bca80",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs.meta",
+        "sha256": "8556ce702a337dd39db1182932df10fd050d4ae8a840c2f58862a51ca23b9006",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaObjectiveSupportContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaObjectiveSupportContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "d79d15432ca1f48e8f581df46e95d0c911e7e7368d29c125466fb4674b3523fc",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/AriaObjectiveSupportContracts.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSupport.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSupport.cs.txt",
+      "before_sha256": null,
+      "sha256": "753c12d32004b98c962850914d3db7d316a03159dcab59646f7e92271db8703f",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSupport.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.ObjectiveSupport.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.ObjectiveSupport.cs.txt",
+      "before_sha256": null,
+      "sha256": "9cb7239bda7fba757c36fcb1573d0e6bf3fecca5bdc4c20f3ac3a0da43de8a47",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.ObjectiveSupport.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaObjectiveSupport/AriaObjectiveSupportTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "e41cb93ab40f8919278499d03e3cb9a31dccf7df5d404031e69b52ebefa1546b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/Sources/Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs.txt",
+      "before_sha256": "ff35fdb1447204c25b23399057cca4189190b2c218a35c9a55d33d6f6f57fb1e",
+      "sha256": "e2469ebcf3356740c30c0a4dca77d406b5be465d6b22e8562e31875c2351cbda",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs.meta",
+        "sha256": "a1e47f8e78eadd522b98127da92b040bedb03c6bbc62dbe10fe3492cdf15ba2d",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs.txt",
+      "before_sha256": "b926bbd0d83b34396900c5bf2f46f9a238e04b22bd86e16eca9e683f3f826499",
+      "sha256": "798a87bf7b34618344f0801c49382761535745ff35fd259b77f3409268cb3dae",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs.meta",
+        "sha256": "37777f641114b35b0eeb5c314bfc81952cf6098e9a987461625f4d733c17eced",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicAircraftReturnReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/SkirmishPublicAircraftReturnReceipt.cs.txt",
+      "before_sha256": null,
+      "sha256": "54d16618aff734213186e7993bd79317ca9fe2eff8988150bca19bc6459705e9",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicAircraftReturnReceipt.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicAircraftReturnFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/SkirmishPublicAircraftReturnFeedback.cs.txt",
+      "before_sha256": null,
+      "sha256": "ef9e85ef56146c3ca47f37b16517d96f79578fd58c0b4216eae769226062929b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicAircraftReturnFeedback.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaAircraftServiceContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaAircraftServiceContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "1c847a3a660cb24e46f67e73520de73ec25c80daf225b5dc6e01f4a91a4f4e52",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/AriaAircraftServiceContracts.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiAircraftServiceModel.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/UiAircraftServiceModel.cs.txt",
+      "before_sha256": null,
+      "sha256": "fd6a962c8f4e50ddb5049c1bc0a82181bfe07435fb815b78b0a10276693f1211",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/UiAircraftServiceModel.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "e4802e4f9e8d508d9c6e179628fadafbb589bd923beca082b1390580e00b0db3",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AircraftService.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/MatchHudSelectionPanelView.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "9655ad6d31088c09ed0d3922b5196cdf3a674f55c7f60d5afb1c0c84b4836d91",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.AircraftService.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "65602518d0fe03776bca478517df66df4dd42d7a389d4e2a1c5add0cdc98c5f1",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.AircraftService.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "1462417db35db285fc2e0e1459a413182f7ffb99f7ae83f562696fefd0216b2a",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.AircraftService.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaAircraftServiceTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/AriaAircraftServiceTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "03f6f01a648419235052c595d8dac332e69ad918b69239ec1ae535d959c8ebd2",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaAircraftServiceTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/Sources/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs.txt",
+      "before_sha256": "51d5ecc7d686da660b00e2d6b156f2c733548a939f10edd315d048754bbcf354",
+      "sha256": "7f29026bfec8c13999f7a8285e121382e07b2cce90c5e7166132fca6363ca14f",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs.meta",
+        "sha256": "e36869034b1b3899811498ea1c389e134f3f137e6ba7557d93298584ee269631",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/Sources/Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs.txt",
+      "before_sha256": "6213c9b0c9c35efe43b345131a81e590508580c5d4838aaa1a6ce7fefbeb5b1f",
+      "sha256": "ac013f490e662cc4e69bde1ca8dd0221958920b0ea01a587680398c0441cb278",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs.meta",
+        "sha256": "78165a4903f948d38e3acb83216476ba10a9b574c6c09443d2b5abab9e6b53ca",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs.txt",
+      "before_sha256": "5c78cf71d61bda8d09d0eb89fbc19b84065d01f40779995353b3a8a8f8e88b23",
+      "sha256": "7ca84d9a5a75f0cfeec86878117e699e53769e383cd4006b69b608750f0e4e33",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs.meta",
+        "sha256": "2b4134eeea3d71ca2af5c72195e14b3e228975acb057f0b9b21aaf337d5f54d4",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicScanReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/SkirmishPublicScanReceipt.cs.txt",
+      "before_sha256": null,
+      "sha256": "8d19a0b0c3de881bbdf24f520258aeef0ee4b574f89964f30c08bc5659f127e5",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicScanReceipt.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicScanFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/SkirmishPublicScanFeedback.cs.txt",
+      "before_sha256": null,
+      "sha256": "a576be21514ee2f27a2eb24acf5cf4d2a4096d2b3b9c7ce4d3f6790eedf16414",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicScanFeedback.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaPublicScanContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaPublicScanContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "a47a4ddc41b5d786b307e846b48f3ba18cd3f5a25fd84a37edd4b12c58f78b1b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/AriaPublicScanContracts.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ScanTarget.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/SkirmishMatchView.ScanTarget.cs.txt",
+      "before_sha256": null,
+      "sha256": "bcd48eb6c541ae66b397db3c1f7e54543a6859d3af388525a7a403ab1fffe8e2",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ScanTarget.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicScan.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicScan.cs.txt",
+      "before_sha256": null,
+      "sha256": "1596cf9101c2cb0bce0f31e1d156bfa152abd9db33a08d376cbbbd40987b3469",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicScan.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicScan.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicScan.cs.txt",
+      "before_sha256": null,
+      "sha256": "ae67a67c96fa7d33011994f7a16f2d4d7f139b8aa31f86364346fe65957fc4f7",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicScan.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScanRetrySuccessor/Sources/Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "2fc483e4737ea0e045337981d5dfd128f75214620a400d407c66bf7111ad1e87",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanNativeTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/AriaPublicScanNativeTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "d4928d5bb5ff16a5fcf8a28bce264be8ad1fd241dc704a835e07b52b40642534",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanNativeTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScanRetrySuccessor/Sources/Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportValidation.cs.txt",
+      "before_sha256": null,
+      "sha256": "735751c00837da0eabd30856e6184939d4d67d952f612f900549bacbde485266",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportValidation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs.txt",
+      "before_sha256": "b5c3f556b8c0e75f002ce062e5ddca97e4ab95d626015fe667b4e70b2b8a3740",
+      "sha256": "f8d73895cd24b0d33caaf794702fbae5ef981340600fc808eb4a7452925091e9",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs.meta",
+        "sha256": "359f5473705ec324e12341cc834023cccc084838cef4f6468e430c21b13ebc3e",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs.txt",
+      "before_sha256": "535b2ecd675c23ea72dc1a0aac5d0c9cd628b16acb8fae53576505668552b98e",
+      "sha256": "135992b16af3f059bdd84136c553530bfb70f2cde8cecc60e36ef5b794540600",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs.meta",
+        "sha256": "2920c71489479058cb8c757085399a8f92066eee24d0f978bf4d67d79abdee92",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs.txt",
+      "before_sha256": "2c34a52e06451df7d72beba80d135881b1c99700640208f4418266bbb1343746",
+      "sha256": "80b2a697a035f8410a097cec035e27a606e810f89ebc19b89b45a5a51942bf92",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs.meta",
+        "sha256": "15a3bba3735196b31e9827760a3622e921c39e2dad55e608ed37a38d835167cd",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs.txt",
+      "before_sha256": "ea1d277e7eb51c9f7e030d0e7c328836f64ac4e9c749cd09a4ce6c0e80c7a862",
+      "sha256": "6b2c828de43f32734730da6f9e94796448dbb305a63c91380cb7476aad8e6ce8",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs.meta",
+        "sha256": "d98d52400e640be8b07057933dd8edb1b119152d384f1c56621ae77f8a70bf6e",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicBoardingPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/SkirmishPublicBoardingPresentation.cs.txt",
+      "before_sha256": null,
+      "sha256": "09d43d088d49feb51596a32f700c605177c13bf7deee572d4c966578fb91bf34",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicBoardingPresentation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiPublicBoardingModel.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/UiPublicBoardingModel.cs.txt",
+      "before_sha256": null,
+      "sha256": "af1930292401216ffe2dcf4d30dcee479d23c99878fc2213b85f5db129cbb49a",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/UiPublicBoardingModel.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/UiShellEcsGateway.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "7b91bdafafaf57a34ef846729da2c53ec726cdeffe7fe96e22759afa9bdc84c1",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicBoarding.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/MatchHudSelectionPanelView.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "3f74fb8df025efbb60741e8239dba8de3c952ef97a1c370c0c5de8a469b69898",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.PublicBoarding.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaPublicBoardingContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaPublicBoardingContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "3b3fb4c42e6f48a745a4eebb7722fbfca0d840b2de739d10b4f2561132b081d3",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/AriaPublicBoardingContracts.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.BoardingTarget.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/SkirmishMatchView.BoardingTarget.cs.txt",
+      "before_sha256": null,
+      "sha256": "e642db0ddff476b4e4520b56ca1a4596f35cfcf64b0aaa66eedad185806c600c",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.BoardingTarget.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/MatchHudAssistantUiSystemHelper.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "bce95cb7f2e797d411fe36e3174f3db212349fe72e8dc2360691dd7ac7f35716",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicBoarding.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaSkirmishPlanSystem.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "e881806a8330f50b8d773bbc45efbc0e2a66f2291fb7f50d670718907f4f634a",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicBoarding.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicBoardingTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaPublicBoardingTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "547c6d2f95fb96e10ad5dafe0f7b96bc28df99eae6a637bee179fec4b19580fb",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicBoardingTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicBoardingNativeTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaPublicBoardingNativeTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "23736132aafc348ade438e12d6ff265862ac1ac1442d82d1d988eb292c30bc53",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicBoardingNativeTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaCompleteObjectiveSupportValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaCompleteObjectiveSupportValidation.cs.txt",
+      "before_sha256": null,
+      "sha256": "444d70ac70c78162044ffec9c96dfdb9d4c715a6524177b4c980f99bd80d93f3",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaCompleteObjectiveSupportValidation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs.txt",
+      "before_sha256": "cb22071eed2f409350035a707acdbd9ae1f05899c354851168270590d70b816e",
+      "sha256": "594f4c2cc412d109e41522741fabbb7c28c7fe3c0d6ef2611cf22a743192f8c1",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs.meta",
+        "sha256": "5614e3b47540ff186bef826ea85238b7a407e7f3bde31cd57a98b3b952035900",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaOffensiveAirContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaOffensiveAirContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "8f8da2a6c88d43151a1e54137ff6ca57f9cca512ca43e6f3c3fc5a4026c164d2",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/AriaOffensiveAirContracts.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicAirPressureReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/SkirmishPublicAirPressureReceipt.cs.txt",
+      "before_sha256": null,
+      "sha256": "e200a36270434f6716f73b682763f5d9d96bf4f1e3332639f140484bd3cdd1e9",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicAirPressureReceipt.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicAirPressureFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/SkirmishPublicAirPressureFeedback.cs.txt",
+      "before_sha256": null,
+      "sha256": "2899e1d55e1ce76af0d72996ba4d7cbdca9889143ad7874e4c34e0312406209f",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicAirPressureFeedback.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiAirRecruitModel.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/UiAirRecruitModel.cs.txt",
+      "before_sha256": null,
+      "sha256": "63ac37c261e6ebfedf0e0ac2d926c8ad52ed41abd352fd8debbfab8077514975",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/UiAirRecruitModel.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AirRecruit.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/UiShellEcsGateway.AirRecruit.cs.txt",
+      "before_sha256": null,
+      "sha256": "2cbfeea716f4d4b545042b13d49005fa96167a977e77cf0b74e5f1f370354a38",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AirRecruit.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.OffensiveAir.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/MatchHudAssistantUiSystemHelper.OffensiveAir.cs.txt",
+      "before_sha256": null,
+      "sha256": "f97e455373e8a2af4450cbd7a98bf9bd41d9399f784aa2bf3597b4162a39e9a2",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.OffensiveAir.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.OffensiveAir.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaSkirmishPlanSystem.OffensiveAir.cs.txt",
+      "before_sha256": null,
+      "sha256": "b62e36e6871ae3d3daaeefbe9ecec6f52cbd8de05f930a5f5feee5dcc87b9c9f",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.OffensiveAir.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaOffensiveAirTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaOffensiveAirTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "fefdf04a8eb16258bc946179bf20f7e3202a1acd2e1bf145ece6290b9b8daa29",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaOffensiveAirTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaOffensiveAirNativeTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaOffensiveAirNativeTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "02cdee8aac86ca44b5ea30d6134d9da8f3bcce5b66c71b6eb7843eca4cc73bf5",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaOffensiveAirNativeTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaExtendedObjectiveSupportValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/AriaExtendedObjectiveSupportValidation.cs.txt",
+      "before_sha256": null,
+      "sha256": "cf0e0bca385b8ea24ccd1195b322eff38cd78f3179dc8035dce3554663e4ee17",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaExtendedObjectiveSupportValidation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaBoardingFootprintTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/AriaBoardingFootprintTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "f712fe19ddd8ffc0a0e58da3db09afca039900bef188ae64716ab87ce269614e",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaBoardingFootprintTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "before_sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0",
+      "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs.meta",
+        "sha256": "0c0dbbfa13e80d4aad4babcdfefbbefa2b35c22819659ee2bbf7fef47ec3df6d",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "before_sha256": "b10a6b4715dbfec25d4707dc36c9923fa2be71764379c20837009c80837bd8cf",
+      "sha256": "7addebfaba8680b77080d90c3d691c93a48fc71e1ae334186318894020b21307",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs.meta",
+        "sha256": "a1b218edb2e48181dae4425b1ffb1920abaca49d5c66821c9d0110cd01b23220",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "before_sha256": "dab98c69d01e35b1ec4f0f76967bc72ee31a9d5d5a8945057a97b72dfa4c82cc",
+      "sha256": "9ab858c250ddd773cd25a631637867947cf8f724aa881914bdac96d6373b74c4",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs.meta",
+        "sha256": "a534f99bc4de9de3b6c431f4a0b8a18e385056b699ea385f655a47b8d5a7efda",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "before_sha256": "81e37f7df652df039aaa9fa124f98e24db8c629a09e38df478a098c65a60b1b3",
+      "sha256": "7a4259f814dde91b16e57d5709a5e7c0eb426a2cb61088660e515ae6d62e6cc9",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs.meta",
+        "sha256": "5b536553e2869866e07a608934d37aa3de85729fb3477de576f56c95e8f3eb6f",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "before_sha256": "5f182ee3a9dd124206b7643315624e0f15e908b30ba66a40b80481c453e0d414",
+      "sha256": "aa7efa508ac53aa254f69002ca38ee27841a7575f91301b6d531e0d2ac81c912",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs.meta",
+        "sha256": "f911dc0e1e405900acc2c80af8d074464baad82ce3f5c4b3978c07f0cd6d9ee7",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishGenericAirCombinedEnemyRollout.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/SkirmishGenericAirCombinedEnemyRollout.cs.txt",
+      "before_sha256": null,
+      "sha256": "d6591a1a11a8817e04d9a4758cfddcd43eefbfef821bc0f0ffc345b582442bb1",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishGenericAirCombinedEnemyRollout.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyAirCombined13Tests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/SkirmishEnemyAirCombined13Tests.cs.txt",
+      "before_sha256": null,
+      "sha256": "6523d552f965469720362f88ce03346121604f579114cec7c54625eeb4c126a2",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyAirCombined13Tests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "before_sha256": "e2d36d7bea39c5778479b48a510c1d7e2b6e8c01ae6b32955e09d8467a7cc628",
+      "sha256": "4b72ea8fd6a591539d1025b09b64ab086da96494e09b741e7dfb2084e5fda228",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs.meta",
+        "sha256": "0c15756124ce0c6b2240bad27c8eea071a0b444388e22ffdf246f44d3525e89d",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs",
+      "before_sha256": "1ed379531c953432ab2a005a31617fd13c6966e885998dfe71f41f12f31100e1",
+      "sha256": "7b9738bed435747d323fb65b483ad3e8953230eb505557a0d55b7df4d5488ddc",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs.meta",
+        "sha256": "7967d424d0e965315797455047005743ee7d4533aca49f668eae318553407f20",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveApproachTowerTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/SkirmishObjectiveApproachTowerTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "30023f16d132905eb932c72880c69a7802ecadc9fb23f0e022228c1db61aa36c",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveApproachTowerTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "before_sha256": "64a74245632940ff8d89d884cafd649c7291d771da4773740cc4eb77fd443bdb",
+      "sha256": "0850b0e5a90937d4f8f5fb8b435cda2df1e630a2bc1046d5ce556868e8ee88df",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs.meta",
+        "sha256": "960f1239fe1618a6af1603696724858a54f703ef4f01293065a68e2aec836671",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs",
+      "before_sha256": "8350ef63a624dc450f92f2c49a4bba1670195e710f49ba914f229be96d42f612",
+      "sha256": "b0cde693fd2cbb818bdf561ffd4711a463d0b484671500dae2381b8417a85c11",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs.meta",
+        "sha256": "9933011f71670f64b073b2f532cbcf4a0198f0d37d25aa0a1432a114eb784aff",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "before_sha256": "dd34c3dbad60d55afc1273343b39ddfade241aaa2196d748a31798fe1f0c6953",
+      "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs.meta",
+        "sha256": "f96c7644004173c50cb495e4758726307aec59d9d595136e83f7eb40dcfbf4f4",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "before_sha256": "51244b0e14d0df4211c9b8d3139fcad47969c84f5adefd454da18762266357ec",
+      "sha256": "0dca4cbde1225a67ea21b4d17fd6a2dc047ac892ef87edf8b3022818fca8149b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.meta",
+        "sha256": "b8b8594283ec60140b33708385eba819f3f40fe54e85018f489fd3702400a351",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "before_sha256": null,
+      "sha256": "10fea77ebd30f5978d802677c1710d5ae44610279fba6b330d7b9c5bd4452fc7",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "de5c3cd105cbd961bba6a8c56d61ded3232ab0644bfc0445b66b71c274b687ae",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementApproaches.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.RefinementApproaches.cs.txt",
+      "before_sha256": null,
+      "sha256": "033d87f0d2cff55183a4aa2a0aa9c3bb84ce9026eb40d62646eade56e76c8825",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementApproaches.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.RefinementOutput.cs.txt",
+      "before_sha256": null,
+      "sha256": "b9be58676aabe221d1cdbe9dd4f672cf7973c0b817dd8f86e4e40450026212c9",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "before_sha256": "d8f5c398e249a4ad55f2ad3b551b67b968ee0de14e2ee06702e44fa9e226c5e0",
+      "sha256": "6403150974dbac8bb512ac8cb230cb9497840de08738d3faa974f259a58b6ada",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.meta",
+        "sha256": "96e297e535e0268b5da20d823f296eb7373d3b0976247a91e9d242370487ff4c",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "before_sha256": "a98eff8c77c2c998eab543dff1efa93d096e3a13219cde9a41407f187c7125f1",
+      "sha256": "5a98ac9ae2fdf6613b290bea4a718436a9e8100ab26ceb0b38ebd0b7504b5c00",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs.meta",
+        "sha256": "f58006cde00d926ce00561f1c5543469f28ca92697a1e0cab30b1695347c06f1",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishTypedSpawnConstraint.cs.txt",
+      "before_sha256": null,
+      "sha256": "44d814fe29405323e081202a2088600bfcf918d6f496e6f1486a0883423ad403",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs",
+      "before_sha256": "8a045dbca7f3f2c1a949a08a0c3d2d7f7d32b44c1cae55b5b0f859191d0de9ff",
+      "sha256": "4b417d83d8354cb4ea14e6dfcfbb05b5ea8ddc607f77d822f08da388f8b39baa",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs.meta",
+        "sha256": "581584690bbf4fcdf017a716e1be6202cde0844eb03c84ed0a4c762e10af4b5e",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs",
+      "before_sha256": "7c12c4ec9b799883b34706c6cbb58fb79a99560c70cd0d86c23447da03679b30",
+      "sha256": "14c96dfd02a4fdf0879cdf768d18429d5978269c768aad2f2f7ae6679d49951d",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs.meta",
+        "sha256": "90c561d9f0e582ad657aa70deaa4cf253842e5646ecc69b8cfc1465f3b690a84",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRefinementEngineeringViewTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishRefinementEngineeringViewTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "5605749e31598c9c1706e22d0a9e2554eaadcdc7839ae5fa78e25a2e86c5d85c",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRefinementEngineeringViewTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTypedSpawnConstraintTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishTypedSpawnConstraintTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "f62d55508eea88ea630b12f80fd14104bc4ac315ad1400b09483892bd57daa6a",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTypedSpawnConstraintTests.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedNativeProductionPreparation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/SkirmishSharedNativeProductionPreparation.cs.txt",
+      "before_sha256": null,
+      "sha256": "cd3669233b2a192d9473987d26f2e66446b8e0baf082a731e89e46fbb2da7e94",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedNativeProductionPreparation.cs.meta",
+        "sha256": null,
+        "disposition": "Root-owned Unity import must generate and pin before final source/DLL candidate"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs",
+      "before_sha256": "0bde2b46fcfc48685b230a8681a908f88b51a3479888bbea040931048a4a0244",
+      "sha256": "0bde2b46fcfc48685b230a8681a908f88b51a3479888bbea040931048a4a0244",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs.meta",
+        "sha256": "a8e8b59ee7e687c98cb667b3a1f16a71c6b6474338d51f929d7223ae6f518f51",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishMatchView.PublicObjectiveAria.cs",
+      "before_sha256": "f9f7d5fe567991b29da45c71085cb12427023ec44c8345fce666563c0a346ce4",
+      "sha256": "f9f7d5fe567991b29da45c71085cb12427023ec44c8345fce666563c0a346ce4",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs.meta",
+        "sha256": "e8a7558c601a396b1ebd76c4197ee29abe13ac1e90730b1a75e8637df517f695",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/AriaTutorialBriefingView.ObjectivePolicy.cs",
+      "before_sha256": "c40ac69e7567a76acf30db6ad14223911fa1ef4f1916dfe93da367e2f731f90e",
+      "sha256": "c40ac69e7567a76acf30db6ad14223911fa1ef4f1916dfe93da367e2f731f90e",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs.meta",
+        "sha256": "f702fdb43f5f1a838dce4ef6c53e5c1f8cefbd281073fc922286df1733fbbe64",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiSkirmishPublicObjectiveModel.cs",
+      "before_sha256": "4b0d63c932264acd304504b554e3bead18e9799c2257b88eb25523a8ee53c680",
+      "sha256": "4b0d63c932264acd304504b554e3bead18e9799c2257b88eb25523a8ee53c680",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs.meta",
+        "sha256": "111e585c62b7fbb7937074127b9e19a7744356acaa6d9b70b02eeadbdab8a668",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiShellEcsGateway.PublicObjective.cs",
+      "before_sha256": "e0753aa4fd4342950dd1f2ce42281d12bd0d7cfc3fad9790df12c7f472002c34",
+      "sha256": "e0753aa4fd4342950dd1f2ce42281d12bd0d7cfc3fad9790df12c7f472002c34",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs.meta",
+        "sha256": "20d1e1c82fc4c3e36a8ad14f1dbbdfda99dabbcceb413c2262f58e4760b55be9",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "before_sha256": "753fb5024c832f78b82fd421dabbe5929c5549340445622e4bca14b5595c759b",
+      "sha256": "753fb5024c832f78b82fd421dabbe5929c5549340445622e4bca14b5595c759b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs.meta",
+        "sha256": "4c3607bcbbc21f434f1d59e08027f659d51baca573153d9cab17d4baeef28778",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+      "before_sha256": "91affdefe1169c6f831e6d3a825e9ccd78d309e920c659093fd487f0fe698b93",
+      "sha256": "91affdefe1169c6f831e6d3a825e9ccd78d309e920c659093fd487f0fe698b93",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs.meta",
+        "sha256": "17ce80658b259daf080dd31430eda9e76ec04d028c7ba2e0e9ce45b3a84afcbc",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiPublicConvoyServiceModel.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiPublicConvoyServiceModel.cs",
+      "before_sha256": "00c60a351b2b069e1e991d592445a9256f2e427162b6c80cb3ae3018cac54edf",
+      "sha256": "00c60a351b2b069e1e991d592445a9256f2e427162b6c80cb3ae3018cac54edf",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/UiPublicConvoyServiceModel.cs.meta",
+        "sha256": "7f94f18ce902c9a800c19812824cf4eaf9b216d2a3ee8c05534653fe87763da4",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ConvoyService.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/UiShellEcsGateway.ConvoyService.cs",
+      "before_sha256": "37c6b8b3b0416f93429e48f8c4177593eca95f4b9acfe601c93c58071290f49f",
+      "sha256": "37c6b8b3b0416f93429e48f8c4177593eca95f4b9acfe601c93c58071290f49f",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ConvoyService.cs.meta",
+        "sha256": "759521b12b50855d3380486fbd0656de2f9fa739891000eb28bc86dc4d98bd5a",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ConvoyService.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishMatchView.ConvoyService.cs",
+      "before_sha256": "e22e7b80a19994b5069fc30cc511fc4df50ed6696cc1721f229e6ce24a941a52",
+      "sha256": "e22e7b80a19994b5069fc30cc511fc4df50ed6696cc1721f229e6ce24a941a52",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ConvoyService.cs.meta",
+        "sha256": "2dfc9f759631be13f8f73aff66793337782c09d5206d50dbc1d4a4bf802f9ac3",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/SkirmishConvoyServiceJourney.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishConvoyServiceJourney.cs",
+      "before_sha256": "da373079e82223f5119cf38ec7f1415aefb8c9c92192e566c1a0c7568f87aef6",
+      "sha256": "da373079e82223f5119cf38ec7f1415aefb8c9c92192e566c1a0c7568f87aef6",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/SkirmishConvoyServiceJourney.cs.meta",
+        "sha256": "012ab121992192ed7438fba57a50a9097cb1b9d24285c252739450243883b41c",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/MatchHudAssistantUiSystemHelper.ConvoyService.cs",
+      "before_sha256": "04c131b05c51bba28b2ae2889297a5e0d4ec6779866a5bb5ba50520e95cd2fa1",
+      "sha256": "04c131b05c51bba28b2ae2889297a5e0d4ec6779866a5bb5ba50520e95cd2fa1",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs.meta",
+        "sha256": "c8861b115a09c5e0851088395fb1afac7e713d9476b12afd4034b8d90e27dd03",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyServiceJourneyTests.cs",
+      "source": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/player-owning-6h3qs1h_/SkirmishConvoyServiceJourneyTests.cs",
+      "before_sha256": "95421fedd674d35f852d2c681898bd41122fa48f2462ac5409c7c43041c75b33",
+      "sha256": "95421fedd674d35f852d2c681898bd41122fa48f2462ac5409c7c43041c75b33",
+      "origin_manifest": "Design/AgentReports/SkirmishExpansion/AriaObjectivePublic/CONVOY_SERVICE.delta.ready.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyServiceJourneyTests.cs.meta",
+        "sha256": "4b64fdcc84f23c7038e7aa4085360898a4cf31e927f24a3612dac1d705e0bfe2",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/SkirmishS002AriaRunHarness.cs.txt",
+      "before_sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+      "sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs.meta",
+        "sha256": "70862588adb5470c2bb0454e445c7cf25efec5aa0cc47bf9c19c9b0795e7ad5c",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "before_sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+      "sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.meta",
+        "sha256": "764ef929dccd87d1befca37b150b6772c035aaa7b4ccc68316120493a2941aad",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MenuLaunchPriority/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "before_sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/MenuLaunchPriority/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs.meta",
+        "sha256": "85f8166ad0d218bdf52ccaaf8cd39307379d369f6b874b5dc3b0fb3f1a42e894",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/03-SkirmishProductionCanaryRequest.cs.txt",
+      "before_sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs.meta",
+        "sha256": "d8b95d46aa466fd435f5885a4b0aa3c814a1b6ea89be805dd38041e95582c491",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchContract.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/05-SkirmishProductionBatchContract.cs.txt",
+      "before_sha256": "c470d4ccd6310c0ecf2ff69734ce086817e6d1f2f47d35ba1cfb35b3cfaf348b",
+      "sha256": "c470d4ccd6310c0ecf2ff69734ce086817e6d1f2f47d35ba1cfb35b3cfaf348b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchContract.cs.meta",
+        "sha256": "9e7863e71b9885239f6ce5ed4eb9d7f211a51c54eb957d2ffa378109bdd25e48",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchManifest.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/06-SkirmishProductionBatchManifest.cs.txt",
+      "before_sha256": "543b849a45bb9c2c7238bca024e57cbbcd5bc25b83ac872213b28ef5f085c381",
+      "sha256": "543b849a45bb9c2c7238bca024e57cbbcd5bc25b83ac872213b28ef5f085c381",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchManifest.cs.meta",
+        "sha256": "42859df1ba9eecc4cf1778957cdd2c6636629d7e4403f73298c6140466ffbba7",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/07-SkirmishProductionBatchOwnershipCensus.cs.txt",
+      "before_sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs.meta",
+        "sha256": "e4ef6ec3e639a62f82075ec6861036b97f42ae012424d001c26cc2a073b9ca69",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/08-SkirmishS002AriaRunHarness.ProductionBatch.cs.txt",
+      "before_sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs.meta",
+        "sha256": "29be8083943300839d61545cb80763ba06b459382c085e062ffd8a1210a20bce",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "before_sha256": "0d1875e3801c098412c9f8bf90b617b4db6e5b752a5db60f4c9076fa732698e7",
+      "sha256": "0d1875e3801c098412c9f8bf90b617b4db6e5b752a5db60f4c9076fa732698e7",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs.meta",
+        "sha256": "347cb3bffe765096eb98c9c990bcc7225ade46f9991165d0f453401764580000",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "before_sha256": "e26011b3277eb6909bc917ba5d74b80bdeef96036cb162e1792fc6e7dce7003b",
+      "sha256": "e26011b3277eb6909bc917ba5d74b80bdeef96036cb162e1792fc6e7dce7003b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs.meta",
+        "sha256": "3da8651549bfddf55fbe0697d08bd3d4bade0998b9698687fe2dd4ec3d8ca9a7",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "before_sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+      "sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs.meta",
+        "sha256": "e07940e77dd7bab45fd7947389269dfc9396cd4cde21baa7b4c0c8a639c80c01",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "before_sha256": "7b52175c37767996289bbba55e0c95d1478d55599dc6468d6036af8c09116c55",
+      "sha256": "7b52175c37767996289bbba55e0c95d1478d55599dc6468d6036af8c09116c55",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs.meta",
+        "sha256": "9a5df12a593fd37bfcf9975c7ab018d00a5fbabc19b3747f56a96abb6b198d1e",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs",
+      "before_sha256": "10ffe6e4ed4827a4c9377eb67ef327181d0221055921d313f4941822b31c6e26",
+      "sha256": "10ffe6e4ed4827a4c9377eb67ef327181d0221055921d313f4941822b31c6e26",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs.meta",
+        "sha256": "835dde3b3f3be27413dce19dc4d952c620dd3f08612a8173c431199c1cdbffee",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs",
+      "before_sha256": "d995c47820a4023aec136b8ec887c2b1d7716304d9c81e04923aef70a64ba4c6",
+      "sha256": "d995c47820a4023aec136b8ec887c2b1d7716304d9c81e04923aef70a64ba4c6",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs.meta",
+        "sha256": "91c7e2e0ae94ae9e3f5373b6a722b105425f8b0f1927293e060979dadab3d989",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs",
+      "before_sha256": "aefc70d29c983bb7a064964092b1c284490687db7780180556ce4937d13b1d96",
+      "sha256": "aefc70d29c983bb7a064964092b1c284490687db7780180556ce4937d13b1d96",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/manifest.json",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs.meta",
+        "sha256": "fa71ec8b7daec0dde7b12765d47bcfe39a2a41ae975d544dd730eb6f1bd72d28",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs.txt",
+      "before_sha256": "c40af611e4c23d5a4eea40d451b8a9b8c0890f99f6e845f87df6abee0c461f75",
+      "sha256": "c40af611e4c23d5a4eea40d451b8a9b8c0890f99f6e845f87df6abee0c461f75",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs.meta",
+        "sha256": "9b7df7a3f56a992e4e45c99ed168230fd42889b9d8f87263de839f8a16310f2e",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs.txt",
+      "before_sha256": "1875c21974c6aca56f5b94c5231c2d226bbcf91f40baeacdb6807dd6e8fe87e7",
+      "sha256": "1875c21974c6aca56f5b94c5231c2d226bbcf91f40baeacdb6807dd6e8fe87e7",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs.meta",
+        "sha256": "22c38bf023a2dcc77888a441902d001207ed9bbde853a6cc2615c9800bc8f5a4",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SixPilotBoundedMaterialization/SkirmishGroundSourceFitSurvey.BoundedPilot.cs.txt",
+      "before_sha256": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b",
+      "sha256": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b",
+      "origin_manifest": "Tools/CI/SkirmishProductionDrafts/PilotAndGround30SourceChunks/manifest.json",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs.meta",
+        "sha256": "6c7b79082f769c7defc684a6aaf8a89f143b4d8cf67a52b6361ba8ce27a2a276",
+        "disposition": "Preserve exact existing native meta; do not invent/change GUID"
+      }
+    }
+  ],
+  "target_count": 160,
+  "new_meta_dispositions": 66,
+  "composition": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/composition.manifest.json",
+  "composition_sha256": "9aae455bcd4ad2c215a05cfcb4d029a16158645be81342268ed4f9e561e267ec",
+  "baseline_groups": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/BASELINE_CLOSURE_GROUPS.json",
+  "baseline_groups_sha256": "2485729a10047415ad5f762b5fa5695f994c6fedbac7639e328f83d0f5692981",
+  "owning_proof": "Design/AgentReports/SkirmishExpansion/S005/shared-native-main-closure/owning-uesn01hn/result.json",
+  "owning_proof_sha256": "c63aabd75fb0fa6fb9f2f76d311c48da23fcac85038c417b9a12ff1a7ab503a2",
+  "independent_review": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/INDEPENDENT_REVIEW.9aae455b.json",
+  "independent_review_sha256": "4125716db64688849da8bf5f68cfe39476250617ccdda50bc93664ee41a7e0c6",
+  "source_capability_closure": "Passed immutable f733 plus158 exact C# overrides;13 current-only Assets excluded;14 owners",
+  "asset_byte_provenance_closure": "Pending separate seven-aircraft raw prefab/meta/transitive dependency audit and actual current Unity dependency validation",
+  "unchanged_transport_metadata": "Preserve existing Transport3 sources/57 draws and exact pins in CAMERA_EXACT40_ADOPTION_20261015.json",
+  "conditional_s005_profile": "Preserve separately; do not overwrite/copy calibration profile or assert accepted camera defaults",
+  "new_generated_metadata": "Root-owned measured canonical/rotor logical assets and metas remain pending actual preparation; take fresh candidate afterward",
+  "native_execution": false,
+  "camera_accepted": false,
+  "mission_ready": false,
+  "asset_byte_audit": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/AIRCRAFT_GIT_BYTE_PINS_20261015.json",
+  "asset_byte_audit_sha256": "c93576b6ac4df12d90367739b371c8cd00316dafc3e8cd861c11d496d64b680f",
+  "git_byte_policy": "Current source/meta raw SHA pins describe the frozen working candidate. Repository eol=lf may canonicalize CRLF-only text; do not claim those raw bytes survive Git checkout. Preserve GUID/importer/geometry semantics and existing modelRoot overrides, then refresh exact raw/native dependency pins before final metadata generation or candidate qualification. No .gitattributes override is authorized."
+}

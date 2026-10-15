@@ -260,6 +260,8 @@ namespace Game.UI.Runtime
             SetText(subtitleText, model.Subtitle);
             SetText(currentOrderText, model.CurrentOrder);
             RefreshFieldRepairContext(model.CurrentOrder);
+            RefreshAircraftServiceContext();
+            RefreshPublicBoardingContext();
             SetText(healthText, model.HealthText);
             SetSelectionPortrait(FirstNonNull(model.PortraitSprite, ResolveFallbackPortraitSprite(model.PortraitKind)));
             SetHealthFill(model.Health01);

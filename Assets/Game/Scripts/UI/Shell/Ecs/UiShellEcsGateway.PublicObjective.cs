@@ -69,6 +69,7 @@ namespace Game.UI.Shell.Ecs
             model.Positions=positions.ToArray();
             if(!TryOwnObjectiveGroups(em,session,goal,out var groups))return true;
             model.OwnGroups=groups;model.Available=true;
+            ReadPublicConvoyService(em,session,model,positions);model.Positions=positions.ToArray();
             // Exact public accepted group/goal/contact feedback is installed by the
             // separate normal result projection. Never infer it from tap completion.
             model.CommandFeedbackReady=SkirmishPublicOrderFeedback.Version==1;

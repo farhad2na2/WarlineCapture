@@ -151,7 +151,7 @@ namespace Game.Editor
             playerResumeGuardReady = !playerResumePaidNeedsDelivery;
             airProbeDefenseSlot = airProbeDefenseStep = airProbeDefenseMapStep = airProbeDefenseMapAttempts = 0;
             airProbeDefensePage = airProbeDefenseOrders = 0;
-            airProbeDefensePaging.Reset();
+            airProbeDefensePaging.Reset();ResetS005GuardObservation();
             playerResumeLoggedStep = -1;
             playerResumeDiagnosticDue = 0;
             playerResumeContinueStableAt = playerResumeContinueAttemptAt = 0;

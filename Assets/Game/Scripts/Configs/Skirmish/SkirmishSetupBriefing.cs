@@ -18,12 +18,20 @@ namespace Game.Configs
             Roster = fa
                 ? $"نیروی آغازین: {setup.PlayerInfantry} پیاده · {setup.PlayerGround} خودروی رزمی · {setup.PlayerAir} هواگرد\nسقف: {setup.InfantryCapEach} پیاده · {setup.GroundCapEach} خودرو · {setup.TacticalAirCapEach} هواگرد"
                 : $"Start: {setup.PlayerInfantry} infantry · {setup.PlayerGround} ground vehicles · {setup.PlayerAir} aircraft\nCaps: {setup.InfantryCapEach} infantry · {setup.GroundCapEach} vehicles · {setup.TacticalAirCapEach} aircraft";
+            Roster += DefenderAdvantage(setup.ObjectiveKind,fa);
             Economy = fa
                 ? $"آغاز: {setup.MaterialsEach} مصالح · {setup.OilEach} نفت · {setup.UsableFuelEach} سوخت\nبرای ساخت و جذب نیرو مصالح خرج کن. از مسیر تدارکات محافظت کن."
                 : $"Start: {setup.MaterialsEach} Materials · {setup.OilEach} Oil · {setup.UsableFuelEach} Fuel\nSpend Materials to build and recruit. Protect your supply route.";
             Intel = setup.DevelopmentFullVision
                 ? (fa ? "دید کامل نقشه · بدون پاداش کارزار" : "Full map visibility · No campaign rewards")
                 : (fa ? "اهداف را پیش از حمله شناسایی کن" : "Scout targets before attacking");
+        }
+
+        public static string DefenderAdvantage(SkirmishObjectiveKind kind,bool fa)
+        {
+            if(kind!=SkirmishObjectiveKind.Breakthrough&&kind!=SkirmishObjectiveKind.ConvoyEscort)return string.Empty;
+            return fa ? "\nبرتری مدافع: دشمن دو برج نگهبانی اضافه در مسیرهای نزدیک‌شدن دارد."
+                : "\nDefender advantage: the enemy has two additional watchtowers protecting the approaches.";
         }
 
         public static string MatchHelp(SkirmishResolvedSetup setup, bool fa)

@@ -131,7 +131,7 @@ namespace Game.Editor
             if (tray == null) return false;
             if (airProbeDefenseSlot >= 5)
             {
-                if (!fixedWingCycleOnly || !page.NextPage&&!airProbeDefensePaging.IsPending) return true;
+                if (!fixedWingCycleOnly || !page.NextPage&&!airProbeDefensePaging.IsPending){StopS005GuardObservation();return true;}
                 if (airProbeDefensePage >= 8)
                     throw new InvalidOperationException("Opening defense squad paging did not finish.");
                 var receipt=airProbeDefensePaging.Observe(page.PageIndex,tray.LogicalPageIndex,page.RosterRevision,
@@ -231,15 +231,24 @@ namespace Game.Editor
                     return false;
                 }
                 Vector2 point = screen;
+                if(planeCanaryActive)PrepareS005GuardMove(tray.ExpandedSlotGroupId(airProbeDefenseSlot),site,point,now);
                 if (!helipadProbeTouch.TryGesture(point, point, .15f, 0f, Time.unscaledTime))
                 { EndHelipadProbe(false, "baseGuardTouchRejected"); return false; }
                 Debug.Log("[S005AircraftBaseGuard] input=Touch command=AttackMove slot=" + airProbeDefenseSlot +
                     " page=" + airProbeDefensePage + " world=" + site + " point=" + point +
                     " producerRelative=" + (fixedWingCycleOnly ? 1 : 0) + " ownInformationOnly=1");
-                airProbeDefenseOrders++;
+                // In the normal paid-plane canary dispatch remains raw evidence.
+                if(!planeCanaryActive)airProbeDefenseOrders++;
                 helipadProbeNext = now + 1d;
                 airProbeDefenseStep = 3;
                 airProbeDefenseMapAttempts = 0;
+            }
+            else if (planeCanaryActive&&airProbeDefenseStep==3)
+            {
+                var accepted=ObserveS005GuardMove(now);
+                if(accepted==S005GuardReceiptState.Waiting)return false;
+                if(accepted==S005GuardReceiptState.Retry){airProbeDefenseStep=2;return false;}
+                airProbeDefenseOrders++;airProbeDefenseStep=4;
             }
             else if (DeselectHelipadSquads(tray, now))
             { airProbeDefenseSlot++; airProbeDefenseStep = 0; }

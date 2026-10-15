@@ -1360,7 +1360,10 @@ namespace Game.Runtime
         {
             var pose = BuildPose(target, TacticalFollowCameraPoseSource.BaseTarget);
             // Existing public follow consent/result/restore owner remains in charge.
-            SkirmishMissionViewProfileApplication.TryApplyAircraftFollowPose(em, target.TargetEntity, Camera.main, ref pose);
+            bool applied=SkirmishMissionViewProfileApplication.TryApplyAircraftFollowPose(em, target.TargetEntity, Camera.main, ref pose);
+            // An explicitly scoped Transport profile cannot silently use the
+            // old guessed/culling fit when visible geometry is unavailable.
+            if(!applied&&SkirmishMissionViewProfileApplication.RequiresRigidAircraftFraming(em,target.TargetEntity))pose.Valid=0;
             return pose;
         }
 

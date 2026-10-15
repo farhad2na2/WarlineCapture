@@ -71,9 +71,11 @@ namespace Game.UI.Runtime
             if(goal.Score.ProgressKnown)score+="\n"+(fa?"زنده ":"ALIVE ")+(goal.Score.OriginalSubjects-goal.Score.Completed-goal.Score.SubjectsLost);
             UiLocalizedText.Set(clock,score+"\n"+match.Clock);clock.fontSize=HudIconButtonView.LabelSize;
             RefreshPublicGoalMap(goal,fa);
+            PresentPublicConvoyService(model);
             // Rendering the goal HUD alone is not an executable ARIA capability.
             // Exact normal command feedback is mandatory and is never synthesized.
             PublishRenderedObjectiveFrame(model);
+            RefreshPublicBoardingHud();
         }
 
         private void FocusPresentedObjectiveOrBase(bool own)
@@ -225,7 +227,7 @@ namespace Game.UI.Runtime
                         else if(best-distance>=model.GroundCellSize){bestPublicTravel[key]=distance;publicTravelRevision++;}
                     }
             }
-            string acceptedGoal=ResolvePublicOrderGoal(model);
+            string acceptedGoal=ResolvePublicServiceOrder(model)??ResolvePublicOrderGoal(model);
             int contact=0;
             if(model.Order.Present&&model.Order.Accepted&&acceptedGoal!=null&&model.CompletedContactTargetId!=0&&
                 Math.Abs(model.Order.Frame-model.CompletedContactFrame)<=2&&
@@ -233,7 +235,7 @@ namespace Game.UI.Runtime
                 contact=model.CompletedContactTargetId;
             uint progress=PublicGoalRevision(model.Goal,false)^publicTravelRevision,significant=PublicGoalRevision(model.Goal,true);
             PresentPublicObjectiveForAria(new AriaPresentedObjectiveFrame {Goal=model.Goal,Groups=groups.ToArray(),Approaches=approaches.ToArray(),Targets=targets.ToArray(),
-                Presented=true,Frame=Time.frameCount,PresentationEpoch=objectiveEpoch,RosterRevision=revision,Paused=model.Paused,
+                Presented=true,OwnModel=model,ConvoyService=PresentedConvoyService(model,camera,mapOpen),Frame=Time.frameCount,PresentationEpoch=objectiveEpoch,RosterRevision=revision,Paused=model.Paused,
                 SimulationSeconds=model.SimulationSeconds,SignificantPublicEventRevision=significant,CameraSettled=objectiveCameraSettledFrames>=2,
                 ExclusiveSelectedGroup=selectedCount==1?selected:0,MoveMode=UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)&&command.ActiveCommandMode==Game.Tactical.Contracts.TacticalCommandMode.Move,
                 AcceptedOrderRevision=model.Order.Present?model.Order.Revision:0,AcceptedGroup=model.Order.GroupId,AcceptedGoalId=acceptedGoal,

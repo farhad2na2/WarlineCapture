@@ -1,0 +1,11 @@
+{
+  "scope": "Independent readonly post-proof source/reference rehash",
+  "proof": "Design\\AgentReports\\SkirmishExpansion\\S005\\shared-native-main-closure\\owning-uesn01hn\\result.json",
+  "proofSha256": "c63aabd75fb0fa6fb9f2f76d311c48da23fcac85038c417b9a12ff1a7ab503a2",
+  "compositionSha256": "9aae455bcd4ad2c215a05cfcb4d029a16158645be81342268ed4f9e561e267ec",
+  "owners": 14,
+  "sourceChecks": 3736,
+  "referenceChecks": 4291,
+  "mismatches": [],
+  "passed": true
+}

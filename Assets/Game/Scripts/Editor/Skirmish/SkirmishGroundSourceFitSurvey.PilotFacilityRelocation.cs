@@ -21,7 +21,7 @@ namespace Game.Editor
         // metadata/caches. Static proposals do not stand in for live scene fitting.
         static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
-            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false)
+            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null)
         {
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
@@ -52,6 +52,7 @@ namespace Game.Editor
             var sourceRows=((JArray)report["allSizeFacilities"]).OfType<JObject>().ToArray();
             foreach(var configuration in sourceRows.GroupBy(row=>((string)row["catalogId"],(string)row["size"])))
             {
+                if(boundedPilotObserver!=null)BoundedPilotCheckpoint("FacilitySizeStarted",new JObject{["catalogId"]=configuration.Key.Item1,["size"]=configuration.Key.Item2});
                 var reserved=new List<RectInt>();bool complete=true;
                 var serviceFootprints=new Dictionary<byte,List<RectInt>>();var serviceAvailable=new Dictionary<byte,bool>();
                 foreach(byte side in new byte[]{1,2})
@@ -95,6 +96,14 @@ namespace Game.Editor
                     var contract=contracts[0];
                     var padBounds=PilotExactAxisAlignedPadCells(layout,contract,grid);
                     result["actualTypedFacilityPadCells"]=RectJson(padBounds);
+                    // Authoring discovery searches only inside the explicitly
+                    // declared compound, preserving all native source/occupancy
+                    // and circulation predicates. It does NOT call this a fit of
+                    // the old typed pad. Default collection is unchanged.
+                    if(contract.Kind==SkirmishLegalPadKind.DefenseApproach)compound=padBounds;
+                    result["declaredCompoundCells"]=RectJson(compound);
+                    var searchPadBounds=discoverFacilityPads&&contract.Kind!=SkirmishLegalPadKind.DefenseApproach?compound:padBounds;
+                    if(discoverFacilityPads)result["authoringSearchEnvelopeCells"]=RectJson(searchPadBounds);
                     int outsideCompound=0,outsidePad=0,circulationConflict=0,sourceRejected=0;
                     var serviceKeepClear=new List<RectInt>();
                     foreach(var kind in new[]{SkirmishLegalPadKind.InfantrySpawn,
@@ -108,6 +117,7 @@ namespace Game.Editor
                     // Service is shared by native Watchtower/Dish structures. Keep
                     // only actual vehicle interaction footprints free, not the whole pad.
                     serviceKeepClear.AddRange(serviceFootprints[faction]);
+                    if(plannedApproachClearance!=null)serviceKeepClear.AddRange(plannedApproachClearance);
                     result["additionalQaClearanceScope"]="DeclaredCompoundAndTypedPad_WholeSpawnRallyPads_ActualRepairVehicleFootprints";
                     result["repairInteractionClearanceAvailable"]=serviceAvailable[faction];
                     RectInt Effective(BuildingDefinition d,Vector2Int origin,GridConfig g,bool rotated)
@@ -125,7 +135,7 @@ namespace Game.Editor
                     {
                         var rect=Effective(d,origin,g,rotated);
                         if(!PilotCompoundContains(compound,rect)){outsideCompound++;return false;}
-                        if(!PilotCompoundContains(padBounds,rect)){outsidePad++;return false;}
+                        if(!PilotCompoundContains(searchPadBounds,rect)){outsidePad++;return false;}
                         if(serviceKeepClear.Any(rect.Overlaps)){circulationConflict++;return false;}
                         if(!serviceAvailable[faction]){circulationConflict++;return false;}
                         bool valid=NativeValid(d,origin,footprint,rotated,g,nativeRoads,nativeBlockers);
@@ -157,15 +167,17 @@ namespace Game.Editor
                     if(!foundFit)
                     {result["status"]="NativeNormalSearchNoFitInsideDeclaredCompoundAndPad";complete=false;continue;}
                     var accepted=Effective(definition,found,grid,false);
-                    Require(PilotCompoundContains(compound,accepted)&&PilotCompoundContains(padBounds,accepted)&&!reserved.Any(accepted.Overlaps),"Actual result escaped declared reservation contract");
+                    Require(PilotCompoundContains(compound,accepted)&&PilotCompoundContains(searchPadBounds,accepted)&&!reserved.Any(accepted.Overlaps),"Actual result escaped declared reservation contract");
                     reserved.Add(accepted);result["originX"]=accepted.x;result["originZ"]=accepted.y;
                     result["widthCells"]=accepted.width;result["depthCells"]=accepted.height;result["insideGrid"]=true;
                     result["resolvedEffectiveRect"]=RectJson(accepted);
                     result["resolvedWorldCenterXZ"]=new JArray(grid.Origin.x+(accepted.x+accepted.width*.5f)*grid.CellSize,grid.Origin.z+(accepted.y+accepted.height*.5f)*grid.CellSize);
-                    result["status"]="NativeNormalStaticSearchFound_WithinCompound_LivePending";
+                    result["status"]=discoverFacilityPads?"AuthoringDiscovery_NormalSourceAndReservations_OriginalTypedPadNotCertified":"NativeNormalStaticSearchFound_WithinCompound_LivePending";
+                    if(discoverFacilityPads)result["insideOriginalTypedPad"]=PilotCompoundContains(padBounds,accepted);
                 }
                 foreach(var result in output.OfType<JObject>().Where(row=>(string)row["catalogId"]==configuration.Key.Item1&&(string)row["size"]==configuration.Key.Item2))
                     result["entireConfigurationFound"]=complete;
+                if(boundedPilotObserver!=null)BoundedPilotCheckpoint("FacilitySizeCompleted",new JObject{["catalogId"]=configuration.Key.Item1,["size"]=configuration.Key.Item2,["complete"]=complete,["rows"]=new JArray(output.OfType<JObject>().Where(r=>(string)r["catalogId"]==configuration.Key.Item1&&(string)r["size"]==configuration.Key.Item2).Select(r=>r.DeepClone()))});
             }
             if(exactTypedRosterCaller){report["normalFacilityRelocationStatus"]="CollectedStaticFacilities_ExactTypedRosterCallerOwnsPacking";return;}
             // Preserve original force/facility rows. Re-query canonical force budgets
@@ -179,6 +191,36 @@ namespace Game.Editor
                     completeRows.OfType<JObject>().Any(row=>(string)row["catalogId"]==(string)request["catalogId"]&&
                         (string)row["size"]==(string)canonical["size_id"])).Select(row=>row.DeepClone()));
                 if(((JArray)clone["canonicalSetupRows"]).Count>0)completeRequests.Add(clone);
+            }
+            if(boundedPilotObserver!=null)
+            {
+                var plainAll=new JArray();var fallbackAll=new JArray();
+                var unavailable=new JArray();
+                foreach(var request in requests)foreach(JObject canonical in (JArray)request["canonicalSetupRows"])
+                    if(!completeRows.OfType<JObject>().Any(r=>(string)r["catalogId"]==(string)request["catalogId"]&&(string)r["size"]==(string)canonical["size_id"]))
+                    {
+                        var row=new JObject{["catalogId"]=request["catalogId"],["size"]=canonical["size_id"],["status"]="NotQueried_IncompleteCanonicalFacilityConfiguration"};
+                        unavailable.Add(row);BoundedPilotCheckpoint("PostFacilityArmySizeUnavailable",row);
+                    }
+                report["postFacilityPackingUnavailableSizes"]=unavailable;
+                foreach(var request in completeRequests)foreach(JObject canonical in (JArray)request["canonicalSetupRows"])
+                {
+                    var one=(JObject)request.DeepClone();one["canonicalSetupRows"]=new JArray(canonical.DeepClone());
+                    var placed=new JArray(completeRows.OfType<JObject>().Where(r=>(string)r["catalogId"]==(string)request["catalogId"]&&(string)r["size"]==(string)canonical["size_id"]).Select(r=>r.DeepClone()));
+                    var plain=SurveyForcePacking(input,new[]{one},layout,roles,em,gridEntity,grid,surface,placed);
+                    foreach(var row in plain)plainAll.Add(row.DeepClone());
+                    var fallback=new JObject();ProbePilotNormalTerrainFallback(input,new[]{one},layout,roles,em,gridEntity,grid,surface,placed,fallback);
+                    var rows=(JArray)fallback["normalTerrainFallbackForcePacking"];
+                    foreach(var row in rows)fallbackAll.Add(row.DeepClone());
+                    report["packingAfterNormalStaticFacilityRelocation"]=plainAll;
+                    report["packingAfterNormalStaticFacilityRelocationWithTerrainFallback"]=fallbackAll;
+                    BoundedPilotCheckpoint("PostFacilityArmySizeCompleted",new JObject{["catalogId"]=request["catalogId"],["size"]=canonical["size_id"],["facilityRows"]=placed,["rawPacking"]=plain,["terrainFallbackPacking"]=rows});
+                }
+                report["packingAfterNormalStaticFacilityRelocation"]=plainAll;
+                report["packingAfterNormalStaticFacilityRelocationWithTerrainFallback"]=fallbackAll;
+                report["packingAfterRelocationScope"]="CompleteFacilityConfigurationsOnly_ActualStaticReservations_NoLiveOccupancy";
+                report["normalFacilityRelocationStatus"]="CollectedStaticProposals_LiveSourceFitAndReadabilityPending";
+                return;
             }
             report["packingAfterNormalStaticFacilityRelocation"]=SurveyForcePacking(input,completeRequests.ToArray(),layout,roles,em,gridEntity,grid,surface,completeRows);
             var fallbackReport=new JObject();

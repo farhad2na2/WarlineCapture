@@ -20,6 +20,7 @@ namespace Game.Editor
         private static double menuStableSince, menuLastTapAt;
         private static double menuDiagnosticDue;
         private static bool menuDiagnosticCaptured;
+        private static SkirmishMenuLaunchPreparation menuLaunchPreparation;
         private static IDisposable candidateCatalogScope;
         private static SkirmishBattleCatalogConfig candidateCatalog;
 
@@ -152,6 +153,7 @@ namespace Game.Editor
                 menuStableSince = menuLastTapAt = 0;
                 menuDiagnosticDue = 0;
                 menuDiagnosticCaptured = false;
+                menuLaunchPreparation = new SkirmishMenuLaunchPreparation();
                 menuTouch = new AriaTouchInputUiSystemHelper();
                 if (!menuTouch.Start()) throw new InvalidOperationException("Menu Touch unavailable.");
                 var runner = new GameObject("S004MenuInputProbe");
@@ -181,12 +183,23 @@ namespace Game.Editor
                 menuDiagnosticDue = EditorApplication.timeSinceStartup + 10d;
                 ObservePresentedMenuControls(buttons);
             }
+            if (menuStep == 4 && EditorApplication.timeSinceStartup >= menuDiagnosticDue)
+            {
+                menuDiagnosticDue = EditorApplication.timeSinceStartup + 10d;
+                Debug.Log("[S005MenuLaunchObservation] screen=" + Screen.width + "x" + Screen.height +
+                    " safeArea=" + Screen.safeArea + " step=4 readOnly=1 extraScreenshot=0");
+                ObservePresentedMenuControls(buttons, false);
+            }
             if (menuStep == 5)
             {
                 var world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
                 if (world != null && world.IsCreated &&
-                    Game.Composition.SkirmishLaunchProjection.TryGet(world.EntityManager, out _, out _))
+                    Game.Composition.SkirmishLaunchProjection.TryGet(world.EntityManager, out var observedSession, out var observedMatch))
                 {
+                    RecordProductionResolvedSnapshot(world.EntityManager, observedSession, in observedMatch,
+                        Game.Composition.SkirmishLaunchProjection.IsSimulationActive(world.EntityManager),
+                        Game.Composition.SkirmishLaunchProjection.ReadMatchElapsedSeconds(world.EntityManager, observedSession, in observedMatch),
+                        "NormalMenuLaunchObserved");
                     Debug.Log("[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll," +
                         catalogId + ",Launch seedFixture=" + seed + " nativeSessionObserved=1");
                     menuStep = 6;
@@ -251,18 +264,31 @@ namespace Game.Editor
             }
             else if (menuStep == 4)
             {
-                if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
-                    foreach (var b in buttons)
-                        if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
-                        {
-                            if (MenuTap(b)) Debug.Log("[S004MenuJourney] phase=ScenarioRetry input=Touch reason=LibraryStillVisible");
-                            return;
-                        }
-                foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                var setup = SelectMenuSetupForLaunch(UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude), catalogId);
+                if (setup == null)
                 {
-                    if (!setup.IsBaseAssaultSetup || setup.SelectedScenarioId != catalogId) continue;
+                    // The library persists inside a valid setup. Retry selection only
+                    // when the actual exact selected setup is absent.
+                    if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
+                        foreach (var b in buttons)
+                            if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
+                            {
+                                if (MenuTap(b)) Debug.Log("[S004MenuJourney] phase=ScenarioRetry input=Touch reason=SelectedSetupAbsent");
+                                return;
+                            }
+                    return;
+                }
+                {
                     // Fixed seed is a test fixture; entry, selection and launch use native input.
-                    setup.PrepareScenarioAdjustment(setup.ReadConfigFromControls().ScenarioIndex, seed);
+                    if (menuLaunchPreparation.Read(setup, seed) == SkirmishMenuLaunchPreparation.Action.PrepareSetup)
+                    {
+                        setup.PrepareScenarioAdjustment(setup.ReadConfigFromControls().ScenarioIndex, seed);
+                        menuLaunchPreparation.MarkPrepared(setup, seed);
+                        menuStableTarget = null;
+                        // Bind/SelectScenario rebuild the cards and presentation. Give
+                        // the ordinary raycast/stability path a fresh subsequent frame.
+                        return;
+                    }
                     foreach (var label in setup.GetComponentsInChildren<TMP_Text>())
                         if (label.name == "OperationName" || label.name == "SeedHelp")
                         {
@@ -284,6 +310,18 @@ namespace Game.Editor
                         }
                 }
             }
+        }
+
+        public static QuickCustomScreenView SelectMenuSetupForLaunch(QuickCustomScreenView[] setups, string requestedId)
+        {
+            QuickCustomScreenView selected = null;
+            foreach (var setup in setups)
+            {
+                if (setup == null || !setup.IsBaseAssaultSetup || setup.SelectedScenarioId != requestedId) continue;
+                if (selected != null) throw new InvalidOperationException("Ambiguous exact selected menu setup.");
+                selected = setup;
+            }
+            return selected;
         }
 
         private static bool MenuTap(Button b)
@@ -310,9 +348,9 @@ namespace Game.Editor
             return accepted;
         }
 
-        private static void ObservePresentedMenuControls(Button[] buttons)
+        private static void ObservePresentedMenuControls(Button[] buttons, bool allowScreenshot = true)
         {
-            if (!menuDiagnosticCaptured)
+            if (allowScreenshot && !menuDiagnosticCaptured)
             {
                 ScreenCapture.CaptureScreenshot(LiveTracePath() + ".menu-selection-diagnostic.png");
                 menuDiagnosticCaptured = true;
@@ -347,6 +385,20 @@ namespace Game.Editor
         {
             menuTouch?.Dispose();
             menuTouch = null;
+        }
+    }
+
+    public sealed class SkirmishMenuLaunchPreparation
+    {
+        public enum Action { SelectCard, PrepareSetup, TouchLaunch }
+        private object preparedInstance;
+        private int preparedSeed;
+        public Action Read(object selectedSetup, int seed) => selectedSetup == null ? Action.SelectCard :
+            ReferenceEquals(preparedInstance, selectedSetup) && preparedSeed == seed ? Action.TouchLaunch : Action.PrepareSetup;
+        public void MarkPrepared(object actualSetup, int seed)
+        {
+            if (actualSetup == null) throw new ArgumentNullException(nameof(actualSetup));
+            preparedInstance = actualSetup; preparedSeed = seed;
         }
     }
 

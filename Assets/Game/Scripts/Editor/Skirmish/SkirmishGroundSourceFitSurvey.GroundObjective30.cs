@@ -100,7 +100,7 @@ namespace Game.Editor
                 ["sizes"]=new JArray(new[]{"Standard","War","LargeWar"}.Select(size=>new JObject{["size"]=size,["status"]="NotCollected",["normalCompilerPassed"]=false}))};
         }
 
-        static void CollectGround30Source(JObject[] missions,JObject report)
+        static void CollectGround30Source(JObject[] missions,JObject report,bool refineLogical=false)
         {
             var pin=(JObject)missions[0]["source_candidate"];
             foreach(var mission in missions)foreach(var key in new[]{"sourcePath","sourceAssetSha256","gridPath","gridAssetSha256","surfacePath","surfaceAssetSha256","operationMapId","sourceIdentityHash","contentHash","sourceSceneGuid","authoredSubSceneGuid"})
@@ -128,6 +128,11 @@ namespace Game.Editor
                 Require(SkirmishSetupMatrixTable.TryLoad(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),out var matrix,out string matrixError),matrixError);
                 foreach(var mission in missions)
                 {
+                    if(refineLogical)
+                    {
+                        ((JArray)report["missions"]).Add(RefineGround30LoadedMission(mission,source,em,gridEntity,grid,surface,(string)report["refinementOutputPrefix"]));
+                        continue;
+                    }
                     var row=Ground30MissionRow(mission);((JArray)report["missions"]).Add(row);
                     GroundObjective30CandidateOwner owner=null;
                     try
@@ -139,7 +144,7 @@ namespace Game.Editor
                         foreach(var sizeRow in ((JArray)row["sizes"]).OfType<JObject>())
                         {
                             if (ground30MemoryWriter != null && (string)sizeRow["size"] != ground30MemorySize) continue;
-                            Ground30MemoryCheckpoint("BeforeSize", row);
+                            Ground30MemoryCheckpoint("BeforeSize", new JObject{["catalogId"]=row["catalogId"],["size"]=sizeRow["size"]});
                             try
                             {
                                 Require(Enum.TryParse((string)sizeRow["size"],out SkirmishSizeId size),"Canonical native size missing");
@@ -277,7 +282,7 @@ namespace Game.Editor
             return rows;
         }
 
-        static JArray Ground30PackBudget(SkirmishStaticAuthoringBudget budget,SkirmishMapLayoutConfig layout,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JArray acceptedFacilities)
+        static JArray Ground30PackBudget(SkirmishStaticAuthoringBudget budget,SkirmishMapLayoutConfig layout,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JArray acceptedFacilities,Game.Runtime.SkirmishTypedSpawnConstraint typedConstraint=null)
         {
             using var matches=em.CreateEntityQuery(typeof(SkirmishMatchState));Require(matches.IsEmptyIgnoreFilter,"Never query a live gameplay World");
             Entity context=em.CreateEntity(typeof(SkirmishMatchState));
@@ -304,15 +309,31 @@ namespace Game.Editor
                         var center=GridUtils.WorldToCell(grid,new float3(x,0,z));var cells=new JArray();row["candidateCells"]=cells;
                         row["nativePrefabEntityIndex"]=prefab.Index;row["nativePrefabEntityVersion"]=prefab.Version;row["footprintX"]=footprint.x;row["footprintZ"]=footprint.y;row["padId"]=pad.PadId;
                         int found=0,traversable=0,contained=0;
+                        NativeBitArray constrained=default;
+                        Require(typedConstraint==null||typedConstraint.TryMask(force,occupied,out constrained),"Exact typed source-authoring spawn mask required");
+                        var placementOccupancy=typedConstraint==null?occupied:constrained;
+                        try
+                        {
                         for(int member=0;member<force.Quantity;member++)
                         {
-                            if(!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref random,grid,walkable,blocked,occupied,ref reserved,center,12,footprint,air,out var cell))break;
-                            var initial=cell;bool accepted=air||SkirmishSpawnPlacement.EnsureTraversable(em,grid,walkable,blocked,occupied,ref reserved,prefab,footprint,ref cell);
+                            var requestedCenter=center;
+                            if(typedConstraint!=null)
+                            {
+                                Require(typedConstraint.TryRequestedWorld(force,member,out var requested),"Exact normal member offset required");
+                                requestedCenter=GridUtils.WorldToCell(grid,new float3(requested.x,requested.y,requested.z));
+                                random=Game.Runtime.SkirmishTypedSpawnConstraint.PlacementRandom(1,
+                                    new FixedString64Bytes(force.RoleId+"."+force.FactionId+"."+(forceIndex-1)+"."+member),requestedCenter);
+                            }
+                            if(!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref random,grid,walkable,blocked,placementOccupancy,ref reserved,requestedCenter,12,footprint,air,out var cell))break;
+                            var initial=cell;bool accepted=air||SkirmishSpawnPlacement.EnsureTraversable(em,grid,walkable,blocked,placementOccupancy,ref reserved,prefab,footprint,ref cell);
                             if(!accepted){cells.Add(new JObject{["member"]=member,["initialX"]=initial.x,["initialZ"]=initial.y,["normalFallbackAccepted"]=false});break;}
                             bool terrain=air||new MapSurfaceTraversalValidation().CanTraverseFootprint(surface,surface.HasSurfaceData,grid,cell,footprint,vehicle);
                             bool inside=PilotFootprintInsideProjectedPad(layout,pad,grid,cell,footprint);found++;if(terrain)traversable++;if(inside)contained++;
                             cells.Add(new JObject{["member"]=member,["x"]=cell.x,["z"]=cell.y,["normalFallbackAccepted"]=true,["surfaceTraversable"]=terrain,["insideActualTypedPad"]=inside});
                         }
+                        }
+                        finally{if(constrained.IsCreated)constrained.Dispose();}
+                        row["typedSpawnConstraintApplied"]=typedConstraint!=null;
                         row["foundCount"]=found;row["surfaceTraversableCount"]=traversable;row["insideTypedPadCount"]=contained;
                         row["status"]=found==force.Quantity&&traversable==force.Quantity&&contained==force.Quantity?"StaticSourcePackingInsidePad_LiveAndFacilitiesPending":"StaticSourcePackingFailedOrOutsidePad";
                     }

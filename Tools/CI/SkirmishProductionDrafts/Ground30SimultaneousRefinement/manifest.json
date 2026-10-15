@@ -1,0 +1,200 @@
+{
+  "schema": 1,
+  "scope": "EngineeringLogicalAuthoring_ExactTypedSpawn_NotMissionAcceptance",
+  "parents": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/manifest.json",
+      "sha256": "deb0689a63810b749d5d0f1e8c625bf64df3694167933c92b1f4790cb34f510e"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/manifest.draft.json",
+      "sha256": "86ce6e46598bca426a32ebbe39b588f60c6fecd1a495cce05f94635f599e177a"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/manifest.draft.json",
+      "sha256": "7b90d180b750e62e300dc4f5efb5efb317b2739cf182e6d641ccc3579146c7a0"
+    }
+  ],
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "before_sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0",
+      "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "composed_from": {
+        "path": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+        "sha256": "ccaddb274a722793042524d1bd847d1a0381baa2122caab154084b763dff0fb5"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "before_sha256": "b10a6b4715dbfec25d4707dc36c9923fa2be71764379c20837009c80837bd8cf",
+      "sha256": "7addebfaba8680b77080d90c3d691c93a48fc71e1ae334186318894020b21307"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "before_sha256": "dab98c69d01e35b1ec4f0f76967bc72ee31a9d5d5a8945057a97b72dfa4c82cc",
+      "sha256": "9ab858c250ddd773cd25a631637867947cf8f724aa881914bdac96d6373b74c4"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "before_sha256": "81e37f7df652df039aaa9fa124f98e24db8c629a09e38df478a098c65a60b1b3",
+      "sha256": "7a4259f814dde91b16e57d5709a5e7c0eb426a2cb61088660e515ae6d62e6cc9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "before_sha256": "5f182ee3a9dd124206b7643315624e0f15e908b30ba66a40b80481c453e0d414",
+      "sha256": "aa7efa508ac53aa254f69002ca38ee27841a7575f91301b6d531e0d2ac81c912"
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishGenericAirCombinedEnemyRollout.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/SkirmishGenericAirCombinedEnemyRollout.cs.txt",
+      "before_sha256": null,
+      "sha256": "d6591a1a11a8817e04d9a4758cfddcd43eefbfef821bc0f0ffc345b582442bb1",
+      "assembly": "Game.Configs"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyAirCombined13Tests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/SkirmishEnemyAirCombined13Tests.cs.txt",
+      "before_sha256": null,
+      "sha256": "6523d552f965469720362f88ce03346121604f579114cec7c54625eeb4c126a2",
+      "assembly": "Game.Tests.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "before_sha256": "e2d36d7bea39c5778479b48a510c1d7e2b6e8c01ae6b32955e09d8467a7cc628",
+      "sha256": "4b72ea8fd6a591539d1025b09b64ab086da96494e09b741e7dfb2084e5fda228",
+      "composed_from": null
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs",
+      "before_sha256": "1ed379531c953432ab2a005a31617fd13c6966e885998dfe71f41f12f31100e1",
+      "sha256": "7b9738bed435747d323fb65b483ad3e8953230eb505557a0d55b7df4d5488ddc",
+      "composed_from": null
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveApproachTowerTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/SkirmishObjectiveApproachTowerTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "30023f16d132905eb932c72880c69a7802ecadc9fb23f0e022228c1db61aa36c"
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "before_sha256": "64a74245632940ff8d89d884cafd649c7291d771da4773740cc4eb77fd443bdb",
+      "sha256": "0850b0e5a90937d4f8f5fb8b435cda2df1e630a2bc1046d5ce556868e8ee88df",
+      "composed_from": null
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs",
+      "before_sha256": "8350ef63a624dc450f92f2c49a4bba1670195e710f49ba914f229be96d42f612",
+      "sha256": "b0cde693fd2cbb818bdf561ffd4711a463d0b484671500dae2381b8417a85c11",
+      "composed_from": null
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ObjectiveApproachTowers/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "before_sha256": "dd34c3dbad60d55afc1273343b39ddfade241aaa2196d748a31798fe1f0c6953",
+      "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994",
+      "composed_from": null
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "before_sha256": "51244b0e14d0df4211c9b8d3139fcad47969c84f5adefd454da18762266357ec",
+      "sha256": "0dca4cbde1225a67ea21b4d17fd6a2dc047ac892ef87edf8b3022818fca8149b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "before_sha256": null,
+      "sha256": "10fea77ebd30f5978d802677c1710d5ae44610279fba6b330d7b9c5bd4452fc7"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "de5c3cd105cbd961bba6a8c56d61ded3232ab0644bfc0445b66b71c274b687ae"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementApproaches.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.RefinementApproaches.cs.txt",
+      "before_sha256": null,
+      "sha256": "033d87f0d2cff55183a4aa2a0aa9c3bb84ce9026eb40d62646eade56e76c8825"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.RefinementOutput.cs.txt",
+      "before_sha256": null,
+      "sha256": "b9be58676aabe221d1cdbe9dd4f672cf7973c0b817dd8f86e4e40450026212c9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "before_sha256": "d8f5c398e249a4ad55f2ad3b551b67b968ee0de14e2ee06702e44fa9e226c5e0",
+      "sha256": "6403150974dbac8bb512ac8cb230cb9497840de08738d3faa974f259a58b6ada"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "before_sha256": "a98eff8c77c2c998eab543dff1efa93d096e3a13219cde9a41407f187c7125f1",
+      "sha256": "5a98ac9ae2fdf6613b290bea4a718436a9e8100ab26ceb0b38ebd0b7504b5c00"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishTypedSpawnConstraint.cs.txt",
+      "before_sha256": null,
+      "sha256": "44d814fe29405323e081202a2088600bfcf918d6f496e6f1486a0883423ad403"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs",
+      "before_sha256": "8a045dbca7f3f2c1a949a08a0c3d2d7f7d32b44c1cae55b5b0f859191d0de9ff",
+      "sha256": "4b417d83d8354cb4ea14e6dfcfbb05b5ea8ddc607f77d822f08da388f8b39baa"
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs",
+      "before_sha256": "7c12c4ec9b799883b34706c6cbb58fb79a99560c70cd0d86c23447da03679b30",
+      "sha256": "14c96dfd02a4fdf0879cdf768d18429d5978269c768aad2f2f7ae6679d49951d"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRefinementEngineeringViewTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishRefinementEngineeringViewTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "5605749e31598c9c1706e22d0a9e2554eaadcdc7839ae5fa78e25a2e86c5d85c"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTypedSpawnConstraintTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishTypedSpawnConstraintTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "f62d55508eea88ea630b12f80fd14104bc4ac315ad1400b09483892bd57daa6a"
+    }
+  ],
+  "proof": {
+    "path": "Design/AgentReports/SkirmishExpansion/ObjectiveBridge/convoy-owning-compile-d2t62otw",
+    "sha256": "e3f588255c48f00d5021bacf361859e446652657195edaec520c739034ebe2f0",
+    "stability_sha256": "9213b66b6517a6fca4750baebd570d1426d7216640b4cea0fe6cb8eb30f70a79"
+  },
+  "native_tests_executed": false,
+  "source_fit_certified": false,
+  "camera_accepted": false,
+  "preparation_entry": "Game.Tests.Editor.SkirmishLogicalRefinementPreparationValidation.Run",
+  "preparation_marker": "[SkirmishLogicalRefinementPreparation] result=Passed enemy=5 approach=3 view=6 typedSpawn=5 canonicalSizeVectors=180 nativeMissionAcceptance=Pending",
+  "one_mission_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGround30SimultaneousLogicalRefinement",
+  "pending": [
+    "Native focused controls",
+    "Complete simultaneous placement on actual sources",
+    "Independent routes and service/live occupancy",
+    "Required fresh-seed normal spawning",
+    "Native high/low default/min/max and aircraft readability",
+    "Normal mission and device acceptance"
+  ]
+}

@@ -218,7 +218,7 @@ namespace Game.Runtime
             NativeArray<Entity> entities = selectedEntities;
             var reservedGoalCells = new HashSet<int>();
             HashSet<int> selectedCurrentCells = moveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
-            using NativeList<Entity> publicAcceptedUnits=SkirmishPublicOrderFeedback.ShouldObserve(em)?new NativeList<Entity>(Allocator.Temp):default;
+            using NativeList<Entity> publicAcceptedUnits=(SkirmishPublicOrderFeedback.ShouldObserve(em)||AriaMoveExecutionEvidence.Active)?new NativeList<Entity>(Allocator.Temp):default;
             using NativeList<int2> publicAcceptedGoals=publicAcceptedUnits.IsCreated?new NativeList<int2>(Allocator.Temp):default;
             var issuedGoals = new int2[entities.Length];
             var skipIssue = new bool[entities.Length];
@@ -373,7 +373,7 @@ namespace Game.Runtime
                     $"groundCandidates={groundPathCandidateCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves}");
             }
 
-            return Result.Success(goal, clickWorldPoint, factionId,SkirmishPublicOrderFeedback.VerifyCompleteMoveGroup(em,entities,publicAcceptedUnits,publicAcceptedGoals));
+            return Result.Success(goal, clickWorldPoint, factionId,SkirmishPublicOrderFeedback.VerifyCompleteMoveGroup(em,entities,publicAcceptedUnits,publicAcceptedGoals,AriaMoveExecutionEvidence.Active));
         }
 
         private static UnitMoveOrderSystem.MoveOrderCommandResult ToMoveOrderCommandResult(UnitMoveOrderResultElement result)
@@ -488,6 +488,7 @@ namespace Game.Runtime
                 }
 
                 if (result.CommandResult.Accepted) AriaCommandEvidence.Accepted("Move", FactionIdentity.PlayerFactionId);
+                AriaMoveExecutionEvidence.Observe(em,request,result);
                 SkirmishPublicOrderFeedback.PublishMove(em,request,result);
                 AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
             }
@@ -559,6 +560,7 @@ namespace Game.Runtime
                         request.Frame,
                         ResolveMarkerFaction(em, entities));
                 if (result.CommandResult.Accepted) AriaCommandEvidence.Accepted("Move", FactionIdentity.PlayerFactionId);
+                AriaMoveExecutionEvidence.Observe(em,request,result);
                 SkirmishPublicOrderFeedback.PublishMove(em,request,result);
                 AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
             }

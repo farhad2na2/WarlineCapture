@@ -12,6 +12,7 @@ namespace Game.UI.Runtime
         // adapter cannot find a service pad, drive there, heal, spend, or cancel.
         void ObserveFieldRepair(ref AriaSkirmishObservation view)
         {
+            if(ConvoyServiceOwnsRepair&&convoyServiceJourney.Stage!=ConvoyServiceStage.Repair)return;
             if(watchSkirmish==null||!watchSkirmish.TryReadPublicObjectiveForAria(Time.frameCount,out var frame)||
                 !frame.Presented||frame.Goal==null||frame.Goal.Outcome!=SkirmishOutcomeKind.None||
                 !view.PublicObjective.Supported||!view.PublicObjective.Presented||watchSelection==null||

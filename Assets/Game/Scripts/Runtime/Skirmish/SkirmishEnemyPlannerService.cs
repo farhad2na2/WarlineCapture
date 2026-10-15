@@ -10,6 +10,7 @@ namespace Game.Runtime
     {
         public static bool EnsureSession(EntityManager em, Entity session, SkirmishResolvedSetup setup)
         {
+            if (SkirmishGenericAirCombinedEnemyRollout.IncludesCatalog(setup?.CatalogId) && !SkirmishGenericAirCombinedEnemyRollout.Supports(setup)) return false;
             if (setup?.EnemyPolicy == null) return true;
             if ((setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault && !SkirmishEnemyObjectivePolicyScope.Supports(setup)) || !em.Exists(session)) return false;
             var policy = setup.EnemyPolicy;

@@ -87,6 +87,7 @@ namespace Game.UI.Runtime
             AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
             if (!aria.Active)
             {
+                ResetConvoyServiceJourney();
                 watchThreatTracked = false;
                 watchFlankReached = false;
                 UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
@@ -241,7 +242,12 @@ namespace Game.UI.Runtime
             ObserveAdvanceGround(ref view);
             ObserveGroupRectangle(ref view);
             ObservePublicObjective(ref view);
+            ObservePublicScan(ref view);
+            ObservePublicBoarding(ref view);
+            ObserveOffensiveAir(ref view);
+            var ordinaryObjective=view.PublicObjective;
             ObserveFieldRepair(ref view);
+            ObserveConvoyService(ref view,ordinaryObjective);
             UiShellRuntimeGateway.PublishAriaSkirmishObservation(view);
         }
         private static int ReadDisplayedCount(string text)

@@ -27,12 +27,14 @@ namespace Game.Editor
         private static int terminalPlayerHp, terminalEnemyHp, terminalStep;
         private static double terminalDue, terminalDeadline;
         private static double terminalDestinationVisibleSince;
+        private static SkirmishTerminalPresentationObservation.Proof terminalResultPresentation, terminalMenuPresentation;
         private static AriaTouchInputUiSystemHelper terminalTouch;
         private static int terminalInterventions, terminalUnexpectedSamples;
         private static readonly List<Entity> terminalOldBattlefield = new();
 
         private static void StartTerminalProbe(EntityManager em, Entity session, SkirmishMatchState match, float elapsed)
         {
+            RecordProductionResolvedSnapshot(em, session, in match, SkirmishLaunchProjection.IsSimulationActive(em), elapsed, "TerminalSnapshot");
             StopS004ManualProbe();
             terminalSnapshotValid = terminalProbeActive = true;
             terminalInterventions = terminalUnexpectedSamples = 0;
@@ -60,6 +62,7 @@ namespace Game.Editor
             terminalEnemyHp = DesignatedBaseHp(em, session, 2);
             terminalStep = 0;
             terminalDestinationVisibleSince = 0d;
+            terminalResultPresentation = terminalMenuPresentation = null;
             terminalDue = EditorApplication.timeSinceStartup + 3d;
             terminalDeadline = terminalDue + 45d;
             var runner = new GameObject("SkirmishTerminalInputProbe");
@@ -86,6 +89,7 @@ namespace Game.Editor
                 {
                     if (!SkirmishLaunchProjection.TryGet(em, out var session, out var match) || session != terminalSession ||
                         match.Phase != SkirmishPhase.Finished || match.Outcome != terminalMatch.Outcome ||
+                        !em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.Equals(terminalAttempt) ||
                         Mathf.Abs(SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, session, in match) - terminalElapsed) > .05f ||
                         DesignatedBaseHp(em, session, 1) != terminalPlayerHp || DesignatedBaseHp(em, session, 2) != terminalEnemyHp ||
                         SkirmishLaunchProjection.IsSimulationActive(em))
@@ -97,6 +101,8 @@ namespace Game.Editor
                         { EndTerminalProbe(false, "terminalClockNotFrozen"); return; }
                     }
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                    terminalResultPresentation = SkirmishTerminalPresentationObservation.ReadResult(view, terminalAttempt.ToString(), match.Outcome);
+                    if (!SkirmishTerminalPresentationObservation.AcceptResult(terminalResultPresentation, terminalAttempt.ToString(), match.Outcome)) return;
                     if (UiShellRuntimeGateway.Localization.IsRightToLeft)
                     {
                         var card = UnityEngine.Object.FindAnyObjectByType<CampaignStyleResultCard>();
@@ -175,8 +181,13 @@ namespace Game.Editor
                     bool obscured = shellView != null &&
                         shellView.TryGetRegion(UIShellRegionId.LoadingLayer, out var loading) &&
                         loading.CanvasGroup != null && loading.CanvasGroup.alpha > .01f;
-                    bool controlsVisible = terminalAction != "ADJUST SETUP";
-                    if (!controlsVisible)
+                    bool controlsVisible = terminalAction == "REPLAY";
+                    if (terminalAction == "MAIN MENU")
+                    {
+                        terminalMenuPresentation = ReadTerminalMenuPresentation();
+                        controlsVisible = terminalMenuPresentation != null;
+                    }
+                    if (terminalAction == "ADJUST SETUP")
                     {
                         foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
                         {
@@ -213,13 +224,33 @@ namespace Game.Editor
             }
         }
 
+        private static SkirmishTerminalPresentationObservation.Proof ReadTerminalMenuPresentation()
+        {
+            if (!UiShellRuntimeGateway.TryReadShellState(out var shell) || shell.ActiveRoute != UIRoute.MainMenu || shell.IsTransitionRunning)
+                return null;
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated || SkirmishTerminalPresentationObservation.NativeSessionCount(world.EntityManager) != 0) return null;
+            var view = UnityEngine.Object.FindAnyObjectByType<UIShellView>();
+            if (view != null && view.TryGetRegion(UIShellRegionId.LoadingLayer, out var loading) &&
+                loading.CanvasGroup != null && loading.CanvasGroup.alpha > .01f) return null;
+            var proof = SkirmishTerminalPresentationObservation.ReadMenu(terminalAttempt.ToString(),
+                button => TryPresentedButtonPoint(button, out var point) ? point : (Vector2?)null);
+            if (proof != null) terminalMenuPresentation = proof;
+            return proof;
+        }
+
         private static void EndTerminalProbe(bool passed, string reason)
         {
             terminalInterventions = (int)(terminalTouch?.PhysicalInterventions ?? 0);
             terminalUnexpectedSamples = (int)(terminalTouch?.UnexpectedSamples ?? 0);
             if (terminalUnexpectedSamples > 0) { passed = false; reason = "unexpectedTerminalInput"; }
+            if (passed && (!SkirmishTerminalPresentationObservation.AcceptResult(terminalResultPresentation, terminalAttempt.ToString(), terminalMatch.Outcome) ||
+                terminalAction == "MAIN MENU" && (ReadTerminalMenuPresentation() == null ||
+                    terminalResultPresentation.locale != terminalMenuPresentation.locale)))
+            { passed = false; reason = "terminalPresentationLost"; }
             Debug.Log("[SkirmishTerminalProbe] result=" + (passed ? "Passed" : "Failed") + " reason=" + reason +
                 " completed=" + (terminalTouch?.CompletedGestures ?? 0) + " interventions=" + (terminalTouch?.PhysicalInterventions ?? 0));
+            RecordProductionTerminalReturn(passed, reason);
             terminalProbeActive = false;
             terminalTouch?.Dispose(); terminalTouch = null;
             Finish(!passed, passed ? null : "terminal:" + reason);

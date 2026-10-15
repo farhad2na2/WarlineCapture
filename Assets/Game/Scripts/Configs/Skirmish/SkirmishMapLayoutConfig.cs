@@ -15,7 +15,8 @@ namespace Game.Configs
         Supply = 7,
         Service = 8,
         SupplyExpansion = 9,
-        ObjectiveTruckSpawn = 10
+        ObjectiveTruckSpawn = 10,
+        DefenseApproach = 11
     }
 
     public enum SkirmishMeasuredRouteKind : byte

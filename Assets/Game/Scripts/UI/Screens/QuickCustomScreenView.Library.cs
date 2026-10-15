@@ -136,9 +136,9 @@ namespace Game.UI.Runtime
 
             _libraryGrid = FindOrCreate(preview, "LibraryGrid");
             _libraryFilters = FindOrCreate(composition, "LibraryFilters");
-            _medalRow = FindOrCreate(rules, "MedalRow");
-            _difficultyRow = FindOrCreate(rules, "MedalDifficultySelector");
-            _recommendedPanel = FindOrCreate(rules, "RecommendedNext");
+            _medalRow = AdoptBriefingWidget(rules, "MedalRow");
+            _difficultyRow = AdoptBriefingWidget(rules, "MedalDifficultySelector");
+            _recommendedPanel = AdoptBriefingWidget(rules, "RecommendedNext");
             EnsureMedalSlots(_medalRow);
             EnsureDifficultyButtons(_difficultyRow);
             EnsureRecommended(_recommendedPanel);
@@ -306,6 +306,7 @@ namespace Game.UI.Runtime
                 MirrorLibraryPanels();
                 ClampStrayMedalBars();
                 RaiseLaunchTransition();
+                ApplyBriefingColumnState();
             }
             finally
             {
@@ -1148,14 +1149,33 @@ namespace Game.UI.Runtime
             _progressFill.color = new Color(0.93f, 0.74f, 0.22f, 1f);
             _progressFill.enabled = true;
             _progressFill.raycastTarget = false;
-            float shown = Mathf.Max(0.08f, Mathf.Clamp01(_sideWonRatio));
-            RectTransform fill = _progressFill.rectTransform;
-            fill.anchorMin = Vector2.zero;
-            fill.anchorMax = new Vector2(shown, 1f);
-            fill.offsetMin = new Vector2(2f, 2f);
-            fill.offsetMax = new Vector2(-2f, -2f);
-            fill.pivot = new Vector2(0f, 0.5f);
+            Outline outline = bar.GetComponent<Outline>();
+            if (outline != null)
+                outline.enabled = false;
+            float ratio = Mathf.Clamp01(_sideWonRatio);
+            TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
+            if (WonRatio(count != null ? count.text : null, out float parsed))
+                ratio = parsed;
+            float inner = barWidth - 6f;
+            float fillWidth = ratio >= 0.999f ? inner : Mathf.Max(12f, inner * ratio);
+            PlaceTopLeft(_progressFill.rectTransform, 3f, 3f, fillWidth, 12f);
             _progressFill.transform.SetAsLastSibling();
+        }
+
+        private static bool WonRatio(string value, out float ratio)
+        {
+            ratio = 0f;
+            if (string.IsNullOrEmpty(value))
+                return false;
+            int slash = value.IndexOf('/');
+            if (slash <= 0 || slash >= value.Length - 1)
+                return false;
+            if (!int.TryParse(value.Substring(0, slash).Trim(), out int won))
+                return false;
+            if (!int.TryParse(value.Substring(slash + 1).Trim(), out int published) || published <= 0)
+                return false;
+            ratio = Mathf.Clamp01(won / (float)published);
+            return true;
         }
 
         private RectTransform EnsureThinProgressBar(RectTransform track, float height)
@@ -2300,7 +2320,7 @@ namespace Game.UI.Runtime
                 return;
             RectTransform column = FindOrCreate(rules, "BriefingColumn");
             float bottom = _advancedOpen ? 196f : 8f;
-            Stretch(column, 8f, 8f, 6f, bottom);
+            Stretch(column, 24f, 24f, 6f, bottom);
             VerticalLayoutGroup group = column.GetComponent<VerticalLayoutGroup>();
             if (group == null)
                 group = column.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -2421,7 +2441,7 @@ namespace Game.UI.Runtime
             index = StackColumnChild(_briefingPreview != null ? _briefingPreview.rectTransform : null, index, 188f, previewShown);
             Transform title = rules.Find("BriefingColumn/Title") ?? rules.Find("Title");
             index = StackColumnChild(title as RectTransform, index, 40f, title != null);
-            index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 88f, scenarioDescription != null);
+            index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 120f, scenarioDescription != null);
             index = StackColumnChild(_progressTrack, index, 64f, !battlefield && _progressTrack != null);
             index = StackColumnChild(_statRow, index, 84f, battlefield && _statRow != null);
             index = StackColumnChild(_medalRow, index, 104f, _medalRow != null);
@@ -2582,9 +2602,15 @@ namespace Game.UI.Runtime
             rect.pivot = new Vector2(0f, 0f);
             float stripTop = 96f;
             if (preview.Find("OverallProgressStrip") is RectTransform strip)
-                stripTop = strip.anchoredPosition.y + Mathf.Max(40f, strip.sizeDelta.y);
-            rect.anchoredPosition = new Vector2(16f, stripTop + 12f);
-            rect.sizeDelta = new Vector2(-32f, 32f);
+            {
+                float occupied = strip.rect.height > 8f ? strip.rect.height : strip.sizeDelta.y;
+                if (occupied < 8f)
+                    occupied = 88f;
+                stripTop = strip.anchoredPosition.y + occupied;
+            }
+
+            rect.anchoredPosition = new Vector2(18f, stripTop + 40f);
+            rect.sizeDelta = new Vector2(-36f, 36f);
             rect.SetAsLastSibling();
             hint.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             hint.isRightToLeftText = fa;
@@ -3362,6 +3388,164 @@ namespace Game.UI.Runtime
             if (large)
                 binding.SetPresentationScale(1.15f);
             UiLocalizedText.Set(text, value ?? string.Empty);
+        }
+
+        private RectTransform AdoptBriefingWidget(Transform rules, string name)
+        {
+            Transform column = rules != null ? rules.Find("BriefingColumn") : null;
+            RectTransform adopted = null;
+            if (column != null)
+            {
+                for (int i = 0; i < column.childCount; i++)
+                {
+                    Transform child = column.GetChild(i);
+                    if (child.name != name)
+                        continue;
+                    if (adopted == null)
+                        adopted = child as RectTransform;
+                    else
+                        child.gameObject.SetActive(false);
+                }
+            }
+
+            if (adopted == null && rules != null && rules.Find(name) is RectTransform direct)
+                adopted = direct;
+            if (adopted != null)
+                return adopted;
+            return FindOrCreate(column != null ? column : rules, name);
+        }
+
+        private void ApplyBriefingColumnState()
+        {
+            Transform rules = transform.Find("SkirmishSetupComposition/BaseAssaultRules");
+            RectTransform column = rules != null ? rules.Find("BriefingColumn") as RectTransform : null;
+            if (column == null)
+                return;
+            bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
+            string descriptionName = scenarioDescription != null ? scenarioDescription.gameObject.name : "SeedHelp";
+            Transform medalKeep = ChooseMedalRow(column);
+            if (medalKeep is RectTransform keptMedal)
+                _medalRow = keptMedal;
+            var order = battlefield
+                ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
+                : new[] { "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
+            var heights = battlefield
+                ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
+                : new[] { 40f, 120f, 64f, 104f, 124f };
+            for (int i = 0; i < column.childCount; i++)
+            {
+                Transform child = column.GetChild(i);
+                bool allowed = IsBriefingColumnChild(child, medalKeep, battlefield, descriptionName);
+                child.gameObject.SetActive(allowed);
+                LayoutElement element = child.GetComponent<LayoutElement>() ?? child.gameObject.AddComponent<LayoutElement>();
+                element.ignoreLayout = !allowed;
+                if (!allowed)
+                {
+                    element.preferredHeight = 0f;
+                    element.minHeight = 0f;
+                    element.flexibleHeight = 0f;
+                }
+            }
+
+            int index = 0;
+            for (int nameIndex = 0; nameIndex < order.Length; nameIndex++)
+            {
+                Transform child = null;
+                for (int i = 0; i < column.childCount; i++)
+                {
+                    Transform candidate = column.GetChild(i);
+                    if (candidate.name != order[nameIndex] || !candidate.gameObject.activeSelf)
+                        continue;
+                    if (candidate.name == "MedalRow" && candidate != medalKeep)
+                        continue;
+                    child = candidate;
+                    break;
+                }
+
+                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null);
+            }
+
+            if (scenarioDescription != null)
+            {
+                bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                scenarioDescription.margin = new Vector4(24f, 8f, 24f, 8f);
+                scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
+                scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
+                scenarioDescription.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+                scenarioDescription.isRightToLeftText = fa;
+                scenarioDescription.maxVisibleLines = battlefield ? 0 : 3;
+            }
+
+            VerticalLayoutGroup group = column.GetComponent<VerticalLayoutGroup>();
+            if (group != null)
+            {
+                group.enabled = true;
+                group.padding = new RectOffset(8, 8, 4, 6);
+                group.spacing = 6f;
+                group.childControlWidth = true;
+                group.childControlHeight = true;
+                group.childForceExpandWidth = true;
+                group.childForceExpandHeight = false;
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(column);
+            PaintSideProgress();
+        }
+
+        private bool IsBriefingColumnChild(Transform child, Transform medalKeep, bool battlefield, string descriptionName)
+        {
+            if (child == null)
+                return false;
+            if (child.name == "MedalRow")
+                return child == medalKeep;
+            if (child.name == "Title")
+                return true;
+            if (scenarioDescription != null && child == scenarioDescription.transform)
+                return true;
+            if (child.name == descriptionName && scenarioDescription != null && child != scenarioDescription.transform)
+                return false;
+            if (battlefield)
+            {
+                if (child.name == "BriefingPreview")
+                    return _briefingPreview == null || child == _briefingPreview.transform;
+                if (child.name == "BriefingStats")
+                    return _statRow == null || child == _statRow;
+                if (child.name == "MedalDifficultySelector")
+                    return _difficultyRow == null || child == _difficultyRow;
+                return false;
+            }
+
+            if (child.name == "BattlesWonTrack")
+                return _progressTrack == null || child == _progressTrack;
+            if (child.name == "RecommendedNext")
+                return _recommendedPanel == null || child == _recommendedPanel;
+            return false;
+        }
+
+        private Transform ChooseMedalRow(Transform column)
+        {
+            Transform best = null;
+            int bestScore = -1;
+            for (int i = 0; i < column.childCount; i++)
+            {
+                Transform child = column.GetChild(i);
+                if (child.name != "MedalRow")
+                    continue;
+                int score = 0;
+                if (child.Find("Slot0") != null)
+                    score += 2;
+                if (child.Find("Slot0/Caption") != null)
+                    score += 2;
+                if (child == _medalRow)
+                    score += 1;
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    best = child;
+                }
+            }
+
+            return best;
         }
 
         private RectTransform FindOrCreate(Transform parent, string name)

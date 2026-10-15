@@ -174,7 +174,7 @@ namespace Game.Editor
                     text.ForceMeshUpdate();
                 RejectMissingGlyphs(instance);
                 RejectUntranslatedFa(instance, path);
-                RejectBlankImages(instance);
+                RejectBlankImages(instance, state);
                 RejectExtraLibraryRoots();
                 if (notch && safeFrame != null)
                 {
@@ -380,14 +380,19 @@ namespace Game.Editor
 
         internal static void RejectBlankImages(GameObject instance)
         {
+            RejectBlankImages(instance, null);
+        }
+
+        internal static void RejectBlankImages(GameObject instance, string state)
+        {
             if (instance == null)
                 return;
             Transform composition = instance.transform.Find("SkirmishSetupComposition");
-            RejectBlankImages(composition != null ? composition.Find("BaseAssaultRules") : null);
-            RejectBlankImages(composition != null ? composition.Find("OperationPreview") : null);
+            RejectBlankImages(composition != null ? composition.Find("BaseAssaultRules") : null, state);
+            RejectBlankImages(composition != null ? composition.Find("OperationPreview") : null, null);
         }
 
-        private static void RejectBlankImages(Transform root)
+        private static void RejectBlankImages(Transform root, string state)
         {
             if (root == null)
                 return;
@@ -415,18 +420,56 @@ namespace Game.Editor
             RejectBriefingOverlap(root);
             RejectNarrowGreyOverText(root);
             RejectMedalOverForeignText(root);
-            RejectBriefingStack(root);
+            RejectBriefingStack(root, state);
         }
 
-        private static void RejectBriefingStack(Transform root)
+        private static void RejectBriefingStack(Transform root, string state)
         {
             if (root == null || root.name != "BaseAssaultRules")
                 return;
             var column = root.Find("BriefingColumn") as RectTransform;
             if (column == null)
                 return;
+            var active = new List<string>();
+            int medalRows = 0;
+            for (int i = 0; i < column.childCount; i++)
+            {
+                Transform child = column.GetChild(i);
+                if (child == null || !child.gameObject.activeInHierarchy)
+                    continue;
+                active.Add(child.name);
+                if (child.name == "MedalRow")
+                    medalRows++;
+            }
+
+            string listed = string.Join(",", active);
+            Debug.Log("[SkirmishBattleLibraryCapture] briefing-active state=" + (state ?? "unspecified") + " children=" + listed);
+            if (!string.IsNullOrEmpty(state))
+            {
+                bool theatre = string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase);
+                string[] forbidden = theatre
+                    ? new[] { "BriefingPreview", "BriefingStats", "MedalDifficultySelector" }
+                    : new[] { "BattlesWonTrack", "RecommendedNext" };
+                for (int i = 0; i < forbidden.Length; i++)
+                {
+                    if (active.Contains(forbidden[i]))
+                    {
+                        throw new InvalidOperationException(
+                            "Briefing column has " + forbidden[i] + " active in state " + state + ": " + listed);
+                    }
+                }
+
+                if (medalRows != 1)
+                {
+                    throw new InvalidOperationException(
+                        "Briefing column expected one MedalRow in state " + state + " and found " + medalRows + ": " + listed);
+                }
+            }
+
             var report = new System.Text.StringBuilder();
-            report.Append("[SkirmishBattleLibraryCapture] briefing-stack column=")
+            report.Append("[SkirmishBattleLibraryCapture] briefing-stack state=")
+                .Append(state ?? "unspecified")
+                .Append(" column=")
                 .Append(column.rect.width.ToString("0"))
                 .Append("x")
                 .Append(column.rect.height.ToString("0"));

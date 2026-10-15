@@ -138,13 +138,11 @@ namespace Game.UI.Runtime
 
             if (rules != null)
             {
-                _briefingPreview = FindOrCreate(rules, "BriefingPreview").GetComponent<RawImage>();
+                _briefingPreview = AdoptBriefingWidget(rules, "BriefingPreview").GetComponent<RawImage>();
                 if (_briefingPreview == null)
-                {
-                    _briefingPreview = FindOrCreate(rules, "BriefingPreview").gameObject.AddComponent<RawImage>();
-                }
+                    _briefingPreview = AdoptBriefingWidget(rules, "BriefingPreview").gameObject.AddComponent<RawImage>();
 
-                _progressTrack = FindOrCreate(rules, "BattlesWonTrack");
+                _progressTrack = AdoptBriefingWidget(rules, "BattlesWonTrack");
                 if (_progressTrack.Find("Fill") == null)
                 {
                     var bar = new GameObject("Bar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -178,7 +176,7 @@ namespace Game.UI.Runtime
                     count.isRightToLeftText = false;
                 }
 
-                _statRow = FindOrCreate(rules, "BriefingStats");
+                _statRow = AdoptBriefingWidget(rules, "BriefingStats");
                 EnsureStatTile(_statRow, "Time", 0f, "TIME");
                 EnsureStatTile(_statRow, "Forces", 132f, "FORCES");
                 EnsureStatTile(_statRow, "Size", 264f, "SIZE");
@@ -225,6 +223,8 @@ namespace Game.UI.Runtime
             FitBriefingPicture();
             ClampStrayMedalBars();
             LockMedalArtwork();
+            ApplyBriefingColumnState();
+            PresentZoomHint(fa, battlefield);
             RaiseLaunchTransition();
         }
 

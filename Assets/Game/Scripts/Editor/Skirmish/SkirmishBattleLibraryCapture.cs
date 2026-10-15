@@ -772,8 +772,11 @@ namespace Game.Editor
                 cards[i] = card;
                 names[i] = card.Find("ZoneName") as RectTransform;
                 RejectZoneCardContent(card, pins, mapIds[i], locale);
+                RejectZoneLeader(regions, mapIds[i], locale);
                 RejectSelectedZoneMatchesGridRows(view, pins, mapIds[i], locale);
             }
+
+            RejectCardsClearOfHexes(regions, cards, mapIds, locale);
 
             RejectZoneProgressMatchesCard(root, view, locale);
             RejectStripMatchesZoneTotals(root, view, locale);
@@ -1043,10 +1046,7 @@ namespace Game.Editor
                 ? SkirmishBattleLibraryArt.ComingSoon(fa)
                 : pin.WonCount + "/" + pin.PublishedCount;
             count.ForceMeshUpdate();
-            string shown = StripBidiMarks(count.text).Trim();
-            bool matches = pending
-                ? SkirmishBattleLibraryArt.IsComingSoon(shown)
-                : shown == expected;
+            bool matches = SkirmishBattleLibraryArt.SameRenderedText(count.text, expected);
             if (!matches)
             {
                 throw new InvalidOperationException(
@@ -1124,12 +1124,11 @@ namespace Game.Editor
             if (count == null)
                 return;
             string mapId = view.LibraryViewModel.Theater.SelectedMapId ?? string.Empty;
-            string shown = StripBidiMarks(count.text).Trim();
+            string raw = count.text ?? string.Empty;
             bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
-            if (SkirmishBattleLibraryArt.IsComingSoon(shown))
-                shown = SkirmishBattleLibraryArt.ComingSoon(fa);
-            else
-                shown = shown.Replace(" ", string.Empty);
+            string shown = SkirmishBattleLibraryArt.IsRenderedComingSoon(raw)
+                ? SkirmishBattleLibraryArt.ComingSoon(fa)
+                : StripBidiMarks(raw).Trim().Replace(" ", string.Empty);
             RememberZoneCount(locale, mapId, shown, "zone progress");
         }
 
@@ -1162,7 +1161,7 @@ namespace Game.Editor
                 return;
             TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
             string expected = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
-            if (count == null || StripBidiMarks(count.text) != expected)
+            if (count == null || !SkirmishBattleLibraryArt.SameRenderedText(count.text, expected))
             {
                 throw new InvalidOperationException(
                     "Battles-won strip reads '" + (count != null ? count.text : string.Empty) +
@@ -1226,7 +1225,7 @@ namespace Game.Editor
             won = 0;
             published = 0;
             string cleaned = StripBidiMarks(text).Trim();
-            if (SkirmishBattleLibraryArt.IsComingSoon(cleaned))
+            if (SkirmishBattleLibraryArt.IsRenderedComingSoon(cleaned))
                 return true;
             cleaned = cleaned.Replace(" ", string.Empty);
             int slash = cleaned.IndexOf('/');
@@ -1312,6 +1311,114 @@ namespace Game.Editor
                 .Replace("\u202b", string.Empty)
                 .Replace("\u202c", string.Empty)
                 .Replace("\u061c", string.Empty);
+        }
+
+        private static void RejectZoneLeader(Transform regions, string mapId, string locale)
+        {
+            Transform node = FindNamed(regions, "ZoneLeader_" + mapId);
+            if (node == null || !node.gameObject.activeInHierarchy || node is not RectTransform rect)
+            {
+                throw new InvalidOperationException(
+                    "Theatre leader is missing for " + mapId + " locale=" + locale + ".");
+            }
+
+            Image line = rect.GetComponent<Image>();
+            if (line == null || !line.enabled || line.color.a <= 0.4f || rect.sizeDelta.x < 4f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre leader for " + mapId + " is not a visible stroke locale=" + locale +
+                    " length=" + rect.sizeDelta.x.ToString("0.0") + ".");
+            }
+        }
+
+        private static void RejectCardsClearOfHexes(
+            Transform regions,
+            RectTransform[] cards,
+            string[] mapIds,
+            string locale)
+        {
+            if (regions == null || cards == null || mapIds == null)
+                return;
+            for (int h = 0; h < mapIds.Length; h++)
+            {
+                Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[h]);
+                V3PolygonGraphic polygon = outlineNode != null ? outlineNode.GetComponent<V3PolygonGraphic>() : null;
+                if (polygon == null || polygon.PointCount < 3 || outlineNode is not RectTransform outline)
+                    continue;
+                var world = new Vector2[polygon.PointCount];
+                for (int p = 0; p < world.Length; p++)
+                {
+                    Vector2 local = polygon.LocalPoint(p);
+                    Vector3 point = outline.TransformPoint(new Vector3(local.x, local.y, 0f));
+                    world[p] = new Vector2(point.x, point.y);
+                }
+
+                for (int c = 0; c < cards.Length; c++)
+                {
+                    if (cards[c] == null)
+                        continue;
+                    Rect bounds = WorldBounds(cards[c]);
+                    var shrunk = new Rect(bounds.x + 1f, bounds.y + 1f, bounds.width - 2f, bounds.height - 2f);
+                    if (shrunk.width <= 0f || shrunk.height <= 0f || !RectHitsPolygon(shrunk, world))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre zone card covers a hex locale=" + locale +
+                        " card=" + cards[c].name + " hex=" + mapIds[h] + ".");
+                }
+            }
+        }
+
+        private static bool RectHitsPolygon(Rect rect, Vector2[] poly)
+        {
+            if (poly == null || poly.Length < 3)
+                return false;
+            Vector2[] corners =
+            {
+                new Vector2(rect.xMin, rect.yMin),
+                new Vector2(rect.xMax, rect.yMin),
+                new Vector2(rect.xMax, rect.yMax),
+                new Vector2(rect.xMin, rect.yMax)
+            };
+            if (CaptureSeparated(corners, poly, new Vector2(1f, 0f)) || CaptureSeparated(corners, poly, new Vector2(0f, 1f)))
+                return false;
+            for (int i = 0; i < poly.Length; i++)
+            {
+                Vector2 edge = poly[(i + 1) % poly.Length] - poly[i];
+                float length = edge.magnitude;
+                if (length < 0.001f)
+                    continue;
+                if (CaptureSeparated(corners, poly, new Vector2(-edge.y / length, edge.x / length)))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool CaptureSeparated(Vector2[] corners, Vector2[] poly, Vector2 axis)
+        {
+            float rMin = float.MaxValue;
+            float rMax = float.MinValue;
+            for (int i = 0; i < corners.Length; i++)
+            {
+                float dot = Vector2.Dot(corners[i], axis);
+                if (dot < rMin)
+                    rMin = dot;
+                if (dot > rMax)
+                    rMax = dot;
+            }
+
+            float pMin = float.MaxValue;
+            float pMax = float.MinValue;
+            for (int i = 0; i < poly.Length; i++)
+            {
+                float dot = Vector2.Dot(poly[i], axis);
+                if (dot < pMin)
+                    pMin = dot;
+                if (dot > pMax)
+                    pMax = dot;
+            }
+
+            return rMax <= pMin || pMax <= rMin;
         }
 
         private static void RejectTheaterOverlap(

@@ -219,7 +219,7 @@ namespace Game.Editor
             SkirmishTheaterState theater = view.Library.Theater;
             string progress = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
             TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
-            AssertStep(count != null && count.text == progress, "Overall progress count is not " + progress + ".");
+            AssertStep(count != null && SkirmishBattleLibraryArt.SameRenderedText(count.text, progress), "Overall progress count is not " + progress + ".");
             int[] medals =
             {
                 theater.OverallMedalTotals.Recruit,
@@ -230,7 +230,7 @@ namespace Game.Editor
             for (int i = 0; i < medals.Length; i++)
             {
                 TMP_Text tier = strip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
-                AssertStep(tier != null && tier.text == medals[i].ToString(), "Medal tier " + i + " is not the view-model total.");
+                AssertStep(tier != null && SkirmishBattleLibraryArt.SameRenderedText(tier.text, medals[i].ToString()), "Medal tier " + i + " is not the view-model total.");
             }
         }
 

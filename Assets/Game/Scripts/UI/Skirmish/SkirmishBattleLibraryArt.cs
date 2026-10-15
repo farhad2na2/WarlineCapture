@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -41,15 +42,16 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// Where each zone card prefers to sit, top-left normalised on the painting.
-        /// Mountain Pass stays on the left. Airfield Plains is lower-centre, on the sand beside the runway.
+        /// Industrial Basin prefers the open ground beside the refinery. Mountain Pass stays on the left.
+        /// Airfield Plains prefers lower-centre sand near the runway. The runtime seat rejects any spot that covers a hex.
         /// </summary>
         public static readonly Vector2[] TheaterCardAnchors =
         {
-            new Vector2(0.20f, 0.34f),
-            new Vector2(0.80f, 0.34f),
-            new Vector2(0.20f, 0.61f),
-            new Vector2(0.50f, 0.61f),
-            new Vector2(0.50f, 0.86f)
+            new Vector2(0.22f, 0.12f),
+            new Vector2(0.80f, 0.12f),
+            new Vector2(0.16f, 0.62f),
+            new Vector2(0.84f, 0.66f),
+            new Vector2(0.50f, 0.88f)
         };
 
         public const string ComingSoonEn = "Coming soon";
@@ -74,36 +76,80 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// True when the shown label is the logical phrase or the exact string the RTL shaper stores on TMP.
+        /// Ordinal after the same format-mark strip, or NFKC of those two forms. A different phrase does not match.
+        /// </summary>
+        public static bool SameRenderedText(string shown, string expected)
+        {
+            string left = StripFormatMarks(shown).Trim();
+            string right = StripFormatMarks(expected).Trim();
+            if (string.Equals(left, right, StringComparison.Ordinal))
+                return true;
+            string shaped = StripFormatMarks(V3LocalizedTextBindingView.ShapeForRendering(right)).Trim();
+            if (string.Equals(left, shaped, StringComparison.Ordinal))
+                return true;
+            string normLeft = left.Normalize(NormalizationForm.FormKC);
+            string normRight = right.Normalize(NormalizationForm.FormKC);
+            if (string.Equals(normLeft, normRight, StringComparison.Ordinal))
+                return true;
+            return string.Equals(normLeft, shaped.Normalize(NormalizationForm.FormKC), StringComparison.Ordinal);
+        }
+
+        public static bool IsRenderedComingSoon(string value)
+        {
+            return SameRenderedText(value, ComingSoonEn) || SameRenderedText(value, ComingSoonFa);
+        }
+
+        private static string StripFormatMarks(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+            var builder = new StringBuilder(value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (c == '\u200C' || c == '\u200D' || c == '\u200B' || c == '\uFEFF' || c == '\u2060' || c == '\u061C'
+                    || c == '\u200E' || c == '\u200F' || c == '\u202A' || c == '\u202B' || c == '\u202C'
+                    || c == '\u202D' || c == '\u202E' || c == '\u2066' || c == '\u2067' || c == '\u2068' || c == '\u2069')
+                    continue;
+                builder.Append(c);
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary>
         /// One convex polygon per district, top-left normalised on the 1280×720 painting.
-        /// Order matches <see cref="MapIds"/>. The shapes trace the painted districts and do not overlap.
+        /// Order matches <see cref="MapIds"/>. Each shape is the painted district pulled in toward its
+        /// centroid so the zone cards can sit on open sand without covering a hex. They do not overlap.
         /// Runtime scales them only with the cover crop.
         /// </summary>
         public static readonly Vector2[][] TheaterDistrictPolygons =
         {
             new[]
             {
-                new Vector2(0.10f, 0.20f), new Vector2(0.30f, 0.18f), new Vector2(0.44f, 0.26f),
-                new Vector2(0.40f, 0.38f), new Vector2(0.20f, 0.40f), new Vector2(0.08f, 0.30f)
+                new Vector2(0.152f, 0.229f), new Vector2(0.284f, 0.216f), new Vector2(0.377f, 0.269f),
+                new Vector2(0.350f, 0.348f), new Vector2(0.218f, 0.361f), new Vector2(0.139f, 0.295f)
             },
             new[]
             {
-                new Vector2(0.56f, 0.20f), new Vector2(0.76f, 0.18f), new Vector2(0.92f, 0.26f),
-                new Vector2(0.88f, 0.38f), new Vector2(0.68f, 0.40f), new Vector2(0.54f, 0.30f)
+                new Vector2(0.616f, 0.229f), new Vector2(0.748f, 0.216f), new Vector2(0.853f, 0.269f),
+                new Vector2(0.827f, 0.348f), new Vector2(0.695f, 0.361f), new Vector2(0.602f, 0.295f)
             },
             new[]
             {
-                new Vector2(0.08f, 0.44f), new Vector2(0.26f, 0.42f), new Vector2(0.40f, 0.48f),
-                new Vector2(0.36f, 0.58f), new Vector2(0.16f, 0.60f), new Vector2(0.06f, 0.52f)
+                new Vector2(0.128f, 0.463f), new Vector2(0.246f, 0.449f), new Vector2(0.339f, 0.489f),
+                new Vector2(0.312f, 0.555f), new Vector2(0.180f, 0.568f), new Vector2(0.114f, 0.515f)
             },
             new[]
             {
-                new Vector2(0.56f, 0.44f), new Vector2(0.76f, 0.42f), new Vector2(0.92f, 0.48f),
-                new Vector2(0.88f, 0.58f), new Vector2(0.66f, 0.60f), new Vector2(0.54f, 0.52f)
+                new Vector2(0.614f, 0.463f), new Vector2(0.746f, 0.449f), new Vector2(0.852f, 0.489f),
+                new Vector2(0.826f, 0.555f), new Vector2(0.680f, 0.568f), new Vector2(0.601f, 0.515f)
             },
             new[]
             {
-                new Vector2(0.30f, 0.64f), new Vector2(0.50f, 0.62f), new Vector2(0.70f, 0.64f),
-                new Vector2(0.72f, 0.74f), new Vector2(0.46f, 0.75f), new Vector2(0.28f, 0.70f)
+                new Vector2(0.366f, 0.654f), new Vector2(0.498f, 0.641f), new Vector2(0.630f, 0.654f),
+                new Vector2(0.643f, 0.720f), new Vector2(0.471f, 0.727f), new Vector2(0.353f, 0.694f)
             }
         };
 

@@ -219,8 +219,11 @@ namespace Game.UI.Runtime
             ApplyLibraryDepth();
             PresentZoomHint(fa, battlefield);
             EnforceLibraryFontFloor();
+            FinishLibraryText();
             RemoveBlankPanelImages();
+            PlaceLibraryHeader();
             FitBriefingPicture();
+            RaiseLaunchTransition();
         }
 
         private void EnsureStatTile(RectTransform row, string name, float x, string captionText)
@@ -345,10 +348,15 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(icon.rectTransform, 0f, 8f, 32f, 32f);
                 ShowIcon(icon, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), Color.white);
                 var tier = CreateLabel(slot, "Count", 18f);
-                PlaceTopLeft(tier.rectTransform, 36f, 8f, 60f, 32f);
+                PlaceTopLeft(tier.rectTransform, 36f, 2f, 60f, 24f);
                 tier.alignment = TextAlignmentOptions.MidlineLeft;
                 tier.textWrappingMode = TextWrappingModes.NoWrap;
                 tier.isRightToLeftText = false;
+                var caption = CreateLabel(slot, "Caption", 12f);
+                PlaceTopLeft(caption.rectTransform, 36f, 26f, 62f, 20f);
+                caption.alignment = TextAlignmentOptions.MidlineLeft;
+                caption.overflowMode = TextOverflowModes.Ellipsis;
+                caption.isRightToLeftText = false;
             }
         }
 
@@ -386,12 +394,28 @@ namespace Game.UI.Runtime
 
             SkirmishMedalTotals medals = theater.OverallMedalTotals;
             int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
+            var tierNames = new[]
+            {
+                SkirmishDifficultyId.Recruit,
+                SkirmishDifficultyId.Regular,
+                SkirmishDifficultyId.Veteran,
+                SkirmishDifficultyId.Commander
+            };
             for (int i = 0; i < tiers.Length; i++)
             {
                 TMP_Text tier = _overallStrip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
                 SetCopy(tier, tiers[i].ToString(), 14f, 20f);
                 if (tier != null)
                     tier.isRightToLeftText = false;
+                SkirmishBattleLibraryArt.DifficultyCopy(tierNames[i], fa, out string tierLabel);
+                TMP_Text caption = _overallStrip.Find("Medal" + i + "/Caption")?.GetComponent<TMP_Text>();
+                SetCopy(caption, tierLabel, 11f, 14f);
+                if (caption != null)
+                {
+                    caption.isRightToLeftText = fa;
+                    caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                    caption.overflowMode = TextOverflowModes.Ellipsis;
+                }
             }
         }
 
@@ -516,24 +540,29 @@ namespace Game.UI.Runtime
             tile.gameObject.SetActive(true);
             if (tile is RectTransform rect)
                 PlaceTopLeft(rect, x, 0f, width, 80f);
-            float inner = Mathf.Max(20f, width - 12f);
+            float inner = Mathf.Max(20f, width - 28f);
             TMP_Text captionText = tile.Find("Caption")?.GetComponent<TMP_Text>();
             if (captionText != null)
             {
-                PlaceTopLeft(captionText.rectTransform, 6f, 2f, inner, 28f);
-                captionText.overflowMode = TextOverflowModes.Overflow;
-                captionText.fontSizeMin = 22f;
+                PlaceTopLeft(captionText.rectTransform, 12f, 2f, inner, 24f);
+                captionText.overflowMode = TextOverflowModes.Ellipsis;
+                captionText.margin = new Vector4(2f, 0f, 2f, 0f);
+                captionText.fontSizeMin = 16f;
             }
 
             TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
             if (valueText != null)
             {
-                PlaceTopLeft(valueText.rectTransform, 6f, 32f, inner, 42f);
-                valueText.overflowMode = TextOverflowModes.Overflow;
-                valueText.fontSizeMin = 22f;
+                PlaceTopLeft(valueText.rectTransform, 12f, 26f, inner, 50f);
+                valueText.textWrappingMode = TextWrappingModes.Normal;
+                valueText.overflowMode = TextOverflowModes.Ellipsis;
+                valueText.margin = new Vector4(2f, 0f, 2f, 0f);
+                valueText.fontSizeMin = 16f;
             }
-            if (tile.GetComponent<RectMask2D>() == null)
-                tile.gameObject.AddComponent<RectMask2D>();
+
+            RectMask2D mask = tile.GetComponent<RectMask2D>();
+            if (mask != null)
+                mask.enabled = false;
         }
 
         private static int CountMedals(SkirmishMedalMask mask)
@@ -623,20 +652,15 @@ namespace Game.UI.Runtime
                 new Color(0.16f, 0.48f, 0.78f, 1f), new Color(0.06f, 0.22f, 0.42f, 1f));
             if (_savedMatchAvailable)
                 return;
-            if (battlefield)
-            {
-                TintCommand(resetButton, new Color(0.72f, 0.46f, 0.12f, 1f), new Color(0.36f, 0.2f, 0.04f, 1f));
-                TintCommand(randomizeSeedButton, new Color(0.14f, 0.46f, 0.7f, 1f), new Color(0.05f, 0.2f, 0.36f, 1f));
-                TintCommand(launchButton, new Color(0.24f, 0.58f, 0.18f, 1f), new Color(0.08f, 0.28f, 0.08f, 1f));
-            }
-            else
-            {
-                TintCommand(resetButton, new Color(0.75f, 0.5f, 0.12f, 1f), new Color(0.38f, 0.22f, 0.04f, 1f));
-                TintCommand(randomizeSeedButton, new Color(0.12f, 0.58f, 0.66f, 1f), new Color(0.04f, 0.24f, 0.3f, 1f));
-                TintCommand(launchButton, new Color(0.24f, 0.58f, 0.18f, 1f), new Color(0.08f, 0.28f, 0.08f, 1f));
-            }
+            TintCommand(resetButton, new Color(0.16f, 0.4f, 0.62f, 1f), new Color(0.06f, 0.18f, 0.32f, 1f));
+            TintCommand(_libraryFavouritesButton, new Color(0.42f, 0.28f, 0.1f, 1f), new Color(0.2f, 0.12f, 0.04f, 1f));
+            TintCommand(_libraryAdvancedButton, new Color(0.22f, 0.32f, 0.36f, 1f), new Color(0.08f, 0.14f, 0.16f, 1f));
+            TintCommand(randomizeSeedButton, new Color(0.14f, 0.46f, 0.7f, 1f), new Color(0.05f, 0.2f, 0.36f, 1f));
+            TintCommand(launchButton, new Color(0.24f, 0.58f, 0.18f, 1f), new Color(0.08f, 0.28f, 0.08f, 1f));
 
             EnlargeButtonLabel(resetButton);
+            EnlargeButtonLabel(_libraryFavouritesButton);
+            EnlargeButtonLabel(_libraryAdvancedButton);
             EnlargeButtonLabel(randomizeSeedButton);
             EnlargeButtonLabel(launchButton);
         }

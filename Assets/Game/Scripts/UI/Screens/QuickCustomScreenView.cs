@@ -320,6 +320,8 @@ namespace Game.UI.Runtime
                 if (_libraryViewModel == null || !_libraryViewModel.Launch())
                     return;
                 LibraryLaunchRequested = true;
+                Debug.Log("[SkirmishBattleLibrary] launch requested scenario=" + _selectedScenarioId);
+                PresentLaunchTransition(_selectedScenarioId);
             }
 
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);

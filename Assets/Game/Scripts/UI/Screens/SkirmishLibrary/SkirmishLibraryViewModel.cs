@@ -213,8 +213,46 @@ namespace Game.UI.Runtime
                 _interactionDepth--;
             }
 
-            if (_level == SkirmishLibraryLevel.Battlefield)
-                Raise(SkirmishLibraryInteractionKind.Clicked, _selectedMapId, UIAudioEventKind.ScreenForward);
+            if (_level != SkirmishLibraryLevel.Battlefield)
+                return;
+            if (!SelectedScenarioCanLaunch())
+            {
+                string pick = FirstOwnedMissingRegular(_selectedMapId);
+                if (string.IsNullOrEmpty(pick))
+                {
+                    string recommended = FindRecommended();
+                    if (ScenarioBelongsToMap(recommended, _selectedMapId))
+                        pick = recommended;
+                }
+
+                if (string.IsNullOrEmpty(pick))
+                    pick = FirstScenarioOnObjective(_selectedMapId, _selectedObjectiveId);
+                if (!string.IsNullOrEmpty(pick))
+                    SelectScenarioId(pick);
+            }
+
+            Raise(SkirmishLibraryInteractionKind.Clicked, _selectedMapId, UIAudioEventKind.ScreenForward);
+        }
+
+        private bool SelectedScenarioOnMap()
+        {
+            return ScenarioBelongsToMap(_selectedScenarioId, _selectedMapId);
+        }
+
+        private bool SelectedScenarioCanLaunch()
+        {
+            if (!TryFind(_selectedScenarioId, out SkirmishBattleCatalogEntry entry) || !SelectedScenarioOnMap())
+                return false;
+            ResolveAccess(entry, out SkirmishCardAccess access, out _, out _);
+            return access == SkirmishCardAccess.Playable;
+        }
+
+        private bool ScenarioBelongsToMap(string scenarioId, string mapId)
+        {
+            if (!TryFind(scenarioId, out SkirmishBattleCatalogEntry entry))
+                return false;
+            string map = CanonicalMap(entry.MapId) ?? entry.MapId;
+            return string.Equals(map, mapId, StringComparison.OrdinalIgnoreCase);
         }
 
         public void BackToTheater()

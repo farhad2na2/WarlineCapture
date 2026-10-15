@@ -180,8 +180,10 @@ namespace Game.Editor
                 AssertStep(view.Library.Briefing.ScenarioId == "S001", "GRID toggle cleared S001.");
 
                 Click(Require(instance, SkirmishLibraryControlNames.StartBattle));
-                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "07-launch-" + suffix + ".png"), "grid", suffix, shots);
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "07-launch-" + suffix + ".png"), "launch", suffix, shots);
                 AssertStep(view.LibraryLaunchRequested, "Start Battle did not request a launch.");
+                Transform launchTransition = instance.transform.Find("SkirmishSetupComposition/LaunchTransition");
+                AssertStep(launchTransition != null && launchTransition.gameObject.activeInHierarchy, "Start Battle did not show the launch transition.");
                 AssertStep(view.Library.Briefing.CanLaunch, "Start Battle left the briefing unable to launch.");
                 AssertStep(
                     SkirmishLibraryLaunchContext.Difficulty == view.Library.Briefing.SelectedDifficulty,

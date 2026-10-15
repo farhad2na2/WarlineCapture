@@ -135,11 +135,13 @@ namespace Game.Editor
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
             MenuAccountHeaderAuthoring.Apply(root);
             MenuUiApprovedAuthoring.Apply(root, "skirmish");
+            EnsureLibraryBrand(composition);
             layout.DisableMenuFrame();
             screen.EnsureBattleLibraryChrome();
             RequireLibraryPlate(root.transform);
-            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/OperationPreview"), MapPanelX, MapPanelY, MapPanelWidth, MapPanelHeight);
-            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/BaseAssaultRules"), BriefingPanelX, BriefingPanelY, BriefingPanelWidth, BriefingPanelHeight);
+            SkirmishLibraryFrame.Resolve(16f / 9f, 0f, true, out float mapX, out float mapWidth, out float briefingX, out float briefingWidth);
+            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/OperationPreview"), mapX, SkirmishLibraryFrame.PanelY, mapWidth, SkirmishLibraryFrame.PanelHeight);
+            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/BaseAssaultRules"), briefingX, SkirmishLibraryFrame.PanelY, briefingWidth, SkirmishLibraryFrame.PanelHeight);
             Debug.Log("[SkirmishBattleLibraryPlate] result=Passed");
             layout.Configure(
                 ReferenceResolution,
@@ -1032,6 +1034,11 @@ namespace Game.Editor
                 if (card == null)
                     throw new InvalidOperationException("Main Menu prefab is missing Card_Skirmish.");
                 Transform hotspot = Find(card, "Hotspot");
+                bool alreadyRouted = hotspot != null &&
+                    hotspot.GetComponent<UIShellRouteButtonView>() != null &&
+                    hotspot.GetComponent<Button>() != null;
+                if (alreadyRouted)
+                    return;
                 GameObject target = hotspot != null
                     ? hotspot.gameObject
                     : CreateRect("Hotspot", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
@@ -1042,8 +1049,7 @@ namespace Game.Editor
                 button.targetGraphic = image;
                 UIShellRouteButtonView route = target.GetComponent<UIShellRouteButtonView>() ?? target.AddComponent<UIShellRouteButtonView>();
                 route.Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.QuickCustomSetup, true);
-            MenuAccountHeaderAuthoring.Apply(root);
-
+                MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, MainMenuPrefabPath);
             }
             finally
@@ -1065,10 +1071,28 @@ namespace Game.Editor
             if (content == null)
                 throw new InvalidOperationException("Menu scene is missing UIShellContentView.");
             SerializedObject serialized = new(content);
+            SerializedProperty reference = serialized.FindProperty("skirmishSetupContentPrefab");
+            if (reference != null && reference.objectReferenceValue == prefab)
+                return;
             SetReference(serialized, "skirmishSetupContentPrefab", prefab);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        private static void EnsureLibraryBrand(Transform composition)
+        {
+            if (composition == null)
+                return;
+            Transform existing = composition.Find("WarlineLogo");
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return;
+            }
+
+            RectTransform logo = CreateTopLeft("WarlineLogo", composition, 14f, 8f, 360f, 86f);
+            V3UiFoundationBuilder.AddMainMenuLogo(logo);
         }
 
         private static Transform Require(Transform root, string path)

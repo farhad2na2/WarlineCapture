@@ -400,6 +400,61 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     "Visible image has no sprite and a default white or grey colour: " + ImagePath(image.transform));
             }
+
+            RawImage[] rawImages = root.GetComponentsInChildren<RawImage>(true);
+            for (int i = 0; i < rawImages.Length; i++)
+            {
+                RawImage image = rawImages[i];
+                if (!SkirmishLibraryBlankImage.IsBlank(image))
+                    continue;
+                throw new InvalidOperationException(
+                    "Visible raw image has no texture and a default white or grey colour: " + ImagePath(image.transform));
+            }
+
+            RejectBriefingOverlap(root);
+        }
+
+        private static void RejectBriefingOverlap(Transform root)
+        {
+            if (root == null || root.name != "BaseAssaultRules")
+                return;
+            RectTransform army = root.Find("BriefingColumn/BriefingStats/Army") as RectTransform;
+            RectTransform medals = root.Find("BriefingColumn/MedalRow") as RectTransform;
+            if (army == null || medals == null || !army.gameObject.activeInHierarchy || !medals.gameObject.activeInHierarchy)
+                return;
+            Vector3 armyCenter = army.TransformPoint(army.rect.center);
+            Vector3 medalCenter = medals.TransformPoint(medals.rect.center);
+            Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic graphic = graphics[i];
+                if (graphic == null || graphic is TMP_Text || !graphic.enabled || !graphic.gameObject.activeInHierarchy)
+                    continue;
+                if (graphic.name == "Picture" || graphic.name == "DepthFrame")
+                    continue;
+                RectTransform rect = graphic.rectTransform;
+                if (!SkirmishLibraryBlankImage.IsLarge(rect))
+                    continue;
+                if (!ContainsWorldPoint(rect, armyCenter) || !ContainsWorldPoint(rect, medalCenter))
+                    continue;
+                bool light = SkirmishLibraryBlankImage.IsLightNeutral(graphic.color);
+                bool emptyRaw = graphic is RawImage raw && raw.texture == null;
+                bool emptyImage = graphic is Image image && image.sprite == null && light;
+                if (!emptyRaw && !emptyImage && !light)
+                    continue;
+                if (graphic is V3GradientGraphic)
+                    continue;
+                throw new InvalidOperationException(
+                    "A blank graphic covers the army tile and the medal row: " + ImagePath(graphic.transform));
+            }
+        }
+
+        private static bool ContainsWorldPoint(RectTransform rect, Vector3 worldPoint)
+        {
+            if (rect == null)
+                return false;
+            Vector3 local = rect.InverseTransformPoint(worldPoint);
+            return rect.rect.Contains(local);
         }
 
         private static string ImagePath(Transform transform)
@@ -433,30 +488,27 @@ namespace Game.Editor
             var map = composition.Find("OperationPreview") as RectTransform;
             var briefing = composition.Find("BaseAssaultRules") as RectTransform;
             float extra = layout.LastAppliedExtraWidth;
-            float gap = SkirmishSetupPrefabBuilder.BriefingPanelX
-                - SkirmishSetupPrefabBuilder.MapPanelX
-                - SkirmishSetupPrefabBuilder.MapPanelWidth;
             bool fa = GameLocalization.IsRightToLeft;
-            float mapX = fa
-                ? SkirmishSetupPrefabBuilder.MapPanelX + SkirmishSetupPrefabBuilder.BriefingPanelWidth + gap
-                : SkirmishSetupPrefabBuilder.MapPanelX;
-            float briefingX = fa
-                ? SkirmishSetupPrefabBuilder.MapPanelX
-                : SkirmishSetupPrefabBuilder.BriefingPanelX + extra;
+            float aspect = 16f / 9f;
+            Canvas canvas = composition.GetComponentInParent<Canvas>();
+            RectTransform canvasRect = canvas != null ? canvas.transform as RectTransform : null;
+            if (canvasRect != null && canvasRect.rect.height > 1f)
+                aspect = canvasRect.rect.width / canvasRect.rect.height;
+            SkirmishLibraryFrame.Resolve(aspect, extra, !fa, out float mapX, out float mapWidth, out float briefingX, out float briefingWidth);
             ExpectPanel(
                 map,
                 "map",
                 mapX,
-                -SkirmishSetupPrefabBuilder.MapPanelY,
-                SkirmishSetupPrefabBuilder.MapPanelWidth + extra,
-                SkirmishSetupPrefabBuilder.MapPanelHeight);
+                -SkirmishLibraryFrame.PanelY,
+                mapWidth,
+                SkirmishLibraryFrame.PanelHeight);
             ExpectPanel(
                 briefing,
                 "briefing",
                 briefingX,
-                -SkirmishSetupPrefabBuilder.BriefingPanelY,
-                SkirmishSetupPrefabBuilder.BriefingPanelWidth,
-                SkirmishSetupPrefabBuilder.BriefingPanelHeight);
+                -SkirmishLibraryFrame.PanelY,
+                briefingWidth,
+                SkirmishLibraryFrame.PanelHeight);
             RequireFilled(map, "map");
             RequireFilled(briefing, "briefing");
             var plate = composition.Find("OperationPreview/MapPreviewClip") as RectTransform;

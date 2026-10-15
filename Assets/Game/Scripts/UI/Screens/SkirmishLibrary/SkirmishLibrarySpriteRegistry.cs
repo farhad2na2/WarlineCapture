@@ -57,6 +57,21 @@ namespace Game.UI.Runtime
             return texture != null;
         }
 
+        public bool Matches(Entry[] next)
+        {
+            Entry[] left = entries ?? Array.Empty<Entry>();
+            Entry[] right = next ?? Array.Empty<Entry>();
+            if (left.Length != right.Length)
+                return false;
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (!string.Equals(left[i].Key, right[i].Key, StringComparison.Ordinal) || left[i].Sprite != right[i].Sprite)
+                    return false;
+            }
+
+            return true;
+        }
+
         public void Replace(Entry[] next)
         {
             entries = next ?? Array.Empty<Entry>();

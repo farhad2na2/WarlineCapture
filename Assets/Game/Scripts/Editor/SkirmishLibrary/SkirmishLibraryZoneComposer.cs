@@ -7,8 +7,8 @@ using UnityEngine;
 namespace Game.Editor
 {
     /// <summary>
-    /// Builds the theatre as five feathered plate windows plus darkened blur plates.
-    /// The screen composites one RawImage per zone. It does not author new terrain.
+    /// Paints one warm theatre plate from the existing Campaign plates, then writes
+    /// feathered windows of that same image. It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
@@ -16,8 +16,8 @@ namespace Game.Editor
         public const int ZoneHeight = 540;
         public const int BlurWidth = 160;
         public const int BlurHeight = 90;
-        private const float Feather = 0.055f;
-        private const float Border = 0.014f;
+        private const float Feather = 0.085f;
+        private const float Border = 0.010f;
 
         public static void Generate()
         {
@@ -38,11 +38,17 @@ namespace Game.Editor
                     plates[i] = LoadPlate(mapIds[i]);
                     pixels[i] = plates[i].GetPixels32();
                     sizes[i] = new Vector2Int(plates[i].width, plates[i].height);
-                    WriteZone(zoneFolder, mapIds[i], regions[i], pixels[i], sizes[i], ZoneColor(mapIds[i]));
+                }
+
+                Color32[] composite = Compose(regions, pixels, sizes);
+                WriteSprite(zoneFolder + "/skirmish.zone.theater.png", composite, ZoneWidth, ZoneHeight);
+                for (int i = 0; i < mapIds.Length; i++)
+                {
+                    WriteZoneWindow(zoneFolder, mapIds[i], regions[i], composite, ZoneColor(mapIds[i]));
                     WriteBlur(blurFolder, "skirmish.blur." + mapIds[i], pixels[i], sizes[i]);
                 }
 
-                WriteTheaterBlur(blurFolder, mapIds, regions, pixels, sizes);
+                WriteTheaterBlur(blurFolder, composite);
             }
             finally
             {
@@ -68,7 +74,104 @@ namespace Game.Editor
             return texture;
         }
 
-        private static void WriteZone(string folder, string mapId, Rect region, Color32[] plate, Vector2Int plateSize, Color border)
+        private static Color32[] Compose(Rect[] regions, Color32[][] plates, Vector2Int[] sizes)
+        {
+            var pixels = new Color32[ZoneWidth * ZoneHeight];
+            for (int y = 0; y < ZoneHeight; y++)
+            {
+                float vTop = 1f - (y + 0.5f) / ZoneHeight;
+                for (int x = 0; x < ZoneWidth; x++)
+                {
+                    float u = (x + 0.5f) / ZoneWidth;
+                    float red = 0f;
+                    float green = 0f;
+                    float blue = 0f;
+                    float weight = 0f;
+                    for (int i = 0; i < regions.Length; i++)
+                    {
+                        float influence = Influence(regions[i], u, vTop);
+                        if (influence <= 0f)
+                            continue;
+                        float pu = regions[i].width > 0.001f ? Mathf.Clamp01((u - regions[i].x) / regions[i].width) : 0.5f;
+                        float pv = regions[i].height > 0.001f ? Mathf.Clamp01(1f - (vTop - regions[i].y) / regions[i].height) : 0.5f;
+                        Color32 sample = Sample(plates[i], sizes[i], pu, pv);
+                        red += sample.r * influence;
+                        green += sample.g * influence;
+                        blue += sample.b * influence;
+                        weight += influence;
+                    }
+
+                    if (weight <= 0.001f)
+                    {
+                        pixels[y * ZoneWidth + x] = new Color32(92, 48, 18, 255);
+                        continue;
+                    }
+
+                    var mixed = new Color32(
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(red / weight), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(green / weight), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(blue / weight), 0, 255),
+                        255);
+                    pixels[y * ZoneWidth + x] = Grade(mixed);
+                }
+            }
+
+            for (int i = 0; i < regions.Length; i++)
+                Stroke(pixels, regions[i], ZoneColor(IndexMap(i)));
+            return pixels;
+        }
+
+        private static string IndexMap(int index)
+        {
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            return index >= 0 && index < mapIds.Length ? mapIds[index] : "DB";
+        }
+
+        private static float Influence(Rect region, float u, float vTop)
+        {
+            float left = u - region.x;
+            float right = region.xMax - u;
+            float top = vTop - region.y;
+            float bottom = region.yMax - vTop;
+            float inset = Mathf.Min(Mathf.Min(left, right), Mathf.Min(top, bottom));
+            if (region.width <= 0.001f || region.height <= 0.001f)
+                return 0f;
+            if (inset >= Feather)
+                return 1f;
+            if (inset <= -Feather)
+                return 0f;
+            return Mathf.Clamp01((inset + Feather) / (Feather * 2f));
+        }
+
+        private static void Stroke(Color32[] pixels, Rect region, Color color)
+        {
+            var ink = (Color32)color;
+            for (int y = 0; y < ZoneHeight; y++)
+            {
+                float vTop = 1f - (y + 0.5f) / ZoneHeight;
+                for (int x = 0; x < ZoneWidth; x++)
+                {
+                    float u = (x + 0.5f) / ZoneWidth;
+                    float left = u - region.x;
+                    float right = region.xMax - u;
+                    float top = vTop - region.y;
+                    float bottom = region.yMax - vTop;
+                    float inset = Mathf.Min(Mathf.Min(left, right), Mathf.Min(top, bottom));
+                    if (inset < 0f || inset > Border)
+                        continue;
+                    int index = y * ZoneWidth + x;
+                    float edge = Mathf.Clamp01(inset / Border);
+                    Color32 under = pixels[index];
+                    pixels[index] = new Color32(
+                        (byte)Mathf.Lerp(ink.r, under.r, edge),
+                        (byte)Mathf.Lerp(ink.g, under.g, edge),
+                        (byte)Mathf.Lerp(ink.b, under.b, edge),
+                        255);
+                }
+            }
+        }
+
+        private static void WriteZoneWindow(string folder, string mapId, Rect region, Color32[] composite, Color border)
         {
             var pixels = new Color32[ZoneWidth * ZoneHeight];
             var border32 = (Color32)border;
@@ -83,13 +186,11 @@ namespace Game.Editor
                     float top = vTop - region.y;
                     float bottom = region.yMax - vTop;
                     float inset = Mathf.Min(Mathf.Min(left, right), Mathf.Min(top, bottom));
-                    if (inset <= 0f || region.width <= 0.001f || region.height <= 0.001f)
+                    if (inset <= -Feather || region.width <= 0.001f || region.height <= 0.001f)
                         continue;
-                    float alpha = Mathf.Clamp01(inset / Feather);
-                    float pu = Mathf.Clamp01((u - region.x) / region.width);
-                    float pv = Mathf.Clamp01(1f - (vTop - region.y) / region.height);
-                    Color32 sample = Sample(plate, plateSize, pu, pv);
-                    if (inset < Border)
+                    float alpha = Mathf.Clamp01((inset + Feather * 0.35f) / Feather);
+                    Color32 sample = composite[y * ZoneWidth + x];
+                    if (inset >= 0f && inset < Border)
                     {
                         float edge = Mathf.Clamp01(inset / Border);
                         sample.r = (byte)Mathf.Lerp(border32.r, sample.r, edge);
@@ -105,6 +206,19 @@ namespace Game.Editor
             WriteSprite(folder + "/skirmish.zone." + mapId + ".png", pixels, ZoneWidth, ZoneHeight);
         }
 
+        private static Color32 Grade(Color32 sample)
+        {
+            float luminance = (sample.r * 0.30f + sample.g * 0.52f + sample.b * 0.18f) / 255f;
+            float red = Mathf.Clamp01(luminance * 1.05f + 0.28f);
+            float green = Mathf.Clamp01(luminance * 0.62f + 0.12f);
+            float blue = Mathf.Clamp01(luminance * 0.22f + 0.03f);
+            return new Color32(
+                (byte)Mathf.RoundToInt(red * 255f),
+                (byte)Mathf.RoundToInt(green * 255f),
+                (byte)Mathf.RoundToInt(blue * 255f),
+                255);
+        }
+
         private static void WriteBlur(string folder, string fileName, Color32[] plate, Vector2Int plateSize)
         {
             var pixels = new Color32[BlurWidth * BlurHeight];
@@ -114,8 +228,7 @@ namespace Game.Editor
                 for (int x = 0; x < BlurWidth; x++)
                 {
                     float u = (x + 0.5f) / BlurWidth;
-                    Color32 sample = Sample(plate, plateSize, u, v);
-                    pixels[y * BlurWidth + x] = Darken(sample, 0.42f);
+                    pixels[y * BlurWidth + x] = Grade(Darken(Sample(plate, plateSize, u, v), 0.55f));
                 }
             }
 
@@ -124,32 +237,16 @@ namespace Game.Editor
             WriteSprite(folder + "/" + fileName + ".png", pixels, BlurWidth, BlurHeight);
         }
 
-        private static void WriteTheaterBlur(
-            string folder,
-            string[] mapIds,
-            Rect[] regions,
-            Color32[][] plates,
-            Vector2Int[] sizes)
+        private static void WriteTheaterBlur(string folder, Color32[] composite)
         {
             var pixels = new Color32[BlurWidth * BlurHeight];
             for (int y = 0; y < BlurHeight; y++)
             {
-                float vTop = 1f - (y + 0.5f) / BlurHeight;
+                int sourceY = Mathf.Clamp(Mathf.RoundToInt((y + 0.5f) / BlurHeight * (ZoneHeight - 1)), 0, ZoneHeight - 1);
                 for (int x = 0; x < BlurWidth; x++)
                 {
-                    float u = (x + 0.5f) / BlurWidth;
-                    int chosen = 0;
-                    for (int i = 0; i < regions.Length; i++)
-                    {
-                        Rect region = regions[i];
-                        if (u >= region.x && u <= region.xMax && vTop >= region.y && vTop <= region.yMax)
-                            chosen = i;
-                    }
-
-                    Rect window = regions[chosen];
-                    float pu = window.width > 0.001f ? Mathf.Clamp01((u - window.x) / window.width) : 0.5f;
-                    float pv = window.height > 0.001f ? Mathf.Clamp01(1f - (vTop - window.y) / window.height) : 0.5f;
-                    pixels[y * BlurWidth + x] = Darken(Sample(plates[chosen], sizes[chosen], pu, pv), 0.38f);
+                    int sourceX = Mathf.Clamp(Mathf.RoundToInt((x + 0.5f) / BlurWidth * (ZoneWidth - 1)), 0, ZoneWidth - 1);
+                    pixels[y * BlurWidth + x] = Darken(composite[sourceY * ZoneWidth + sourceX], 0.62f);
                 }
             }
 
@@ -222,8 +319,12 @@ namespace Game.Editor
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
             texture.SetPixels32(pixels);
             texture.Apply(false, false);
-            File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(Application.dataPath) ?? string.Empty, assetPath), texture.EncodeToPNG());
+            byte[] png = texture.EncodeToPNG();
             Object.DestroyImmediate(texture);
+            string absolute = Path.Combine(Path.GetDirectoryName(Application.dataPath) ?? string.Empty, assetPath);
+            if (SameBytes(absolute, png))
+                return;
+            File.WriteAllBytes(absolute, png);
             AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
             TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             if (importer == null)
@@ -236,6 +337,22 @@ namespace Game.Editor
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
             importer.SaveAndReimport();
+        }
+
+        private static bool SameBytes(string absolute, byte[] next)
+        {
+            if (next == null || !File.Exists(absolute))
+                return false;
+            byte[] current = File.ReadAllBytes(absolute);
+            if (current.Length != next.Length)
+                return false;
+            for (int i = 0; i < current.Length; i++)
+            {
+                if (current[i] != next[i])
+                    return false;
+            }
+
+            return true;
         }
 
         private static void EnsureFolder(string assetFolder)

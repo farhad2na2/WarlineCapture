@@ -15,7 +15,7 @@ namespace Game.UI.Runtime
         private const float LibraryPinWidth = 252f;
         private const float LibraryPinHeight = 168f;
         private const float LibraryGridCardWidth = 146f;
-        private const float LibraryGridCardHeight = 96f;
+        private const float LibraryGridCardHeight = 108f;
         private const float LibraryGridOriginX = 92f;
         private const float LibraryGridStride = 154f;
 
@@ -23,6 +23,10 @@ namespace Game.UI.Runtime
         private string _startFilter = string.Empty;
         private bool _missingMedalOnly;
         private bool _filtersOpen;
+        private bool _favouritesLit;
+        private Button _libraryFavouritesButton;
+        private Button _libraryAdvancedButton;
+        private static Sprite _libraryMedallion;
         private bool _advancedOpen;
         private bool _librarySearchApplied;
         private bool _libraryChromeReady;
@@ -134,6 +138,8 @@ namespace Game.UI.Runtime
             EnsureMedalSlots(_medalRow);
             EnsureDifficultyButtons(_difficultyRow);
             EnsureRecommended(_recommendedPanel);
+            _libraryFavouritesButton = EnsureFooterUtility(composition, "LibraryFavouritesButton");
+            _libraryAdvancedButton = EnsureFooterUtility(composition, "LibraryAdvancedButton");
             EnsureStoreButton(rules);
             EnsureModeToggle(preview);
             EnsureFilterPanel(_libraryFilters);
@@ -285,8 +291,11 @@ namespace Game.UI.Runtime
                 ComposeBriefingColumn(battlefield);
                 PresentZoomHint(fa, battlefield);
                 EnforceLibraryFontFloor();
+                FinishLibraryText();
                 RemoveBlankPanelImages();
+                PlaceLibraryHeader();
                 MirrorLibraryPanels();
+                RaiseLaunchTransition();
             }
             finally
             {
@@ -388,30 +397,47 @@ namespace Game.UI.Runtime
             var ground = new GameObject("TheaterGround", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             ground.transform.SetParent(_libraryRegions, false);
             Stretch(ground.rectTransform);
-            ground.color = new Color(0.03f, 0.04f, 0.05f, 1f);
+            ground.color = new Color(0.28f, 0.14f, 0.05f, 1f);
             ground.raycastTarget = false;
 
             var zones = new GameObject("TheaterZones", typeof(RectTransform)).GetComponent<RectTransform>();
             zones.SetParent(_libraryRegions, false);
             Stretch(zones);
-            bool anyZone = false;
-            for (int i = 0; i < theater.Pins.Length; i++)
+            Texture2D painted = SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
+            bool anyZone = painted != null;
+            if (painted != null)
             {
-                SkirmishTheaterPinState pin = theater.Pins[i];
-                Texture2D feather = SkirmishLibraryPreviewAssets.Load("skirmish.zone." + pin.MapId);
-                if (feather == null)
-                    continue;
-                anyZone = true;
-                bool selected = string.Equals(pin.MapId, theater.SelectedMapId, StringComparison.OrdinalIgnoreCase);
-                var raw = new GameObject("Zone_" + pin.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+                var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 raw.transform.SetParent(zones, false);
                 Stretch(raw.rectTransform);
-                raw.texture = feather;
-                raw.color = selected ? Color.white : new Color(1f, 1f, 1f, 0.9f);
+                raw.texture = painted;
+                raw.color = Color.white;
                 raw.raycastTarget = false;
-                raw.uvRect = new Rect(0f, 0f, 1f, 1f);
-                if (selected)
-                    raw.transform.SetAsLastSibling();
+                RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
+                float plateWidth = plate != null && plate.rect.width > 2f ? plate.rect.width : 1024f;
+                float plateHeight = plate != null && plate.rect.height > 2f ? plate.rect.height : 540f;
+                CoverCrop(raw, plateWidth, plateHeight);
+            }
+            else
+            {
+                for (int i = 0; i < theater.Pins.Length; i++)
+                {
+                    SkirmishTheaterPinState pin = theater.Pins[i];
+                    Texture2D feather = SkirmishLibraryPreviewAssets.Load("skirmish.zone." + pin.MapId);
+                    if (feather == null)
+                        continue;
+                    anyZone = true;
+                    var raw = new GameObject("Zone_" + pin.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+                    raw.transform.SetParent(zones, false);
+                    Stretch(raw.rectTransform);
+                    raw.texture = feather;
+                    raw.color = Color.white;
+                    raw.raycastTarget = false;
+                    RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
+                    float plateWidth = plate != null && plate.rect.width > 2f ? plate.rect.width : 1024f;
+                    float plateHeight = plate != null && plate.rect.height > 2f ? plate.rect.height : 540f;
+                    CoverCrop(raw, plateWidth, plateHeight);
+                }
             }
 
             if (map != null)
@@ -440,20 +466,28 @@ namespace Game.UI.Runtime
 
                 var pinMark = new GameObject("Pin", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 pinMark.transform.SetParent(labels, false);
+                pinMark.sprite = LibraryMedallion();
+                pinMark.preserveAspect = true;
                 pinMark.color = zone;
                 pinMark.raycastTarget = false;
-                PlaceLabelCentre(pinMark.rectTransform, centre, 16f, 16f);
+                PlaceLabelCentre(pinMark.rectTransform, centre, 42f, 42f);
                 var name = CreateLabel(labels, "ZoneName", LibraryFontFloor);
-                PlaceLabelCentre(name.rectTransform, centre + new Vector2(0f, 0.08f), 260f, 44f);
-                name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                PlaceLabelCentre(name.rectTransform, centre + new Vector2(0f, 0.08f), 280f, 44f);
+                name.alignment = TextAlignmentOptions.Center;
                 name.isRightToLeftText = fa;
                 name.textWrappingMode = TextWrappingModes.NoWrap;
-                name.overflowMode = TextOverflowModes.Overflow;
-                name.color = selected ? new Color(1f, 0.97f, 0.88f, 1f) : Color.white;
-                SetCopy(name, MapDisplayTitle(pin.MapId, fa), LibraryFontFloor, 28f);
-                name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                name.overflowMode = TextOverflowModes.Ellipsis;
+                name.fontStyle = FontStyles.Bold;
+                name.outlineWidth = 0.28f;
+                name.outlineColor = new Color32(18, 10, 4, 240);
+                name.color = selected ? new Color(1f, 0.97f, 0.86f, 1f) : new Color(1f, 0.96f, 0.9f, 1f);
+                SetCopy(name, MapDisplayTitle(pin.MapId, fa), LibraryFontFloor, 30f);
+                name.alignment = TextAlignmentOptions.Center;
                 name.isRightToLeftText = fa;
-                name.overflowMode = TextOverflowModes.Overflow;
+                name.overflowMode = TextOverflowModes.Ellipsis;
+                name.fontStyle = FontStyles.Bold;
+                name.outlineWidth = 0.28f;
+                name.outlineColor = new Color32(18, 10, 4, 240);
                 var count = CreateLabel(labels, "ZoneCount", LibraryFontFloor);
                 PlaceLabelCentre(count.rectTransform, centre + new Vector2(0f, 0.17f), 140f, 32f);
                 count.alignment = TextAlignmentOptions.Center;
@@ -541,7 +575,7 @@ namespace Game.UI.Runtime
             for (int row = 0; row < rows; row++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[row];
-                float y = 118f + row * (LibraryGridCardHeight + 8f);
+                float y = 100f + row * (LibraryGridCardHeight + 8f);
                 var rowIcon = new GameObject("RowIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 rowIcon.transform.SetParent(_libraryGrid, false);
                 PlaceTopLeft(rowIcon.rectTransform, 8f, y + 8f, 36f, 36f);
@@ -578,19 +612,24 @@ namespace Game.UI.Runtime
         {
             if (_libraryGrid == null)
                 return;
-            for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
+            int tabCount = SkirmishBattleLibraryArt.MapIds.Length;
+            float span = _libraryGrid.rect.width > 240f ? _libraryGrid.rect.width - 16f : 1008f;
+            const float tabGap = 10f;
+            float tabWidth = tabCount > 0 ? (span - tabGap * (tabCount - 1)) / tabCount : 160f;
+            for (int i = 0; i < tabCount; i++)
             {
                 string mapId = SkirmishBattleLibraryArt.MapIds[i];
                 var button = CreateChromeButton(_libraryGrid, "BattlefieldTab_" + mapId);
-                float width = 168f;
-                PlaceTopLeft(button.GetComponent<RectTransform>(), 8f + i * (width + 6f), 4f, width, 46f);
+                PlaceTopLeft(button.GetComponent<RectTransform>(), 8f + i * (tabWidth + tabGap), 4f, tabWidth, 46f);
                 TintButton(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase), true);
                 var label = CreateLabel(button.transform, "Label", 16f);
-                Stretch(label.rectTransform, 6f, 4f, 4f, 4f);
+                Stretch(label.rectTransform, 8f, 8f, 4f, 4f);
                 label.alignment = TextAlignmentOptions.Center;
                 label.textWrappingMode = TextWrappingModes.NoWrap;
-                label.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(label, MapDisplayTitle(mapId, fa), 13f, 16f);
+                label.overflowMode = TextOverflowModes.Ellipsis;
+                SetCopy(label, MapDisplayTitle(mapId, fa), 14f, 18f);
+                label.overflowMode = TextOverflowModes.Ellipsis;
+                label.textWrappingMode = TextWrappingModes.NoWrap;
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }
@@ -622,7 +661,7 @@ namespace Game.UI.Runtime
             }
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            float footer = pin ? 64f : 52f;
+            float footer = pin ? 72f : 56f;
             bool playable = card.Access == SkirmishCardAccess.Playable;
             TintButton(button, card.IsSelected, playable, true);
             button.interactable = !string.IsNullOrEmpty(card.ScenarioId);
@@ -667,13 +706,20 @@ namespace Game.UI.Runtime
             title.overflowMode = TextOverflowModes.Overflow;
             SetCopy(title, objectiveLabel, 13f, 16f);
             var subtitle = CreateLabel(button.transform, "Subtitle", 13f);
-            PlaceTopLeft(subtitle.rectTransform, 6f, height - footer + 20f, width - 12f, 18f);
-            subtitle.alignment = TextAlignmentOptions.MidlineLeft;
-            subtitle.textWrappingMode = TextWrappingModes.NoWrap;
-            subtitle.overflowMode = TextOverflowModes.Overflow;
+            float subtitleTop = height - footer + (pin ? 22f : 20f);
+            float subtitleHeight = pin ? 36f : 32f;
+            PlaceTopLeft(subtitle.rectTransform, 6f, subtitleTop, width - 12f, subtitleHeight);
+            subtitle.alignment = TextAlignmentOptions.TopLeft;
+            subtitle.textWrappingMode = TextWrappingModes.Normal;
+            subtitle.overflowMode = TextOverflowModes.Ellipsis;
+            subtitle.enableAutoSizing = true;
+            subtitle.fontSizeMin = 12f;
+            subtitle.fontSizeMax = 16f;
             subtitle.color = new Color(0.86f, 0.9f, 0.88f, 1f);
             string subtitleCopy = string.IsNullOrEmpty(startLabel) ? armyLabel : armyLabel + " · " + startLabel;
-            SetCopy(subtitle, subtitleCopy, 12f, 15f);
+            SetCopy(subtitle, subtitleCopy, 13f, 16f);
+            subtitle.textWrappingMode = TextWrappingModes.Normal;
+            subtitle.overflowMode = TextOverflowModes.Ellipsis;
             if (card.IsRecommended)
             {
                 var recommended = CreateLabel(button.transform, "Recommended", 12f);
@@ -810,11 +856,14 @@ namespace Game.UI.Runtime
                 if (body != null)
                 {
                     body.textWrappingMode = TextWrappingModes.Normal;
-                    body.overflowMode = TextOverflowModes.Truncate;
+                    body.overflowMode = TextOverflowModes.Ellipsis;
                     body.enableAutoSizing = true;
-                    body.fontSizeMin = 13f;
-                    body.fontSizeMax = 16f;
+                    body.fontSizeMin = 14f;
+                    body.fontSizeMax = 18f;
+                    body.margin = new Vector4(4f, 0f, 4f, 0f);
                 }
+
+                PresentRecommendedPreview(recommendation);
             }
 
             PresentMedalRow(briefing, hasPin, pin, fa, battlefield);
@@ -861,9 +910,10 @@ namespace Game.UI.Runtime
                 SetCopy(scenarioDescription, geography, LibraryFontFloor, 26f);
                 scenarioDescription.color = new Color(0.98f, 0.95f, 0.84f, 1f);
                 scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
-                scenarioDescription.overflowMode = TextOverflowModes.Overflow;
+                scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
                 scenarioDescription.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                 scenarioDescription.isRightToLeftText = fa;
+                scenarioDescription.margin = new Vector4(16f, 2f, 16f, 2f);
             }
             else if (scenarioDescription != null && !string.IsNullOrEmpty(briefing.ScenarioId))
             {
@@ -906,17 +956,73 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(count.rectTransform, 360f, 0f, 180f, 30f);
             }
 
-            if (_progressTrack.Find("Bar") is RectTransform bar)
-                PlaceTopLeft(bar, 0f, 34f, 520f, 14f);
+            RectTransform bar = EnsureThinProgressBar(_progressTrack, 8f);
             float ratio = pin.PublishedCount > 0 ? Mathf.Clamp01(pin.WonCount / (float)pin.PublishedCount) : 0f;
-            if (_progressFill != null)
+            if (bar != null && _progressFill != null && _progressFill.transform.parent == bar)
             {
-                RectTransform fill = _progressFill.rectTransform;
-                fill.anchorMin = Vector2.zero;
-                fill.anchorMax = new Vector2(Mathf.Max(0.04f, ratio), 1f);
-                fill.offsetMin = Vector2.zero;
-                fill.offsetMax = Vector2.zero;
+                float barWidth = bar.sizeDelta.x > 2f ? bar.sizeDelta.x : 520f;
+                PlaceTopLeft(_progressFill.rectTransform, 0f, 0f, Mathf.Max(6f, barWidth * Mathf.Max(0.04f, ratio)), 8f);
+                _progressFill.rectTransform.SetParent(bar, false);
             }
+        }
+
+        private RectTransform EnsureThinProgressBar(RectTransform track, float height)
+        {
+            if (track == null)
+                return null;
+            for (int i = track.childCount - 1; i >= 0; i--)
+            {
+                Transform child = track.GetChild(i);
+                if (child.name != "Bar")
+                    continue;
+                if (track.Find("Bar") != child)
+                    DestroyUi(child.gameObject);
+            }
+
+            RectTransform bar = track.Find("Bar") as RectTransform;
+            if (bar == null)
+            {
+                var created = new GameObject("Bar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                created.transform.SetParent(track, false);
+                created.color = new Color(0.08f, 0.1f, 0.12f, 1f);
+                created.raycastTarget = false;
+                bar = created.rectTransform;
+            }
+
+            Image trackImage = track.GetComponent<Image>();
+            if (trackImage != null)
+                trackImage.enabled = false;
+            float width = track.rect.width > 40f ? track.rect.width : 520f;
+            PlaceTopLeft(bar, 0f, 36f, width, height);
+            if (bar.GetComponent<RectMask2D>() == null)
+                bar.gameObject.AddComponent<RectMask2D>();
+            Image barImage = bar.GetComponent<Image>();
+            if (barImage != null)
+            {
+                barImage.color = new Color(0.08f, 0.1f, 0.12f, 1f);
+                barImage.raycastTarget = false;
+            }
+
+            if (_progressFill == null || _progressFill.transform.parent != bar)
+            {
+                Transform existing = bar.Find("Fill");
+                if (existing != null)
+                    DestroyUi(existing.gameObject);
+                var fill = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                fill.transform.SetParent(bar, false);
+                fill.color = new Color(0.91f, 0.72f, 0.22f, 1f);
+                fill.raycastTarget = false;
+                _progressFill = fill;
+            }
+
+            for (int i = track.childCount - 1; i >= 0; i--)
+            {
+                Transform child = track.GetChild(i);
+                if (child.name == "Fill")
+                    DestroyUi(child.gameObject);
+            }
+
+            return bar;
         }
 
         private void PresentMedalRow(SkirmishBriefingState briefing, bool hasPin, SkirmishTheaterPinState pin, bool fa, bool battlefield)
@@ -984,27 +1090,37 @@ namespace Game.UI.Runtime
             float slotWidth = (width - 8f) * 0.5f;
             const float slotHeight = 46f;
             PlaceTopLeft(slot, (index % 2) * (slotWidth + 8f), (index / 2) * (slotHeight + 6f), slotWidth, slotHeight);
+            const float iconSize = 28f;
+            const float countWidth = 36f;
+            float iconX = fa ? slotWidth - iconSize - 4f : 4f;
+            float countX = fa ? 4f : slotWidth - countWidth - 4f;
+            float captionX = fa ? countWidth + 12f : iconSize + 12f;
+            float captionWidth = Mathf.Max(48f, slotWidth - iconSize - countWidth - 28f);
             if (slot.Find("Icon") is RectTransform icon)
-                PlaceTopLeft(icon, 4f, 8f, 30f, 30f);
-            float captionX = fa ? 40f : 40f;
+                PlaceTopLeft(icon, iconX, 8f, iconSize, iconSize);
             if (slot.Find("Caption") is RectTransform caption)
             {
-                PlaceTopLeft(caption, captionX, 4f, Mathf.Max(80f, slotWidth - 78f), 38f);
+                PlaceTopLeft(caption, captionX, 4f, captionWidth, 38f);
                 TMP_Text captionText = caption.GetComponent<TMP_Text>();
                 if (captionText != null)
                 {
                     captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                     captionText.isRightToLeftText = fa;
-                    captionText.overflowMode = TextOverflowModes.Overflow;
+                    captionText.overflowMode = TextOverflowModes.Ellipsis;
+                    captionText.textWrappingMode = TextWrappingModes.NoWrap;
                 }
             }
 
             if (slot.Find("Count") is RectTransform count)
             {
-                PlaceTopLeft(count, slotWidth - 36f, 8f, 32f, 30f);
+                PlaceTopLeft(count, countX, 8f, countWidth, 30f);
                 TMP_Text countText = count.GetComponent<TMP_Text>();
                 if (countText != null)
+                {
                     countText.isRightToLeftText = false;
+                    countText.alignment = TextAlignmentOptions.Center;
+                    countText.overflowMode = TextOverflowModes.Overflow;
+                }
             }
         }
 
@@ -1173,12 +1289,29 @@ namespace Game.UI.Runtime
                 compositionHeight = 941f;
             if (compositionWidth < 200f)
                 compositionWidth = 1672f;
-            float height = 108f;
+            float height = 96f;
             float y = compositionHeight - height - 12f;
-            float gap = 12f;
+            float gap = 10f;
             float x = 14f;
-            float backWidth = 220f;
-            float middle = Mathf.Min(360f, (compositionWidth - 80f) / 4f);
+            float backWidth = 168f;
+            Button[] commands =
+            {
+                resetButton,
+                _libraryFavouritesButton,
+                _libraryAdvancedButton,
+                randomizeSeedButton,
+                launchButton
+            };
+            int commandCount = 0;
+            for (int i = 0; i < commands.Length; i++)
+            {
+                if (commands[i] != null)
+                    commandCount++;
+            }
+
+            float commandWidth = commandCount > 0
+                ? Mathf.Max(150f, (compositionWidth - 28f - backWidth - gap * commandCount) / commandCount)
+                : 180f;
             if (back != null)
             {
                 PlaceTopLeft(back.GetComponent<RectTransform>(), x, y, backWidth, height);
@@ -1192,23 +1325,16 @@ namespace Game.UI.Runtime
             }
 
             x += backWidth + gap;
-            if (resetButton != null)
+            for (int i = 0; i < commands.Length; i++)
             {
-                PlaceTopLeft(resetButton.GetComponent<RectTransform>(), x, y, middle, height);
-                HideFooterChevrons(resetButton);
-            }
-            x += middle + gap;
-            if (randomizeSeedButton != null)
-            {
-                PlaceTopLeft(randomizeSeedButton.GetComponent<RectTransform>(), x, y, middle, height);
-                HideFooterChevrons(randomizeSeedButton);
-            }
-            x += middle + gap;
-            if (launchButton != null)
-            {
-                float launchWidth = Mathf.Max(180f, compositionWidth - 14f - x);
-                PlaceTopLeft(launchButton.GetComponent<RectTransform>(), x, y, launchWidth, height);
-                HideFooterChevrons(launchButton);
+                Button button = commands[i];
+                if (button == null)
+                    continue;
+                float width = i == commands.Length - 1 ? Mathf.Max(160f, compositionWidth - 14f - x) : commandWidth;
+                PlaceTopLeft(button.GetComponent<RectTransform>(), x, y, width, height);
+                HideFooterChevrons(button);
+                HideDiceIcon(button);
+                x += width + gap;
             }
         }
 
@@ -1242,11 +1368,13 @@ namespace Game.UI.Runtime
             int credits = 0;
             bool shown = SkirmishLibraryWallet.ReadCredits != null && SkirmishLibraryWallet.ReadCredits(out credits);
             header.enabled = false;
-            header.gameObject.SetActive(shown);
-            if (!shown || header.Value == null)
+            header.gameObject.SetActive(true);
+            if (header.Value == null)
                 return;
             header.Value.isRightToLeftText = false;
-            header.Value.text = credits.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+            header.Value.text = shown
+                ? credits.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)
+                : "—";
         }
 
         private void PresentLibraryFooter(bool fa, bool battlefield)
@@ -1259,18 +1387,24 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            BindFooter(resetButton, OnLibraryFilters, fa ? "پالایه" : "FILTERS");
+            BindFooter(_libraryFavouritesButton, OnLibraryFavourites, fa ? "برگزیده‌ها" : "FAVOURITES");
+            BindFooter(_libraryAdvancedButton, OnLibraryAdvanced, fa ? "پیشرفته" : "ADVANCED");
             if (battlefield)
             {
-                BindFooter(resetButton, OnLibraryAdvanced, fa ? "پیشرفته" : "ADVANCED");
                 BindFooter(randomizeSeedButton, OnLibraryTheater, fa ? "نقشه صحنه" : "THEATRE MAP");
                 BindFooter(launchButton, LaunchMatch, fa ? "شروع نبرد" : "START BATTLE");
             }
             else
             {
-                BindFooter(resetButton, OnLibraryFilters, fa ? "پالایه" : "FILTERS");
                 BindFooter(randomizeSeedButton, OnLibraryZoom, fa ? "نزدیک‌تر" : "ZOOM IN");
                 BindFooter(launchButton, OnLibraryQuickBattle, fa ? "نبرد سریع" : "QUICK BATTLE");
             }
+
+            DressFooterIcon(resetButton, "filters");
+            DressFooterIcon(_libraryFavouritesButton, "favourites");
+            DressFooterIcon(_libraryAdvancedButton, "advanced");
+            DressFooterIcon(randomizeSeedButton, battlefield ? "map" : "zoom");
         }
 
         private void BindFooter(Button button, UnityEngine.Events.UnityAction action, string label)
@@ -1285,6 +1419,7 @@ namespace Game.UI.Runtime
             button.onClick.RemoveListener(OnLibraryZoom);
             button.onClick.RemoveListener(OnLibraryTheater);
             button.onClick.RemoveListener(OnLibraryQuickBattle);
+            button.onClick.RemoveListener(OnLibraryFavourites);
             button.onClick.AddListener(action);
             if (!string.IsNullOrEmpty(label))
                 SetCopy(button.GetComponentInChildren<TMP_Text>(true), label);
@@ -1299,7 +1434,7 @@ namespace Game.UI.Runtime
             else if (action == LaunchMatch)
                 AliasControl(button, SkirmishLibraryControlNames.StartBattle);
 
-            bool localSound = action == OnLibraryFilters || action == OnLibraryAdvanced;
+            bool localSound = action == OnLibraryFilters || action == OnLibraryAdvanced || action == OnLibraryFavourites;
             if (localSound)
                 AttachAudio(button, UIAudioEventKind.ButtonSecondaryClick);
             else
@@ -1313,6 +1448,12 @@ namespace Game.UI.Runtime
             UIButtonAudioEventView audio = button.GetComponent<UIButtonAudioEventView>();
             if (audio != null)
                 DestroyUi(audio);
+        }
+
+        private void OnLibraryFavourites()
+        {
+            _favouritesLit = !_favouritesLit;
+            TintButton(_libraryFavouritesButton, _favouritesLit, true);
         }
 
         private void OnLibraryFilters()
@@ -1844,9 +1985,10 @@ namespace Game.UI.Runtime
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
                 scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
-                scenarioDescription.overflowMode = TextOverflowModes.Overflow;
+                scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
                 scenarioDescription.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                 scenarioDescription.isRightToLeftText = fa;
+                scenarioDescription.margin = new Vector4(16f, 2f, 16f, 2f);
                 scenarioDescription.fontSizeMin = LibraryFontFloor;
                 scenarioDescription.fontSizeMax = Mathf.Max(LibraryFontFloor, scenarioDescription.fontSizeMax);
             }
@@ -1883,16 +2025,28 @@ namespace Game.UI.Runtime
 
         private void MirrorLibraryPanels()
         {
+            ApplyLibraryFrame();
+        }
+
+        private void ApplyLibraryFrame()
+        {
             var map = transform.Find("SkirmishSetupComposition/OperationPreview") as RectTransform;
             var briefing = transform.Find("SkirmishSetupComposition/BaseAssaultRules") as RectTransform;
-            if (map == null || briefing == null || !UiShellRuntimeGateway.Localization.IsRightToLeft)
+            if (map == null || briefing == null)
                 return;
-            const float left = 14f;
-            const float gap = 14f;
-            const float briefingWidth = 590f;
-            briefing.anchoredPosition = new Vector2(left, briefing.anchoredPosition.y);
-            briefing.sizeDelta = new Vector2(briefingWidth, briefing.sizeDelta.y);
-            map.anchoredPosition = new Vector2(left + briefingWidth + gap, map.anchoredPosition.y);
+            float aspect = 16f / 9f;
+            Canvas canvas = GetComponentInParent<Canvas>();
+            RectTransform canvasRect = canvas != null ? canvas.transform as RectTransform : null;
+            if (canvasRect != null && canvasRect.rect.height > 1f)
+                aspect = canvasRect.rect.width / canvasRect.rect.height;
+            float extra = 0f;
+            MainMenuV3SectionLayoutView layout = transform.Find("SkirmishSetupComposition")?.GetComponent<MainMenuV3SectionLayoutView>();
+            if (layout != null)
+                extra = layout.LastAppliedExtraWidth;
+            bool briefingOnLeft = !UiShellRuntimeGateway.Localization.IsRightToLeft;
+            SkirmishLibraryFrame.Resolve(aspect, extra, briefingOnLeft, out float mapX, out float mapWidth, out float briefingX, out float briefingWidth);
+            PlaceTopLeft(map, mapX, SkirmishLibraryFrame.PanelY, mapWidth, SkirmishLibraryFrame.PanelHeight);
+            PlaceTopLeft(briefing, briefingX, SkirmishLibraryFrame.PanelY, briefingWidth, SkirmishLibraryFrame.PanelHeight);
         }
 
         private void PresentZoomHint(bool fa, bool battlefield)
@@ -1948,11 +2102,24 @@ namespace Game.UI.Runtime
 
         private void RemoveBlankPanelImages()
         {
-            HideBlankImages(transform.Find("SkirmishSetupComposition/BaseAssaultRules"));
-            HideBlankImages(transform.Find("SkirmishSetupComposition/OperationPreview"));
+            Transform rules = transform.Find("SkirmishSetupComposition/BaseAssaultRules");
+            Transform preview = transform.Find("SkirmishSetupComposition/OperationPreview");
+            HideBlankGraphics(rules);
+            HideBlankGraphics(preview);
+            if (_briefingPreview != null)
+            {
+                _briefingPreview.texture = null;
+                _briefingPreview.enabled = false;
+                _briefingPreview.color = new Color(0.05f, 0.07f, 0.08f, 1f);
+            }
+
+            Transform scroll = rules != null ? rules.Find("RulesScroll") : null;
+            if (scroll != null && !_advancedOpen)
+                scroll.gameObject.SetActive(false);
+            HideOverlappingBlank(rules);
         }
 
-        private static void HideBlankImages(Transform root)
+        private static void HideBlankGraphics(Transform root)
         {
             if (root == null)
                 return;
@@ -1962,17 +2129,54 @@ namespace Game.UI.Runtime
                 if (SkirmishLibraryBlankImage.IsBlank(images[i]))
                     images[i].enabled = false;
             }
+
+            RawImage[] rawImages = root.GetComponentsInChildren<RawImage>(true);
+            for (int i = 0; i < rawImages.Length; i++)
+            {
+                if (rawImages[i] != null && rawImages[i].name == "Picture")
+                    continue;
+                if (SkirmishLibraryBlankImage.IsBlank(rawImages[i]))
+                    rawImages[i].enabled = false;
+            }
+        }
+
+        private void HideOverlappingBlank(Transform rules)
+        {
+            RectTransform army = _statRow != null ? _statRow.Find("Army") as RectTransform : null;
+            if (army == null || _medalRow == null || !army.gameObject.activeInHierarchy || !_medalRow.gameObject.activeInHierarchy)
+                return;
+            Vector3 armyCenter = army.TransformPoint(army.rect.center);
+            Vector3 medalCenter = _medalRow.TransformPoint(_medalRow.rect.center);
+            Graphic[] graphics = rules.GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic graphic = graphics[i];
+                if (graphic == null || graphic is TMP_Text || graphic is V3GradientGraphic || !graphic.enabled)
+                    continue;
+                if (graphic.name == "Picture" || graphic.name == "DepthFrame")
+                    continue;
+                RectTransform rect = graphic.rectTransform;
+                if (!SkirmishLibraryBlankImage.IsLarge(rect))
+                    continue;
+                if (!rect.rect.Contains(rect.InverseTransformPoint(armyCenter)) ||
+                    !rect.rect.Contains(rect.InverseTransformPoint(medalCenter)))
+                    continue;
+                bool emptyRaw = graphic is RawImage raw && raw.texture == null;
+                bool emptyImage = graphic is Image image && image.sprite == null;
+                if (emptyRaw || emptyImage || SkirmishLibraryBlankImage.IsLightNeutral(graphic.color))
+                    graphic.enabled = false;
+            }
         }
 
         private static void AddSelectionGlow(RectTransform card)
         {
             if (card == null || card.Find("SelectionGlowTop") != null)
                 return;
-            Color glow = new Color(0.95f, 0.78f, 0.28f, 0.95f);
-            AddGlowEdge(card, "SelectionGlowTop", new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-8f, 3f), new Vector2(0f, -3f), glow);
-            AddGlowEdge(card, "SelectionGlowBottom", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(-8f, 3f), new Vector2(0f, 3f), glow);
-            AddGlowEdge(card, "SelectionGlowLeft", new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(3f, -8f), new Vector2(3f, 0f), glow);
-            AddGlowEdge(card, "SelectionGlowRight", new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), new Vector2(3f, -8f), new Vector2(-3f, 0f), glow);
+            Color glow = new Color(1f, 0.82f, 0.28f, 1f);
+            AddGlowEdge(card, "SelectionGlowTop", new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(8f, 10f), new Vector2(0f, 4f), glow);
+            AddGlowEdge(card, "SelectionGlowBottom", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(8f, 10f), new Vector2(0f, -4f), glow);
+            AddGlowEdge(card, "SelectionGlowLeft", new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(10f, 8f), new Vector2(-4f, 0f), glow);
+            AddGlowEdge(card, "SelectionGlowRight", new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), new Vector2(10f, 8f), new Vector2(4f, 0f), glow);
         }
 
         private static void AddGlowEdge(RectTransform card, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 size, Vector2 position, Color color)
@@ -2618,7 +2822,8 @@ namespace Game.UI.Runtime
         {
             if (text == null)
                 return;
-            min = Mathf.Max(LibraryFontFloor, min);
+            if (text.name != "Subtitle")
+                min = Mathf.Max(LibraryFontFloor, min);
             max = Mathf.Max(min, max);
             var binding = text.GetComponent<V3LocalizedTextBindingView>() ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>();
             if (string.IsNullOrEmpty(binding.LocalizationKey))
@@ -2688,11 +2893,11 @@ namespace Game.UI.Runtime
             shadow.anchorMax = widget.anchorMax;
             shadow.pivot = widget.pivot;
             shadow.sizeDelta = widget.sizeDelta;
-            shadow.anchoredPosition = widget.anchoredPosition + new Vector2(14f, -16f);
-            shadow.sizeDelta = widget.sizeDelta + new Vector2(18f, 18f);
+            shadow.anchoredPosition = widget.anchoredPosition + new Vector2(10f, -12f);
+            shadow.sizeDelta = widget.sizeDelta + new Vector2(16f, 16f);
             shadow.SetSiblingIndex(widget.GetSiblingIndex());
             Image image = shadow.GetComponent<Image>();
-            image.color = new Color(0f, 0f, 0f, 0.42f);
+            image.color = new Color(0.1f, 0.04f, 0.01f, 0.78f);
             image.raycastTarget = false;
         }
 
@@ -2737,10 +2942,17 @@ namespace Game.UI.Runtime
                 back.SetAsLastSibling();
             if (resetButton != null)
                 resetButton.transform.SetAsLastSibling();
+            if (_libraryFavouritesButton != null)
+                _libraryFavouritesButton.transform.SetAsLastSibling();
+            if (_libraryAdvancedButton != null)
+                _libraryAdvancedButton.transform.SetAsLastSibling();
             if (randomizeSeedButton != null)
                 randomizeSeedButton.transform.SetAsLastSibling();
             if (launchButton != null)
                 launchButton.transform.SetAsLastSibling();
+            Transform launchTransition = composition != null ? composition.Find("LaunchTransition") : null;
+            if (launchTransition != null && launchTransition.gameObject.activeSelf)
+                launchTransition.SetAsLastSibling();
             RaiseDepth(composition, "SafeAreaEdgeLeft");
             RaiseDepth(composition, "SafeAreaEdgeRight");
             RaiseDepth(composition, "SafeAreaEdgeTop");
@@ -2759,15 +2971,20 @@ namespace Game.UI.Runtime
         {
             if (composition == null)
                 return;
-            RawImage image = composition.Find("LibraryDepthPlate")?.GetComponent<RawImage>();
+            Transform screen = composition.parent != null ? composition.parent : composition;
+            RawImage image = screen.Find("LibraryDepthPlate")?.GetComponent<RawImage>()
+                ?? composition.Find("LibraryDepthPlate")?.GetComponent<RawImage>();
             if (image == null)
             {
                 image = new GameObject("LibraryDepthPlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-                image.transform.SetParent(composition, false);
+                image.transform.SetParent(screen, false);
             }
-
+            image.transform.SetParent(screen, false);
             image.transform.SetAsFirstSibling();
             Stretch(image.rectTransform);
+            Transform canvasBlack = screen.Find("CanvasBlack");
+            if (canvasBlack != null)
+                canvasBlack.gameObject.SetActive(false);
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             string mapId = LibraryMapId;
             string key = battlefield ? "skirmish.blur." + mapId : "skirmish.blur.theater";
@@ -2775,9 +2992,11 @@ namespace Game.UI.Runtime
             if (texture == null && battlefield)
                 texture = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
             if (texture == null)
+                texture = SkirmishLibraryPreviewAssets.Load("skirmish.zone.theater");
+            if (texture == null)
                 texture = SkirmishLibraryPreviewAssets.Load("skirmish.blur.theater");
             image.texture = texture != null ? texture : SkirmishLibraryPreviewAssets.Placeholder();
-            image.color = new Color(0.5f, 0.54f, 0.56f, 1f);
+            image.color = new Color(0.95f, 0.72f, 0.42f, 1f);
             image.uvRect = new Rect(0f, 0f, 1f, 1f);
             image.raycastTarget = false;
         }
@@ -2800,11 +3019,11 @@ namespace Game.UI.Runtime
             shadow.anchorMin = panel.anchorMin;
             shadow.anchorMax = panel.anchorMax;
             shadow.pivot = panel.pivot;
-            shadow.anchoredPosition = panel.anchoredPosition + new Vector2(12f, -18f);
-            shadow.sizeDelta = panel.sizeDelta + new Vector2(28f, 28f);
+            shadow.anchoredPosition = panel.anchoredPosition + new Vector2(18f, -24f);
+            shadow.sizeDelta = panel.sizeDelta + new Vector2(40f, 36f);
             PlaceBehind(shadow, panel);
             Image image = shadow.GetComponent<Image>();
-            image.color = new Color(0f, 0f, 0f, 0.4f);
+            image.color = new Color(0.12f, 0.05f, 0.01f, 0.82f);
             image.raycastTarget = false;
         }
 
@@ -2933,6 +3152,288 @@ namespace Game.UI.Runtime
                 if (children[i] == null || children[i].name.IndexOf("Chevron", StringComparison.Ordinal) < 0)
                     continue;
                 children[i].gameObject.SetActive(false);
+            }
+        }
+
+        private Button EnsureFooterUtility(Transform parent, string name)
+        {
+            if (parent == null)
+                return null;
+            Transform existing = parent.Find(name);
+            if (existing != null)
+                return existing.GetComponent<Button>();
+            Button button = CreateChromeButton(parent, name);
+            var label = CreateLabel(button.transform, "Label", 18f);
+            Stretch(label.rectTransform, 48f, 12f, 8f, 8f);
+            label.alignment = TextAlignmentOptions.Center;
+            return button;
+        }
+
+        private void PresentRecommendedPreview(string scenarioId)
+        {
+            if (_recommendedPanel == null)
+                return;
+            VerticalLayoutGroup recommendedGroup = _recommendedPanel.GetComponent<VerticalLayoutGroup>();
+            if (recommendedGroup != null)
+                recommendedGroup.enabled = false;
+            Image[] images = _recommendedPanel.GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i] != null && images[i].name != "PreviewFrame" && SkirmishLibraryBlankImage.IsBlank(images[i]))
+                    images[i].enabled = false;
+            }
+
+            RawImage preview = _recommendedPanel.Find("Preview")?.GetComponent<RawImage>();
+            string key = string.IsNullOrEmpty(scenarioId) ? null : "skirmish.preview." + scenarioId;
+            Texture2D texture = string.IsNullOrEmpty(key) ? null : SkirmishLibraryPreviewAssets.Load(key);
+            if (texture == null)
+            {
+                if (preview != null)
+                    preview.gameObject.SetActive(false);
+                return;
+            }
+
+            if (preview == null)
+            {
+                preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+                preview.transform.SetParent(_recommendedPanel, false);
+            }
+
+            preview.gameObject.SetActive(true);
+            preview.texture = texture;
+            preview.color = Color.white;
+            preview.raycastTarget = false;
+            preview.enabled = true;
+            PlaceTopLeft(preview.rectTransform, 8f, 28f, 120f, 56f);
+            CoverCrop(preview, 120f, 56f);
+            if (_recommendedPanel.Find("Heading") is RectTransform heading)
+                PlaceTopLeft(heading, 136f, 4f, 280f, 24f);
+            if (_recommendedPanel.Find("Body") is RectTransform body)
+                PlaceTopLeft(body, 136f, 28f, 280f, 52f);
+        }
+
+        private void PresentLaunchTransition(string scenarioId)
+        {
+            Transform composition = transform.Find("SkirmishSetupComposition");
+            if (composition == null)
+                return;
+            Transform existing = composition.Find("LaunchTransition");
+            RectTransform plate = existing as RectTransform;
+            if (plate == null)
+            {
+                var graphic = new GameObject("LaunchTransition", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                graphic.transform.SetParent(composition, false);
+                graphic.color = new Color(0.16f, 0.07f, 0.02f, 0.82f);
+                graphic.raycastTarget = false;
+                plate = graphic.rectTransform;
+                var label = CreateLabel(plate, "LaunchLabel", 28f);
+                Stretch(label.rectTransform, 40f, 40f, 24f, 24f);
+                label.alignment = TextAlignmentOptions.Center;
+                label.color = new Color(1f, 0.9f, 0.62f, 1f);
+            }
+
+            plate.gameObject.SetActive(true);
+            Stretch(plate);
+            RaiseLaunchTransition();
+            TMP_Text text = plate.Find("LaunchLabel")?.GetComponent<TMP_Text>();
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            SetCopy(text, fa ? "در حال اعزام " + scenarioId : "LAUNCHING " + scenarioId, 28f, 42f);
+            if (text != null)
+            {
+                text.alignment = TextAlignmentOptions.Center;
+                text.isRightToLeftText = false;
+                text.color = new Color(1f, 0.9f, 0.62f, 1f);
+            }
+        }
+
+        private void RaiseLaunchTransition()
+        {
+            Transform transition = transform.Find("SkirmishSetupComposition/LaunchTransition");
+            if (transition != null && transition.gameObject.activeSelf)
+                transition.SetAsLastSibling();
+        }
+
+        private void PlaceLibraryHeader()
+        {
+            Transform composition = transform.Find("SkirmishSetupComposition");
+            if (composition == null)
+                return;
+            if (composition.Find("WarlineLogo") is RectTransform logo)
+            {
+                logo.gameObject.SetActive(true);
+                PlaceTopLeft(logo, 16f, 8f, 340f, 84f);
+                logo.SetAsLastSibling();
+            }
+
+            if (composition.Find("ScreenTitlePanel") is RectTransform title)
+                PlaceTopLeft(title, 360f, 12f, 760f, 78f);
+            MainMenuAccountHeaderView header = GetComponentInChildren<MainMenuAccountHeaderView>(true);
+            if (header != null)
+            {
+                header.gameObject.SetActive(true);
+                if (header.transform is RectTransform chip)
+                    PlaceTopLeft(chip, 1140f, 10f, 500f, 80f);
+                Transform label = header.transform.Find("Label");
+                if (label != null)
+                    label.gameObject.SetActive(true);
+                TMP_Text caption = label != null ? label.GetComponent<TMP_Text>() : null;
+                if (caption != null)
+                {
+                    bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                    SetCopy(caption, fa ? "بازیکن" : "PLAYER", 16f, 22f);
+                    caption.color = new Color(0.93f, 0.78f, 0.38f, 1f);
+                }
+            }
+        }
+
+        private void FinishLibraryText()
+        {
+            Transform composition = transform.Find("SkirmishSetupComposition");
+            if (composition == null)
+                return;
+            TMP_Text[] texts = composition.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null)
+                    continue;
+                bool subtitle = text.name == "Subtitle";
+                bool zoneTab = text.name == "Label" && text.transform.parent != null &&
+                    text.transform.parent.name.StartsWith("BattlefieldTab_", StringComparison.Ordinal);
+                if (subtitle || zoneTab)
+                {
+                    text.textWrappingMode = subtitle ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+                    text.overflowMode = TextOverflowModes.Ellipsis;
+                    text.enableAutoSizing = true;
+                    if (subtitle)
+                    {
+                        text.fontSizeMin = 12f;
+                        text.fontSizeMax = 16f;
+                        if (text.fontSize > 16f)
+                            text.fontSize = 16f;
+                    }
+                }
+            }
+
+            if (scenarioDescription != null)
+            {
+                scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
+                scenarioDescription.margin = new Vector4(16f, 2f, 16f, 2f);
+            }
+        }
+
+        private static Sprite LibraryMedallion()
+        {
+            if (_libraryMedallion != null)
+                return _libraryMedallion;
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
+                    if (distance > 1f)
+                        continue;
+                    bool ring = distance > 0.72f;
+                    bool core = distance < 0.34f;
+                    pixels[y * size + x] = ring
+                        ? new Color32(255, 236, 196, 255)
+                        : core
+                            ? new Color32(255, 255, 255, 255)
+                            : new Color32(255, 214, 120, 255);
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _libraryMedallion = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _libraryMedallion.hideFlags = HideFlags.HideAndDontSave;
+            return _libraryMedallion;
+        }
+
+        private void DressFooterIcon(Button button, string kind)
+        {
+            if (button == null)
+                return;
+            HideDiceIcon(button);
+            Transform existing = button.transform.Find("LibraryIcon");
+            Image icon = existing != null ? existing.GetComponent<Image>() : null;
+            if (icon == null)
+            {
+                icon = new GameObject("LibraryIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                icon.transform.SetParent(button.transform, false);
+                icon.raycastTarget = false;
+            }
+
+            PlaceTopLeft(icon.rectTransform, 16f, 28f, 36f, 36f);
+            icon.sprite = kind == "favourites" ? LibraryMedallion() : null;
+            icon.color = Color.white;
+            icon.preserveAspect = icon.sprite != null;
+            icon.enabled = true;
+            if (icon.sprite == null)
+                PaintFooterMark(icon, kind);
+        }
+
+        private static void PaintFooterMark(Image icon, string kind)
+        {
+            if (icon == null)
+                return;
+            for (int i = icon.transform.childCount - 1; i >= 0; i--)
+            {
+                if (icon.transform.GetChild(i).name.StartsWith("Mark", StringComparison.Ordinal))
+                    DestroyUi(icon.transform.GetChild(i).gameObject);
+            }
+
+            if (kind == "filters")
+            {
+                AddMark(icon.transform, 4f, 6f, 28f, 4f);
+                AddMark(icon.transform, 8f, 16f, 20f, 4f);
+                AddMark(icon.transform, 12f, 26f, 12f, 4f);
+            }
+            else if (kind == "advanced")
+            {
+                AddMark(icon.transform, 4f, 6f, 28f, 4f);
+                AddMark(icon.transform, 4f, 16f, 28f, 4f);
+                AddMark(icon.transform, 4f, 26f, 28f, 4f);
+            }
+            else if (kind == "zoom")
+            {
+                AddMark(icon.transform, 6f, 4f, 18f, 18f);
+                AddMark(icon.transform, 20f, 22f, 12f, 4f);
+            }
+            else
+            {
+                AddMark(icon.transform, 4f, 8f, 28f, 20f);
+            }
+        }
+
+        private static void AddMark(Transform parent, float x, float y, float width, float height)
+        {
+            var mark = new GameObject("Mark", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            mark.transform.SetParent(parent, false);
+            mark.color = new Color(0.96f, 0.94f, 0.88f, 1f);
+            mark.raycastTarget = false;
+            PlaceTopLeft(mark.rectTransform, x, y, width, height);
+        }
+
+        private static void HideDiceIcon(Button button)
+        {
+            if (button == null)
+                return;
+            Transform icon = button.transform.Find("Icon");
+            if (icon != null && icon.name != "LibraryIcon")
+                icon.gameObject.SetActive(false);
+            Transform[] children = button.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i] == null)
+                    continue;
+                if (children[i].name.StartsWith("Dot_", StringComparison.Ordinal) || children[i].name == "DiceIcon")
+                    children[i].gameObject.SetActive(false);
             }
         }
 

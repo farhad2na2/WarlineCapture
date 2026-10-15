@@ -383,7 +383,7 @@ namespace Game.UI.Runtime
                 Button button = _mapTabButtons[last];
                 _mapTabButtons.RemoveAt(last);
                 if (button != null)
-                    Destroy(button.gameObject);
+                    DestroyUi(button.gameObject);
             }
 
             for (int i = 0; i < MapCollectionIds.Length; i++)
@@ -495,7 +495,7 @@ namespace Game.UI.Runtime
                 Button button = _libraryButtons[last];
                 _libraryButtons.RemoveAt(last);
                 if (button != null)
-                    Destroy(button.gameObject);
+                    DestroyUi(button.gameObject);
             }
 
             for (int i = 0; i < _visibleEntries.Count; i++)

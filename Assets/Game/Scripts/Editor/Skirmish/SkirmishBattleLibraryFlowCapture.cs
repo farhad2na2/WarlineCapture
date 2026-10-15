@@ -48,8 +48,9 @@ namespace Game.Editor
                 GameLocalization.Initialize(catalog, "en", false);
                 UiShellRuntimeGateway.BindLocalization(new FlowLocalization());
 
-                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-                    "Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab");
+                SkirmishSetupPrefabBuilder.Build();
+                SkirmishSetupPrefabBuilder.RequireFreshPrefab();
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkirmishSetupPrefabBuilder.PrefabPath);
                 if (prefab == null)
                     throw new FileNotFoundException("Missing SCN-13 prefab.");
 
@@ -254,6 +255,7 @@ namespace Game.Editor
             for (int i = 0; i < texts.Length; i++)
                 texts[i].ForceMeshUpdate();
             SkirmishBattleLibraryCapture.RejectMissingGlyphs(view.gameObject);
+            SkirmishBattleLibraryCapture.RejectCollapsedLayout(view.gameObject);
             camera.Render();
             RenderTexture previous = RenderTexture.active;
             RenderTexture.active = target;

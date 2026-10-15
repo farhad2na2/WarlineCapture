@@ -54,8 +54,9 @@ namespace Game.Editor
                 GameLocalization.Initialize(catalog, "en", false);
                 UiShellRuntimeGateway.BindLocalization(new CaptureLocalization());
 
-                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-                    "Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab");
+                SkirmishSetupPrefabBuilder.Build();
+                SkirmishSetupPrefabBuilder.RequireFreshPrefab();
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkirmishSetupPrefabBuilder.PrefabPath);
                 if (prefab == null)
                     throw new FileNotFoundException("Missing SCN-13 prefab.");
 
@@ -179,6 +180,7 @@ namespace Game.Editor
             view.PresentLibraryCapture(state);
             RejectUnresolvedSprites(view.Library);
             Canvas.ForceUpdateCanvases();
+            RejectCollapsedLayout(instance);
             foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
                 text.ForceMeshUpdate();
             RejectMissingGlyphs(instance);
@@ -223,6 +225,76 @@ namespace Game.Editor
                         "FA text is missing a glyph on " + text.name + " U+" + code.ToString("X4") + " text=" + shown);
                 }
             }
+        }
+
+        internal static void RejectCollapsedLayout(GameObject instance)
+        {
+            Transform composition = instance != null ? instance.transform.Find("SkirmishSetupComposition") : null;
+            if (composition == null)
+                throw new InvalidOperationException("SCN-13 composition is missing.");
+            var layout = composition.GetComponent<MainMenuV3SectionLayoutView>();
+            if (layout == null)
+                throw new InvalidOperationException("SCN-13 section layout is missing.");
+            if (layout.UsesMenuFrame)
+                throw new InvalidOperationException("SCN-13 menu frame overrides the library panels.");
+            layout.RefreshLayout();
+            Canvas.ForceUpdateCanvases();
+
+            var map = composition.Find("OperationPreview") as RectTransform;
+            var briefing = composition.Find("BaseAssaultRules") as RectTransform;
+            float extra = layout.LastAppliedExtraWidth;
+            ExpectPanel(
+                map,
+                "map",
+                SkirmishSetupPrefabBuilder.MapPanelX,
+                -SkirmishSetupPrefabBuilder.MapPanelY,
+                SkirmishSetupPrefabBuilder.MapPanelWidth + extra,
+                SkirmishSetupPrefabBuilder.MapPanelHeight);
+            ExpectPanel(
+                briefing,
+                "briefing",
+                SkirmishSetupPrefabBuilder.BriefingPanelX + extra,
+                -SkirmishSetupPrefabBuilder.BriefingPanelY,
+                SkirmishSetupPrefabBuilder.BriefingPanelWidth,
+                SkirmishSetupPrefabBuilder.BriefingPanelHeight);
+            RequireFilled(map, "map");
+            RequireFilled(briefing, "briefing");
+            var plate = composition.Find("OperationPreview/MapPreviewClip") as RectTransform;
+            var column = composition.Find("BaseAssaultRules/BriefingColumn") as RectTransform;
+            if (column != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(column);
+            RequireFilled(plate, "map plate");
+            RequireFilled(column, "briefing column");
+        }
+
+        private static void ExpectPanel(RectTransform rect, string label, float x, float y, float width, float height)
+        {
+            if (rect == null)
+                throw new InvalidOperationException("Panel is missing: " + label);
+            const float tolerance = 2f;
+            bool placed =
+                Mathf.Abs(rect.anchoredPosition.x - x) <= tolerance &&
+                Mathf.Abs(rect.anchoredPosition.y - y) <= tolerance &&
+                Mathf.Abs(rect.sizeDelta.x - width) <= tolerance &&
+                Mathf.Abs(rect.sizeDelta.y - height) <= tolerance;
+            if (placed)
+                return;
+            string actual = rect.anchoredPosition.x.ToString("0.#") + "," + rect.anchoredPosition.y.ToString("0.#") +
+                " " + rect.sizeDelta.x.ToString("0.#") + "x" + rect.sizeDelta.y.ToString("0.#");
+            string expected = x.ToString("0.#") + "," + y.ToString("0.#") + " " + width.ToString("0.#") + "x" + height.ToString("0.#");
+            if (label == "map" && Mathf.Abs(rect.sizeDelta.x - width) > tolerance)
+                throw new InvalidOperationException("Map panel width is " + rect.sizeDelta.x.ToString("0.#") + "; expected " + width.ToString("0.#") + ".");
+            string title = label == "briefing" ? "Briefing panel is not at its expected rect." : "Map panel is not at its expected rect.";
+            throw new InvalidOperationException(title + " rect=" + actual + " expected=" + expected);
+        }
+
+        private static void RequireFilled(RectTransform rect, string label)
+        {
+            if (rect == null || !rect.gameObject.activeInHierarchy)
+                throw new InvalidOperationException("Panel is missing: " + label);
+            if (rect.rect.width < 200f || rect.rect.height < 160f)
+                throw new InvalidOperationException(
+                    "Panel is collapsed: " + label + " size=" + rect.rect.width.ToString("0.#") + "x" + rect.rect.height.ToString("0.#"));
         }
 
         internal static void RejectUnresolvedSprites(ISkirmishLibraryViewModel library)

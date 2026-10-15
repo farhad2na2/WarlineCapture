@@ -422,7 +422,15 @@ namespace Game.UI.Runtime
             }
 
             if (_overallFill != null && _overallFill.transform.parent is RectTransform bar)
-                PlaceTopLeft(bar, pairX, 40f, captionWidth + pairGap + countWidth, 12f);
+            {
+                PlaceTopLeft(bar, pairX, 46f, captionWidth + pairGap + countWidth, 22f);
+                Image track = bar.GetComponent<Image>();
+                if (track != null)
+                    track.color = new Color(0.05f, 0.07f, 0.08f, 1f);
+                Outline rim = bar.GetComponent<Outline>() ?? bar.gameObject.AddComponent<Outline>();
+                rim.effectColor = new Color(0.93f, 0.78f, 0.38f, 1f);
+                rim.effectDistance = new Vector2(1.5f, -1.5f);
+            }
 
             SkirmishMedalTotals medals = theater.OverallMedalTotals;
             int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
@@ -502,10 +510,11 @@ namespace Game.UI.Runtime
             if (slot == null)
                 return;
             float inner = Mathf.Max(96f, slotWidth - 8f);
-            PlaceTopLeft(slot, origin, 8f, inner, 48f);
+            PlaceTopLeft(slot, origin, 4f, inner, 44f);
             LayoutElement element = slot.GetComponent<LayoutElement>();
             if (element != null)
                 element.ignoreLayout = false;
+            DropExtraMedalImages(slot);
             LayoutMedalEntry(slot, fa, 24f, 32f);
             BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), index);
         }

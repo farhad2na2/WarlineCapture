@@ -123,7 +123,8 @@ namespace Game.Editor
                 }
             }
 
-            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 3, 2.2f, 0.22f);
+            pixels = Median(pixels, ZoneWidth, ZoneHeight, 2);
+            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 4, 3.4f, 0.55f);
             for (int i = 0; i < pixels.Length; i++)
                 pixels[i] = Grade(pixels[i]);
             Vignette(pixels);
@@ -326,6 +327,57 @@ namespace Game.Editor
                         255));
                 }
             }
+        }
+
+        private static Color32[] Median(Color32[] source, int width, int height, int radius)
+        {
+            int window = (radius * 2 + 1) * (radius * 2 + 1);
+            var reds = new byte[window];
+            var greens = new byte[window];
+            var blues = new byte[window];
+            var dest = new Color32[source.Length];
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int count = 0;
+                    for (int ky = -radius; ky <= radius; ky++)
+                    {
+                        int sy = Mathf.Clamp(y + ky, 0, height - 1);
+                        for (int kx = -radius; kx <= radius; kx++)
+                        {
+                            int sx = Mathf.Clamp(x + kx, 0, width - 1);
+                            Color32 sample = source[sy * width + sx];
+                            reds[count] = sample.r;
+                            greens[count] = sample.g;
+                            blues[count] = sample.b;
+                            count++;
+                        }
+                    }
+
+                    dest[y * width + x] = new Color32(MedianChannel(reds, count), MedianChannel(greens, count), MedianChannel(blues, count), 255);
+                }
+            }
+
+            return dest;
+        }
+
+        private static byte MedianChannel(byte[] values, int count)
+        {
+            for (int i = 1; i < count; i++)
+            {
+                byte value = values[i];
+                int j = i - 1;
+                while (j >= 0 && values[j] > value)
+                {
+                    values[j + 1] = values[j];
+                    j--;
+                }
+
+                values[j + 1] = value;
+            }
+
+            return values[count / 2];
         }
 
         private static Color32[] Bilateral(Color32[] source, int width, int height, int radius, float sigmaSpace, float sigmaRange)

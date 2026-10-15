@@ -411,8 +411,114 @@ namespace Game.Editor
                     "Visible raw image has no texture and a default white or grey colour: " + ImagePath(image.transform));
             }
 
+            LogBriefingImages(root);
             RejectBriefingOverlap(root);
             RejectNarrowGreyOverText(root);
+            RejectMedalOverForeignText(root);
+        }
+
+        private static void LogBriefingImages(Transform root)
+        {
+            if (root == null || root.name != "BaseAssaultRules")
+                return;
+            Transform column = root.Find("BriefingColumn");
+            if (column == null)
+                return;
+            var report = new System.Text.StringBuilder();
+            report.Append("[SkirmishBattleLibraryCapture] briefing-images");
+            Image[] images = column.GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null || !image.gameObject.activeInHierarchy || !image.enabled)
+                    continue;
+                Rect rect = image.rectTransform.rect;
+                string sprite = image.sprite != null ? image.sprite.name : "none";
+                report.Append(" | ").Append(ImagePath(image.transform));
+                report.Append(" parent=").Append(image.transform.parent != null ? image.transform.parent.name : "none");
+                report.Append(" rect=").Append(rect.x.ToString("0")).Append(",").Append(rect.y.ToString("0"));
+                report.Append(",").Append(rect.width.ToString("0")).Append("x").Append(rect.height.ToString("0"));
+                report.Append(" sprite=").Append(sprite);
+            }
+
+            TMP_Text[] texts = column.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null || !text.gameObject.activeInHierarchy)
+                    continue;
+                string value = text.text ?? string.Empty;
+                bool spriteTag = value.IndexOf("<sprite", StringComparison.OrdinalIgnoreCase) >= 0;
+                bool foreign = text.name != "Caption";
+                if (!spriteTag && text.spriteAsset == null && !foreign)
+                    continue;
+                if (text.name == "Caption" || text.name == "Count" || text.name == "Label")
+                {
+                    if (!spriteTag && text.spriteAsset == null)
+                        continue;
+                }
+
+                report.Append(" | text=").Append(ImagePath(text.transform));
+                report.Append(" spriteAsset=").Append(text.spriteAsset != null ? text.spriteAsset.name : "none");
+                report.Append(" spriteTag=").Append(spriteTag ? "yes" : "no");
+                if (value.IndexOf("approach", StringComparison.OrdinalIgnoreCase) >= 0 || spriteTag)
+                    report.Append(" body=").Append(value.Replace("\n", " "));
+            }
+
+            Debug.Log(report.ToString());
+        }
+
+        private static void RejectMedalOverForeignText(Transform root)
+        {
+            if (root == null)
+                return;
+            Transform column = root.Find("BriefingColumn");
+            Transform strip = root.Find("OverallProgressStrip");
+            if (column != null)
+                RejectMedalOverForeignTextIn(column);
+            if (strip != null)
+                RejectMedalOverForeignTextIn(strip);
+        }
+
+        private static void RejectMedalOverForeignTextIn(Transform scope)
+        {
+            if (scope == null)
+                return;
+            Image[] images = scope.GetComponentsInChildren<Image>(true);
+            TMP_Text[] texts = scope.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null || !image.gameObject.activeInHierarchy || !image.enabled)
+                    continue;
+                if (!SkirmishLibraryBlankImage.IsMedalArt(image))
+                    continue;
+                if (image.sprite == null)
+                    continue;
+                string spriteName = image.sprite.name ?? string.Empty;
+                bool tier = spriteName.IndexOf("medal", StringComparison.OrdinalIgnoreCase) >= 0;
+                bool slotIcon = image.name == "Icon" && image.transform.parent != null &&
+                    (image.transform.parent.name.StartsWith("Slot", StringComparison.Ordinal) ||
+                     image.transform.parent.name.StartsWith("Medal", StringComparison.Ordinal));
+                if (!tier && !slotIcon)
+                    continue;
+                for (int t = 0; t < texts.Length; t++)
+                {
+                    TMP_Text text = texts[t];
+                    if (text == null || !text.gameObject.activeInHierarchy || !text.enabled)
+                        continue;
+                    if (string.IsNullOrEmpty(text.text))
+                        continue;
+                    bool ownLabel = text.name == "Caption" && text.transform.parent == image.transform.parent;
+                    if (ownLabel)
+                        continue;
+                    if (!SkirmishLibraryBlankImage.OverlapsText(image.rectTransform, text))
+                        continue;
+                    throw new InvalidOperationException(
+                        "A medal sprite covers text: " + ImagePath(image.transform) +
+                        " text=" + ImagePath(text.transform));
+                }
+            }
         }
 
         private static void RejectNarrowGreyOverText(Transform root)

@@ -28,6 +28,7 @@ namespace Game.UI.Runtime
         private Button _libraryAdvancedButton;
         private static Sprite _libraryMedallion;
         private static Sprite _zoneGlow;
+        private static Sprite _zoneRibbon;
         private bool _advancedOpen;
         private bool _librarySearchApplied;
         private bool _libraryChromeReady;
@@ -506,9 +507,11 @@ namespace Game.UI.Runtime
 
                 var backing = new GameObject("ZonePlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 backing.transform.SetParent(labels, false);
-                backing.color = new Color(0.02f, 0.03f, 0.04f, 0.92f);
+                backing.sprite = ZoneRibbonSprite();
+                backing.type = Image.Type.Sliced;
+                backing.color = Color.white;
                 backing.raycastTarget = false;
-                PlaceLabelCentre(backing.rectTransform, centre + new Vector2(0f, 0.09f), 300f, 72f);
+                PlaceLabelCentre(backing.rectTransform, centre + new Vector2(0f, 0.09f), 300f, 64f);
                 var name = CreateLabel(labels, "ZoneName", 18f);
                 PlaceLabelCentre(name.rectTransform, centre + new Vector2(0f, 0.075f), 284f, 36f);
                 name.alignment = TextAlignmentOptions.Center;
@@ -679,18 +682,21 @@ namespace Game.UI.Runtime
                     float columnX = LibraryGridOriginX + column * LibraryGridStride;
                     var headerIcon = new GameObject("ColumnIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     headerIcon.transform.SetParent(_libraryGrid, false);
-                    PlaceTopLeft(headerIcon.rectTransform, columnX + 4f, 48f, 26f, 26f);
+                    PlaceTopLeft(headerIcon.rectTransform, columnX + (fa ? LibraryGridCardWidth - 26f : 2f), 62f, 22f, 22f);
                     ShowIcon(headerIcon, SkirmishBattleLibraryArt.ArmyIcon(armies[armyIndex]), Color.white);
                     SkirmishBattleLibraryArt.ProfileCopy(armies[armyIndex], fa, out string armyLabel);
                     SkirmishBattleLibraryArt.ProfileCopy(starts[startIndex], fa, out string startLabel);
                     var header = CreateLabel(_libraryGrid, "Column_" + column, 18f);
-                    PlaceTopLeft(header.rectTransform, columnX, 76f, LibraryGridCardWidth, 34f);
+                    float headerX = fa ? columnX : columnX + 26f;
+                    PlaceTopLeft(header.rectTransform, headerX, 58f, LibraryGridCardWidth - 28f, 40f);
                     header.alignment = TextAlignmentOptions.Center;
-                    header.textWrappingMode = TextWrappingModes.Normal;
-                    header.overflowMode = TextOverflowModes.Overflow;
-                    SetCopy(header, armyLabel + "\n" + startLabel, 16f, 20f);
-                    header.textWrappingMode = TextWrappingModes.Normal;
-                    header.overflowMode = TextOverflowModes.Overflow;
+                    header.isRightToLeftText = fa;
+                    header.textWrappingMode = TextWrappingModes.NoWrap;
+                    header.overflowMode = TextOverflowModes.Ellipsis;
+                    SetCopy(header, armyLabel + "\n" + startLabel, 14f, 18f);
+                    header.isRightToLeftText = fa;
+                    header.textWrappingMode = TextWrappingModes.NoWrap;
+                    header.overflowMode = TextOverflowModes.Ellipsis;
                 }
             }
 
@@ -1074,53 +1080,36 @@ namespace Game.UI.Runtime
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
             SetCopy(caption, fa ? "نبردهای برده" : "BATTLES WON", 14f, 22f);
             SetCopy(count, pin.WonCount + " / " + pin.PublishedCount, 14f, 22f);
-            float trackWidth = _progressTrack.rect.width > 80f ? _progressTrack.rect.width : 520f;
-            const float countWidth = 132f;
-            if (fa)
+            const float captionWidth = 168f;
+            const float countWidth = 96f;
+            const float pairGap = 6f;
+            float pairX = 8f;
+            if (fa && _progressTrack.rect.width > captionWidth + countWidth + 24f)
+                pairX = _progressTrack.rect.width - 8f - captionWidth - pairGap - countWidth;
+            if (caption != null)
             {
-                if (count != null)
-                {
-                    count.isRightToLeftText = false;
-                    count.alignment = TextAlignmentOptions.MidlineLeft;
-                    count.overflowMode = TextOverflowModes.Overflow;
-                    PlaceTopLeft(count.rectTransform, 0f, 0f, countWidth, 30f);
-                }
-
-                if (caption != null)
-                {
-                    caption.alignment = TextAlignmentOptions.MidlineRight;
-                    caption.isRightToLeftText = true;
-                    caption.overflowMode = TextOverflowModes.Overflow;
-                    caption.textWrappingMode = TextWrappingModes.NoWrap;
-                    PlaceTopLeft(caption.rectTransform, countWidth + 12f, 0f, Mathf.Max(80f, trackWidth - countWidth - 16f), 34f);
-                }
-            }
-            else
-            {
-                if (caption != null)
-                {
-                    caption.alignment = TextAlignmentOptions.MidlineLeft;
-                    caption.isRightToLeftText = false;
-                    caption.overflowMode = TextOverflowModes.Ellipsis;
-                    caption.textWrappingMode = TextWrappingModes.NoWrap;
-                    PlaceTopLeft(caption.rectTransform, 0f, 0f, Mathf.Max(80f, trackWidth - countWidth - 12f), 30f);
-                }
-
-                if (count != null)
-                {
-                    count.isRightToLeftText = false;
-                    count.alignment = TextAlignmentOptions.MidlineRight;
-                    count.overflowMode = TextOverflowModes.Overflow;
-                    PlaceTopLeft(count.rectTransform, Mathf.Max(0f, trackWidth - countWidth), 0f, countWidth, 30f);
-                }
+                caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                caption.isRightToLeftText = fa;
+                caption.overflowMode = TextOverflowModes.Ellipsis;
+                caption.textWrappingMode = TextWrappingModes.NoWrap;
+                PlaceTopLeft(caption.rectTransform, fa ? pairX + countWidth + pairGap : pairX, 0f, captionWidth, 32f);
             }
 
-            RectTransform bar = EnsureThinProgressBar(_progressTrack, 8f);
+            if (count != null)
+            {
+                count.isRightToLeftText = false;
+                count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                count.overflowMode = TextOverflowModes.Overflow;
+                count.textWrappingMode = TextWrappingModes.NoWrap;
+                PlaceTopLeft(count.rectTransform, fa ? pairX : pairX + captionWidth + pairGap, 2f, countWidth, 28f);
+            }
+
+            RectTransform bar = EnsureThinProgressBar(_progressTrack, 18f);
             float ratio = pin.PublishedCount > 0 ? Mathf.Clamp01(pin.WonCount / (float)pin.PublishedCount) : 0f;
             if (bar != null && _progressFill != null && _progressFill.transform.parent == bar)
             {
                 float barWidth = bar.sizeDelta.x > 2f ? bar.sizeDelta.x : 520f;
-                PlaceTopLeft(_progressFill.rectTransform, 0f, 0f, Mathf.Max(6f, barWidth * Mathf.Max(0.04f, ratio)), 8f);
+                PlaceTopLeft(_progressFill.rectTransform, 2f, 2f, Mathf.Max(8f, (barWidth - 4f) * Mathf.Max(0.04f, ratio)), 14f);
                 _progressFill.rectTransform.SetParent(bar, false);
             }
         }
@@ -1158,9 +1147,13 @@ namespace Game.UI.Runtime
             Image barImage = bar.GetComponent<Image>();
             if (barImage != null)
             {
-                barImage.color = new Color(0.08f, 0.1f, 0.12f, 1f);
+                barImage.color = new Color(0.05f, 0.07f, 0.08f, 1f);
                 barImage.raycastTarget = false;
             }
+
+            Outline rim = bar.GetComponent<Outline>() ?? bar.gameObject.AddComponent<Outline>();
+            rim.effectColor = new Color(0.93f, 0.78f, 0.38f, 1f);
+            rim.effectDistance = new Vector2(1.5f, -1.5f);
 
             if (_progressFill == null || _progressFill.transform.parent != bar)
             {
@@ -1249,8 +1242,11 @@ namespace Game.UI.Runtime
         private void LockMedalArtwork()
         {
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            HoldDescriptionClear();
             ArrangeMedalGrid(_medalRow, fa);
             LayoutTheatreMedals(fa);
+            SeatMedalRowBelowCopy();
+            PurgeStrayMedalImages();
         }
 
         private void ArrangeMedalGrid(RectTransform row, bool fa)
@@ -1258,28 +1254,132 @@ namespace Game.UI.Runtime
             if (row == null)
                 return;
             StopExpanding(row);
+            GridLayoutGroup grid = row.GetComponent<GridLayoutGroup>();
+            if (grid != null)
+                grid.enabled = false;
             float width = MedalRowWidth();
-            float cell = Mathf.Max(136f, (width - 8f) * 0.5f);
-            GridLayoutGroup grid = row.GetComponent<GridLayoutGroup>() ?? row.gameObject.AddComponent<GridLayoutGroup>();
-            grid.enabled = true;
-            grid.padding = new RectOffset(0, 0, 0, 0);
-            grid.spacing = new Vector2(8f, 6f);
-            grid.cellSize = new Vector2(cell, 46f);
-            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            grid.constraintCount = 2;
-            grid.startCorner = fa ? GridLayoutGroup.Corner.UpperRight : GridLayoutGroup.Corner.UpperLeft;
-            grid.startAxis = GridLayoutGroup.Axis.Horizontal;
-            grid.childAlignment = fa ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
+            float cell = Mathf.Min(220f, Mathf.Max(148f, (width - 8f) * 0.5f));
+            if (cell * 2f + 8f > width)
+                cell = Mathf.Max(120f, (width - 8f) * 0.5f);
             for (int i = 0; i < 4; i++)
             {
                 if (row.Find("Slot" + i) is not RectTransform slot)
                     continue;
+                int column = i % 2;
+                if (fa)
+                    column = 1 - column;
+                int line = i / 2;
+                PlaceTopLeft(slot, column * (cell + 8f), 4f + line * 50f, cell, 46f);
                 LayoutElement element = slot.GetComponent<LayoutElement>();
                 if (element != null)
                     element.ignoreLayout = false;
+                DropExtraMedalImages(slot);
                 LayoutMedalEntry(slot, fa, 24f, 36f);
                 BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), i);
             }
+        }
+
+        private void SeatMedalRowBelowCopy()
+        {
+            if (_medalRow == null || scenarioDescription == null)
+                return;
+            RectTransform description = scenarioDescription.rectTransform;
+            if (description.parent != _medalRow.parent)
+                return;
+            float descriptionBottom = -description.anchoredPosition.y + Mathf.Max(8f, description.sizeDelta.y);
+            float rowTop = -_medalRow.anchoredPosition.y;
+            if (rowTop >= descriptionBottom + 6f)
+                return;
+            PlaceTopLeft(
+                _medalRow,
+                _medalRow.anchoredPosition.x,
+                descriptionBottom + 8f,
+                Mathf.Max(160f, _medalRow.sizeDelta.x),
+                Mathf.Max(104f, _medalRow.sizeDelta.y));
+        }
+
+        private void HoldDescriptionClear()
+        {
+            if (scenarioDescription == null)
+                return;
+            scenarioDescription.spriteAsset = null;
+            string source = scenarioDescription.text ?? string.Empty;
+            string stripped = StripSpriteTags(source);
+            if (!string.Equals(stripped, source, StringComparison.Ordinal))
+                scenarioDescription.text = stripped;
+            scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
+            scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
+            if (scenarioDescription.GetComponent<RectMask2D>() == null)
+                scenarioDescription.gameObject.AddComponent<RectMask2D>();
+            Image[] images = scenarioDescription.GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i] != null)
+                    DestroyUi(images[i].gameObject);
+            }
+        }
+
+        private static string StripSpriteTags(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.IndexOf("<sprite", StringComparison.OrdinalIgnoreCase) < 0)
+                return value;
+            var builder = new System.Text.StringBuilder(value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (i + 7 <= value.Length && string.Compare(value, i, "<sprite", 0, 7, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    int end = value.IndexOf('>', i);
+                    if (end < 0)
+                        break;
+                    i = end;
+                    continue;
+                }
+
+                builder.Append(value[i]);
+            }
+
+            return builder.ToString();
+        }
+
+        private void PurgeStrayMedalImages()
+        {
+            Transform column = transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn");
+            if (column == null)
+                return;
+            Image[] images = column.GetComponentsInChildren<Image>(true);
+            var stray = new List<GameObject>();
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null || !SkirmishLibraryBlankImage.IsMedalArt(image))
+                    continue;
+                Transform parent = image.transform.parent;
+                bool kept = image.name == "Icon" && parent != null && parent.name.StartsWith("Slot", StringComparison.Ordinal);
+                if (!kept)
+                    stray.Add(image.gameObject);
+            }
+
+            for (int i = 0; i < stray.Count; i++)
+                DestroyUi(stray[i]);
+        }
+
+        private static void DropExtraMedalImages(RectTransform slot)
+        {
+            if (slot == null)
+                return;
+            var stray = new List<GameObject>();
+            for (int i = 0; i < slot.childCount; i++)
+            {
+                Transform child = slot.GetChild(i);
+                Image image = child.GetComponent<Image>();
+                if (image == null || child.name == "Icon")
+                    continue;
+                if (SkirmishLibraryBlankImage.IsMedalArt(image))
+                    stray.Add(child.gameObject);
+            }
+
+            for (int i = 0; i < stray.Count; i++)
+                DestroyUi(stray[i]);
         }
 
         private float MedalRowWidth()
@@ -1358,29 +1458,28 @@ namespace Game.UI.Runtime
         {
             if (slot == null)
                 return;
-            HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>() ?? slot.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.enabled = true;
-            row.padding = new RectOffset(4, 4, 6, 6);
-            row.spacing = 6f;
-            row.childAlignment = fa ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft;
-            row.reverseArrangement = fa;
-            row.childControlWidth = true;
-            row.childControlHeight = true;
-            row.childForceExpandWidth = false;
-            row.childForceExpandHeight = false;
-            row.childScaleWidth = false;
-            row.childScaleHeight = false;
+            HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>();
+            if (row != null)
+                row.enabled = false;
+            GridLayoutGroup grid = slot.GetComponent<GridLayoutGroup>();
+            if (grid != null)
+                grid.enabled = false;
+            float slotWidth = slot.sizeDelta.x > 40f ? slot.sizeDelta.x : slot.rect.width;
+            if (slotWidth < 40f)
+                slotWidth = 148f;
             RectTransform icon = slot.Find("Icon") as RectTransform;
             RectTransform caption = slot.Find("Caption") as RectTransform;
             RectTransform count = slot.Find("Count") as RectTransform;
-            if (icon != null)
-                icon.SetSiblingIndex(0);
-            if (caption != null)
-                caption.SetSiblingIndex(icon != null ? 1 : 0);
-            if (count != null)
-                count.SetSiblingIndex(slot.childCount - 1);
+            float iconX = fa ? slotWidth - 4f - iconSize : 4f;
+            float countX = fa ? 4f : slotWidth - 4f - countWidth;
+            float labelX = fa ? 4f + countWidth + 6f : 4f + iconSize + 6f;
+            float labelEnd = fa ? iconX - 6f : countX - 6f;
+            float labelWidth = Mathf.Max(28f, labelEnd - labelX);
+            PlaceTopLeft(icon, iconX, 11f, iconSize, iconSize);
+            PlaceTopLeft(caption, labelX, 8f, labelWidth, 30f);
+            PlaceTopLeft(count, countX, 11f, countWidth, 24f);
             HoldFixed(icon, iconSize, iconSize, 0f);
-            HoldFlexible(caption, 40f, 72f, 28f);
+            HoldFixed(caption, labelWidth, 30f, 0f);
             HoldFixed(count, countWidth, 24f, 0f);
             Image image = icon != null ? icon.GetComponent<Image>() : null;
             if (image != null)
@@ -1394,7 +1493,7 @@ namespace Game.UI.Runtime
             {
                 captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 captionText.isRightToLeftText = fa;
-                captionText.overflowMode = TextOverflowModes.Overflow;
+                captionText.overflowMode = TextOverflowModes.Ellipsis;
                 captionText.textWrappingMode = TextWrappingModes.NoWrap;
                 captionText.enableAutoSizing = true;
                 captionText.fontSizeMin = 13f;
@@ -1422,20 +1521,6 @@ namespace Game.UI.Runtime
             element.minHeight = height;
             element.preferredHeight = height;
             element.flexibleWidth = flexibleWidth;
-            element.flexibleHeight = 0f;
-        }
-
-        private static void HoldFlexible(RectTransform rect, float minWidth, float preferredWidth, float height)
-        {
-            if (rect == null)
-                return;
-            LayoutElement element = rect.GetComponent<LayoutElement>() ?? rect.gameObject.AddComponent<LayoutElement>();
-            element.ignoreLayout = false;
-            element.minWidth = minWidth;
-            element.preferredWidth = preferredWidth;
-            element.minHeight = height;
-            element.preferredHeight = height;
-            element.flexibleWidth = 1f;
             element.flexibleHeight = 0f;
         }
 
@@ -2075,7 +2160,7 @@ namespace Game.UI.Runtime
                 _overallStrip.anchorMax = new Vector2(1f, 0f);
                 _overallStrip.pivot = new Vector2(0.5f, 0f);
                 _overallStrip.anchoredPosition = new Vector2(0f, 8f);
-                _overallStrip.sizeDelta = new Vector2(-16f, 76f);
+                _overallStrip.sizeDelta = new Vector2(-16f, 88f);
             }
 
             if (_libraryPins is RectTransform pinRect)
@@ -4009,9 +4094,11 @@ namespace Game.UI.Runtime
                 }
                 else if (columnHeader)
                 {
-                    RelaxLibraryText(text, 16f, 20f, true);
+                    RelaxLibraryText(text, 14f, 18f, false);
                     text.alignment = TextAlignmentOptions.Center;
-                    text.overflowMode = TextOverflowModes.Overflow;
+                    text.isRightToLeftText = fa && ContainsArabicScript(text.text);
+                    text.textWrappingMode = TextWrappingModes.NoWrap;
+                    text.overflowMode = TextOverflowModes.Ellipsis;
                 }
                 else if (medalCaption || stripCaption)
                 {
@@ -4197,6 +4284,50 @@ namespace Game.UI.Runtime
             _zoneGlow = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
             _zoneGlow.hideFlags = HideFlags.HideAndDontSave;
             return _zoneGlow;
+        }
+
+        private static Sprite ZoneRibbonSprite()
+        {
+            if (_zoneRibbon != null)
+                return _zoneRibbon;
+            const int width = 256;
+            const int height = 64;
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            var pixels = new Color32[width * height];
+            var fill = new Color32(8, 12, 14, 235);
+            var gold = new Color32(236, 196, 96, 255);
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int inset = 0;
+                    if (x < 22)
+                        inset = 22 - x;
+                    else if (x >= width - 22)
+                        inset = x - (width - 23);
+                    int top = 4 + inset / 3;
+                    int bottom = height - 5 - inset / 3;
+                    if (y < top || y > bottom)
+                        continue;
+                    bool rim = y <= top + 2 || y >= bottom - 2 || x <= 2 || x >= width - 3;
+                    pixels[y * width + x] = rim ? gold : fill;
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneRibbon = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, width, height),
+                new Vector2(0.5f, 0.5f),
+                100f,
+                0,
+                SpriteMeshType.FullRect,
+                new Vector4(28f, 8f, 28f, 8f),
+                false);
+            _zoneRibbon.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneRibbon;
         }
 
         private static void ClearFooterIcon(Button button)

@@ -415,6 +415,55 @@ namespace Game.Editor
             RejectBriefingOverlap(root);
             RejectNarrowGreyOverText(root);
             RejectMedalOverForeignText(root);
+            RejectBriefingStack(root);
+        }
+
+        private static void RejectBriefingStack(Transform root)
+        {
+            if (root == null || root.name != "BaseAssaultRules")
+                return;
+            var column = root.Find("BriefingColumn") as RectTransform;
+            if (column == null)
+                return;
+            var report = new System.Text.StringBuilder();
+            report.Append("[SkirmishBattleLibraryCapture] briefing-stack column=")
+                .Append(column.rect.width.ToString("0"))
+                .Append("x")
+                .Append(column.rect.height.ToString("0"));
+            float previousBottom = float.PositiveInfinity;
+            string previousName = string.Empty;
+            for (int i = 0; i < column.childCount; i++)
+            {
+                if (column.GetChild(i) is not RectTransform child || !child.gameObject.activeInHierarchy)
+                    continue;
+                LayoutElement element = child.GetComponent<LayoutElement>();
+                if (element != null && element.ignoreLayout)
+                    continue;
+                Vector3 min = column.InverseTransformPoint(child.TransformPoint(child.rect.min));
+                Vector3 max = column.InverseTransformPoint(child.TransformPoint(child.rect.max));
+                float top = Mathf.Max(min.y, max.y);
+                float bottom = Mathf.Min(min.y, max.y);
+                float height = Mathf.Abs(max.y - min.y);
+                report.Append(" | ").Append(i).Append(':').Append(child.name)
+                    .Append(" h=").Append(height.ToString("0"))
+                    .Append(" pref=").Append(element != null ? element.preferredHeight.ToString("0") : "-");
+                if (top > previousBottom + 1f)
+                {
+                    throw new InvalidOperationException(
+                        "Briefing column entries overlap: " + previousName + " and " + child.name + " " + report);
+                }
+
+                if (bottom < column.rect.yMin - 2f)
+                {
+                    throw new InvalidOperationException(
+                        "Briefing column stack passes the bottom of the column: " + child.name + " " + report);
+                }
+
+                previousBottom = bottom;
+                previousName = child.name;
+            }
+
+            Debug.Log(report.ToString());
         }
 
         private static void LogBriefingImages(Transform root)

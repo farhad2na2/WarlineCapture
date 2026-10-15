@@ -478,7 +478,7 @@ namespace Game.UI.Runtime
             const float summaryCountWidth = 96f;
             const float pairGap = 6f;
             float reserved = 8f + captionWidth + pairGap + summaryCountWidth + 16f;
-            float slotWidth = Mathf.Clamp((stripWidth - reserved) * 0.25f, 132f, 168f);
+            float slotWidth = Mathf.Clamp((stripWidth - reserved) / 4f, 150f, 220f);
             float run = slotWidth * 4f;
             float origin = fa ? stripWidth - reserved - run : reserved;
             for (int i = 0; i < 4; i++)
@@ -515,7 +515,7 @@ namespace Game.UI.Runtime
             if (element != null)
                 element.ignoreLayout = false;
             DropExtraMedalImages(slot);
-            LayoutMedalEntry(slot, fa, 24f, 32f);
+            LayoutMedalEntry(slot, fa, 22f, 28f);
             BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), index);
         }
 

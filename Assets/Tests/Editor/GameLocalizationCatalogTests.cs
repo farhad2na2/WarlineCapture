@@ -190,7 +190,8 @@ public sealed class GameLocalizationCatalogTests
     public void TearDown()
     {
         GameText.Init(null);
-        GameLocalization.Initialize(null, GameLocalization.EnglishLocaleCode, persist: false);
+        // Leave the shipped catalog behind; a null catalog marked initialized broke later locale tests.
+        LocalizationTestState.UseShippedCatalog();
         Object.DestroyImmediate(catalog);
     }
 

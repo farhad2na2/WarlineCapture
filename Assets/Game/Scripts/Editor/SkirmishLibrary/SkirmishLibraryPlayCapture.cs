@@ -394,9 +394,11 @@ namespace Game.Editor
             back.y = 0f;
             if (back.sqrMagnitude < 1f) back = Vector3.back;
             back.Normalize();
-            back = Quaternion.AngleAxis(25f, Vector3.up) * back;
+            // S002 and S003 share the Desert Base enemy pads; give S003 (Field) its own low side angle.
+            bool fieldAngle = id == "S003";
+            back = Quaternion.AngleAxis(fieldAngle ? -95f : 25f, Vector3.up) * back;
             const float fov = 40f;
-            const float pitch = 55f;
+            float pitch = fieldAngle ? 36f : 55f;
             float aspect = CardWidth / (float)CardHeight;
             Vector3 size = bounds.size;
             float radius = Mathf.Max(size.x, size.z) * 0.5f + 25f;

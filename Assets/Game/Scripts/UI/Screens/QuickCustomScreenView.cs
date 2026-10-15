@@ -56,7 +56,7 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
-            if (baseAssaultPreset && _selectedScenarioId == "S005" && UiShellRuntimeGateway.TryConsumeSkirmishResumeFailure())
+            if (baseAssaultPreset && !string.IsNullOrWhiteSpace(_selectedScenarioId) && UiShellRuntimeGateway.TryConsumeSkirmishResumeFailure())
                 PresentResumeFailure();
         }
 

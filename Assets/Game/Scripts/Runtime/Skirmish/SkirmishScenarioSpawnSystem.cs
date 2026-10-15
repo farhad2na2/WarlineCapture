@@ -126,6 +126,16 @@ namespace Game.Runtime
             }
 
             em.SetComponentData(entity, session);
+            if ((Game.Configs.SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup) &&
+                !SkirmishMissionLogicalBindingProvider.TryAttachAfterActualSpawn(em,entity,out _)) ||
+                !SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(em,entity,out _))
+            {
+                session.Phase=SkirmishSessionPhase.Failed;session.FailureCode=SkirmishReasonCode.MissingReference;
+                em.SetComponentData(entity,session);
+                if(em.HasComponent<SkirmishObjectiveClockComponent>(entity))
+                {var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(entity);clock.Playing=0;em.SetComponentData(entity,clock);}
+                return;
+            }
             SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
         }
 
@@ -141,6 +151,15 @@ namespace Game.Runtime
             if (setup?.Forces == null)
             {
                 reason = SkirmishReasonCode.MissingResolvedSetup;
+                return false;
+            }
+
+            // Exact original IDs derive from the complete compiled force array.
+            // Validate before any spawn-ledger/economy mutation; CE without a real
+            // mode-owned Cargo Truck binding fails instead of borrowing logistics.
+            if (!SkirmishOriginalObjectiveSpawnHooks.TryPlan(setup, out _, out _))
+            {
+                reason = SkirmishReasonCode.MissingReference;
                 return false;
             }
 
@@ -394,7 +413,9 @@ namespace Game.Runtime
                 SetOrAdd(em, owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(prefabKey) });
             if (fromPrefab)
             {
-                Vector3 position = setup != null &&
+                Vector3 position = force.RoleKind == SkirmishRoleKind.ConvoyLogic
+                    ? new Vector3(force.SpawnWorldX, 0f, force.SpawnWorldZ)
+                    : setup != null &&
                     SkirmishVisualSpawnService.TryResolveUnitSpawnWorld(setup, force.FactionId, force.RoleKind, member, out Vector3 measured)
                         ? measured
                         : force.SpawnWorldX != 0f || force.SpawnWorldZ != 0f
@@ -415,6 +436,18 @@ namespace Game.Runtime
                     em.AddComponentData(owned, new CampaignMissionCombatSuppressedTag());
             }
 
+            if (force.RoleKind == SkirmishRoleKind.ConvoyLogic &&
+                (!fromPrefab || setup == null || !SkirmishConvoySpawnHooks.TrySpecializeOpening(em, owned, sessionId, setup, forceIndex, member, out _)))
+            {
+                em.DestroyEntity(owned);
+                return Entity.Null;
+            }
+            if (fromPrefab && setup != null &&
+                !SkirmishOriginalObjectiveSpawnHooks.TryTagActualOpeningMember(em, owned, sessionId, setup, forceIndex, member, out _))
+            {
+                em.DestroyEntity(owned);
+                return Entity.Null;
+            }
             return owned;
         }
 

@@ -44,6 +44,16 @@ namespace Game.Runtime
                 return Path.Combine(Application.persistentDataPath, "skirmish-s005-native.json");
             }
         }
+        private static bool SupportsGenericSave(string catalogId)
+        {
+            var battle=SkirmishBattleCatalogConfig.Load();var authored=SkirmishExpansionCatalogConfig.Load();
+            return SkirmishMissionDispatch.TryGetGenericById(battle,catalogId,out var entry) && authored!=null &&
+                authored.TryGetDefinition(catalogId,out var definition) && SkirmishMissionDispatch.MatchesDefinition(entry,definition) &&
+                definition.CampaignMap!=null && definition.ObjectiveConfig!=null && definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.BaseAssault;
+        }
+        private static string SavePathForCatalog(string catalogId)=>catalogId=="S005"?SavePath:
+            SupportsGenericSave(catalogId)?Path.Combine(Path.GetDirectoryName(SavePath),"skirmish-"+catalogId.ToLowerInvariant()+"-native.json"):null;
+
         public static bool HasSaved(string catalogId) => TryRead(catalogId, out _, out _) || HasRecognizedPolicylessSave(catalogId);
 
         private static bool HasRecognizedPolicylessSave(string catalogId)
@@ -64,7 +74,11 @@ namespace Game.Runtime
         public static bool CanSave(EntityManager em, Entity session) => em.Exists(session) &&
             em.HasComponent<SkirmishExpandedSessionComponent>(session) &&
             em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0 &&
-            em.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString() == "S005" &&
+            (em.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString() == "S005" ||
+             (SupportsGenericSave(em.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString()) &&
+              em.HasComponent<SkirmishLaunchDefinitionRecord>(session) && em.HasComponent<SkirmishResolvedSetupRecord>(session) &&
+              em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session).Matches(em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session)))) &&
             em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase == SkirmishSessionPhase.Playing &&
             em.HasComponent<SkirmishResolvedSetupRecord>(session);
 
@@ -75,7 +89,7 @@ namespace Game.Runtime
             if (gameplay.CalculateEntityCount() != 1 || gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive != 0) return false;
             var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             bool captured = SkirmishNativeCheckpointSnapshotService.TryCapture(em, session, out var snapshot, out string failure);
-            bool saved = captured && SkirmishNativeCheckpointCodec.TryWriteAtomic(SavePath, snapshot, setup);
+            bool saved = captured && SkirmishNativeCheckpointCodec.TryWriteAtomic(SavePathForCatalog(setup.CatalogId), snapshot, setup);
             if (!em.HasComponent<SkirmishNativeSaveFeedback>(session)) em.AddComponentObject(session, new SkirmishNativeSaveFeedback());
             em.GetComponentObject<SkirmishNativeSaveFeedback>(session).Failed = !saved;
             if (!saved) { Debug.LogWarning("[SkirmishPlayerSave] result=Failed reason=" + (captured ? "AtomicWriteFailed" : failure)); return false; }
@@ -93,8 +107,9 @@ namespace Game.Runtime
         internal static bool TryRead(string catalogId, out SkirmishNativeCheckpointSnapshotService.Snapshot snapshot, out SkirmishResolvedSetup setup)
         {
             snapshot = null; setup = null;
-            if (catalogId != "S005" || ContentAccessRuntime.Evaluate("skirmish.s005") != Game.Missions.Contracts.ContentAccessState.Allowed ||
-                !SkirmishNativeCheckpointCodec.TryReadDescriptor(SavePath, out var saved) || saved.CatalogId != catalogId ||
+            string path=SavePathForCatalog(catalogId);
+            if (path==null || ContentAccessRuntime.Evaluate("skirmish."+catalogId.ToLowerInvariant()) != Game.Missions.Contracts.ContentAccessState.Allowed ||
+                !SkirmishNativeCheckpointCodec.TryReadDescriptor(path, out var saved) || saved.CatalogId != catalogId ||
                 !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishExpandedSessionComponent state) ||
                 state.Phase != SkirmishSessionPhase.Playing || state.SpawnComplete == 0) return false;
             var catalog = SkirmishExpansionCatalogConfig.Load();
@@ -121,16 +136,16 @@ namespace Game.Runtime
             return true;
         }
 
-        internal static void CompleteAttempt(string sessionId)
+        internal static void CompleteAttempt(string sessionId, string catalogId = "S005")
         {
-            if (SkirmishNativeCheckpointCodec.TryReadDescriptor(SavePath, out var saved) && saved.SessionId == sessionId && !TryDiscard(saved.CatalogId))
+            if (SavePathForCatalog(catalogId) is string path && SkirmishNativeCheckpointCodec.TryReadDescriptor(path, out var saved) && saved.CatalogId == catalogId && saved.SessionId == sessionId && !TryDiscard(saved.CatalogId))
                 Debug.LogWarning("[SkirmishPlayerSave] result=Failed reason=CompletedSaveCleanupFailed");
         }
 
         public static bool TryDiscard(string catalogId)
         {
-            if (catalogId != "S005") return false;
-            try { if (File.Exists(SavePath)) File.Delete(SavePath); return true; }
+            string path=SavePathForCatalog(catalogId); if(path==null)return false;
+            try { if (File.Exists(path)) File.Delete(path); return true; }
             catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException) { return false; }
         }
     }

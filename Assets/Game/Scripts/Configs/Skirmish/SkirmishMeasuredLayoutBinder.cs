@@ -63,8 +63,10 @@ namespace Game.Configs
             if (setup == null || layout == null || source == null)
             { Add(reasons, "definition/layout/source", "Explicit setup, logical layout and Campaign source required."); return false; }
             if (setup.CatalogId != definition.CatalogId || setup.OperationMapId != layout.OperationMapId ||
-                setup.LayoutId != layout.LayoutId || setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault)
-                Add(reasons, "identity", "Setup must match the explicit BA definition and logical layout.");
+                setup.LayoutId != layout.LayoutId || definition.ObjectiveConfig == null || setup.ObjectiveKind != definition.ObjectiveConfig.Kind ||
+                (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault && setup.ObjectiveKind != SkirmishObjectiveKind.FrontlineControl &&
+                 setup.ObjectiveKind != SkirmishObjectiveKind.Breakthrough && setup.ObjectiveKind != SkirmishObjectiveKind.ConvoyEscort))
+                Add(reasons, "identity", "Setup must match the explicit supported definition and logical layout.");
             if (!source.TryValidateMetadata(out string error) || !source.TryValidateLocalContentReferences(out error))
                 Add(reasons, "campaignSource", error);
             if (source.AdditionalBuildingPlacements != null && source.AdditionalBuildingPlacements.Placements == null)

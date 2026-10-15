@@ -225,6 +225,7 @@ namespace Game.Runtime
             Register<SkirmishUnitRoleComponent>();
             Register<SkirmishRoleOverlayComponent>();
             Register<SkirmishObjectiveRoleComponent>();
+            Register<SkirmishConvoyObjectiveTruckComponent>();
             Register<SkirmishStructureIdentityComponent>();
             Register<SkirmishMoveIntentComponent>(NormalizeExpiredMoveTarget);
             Register<SkirmishArmyGroupMembershipComponent>();

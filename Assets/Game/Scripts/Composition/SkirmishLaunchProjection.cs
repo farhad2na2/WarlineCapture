@@ -25,7 +25,11 @@ namespace Game.Composition
 
         public static bool TryQueue(EntityManager em, QuickGameConfig config)
         {
-            string canonicalId = config.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "skirmish.s025" :
+            bool generic = config.ScenarioIndex > 7;
+            SkirmishBattleCatalogEntry genericEntry = default;
+            if (generic && !SkirmishMissionDispatch.TryGetGenericByIndex(SkirmishBattleCatalogConfig.Load(), config.ScenarioIndex, out genericEntry)) return false;
+            if (config.ScenarioIndex < 0) return false;
+            string canonicalId = generic ? genericEntry.DefinitionId : config.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "skirmish.s025" :
                 config.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "skirmish.s073" :
                 config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ? "skirmish.s002" :
                 config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ? "skirmish.s003" :
@@ -55,6 +59,7 @@ namespace Game.Composition
                 }
             }
             config = config.NormalizeForBaseAssault();
+            if (generic) return TryQueueExpanded(em, genericEntry.ScenarioId, config.MapSeed);
             if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex)
                 return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, config.MapSeed);
             if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)

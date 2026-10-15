@@ -62,6 +62,7 @@ namespace Game.Composition
             {
                 // A logical Skirmish window has the same physical-source contract as
                 // a campaign window, but no campaign launch request owns its lifetime.
+                if (!Game.Runtime.SkirmishGenericMissionSource.TryResolve(entityManager,out bool generic,out var authoredMission,out var explicitSource,out _)) return false;
                 var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);
                 var selectedMap = Game.Runtime.SkirmishS004Environment.LoadMapForSession(entityManager)
                     ?? (preset != null ? preset.operationMap : null);
@@ -73,6 +74,10 @@ namespace Game.Composition
                     ? SkirmishPresetConfig.IndustrialBasinScenarioSetupId
                     : skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
                         ? "scenario.skirmish.city_crossroads" : SkirmishLaunchProjection.ScenarioId;
+                if (generic)
+                {
+                    missionId=authoredMission.Definition.DefinitionId;scenarioId=authoredMission.Definition.ScenarioSetupId;selectedMap=explicitSource;
+                }
                 request = new CampaignMissionLaunchRequestElement
                 {
                     MissionId = new Unity.Collections.FixedString64Bytes(missionId),

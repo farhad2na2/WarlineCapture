@@ -367,6 +367,13 @@ namespace Game.Configs
             pad = default;
             if (layout == null)
                 return false;
+            if (force.RoleKind == SkirmishRoleKind.ConvoyLogic)
+            {
+                string slot = force.ObjectiveRoleId == "convoy.1" ? "1" : force.ObjectiveRoleId == "convoy.2" ? "2" : force.ObjectiveRoleId == "convoy.3" ? "3" : null;
+                return slot != null && force.FactionId == 1 && force.Quantity == 1 && force.SupplyCost == 0 &&
+                    layout.TryGetPad("convoy.origin." + slot, out pad) && pad.Kind == SkirmishLegalPadKind.ObjectiveTruckSpawn &&
+                    pad.FactionId == 1 && pad.AnchorId == force.SpawnAnchorId;
+            }
             SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
             SkirmishLegalPadKind kind = category == SkirmishPopulationCategory.Infantry
                 ? SkirmishLegalPadKind.InfantrySpawn

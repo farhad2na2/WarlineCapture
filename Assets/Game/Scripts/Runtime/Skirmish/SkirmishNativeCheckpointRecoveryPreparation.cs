@@ -15,6 +15,7 @@ namespace Game.Runtime
             internal ulong WorldSequence;
             internal Entity Session;
             internal bool Committed;
+            internal SkirmishNativeObjectiveCheckpoint.Prepared Objective;
             internal SkirmishNativeCheckpointTransientState.Bindings Transients;
             internal readonly Dictionary<Entity, float> HiddenPassengers = new();
             internal readonly Dictionary<Entity, SkirmishNativeCheckpointParts.Part[]> Parts = new();
@@ -171,6 +172,8 @@ namespace Game.Runtime
                 value.Parts.Add(session, Parts(saved.SessionParts));
                 foreach (var bank in saved.Banks)
                     value.Parts.Add(Resolve("bank/" + bank.Faction), Parts(bank.Parts));
+                if (setup.ObjectiveKind != Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
+                    !SkirmishNativeObjectiveCheckpoint.TryPrepare(em,session,saved,setup,out value.Objective,out failure)) return false;
                 prepared = value;
                 failure = string.Empty;
                 return true;

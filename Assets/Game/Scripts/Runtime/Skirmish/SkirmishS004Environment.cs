@@ -18,6 +18,9 @@ namespace Game.Runtime
         }
         public static OperationMapDefinition LoadMapForSession(EntityManager em)
         {
+            if (!SkirmishGenericMissionSource.TryResolve(em, out bool generic, out _, out var explicitSource, out string sourceError))
+                throw new System.InvalidOperationException(sourceError);
+            if (generic) return explicitSource;
             using var query = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupRecord));
             if (query.CalculateEntityCount() == 1)
             {

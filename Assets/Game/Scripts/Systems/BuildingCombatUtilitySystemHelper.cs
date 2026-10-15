@@ -516,6 +516,8 @@ namespace Game.Runtime
                 return;
             }
 
+            if (!SkirmishNativeObjectiveLifecycleHooks.TryBeforeDestroyedActorRemoved(em, entity, out string objectiveRemovalError))
+                UnityEngine.Debug.LogError("[SkirmishObjectiveLifecycle] result=Failed " + objectiveRemovalError);
             em.DestroyEntity(entity);
         }
 

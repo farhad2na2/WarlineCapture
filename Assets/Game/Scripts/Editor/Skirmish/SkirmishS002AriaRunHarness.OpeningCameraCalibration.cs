@@ -31,6 +31,7 @@ namespace Game.Editor
             openingFramingRequired=true;openingFramingComplete=false;openingFramingStage=0;
             openingFramingCapturePending=null;openingFramingLastFrame=-1;openingFramingSettledFrames=0;
             openingFramingDeadline=0;
+            StartOpeningDriverDiagnostic();
             RunS005NormalPaidPlaneLineageCanary();
         }
 
@@ -46,6 +47,7 @@ namespace Game.Editor
         // True yields this QA input frame; no ECS, economy, AI or camera writes.
         static bool TickS005OpeningCameraCalibration(EntityManager em,bool hasSession,Entity session)
         {
+            ObserveOpeningDriverGate();
             if(!openingFramingRequired||openingFramingComplete)return false;
             if(!hasSession||!SkirmishLaunchProjection.IsSimulationActive(em))return true;
             if(openingFramingDeadline==0)openingFramingDeadline=EditorApplication.timeSinceStartup+180;
@@ -61,14 +63,18 @@ namespace Game.Editor
             openingFramingPreviousPosition=camera.transform.position;openingFramingPreviousRotation=camera.transform.rotation;openingFramingPreviousFov=camera.fieldOfView;
             openingFramingSettledFrames=still?openingFramingSettledFrames+1:0;
             if(openingFramingSettledFrames<15)return true; // Includes at least one normal10-frame LOD budget update.
-            var rails=UnityEngine.Object.FindObjectsByType<MatchHudRightQuickRailView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
-            if(rails.Length!=1||!rails[0].isActiveAndEnabled)return true;
-            var rail=rails[0];
             if(openingFramingStage==0){
                 if(Mathf.Abs(camera.transform.position.y-profile.NormalHeight)>.1f||camera.orthographic)
                     throw new InvalidOperationException("Opening view is not the authored default perspective; retain native failure.");
                 QueueOpeningFraming("opening-default");openingFramingStage=1;return true;
             }
+            var rails=UnityEngine.Object.FindObjectsByType<MatchHudRightQuickRailView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
+            if(rails.Length!=1||!rails[0].isActiveAndEnabled||rails[0].ZoomInButton==null||rails[0].ZoomOutButton==null)
+            {
+                WriteOpeningDriverDiagnostic("ZoomRouteUnavailableAfterDefaultCapture");
+                throw new InvalidOperationException("Default camera captured; unique discrete quick-rail zoom route unavailable. Actual quick-rail/minimap controls and distinct gesture routes are preserved in opening-driver evidence; no timeout or substituted camera input.");
+            }
+            var rail=rails[0];
             if(openingFramingStage==1){if(PlayerResumeTap(rail.ZoomOutButton)){openingFramingStage=2;openingFramingSettledFrames=0;}return true;}
             if(openingFramingStage==2){
                 // ZoomOut boundary-aware result may be less than authored max.

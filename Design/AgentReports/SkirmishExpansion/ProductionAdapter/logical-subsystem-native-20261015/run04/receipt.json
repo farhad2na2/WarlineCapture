@@ -1,0 +1,16 @@
+{
+  "result": "Failed",
+  "actual_checked_wrapper_exit": 1,
+  "underlying_wrapper_exit": 1,
+  "assertions_before_failure": [
+    "openingPolicy5",
+    "immutableLegacy12beforeAfter",
+    "shared77",
+    "invalidManagedDefaults1"
+  ],
+  "failure": "Active synthetic FC fixture omitted the public objective state normally created by session initialization; producer correctly refused missing state",
+  "fix_scope": "Explicit synthetic public state from actual compiled kind; no runtime behavior or source-fit change",
+  "before_sha256": "d0806947e6d3b720a3f6d229b1872720d00d0700a35cda03528b6266f65a6d62",
+  "after_sha256": "7fc886fe00319c3f7526c63c73038d075bef2370c050084575c1dbb434687faf",
+  "playerReady": false
+}

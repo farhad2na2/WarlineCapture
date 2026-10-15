@@ -18,7 +18,13 @@ namespace Game.Runtime
             var session = sessions.GetSingletonEntity();
             if (em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy != 0) return false;
             var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            if (setup == null || setup.CatalogId != "S005") return false;
+            if (setup == null) return false;
+            if (Game.Configs.SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup))
+            {
+                if (!SkirmishMissionLogicalBindingProvider.TryRead(em,session,out var logical)) return false;
+                profile = logical.View; return true;
+            }
+            if (setup.CatalogId != "S005") return false;
             var catalog = Game.Configs.SkirmishExpansionCatalogConfig.Load();
             var candidate = Game.Configs.SkirmishMissionViewProfile.Load(setup.CatalogId);
             if (catalog == null || !catalog.TryGetDefinition(setup.CatalogId, out var definition) ||
@@ -44,13 +50,17 @@ namespace Game.Runtime
             profile = null; combined = default;
             if (!TryResolve(em, out profile) || !em.Exists(actor) ||
                 !em.HasComponent<SkirmishAttemptOwnedComponent>(actor) || !em.HasComponent<SkirmishUnitRoleComponent>(actor) ||
-                em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role != SkirmishRoleKind.TransportPlane ||
+                !SupportedAircraft(profile,em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role) ||
                 !em.HasComponent<UnitHealth>(actor) || em.GetComponentData<UnitHealth>(actor).Current <= 0 ||
                 RenderBoundsGateway.Provider == null) return false;
             var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
             using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
             if (sessions.CalculateEntityCount() != 1) return false;
-            var session = em.GetComponentData<SkirmishExpandedSessionComponent>(sessions.GetSingletonEntity());
+            var sessionEntity = sessions.GetSingletonEntity();
+            var session = em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity);
+            if ((profile.AuthoredNonBaseAssault || profile.AuthoredGenericBaseAssault) &&
+                (!SkirmishMissionLogicalBindingProvider.TryRead(em,sessionEntity,out var logical) ||
+                 !logical.TryReadFraming(em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role,out _))) return false;
             if (owner.FactionId != 1 || !owner.SessionId.Equals(session.SessionId) || !em.HasComponent<UnitRenderVisualComponent>(actor)) return false;
             var visual = em.GetComponentData<UnitRenderVisualComponent>(actor);
             if (visual.Current != visual.Desired) return false;
@@ -112,6 +122,10 @@ namespace Game.Runtime
             position = bounds.center - forward * distance;
             return Finite(position);
         }
+        private static bool SupportedAircraft(Game.Configs.SkirmishMissionViewProfile profile,SkirmishRoleKind role) =>
+            (profile.AuthoredNonBaseAssault || profile.AuthoredGenericBaseAssault) ? SkirmishRoleIds.Category(role) == SkirmishPopulationCategory.Air ||
+                role == SkirmishRoleKind.TransportPlane || role == SkirmishRoleKind.TransportHeli || role == SkirmishRoleKind.Drone :
+                role == SkirmishRoleKind.TransportPlane;
         private static bool Finite(Vector3 value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
     }
 }

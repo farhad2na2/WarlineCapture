@@ -121,6 +121,7 @@ namespace Game.Configs
                 case SkirmishRoleKind.Siege: return "Unit_Veh_Missle_Launcher_Ground";
                 case SkirmishRoleKind.TransportHeli: return "Unit_Veh_Helicopter_Transport";
                 case SkirmishRoleKind.Drone: return "Unit_Veh_Drone";
+                case SkirmishRoleKind.ConvoyLogic: return "Unit_Veh_Truck_Tray";
                 case SkirmishRoleKind.LogisticsTruck: return "Unit_Veh_Truck_Tray";
                 case SkirmishRoleKind.Tanker: return "Unit_Veh_Truck_Tanker";
                 case SkirmishRoleKind.AntiAir: return "Unit_Veh_Missle_Launcher_Air";

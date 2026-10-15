@@ -55,7 +55,10 @@ namespace Game.Composition
                 EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString() ==
                 SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId;
             if(!startupFailed&&UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning&&focusedSession!=match.SessionId.ToString())
-            {if(Focus(match.PlayerMainBase,true,match.ScenarioIndex,false,s002Session))focusedSession=match.SessionId.ToString();}
+            {
+                if(SkirmishMissionLogicalBindingProvider.OwnsOpeningIntroduction(EntityManager,session)||SkirmishS005OpeningViewPolicy.OwnsIntroduction(EntityManager,session))focusedSession=match.SessionId.ToString();
+                else if(Focus(match.PlayerMainBase,true,match.ScenarioIndex,false,s002Session))focusedSession=match.SessionId.ToString();
+            }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var worldCamera = Camera.main;
             bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
@@ -95,7 +98,7 @@ namespace Game.Composition
                        EntityManager.GetComponentData<SkirmishResultComponent>(session).SaveAcknowledged!=0)
                     {
                         match.ResultSaved=1;EntityManager.SetComponentData(session,match);
-                        SkirmishNativePlayerSaveService.CompleteAttempt(match.SessionId.ToString());
+                        SkirmishNativePlayerSaveService.CompleteAttempt(match.SessionId.ToString(), EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString());
                     }
                 }
                 else

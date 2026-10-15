@@ -15,6 +15,7 @@ namespace Game.Runtime
         [Serializable] internal sealed class Snapshot
         {
             public int Version = SchemaVersion;
+            public SkirmishNativeObjectiveCheckpoint.Payload Objective;
             public string SessionId;
             public string CatalogId;
             public uint SetupHash;
@@ -231,6 +232,16 @@ namespace Game.Runtime
                 if (metadata.CalculateEntityCount() == 1)
                     snapshot.MapMetadataHash = metadata.GetSingleton<OperationMapMetadataComponent>().MetadataHash.ToString();
                 failure = string.Empty;
+                if (state.ObjectiveKind != Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault)
+                {
+                    if (!SkirmishNativeObjectiveCheckpoint.TryCapture(em, session, out var objectivePayload, out failure))
+                    { snapshot = null; return false; }
+                    snapshot.Objective = objectivePayload;
+                    snapshot.Version = SkirmishNativeObjectiveCheckpoint.NativeVersion;
+                    var actualSetup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    if (!SkirmishNativeObjectiveCheckpoint.Validate(objectivePayload,snapshot,actualSetup,out failure))
+                    { snapshot = null; return false; }
+                }
                 return true;
             }
             catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)

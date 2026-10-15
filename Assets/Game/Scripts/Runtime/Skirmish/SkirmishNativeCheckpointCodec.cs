@@ -43,7 +43,7 @@ namespace Game.Runtime
         {
             uint expectedHash = setup == null ? 0 : policylessCompatibility ? SkirmishSetupCompiler.ComputePolicylessHash(setup, setup.Seed) : setup.SetupHash;
             string expectedContent = policylessCompatibility ? setup?.EnemyPolicy?.SourceContentHash : setup?.ContentHash;
-            if (!BitConverter.IsLittleEndian || snapshot == null || setup == null || snapshot.Version != SkirmishNativeCheckpointSnapshotService.SchemaVersion ||
+            if (!BitConverter.IsLittleEndian || snapshot == null || setup == null || !SkirmishNativeObjectiveCheckpoint.Schema(snapshot.Version, snapshot.Objective, setup.ObjectiveKind) ||
                 snapshot.Support == null || snapshot.Banks == null || (snapshot.Banks.Length != 0 && snapshot.Banks.Length != 2) ||
                 snapshot.Actors == null || snapshot.MapReferences == null || snapshot.DropVisuals == null || snapshot.Actors.Length == 0 ||
                 snapshot.Actors.Length > 16384 || snapshot.MapReferences.Length > 65536 ||
@@ -104,6 +104,7 @@ namespace Game.Runtime
                         !SkirmishNativeCheckpointParts.TryReadComponent(actor.Parts, out SkirmishAttemptOwnedComponent owner) ||
                         owner.StableObjectId.ToString() != actor.Id || owner.SessionId.ToString() != snapshot.SessionId ||
                         owner.IsStructure != actor.IsStructure) return false;
+                    if (!SkirmishNativeConvoyCheckpoint.TryValidateClassification(setup,actor,out _)) return false;
                     bool passenger = SkirmishNativeCheckpointParts.TryReadComponent(actor.Parts, out UnitTransportPassenger _);
                     if (!float.IsFinite(actor.HiddenPassengerScale) || actor.HiddenPassengerScale < 0 ||
                         (passenger ? actor.HiddenPassengerScale <= 0 : actor.HiddenPassengerScale != 0)) return false;
@@ -118,6 +119,8 @@ namespace Game.Runtime
                         info.RuntimeBuildingId != map.OldRuntimeBuildingId || info.OwnerFactionId != map.Faction ||
                         info.OriginCell.x != map.OriginX || info.OriginCell.y != map.OriginZ) return false;
                 }
+                if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault &&
+                    !SkirmishNativeObjectiveCheckpoint.Validate(snapshot.Objective, snapshot, setup, out _)) return false;
                 return true;
             }
             catch (Exception exception) when (exception is ArgumentException || exception is FormatException || exception is OverflowException)
@@ -196,7 +199,7 @@ namespace Game.Runtime
                 if (wire == null || wire.Version != WireVersion || string.IsNullOrEmpty(wire.Payload) ||
                     !string.Equals(wire.Checksum, Hash(wire.Payload), StringComparison.Ordinal)) return false;
                 var value = JsonUtility.FromJson<SkirmishNativeCheckpointSnapshotService.Snapshot>(wire.Payload);
-                if (value == null || value.Version != SkirmishNativeCheckpointSnapshotService.SchemaVersion ||
+                if (value == null || (value.Version != 7 && value.Version != SkirmishNativeObjectiveCheckpoint.NativeVersion) ||
                     !SkirmishNativeCheckpointParts.TryReadComponent(value.SessionParts, out SkirmishExpandedSessionComponent _)) return false;
                 snapshot = value;
                 return true;

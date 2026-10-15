@@ -7,6 +7,9 @@ namespace Game.Configs
     [CreateAssetMenu(menuName = "Game/SkirmishExpansion/Mission View Profile")]
     public sealed class SkirmishMissionViewProfile : ScriptableObject
     {
+        public SkirmishMissionOpeningFocusPolicy OpeningFocusPolicy;
+        public bool AuthoredNonBaseAssault, AuthoredGenericBaseAssault;
+        public Game.Skirmish.Contracts.SkirmishObjectiveKind ObjectiveKind;
         public int SchemaVersion = 1, ContentVersion = 1, DefinitionVersion;
         public string CatalogId, DefinitionId, CampaignSourceContentHash, LayoutContentHash;
         public float MinHeight, MaxHeight, NormalHeight, BuildHeight, Pitch, Yaw, NormalFieldOfView, BuildFieldOfView;
@@ -41,9 +44,12 @@ namespace Game.Configs
             setup.DefinitionId == DefinitionId && setup.ContentVersion == DefinitionVersion && definition.ContentVersion == DefinitionVersion &&
             definition.CampaignMap != null && definition.CampaignMap.ContentHash == CampaignSourceContentHash &&
             definition.MapLayout != null && definition.MapLayout.ContentHash == LayoutContentHash &&
-            setup.LayoutId == definition.MapLayoutId && setup.OperationMapId == definition.OperationMapId;
-        public bool IsValid => SchemaVersion == 1 && ContentVersion > 0 && DefinitionVersion > 0 &&
-            CatalogId == "S005" && DefinitionId == "skirmish.s005" && !string.IsNullOrWhiteSpace(CampaignSourceContentHash) &&
+            setup.LayoutId == definition.MapLayoutId && setup.OperationMapId == definition.OperationMapId &&
+            (!(AuthoredNonBaseAssault || AuthoredGenericBaseAssault) || setup.ObjectiveKind == ObjectiveKind && definition.ObjectiveConfig != null && definition.ObjectiveConfig.Kind == ObjectiveKind);
+        public bool IsValid => System.Enum.IsDefined(typeof(SkirmishMissionOpeningFocusPolicy),OpeningFocusPolicy) &&
+            (OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.None||!AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault&&CatalogId=="S005"&&DefinitionId=="skirmish.s005") &&
+            SchemaVersion == 1 && ContentVersion > 0 && DefinitionVersion > 0 &&
+            ValidIdentity && !string.IsNullOrWhiteSpace(CampaignSourceContentHash) &&
             !string.IsNullOrWhiteSpace(LayoutContentHash) && Positive(MinHeight) && Positive(MaxHeight) && MaxHeight >= MinHeight &&
             NormalHeight >= MinHeight && NormalHeight <= MaxHeight && BuildHeight >= NormalHeight && BuildHeight <= MaxHeight &&
             Positive(Pitch) && Pitch < 90 && float.IsFinite(Yaw) && Positive(NormalFieldOfView) && NormalFieldOfView < 179 &&
@@ -53,6 +59,22 @@ namespace Game.Configs
             Positive(PlaneMaximumViewportDimension) && PlaneMaximumViewportDimension < 1 &&
             Positive(AircraftPitch) && AircraftPitch < 90 && Positive(AircraftFieldOfView) && AircraftFieldOfView < 179 &&
             Positive(AircraftMinimumDistance) && Positive(AircraftMaximumDistance) && AircraftMaximumDistance >= AircraftMinimumDistance;
+        private bool ValidIdentity
+        {
+            get
+            {
+                if (!AuthoredNonBaseAssault && !AuthoredGenericBaseAssault) return CatalogId == "S005" && DefinitionId == "skirmish.s005";
+                if (AuthoredNonBaseAssault && AuthoredGenericBaseAssault) return false;
+                bool kind = AuthoredGenericBaseAssault ? ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
+                    !SkirmishMissionDispatch.TryGetLegacyIndex(CatalogId,out _) :
+                    ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.FrontlineControl ||
+                    ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.Breakthrough || ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.ConvoyEscort;
+                return kind &&
+                    CatalogId != null && CatalogId.Length == 4 && CatalogId[0] == 'S' &&
+                    int.TryParse(CatalogId.Substring(1),System.Globalization.NumberStyles.None,System.Globalization.CultureInfo.InvariantCulture,out int id) && id >= 1 && id <= 120 &&
+                    DefinitionId == "skirmish." + CatalogId.ToLowerInvariant();
+            }
+        }
         private static bool Positive(float value) => float.IsFinite(value) && value > 0;
     }
 }

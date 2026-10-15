@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "checked_wrapper_exit": 1,
+  "unity_wrapper_exit": 1,
+  "shared77_assertions": "Passed; both immutable12 baseline checks passed inside failed aggregate",
+  "managedDefaults1": "Passed",
+  "failure": "FC active fixture read objective clock before adding the normally after-spawn component",
+  "fix_scope": "Synthetic fixture clock initialization only, from actual compiled deadline; no runtime behavior change",
+  "before_sha256": "7957cbbded753cd8b4fc253e28765678ff3d50ba263a508e00d1f66a215c21a7",
+  "after_sha256": "d0806947e6d3b720a3f6d229b1872720d00d0700a35cda03528b6266f65a6d62",
+  "full_aggregate_passed": false,
+  "playerReady": false
+}

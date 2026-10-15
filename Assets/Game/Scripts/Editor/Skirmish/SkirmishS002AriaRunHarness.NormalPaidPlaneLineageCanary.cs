@@ -38,7 +38,9 @@ namespace Game.Editor
         // End-of-frame observation only: no selection, camera pose, commands or ARIA inputs.
         static System.Collections.IEnumerator CaptureNormalPlaneCamera(string phase,Entity expectedPlane,uint reservation)
         {
+            ObserveOpeningDriverCapture(phase,"CoroutineBeforeEof");
             yield return new WaitForEndOfFrame();
+            ObserveOpeningDriverCapture(phase,"CoroutineAfterEof");
             if(!planeCanaryActive)yield break;
             try{
                 var world=World.DefaultGameObjectInjectionWorld;
@@ -46,6 +48,10 @@ namespace Game.Editor
                 var em=world.EntityManager;
                 if(!SkirmishLaunchProjection.TryGet(em,out var session,out _))throw new InvalidOperationException("Camera sample session missing");
                 var sessionId=em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+                // This raw opening observer may run before any Canvas callback.
+                // Bind only from this actual session; preserve the independent Canvas counter.
+                if(string.IsNullOrEmpty(planeCanaryAttempt)&&expectedPlane==Entity.Null&&phase.StartsWith("opening-",StringComparison.Ordinal))
+                    planeCanaryAttempt=sessionId.ToString();
                 if(sessionId.ToString()!=planeCanaryAttempt)throw new InvalidOperationException("Camera sample attempt changed");
                 var camera=Camera.main;
                 if(camera==null)throw new InvalidOperationException("Actual native main camera missing");
@@ -99,6 +105,7 @@ namespace Game.Editor
                 using(var sha=System.Security.Cryptography.SHA256.Create()){
                     string digest=BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
                     foreach(var row in rows){row.pngSha256=digest;File.AppendAllText(planeCanaryOutput+".camera.jsonl",JsonUtility.ToJson(row)+"\n");}}
+                ObserveOpeningDriverCapture(phase,"Persisted");
                 ObserveS005OpeningCameraCaptureComplete(phase);
                 if(phase=="parked-follow-transport")transportParkedFollowPngDone=true;else if(phase=="cruising-transport")transportCruisePngDone=true;else if(expectedPlane==Entity.Null)planeCameraOpeningDone=true;else planeCameraDeliveryDone=true;
             }catch(Exception error){EndNormalPaidPlaneCanary(true,"CameraEvidence: "+error);}
@@ -107,6 +114,7 @@ namespace Game.Editor
         {
             var owners=UnityEngine.Object.FindObjectsByType<SkirmishS005PlayerResumeFrame>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
             if(owners.Length!=1)throw new InvalidOperationException("Unique existing QA coroutine owner required");
+            ObserveOpeningDriverCapture(phase,"Queued");
             owners[0].StartCoroutine(CaptureNormalPlaneCamera(phase,plane,reservation));
         }
 
@@ -228,6 +236,7 @@ namespace Game.Editor
         }
         static void TickNormalPaidPlaneCanary()
         {
+            ObserveOpeningDriverCanvas();
             // Placement may force Canvas before stage3 becomes stage4 in the same frame.
             // Observe every prelease callback; only the exclusive input owner is frame-throttled.
             if(!planeCanaryActive||planeCanaryTicking||(planeCanaryLeased&&Time.frameCount==planeCanaryLastFrame))return;
@@ -240,7 +249,9 @@ namespace Game.Editor
                 if(match.Phase==SkirmishPhase.Finished)throw new InvalidOperationException("Genuine match outcome occurred before scoped Plane proof");
                 if(!SkirmishLaunchProjection.IsSimulationActive(em))return;
                 if(!Mathf.Approximately(Time.timeScale,1))throw new InvalidOperationException("Normal speed required");
-                planeCanaryAttempt=em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString();
+                string observedAttempt=em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString();
+                if(!string.IsNullOrEmpty(planeCanaryAttempt)&&planeCanaryAttempt!=observedAttempt)throw new InvalidOperationException("Canvas observer attempt changed");
+                planeCanaryAttempt=observedAttempt;
                 if(playerResumeTouch==null)return;
                 if(planeCanaryLeased)playerResumeTouch.Tick(Time.unscaledTime);
                 if(playerResumeTouch.UnexpectedSamples!=0||playerResumeTouch.PhysicalInterventions!=0||AriaCommandEvidence.Violations!=0)throw new InvalidOperationException("Normal Touch audit failed");

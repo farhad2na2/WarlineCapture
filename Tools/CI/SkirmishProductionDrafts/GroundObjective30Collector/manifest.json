@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "scope": "StaticAuthoringSourceQueries_NotCompiledMissionQualification",
+  "files": [
+    {
+      "assembly": "Game.Configs",
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/SkirmishSetupCompiler.StaticAuthoringBudget.cs.txt",
+      "before_sha256": "8a7334a31429f058dcf417d189ec126335d59b5f670ea935668eade27c21b669",
+      "sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0"
+    },
+    {
+      "assembly": "Game.Configs",
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/SkirmishStaticAuthoringBudget.cs.txt",
+      "before_sha256": null,
+      "sha256": "97ce4618264011098b465c95da5fe88ea307fc403dd9d2c03fb6603ffbc11c2d"
+    },
+    {
+      "assembly": "Game.Tests.Editor",
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/SkirmishStaticAuthoringBudgetTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "1bca175f71fd74a5511477249970e2c3e2b8829221b52d8ef602cf0a3d11c2fa"
+    },
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.TypedRoster.cs.txt",
+      "before_sha256": "f880684dca2ef792257ad9b6aa9e3d3e48b59198ef5e6312159836518d5cf575",
+      "sha256": "d957e25d59ceed0f8f258d62e8bcedb4576a7b5cd61653158a464012838276d7"
+    },
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.txt",
+      "before_sha256": null,
+      "sha256": "7fb1bf12dd03c27a200b33437478b1dcd6d170f2f781bca4e9f7733a7c3f4489"
+    },
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs.txt",
+      "before_sha256": null,
+      "sha256": "50646833c3a33fa760ee70329c31038471223b995c46bdfb4b66d58e39a2433b"
+    },
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30SceneGuidSuccessor/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+      "sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/manifest.json",
+      "sha256": "423354bad816bc6b9d703dc0b25f762f244946aacc99b1fdbc383b6eda594677"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30SceneGuidSuccessor/manifest.json",
+      "sha256": "50b615a33ef85604dbf84742d116b25459566024de3fe532ee665cec914b1eda"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_contract.py",
+      "sha256": "b856645605ea00ec7d4be2b2d33224063f0e1f2a46a244ddabd4f5ac7cff72ae"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_contract_test.py",
+      "sha256": "0327934cd189f18014397fbd67c4df103eaa1948505ad40827c94cea5ad67b80"
+    }
+  ],
+  "native_execution": false,
+  "tests_executed": false,
+  "source_fit_certified": false,
+  "publication_enabled": false,
+  "controls": [
+    {
+      "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundObjective30AuthoringControls",
+      "marker": "[SkirmishGroundObjective30Authoring] result=Passed candidates=30 negativeControls=60 streamingWorldsCreated=0 sourceFitCertified=0"
+    },
+    {
+      "entry": "Game.Tests.Editor.SkirmishStaticAuthoringBudgetTests.RunFocusedValidation",
+      "marker": "[SkirmishStaticAuthoringBudgetTests] result=Passed controls=5 sourceFitCertified=0"
+    },
+    {
+      "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundObjective30CollectionControls",
+      "marker": "[SkirmishGroundObjective30CollectionControls] result=Passed controls=3 corruptions=8 streamingWorldsCreated=0 sourceFitCertified=0"
+    }
+  ],
+  "collection_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundObjective30QualificationCollection",
+  "output_environment": "WARLINE_GROUND_OBJECTIVE30_OUTPUT",
+  "output_scope": "Fresh absolute unique file under Logs/SkirmishProduction; never Temp",
+  "pending": [
+    "Independent code review",
+    "Checked native schema controls",
+    "Four-source native collection with actual wrapper0",
+    "Complete static/live/source fit",
+    "Three route independence and live circulation",
+    "Measured typed logical binding",
+    "Per-source camera framing and native readability",
+    "Normal objective mission/result/return",
+    "Player/device acceptance"
+  ]
+}

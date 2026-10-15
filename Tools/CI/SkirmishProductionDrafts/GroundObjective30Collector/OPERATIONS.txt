@@ -1,0 +1,57 @@
+Ground objective 30: unqualified static authoring collection
+
+Import contract
+Use only manifest.json's seven exact target/before/source hashes. The definition
+helper is the scene-GUID successor, not the preserved original GroundObjective30
+helper. Input JSON remains 95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc.
+No physical map, Resources asset or gameplay budget is created or modified.
+
+Offline evidence
+Design/AgentReports/SkirmishExpansion/ObjectiveBridge/convoy-owning-compile-yvbfu6gb
+passed seven actual owners: UI.Contracts, Components, Configs, Runtime.Combat,
+Runtime, Editor and Tests.Editor. All seven manifest source hashes occur in the
+compiled-source census; source bytes stayed unchanged; requested/consumed
+projections match. Analyzer omissions: UI.Contracts7, each remaining owner18.
+This is csc type checking, not ILPP, Unity execution or executed native tests.
+Earlier failed proofs are retained (including the Tests Newtonsoft boundary).
+Four Python contract methods were independently executed and passed.
+
+First checked native run: fast controls, no source streaming
+Run all three manifest control entries with their exact independent markers:
+GroundObjective30Authoring:30 positives/60 negatives;
+SkirmishStaticAuthoringBudgetTests:5 controls;
+GroundObjective30CollectionControls:3 groups,8 envelope corruptions.
+Use the checked repository wrapper, explicit unique Logs output and timeout,
+and actual wrapper exit0. No native control has been executed by this worker.
+
+Then source collection
+Set WARLINE_GROUND_OBJECTIVE30_OUTPUT to an explicit fresh absolute JSON path
+under project Logs/SkirmishProduction. Do not use Temp. Invoke
+Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundObjective30QualificationCollection
+through the checked wrapper. It reuses one disposable source World per physical
+source (four), processing30 missions/90 size rows. It preserves independent source,
+candidate and size failures in output before terminal failure. Failed rows must
+remain; source loading or query errors cannot be converted to successful fit.
+
+Measurement scope
+Normal compiler results and reasons remain explicit. The Editor-only diagnostic
+budget API privately calls the actual typed budget owner and returns copied roster
+arrays, never the rejected setup, native hash or launch payload. Static canonical
+quantity checks include both factions and CE objective trucks. This breaks the
+unmeasured-logical-proof circularity without bypassing normal compilation.
+
+Source-only army packing is separate from packing with complete accepted facility
+reservations. Facilities use actual normal origin search and native source caches,
+with additional typed-pad/compound/circulation QA recorded separately. Path reuse
+is limited to identical actual faction, footprint, movement behavior and ordered
+endpoints within one unchanged complete-facility configuration. Raw path query
+results and per-role references remain separate. Area samples cover exact authored
+vertices only, not full interior clearance. Cleanup compares exact World census,
+default World reference and scene/preview counts; it closes no unrelated previews.
+
+All rows remain unqualified. Missing proof, normal compiler rejection, role/pad
+failure, static blockers, incomplete configuration and cleanup failures are honest
+outputs. Live occupancy, complete surface/geometry fit, three independent routes,
+successful objective lifecycle, normal result/return, paid service, per-source
+readable infantry/default/min/max camera, aircraft fit and device acceptance remain
+pending. No S005 camera tuning is copied as accepted generic policy.

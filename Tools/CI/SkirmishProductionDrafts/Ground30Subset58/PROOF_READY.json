@@ -1,0 +1,25 @@
+{
+  "result": "PassedIsolatedEightOwnerTypeClosure_NativeSubsetPending",
+  "source_map_sha256": "e16d04d462d9a4785cfe3b8e653b8f7ee2e845069381baeea12482f741f8cf3e",
+  "workflow_sha256": "365e92e3df31636f523f2483c27af532a02002a1910404e68cd1231e7a9c12c9",
+  "baseline": "27881d4ee700dde9a046fc36b23d3d73d24fa36b",
+  "historical_source_equivalent_baseline": "09467291560212bedecb4d9da987a3e2135e7ce0",
+  "proof": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/head278-g30-58-compile-zyxol3v4",
+  "proof_archive_sha256": "423a167b7594f73973d0a5e7259f6c705ef5c80a09405a9d4404771fac6e7ffb",
+  "final_recheck_sha256": "43eded6d13fee04ce9585a27f14dfef284042dbe21b53f1b87caf1645831731d",
+  "owning_assemblies": 8,
+  "overrides_consumed": 11,
+  "current_only_assets_excluded": 32,
+  "offline_workflow_methods_passed": 3,
+  "metadata_preparation_error": "One PowerShell quoting failure while generating compiler; no source/result output produced by failed command. Corrected generator syntax and actual proof passed.",
+  "native_execution": false,
+  "tests_executed": false,
+  "source_fit_certified": false,
+  "readiness": 0,
+  "pending": [
+    "Independent map/workflow review",
+    "Root releases source freeze",
+    "Exact projected committed subset standalone30/60+5+3 actualwrapper0",
+    "Root reviewed path list + concise evidence before staging"
+  ]
+}

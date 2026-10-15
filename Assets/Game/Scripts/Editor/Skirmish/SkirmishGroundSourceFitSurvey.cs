@@ -324,6 +324,7 @@ namespace Game.Editor
             RecordPilotPlacementGates(row);
             ProbePilotNormalFacilityRelocation(input,requests,layout,profiles.Roles,em,gridEntity,grid,surface,row);
             ProbePilotNormalTerrainFallback(input,requests,layout,profiles.Roles,em,gridEntity,grid,surface,facilities,row);
+            CollectMaterializedPilotCandidates(input,requests,source,layout,profiles.Roles,em,gridEntity,grid,surface,row);
             row["collectionCompleted"] = true;
         }
 
@@ -428,11 +429,19 @@ namespace Game.Editor
 
         static World StreamingWorld()
         {
-            var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Streaming, true);
+            var systems = ground30MemoryWriter == null ? DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Streaming, true) : Ground30DiagnosticSystems();
             foreach (var system in systems) Require(!TypeManager.GetSystemName(system).ToString().StartsWith("Game.", StringComparison.Ordinal), "Gameplay system in streaming filter");
             var world = new World("ReadOnlyGroundSourceFitStreaming", WorldFlags.Game);
-            DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, systems);
-            return world;
+            try
+            {
+                DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, systems);
+                return world;
+            }
+            catch
+            {
+                if (world.IsCreated) world.Dispose();
+                throw;
+            }
         }
         static void Load(World world, string guid)
         {
@@ -454,7 +463,7 @@ namespace Game.Editor
         }
         static NativeArray<T> Array<T>(int count, List<IDisposable> allocations) where T : unmanaged
         { var value = new NativeArray<T>(count, Allocator.Persistent); allocations.Add(value); return value; }
-        static void QueryPath(EntityManager em, Entity gridEntity, GridConfig grid, MapSurfaceComponent surface, Entity prefab, int2 from, int2 to, JObject result, byte queryFaction = 1)
+        static void QueryPath(EntityManager em, Entity gridEntity, GridConfig grid, MapSurfaceComponent surface, Entity prefab, int2 from, int2 to, JObject result, byte queryFaction = 1, NativeBitArray plannedFacilityBlockers = default)
         {
             var allocations = new List<IDisposable>(); var scratch = new UnitPathScratchWorkspace();
             using var stream = new NativeStream(1, Allocator.Persistent);
@@ -470,7 +479,7 @@ namespace Game.Editor
                 var requests = Array<UnitPathRequest>(1, allocations); requests[0] = new UnitPathRequest { Goal = to };
                 var goals = Array<int2>(1, allocations); goals[0] = to;
                 var status = Array<byte>(1, allocations); var failures = Array<int>(1, allocations); var expansions = Array<int>(1, allocations);
-                var job = new PathfindBatchJob { Grid = grid, Walkable = em.GetBuffer<GridWalkable>(gridEntity, true).AsNativeArray(),
+                var job = new PathfindBatchJob { Grid = grid, DynamicBlocked=plannedFacilityBlockers, Walkable = em.GetBuffer<GridWalkable>(gridEntity, true).AsNativeArray(),
                     Roads = em.GetBuffer<GridRoad>(gridEntity, true).AsNativeArray(), Sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity, true).AsNativeArray(), DirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity, true).AsNativeArray(),
                     MapSurface = surface, HasMapSurface = 1, SurfaceValidation = new MapSurfaceTraversalValidation(),
                     SurfacePathCost = new MapSurfacePathCost(), SurfaceRoadPriority = new MapSurfaceRoadPriorityPolicy(),
@@ -489,6 +498,7 @@ namespace Game.Editor
                 result["footprintX"] = sizes[0].Size.x; result["footprintZ"] = sizes[0].Size.y;
                 result["nativeQueryFaction"] = queryFaction;
                 result["dynamicBlockersIncluded"] = false; result["liveOccupancyIncluded"] = false;
+                if(plannedFacilityBlockers.IsCreated)result["plannedFacilityBlockerScope"]="ExactAcceptedStaticCandidateRectangles_NotLiveDynamicOccupancy";
             }
             finally { foreach (var value in allocations) value.Dispose(); scratch.Dispose(); }
         }

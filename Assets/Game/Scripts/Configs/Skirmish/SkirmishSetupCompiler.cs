@@ -72,6 +72,51 @@ namespace Game.Configs
         }
 
 #if UNITY_EDITOR
+        // Read-only authoring diagnostics. A returned roster is NOT a compiled setup,
+        // source-fit proof, native identity, launch permission or readiness declaration.
+        public static bool TryInspectStaticAuthoringBudget(SkirmishScenarioDefinitionConfig definition,
+            SkirmishDifficultyId difficulty, SkirmishSizeId size, int seed, SkirmishContentManifest manifest,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix, out SkirmishStaticAuthoringBudget budget,
+            out List<SkirmishCompileReason> reasons)
+        {
+            budget=null;reasons=new List<SkirmishCompileReason>();
+            if(matrix==null||definition==null||definition.ObjectiveConfig==null||definition.ArmyProfileConfig==null||
+                definition.StartPackageConfig==null||definition.EconomyConfig==null||definition.RoleCatalog==null||definition.MapLayout==null)
+            {reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference,"staticAuthoringBudget","Actual typed definition/catalog/layout required."));return false;}
+            ValidateIdentity(definition,reasons);RejectMissingCapabilities(definition,manifest,reasons);
+            if(difficulty==SkirmishDifficultyId.None||(size!=SkirmishSizeId.Standard&&size!=SkirmishSizeId.War&&size!=SkirmishSizeId.LargeWar)||!SkirmishSetupMatrixTable.TryFind(matrix,definition.CatalogId,size,out var vector))
+            {reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch,"staticAuthoringBudget","Exact canonical difficulty/size vector required."));return false;}
+            CompareIdentity(definition,vector,reasons);if(reasons.Count!=0)return false;
+            bool normal=TryCompile(definition,difficulty,size,seed,manifest,matrix,out var accepted,out var normalReasons);
+            // Reuse the actual budget owner even when its later source/proof gates reject.
+            // The rejected internal object and its hash/payload never leave this method.
+            var observed=new List<SkirmishCompileReason>();var resolved=accepted??BuildSetup(definition,difficulty,size,seed,vector,observed);
+            reasons.AddRange(normalReasons);
+            var forces=new List<SkirmishResolvedForceEntry>(resolved.Forces);var errors=new List<string>();
+            Tally(forces,1,out int pi,out int pg,out int pa,out int pc,out int ps);
+            Tally(forces,2,out int ei,out int eg,out int ea,out int ec,out int es);
+            if(pi!=vector.PlayerInfantry||pg!=vector.PlayerGround||pa!=vector.PlayerAir||pc!=vector.PlayerCombat||ps!=vector.PlayerSupply||
+                ei!=vector.EnemyInfantry||eg!=vector.EnemyGround||ea!=vector.EnemyAir||ec!=vector.EnemyCombat||es!=vector.EnemySupply)
+                errors.Add("Actual typed combat roster does not match canonical totals/Supply.");
+            int playerSupport=0,enemySupport=0,playerTrucks=0,enemyTrucks=0,playerStructures=0,enemyStructures=0;
+            foreach(var force in forces)
+            {
+                if(force.FactionId!=1&&force.FactionId!=2||force.Quantity<=0||string.IsNullOrEmpty(force.RuntimePrefabKey)||string.IsNullOrEmpty(force.RoleId))
+                    errors.Add("Actual force identity/count/native prefab binding missing.");
+                if(force.RoleId==SkirmishRoleIds.Tanker||force.RoleId==SkirmishRoleIds.LogisticsTruck)
+                {if(force.FactionId==1)playerSupport+=force.Quantity;else if(force.FactionId==2)enemySupport+=force.Quantity;}
+                if(force.RoleKind==SkirmishRoleKind.ConvoyLogic)
+                {if(force.FactionId==1)playerTrucks+=force.Quantity;else if(force.FactionId==2)enemyTrucks+=force.Quantity;}
+            }
+            foreach(var structure in resolved.Structures){if(structure.FactionId==1)playerStructures++;else if(structure.FactionId==2)enemyStructures++;else errors.Add("Invalid actual structure faction.");}
+            if(playerSupport!=vector.PlayerLogisticsSupport||enemySupport!=vector.EnemyLogisticsSupport||
+                playerTrucks!=vector.PlayerObjectiveTrucks||enemyTrucks!=vector.EnemyObjectiveTrucks||
+                playerStructures!=vector.PlayerStartingStructures||enemyStructures!=vector.EnemyStartingStructures)
+                errors.Add("Actual support/objective-truck/structure roster does not match canonical counts.");
+            budget=new SkirmishStaticAuthoringBudget(definition.CatalogId,definition.DefinitionId,size,
+                resolved.Forces,resolved.Structures,normal,errors.ToArray());
+            return true;
+        }
         public static bool TryCaptureMissionLogicalAuthoringInputs(SkirmishScenarioDefinitionConfig definition,
             SkirmishDifficultyId difficulty,SkirmishSizeId size,int seed,SkirmishContentManifest manifest,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,out SkirmishMissionLogicalAuthoringInputs inputs,

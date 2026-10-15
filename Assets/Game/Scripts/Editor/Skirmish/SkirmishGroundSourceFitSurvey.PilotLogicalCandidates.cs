@@ -32,9 +32,22 @@ namespace Game.Editor
             Require(Hash(PilotFacts) == "854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b", "Measured pilot facts changed");
             var facts = JObject.Parse(File.ReadAllText(PilotFacts));
             var rows = ((JArray)facts["sources"]).OfType<JObject>().Where(r => (string)r["group"] == group).ToArray();
-            Require(rows.Length == 1 && (string)rows[0]["source_sha256"] == (string)report["sourceAssetSha256"] &&
+            string actualSourcePath = AssetDatabase.GetAssetPath(source);
+            string actualSourceSha = string.IsNullOrEmpty(actualSourcePath) ? null : Hash(actualSourcePath);
+            var sourceJoin = new JObject { ["group"] = group, ["measuredRows"] = rows.Length,
+                ["actualSourcePath"] = actualSourcePath, ["callerSourcePath"] = report["sourcePath"],
+                ["expectedAssetSha256"] = rows.Length == 1 ? rows[0]["source_sha256"] : null,
+                ["callerAssetSha256"] = report["sourceAssetSha256"], ["actualAssetSha256"] = actualSourceSha,
+                ["expectedContentHash"] = rows.Length == 1 ? rows[0]["source_content_hash"] : null,
+                ["actualContentHash"] = source.ContentHash,
+                ["expectedSourceIdentityHash"] = rows.Length == 1 ? rows[0]["source_identity_hash"] : null,
+                ["actualSourceIdentityHash"] = source.SourceIdentityHash };
+            Require(rows.Length == 1 && !string.IsNullOrEmpty(actualSourceSha) &&
+                (string)rows[0]["source_sha256"] == (string)report["sourceAssetSha256"] &&
+                (string)report["sourceAssetSha256"] == actualSourceSha &&
                 (string)rows[0]["source_content_hash"] == source.ContentHash &&
-                (string)rows[0]["source_identity_hash"] == source.SourceIdentityHash, "Exact measured source join required");
+                (string)rows[0]["source_identity_hash"] == source.SourceIdentityHash,
+                "Exact measured source join required: " + sourceJoin.ToString(Newtonsoft.Json.Formatting.None));
             Require((string)facts["native_survey_sha256"] == "c8bfa82f6f76dfe35344fc6e00c00ce460baa700e395b150ac53c64644f36a84",
                 "Actual native survey reference changed");
             var compounds = (JArray)rows[0]["measured_compounds"];

@@ -1,0 +1,39 @@
+Root-owned four-source collection workflow
+
+The launcher/postprocessor are outside Assets and do not change the reviewed
+seven-target979dafe9 source package. Run the checked clean preparation first and
+finish the planned Warm None baseline before dispatching this independent static
+collection. Root owns sequencing, source freeze and Unity launch.
+
+Plan (no files, snapshots, process changes or Unity launch):
+rtk proxy python Tools/CI/invoke_skirmish_ground_objective30_collection.py --run-directory D:/Projects/WarlineCapture/Logs/SkirmishProduction/GroundObjective30/20261015-01
+
+Run after the lane is released; replace the preparation path with the actual
+clean terminal0 log containing the full ProductionAuthoringPreparation marker:
+rtk proxy python Tools/CI/invoke_skirmish_ground_objective30_collection.py --run-directory D:/Projects/WarlineCapture/Logs/SkirmishProduction/GroundObjective30/20261015-01 --preparation-log ABSOLUTE_CLEAN_PREPARATION_LOG --timeout-seconds 1800 --execute
+
+The run directory must be fresh. Native output is ground-objective30.json.
+Full source/DLL before and after manifests are captured once for the whole
+four-world/30-mission/90-size collection, not separately per mission. The receipt
+binds tools, input/map, preparation log, raw/log/endpoints and actual child exit.
+Snapshot cost and checked Editor duration are recorded separately; no throughput
+claim is made before native measurement. The collector is synchronous and uses
+the checked focused executeMethod wrapper's normal quit lifecycle. It runs no
+Play/input mission and emits no native Launch/Finish candidate fingerprint.
+
+collection-evidence.json requires exact installed seven-source census pins,
+complete source/DLL endpoint equality, unique native collection marker/output,
+actual checked Unity0 and child0, exact30 unique IDs/all90 size rows, canonical
+budget SHA/source joins, no native collection/cleanup errors, and unchanged
+workflow tool bytes. It refuses partial facilities being presented as a complete
+configuration. Native normal-compiler rejection, incomplete facilities, packing
+and route failures remain raw and summarized; they do not become fit/readiness.
+
+The report does not require every fit query to succeed: its only positive result
+is complete unqualified evidence collection. qualified/source_fit_certified remain
+false. Raw per-object scene census is not exported by the reviewed source; the
+scope honestly cites its pinned native World/default reference/scene/preview checks.
+
+All failed rows and artifacts are preserved. Existing result files are never
+overwritten. No process is killed by this launcher; the checked wrapper retains
+its existing timeout ownership contract. No generic preview-scene cleanup occurs.

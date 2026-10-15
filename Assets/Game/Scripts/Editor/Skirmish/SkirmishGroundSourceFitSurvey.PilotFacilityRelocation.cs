@@ -21,10 +21,10 @@ namespace Game.Editor
         // metadata/caches. Static proposals do not stand in for live scene fitting.
         static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
-            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report)
+            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false)
         {
             string group=(string)report["group"];
-            if(group!="MP"&&group!="IB")return;
+            if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
             var output=new JArray();report["normalFacilityRelocationProposals"]=output;
             report["normalFacilityRelocationScope"]="ActualProductionSearchAndStaticSourceCaches_NoLiveGameplayCertificate";
             var authored=new BuildingPlacementAuthoredBuildingCache();authored.Ensure(em,grid);
@@ -53,6 +53,19 @@ namespace Game.Editor
             foreach(var configuration in sourceRows.GroupBy(row=>((string)row["catalogId"],(string)row["size"])))
             {
                 var reserved=new List<RectInt>();bool complete=true;
+                var serviceFootprints=new Dictionary<byte,List<RectInt>>();var serviceAvailable=new Dictionary<byte,bool>();
+                foreach(byte side in new byte[]{1,2})
+                {
+                    var serviceRows=new JArray();
+                    serviceAvailable[side]=PilotRepairInteractionFootprints(layout,em,gridEntity,grid,surface,side,out var keepClear,serviceRows);
+                    serviceFootprints[side]=keepClear;
+                    bool support=configuration.Any(value=>(byte)value["faction"]==side&&(string)value["structureId"]==Game.Skirmish.Contracts.SkirmishStructureIds.GroundStaging);
+                    serviceAvailable[side]&=support;
+                    if(report["nativeRepairInteractionClearance"]==null)report["nativeRepairInteractionClearance"]=new JArray();
+                    ((JArray)report["nativeRepairInteractionClearance"]).Add(new JObject{["catalogId"]=configuration.Key.Item1,["size"]=configuration.Key.Item2,
+                        ["faction"]=side,["requiredNormalGroundStagingInCanonicalConfiguration"]=support,["allStaticFootprintsAvailableAndLegal"]=serviceAvailable[side],
+                        ["roles"]=serviceRows,["paidRepairOrLiveOccupancyCertified"]=false});
+                }
                 foreach(var preferred in configuration)
                 {
                     var result=(JObject)preferred.DeepClone();output.Add(result);
@@ -70,9 +83,12 @@ namespace Game.Editor
                     float cx=0,cz=0;
                     Require(layout.TryGetPad(faction,SkirmishLegalPadKind.GroundStaging,out var staging)&&
                         layout.TryProjectLocalToMap(staging.CenterX,staging.CenterZ,out cx,out cz),"Actual compound frame required");
-                    // The measured proposal is exactly96x80 source metres. Relocation
-                    // cannot exploit the production80..160 search to escape this box.
+                    // Original proposals default to their measured 96x80 box.
+                    // Materialized candidates supply explicit larger logical bounds;
+                    // neither may exploit normal search outside that declared box.
                     var compound=PilotRoundPadCells(cx-48,cz-40,cx+48,cz+40,grid,false);
+                    if(report["candidateCompoundWorldRects"]?[faction.ToString()] is JArray declared)
+                        compound=PilotRoundPadCells((float)declared[0],(float)declared[1],(float)declared[2],(float)declared[3],grid,false);
                     result["declaredCompoundCells"]=RectJson(compound);
                     var contracts=layout.Pads.Where(pad=>pad.PadId==(string)preferred["padId"]&&pad.FactionId==faction).ToArray();
                     Require(contracts.Length==1,"Unique actual typed facility pad contract required");
@@ -81,7 +97,7 @@ namespace Game.Editor
                     result["actualTypedFacilityPadCells"]=RectJson(padBounds);
                     int outsideCompound=0,outsidePad=0,circulationConflict=0,sourceRejected=0;
                     var serviceKeepClear=new List<RectInt>();
-                    foreach(var kind in new[]{SkirmishLegalPadKind.Service,SkirmishLegalPadKind.InfantrySpawn,
+                    foreach(var kind in new[]{SkirmishLegalPadKind.InfantrySpawn,
                         SkirmishLegalPadKind.VehicleSpawn,SkirmishLegalPadKind.Rally})
                     {
                         Require(layout.TryGetPad(faction,kind,out var pad),"Actual typed circulation pad required");
@@ -89,8 +105,21 @@ namespace Game.Editor
                         // cannot count as free circulation space.
                         serviceKeepClear.Add(PilotExactAxisAlignedPadCells(layout,pad,grid,keepClear:true));
                     }
+                    // Service is shared by native Watchtower/Dish structures. Keep
+                    // only actual vehicle interaction footprints free, not the whole pad.
+                    serviceKeepClear.AddRange(serviceFootprints[faction]);
+                    result["additionalQaClearanceScope"]="DeclaredCompoundAndTypedPad_WholeSpawnRallyPads_ActualRepairVehicleFootprints";
+                    result["repairInteractionClearanceAvailable"]=serviceAvailable[faction];
                     RectInt Effective(BuildingDefinition d,Vector2Int origin,GridConfig g,bool rotated)
                         =>runway.GetEffectivePlacementRect(d,origin,g,rotated,grid.Origin.y,geometry.GetPlacementFootprint);
+                    bool NativeValid(BuildingDefinition d,Vector2Int origin,Vector2Int footprint,bool rotated,GridConfig g,
+                        DynamicBuffer<GridRoad> nativeRoads,DynamicBlockerComponent nativeBlockers)
+                    {
+                        var rect=Effective(d,origin,g,rotated);
+                        return BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(surface,rect)&&
+                            cache.IsPlacementValid(d,origin,footprint,rotated,g,nativeRoads,nativeBlockers,dependency,startup,
+                                Effective,candidate=>reserved.Any(candidate.Overlaps));
+                    }
                     bool Valid(BuildingDefinition d,Vector2Int origin,Vector2Int footprint,bool rotated,GridConfig g,
                         DynamicBuffer<GridRoad> nativeRoads,DynamicBlockerComponent nativeBlockers)
                     {
@@ -98,9 +127,8 @@ namespace Game.Editor
                         if(!PilotCompoundContains(compound,rect)){outsideCompound++;return false;}
                         if(!PilotCompoundContains(padBounds,rect)){outsidePad++;return false;}
                         if(serviceKeepClear.Any(rect.Overlaps)){circulationConflict++;return false;}
-                        bool valid=BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(surface,rect)&&
-                            cache.IsPlacementValid(d,origin,footprint,rotated,g,nativeRoads,nativeBlockers,dependency,startup,
-                                Effective,candidate=>reserved.Any(candidate.Overlaps));
+                        if(!serviceAvailable[faction]){circulationConflict++;return false;}
+                        bool valid=NativeValid(d,origin,footprint,rotated,g,nativeRoads,nativeBlockers);
                         if(!valid)sourceRejected++;return valid;
                     }
                     var context=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
@@ -109,6 +137,20 @@ namespace Game.Editor
                     var center=GridUtils.WorldToCell(grid,new float3((float)preferred["x"],0,(float)preferred["z"]));
                     var origin=new Vector2Int(center.x-footprint.x/2,center.y-footprint.y/2);
                     result["actualModelFootprintCells"]=new JArray(footprint.x,footprint.y);
+                    var nativeContext=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
+                        geometry.GetPlacementFootprint,Effective,NativeValid,cache.HasCachedInvalidCellInFootprint,null,null,null,null);
+                    bool nativeFound=search.TryFindValidInitialBuildingOrigin(nativeContext,definition,origin,false,grid,roads,blocker,out var nativeOrigin);
+                    result["normalStaticPlacementWithoutAdditionalQa"]=new JObject{["found"]=nativeFound,
+                        ["scope"]="ActualProductionSourceChecksAndPriorAcceptedReservations_NoCompoundPadOrCirculationQa",
+                        ["acceptedAsCandidateFacility"]=false};
+                    if(nativeFound)
+                    {
+                        var nativeRect=Effective(definition,nativeOrigin,grid,false);
+                        result["normalStaticPlacementWithoutAdditionalQa"]["resolvedEffectiveRect"]=RectJson(nativeRect);
+                        result["normalStaticPlacementWithoutAdditionalQa"]["insideDeclaredCompound"]=PilotCompoundContains(compound,nativeRect);
+                        result["normalStaticPlacementWithoutAdditionalQa"]["insideActualTypedPad"]=PilotCompoundContains(padBounds,nativeRect);
+                        result["normalStaticPlacementWithoutAdditionalQa"]["overlapsAdditionalQaClearance"]=serviceKeepClear.Any(nativeRect.Overlaps);
+                    }
                     bool foundFit=search.TryFindValidInitialBuildingOrigin(context,definition,origin,false,grid,roads,blocker,out var found);
                     result["nativeCandidateRejections"]=new JObject{["outsideCompound"]=outsideCompound,["outsideTypedPad"]=outsidePad,
                         ["circulationPadConflict"]=circulationConflict,["sourceGeometrySurfaceOrPriorReservation"]=sourceRejected};
@@ -125,6 +167,7 @@ namespace Game.Editor
                 foreach(var result in output.OfType<JObject>().Where(row=>(string)row["catalogId"]==configuration.Key.Item1&&(string)row["size"]==configuration.Key.Item2))
                     result["entireConfigurationFound"]=complete;
             }
+            if(exactTypedRosterCaller){report["normalFacilityRelocationStatus"]="CollectedStaticFacilities_ExactTypedRosterCallerOwnsPacking";return;}
             // Preserve original force/facility rows. Re-query canonical force budgets
             // against ONLY complete new reservation sets, never partial successes.
             var completeRows=new JArray(output.OfType<JObject>().Where(row=>(bool?)row["entireConfigurationFound"]==true).Select(row=>row.DeepClone()));
@@ -184,6 +227,37 @@ namespace Game.Editor
                 if(winding==0)return false;
             }
             return true;
+        }
+        static bool PilotRepairInteractionFootprints(SkirmishMapLayoutConfig layout,EntityManager em,Entity gridEntity,GridConfig grid,
+            MapSurfaceComponent surface,byte faction,out List<RectInt> rectangles,JArray evidence)
+        {
+            rectangles=new List<RectInt>();
+            var pads=layout.Pads.Where(p=>p.FactionId==faction&&p.Kind==SkirmishLegalPadKind.Service).ToArray();
+            Require(pads.Length==1,"Unique actual typed Service pad required; no duplicate or guessed point");
+            var pad=pads[0];Require(layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z),"Actual repair interaction point required");
+            var cell=GridUtils.WorldToCell(grid,new float3(x,0,z));bool available=true;
+            foreach(var role in new[]{Game.Skirmish.Contracts.SkirmishRoleKind.Car,Game.Skirmish.Contracts.SkirmishRoleKind.ApcFast,
+                Game.Skirmish.Contracts.SkirmishRoleKind.ApcArmored,Game.Skirmish.Contracts.SkirmishRoleKind.ApcHeavy,
+                Game.Skirmish.Contracts.SkirmishRoleKind.Tank,Game.Skirmish.Contracts.SkirmishRoleKind.AntiAir,
+                Game.Skirmish.Contracts.SkirmishRoleKind.Radar,Game.Skirmish.Contracts.SkirmishRoleKind.Siege,
+                Game.Skirmish.Contracts.SkirmishRoleKind.Tanker,Game.Skirmish.Contracts.SkirmishRoleKind.LogisticsTruck})
+            {
+                var row=new JObject{["role"]=role.ToString(),["servicePadId"]=pad.PadId,["interactionWorldXZ"]=new JArray(x,z),
+                    ["requestedCell"]=new JArray(cell.x,cell.y),["scope"]="ActualNativeFootprintAtTypedRepairPoint_NotPaidRepairOrThreatProof"};evidence.Add(row);
+                var prefab=FindNativePrefab(em,SkirmishRoleCatalogConfig.RuntimePrefabKey(role));
+                if(prefab==Entity.Null||!em.HasComponent<UnitFootprint>(prefab)||!em.HasComponent<UnitMovementBehavior>(prefab)||
+                    em.GetComponentData<UnitMovementBehavior>(prefab).UsesVehicleMotion==0)
+                {row["status"]="UnavailableExactNativeRepairVehicleFootprint";available=false;continue;}
+                var footprint=em.GetComponentData<UnitFootprint>(prefab).Size;
+                var minimum=UnitFootprintUtility.GetMinCell(cell,footprint);var rect=new RectInt(minimum.x,minimum.y,footprint.x,footprint.y);
+                row["footprintCells"]=new JArray(footprint.x,footprint.y);row["reservedInteractionRect"]=RectJson(rect);
+                bool nativeLegal=EndpointLegal(em,gridEntity,grid,surface,prefab,cell);
+                bool insidePad=PilotFootprintInsideProjectedPad(layout,pad,grid,cell,footprint);
+                row["nativeStaticEndpointLegal"]=nativeLegal;row["insideTypedServicePad"]=insidePad;
+                row["status"]=nativeLegal&&insidePad?"StaticRepairInteractionFootprintAvailable_LiveRepairPending":"StaticRepairInteractionRejectedOrOutsideTypedPad";
+                available&=nativeLegal&&insidePad;rectangles.Add(rect);
+            }
+            return available;
         }
         static void RunPilotCompoundReservationControls()
         {

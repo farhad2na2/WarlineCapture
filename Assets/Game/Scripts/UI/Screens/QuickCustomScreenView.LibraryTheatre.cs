@@ -2115,9 +2115,9 @@ namespace Game.UI.Runtime
             if (!cueSeated)
             {
                 float naturalWidth = cueRect.width;
-                for (float width = naturalWidth - 20f; width >= 340f; width -= 20f)
+                for (float candidateWidth = naturalWidth - 20f; candidateWidth >= 340f; candidateWidth -= 20f)
                 {
-                    cueRect.width = width;
+                    cueRect.width = candidateWidth;
                     if (!SeatCueNearPin(parent, pin, selectedDistrict, frameW, frameH, inset, detail, ref cueRect))
                         continue;
                     cueSeated = true;

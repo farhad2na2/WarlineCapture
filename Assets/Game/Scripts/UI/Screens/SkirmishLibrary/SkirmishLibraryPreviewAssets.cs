@@ -9,7 +9,8 @@ namespace Game.UI.Runtime
         public const int Height = 288;
         public const string Root = "Assets/Game/Art/SkirmishLibrary";
         private static Texture2D _placeholder;
-        private static readonly Dictionary<int, Texture2D> PosterGrades = new Dictionary<int, Texture2D>();
+        private static readonly Dictionary<Texture, Texture2D> PosterGrades =
+            new Dictionary<Texture, Texture2D>(TextureReferenceComparer.Instance);
 
         public static string PreviewPath(string scenarioId) =>
             Root + "/Previews/skirmish.preview." + scenarioId + ".png";
@@ -125,8 +126,7 @@ namespace Game.UI.Runtime
         {
             if (source == null || source.width < 2 || source.height < 2)
                 return null;
-            int id = source.GetInstanceID();
-            if (PosterGrades.TryGetValue(id, out Texture2D cached) && cached != null)
+            if (PosterGrades.TryGetValue(source, out Texture2D cached) && cached != null)
                 return cached;
 
             const int width = 256;
@@ -142,8 +142,18 @@ namespace Game.UI.Runtime
             graded.wrapMode = TextureWrapMode.Clamp;
             graded.name = "SkirmishLibraryPosterGrade";
             graded.hideFlags = HideFlags.HideAndDontSave;
-            PosterGrades[id] = graded;
+            PosterGrades[source] = graded;
             return graded;
+        }
+
+        private sealed class TextureReferenceComparer : IEqualityComparer<Texture>
+        {
+            public static readonly TextureReferenceComparer Instance = new TextureReferenceComparer();
+
+            public bool Equals(Texture x, Texture y) => ReferenceEquals(x, y);
+
+            public int GetHashCode(Texture obj) =>
+                ReferenceEquals(obj, null) ? 0 : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
         }
 
         public static Color32 Grade(Color32 sample)

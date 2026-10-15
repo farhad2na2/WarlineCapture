@@ -1,0 +1,19 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\focused-missing-pass-marker.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\focused-missing-pass-marker.log -quit -executeMethod OwnedSyntheticValidation
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\focused-missing-pass-marker.log -quit -executeMethod OwnedSyntheticValidation
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\focused-missing-pass-marker.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\focused-missing-pass-marker.stderr.log
+[UnityInvoke] ExitCode: 0
+[ArchitectureValidation] 'OwnedSyntheticValidation' log is missing required pass marker: [OwnedSyntheticRequired] 
+result=Passed
+At D:\Projects\WarlineCapture\Tools\CI\InvokeUnityExecuteMethodValidation.ps1:76 char:5
++     throw "[ArchitectureValidation] '$ExecuteMethod' log is missing r ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: ([ArchitectureVa...] result=Passed:String) [], RuntimeException
+    + FullyQualifiedErrorId : [ArchitectureValidation] 'OwnedSyntheticValidation' log is missing required pass marker: 
+    [OwnedSyntheticRequired] result=Passed
+ 

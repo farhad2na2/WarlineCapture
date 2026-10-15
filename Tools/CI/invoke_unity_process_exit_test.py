@@ -33,7 +33,7 @@ def quote(value): return "'"+str(value).replace("'","''")+"'"
 
 def main():
     project=Path(__file__).resolve().parents[2]
-    parent=project/"Temp/InvokeUnityProcessExitTests"
+    parent=project/"Logs/SkirmishProduction/Offline/InvokeUnityProcessExitTests"
     parent.mkdir(parents=True,exist_ok=True)
     output=Path(tempfile.mkdtemp(prefix="canary-",dir=parent))
     source=output/"OwnedExitProbe.cs"

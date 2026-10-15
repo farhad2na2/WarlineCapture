@@ -16,7 +16,7 @@ namespace Game.UI.Runtime
         {
             Texture2D painted = LoadTheatreBase();
             map.texture = painted != null ? painted : SkirmishLibraryPreviewAssets.Placeholder();
-            map.color = Color.white;
+            map.color = new Color(0.72f, 0.74f, 0.76f, 1f);
             Stretch(map.rectTransform);
             map.rectTransform.localScale = Vector3.one;
             ApplyTheatreCover(map, plateWidth, plateHeight);
@@ -76,10 +76,17 @@ namespace Game.UI.Runtime
                 raw.transform.SetParent(fit, false);
                 Stretch(raw.rectTransform);
                 raw.texture = painted;
-                raw.color = Color.white;
+                raw.color = new Color(0.72f, 0.74f, 0.76f, 1f);
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
                 ApplyTheatreCover(raw, plateWidth, plateHeight);
+                var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                shade.transform.SetParent(fit, false);
+                Stretch(shade.rectTransform);
+                shade.sprite = ZoneVignetteSprite();
+                shade.color = new Color(0.02f, 0.03f, 0.04f, 0.92f);
+                shade.raycastTarget = false;
+                shade.rectTransform.localScale = Vector3.one;
             }
 
             if (map != null)
@@ -362,8 +369,6 @@ namespace Game.UI.Runtime
 
         private static bool ZoneCardLegal(List<TheatreZoneSlot> slots, int index, Rect card, bool[] seated)
         {
-            if (RectHitsAnyHex(card, slots))
-                return false;
             for (int i = 0; i < slots.Count; i++)
             {
                 if (CardsTooClose(card, slots[i].Pin))
@@ -465,9 +470,11 @@ namespace Game.UI.Runtime
                 float pinX = Mathf.Clamp(slot.Anchor.x - ZonePinSize * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZonePinSize));
                 float pinY = Mathf.Clamp(slot.Anchor.y - ZonePinSize * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZonePinSize));
                 slot.Pin = new Rect(pinX, pinY, ZonePinSize, ZonePinSize);
-                float cardX = Mathf.Clamp(slot.CardAnchor.x - ZoneCardWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCardWidth));
-                float cardY = Mathf.Clamp(slot.CardAnchor.y - ZoneCardHeight * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZoneCardHeight));
-                slot.Card = new Rect(cardX, cardY, ZoneCardWidth, ZoneCardHeight);
+                const float cardWidth = 320f;
+                const float cardHeight = 110f;
+                float cardX = Mathf.Clamp(slot.CardAnchor.x - cardWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - cardWidth));
+                float cardY = Mathf.Clamp(slot.CardAnchor.y - cardHeight * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - cardHeight));
+                slot.Card = new Rect(cardX, cardY, cardWidth, cardHeight);
                 float cueX = Mathf.Clamp(slot.Pin.center.x - ZoneCueWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
                 float cueY = slot.Pin.yMax + ZoneStackGap + 4f;
                 if (cueY + ZoneCueHeight > safe.yMax)
@@ -921,15 +928,16 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             Color fill = color;
-            fill.a = 0.18f;
+            fill.a = 0.20f;
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
+            PlaceDistrictHalo(root, local, color);
             float stroke = selected ? 4f : 3.5f;
             Color glow = color;
-            glow.a = 0.62f;
-            Color ink = selected ? Color.Lerp(color, Color.white, 0.28f) : color;
+            glow.a = 0.85f;
+            Color ink = selected ? Color.Lerp(color, Color.white, 0.35f) : Color.Lerp(color, Color.white, 0.12f);
             ink.a = 1f;
-            DrawHexEdges(root, local, glow, 14f);
-            DrawHexEdges(root, local, ink, stroke);
+            DrawHexEdges(root, local, glow, 12f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             for (int i = 0; i < local.Length; i++)
             {
                 var cap = new GameObject("HexCap", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -941,7 +949,127 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static void DrawHexEdges(RectTransform root, Vector2[] points, Color color, float thickness)
+        private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
+        {
+            const float pad = 14f;
+            Sprite halo = BuildDistrictHalo(localPoints, pad);
+            if (halo == null || root == null)
+                return;
+            BoundsOf(localPoints, 0f, out float minX, out float minY, out float maxX, out float maxY);
+            var image = new GameObject("ZoneHalo", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            image.transform.SetParent(root, false);
+            image.sprite = halo;
+            image.type = Image.Type.Simple;
+            image.color = new Color(color.r, color.g, color.b, 0.82f);
+            image.raycastTarget = false;
+            PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
+            image.rectTransform.localScale = Vector3.one;
+        }
+
+        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad)
+        {
+            if (localPoints == null || localPoints.Length < 3)
+                return null;
+            BoundsOf(localPoints, 0f, out float minX, out float minY, out float maxX, out float maxY);
+            float spanX = Mathf.Max(8f, maxX - minX + pad * 2f);
+            float spanY = Mathf.Max(8f, maxY - minY + pad * 2f);
+            const int maxDim = 420;
+            float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
+            int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
+            int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
+            var solid = new float[width * height];
+            float originX = minX - pad;
+            float originY = minY - pad;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
+                    if (!PointInPolygon(point, localPoints))
+                        continue;
+                    solid[y * width + x] = 1f;
+                }
+            }
+
+            int radius = Mathf.Clamp(Mathf.RoundToInt(5f * scale), 2, 7);
+            float[] blurred = BoxBlurAlpha(solid, width, height, radius);
+            blurred = BoxBlurAlpha(blurred, width, height, radius);
+            var pixels = new Color32[width * height];
+            for (int y = 0; y < height; y++)
+            {
+                int source = y * width;
+                int target = (height - 1 - y) * width;
+                for (int x = 0; x < width; x++)
+                {
+                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(blurred[source + x] * 255f), 0, 255);
+                    pixels[target + x] = new Color32(255, 255, 255, alpha);
+                }
+            }
+
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            return sprite;
+        }
+
+        private static float[] BoxBlurAlpha(float[] source, int width, int height, int radius)
+        {
+            var horizontal = new float[source.Length];
+            var output = new float[source.Length];
+            int window = radius * 2 + 1;
+            for (int y = 0; y < height; y++)
+            {
+                int row = y * width;
+                float sum = 0f;
+                for (int x = -radius; x <= radius; x++)
+                    sum += source[row + Mathf.Clamp(x, 0, width - 1)];
+                for (int x = 0; x < width; x++)
+                {
+                    horizontal[row + x] = sum / window;
+                    int leave = Mathf.Clamp(x - radius, 0, width - 1);
+                    int enter = Mathf.Clamp(x + radius + 1, 0, width - 1);
+                    sum += source[row + enter] - source[row + leave];
+                }
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                float sum = 0f;
+                for (int y = -radius; y <= radius; y++)
+                    sum += horizontal[Mathf.Clamp(y, 0, height - 1) * width + x];
+                for (int y = 0; y < height; y++)
+                {
+                    output[y * width + x] = sum / window;
+                    int leave = Mathf.Clamp(y - radius, 0, height - 1);
+                    int enter = Mathf.Clamp(y + radius + 1, 0, height - 1);
+                    sum += horizontal[enter * width + x] - horizontal[leave * width + x];
+                }
+            }
+
+            return output;
+        }
+
+        private static bool PointInPolygon(Vector2 point, Vector2[] polygon)
+        {
+            bool inside = false;
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                Vector2 a = polygon[i];
+                Vector2 b = polygon[j];
+                if ((a.y > point.y) == (b.y > point.y))
+                    continue;
+                float x = (b.x - a.x) * (point.y - a.y) / ((b.y - a.y) + 0.0001f) + a.x;
+                if (point.x < x)
+                    inside = !inside;
+            }
+
+            return inside;
+        }
+
+        private static void DrawHexEdges(RectTransform root, Vector2[] points, Color color, float thickness, Sprite sprite)
         {
             for (int i = 0; i < points.Length; i++)
             {
@@ -952,7 +1080,7 @@ namespace Game.UI.Runtime
                 float length = Mathf.Sqrt(dx * dx + dy * dy);
                 var edge = new GameObject("HexEdge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 edge.transform.SetParent(root, false);
-                edge.sprite = ZoneSolidSprite();
+                edge.sprite = sprite != null ? sprite : ZoneSolidSprite();
                 edge.type = Image.Type.Simple;
                 edge.color = color;
                 edge.raycastTarget = false;
@@ -1036,22 +1164,30 @@ namespace Game.UI.Runtime
             pin.rectTransform.localScale = Vector3.one;
             if (!slot.Selected)
                 return;
-            var cue = CreateLabel(parent, "ZoomCue", 14f);
+            var plate = new GameObject("CuePlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            plate.transform.SetParent(parent, false);
+            plate.sprite = ZonePillSprite();
+            plate.type = Image.Type.Sliced;
+            plate.color = new Color(0.03f, 0.05f, 0.07f, 0.92f);
+            plate.raycastTarget = false;
+            PlaceTopLeft(plate.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
+            plate.rectTransform.localScale = Vector3.one;
+            var cue = CreateLabel(parent, "ZoomCue", 20f);
             PlaceTopLeft(cue.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.fontStyle = FontStyles.Bold;
-            cue.color = new Color(1f, 0.96f, 0.82f, 1f);
-            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 12f, 16f);
+            cue.color = new Color(1f, 0.97f, 0.9f, 1f);
+            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 18f, 24f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.maxVisibleLines = 1;
             cue.fontStyle = FontStyles.Bold;
-            cue.color = new Color(1f, 0.96f, 0.82f, 1f);
+            cue.color = new Color(1f, 0.97f, 0.9f, 1f);
         }
 
         private void PlaceZoneCard(Transform parent, TheatreZoneSlot slot, bool fa)
@@ -1066,11 +1202,12 @@ namespace Game.UI.Runtime
             card.rectTransform.localScale = Vector3.one;
 
             float cardW = slot.Card.width;
-            float thumbX = fa ? cardW - 4f - ZoneThumbSize : 4f;
-            float textX = fa ? 8f : 4f + ZoneThumbSize + 8f;
-            float textW = Mathf.Max(40f, cardW - ZoneThumbSize - 20f);
-            var name = CreateLabel(card.transform, "ZoneName", 16f);
-            PlaceTopLeft(name.rectTransform, textX, 4f, textW, 34f);
+            const float thumb = 84f;
+            float thumbX = fa ? cardW - 10f - thumb : 10f;
+            float textX = fa ? 12f : 10f + thumb + 12f;
+            float textW = Mathf.Max(80f, cardW - thumb - 32f);
+            var name = CreateLabel(card.transform, "ZoneName", 22f);
+            PlaceTopLeft(name.rectTransform, textX, 8f, textW, 40f);
             name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             name.isRightToLeftText = fa;
             name.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1078,7 +1215,7 @@ namespace Game.UI.Runtime
             name.maxVisibleLines = 1;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 13f, 17f);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 18f, 26f);
             name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             name.isRightToLeftText = fa;
             name.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1087,21 +1224,29 @@ namespace Game.UI.Runtime
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
 
+            var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
+            medallion.transform.SetParent(card.transform, false);
+            medallion.sprite = LibraryMedallion();
+            medallion.color = Color.white;
+            medallion.raycastTarget = false;
+            PlaceTopLeft(medallion.rectTransform, thumbX - 6f, 6f, thumb + 12f, thumb + 12f);
+            Mask mask = medallion.GetComponent<Mask>();
+            mask.showMaskGraphic = true;
             var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-            preview.transform.SetParent(card.transform, false);
-            PlaceTopLeft(preview.rectTransform, thumbX, 4f, ZoneThumbSize, ZoneThumbSize);
+            preview.transform.SetParent(medallion.transform, false);
+            PlaceTopLeft(preview.rectTransform, 10f, 10f, thumb - 8f, thumb - 8f);
             ApplyDistrictThumbnail(preview, slot.MapId);
             preview.color = Color.white;
             preview.raycastTarget = false;
 
-            const float ring = 52f;
-            float ringX = fa ? textX + textW - ring : textX;
+            const float ring = 56f;
+            float ringX = fa ? textX : textX + textW - ring;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = ZoneRingSprite();
-            track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.28f);
+            track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.9f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, 46f, ring, ring);
+            PlaceTopLeft(track.rectTransform, ringX, 48f, ring, ring);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1112,14 +1257,35 @@ namespace Game.UI.Runtime
             fill.fillClockwise = true;
             int total = Mathf.Max(0, slot.Playable);
             bool pending = total <= 0;
-            fill.fillAmount = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
-            fill.color = slot.Zone;
+            float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
+            fill.fillAmount = ratio;
+            fill.color = Color.Lerp(slot.Zone, Color.white, 0.35f);
             fill.raycastTarget = false;
             fill.enabled = !pending;
-            track.enabled = !pending;
+            track.enabled = true;
+            float barX = fa ? textX + ring + 8f : textX;
+            float barW = Mathf.Max(36f, textW - ring - 8f);
+            var bar = new GameObject("ProgressBar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            bar.transform.SetParent(card.transform, false);
+            bar.sprite = ZoneSolidSprite();
+            bar.color = new Color(0.04f, 0.05f, 0.06f, 0.9f);
+            bar.raycastTarget = false;
+            PlaceTopLeft(bar.rectTransform, barX, 86f, barW, 14f);
+            var barFill = new GameObject("BarFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            barFill.transform.SetParent(bar.transform, false);
+            Stretch(barFill.rectTransform);
+            barFill.sprite = ZoneSolidSprite();
+            barFill.type = Image.Type.Filled;
+            barFill.fillMethod = Image.FillMethod.Horizontal;
+            barFill.fillOrigin = fa ? (int)Image.OriginHorizontal.Right : (int)Image.OriginHorizontal.Left;
+            barFill.fillAmount = ratio;
+            barFill.color = slot.Zone;
+            barFill.raycastTarget = false;
+            barFill.enabled = !pending;
+            bar.enabled = !pending;
             if (pending)
-                PlaceTopLeft(track.rectTransform, textX, 44f, textW, 34f);
-            var count = CreateLabel(track.transform, "ZoneCount", 12f);
+                PlaceTopLeft(track.rectTransform, textX, 52f, textW, 42f);
+            var count = CreateLabel(track.transform, "ZoneCount", pending ? 18f : 22f);
             Stretch(count.rectTransform);
             count.alignment = pending
                 ? (fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft)
@@ -1129,7 +1295,7 @@ namespace Game.UI.Runtime
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
-            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 13f : 11f, pending ? 16f : 14f);
+            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 16f : 18f, pending ? 22f : 26f);
             count.alignment = pending
                 ? (fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft)
                 : TextAlignmentOptions.Center;
@@ -1239,22 +1405,25 @@ namespace Game.UI.Runtime
             }
 
             if (cue == null)
+            {
+                RaiseTheatreReadability(_libraryRegions);
                 return;
+            }
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.enableAutoSizing = true;
-            cue.fontSizeMin = 12f;
-            cue.fontSizeMax = 16f;
+            cue.fontSizeMin = 18f;
+            cue.fontSizeMax = 24f;
             cue.maxVisibleLines = 1;
             cue.ForceMeshUpdate();
             Vector2 preferred = cue.GetPreferredValues();
-            const float padX = 16f;
-            const float padY = 8f;
-            float width = Mathf.Max(ZoneCueWidth, Mathf.Ceil(preferred.x + padX));
-            float height = Mathf.Max(ZoneCueHeight, Mathf.Ceil(preferred.y + padY));
+            const float padX = 28f;
+            const float padY = 14f;
+            float width = Mathf.Max(220f, Mathf.Ceil(preferred.x + padX));
+            float height = Mathf.Max(44f, Mathf.Ceil(preferred.y + padY));
             RectTransform rect = cue.rectTransform;
             RectTransform parent = rect.parent as RectTransform;
             RectTransform pin = null;
@@ -1297,7 +1466,10 @@ namespace Game.UI.Runtime
                 top = Mathf.Clamp(top, inset, frameH - inset - height);
             PlaceTopLeft(rect, left, top, width, height);
             if (parent == null)
+            {
+                RaiseTheatreReadability(_libraryRegions);
                 return;
+            }
             Rect cueRect = new Rect(left, top, width, height);
             for (int pass = 0; pass < 8; pass++)
             {
@@ -1362,6 +1534,54 @@ namespace Game.UI.Runtime
                 ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
                 PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
                 cue.ForceMeshUpdate();
+            }
+
+            Transform plate = parent.Find("CuePlate");
+            if (plate is RectTransform plateRect)
+                PlaceTopLeft(plateRect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
+            RaiseTheatreReadability(parent);
+        }
+
+        private static void RaiseTheatreReadability(Transform regions)
+        {
+            if (regions == null)
+                return;
+            TMP_Text[] texts = regions.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null || !text.gameObject.activeInHierarchy)
+                    continue;
+                if (text.name == "ZoneName")
+                    RaiseTheatreLine(text, 18f, 26f);
+                else if (text.name == "ZoneCount")
+                {
+                    bool pending = SkirmishBattleLibraryArt.IsRenderedComingSoon(text.text);
+                    RaiseTheatreLine(text, pending ? 16f : 18f, pending ? 22f : 26f);
+                }
+                else if (text.name == "ZoomCue")
+                    RaiseTheatreLine(text, 18f, 24f);
+            }
+        }
+
+        private static void RaiseTheatreLine(TMP_Text text, float min, float max)
+        {
+            text.enableAutoSizing = true;
+            text.fontSizeMin = min;
+            text.fontSizeMax = Mathf.Max(min, max);
+            if (text.fontSize < min)
+                text.fontSize = min;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.maxVisibleLines = 1;
+            text.ForceMeshUpdate();
+            float width = text.rectTransform != null ? text.rectTransform.rect.width : 0f;
+            if (width < 8f)
+                return;
+            for (int step = 0; step < 10 && text.preferredWidth > width + 1.5f && text.fontSizeMax > text.fontSizeMin + 0.5f; step++)
+            {
+                text.fontSizeMax = Mathf.Max(text.fontSizeMin, text.fontSizeMax - 1f);
+                text.ForceMeshUpdate();
             }
         }
 
@@ -1624,22 +1844,22 @@ namespace Game.UI.Runtime
             const int height = 64;
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
             var pixels = new Color32[width * height];
-            var fill = new Color32(8, 12, 14, 235);
+            var fill = new Color32(6, 10, 12, 242);
             var gold = new Color32(236, 196, 96, 255);
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
                     int inset = 0;
-                    if (x < 22)
-                        inset = 22 - x;
-                    else if (x >= width - 22)
-                        inset = x - (width - 23);
-                    int top = 4 + inset / 3;
-                    int bottom = height - 5 - inset / 3;
+                    if (x < 28)
+                        inset = 28 - x;
+                    else if (x >= width - 28)
+                        inset = x - (width - 29);
+                    int top = 2 + inset / 4;
+                    int bottom = height - 3 - inset / 4;
                     if (y < top || y > bottom)
                         continue;
-                    bool rim = y <= top + 2 || y >= bottom - 2 || x <= 2 || x >= width - 3;
+                    bool rim = y <= top + 5 || y >= bottom - 5 || x <= 5 || x >= width - 6;
                     pixels[y * width + x] = rim ? gold : fill;
                 }
             }
@@ -1654,7 +1874,7 @@ namespace Game.UI.Runtime
                 100f,
                 0,
                 SpriteMeshType.FullRect,
-                new Vector4(28f, 8f, 28f, 8f),
+                new Vector4(36f, 12f, 36f, 12f),
                 false);
             _zoneRibbon.hideFlags = HideFlags.HideAndDontSave;
             return _zoneRibbon;
@@ -1750,7 +1970,7 @@ namespace Game.UI.Runtime
                 for (int x = 0; x < size; x++)
                 {
                     float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
-                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.72f) / 0.18f);
+                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.68f) / 0.28f);
                     pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(ring * 255f));
                 }
             }
@@ -1761,6 +1981,76 @@ namespace Game.UI.Runtime
             _zoneRing = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
             _zoneRing.hideFlags = HideFlags.HideAndDontSave;
             return _zoneRing;
+        }
+
+        private static Sprite _zonePill;
+        private static Sprite _zoneVignette;
+
+        private static Sprite ZonePillSprite()
+        {
+            if (_zonePill != null)
+                return _zonePill;
+            const int width = 64;
+            const int height = 32;
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            var pixels = new Color32[width * height];
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    float dx = x < height * 0.5f ? (height * 0.5f - x) : (x >= width - height * 0.5f ? x - (width - height * 0.5f - 1f) : 0f);
+                    float dy = y - (height - 1) * 0.5f;
+                    float distance = Mathf.Sqrt(dx * dx + dy * dy) / (height * 0.5f);
+                    if (distance > 1f)
+                        continue;
+                    pixels[y * width + x] = new Color32(255, 255, 255, 255);
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zonePill = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, width, height),
+                new Vector2(0.5f, 0.5f),
+                100f,
+                0,
+                SpriteMeshType.FullRect,
+                new Vector4(16f, 16f, 16f, 16f),
+                false);
+            _zonePill.hideFlags = HideFlags.HideAndDontSave;
+            return _zonePill;
+        }
+
+        private static Sprite ZoneVignetteSprite()
+        {
+            if (_zoneVignette != null)
+                return _zoneVignette;
+            const int size = 128;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = (x - center.x) / center.x;
+                    float dy = (y - center.y) / center.y;
+                    float distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    float edge = Mathf.Clamp01((distance - 0.35f) / 0.85f);
+                    edge = edge * edge;
+                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(0.18f, 0.78f, edge) * 255f), 0, 255);
+                    pixels[y * size + x] = new Color32(0, 0, 0, alpha);
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneVignette = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _zoneVignette.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneVignette;
         }
     }
 }

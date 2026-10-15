@@ -776,7 +776,7 @@ namespace Game.Editor
                 RejectSelectedZoneMatchesGridRows(view, pins, mapIds[i], locale);
             }
 
-            RejectCardsClearOfHexes(regions, cards, mapIds, locale);
+            RejectDistrictHalo(regions, mapIds, locale);
 
             RejectZoneProgressMatchesCard(root, view, locale);
             RejectStripMatchesZoneTotals(root, view, locale);
@@ -823,6 +823,13 @@ namespace Game.Editor
                     "Theatre polygon for " + mapId + " has no visible area locale=" + locale +
                     " points=" + (polygon != null ? polygon.PointCount.ToString() : "0") +
                     " area=" + (polygon != null ? polygon.FilledArea.ToString("0") : "0") + ".");
+            }
+
+            if (polygon.FilledArea < 40000f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre polygon for " + mapId + " is still a small hex locale=" + locale +
+                    " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
             if (polygon.color.a < 0.14f || polygon.color.a > 0.24f)
@@ -1012,7 +1019,8 @@ namespace Game.Editor
                 throw new InvalidOperationException("Theatre zone card has no name for " + mapId + " locale=" + locale + ".");
             RejectReadableLine(name, "zone name", mapId, locale);
 
-            RawImage thumb = card.Find("Thumbnail")?.GetComponent<RawImage>();
+            RawImage thumb = card.Find("Thumbnail")?.GetComponent<RawImage>()
+                ?? card.Find("ThumbFrame/Thumbnail")?.GetComponent<RawImage>();
             if (thumb == null || thumb.texture == null || thumb.color.r < 0.95f || thumb.color.g < 0.95f || thumb.color.b < 0.95f)
                 throw new InvalidOperationException("Theatre zone thumbnail is missing or tinted for " + mapId + " locale=" + locale + ".");
 
@@ -1331,94 +1339,41 @@ namespace Game.Editor
             }
         }
 
-        private static void RejectCardsClearOfHexes(
+        private static void RejectDistrictHalo(
             Transform regions,
-            RectTransform[] cards,
             string[] mapIds,
             string locale)
         {
-            if (regions == null || cards == null || mapIds == null)
+            if (regions == null || mapIds == null)
                 return;
             for (int h = 0; h < mapIds.Length; h++)
             {
                 Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[h]);
-                V3PolygonGraphic polygon = outlineNode != null ? outlineNode.GetComponent<V3PolygonGraphic>() : null;
-                if (polygon == null || polygon.PointCount < 3 || outlineNode is not RectTransform outline)
+                if (outlineNode is not RectTransform outline)
                     continue;
-                var world = new Vector2[polygon.PointCount];
-                for (int p = 0; p < world.Length; p++)
+                Transform haloNode = outline.Find("ZoneHalo");
+                Image haloImage = haloNode != null ? haloNode.GetComponent<Image>() : null;
+                if (haloNode is not RectTransform halo || haloImage == null || !haloImage.enabled || haloImage.sprite == null || haloImage.color.a < 0.45f)
                 {
-                    Vector2 local = polygon.LocalPoint(p);
-                    Vector3 point = outline.TransformPoint(new Vector3(local.x, local.y, 0f));
-                    world[p] = new Vector2(point.x, point.y);
-                }
-
-                for (int c = 0; c < cards.Length; c++)
-                {
-                    if (cards[c] == null)
-                        continue;
-                    Rect bounds = WorldBounds(cards[c]);
-                    var shrunk = new Rect(bounds.x + 1f, bounds.y + 1f, bounds.width - 2f, bounds.height - 2f);
-                    if (shrunk.width <= 0f || shrunk.height <= 0f || !RectHitsPolygon(shrunk, world))
-                        continue;
                     throw new InvalidOperationException(
-                        "Theatre zone card covers a hex locale=" + locale +
-                        " card=" + cards[c].name + " hex=" + mapIds[h] + ".");
+                        "Theatre district glow for " + mapIds[h] + " is missing its soft halo locale=" + locale + ".");
+                }
+
+                float left = halo.anchoredPosition.x;
+                float top = -halo.anchoredPosition.y;
+                float right = left + halo.sizeDelta.x;
+                float bottom = top + halo.sizeDelta.y;
+                float width = outline.rect.width > 2f ? outline.rect.width : outline.sizeDelta.x;
+                float height = outline.rect.height > 2f ? outline.rect.height : outline.sizeDelta.y;
+                if (left > -6f || top > -6f || right < width + 6f || bottom < height + 6f)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre district glow for " + mapIds[h] + " does not extend past the region locale=" + locale +
+                        " halo=" + left.ToString("0") + "," + top.ToString("0") + " " + right.ToString("0") + "," + bottom.ToString("0") +
+                        " outline=" + width.ToString("0") + "x" + height.ToString("0") + ".");
                 }
             }
-        }
 
-        private static bool RectHitsPolygon(Rect rect, Vector2[] poly)
-        {
-            if (poly == null || poly.Length < 3)
-                return false;
-            Vector2[] corners =
-            {
-                new Vector2(rect.xMin, rect.yMin),
-                new Vector2(rect.xMax, rect.yMin),
-                new Vector2(rect.xMax, rect.yMax),
-                new Vector2(rect.xMin, rect.yMax)
-            };
-            if (CaptureSeparated(corners, poly, new Vector2(1f, 0f)) || CaptureSeparated(corners, poly, new Vector2(0f, 1f)))
-                return false;
-            for (int i = 0; i < poly.Length; i++)
-            {
-                Vector2 edge = poly[(i + 1) % poly.Length] - poly[i];
-                float length = edge.magnitude;
-                if (length < 0.001f)
-                    continue;
-                if (CaptureSeparated(corners, poly, new Vector2(-edge.y / length, edge.x / length)))
-                    return false;
-            }
-
-            return true;
-        }
-
-        private static bool CaptureSeparated(Vector2[] corners, Vector2[] poly, Vector2 axis)
-        {
-            float rMin = float.MaxValue;
-            float rMax = float.MinValue;
-            for (int i = 0; i < corners.Length; i++)
-            {
-                float dot = Vector2.Dot(corners[i], axis);
-                if (dot < rMin)
-                    rMin = dot;
-                if (dot > rMax)
-                    rMax = dot;
-            }
-
-            float pMin = float.MaxValue;
-            float pMax = float.MinValue;
-            for (int i = 0; i < poly.Length; i++)
-            {
-                float dot = Vector2.Dot(poly[i], axis);
-                if (dot < pMin)
-                    pMin = dot;
-                if (dot > pMax)
-                    pMax = dot;
-            }
-
-            return rMax <= pMin || pMax <= rMin;
         }
 
         private static void RejectTheaterOverlap(

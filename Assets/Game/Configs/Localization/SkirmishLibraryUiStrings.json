@@ -5129,6 +5129,36 @@
           "value": "هدف اسکورت کاروان"
         }
       ]
+    },
+    {
+      "key": "ui.skirmish.theatre_battles_one",
+      "source": "{0} battle",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theatre_battles_other",
+      "source": "{0} battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theatre_battles_won",
+      "source": "{0} won",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} برده"
+        }
+      ]
     }
   ]
 }

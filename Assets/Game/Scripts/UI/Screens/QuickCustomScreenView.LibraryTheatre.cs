@@ -33,6 +33,7 @@ namespace Game.UI.Runtime
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             if (battlefield || theater.Pins == null)
             {
+                TheatreSeatGeometry.NoteDetailReserve(false);
                 if (map != null)
                     map.enabled = true;
                 HideTheaterLabels(map);
@@ -73,6 +74,7 @@ namespace Game.UI.Runtime
             NoteHostCanvas(plate);
             bool reserve = TheatreSeatGeometry.DetailReserveOn(
                 plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
+            TheatreSeatGeometry.NoteDetailReserve(reserve);
             TheatreSeatGeometry.ShotReserve = reserve;
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
             bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;

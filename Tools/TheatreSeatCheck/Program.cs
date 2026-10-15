@@ -206,6 +206,7 @@ internal static class Program
             selected = "DB";
         bool fourByThree = string.Equals(ratio, "4:3", StringComparison.Ordinal);
         bool applied = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, reserveOn, fourByThree);
+        TheatreSeatGeometry.NoteDetailReserve(applied);
         TheatreSeatGeometry.SetShot(ratio, notch, locale, applied, canvasWidth, canvasHeight, left, top, right, bottom);
         TheatreSeatGeometry.ShotSelected = selected;
         TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, applied, selected);
@@ -213,7 +214,8 @@ internal static class Program
         bool outlines = OutlinesHold(layout, plateWidth, plateHeight);
         bool ok = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal && outlines
             && layout.Seats != null && layout.Seats.Length == 5 && violations.Length == 0
-            && FieldsHold(violations);
+            && FieldsHold(violations)
+            && TheatreSeatGeometry.TheatreDetailReserved == applied;
         TheatreSeatGeometry.Box view = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, applied);
         string card = layout.Seats != null && layout.Seats.Length > 0
             ? layout.Seats[0].Card.W.ToString("0", CultureInfo.InvariantCulture)

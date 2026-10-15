@@ -303,6 +303,12 @@ namespace Game.UI.Runtime
         public static string ShotLocale = "en";
         public static string ShotSelected = "DB";
         public static bool ShotReserve;
+
+        /// <summary>
+        /// True only when this layout pass seated with the detail reserve applied.
+        /// False means the plate was not inset and the detail panel is a bottom sheet.
+        /// </summary>
+        public static bool TheatreDetailReserved { get; private set; }
         public static float ShotCanvasWidth;
         public static float ShotCanvasHeight;
         public static float ShotInsetLeft;
@@ -558,6 +564,12 @@ namespace Game.UI.Runtime
             return plateWidth > 2f && plateHeight > 2f;
         }
 
+        /// <summary>Records whether the seating pass actually applied the detail reserve.</summary>
+        public static void NoteDetailReserve(bool applied)
+        {
+            TheatreDetailReserved = applied;
+        }
+
         /// <summary>
         /// Writes the plate, reserve and selected district that <see cref="Arrange"/> just used.
         /// The file name includes the plate, so a later pass at another size cannot replace it.
@@ -565,6 +577,7 @@ namespace Game.UI.Runtime
         public static void NoteSeating(float plateWidth, float plateHeight, bool fa, bool reserve, string selected, Layout layout)
         {
             ShotReserve = reserve;
+            NoteDetailReserve(reserve);
             ShotSelected = string.IsNullOrEmpty(selected) ? "DB" : selected;
             if (string.IsNullOrEmpty(DumpDirectory))
                 return;

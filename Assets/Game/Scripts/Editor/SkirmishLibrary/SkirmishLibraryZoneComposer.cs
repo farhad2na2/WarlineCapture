@@ -227,7 +227,7 @@ namespace Game.Editor
             AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
             TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             if (importer == null)
-                throw new InvalidOperationException("Theatre sprite importer is missing: " + assetPath);
+                throw new System.InvalidOperationException("Theatre sprite importer is missing: " + assetPath);
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;
             importer.alphaIsTransparency = true;

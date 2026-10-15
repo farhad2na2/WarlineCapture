@@ -88,6 +88,14 @@ Run each applicable mission matrix. Report content preparation time, native minu
 
 ## Coverage and publication rules
 
+### Camera readability (owner direction, 2026-10-15)
+
+Every mission must open at a useful distance where nearby soldiers are readable rather than dots or impostors. Keep transport aircraft comfortably inside the unobscured viewport without dominating the screen. Do not widen ordinary ground zoom just to show an entire army.
+
+Check actual native rendering at the normal view, both legal zoom limits and the restored view, including landscape and portrait layouts. Retain posed infantry/group visibility and occlusion evidence; one visible soldier does not certify a roof-obscured squad. For applicable aircraft, check their actual legal parked/staging, production, Follow and cruise views. Use mission-specific source elevation and actual drawn geometry, not culling bounds alone. Camera transitions and guidance must not issue troop orders.
+
+Send native screenshots for asynchronous owner review and continue authorized work without waiting for visual acceptance. Record pending visual/device/player gates separately; shared camera tests and screenshots alone do not establish mission readiness.
+
 Keep the governing requirements intact: six Regular ARIA runs per entry with three seeds per locale and at least two wins per locale; 20 stress seeds per map/objective/army family, alternating starts; additional wins for exposed difficulties/sizes; manual win, two approaches, objective edges, recovery/localization, applicable lifecycle/capacity, device and player gates.
 
 Across the catalog, Regular contributes at least 720 full runs and the 60 family stress samples contribute 1,200 sample slots. Schedule a genuine run into multiple coverage sets only when its exact seed/start/locale/setup qualifies for all of them. Replaying a seed in another locale does not supply another distinct stress seed. Keep every loss and failure; do not replace required normal matches with accelerated, injected or template outcomes.

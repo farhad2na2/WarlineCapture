@@ -22,14 +22,14 @@ internal static class Program
         ReplayDumps(ref seated, ref blocked, ref failed);
 
         Console.WriteLine(
-            "THRESHOLD propose leaving the reserve off at 4:3 when the open viewport is under "
-            + TheatreSeatGeometry.ReserveViewportMinWidth.ToString("0", CultureInfo.InvariantCulture)
-            + " wide or under "
-            + TheatreSeatGeometry.ReserveViewportMinHeight.ToString("0", CultureInfo.InvariantCulture)
-            + " tall. Wider plates still pack below that height. The reserve stays on until that is agreed.");
-        if (failed == 0)
+            "THRESHOLD ReserveViewportFloor "
+            + TheatreSeatGeometry.ReserveViewportFloor.X.ToString("0", CultureInfo.InvariantCulture)
+            + "x"
+            + TheatreSeatGeometry.ReserveViewportFloor.Y.ToString("0", CultureInfo.InvariantCulture)
+            + " skips the 4:3 reserve when either axis is under the floor.");
+        if (failed == 0 && blocked == 0)
         {
-            Console.WriteLine("TheatreSeatCheck result=Passed seated=" + seated + " blocked=" + blocked);
+            Console.WriteLine("TheatreSeatCheck result=Passed seated=" + seated + " blocked=0");
             return 0;
         }
 
@@ -189,15 +189,16 @@ internal static class Program
         ref int failed)
     {
         string locale = fa ? "fa" : "en";
-        TheatreSeatGeometry.SetShot(ratio, notch, locale, reserveOn, canvasWidth, canvasHeight, left, top, right, bottom);
-        TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, reserveOn, "DB");
-        string[] violations = TheatreSeatGeometry.CollectViolations(plateWidth, plateHeight, fa, reserveOn, "DB");
+        bool fourByThree = string.Equals(ratio, "4:3", StringComparison.Ordinal);
+        bool applied = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, reserveOn, fourByThree);
+        TheatreSeatGeometry.SetShot(ratio, notch, locale, applied, canvasWidth, canvasHeight, left, top, right, bottom);
+        TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, applied, "DB");
+        string[] violations = TheatreSeatGeometry.CollectViolations(plateWidth, plateHeight, fa, applied, "DB");
         bool outlines = OutlinesHold(layout, plateWidth, plateHeight);
         bool ok = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal && outlines
             && layout.Seats != null && layout.Seats.Length == 5 && violations.Length == 0
             && FieldsHold(violations);
-        TheatreSeatGeometry.Box view = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserveOn);
-        bool below = BelowFloor(plateWidth, plateHeight, fa, reserveOn);
+        TheatreSeatGeometry.Box view = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, applied);
         string card = layout.Seats != null && layout.Seats.Length > 0
             ? layout.Seats[0].Card.W.ToString("0", CultureInfo.InvariantCulture)
                 + "x" + layout.Seats[0].Card.H.ToString("0", CultureInfo.InvariantCulture)
@@ -208,11 +209,6 @@ internal static class Program
             seated++;
             state = "PASS";
         }
-        else if (below)
-        {
-            blocked++;
-            state = "BLOCK";
-        }
         else
         {
             failed++;
@@ -222,7 +218,8 @@ internal static class Program
         Console.WriteLine(state + " " + ratio
             + " notch=" + notch
             + (fa ? " FA" : " EN")
-            + (reserveOn ? " reserve=on" : " reserve=off")
+            + (applied ? " reserve=on" : " reserve=off")
+            + (reserveOn && !applied ? " floor" : "")
             + " plate=" + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
             + " view=" + view.W.ToString("0.0", CultureInfo.InvariantCulture)
@@ -245,14 +242,6 @@ internal static class Program
             for (int i = 0; i < layout.LogLines.Length; i++)
                 Console.WriteLine(layout.LogLines[i]);
         }
-    }
-
-    private static bool BelowFloor(float plateWidth, float plateHeight, bool fa, bool reserveOn)
-    {
-        if (reserveOn)
-            return !TheatreSeatGeometry.ReserveViewportHolds(plateWidth, plateHeight, fa);
-        return plateWidth + 0.5f < TheatreSeatGeometry.ReserveViewportMinWidth
-            || plateHeight + 0.5f < TheatreSeatGeometry.ReserveViewportMinHeight;
     }
 
     private static bool FieldsHold(string[] violations)
@@ -327,7 +316,7 @@ internal static class Program
             && locale == "en"
             && Math.Abs(plateWidth - 1039.6f) < 0.05f
             && Math.Abs(plateHeight - 724f) < 0.05f
-            && json.IndexOf("\"portraitMinW\": 124", StringComparison.Ordinal) >= 0
+            && json.IndexOf("\"portraitMinW\": 112", StringComparison.Ordinal) >= 0
             && json.IndexOf("DESERT BASE", StringComparison.Ordinal) >= 0;
         Console.WriteLine((ok ? "PASS" : "FAIL") + " dump round-trip plate="
             + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)

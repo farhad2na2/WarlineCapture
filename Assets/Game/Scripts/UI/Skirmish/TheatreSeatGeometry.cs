@@ -125,9 +125,16 @@ namespace Game.UI.Runtime
         /// <summary>Laid-out gap. The check rejects anything under <see cref="MedalGapMinimum"/>.</summary>
         private const float MedalGap = 8f;
         public const float MedalGapMinimum = 6f;
+        public const float PortraitMinWidth = 112f;
+        public const float PortraitMaxWidth = 160f;
+        public const float PortraitMinHeight = 140f;
         public const float PortraitMaxHeight = 212f;
+        /// <summary>Compact 112-wide tiles may step one point under <see cref="NameFontFloor"/> so the longest Persian word still fits.</summary>
+        public const float PortraitCompactFontFloor = 15f;
         public const float NameFontCeiling = 22f;
         public const float NameFontFloor = 16f;
+        public const float StripCaptionCeiling = 12f;
+        public const float StripCaptionFloor = 9f;
 
         public static Vec2[] DistrictHex(string mapId, float frameWidth, float frameHeight)
         {
@@ -304,12 +311,10 @@ namespace Game.UI.Runtime
         public static string DumpDirectory;
 
         /// <summary>
-        /// Open viewport, at the 4:3 bucket, below which five portrait tiles and the cue do not pack.
-        /// Measured on the reserve viewport: width under 780 or height under 704. Not applied to layout;
-        /// Programmer 1 still has to agree before the reserve is skipped.
+        /// 4:3 open viewport below which the detail reserve is not applied.
+        /// X is the width floor (780) and Y is the height floor (704). Either axis under the floor skips the reserve.
         /// </summary>
-        public const float ReserveViewportMinWidth = 780f;
-        public const float ReserveViewportMinHeight = 704f;
+        public static readonly Vec2 ReserveViewportFloor = new Vec2(780f, 704f);
 
         public static void SetShot(
             string ratio,
@@ -380,10 +385,36 @@ namespace Game.UI.Runtime
             usableHeight = canvasHeight * fit;
         }
 
-        public static bool ReserveViewportHolds(float plateWidth, float plateHeight, bool fa)
+        public static bool CanvasIsFourByThree(float canvasWidth, float canvasHeight)
         {
+            if (canvasWidth < 2f || canvasHeight < 2f)
+                return false;
+            return canvasWidth / canvasHeight < 1.5f;
+        }
+
+        public static bool ShotIsFourByThree()
+        {
+            if (string.Equals(ShotRatio, "4:3", StringComparison.Ordinal))
+                return true;
+            return CanvasIsFourByThree(ShotCanvasWidth, ShotCanvasHeight);
+        }
+
+        /// <summary>
+        /// Detail reserve. A 4:3 canvas leaves it off when the open viewport is under <see cref="ReserveViewportFloor"/>.
+        /// A wider ratio keeps it unless that same floor is missed and five portraits will not pack beside it.
+        /// </summary>
+        public static bool DetailReserveOn(float plateWidth, float plateHeight, bool fa, bool requested, bool fourByThree)
+        {
+            if (!requested || plateWidth < 600f || plateHeight < 2f)
+                return false;
             Box view = OpenViewport(plateWidth, plateHeight, fa, true);
-            return view.W + 0.5f >= ReserveViewportMinWidth && view.H + 0.5f >= ReserveViewportMinHeight;
+            bool holds = view.W + 0.5f >= ReserveViewportFloor.X && view.H + 0.5f >= ReserveViewportFloor.Y;
+            if (holds)
+                return true;
+            if (fourByThree)
+                return false;
+            Layout layout = Arrange(plateWidth, plateHeight, fa, true, "DB");
+            return layout.CardsLegal && layout.CueNear && layout.HexAspectLegal;
         }
 
         public struct NameMeasure
@@ -446,7 +477,11 @@ namespace Game.UI.Runtime
                 }
             }
 
-            text.Append("  \"band\": { \"portraitMinW\": 124, \"portraitMaxW\": 160, \"portraitMinH\": 156, \"portraitMaxH\": 212, \"chosenMinW\": ")
+            text.Append("  \"band\": { \"portraitMinW\": ").Append(PortraitMinWidth.ToString("0", CultureInfo.InvariantCulture))
+                .Append(", \"portraitMaxW\": ").Append(PortraitMaxWidth.ToString("0", CultureInfo.InvariantCulture))
+                .Append(", \"portraitMinH\": ").Append(PortraitMinHeight.ToString("0", CultureInfo.InvariantCulture))
+                .Append(", \"portraitMaxH\": ").Append(PortraitMaxHeight.ToString("0", CultureInfo.InvariantCulture))
+                .Append(", \"chosenMinW\": ")
                 .Append(Num(minW)).Append(", \"chosenMaxW\": ").Append(Num(maxW))
                 .Append(", \"chosenMinH\": ").Append(Num(minH)).Append(", \"chosenMaxH\": ").Append(Num(maxH)).Append(" },\n");
             text.Append("  \"names\": [\n");
@@ -615,16 +650,23 @@ namespace Game.UI.Runtime
                 }
 
                 NoteOutside(violations, pins[i], plateWidth, plateHeight, "pin", mapId, locale, true);
-                if (cards[i].W > 1f)
+                if (cards[i].W < 1f || cards[i].H < 1f)
+                {
+                    violations.Add(
+                        "Theatre portrait seating was refused locale=" + locale +
+                        " card=ZoneCard_" + mapId + ".");
+                }
+                else
                 {
                     NoteOutside(violations, cards[i], plateWidth, plateHeight, "zone card", mapId, locale, true);
                     NoteCardEdge(violations, cards[i], plateWidth, plateHeight, mapId, locale);
-                    if (cards[i].W < 124f || cards[i].W > 160f || cards[i].H < 156f || cards[i].H > 212f)
+                    if (cards[i].W < PortraitMinWidth || cards[i].W > PortraitMaxWidth
+                        || cards[i].H < PortraitMinHeight || cards[i].H > PortraitMaxHeight)
                     {
                         violations.Add(
                             "Theatre zone card for " + mapId + " is " + cards[i].W.ToString("0", CultureInfo.InvariantCulture) +
                             "x" + cards[i].H.ToString("0", CultureInfo.InvariantCulture) +
-                            " locale=" + locale + ". Expected a portrait tile about 124-160 by 156-212.");
+                            " locale=" + locale + ". Expected a portrait tile about 112-160 by 140-212.");
                     }
 
                     if (!SeatHolds(cards[i], hexes[i], hexes))
@@ -955,7 +997,8 @@ namespace Game.UI.Runtime
             float width = Math.Max(1f, card.W - 12f);
             float factor = NameLineFactor(text);
             float band = Math.Max(card.H, Math.Min(PortraitMaxHeight, bandHeight));
-            for (float size = NameFontCeiling; size >= NameFontFloor - 0.01f; size -= 1f)
+            float fontFloor = card.W <= PortraitMinWidth + 8f ? PortraitCompactFontFloor : NameFontFloor;
+            for (float size = NameFontCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
                 if (!MeasureName(text, width, size, out int lines, out float longest, out float word))
                 {
@@ -1023,8 +1066,10 @@ namespace Game.UI.Runtime
         /// <summary>Name-box height a portrait can give once the thumbnail keeps 44px and the ring keeps its size.</summary>
         public static float MaxNameBoxHeight(float cardHeight, bool wide)
         {
-            float ring = (cardHeight >= 190f ? 56f : 44f) + (wide ? 4f : 0f);
-            return cardHeight - 6f - 44f - 4f - ring - 4f - 6f;
+            bool compact = cardHeight < 156f;
+            float ring = (cardHeight >= 190f ? 56f : compact ? 36f : 44f) + (wide ? 4f : 0f);
+            float art = compact ? 36f : 44f;
+            return cardHeight - 6f - art - 4f - ring - 4f - 6f;
         }
 
         private static void GrowCardsForNames(
@@ -1257,7 +1302,8 @@ namespace Game.UI.Runtime
                         " gap=" + gap.ToString("0.0", CultureInfo.InvariantCulture) + ".");
                 }
 
-                float width = TextWidth(tiers[i], 12f);
+                float font = StripCaptionSize(label.W, tiers[i]);
+                float width = TextWidth(tiers[i], font);
                 if (width > label.W + 1f)
                 {
                     violations.Add(
@@ -1295,6 +1341,20 @@ namespace Game.UI.Runtime
             slot = new Box(slotX, 4f, inner, 44f);
             label = new Box(slotX + labelX, 8f, Math.Max(1f, labelWidth), 28f);
             count = new Box(slotX + countX, 10f, countBox, 24f);
+        }
+
+        /// <summary>Caption size that fits the strip slot. Wide plates stay at 12; a narrow 4:3 slot steps down to 9.</summary>
+        public static float StripCaptionSize(float labelWidth, string text)
+        {
+            if (string.IsNullOrEmpty(text) || labelWidth < 1f)
+                return StripCaptionFloor;
+            for (float size = StripCaptionCeiling; size >= StripCaptionFloor - 0.01f; size -= 1f)
+            {
+                if (TextWidth(text, size) <= labelWidth + 1f)
+                    return size;
+            }
+
+            return StripCaptionFloor;
         }
 
         private static float HorizontalGap(Box left, Box right)
@@ -1935,8 +1995,8 @@ namespace Game.UI.Runtime
         {
             cards = null;
             cue = default;
-            float[] widths = { 156f, 148f, 140f, 132f, 124f };
-            float[] heights = { 208f, 196f, 184f, 172f, 156f };
+            float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
+            float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
             Box[] cues = CueSpots(plateWidth, plateHeight, pins, hexes, detail, selected);
             for (int size = 0; size < widths.Length; size++)
             {

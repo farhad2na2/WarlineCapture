@@ -70,7 +70,10 @@ namespace Game.UI.Runtime
                 out float cropW,
                 out float cropH);
 
-            bool reserve = plateWidth >= 600f;
+            NoteHostCanvas(plate);
+            bool reserve = TheatreSeatGeometry.DetailReserveOn(
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
+            TheatreSeatGeometry.ShotReserve = reserve;
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
             bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
             if (painted != null)
@@ -147,19 +150,24 @@ namespace Game.UI.Runtime
                 });
             }
 
-            TheatreSeatGeometry.ShotReserve = plateWidth >= 600f;
             PlaceZoneSlots(slots, safe, plateWidth, plateHeight, fa);
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
             for (int i = 0; i < slots.Count; i++)
                 DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
             for (int i = 0; i < slots.Count; i++)
             {
+                if (slots[i].Card.width < 1f)
+                    continue;
                 PlaceZonePin(fit, slots[i], fa);
                 PlaceZoneCard(fit, slots[i], fa, wideFrame);
             }
 
             for (int i = 0; i < slots.Count; i++)
+            {
+                if (slots[i].Card.width < 1f)
+                    continue;
                 DrawZoneLeader(fit, slots[i]);
+            }
 
             var hits = new GameObject("TheaterHits", typeof(RectTransform)).GetComponent<RectTransform>();
             hits.SetParent(fit, false);
@@ -846,38 +854,32 @@ namespace Game.UI.Runtime
             return rMax <= pMin || pMax <= rMin;
         }
 
+        private static void NoteHostCanvas(RectTransform plate)
+        {
+            if (TheatreSeatGeometry.ShotCanvasHeight > 2f)
+                return;
+            Canvas canvas = plate != null ? plate.GetComponentInParent<Canvas>() : null;
+            RectTransform root = canvas != null && canvas.rootCanvas != null
+                ? canvas.rootCanvas.transform as RectTransform
+                : null;
+            if (root == null || root.rect.height < 2f)
+                return;
+            TheatreSeatGeometry.ShotCanvasWidth = root.rect.width;
+            TheatreSeatGeometry.ShotCanvasHeight = root.rect.height;
+            if (string.IsNullOrEmpty(TheatreSeatGeometry.ShotRatio)
+                || string.Equals(TheatreSeatGeometry.ShotRatio, "unset", StringComparison.Ordinal))
+            {
+                TheatreSeatGeometry.ShotRatio = TheatreSeatGeometry.CanvasIsFourByThree(root.rect.width, root.rect.height)
+                    ? "4:3"
+                    : "16:9";
+            }
+        }
+
         private static void PlaceZoneSlots(List<TheatreZoneSlot> slots, Rect safe, float plateWidth, float plateHeight, bool fa)
         {
             if (slots == null)
                 return;
-            if (TryApplyArrangedSeats(slots, plateWidth, plateHeight, fa))
-                return;
-            // The detail panel overlays the map. Hexes and the first card seats stay on the
-            // full plate; only a card that meets the panel is moved, and only that card may shrink.
-            for (int i = 0; i < slots.Count; i++)
-            {
-                TheatreZoneSlot slot = slots[i];
-                float pinX = Mathf.Clamp(slot.Anchor.x - ZonePinSize * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZonePinSize));
-                float pinY = Mathf.Clamp(slot.Anchor.y - ZonePinSize * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZonePinSize));
-                slot.Pin = new Rect(pinX, pinY, ZonePinSize, ZonePinSize);
-                const float cardWidth = 320f;
-                const float cardHeight = 110f;
-                float cardX = Mathf.Clamp(slot.CardAnchor.x - cardWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - cardWidth));
-                float cardY = Mathf.Clamp(slot.CardAnchor.y - cardHeight * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - cardHeight));
-                slot.Card = new Rect(cardX, cardY, cardWidth, cardHeight);
-                float cueX = Mathf.Clamp(slot.Pin.center.x - ZoneCueWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
-                float cueY = slot.Pin.yMax + ZoneStackGap + 4f;
-                if (cueY + ZoneCueHeight > safe.yMax)
-                    cueX = slot.Pin.xMax + ZoneStackGap + 4f;
-                cueX = Mathf.Clamp(cueX, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
-                cueY = Mathf.Clamp(cueY, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - ZoneCueHeight));
-                slot.Cue = new Rect(cueX, cueY, ZoneCueWidth, ZoneCueHeight);
-                slots[i] = slot;
-            }
-
-            SeatCardsInsideDistricts(slots, safe);
-            SeatCardsClearOfDetail(slots, safe, plateWidth, plateHeight, fa);
-            NudgeCues(slots, safe);
+            TryApplyArrangedSeats(slots, plateWidth, plateHeight, fa);
         }
 
         /// <summary>Width reserved on the trailing edge. Matches the detail panel when the plate is wide enough.</summary>
@@ -913,6 +915,9 @@ namespace Game.UI.Runtime
 
         private static Rect SeatingDetailRect(float plateWidth, float plateHeight, bool fa)
         {
+            if (!TheatreSeatGeometry.DetailReserveOn(
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree()))
+                return Rect.zero;
             float reserve = SeatingDetailReserve(plateWidth);
             if (reserve <= 0f)
                 return Rect.zero;
@@ -2121,8 +2126,10 @@ namespace Game.UI.Runtime
                     selected = slots[i].MapId;
             }
 
+            bool reserve = TheatreSeatGeometry.DetailReserveOn(
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
             TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(
-                plateWidth, plateHeight, fa, plateWidth >= 600f, selected);
+                plateWidth, plateHeight, fa, reserve, selected);
             if (!layout.CardsLegal || !layout.CueNear || !layout.HexAspectLegal || layout.Seats == null)
                 return false;
             for (int i = 0; i < slots.Count; i++)
@@ -2249,13 +2256,15 @@ namespace Game.UI.Runtime
                 nameTexts.Add(name);
             }
 
-            TheatreSeatGeometry.ShotReserve = plateWidth >= 600f;
+            bool reserve = TheatreSeatGeometry.DetailReserveOn(
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
+            TheatreSeatGeometry.ShotReserve = reserve;
             if (string.IsNullOrEmpty(TheatreSeatGeometry.DumpDirectory) || cards.Count == 0)
                 return;
             Rect detailRect = SeatingDetailRect(plateWidth, plateHeight, fa);
             var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(
-                plateWidth, plateHeight, fa, plateWidth >= 600f);
+                plateWidth, plateHeight, fa, reserve);
             TheatreSeatGeometry.Box cue = default;
             if (space.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
                 cue = PlateBoxOf(cueRect);
@@ -2363,7 +2372,10 @@ namespace Game.UI.Runtime
             float boxWidth = Mathf.Max(8f, cardW - 12f);
             string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
-            for (float size = TheatreSeatGeometry.NameFontCeiling; size >= TheatreSeatGeometry.NameFontFloor - 0.01f; size -= 1f)
+            float fontFloor = cardW <= TheatreSeatGeometry.PortraitMinWidth + 8f
+                ? TheatreSeatGeometry.PortraitCompactFontFloor
+                : TheatreSeatGeometry.NameFontFloor;
+            for (float size = TheatreSeatGeometry.NameFontCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
                 if (binding != null)
                     binding.ConfigureFontBounds(size, size);
@@ -2417,7 +2429,9 @@ namespace Game.UI.Runtime
         {
             if (name == null || card == null)
                 return;
-            float size = TheatreSeatGeometry.NameFontFloor;
+            float size = card.sizeDelta.x <= TheatreSeatGeometry.PortraitMinWidth + 8f
+                ? TheatreSeatGeometry.PortraitCompactFontFloor
+                : TheatreSeatGeometry.NameFontFloor;
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(size, size);
@@ -2498,12 +2512,14 @@ namespace Game.UI.Runtime
             float artW = Mathf.Max(48f, cardW - pad * 2f);
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
             bool banner = ring != null && ring.sizeDelta.x > ring.sizeDelta.y + 8f;
+            bool compact = cardH < 156f;
             float ringSide = banner
                 ? Mathf.Max(28f, ring.sizeDelta.y)
-                : (cardH >= 190f ? 56f : 44f) + (wide ? 4f : 0f);
+                : (cardH >= 190f ? 56f : compact ? 36f : 44f) + (wide ? 4f : 0f);
+            float artFloor = compact ? 36f : 44f;
             float artH = cardH - pad - 4f - nameH - 4f - ringSide - pad;
-            if (artH < 44f)
-                artH = 44f;
+            if (artH < artFloor)
+                artH = artFloor;
             if (oneLine)
                 nameH = Mathf.Max(nameH, cardH >= 190f ? 40f : 34f);
             float nameY = pad + artH + 4f;

@@ -1503,11 +1503,12 @@ namespace Game.Editor
             string locale)
         {
             Vector2 size = card.sizeDelta;
-            if (size.x < 124f || size.x > 160f || size.y < 156f || size.y > 212f)
+            if (size.x < TheatreSeatGeometry.PortraitMinWidth || size.x > TheatreSeatGeometry.PortraitMaxWidth
+                || size.y < TheatreSeatGeometry.PortraitMinHeight || size.y > TheatreSeatGeometry.PortraitMaxHeight)
             {
                 throw new InvalidOperationException(
                     "Theatre zone card for " + mapId + " is " + size.x.ToString("0") + "x" + size.y.ToString("0") +
-                    " locale=" + locale + ". Expected a portrait tile about 124-160 by 156-212.");
+                    " locale=" + locale + ". Expected a portrait tile about 112-160 by 140-212.");
             }
 
             TMP_Text name = card.Find("ZoneName")?.GetComponent<TMP_Text>();

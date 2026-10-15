@@ -474,9 +474,10 @@ namespace Game.UI.Runtime
                 captionText.overflowMode = TextOverflowModes.Overflow;
                 captionText.textWrappingMode = TextWrappingModes.NoWrap;
                 captionText.enableAutoSizing = false;
-                captionText.fontSize = 12f;
-                captionText.fontSizeMin = 12f;
-                captionText.fontSizeMax = 12f;
+                float captionSize = TheatreSeatGeometry.StripCaptionSize(label.W, captionText.text);
+                captionText.fontSize = captionSize;
+                captionText.fontSizeMin = captionSize;
+                captionText.fontSizeMax = captionSize;
                 captionText.maxVisibleLines = 1;
             }
 

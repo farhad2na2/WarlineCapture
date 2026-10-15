@@ -412,6 +412,32 @@ namespace Game.Editor
             }
 
             RejectBriefingOverlap(root);
+            RejectNarrowGreyOverText(root);
+        }
+
+        private static void RejectNarrowGreyOverText(Transform root)
+        {
+            if (root == null)
+                return;
+            Image[] images = root.GetComponentsInChildren<Image>(true);
+            TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (!SkirmishLibraryBlankImage.IsNarrowBar(image))
+                    continue;
+                bool medal = SkirmishLibraryBlankImage.IsMedalArt(image);
+                bool grey = SkirmishLibraryBlankImage.IsGreyTint(image);
+                if (!medal && !grey)
+                    continue;
+                bool overText = false;
+                for (int t = 0; t < texts.Length && !overText; t++)
+                    overText = SkirmishLibraryBlankImage.OverlapsText(image.rectTransform, texts[t]);
+                if (!overText)
+                    continue;
+                throw new InvalidOperationException(
+                    "A narrow grey image covers text: " + ImagePath(image.transform));
+            }
         }
 
         private static void RejectBriefingOverlap(Transform root)

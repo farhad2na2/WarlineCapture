@@ -7,8 +7,9 @@ using UnityEngine;
 namespace Game.Editor
 {
     /// <summary>
-    /// Paints one warm theatre plate from the existing Campaign plates, then writes
-    /// feathered windows of that same image. It does not author new terrain.
+    /// Paints one warm theatre plate from the existing Campaign plates. Each pixel
+    /// keeps a single plate, then a brown-to-sand ramp, a thick region border and
+    /// a vignette. It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
@@ -16,8 +17,9 @@ namespace Game.Editor
         public const int ZoneHeight = 540;
         public const int BlurWidth = 160;
         public const int BlurHeight = 90;
-        private const float Feather = 0.20f;
-        private const float Warp = 0.06f;
+        private const float Warp = 0.12f;
+        private const int BorderBand = 16;
+        private const int DarkStroke = 5;
 
         public static void Generate()
         {
@@ -40,11 +42,11 @@ namespace Game.Editor
                     sizes[i] = new Vector2Int(plates[i].width, plates[i].height);
                 }
 
-                Color32[] composite = Compose(regions, pixels, sizes);
+                Color32[] composite = Compose(regions, pixels, sizes, out byte[] owner);
                 WriteSprite(zoneFolder + "/skirmish.zone.theater.png", composite, ZoneWidth, ZoneHeight);
                 for (int i = 0; i < mapIds.Length; i++)
                 {
-                    WriteZoneWindow(zoneFolder, mapIds[i], regions[i], composite);
+                    WriteZoneWindow(zoneFolder, mapIds[i], (byte)i, owner, composite);
                     WriteBlur(blurFolder, "skirmish.blur." + mapIds[i], pixels[i], sizes[i]);
                 }
 
@@ -74,63 +76,41 @@ namespace Game.Editor
             return texture;
         }
 
-        private static Color32[] Compose(Rect[] regions, Color32[][] plates, Vector2Int[] sizes)
+        private static Color32[] Compose(Rect[] regions, Color32[][] plates, Vector2Int[] sizes, out byte[] owner)
         {
             int count = ZoneWidth * ZoneHeight;
             var pixels = new Color32[count];
-            var owner = new byte[count];
+            owner = new byte[count];
             for (int y = 0; y < ZoneHeight; y++)
             {
                 float vTop = 1f - (y + 0.5f) / ZoneHeight;
                 for (int x = 0; x < ZoneWidth; x++)
                 {
                     float u = (x + 0.5f) / ZoneWidth;
-                    float warp = BoundaryNoise(u, vTop) * Warp;
-                    float red = 0f;
-                    float green = 0f;
-                    float blue = 0f;
-                    float weight = 0f;
                     int best = 0;
-                    float bestWeight = -1f;
+                    float bestInset = -1000f;
                     for (int i = 0; i < regions.Length; i++)
                     {
-                        float influence = Influence(regions[i], u, vTop, warp);
-                        if (influence > bestWeight)
+                        float inset = RegionInset(regions[i], u, vTop, i);
+                        if (inset > bestInset)
                         {
-                            bestWeight = influence;
+                            bestInset = inset;
                             best = i;
                         }
-
-                        if (influence <= 0f)
-                            continue;
-                        float pu = regions[i].width > 0.001f ? Mathf.Clamp01((u - regions[i].x) / regions[i].width) : 0.5f;
-                        float pv = regions[i].height > 0.001f ? Mathf.Clamp01(1f - (vTop - regions[i].y) / regions[i].height) : 0.5f;
-                        Color32 sample = Sample(plates[i], sizes[i], pu, pv);
-                        red += sample.r * influence;
-                        green += sample.g * influence;
-                        blue += sample.b * influence;
-                        weight += influence;
                     }
 
                     int index = y * ZoneWidth + x;
                     owner[index] = (byte)best;
-                    if (weight <= 0.001f)
-                    {
-                        pixels[index] = new Color32(28, 26, 24, 255);
-                        continue;
-                    }
-
-                    var mixed = new Color32(
-                        (byte)Mathf.Clamp(Mathf.RoundToInt(red / weight), 0, 255),
-                        (byte)Mathf.Clamp(Mathf.RoundToInt(green / weight), 0, 255),
-                        (byte)Mathf.Clamp(Mathf.RoundToInt(blue / weight), 0, 255),
-                        255);
-                    pixels[index] = Grade(mixed);
+                    Rect region = regions[best];
+                    float pu = region.width > 0.001f ? Mathf.Clamp01((u - region.x) / region.width) : 0.5f;
+                    float pv = region.height > 0.001f ? Mathf.Clamp01(1f - (vTop - region.y) / region.height) : 0.5f;
+                    pixels[index] = Grade(Sample(plates[best], sizes[best], pu, pv));
                 }
             }
 
-            pixels = BoxBlur(pixels, ZoneWidth, ZoneHeight, 2);
-            PaintRegionBorders(pixels, owner);
+            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 4, 2.6f, 0.18f);
+            PaintThickBorders(pixels, owner);
+            Vignette(pixels);
             return pixels;
         }
 
@@ -140,25 +120,29 @@ namespace Game.Editor
             return index >= 0 && index < mapIds.Length ? mapIds[index] : "DB";
         }
 
-        private static float Influence(Rect region, float u, float vTop, float warp)
+        private static float RegionInset(Rect region, float u, float vTop, int index)
         {
-            float left = u - region.x;
-            float right = region.xMax - u;
-            float top = vTop - region.y;
-            float bottom = region.yMax - vTop;
-            float inset = Mathf.Min(Mathf.Min(left, right), Mathf.Min(top, bottom)) + warp;
             if (region.width <= 0.001f || region.height <= 0.001f)
-                return 0f;
-            if (inset >= Feather)
-                return 0.82f;
-            if (inset <= -Feather)
-                return 0f;
-            return Mathf.Clamp01((inset + Feather) / (Feather * 2f)) * 0.82f;
+                return -1f;
+            float wobble = RegionWobble(u, vTop, index);
+            float left = u - (region.x + wobble);
+            float right = region.xMax - u + wobble * 0.85f;
+            float top = vTop - (region.y + wobble * 0.9f);
+            float bottom = region.yMax - vTop + wobble * 0.75f;
+            return Mathf.Min(Mathf.Min(left, right), Mathf.Min(top, bottom));
         }
 
-        private static float BoundaryNoise(float u, float v)
+        private static float RegionWobble(float u, float vTop, int index)
         {
-            const float scale = 6.5f;
+            float originU = u + index * 0.41f;
+            float originV = vTop + index * 0.27f;
+            float coarse = BoundaryNoise(originU, originV, 8f) * 0.62f;
+            float fine = BoundaryNoise(originU + index * 1.7f, originV + index * 0.9f, 17f) * 0.38f;
+            return (coarse + fine) * Warp;
+        }
+
+        private static float BoundaryNoise(float u, float v, float scale)
+        {
             float x = u * scale;
             float y = v * scale;
             int x0 = Mathf.FloorToInt(x);
@@ -183,66 +167,170 @@ namespace Game.Editor
             return (n & 1023) / 1023f;
         }
 
-        private static void PaintRegionBorders(Color32[] pixels, byte[] owner)
+        private static void PaintThickBorders(Color32[] pixels, byte[] owner)
         {
-            const int radius = 2;
-            var source = (Color32[])pixels.Clone();
+            int count = ZoneWidth * ZoneHeight;
+            var distance = new int[count];
+            for (int i = 0; i < count; i++)
+                distance[i] = 99;
             for (int y = 0; y < ZoneHeight; y++)
             {
                 for (int x = 0; x < ZoneWidth; x++)
                 {
                     int index = y * ZoneWidth + x;
                     byte mine = owner[index];
-                    int nearest = radius + 1;
-                    for (int ky = -radius; ky <= radius; ky++)
-                    {
-                        int sy = y + ky;
-                        if (sy < 0 || sy >= ZoneHeight)
-                            continue;
-                        for (int kx = -radius; kx <= radius; kx++)
-                        {
-                            int sx = x + kx;
-                            if (sx < 0 || sx >= ZoneWidth)
-                                continue;
-                            if (owner[sy * ZoneWidth + sx] == mine)
-                                continue;
-                            int distance = Mathf.Max(Mathf.Abs(kx), Mathf.Abs(ky));
-                            if (distance < nearest)
-                                nearest = distance;
-                        }
-                    }
+                    bool edge = (x > 0 && owner[index - 1] != mine)
+                        || (x + 1 < ZoneWidth && owner[index + 1] != mine)
+                        || (y > 0 && owner[index - ZoneWidth] != mine)
+                        || (y + 1 < ZoneHeight && owner[index + ZoneWidth] != mine);
+                    if (edge)
+                        distance[index] = 0;
+                }
+            }
 
-                    if (nearest > radius)
-                        continue;
-                    Color32 ink = (Color32)ZoneColor(IndexMap(mine));
-                    float strength = 0.78f * (1f - nearest / (float)(radius + 1));
-                    Color32 under = source[index];
+            for (int y = 0; y < ZoneHeight; y++)
+            {
+                for (int x = 0; x < ZoneWidth; x++)
+                {
+                    int index = y * ZoneWidth + x;
+                    int next = distance[index];
+                    if (y > 0)
+                        next = Mathf.Min(next, distance[index - ZoneWidth] + 1);
+                    if (x > 0)
+                        next = Mathf.Min(next, distance[index - 1] + 1);
+                    if (y > 0 && x > 0)
+                        next = Mathf.Min(next, distance[index - ZoneWidth - 1] + 1);
+                    if (y > 0 && x + 1 < ZoneWidth)
+                        next = Mathf.Min(next, distance[index - ZoneWidth + 1] + 1);
+                    distance[index] = next;
+                }
+            }
+
+            for (int y = ZoneHeight - 1; y >= 0; y--)
+            {
+                for (int x = ZoneWidth - 1; x >= 0; x--)
+                {
+                    int index = y * ZoneWidth + x;
+                    int next = distance[index];
+                    if (y + 1 < ZoneHeight)
+                        next = Mathf.Min(next, distance[index + ZoneWidth] + 1);
+                    if (x + 1 < ZoneWidth)
+                        next = Mathf.Min(next, distance[index + 1] + 1);
+                    if (y + 1 < ZoneHeight && x + 1 < ZoneWidth)
+                        next = Mathf.Min(next, distance[index + ZoneWidth + 1] + 1);
+                    if (y + 1 < ZoneHeight && x > 0)
+                        next = Mathf.Min(next, distance[index + ZoneWidth - 1] + 1);
+                    distance[index] = next;
+                }
+            }
+
+            var inkDark = new Color32(14, 8, 5, 255);
+            for (int i = 0; i < count; i++)
+            {
+                int nearest = distance[i];
+                if (nearest > BorderBand)
+                    continue;
+                if (nearest <= DarkStroke)
+                {
+                    pixels[i] = inkDark;
+                    continue;
+                }
+
+                Color32 ink = (Color32)ZoneColor(IndexMap(owner[i]));
+                Color32 under = pixels[i];
+                pixels[i] = new Color32(
+                    (byte)Mathf.Lerp(under.r, ink.r, 0.94f),
+                    (byte)Mathf.Lerp(under.g, ink.g, 0.94f),
+                    (byte)Mathf.Lerp(under.b, ink.b, 0.94f),
+                    255);
+            }
+        }
+
+        private static void Vignette(Color32[] pixels)
+        {
+            for (int y = 0; y < ZoneHeight; y++)
+            {
+                float dy = ((y + 0.5f) / ZoneHeight - 0.5f) * 1.28f;
+                for (int x = 0; x < ZoneWidth; x++)
+                {
+                    float dx = ((x + 0.5f) / ZoneWidth - 0.5f) * 1.1f;
+                    float radius = Mathf.Sqrt(dx * dx + dy * dy) / 0.70f;
+                    float shade = Mathf.Clamp01(radius);
+                    shade = Mathf.Pow(shade, 1.5f);
+                    float gain = 1f - 0.62f * shade;
+                    int index = y * ZoneWidth + x;
+                    Color32 sample = pixels[index];
                     pixels[index] = new Color32(
-                        (byte)Mathf.Lerp(under.r, ink.r, strength),
-                        (byte)Mathf.Lerp(under.g, ink.g, strength),
-                        (byte)Mathf.Lerp(under.b, ink.b, strength),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(sample.r * gain), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(sample.g * gain), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(sample.b * gain), 0, 255),
                         255);
                 }
             }
         }
 
-        private static void WriteZoneWindow(string folder, string mapId, Rect region, Color32[] composite)
+        private static Color32[] Bilateral(Color32[] source, int width, int height, int radius, float sigmaSpace, float sigmaRange)
+        {
+            int count = width * height;
+            var luminance = new float[count];
+            for (int i = 0; i < count; i++)
+            {
+                Color32 sample = source[i];
+                luminance[i] = (sample.r * 0.30f + sample.g * 0.50f + sample.b * 0.20f) / 255f;
+            }
+
+            var dest = new Color32[count];
+            float rangeScale = 1f / (2f * sigmaRange * sigmaRange);
+            float spaceScale = 1f / (2f * sigmaSpace * sigmaSpace);
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = y * width + x;
+                    float weight = 0f;
+                    float red = 0f;
+                    float green = 0f;
+                    float blue = 0f;
+                    float center = luminance[index];
+                    for (int ky = -radius; ky <= radius; ky++)
+                    {
+                        int sy = Mathf.Clamp(y + ky, 0, height - 1);
+                        for (int kx = -radius; kx <= radius; kx++)
+                        {
+                            int sx = Mathf.Clamp(x + kx, 0, width - 1);
+                            int sampleIndex = sy * width + sx;
+                            float delta = center - luminance[sampleIndex];
+                            float sampleWeight = Mathf.Exp(-(kx * kx + ky * ky) * spaceScale - delta * delta * rangeScale);
+                            Color32 sample = source[sampleIndex];
+                            red += sample.r * sampleWeight;
+                            green += sample.g * sampleWeight;
+                            blue += sample.b * sampleWeight;
+                            weight += sampleWeight;
+                        }
+                    }
+
+                    float inverse = weight > 0.001f ? 1f / weight : 0f;
+                    dest[index] = new Color32(
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(red * inverse), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(green * inverse), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(blue * inverse), 0, 255),
+                        255);
+                }
+            }
+
+            return dest;
+        }
+
+        private static void WriteZoneWindow(string folder, string mapId, byte regionIndex, byte[] owner, Color32[] composite)
         {
             var pixels = new Color32[ZoneWidth * ZoneHeight];
-            for (int y = 0; y < ZoneHeight; y++)
+            for (int i = 0; i < pixels.Length; i++)
             {
-                float vTop = 1f - (y + 0.5f) / ZoneHeight;
-                for (int x = 0; x < ZoneWidth; x++)
-                {
-                    float u = (x + 0.5f) / ZoneWidth;
-                    float warp = BoundaryNoise(u, vTop) * Warp;
-                    float influence = Influence(region, u, vTop, warp);
-                    if (influence <= 0.001f)
-                        continue;
-                    Color32 sample = composite[y * ZoneWidth + x];
-                    sample.a = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Clamp01(influence / 0.82f) * 255f), 0, 255);
-                    pixels[y * ZoneWidth + x] = sample;
-                }
+                if (owner == null || i >= owner.Length || owner[i] != regionIndex)
+                    continue;
+                Color32 sample = composite[i];
+                sample.a = 255;
+                pixels[i] = sample;
             }
 
             WriteSprite(folder + "/skirmish.zone." + mapId + ".png", pixels, ZoneWidth, ZoneHeight);
@@ -251,14 +339,25 @@ namespace Game.Editor
         private static Color32 Grade(Color32 sample)
         {
             float luminance = (sample.r * 0.30f + sample.g * 0.52f + sample.b * 0.18f) / 255f;
-            float warmR = Mathf.Clamp01(luminance * 0.92f + 0.05f);
-            float warmG = Mathf.Clamp01(luminance * 0.84f + 0.04f);
-            float warmB = Mathf.Clamp01(luminance * 0.70f + 0.03f);
-            const float keep = 0.74f;
+            luminance = Mathf.Clamp01((luminance - 0.40f) * 1.5f + 0.45f);
+            const float steps = 5f;
+            float poster = Mathf.Round(luminance * steps) / steps;
+            float t = Mathf.Clamp01(poster * 0.9f + luminance * 0.1f);
+            Color32 dark = new Color32(34, 15, 7, 255);
+            Color32 amber = new Color32(168, 86, 24, 255);
+            Color32 sand = new Color32(224, 202, 154, 255);
+            if (t < 0.5f)
+                return LerpColor(dark, amber, t * 2f);
+            return LerpColor(amber, sand, (t - 0.5f) * 2f);
+        }
+
+        private static Color32 LerpColor(Color32 a, Color32 b, float t)
+        {
+            t = Mathf.Clamp01(t);
             return new Color32(
-                (byte)Mathf.RoundToInt((sample.r / 255f * keep + warmR * (1f - keep)) * 255f),
-                (byte)Mathf.RoundToInt((sample.g / 255f * keep + warmG * (1f - keep)) * 255f),
-                (byte)Mathf.RoundToInt((sample.b / 255f * keep + warmB * (1f - keep)) * 255f),
+                (byte)Mathf.Lerp(a.r, b.r, t),
+                (byte)Mathf.Lerp(a.g, b.g, t),
+                (byte)Mathf.Lerp(a.b, b.b, t),
                 255);
         }
 

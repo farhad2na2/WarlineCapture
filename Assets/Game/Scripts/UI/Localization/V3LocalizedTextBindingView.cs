@@ -229,6 +229,8 @@ namespace Game.UI.Runtime
                 target.enableAutoSizing=true;
                 target.fontSizeMin=minimumPresentationSize*presentationScale;
                 target.fontSizeMax=maximumPresentationSize*presentationScale;
+                if (containsRightToLeftText)
+                    FitArabicLineBox();
                 return;
             }
             if (!containsRightToLeftText)
@@ -248,19 +250,33 @@ namespace Game.UI.Runtime
             float authoredMin = sourceAutoSizing
                 ? sourceFontSizeMin * presentationScale
                 : Mathf.Min(sourceFontSize, Mathf.Max(8f, sourceFontSize * 0.55f)) * presentationScale;
-            float height = target.rectTransform != null ? target.rectTransform.rect.height : 0f;
-            if (height >= 16f)
-            {
-                float fittedMax = Mathf.Max(14f, height / 1.65f);
-                authoredMax = Mathf.Min(authoredMax, fittedMax);
-                authoredMin = Mathf.Min(authoredMin, Mathf.Max(height >= 32f ? 15f : 12f, authoredMax * 0.62f));
-                target.overflowMode = TextOverflowModes.Overflow;
-            }
-
+            FitArabicLineBox(ref authoredMin, ref authoredMax);
             if (authoredMin > authoredMax)
                 authoredMin = authoredMax;
             target.fontSizeMax = authoredMax;
             target.fontSizeMin = authoredMin;
+        }
+
+        private void FitArabicLineBox()
+        {
+            float authoredMin = target.fontSizeMin;
+            float authoredMax = target.fontSizeMax;
+            FitArabicLineBox(ref authoredMin, ref authoredMax);
+            if (authoredMin > authoredMax)
+                authoredMin = authoredMax;
+            target.fontSizeMin = authoredMin;
+            target.fontSizeMax = authoredMax;
+        }
+
+        private void FitArabicLineBox(ref float authoredMin, ref float authoredMax)
+        {
+            float height = target.rectTransform != null ? target.rectTransform.rect.height : 0f;
+            if (height < 16f)
+                return;
+            float fittedMax = Mathf.Max(14f, height / 1.65f);
+            authoredMax = Mathf.Min(authoredMax, fittedMax);
+            authoredMin = Mathf.Min(authoredMin, Mathf.Max(height >= 32f ? 15f : 12f, authoredMax * 0.62f));
+            target.overflowMode = TextOverflowModes.Overflow;
         }
 
         private string ReadAuthoredText()

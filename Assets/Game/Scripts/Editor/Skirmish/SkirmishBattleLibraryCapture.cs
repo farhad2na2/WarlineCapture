@@ -415,36 +415,51 @@ namespace Game.Editor
             var gridRect = grid as RectTransform;
             if (gridRect == null || !grid.gameObject.activeInHierarchy)
                 return;
+            Canvas.ForceUpdateCanvases();
             ScrollRect scroll = grid.GetComponent<ScrollRect>() ?? grid.GetComponentInChildren<ScrollRect>(true);
             RectTransform viewport = scroll != null && scroll.viewport != null ? scroll.viewport : gridRect;
             RectTransform content = scroll != null ? scroll.content : null;
+            bool scrolls = content != null && content.rect.height > viewport.rect.height + 2f;
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
-            for (int i = 0; i < grid.childCount; i++)
+            RejectGridCardsOutside(grid, viewport, content, scrolls, locale);
+        }
+
+        private static void RejectGridCardsOutside(Transform parent, RectTransform viewport, RectTransform content, bool scrolls, string locale)
+        {
+            for (int i = 0; i < parent.childCount; i++)
             {
-                Transform child = grid.GetChild(i);
+                Transform child = parent.GetChild(i);
                 if (child == null || !child.gameObject.activeInHierarchy)
                     continue;
-                bool card = child.name == "EmptyCell" || child.GetComponent<Button>() != null;
+                bool card = child.name == "EmptyCell" || child.name.StartsWith("BattleCard_", StringComparison.Ordinal);
                 var cardRect = child as RectTransform;
                 if (!card || cardRect == null)
+                {
+                    RejectGridCardsOutside(child, viewport, content, scrolls, locale);
                     continue;
-                RequireInside(viewport, cardRect, locale, "viewport");
+                }
+
+                RequireInside(viewport, cardRect, locale, "viewport", true);
                 if (content != null)
-                    RequireInside(content, cardRect, locale, "scroll content");
+                    RequireInside(content, cardRect, locale, "scroll content", false);
+                if (!scrolls)
+                    RequireInside(viewport, cardRect, locale, "viewport", false);
                 Image[] images = child.GetComponentsInChildren<Image>(true);
                 for (int imageIndex = 0; imageIndex < images.Length; imageIndex++)
                 {
                     Image image = images[imageIndex];
                     if (image == null || !image.gameObject.activeInHierarchy || !image.name.StartsWith("Medal", StringComparison.Ordinal))
                         continue;
-                    RequireInside(viewport, image.rectTransform, locale, "viewport");
+                    RequireInside(viewport, image.rectTransform, locale, "viewport", true);
                     if (content != null)
-                        RequireInside(content, image.rectTransform, locale, "scroll content");
+                        RequireInside(content, image.rectTransform, locale, "scroll content", false);
+                    if (!scrolls)
+                        RequireInside(viewport, image.rectTransform, locale, "viewport", false);
                 }
             }
         }
 
-        private static void RequireInside(RectTransform bounds, RectTransform item, string locale, string container)
+        private static void RequireInside(RectTransform bounds, RectTransform item, string locale, string container, bool horizontalOnly)
         {
             const float slop = 2f;
             Vector3[] corners = new Vector3[4];
@@ -453,12 +468,14 @@ namespace Game.Editor
             for (int i = 0; i < corners.Length; i++)
             {
                 Vector3 local = bounds.InverseTransformPoint(corners[i]);
-                if (local.x >= rect.xMin - slop && local.x <= rect.xMax + slop &&
-                    local.y >= rect.yMin - slop && local.y <= rect.yMax + slop)
+                bool outsideX = local.x < rect.xMin - slop || local.x > rect.xMax + slop;
+                bool outsideY = local.y < rect.yMin - slop || local.y > rect.yMax + slop;
+                if (!outsideX && (horizontalOnly || !outsideY))
                     continue;
                 throw new InvalidOperationException(
                     "Grid card is outside the " + container +
                     " locale=" + locale +
+                    " gridWidth=" + rect.width.ToString("0.0") +
                     " gridHeight=" + rect.height.ToString("0.0") +
                     " path=" + ImagePath(item) +
                     " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));

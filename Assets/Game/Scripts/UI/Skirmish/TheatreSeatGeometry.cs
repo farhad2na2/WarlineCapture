@@ -94,6 +94,13 @@ namespace Game.UI.Runtime
         private const float SafeBottom = 40f;
         /// <summary>ZoneHexPad. The outline rect is the hex bounds plus this pad. Capture measures that rect.</summary>
         public const float OutlinePad = 6f;
+        /// <summary>
+        /// ZoomHint on the preview, in plate y-down. The strip top is 96 and the hint sits 42px above it,
+        /// 36px tall, from x=36 to the right edge. On a 724px clip that is y 678–714, clear of the runway pin.
+        /// </summary>
+        public const float ZoomHintInsetX = 36f;
+        public const float ZoomHintHeight = 36f;
+        public const float ZoomHintTopGap = 46f;
         /// <summary>RequireTheaterOverlay inset. Corners must sit inside the clip shrunk by this, with <see cref="MapInsetSlop"/>.</summary>
         public const float MapInset = 12f;
         public const float MapInsetSlop = 2f;
@@ -246,6 +253,398 @@ namespace Game.UI.Runtime
             float height = Math.Max(200f, plateHeight - margin * 2f);
             float x = fa ? margin : plateWidth - reserve + margin;
             return new Box(x, margin, width, height);
+        }
+
+        public static Box ZoomHintRect(float plateWidth, float plateHeight)
+        {
+            float top = plateHeight - ZoomHintTopGap;
+            float width = Math.Max(1f, plateWidth - ZoomHintInsetX);
+            return new Box(ZoomHintInsetX, top, width, ZoomHintHeight);
+        }
+
+        /// <summary>
+        /// Every theatre geometry predicate the capture runs, in plate y-down space.
+        /// The messages match the capture so a dotnet failure is the Mac failure.
+        /// </summary>
+        public static void CollectViolations(
+            string locale,
+            float plateWidth,
+            float plateHeight,
+            string selectedMapId,
+            Vec2[][] hexes,
+            Box[] cards,
+            Box[] pins,
+            Box cue,
+            bool hasCue,
+            Box detail,
+            Box hint,
+            bool hasHint,
+            IList<string> violations)
+        {
+            if (violations == null)
+                return;
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            int count = MapIds.Length;
+            if (hexes == null)
+                hexes = new Vec2[count][];
+            if (cards == null)
+                cards = new Box[count];
+            if (pins == null)
+                pins = new Box[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                string mapId = MapIds[i];
+                if (!OutlineInside(hexes[i], plateWidth, plateHeight, out float localX, out float localY))
+                {
+                    violations.Add(
+                        "Theatre outline for " + mapId + " is outside the map locale=" + locale +
+                        " local=" + localX.ToString("0.0", CultureInfo.InvariantCulture) +
+                        "," + localY.ToString("0.0", CultureInfo.InvariantCulture));
+                }
+
+                NoteOutside(violations, pins[i], plateWidth, plateHeight, "pin", mapId, locale, true);
+                if (cards[i].W > 1f)
+                {
+                    NoteOutside(violations, cards[i], plateWidth, plateHeight, "zone card", mapId, locale, true);
+                    NoteCardEdge(violations, cards[i], plateWidth, plateHeight, mapId, locale);
+                    if (cards[i].W < 124f || cards[i].W > 160f || cards[i].H < 156f || cards[i].H > 212f)
+                    {
+                        violations.Add(
+                            "Theatre zone card for " + mapId + " is " + cards[i].W.ToString("0", CultureInfo.InvariantCulture) +
+                            "x" + cards[i].H.ToString("0", CultureInfo.InvariantCulture) +
+                            " locale=" + locale + ". Expected a portrait tile about 124-160 by 156-212.");
+                    }
+
+                    if (!SeatHolds(cards[i], hexes[i], hexes))
+                    {
+                        violations.Add(
+                            "Theatre zone card straddles a district edge locale=" + locale +
+                            " card=ZoneCard_" + mapId + ".");
+                    }
+
+                    NoteName(violations, cards[i], mapId, fa, locale);
+                    NoteLeader(violations, pins[i], cards[i], detail, mapId, locale);
+                }
+
+                if (hasHint && hexes[i] != null)
+                {
+                    for (int p = 0; p < hexes[i].Length; p++)
+                    {
+                        Vec2 a = hexes[i][p];
+                        Vec2 b = hexes[i][(p + 1) % hexes[i].Length];
+                        if (!SegmentHitsRect(a, b, hint))
+                            continue;
+                        violations.Add(
+                            "Theatre district edge crosses the zoom hint locale=" + locale +
+                            " district=" + mapId + ".");
+                        break;
+                    }
+                }
+
+                float expected = HexAspect(mapId, plateWidth, plateHeight);
+                float measured = MeasuredHexAspect(hexes[i]);
+                if (expected >= 0.2f && measured > 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
+                {
+                    violations.Add(
+                        "Theatre district hex is stretched locale=" + locale +
+                        " map=" + mapId +
+                        " ratio=" + measured.ToString("0.00", CultureInfo.InvariantCulture) +
+                        " expected=" + expected.ToString("0.00", CultureInfo.InvariantCulture) + ".");
+                }
+
+                if (PolygonArea(hexes[i]) < 40000f)
+                {
+                    violations.Add(
+                        "Theatre polygon for " + mapId + " is still a small hex locale=" + locale +
+                        " area=" + PolygonArea(hexes[i]).ToString("0", CultureInfo.InvariantCulture) +
+                        ". Expected a large district region.");
+                }
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    if (hexes[i] != null && hexes[j] != null && PolygonsOverlap(hexes[i], hexes[j], 0.75f))
+                    {
+                        violations.Add(
+                            "Theatre districts overlap locale=" + locale +
+                            " " + MapIds[i] + " " + MapIds[j] + ".");
+                    }
+
+                    if (cards[i].W < 1f || cards[j].W < 1f)
+                        continue;
+                    if (Overlaps(cards[i], cards[j], 2f))
+                    {
+                        violations.Add(
+                            "Theatre zone cards overlap locale=" + locale +
+                            " ZoneCard_" + MapIds[i] + " ZoneCard_" + MapIds[j] + ".");
+                    }
+
+                    float gap = Separation(cards[i], cards[j]);
+                    if (gap < 12f)
+                    {
+                        violations.Add(
+                            "Theatre zone cards are closer than 12px locale=" + locale +
+                            " ZoneCard_" + MapIds[i] + " ZoneCard_" + MapIds[j] +
+                            " gap=" + gap.ToString("0.0", CultureInfo.InvariantCulture) + ".");
+                    }
+                }
+            }
+
+            if (hasCue)
+            {
+                NoteOutside(violations, cue, plateWidth, plateHeight, "zoom hint", "selected", locale, true);
+                for (int i = 0; i < count; i++)
+                {
+                    if (cards[i].W > 1f && Overlaps(cue, cards[i], 2f))
+                    {
+                        violations.Add(
+                            "Theatre zoom hint overlaps a zone card locale=" + locale +
+                            " card=ZoneCard_" + MapIds[i] + ".");
+                    }
+
+                    if (pins[i].W > 1f && Overlaps(cue, pins[i], 0f))
+                    {
+                        violations.Add(
+                            "Theatre zoom hint intersects a pin locale=" + locale +
+                            " pin=ZonePin_" + MapIds[i] + ".");
+                    }
+                }
+
+                int selected = IndexOf(selectedMapId);
+                if (selected >= 0 && pins[selected].W > 1f)
+                {
+                    float distance = Distance(cue.Center, pins[selected].Center);
+                    bool insideHex = hexes[selected] != null && PointInPolygon(cue.Center, hexes[selected]);
+                    if (distance > CueNearLimit && !insideHex)
+                    {
+                        violations.Add(
+                            "Theatre zoom hint is far from the selected pin locale=" + locale +
+                            " map=" + selectedMapId +
+                            " distance=" + distance.ToString("0", CultureInfo.InvariantCulture) + ".");
+                    }
+                }
+
+                if (detail.W > 1f && Overlaps(cue, detail, 0f))
+                {
+                    violations.Add(
+                        "Theatre zoom hint intersects the detail panel locale=" + locale + ".");
+                }
+            }
+
+            if (detail.W > 1f)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    if (cards[i].W > 1f && Overlaps(cards[i], detail, 0f))
+                    {
+                        violations.Add(
+                            "Theatre zone card intersects the detail panel locale=" + locale +
+                            " card=ZoneCard_" + MapIds[i] + ".");
+                    }
+                }
+            }
+        }
+
+        public static string[] CollectViolations(float plateWidth, float plateHeight, bool fa, bool reserveOn, string selectedMapId)
+        {
+            Layout layout = Arrange(plateWidth, plateHeight, fa, reserveOn, selectedMapId);
+            var hexes = new Vec2[MapIds.Length][];
+            var cards = new Box[MapIds.Length];
+            var pins = new Box[MapIds.Length];
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                hexes[i] = layout.Seats[i].Hex;
+                cards[i] = layout.Seats[i].Card;
+                pins[i] = layout.Seats[i].Pin;
+            }
+
+            var violations = new List<string>();
+            CollectViolations(
+                fa ? "fa" : "en",
+                plateWidth,
+                plateHeight,
+                selectedMapId,
+                hexes,
+                cards,
+                pins,
+                layout.Cue,
+                layout.Cue.W > 1f,
+                DetailRect(plateWidth, plateHeight, fa, reserveOn),
+                ZoomHintRect(plateWidth, plateHeight),
+                true,
+                violations);
+            return violations.ToArray();
+        }
+
+        private static void NoteOutside(
+            IList<string> violations,
+            Box rect,
+            float plateWidth,
+            float plateHeight,
+            string kind,
+            string mapId,
+            string locale,
+            bool useSlop)
+        {
+            if (rect.W < 1f || rect.H < 1f)
+                return;
+            float slop = useSlop ? MapInsetSlop : 0f;
+            float[] xs = { rect.XMin, rect.XMax, rect.XMin, rect.XMax };
+            float[] ys = { rect.YMin, rect.YMin, rect.YMax, rect.YMax };
+            for (int i = 0; i < xs.Length; i++)
+            {
+                float lx = xs[i];
+                float ly = -ys[i];
+                float xMin = MapInset;
+                float xMax = plateWidth - MapInset;
+                float yTop = -MapInset;
+                float yBottom = -plateHeight + MapInset;
+                bool outside = lx < xMin - slop || lx > xMax + slop || ly < yBottom - slop || ly > yTop + slop;
+                if (!outside)
+                    continue;
+                violations.Add(
+                    "Theatre " + kind + " for " + mapId + " is outside the map locale=" + locale +
+                    " local=" + lx.ToString("0.0", CultureInfo.InvariantCulture) +
+                    "," + ly.ToString("0.0", CultureInfo.InvariantCulture));
+                return;
+            }
+        }
+
+        private static void NoteCardEdge(IList<string> violations, Box card, float plateWidth, float plateHeight, string mapId, string locale)
+        {
+            float[] xs = { card.XMin, card.XMax, card.XMin, card.XMax };
+            float[] ys = { card.YMin, card.YMin, card.YMax, card.YMax };
+            for (int i = 0; i < xs.Length; i++)
+            {
+                float lx = xs[i];
+                float ly = -ys[i];
+                bool outside = lx < MapInset || lx > plateWidth - MapInset || ly < -plateHeight + MapInset || ly > -MapInset;
+                if (!outside)
+                    continue;
+                violations.Add(
+                    "Theatre zone card is closer than 12px to the map edge locale=" + locale +
+                    " card=ZoneCard_" + mapId +
+                    " local=" + lx.ToString("0.0", CultureInfo.InvariantCulture) +
+                    "," + ly.ToString("0.0", CultureInfo.InvariantCulture));
+                return;
+            }
+        }
+
+        private static void NoteName(IList<string> violations, Box card, string mapId, bool fa, string locale)
+        {
+            string title = ZoneTitle(mapId, fa);
+            float width = Math.Max(1f, card.W - 12f);
+            float height = card.H >= 190f ? 40f : 34f;
+            if (NameFits(title, width, height, out float preferred))
+                return;
+            violations.Add(
+                "Theatre zone name draws past its box for " + mapId + " locale=" + locale +
+                " preferred=" + preferred.ToString("0.0", CultureInfo.InvariantCulture) +
+                " width=" + width.ToString("0.0", CultureInfo.InvariantCulture) +
+                " text=" + title + ".");
+        }
+
+        private static bool NameFits(string text, float width, float height, out float preferred)
+        {
+            preferred = 0f;
+            if (string.IsNullOrEmpty(text))
+                return true;
+            for (float size = 22f; size >= 16f; size -= 1f)
+            {
+                float longest = 0f;
+                float line = 0f;
+                int lines = 1;
+                string[] words = text.Split(' ');
+                bool wordFits = true;
+                for (int i = 0; i < words.Length; i++)
+                {
+                    float word = TextWidth(words[i], size);
+                    if (word > width + 2f)
+                    {
+                        preferred = word;
+                        wordFits = false;
+                        break;
+                    }
+
+                    float next = line <= 0f ? word : line + TextWidth(" ", size) + word;
+                    if (line > 0f && next > width + 2f)
+                    {
+                        lines++;
+                        line = word;
+                    }
+                    else
+                    {
+                        line = next;
+                    }
+
+                    if (line > longest)
+                        longest = line;
+                }
+
+                preferred = longest;
+                if (wordFits && lines <= 2 && longest <= width + 2f && lines * (size + 2f) <= height + 2f)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static string ZoneTitle(string mapId, bool fa)
+        {
+            switch (mapId)
+            {
+                case "CC": return fa ? "چهارراه شهر" : "CITY CROSSROADS";
+                case "MP": return fa ? "گذرگاه کوهستان" : "MOUNTAIN PASS";
+                case "IB": return fa ? "حوضه صنعتی" : "INDUSTRIAL BASIN";
+                case "AP": return fa ? "دشت فرودگاه" : "AIRFIELD PLAINS";
+                default: return fa ? "پایگاه کویر" : "DESERT BASE";
+            }
+        }
+
+        private static float TextWidth(string text, float size)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0f;
+            float width = 0f;
+            for (int i = 0; i < text.Length; i++)
+            {
+                char value = text[i];
+                float factor = value <= 127 ? 0.56f : 0.95f;
+                width += size * factor;
+            }
+
+            return width;
+        }
+
+        private static void NoteLeader(IList<string> violations, Box pin, Box card, Box detail, string mapId, string locale)
+        {
+            if (pin.W < 1f || card.W < 1f)
+                return;
+            Vec2 from = pin.Center;
+            Vec2 to = NearestOn(card, from);
+            float length = Distance(from, to);
+            float draw = length - PinSize * 0.5f - 4f;
+            if (draw < 4f)
+            {
+                violations.Add("Theatre leader is missing for " + mapId + " locale=" + locale + ".");
+                return;
+            }
+
+            if (detail.W > 1f && SegmentHitsRect(from, to, detail))
+            {
+                violations.Add(
+                    "Theatre leader intersects the detail panel locale=" + locale +
+                    " map=" + mapId + ".");
+            }
+        }
+
+        private static bool Overlaps(Box left, Box right, float slop)
+        {
+            return left.XMin < right.XMax - slop && right.XMin < left.XMax - slop &&
+                left.YMin < right.YMax - slop && right.YMin < left.YMax - slop;
         }
 
         /// <summary>
@@ -508,6 +907,10 @@ namespace Game.UI.Runtime
                 float maxCx = frameWidth - MapInset - OutlinePad - halfW;
                 float minCy = MapInset + OutlinePad + halfH;
                 float maxCy = frameHeight - MapInset - OutlinePad - halfH;
+                Box hint = ZoomHintRect(frameWidth, frameHeight);
+                float hintLimit = hint.YMin - 1f - halfH;
+                if (hintLimit < maxCy)
+                    maxCy = hintLimit;
                 if (minCx > maxCx || minCy > maxCy)
                 {
                     scale *= 0.96f;

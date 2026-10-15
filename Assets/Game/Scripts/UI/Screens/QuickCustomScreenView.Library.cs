@@ -954,7 +954,7 @@ namespace Game.UI.Runtime
                 stripTop = strip.anchoredPosition.y + occupied;
             }
 
-            rect.anchoredPosition = new Vector2(36f, stripTop + 48f);
+            rect.anchoredPosition = new Vector2(36f, stripTop + 42f);
             rect.sizeDelta = new Vector2(-36f, 36f);
             rect.SetAsLastSibling();
             hint.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;

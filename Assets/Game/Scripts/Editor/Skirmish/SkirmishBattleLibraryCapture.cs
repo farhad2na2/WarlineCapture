@@ -45,14 +45,58 @@ namespace Game.Editor
             Capture(true);
         }
 
+        private static readonly List<string> TheatreViolations = new List<string>();
+
         internal static void ResetZoneCountLedger()
         {
             ZonePlayableCounts.Clear();
         }
 
+        internal static void BeginTheatreReport()
+        {
+            TheatreViolations.Clear();
+        }
+
+        internal static void NoteTheatre(string message)
+        {
+            if (!string.IsNullOrEmpty(message))
+                TheatreViolations.Add(message);
+        }
+
+        internal static void FinishTheatreReport()
+        {
+            if (TheatreViolations.Count == 0)
+                return;
+            string report = "Theatre violations=" + TheatreViolations.Count + "\n" + string.Join("\n", TheatreViolations);
+            TheatreViolations.Clear();
+            throw new InvalidOperationException(report);
+        }
+
+        internal static string PendingTheatreSuffix()
+        {
+            if (TheatreViolations.Count == 0)
+                return string.Empty;
+            return "\n" + string.Join("\n", TheatreViolations);
+        }
+
+        private static void GuardTheatre(Action check)
+        {
+            if (check == null)
+                return;
+            try
+            {
+                check();
+            }
+            catch (InvalidOperationException exception)
+            {
+                NoteTheatre(exception.Message);
+            }
+        }
+
         private static void Capture(bool quit)
         {
             ResetZoneCountLedger();
+            BeginTheatreReport();
             string previousLocale = GameLocalization.CurrentLocaleCode;
             var shots = new List<CaptureIdentity>();
             try
@@ -107,13 +151,14 @@ namespace Game.Editor
                 if (written != 24)
                     throw new InvalidOperationException("Expected 24 captures, wrote " + written + ".");
                 RejectDuplicateCaptures(shots);
+                FinishTheatreReport();
                 Debug.Log(PassMarker + " files=" + written + " folder=" + OutputDirectory);
                 if (quit)
                     EditorApplication.Exit(0);
             }
             catch (Exception exception)
             {
-                Debug.LogError("[SkirmishBattleLibraryCapture] result=Failed\n" + exception);
+                Debug.LogError("[SkirmishBattleLibraryCapture] result=Failed\n" + exception + PendingTheatreSuffix());
                 if (quit)
                     EditorApplication.Exit(1);
                 else
@@ -202,7 +247,7 @@ namespace Game.Editor
                 image.Apply();
                 RenderTexture.active = previous;
                 if (string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
-                    RejectDistrictPainting(image, canvasRect, instance);
+                    GuardTheatre(() => RejectDistrictPainting(image, canvasRect, instance));
                 File.WriteAllBytes(path, image.EncodeToPNG());
                 UnityEngine.Object.DestroyImmediate(image);
             }
@@ -767,41 +812,135 @@ namespace Game.Editor
             var names = new RectTransform[mapIds.Length];
             for (int i = 0; i < mapIds.Length; i++)
             {
-                RectTransform outline = RequireTheaterOverlay(regions, clip, "ZoneOutline_" + mapIds[i], "outline", mapIds[i], locale);
-                RejectZonePolygon(outline, clip, mapIds[i], locale);
-                RequireTheaterOverlay(regions, clip, "ZonePin_" + mapIds[i], "pin", mapIds[i], locale);
-                RectTransform card = RequireTheaterOverlay(regions, clip, "ZoneCard_" + mapIds[i], "zone card", mapIds[i], locale);
-                cards[i] = card;
-                names[i] = card.Find("ZoneName") as RectTransform;
-                RejectZoneCardContent(card, pins, mapIds[i], locale);
-                RejectZoneLeader(regions, mapIds[i], locale);
-                RejectSelectedZoneMatchesGridRows(view, pins, mapIds[i], locale);
+                int index = i;
+                GuardTheatre(() =>
+                {
+                    RectTransform outline = RequireTheaterOverlay(regions, clip, "ZoneOutline_" + mapIds[index], "outline", mapIds[index], locale);
+                    RejectZonePolygon(outline, clip, mapIds[index], locale);
+                    RequireTheaterOverlay(regions, clip, "ZonePin_" + mapIds[index], "pin", mapIds[index], locale);
+                    RectTransform card = RequireTheaterOverlay(regions, clip, "ZoneCard_" + mapIds[index], "zone card", mapIds[index], locale);
+                    cards[index] = card;
+                    names[index] = card != null ? card.Find("ZoneName") as RectTransform : null;
+                    RejectZoneCardContent(card, pins, mapIds[index], locale);
+                    RejectZoneLeader(regions, mapIds[index], locale);
+                    RejectSelectedZoneMatchesGridRows(view, pins, mapIds[index], locale);
+                });
             }
 
-            RejectDistrictHalo(regions, mapIds, locale);
-            RejectDistrictsSeparate(regions, mapIds, locale);
-            RejectDistrictHexAspect(regions, mapIds, locale);
-
-            RejectZoneProgressMatchesCard(root, view, locale);
-            RejectStripMatchesZoneTotals(root, view, locale);
+            GuardTheatre(() => RejectDistrictHalo(regions, mapIds, locale));
+            GuardTheatre(() => RejectZoneProgressMatchesCard(root, view, locale));
+            GuardTheatre(() => RejectStripMatchesZoneTotals(root, view, locale));
 
             RectTransform cue = null;
             Transform cueNode = FindNamed(regions, "ZoomCue");
             if (cueNode != null && cueNode.gameObject.activeInHierarchy)
             {
-                cue = RequireTheaterOverlay(regions, clip, "ZoomCue", "zoom hint", "selected", locale);
-                TMP_Text cueText = cue.GetComponent<TMP_Text>();
-                if (cueText != null)
-                    RejectReadableLine(cueText, "zoom hint", "selected", locale);
-                RejectCueClearOfPins(regions, cue, locale);
+                GuardTheatre(() =>
+                {
+                    cue = RequireTheaterOverlay(regions, clip, "ZoomCue", "zoom hint", "selected", locale);
+                    TMP_Text cueText = cue != null ? cue.GetComponent<TMP_Text>() : null;
+                    if (cueText != null)
+                        RejectReadableLine(cueText, "zoom hint", "selected", locale);
+                });
             }
 
-            RejectTheaterOverlap(cards, names, cue, locale);
-            RejectZoneCardSpacing(cards, clip, locale);
-            RejectZoneCardsInsideOrClear(regions, mapIds, locale);
-            RejectCueNearSelectedPin(view, regions, cue, locale);
-            RejectZoomHintOffDistrictEdges(root, regions, mapIds, locale);
-            RejectDetailPanelClear(regions, cards, cue, mapIds, locale);
+            GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
+        }
+
+        private static void AppendMeasuredTheatreViolations(
+            QuickCustomScreenView view,
+            Transform regions,
+            string locale,
+            string[] mapIds)
+        {
+            if (regions == null || mapIds == null)
+                return;
+            RectTransform space = null;
+            var hexes = new TheatreSeatGeometry.Vec2[mapIds.Length][];
+            var cards = new TheatreSeatGeometry.Box[mapIds.Length];
+            var pins = new TheatreSeatGeometry.Box[mapIds.Length];
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapIds[i]);
+                if (outlineNode is RectTransform outline)
+                {
+                    space = outline.parent as RectTransform ?? space;
+                    if (space != null)
+                        hexes[i] = PlateShape(space, outline);
+                }
+
+                Transform cardNode = FindNamed(regions, "ZoneCard_" + mapIds[i]);
+                if (cardNode is RectTransform card && space != null)
+                    cards[i] = PlateBox(space, card);
+                Transform pinNode = FindNamed(regions, "ZonePin_" + mapIds[i]);
+                if (pinNode is RectTransform pin && space != null)
+                    pins[i] = PlateBox(space, pin);
+            }
+
+            if (space == null)
+                return;
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            string selected = view != null && view.LibraryViewModel != null
+                ? view.LibraryViewModel.Theater.SelectedMapId
+                : "DB";
+            TheatreSeatGeometry.Box cue = default;
+            bool hasCue = false;
+            Transform cueNode = FindNamed(regions, "ZoomCue");
+            if (cueNode is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
+            {
+                cue = PlateBox(space, cueRect);
+                hasCue = true;
+            }
+
+            TheatreSeatGeometry.Box hint = default;
+            bool hasHint = false;
+            Transform hintNode = FindNamed(regions.root, "ZoomHint");
+            if (hintNode is RectTransform hintRect && hintRect.gameObject.activeInHierarchy)
+            {
+                hint = PlateBox(space, hintRect);
+                hasHint = true;
+            }
+
+            TheatreSeatGeometry.Box detail = default;
+            Transform panel = FindNamed(regions, "TheatreDetailPanel");
+            if (panel is RectTransform panelRect && panelRect.gameObject.activeInHierarchy)
+                detail = PlateBox(space, panelRect);
+            else
+                detail = TheatreSeatGeometry.DetailRect(space.rect.width, space.rect.height, fa, space.rect.width >= 600f);
+
+            var violations = new List<string>();
+            TheatreSeatGeometry.CollectViolations(
+                locale,
+                space.rect.width,
+                space.rect.height,
+                selected,
+                hexes,
+                cards,
+                pins,
+                cue,
+                hasCue,
+                detail,
+                hint,
+                hasHint,
+                violations);
+            for (int i = 0; i < violations.Count; i++)
+                NoteTheatre(violations[i]);
+        }
+
+        private static TheatreSeatGeometry.Vec2[] PlateShape(RectTransform space, RectTransform outline)
+        {
+            V3PolygonGraphic graphic = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
+            int count = graphic != null ? graphic.PointCount : 0;
+            var plate = new TheatreSeatGeometry.Vec2[count];
+            for (int point = 0; point < count; point++)
+            {
+                Vector2 authored = graphic.LocalPoint(point);
+                Vector3 world = outline.TransformPoint(new Vector3(authored.x, authored.y, 0f));
+                Vector2 local = PlatePoint(space, world);
+                plate[point] = new TheatreSeatGeometry.Vec2(local.x, local.y);
+            }
+
+            return plate;
         }
 
         private static void RejectZoneCardsInsideOrClear(Transform regions, string[] mapIds, string locale)
@@ -1329,9 +1468,10 @@ namespace Game.Editor
                     local.y < clipRect.yMin - slop || local.y > clipRect.yMax + slop;
                 if (!outside)
                     continue;
-                throw new InvalidOperationException(
+                NoteTheatre(
                     "Theatre " + kind + " for " + mapId + " is outside the map locale=" + locale +
                     " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));
+                break;
             }
 
             return rect;

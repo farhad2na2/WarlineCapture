@@ -39,6 +39,7 @@ namespace Game.Editor
         private static void Capture(bool quit)
         {
             SkirmishBattleLibraryCapture.ResetZoneCountLedger();
+            SkirmishBattleLibraryCapture.BeginTheatreReport();
             string previousLocale = GameLocalization.CurrentLocaleCode;
             var shots = new List<SkirmishBattleLibraryCapture.CaptureIdentity>();
             try
@@ -67,13 +68,15 @@ namespace Game.Editor
                 if (written != 14)
                     throw new InvalidOperationException("Expected 14 flow captures, wrote " + written + ".");
                 SkirmishBattleLibraryCapture.RejectDuplicateCaptures(shots);
+                SkirmishBattleLibraryCapture.FinishTheatreReport();
                 Debug.Log(PassMarker + " files=" + written + " folder=" + OutputDirectory);
                 if (quit)
                     EditorApplication.Exit(0);
             }
             catch (Exception exception)
             {
-                Debug.LogError("[SkirmishBattleLibraryFlow] result=Failed\n" + exception);
+                Debug.LogError("[SkirmishBattleLibraryFlow] result=Failed\n" + exception
+                    + SkirmishBattleLibraryCapture.PendingTheatreSuffix());
                 if (quit)
                     EditorApplication.Exit(1);
                 else

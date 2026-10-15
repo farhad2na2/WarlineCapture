@@ -30,17 +30,22 @@ internal static class Program
                     bool reserveOn = reserve == 1;
                     TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(
                         width, height, fa, reserveOn, "DB");
+                    string[] violations = TheatreSeatGeometry.CollectViolations(width, height, fa, reserveOn, "DB");
                     string name = canvases[p][0] + " h=" + height.ToString("0", CultureInfo.InvariantCulture)
                         + (fa ? " FA" : " EN") + (reserveOn ? " reserve" : " open");
                     bool outlines = OutlinesHold(layout, width, height, name);
-                    bool ok = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal && outlines && layout.Seats.Length == 5;
+                    bool ok = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal && outlines
+                        && layout.Seats.Length == 5 && violations.Length == 0;
                     if (!ok)
                         failed++;
                     Console.WriteLine((ok ? "PASS " : "FAIL ") + name
                         + " cards=" + layout.CardsLegal
                         + " cue=" + layout.CueNear
                         + " aspect=" + layout.HexAspectLegal
-                        + " outlines=" + outlines);
+                        + " outlines=" + outlines
+                        + " violations=" + violations.Length);
+                    for (int v = 0; v < violations.Length; v++)
+                        Console.WriteLine("  " + violations[v]);
                     if (layout.LogLines != null)
                     {
                         for (int i = 0; i < layout.LogLines.Length; i++)

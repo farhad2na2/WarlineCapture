@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "scope": "ToolOnly_AdoptedBoundedParallelSourceSnapshot",
+  "baseline_head_root_reported": "26d2eeebd1a358b7158c2ae4270980bad89ca6b5",
+  "installed_tool_count": 1,
+  "old_sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+  "new_sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+  "payload": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/ADOPTED_TOOL_MANIFEST.json",
+      "sha256": "5f401dd01f9d677a019c040853ae87992273a165854be43da24171a86d469061",
+      "bytes": 697,
+      "contains_crlf_text": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/EVIDENCE_RECEIPT.json",
+      "sha256": "b5e28feb43764ec61f3033d38f50ab8def9d143e7c83139f46e4cb00f6763a41",
+      "bytes": 3718,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/INDEPENDENT_TOOL_REVIEW.json",
+      "sha256": "cb1238b41a07f32a7a20713170d8946e606765e0a802b5a0de12360796e41577",
+      "bytes": 1362,
+      "contains_crlf_text": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/REPLAY_INPUTS.json",
+      "sha256": "c148a71f69d3e0740aa20efb0fd18ae308712d0f837ee6bc69bb6f2e1939def5",
+      "bytes": 944,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/REPLAY_RECEIPT.json",
+      "sha256": "e6bc42e7be2b2ad413ac164178c4ab10a2dea3962c741b52c1df2682e3627549",
+      "bytes": 493,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/Replay/new_snapshot.py",
+      "sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+      "bytes": 5028,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/Replay/old_snapshot.py",
+      "sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+      "bytes": 4064,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/Replay/test_snapshot.py",
+      "sha256": "5238557e9b1acdcb9c33c04bd06de981dd410a18a9f8c3f0af68258b2d37df1e",
+      "bytes": 6185,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/actual-parity-and-controls.zip",
+      "sha256": "add43277f6b5c79b281a75c8b563815105a68db893f14718dc092bc6a95cb7d0",
+      "bytes": 5842929,
+      "contains_crlf_text": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/replay-controls.log",
+      "sha256": "54a6bf0f0015e97e80e75ae15fc2f2f928684787d08d6c244e8d221378691641",
+      "bytes": 1044,
+      "contains_crlf_text": true
+    },
+    {
+      "path": "Tools/CI/s005_windows_source_snapshot.py",
+      "sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+      "bytes": 5028,
+      "contains_crlf_text": false
+    }
+  ],
+  "historical_fixture_replay": {
+    "actual_exit": 0,
+    "methods": 7,
+    "result": "PassedHistoricalOldVsNewSmallFixtureReplay",
+    "old_sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+    "new_sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+    "test_sha256": "5238557e9b1acdcb9c33c04bd06de981dd410a18a9f8c3f0af68258b2d37df1e",
+    "log_sha256": "54a6bf0f0015e97e80e75ae15fc2f2f928684787d08d6c244e8d221378691641",
+    "full_tree_replayed": false,
+    "native_executed": false
+  },
+  "actual_full_tree_parity": {
+    "receipt_sha256": "7bb5898bb0b0222bcd7ca83c4f01a2e644c41b1a85c5758568dce8a212dd651d",
+    "output_sha256": "56c5f2c6b26f830c1f8c61bdfa5f3eb1569483203881fdac6e4d161dfdbe10df",
+    "source_rows": 41598,
+    "dll_hash_rows": 192,
+    "both_actual_exit": 0,
+    "output_bytes_identical": true,
+    "speedup_measured": false
+  },
+  "exclusions": [
+    "ALL Assets/metas/C# changes, including imported but not accepted Legacy/Witness/LogicalFrame sources",
+    "FutureJointPad/counterpart/sequential/lateEcs source drafts",
+    "Library and DLL/PDB binaries",
+    "Mission readiness/source-fit/publication/queue-qualification claims"
+  ],
+  "root_only_actions": [
+    "Compare exact scoped paths against current HEAD and stage only installedtool+listed evidence/replay/plan files. No broad directories.",
+    "Historical sevenfixture replay uses bundled old2b42/newd32, exact SHA assertions and unequalinput check; never treat installed newtool as old.",
+    "Append exact provided CRLF -text rules if not already covered; preserve existing .gitattributes. Root adds .gitattributes itself only if needed.",
+    "Compare every staged raw blob SHA to plan payload; keep unrelated working tree unstaged."
+  ],
+  "Assets_Git_native_mutations_by_preparer": false,
+  "mission_readiness": false,
+  "queue_success_enabled": false,
+  "full_tree_benchmark_executed_by_preparer": false,
+  "plan_artifacts": [
+    "CHECKPOINT.plan.json",
+    "stage.paths",
+    "NOTES.md",
+    "byte-preservation.fragment.gitattributes"
+  ],
+  "historical_authority_path_mapping": {
+    "Tools/CI/SkirmishProductionDrafts/ParallelSourceSnapshot/manifest.json": "ADOPTED_TOOL_MANIFEST.json",
+    "Tools/CI/SkirmishProductionDrafts/ParallelSourceSnapshot/s005_windows_source_snapshot.py": "Replay/new_snapshot.py",
+    "Tools/CI/SkirmishProductionDrafts/ParallelSourceSnapshot/INDEPENDENT_REVIEW.json": "INDEPENDENT_TOOL_REVIEW.json",
+    "original_producer_fixture": "actual-parity-and-controls.zip member Tools/CI/SkirmishProductionDrafts/ParallelSourceSnapshot/test_snapshot.py",
+    "old_helper_before_adoption": "Replay/old_snapshot.py",
+    "replay_fixture": "Replay/test_snapshot.py explicitly pins and uses historical old/new. Original producer fixture is retained as evidence only, never used afteradoption with installedhelper as old."
+  }
+}

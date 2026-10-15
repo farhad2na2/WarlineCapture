@@ -1,0 +1,18 @@
+{
+  "scope": "BoundedParallelHashing_ExactExistingSnapshotScope",
+  "files": [
+    {
+      "target": "Tools/CI/s005_windows_source_snapshot.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/ParallelSourceSnapshot/s005_windows_source_snapshot.py",
+      "before_sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+      "sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962"
+    }
+  ],
+  "hash_workers": 8,
+  "maximum_pending_hashes": 32,
+  "enumeration": "Unchanged Path.rglob/is_file/suffix semantics",
+  "cache_used": false,
+  "native_executed": false,
+  "full_tree_benchmark_executed": false,
+  "speedup_measured": false
+}

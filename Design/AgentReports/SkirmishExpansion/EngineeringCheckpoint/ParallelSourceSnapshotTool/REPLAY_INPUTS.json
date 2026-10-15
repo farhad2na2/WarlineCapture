@@ -1,0 +1,19 @@
+{
+  "old": {
+    "path": "Replay/old_snapshot.py",
+    "sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+    "historical_origin": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/before-tools/Tools/CI/s005_windows_source_snapshot.py"
+  },
+  "new": {
+    "path": "Replay/new_snapshot.py",
+    "sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+    "adopted_target": "Tools/CI/s005_windows_source_snapshot.py"
+  },
+  "test": {
+    "path": "Replay/test_snapshot.py",
+    "sha256": "5238557e9b1acdcb9c33c04bd06de981dd410a18a9f8c3f0af68258b2d37df1e",
+    "original_test_sha256": "b7b7b5cd602f6faf3133036ba61314e8dead2c3b160e4cb148fb166138c24446",
+    "delta": "Only repository root discovery, explicit immutable old/new imports and CLI paths plus exact old/new SHA and inequality assertions. Seven test bodies unchanged."
+  },
+  "no_current_target_as_old_input": true
+}

@@ -4,24 +4,59 @@ import hashlib
 import json
 from pathlib import Path
 import struct
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
 
 EXTENSIONS = {".cs", ".asmdef", ".asmref", ".rsp", ".json", ".asset", ".prefab", ".unity",
               ".shader", ".hlsl", ".cginc", ".compute", ".meta"}
 
 
-def snapshot(project):
+HASH_WORKERS = 8
+MAX_PENDING_HASHES = HASH_WORKERS * 4
+
+
+def _file_row(project, path):
+    with path.open("rb") as stream:
+        digest = hashlib.file_digest(stream, "sha256").hexdigest()
+    return dict(path=path.relative_to(project).as_posix(), sha256=digest)
+
+
+def _hash_paths(project, paths):
+    """Bounded IO concurrency; every future is joined and any failure aborts."""
+    pending = deque()
     found = []
+    iterator = iter(paths)
+    with ThreadPoolExecutor(max_workers=HASH_WORKERS) as executor:
+        try:
+            for _ in range(MAX_PENDING_HASHES):
+                path = next(iterator, None)
+                if path is None:
+                    break
+                pending.append(executor.submit(_file_row, project, path))
+            while pending:
+                found.append(pending.popleft().result())
+                path = next(iterator, None)
+                if path is not None:
+                    pending.append(executor.submit(_file_row, project, path))
+        except BaseException:
+            for future in pending:
+                future.cancel()
+            raise
+    return found
+
+
+def snapshot(project):
+    paths = []
     for directory in ("Assets", "Packages", "ProjectSettings"):
         folder = project / directory
         if not folder.is_dir():
             raise ValueError("Required source tree absent: " + directory)
+        # Keep predecessor Path.rglob/is_file/suffix semantics exactly. Hashing
+        # cannot silently replace this scope with an extension/path cache.
         for path in folder.rglob("*"):
             if path.is_file() and path.suffix.lower() in EXTENSIONS:
-                with path.open("rb") as stream:
-                    digest = hashlib.file_digest(stream, "sha256").hexdigest()
-                found.append(dict(path=path.relative_to(project).as_posix(),
-                                  sha256=digest))
-    return sorted(found, key=lambda row: row["path"])
+                paths.append(path)
+    return sorted(_hash_paths(project, paths), key=lambda row: row["path"])
 
 
 def candidate_hash(manifest):
@@ -45,11 +80,7 @@ def candidate_hash(manifest):
 
 def build_snapshot(project):
     folder = project / "Library/ScriptAssemblies"
-    files = []
-    for path in sorted(folder.glob("*.dll"), key=lambda path:path.as_posix()):
-        with path.open("rb") as stream:
-            files.append(dict(path=path.relative_to(project).as_posix(),
-                              sha256=hashlib.file_digest(stream, "sha256").hexdigest()))
+    files = _hash_paths(project, sorted(folder.glob("*.dll"), key=lambda path:path.as_posix()))
     if not files:
         raise ValueError("Compiled ScriptAssemblies absent; compile/load canary is required before trial.")
     digest = hashlib.sha256(json.dumps(files, sort_keys=True, separators=(",", ":")).encode()).hexdigest()

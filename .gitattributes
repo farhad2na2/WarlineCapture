@@ -299,3 +299,6 @@ Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.js
 /Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/INDEPENDENT_REVIEW.4a58b00a.json -text
 /Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/READY.json -text
 /Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/manifest.json -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/ADOPTED_TOOL_MANIFEST.json -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/INDEPENDENT_TOOL_REVIEW.json -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ParallelSourceSnapshotTool/replay-controls.log -text

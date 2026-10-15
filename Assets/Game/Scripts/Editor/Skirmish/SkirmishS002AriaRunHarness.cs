@@ -480,6 +480,15 @@ namespace Game.Editor
         private static bool TryCreateSelectedPayload(string catalog, int selectedSeed, string selectedLocale,
             out SkirmishAriaAcceptancePayload payload, out string error)
         {
+            if(productionCanary!=null)
+            {
+                var request=productionCanary.Request;
+                if(catalog!=request.CatalogId||selectedSeed!=request.Seed||selectedLocale!=request.Locale)
+                    throw new InvalidOperationException("Payload differs from exact claimed normal journey");
+                return SkirmishAriaAcceptancePayload.TryCreate(catalog,(string)request.Job["definition_id"],
+                    (int)request.Job["definition_version"],SkirmishSizeId.Standard,SkirmishDifficultyId.Regular,
+                    selectedSeed,selectedLocale,out payload,out error);
+            }
             if (catalog == "S005")
                 return SkirmishAriaAcceptancePayload.TryCreate("S005", "skirmish.s005", 2,
                     SkirmishSizeId.Standard, SkirmishDifficultyId.Regular, selectedSeed, selectedLocale, out payload, out error);
@@ -713,7 +722,7 @@ namespace Game.Editor
 
                 if (!SkirmishLaunchProjection.TryGet(em, out Entity session, out SkirmishMatchState match))
                     return;
-                bool nativeS005MenuJourney = catalogId == "S005" && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
                 if (stage <= 1 && !nativeS005MenuJourney)
                 {
                     SkirmishLaunchProjection.TryEnterMatch(em);
@@ -1392,7 +1401,14 @@ namespace Game.Editor
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string runsPath = RunsCsvPath(root);
             string csv = File.Exists(runsPath) ? File.ReadAllText(runsPath) : SkirmishAcceptanceScaffold.RequiredHeader + "\n";
-            if (!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out string runId, out string idError))
+            string runId=null,idError=null;
+            bool matrixJob=productionBatch?.Matrix!=null;
+            if(matrixJob)
+            {
+                productionBatch.Matrix.ValidateJob(productionCanary.Request.Job);
+                runId=catalogId+"-aria-matrix-"+(string)productionCanary.Request.Claim["attempt_id"];
+            }
+            if (!matrixJob&&!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out runId, out idError))
             {
                 Debug.LogError("[SkirmishS002AriaRun] result=Failed " + idError);
                 UiShellRuntimeGateway.StopAriaPlay();
@@ -1462,7 +1478,9 @@ namespace Game.Editor
                 ForcedVictory = false,
                 Aborted = abort || !haveMatch || match.Phase != SkirmishPhase.Finished
             };
-            if (TryReadCensus(root, out SkirmishAcceptanceCensus census))
+            bool nativeProvenance=!matrixJob;
+            if(matrixJob)nativeProvenance=productionCanary.TryApplyNativeProvenance(ref facts,SessionState.GetString(CandidateHashKey,""));
+            else if (TryReadCensus(root, out SkirmishAcceptanceCensus census))
             {
                 facts.DefinitionVersion = census.DefinitionVersion;
                 facts.CodeHash = census.CodeHash;
@@ -1470,7 +1488,7 @@ namespace Game.Editor
             }
 
             bool appended = SkirmishS002AriaRunLog.TryAppendTerminalRow(runsPath, in facts, out string row, out string error);
-            bool counted = appended && SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, RowResult(row));
+            bool counted = appended && nativeProvenance && (productionBatch==null||productionBatch.RuntimeErrorsClean) && SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, RowResult(row));
             string log = string.Format(
                 CultureInfo.InvariantCulture,
                 "[SkirmishS002AriaRun] appended={0} countedWin={1} error={2}\n{3}\n",
@@ -1487,12 +1505,16 @@ namespace Game.Editor
             AriaCommandEvidence.End();
             UiShellRuntimeGateway.StopAriaPlay();
             EditorApplication.ExitPlaymode();
-            RequestQuitIfAsked(counted ? 0 : 2);
+            bool operational=matrixJob&&(productionBatch==null||productionBatch.RuntimeErrorsClean)&&SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,appended,terminalSnapshotValid);
+            if(matrixJob)Debug.Log("[SkirmishProductionOperationalRun] result="+(operational?"Completed":"Failed")+
+                " outcome="+outcome+" countedWin="+(counted?1:0)+" queueSuccessEnabled=0");
+            RequestQuitIfAsked(matrixJob?(operational?0:2):(counted?0:2));
         }
 
         private static bool TryReadCensus(string root, out SkirmishAcceptanceCensus census)
         {
             census = null;
+            if(productionBatch?.Matrix!=null)return false; // Matrix records use verified native setup observations, never the S002 fallback.
             if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out _))
                 return false;
             var packaged = SkirmishExpansionCatalogConfig.Load();

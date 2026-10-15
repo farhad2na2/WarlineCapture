@@ -1,0 +1,5 @@
+The checkpoint records seven actual native Batch authority controls with checked exit 0; no real production job, win, stress run or readiness is established. Baseline720 and Stress1200 are explicit planned input authorities. S026 completed collection with checked exit 0 but all three facility configurations remained incomplete; it is unfit and unqualified.
+
+The manifest lists exact files, hashes and three generated script metas. Existing canonical22 inputs, governing documents and prior committed parent maps are separately pinned prerequisites. The proof archive contains JSON, compiler logs and response files only. Final five offline methods and parent29 controls retain separate attribution. Compound and placement-witness successors are excluded. No Assets, Git or native execution was performed to prepare this plan.
+
+Root should filter the exact stage list against HEAD358506ccf, retain unchanged MenuProbe only as a verified dependency, append scoped -text rules using forward-slash paths, and compare staged blob SHA256 to every raw payload before commit. The .gitattributes file itself is an additional root-owned change, not replaced by this fragment.

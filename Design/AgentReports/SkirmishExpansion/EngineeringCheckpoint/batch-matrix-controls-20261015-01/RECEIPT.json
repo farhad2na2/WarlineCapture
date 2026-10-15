@@ -1,0 +1,14 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/actual-native-evidence.zip",
+  "sha256": "98f1d3a81c539b972a6981420859446d1e784ddfc031260942e890136b7d782f",
+  "actualWrapperExit": 0,
+  "methods": 7,
+  "baselineSlotControls": 720,
+  "syntheticStressSlotControls": 1200,
+  "nativeRealJobs": 0,
+  "queueSuccessEnabled": false,
+  "sourceFiles": 41586,
+  "candidateSha256": "eb7e094c3c8d3685c47d82cae06756efd509018fc967ef7149b50574a6cdac0e",
+  "buildSha256": "c624b6e1525465c9e7510e2de80a902b9097e56ddb1144a810f2d0649b395f0e",
+  "readiness": false
+}

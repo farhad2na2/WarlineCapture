@@ -87,12 +87,24 @@ namespace Game.Editor
             return true;
         }
 
+        internal sealed class ProductionRuntimeErrorGate
+        {
+            private int count;
+            internal int Count=>System.Threading.Volatile.Read(ref count);
+            internal void Observe(string condition,string stackTrace,LogType type)
+            {
+                if(type==LogType.Error||type==LogType.Exception||type==LogType.Assert)System.Threading.Interlocked.Increment(ref count);
+            }
+            internal void EnsureClean()
+            { if(Count!=0)throw new InvalidOperationException("Production runtime Error/Exception/Assert observations="+Count); }
+        }
         private sealed class ProductionBatchContext
         {
             internal readonly string OutputDirectory;
             private readonly string descriptorPath,descriptorHash,manifestPath;
             private readonly JObject descriptor;
             private readonly JArray jobs;
+            internal readonly SkirmishProductionMatrixAuthority Matrix;
             private readonly Dictionary<string,string> previousEnvironment=new Dictionary<string,string>(StringComparer.Ordinal);
             private readonly SkirmishProductionBatchContract contract;
             private readonly Stopwatch wall=Stopwatch.StartNew();
@@ -106,18 +118,47 @@ namespace Game.Editor
             private readonly string baselineOwnership;
             private bool finalExitRequested;
             private int exitInvocations;
+            private readonly ProductionRuntimeErrorGate runtimeErrors=new ProductionRuntimeErrorGate();
+            private bool runtimeObservationArmed;
+            private volatile bool quitGateEmitted;
+            private int finalRequestedCode=2;
+            internal bool RuntimeErrorsClean=>runtimeErrors.Count==0;
+            private void ArmRuntimeObservation()
+            {
+                if(runtimeObservationArmed)return;
+                runtimeObservationArmed=true;
+                Application.logMessageReceivedThreaded+=ObserveRuntimeLog;
+                EditorApplication.quitting+=RuntimeQuittingGate;
+            }
+            private void ObserveRuntimeLog(string condition,string stackTrace,LogType type)
+            {
+                runtimeErrors.Observe(condition,stackTrace,type);
+                // Retain this observer until process exit: a later quitting callback
+                // can invalidate an earlier clean marker. Log, not LogError, avoids recursion.
+                if(quitGateEmitted&&(type==LogType.Error||type==LogType.Exception||type==LogType.Assert))
+                    UnityEngine.Debug.Log("[SkirmishProductionRuntimeGate] result=Failed errors="+runtimeErrors.Count+" reason=ErrorAfterQuitGate");
+            }
+            private void RuntimeQuittingGate()
+            {
+                quitGateEmitted=true;
+                bool clean=RuntimeErrorsClean&&stopped&&completed==jobs.Count&&finalExitRequested&&finalRequestedCode==0&&exitInvocations==1;
+                Write("RuntimeQuittingGate",new JObject{["errors"]=runtimeErrors.Count,["completed_jobs"]=completed,["passed"]=clean});
+                UnityEngine.Debug.Log("[SkirmishProductionRuntimeGate] result="+(clean?"Passed":"Failed")+" errors="+runtimeErrors.Count+" jobs="+completed+" actualWrapperExitStillRequired=1");
+            }
 
             internal ProductionBatchContext(string path)
             {
                 descriptorPath=Path.GetFullPath(path);descriptorHash=SkirmishProductionCanaryRequest.FileHash(descriptorPath);
                 descriptor=SkirmishProductionCanaryRequest.ReadObject(descriptorPath);
-                Exact(descriptor,"schema_version batch_id artifact_directory candidate_sha256 build_sha256 candidate_manifest_path candidate_manifest_sha256 jobs");
-                if(descriptor["schema_version"]?.Type!=JTokenType.Integer||(int)descriptor["schema_version"]!=1)
+                bool matrixMode=(int?)descriptor["schema_version"]==2;
+                Exact(descriptor,"schema_version batch_id artifact_directory candidate_sha256 build_sha256 candidate_manifest_path candidate_manifest_sha256 jobs"+(matrixMode?" sampling_plan_path sampling_plan_sha256":""));
+                if(descriptor["schema_version"]?.Type!=JTokenType.Integer||((int)descriptor["schema_version"]!=1&&!matrixMode))
                     throw new InvalidDataException("Unknown batch schema.");
                 string id=Text(descriptor,"batch_id");
                 if(!System.Text.RegularExpressions.Regex.IsMatch(id,"^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"))throw new InvalidDataException("Unsafe batch ID.");
                 jobs=descriptor["jobs"] as JArray;
-                if(jobs==null||jobs.Count!=2)throw new InvalidDataException("This bounded adapter requires exactly two development canaries.");
+                if(jobs==null||jobs.Count<1||jobs.Count>(matrixMode?1200:2)||(!matrixMode&&jobs.Count!=2))throw new InvalidDataException("Finite matrix batches require1..1200 jobs; legacy canary requires exactly two.");
+                if(matrixMode)Matrix=new SkirmishProductionMatrixAuthority(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),Text(descriptor,"sampling_plan_path"),Text(descriptor,"sampling_plan_sha256"));
                 OutputDirectory=Path.GetFullPath(Text(descriptor,"artifact_directory"));
                 var root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
                 if(!OutputDirectory.StartsWith(Path.GetFullPath(Path.Combine(root,"Logs","SkirmishProduction"))+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
@@ -139,19 +180,22 @@ namespace Game.Editor
                 SkirmishProductionBatchManifest.Validate(manifest);
                 var attempts=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var catalogs=new HashSet<string>(StringComparer.Ordinal);
+                var samplingSlots=new HashSet<string>(StringComparer.Ordinal);
                 foreach(var token in jobs)
                 {
                     var row=token as JObject;Exact(row,"job_path claim_path");
-                    var request=SkirmishProductionCanaryRequest.Read(root,Text(row,"job_path"),Text(row,"claim_path"),false);
+                    var request=SkirmishProductionCanaryRequest.Read(root,Text(row,"job_path"),Text(row,"claim_path"),false,Matrix);
                     catalogs.Add(request.CatalogId);
+                    if(Matrix!=null&&!samplingSlots.Add(request.CatalogId+"|"+request.Seed+"|"+(string)request.Job["locale"]))throw new InvalidDataException("Duplicate matrix sampling slot in finite batch");
                     if(SkirmishProductionCanaryRequest.Canonical(request.Job["source_manifest"])!=SkirmishProductionCanaryRequest.Canonical(sourceRows))
                         throw new InvalidDataException("Job must reference exactly the complete frozen candidate census");
                     if(!attempts.Add(request.ArtifactDirectory)||(string)request.Job["candidate_sha256"]!=(string)descriptor["candidate_sha256"]||
                         (string)request.Job["build_sha256"]!=(string)descriptor["build_sha256"])
                         throw new InvalidDataException("Batch attempts must be distinct and pin one frozen candidate/build.");
                 }
-                if(catalogs.Count!=2||!catalogs.Contains("S004")||!catalogs.Contains("S005"))
+                if(Matrix==null&&(catalogs.Count!=2||!catalogs.Contains("S004")||!catalogs.Contains("S005")))
                     throw new InvalidDataException("Exactly one S004 and one S005 real development canary required");
+                Matrix?.ValidateBatch(jobs.OfType<JObject>().Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text(v,"job_path"))));
                 for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
                     if(UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty)throw new InvalidOperationException("Preserve dirty Editor scene.");
                 // One atomic start sentinel. A crashed or partial batch is never resumed
@@ -170,7 +214,7 @@ namespace Game.Editor
                 // lazy companion scenes BEFORE the strict baseline. No gameplay
                 // systems/input/default World or unrelated preview scene are touched.
                 var preparationTimer=Stopwatch.StartNew();
-                PrepareNativeSceneBaseline();
+                PrepareNativeSceneBaseline(jobs.Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text((JObject)v,"job_path"))));
                 preparationTimer.Stop();
                 var ownership=SkirmishProductionBatchOwnershipCensus.Capture();
                 baselineOwnership=SkirmishProductionBatchOwnershipCensus.CleanupSignature(ownership);
@@ -185,11 +229,13 @@ namespace Game.Editor
             internal void DispatchNext()
             {
                 if(stopped)return;
+                ArmRuntimeObservation();
                 try
                 {
+                    runtimeErrors.EnsureClean();
                     if(next==jobs.Count){Complete();return;}
                     var row=(JObject)jobs[next];
-                    current=SkirmishProductionCanaryRequest.Read(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),Text(row,"job_path"),Text(row,"claim_path"),false);
+                    current=SkirmishProductionCanaryRequest.Read(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),Text(row,"job_path"),Text(row,"claim_path"),false,Matrix);
                     contract.Start((string)current.Job["candidate_sha256"],(string)current.Job["build_sha256"]);
                     jobDeadline=EditorApplication.timeSinceStartup+(int)current.Job["timeout_seconds"];
                     EditorApplication.update-=Watchdog;EditorApplication.update+=Watchdog;
@@ -232,6 +278,12 @@ namespace Game.Editor
                 }
                 if(kind=="TerminalReturnOwnerCompleted")
                 {
+                    if(Matrix!=null&&(facts["native_terminal_session_count"]?.Type!=JTokenType.Integer||
+                        (int)facts["native_terminal_session_count"]!=0||
+                        facts["native_outcome_matches_rendered_title"]?.Type!=JTokenType.Boolean||
+                        !(bool)facts["native_outcome_matches_rendered_title"]||
+                        facts["localized_main_menu_presentation"]==null||facts["localized_main_menu_presentation"].Type==JTokenType.Null))
+                        throw new InvalidDataException("Matrix continuation requires actual zero native sessions and joined rendered result/localized MainMenu");
                     if(facts["owner_probe_passed"]?.Type!=JTokenType.Boolean||!(bool)facts["owner_probe_passed"])
                         throw new InvalidDataException("Actual terminal owner reported failure.");
                     contract.Return((string)facts["native_terminal_session_id"],(string)facts["actual_shell_route"],
@@ -246,6 +298,7 @@ namespace Game.Editor
                 if(stopped){productionBatch=null;QueueFinalExit(2);return;}
                 try
                 {
+                    runtimeErrors.EnsureClean();
                     contract.Finish(code);cleanupDeadline=EditorApplication.timeSinceStartup+30;
                     EditorApplication.update-=WaitForCleanup;EditorApplication.update+=WaitForCleanup;
                 }
@@ -287,6 +340,8 @@ namespace Game.Editor
             }
             private void CheckLiveInputs()
             {
+                runtimeErrors.EnsureClean();
+                Matrix?.Recheck();
                 if(SkirmishProductionCanaryRequest.FileHash(descriptorPath)!=descriptorHash||
                     SkirmishProductionCanaryRequest.Hash(Encoding.UTF8.GetBytes(SkirmishProductionCanaryRequest.Canonical(SkirmishProductionCanaryRequest.ReadObject(current.JobPath))))!=current.JobHash||
                     SkirmishProductionCanaryRequest.Canonical(SkirmishProductionCanaryRequest.ReadObject(current.ClaimPath))!=SkirmishProductionCanaryRequest.Canonical(current.Claim)||
@@ -295,6 +350,7 @@ namespace Game.Editor
             }
             private void Complete()
             {
+                runtimeErrors.EnsureClean();
                 stopped=true;Write("BatchCompleted",new JObject { ["completed_jobs"]=completed,["elapsed_seconds"]=wall.Elapsed.TotalSeconds,["queue_success_enabled"]=false });
                 SessionState.EraseString(ProductionBatchOwnerKey);productionBatch=null;
                 UnityEngine.Debug.Log("[SkirmishProductionBatch] result=Completed jobs="+completed+" queueSuccessEnabled=0");
@@ -319,6 +375,8 @@ namespace Game.Editor
             private void QueueFinalExit(int code)
             {
                 if(finalExitRequested)throw new InvalidOperationException("A batch owner already requested its single final native exit");
+                if(!RuntimeErrorsClean)code=2;
+                finalRequestedCode=code;
                 finalExitRequested=true;productionBatchExitOwner=this;
                 Write("FinalExitQueued",new JObject { ["requested_code"]=code,["actual_process_exit"]="Pending checked wrapper" });
                 // Never call the native Exit owner from inside its current update
@@ -328,7 +386,7 @@ namespace Game.Editor
             private void RequestFinalExit(int code)
             {
                 Environment.SetEnvironmentVariable("WARLINE_ARIA_QUIT","1");
-                RequestQuitIfAsked(code);
+                RequestQuitIfAsked(RuntimeErrorsClean?code:2);
                 RestoreEnvironment();
             }
             internal void RecordActualExitInvocation(int code)
@@ -339,19 +397,16 @@ namespace Game.Editor
                     ["actual_process_exit"]="Pending external checked-wrapper receipt" });
             }
 
-            internal static void PrepareNativeSceneBaseline()
+            internal static void PrepareNativeSceneBaseline(IEnumerable<JObject> plannedJobs=null)
             {
                 var original=World.DefaultGameObjectInjectionWorld;
                 var systems=DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Streaming,true);
                 foreach(var system in systems)
                     if(TypeManager.GetSystemName(system).ToString().StartsWith("Game.",StringComparison.Ordinal))
                         throw new InvalidOperationException("Gameplay system unexpectedly entered streaming-only batch preparation");
-                using(var world=new World("ProductionBatchNativeScenePreparation",WorldFlags.Game))
-                {
-                    DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world,systems);
-                    var catalog=SkirmishExpansionCatalogConfig.Load();
+                var catalog=SkirmishExpansionCatalogConfig.Load();
                     var guids=new HashSet<string>(StringComparer.Ordinal);
-                    foreach(string id in new[]{"S004","S005"})
+                    foreach(string id in plannedJobs==null?new[]{"S004","S005"}:plannedJobs.Select(v=>(string)v["catalog_id"]).Distinct(StringComparer.Ordinal))
                     {
                         if(catalog==null||!catalog.TryGetDefinition(id,out var definition)||definition.CampaignMap==null)
                             throw new InvalidDataException("Actual packaged canary source definition missing");
@@ -360,6 +415,9 @@ namespace Game.Editor
                     guids.Add(AssetDatabase.AssetPathToGUID("Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity"));
                     foreach(string guid in guids.OrderBy(x=>x,StringComparer.Ordinal))
                     {
+                      using(var world=new World("ProductionBatchNativeScenePreparation",WorldFlags.Game))
+                      {
+                        DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world,systems);
                         if(string.IsNullOrWhiteSpace(guid))throw new InvalidDataException("Exact source SubScene identity absent");
                         var scene=SceneSystem.LoadSceneAsync(world.Unmanaged,new Unity.Entities.Hash128(guid),new SceneSystem.LoadParameters {
                             Flags=SceneLoadFlags.BlockOnImport|SceneLoadFlags.BlockOnStreamIn });
@@ -376,7 +434,8 @@ namespace Game.Editor
                 File.AppendAllText(events,new JObject { ["schema_version"]=1,["kind"]=kind,["utc"]=DateTimeOffset.UtcNow.ToString("O"),
                     ["elapsed_seconds"]=wall.Elapsed.TotalSeconds,["facts"]=facts }.ToString(Formatting.None)+"\n",new UTF8Encoding(false));
             }
-            private static string[] Worlds()=>World.All.Where(w=>w.IsCreated).Select(w=>w.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture)).OrderBy(x=>x,StringComparer.Ordinal).ToArray();
+            private static string[] Worlds()
+            {var rows=new List<string>();foreach(var world in World.All)if(world.IsCreated)rows.Add(world.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture));return rows.OrderBy(v=>v,StringComparer.Ordinal).ToArray();}
             private static string Scenes()=>SkirmishProductionCanaryRequest.Canonical(new JArray(EditorSceneManager.GetSceneManagerSetup().Select(s=>new JObject {
                 ["path"]=s.path,["loaded"]=s.isLoaded,["active"]=s.isActive })));
             private static string Text(JObject value,string key)

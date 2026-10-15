@@ -82,10 +82,13 @@ namespace Game.Editor
             var allScenes = new JArray(scenes.Values.OrderBy(Handle, StringComparer.Ordinal).Select(SceneRow));
             int measuredPreviews = scenes.Values.Count(EditorSceneManager.IsPreviewScene);
             var worlds = new JArray();
-            foreach (var world in World.All.Where(w => w.IsCreated).OrderBy(w => w.SequenceNumber))
+            var liveWorlds=new List<World>();foreach(var candidate in World.All)if(candidate.IsCreated)liveWorlds.Add(candidate);
+            foreach (var world in liveWorlds.OrderBy(w => w.SequenceNumber))
             {
                 var em = world.EntityManager;
-                using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                using var sessions = em.CreateEntityQuery(new EntityQueryDesc {
+                    Any = new[] { ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(), ComponentType.ReadOnly<SkirmishMatchState>() },
+                    Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IgnoreComponentEnabledState });
                 using var owners = em.CreateEntityQuery(new EntityQueryDesc {
                     All = new[] { ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>() },
                     Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IgnoreComponentEnabledState });

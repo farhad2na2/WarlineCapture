@@ -32,7 +32,7 @@ namespace Game.Editor
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             var request = SkirmishProductionCanaryRequest.Read(root,
                 Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_JOB"),
-                Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM"),productionBatch==null);
+                Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM"),productionBatch==null,productionBatch?.Matrix);
             var packaged = SkirmishExpansionCatalogConfig.Load();
             SkirmishScenarioDefinitionConfig definition;
             if (packaged == null || !packaged.TryGetDefinition(request.CatalogId, out definition) ||
@@ -134,6 +134,7 @@ namespace Game.Editor
                 setup.DefinitionId != (string)request.Job["definition_id"] || setup.ContentVersion != (int)request.Job["definition_version"] ||
                 setup.Seed != request.Seed || setup.SizeId != SkirmishSizeId.Standard || setup.DifficultyId != SkirmishDifficultyId.Regular)
                 throw new InvalidDataException("Actual resolved canary identity/setup differs from owned request.");
+            productionCanary.CaptureVerifiedIdentity(identity,(string)facts["native_config_sha256"]);
         }
 
         private static void RecordProductionTerminalReturn(bool passed, string reason)
@@ -177,6 +178,25 @@ namespace Game.Editor
         private sealed class ProductionCanaryContext
         {
             internal readonly SkirmishProductionCanaryRequest Request;
+            private JObject verifiedNativeIdentity;
+            private string verifiedNativeConfigHash;
+            internal void CaptureVerifiedIdentity(JObject identity,string configHash)
+            {
+                Request.VerifyNativeSetupIdentity(identity);
+                if(!System.Text.RegularExpressions.Regex.IsMatch(configHash??"","^[a-f0-9]{64}$")||
+                    (verifiedNativeIdentity!=null&&(!JToken.DeepEquals(verifiedNativeIdentity,identity)||verifiedNativeConfigHash!=configHash)))
+                    throw new InvalidDataException("Verified native setup/config identity changed within attempt");
+                verifiedNativeIdentity=(JObject)identity.DeepClone();verifiedNativeConfigHash=configHash;
+            }
+            internal bool TryApplyNativeProvenance(ref SkirmishS002AriaTerminalFacts facts,string actualSourceHash)
+            {
+                if(verifiedNativeIdentity==null)return false;
+                Request.VerifyNativeSetupIdentity(verifiedNativeIdentity);
+                if((string)verifiedNativeIdentity["catalog_id"]!=facts.CatalogId||(int)verifiedNativeIdentity["seed"]!=facts.Seed||
+                    (string)verifiedNativeIdentity["locale"]!=(facts.Locale=="en"?"EN":"FA")||
+                    actualSourceHash!=(string)Request.Job["candidate_sha256"])throw new InvalidDataException("Native run provenance differs from exact claimed attempt");
+                facts.DefinitionVersion=(int)verifiedNativeIdentity["definition_version"];facts.CodeHash=actualSourceHash;facts.ConfigHash=verifiedNativeConfigHash;return true;
+            }
             private readonly Dictionary<string, string> environment = new Dictionary<string, string>(StringComparer.Ordinal);
             private readonly SceneSetup[] sceneSetup;
             private readonly bool optionsEnabled;

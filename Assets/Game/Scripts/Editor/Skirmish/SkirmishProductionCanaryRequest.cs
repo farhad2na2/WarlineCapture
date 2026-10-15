@@ -27,7 +27,7 @@ namespace Game.Editor
             JobHash = Hash(Encoding.UTF8.GetBytes(Canonical(job)));
         }
 
-        public static SkirmishProductionCanaryRequest Read(string projectRoot, string jobPath, string claimPath, bool verifySourceBytes = true)
+        public static SkirmishProductionCanaryRequest Read(string projectRoot, string jobPath, string claimPath, bool verifySourceBytes = true, SkirmishProductionMatrixAuthority matrix = null)
         {
             var root = Path.GetFullPath(projectRoot);
             jobPath = Path.GetFullPath(jobPath); claimPath = Path.GetFullPath(claimPath);
@@ -38,13 +38,14 @@ namespace Game.Editor
             Integer(job, "seed", 1, int.MaxValue); Integer(job, "timeout_seconds", 1, 14400);
             Require(Regex.IsMatch(Text(job, "job_id"), "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"), "Unsafe job ID.");
             var catalog = Text(job, "catalog_id");
-            Require(catalog == "S004" || catalog == "S005", "Only S004/S005 canary dispatch exists.");
+            Require(matrix != null || catalog == "S004" || catalog == "S005", "Only S004/S005 canary dispatch exists without an explicit matrix plan.");
             Require(Text(job, "definition_id") == "skirmish." + catalog.ToLowerInvariant(), "Definition mismatch.");
             Require(Text(job, "size") == "Standard" && Text(job, "difficulty") == "Regular", "Only Regular/Standard canary dispatch exists.");
             Require(new[] { "EN", "FA" }.Contains(Text(job, "locale")), "Locale must be EN/FA.");
             Require(new[] { "manual", "aria" }.Contains(Text(job, "control_mode")), "Unknown control mode.");
             int[] seeds = catalog == "S004" ? new[] { 104733, 130367, 155925 } : new[] { 104734, 130368, 155926 };
-            Require(seeds.Contains((int)job["seed"]), "Seed outside bounded baseline canary.");
+            if(matrix==null) Require(seeds.Contains((int)job["seed"]), "Seed outside bounded baseline canary.");
+            else matrix.ValidateJob(job);
             foreach (var key in new[] { "candidate_sha256", "build_sha256", "setup_sha256", "content_sha256", "packet_sha256" })
                 Require(IsHash(Text(job, key)), "Malformed " + key);
             var stages = job["required_stages"] as JArray;
@@ -64,7 +65,7 @@ namespace Game.Editor
                     Require(FileHash(resolved) == (string)entry["sha256"], "Source file missing/changed: " + relative);
             }
             var packet = Text(job, "packet_path");
-            Require(packet == "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md", "Canary must use governing DB_BA packet.");
+            Require(matrix != null || packet == "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md", "Canary must use governing DB_BA packet without an explicit matrix plan.");
             Require(FileHash(Relative(root, packet)) == Text(job, "packet_sha256"), "Packet changed.");
             Require(Regex.IsMatch(Text(claim, "attempt_id"), "^attempt-[a-f0-9]{32}$") && Regex.IsMatch(Text(claim, "token"), "^[a-f0-9]{32}$"), "Malformed claim identity.");
             Require(Regex.IsMatch(Text(claim, "worker"), "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"), "Malformed worker.");

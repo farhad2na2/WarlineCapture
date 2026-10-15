@@ -75,7 +75,7 @@ def outside_assets(path, project):
     require(not Path(path).resolve().is_relative_to((Path(project) / "Assets").resolve()), "queue/artifacts must remain outside imported Assets")
 
 
-def preflight(job, project):
+def preflight(job, project, sampling_authority=None):
     require(isinstance(job, dict), "job must be an object")
     fields = {"schema_version", "job_id", "catalog_id", "definition_id", "definition_version", "candidate_sha256", "build_sha256", "setup_sha256", "content_sha256", "source_manifest", "packet_path", "packet_sha256", "seed", "locale", "size", "difficulty", "control_mode", "required_stages", "timeout_seconds"}
     require(set(job) == fields, "job fields missing or unknown: " + str(sorted(set(job) ^ fields)))
@@ -122,12 +122,15 @@ def preflight(job, project):
         require(selected is not None, "packet seed not found for selected configuration")
         require(job["difficulty"] == "Regular" or job["locale"] == "EN", "additional difficulty packet seeds are EN only")
         allowed = [int(selected.group(1))]
-    require(job["seed"] in allowed, "seed does not match packet/configuration")
+    if sampling_authority is None:
+        require(job["seed"] in allowed, "seed does not match packet/configuration")
+    else:
+        sampling_authority.validate_job(job)
     return {"schema_version": VERSION, "job_sha256": fingerprint(job), "preflight": "passed", "native_qualification": "pending"}
 
 
-def enqueue(queue, job, project):
-    preflight(job, project)
+def enqueue(queue, job, project, sampling_authority=None):
+    preflight(job, project, sampling_authority)
     outside_assets(queue, project)
     directory = Path(queue) / identifier(job["job_id"])
     directory.mkdir(parents=True, exist_ok=False)
@@ -203,13 +206,13 @@ def guard(directory):
         lock.rmdir()
 
 
-def claim(directory, worker, project):
+def claim(directory, worker, project, sampling_authority=None):
     directory = Path(directory)
     worker = identifier(worker)
     outside_assets(directory, project)
     with guard(directory):
         job = load(directory / "job.json")
-        preflight(job, project)
+        preflight(job, project, sampling_authority)
         require(not (directory / "claim.json").exists(), "job already claimed; explicit interruption required")
         attempts = sorted(directory.glob("attempt-*/result.json"))
         results = [load(p) for p in attempts]
@@ -258,19 +261,26 @@ def main():
     parser.add_argument("--status", choices=("failed", "interrupted"))
     parser.add_argument("--category", choices=sorted(CATEGORIES))
     parser.add_argument("--signature")
+    parser.add_argument("--sampling-plan", type=Path)
+    parser.add_argument("--sampling-sha")
     args = parser.parse_args()
     try:
+        require((args.sampling_plan is None)==(args.sampling_sha is None), "Both sampling plan/path SHA required")
+        authority=None
+        if args.sampling_plan is not None:
+            from skirmish_production_matrix_authority import SamplingAuthority
+            authority=SamplingAuthority(args.project,args.sampling_plan,args.sampling_sha)
         if args.command in ("preflight", "enqueue"):
             require(args.job is not None, "--job required")
             job = load(args.job)
             if args.command == "preflight":
-                result = preflight(job, args.project)
+                result = preflight(job, args.project, authority)
             else:
                 require(args.queue is not None, "--queue required")
-                result = enqueue(args.queue, job, args.project)
+                result = enqueue(args.queue, job, args.project, authority)
         elif args.command == "claim":
             require(args.directory is not None and args.worker is not None, "--directory and --worker required")
-            result = claim(args.directory, args.worker, args.project)
+            result = claim(args.directory, args.worker, args.project, authority)
         else:
             require(args.directory is not None, "--directory required")
             result = finish(args.directory, args.token, args.status, args.category, args.signature)

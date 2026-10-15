@@ -288,3 +288,14 @@ Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/READY.json 
 Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt -text
 Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/compile_editor.py -text
 Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.json -text
+/Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/RECEIPT.json -text
+/Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/actual-native-evidence.zip -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/BatchMatrixStableCheckpoint/owning-and-offline-evidence.zip -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/RECEIPT.json -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/actual-native-evidence.zip -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/INDEPENDENT_REVIEW.193cd3d9.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/READY.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/manifest.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/INDEPENDENT_REVIEW.4a58b00a.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/READY.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/manifest.json -text

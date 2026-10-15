@@ -1785,8 +1785,13 @@ namespace Game.UI.Runtime
             }
 
             float thumbX = fa ? cardW - 10f - thumb : 10f;
-            float textX = fa ? 12f : 10f + thumb + 12f;
-            float textW = Mathf.Max(80f, cardW - thumb - 32f);
+            float frame = thumb + 12f;
+            float frameX = thumbX - 6f;
+            const float nameEdge = 10f;
+            const float nameGap = 6f;
+            float textX = fa ? nameEdge : frameX + frame + nameGap;
+            float textRight = fa ? frameX - nameGap : cardW - nameEdge;
+            float textW = Mathf.Max(72f, textRight - textX);
             var name = CreateLabel(card.transform, "ZoneName", 22f);
             PlaceTopLeft(name.rectTransform, textX, 6f, textW, nameH);
             name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
@@ -1810,9 +1815,8 @@ namespace Game.UI.Runtime
             medallion.sprite = LibraryMedallion();
             medallion.color = Color.white;
             medallion.raycastTarget = false;
-            float frame = thumb + 12f;
             float frameY = Mathf.Max(1f, (cardH - frame) * 0.5f);
-            PlaceTopLeft(medallion.rectTransform, thumbX - 6f, frameY, frame, frame);
+            PlaceTopLeft(medallion.rectTransform, frameX, frameY, frame, frame);
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
             var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
@@ -2143,6 +2147,7 @@ namespace Game.UI.Runtime
         {
             if (regions == null)
                 return;
+            FitZoneNames(regions);
             TMP_Text[] texts = regions.GetComponentsInChildren<TMP_Text>(true);
             for (int i = 0; i < texts.Length; i++)
             {
@@ -2150,8 +2155,8 @@ namespace Game.UI.Runtime
                 if (text == null || !text.gameObject.activeInHierarchy)
                     continue;
                 if (text.name == "ZoneName")
-                    RaiseTheatreLine(text, 18f, 26f);
-                else if (text.name == "ZoneCount")
+                    continue;
+                if (text.name == "ZoneCount")
                 {
                     bool pending = SkirmishBattleLibraryArt.IsRenderedComingSoon(text.text);
                     RaiseTheatreLine(text, pending ? 16f : 18f, pending ? 22f : 26f);
@@ -2159,6 +2164,227 @@ namespace Game.UI.Runtime
                 else if (text.name == "ZoomCue")
                     RaiseTheatreLine(text, 18f, 24f);
             }
+        }
+
+        private const float ZoneNameFontCeiling = 26f;
+        private const float ZoneNameFontFloor = 16f;
+
+        /// <summary>
+        /// One title size for every zone card. Steps down from the ceiling until each name's
+        /// TextMesh Pro preferred width fits the box the card actually left beside the medallion.
+        /// A title that still overflows at the floor breaks after its space onto a second line.
+        /// </summary>
+        private static void FitZoneNames(Transform regions)
+        {
+            var names = new List<TMP_Text>(8);
+            TMP_Text[] texts = regions.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text != null && text.name == "ZoneName" && text.gameObject.activeInHierarchy)
+                    names.Add(text);
+            }
+
+            if (names.Count == 0)
+                return;
+            float chosen = ZoneNameFontFloor;
+            bool fitted = false;
+            for (float candidate = ZoneNameFontCeiling; candidate >= ZoneNameFontFloor - 0.01f; candidate -= 1f)
+            {
+                if (!ZoneNamesFit(names, candidate))
+                    continue;
+                chosen = candidate;
+                fitted = true;
+                break;
+            }
+
+            ApplyZoneNameSize(names, chosen, wrapOverflow: !fitted);
+        }
+
+        private static bool ZoneNamesFit(List<TMP_Text> names, float size)
+        {
+            SetZoneNameFont(names, size);
+            for (int i = 0; i < names.Count; i++)
+            {
+                TMP_Text name = names[i];
+                if (name == null)
+                    continue;
+                float boxWidth = ZoneNameBoxWidth(name);
+                if (boxWidth < 8f || name.preferredWidth > boxWidth + 1.5f)
+                    return false;
+                if (name.preferredHeight > ZoneNameHeightLimit(name.rectTransform) - 1f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static void ApplyZoneNameSize(List<TMP_Text> names, float size, bool wrapOverflow)
+        {
+            SetZoneNameFont(names, size);
+            for (int i = 0; i < names.Count; i++)
+            {
+                TMP_Text name = names[i];
+                if (name == null)
+                    continue;
+                float boxWidth = ZoneNameBoxWidth(name);
+                if (wrapOverflow && boxWidth >= 8f && name.preferredWidth > boxWidth + 1.5f)
+                    WrapZoneName(name, size);
+                GrowZoneNameBox(name);
+            }
+        }
+
+        private static void SetZoneNameFont(List<TMP_Text> names, float size)
+        {
+            for (int i = 0; i < names.Count; i++)
+            {
+                TMP_Text name = names[i];
+                if (name == null)
+                    continue;
+                var binding = name.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(size, size);
+                name.enableAutoSizing = true;
+                name.fontSizeMin = size;
+                name.fontSizeMax = size;
+                name.fontSize = size;
+                name.fontStyle = FontStyles.Bold;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.overflowMode = TextOverflowModes.Overflow;
+                name.maxVisibleLines = 1;
+                name.ForceMeshUpdate();
+            }
+        }
+
+        private static void WrapZoneName(TMP_Text name, float size)
+        {
+            string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
+            float boxWidth = ZoneNameBoxWidth(name);
+            int split = -1;
+            float bestGap = float.MaxValue;
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (source[i] != ' ')
+                    continue;
+                string left = source.Substring(0, i + 1);
+                string right = source.Substring(i + 1).TrimStart();
+                if (right.Length == 0)
+                    continue;
+                float leftWidth = ZoneNameLineWidth(name, left, size);
+                float rightWidth = ZoneNameLineWidth(name, right, size);
+                if (leftWidth > boxWidth + 1.5f || rightWidth > boxWidth + 1.5f)
+                    continue;
+                float gap = Mathf.Abs(leftWidth - rightWidth);
+                if (gap >= bestGap)
+                    continue;
+                bestGap = gap;
+                split = i;
+            }
+
+            if (split < 0)
+                return;
+            string first = source.Substring(0, split + 1);
+            string second = source.Substring(split + 1).TrimStart();
+            name.text = first + "\n" + second;
+            name.textWrappingMode = TextWrappingModes.Normal;
+            name.maxVisibleLines = 2;
+            name.fontSizeMin = size;
+            name.fontSizeMax = size;
+            name.fontSize = size;
+            name.ForceMeshUpdate();
+            float limit = ZoneNameHeightLimit(name.rectTransform);
+            if (name.preferredHeight > limit + 1.5f || name.preferredWidth > boxWidth + 1.5f)
+            {
+                name.text = source;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.maxVisibleLines = 1;
+                name.ForceMeshUpdate();
+            }
+        }
+
+        private static float ZoneNameBoxWidth(TMP_Text name)
+        {
+            if (name == null || name.rectTransform == null)
+                return 0f;
+            return Mathf.Max(name.rectTransform.rect.width, name.rectTransform.sizeDelta.x);
+        }
+
+        private static float ZoneNameLineWidth(TMP_Text name, string line, float size)
+        {
+            string previous = name.text;
+            name.text = line;
+            name.fontSizeMin = size;
+            name.fontSizeMax = size;
+            name.fontSize = size;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.maxVisibleLines = 1;
+            name.ForceMeshUpdate();
+            float measured = name.preferredWidth;
+            name.text = previous;
+            return measured;
+        }
+
+        private static void GrowZoneNameBox(TMP_Text name)
+        {
+            RectTransform rect = name.rectTransform;
+            if (rect == null)
+                return;
+            float limit = ZoneNameHeightLimit(rect);
+            float needed = Mathf.Ceil(name.preferredHeight + 2f);
+            float height = Mathf.Min(limit, Mathf.Max(rect.sizeDelta.y, needed));
+            if (height > rect.sizeDelta.y + 0.5f)
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+            NudgeRingBelowName(rect);
+        }
+
+        private static float ZoneNameHeightLimit(RectTransform name)
+        {
+            if (name == null)
+                return 0f;
+            RectTransform card = name.parent as RectTransform;
+            if (card == null)
+                return name.sizeDelta.y;
+            float top = -name.anchoredPosition.y;
+            RectTransform ring = card.Find("ProgressRing") as RectTransform;
+            RectTransform bar = card.Find("ProgressBar") as RectTransform;
+            float cardBottom = card.sizeDelta.y;
+            float barTop = bar != null ? -bar.anchoredPosition.y : cardBottom - 8f;
+            bool pendingBanner = ring != null && ring.sizeDelta.x > ring.sizeDelta.y + 8f;
+            float stop;
+            if (pendingBanner)
+                stop = -ring.anchoredPosition.y;
+            else if (ring != null)
+                stop = Mathf.Min(barTop, cardBottom - 4f - ring.sizeDelta.y);
+            else
+                stop = barTop;
+            return Mathf.Max(18f, stop - 4f - top);
+        }
+
+        private static void NudgeRingBelowName(RectTransform name)
+        {
+            RectTransform card = name.parent as RectTransform;
+            if (card == null)
+                return;
+            RectTransform ring = card.Find("ProgressRing") as RectTransform;
+            if (ring == null || ring.sizeDelta.x > ring.sizeDelta.y + 8f)
+                return;
+            float nameBottom = -name.anchoredPosition.y + name.sizeDelta.y;
+            float ringTop = -ring.anchoredPosition.y;
+            if (ringTop >= nameBottom + 2f)
+                return;
+            float nextTop = nameBottom + 2f;
+            float room = card.sizeDelta.y - 4f - nextTop;
+            float side = ring.sizeDelta.x;
+            if (room + 0.5f < side)
+            {
+                if (room < 22f)
+                    return;
+                side = room;
+            }
+
+            float right = ring.anchoredPosition.x + ring.sizeDelta.x;
+            ring.anchoredPosition = new Vector2(right - side, -nextTop);
+            ring.sizeDelta = new Vector2(side, side);
         }
 
         private static void RaiseTheatreLine(TMP_Text text, float min, float max)

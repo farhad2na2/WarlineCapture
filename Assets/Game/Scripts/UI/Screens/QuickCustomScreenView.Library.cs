@@ -50,6 +50,8 @@ namespace Game.UI.Runtime
         private const float ZoneStackGap = 6f;
         private const float ZoneHexPad = 6f;
         private const float ZoneCardGap = 12f;
+        // Above the 12px capture check. A 20:9 notch scales the frame by 0.91, and 14 × 0.91 still clears 12px.
+        private const float ZoneSeparateGap = 14f;
         private const float ZoneFrameInset = 12f;
 
         /// <summary>
@@ -830,74 +832,96 @@ namespace Game.UI.Runtime
             return true;
         }
 
+        /// <summary>
+        /// Pushes the closest pair until every card pair has the capture clearance
+        /// (the separating axis, or the smaller gap when both axes separate) of at least
+        /// <see cref="ZoneSeparateGap"/>. A move is kept only when it reduces that set
+        /// without covering another pin.
+        /// </summary>
         private static void SeparateCards(List<TheatreZoneSlot> slots, Rect safe)
         {
-            for (int pass = 0; pass < 24; pass++)
+            if (slots == null)
+                return;
+            for (int pass = 0; pass < 48; pass++)
             {
-                bool moved = false;
-                for (int i = 0; i < slots.Count; i++)
-                {
-                    for (int j = i + 1; j < slots.Count; j++)
-                    {
-                        if (!CardsTooClose(slots[i].Card, slots[j].Card))
-                            continue;
-                        Rect a = slots[i].Card;
-                        Rect b = slots[j].Card;
-                        float dx = AxisGap(a.xMin, a.xMax, b.xMin, b.xMax);
-                        float dy = AxisGap(a.yMin, a.yMax, b.yMin, b.yMax);
-                        bool pushX = dx >= dy;
-                        if (SeparatePair(slots, i, j, safe, pushX) || SeparatePair(slots, i, j, safe, !pushX))
-                            moved = true;
-                    }
-                }
-
-                if (!moved)
-                    break;
+                if (!TryPushWorstPair(slots, safe))
+                    return;
             }
         }
 
-        private static bool SeparatePair(List<TheatreZoneSlot> slots, int i, int j, Rect safe, bool pushX)
+        private static bool TryPushWorstPair(List<TheatreZoneSlot> slots, Rect safe)
         {
-            Rect a = slots[i].Card;
-            Rect b = slots[j].Card;
-            int later = pushX
-                ? (a.center.x <= b.center.x ? j : i)
-                : (a.center.y <= b.center.y ? j : i);
-            int earlier = later == j ? i : j;
+            int worstI = -1;
+            int worstJ = -1;
+            float worst = float.MaxValue;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                for (int j = i + 1; j < slots.Count; j++)
+                {
+                    float gap = CardClearance(slots[i].Card, slots[j].Card);
+                    if (gap + 0.01f >= ZoneSeparateGap || gap >= worst)
+                        continue;
+                    worst = gap;
+                    worstI = i;
+                    worstJ = j;
+                }
+            }
+
+            if (worstI < 0)
+                return false;
+
+            Rect a = slots[worstI].Card;
+            Rect b = slots[worstJ].Card;
+            float dx = AxisGap(a.xMin, a.xMax, b.xMin, b.xMax);
+            float dy = AxisGap(a.yMin, a.yMax, b.yMin, b.yMax);
+            bool primaryX = ChooseSeparationAxis(dx, dy);
+            int beforeCount = FailingPairCount(slots);
+            float beforeMin = MinimumClearance(slots);
+            int beforePins = PinHitCount(slots);
+            if (TryAcceptSeparation(slots, safe, worstI, worstJ, primaryX, beforeCount, beforeMin, beforePins))
+                return true;
+            return TryAcceptSeparation(slots, safe, worstI, worstJ, !primaryX, beforeCount, beforeMin, beforePins);
+        }
+
+        private static bool TryAcceptSeparation(
+            List<TheatreZoneSlot> slots,
+            Rect safe,
+            int i,
+            int j,
+            bool pushX,
+            int beforeCount,
+            float beforeMin,
+            int beforePins)
+        {
+            return TryCommit(slots, ApplyApart(slots, safe, i, j, pushX, 0), beforeCount, beforeMin, beforePins)
+                || TryCommit(slots, ApplyApart(slots, safe, i, j, pushX, 1), beforeCount, beforeMin, beforePins)
+                || TryCommit(slots, ApplyApart(slots, safe, i, j, pushX, 2), beforeCount, beforeMin, beforePins)
+                || TryCommit(slots, ApplyCollapse(slots, safe, i, j, pushX), beforeCount, beforeMin, beforePins);
+        }
+
+        private static bool TryCommit(
+            List<TheatreZoneSlot> slots,
+            Rect[] candidate,
+            int beforeCount,
+            float beforeMin,
+            int beforePins)
+        {
+            if (candidate == null)
+                return false;
             var snapshot = new Rect[slots.Count];
             for (int n = 0; n < slots.Count; n++)
                 snapshot[n] = slots[n].Card;
-            int before = PlacementScore(slots);
-            TheatreZoneSlot laterSlot = slots[later];
-            TheatreZoneSlot earlierSlot = slots[earlier];
-            Rect card = laterSlot.Card;
-            Rect other = earlierSlot.Card;
-            if (pushX)
+            for (int n = 0; n < slots.Count; n++)
             {
-                float pushed = other.xMax + ZoneCardGap;
-                if (pushed + card.width <= safe.xMax)
-                    card.x = pushed;
-                else
-                    other.x = Mathf.Max(safe.xMin, card.xMin - ZoneCardGap - other.width);
-            }
-            else
-            {
-                float pushed = other.yMax + ZoneCardGap;
-                if (pushed + card.height <= safe.yMax)
-                    card.y = pushed;
-                else
-                    other.y = Mathf.Max(safe.yMin, card.yMin - ZoneCardGap - other.height);
+                TheatreZoneSlot slot = slots[n];
+                slot.Card = candidate[n];
+                slots[n] = slot;
             }
 
-            card.x = Mathf.Clamp(card.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - card.width));
-            card.y = Mathf.Clamp(card.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - card.height));
-            other.x = Mathf.Clamp(other.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - other.width));
-            other.y = Mathf.Clamp(other.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - other.height));
-            laterSlot.Card = card;
-            earlierSlot.Card = other;
-            slots[later] = laterSlot;
-            slots[earlier] = earlierSlot;
-            if (PlacementScore(slots) < before)
+            int afterCount = FailingPairCount(slots);
+            float afterMin = MinimumClearance(slots);
+            bool improved = afterCount < beforeCount || (afterCount == beforeCount && afterMin > beforeMin + 0.05f);
+            if (improved && PinHitCount(slots) <= beforePins)
                 return true;
             for (int n = 0; n < slots.Count; n++)
             {
@@ -909,21 +933,186 @@ namespace Game.UI.Runtime
             return false;
         }
 
-        private static int PlacementScore(List<TheatreZoneSlot> slots)
+        /// <summary>mode 0 splits the deficit, 1 moves only the lesser card, 2 moves only the greater card.</summary>
+        private static Rect[] ApplyApart(List<TheatreZoneSlot> slots, Rect safe, int i, int j, bool pushX, int mode)
         {
-            int score = 0;
+            Rect a = slots[i].Card;
+            Rect b = slots[j].Card;
+            float gap = pushX
+                ? AxisGap(a.xMin, a.xMax, b.xMin, b.xMax)
+                : AxisGap(a.yMin, a.yMax, b.yMin, b.yMax);
+            if (gap >= ZoneSeparateGap - 0.01f)
+                return null;
+            float deficit = ZoneSeparateGap - gap;
+            int lower = pushX
+                ? (a.center.x <= b.center.x ? i : j)
+                : (a.center.y <= b.center.y ? i : j);
+            int upper = lower == i ? j : i;
+            Rect low = slots[lower].Card;
+            Rect up = slots[upper].Card;
+            float roomLow = pushX ? low.x - safe.xMin : low.y - safe.yMin;
+            float roomUp = pushX ? safe.xMax - (up.x + up.width) : safe.yMax - (up.y + up.height);
+            roomLow = Mathf.Max(0f, roomLow);
+            roomUp = Mathf.Max(0f, roomUp);
+            float takeLow;
+            float takeUp;
+            if (mode == 1)
+            {
+                takeLow = Mathf.Min(roomLow, deficit);
+                takeUp = 0f;
+            }
+            else if (mode == 2)
+            {
+                takeLow = 0f;
+                takeUp = Mathf.Min(roomUp, deficit);
+            }
+            else
+            {
+                takeLow = Mathf.Min(roomLow, deficit);
+                takeUp = Mathf.Min(roomUp, deficit - takeLow);
+            }
+
+            if (takeLow + takeUp + 0.01f < deficit)
+                return null;
+            if (pushX)
+            {
+                low.x -= takeLow;
+                up.x += takeUp;
+            }
+            else
+            {
+                low.y -= takeLow;
+                up.y += takeUp;
+            }
+
+            return CopyCards(slots, lower, low, upper, up);
+        }
+
+        /// <summary>
+        /// Overlaps the short axis by 1px when the other axis is already clear, so the capture
+        /// clearance becomes that clear axis. One pixel stays inside the 2px overlap slop.
+        /// </summary>
+        private static Rect[] ApplyCollapse(List<TheatreZoneSlot> slots, Rect safe, int i, int j, bool pushX)
+        {
+            Rect a = slots[i].Card;
+            Rect b = slots[j].Card;
+            float dx = AxisGap(a.xMin, a.xMax, b.xMin, b.xMax);
+            float dy = AxisGap(a.yMin, a.yMax, b.yMin, b.yMax);
+            float gap = pushX ? dx : dy;
+            float other = pushX ? dy : dx;
+            if (gap < 0f || other < ZoneSeparateGap - 0.01f)
+                return null;
+            float need = gap + 1f;
+            int lower = pushX
+                ? (a.center.x <= b.center.x ? i : j)
+                : (a.center.y <= b.center.y ? i : j);
+            int upper = lower == i ? j : i;
+            Rect low = slots[lower].Card;
+            Rect up = slots[upper].Card;
+            float roomLow = pushX ? safe.xMax - (low.x + low.width) : safe.yMax - (low.y + low.height);
+            float roomUp = pushX ? up.x - safe.xMin : up.y - safe.yMin;
+            roomLow = Mathf.Max(0f, roomLow);
+            roomUp = Mathf.Max(0f, roomUp);
+            float takeUp = Mathf.Min(roomUp, need);
+            float takeLow = Mathf.Min(roomLow, need - takeUp);
+            if (takeLow + takeUp + 0.01f < need)
+                return null;
+            if (pushX)
+            {
+                low.x += takeLow;
+                up.x -= takeUp;
+            }
+            else
+            {
+                low.y += takeLow;
+                up.y -= takeUp;
+            }
+
+            return CopyCards(slots, lower, low, upper, up);
+        }
+
+        private static Rect[] CopyCards(List<TheatreZoneSlot> slots, int lower, Rect low, int upper, Rect up)
+        {
+            var next = new Rect[slots.Count];
+            for (int n = 0; n < slots.Count; n++)
+                next[n] = slots[n].Card;
+            next[lower] = low;
+            next[upper] = up;
+            return next;
+        }
+
+        private static bool ChooseSeparationAxis(float dx, float dy)
+        {
+            bool xSeparated = dx >= 0f;
+            bool ySeparated = dy >= 0f;
+            if (xSeparated && ySeparated)
+                return dx <= dy;
+            if (xSeparated)
+                return true;
+            if (ySeparated)
+                return false;
+            return dx >= dy;
+        }
+
+        private static int FailingPairCount(List<TheatreZoneSlot> slots)
+        {
+            int count = 0;
             for (int i = 0; i < slots.Count; i++)
             {
-                if (CardsTooClose(slots[i].Card, slots[i].Pin))
-                    score += 10;
                 for (int j = i + 1; j < slots.Count; j++)
                 {
-                    if (CardsTooClose(slots[i].Card, slots[j].Card))
-                        score += 10;
+                    if (CardClearance(slots[i].Card, slots[j].Card) + 0.01f < ZoneSeparateGap)
+                        count++;
                 }
             }
 
-            return score;
+            return count;
+        }
+
+        private static float MinimumClearance(List<TheatreZoneSlot> slots)
+        {
+            float worst = float.MaxValue;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                for (int j = i + 1; j < slots.Count; j++)
+                {
+                    float gap = CardClearance(slots[i].Card, slots[j].Card);
+                    if (gap < worst)
+                        worst = gap;
+                }
+            }
+
+            return worst;
+        }
+
+        private static int PinHitCount(List<TheatreZoneSlot> slots)
+        {
+            int count = 0;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (CardsTooClose(slots[i].Card, slots[i].Pin))
+                    count++;
+            }
+
+            return count;
+        }
+
+        private static float CardClearance(Rect a, Rect b)
+        {
+            float dx = ZoneSeparatingGap(a.xMin, a.xMax, b.xMin, b.xMax);
+            float dy = ZoneSeparatingGap(a.yMin, a.yMax, b.yMin, b.yMax);
+            if (dx >= 0f && dy >= 0f)
+                return Mathf.Min(dx, dy);
+            return dx >= 0f ? dx : dy;
+        }
+
+        private static float ZoneSeparatingGap(float aMin, float aMax, float bMin, float bMax)
+        {
+            if (aMax <= bMin)
+                return bMin - aMax;
+            if (bMax <= aMin)
+                return aMin - bMax;
+            return -1f;
         }
 
         private static bool CardsTooClose(Rect a, Rect b)

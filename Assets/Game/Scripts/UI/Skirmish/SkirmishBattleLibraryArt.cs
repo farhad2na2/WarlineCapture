@@ -41,7 +41,7 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// Where each zone card prefers to sit, top-left normalised on the painting.
-        /// These are open ground beside the fort, the crossing, the pass, the refinery and the runway.
+        /// Mountain Pass stays on the left. Airfield Plains is lower-centre, on the sand beside the runway.
         /// </summary>
         public static readonly Vector2[] TheaterCardAnchors =
         {
@@ -49,7 +49,7 @@ namespace Game.UI.Runtime
             new Vector2(0.80f, 0.34f),
             new Vector2(0.20f, 0.61f),
             new Vector2(0.50f, 0.61f),
-            new Vector2(0.69f, 0.80f)
+            new Vector2(0.50f, 0.86f)
         };
 
         public const string ComingSoonEn = "Coming soon";

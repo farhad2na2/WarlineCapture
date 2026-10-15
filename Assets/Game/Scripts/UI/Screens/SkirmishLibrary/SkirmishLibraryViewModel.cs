@@ -17,6 +17,7 @@ namespace Game.UI.Runtime
         public const string ObjectivePrefsKey = "Warline.Skirmish.Library.Objective";
         public const string LayoutPrefsKey = "Warline.Skirmish.Library.Layout";
         public const string DifficultyPrefsKey = "Warline.Skirmish.Library.Difficulty";
+        /// <summary>Authored catalog size. Progress totals use playable scenarios, not this stand-in.</summary>
         public const int DevOverallPublishedCount = 120;
 
         private static readonly string[] MapOrder = { "DB", "CC", "MP", "IB", "AP" };
@@ -387,7 +388,7 @@ namespace Game.UI.Runtime
                     PlatePreviewKey = SkirmishLibraryPreviewAssets.ResolvePlateKey(MapOrder[i]),
                     PublishedCount = CountPublished(MapOrder[i], null),
                     WonCount = _medals.CountFor(MapOrder[i]),
-                    ZoneScenarioCount = CountZoneScenarios(MapOrder[i]),
+                    ZoneScenarioCount = CountPublished(MapOrder[i], null),
                     Medals = new SkirmishMedalTotals
                     {
                         Recruit = totals.Recruit,
@@ -403,7 +404,7 @@ namespace Game.UI.Runtime
 
             SkirmishMedalTotals overallMedals = TotalsAcrossCatalog();
             int earned = overallMedals.Recruit + overallMedals.Regular + overallMedals.Veteran + overallMedals.Commander;
-            int published = _showPlanned ? DevOverallPublishedCount : CountPublished(null, null);
+            int published = CountPublished(null, null);
             return new SkirmishTheaterState
             {
                 Pins = pins.ToArray(),
@@ -859,27 +860,6 @@ namespace Game.UI.Runtime
             }
 
             return totals;
-        }
-
-        /// <summary>
-        /// Scenarios in the battle catalog for one map. Planned entries count.
-        /// Zone cards use this as the denominator; <see cref="CountPublished"/> stays the playable subset.
-        /// </summary>
-        private int CountZoneScenarios(string mapId)
-        {
-            int count = 0;
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < _catalog.Count; i++)
-            {
-                SkirmishBattleCatalogEntry entry = _catalog[i];
-                if (!string.Equals(entry.MapId, mapId, StringComparison.OrdinalIgnoreCase))
-                    continue;
-                if (string.IsNullOrEmpty(entry.ScenarioId) || !seen.Add(entry.ScenarioId))
-                    continue;
-                count++;
-            }
-
-            return count;
         }
 
         private int CountPublished(string mapId, string objectiveId)

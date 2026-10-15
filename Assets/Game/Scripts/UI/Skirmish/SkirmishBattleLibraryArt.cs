@@ -29,7 +29,7 @@ namespace Game.UI.Runtime
             new Rect(0.00f, 0.66f, 1.00f, 0.34f)
         };
 
-        /// <summary>Pin centres on the painted theatre base, top-left normalised. The name card sits just below.</summary>
+        /// <summary>Pin centres on the painted theatre base, top-left normalised. The pin stays on the landmark.</summary>
         public static readonly Vector2[] TheaterLabelCentres =
         {
             new Vector2(0.25f, 0.15f),
@@ -38,6 +38,61 @@ namespace Game.UI.Runtime
             new Vector2(0.74f, 0.48f),
             new Vector2(0.52f, 0.78f)
         };
+
+        /// <summary>
+        /// Where each zone card prefers to sit, top-left normalised on the painting.
+        /// These are open ground beside the fort, the crossing, the pass, the refinery and the runway.
+        /// </summary>
+        public static readonly Vector2[] TheaterCardAnchors =
+        {
+            new Vector2(0.12f, 0.28f),
+            new Vector2(0.88f, 0.28f),
+            new Vector2(0.08f, 0.58f),
+            new Vector2(0.92f, 0.58f),
+            new Vector2(0.16f, 0.74f)
+        };
+
+        /// <summary>
+        /// One convex polygon per district, top-left normalised on the 1280×720 painting.
+        /// Order matches <see cref="MapIds"/>. The shapes trace the painted districts and do not overlap.
+        /// Runtime scales them only with the cover crop.
+        /// </summary>
+        public static readonly Vector2[][] TheaterDistrictPolygons =
+        {
+            new[]
+            {
+                new Vector2(0.02f, 0.02f), new Vector2(0.47f, 0.02f), new Vector2(0.48f, 0.20f),
+                new Vector2(0.36f, 0.32f), new Vector2(0.02f, 0.30f)
+            },
+            new[]
+            {
+                new Vector2(0.53f, 0.03f), new Vector2(0.97f, 0.02f), new Vector2(0.98f, 0.22f),
+                new Vector2(0.84f, 0.32f), new Vector2(0.54f, 0.28f)
+            },
+            new[]
+            {
+                new Vector2(0.03f, 0.40f), new Vector2(0.42f, 0.38f), new Vector2(0.46f, 0.50f),
+                new Vector2(0.34f, 0.64f), new Vector2(0.06f, 0.68f), new Vector2(0.02f, 0.50f)
+            },
+            new[]
+            {
+                new Vector2(0.52f, 0.38f), new Vector2(0.96f, 0.36f), new Vector2(0.98f, 0.54f),
+                new Vector2(0.88f, 0.64f), new Vector2(0.54f, 0.62f)
+            },
+            new[]
+            {
+                new Vector2(0.16f, 0.70f), new Vector2(0.96f, 0.68f), new Vector2(0.98f, 0.84f),
+                new Vector2(0.78f, 0.97f), new Vector2(0.10f, 0.96f), new Vector2(0.04f, 0.82f)
+            }
+        };
+
+        public static Vector2[] CopyDistrictPolygon(int index)
+        {
+            Vector2[] source = TheaterDistrictPolygons[index];
+            var copy = new Vector2[source.Length];
+            Array.Copy(source, copy, source.Length);
+            return copy;
+        }
 
         public static string TheaterPlate => ResourceRoot + "theater_collage";
         public static string Backdrop => ResourceRoot + "theater_backdrop";

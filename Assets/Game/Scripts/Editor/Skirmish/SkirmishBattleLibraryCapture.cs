@@ -32,6 +32,7 @@ namespace Game.Editor
 
         private static readonly string[] Locales = { "en", "fa-IR" };
         private static readonly string[] States = { "theater", "map", "grid" };
+        private static readonly Dictionary<string, string> ZonePlayableCounts = new Dictionary<string, string>(StringComparer.Ordinal);
 
         [MenuItem("Game/UI/V3/Capture Skirmish Battle Library")]
         public static void CaptureMenu()
@@ -44,8 +45,14 @@ namespace Game.Editor
             Capture(true);
         }
 
+        internal static void ResetZoneCountLedger()
+        {
+            ZonePlayableCounts.Clear();
+        }
+
         private static void Capture(bool quit)
         {
+            ResetZoneCountLedger();
             string previousLocale = GameLocalization.CurrentLocaleCode;
             var shots = new List<CaptureIdentity>();
             try
@@ -425,6 +432,7 @@ namespace Game.Editor
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
             RejectGridCardsOutside(grid, viewport, content, scrolls, wideFrame, locale);
             RejectGridZoneRows(grid, locale);
+            RejectVisibleGridRowTotals(root, locale);
         }
 
         private static bool IsWideLibraryFrame(Transform node)
@@ -763,7 +771,11 @@ namespace Game.Editor
                 cards[i] = card;
                 names[i] = card.Find("ZoneName") as RectTransform;
                 RejectZoneCardContent(card, pins, mapIds[i], locale);
+                RejectSelectedZoneMatchesGridRows(view, pins, mapIds[i], locale);
             }
+
+            RejectZoneProgressMatchesCard(root, view, locale);
+            RejectStripMatchesZoneTotals(root, view, locale);
 
             RectTransform cue = null;
             Transform cueNode = FindNamed(regions, "ZoomCue");
@@ -876,29 +888,172 @@ namespace Game.Editor
 
             if (!found)
                 throw new InvalidOperationException("Theatre pin data is missing for " + mapId + " locale=" + locale + ".");
-            if (pin.ZoneScenarioCount <= 0)
-            {
-                throw new InvalidOperationException(
-                    "Theatre zone scenario count is missing for " + mapId + " locale=" + locale +
-                    ". The card denominator is catalog scenarios for that map.");
-            }
 
-            string expected = pin.WonCount + "/" + pin.ZoneScenarioCount;
+            string expected = pin.WonCount + "/" + pin.PublishedCount;
             count.ForceMeshUpdate();
-            if (StripBidiMarks(count.text) != expected)
+            string shown = StripBidiMarks(count.text);
+            if (shown != expected)
             {
                 throw new InvalidOperationException(
                     "Theatre zone count for " + mapId + " is '" + count.text + "' locale=" + locale +
-                    ". Expected " + expected + " (medals won / catalog scenarios).");
+                    ". Expected " + expected + " (medals won / playable scenarios).");
             }
 
-            float ratio = pin.WonCount / (float)pin.ZoneScenarioCount;
+            RememberZoneCount(locale, mapId, shown, "zone card");
+            float ratio = pin.PublishedCount > 0 ? pin.WonCount / (float)pin.PublishedCount : 0f;
             if (Mathf.Abs(fill.fillAmount - Mathf.Clamp01(ratio)) > 0.02f)
             {
                 throw new InvalidOperationException(
                     "Theatre progress arc for " + mapId + " is " + fill.fillAmount.ToString("0.00") +
                     " locale=" + locale + ". Expected " + ratio.ToString("0.00") + ".");
             }
+        }
+
+        private static void RejectSelectedZoneMatchesGridRows(
+            QuickCustomScreenView view,
+            SkirmishTheaterPinState[] pins,
+            string mapId,
+            string locale)
+        {
+            if (view == null || view.LibraryViewModel == null || pins == null)
+                return;
+            SkirmishBattlefieldState field = view.LibraryViewModel.Battlefield;
+            if (!string.Equals(field.MapId, mapId, StringComparison.OrdinalIgnoreCase) || field.Tabs == null)
+                return;
+            int won = 0;
+            int published = 0;
+            for (int i = 0; i < field.Tabs.Length; i++)
+            {
+                won += field.Tabs[i].WonCount;
+                published += field.Tabs[i].PublishedCount;
+            }
+
+            SkirmishTheaterPinState pin = default;
+            for (int i = 0; i < pins.Length; i++)
+            {
+                if (!string.Equals(pins[i].MapId, mapId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                pin = pins[i];
+                break;
+            }
+
+            if (won != pin.WonCount || published != pin.PublishedCount)
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone count for " + mapId + " is " + pin.WonCount + "/" + pin.PublishedCount +
+                    " locale=" + locale + " but its grid rows sum to " + won + "/" + published + ".");
+            }
+        }
+
+        private static void RejectZoneProgressMatchesCard(GameObject root, QuickCustomScreenView view, string locale)
+        {
+            if (view == null || view.LibraryViewModel == null)
+                return;
+            Transform track = FindNamed(root.transform, "BattlesWonTrack");
+            if (track == null || !track.gameObject.activeInHierarchy)
+                return;
+            TMP_Text count = track.Find("Count")?.GetComponent<TMP_Text>();
+            if (count == null)
+                return;
+            string mapId = view.LibraryViewModel.Theater.SelectedMapId ?? string.Empty;
+            string shown = StripBidiMarks(count.text).Replace(" ", string.Empty);
+            RememberZoneCount(locale, mapId, shown, "zone progress");
+        }
+
+        private static void RejectStripMatchesZoneTotals(GameObject root, QuickCustomScreenView view, string locale)
+        {
+            if (view == null || view.LibraryViewModel == null)
+                return;
+            SkirmishTheaterState theater = view.LibraryViewModel.Theater;
+            SkirmishTheaterPinState[] pins = theater.Pins;
+            int won = 0;
+            int published = 0;
+            if (pins != null)
+            {
+                for (int i = 0; i < pins.Length; i++)
+                {
+                    won += pins[i].WonCount;
+                    published += pins[i].PublishedCount;
+                }
+            }
+
+            if (won != theater.OverallWonCount || published != theater.OverallPublishedCount)
+            {
+                throw new InvalidOperationException(
+                    "Battles-won strip is " + theater.OverallWonCount + " / " + theater.OverallPublishedCount +
+                    " locale=" + locale + " but the zone playable totals sum to " + won + " / " + published + ".");
+            }
+
+            Transform strip = FindNamed(root.transform, "OverallProgressStrip");
+            if (strip == null || !strip.gameObject.activeInHierarchy)
+                return;
+            TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
+            string expected = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
+            if (count == null || StripBidiMarks(count.text) != expected)
+            {
+                throw new InvalidOperationException(
+                    "Battles-won strip reads '" + (count != null ? count.text : string.Empty) +
+                    "' locale=" + locale + ". Expected " + expected + ".");
+            }
+        }
+
+        private static void RejectVisibleGridRowTotals(GameObject root, string locale)
+        {
+            QuickCustomScreenView view = root != null ? root.GetComponent<QuickCustomScreenView>() : null;
+            if (view == null || view.LibraryViewModel == null)
+                return;
+            string mapId = view.LibraryViewModel.Battlefield.MapId ?? string.Empty;
+            Transform grid = FindNamed(root.transform, "LibraryGrid");
+            if (grid == null)
+                return;
+            int won = 0;
+            int published = 0;
+            int rows = 0;
+            TMP_Text[] texts = grid.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null || !text.name.StartsWith("RowCount_", StringComparison.Ordinal) || !text.gameObject.activeInHierarchy)
+                    continue;
+                if (!TryParseCount(text.text, out int rowWon, out int rowPublished))
+                {
+                    throw new InvalidOperationException(
+                        "Grid row count is not won/playable locale=" + locale + " text=" + text.text + ".");
+                }
+
+                won += rowWon;
+                published += rowPublished;
+                rows++;
+            }
+
+            if (rows == 0)
+                return;
+            RememberZoneCount(locale, mapId, won + "/" + published, "grid rows");
+        }
+
+        private static void RememberZoneCount(string locale, string mapId, string count, string source)
+        {
+            string key = (locale ?? string.Empty) + "|" + (mapId ?? string.Empty).ToUpperInvariant();
+            if (ZonePlayableCounts.TryGetValue(key, out string prior) && prior != count)
+            {
+                throw new InvalidOperationException(
+                    "Zone playable count for " + mapId + " is " + count + " from " + source +
+                    " locale=" + locale + " but another surface shows " + prior + ".");
+            }
+
+            ZonePlayableCounts[key] = count;
+        }
+
+        private static bool TryParseCount(string text, out int won, out int published)
+        {
+            won = 0;
+            published = 0;
+            string cleaned = StripBidiMarks(text).Replace(" ", string.Empty);
+            int slash = cleaned.IndexOf('/');
+            if (slash <= 0 || slash >= cleaned.Length - 1)
+                return false;
+            return int.TryParse(cleaned.Substring(0, slash), out won) &&
+                int.TryParse(cleaned.Substring(slash + 1), out published);
         }
 
         private static void RejectReadableLine(TMP_Text text, string kind, string mapId, string locale)

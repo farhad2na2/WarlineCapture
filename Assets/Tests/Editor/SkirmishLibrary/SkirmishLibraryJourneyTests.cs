@@ -153,7 +153,7 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void TheaterHeaderTotalsUsePlayableCountInReleaseAndTheFullLibraryInDev()
+        public void TheaterHeaderTotalsUsePlayableCountsInReleaseAndDev()
         {
             var entries = new List<SkirmishBattleCatalogEntry>
             {
@@ -181,10 +181,10 @@ namespace Game.Tests.Editor
 
             SkirmishTheaterState dev = Model(entries, ledger, showPlanned: true).Theater;
             Assert.AreEqual(release.OverallWonCount, dev.OverallWonCount);
-            Assert.AreEqual(SkirmishLibraryViewModel.DevOverallPublishedCount, dev.OverallPublishedCount);
-            Assert.AreEqual(120, dev.OverallPublishedCount);
+            Assert.AreEqual(release.OverallPublishedCount, dev.OverallPublishedCount);
+            Assert.AreEqual(3, dev.OverallPublishedCount);
             Assert.AreEqual(release.OverallMedalsEarned, dev.OverallMedalsEarned);
-            Assert.AreEqual(480, dev.OverallMedalsPossible);
+            Assert.AreEqual(12, dev.OverallMedalsPossible);
             Assert.AreEqual(dev.OverallPublishedCount * 4, dev.OverallMedalsPossible);
             Assert.AreEqual(release.OverallMedalTotals.Recruit, dev.OverallMedalTotals.Recruit);
             Assert.AreEqual(release.OverallMedalTotals.Regular, dev.OverallMedalTotals.Regular);

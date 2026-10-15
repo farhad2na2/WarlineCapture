@@ -38,6 +38,7 @@ namespace Game.Editor
 
         private static void Capture(bool quit)
         {
+            SkirmishBattleLibraryCapture.ResetZoneCountLedger();
             string previousLocale = GameLocalization.CurrentLocaleCode;
             var shots = new List<SkirmishBattleLibraryCapture.CaptureIdentity>();
             try

@@ -424,20 +424,11 @@ namespace Game.UI.Runtime
         {
             if (_overallStrip == null)
                 return;
-            float stripWidth = TheatreStripWidth();
-            const float captionWidth = 168f;
-            const float summaryCountWidth = 96f;
-            const float pairGap = 6f;
-            float reserved = 8f + captionWidth + pairGap + summaryCountWidth + 16f;
-            float slotWidth = Mathf.Clamp((stripWidth - reserved) / 4f, 150f, 220f);
-            float run = slotWidth * 4f;
-            float origin = fa ? stripWidth - reserved - run : reserved;
             for (int i = 0; i < 4; i++)
             {
                 if (_overallStrip.Find("Medal" + i) is not RectTransform slot)
                     continue;
-                int visual = fa ? 3 - i : i;
-                PlaceStripMedal(slot, i, fa, origin + visual * slotWidth, slotWidth);
+                PlaceStripMedal(slot, i, fa);
             }
         }
 
@@ -456,17 +447,49 @@ namespace Game.UI.Runtime
             return stripWidth >= 200f ? stripWidth : 900f;
         }
 
-        private void PlaceStripMedal(RectTransform slot, int index, bool fa, float origin, float slotWidth)
+        private void PlaceStripMedal(RectTransform slot, int index, bool fa)
         {
             if (slot == null)
                 return;
-            float inner = Mathf.Max(96f, slotWidth - 8f);
-            PlaceTopLeft(slot, origin, 4f, inner, 44f);
+            float stripWidth = TheatreStripWidth();
+            TheatreSeatGeometry.StripMedal(stripWidth + 16f, fa, index, out TheatreSeatGeometry.Box seat, out TheatreSeatGeometry.Box label, out TheatreSeatGeometry.Box count);
+            PlaceTopLeft(slot, seat.X, seat.Y, seat.W, seat.H);
             LayoutElement element = slot.GetComponent<LayoutElement>();
             if (element != null)
                 element.ignoreLayout = false;
             DropExtraMedalImages(slot);
-            LayoutMedalEntry(slot, fa, 22f, 28f);
+            const float icon = 22f;
+            float iconX = fa ? seat.W - 4f - icon : 4f;
+            RectTransform iconRect = slot.Find("Icon") as RectTransform;
+            PlaceTopLeft(iconRect, iconX, 8f, icon, icon);
+            RectTransform caption = slot.Find("Caption") as RectTransform;
+            RectTransform countRect = slot.Find("Count") as RectTransform;
+            PlaceTopLeft(caption, label.X - seat.X, label.Y - seat.Y, label.W, label.H);
+            PlaceTopLeft(countRect, count.X - seat.X, count.Y - seat.Y, count.W, count.H);
+            TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
+            if (captionText != null)
+            {
+                captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                captionText.isRightToLeftText = fa;
+                captionText.overflowMode = TextOverflowModes.Overflow;
+                captionText.textWrappingMode = TextWrappingModes.NoWrap;
+                captionText.enableAutoSizing = false;
+                captionText.fontSize = 12f;
+                captionText.fontSizeMin = 12f;
+                captionText.fontSizeMax = 12f;
+                captionText.maxVisibleLines = 1;
+            }
+
+            TMP_Text countText = countRect != null ? countRect.GetComponent<TMP_Text>() : null;
+            if (countText != null)
+            {
+                countText.isRightToLeftText = false;
+                countText.alignment = TextAlignmentOptions.Center;
+                countText.overflowMode = TextOverflowModes.Overflow;
+                countText.textWrappingMode = TextWrappingModes.NoWrap;
+                countText.fontSize = 14f;
+            }
+
             BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), index);
         }
 

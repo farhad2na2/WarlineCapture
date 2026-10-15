@@ -116,6 +116,11 @@ namespace Game.UI.Runtime
         private const float CueNearLimit = 160f;
         private const float CueWidth = 220f;
         private const float CueHeight = 44f;
+        /// <summary>A card centre may sit this far outside its own hex edge.</summary>
+        public const float CardReach = 120f;
+        /// <summary>Halo is drawn this far outside the hex vertices. The clip mask cuts anything past the plate.</summary>
+        public const float HaloReach = 22f;
+        private const float MedalGap = 4f;
 
         public static Vec2[] DistrictHex(string mapId, float frameWidth, float frameHeight)
         {
@@ -303,6 +308,15 @@ namespace Game.UI.Runtime
                         "," + localY.ToString("0.0", CultureInfo.InvariantCulture));
                 }
 
+                if (!GlowInside(hexes[i], plateWidth, plateHeight, out float glowX, out float glowY))
+                {
+                    violations.Add(
+                        "Theatre district glow is clipped by the map locale=" + locale +
+                        " district=" + mapId +
+                        " local=" + glowX.ToString("0.0", CultureInfo.InvariantCulture) +
+                        "," + glowY.ToString("0.0", CultureInfo.InvariantCulture));
+                }
+
                 NoteOutside(violations, pins[i], plateWidth, plateHeight, "pin", mapId, locale, true);
                 if (cards[i].W > 1f)
                 {
@@ -325,6 +339,10 @@ namespace Game.UI.Runtime
 
                     NoteName(violations, cards[i], mapId, fa, locale);
                     NoteLeader(violations, pins[i], cards[i], detail, mapId, locale);
+                    if (hasCue)
+                        NoteLeaderCue(violations, pins[i], cards[i], cue, mapId, locale);
+                    NoteCardHome(violations, cards[i], hexes[i], mapId, locale);
+                    NoteLeaderHexes(violations, pins[i], cards[i], hexes, i, locale);
                 }
 
                 if (hasHint && hexes[i] != null)
@@ -446,6 +464,9 @@ namespace Game.UI.Runtime
                     }
                 }
             }
+
+            NoteLeaderCrossings(violations, pins, cards, locale);
+            NoteStripMedals(violations, plateWidth, fa, locale);
         }
 
         public static string[] CollectViolations(float plateWidth, float plateHeight, bool fa, bool reserveOn, string selectedMapId)
@@ -537,7 +558,7 @@ namespace Game.UI.Runtime
         {
             string title = ZoneTitle(mapId, fa);
             float width = Math.Max(1f, card.W - 12f);
-            float height = card.H >= 190f ? 40f : 34f;
+            float height = card.H >= 190f ? 48f : 40f;
             if (NameFits(title, width, height, out float preferred))
                 return;
             violations.Add(
@@ -612,11 +633,251 @@ namespace Game.UI.Runtime
             for (int i = 0; i < text.Length; i++)
             {
                 char value = text[i];
-                float factor = value <= 127 ? 0.56f : 0.95f;
+                float factor = value <= 127 ? 0.62f : 0.95f;
                 width += size * factor;
             }
 
             return width;
+        }
+
+        private static bool GlowInside(Vec2[] hex, float plateWidth, float plateHeight, out float localX, out float localY)
+        {
+            localX = 0f;
+            localY = 0f;
+            if (hex == null || hex.Length < 3)
+                return false;
+            bool inside = true;
+            for (int i = 0; i < hex.Length; i++)
+            {
+                float x = hex[i].X;
+                float y = hex[i].Y;
+                float glowLeft = x - HaloReach;
+                float glowRight = x + HaloReach;
+                float glowTop = y - HaloReach;
+                float glowBottom = y + HaloReach;
+                bool outside = glowLeft < 1f || glowRight > plateWidth - 1f || glowTop < 1f || glowBottom > plateHeight - 1f;
+                if (!outside)
+                    continue;
+                localX = glowLeft < 1f ? glowLeft : glowRight > plateWidth - 1f ? glowRight : x;
+                float plateY = glowTop < 1f ? glowTop : glowBottom > plateHeight - 1f ? glowBottom : y;
+                localY = -plateY;
+                inside = false;
+            }
+
+            return inside;
+        }
+
+        private static void NoteCardHome(IList<string> violations, Box card, Vec2[] hex, string mapId, string locale)
+        {
+            if (card.W < 1f || CentreOwns(card, hex))
+                return;
+            float reach = CentreReach(card, hex);
+            violations.Add(
+                "Theatre zone card sits away from its district locale=" + locale +
+                " card=ZoneCard_" + mapId +
+                " distance=" + reach.ToString("0", CultureInfo.InvariantCulture) + ".");
+        }
+
+        private static void NoteLeaderCue(IList<string> violations, Box pin, Box card, Box cue, string mapId, string locale)
+        {
+            if (pin.W < 1f || card.W < 1f || cue.W < 1f)
+                return;
+            if (!SegmentHitsRect(pin.Center, NearestOn(card, pin.Center), cue))
+                return;
+            violations.Add(
+                "Theatre leader intersects the zoom hint locale=" + locale +
+                " map=" + mapId + ".");
+        }
+
+        private static void NoteLeaderHexes(IList<string> violations, Box pin, Box card, Vec2[][] hexes, int index, string locale)
+        {
+            if (pin.W < 1f || card.W < 1f || hexes == null)
+                return;
+            Vec2 from = pin.Center;
+            Vec2 to = NearestOn(card, from);
+            for (int j = 0; j < hexes.Length; j++)
+            {
+                if (j == index || hexes[j] == null)
+                    continue;
+                if (!SegmentHitsPolygon(from, to, hexes[j]))
+                    continue;
+                violations.Add(
+                    "Theatre leader crosses a district locale=" + locale +
+                    " leader=" + MapIds[index] +
+                    " district=" + MapIds[j] + ".");
+            }
+        }
+
+        private static void NoteLeaderCrossings(IList<string> violations, Box[] pins, Box[] cards, string locale)
+        {
+            if (pins == null || cards == null)
+                return;
+            int count = Math.Min(pins.Length, cards.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (pins[i].W < 1f || cards[i].W < 1f)
+                    continue;
+                Vec2 from = pins[i].Center;
+                Vec2 to = NearestOn(cards[i], from);
+                for (int j = i + 1; j < count; j++)
+                {
+                    if (pins[j].W < 1f || cards[j].W < 1f)
+                        continue;
+                    Vec2 otherFrom = pins[j].Center;
+                    Vec2 otherTo = NearestOn(cards[j], otherFrom);
+                    if (!SegmentsCross(from, to, otherFrom, otherTo))
+                        continue;
+                    violations.Add(
+                        "Theatre leaders cross locale=" + locale +
+                        " " + MapIds[i] + " " + MapIds[j] + ".");
+                }
+            }
+        }
+
+        private static void NoteStripMedals(IList<string> violations, float plateWidth, bool fa, string locale)
+        {
+            string[] tiers = fa
+                ? new[] { "تازه‌کار", "عادی", "کهنه‌کار", "فرمانده" }
+                : new[] { "RECRUIT", "REGULAR", "VETERAN", "COMMANDER" };
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                StripMedal(plateWidth, fa, i, out _, out Box label, out Box count);
+                float gap = HorizontalGap(label, count);
+                if (gap < MedalGap)
+                {
+                    violations.Add(
+                        "Theatre medal label overlaps its count locale=" + locale +
+                        " tier=" + tiers[i] +
+                        " gap=" + gap.ToString("0.0", CultureInfo.InvariantCulture) + ".");
+                }
+
+                float width = TextWidth(tiers[i], 12f);
+                if (width > label.W + 1f)
+                {
+                    violations.Add(
+                        "Theatre medal label draws into its count locale=" + locale +
+                        " tier=" + tiers[i] +
+                        " preferred=" + width.ToString("0.0", CultureInfo.InvariantCulture) +
+                        " width=" + label.W.ToString("0.0", CultureInfo.InvariantCulture) + ".");
+                }
+            }
+        }
+
+        /// <summary>Strip medal caption and count, in preview space. The strip is 16px narrower than the map.</summary>
+        public static void StripMedal(float plateWidth, bool fa, int index, out Box slot, out Box label, out Box count)
+        {
+            float stripWidth = Math.Max(200f, plateWidth - 16f);
+            const float captionWidth = 168f;
+            const float summaryCountWidth = 96f;
+            const float pairGap = 6f;
+            float reserved = 8f + captionWidth + pairGap + summaryCountWidth + 16f;
+            float slotWidth = Clamp((stripWidth - reserved) / 4f, 150f, 220f);
+            float inner = Math.Max(96f, slotWidth - 8f);
+            float run = slotWidth * 4f;
+            float origin = fa ? stripWidth - reserved - run : reserved;
+            int visual = fa ? 3 - index : index;
+            float slotX = origin + visual * slotWidth;
+            const float icon = 22f;
+            const float gap = 6f;
+            const float countBox = 36f;
+            const float edge = 4f;
+            float labelWidth = inner - (edge + icon + gap + MedalGap + countBox + edge);
+            if (labelWidth < 48f)
+                labelWidth = 48f;
+            float labelX = fa ? edge + countBox + MedalGap : edge + icon + gap;
+            float countX = fa ? edge : inner - edge - countBox;
+            slot = new Box(slotX, 4f, inner, 44f);
+            label = new Box(slotX + labelX, 8f, Math.Max(1f, labelWidth), 28f);
+            count = new Box(slotX + countX, 10f, countBox, 24f);
+        }
+
+        private static float HorizontalGap(Box left, Box right)
+        {
+            bool rowsOverlap = left.YMin < right.YMax && right.YMin < left.YMax;
+            if (!rowsOverlap)
+                return 999f;
+            if (left.XMax <= right.XMin)
+                return right.XMin - left.XMax;
+            if (right.XMax <= left.XMin)
+                return left.XMin - right.XMax;
+            return -Math.Min(left.XMax, right.XMax) + Math.Max(left.XMin, right.XMin);
+        }
+
+        private static bool CentreOwns(Box card, Vec2[] hex)
+        {
+            if (hex == null || hex.Length < 3 || card.W < 1f)
+                return false;
+            if (PointInPolygon(card.Center, hex))
+                return true;
+            return DistanceToEdge(card.Center, hex) <= CardReach;
+        }
+
+        private static float CentreReach(Box card, Vec2[] hex)
+        {
+            if (hex == null || hex.Length < 3)
+                return 999f;
+            if (PointInPolygon(card.Center, hex))
+                return 0f;
+            return DistanceToEdge(card.Center, hex);
+        }
+
+        private static bool LeaderHitsOtherHex(Vec2 from, Vec2 to, Vec2[][] hexes, int index)
+        {
+            if (hexes == null)
+                return false;
+            for (int j = 0; j < hexes.Length; j++)
+            {
+                if (j == index)
+                    continue;
+                if (SegmentHitsPolygon(from, to, hexes[j]))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool SegmentHitsPolygon(Vec2 a, Vec2 b, Vec2[] polygon)
+        {
+            if (polygon == null || polygon.Length < 3)
+                return false;
+            if (PointInPolygon(a, polygon) || PointInPolygon(b, polygon))
+                return true;
+            for (int i = 0; i < polygon.Length; i++)
+            {
+                if (SegmentsCross(a, b, polygon[i], polygon[(i + 1) % polygon.Length]))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool LeaderHitsRect(Box[] pins, Box[] cards, Box rect)
+        {
+            if (pins == null || cards == null || rect.W < 1f)
+                return false;
+            int count = Math.Min(pins.Length, cards.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (pins[i].W < 1f || cards[i].W < 1f)
+                    continue;
+                if (SegmentHitsRect(pins[i].Center, NearestOn(cards[i], pins[i].Center), rect))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void BoundsOf(Vec2[] hex, out float minX, out float minY, out float maxX, out float maxY)
+        {
+            minX = maxX = hex[0].X;
+            minY = maxY = hex[0].Y;
+            for (int i = 1; i < hex.Length; i++)
+            {
+                minX = Math.Min(minX, hex[i].X);
+                maxX = Math.Max(maxX, hex[i].X);
+                minY = Math.Min(minY, hex[i].Y);
+                maxY = Math.Max(maxY, hex[i].Y);
+            }
         }
 
         private static void NoteLeader(IList<string> violations, Box pin, Box card, Box detail, string mapId, string locale)
@@ -903,10 +1164,11 @@ namespace Game.UI.Runtime
             {
                 float halfW = placement.Hw * scale;
                 float halfH = placement.Hh * scale;
-                float minCx = MapInset + OutlinePad + halfW;
-                float maxCx = frameWidth - MapInset - OutlinePad - halfW;
-                float minCy = MapInset + OutlinePad + halfH;
-                float maxCy = frameHeight - MapInset - OutlinePad - halfH;
+                float edge = Math.Max(MapInset + OutlinePad, HaloReach + 1f);
+                float minCx = edge + halfW;
+                float maxCx = frameWidth - edge - halfW;
+                float minCy = edge + halfH;
+                float maxCy = frameHeight - edge - halfH;
                 Box hint = ZoomHintRect(frameWidth, frameHeight);
                 float hintLimit = hint.YMin - 1f - halfH;
                 if (hintLimit < maxCy)
@@ -1011,7 +1273,7 @@ namespace Game.UI.Runtime
             cards = null;
             cue = default;
             float[] widths = { 156f, 148f, 140f, 132f, 124f };
-            float[] heights = { 208f, 196f, 184f, 168f, 156f };
+            float[] heights = { 208f, 196f, 184f, 172f, 156f };
             Box[] cues = CueSpots(plateWidth, plateHeight, pins, hexes, detail, selected);
             for (int size = 0; size < widths.Length; size++)
             {
@@ -1019,20 +1281,217 @@ namespace Game.UI.Runtime
                 {
                     if (cues[c].W < 1f)
                         continue;
-                    if (!PickCards(plateWidth, plateHeight, hexes, pins, detail, cues[c], widths[size], heights[size], out cards))
+                    if (!CueAccepted(cues[c], pins, null, hexes, detail, selected, plateWidth, plateHeight))
+                        continue;
+                    if (!SeatPortraits(plateWidth, plateHeight, hexes, pins, detail, cues[c], widths[size], heights[size], out cards))
+                        continue;
+                    if (LeaderHitsRect(pins, cards, cues[c]))
                         continue;
                     cue = cues[c];
                     return true;
                 }
-            }
 
-            for (int size = 0; size < widths.Length; size++)
-            {
-                if (PickCards(plateWidth, plateHeight, hexes, pins, detail, default, widths[size], heights[size], out cards))
+                if (!SeatPortraits(plateWidth, plateHeight, hexes, pins, detail, default, widths[size], heights[size], out cards))
+                    continue;
+                bool placedCue = TryPlaceCue(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out cue);
+                bool accepted = placedCue && CueAccepted(cue, pins, cards, hexes, detail, selected, plateWidth, plateHeight);
+                bool leaderClear = accepted && !LeaderHitsRect(pins, cards, cue);
+                if (leaderClear)
                     return true;
             }
 
             cards = null;
+            cue = default;
+            return false;
+        }
+
+        private static bool SeatPortraits(
+            float plateWidth,
+            float plateHeight,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box detail,
+            Box cue,
+            float cardWidth,
+            float cardHeight,
+            out Box[] cards)
+        {
+            cards = null;
+            var pools = new List<Box>[MapIds.Length];
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                pools[i] = LocalCards(i, plateWidth, plateHeight, hexes, pins, detail, cue, cardWidth, cardHeight);
+                if (pools[i].Count == 0)
+                    return false;
+            }
+
+            int[] order = new int[MapIds.Length];
+            for (int i = 0; i < order.Length; i++)
+                order[i] = i;
+            Array.Sort(order, delegate(int a, int b) { return pools[a].Count.CompareTo(pools[b].Count); });
+            var placed = new Box[MapIds.Length];
+            var used = new bool[MapIds.Length];
+            int nodes = 0;
+            if (!PlaceOwned(0, order, pools, placed, used, pins, hexes, ref nodes))
+                return false;
+            cards = placed;
+            return true;
+        }
+
+        private static List<Box> LocalCards(
+            int index,
+            float plateWidth,
+            float plateHeight,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box detail,
+            Box cue,
+            float cardWidth,
+            float cardHeight)
+        {
+            var found = new List<Box>(48);
+            Vec2[] hex = hexes[index];
+            if (hex == null || hex.Length < 3)
+                return found;
+            BoundsOf(hex, out float minX, out float minY, out float maxX, out float maxY);
+            float cx = 0f;
+            float cy = 0f;
+            for (int i = 0; i < hex.Length; i++)
+            {
+                cx += hex[i].X;
+                cy += hex[i].Y;
+            }
+
+            cx /= hex.Length;
+            cy /= hex.Length;
+            for (float dy = -96f; dy <= 96.01f; dy += 24f)
+            {
+                for (float dx = -96f; dx <= 96.01f; dx += 24f)
+                    ConsiderCard(found, index, new Box(cx + dx - cardWidth * 0.5f, cy + dy - cardHeight * 0.5f, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+            }
+
+            float[] slides = { -160f, -112f, -64f, -32f, 0f, 32f, 64f, 112f, 160f };
+            float[] gaps = { 10f, 24f, 40f, 64f };
+            float pinY = pins[index].Center.Y;
+            float pinX = pins[index].Center.X;
+            for (int g = 0; g < gaps.Length; g++)
+            {
+                float gap = gaps[g];
+                for (int s = 0; s < slides.Length; s++)
+                {
+                    float slide = slides[s];
+                    ConsiderCard(found, index, new Box(maxX + gap, pinY - cardHeight * 0.5f + slide, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(minX - gap - cardWidth, pinY - cardHeight * 0.5f + slide, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(pinX - cardWidth * 0.5f + slide, maxY + gap, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(pinX - cardWidth * 0.5f + slide, minY - gap - cardHeight, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(maxX + gap, Edge, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(minX - gap - cardWidth, Edge, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(Edge, maxY + gap, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                }
+            }
+
+            found.Sort(delegate(Box a, Box b)
+            {
+                return HomeScore(a, pins[index], hex).CompareTo(HomeScore(b, pins[index], hex));
+            });
+            if (found.Count > 18)
+                found.RemoveRange(18, found.Count - 18);
+            return found;
+        }
+
+        private static void ConsiderCard(
+            List<Box> found,
+            int index,
+            Box card,
+            float plateWidth,
+            float plateHeight,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box detail,
+            Box cue)
+        {
+            if (!OnPlate(card, plateWidth, plateHeight) || !Clears(card, detail) || !ClearsPins(card, pins))
+                return;
+            if (cue.W > 1f && (Separation(card, cue) < 12f || SegmentHitsRect(pins[index].Center, NearestOn(card, pins[index].Center), cue)))
+                return;
+            if (!SeatHolds(card, hexes[index], hexes) || !CentreOwns(card, hexes[index]))
+                return;
+            if (Leader(pins[index], card) < LeaderMin)
+                return;
+            Vec2 from = pins[index].Center;
+            Vec2 to = NearestOn(card, from);
+            if (detail.W > 1f && SegmentHitsRect(from, to, detail))
+                return;
+            if (LeaderHitsOtherHex(from, to, hexes, index))
+                return;
+            for (int i = 0; i < found.Count; i++)
+            {
+                if (Math.Abs(found[i].X - card.X) < 8f && Math.Abs(found[i].Y - card.Y) < 8f)
+                    return;
+            }
+
+            found.Add(card);
+        }
+
+        private static float HomeScore(Box card, Box pin, Vec2[] hex)
+        {
+            float leader = Leader(pin, card);
+            bool inside = RestsInside(card, hex, InsideMargin);
+            float reach = CentreReach(card, hex);
+            return (inside ? 0f : 400f) + leader + reach;
+        }
+
+        private static bool PlaceOwned(
+            int depth,
+            int[] order,
+            List<Box>[] pools,
+            Box[] placed,
+            bool[] used,
+            Box[] pins,
+            Vec2[][] hexes,
+            ref int nodes)
+        {
+            nodes++;
+            if (nodes > 50000)
+                return false;
+            if (depth >= order.Length)
+                return true;
+            int index = order[depth];
+            List<Box> options = pools[index];
+            for (int n = 0; n < options.Count; n++)
+            {
+                Box card = options[n];
+                bool blocked = false;
+                Vec2 from = pins[index].Center;
+                Vec2 to = NearestOn(card, from);
+                for (int i = 0; i < placed.Length; i++)
+                {
+                    if (!used[i])
+                        continue;
+                    if (Separation(card, placed[i]) < CardGap || SegmentHitsRect(from, to, placed[i]))
+                    {
+                        blocked = true;
+                        break;
+                    }
+
+                    Vec2 otherFrom = pins[i].Center;
+                    Vec2 otherTo = NearestOn(placed[i], otherFrom);
+                    if (SegmentsCross(from, to, otherFrom, otherTo) || SegmentHitsRect(otherFrom, otherTo, card))
+                    {
+                        blocked = true;
+                        break;
+                    }
+                }
+
+                if (blocked)
+                    continue;
+                placed[index] = card;
+                used[index] = true;
+                if (PlaceOwned(depth + 1, order, pools, placed, used, pins, hexes, ref nodes))
+                    return true;
+                used[index] = false;
+            }
+
             return false;
         }
 
@@ -1530,15 +1989,16 @@ namespace Game.UI.Runtime
 
         private static Box[] CueSpots(float plateWidth, float plateHeight, Box[] pins, Vec2[][] hexes, Box detail, int selected)
         {
-            var found = new List<Box>(8);
+            var found = new List<Box>(16);
             Box pin = pins[selected];
             Vec2 pinCentre = pin.Center;
-            for (int dist = 0; dist <= 140 && found.Count < 6; dist += 8)
+            for (int dist = 0; dist <= 160 && found.Count < 12; dist += 20)
             {
-                for (int slide = 0; slide <= 120 && found.Count < 6; slide += 16)
+                int added = 0;
+                for (int slide = 0; slide <= 120 && found.Count < 12 && added < 2; slide += 20)
                 {
                     float[] slides = slide == 0 ? new[] { 0f } : new[] { -slide, (float)slide };
-                    for (int s = 0; s < slides.Length && found.Count < 6; s++)
+                    for (int s = 0; s < slides.Length && found.Count < 12; s++)
                     {
                         float offset = slides[s];
                         Box[] spots =
@@ -1548,7 +2008,7 @@ namespace Game.UI.Runtime
                             new Box(pin.X - 12f - CueWidth - dist, pinCentre.Y - CueHeight * 0.5f + offset, CueWidth, CueHeight),
                             new Box(pin.XMax + 12f + dist, pinCentre.Y - CueHeight * 0.5f + offset, CueWidth, CueHeight)
                         };
-                        for (int i = 0; i < spots.Length && found.Count < 6; i++)
+                        for (int i = 0; i < spots.Length && found.Count < 12; i++)
                         {
                             Box spot = spots[i];
                             if (spot.X < Edge || spot.Y < Edge || spot.XMax > plateWidth - Edge || spot.YMax > plateHeight - Edge)
@@ -1560,6 +2020,7 @@ namespace Game.UI.Runtime
                             if (!Clears(spot, detail) || !ClearsPins(spot, pins) || EdgeCrosses(spot, hexes))
                                 continue;
                             found.Add(spot);
+                            added++;
                         }
                     }
                 }
@@ -1610,6 +2071,8 @@ namespace Game.UI.Runtime
                             if (!Clears(spot, detail))
                                 continue;
                             if (!ClearsCards(spot, cards, 12f) || !ClearsPins(spot, pins) || EdgeCrosses(spot, hexes))
+                                continue;
+                            if (LeaderHitsRect(pins, cards, spot))
                                 continue;
                             cue = spot;
                             return true;

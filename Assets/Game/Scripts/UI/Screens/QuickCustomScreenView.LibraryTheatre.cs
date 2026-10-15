@@ -1740,7 +1740,7 @@ namespace Game.UI.Runtime
             float cardW = slot.Card.width;
             float cardH = slot.Card.height;
             const float pad = 6f;
-            float nameH = cardH >= 190f ? 40f : 34f;
+            float nameH = cardH >= 190f ? 48f : 40f;
             float ring = cardH >= 190f ? 56f : 44f;
             if (wideFrame)
                 ring += 4f;
@@ -1754,6 +1754,9 @@ namespace Game.UI.Runtime
             name.textWrappingMode = TextWrappingModes.Normal;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
+            name.enableAutoSizing = true;
+            name.fontSizeMin = 16f;
+            name.fontSizeMax = 22f;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
             SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 22f);
@@ -2314,22 +2317,39 @@ namespace Game.UI.Runtime
             }
 
             if (split < 0)
+            {
+                name.text = source;
+                name.textWrappingMode = TextWrappingModes.Normal;
+                name.overflowMode = TextOverflowModes.Overflow;
+                name.maxVisibleLines = 2;
+                name.fontSizeMin = size;
+                name.fontSizeMax = size;
+                name.fontSize = size;
+                name.ForceMeshUpdate();
                 return;
+            }
+
             string first = source.Substring(0, split + 1);
             string second = source.Substring(split + 1).TrimStart();
             name.text = first + "\n" + second;
             name.textWrappingMode = TextWrappingModes.Normal;
+            name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
             name.fontSizeMin = size;
             name.fontSizeMax = size;
             name.fontSize = size;
             name.ForceMeshUpdate();
-            float limit = ZoneNameHeightLimit(name.rectTransform);
-            if (name.preferredHeight > limit + 1.5f || name.preferredWidth > boxWidth + 1.5f)
+            RectTransform rect = name.rectTransform;
+            float needed = Mathf.Ceil(name.preferredHeight + 2f);
+            float limit = ZoneNameHeightLimit(rect);
+            float height = Mathf.Min(limit, Mathf.Max(rect != null ? rect.sizeDelta.y : needed, needed));
+            if (rect != null && height > rect.sizeDelta.y + 0.5f)
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+            if (name.preferredHeight > height + 1.5f || name.preferredWidth > boxWidth + 1.5f)
             {
                 name.text = source;
-                name.textWrappingMode = TextWrappingModes.NoWrap;
-                name.maxVisibleLines = 1;
+                name.textWrappingMode = TextWrappingModes.Normal;
+                name.maxVisibleLines = 2;
                 name.ForceMeshUpdate();
             }
         }

@@ -845,6 +845,7 @@ namespace Game.Editor
             }
 
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
+            GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
 
         private static void AppendMeasuredTheatreViolations(
@@ -1720,10 +1721,85 @@ namespace Game.Editor
                 int.TryParse(cleaned.Substring(slash + 1), out published);
         }
 
+        private static bool ZoneNameCoversSource(TMP_Text text, string kind)
+        {
+            if (text == null || kind != "zone name")
+                return true;
+            string source = (text.text ?? string.Empty).Replace("\n", string.Empty);
+            int expected = 0;
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (char.IsLetterOrDigit(source[i]))
+                    expected++;
+            }
+
+            TMP_TextInfo info = text.textInfo;
+            if (info == null || info.characterInfo == null)
+                return expected == 0;
+            int visible = 0;
+            int count = Mathf.Min(info.characterCount, info.characterInfo.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (!info.characterInfo[i].isVisible)
+                    continue;
+                char value = info.characterInfo[i].character;
+                if (char.IsLetterOrDigit(value))
+                    visible++;
+            }
+
+            return visible >= expected;
+        }
+
+        private static float LineWidth(TMP_Text text)
+        {
+            if (text == null)
+                return 0f;
+            TMP_TextInfo info = text.textInfo;
+            if (info == null || info.lineCount <= 1)
+                return text.preferredWidth;
+            float widest = 0f;
+            int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
+            for (int i = 0; i < lines; i++)
+                widest = Mathf.Max(widest, info.lineInfo[i].length);
+            return widest;
+        }
+
+        private static void RejectStripMedalOverlap(GameObject root, string locale)
+        {
+            if (root == null)
+                return;
+            Transform strip = FindNamed(root.transform, "OverallProgressStrip");
+            if (strip == null || !strip.gameObject.activeInHierarchy)
+                return;
+            for (int i = 0; i < 4; i++)
+            {
+                Transform slot = strip.Find("Medal" + i);
+                if (slot == null)
+                    continue;
+                var caption = slot.Find("Caption") as RectTransform;
+                var count = slot.Find("Count") as RectTransform;
+                if (caption == null || count == null)
+                    continue;
+                Rect label = WorldBounds(caption);
+                Rect tally = WorldBounds(count);
+                float dy = SeparatingGap(label.yMin, label.yMax, tally.yMin, tally.yMax);
+                if (dy >= 0f)
+                    continue;
+                float gap = SeparatingGap(label.xMin, label.xMax, tally.xMin, tally.xMax);
+                if (gap >= 4f)
+                    continue;
+                string tier = caption.GetComponent<TMP_Text>() != null ? caption.GetComponent<TMP_Text>().text : "Medal" + i;
+                throw new InvalidOperationException(
+                    "Theatre medal label overlaps its count locale=" + locale +
+                    " tier=" + tier +
+                    " gap=" + gap.ToString("0.0") + ".");
+            }
+        }
+
         private static void RejectReadableLine(TMP_Text text, string kind, string mapId, string locale)
         {
             text.ForceMeshUpdate();
-            if (text.isTextTruncated || text.isTextOverflowing)
+            if (text.isTextTruncated || text.isTextOverflowing || !ZoneNameCoversSource(text, kind))
             {
                 throw new InvalidOperationException(
                     "Theatre " + kind + " is truncated for " + mapId + " locale=" + locale + " text=" + text.text + ".");
@@ -1736,11 +1812,12 @@ namespace Game.Editor
             }
 
             float width = text.rectTransform != null ? text.rectTransform.rect.width : 0f;
-            if (text.preferredWidth > width + 2f)
+            float preferred = LineWidth(text);
+            if (preferred > width + 2f)
             {
                 throw new InvalidOperationException(
                     "Theatre " + kind + " draws past its box for " + mapId + " locale=" + locale +
-                    " preferred=" + text.preferredWidth.ToString("0.0") + " width=" + width.ToString("0.0") +
+                    " preferred=" + preferred.ToString("0.0") + " width=" + width.ToString("0.0") +
                     " text=" + text.text + ".");
             }
 

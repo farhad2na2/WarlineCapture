@@ -20,6 +20,7 @@ class ExitProbe {
    if(Arg(args,"--fatal","0")=="2")File.AppendAllText(log,"\nAssets/Game/Scripts/OwnedSyntheticProbe.cs(5,13): error CS0234: Synthetic compiler failure only\n");
    if(Arg(args,"--fatal","0")=="3")File.AppendAllText(log,"\nAssets/Game/Scripts/OwnedSyntheticProbe.cs(5,13): warning CS0168: Synthetic warning only\n");
    if(Arg(args,"--fatal","0")=="4")File.AppendAllText(log,"\nAssets/Game/Scripts/OwnedSyntheticProbe.cs(5,13):\nerror CS0234: Separate synthetic line only\n");
+   if(Arg(args,"--fatal","0")=="5")File.AppendAllText(log,"\nUnity.Entities.CodeGen.EntitiesILPostProcessors: ILPostProcessor has thrown an exception: System.ArgumentException: OwnedSyntheticRecord requires a default constructor.\n");
    Thread.Sleep(int.Parse(Arg(args,"--sleep","0")));
    return int.Parse(Arg(args,"--exit","0"));
  }
@@ -48,7 +49,8 @@ def main():
            ("no-process-exit",37,1250,0,10,37,True),("timeout",0,15000,0,1,124,False),
            ("fatal-before-timeout",0,15000,1,1,1,False),("fatal-over-zero",0,0,1,10,1,False),
            ("compiler-before-timeout",0,15000,2,1,1,False),("compiler-over-zero",0,0,2,10,1,False),
-           ("compiler-warning-zero",0,0,3,10,0,False),("compiler-split-line-zero",0,0,4,10,0,False)]
+           ("compiler-warning-zero",0,0,3,10,0,False),("compiler-split-line-zero",0,0,4,10,0,False),
+           ("entities-ilpp-before-timeout",0,15000,5,1,1,False),("entities-ilpp-over-zero",0,0,5,10,1,False)]
     results=[]
     for name,code,sleep,fatal,timeout,expected,no_exit in cases:
         log=output/(name+".log")

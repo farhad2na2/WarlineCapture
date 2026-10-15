@@ -113,6 +113,7 @@ function Find-UnityLoggedFailure {
         'Test run completed\. Exiting with code [1-9][0-9]* \(Failed\)\.',
         'Aborting batchmode due to failure',
         '(?m)^[^\r\n]*\.cs\([0-9]+,[0-9]+\):[ \t]*error CS[0-9]+:[^\r\n]*',
+        '(?m)^[ \t]*Unity\.Entities\.CodeGen\.EntitiesILPostProcessors: ILPostProcessor has thrown an exception:',
         'Crash!!!',
         'A crash has been intercepted by the crash handler\.'
     )

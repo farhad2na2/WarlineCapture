@@ -397,30 +397,32 @@ namespace Game.UI.Runtime
             }
 
             float stripWidth = TheatreStripWidth();
-            float slotWidth = Mathf.Clamp(stripWidth * 0.16f, 112f, 168f);
-            float labelBand = Mathf.Max(140f, stripWidth - slotWidth * 4f - 8f);
             TMP_Text battles = _overallStrip.Find("Caption")?.GetComponent<TMP_Text>();
             SetCopy(battles, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 20f);
             TMP_Text count = _overallStrip.Find("Count")?.GetComponent<TMP_Text>();
             SetCopy(count, won + " / " + published, 15f, 22f);
+            const float captionWidth = 168f;
+            const float countWidth = 96f;
+            const float pairGap = 6f;
+            float pairX = fa ? stripWidth - 8f - captionWidth - pairGap - countWidth : 8f;
             if (battles != null)
             {
                 battles.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 battles.isRightToLeftText = fa;
                 battles.overflowMode = TextOverflowModes.Overflow;
                 battles.textWrappingMode = TextWrappingModes.NoWrap;
-                PlaceTopLeft(battles.rectTransform, fa ? 108f : 8f, 4f, Mathf.Max(80f, labelBand - 120f), 32f);
+                PlaceTopLeft(battles.rectTransform, fa ? pairX + countWidth + pairGap : pairX, 4f, captionWidth, 32f);
             }
 
             if (count != null)
             {
                 count.isRightToLeftText = false;
-                count.alignment = fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
-                PlaceTopLeft(count.rectTransform, fa ? 8f : labelBand - 108f, 6f, 96f, 28f);
+                count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                PlaceTopLeft(count.rectTransform, fa ? pairX : pairX + captionWidth + pairGap, 6f, countWidth, 28f);
             }
 
             if (_overallFill != null && _overallFill.transform.parent is RectTransform bar)
-                PlaceTopLeft(bar, 8f, 40f, Mathf.Max(80f, labelBand - 16f), 12f);
+                PlaceTopLeft(bar, pairX, 40f, captionWidth + pairGap + countWidth, 12f);
 
             SkirmishMedalTotals medals = theater.OverallMedalTotals;
             int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
@@ -464,12 +466,19 @@ namespace Game.UI.Runtime
             if (_overallStrip == null)
                 return;
             float stripWidth = TheatreStripWidth();
-            float slotWidth = Mathf.Clamp(stripWidth * 0.16f, 112f, 168f);
-            float labelBand = Mathf.Max(140f, stripWidth - slotWidth * 4f - 8f);
+            const float captionWidth = 168f;
+            const float summaryCountWidth = 96f;
+            const float pairGap = 6f;
+            float reserved = 8f + captionWidth + pairGap + summaryCountWidth + 16f;
+            float slotWidth = Mathf.Clamp((stripWidth - reserved) * 0.25f, 132f, 168f);
+            float run = slotWidth * 4f;
+            float origin = fa ? stripWidth - reserved - run : reserved;
             for (int i = 0; i < 4; i++)
             {
-                if (_overallStrip.Find("Medal" + i) is RectTransform slot)
-                    PlaceStripMedal(slot, i, fa, labelBand + i * slotWidth, slotWidth);
+                if (_overallStrip.Find("Medal" + i) is not RectTransform slot)
+                    continue;
+                int visual = fa ? 3 - i : i;
+                PlaceStripMedal(slot, i, fa, origin + visual * slotWidth, slotWidth);
             }
         }
 
@@ -492,50 +501,13 @@ namespace Game.UI.Runtime
         {
             if (slot == null)
                 return;
-            float inner = Mathf.Max(64f, slotWidth - 6f);
-            PlaceTopLeft(slot, origin, 2f, inner, 62f);
-            ReleaseFromLayout(slot);
-            const float iconSize = 24f;
-            const float countWidth = 36f;
-            float iconX = fa ? inner - iconSize - 4f : 4f;
-            float countX = fa ? 4f : iconSize + 8f;
-            StopExpanding(slot);
-            if (slot.Find("Icon") is RectTransform icon)
-            {
-                PlaceTopLeft(icon, iconX, 4f, iconSize, iconSize);
-                PinSquare(icon, iconSize);
-                BindMedalIcon(icon.GetComponent<Image>(), index);
-            }
-
-            if (slot.Find("Count") is RectTransform count)
-            {
-                PlaceTopLeft(count, countX, 4f, countWidth, iconSize);
-                ReleaseFromLayout(count);
-                TMP_Text countText = count.GetComponent<TMP_Text>();
-                if (countText != null)
-                {
-                    countText.isRightToLeftText = false;
-                    countText.alignment = TextAlignmentOptions.MidlineLeft;
-                    countText.overflowMode = TextOverflowModes.Overflow;
-                }
-            }
-
-            if (slot.Find("Caption") is RectTransform caption)
-            {
-                PlaceTopLeft(caption, 4f, 32f, Mathf.Max(48f, inner - 8f), 26f);
-                ReleaseFromLayout(caption);
-                TMP_Text captionText = caption.GetComponent<TMP_Text>();
-                if (captionText != null)
-                {
-                    captionText.isRightToLeftText = fa;
-                    captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                    captionText.overflowMode = TextOverflowModes.Overflow;
-                    captionText.textWrappingMode = TextWrappingModes.NoWrap;
-                    captionText.enableAutoSizing = true;
-                    captionText.fontSizeMin = 11f;
-                    captionText.fontSizeMax = 15f;
-                }
-            }
+            float inner = Mathf.Max(96f, slotWidth - 8f);
+            PlaceTopLeft(slot, origin, 8f, inner, 48f);
+            LayoutElement element = slot.GetComponent<LayoutElement>();
+            if (element != null)
+                element.ignoreLayout = false;
+            LayoutMedalEntry(slot, fa, 24f, 32f);
+            BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), index);
         }
 
         private void PresentStatTiles(SkirmishBriefingState briefing, bool hasCard, SkirmishBattleCardState card, bool fa)

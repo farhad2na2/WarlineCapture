@@ -8,8 +8,8 @@ namespace Game.Editor
 {
     /// <summary>
     /// Paints one warm theatre plate from the existing Campaign plates. Each pixel
-    /// keeps a single plate, then a brown-to-sand ramp, a thick region border and
-    /// a vignette. It does not author new terrain.
+    /// keeps a single plate, then five flat amber steps, a thin region border and
+    /// a light vignette. It does not author new terrain.
     /// </summary>
     public static class SkirmishLibraryZoneComposer
     {
@@ -17,9 +17,9 @@ namespace Game.Editor
         public const int ZoneHeight = 540;
         public const int BlurWidth = 160;
         public const int BlurHeight = 90;
-        private const float Warp = 0.12f;
-        private const int BorderBand = 16;
-        private const int DarkStroke = 5;
+        private const float Warp = 0.065f;
+        private const int BorderBand = 10;
+        private const int DarkStroke = 3;
 
         public static void Generate()
         {
@@ -101,17 +101,78 @@ namespace Game.Editor
 
                     int index = y * ZoneWidth + x;
                     owner[index] = (byte)best;
-                    Rect region = regions[best];
-                    float pu = region.width > 0.001f ? Mathf.Clamp01((u - region.x) / region.width) : 0.5f;
-                    float pv = region.height > 0.001f ? Mathf.Clamp01(1f - (vTop - region.y) / region.height) : 0.5f;
-                    pixels[index] = Grade(Sample(plates[best], sizes[best], pu, pv));
                 }
             }
 
-            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 4, 2.6f, 0.18f);
-            PaintThickBorders(pixels, owner);
+            owner = SmoothOwner(owner);
+            owner = SmoothOwner(owner);
+            for (int y = 0; y < ZoneHeight; y++)
+            {
+                float vTop = 1f - (y + 0.5f) / ZoneHeight;
+                for (int x = 0; x < ZoneWidth; x++)
+                {
+                    int index = y * ZoneWidth + x;
+                    int best = owner[index];
+                    if (best < 0 || best >= regions.Length)
+                        best = 0;
+                    float u = (x + 0.5f) / ZoneWidth;
+                    Rect region = regions[best];
+                    float pu = region.width > 0.001f ? Mathf.Clamp01((u - region.x) / region.width) : 0.5f;
+                    float pv = region.height > 0.001f ? Mathf.Clamp01(1f - (vTop - region.y) / region.height) : 0.5f;
+                    pixels[index] = Sample(plates[best], sizes[best], pu, pv);
+                }
+            }
+
+            pixels = Bilateral(pixels, ZoneWidth, ZoneHeight, 3, 2.2f, 0.22f);
+            for (int i = 0; i < pixels.Length; i++)
+                pixels[i] = Grade(pixels[i]);
             Vignette(pixels);
+            PaintThickBorders(pixels, owner);
             return pixels;
+        }
+
+        private static byte[] SmoothOwner(byte[] owner)
+        {
+            var next = new byte[owner.Length];
+            var tally = new int[8];
+            for (int y = 0; y < ZoneHeight; y++)
+            {
+                for (int x = 0; x < ZoneWidth; x++)
+                {
+                    for (int i = 0; i < tally.Length; i++)
+                        tally[i] = 0;
+                    for (int ky = -1; ky <= 1; ky++)
+                    {
+                        int sy = y + ky;
+                        if (sy < 0 || sy >= ZoneHeight)
+                            continue;
+                        for (int kx = -1; kx <= 1; kx++)
+                        {
+                            int sx = x + kx;
+                            if (sx < 0 || sx >= ZoneWidth)
+                                continue;
+                            int id = owner[sy * ZoneWidth + sx];
+                            if (id >= 0 && id < tally.Length)
+                                tally[id]++;
+                        }
+                    }
+
+                    int best = owner[y * ZoneWidth + x];
+                    int bestCount = 0;
+                    for (int i = 0; i < tally.Length; i++)
+                    {
+                        if (tally[i] > bestCount)
+                        {
+                            bestCount = tally[i];
+                            best = i;
+                        }
+                    }
+
+                    next[y * ZoneWidth + x] = (byte)best;
+                }
+            }
+
+            return next;
         }
 
         private static string IndexMap(int index)
@@ -136,9 +197,7 @@ namespace Game.Editor
         {
             float originU = u + index * 0.41f;
             float originV = vTop + index * 0.27f;
-            float coarse = BoundaryNoise(originU, originV, 8f) * 0.62f;
-            float fine = BoundaryNoise(originU + index * 1.7f, originV + index * 0.9f, 17f) * 0.38f;
-            return (coarse + fine) * Warp;
+            return BoundaryNoise(originU, originV, 5.5f) * Warp;
         }
 
         private static float BoundaryNoise(float u, float v, float scale)
@@ -257,14 +316,14 @@ namespace Game.Editor
                     float radius = Mathf.Sqrt(dx * dx + dy * dy) / 0.70f;
                     float shade = Mathf.Clamp01(radius);
                     shade = Mathf.Pow(shade, 1.5f);
-                    float gain = 1f - 0.62f * shade;
+                    float gain = 1f - 0.12f * shade;
                     int index = y * ZoneWidth + x;
                     Color32 sample = pixels[index];
-                    pixels[index] = new Color32(
+                    pixels[index] = Grade(new Color32(
                         (byte)Mathf.Clamp(Mathf.RoundToInt(sample.r * gain), 0, 255),
                         (byte)Mathf.Clamp(Mathf.RoundToInt(sample.g * gain), 0, 255),
                         (byte)Mathf.Clamp(Mathf.RoundToInt(sample.b * gain), 0, 255),
-                        255);
+                        255));
                 }
             }
         }
@@ -339,26 +398,20 @@ namespace Game.Editor
         private static Color32 Grade(Color32 sample)
         {
             float luminance = (sample.r * 0.30f + sample.g * 0.52f + sample.b * 0.18f) / 255f;
-            luminance = Mathf.Clamp01((luminance - 0.40f) * 1.5f + 0.45f);
-            const float steps = 5f;
-            float poster = Mathf.Round(luminance * steps) / steps;
-            float t = Mathf.Clamp01(poster * 0.9f + luminance * 0.1f);
-            Color32 dark = new Color32(34, 15, 7, 255);
-            Color32 amber = new Color32(168, 86, 24, 255);
-            Color32 sand = new Color32(224, 202, 154, 255);
-            if (t < 0.5f)
-                return LerpColor(dark, amber, t * 2f);
-            return LerpColor(amber, sand, (t - 0.5f) * 2f);
+            int step = luminance < 0.38f ? 0 : luminance < 0.52f ? 1 : luminance < 0.64f ? 2 : luminance < 0.76f ? 3 : 4;
+            return PosterStep(step);
         }
 
-        private static Color32 LerpColor(Color32 a, Color32 b, float t)
+        private static Color32 PosterStep(int step)
         {
-            t = Mathf.Clamp01(t);
-            return new Color32(
-                (byte)Mathf.Lerp(a.r, b.r, t),
-                (byte)Mathf.Lerp(a.g, b.g, t),
-                (byte)Mathf.Lerp(a.b, b.b, t),
-                255);
+            switch (step)
+            {
+                case 0: return new Color32(90, 28, 10, 255);
+                case 1: return new Color32(190, 90, 22, 255);
+                case 2: return new Color32(220, 132, 32, 255);
+                case 3: return new Color32(236, 168, 64, 255);
+                default: return new Color32(252, 214, 140, 255);
+            }
         }
 
         private static void WriteBlur(string folder, string fileName, Color32[] plate, Vector2Int plateSize)

@@ -743,23 +743,44 @@ namespace Game.Editor
             Transform regions = FindNamed(root.transform, "LibraryRegions");
             if (regions == null || !regions.gameObject.activeInHierarchy)
                 return;
-            var panel = FindNamed(root.transform, "OperationPreview") as RectTransform;
-            if (panel == null || !panel.gameObject.activeInHierarchy)
-                throw new InvalidOperationException("Map panel is missing for the theatre overlays.");
+            var clip = FindNamed(root.transform, "MapPreviewClip") as RectTransform;
+            if (clip == null || !clip.gameObject.activeInHierarchy)
+                throw new InvalidOperationException("Map clip is missing for the theatre overlays.");
             Canvas.ForceUpdateCanvases();
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
+            QuickCustomScreenView view = root.GetComponent<QuickCustomScreenView>();
+            SkirmishTheaterPinState[] pins = view != null && view.LibraryViewModel != null
+                ? view.LibraryViewModel.Theater.Pins
+                : null;
             string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            var cards = new RectTransform[mapIds.Length];
+            var names = new RectTransform[mapIds.Length];
             for (int i = 0; i < mapIds.Length; i++)
             {
-                RequireTheaterOverlay(regions, panel, "ZoneOutline_" + mapIds[i], "outline", mapIds[i], locale);
-                RequireTheaterOverlay(regions, panel, "ZonePin_" + mapIds[i], "pin", mapIds[i], locale);
-                RequireTheaterOverlay(regions, panel, "ZoneCard_" + mapIds[i], "zone card", mapIds[i], locale);
+                RequireTheaterOverlay(regions, clip, "ZoneOutline_" + mapIds[i], "outline", mapIds[i], locale);
+                RequireTheaterOverlay(regions, clip, "ZonePin_" + mapIds[i], "pin", mapIds[i], locale);
+                RectTransform card = RequireTheaterOverlay(regions, clip, "ZoneCard_" + mapIds[i], "zone card", mapIds[i], locale);
+                cards[i] = card;
+                names[i] = card.Find("ZoneName") as RectTransform;
+                RejectZoneCardContent(card, pins, mapIds[i], locale);
             }
+
+            RectTransform cue = null;
+            Transform cueNode = FindNamed(regions, "ZoomCue");
+            if (cueNode != null && cueNode.gameObject.activeInHierarchy)
+            {
+                cue = RequireTheaterOverlay(regions, clip, "ZoomCue", "zoom hint", "selected", locale);
+                TMP_Text cueText = cue.GetComponent<TMP_Text>();
+                if (cueText != null)
+                    RejectReadableLine(cueText, "zoom hint", "selected", locale);
+            }
+
+            RejectTheaterOverlap(cards, names, cue, locale);
         }
 
-        private static void RequireTheaterOverlay(
+        private static RectTransform RequireTheaterOverlay(
             Transform regions,
-            RectTransform panel,
+            RectTransform clip,
             string name,
             string kind,
             string mapId,
@@ -786,20 +807,261 @@ namespace Game.Editor
             if (rect == null)
                 throw new InvalidOperationException("Theatre " + kind + " for " + mapId + " has no rect locale=" + locale + ".");
             const float slop = 2f;
+            const float inset = 12f;
             Vector3[] corners = new Vector3[4];
             rect.GetWorldCorners(corners);
-            Rect panelRect = panel.rect;
+            Rect clipRect = clip.rect;
+            clipRect.xMin += inset;
+            clipRect.xMax -= inset;
+            clipRect.yMin += inset;
+            clipRect.yMax -= inset;
             for (int i = 0; i < corners.Length; i++)
             {
-                Vector3 local = panel.InverseTransformPoint(corners[i]);
-                bool outside = local.x < panelRect.xMin - slop || local.x > panelRect.xMax + slop ||
-                    local.y < panelRect.yMin - slop || local.y > panelRect.yMax + slop;
+                Vector3 local = clip.InverseTransformPoint(corners[i]);
+                bool outside = local.x < clipRect.xMin - slop || local.x > clipRect.xMax + slop ||
+                    local.y < clipRect.yMin - slop || local.y > clipRect.yMax + slop;
                 if (!outside)
                     continue;
                 throw new InvalidOperationException(
-                    "Theatre " + kind + " for " + mapId + " is outside the map panel locale=" + locale +
+                    "Theatre " + kind + " for " + mapId + " is outside the map locale=" + locale +
                     " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));
             }
+
+            return rect;
+        }
+
+        private static void RejectZoneCardContent(
+            RectTransform card,
+            SkirmishTheaterPinState[] pins,
+            string mapId,
+            string locale)
+        {
+            Vector2 size = card.sizeDelta;
+            if (size.x < 280f || size.x > 320f || size.y < 96f || size.y > 110f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone card for " + mapId + " is " + size.x.ToString("0") + "x" + size.y.ToString("0") +
+                    " locale=" + locale + ". Expected about 280-320 by 96-110 at 1080p.");
+            }
+
+            TMP_Text name = card.Find("ZoneName")?.GetComponent<TMP_Text>();
+            if (name == null)
+                throw new InvalidOperationException("Theatre zone card has no name for " + mapId + " locale=" + locale + ".");
+            RejectReadableLine(name, "zone name", mapId, locale);
+
+            RawImage thumb = card.Find("Thumbnail")?.GetComponent<RawImage>();
+            if (thumb == null || thumb.texture == null || thumb.color.r < 0.95f || thumb.color.g < 0.95f || thumb.color.b < 0.95f)
+                throw new InvalidOperationException("Theatre zone thumbnail is missing or tinted for " + mapId + " locale=" + locale + ".");
+
+            Image fill = card.Find("ProgressRing/ProgressFill")?.GetComponent<Image>();
+            TMP_Text count = card.Find("ProgressRing/ZoneCount")?.GetComponent<TMP_Text>();
+            if (fill == null || count == null)
+                throw new InvalidOperationException("Theatre zone card is missing its progress arc for " + mapId + " locale=" + locale + ".");
+            if (fill.type != Image.Type.Filled || fill.fillMethod != Image.FillMethod.Radial360)
+                throw new InvalidOperationException("Theatre progress for " + mapId + " is not a circular arc locale=" + locale + ".");
+
+            SkirmishTheaterPinState pin = default;
+            bool found = false;
+            if (pins != null)
+            {
+                for (int i = 0; i < pins.Length; i++)
+                {
+                    if (!string.Equals(pins[i].MapId, mapId, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    pin = pins[i];
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                throw new InvalidOperationException("Theatre pin data is missing for " + mapId + " locale=" + locale + ".");
+            if (pin.ZoneScenarioCount <= 0)
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone scenario count is missing for " + mapId + " locale=" + locale +
+                    ". The card denominator is catalog scenarios for that map.");
+            }
+
+            string expected = pin.WonCount + "/" + pin.ZoneScenarioCount;
+            count.ForceMeshUpdate();
+            if (StripBidiMarks(count.text) != expected)
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone count for " + mapId + " is '" + count.text + "' locale=" + locale +
+                    ". Expected " + expected + " (medals won / catalog scenarios).");
+            }
+
+            float ratio = pin.WonCount / (float)pin.ZoneScenarioCount;
+            if (Mathf.Abs(fill.fillAmount - Mathf.Clamp01(ratio)) > 0.02f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre progress arc for " + mapId + " is " + fill.fillAmount.ToString("0.00") +
+                    " locale=" + locale + ". Expected " + ratio.ToString("0.00") + ".");
+            }
+        }
+
+        private static void RejectReadableLine(TMP_Text text, string kind, string mapId, string locale)
+        {
+            text.ForceMeshUpdate();
+            if (text.isTextTruncated || text.isTextOverflowing)
+            {
+                throw new InvalidOperationException(
+                    "Theatre " + kind + " is truncated for " + mapId + " locale=" + locale + " text=" + text.text + ".");
+            }
+
+            if (text.overflowMode == TextOverflowModes.Ellipsis || text.overflowMode == TextOverflowModes.Truncate)
+            {
+                throw new InvalidOperationException(
+                    "Theatre " + kind + " uses a clipping overflow for " + mapId + " locale=" + locale + ".");
+            }
+
+            float width = text.rectTransform != null ? text.rectTransform.rect.width : 0f;
+            if (text.preferredWidth > width + 2f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre " + kind + " draws past its box for " + mapId + " locale=" + locale +
+                    " preferred=" + text.preferredWidth.ToString("0.0") + " width=" + width.ToString("0.0") +
+                    " text=" + text.text + ".");
+            }
+
+            if (BreaksMidWord(text))
+            {
+                throw new InvalidOperationException(
+                    "Theatre " + kind + " breaks a word for " + mapId + " locale=" + locale + " text=" + text.text + ".");
+            }
+        }
+
+        private static bool BreaksMidWord(TMP_Text text)
+        {
+            TMP_TextInfo info = text.textInfo;
+            if (info == null || info.lineCount <= 1)
+                return false;
+            string source = text.text ?? string.Empty;
+            for (int line = 0; line < info.lineCount - 1; line++)
+            {
+                TMP_LineInfo row = info.lineInfo[line];
+                TMP_LineInfo next = info.lineInfo[line + 1];
+                if (row.characterCount <= 0 || next.characterCount <= 0)
+                    continue;
+                int last = row.lastCharacterIndex;
+                int firstNext = next.firstCharacterIndex;
+                if (last < 0 || firstNext < 0 || last >= info.characterCount || firstNext >= info.characterCount)
+                    continue;
+                int leftIndex = info.characterInfo[last].index;
+                int rightIndex = info.characterInfo[firstNext].index;
+                if (leftIndex < 0 || rightIndex <= leftIndex || leftIndex >= source.Length || rightIndex >= source.Length)
+                    continue;
+                if (IsWordChar(source[leftIndex]) && IsWordChar(source[rightIndex]))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsWordChar(char value)
+        {
+            if (char.IsWhiteSpace(value) || value == '-' || value == '/' || value == '·')
+                return false;
+            return char.IsLetterOrDigit(value);
+        }
+
+        private static string StripBidiMarks(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+            return value
+                .Replace("\u200e", string.Empty)
+                .Replace("\u200f", string.Empty)
+                .Replace("\u202a", string.Empty)
+                .Replace("\u202b", string.Empty)
+                .Replace("\u202c", string.Empty)
+                .Replace("\u061c", string.Empty);
+        }
+
+        private static void RejectTheaterOverlap(
+            RectTransform[] cards,
+            RectTransform[] names,
+            RectTransform cue,
+            string locale)
+        {
+            for (int i = 0; i < cards.Length; i++)
+            {
+                for (int j = i + 1; j < cards.Length; j++)
+                {
+                    if (cards[i] == null || cards[j] == null)
+                        continue;
+                    if (WorldOverlap(cards[i], cards[j]))
+                    {
+                        throw new InvalidOperationException(
+                            "Theatre zone cards overlap locale=" + locale +
+                            " " + cards[i].name + " " + cards[j].name + ".");
+                    }
+                }
+            }
+
+            for (int i = 0; i < names.Length; i++)
+            {
+                for (int j = i + 1; j < names.Length; j++)
+                {
+                    if (names[i] == null || names[j] == null)
+                        continue;
+                    if (WorldOverlap(names[i], names[j]))
+                    {
+                        throw new InvalidOperationException(
+                            "Theatre zone names overlap locale=" + locale +
+                            " " + names[i].name + " " + names[j].name + ".");
+                    }
+                }
+            }
+
+            if (cue == null)
+                return;
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (cards[i] != null && WorldOverlap(cue, cards[i]))
+                {
+                    throw new InvalidOperationException(
+                        "Theatre zoom hint overlaps a zone card locale=" + locale + " card=" + cards[i].name + ".");
+                }
+            }
+
+            for (int i = 0; i < names.Length; i++)
+            {
+                if (names[i] != null && WorldOverlap(cue, names[i]))
+                {
+                    throw new InvalidOperationException(
+                        "Theatre zoom hint overlaps a zone name locale=" + locale + " name=" + names[i].name + ".");
+                }
+            }
+        }
+
+        private static bool WorldOverlap(RectTransform a, RectTransform b)
+        {
+            Rect left = WorldBounds(a);
+            Rect right = WorldBounds(b);
+            const float slop = 2f;
+            return left.xMin < right.xMax - slop && right.xMin < left.xMax - slop &&
+                left.yMin < right.yMax - slop && right.yMin < left.yMax - slop;
+        }
+
+        private static Rect WorldBounds(RectTransform rect)
+        {
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            float minX = corners[0].x;
+            float maxX = corners[0].x;
+            float minY = corners[0].y;
+            float maxY = corners[0].y;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                minX = Mathf.Min(minX, corners[i].x);
+                maxX = Mathf.Max(maxX, corners[i].x);
+                minY = Mathf.Min(minY, corners[i].y);
+                maxY = Mathf.Max(maxY, corners[i].y);
+            }
+
+            return Rect.MinMaxRect(minX, minY, maxX, maxY);
         }
 
         private static Transform FindNamed(Transform root, string name)

@@ -47,8 +47,17 @@ namespace Game.UI.Runtime
         public string TitleLocKey;
         public string SubtitleLocKey;
         public string PlatePreviewKey;
+        /// <summary>Playable scenarios on this map. Grid row labels and the side column use this. The zone card does not.</summary>
         public int PublishedCount;
+        /// <summary>Catalog scenarios on this map that have any medal. Numerator of the zone card.</summary>
         public int WonCount;
+        /// <summary>
+        /// Catalog scenarios authored for this map, including planned entries.
+        /// The zone card shows <see cref="WonCount"/> / <see cref="ZoneScenarioCount"/>.
+        /// That is the same catalog the battlefield grid enumerates, not the playable
+        /// subset in <see cref="PublishedCount"/> and not the overall battles-won strip.
+        /// </summary>
+        public int ZoneScenarioCount;
         public SkirmishMedalTotals Medals;
         public bool HasOwnedPlayable;
         public bool IsRecommended;

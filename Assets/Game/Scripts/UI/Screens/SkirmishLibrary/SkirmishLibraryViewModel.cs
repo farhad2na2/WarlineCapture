@@ -387,6 +387,7 @@ namespace Game.UI.Runtime
                     PlatePreviewKey = SkirmishLibraryPreviewAssets.ResolvePlateKey(MapOrder[i]),
                     PublishedCount = CountPublished(MapOrder[i], null),
                     WonCount = _medals.CountFor(MapOrder[i]),
+                    ZoneScenarioCount = CountZoneScenarios(MapOrder[i]),
                     Medals = new SkirmishMedalTotals
                     {
                         Recruit = totals.Recruit,
@@ -858,6 +859,27 @@ namespace Game.UI.Runtime
             }
 
             return totals;
+        }
+
+        /// <summary>
+        /// Scenarios in the battle catalog for one map. Planned entries count.
+        /// Zone cards use this as the denominator; <see cref="CountPublished"/> stays the playable subset.
+        /// </summary>
+        private int CountZoneScenarios(string mapId)
+        {
+            int count = 0;
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < _catalog.Count; i++)
+            {
+                SkirmishBattleCatalogEntry entry = _catalog[i];
+                if (!string.Equals(entry.MapId, mapId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (string.IsNullOrEmpty(entry.ScenarioId) || !seen.Add(entry.ScenarioId))
+                    continue;
+                count++;
+            }
+
+            return count;
         }
 
         private int CountPublished(string mapId, string objectiveId)

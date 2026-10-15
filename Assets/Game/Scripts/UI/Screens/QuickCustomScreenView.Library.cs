@@ -34,6 +34,38 @@ namespace Game.UI.Runtime
         private const float LibraryGridRoomyHeaderHeight = 40f;
         private const float LibraryPinSubtitleHeight = 36f;
         private const int LibraryGridLogicalColumns = 6;
+        // Cover focal is the midpoint of the district anchors (y 0.15–0.78) on the 16:9 painting.
+        private const float TheatreFocalX = 0.50f;
+        private const float TheatreFocalY = 0.465f;
+        private const float TheatreSafeLeft = 28f;
+        private const float TheatreSafeTop = 28f;
+        private const float TheatreSafeRight = 28f;
+        private const float TheatreSafeBottom = 40f;
+        private const float ZoneCardWidth = 316f;
+        private const float ZoneCardHeight = 104f;
+        private const float ZonePinSize = 34f;
+        private const float ZoneCueWidth = 240f;
+        private const float ZoneCueHeight = 22f;
+        private const float ZoneStackGap = 6f;
+        private const float ZoneHexPad = 6f;
+
+        /// <summary>
+        /// One theatre district after the painting's cover transform. Hex points are screen pixels
+        /// in the map clip (y down) and stay at the painting's uniform scale.
+        /// </summary>
+        private struct TheatreZoneSlot
+        {
+            public string MapId;
+            public Color Zone;
+            public bool Selected;
+            public int Won;
+            public int ScenarioCount;
+            public Vector2 Anchor;
+            public Rect Pin;
+            public Rect Cue;
+            public Rect Card;
+            public Vector2[] Hex;
+        }
 
         private struct GridCardSlots
         {
@@ -406,7 +438,7 @@ namespace Game.UI.Runtime
                 map.color = Color.white;
                 Stretch(map.rectTransform);
                 map.rectTransform.localScale = Vector3.one;
-                CoverCrop(map, plateWidth, plateHeight);
+                ApplyTheatreCover(map, plateWidth, plateHeight);
             }
             else
             {
@@ -439,6 +471,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            Canvas.ForceUpdateCanvases();
             RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
             if (!TryFrameSize(plate, out float plateWidth, out float plateHeight))
             {
@@ -447,12 +480,28 @@ namespace Game.UI.Runtime
             }
 
             Texture2D painted = LoadTheatreBase();
-            float aspect = TextureAspect(painted);
-            CoverWindow(plateWidth, plateHeight, aspect, out float cropU, out float cropV, out float cropW, out float cropH);
             var fit = new GameObject("TheaterFit", typeof(RectTransform)).GetComponent<RectTransform>();
             fit.SetParent(_libraryRegions, false);
-            PlaceTopLeft(fit, 0f, 0f, plateWidth, plateHeight);
+            Stretch(fit);
             fit.localScale = Vector3.one;
+            Canvas.ForceUpdateCanvases();
+            if (TryFrameSize(fit, out float fittedWidth, out float fittedHeight))
+            {
+                plateWidth = fittedWidth;
+                plateHeight = fittedHeight;
+            }
+
+            CoverWindow(
+                plateWidth,
+                plateHeight,
+                TextureAspect(painted),
+                TheatreFocalX,
+                TheatreFocalY,
+                out float cropU,
+                out float cropV,
+                out float cropW,
+                out float cropH);
+
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
@@ -462,24 +511,26 @@ namespace Game.UI.Runtime
                 raw.color = Color.white;
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                CoverCrop(raw, plateWidth, plateHeight);
+                ApplyTheatreCover(raw, plateWidth, plateHeight);
             }
 
             if (map != null)
                 map.enabled = painted == null;
 
-            var hits = new GameObject("TheaterHits", typeof(RectTransform)).GetComponent<RectTransform>();
-            hits.SetParent(fit, false);
-            Stretch(hits);
+            Rect safe = Rect.MinMaxRect(
+                TheatreSafeLeft,
+                TheatreSafeTop,
+                Mathf.Max(TheatreSafeLeft + ZoneCardWidth, plateWidth - TheatreSafeRight),
+                Mathf.Max(TheatreSafeTop + ZoneCardHeight, plateHeight - TheatreSafeBottom));
+            var slots = new List<TheatreZoneSlot>(SkirmishBattleLibraryArt.MapIds.Length);
             for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
             {
                 string mapId = SkirmishBattleLibraryArt.MapIds[i];
-                if (!TryRegion(mapId, out Rect region, out Vector2 centre))
+                if (!TryRegion(mapId, out _, out Vector2 centre))
                     continue;
                 bool selected = string.Equals(mapId, theater.SelectedMapId, StringComparison.OrdinalIgnoreCase);
-                Color zone = RegionZoneColor(mapId);
                 int won = 0;
-                int published = 0;
+                int scenarios = 0;
                 if (theater.Pins != null)
                 {
                     for (int pinIndex = 0; pinIndex < theater.Pins.Length; pinIndex++)
@@ -487,22 +538,52 @@ namespace Game.UI.Runtime
                         if (!string.Equals(theater.Pins[pinIndex].MapId, mapId, StringComparison.OrdinalIgnoreCase))
                             continue;
                         won = theater.Pins[pinIndex].WonCount;
-                        published = theater.Pins[pinIndex].PublishedCount;
+                        scenarios = theater.Pins[pinIndex].ZoneScenarioCount;
                         break;
                     }
                 }
 
-                Rect box = VisibleDistrictBox(region, cropU, cropV, cropW, cropH, plateWidth, plateHeight);
-                var button = CreateHitButton(hits, SkirmishLibraryControlNames.TheaterPin(mapId));
-                PlaceTopLeft(button.GetComponent<RectTransform>(), box.x, box.y, box.width, box.height);
+                var hex = new Vector2[6];
+                PaintingHex(i, hex);
+                for (int point = 0; point < hex.Length; point++)
+                    hex[point] = MapPaintingPoint(hex[point], cropU, cropV, cropW, cropH, plateWidth, plateHeight);
+                FitHexUniform(hex, safe, ZoneHexPad);
+                slots.Add(new TheatreZoneSlot
+                {
+                    MapId = mapId,
+                    Zone = RegionZoneColor(mapId),
+                    Selected = selected,
+                    Won = won,
+                    ScenarioCount = scenarios,
+                    Anchor = MapPaintingPoint(centre, cropU, cropV, cropW, cropH, plateWidth, plateHeight),
+                    Hex = hex
+                });
+            }
+
+            SeparateHexes(slots, safe, ZoneHexPad);
+            PlaceZoneSlots(slots, safe);
+            for (int i = 0; i < slots.Count; i++)
+                DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
+            for (int i = 0; i < slots.Count; i++)
+            {
+                PlaceZonePin(fit, slots[i], fa);
+                PlaceZoneCard(fit, slots[i], fa);
+            }
+
+            var hits = new GameObject("TheaterHits", typeof(RectTransform)).GetComponent<RectTransform>();
+            hits.SetParent(fit, false);
+            Stretch(hits);
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TheatreZoneSlot slot = slots[i];
+                BoundsOf(slot.Hex, 0f, out float minX, out float minY, out float maxX, out float maxY);
+                var button = CreateHitButton(hits, SkirmishLibraryControlNames.TheaterPin(slot.MapId));
+                PlaceTopLeft(button.GetComponent<RectTransform>(), minX, minY, Mathf.Max(48f, maxX - minX), Mathf.Max(48f, maxY - minY));
                 if (button.targetGraphic is Image hit)
                     hit.color = new Color(0f, 0f, 0f, 0f);
-                string captured = mapId;
+                string captured = slot.MapId;
                 button.onClick.AddListener(() => SelectTheaterRegion(captured));
                 _regionButtons.Add(button);
-                DrawZoneOutline(fit, "ZoneOutline_" + mapId, box, zone, selected);
-                PlaceZonePin(fit, mapId, box, zone, selected, fa);
-                PlaceZoneCard(fit, mapId, box, zone, won, published, selected, fa);
             }
         }
 
@@ -533,6 +614,8 @@ namespace Game.UI.Runtime
             float frameWidth,
             float frameHeight,
             float sourceAspect,
+            float focalX,
+            float focalY,
             out float u,
             out float v,
             out float width,
@@ -546,19 +629,46 @@ namespace Game.UI.Runtime
                 width = 1f;
                 height = sourceAspect / frameAspect;
                 u = 0f;
-                v = (1f - height) * 0.5f;
+                v = Mathf.Clamp(focalY - height * 0.5f, 0f, Mathf.Max(0f, 1f - height));
             }
             else
             {
                 height = 1f;
                 width = frameAspect / sourceAspect;
-                u = (1f - width) * 0.5f;
+                u = Mathf.Clamp(focalX - width * 0.5f, 0f, Mathf.Max(0f, 1f - width));
                 v = 0f;
             }
         }
 
-        private static Rect VisibleDistrictBox(
-            Rect region,
+        /// <summary>
+        /// Cover-crops the theatre painting. The window is the same one the district overlays use,
+        /// so a wide frame crops top and bottom around the district anchors instead of letterboxing.
+        /// </summary>
+        private static void ApplyTheatreCover(RawImage image, float frameWidth, float frameHeight)
+        {
+            if (image == null)
+                return;
+            if (frameWidth < 2f || frameHeight < 2f)
+            {
+                image.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            CoverWindow(
+                frameWidth,
+                frameHeight,
+                TextureAspect(image.texture),
+                TheatreFocalX,
+                TheatreFocalY,
+                out float u,
+                out float v,
+                out float width,
+                out float height);
+            image.uvRect = new Rect(u, 1f - (v + height), width, height);
+        }
+
+        private static Vector2 MapPaintingPoint(
+            Vector2 normalized,
             float cropU,
             float cropV,
             float cropW,
@@ -566,72 +676,317 @@ namespace Game.UI.Runtime
             float frameWidth,
             float frameHeight)
         {
-            const float margin = 8f;
-            float x0 = Mathf.Max(region.x, cropU);
-            float y0 = Mathf.Max(region.y, cropV);
-            float x1 = Mathf.Min(region.xMax, cropU + cropW);
-            float y1 = Mathf.Min(region.yMax, cropV + cropH);
-            float left = (x0 - cropU) / cropW * frameWidth;
-            float top = (y0 - cropV) / cropH * frameHeight;
-            float right = (x1 - cropU) / cropW * frameWidth;
-            float bottom = (y1 - cropV) / cropH * frameHeight;
-            left = Mathf.Clamp(left, margin, frameWidth - margin);
-            top = Mathf.Clamp(top, margin, frameHeight - margin);
-            right = Mathf.Clamp(right, left + 48f, frameWidth - margin);
-            bottom = Mathf.Clamp(bottom, top + 48f, frameHeight - margin);
-            return Rect.MinMaxRect(left, top, right, bottom);
+            return new Vector2(
+                (normalized.x - cropU) / Mathf.Max(0.001f, cropW) * frameWidth,
+                (normalized.y - cropV) / Mathf.Max(0.001f, cropH) * frameHeight);
         }
 
-        private static void DrawZoneOutline(Transform parent, string name, Rect box, Color color, bool selected)
+        /// <summary>
+        /// Flat hex around the district anchor, in painting pixels. The same pixel radius
+        /// is used on both axes so the shape matches the painting instead of the cropped frame.
+        /// </summary>
+        private static void PaintingHex(int index, Vector2[] normalized)
         {
-            var root = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
-            root.SetParent(parent, false);
-            PlaceTopLeft(root, box.x, box.y, box.width, box.height);
-            root.localScale = Vector3.one;
-            var points = new Vector2[6];
-            HexPoints(points);
-            float span = Mathf.Min(box.width, box.height);
-            float thickness = Mathf.Min(selected ? 10f : 6f, span * 0.08f);
-            Color ink = new Color(0.08f, 0.05f, 0.03f, 0.9f);
-            Color stroke = selected ? Color.Lerp(color, Color.white, 0.28f) : color;
-            stroke.a = selected ? 1f : 0.94f;
-            DrawHexEdges(root, points, ink, Mathf.Min(thickness + 6f, span * 0.12f));
-            DrawHexEdges(root, points, stroke, thickness);
+            Rect region = SkirmishBattleLibraryArt.TheaterRegions[index];
+            Vector2 centre = SkirmishBattleLibraryArt.TheaterLabelCentres[index];
+            const float paintWidth = 1280f;
+            const float paintHeight = 720f;
+            const float hex = 0.8660254f;
+            float radius = region.height * paintHeight * 0.46f;
+            float top = (centre.y - region.y) * paintHeight;
+            float bottom = (region.yMax - centre.y) * paintHeight;
+            float left = (centre.x - region.x) * paintWidth;
+            float right = (region.xMax - centre.x) * paintWidth;
+            radius = Mathf.Min(radius, top / hex * 0.92f, bottom / hex * 0.92f, left * 0.92f, right * 0.92f);
+            float rise = radius * hex;
+            float cx = centre.x * paintWidth;
+            float cy = centre.y * paintHeight;
+            Vector2[] local =
+            {
+                new Vector2(radius, 0f),
+                new Vector2(radius * 0.5f, rise),
+                new Vector2(-radius * 0.5f, rise),
+                new Vector2(-radius, 0f),
+                new Vector2(-radius * 0.5f, -rise),
+                new Vector2(radius * 0.5f, -rise)
+            };
+            for (int i = 0; i < local.Length; i++)
+                normalized[i] = new Vector2((cx + local[i].x) / paintWidth, (cy + local[i].y) / paintHeight);
+        }
+
+        private static void FitHexUniform(Vector2[] points, Rect safe, float pad)
+        {
+            if (points == null || points.Length == 0)
+                return;
+            BoundsOf(points, 0f, out float minX, out float minY, out float maxX, out float maxY);
+            float availW = Mathf.Max(1f, safe.width - pad * 2f);
+            float availH = Mathf.Max(1f, safe.height - pad * 2f);
+            float scale = Mathf.Min(1f, availW / Mathf.Max(1f, maxX - minX), availH / Mathf.Max(1f, maxY - minY));
+            if (scale < 0.999f)
+                ScaleAboutCentre(points, scale);
+            FitHex(points, safe, pad);
+        }
+
+        private static void FitHex(Vector2[] points, Rect safe, float pad)
+        {
+            BoundsOf(points, pad, out float minX, out float minY, out float maxX, out float maxY);
+            float dx = 0f;
+            float dy = 0f;
+            if (minX < safe.xMin)
+                dx = safe.xMin - minX;
+            if (maxX + dx > safe.xMax)
+                dx = safe.xMax - maxX;
+            if (minY < safe.yMin)
+                dy = safe.yMin - minY;
+            if (maxY + dy > safe.yMax)
+                dy = safe.yMax - maxY;
+            Translate(points, dx, dy);
+        }
+
+        private static void SeparateHexes(List<TheatreZoneSlot> slots, Rect safe, float pad)
+        {
+            if (slots == null)
+                return;
+            for (int pass = 0; pass < 8; pass++)
+            {
+                bool moved = false;
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    for (int j = i + 1; j < slots.Count; j++)
+                    {
+                        if (slots[i].Hex == null || slots[j].Hex == null || !OverlapBounds(slots[i].Hex, slots[j].Hex, pad, 6f))
+                            continue;
+                        BoundsOf(slots[i].Hex, pad, out _, out float topA, out _, out float bottomA);
+                        BoundsOf(slots[j].Hex, pad, out _, out float topB, out _, out float bottomB);
+                        int lower = topA <= topB ? j : i;
+                        int upper = lower == j ? i : j;
+                        float upperBottom = upper == i ? bottomA : bottomB;
+                        float lowerTop = lower == i ? topA : topB;
+                        Vector2[] trial = CopyPoints(slots[lower].Hex);
+                        Translate(trial, 0f, upperBottom + 6f - lowerTop);
+                        FitHex(trial, safe, pad);
+                        if (!OverlapBounds(slots[upper].Hex, trial, pad, 6f))
+                        {
+                            TheatreZoneSlot slot = slots[lower];
+                            slot.Hex = trial;
+                            slots[lower] = slot;
+                            moved = true;
+                        }
+                    }
+                }
+
+                if (!moved)
+                    break;
+            }
+        }
+
+        private static void PlaceZoneSlots(List<TheatreZoneSlot> slots, Rect safe)
+        {
+            if (slots == null)
+                return;
+            float stack = ZonePinSize + ZoneStackGap + ZoneCueHeight + ZoneStackGap + ZoneCardHeight;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TheatreZoneSlot slot = slots[i];
+                float left = Mathf.Clamp(slot.Anchor.x - ZoneCardWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCardWidth));
+                float top = Mathf.Clamp(slot.Anchor.y - ZonePinSize * 0.5f, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - stack));
+                float pinX = Mathf.Clamp(slot.Anchor.x - ZonePinSize * 0.5f, left, left + ZoneCardWidth - ZonePinSize);
+                pinX = Mathf.Clamp(pinX, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZonePinSize));
+                slot.Pin = new Rect(pinX, top, ZonePinSize, ZonePinSize);
+                float cueX = Mathf.Clamp(pinX + ZonePinSize * 0.5f - ZoneCueWidth * 0.5f, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - ZoneCueWidth));
+                float cursor = top + ZonePinSize + ZoneStackGap;
+                slot.Cue = new Rect(cueX, cursor, ZoneCueWidth, ZoneCueHeight);
+                cursor += ZoneCueHeight + ZoneStackGap;
+                slot.Card = new Rect(left, cursor, ZoneCardWidth, ZoneCardHeight);
+                slots[i] = slot;
+            }
+
+            SeparateCards(slots, safe);
+            NudgeCues(slots, safe);
+        }
+
+        private static void SeparateCards(List<TheatreZoneSlot> slots, Rect safe)
+        {
+            for (int pass = 0; pass < 12; pass++)
+            {
+                bool moved = false;
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    for (int j = i + 1; j < slots.Count; j++)
+                    {
+                        Rect a = slots[i].Card;
+                        Rect b = slots[j].Card;
+                        if (!Overlaps(a, b, 6f))
+                            continue;
+                        int lower = a.yMin <= b.yMin ? j : i;
+                        int upper = lower == j ? i : j;
+                        TheatreZoneSlot lowerSlot = slots[lower];
+                        TheatreZoneSlot upperSlot = slots[upper];
+                        float pushed = upperSlot.Card.yMax + 8f;
+                        if (pushed + lowerSlot.Card.height <= safe.yMax)
+                        {
+                            Rect card = lowerSlot.Card;
+                            card.y = pushed;
+                            lowerSlot.Card = card;
+                            slots[lower] = lowerSlot;
+                        }
+                        else
+                        {
+                            Rect card = upperSlot.Card;
+                            card.y = Mathf.Max(safe.yMin, lowerSlot.Card.yMin - 8f - card.height);
+                            upperSlot.Card = card;
+                            slots[upper] = upperSlot;
+                        }
+
+                        moved = true;
+                    }
+                }
+
+                if (!moved)
+                    break;
+            }
+        }
+
+        private static void NudgeCues(List<TheatreZoneSlot> slots, Rect safe)
+        {
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (!slots[i].Selected)
+                    continue;
+                for (int pass = 0; pass < 6; pass++)
+                {
+                    TheatreZoneSlot slot = slots[i];
+                    Rect cue = slot.Cue;
+                    bool hit = false;
+                    for (int j = 0; j < slots.Count; j++)
+                    {
+                        Rect card = slots[j].Card;
+                        if (!Overlaps(cue, card, 2f))
+                            continue;
+                        hit = true;
+                        cue.y = cue.center.y <= card.center.y
+                            ? card.yMin - cue.height - 4f
+                            : card.yMax + 4f;
+                    }
+
+                    cue.x = Mathf.Clamp(cue.x, safe.xMin, Mathf.Max(safe.xMin, safe.xMax - cue.width));
+                    cue.y = Mathf.Clamp(cue.y, safe.yMin, Mathf.Max(safe.yMin, safe.yMax - cue.height));
+                    slot.Cue = cue;
+                    slots[i] = slot;
+                    if (!hit)
+                        break;
+                }
+            }
+        }
+
+        private static bool Overlaps(Rect a, Rect b, float slop)
+        {
+            return a.xMin < b.xMax - slop && b.xMin < a.xMax - slop && a.yMin < b.yMax - slop && b.yMin < a.yMax - slop;
+        }
+
+        private static bool OverlapBounds(Vector2[] a, Vector2[] b, float pad, float slop)
+        {
+            if (a == null || b == null)
+                return false;
+            BoundsOf(a, pad, out float a0, out float a1, out float a2, out float a3);
+            BoundsOf(b, pad, out float b0, out float b1, out float b2, out float b3);
+            return a0 < b2 - slop && b0 < a2 - slop && a1 < b3 - slop && b1 < a3 - slop;
+        }
+
+        private static void BoundsOf(Vector2[] points, float pad, out float minX, out float minY, out float maxX, out float maxY)
+        {
+            minX = maxX = points[0].x;
+            minY = maxY = points[0].y;
+            for (int i = 1; i < points.Length; i++)
+            {
+                minX = Mathf.Min(minX, points[i].x);
+                maxX = Mathf.Max(maxX, points[i].x);
+                minY = Mathf.Min(minY, points[i].y);
+                maxY = Mathf.Max(maxY, points[i].y);
+            }
+
+            minX -= pad;
+            minY -= pad;
+            maxX += pad;
+            maxY += pad;
+        }
+
+        private static void Translate(Vector2[] points, float dx, float dy)
+        {
+            if (Mathf.Abs(dx) < 0.01f && Mathf.Abs(dy) < 0.01f)
+                return;
             for (int i = 0; i < points.Length; i++)
+                points[i] = new Vector2(points[i].x + dx, points[i].y + dy);
+        }
+
+        private static void ScaleAboutCentre(Vector2[] points, float scale)
+        {
+            float cx = 0f;
+            float cy = 0f;
+            for (int i = 0; i < points.Length; i++)
+            {
+                cx += points[i].x;
+                cy += points[i].y;
+            }
+
+            cx /= points.Length;
+            cy /= points.Length;
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i] = new Vector2(
+                    cx + (points[i].x - cx) * scale,
+                    cy + (points[i].y - cy) * scale);
+            }
+        }
+
+        private static Vector2[] CopyPoints(Vector2[] source)
+        {
+            var copy = new Vector2[source.Length];
+            Array.Copy(source, copy, source.Length);
+            return copy;
+        }
+
+        private static void DrawZoneOutline(Transform parent, string name, Vector2[] screenPoints, Color color, bool selected)
+        {
+            BoundsOf(screenPoints, 0f, out float minX, out float minY, out float maxX, out float maxY);
+            float width = maxX - minX + ZoneHexPad * 2f;
+            float height = maxY - minY + ZoneHexPad * 2f;
+            var root = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(V3PolygonGraphic)).GetComponent<RectTransform>();
+            root.SetParent(parent, false);
+            PlaceTopLeft(root, minX - ZoneHexPad, minY - ZoneHexPad, width, height);
+            root.localScale = Vector3.one;
+            var local = new Vector2[screenPoints.Length];
+            for (int i = 0; i < screenPoints.Length; i++)
+                local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
+            Color fill = color;
+            fill.a = 0.18f;
+            root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
+            float stroke = selected ? 4f : 3.5f;
+            Color glow = color;
+            glow.a = 0.35f;
+            Color ink = selected ? Color.Lerp(color, Color.white, 0.28f) : color;
+            ink.a = 1f;
+            DrawHexEdges(root, local, glow, 8f);
+            DrawHexEdges(root, local, ink, stroke);
+            for (int i = 0; i < local.Length; i++)
             {
                 var cap = new GameObject("HexCap", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 cap.transform.SetParent(root, false);
                 cap.sprite = ZoneCapSprite();
-                cap.color = stroke;
+                cap.color = ink;
                 cap.raycastTarget = false;
-                PlaceHexPoint(cap.rectTransform, points[i], box.width, box.height, thickness + 2f);
+                PlaceHexPoint(cap.rectTransform, local[i], stroke + 3f);
             }
-        }
-
-        private static void HexPoints(Vector2[] points)
-        {
-            points[0] = new Vector2(0.50f, 0.12f);
-            points[1] = new Vector2(0.86f, 0.30f);
-            points[2] = new Vector2(0.86f, 0.70f);
-            points[3] = new Vector2(0.50f, 0.88f);
-            points[4] = new Vector2(0.14f, 0.70f);
-            points[5] = new Vector2(0.14f, 0.30f);
         }
 
         private static void DrawHexEdges(RectTransform root, Vector2[] points, Color color, float thickness)
         {
-            float width = root.sizeDelta.x;
-            float height = root.sizeDelta.y;
             for (int i = 0; i < points.Length; i++)
             {
                 Vector2 a = points[i];
                 Vector2 b = points[(i + 1) % points.Length];
-                float x1 = a.x * width;
-                float y1 = a.y * height;
-                float x2 = b.x * width;
-                float y2 = b.y * height;
-                float dx = x2 - x1;
-                float dy = y2 - y1;
+                float dx = b.x - a.x;
+                float dy = b.y - a.y;
                 float length = Mathf.Sqrt(dx * dx + dy * dy);
                 var edge = new GameObject("HexEdge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 edge.transform.SetParent(root, false);
@@ -643,38 +998,35 @@ namespace Game.UI.Runtime
                 rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 rect.sizeDelta = new Vector2(length + thickness, thickness);
-                rect.anchoredPosition = new Vector2((x1 + x2) * 0.5f, -((y1 + y2) * 0.5f));
-                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-(y2 - y1), x2 - x1) * Mathf.Rad2Deg);
+                rect.anchoredPosition = new Vector2((a.x + b.x) * 0.5f, -((a.y + b.y) * 0.5f));
+                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-(b.y - a.y), b.x - a.x) * Mathf.Rad2Deg);
                 rect.localScale = Vector3.one;
             }
         }
 
-        private static void PlaceHexPoint(RectTransform rect, Vector2 point, float width, float height, float size)
+        private static void PlaceHexPoint(RectTransform rect, Vector2 point, float size)
         {
             rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
             rect.pivot = new Vector2(0.5f, 0.5f);
             rect.sizeDelta = new Vector2(size, size);
-            rect.anchoredPosition = new Vector2(point.x * width, -(point.y * height));
+            rect.anchoredPosition = new Vector2(point.x, -point.y);
             rect.localScale = Vector3.one;
         }
 
-        private void PlaceZonePin(Transform parent, string mapId, Rect box, Color zone, bool selected, bool fa)
+        private void PlaceZonePin(Transform parent, TheatreZoneSlot slot, bool fa)
         {
-            float size = Mathf.Clamp(Mathf.Min(box.width, box.height) * 0.22f, 24f, selected ? 40f : 30f);
-            float x = box.x + (box.width - size) * 0.5f;
-            float y = box.y + 8f;
-            var pin = new GameObject("ZonePin_" + mapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            var pin = new GameObject("ZonePin_" + slot.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             pin.transform.SetParent(parent, false);
             pin.sprite = LibraryMedallion();
             pin.preserveAspect = true;
-            pin.color = selected ? new Color(1f, 0.94f, 0.55f, 1f) : zone;
+            pin.color = slot.Selected ? new Color(1f, 0.94f, 0.55f, 1f) : slot.Zone;
             pin.raycastTarget = false;
-            PlaceTopLeft(pin.rectTransform, x, y, size, size);
+            PlaceTopLeft(pin.rectTransform, slot.Pin.x, slot.Pin.y, slot.Pin.width, slot.Pin.height);
             pin.rectTransform.localScale = Vector3.one;
-            if (!selected || box.height < size + 108f)
+            if (!slot.Selected)
                 return;
             var cue = CreateLabel(parent, "ZoomCue", 14f);
-            PlaceTopLeft(cue.rectTransform, box.x + 8f, y + size + 2f, Mathf.Max(72f, box.width - 16f), 22f);
+            PlaceTopLeft(cue.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -684,78 +1036,64 @@ namespace Game.UI.Runtime
             SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 12f, 16f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
+            cue.maxVisibleLines = 1;
             cue.fontStyle = FontStyles.Bold;
             cue.color = new Color(1f, 0.96f, 0.82f, 1f);
         }
 
-        private void PlaceZoneCard(
-            Transform parent,
-            string mapId,
-            Rect box,
-            Color zone,
-            int won,
-            int published,
-            bool selected,
-            bool fa)
+        private void PlaceZoneCard(Transform parent, TheatreZoneSlot slot, bool fa)
         {
-            float cardH = Mathf.Min(72f, Mathf.Max(56f, box.height - 20f));
-            float cardW = Mathf.Clamp(box.width - 16f, 120f, 188f);
-            if (cardW > box.width - 8f)
-                cardW = Mathf.Max(96f, box.width - 8f);
-            if (cardH > box.height - 8f)
-                cardH = Mathf.Max(48f, box.height - 8f);
-            float foot = Mathf.Max(16f, box.height * 0.14f);
-            float x = box.x + (box.width - cardW) * 0.5f;
-            float y = Mathf.Clamp(box.yMax - cardH - foot, box.y + 4f, Mathf.Max(box.y + 4f, box.yMax - cardH));
-            var card = new GameObject("ZoneCard_" + mapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            var card = new GameObject("ZoneCard_" + slot.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             card.transform.SetParent(parent, false);
             card.sprite = ZoneRibbonSprite();
             card.type = Image.Type.Sliced;
-            card.color = selected ? Color.white : new Color(0.92f, 0.9f, 0.84f, 1f);
+            card.color = Color.white;
             card.raycastTarget = false;
-            PlaceTopLeft(card.rectTransform, x, y, cardW, cardH);
+            PlaceTopLeft(card.rectTransform, slot.Card.x, slot.Card.y, slot.Card.width, slot.Card.height);
             card.rectTransform.localScale = Vector3.one;
 
-            float thumb = Mathf.Clamp(cardH - 20f, 32f, 48f);
+            float cardW = slot.Card.width;
+            float cardH = slot.Card.height;
+            var name = CreateLabel(card.transform, "ZoneName", 16f);
+            PlaceTopLeft(name.rectTransform, 8f, 4f, Mathf.Max(40f, cardW - 16f), 32f);
+            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            name.isRightToLeftText = fa;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.maxVisibleLines = 1;
+            name.fontStyle = FontStyles.Bold;
+            name.color = new Color(1f, 0.97f, 0.9f, 1f);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 14f, 18f);
+            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            name.isRightToLeftText = fa;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.maxVisibleLines = 1;
+            name.fontStyle = FontStyles.Bold;
+            name.color = new Color(1f, 0.97f, 0.9f, 1f);
+
+            const float thumb = 58f;
+            const float ring = 50f;
+            float bodyY = 40f;
             float thumbX = fa ? cardW - 10f - thumb : 10f;
             var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(card.transform, false);
-            PlaceTopLeft(preview.rectTransform, thumbX, (cardH - thumb) * 0.5f, thumb, thumb);
-            Texture2D plateArt = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
+            PlaceTopLeft(preview.rectTransform, thumbX, bodyY, thumb, thumb);
+            Texture2D plateArt = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + slot.MapId);
             preview.texture = plateArt != null ? plateArt : LoadTheatreBase();
             preview.color = Color.white;
             preview.raycastTarget = false;
             CoverCrop(preview, thumb, thumb);
 
-            float textX = fa ? 8f : thumbX + thumb + 6f;
-            float textW = Mathf.Max(48f, cardW - thumb - 22f);
-            const float ring = 34f;
-            float nameW = Mathf.Max(40f, textW - ring - 4f);
-            float nameX = fa ? textX + ring + 4f : textX;
-            var name = CreateLabel(card.transform, "ZoneName", 15f);
-            PlaceTopLeft(name.rectTransform, nameX, 6f, nameW, 26f);
-            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-            name.isRightToLeftText = fa;
-            name.textWrappingMode = TextWrappingModes.NoWrap;
-            name.overflowMode = TextOverflowModes.Overflow;
-            name.fontStyle = FontStyles.Bold;
-            name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(mapId, fa), 13f, 18f);
-            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-            name.isRightToLeftText = fa;
-            name.overflowMode = TextOverflowModes.Overflow;
-            name.fontStyle = FontStyles.Bold;
-            name.color = new Color(1f, 0.97f, 0.9f, 1f);
-
-            float ringX = fa ? textX : textX + textW - ring;
+            float ringX = fa ? 10f : cardW - 10f - ring;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = ZoneRingSprite();
-            track.color = new Color(zone.r, zone.g, zone.b, 0.4f);
+            track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.28f);
             track.raycastTarget = false;
-            float ringY = Mathf.Clamp(cardH - ring - 6f, 4f, Mathf.Max(4f, cardH - ring));
-            PlaceTopLeft(track.rectTransform, ringX, ringY, ring, ring);
+            PlaceTopLeft(track.rectTransform, ringX, Mathf.Min(bodyY, cardH - ring - 6f), ring, ring);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -764,9 +1102,9 @@ namespace Game.UI.Runtime
             fill.fillMethod = Image.FillMethod.Radial360;
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
-            int denom = published > 0 ? published : 24;
-            fill.fillAmount = Mathf.Clamp01(won / (float)denom);
-            fill.color = zone;
+            int total = Mathf.Max(0, slot.ScenarioCount);
+            fill.fillAmount = total > 0 ? Mathf.Clamp01(slot.Won / (float)total) : 0f;
+            fill.color = slot.Zone;
             fill.raycastTarget = false;
             var count = CreateLabel(track.transform, "ZoneCount", 12f);
             Stretch(count.rectTransform);
@@ -776,7 +1114,8 @@ namespace Game.UI.Runtime
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
-            SetCopy(count, won + "/" + denom, 11f, 14f);
+            // Medals won / catalog scenarios for this map. Not the playable PublishedCount.
+            SetCopy(count, slot.Won + "/" + total, 11f, 14f);
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = false;
             count.overflowMode = TextOverflowModes.Overflow;
@@ -2661,8 +3000,8 @@ namespace Game.UI.Runtime
                 plateRect.anchorMin = new Vector2(0f, 0f);
                 plateRect.anchorMax = new Vector2(1f, 1f);
                 plateRect.pivot = new Vector2(0f, 1f);
-                plateRect.offsetMin = new Vector2(8f, theater ? 128f : 8f);
-                plateRect.offsetMax = new Vector2(-8f, -112f);
+                plateRect.offsetMin = new Vector2(theater ? 0f : 8f, theater ? 128f : 8f);
+                plateRect.offsetMax = new Vector2(theater ? 0f : -8f, -112f);
                 MaskRect(plateRect);
             }
 
@@ -3011,7 +3350,10 @@ namespace Game.UI.Runtime
             EnsureOpaquePanel(briefing);
             RectTransform mapShadow = EnsureSoftShadow(map, 8f, 14f);
             RectTransform briefingShadow = EnsureSoftShadow(briefing, briefingOnLeft ? 16f : -16f, 14f);
-            if (briefingShadow != null && briefingShadow.GetSiblingIndex() < map.GetSiblingIndex())
+            bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+            if (theater && briefingShadow != null)
+                briefingShadow.SetSiblingIndex(map.GetSiblingIndex());
+            else if (briefingShadow != null && briefingShadow.GetSiblingIndex() < map.GetSiblingIndex())
             {
                 briefingShadow.SetSiblingIndex(map.GetSiblingIndex() + 1);
                 briefing.SetSiblingIndex(briefingShadow.GetSiblingIndex() + 1);
@@ -5204,7 +5546,9 @@ namespace Game.UI.Runtime
                 else if (text.name == "ZoomCue")
                 {
                     RelaxLibraryText(text, 12f, 16f, false);
+                    text.textWrappingMode = TextWrappingModes.NoWrap;
                     text.overflowMode = TextOverflowModes.Overflow;
+                    text.maxVisibleLines = 1;
                     text.isRightToLeftText = fa;
                 }
                 else if (text.name == "ZoneCount")
@@ -5215,9 +5559,10 @@ namespace Game.UI.Runtime
                 }
                 else if (zoneName)
                 {
-                    RelaxLibraryText(text, 13f, 18f, true);
+                    RelaxLibraryText(text, 14f, 18f, false);
+                    text.textWrappingMode = TextWrappingModes.NoWrap;
                     text.overflowMode = TextOverflowModes.Overflow;
-                    text.maxVisibleLines = 2;
+                    text.maxVisibleLines = 1;
                     text.isRightToLeftText = fa && ContainsArabicScript(text.text);
                 }
                 else if (recommended)

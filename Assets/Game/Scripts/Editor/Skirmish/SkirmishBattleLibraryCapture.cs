@@ -411,6 +411,7 @@ namespace Game.Editor
         {
             if (root == null)
                 return;
+            RejectTheaterOverlays(root);
             Transform grid = FindNamed(root.transform, "LibraryGrid");
             var gridRect = grid as RectTransform;
             if (gridRect == null || !grid.gameObject.activeInHierarchy)
@@ -733,6 +734,70 @@ namespace Game.Editor
                     " gridWidth=" + rect.width.ToString("0.0") +
                     " gridHeight=" + rect.height.ToString("0.0") +
                     " path=" + ImagePath(item) +
+                    " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));
+            }
+        }
+
+        private static void RejectTheaterOverlays(GameObject root)
+        {
+            Transform regions = FindNamed(root.transform, "LibraryRegions");
+            if (regions == null || !regions.gameObject.activeInHierarchy)
+                return;
+            var panel = FindNamed(root.transform, "OperationPreview") as RectTransform;
+            if (panel == null || !panel.gameObject.activeInHierarchy)
+                throw new InvalidOperationException("Map panel is missing for the theatre overlays.");
+            Canvas.ForceUpdateCanvases();
+            string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                RequireTheaterOverlay(regions, panel, "ZoneOutline_" + mapIds[i], "outline", mapIds[i], locale);
+                RequireTheaterOverlay(regions, panel, "ZonePin_" + mapIds[i], "pin", mapIds[i], locale);
+                RequireTheaterOverlay(regions, panel, "ZoneCard_" + mapIds[i], "zone card", mapIds[i], locale);
+            }
+        }
+
+        private static void RequireTheaterOverlay(
+            Transform regions,
+            RectTransform panel,
+            string name,
+            string kind,
+            string mapId,
+            string locale)
+        {
+            Transform node = FindNamed(regions, name);
+            if (node == null || !node.gameObject.activeInHierarchy)
+                throw new InvalidOperationException("Theatre " + kind + " is missing for " + mapId + " locale=" + locale + ".");
+            Graphic[] graphics = node.GetComponentsInChildren<Graphic>(true);
+            bool shown = false;
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic graphic = graphics[i];
+                if (graphic != null && graphic.enabled && graphic.gameObject.activeInHierarchy && graphic.color.a > 0.05f)
+                {
+                    shown = true;
+                    break;
+                }
+            }
+
+            if (!shown)
+                throw new InvalidOperationException("Theatre " + kind + " for " + mapId + " has no visible graphic locale=" + locale + ".");
+            var rect = node as RectTransform;
+            if (rect == null)
+                throw new InvalidOperationException("Theatre " + kind + " for " + mapId + " has no rect locale=" + locale + ".");
+            const float slop = 2f;
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            Rect panelRect = panel.rect;
+            for (int i = 0; i < corners.Length; i++)
+            {
+                Vector3 local = panel.InverseTransformPoint(corners[i]);
+                bool outside = local.x < panelRect.xMin - slop || local.x > panelRect.xMax + slop ||
+                    local.y < panelRect.yMin - slop || local.y > panelRect.yMax + slop;
+                if (!outside)
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre " + kind + " for " + mapId + " is outside the map panel locale=" + locale +
                     " local=" + local.x.ToString("0.0") + "," + local.y.ToString("0.0"));
             }
         }

@@ -54,6 +54,9 @@ namespace Game.UI.Runtime
         private static Sprite _zoneMedallion;
         private static Sprite _zoneGlow;
         private static Sprite _zoneRibbon;
+        private static Sprite _zoneStroke;
+        private static Sprite _zoneCap;
+        private static Sprite _zoneRing;
         private static Sprite _solidSprite;
         private static Sprite _softShadow;
         private float _sideWonRatio;
@@ -401,9 +404,9 @@ namespace Game.UI.Runtime
                 Texture2D painted = LoadTheatreBase();
                 map.texture = painted != null ? painted : SkirmishLibraryPreviewAssets.Placeholder();
                 map.color = Color.white;
-                map.uvRect = new Rect(0f, 0f, 1f, 1f);
-                PlaceTheatreContain(map.rectTransform, plateWidth, plateHeight, TextureAspect(map.texture));
+                Stretch(map.rectTransform);
                 map.rectTransform.localScale = Vector3.one;
+                CoverCrop(map, plateWidth, plateHeight);
             }
             else
             {
@@ -436,12 +439,6 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            var ground = new GameObject("TheaterGround", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            ground.transform.SetParent(_libraryRegions, false);
-            Stretch(ground.rectTransform);
-            ground.color = new Color(0.07f, 0.07f, 0.06f, 1f);
-            ground.raycastTarget = false;
-
             RectTransform plate = map != null ? map.rectTransform.parent as RectTransform : null;
             if (!TryFrameSize(plate, out float plateWidth, out float plateHeight))
             {
@@ -450,12 +447,11 @@ namespace Game.UI.Runtime
             }
 
             Texture2D painted = LoadTheatreBase();
-            bool anyZone = painted != null;
             float aspect = TextureAspect(painted);
-            ContainTheatre(plateWidth, plateHeight, aspect, out float fitX, out float fitY, out float fitW, out float fitH);
+            CoverWindow(plateWidth, plateHeight, aspect, out float cropU, out float cropV, out float cropW, out float cropH);
             var fit = new GameObject("TheaterFit", typeof(RectTransform)).GetComponent<RectTransform>();
             fit.SetParent(_libraryRegions, false);
-            PlaceTopLeft(fit, fitX, fitY, fitW, fitH);
+            PlaceTopLeft(fit, 0f, 0f, plateWidth, plateHeight);
             fit.localScale = Vector3.one;
             if (painted != null)
             {
@@ -464,42 +460,17 @@ namespace Game.UI.Runtime
                 Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = Color.white;
-                raw.uvRect = new Rect(0f, 0f, 1f, 1f);
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                OutlineSelectedZone(fit, theater.SelectedMapId);
-            }
-            else
-            {
-                for (int i = 0; i < theater.Pins.Length; i++)
-                {
-                    SkirmishTheaterPinState pin = theater.Pins[i];
-                    Texture2D feather = SkirmishLibraryPreviewAssets.Load("skirmish.zone." + pin.MapId);
-                    if (feather == null)
-                        continue;
-                    anyZone = true;
-                    var raw = new GameObject("Zone_" + pin.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-                    raw.transform.SetParent(fit, false);
-                    Stretch(raw.rectTransform);
-                    raw.texture = feather;
-                    bool zoneSelected = string.Equals(pin.MapId, theater.SelectedMapId, StringComparison.OrdinalIgnoreCase);
-                    raw.color = zoneSelected ? new Color(1.25f, 1.05f, 0.72f, 1f) : new Color(0.62f, 0.5f, 0.38f, 1f);
-                    raw.uvRect = new Rect(0f, 0f, 1f, 1f);
-                    raw.raycastTarget = false;
-                    raw.rectTransform.localScale = Vector3.one;
-                    if (zoneSelected)
-                        StrokeSelectedZone(fit, raw, feather);
-                }
+                CoverCrop(raw, plateWidth, plateHeight);
             }
 
             if (map != null)
-                map.enabled = !anyZone;
+                map.enabled = painted == null;
 
             var hits = new GameObject("TheaterHits", typeof(RectTransform)).GetComponent<RectTransform>();
             hits.SetParent(fit, false);
             Stretch(hits);
-            RectTransform labels = EnsureTheaterLabelHost(plate, fitX, fitY, fitW, fitH);
-            ClearChildren(labels);
             for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
             {
                 string mapId = SkirmishBattleLibraryArt.MapIds[i];
@@ -521,73 +492,17 @@ namespace Game.UI.Runtime
                     }
                 }
 
+                Rect box = VisibleDistrictBox(region, cropU, cropV, cropW, cropH, plateWidth, plateHeight);
                 var button = CreateHitButton(hits, SkirmishLibraryControlNames.TheaterPin(mapId));
-                PlaceRegion(button.GetComponent<RectTransform>(), region);
+                PlaceTopLeft(button.GetComponent<RectTransform>(), box.x, box.y, box.width, box.height);
                 if (button.targetGraphic is Image hit)
                     hit.color = new Color(0f, 0f, 0f, 0f);
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectTheaterRegion(captured));
                 _regionButtons.Add(button);
-
-                float pinSize = selected ? 96f : 36f;
-                Vector2 pinCentre = centre + (selected ? new Vector2(0f, -0.07f) : Vector2.zero);
-                if (selected)
-                {
-                    var glow = new GameObject("ZoneGlow", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                    glow.transform.SetParent(labels, false);
-                    glow.sprite = ZoneGlowSprite();
-                    glow.preserveAspect = true;
-                    glow.color = new Color(1f, 0.86f, 0.28f, 0.95f);
-                    glow.raycastTarget = false;
-                    PlaceLabelCentre(glow.rectTransform, pinCentre, 220f, 220f);
-                }
-
-                var backing = new GameObject("ZonePlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                backing.transform.SetParent(labels, false);
-                backing.sprite = ZoneRibbonSprite();
-                backing.type = Image.Type.Sliced;
-                backing.color = Color.white;
-                backing.raycastTarget = false;
-                PlaceLabelCentre(backing.rectTransform, centre + new Vector2(0f, 0.09f), 300f, 76f);
-                var name = CreateLabel(labels, "ZoneName", 18f);
-                PlaceLabelCentre(name.rectTransform, centre + new Vector2(0f, 0.072f), 260f, 30f);
-                name.alignment = TextAlignmentOptions.Center;
-                name.isRightToLeftText = fa;
-                name.textWrappingMode = TextWrappingModes.NoWrap;
-                name.overflowMode = TextOverflowModes.Overflow;
-                name.fontStyle = FontStyles.Bold;
-                name.outlineWidth = 0f;
-                name.color = new Color(1f, 0.98f, 0.92f, 1f);
-                SetCopy(name, MapDisplayTitle(mapId, fa), 16f, 26f);
-                name.alignment = TextAlignmentOptions.Center;
-                name.isRightToLeftText = fa;
-                name.overflowMode = TextOverflowModes.Overflow;
-                name.fontStyle = FontStyles.Bold;
-                name.outlineWidth = 0f;
-                name.color = selected ? Color.white : new Color(1f, 0.98f, 0.92f, 1f);
-                var count = CreateLabel(labels, "ZoneCount", 16f);
-                PlaceLabelCentre(count.rectTransform, centre + new Vector2(0f, 0.112f), 120f, 24f);
-                count.alignment = TextAlignmentOptions.Center;
-                count.isRightToLeftText = false;
-                count.fontStyle = FontStyles.Bold;
-                count.outlineWidth = 0f;
-                count.color = Color.white;
-                count.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(count, won + "/" + published, 16f, 24f);
-                count.isRightToLeftText = false;
-                count.overflowMode = TextOverflowModes.Overflow;
-                count.fontStyle = FontStyles.Bold;
-                count.outlineWidth = 0f;
-                count.color = Color.white;
-                var pinMark = new GameObject("Pin", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                pinMark.transform.SetParent(labels, false);
-                pinMark.sprite = LibraryMedallion();
-                pinMark.preserveAspect = true;
-                pinMark.color = selected ? new Color(1f, 0.93f, 0.45f, 1f) : zone;
-                pinMark.raycastTarget = false;
-                PlaceLabelCentre(pinMark.rectTransform, pinCentre, pinSize, pinSize);
-                if (selected)
-                    pinMark.transform.SetAsLastSibling();
+                DrawZoneOutline(fit, "ZoneOutline_" + mapId, box, zone, selected);
+                PlaceZonePin(fit, mapId, box, zone, selected, fa);
+                PlaceZoneCard(fit, mapId, box, zone, won, published, selected, fa);
             }
         }
 
@@ -614,95 +529,259 @@ namespace Game.UI.Runtime
             return 16f / 9f;
         }
 
-        private static void ContainTheatre(
+        private static void CoverWindow(
             float frameWidth,
             float frameHeight,
             float sourceAspect,
-            out float x,
-            out float y,
+            out float u,
+            out float v,
             out float width,
             out float height)
         {
             if (sourceAspect < 0.01f)
                 sourceAspect = 16f / 9f;
-            width = frameWidth;
-            height = width / sourceAspect;
-            if (height > frameHeight)
+            float frameAspect = frameWidth > 2f && frameHeight > 2f ? frameWidth / frameHeight : sourceAspect;
+            if (frameAspect >= sourceAspect)
             {
-                height = frameHeight;
-                width = height * sourceAspect;
+                width = 1f;
+                height = sourceAspect / frameAspect;
+                u = 0f;
+                v = (1f - height) * 0.5f;
             }
-
-            x = (frameWidth - width) * 0.5f;
-            y = (frameHeight - height) * 0.5f;
-        }
-
-        private static void PlaceTheatreContain(RectTransform rect, float frameWidth, float frameHeight, float sourceAspect)
-        {
-            ContainTheatre(frameWidth, frameHeight, sourceAspect, out float x, out float y, out float width, out float height);
-            PlaceTopLeft(rect, x, y, width, height);
-        }
-
-        private RectTransform EnsureTheaterLabelHost(RectTransform plate, float x, float y, float width, float height)
-        {
-            if (plate == null)
-                return _libraryRegions;
-            Transform legacy = plate.parent != null ? plate.parent.Find("TheaterLabels") : null;
-            if (legacy != null)
-                legacy.SetParent(plate, false);
-            Transform existing = plate.Find("TheaterLabels");
-            RectTransform host = existing as RectTransform;
-            if (host == null)
+            else
             {
-                host = new GameObject("TheaterLabels", typeof(RectTransform)).GetComponent<RectTransform>();
-                host.SetParent(plate, false);
+                height = 1f;
+                width = frameAspect / sourceAspect;
+                u = (1f - width) * 0.5f;
+                v = 0f;
             }
-
-            PlaceTopLeft(host, x, y, width, height);
-            host.localScale = Vector3.one;
-            host.gameObject.SetActive(true);
-            host.SetAsLastSibling();
-            return host;
         }
 
-        private static void OutlineSelectedZone(Transform parent, string mapId)
+        private static Rect VisibleDistrictBox(
+            Rect region,
+            float cropU,
+            float cropV,
+            float cropW,
+            float cropH,
+            float frameWidth,
+            float frameHeight)
         {
-            if (parent == null || string.IsNullOrEmpty(mapId))
+            const float margin = 8f;
+            float x0 = Mathf.Max(region.x, cropU);
+            float y0 = Mathf.Max(region.y, cropV);
+            float x1 = Mathf.Min(region.xMax, cropU + cropW);
+            float y1 = Mathf.Min(region.yMax, cropV + cropH);
+            float left = (x0 - cropU) / cropW * frameWidth;
+            float top = (y0 - cropV) / cropH * frameHeight;
+            float right = (x1 - cropU) / cropW * frameWidth;
+            float bottom = (y1 - cropV) / cropH * frameHeight;
+            left = Mathf.Clamp(left, margin, frameWidth - margin);
+            top = Mathf.Clamp(top, margin, frameHeight - margin);
+            right = Mathf.Clamp(right, left + 48f, frameWidth - margin);
+            bottom = Mathf.Clamp(bottom, top + 48f, frameHeight - margin);
+            return Rect.MinMaxRect(left, top, right, bottom);
+        }
+
+        private static void DrawZoneOutline(Transform parent, string name, Rect box, Color color, bool selected)
+        {
+            var root = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
+            root.SetParent(parent, false);
+            PlaceTopLeft(root, box.x, box.y, box.width, box.height);
+            root.localScale = Vector3.one;
+            var points = new Vector2[6];
+            HexPoints(points);
+            float span = Mathf.Min(box.width, box.height);
+            float thickness = Mathf.Min(selected ? 10f : 6f, span * 0.08f);
+            Color ink = new Color(0.08f, 0.05f, 0.03f, 0.9f);
+            Color stroke = selected ? Color.Lerp(color, Color.white, 0.28f) : color;
+            stroke.a = selected ? 1f : 0.94f;
+            DrawHexEdges(root, points, ink, Mathf.Min(thickness + 6f, span * 0.12f));
+            DrawHexEdges(root, points, stroke, thickness);
+            for (int i = 0; i < points.Length; i++)
+            {
+                var cap = new GameObject("HexCap", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                cap.transform.SetParent(root, false);
+                cap.sprite = ZoneCapSprite();
+                cap.color = stroke;
+                cap.raycastTarget = false;
+                PlaceHexPoint(cap.rectTransform, points[i], box.width, box.height, thickness + 2f);
+            }
+        }
+
+        private static void HexPoints(Vector2[] points)
+        {
+            points[0] = new Vector2(0.50f, 0.12f);
+            points[1] = new Vector2(0.86f, 0.30f);
+            points[2] = new Vector2(0.86f, 0.70f);
+            points[3] = new Vector2(0.50f, 0.88f);
+            points[4] = new Vector2(0.14f, 0.70f);
+            points[5] = new Vector2(0.14f, 0.30f);
+        }
+
+        private static void DrawHexEdges(RectTransform root, Vector2[] points, Color color, float thickness)
+        {
+            float width = root.sizeDelta.x;
+            float height = root.sizeDelta.y;
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector2 a = points[i];
+                Vector2 b = points[(i + 1) % points.Length];
+                float x1 = a.x * width;
+                float y1 = a.y * height;
+                float x2 = b.x * width;
+                float y2 = b.y * height;
+                float dx = x2 - x1;
+                float dy = y2 - y1;
+                float length = Mathf.Sqrt(dx * dx + dy * dy);
+                var edge = new GameObject("HexEdge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                edge.transform.SetParent(root, false);
+                edge.sprite = ZoneStrokeSprite();
+                edge.type = Image.Type.Sliced;
+                edge.color = color;
+                edge.raycastTarget = false;
+                RectTransform rect = edge.rectTransform;
+                rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.sizeDelta = new Vector2(length + thickness, thickness);
+                rect.anchoredPosition = new Vector2((x1 + x2) * 0.5f, -((y1 + y2) * 0.5f));
+                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-(y2 - y1), x2 - x1) * Mathf.Rad2Deg);
+                rect.localScale = Vector3.one;
+            }
+        }
+
+        private static void PlaceHexPoint(RectTransform rect, Vector2 point, float width, float height, float size)
+        {
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(size, size);
+            rect.anchoredPosition = new Vector2(point.x * width, -(point.y * height));
+            rect.localScale = Vector3.one;
+        }
+
+        private void PlaceZonePin(Transform parent, string mapId, Rect box, Color zone, bool selected, bool fa)
+        {
+            float size = Mathf.Clamp(Mathf.Min(box.width, box.height) * 0.22f, 24f, selected ? 40f : 30f);
+            float x = box.x + (box.width - size) * 0.5f;
+            float y = box.y + 8f;
+            var pin = new GameObject("ZonePin_" + mapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            pin.transform.SetParent(parent, false);
+            pin.sprite = LibraryMedallion();
+            pin.preserveAspect = true;
+            pin.color = selected ? new Color(1f, 0.94f, 0.55f, 1f) : zone;
+            pin.raycastTarget = false;
+            PlaceTopLeft(pin.rectTransform, x, y, size, size);
+            pin.rectTransform.localScale = Vector3.one;
+            if (!selected || box.height < size + 108f)
                 return;
-            Texture2D feather = SkirmishLibraryPreviewAssets.Load("skirmish.zone." + mapId);
-            if (feather == null)
-                return;
-            var marker = new GameObject("ZoneSelected", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-            marker.transform.SetParent(parent, false);
-            Stretch(marker.rectTransform);
-            marker.texture = feather;
-            marker.color = new Color(1.22f, 1.08f, 0.78f, 1f);
-            marker.uvRect = new Rect(0f, 0f, 1f, 1f);
-            marker.raycastTarget = false;
-            marker.rectTransform.localScale = Vector3.one;
-            StrokeSelectedZone(parent, marker, feather);
+            var cue = CreateLabel(parent, "ZoomCue", 14f);
+            PlaceTopLeft(cue.rectTransform, box.x + 8f, y + size + 2f, Mathf.Max(72f, box.width - 16f), 22f);
+            cue.alignment = TextAlignmentOptions.Center;
+            cue.isRightToLeftText = fa;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.fontStyle = FontStyles.Bold;
+            cue.color = new Color(1f, 0.96f, 0.82f, 1f);
+            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 12f, 16f);
+            cue.alignment = TextAlignmentOptions.Center;
+            cue.isRightToLeftText = fa;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.fontStyle = FontStyles.Bold;
+            cue.color = new Color(1f, 0.96f, 0.82f, 1f);
         }
 
-        private static void StrokeSelectedZone(Transform parent, RawImage zone, Texture2D texture)
+        private void PlaceZoneCard(
+            Transform parent,
+            string mapId,
+            Rect box,
+            Color zone,
+            int won,
+            int published,
+            bool selected,
+            bool fa)
         {
-            Vector2[] offsets =
-            {
-                new Vector2(12f, 0f), new Vector2(-12f, 0f), new Vector2(0f, 12f), new Vector2(0f, -12f),
-                new Vector2(8f, 8f), new Vector2(-8f, 8f), new Vector2(8f, -8f), new Vector2(-8f, -8f)
-            };
-            for (int i = 0; i < offsets.Length; i++)
-            {
-                var stroke = new GameObject("ZoneStroke", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-                stroke.transform.SetParent(parent, false);
-                stroke.transform.SetSiblingIndex(zone.transform.GetSiblingIndex());
-                Stretch(stroke.rectTransform);
-                stroke.rectTransform.anchoredPosition = offsets[i];
-                stroke.texture = texture;
-                stroke.color = new Color(1f, 0.86f, 0.22f, 1f);
-                stroke.uvRect = new Rect(0f, 0f, 1f, 1f);
-                stroke.raycastTarget = false;
-                stroke.rectTransform.localScale = Vector3.one;
-            }
+            float cardH = Mathf.Min(72f, Mathf.Max(56f, box.height - 20f));
+            float cardW = Mathf.Clamp(box.width - 16f, 120f, 188f);
+            if (cardW > box.width - 8f)
+                cardW = Mathf.Max(96f, box.width - 8f);
+            if (cardH > box.height - 8f)
+                cardH = Mathf.Max(48f, box.height - 8f);
+            float foot = Mathf.Max(16f, box.height * 0.14f);
+            float x = box.x + (box.width - cardW) * 0.5f;
+            float y = Mathf.Clamp(box.yMax - cardH - foot, box.y + 4f, Mathf.Max(box.y + 4f, box.yMax - cardH));
+            var card = new GameObject("ZoneCard_" + mapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            card.transform.SetParent(parent, false);
+            card.sprite = ZoneRibbonSprite();
+            card.type = Image.Type.Sliced;
+            card.color = selected ? Color.white : new Color(0.92f, 0.9f, 0.84f, 1f);
+            card.raycastTarget = false;
+            PlaceTopLeft(card.rectTransform, x, y, cardW, cardH);
+            card.rectTransform.localScale = Vector3.one;
+
+            float thumb = Mathf.Clamp(cardH - 20f, 32f, 48f);
+            float thumbX = fa ? cardW - 10f - thumb : 10f;
+            var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+            preview.transform.SetParent(card.transform, false);
+            PlaceTopLeft(preview.rectTransform, thumbX, (cardH - thumb) * 0.5f, thumb, thumb);
+            Texture2D plateArt = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
+            preview.texture = plateArt != null ? plateArt : LoadTheatreBase();
+            preview.color = Color.white;
+            preview.raycastTarget = false;
+            CoverCrop(preview, thumb, thumb);
+
+            float textX = fa ? 8f : thumbX + thumb + 6f;
+            float textW = Mathf.Max(48f, cardW - thumb - 22f);
+            const float ring = 34f;
+            float nameW = Mathf.Max(40f, textW - ring - 4f);
+            float nameX = fa ? textX + ring + 4f : textX;
+            var name = CreateLabel(card.transform, "ZoneName", 15f);
+            PlaceTopLeft(name.rectTransform, nameX, 6f, nameW, 26f);
+            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            name.isRightToLeftText = fa;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.fontStyle = FontStyles.Bold;
+            name.color = new Color(1f, 0.97f, 0.9f, 1f);
+            SetCopy(name, MapDisplayTitle(mapId, fa), 13f, 18f);
+            name.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            name.isRightToLeftText = fa;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.fontStyle = FontStyles.Bold;
+            name.color = new Color(1f, 0.97f, 0.9f, 1f);
+
+            float ringX = fa ? textX : textX + textW - ring;
+            var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            track.transform.SetParent(card.transform, false);
+            track.sprite = ZoneRingSprite();
+            track.color = new Color(zone.r, zone.g, zone.b, 0.4f);
+            track.raycastTarget = false;
+            float ringY = Mathf.Clamp(cardH - ring - 6f, 4f, Mathf.Max(4f, cardH - ring));
+            PlaceTopLeft(track.rectTransform, ringX, ringY, ring, ring);
+            var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            fill.transform.SetParent(track.transform, false);
+            Stretch(fill.rectTransform);
+            fill.sprite = ZoneRingSprite();
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Radial360;
+            fill.fillOrigin = (int)Image.Origin360.Top;
+            fill.fillClockwise = true;
+            int denom = published > 0 ? published : 24;
+            fill.fillAmount = Mathf.Clamp01(won / (float)denom);
+            fill.color = zone;
+            fill.raycastTarget = false;
+            var count = CreateLabel(track.transform, "ZoneCount", 12f);
+            Stretch(count.rectTransform);
+            count.alignment = TextAlignmentOptions.Center;
+            count.isRightToLeftText = false;
+            count.textWrappingMode = TextWrappingModes.NoWrap;
+            count.overflowMode = TextOverflowModes.Overflow;
+            count.fontStyle = FontStyles.Bold;
+            count.color = Color.white;
+            SetCopy(count, won + "/" + denom, 11f, 14f);
+            count.alignment = TextAlignmentOptions.Center;
+            count.isRightToLeftText = false;
+            count.overflowMode = TextOverflowModes.Overflow;
+            count.fontStyle = FontStyles.Bold;
+            count.color = Color.white;
         }
 
         private void PresentObjectiveTabs(SkirmishBattlefieldState field, bool fa)
@@ -4147,7 +4226,9 @@ namespace Game.UI.Runtime
         {
             if (text == null)
                 return false;
-            if (text.name == "Subtitle" || text.name == "PendingLabel" || text.name.StartsWith("Column_", StringComparison.Ordinal))
+            if (text.name == "Subtitle" || text.name == "PendingLabel" || text.name == "ZoomCue" ||
+                text.name == "ZoneName" || text.name == "ZoneCount" ||
+                text.name.StartsWith("Column_", StringComparison.Ordinal))
                 return true;
             string parent = text.transform.parent != null ? text.transform.parent.name : string.Empty;
             return text.name == "Caption" && parent.StartsWith("Slot", StringComparison.Ordinal);
@@ -5005,7 +5086,7 @@ namespace Game.UI.Runtime
                 bool medalCaption = text.name == "Caption" && parentName.StartsWith("Slot", StringComparison.Ordinal);
                 bool stripCaption = text.name == "Caption" && parentName.StartsWith("Medal", StringComparison.Ordinal);
                 bool difficulty = parentName.StartsWith("DifficultyChoice_", StringComparison.Ordinal);
-                bool zoneName = (text.name == "ZoneName" || text.name == "ZoneCount") && parentName == "TheaterLabels";
+                bool zoneName = text.name == "ZoneName";
                 bool recommended = parentName == "RecommendedNext";
                 Button footerOwner = text.transform.parent.GetComponent<Button>();
                 bool footer = footerOwner != null && (
@@ -5120,8 +5201,25 @@ namespace Game.UI.Runtime
                 }
                 else if (difficulty)
                     RelaxLibraryText(text, 12f, 18f, true);
+                else if (text.name == "ZoomCue")
+                {
+                    RelaxLibraryText(text, 12f, 16f, false);
+                    text.overflowMode = TextOverflowModes.Overflow;
+                    text.isRightToLeftText = fa;
+                }
+                else if (text.name == "ZoneCount")
+                {
+                    RelaxLibraryText(text, 11f, 14f, false);
+                    text.overflowMode = TextOverflowModes.Overflow;
+                    text.isRightToLeftText = false;
+                }
                 else if (zoneName)
-                    RelaxLibraryText(text, 14f, 26f, false);
+                {
+                    RelaxLibraryText(text, 13f, 18f, true);
+                    text.overflowMode = TextOverflowModes.Overflow;
+                    text.maxVisibleLines = 2;
+                    text.isRightToLeftText = fa && ContainsArabicScript(text.text);
+                }
                 else if (recommended)
                 {
                     bool bodyCopy = text.name == "Body";
@@ -5375,6 +5473,93 @@ namespace Game.UI.Runtime
                 false);
             _zoneRibbon.hideFlags = HideFlags.HideAndDontSave;
             return _zoneRibbon;
+        }
+
+        private static Sprite ZoneStrokeSprite()
+        {
+            if (_zoneStroke != null)
+                return _zoneStroke;
+            const int width = 64;
+            const int height = 16;
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            var pixels = new Color32[width * height];
+            for (int y = 0; y < height; y++)
+            {
+                float dy = Mathf.Abs(y - (height - 1) * 0.5f) / (height * 0.5f);
+                float alpha = Mathf.Clamp01(1f - dy);
+                alpha = alpha * alpha * (3f - 2f * alpha);
+                byte a = (byte)Mathf.RoundToInt(alpha * 255f);
+                for (int x = 0; x < width; x++)
+                    pixels[y * width + x] = new Color32(255, 255, 255, a);
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneStroke = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, width, height),
+                new Vector2(0.5f, 0.5f),
+                100f,
+                0,
+                SpriteMeshType.FullRect,
+                new Vector4(8f, 4f, 8f, 4f),
+                false);
+            _zoneStroke.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneStroke;
+        }
+
+        private static Sprite ZoneCapSprite()
+        {
+            if (_zoneCap != null)
+                return _zoneCap;
+            const int size = 32;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
+                    float alpha = Mathf.Clamp01(1f - distance);
+                    alpha = alpha * alpha * (3f - 2f * alpha);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(alpha * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneCap = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _zoneCap.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneCap;
+        }
+
+        private static Sprite ZoneRingSprite()
+        {
+            if (_zoneRing != null)
+                return _zoneRing;
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
+                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.72f) / 0.18f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(ring * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneRing = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _zoneRing.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneRing;
         }
 
         private static Sprite SolidSprite()

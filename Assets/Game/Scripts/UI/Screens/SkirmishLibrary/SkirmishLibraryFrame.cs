@@ -4,32 +4,46 @@ namespace Game.UI.Runtime
 {
     /// <summary>
     /// Shared theatre frame. The briefing column sits on the left in left-to-right
-    /// layouts. A squarer canvas gives that column less width so the map stays dominant.
+    /// layouts. The panels fill the canvas, and a squarer canvas gives the column
+    /// less width so the map stays dominant.
     /// </summary>
     public static class SkirmishLibraryFrame
     {
         public const float OriginX = 14f;
-        public const float PanelY = 108f;
-        public const float PanelHeight = 688f;
+        public const float HeaderBand = 108f;
+        public const float FooterBand = 112f;
         public const float Gap = 14f;
-        public const float WideMapWidth = 1040f;
-        public const float WideBriefingWidth = 590f;
-        public const float NarrowBriefingWidth = 400f;
         public const float NarrowAspect = 1.55f;
 
         public static void Resolve(
-            float canvasAspect,
-            float extraWidth,
+            float width,
+            float height,
             bool briefingOnLeft,
             out float mapX,
             out float mapWidth,
             out float briefingX,
-            out float briefingWidth)
+            out float briefingWidth,
+            out float panelY,
+            out float panelHeight)
         {
-            bool narrow = canvasAspect > 0.01f && canvasAspect < NarrowAspect;
-            briefingWidth = narrow ? NarrowBriefingWidth : WideBriefingWidth;
-            float content = WideMapWidth + WideBriefingWidth + Gap + Mathf.Max(0f, extraWidth);
-            mapWidth = Mathf.Max(720f, content - briefingWidth - Gap);
+            if (width < 200f)
+                width = 1672f;
+            if (height < 200f)
+                height = 941f;
+            panelY = HeaderBand;
+            panelHeight = Mathf.Max(480f, height - HeaderBand - FooterBand);
+            bool narrow = width / Mathf.Max(1f, height) < NarrowAspect;
+            float share = narrow ? 0.26f : 0.32f;
+            float minBriefing = narrow ? 280f : 460f;
+            float maxBriefing = narrow ? 380f : 600f;
+            briefingWidth = Mathf.Clamp(width * share, minBriefing, maxBriefing);
+            mapWidth = width - OriginX * 2f - Gap - briefingWidth;
+            if (mapWidth < 480f)
+            {
+                mapWidth = 480f;
+                briefingWidth = Mathf.Max(240f, width - OriginX * 2f - Gap - mapWidth);
+            }
+
             if (briefingOnLeft)
             {
                 briefingX = OriginX;

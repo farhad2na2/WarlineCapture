@@ -256,14 +256,14 @@ namespace Game.UI.Runtime
             if (_objectiveColumn == null)
                 return;
             ClearChildren(_objectiveColumn);
-            PlaceTopLeft(_objectiveColumn, 8f, 8f, 88f, 420f);
+            PlaceTopLeft(_objectiveColumn, 8f, 8f, 116f, 520f);
             if (field.Tabs == null)
                 return;
             for (int i = 0; i < field.Tabs.Length; i++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[i];
                 var button = CreateChromeButton(_objectiveColumn, SkirmishLibraryControlNames.ObjectiveTab(objective.ObjectiveId));
-                PlaceTopLeft(button.GetComponent<RectTransform>(), 0f, i * 100f, 84f, 92f);
+                PlaceTopLeft(button.GetComponent<RectTransform>(), 0f, i * 108f, 112f, 100f);
                 bool selected = string.Equals(objective.ObjectiveId, field.SelectedObjectiveId, StringComparison.OrdinalIgnoreCase);
                 TintButton(button, selected, true);
                 var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -272,10 +272,10 @@ namespace Game.UI.Runtime
                 ShowIcon(icon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
                 SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
                 var label = CreateLabel(button.transform, "Label", 16f);
-                PlaceTopLeft(label.rectTransform, 2f, 46f, 80f, 24f);
+                PlaceTopLeft(label.rectTransform, 4f, 48f, 104f, 44f);
                 label.alignment = TextAlignmentOptions.Center;
-                label.textWrappingMode = TextWrappingModes.NoWrap;
-                label.overflowMode = TextOverflowModes.Overflow;
+                label.textWrappingMode = TextWrappingModes.Normal;
+                label.overflowMode = TextOverflowModes.Ellipsis;
                 SetCopy(label, shortLabel, 16f, 20f);
                 var count = CreateLabel(button.transform, "Count", 16f);
                 PlaceTopLeft(count.rectTransform, 2f, 68f, 80f, 22f);
@@ -382,15 +382,31 @@ namespace Game.UI.Runtime
                 fill.pivot = new Vector2(0f, 0.5f);
             }
 
-            SetCopy(
-                _overallStrip.Find("Caption")?.GetComponent<TMP_Text>(),
-                LibraryText("ui.skirmish.library.battles_won", fa),
-                14f,
-                20f);
+            float stripWidth = _overallStrip.rect.width;
+            if (stripWidth < 200f)
+                stripWidth = _overallStrip.sizeDelta.x > 200f ? _overallStrip.sizeDelta.x : 900f;
+            float labelBand = Mathf.Clamp(stripWidth * 0.34f, 220f, 420f);
+            TMP_Text battles = _overallStrip.Find("Caption")?.GetComponent<TMP_Text>();
+            SetCopy(battles, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 20f);
             TMP_Text count = _overallStrip.Find("Count")?.GetComponent<TMP_Text>();
             SetCopy(count, won + " / " + published, 15f, 22f);
+            if (battles != null)
+            {
+                battles.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                battles.isRightToLeftText = fa;
+                battles.overflowMode = TextOverflowModes.Ellipsis;
+                PlaceTopLeft(battles.rectTransform, fa ? 108f : 8f, 6f, Mathf.Max(80f, labelBand - 120f), 28f);
+            }
+
             if (count != null)
+            {
                 count.isRightToLeftText = false;
+                count.alignment = fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
+                PlaceTopLeft(count.rectTransform, fa ? 8f : labelBand - 108f, 6f, 96f, 28f);
+            }
+
+            if (_overallFill != null && _overallFill.transform.parent is RectTransform bar)
+                PlaceTopLeft(bar, 8f, 40f, Mathf.Max(80f, labelBand - 16f), 12f);
 
             SkirmishMedalTotals medals = theater.OverallMedalTotals;
             int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
@@ -401,21 +417,36 @@ namespace Game.UI.Runtime
                 SkirmishDifficultyId.Veteran,
                 SkirmishDifficultyId.Commander
             };
+            float slotWidth = Mathf.Max(78f, (stripWidth - labelBand - 12f) / 4f);
             for (int i = 0; i < tiers.Length; i++)
             {
-                TMP_Text tier = _overallStrip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
+                Transform slot = _overallStrip.Find("Medal" + i);
+                if (slot is not RectTransform slotRect)
+                    continue;
+                PlaceTopLeft(slotRect, labelBand + i * slotWidth, 4f, slotWidth - 6f, 56f);
+                if (slot.Find("Icon") is RectTransform icon)
+                    PlaceTopLeft(icon, fa ? slotWidth - 30f : 2f, 14f, 24f, 24f);
+                TMP_Text tier = slot.Find("Count")?.GetComponent<TMP_Text>();
                 SetCopy(tier, tiers[i].ToString(), 14f, 20f);
                 if (tier != null)
-                    tier.isRightToLeftText = false;
-                SkirmishBattleLibraryArt.DifficultyCopy(tierNames[i], fa, out string tierLabel);
-                TMP_Text caption = _overallStrip.Find("Medal" + i + "/Caption")?.GetComponent<TMP_Text>();
-                SetCopy(caption, tierLabel, 11f, 14f);
-                if (caption != null)
                 {
-                    caption.isRightToLeftText = fa;
-                    caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                    caption.overflowMode = TextOverflowModes.Ellipsis;
+                    tier.isRightToLeftText = false;
+                    tier.alignment = TextAlignmentOptions.MidlineLeft;
+                    tier.overflowMode = TextOverflowModes.Overflow;
+                    PlaceTopLeft(tier.rectTransform, fa ? 2f : slotWidth - 40f, 12f, 34f, 28f);
                 }
+
+                SkirmishBattleLibraryArt.DifficultyCopy(tierNames[i], fa, out string tierLabel);
+                TMP_Text caption = slot.Find("Caption")?.GetComponent<TMP_Text>();
+                if (caption == null)
+                    caption = CreateLabel(slot, "Caption", 12f);
+                SetCopy(caption, tierLabel, 11f, 16f);
+                caption.isRightToLeftText = fa;
+                caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                caption.overflowMode = TextOverflowModes.Ellipsis;
+                caption.textWrappingMode = TextWrappingModes.NoWrap;
+                float captionX = fa ? 38f : 28f;
+                PlaceTopLeft(caption.rectTransform, captionX, 12f, Mathf.Max(28f, slotWidth - 72f), 28f);
             }
         }
 
@@ -540,11 +571,11 @@ namespace Game.UI.Runtime
             tile.gameObject.SetActive(true);
             if (tile is RectTransform rect)
                 PlaceTopLeft(rect, x, 0f, width, 80f);
-            float inner = Mathf.Max(20f, width - 28f);
+            float inner = Mathf.Max(20f, width - 8f);
             TMP_Text captionText = tile.Find("Caption")?.GetComponent<TMP_Text>();
             if (captionText != null)
             {
-                PlaceTopLeft(captionText.rectTransform, 12f, 2f, inner, 24f);
+                PlaceTopLeft(captionText.rectTransform, 4f, 2f, inner, 28f);
                 captionText.overflowMode = TextOverflowModes.Ellipsis;
                 captionText.margin = new Vector4(2f, 0f, 2f, 0f);
                 captionText.fontSizeMin = 16f;
@@ -553,7 +584,7 @@ namespace Game.UI.Runtime
             TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
             if (valueText != null)
             {
-                PlaceTopLeft(valueText.rectTransform, 12f, 26f, inner, 50f);
+                PlaceTopLeft(valueText.rectTransform, 4f, 30f, inner, 46f);
                 valueText.textWrappingMode = TextWrappingModes.Normal;
                 valueText.overflowMode = TextOverflowModes.Ellipsis;
                 valueText.margin = new Vector4(2f, 0f, 2f, 0f);

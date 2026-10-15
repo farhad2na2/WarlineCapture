@@ -139,9 +139,18 @@ namespace Game.Editor
             layout.DisableMenuFrame();
             screen.EnsureBattleLibraryChrome();
             RequireLibraryPlate(root.transform);
-            SkirmishLibraryFrame.Resolve(16f / 9f, 0f, true, out float mapX, out float mapWidth, out float briefingX, out float briefingWidth);
-            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/OperationPreview"), mapX, SkirmishLibraryFrame.PanelY, mapWidth, SkirmishLibraryFrame.PanelHeight);
-            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/BaseAssaultRules"), briefingX, SkirmishLibraryFrame.PanelY, briefingWidth, SkirmishLibraryFrame.PanelHeight);
+            SkirmishLibraryFrame.Resolve(
+                ReferenceResolution.x,
+                ReferenceResolution.y,
+                true,
+                out float mapX,
+                out float mapWidth,
+                out float briefingX,
+                out float briefingWidth,
+                out float panelY,
+                out float panelHeight);
+            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/OperationPreview"), mapX, panelY, mapWidth, panelHeight);
+            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/BaseAssaultRules"), briefingX, panelY, briefingWidth, panelHeight);
             Debug.Log("[SkirmishBattleLibraryPlate] result=Passed");
             layout.Configure(
                 ReferenceResolution,

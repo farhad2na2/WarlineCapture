@@ -487,28 +487,22 @@ namespace Game.Editor
 
             var map = composition.Find("OperationPreview") as RectTransform;
             var briefing = composition.Find("BaseAssaultRules") as RectTransform;
-            float extra = layout.LastAppliedExtraWidth;
             bool fa = GameLocalization.IsRightToLeft;
-            float aspect = 16f / 9f;
-            Canvas canvas = composition.GetComponentInParent<Canvas>();
-            RectTransform canvasRect = canvas != null ? canvas.transform as RectTransform : null;
-            if (canvasRect != null && canvasRect.rect.height > 1f)
-                aspect = canvasRect.rect.width / canvasRect.rect.height;
-            SkirmishLibraryFrame.Resolve(aspect, extra, !fa, out float mapX, out float mapWidth, out float briefingX, out float briefingWidth);
-            ExpectPanel(
-                map,
-                "map",
-                mapX,
-                -SkirmishLibraryFrame.PanelY,
-                mapWidth,
-                SkirmishLibraryFrame.PanelHeight);
-            ExpectPanel(
-                briefing,
-                "briefing",
-                briefingX,
-                -SkirmishLibraryFrame.PanelY,
-                briefingWidth,
-                SkirmishLibraryFrame.PanelHeight);
+            RectTransform compositionRect = composition as RectTransform;
+            float width = compositionRect != null ? compositionRect.rect.width : 0f;
+            float height = compositionRect != null ? compositionRect.rect.height : 0f;
+            SkirmishLibraryFrame.Resolve(
+                width,
+                height,
+                !fa,
+                out float mapX,
+                out float mapWidth,
+                out float briefingX,
+                out float briefingWidth,
+                out float panelY,
+                out float panelHeight);
+            ExpectPanel(map, "map", mapX, -panelY, mapWidth, panelHeight);
+            ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingWidth, panelHeight);
             RequireFilled(map, "map");
             RequireFilled(briefing, "briefing");
             var plate = composition.Find("OperationPreview/MapPreviewClip") as RectTransform;

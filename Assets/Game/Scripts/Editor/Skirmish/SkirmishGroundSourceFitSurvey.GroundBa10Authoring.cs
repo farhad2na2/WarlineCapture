@@ -32,11 +32,11 @@ namespace Game.Editor
             return rows;
         }
 
-        static JObject GroundBaTemplate(JObject mission)
+        static JObject GroundBaTemplate(JObject mission,bool counterpart=false)
         {
             var rows=GroundBa10Rows().Where(r=>(string)r["catalog_id"]==(string)mission?["catalog_id"]).ToArray();
             Require(rows.Length==1&&JToken.DeepEquals(rows[0],mission),"Exact immutable Ground BA row required");
-            Require(mission["protected_binding"].Type==JTokenType.Null,"Protected Ground BA binding is read-only");
+            Require(counterpart?SkirmishMissionDispatch.IsExpandedCounterpart((string)mission["catalog_id"]):mission["protected_binding"].Type==JTokenType.Null,"Protected Ground BA binding is read-only except exact expanded counterpart authoring");
             var ground=ReadGround30Envelope();
             var templates=((JArray)ground["missions"]).OfType<JObject>().Where(r=>
                 (string)r["tuple"]["map_id"]==(string)mission["tuple"]["map_id"]&&
@@ -48,11 +48,19 @@ namespace Game.Editor
 
         public static bool TryCreateGroundBa10Candidate(JObject mission,OperationMapDefinition source,
             out GroundObjective30CandidateOwner owner,out string error)
+            => TryCreateGroundBaCandidate(mission,source,false,out owner,out error);
+
+        public static bool TryCreateProtectedExpandedBaseAssaultCandidate(JObject mission,OperationMapDefinition source,
+            out GroundObjective30CandidateOwner owner,out string error)
+            => TryCreateGroundBaCandidate(mission,source,true,out owner,out error);
+
+        static bool TryCreateGroundBaCandidate(JObject mission,OperationMapDefinition source,bool counterpart,
+            out GroundObjective30CandidateOwner owner,out string error)
         {
             owner=null;error=null;var created=new GroundObjective30CandidateOwner();
             try
             {
-                var template=GroundBaTemplate(mission);
+                var template=GroundBaTemplate(mission,counterpart);
                 Require(TryCreateGroundObjective30Candidate(template,source,out var original,out string failure),failure);
                 using(original)
                 {

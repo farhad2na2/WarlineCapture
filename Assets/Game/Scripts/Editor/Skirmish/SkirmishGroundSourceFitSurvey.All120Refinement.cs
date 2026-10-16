@@ -74,7 +74,7 @@ namespace Game.Editor
             Debug.Log("[All120SourceGroupLogicalRefinement] result=Collected source="+group+" missions="+rows.Length+" sourceWorlds=1 sourceFitCertified=0 output="+output);
         }
 
-        static void ResolveAll120RefinementCandidate(JObject authority,out JObject candidate,out JObject template)
+        static void ResolveAll120RefinementCandidate(JObject authority,out JObject candidate,out JObject template,bool counterpart=false)
         {
             string id=(string)authority["catalog_id"];
             bool air=(string)authority["tuple"]["army_profile"]!="G";
@@ -86,7 +86,7 @@ namespace Game.Editor
                 string templateId=(string)candidate["ground_template_catalog_id"];
                 template=((JArray)ReadGround30Envelope()["missions"]).OfType<JObject>().Single(r=>(string)r["catalog_id"]==templateId);
             }
-            else if(groundBa)template=GroundBaTemplate(authority);
+            else if(groundBa)template=GroundBaTemplate(authority,counterpart);
             else
             {
                 candidate=((JArray)ReadGround30Envelope()["missions"]).OfType<JObject>().Single(r=>(string)r["catalog_id"]==id);
@@ -94,14 +94,14 @@ namespace Game.Editor
             }
         }
 
-        static void CollectAll120Refinement(JObject[] authorities,JObject report,string artifactPrefix)
+        static void CollectAll120Refinement(JObject[] authorities,JObject report,string artifactPrefix,bool counterpart=false)
         {
             Require(authorities.Length>0&&authorities.Length<=48,"Bounded sequential source rows required");
-            ResolveAll120RefinementCandidate(authorities[0],out _,out var template);
+            ResolveAll120RefinementCandidate(authorities[0],out _,out var template,counterpart);
             var pin=(JObject)template["source_candidate"];
             foreach(var authority in authorities)
             {
-                ResolveAll120RefinementCandidate(authority,out _,out var sameSource);
+                ResolveAll120RefinementCandidate(authority,out _,out var sameSource,counterpart);
                 Require(JToken.DeepEquals(pin,sameSource["source_candidate"]),"Every sequential candidate must use the exact same physical source pins");
             }
             string path=(string)pin["sourcePath"],gridPath=(string)pin["gridPath"],surfacePath=(string)pin["surfacePath"];
@@ -137,7 +137,7 @@ namespace Game.Editor
                     var failures=new System.Collections.Generic.List<Exception>();
                     foreach(var authority in authorities)
                     {
-                        ResolveAll120RefinementCandidate(authority,out var candidate,out var candidateTemplate);
+                        ResolveAll120RefinementCandidate(authority,out var candidate,out var candidateTemplate,counterpart);
                         string id=(string)authority["catalog_id"];
                         bool air=(string)authority["tuple"]["army_profile"]!="G";
                         bool groundBa=!air&&(string)authority["tuple"]["objective_id"]=="BA";
@@ -151,7 +151,7 @@ namespace Game.Editor
                                 Require(TryCreateAirCombined80Candidate(candidate,source,out airOwner,out error),error);
                                 owner=new GroundObjective30CandidateOwner{Definition=airOwner.Definition,Layout=airOwner.Layout,AreaDraft=airOwner.AreaDraft};
                             }
-                            else if(groundBa)Require(TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
+                            else if(groundBa)Require(counterpart?TryCreateProtectedExpandedBaseAssaultCandidate(candidate,source,out owner,out error):TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
                             else Require(TryCreateGroundObjective30Candidate(candidate,source,out owner,out error),error);
                             var sizeArtifacts=new JArray();row["sizeArtifacts"]=sizeArtifacts;
                             row["measurement"]=RefineLoadedCandidate(All120MeasurementMission(candidate,candidateTemplate),owner,source,em,gridEntity,grid,surface,artifactPrefix+"."+id,checkpoint=>

@@ -19,7 +19,10 @@ namespace Game.Editor
     {
         // Separate checked authoring entry: collector World/scene cleanup must
         // already be durably verified before any persistent reference changes.
-        public static void MaterializeAll120ReviewedLogicalCandidate()
+        public static void MaterializeAll120ReviewedLogicalCandidate()=>MaterializeReviewedLogicalCandidate(false);
+        public static void MaterializeReviewedProtectedExpandedCounterpart()=>MaterializeReviewedLogicalCandidate(true);
+
+        static void MaterializeReviewedLogicalCandidate(bool counterpart)
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Idle root-owned logical authoring required");
             string reportPath=Environment.GetEnvironmentVariable("WARLINE_ALL120_MATERIALIZATION_REPORT");
@@ -36,8 +39,8 @@ namespace Game.Editor
                 "Exact durable native mission row must match the reviewed cleaned-up report");
             Require((string)row["result"]=="CollectedUnqualified"&&row["error"]==null,"Failed mission rows cannot materialize");
             var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(v=>(string)v["catalog_id"]==id);
-            Require(authority["protected_binding"].Type==JTokenType.Null,"Protected binding is read-only");
-            ResolveAll120RefinementCandidate(authority,out var candidate,out var template);
+            Require(counterpart?SkirmishMissionDispatch.IsExpandedCounterpart(id):authority["protected_binding"].Type==JTokenType.Null,"Protected binding is read-only except explicitly selected expanded counterpart authoring");
+            ResolveAll120RefinementCandidate(authority,out var candidate,out var template,counterpart);
             var measurement=(JObject)row["measurement"];
             Require(JToken.DeepEquals(measurement["sourcePins"],template["source_candidate"]),"Measured physical source pins must match exact authority");
             var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)template["source_candidate"]["sourcePath"]);
@@ -49,7 +52,7 @@ namespace Game.Editor
                 string error;
                 if((string)authority["tuple"]["army_profile"]!="G")
                 {Require(TryCreateAirCombined80Candidate(candidate,source,out airOwner,out error),error);owner=new GroundObjective30CandidateOwner{Definition=airOwner.Definition,Layout=airOwner.Layout,AreaDraft=airOwner.AreaDraft};}
-                else if((string)authority["tuple"]["objective_id"]=="BA")Require(TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
+                else if((string)authority["tuple"]["objective_id"]=="BA")Require(counterpart?TryCreateProtectedExpandedBaseAssaultCandidate(candidate,source,out owner,out error):TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
                 else Require(TryCreateGroundObjective30Candidate(candidate,source,out owner,out error),error);
                 JsonUtility.FromJsonOverwrite((string)measurement["proposedLayoutJson"],owner.Layout);
                 Require(SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(owner.Layout)==(string)measurement["proposedLayoutSemanticSha256"],"Exact measured layout graph required");
@@ -67,7 +70,7 @@ namespace Game.Editor
                     return variant;
                 }).ToArray();
                 owner.Definition.BindMissionLogicalBinding(binding);
-                MaterializeMeasuredAll120Candidate(owner,measurement,receipt);
+                MaterializeMeasuredAll120Candidate(owner,measurement,receipt,counterpart);
                 receipt["result"]="MaterializedDevelopmentOnly";
             }
             catch(Exception failure){receipt["error"]=failure.ToString();throw;}
@@ -85,7 +88,7 @@ namespace Game.Editor
         // references only after the same live native refinement completed all3
         // strict placement/packing passes and ordinary compiler checks. Publication,
         // camera, route independence and normal mission acceptance remain separate.
-        static void MaterializeMeasuredAll120Candidate(GroundObjective30CandidateOwner owner,JObject measurement,JObject receipt)
+        static void MaterializeMeasuredAll120Candidate(GroundObjective30CandidateOwner owner,JObject measurement,JObject receipt,bool counterpart=false)
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode&&owner?.Definition!=null&&
                 measurement["strictThreeSizePlacementPass"]!=null&&(bool?)measurement["normalThreeSizeCompilerPassed"]==true,
@@ -99,7 +102,7 @@ namespace Game.Editor
                 "Three complete native configurations and exact native paths with the same facility reservations required; route independence remains separate");
             var id=owner.Definition.CatalogId;
             var row=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(v=>(string)v["catalog_id"]==id);
-            Require(row["protected_binding"].Type==JTokenType.Null&&!SkirmishMissionDispatch.TryGetLegacyIndex(id,out _),"Seven protected bindings cannot be materialized or replaced");
+            Require(counterpart?SkirmishMissionDispatch.IsExpandedCounterpart(id):row["protected_binding"].Type==JTokenType.Null&&!SkirmishMissionDispatch.TryGetLegacyIndex(id,out _),"Coded bindings cannot be replaced; only explicit counterpart logical assets allowed");
             var definitionPath=(string)row["intended_new_definition_asset"];
             string prefix="Assets/Game/Configs/SkirmishExpansion/Scenarios/"+id+"/";
             Require(!string.IsNullOrEmpty(definitionPath)&&definitionPath.StartsWith(prefix,StringComparison.Ordinal)&&
@@ -113,8 +116,12 @@ namespace Game.Editor
             var entries=battle.Entries.ToArray();int entryIndex=System.Array.FindIndex(entries,e=>e.ScenarioId==id);
             Require(entryIndex>=0&&entries.Count(e=>e.ScenarioId==id)==1,"One existing canonical battle row required");
             var originalEntries=(SkirmishBattleCatalogEntry[])entries.Clone();
-            int runtimeIndex=entries[entryIndex].PlayableScenarioIndex>7?entries[entryIndex].PlayableScenarioIndex:
+            int runtimeIndex=counterpart?entries[entryIndex].PlayableScenarioIndex:entries[entryIndex].PlayableScenarioIndex>7?entries[entryIndex].PlayableScenarioIndex:
                 1000+int.Parse(id.Substring(1),System.Globalization.CultureInfo.InvariantCulture);
+            if(counterpart)Require(SkirmishMissionDispatch.TryGetLegacyIndex(id,out int protectedIndex)&&runtimeIndex==protectedIndex&&
+                entries[entryIndex].ContentVersion==0&&string.IsNullOrEmpty(entries[entryIndex].DefinitionId),"Exact unchanged practice row required");
+            string mainBattlePath=AssetDatabase.GetAssetPath(battle),mainExpansionPath=AssetDatabase.GetAssetPath(expansion);
+            string mainBattleSha=Hash(mainBattlePath),mainExpansionSha=Hash(mainExpansionPath);
             Require(!entries.Where((e,i)=>i!=entryIndex).Any(e=>e.IsPlayable&&e.PlayableScenarioIndex==runtimeIndex),"Unique generic runtime transport index required");
             var created=new List<UnityEngine.Object>();var written=new List<string>();int originalDefinitions=expansion.Definitions.Count;
             bool expansionChanged=false,battleChanged=false;
@@ -127,7 +134,10 @@ namespace Game.Editor
                 Require(binding!=null&&binding.Variants?.Length==3,"Three actual compiled binding variants required");
                 for(int i=0;i<binding.Variants.Length;i++)
                     if(owner.Definition.MissionLogicalBinding.Variants[i].Areas==null)binding.Variants[i].Areas=null;
+                SkirmishExpansionCatalogConfig development=null;
+                if(counterpart){development=UnityEngine.Object.Instantiate(expansion);created.Add(development);}
                 var planned=new List<(UnityEngine.Object asset,string path)>();
+                if(counterpart)planned.Add((development,prefix+"Resources/SkirmishProtectedCounterpart_"+id+".asset"));
                 planned.Add((layout,prefix+"Logical/Layout_"+id+".asset"));planned.Add((objective,prefix+"Logical/Objective_"+id+".asset"));
                 foreach(var variant in binding.Variants)
                 {
@@ -145,16 +155,36 @@ namespace Game.Editor
                 AssertAll120DefinitionBindings(definition,false);
                 foreach(var item in planned)
                 {Directory.CreateDirectory(Path.GetDirectoryName(item.path));AssetDatabase.CreateAsset(item.asset,item.path);written.Add(item.path);}
-                var expansionFields=new SerializedObject(expansion);var definitions=expansionFields.FindProperty("definitions");
+                var expansionFields=new SerializedObject(counterpart?development:expansion);var definitions=expansionFields.FindProperty("definitions");
                 definitions.arraySize=originalDefinitions+1;definitions.GetArrayElementAtIndex(originalDefinitions).objectReferenceValue=definition;
-                expansionChanged=true;expansionFields.ApplyModifiedPropertiesWithoutUndo();
-                var entry=entries[entryIndex];entry.Status=SkirmishBattleCatalogStatus.Playable;entry.PlayableScenarioIndex=runtimeIndex;
-                entry.DefinitionId=definition.DefinitionId;entry.ContentVersion=definition.ContentVersion;entries[entryIndex]=entry;
-                battleChanged=true;battle.Configure(entries);EditorUtility.SetDirty(battle);AssetDatabase.SaveAssets();
-                Require(ReferenceEquals(Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName),expansion)&&
-                    expansion.TryGetDefinition(id,out var normalDefinition)&&ReferenceEquals(normalDefinition,definition)&&
-                    AssetDatabase.GetAssetPath(normalDefinition)==definitionPath,"Normal resource catalog must resolve the exact persisted definition");
-                AssertAll120DefinitionBindings(definition,true);
+                expansionChanged=!counterpart;expansionFields.ApplyModifiedPropertiesWithoutUndo();
+                var entry=entries[entryIndex];
+                if(!counterpart)
+                {
+                    entry.Status=SkirmishBattleCatalogStatus.Playable;entry.PlayableScenarioIndex=runtimeIndex;
+                    entry.DefinitionId=definition.DefinitionId;entry.ContentVersion=definition.ContentVersion;entries[entryIndex]=entry;
+                    battleChanged=true;battle.Configure(entries);EditorUtility.SetDirty(battle);
+                }
+                else EditorUtility.SetDirty(development);
+                AssetDatabase.SaveAssets();
+                if(counterpart)
+                {
+                    Require(Hash(mainBattlePath)==mainBattleSha&&Hash(mainExpansionPath)==mainExpansionSha&&
+                        !EditorUtility.IsDirty(battle)&&!EditorUtility.IsDirty(expansion),"Practice/main catalog bytes changed during counterpart authoring");
+                    var loaded=SkirmishProtectedExpandedCounterpartScope.LoadDevelopmentCatalog(id);
+                    Require(ReferenceEquals(loaded,development)&&loaded.TryGetDefinition(id,out var exact)&&
+                        ReferenceEquals(exact,definition)&&AssetDatabase.GetAssetPath(exact)==definitionPath,"Exact persisted development resources required");
+                    using(SkirmishProtectedExpandedCounterpartScope.Open(loaded,id))AssertAll120DefinitionBindings(definition,true);
+                    receipt["counterpartDevelopmentResource"]=new JObject{["path"]=AssetDatabase.GetAssetPath(development),
+                        ["sha256"]=Hash(AssetDatabase.GetAssetPath(development)),["mainCatalogChanged"]=false,["practiceBindingChanged"]=false};
+                }
+                else
+                {
+                    Require(ReferenceEquals(Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName),expansion)&&
+                        expansion.TryGetDefinition(id,out var normalDefinition)&&ReferenceEquals(normalDefinition,definition)&&
+                        AssetDatabase.GetAssetPath(normalDefinition)==definitionPath,"Normal resource catalog must resolve the exact persisted definition");
+                    AssertAll120DefinitionBindings(definition,true);
+                }
                 receipt["developmentCatalogMaterialization"]=new JObject{["definitionPath"]=definitionPath,["definitionGuid"]=AssetDatabase.AssetPathToGUID(definitionPath),
                     ["definitionSha256"]=Hash(definitionPath),["layoutPath"]=AssetDatabase.GetAssetPath(layout),["bindingPath"]=AssetDatabase.GetAssetPath(binding),
                     ["runtimeIndex"]=runtimeIndex,["ordinaryQueuedSizeVariants"]=3,["ordinaryQueuedSeedChecks"]=12,["authoredDifficulty"]="Regular",["publicationManifestChanged"]=false,

@@ -14,7 +14,8 @@ namespace Game.Editor
     {
         static bool refinementLogicalFrameSearchRequested;
         static readonly float[] RefinementLogicalFrameMargins={0,32,64,128};
-        static bool ProtectedRefinementCatalog(string id)=>new[]{"S001","S002","S003","S004","S005","S025","S073"}.Contains(id);
+        static bool ProtectedRefinementCatalog(string id)=>new[]{"S001","S002","S003","S004","S005","S025","S073"}.Contains(id)&&
+            !(protectedCounterpartRefinementRequested&&SkirmishMissionDispatch.IsExpandedCounterpart(id));
 
         public static void RunAll120BoundedLogicalFrameRefinement()
         {

@@ -50,7 +50,26 @@ namespace Game.Runtime
             if(matches.CalculateEntityCount()==0)return true;
             if(matches.CalculateEntityCount()!=1){error="Ambiguous native Skirmish match.";return false;}
             var entity=matches.GetSingletonEntity();var match=em.GetComponentData<SkirmishMatchState>(entity);
-            generic=match.ScenarioIndex>7;if(!generic)return true;
+            generic=match.ScenarioIndex>7;
+            if(em.HasComponent<SkirmishExpandedSessionComponent>(entity))
+            {
+                var selected=em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                generic|=selected.IsLegacy==0&&SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId.ToString());
+            }
+            // A partially lost expanded owner must fail closed, rather than
+            // turn the same historical index back into a practice source.
+            if(em.HasComponent<SkirmishLaunchDefinitionRecord>(entity))
+            {
+                var selected=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(entity);
+                generic|=selected!=null&&(selected.RequiresExplicitSource||
+                    selected.Definition!=null&&SkirmishMissionDispatch.IsExpandedCounterpart(selected.Definition.CatalogId));
+            }
+            if(em.HasComponent<SkirmishResolvedSetupRecord>(entity))
+            {
+                var selected=em.GetComponentObject<SkirmishResolvedSetupRecord>(entity)?.Setup;
+                generic|=selected!=null&&SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId);
+            }
+            if(!generic)return true;
             error="Exact authored generic mission/source binding missing or changed.";
             if(!em.HasComponent<SkirmishExpandedSessionComponent>(entity)||!em.HasComponent<SkirmishResolvedSetupRecord>(entity)||
                 !em.HasComponent<SkirmishLaunchDefinitionRecord>(entity))return false;
@@ -72,7 +91,7 @@ namespace Game.Runtime
             using var query=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord),typeof(SkirmishLaunchDefinitionRecord),typeof(SkirmishMatchState));
             if(query.CalculateEntityCount()!=1)return false;var entity=query.GetSingletonEntity();
             var record=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(entity);
-            return em.GetComponentData<SkirmishMatchState>(entity).ScenarioIndex>7&&record!=null&&record.RequiresExplicitSource&&
+            return record!=null&&record.RequiresExplicitSource&&
                 record.MatchesIdentity(em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup,em.GetComponentData<SkirmishExpandedSessionComponent>(entity))&&
                 record.Definition.DefinitionId==missionId;
         }

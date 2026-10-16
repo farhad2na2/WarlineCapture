@@ -385,6 +385,16 @@ namespace Game.UI.Contracts
         Production = 3
     }
 
+    // Process-local normal library selection. Old QuickGame save bytes do not
+    // acquire an expanded identity merely because a matching catalog ID exists.
+    public enum UiSkirmishLibraryLaunchKind : byte { Unspecified=0, PracticePreset=1, ExpandedDefinition=2 }
+    public struct UiSkirmishLibrarySelection
+    {
+        public UiSkirmishLibraryLaunchKind Kind;
+        public string CatalogId, DefinitionId;
+        public int ContentVersion;
+    }
+
     public struct UiQuickCustomGameConfig
     {
         public UiQuickGameEnemyType EnemyType;
@@ -406,6 +416,7 @@ namespace Game.UI.Contracts
         public UiQuickGameStartingResources StartingResources;
         public int MapSeed;
         public int ScenarioIndex;
+        public UiSkirmishLibrarySelection SkirmishSelection;
 
         public static UiQuickCustomGameConfig Defaults => new()
         {

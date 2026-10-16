@@ -73,6 +73,7 @@ namespace Game.UI.Runtime
             if (entry.IsPlayable)
             {
                 _config.ScenarioIndex = entry.PlayableScenarioIndex;
+                _config.SkirmishSelection = LibrarySelection(entry);
                 PlayerPrefs.SetString(LastScenarioIdPrefsKey, _selectedScenarioId);
                 PlayerPrefs.Save();
             }
@@ -80,6 +81,19 @@ namespace Game.UI.Runtime
             Bind(_config);
             if (entry.IsPlayable)
                 _configStore?.Apply(ReadConfigFromControls());
+        }
+
+        private static UiSkirmishLibrarySelection LibrarySelection(SkirmishBattleCatalogEntry entry) => new UiSkirmishLibrarySelection
+        {
+            Kind=!string.IsNullOrEmpty(entry.DefinitionId)
+                ? UiSkirmishLibraryLaunchKind.ExpandedDefinition : UiSkirmishLibraryLaunchKind.PracticePreset,
+            CatalogId=entry.ScenarioId, DefinitionId=entry.DefinitionId, ContentVersion=SkirmishMissionDispatch.SelectedContentVersion(entry)
+        };
+        private bool MatchesLibrarySelection(SkirmishBattleCatalogEntry entry)
+        {
+            var selected=_config.SkirmishSelection;var actual=LibrarySelection(entry);
+            return selected.Kind==actual.Kind&&selected.CatalogId==actual.CatalogId&&
+                selected.DefinitionId==actual.DefinitionId&&selected.ContentVersion==actual.ContentVersion;
         }
 
         public void SelectMapCollection(string mapId)
@@ -231,18 +245,27 @@ namespace Game.UI.Runtime
         private string _launchDefault, _resetDefault;
         private readonly Dictionary<TMP_Text, (string key, string fallback)> _authoredRuleCopy = new();
         private string _briefingCatalogId;
-        private int _briefingSeed;
+        private int _briefingSeed, _briefingVersion;
+        private string _briefingDefinitionId;
+        private UiSkirmishLibraryLaunchKind _briefingLaunchKind;
         private SkirmishResolvedSetup _briefingSetup;
 
         private void PresentCompiledBriefing(SkirmishBattleCatalogEntry selected, bool fa)
         {
-            if (_briefingCatalogId != selected.ScenarioId || _briefingSeed != _config.MapSeed)
+            if (_briefingCatalogId != selected.ScenarioId || _briefingSeed != _config.MapSeed ||
+                _briefingLaunchKind != _config.SkirmishSelection.Kind || _briefingDefinitionId != _config.SkirmishSelection.DefinitionId ||
+                _briefingVersion != _config.SkirmishSelection.ContentVersion)
             {
                 _briefingCatalogId = selected.ScenarioId;
                 _briefingSeed = _config.MapSeed;
+                _briefingLaunchKind=_config.SkirmishSelection.Kind;_briefingDefinitionId=_config.SkirmishSelection.DefinitionId;
+                _briefingVersion=_config.SkirmishSelection.ContentVersion;
                 _briefingSetup = null;
-                if (selected.IsPlayable)
+                if (selected.IsPlayable && _briefingLaunchKind==UiSkirmishLibraryLaunchKind.ExpandedDefinition && MatchesLibrarySelection(selected))
+                {
                     SkirmishSetupBriefing.TryLoad(selected.ScenarioId, _config.MapSeed, out _briefingSetup);
+                    if(_briefingSetup!=null&&(_briefingSetup.DefinitionId!=_briefingDefinitionId||_briefingSetup.ContentVersion!=_briefingVersion))_briefingSetup=null;
+                }
             }
             string[] names = { "Opponent", "Objective", "Roster", "Economy", "Intel" };
             var copy = _briefingSetup != null ? new SkirmishSetupBriefing(_briefingSetup, fa) : default;

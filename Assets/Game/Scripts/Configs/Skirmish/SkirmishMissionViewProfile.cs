@@ -66,7 +66,7 @@ namespace Game.Configs
                 if (!AuthoredNonBaseAssault && !AuthoredGenericBaseAssault) return CatalogId == "S005" && DefinitionId == "skirmish.s005";
                 if (AuthoredNonBaseAssault && AuthoredGenericBaseAssault) return false;
                 bool kind = AuthoredGenericBaseAssault ? ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
-                    !SkirmishMissionDispatch.TryGetLegacyIndex(CatalogId,out _) :
+                    SkirmishMissionDispatch.RequiresSourceBoundDefinition(CatalogId) :
                     ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.FrontlineControl ||
                     ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.Breakthrough || ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.ConvoyEscort;
                 return kind &&

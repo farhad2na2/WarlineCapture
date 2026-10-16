@@ -20,7 +20,8 @@ namespace Game.Composition
             if (em == default || payload == null || setup == null || payload.IsLegacy)
                 return false;
             if (!SkirmishMissionDispatch.PayloadMatches(payload, setup)) return false;
-            bool generic = !SkirmishMissionDispatch.TryGetLegacyIndex(payload.CatalogId, out int scenarioIndex);
+            SkirmishMissionDispatch.TryGetLegacyIndex(payload.CatalogId,out int scenarioIndex);
+            bool generic = SkirmishMissionDispatch.RequiresSourceBoundDefinition(payload.CatalogId);
             SkirmishScenarioDefinitionConfig definition = explicitDefinition;
             if (definition == null)
             {

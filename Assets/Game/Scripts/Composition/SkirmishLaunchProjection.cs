@@ -23,7 +23,31 @@ namespace Game.Composition
         public const string ScenarioId = "scenario.skirmish.desert_base_standard";
         public const string OperationMapId = "opmap.skirmish.desert_base_01";
 
+        public static bool TryQueueSelected(EntityManager em,QuickGameConfig config,UiSkirmishLibrarySelection selected)
+        {
+            // Existing callers and old saves retain ordinary practice defaults.
+            if(selected.Kind==UiSkirmishLibraryLaunchKind.Unspecified)
+                return string.IsNullOrEmpty(selected.CatalogId)&&string.IsNullOrEmpty(selected.DefinitionId)&&selected.ContentVersion==0&&TryQueue(em,config);
+            if(selected.Kind==UiSkirmishLibraryLaunchKind.PracticePreset)
+            {
+                if(!SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId)||selected.ContentVersion!=0||
+                    !string.IsNullOrEmpty(selected.DefinitionId)||!SkirmishMissionDispatch.TryGetLegacyIndex(selected.CatalogId,out int index)||index!=config.ScenarioIndex)return false;
+                var catalog=SkirmishBattleCatalogConfig.Load();int matches=0;
+                if(catalog?.Entries==null)return false;
+                foreach(var row in catalog.Entries)if(row.ScenarioId==selected.CatalogId&&row.IsPlayable&&row.PlayableScenarioIndex==index&&
+                    row.ContentVersion==0&&string.IsNullOrEmpty(row.DefinitionId))matches++;
+                return matches==1&&TryQueue(em,config);
+            }
+            if(selected.Kind!=UiSkirmishLibraryLaunchKind.ExpandedDefinition||
+                !SkirmishMissionDispatch.TryGetSelectedExpanded(SkirmishBattleCatalogConfig.Load(),selected.CatalogId,selected.DefinitionId,
+                    selected.ContentVersion,config.ScenarioIndex,out _)||config.MapSeed<=0)return false;
+            return TryQueueCore(em,config,selected);
+        }
+
         public static bool TryQueue(EntityManager em, QuickGameConfig config)
+            => TryQueueCore(em,config,default);
+
+        private static bool TryQueueCore(EntityManager em,QuickGameConfig config,UiSkirmishLibrarySelection selected)
         {
             bool generic = config.ScenarioIndex > 7;
             SkirmishBattleCatalogEntry genericEntry = default;
@@ -59,6 +83,8 @@ namespace Game.Composition
                 }
             }
             config = config.NormalizeForBaseAssault();
+            if(selected.Kind==UiSkirmishLibraryLaunchKind.ExpandedDefinition)
+                return TryQueueExpanded(em,selected.CatalogId,config.MapSeed,selected.DefinitionId,selected.ContentVersion);
             if (generic) return TryQueueExpanded(em, genericEntry.ScenarioId, config.MapSeed);
             if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex)
                 return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, config.MapSeed);
@@ -85,7 +111,7 @@ namespace Game.Composition
             return true;
         }
 
-        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed)
+        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed,string expectedDefinition=null,int expectedVersion=0)
         {
             // Packaged content only: a standalone player cannot read the repository
             // Design directory, and the authored definition asset is the source of truth.
@@ -104,7 +130,7 @@ namespace Game.Composition
             }
 
             if (!catalog.TryGetDefinition(catalogId, out SkirmishScenarioDefinitionConfig definition) ||
-                definition == null)
+                definition == null || (expectedDefinition!=null&&(definition.DefinitionId!=expectedDefinition||definition.ContentVersion!=expectedVersion)))
             {
                 Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " definition=missing");
                 return false;

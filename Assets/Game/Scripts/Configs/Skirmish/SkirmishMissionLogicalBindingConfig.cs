@@ -82,7 +82,7 @@ namespace Game.Configs
     public static class SkirmishMissionLogicalBindingCompiler
     {
         public static bool RequiresBinding(SkirmishResolvedSetup setup)=>setup!=null &&
-            (setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||!SkirmishMissionDispatch.TryGetLegacyIndex(setup.CatalogId,out _));
+            (setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||SkirmishMissionDispatch.RequiresSourceBoundDefinition(setup.CatalogId));
         // Compile identity only. Actual native source fit/camera pictures/mission
         // success are recorded separately and never inferred from these digests.
         public static bool TryCompile(SkirmishScenarioDefinitionConfig definition,SkirmishResolvedSetup setup,

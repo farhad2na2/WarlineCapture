@@ -8,12 +8,40 @@ namespace Game.Configs
     public static class SkirmishMissionDispatch
     {
         public static bool IsLegacyIndex(int index)=>index>=0&&index<=7;
+        public static bool IsExpandedCounterpart(string id)=>id=="S001"||id=="S025"||id=="S073";
+        public static bool IsCodedExpanded(string id)=>id=="S002"||id=="S003"||id=="S004"||id=="S005";
+        public static int SelectedContentVersion(in SkirmishBattleCatalogEntry entry)
+        {
+            if(entry.ContentVersion>0)return entry.ContentVersion;
+            // Existing coded cards predate the row-version field. Read their
+            // actual authored definition; never fabricate a version in the row.
+            var catalog=SkirmishExpansionCatalogConfig.Load();
+            return entry.ContentVersion==0&&IsCodedExpanded(entry.ScenarioId)&&catalog!=null&&
+                catalog.TryGetDefinition(entry.ScenarioId,out var definition)&&definition!=null&&
+                definition.DefinitionId==entry.DefinitionId?definition.ContentVersion:0;
+        }
+        // Expanded setups for these three IDs are counterparts, never legacy
+        // practice. The four existing expanded coded missions keep their path.
+        public static bool RequiresSourceBoundDefinition(string id)=>Canonical(id)&&
+            id!="S002"&&id!="S003"&&id!="S004"&&id!="S005";
+        public static bool TryGetSelectedExpanded(SkirmishBattleCatalogConfig catalog,string id,string definitionId,int version,int index,out SkirmishBattleCatalogEntry entry)
+        {
+            entry=default;if(!Canonical(id)||version<=0||catalog?.Entries==null)return false;
+            int matches=0,indexMatches=0;
+            foreach(var row in catalog.Entries)
+            {if(row.ScenarioId==id){entry=row;matches++;}if(row.IsPlayable&&row.PlayableScenarioIndex==index)indexMatches++;}
+            return matches==1&&indexMatches==1&&entry.IsPlayable&&entry.PlayableScenarioIndex==index&&
+                entry.DefinitionId==definitionId&&SelectedContentVersion(entry)==version&&
+                definitionId==SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(id)).Value&&
+                (TryGetLegacyIndex(id,out int original)?index==original:index>7);
+        }
         public static bool TryGetGenericByIndex(SkirmishBattleCatalogConfig catalog,int index,out SkirmishBattleCatalogEntry entry)
         {
-            entry=default;if(index<=7||catalog?.Entries==null)return false;int matches=0;
+            entry=default;if(index<0||catalog?.Entries==null)return false;int matches=0;
             foreach(var candidate in catalog.Entries)
                 if(candidate.IsPlayable&&candidate.PlayableScenarioIndex==index){entry=candidate;matches++;}
-            if(matches!=1||!Canonical(entry.ScenarioId)||TryGetLegacyIndex(entry.ScenarioId,out _)||entry.ContentVersion<=0||
+            if(matches!=1||!Canonical(entry.ScenarioId)||!RequiresSourceBoundDefinition(entry.ScenarioId)||
+                (index<=7&&(!IsExpandedCounterpart(entry.ScenarioId)||!TryGetLegacyIndex(entry.ScenarioId,out int original)||original!=index))||entry.ContentVersion<=0||
                 entry.DefinitionId!=SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(entry.ScenarioId)).Value)return false;
             int ids=0;foreach(var candidate in catalog.Entries)if(candidate.ScenarioId==entry.ScenarioId)ids++;
             return ids==1;

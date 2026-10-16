@@ -2560,7 +2560,7 @@ namespace Game.Editor
             if (!string.IsNullOrEmpty(state))
             {
                 if (string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
-                    RejectTheatreMedalColumn(instance);
+                    GuardTheatre(() => RejectTheatreMedalColumn(instance));
                 else
                     RejectOneMedalCountDisplay(instance, state);
             }

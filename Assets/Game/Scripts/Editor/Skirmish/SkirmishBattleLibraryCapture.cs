@@ -216,10 +216,10 @@ namespace Game.Editor
                 serialized.FindProperty("baseAssaultPreset").boolValue = true;
                 serialized.ApplyModifiedPropertiesWithoutUndo();
                 view.Bind(default);
+                TheatreSeatGeometry.SeatingReady = false;
                 view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
                 var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
                 safeFrame?.ClearSimulatedInsets();
-                instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
                 string ratio = string.IsNullOrEmpty(size.Name) ? "unset" : size.Name.Replace('x', ':');
                 string shotLocale = GameLocalization.IsRightToLeft ? "fa" : "en";
                 float insetLeft = notch ? 132f : 0f;
@@ -235,10 +235,13 @@ namespace Game.Editor
                     insetTop,
                     0f,
                     0f);
+                Canvas.ForceUpdateCanvases();
+                instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+                Canvas.ForceUpdateCanvases();
+                TheatreSeatGeometry.SeatingReady = true;
                 view.PresentLibraryCapture(state);
                 RejectUnresolvedSprites(view.Library);
                 Canvas.ForceUpdateCanvases();
-                instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
                 RejectCollapsedLayout(instance);
                 foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
                     text.ForceMeshUpdate();
@@ -281,6 +284,7 @@ namespace Game.Editor
                     UnityEngine.Object.DestroyImmediate(canvasObject);
                 if (cameraObject != null)
                     UnityEngine.Object.DestroyImmediate(cameraObject);
+                TheatreSeatGeometry.SeatingReady = true;
             }
         }
 
@@ -1774,13 +1778,24 @@ namespace Game.Editor
             if (text == null)
                 return 0f;
             TMP_TextInfo info = text.textInfo;
-            if (info == null || info.lineCount <= 1)
-                return text.preferredWidth;
-            float widest = 0f;
-            int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
-            for (int i = 0; i < lines; i++)
-                widest = Mathf.Max(widest, info.lineInfo[i].length);
-            return widest;
+            if (info != null && info.lineCount > 1)
+            {
+                float widest = 0f;
+                int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
+                for (int i = 0; i < lines; i++)
+                    widest = Mathf.Max(widest, info.lineInfo[i].length);
+                if (widest > 0.5f)
+                    return widest;
+            }
+
+            float preferred = text.preferredWidth;
+            if (preferred < 0.5f && !string.IsNullOrEmpty(text.text))
+            {
+                Vector2 values = text.GetPreferredValues(text.text);
+                preferred = Mathf.Max(preferred, values.x);
+            }
+
+            return preferred;
         }
 
         private static void RejectStripMedalOverlap(GameObject root, string locale)

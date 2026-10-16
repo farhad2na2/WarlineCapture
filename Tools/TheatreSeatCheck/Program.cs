@@ -205,18 +205,23 @@ internal static class Program
         if (string.IsNullOrEmpty(selected))
             selected = "DB";
         bool fourByThree = string.Equals(ratio, "4:3", StringComparison.Ordinal);
-        bool applied = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, reserveOn, fourByThree);
+        bool applied = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, reserveOn, fourByThree, selected);
         TheatreSeatGeometry.NoteDetailReserve(applied);
         TheatreSeatGeometry.SetShot(ratio, notch, locale, applied, canvasWidth, canvasHeight, left, top, right, bottom);
         TheatreSeatGeometry.ShotSelected = selected;
         TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, applied, selected);
         string[] violations = TheatreSeatGeometry.CollectViolations(plateWidth, plateHeight, fa, applied, selected);
         bool outlines = OutlinesHold(layout, plateWidth, plateHeight);
+        bool full = ReservedSeatsAreFull(layout, applied);
         bool ok = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal && outlines
             && layout.Seats != null && layout.Seats.Length == 5 && violations.Length == 0
             && FieldsHold(violations)
-            && TheatreSeatGeometry.TheatreDetailReserved == applied;
+            && TheatreSeatGeometry.TheatreDetailReserved == applied
+            && full;
         TheatreSeatGeometry.Box view = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, applied);
+        TheatreSeatGeometry.Box reservedView = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, true);
+        bool underFloor = reservedView.W + 0.5f < TheatreSeatGeometry.ReserveViewportFloor.X
+            || reservedView.H + 0.5f < TheatreSeatGeometry.ReserveViewportFloor.Y;
         string card = layout.Seats != null && layout.Seats.Length > 0
             ? layout.Seats[0].Card.W.ToString("0", CultureInfo.InvariantCulture)
                 + "x" + layout.Seats[0].Card.H.ToString("0", CultureInfo.InvariantCulture)
@@ -237,7 +242,7 @@ internal static class Program
             + " notch=" + notch
             + (fa ? " FA" : " EN")
             + (applied ? " reserve=on" : " reserve=off")
-            + (reserveOn && !applied ? " floor" : "")
+            + (reserveOn && !applied ? (underFloor ? " floor" : " sheet") : "")
             + " plate=" + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
             + " view=" + view.W.ToString("0.0", CultureInfo.InvariantCulture)
@@ -261,6 +266,23 @@ internal static class Program
             for (int i = 0; i < layout.LogLines.Length; i++)
                 Console.WriteLine(layout.LogLines[i]);
         }
+    }
+
+    private static bool ReservedSeatsAreFull(TheatreSeatGeometry.Layout layout, bool reserved)
+    {
+        if (!reserved)
+            return true;
+        if (layout.Seats == null)
+            return false;
+        for (int i = 0; i < layout.Seats.Length; i++)
+        {
+            TheatreSeatGeometry.Box card = layout.Seats[i].Card;
+            if (card.W + 0.5f < TheatreSeatGeometry.FullPortraitMinWidth
+                || card.H + 0.5f < TheatreSeatGeometry.FullPortraitMinHeight)
+                return false;
+        }
+
+        return true;
     }
 
     private static bool FieldsHold(string[] violations)

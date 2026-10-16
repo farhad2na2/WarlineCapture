@@ -125,6 +125,15 @@ namespace Game.UI.Runtime
         /// <summary>Laid-out gap. The check rejects anything under <see cref="MedalGapMinimum"/>.</summary>
         private const float MedalGap = 8f;
         public const float MedalGapMinimum = 6f;
+        /// <summary>Smallest portrait kept beside the detail reserve. A smaller tile drops the reserve.</summary>
+        public const float FullPortraitMinWidth = 124f;
+
+        /// <summary>Smallest portrait height kept beside the detail reserve.</summary>
+        public const float FullPortraitMinHeight = 156f;
+
+        /// <summary>Shortest zoom cue the packer seats. A later fit must not widen it.</summary>
+        public const float PackedCueMinWidth = 124f;
+
         public const float PortraitMinWidth = 112f;
         public const float PortraitMaxWidth = 160f;
         public const float PortraitMinHeight = 140f;
@@ -309,6 +318,12 @@ namespace Game.UI.Runtime
         /// False means the plate was not inset and the detail panel is a bottom sheet.
         /// </summary>
         public static bool TheatreDetailReserved { get; private set; }
+
+        /// <summary>
+        /// Capture sets this false until the canvas has been forced to the shot size.
+        /// Theatre seats and writes its JSON only while this is true, so one settled pass is the dump.
+        /// </summary>
+        public static bool SeatingReady = true;
         public static float ShotCanvasWidth;
         public static float ShotCanvasHeight;
         public static float ShotInsetLeft;
@@ -413,20 +428,75 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// Detail reserve. A 4:3 canvas leaves it off when the open viewport is under <see cref="ReserveViewportFloor"/>.
-        /// A wider ratio keeps it unless that same floor is missed and five portraits will not pack beside it.
+        /// Any ratio also leaves it off when the reserved plate cannot hold full portraits
+        /// (at least <see cref="FullPortraitMinWidth"/> by <see cref="FullPortraitMinHeight"/>, names fitting, no word breaks).
+        /// The detail panel is then a bottom sheet and the seats use the full plate.
         /// </summary>
-        public static bool DetailReserveOn(float plateWidth, float plateHeight, bool fa, bool requested, bool fourByThree)
+        public static bool DetailReserveOn(
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool requested,
+            bool fourByThree,
+            string selected = null)
         {
             if (!requested || plateWidth < 600f || plateHeight < 2f)
                 return false;
             Box view = OpenViewport(plateWidth, plateHeight, fa, true);
             bool holds = view.W + 0.5f >= ReserveViewportFloor.X && view.H + 0.5f >= ReserveViewportFloor.Y;
-            if (holds)
-                return true;
-            if (fourByThree)
+            if (!holds && fourByThree)
                 return false;
-            Layout layout = Arrange(plateWidth, plateHeight, fa, true, "DB");
-            return layout.CardsLegal && layout.CueNear && layout.HexAspectLegal;
+            if (string.IsNullOrEmpty(selected))
+                selected = "DB";
+            return FullPortraitSeatsHold(plateWidth, plateHeight, fa, selected);
+        }
+
+        /// <summary>
+        /// Reserved plate can keep the side panel only when every portrait is a full seat and its name fits.
+        /// </summary>
+        public static bool FullPortraitSeatsHold(float plateWidth, float plateHeight, bool fa, string selected)
+        {
+            if (string.IsNullOrEmpty(selected))
+                selected = "DB";
+            Layout layout = Arrange(plateWidth, plateHeight, fa, true, selected);
+            if (layout.Seats == null || !layout.CardsLegal || !layout.CueNear || !layout.HexAspectLegal)
+                return false;
+            bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            int selectedIndex = IndexOf(selected);
+            if (selectedIndex < 0)
+                selectedIndex = 0;
+            Box cue = layout.Cue;
+            for (int i = 0; i < layout.Seats.Length; i++)
+            {
+                Box card = layout.Seats[i].Card;
+                if (card.W + 0.5f < FullPortraitMinWidth || card.H + 0.5f < FullPortraitMinHeight)
+                    return false;
+                float band = NameBandHeight(card, CardsOf(layout), i, DetailRect(plateWidth, plateHeight, fa, true), cue, ZoomHintRect(plateWidth, plateHeight), plateHeight);
+                if (!TryFitZoneName(ZoneTitle(layout.Seats[i].MapId, fa), card, band, wide, layout.Seats[i].Hex, HexesOf(layout), out _, out _, out _))
+                    return false;
+                if (i == selectedIndex
+                    && cue.W > 1f
+                    && SegmentHitsRect(layout.Seats[i].Pin.Center, NearestOn(card, layout.Seats[i].Pin.Center), cue))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static Box[] CardsOf(Layout layout)
+        {
+            var cards = new Box[layout.Seats.Length];
+            for (int i = 0; i < layout.Seats.Length; i++)
+                cards[i] = layout.Seats[i].Card;
+            return cards;
+        }
+
+        private static Vec2[][] HexesOf(Layout layout)
+        {
+            var hexes = new Vec2[layout.Seats.Length][];
+            for (int i = 0; i < layout.Seats.Length; i++)
+                hexes[i] = layout.Seats[i].Hex;
+            return hexes;
         }
 
         public struct NameMeasure
@@ -579,18 +649,46 @@ namespace Game.UI.Runtime
             ShotReserve = reserve;
             NoteDetailReserve(reserve);
             ShotSelected = string.IsNullOrEmpty(selected) ? "DB" : selected;
-            if (string.IsNullOrEmpty(DumpDirectory))
+            if (!SeatingReady || string.IsNullOrEmpty(DumpDirectory))
                 return;
             Box detail = DetailRect(plateWidth, plateHeight, fa, reserve);
             Box viewport = OpenViewport(plateWidth, plateHeight, fa, reserve);
             var names = new NameMeasure[MapIds.Length];
+            bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            var cards = new Box[MapIds.Length];
+            var hexes = new Vec2[MapIds.Length][];
             for (int i = 0; i < MapIds.Length; i++)
             {
-                Box card = layout.Seats != null && i < layout.Seats.Length ? layout.Seats[i].Card : default;
+                cards[i] = layout.Seats != null && i < layout.Seats.Length ? layout.Seats[i].Card : default;
+                hexes[i] = layout.Seats != null && i < layout.Seats.Length ? layout.Seats[i].Hex : null;
+            }
+
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                Box card = cards[i];
+                string title = ZoneTitle(MapIds[i], fa);
+                float band = card.W > 1f
+                    ? NameBandHeight(card, cards, i, detail, layout.Cue, ZoomHintRect(plateWidth, plateHeight), plateHeight)
+                    : 0f;
+                bool fitted = TryFitZoneName(title, card, band, wide, hexes[i], hexes, out float font, out float nameHeight, out _);
+                float fontUsed = font > 0.5f ? font : NameFontFloor;
+                float box = Math.Max(1f, card.W - 12f);
+                float lineWidth = card.W > 1f ? MeasuredTitleWidth(title, fontUsed, box) : 0f;
+                if (lineWidth < 0.5f && !string.IsNullOrEmpty(title))
+                    lineWidth = TextWidth(title, fontUsed);
+                float lineHeight = fitted && nameHeight > 0.5f
+                    ? nameHeight
+                    : fontUsed * NameLineFactor(title) + 2f;
                 names[i] = new NameMeasure
                 {
                     MapId = MapIds[i],
-                    Text = ZoneTitle(MapIds[i], fa),
+                    Text = title,
+                    Font = fontUsed,
+                    BoxWidth = box,
+                    BoxHeight = lineHeight,
+                    PreferredWidth = lineWidth,
+                    PreferredHeight = lineHeight,
+                    Band = band,
                     CardWidth = card.W,
                     CardHeight = card.H
                 };
@@ -1084,13 +1182,16 @@ namespace Game.UI.Runtime
         {
             string title = ZoneTitle(mapId, fa);
             float width = Math.Max(1f, card.W - 12f);
-            if (TryFitZoneName(title, card, bandHeight, wide, own, districts, out _, out float nameHeight, out _))
-                return;
-            violations.Add(
-                "Theatre zone name draws past its box for " + mapId + " locale=" + locale +
-                " preferred=" + nameHeight.ToString("0.0", CultureInfo.InvariantCulture) +
-                " width=" + width.ToString("0.0", CultureInfo.InvariantCulture) +
-                " text=" + title + ".");
+            if (!TryFitZoneName(title, card, bandHeight, wide, own, districts, out _, out float nameHeight, out _))
+            {
+                if (nameHeight < 0.5f)
+                    nameHeight = TextWidth(title, NameFontFloor);
+                violations.Add(
+                    "Theatre zone name draws past its box for " + mapId + " locale=" + locale +
+                    " preferred=" + nameHeight.ToString("0.0", CultureInfo.InvariantCulture) +
+                    " width=" + width.ToString("0.0", CultureInfo.InvariantCulture) +
+                    " text=" + title + ".");
+            }
         }
 
         /// <summary>
@@ -1134,18 +1235,18 @@ namespace Game.UI.Runtime
             {
                 if (!MeasureName(text, width, size, out int lines, out float longest, out float word))
                 {
-                    nameHeight = word;
+                    nameHeight = word > 0.5f ? word : TextWidth(text, size);
                     continue;
                 }
 
                 float needed = lines * size * factor + 2f;
+                nameHeight = needed;
                 float grown = card.H;
                 if (MaxNameBoxHeight(grown, wide) + 1f < needed)
                 {
                     grown = band;
                     if (MaxNameBoxHeight(grown, wide) + 1f < needed)
                     {
-                        nameHeight = needed;
                         fontSize = size;
                         grownHeight = grown;
                         continue;
@@ -1157,9 +1258,12 @@ namespace Game.UI.Runtime
 
                 var grownBox = new Box(card.X, card.Y, card.W, grown);
                 if (own != null && districts != null && !SeatHolds(grownBox, own, districts))
+                {
+                    fontSize = size;
+                    grownHeight = grown;
                     continue;
+                }
                 fontSize = size;
-                nameHeight = needed;
                 grownHeight = grown;
                 return longest <= width + 2f;
             }
@@ -1257,6 +1361,15 @@ namespace Game.UI.Runtime
         private static float NameLineFactor(string text)
         {
             return 1.25f;
+        }
+
+        private static float MeasuredTitleWidth(string text, float size, float boxWidth)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0f;
+            if (MeasureName(text, boxWidth, size, out _, out float longest, out float word))
+                return longest > 0.5f ? longest : TextWidth(text, size);
+            return word > 0.5f ? word : TextWidth(text, size);
         }
 
         private static bool MeasureName(string text, float width, float size, out int lines, out float longest, out float wordWidth)
@@ -1805,6 +1918,8 @@ namespace Game.UI.Runtime
                 + " cue=" + layout.SelectedMapId
                 + " x=" + layout.Cue.X.ToString("0.0", CultureInfo.InvariantCulture)
                 + " y=" + layout.Cue.Y.ToString("0.0", CultureInfo.InvariantCulture)
+                + " w=" + layout.Cue.W.ToString("0.0", CultureInfo.InvariantCulture)
+                + " h=" + layout.Cue.H.ToString("0.0", CultureInfo.InvariantCulture)
                 + " reach=" + reach.ToString("0.0", CultureInfo.InvariantCulture);
             return lines;
         }
@@ -2915,7 +3030,7 @@ namespace Game.UI.Runtime
             cue = default;
             float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
             float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
-            float[] cueWidths = { CueWidth, 196f, 172f, 148f, 124f };
+            float[] cueWidths = { CueWidth, 196f, 172f, 148f, PackedCueMinWidth };
             for (int pass = 0; pass < 2; pass++)
             {
                 bool wide = pass == 1;

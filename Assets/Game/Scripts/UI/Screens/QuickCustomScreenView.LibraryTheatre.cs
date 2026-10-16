@@ -26,6 +26,11 @@ namespace Game.UI.Runtime
         {
             if (_libraryRegions == null)
                 return;
+            if (!TheatreSeatGeometry.SeatingReady)
+            {
+                TheatreSeatGeometry.NoteDetailReserve(false);
+                return;
+            }
             ClearChildren(_libraryRegions);
             _regionButtons.Clear();
             RawImage map = transform.Find("SkirmishSetupComposition/OperationPreview/MapPreviewClip/MapPreview")
@@ -72,8 +77,11 @@ namespace Game.UI.Runtime
                 out float cropH);
 
             NoteHostCanvas(plate);
+            string selectedMap = theater != null && !string.IsNullOrEmpty(theater.SelectedMapId)
+                ? theater.SelectedMapId
+                : "DB";
             bool reserve = TheatreSeatGeometry.DetailReserveOn(
-                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree(), selectedMap);
             TheatreSeatGeometry.NoteDetailReserve(reserve);
             TheatreSeatGeometry.ShotReserve = reserve;
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
@@ -918,7 +926,7 @@ namespace Game.UI.Runtime
         private static Rect SeatingDetailRect(float plateWidth, float plateHeight, bool fa)
         {
             if (!TheatreSeatGeometry.DetailReserveOn(
-                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree()))
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree(), TheatreSeatGeometry.ShotSelected))
                 return Rect.zero;
             float reserve = SeatingDetailReserve(plateWidth);
             if (reserve <= 0f)
@@ -1782,7 +1790,7 @@ namespace Game.UI.Runtime
             PlaceTopLeft(name.rectTransform, pad, nameY, artW, nameH);
             name.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             name.isRightToLeftText = fa;
-            name.textWrappingMode = TextWrappingModes.Normal;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
             name.enableAutoSizing = true;
@@ -1932,6 +1940,102 @@ namespace Game.UI.Runtime
             shadow.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// The packer already left the cue clear of the leader. Fit the label inside that rect.
+        /// A one-line cue that already fits is left alone, so the wide plates keep their label.
+        /// </summary>
+        private static void FitCueInsidePackedRect(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null)
+                return;
+            RectTransform rect = cue.rectTransform;
+            float boxW = rect.rect.width > 1f ? rect.rect.width : rect.sizeDelta.x;
+            float boxH = rect.rect.height > 1f ? rect.rect.height : rect.sizeDelta.y;
+            if (boxW < 8f || boxH < 8f)
+                return;
+            string source = (cue.text ?? string.Empty).Replace("\n", " ").Trim();
+            if (source.Length == 0)
+                return;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.ForceMeshUpdate();
+            float preferred = cue.preferredWidth;
+            if (preferred < 0.5f)
+                preferred = cue.GetPreferredValues(source).x;
+            int drawnLines = cue.textInfo != null ? cue.textInfo.lineCount : 1;
+            if (drawnLines <= 1 && preferred > 0.5f && preferred <= boxW + 1.5f && cue.preferredHeight <= boxH + 1.5f)
+                return;
+
+            const float floor = 12f;
+            for (float size = 18f; size >= floor - 0.01f; size -= 1f)
+            {
+                cue.enableAutoSizing = true;
+                cue.fontSizeMin = size;
+                cue.fontSizeMax = size;
+                cue.fontSize = size;
+                cue.text = source;
+                cue.maxVisibleLines = 1;
+                cue.textWrappingMode = TextWrappingModes.NoWrap;
+                cue.ForceMeshUpdate();
+                float line = cue.preferredWidth;
+                if (line < 0.5f)
+                    line = cue.GetPreferredValues(source).x;
+                float height = cue.preferredHeight;
+                if (height < 0.5f)
+                    height = cue.GetPreferredValues(source).y;
+                if (line > 0.5f && line <= boxW + 1.5f && height <= boxH + 1.5f)
+                    return;
+                if (CueLabelSplits(cue, source, size, boxW, boxH))
+                    return;
+            }
+        }
+
+        private static bool CueLabelSplits(TMP_Text cue, string source, float size, float boxW, float boxH)
+        {
+            int split = -1;
+            float bestGap = float.MaxValue;
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (source[i] != ' ')
+                    continue;
+                string left = source.Substring(0, i + 1);
+                string right = source.Substring(i + 1).TrimStart();
+                if (right.Length == 0)
+                    continue;
+                float leftWidth = ZoneNameLineWidth(cue, left, size);
+                float rightWidth = ZoneNameLineWidth(cue, right, size);
+                if (leftWidth > boxW + 1.5f || rightWidth > boxW + 1.5f)
+                    continue;
+                float gap = Mathf.Abs(leftWidth - rightWidth);
+                if (gap >= bestGap)
+                    continue;
+                bestGap = gap;
+                split = i;
+            }
+
+            if (split < 0)
+                return false;
+            cue.text = source.Substring(0, split + 1) + "\n" + source.Substring(split + 1).TrimStart();
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.maxVisibleLines = 2;
+            cue.fontSizeMin = size;
+            cue.fontSizeMax = size;
+            cue.fontSize = size;
+            cue.ForceMeshUpdate();
+            float needed = MeasuredNameHeight(cue);
+            float line = MeasuredNameWidth(cue);
+            if (needed > boxH + 1.5f || line > boxW + 1.5f)
+            {
+                cue.text = source;
+                cue.maxVisibleLines = 1;
+                cue.ForceMeshUpdate();
+                return false;
+            }
+
+            return true;
+        }
+
         private void FitZoomCue()
         {
             if (_libraryRegions == null || !_libraryRegions.gameObject.activeInHierarchy)
@@ -1955,12 +2059,13 @@ namespace Game.UI.Runtime
             }
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             RectTransform placedCue = cue.rectTransform;
-            if (placedCue.sizeDelta.x >= 200f && placedCue.sizeDelta.y >= 40f)
+            if (placedCue.sizeDelta.x + 0.5f >= TheatreSeatGeometry.PackedCueMinWidth && placedCue.sizeDelta.y >= 40f)
             {
                 Transform cuePlate = cue.transform.parent != null ? cue.transform.parent.Find("CuePlate") : null;
                 if (cuePlate is RectTransform cuePlateRect)
                     PlaceTopLeft(cuePlateRect, placedCue.anchoredPosition.x, -placedCue.anchoredPosition.y, placedCue.sizeDelta.x, placedCue.sizeDelta.y);
                 RaiseTheatreReadability(_libraryRegions);
+                FitCueInsidePackedRect(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
             }
@@ -2129,7 +2234,7 @@ namespace Game.UI.Runtime
             }
 
             bool reserve = TheatreSeatGeometry.DetailReserveOn(
-                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree());
+                plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree(), selected);
             TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(
                 plateWidth, plateHeight, fa, reserve, selected);
             TheatreSeatGeometry.NoteSeating(plateWidth, plateHeight, fa, reserve, selected, layout);
@@ -2305,7 +2410,6 @@ namespace Game.UI.Runtime
                 return;
             float cardW = card.sizeDelta.x;
             float cardH = card.sizeDelta.y;
-            float band = TheatreSeatGeometry.NameBandHeight(boxes[index], boxes, index, detail, cue, hint, plateHeight);
             float boxWidth = Mathf.Max(8f, cardW - 12f);
             string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
@@ -2326,33 +2430,28 @@ namespace Game.UI.Runtime
                 name.overflowMode = TextOverflowModes.Overflow;
                 name.maxVisibleLines = 1;
                 name.ForceMeshUpdate();
-                bool oneLine = name.preferredWidth <= boxWidth + 1.5f;
+                bool oneLine = name.preferredWidth > 0.5f && name.preferredWidth <= boxWidth + 1.5f;
                 if (!oneLine)
                 {
-                    name.textWrappingMode = TextWrappingModes.Normal;
+                    name.textWrappingMode = TextWrappingModes.NoWrap;
                     name.maxVisibleLines = 2;
-                    WrapZoneName(name, size);
+                    if (!WrapZoneName(name, size))
+                        continue;
                     name.fontSizeMin = size;
                     name.fontSizeMax = size;
                     name.fontSize = size;
                     name.maxVisibleLines = 2;
-                    name.textWrappingMode = TextWrappingModes.Normal;
+                    name.textWrappingMode = TextWrappingModes.NoWrap;
                     name.ForceMeshUpdate();
                 }
 
                 float needed = Mathf.Ceil(name.preferredHeight + 2f);
-                float grown = cardH;
-                if (TheatreSeatGeometry.MaxNameBoxHeight(grown, wide) + 1f < needed)
-                {
-                    float target = grown;
-                    while (target + 1f <= band && TheatreSeatGeometry.MaxNameBoxHeight(target, wide) + 1f < needed)
-                        target += 1f;
-                    if (TheatreSeatGeometry.MaxNameBoxHeight(Mathf.Min(band, target), wide) + 1f < needed)
-                        continue;
-                    grown = Mathf.Min(band, target);
-                }
+                if (needed < 0.5f)
+                    continue;
+                if (TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide) + 1f < needed)
+                    continue;
 
-                ApplyPortraitNameLayout(card, name, needed, grown, wide, oneLine);
+                ApplyPortraitNameLayout(card, name, needed, cardH, wide, oneLine);
                 name.lineSpacing = 0f;
                 name.ForceMeshUpdate();
                 if (PortraitNameFitsRect(name, source))
@@ -2376,12 +2475,13 @@ namespace Game.UI.Runtime
             name.fontSizeMax = size;
             name.fontSize = size;
             name.text = source;
-            name.textWrappingMode = TextWrappingModes.Normal;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
-            WrapZoneName(name, size);
+            if (!WrapZoneName(name, size))
+                return;
             name.maxVisibleLines = 2;
-            name.textWrappingMode = TextWrappingModes.Normal;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
             float limit = Mathf.Max(28f, TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide));
             for (float spacing = 0f; spacing >= -36f; spacing -= 4f)
             {
@@ -2541,8 +2641,12 @@ namespace Game.UI.Runtime
                 if (name == null)
                     continue;
                 float boxWidth = ZoneNameBoxWidth(name);
-                if (wrapOverflow && boxWidth >= 8f && name.preferredWidth > boxWidth + 1.5f)
-                    WrapZoneName(name, size);
+                if (wrapOverflow && boxWidth >= 8f && name.preferredWidth > boxWidth + 1.5f && !WrapZoneName(name, size))
+                {
+                    name.textWrappingMode = TextWrappingModes.NoWrap;
+                    name.maxVisibleLines = 1;
+                    name.ForceMeshUpdate();
+                }
                 GrowZoneNameBox(name);
             }
         }
@@ -2569,7 +2673,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static void WrapZoneName(TMP_Text name, float size)
+        private static bool WrapZoneName(TMP_Text name, float size)
         {
             string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
             float boxWidth = ZoneNameBoxWidth(name);
@@ -2597,20 +2701,20 @@ namespace Game.UI.Runtime
             if (split < 0)
             {
                 name.text = source;
-                name.textWrappingMode = TextWrappingModes.Normal;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
                 name.overflowMode = TextOverflowModes.Overflow;
-                name.maxVisibleLines = 2;
+                name.maxVisibleLines = 1;
                 name.fontSizeMin = size;
                 name.fontSizeMax = size;
                 name.fontSize = size;
                 name.ForceMeshUpdate();
-                return;
+                return false;
             }
 
             string first = source.Substring(0, split + 1);
             string second = source.Substring(split + 1).TrimStart();
             name.text = first + "\n" + second;
-            name.textWrappingMode = TextWrappingModes.Normal;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
             name.fontSizeMin = size;
@@ -2618,18 +2722,63 @@ namespace Game.UI.Runtime
             name.fontSize = size;
             name.ForceMeshUpdate();
             RectTransform rect = name.rectTransform;
-            float needed = Mathf.Ceil(name.preferredHeight + 2f);
+            float needed = MeasuredNameHeight(name);
             float limit = ZoneNameHeightLimit(rect);
             float height = Mathf.Min(limit, Mathf.Max(rect != null ? rect.sizeDelta.y : needed, needed));
             if (rect != null && height > rect.sizeDelta.y + 0.5f)
                 rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
-            if (name.preferredHeight > height + 1.5f || name.preferredWidth > boxWidth + 1.5f)
+            float line = MeasuredNameWidth(name);
+            if (needed > height + 1.5f || line > boxWidth + 1.5f)
             {
                 name.text = source;
-                name.textWrappingMode = TextWrappingModes.Normal;
-                name.maxVisibleLines = 2;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.maxVisibleLines = 1;
                 name.ForceMeshUpdate();
+                return false;
             }
+
+            return true;
+        }
+
+        private static float MeasuredNameWidth(TMP_Text name)
+        {
+            if (name == null)
+                return 0f;
+            name.ForceMeshUpdate();
+            float measured = name.preferredWidth;
+            if (measured < 0.5f)
+            {
+                Vector2 values = name.GetPreferredValues(name.text);
+                measured = Mathf.Max(values.x, values.y);
+            }
+
+            TMP_TextInfo info = name.textInfo;
+            if (info != null && info.lineCount > 1)
+            {
+                float widest = 0f;
+                int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
+                for (int i = 0; i < lines; i++)
+                    widest = Mathf.Max(widest, info.lineInfo[i].length);
+                if (widest > 0.5f)
+                    measured = widest;
+            }
+
+            return measured;
+        }
+
+        private static float MeasuredNameHeight(TMP_Text name)
+        {
+            if (name == null)
+                return 0f;
+            name.ForceMeshUpdate();
+            float measured = name.preferredHeight;
+            if (measured < 0.5f)
+            {
+                Vector2 values = name.GetPreferredValues(name.text);
+                measured = Mathf.Max(measured, values.y);
+            }
+
+            return Mathf.Ceil(measured + 2f);
         }
 
         private static float ZoneNameBoxWidth(TMP_Text name)
@@ -2650,8 +2799,26 @@ namespace Game.UI.Runtime
             name.maxVisibleLines = 1;
             name.ForceMeshUpdate();
             float measured = name.preferredWidth;
+            if (measured < 0.5f && !string.IsNullOrEmpty(line))
+            {
+                Vector2 values = name.GetPreferredValues(line);
+                measured = values.x;
+            }
+
+            if (measured < 0.5f)
+                measured = EstimateLineWidth(line, size);
             name.text = previous;
             return measured;
+        }
+
+        private static float EstimateLineWidth(string line, float size)
+        {
+            if (string.IsNullOrEmpty(line))
+                return 0f;
+            float width = 0f;
+            for (int i = 0; i < line.Length; i++)
+                width += size * (line[i] <= 127 ? 0.7f : 0.95f);
+            return width;
         }
 
         private static void GrowZoneNameBox(TMP_Text name)

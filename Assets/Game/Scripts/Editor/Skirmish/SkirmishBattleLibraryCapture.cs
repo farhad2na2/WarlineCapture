@@ -1528,7 +1528,8 @@ namespace Game.Editor
                 throw new InvalidOperationException("Theatre zone thumbnail is missing or tinted for " + mapId + " locale=" + locale + ".");
 
             Image fill = card.Find("ProgressRing/ProgressFill")?.GetComponent<Image>();
-            TMP_Text count = card.Find("ProgressRing/ZoneCount")?.GetComponent<TMP_Text>();
+            TMP_Text count = card.Find("ZoneCount")?.GetComponent<TMP_Text>()
+                ?? card.Find("ProgressRing/ZoneCount")?.GetComponent<TMP_Text>();
             if (fill == null || count == null)
                 throw new InvalidOperationException("Theatre zone card is missing its progress arc for " + mapId + " locale=" + locale + ".");
             if (fill.type != Image.Type.Filled || fill.fillMethod != Image.FillMethod.Radial360)

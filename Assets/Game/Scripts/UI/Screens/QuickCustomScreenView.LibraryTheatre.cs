@@ -91,7 +91,9 @@ namespace Game.UI.Runtime
             TheatreSeatGeometry.NoteDetailReserve(reserve);
             TheatreSeatGeometry.ShotReserve = reserve;
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
+            TheatreSeatGeometry.Box reserveRect = TheatreSeatGeometry.DetailRect(plateWidth, plateHeight, fa, reserve);
             bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
+            RawImage theatrePaint = null;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
@@ -108,6 +110,7 @@ namespace Game.UI.Runtime
                     ApplyPlainTheatreCover(raw, viewport.W, viewport.H);
                 else
                     ApplyTheatreCover(raw, plateWidth, plateHeight);
+                theatrePaint = raw;
                 var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 shade.transform.SetParent(fit, false);
                 Stretch(shade.rectTransform);
@@ -116,6 +119,8 @@ namespace Game.UI.Runtime
                 shade.raycastTarget = false;
                 shade.rectTransform.localScale = Vector3.one;
             }
+
+            LogTheatreCover(plate, plateWidth, plateHeight, viewport, reserveRect, theatrePaint, fa);
 
             if (map != null)
                 map.enabled = painted == null;
@@ -1822,20 +1827,12 @@ namespace Game.UI.Runtime
             PlaceTopLeft(card.rectTransform, slot.Card.x, slot.Card.y, slot.Card.width, slot.Card.height);
             card.rectTransform.localScale = Vector3.one;
 
-            float cardW = slot.Card.width;
             float cardH = slot.Card.height;
-            const float frame = 6f;
             float nameH = Mathf.Min(TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame), cardH >= 190f ? 44f : 40f);
-            float innerW = Mathf.Max(48f, cardW - frame * 2f);
-            float bodyTop = frame + nameH + 4f;
-            float bodyH = Mathf.Max(28f, cardH - bodyTop - frame);
-            float ring = Mathf.Min(bodyH, innerW * 0.56f);
-            float photoW = Mathf.Max(8f, innerW - 6f - ring);
             card.sprite = ZoneSolidSprite();
             card.type = Image.Type.Simple;
             card.color = new Color(0.04f, 0.05f, 0.07f, 0.96f);
             var name = CreateLabel(card.transform, "ZoneName", 18f);
-            PlaceTopLeft(name.rectTransform, frame, frame, innerW, nameH);
             name.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             name.isRightToLeftText = fa;
             name.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1853,13 +1850,10 @@ namespace Game.UI.Runtime
             medallion.sprite = ZoneSolidSprite();
             medallion.color = slot.Zone;
             medallion.raycastTarget = false;
-            PlaceTopLeft(medallion.rectTransform, frame, bodyTop, photoW, bodyH);
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
             var art = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             art.transform.SetParent(medallion.transform, false);
-            const float artInset = 6f;
-            PlaceTopLeft(art.rectTransform, artInset, artInset, Mathf.Max(8f, photoW - artInset * 2f), Mathf.Max(8f, bodyH - artInset * 2f));
             ApplyDistrictThumbnail(art, slot.MapId);
             art.color = Color.white;
             art.raycastTarget = false;
@@ -1867,16 +1861,11 @@ namespace Game.UI.Runtime
             int total = Mathf.Max(0, slot.Playable);
             bool pending = total <= 0;
             float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
-            float ringX = frame + photoW + 6f;
-            float ringY = bodyTop + (bodyH - ring) * 0.5f;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
-            track.sprite = pending ? ZoneSolidSprite() : ZoneRingSprite();
-            track.color = pending
-                ? new Color(0.04f, 0.05f, 0.06f, 0.92f)
-                : new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
+            track.sprite = ZoneRingSprite();
+            track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, ringY, ring, ring);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1889,19 +1878,18 @@ namespace Game.UI.Runtime
             fill.color = Color.Lerp(slot.Zone, Color.white, 0.45f);
             fill.raycastTarget = false;
             fill.enabled = !pending;
-            var count = CreateLabel(track.transform, "ZoneCount", pending ? 18f : 20f);
-            Stretch(count.rectTransform, pending ? 6f : 1f, pending ? 1f : 1f, pending ? 4f : 1f, pending ? 1f : 1f);
+            var count = CreateLabel(card.transform, "ZoneCount", pending ? 18f : 20f);
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
             count.textWrappingMode = TextWrappingModes.NoWrap;
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
-            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 16f : 16f, pending ? 24f : 24f);
+            count.maxVisibleLines = 1;
+            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, 16f, 24f);
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
-            count.maxVisibleLines = 1;
-            FitCopyInside(count, 11f);
+            LayoutZoneCardStack(card.rectTransform, name, nameH, cardH, wideFrame);
         }
 
         private static void ApplyDistrictThumbnail(RawImage preview, string mapId)
@@ -2378,6 +2366,87 @@ namespace Game.UI.Runtime
             }
         }
 
+        /// <summary>
+        /// One line per theatre shot: plate, open viewport, detail reserve, and the painting rect.
+        /// <c>band=reserve</c> means the painting covers the viewport and the unpainted column is the
+        /// detail reserve (#66 does not draw P1's panel). <c>band=gap</c> means the painting is inside
+        /// the viewport. <c>gapB</c> is the empty strip under the painting inside the plate.
+        /// </summary>
+        private static void LogTheatreCover(
+            RectTransform clip,
+            float plateWidth,
+            float plateHeight,
+            TheatreSeatGeometry.Box viewport,
+            TheatreSeatGeometry.Box reserve,
+            RawImage paint,
+            bool fa)
+        {
+            float paintX = 0f;
+            float paintY = 0f;
+            float paintW = 0f;
+            float paintH = 0f;
+            bool hasPaint = paint != null && paint.rectTransform != null;
+            if (hasPaint)
+            {
+                RectTransform rect = paint.rectTransform;
+                bool stretched = rect.anchorMin.x <= 0.01f && rect.anchorMax.x >= 0.99f
+                    && rect.anchorMin.y <= 0.01f && rect.anchorMax.y >= 0.99f;
+                if (stretched && rect.sizeDelta.x < 2f && rect.sizeDelta.y < 2f)
+                {
+                    paintW = plateWidth;
+                    paintH = plateHeight;
+                }
+                else
+                {
+                    paintX = rect.anchoredPosition.x;
+                    paintY = -rect.anchoredPosition.y;
+                    paintW = rect.sizeDelta.x;
+                    paintH = rect.sizeDelta.y;
+                }
+            }
+
+            float gapL = paintX;
+            float gapT = paintY;
+            float gapR = plateWidth - (paintX + paintW);
+            float gapB = plateHeight - (paintY + paintH);
+            bool covers = hasPaint
+                && paintX <= viewport.X + 1.5f
+                && paintY <= viewport.Y + 1.5f
+                && paintX + paintW >= viewport.XMax - 1.5f
+                && paintY + paintH >= viewport.YMax - 1.5f;
+            string band = !hasPaint ? "no-paint" : !covers ? "gap" : reserve.W > 1f ? "reserve" : "full";
+            string clipInset = "none";
+            if (clip != null)
+            {
+                clipInset = F(clip.offsetMin.x) + "," + F(clip.offsetMin.y)
+                    + "," + F(clip.offsetMax.x) + "," + F(clip.offsetMax.y);
+            }
+
+            Debug.Log("[TheatreCover] ratio=" + TheatreSeatGeometry.ShotRatio
+                + " notch=" + TheatreSeatGeometry.ShotNotch
+                + " locale=" + TheatreSeatGeometry.ShotLocale
+                + " fa=" + (fa ? "1" : "0")
+                + " reserveOn=" + (TheatreSeatGeometry.ShotReserve ? "1" : "0")
+                + " plate=0,0," + F(plateWidth) + "," + F(plateHeight)
+                + " viewport=" + F(viewport.X) + "," + F(viewport.Y) + "," + F(viewport.W) + "," + F(viewport.H)
+                + " reserve=" + F(reserve.X) + "," + F(reserve.Y) + "," + F(reserve.W) + "," + F(reserve.H)
+                + " paint=" + (hasPaint
+                    ? F(paintX) + "," + F(paintY) + "," + F(paintW) + "," + F(paintH)
+                    : "none")
+                + " gapL=" + F(gapL)
+                + " gapR=" + F(gapR)
+                + " gapT=" + F(gapT)
+                + " gapB=" + F(gapB)
+                + " coversViewport=" + (covers ? "1" : "0")
+                + " band=" + band
+                + " clipOffset=" + clipInset);
+        }
+
+        private static string F(float value)
+        {
+            return value.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         private static void RaiseTheatreReadability(Transform regions)
         {
             if (regions == null)
@@ -2667,42 +2736,76 @@ namespace Game.UI.Runtime
             float cardX = card.anchoredPosition.x;
             float cardY = -card.anchoredPosition.y;
             PlaceTopLeft(card, cardX, cardY, cardW, cardH);
-            const float pad = 6f;
-            float innerW = Mathf.Max(48f, cardW - pad * 2f);
             if (oneLine)
                 nameH = Mathf.Max(nameH, cardH >= 190f ? 28f : 24f);
+            LayoutZoneCardStack(card, name, nameH, cardH, wide);
+        }
+
+        /// <summary>
+        /// Header across the card, then a square portrait beside a square ring, then the
+        /// status line across the full inner width. The seat rect is left alone.
+        /// </summary>
+        private static void LayoutZoneCardStack(RectTransform card, TMP_Text name, float nameH, float cardH, bool wide)
+        {
+            if (card == null)
+                return;
+            float cardW = card.sizeDelta.x;
+            const float pad = 6f;
+            const float gap = 4f;
+            float innerW = Mathf.Max(48f, cardW - pad * 2f);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
             if (nameH > maxName)
                 nameH = maxName;
-            PlaceTopLeft(name.rectTransform, pad, pad, innerW, Mathf.Max(1f, nameH));
-            float bodyTop = pad + nameH + 4f;
-            float bodyH = cardH - bodyTop - pad;
-            if (bodyH < 28f)
-                bodyH = Mathf.Max(1f, bodyH);
-            float gap = 6f;
-            float stackRoom = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
-            float statusCap = Mathf.Max(28f, stackRoom - nameH);
-            float ringSide = Mathf.Min(Mathf.Max(1f, bodyH), innerW * 0.56f, statusCap);
-            float photoW = Mathf.Max(8f, innerW - gap - ringSide);
+            if (nameH < 1f)
+                nameH = 1f;
+            float statusH = cardH >= 190f ? 28f : 24f;
+            float room = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
+            if (nameH + statusH > room + 0.5f)
+                statusH = Mathf.Max(18f, room - nameH);
+            if (statusH < 18f)
+                statusH = 18f;
+            if (name != null && name.rectTransform != null)
+                PlaceTopLeft(name.rectTransform, pad, pad, innerW, nameH);
+
+            float statusY = cardH - pad - statusH;
+            float midTop = pad + nameH + gap;
+            float midH = statusY - gap - midTop;
+            if (midH < 8f)
+                midH = 8f;
+            float side = Mathf.Min(midH, Mathf.Max(1f, (innerW - gap) * 0.5f));
+            if (side < 1f)
+                side = 1f;
+            float pairTop = midTop;
+            if (midH > side + 1f)
+                pairTop = midTop + (midH - side) * 0.5f;
+
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
             {
-                PlaceTopLeft(thumb, pad, bodyTop, photoW, Mathf.Max(1f, bodyH));
+                PlaceTopLeft(thumb, pad, pairTop, side, side);
                 if (thumb.Find("Thumbnail") is RectTransform preview)
                 {
-                    const float inset = 5f;
-                    PlaceTopLeft(preview, inset, inset, Mathf.Max(8f, photoW - inset * 2f), Mathf.Max(8f, bodyH - inset * 2f));
+                    const float inset = 4f;
+                    float art = Mathf.Max(4f, side - inset * 2f);
+                    PlaceTopLeft(preview, inset, inset, art, art);
                 }
             }
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
-            if (ring == null)
-                return;
-            float ringY = bodyTop + Mathf.Max(0f, (bodyH - ringSide) * 0.5f);
-            PlaceTopLeft(ring, pad + photoW + gap, ringY, ringSide, ringSide);
+            if (ring != null)
+                PlaceTopLeft(ring, pad + side + gap, pairTop, side, side);
 
-            Transform countNode = ring.Find("ZoneCount");
-            if (countNode != null && countNode.TryGetComponent<TMP_Text>(out var count))
+            Transform countNode = card.Find("ZoneCount");
+            if (countNode == null && ring != null)
+                countNode = ring.Find("ZoneCount");
+            if (countNode == null)
+                return;
+            if (countNode.parent != card)
+                countNode.SetParent(card, false);
+            if (countNode is RectTransform countRect)
+                PlaceTopLeft(countRect, pad, statusY, innerW, Mathf.Max(1f, statusH));
+            countNode.SetAsLastSibling();
+            if (countNode.TryGetComponent<TMP_Text>(out var count))
                 FitCopyInside(count, 11f);
         }
 
@@ -2883,7 +2986,9 @@ namespace Game.UI.Runtime
                 ? name.rectTransform.rect.height
                 : name.rectTransform.sizeDelta.y;
             float statusHeight = 0f;
-            if (card.Find("ProgressRing") is RectTransform ring)
+            if (card.Find("ZoneCount") is RectTransform countRow)
+                statusHeight = countRow.rect.height > 1f ? countRow.rect.height : countRow.sizeDelta.y;
+            else if (card.Find("ProgressRing") is RectTransform ring)
                 statusHeight = ring.rect.height > 1f ? ring.rect.height : ring.sizeDelta.y;
             float cardHeight = card.rect.height > 1f ? card.rect.height : card.sizeDelta.y;
             float measuredHeight = name.preferredHeight;
@@ -3088,6 +3193,10 @@ namespace Game.UI.Runtime
                 return;
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
             if (ring == null || ring.sizeDelta.x > ring.sizeDelta.y + 8f)
+                return;
+            if (Mathf.Abs(ring.sizeDelta.x - ring.sizeDelta.y) <= 8f
+                && card.Find("ThumbFrame") is RectTransform thumb
+                && Mathf.Abs(thumb.sizeDelta.x - thumb.sizeDelta.y) <= 8f)
                 return;
             float nameBottom = -name.anchoredPosition.y + name.sizeDelta.y;
             float ringTop = -ring.anchoredPosition.y;

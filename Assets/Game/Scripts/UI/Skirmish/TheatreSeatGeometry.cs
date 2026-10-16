@@ -2301,6 +2301,9 @@ namespace Game.UI.Runtime
             if (!cueNear)
                 cueNear = TryPlaceCue(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue)
                     && CueAccepted(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight);
+            if (cueNear && CueCoversHex(cue, hexes)
+                && TrySlideCueOffHexes(plateWidth, plateHeight, pins, placed, hexes, detail, selected, cue.W, fa, out Box slid))
+                cue = slid;
             layout.Cue = cue;
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
@@ -2445,6 +2448,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < placed.Length; i++)
                 ContainOutline(ref placed[i], frameWidth, frameHeight, plainCover);
             RaiseAreaFloor(placed, frameWidth, frameHeight, plainCover);
+            SeatGlowInside(placed, frameWidth, frameHeight);
 
             for (int i = 0; i < placed.Length; i++)
                 hexes[i] = FlatHex(placed[i].Cx, placed[i].Cy, placed[i].Hw, placed[i].Hh);
@@ -2482,6 +2486,8 @@ namespace Game.UI.Runtime
         {
             Vec2[] hex = FlatHex(candidate.Cx, candidate.Cy, candidate.Hw, candidate.Hh);
             if (!OutlineInside(hex, frameWidth, frameHeight, out _, out _))
+                return false;
+            if (!GlowInside(hex, frameWidth, frameHeight, out _, out _))
                 return false;
             if (OnPlateInterior(hex, frameWidth, frameHeight) < 8)
                 return false;
@@ -2570,6 +2576,92 @@ namespace Game.UI.Runtime
 
                 scale *= 0.96f;
             }
+        }
+
+        /// <summary>
+        /// The half-box inset can leave a vertex a fraction outside the glow margin on a tall plate.
+        /// Nudge or shrink only a district that would fail <see cref="GlowInside"/>; a hex already
+        /// inside the clip stays where the packer seated it.
+        /// </summary>
+        private static void SeatGlowInside(Placement[] placed, float frameWidth, float frameHeight)
+        {
+            if (placed == null || frameWidth < 2f || frameHeight < 2f)
+                return;
+            for (int i = 0; i < placed.Length; i++)
+            {
+                for (int step = 0; step < 8; step++)
+                {
+                    Vec2[] hex = FlatHex(placed[i].Cx, placed[i].Cy, placed[i].Hw, placed[i].Hh);
+                    if (GlowInside(hex, frameWidth, frameHeight, out _, out _))
+                        break;
+                    float left = 0f;
+                    float right = 0f;
+                    float top = 0f;
+                    float bottom = 0f;
+                    for (int p = 0; p < hex.Length; p++)
+                    {
+                        float glowLeft = hex[p].X - HaloReach;
+                        float glowRight = hex[p].X + HaloReach;
+                        float glowTop = hex[p].Y - HaloReach;
+                        float glowBottom = hex[p].Y + HaloReach;
+                        if (glowLeft < 1f)
+                            left = Math.Max(left, 1f - glowLeft);
+                        if (glowRight > frameWidth - 1f)
+                            right = Math.Max(right, glowRight - (frameWidth - 1f));
+                        if (glowTop < 1f)
+                            top = Math.Max(top, 1f - glowTop);
+                        if (glowBottom > frameHeight - 1f)
+                            bottom = Math.Max(bottom, glowBottom - (frameHeight - 1f));
+                    }
+
+                    bool bothX = left > 0.01f && right > 0.01f;
+                    bool bothY = top > 0.01f && bottom > 0.01f;
+                    if (!bothX && !bothY)
+                    {
+                        var nudged = placed[i];
+                        if (left > 0.01f)
+                            nudged.Cx += left + 0.05f;
+                        else if (right > 0.01f)
+                            nudged.Cx -= right + 0.05f;
+                        if (top > 0.01f)
+                            nudged.Cy += top + 0.05f;
+                        else if (bottom > 0.01f)
+                            nudged.Cy -= bottom + 0.05f;
+                        Vec2[] moved = FlatHex(nudged.Cx, nudged.Cy, nudged.Hw, nudged.Hh);
+                        var pin = new Vec2(nudged.PinX, nudged.PinY);
+                        if (PointInPolygon(pin, moved)
+                            && DistanceToEdge(pin, moved) >= 6f
+                            && GlowInside(moved, frameWidth, frameHeight, out _, out _)
+                            && !GlowHitsNeighbour(placed, i, moved))
+                        {
+                            placed[i] = nudged;
+                            break;
+                        }
+                    }
+
+                    float deficit = Math.Max(Math.Max(left, right), Math.Max(top, bottom)) + 0.05f;
+                    float span = Math.Max(placed[i].Hw, placed[i].Hh);
+                    float factor = span > 1f ? Math.Max(0.97f, 1f - deficit / span) : 0.99f;
+                    placed[i].Hw *= factor;
+                    placed[i].Hh *= factor;
+                }
+            }
+        }
+
+        private static bool GlowHitsNeighbour(Placement[] placed, int index, Vec2[] hex)
+        {
+            if (placed == null || hex == null)
+                return false;
+            for (int j = 0; j < placed.Length; j++)
+            {
+                if (j == index)
+                    continue;
+                Vec2[] other = FlatHex(placed[j].Cx, placed[j].Cy, placed[j].Hw, placed[j].Hh);
+                if (PolygonsOverlap(hex, other, 0.75f))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool PinHeld(float pinX, float pinY, float centerX, float centerY, float halfW, float halfH)
@@ -3072,6 +3164,131 @@ namespace Game.UI.Runtime
             if (!CueReadsAsSelected(cue.Center, pins[selected].Center, hexes, pins, selected))
                 return false;
             return !EdgeCrosses(cue, hexes);
+        }
+
+        /// <summary>The zoom pill has to sit clear of every district, including the selected one.</summary>
+        private static bool CueCoversHex(Box cue, Vec2[][] hexes)
+        {
+            if (hexes == null || cue.W < 1f || cue.H < 1f)
+                return false;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (hexes[i] != null && PolygonHitsRect(hexes[i], cue))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Slides a packed pill off every hex without moving the cards. Keeps the pill near the
+        /// selected pin. Returns false when no clear seat exists, and the caller keeps the packed pill.
+        /// </summary>
+        private static bool TrySlideCueOffHexes(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float cueWidth,
+            bool fa,
+            out Box cue)
+        {
+            cue = default;
+            if (pins == null || selected < 0 || selected >= pins.Length || cueWidth < 8f)
+                return false;
+            Box pin = pins[selected];
+            float[] heights = { CueHeight, 32f };
+            float[] gaps = { 12f, 4f };
+            for (int pass = 0; pass < heights.Length; pass++)
+            {
+                float height = heights[pass];
+                float cardGap = gaps[pass];
+                float narrowest = pass == 0 ? (fa ? 140f : 100f) : 140f;
+                if (TrySlideCuePass(
+                    plateWidth, plateHeight, pins, cards, hexes, detail, selected, pin, cueWidth, narrowest, height, cardGap, out cue))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool TrySlideCuePass(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box pin,
+            float cueWidth,
+            float narrowest,
+            float height,
+            float cardGap,
+            out Box cue)
+        {
+            cue = default;
+            Vec2 pinCentre = pin.Center;
+            for (float width = cueWidth; width >= narrowest - 0.5f; width -= 8f)
+            {
+                for (int dist = 0; dist <= 160; dist += 4)
+                {
+                    for (int slide = 0; slide <= 160; slide += 4)
+                    {
+                        float[] slides = slide == 0 ? new[] { 0f } : new[] { -(float)slide, slide };
+                        for (int s = 0; s < slides.Length; s++)
+                        {
+                            float offset = slides[s];
+                            Box[] spots =
+                            {
+                                new Box(pin.XMax + 8f + dist, pinCentre.Y - height * 0.5f + offset, width, height),
+                                new Box(pin.X - 8f - width - dist, pinCentre.Y - height * 0.5f + offset, width, height),
+                                new Box(pinCentre.X - width * 0.5f + offset, pin.YMax + 8f + dist, width, height),
+                                new Box(pinCentre.X - width * 0.5f + offset, pin.Y - 8f - height - dist, width, height)
+                            };
+                            for (int i = 0; i < spots.Length; i++)
+                            {
+                                Box spot = spots[i];
+                                if (!SlideCueOk(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight, cardGap))
+                                    continue;
+                                cue = spot;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool SlideCueOk(
+            Box spot,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight,
+            float cardGap)
+        {
+            if (spot.W < 8f || spot.H < 8f || CueCoversHex(spot, hexes))
+                return false;
+            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail) || !ClearsPins(spot, pins))
+                return false;
+            if (cards != null && !ClearsCards(spot, cards, cardGap))
+                return false;
+            if (CueReach(spot, pins[selected]) > CueNearLimit)
+                return false;
+            if (!CueReadsAsSelected(spot.Center, pins[selected].Center, hexes, pins, selected))
+                return false;
+            if (EdgeCrosses(spot, hexes) || LeaderHitsRect(pins, cards, spot))
+                return false;
+            return true;
         }
 
         private static bool EdgeCrosses(Box rect, Vec2[][] hexes)

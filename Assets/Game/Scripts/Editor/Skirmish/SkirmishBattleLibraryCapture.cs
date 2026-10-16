@@ -870,6 +870,7 @@ namespace Game.Editor
 
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
             GuardTheatre(() => RejectZoomPillOverCards(regions, locale));
+            GuardTheatre(() => RejectZoomPillOverHexes(regions, locale));
             GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
 
@@ -2697,6 +2698,83 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     "Theatre zoom pill overlaps a zone card locale=" + locale + " card=" + card.name + ".");
             }
+        }
+
+        private static void RejectZoomPillOverHexes(Transform regions, string locale)
+        {
+            if (regions == null)
+                return;
+            RectTransform pill = FindNamed(regions, "CuePlate") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                pill = FindNamed(regions, "ZoomCue") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                return;
+            Rect bounds = WorldBounds(pill);
+            const float slop = 2f;
+            bounds.xMin += slop;
+            bounds.yMin += slop;
+            bounds.xMax -= slop;
+            bounds.yMax -= slop;
+            if (bounds.width <= 1f || bounds.height <= 1f)
+                return;
+            for (int i = 0; i < regions.childCount; i++)
+            {
+                Transform child = regions.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneOutline_", StringComparison.Ordinal))
+                    continue;
+                if (child is not RectTransform outline || !outline.gameObject.activeInHierarchy)
+                    continue;
+                Vector2[] shape = OutlineWorldPoints(outline);
+                if (shape == null || shape.Length < 3 || !WorldRectHitsPolygon(bounds, shape))
+                    continue;
+                string district = child.name.Substring("ZoneOutline_".Length);
+                throw new InvalidOperationException(
+                    "Theatre zoom pill overlaps a zone hex locale=" + locale + " district=" + district + ".");
+            }
+        }
+
+        private static Vector2[] OutlineWorldPoints(RectTransform outline)
+        {
+            V3PolygonGraphic graphic = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
+            int count = graphic != null ? graphic.PointCount : 0;
+            if (count < 3)
+                return null;
+            var shape = new Vector2[count];
+            for (int point = 0; point < count; point++)
+            {
+                Vector2 authored = graphic.LocalPoint(point);
+                Vector3 world = outline.TransformPoint(new Vector3(authored.x, authored.y, 0f));
+                shape[point] = new Vector2(world.x, world.y);
+            }
+
+            return shape;
+        }
+
+        private static bool WorldRectHitsPolygon(Rect rect, Vector2[] shape)
+        {
+            if (shape == null || shape.Length < 3)
+                return false;
+            Vector2[] corners =
+            {
+                new Vector2(rect.xMin, rect.yMin),
+                new Vector2(rect.xMax, rect.yMin),
+                new Vector2(rect.xMax, rect.yMax),
+                new Vector2(rect.xMin, rect.yMax)
+            };
+            for (int i = 0; i < corners.Length; i++)
+            {
+                if (PointInPolygon(corners[i], shape))
+                    return true;
+            }
+
+            for (int i = 0; i < shape.Length; i++)
+            {
+                Vector2 next = shape[(i + 1) % shape.Length];
+                if (SegmentHitsRect(shape[i], next, rect))
+                    return true;
+            }
+
+            return PointInPolygon(rect.center, shape);
         }
 
         private static bool TryReadTheatreSummaryCounts(Transform column, out int[] counts)

@@ -2347,7 +2347,6 @@ namespace Game.UI.Runtime
                 string parentName = text.transform.parent.name;
                 bool subtitle = text.name == "Subtitle";
                 bool zoneTab = text.name == "Label" && parentName.StartsWith("BattlefieldTab_", StringComparison.Ordinal);
-                bool zoneRail = text.name == "Label" && parentName.StartsWith("ObjectiveTab_", StringComparison.Ordinal);
                 bool gridRow = text.name.StartsWith("Row_", StringComparison.Ordinal);
                 bool columnHeader = text.name.StartsWith("Column_", StringComparison.Ordinal);
                 bool statCaption = text.name == "Caption" &&
@@ -2448,11 +2447,6 @@ namespace Game.UI.Runtime
                 }
                 else if (zoneTab || gridRow)
                     RelaxLibraryText(text, 11f, 16f, true);
-                else if (zoneRail)
-                {
-                    RelaxLibraryText(text, 11f, 16f, true);
-                    text.overflowMode = TextOverflowModes.Overflow;
-                }
                 else if (statCaption)
                 {
                     RelaxLibraryText(text, 11f, 16f, true);

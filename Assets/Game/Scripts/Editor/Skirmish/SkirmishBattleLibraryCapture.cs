@@ -1771,7 +1771,7 @@ namespace Game.Editor
             {
                 throw new InvalidOperationException(
                     "Battles-won strip is still in theatre locale=" + locale +
-                    ". Medal counts belong in the left-column MedalRow.");
+                    ". Medal counts belong on TheatreSummary.");
             }
         }
 
@@ -2626,50 +2626,101 @@ namespace Game.Editor
             RejectBriefingStack(root, state);
         }
 
+        private static readonly string[] TheatreMedalNames =
+        {
+            "TheatreMedal_Recruit",
+            "TheatreMedal_Regular",
+            "TheatreMedal_Veteran",
+            "TheatreMedal_Commander"
+        };
+
         private static void RejectTheatreMedalColumn(GameObject root)
         {
             Transform strip = FindNamed(root != null ? root.transform : null, "OverallProgressStrip");
             if (strip != null && strip.gameObject.activeInHierarchy)
             {
                 throw new InvalidOperationException(
-                    "Theatre still shows OverallProgressStrip. The battles-won strip and its medal counts are removed. Tier counts belong in BriefingColumn/MedalRow.");
+                    "Theatre still shows OverallProgressStrip. The battles-won strip and its medal counts are removed. Tier counts belong on TheatreSummary.");
             }
 
             Transform column = FindNamed(root != null ? root.transform : null, "BriefingColumn");
+            if (!TryReadTheatreSummaryCounts(column, out int[] shown))
+            {
+                throw new InvalidOperationException("TheatreSummary missing until #68.");
+            }
+
             Transform medalRow = column != null ? column.Find("MedalRow") : null;
-            bool tiles = medalRow != null && medalRow.gameObject.activeInHierarchy && ReadsFourTierCounts(medalRow);
-            if (!tiles)
+            if (medalRow != null && medalRow.gameObject.activeInHierarchy)
             {
                 throw new InvalidOperationException(
-                    "Theatre medal check is waiting for Programmer 1. #66 has no OverallProgressStrip, and BriefingColumn/MedalRow does not show four tier counts yet. #68 adds the left-column tiles: Battles won X / N, a progress bar, and 2x2 tiers read from SkirmishMedalLedger whole-theatre totals.");
+                    "Theatre shows MedalRow. The Theatre has no MedalRow. Tier counts belong on TheatreSummary.");
             }
 
             var displays = new List<Transform>();
             CollectMedalCountDisplays(root.transform, displays);
-            if (displays.Count != 1 || displays[0] != medalRow)
+            if (displays.Count != 0)
             {
-                string names = displays.Count == 0
-                    ? "none"
-                    : string.Join(",", displays.ConvertAll(item => item.name));
+                string names = string.Join(",", displays.ConvertAll(item => item.name));
                 throw new InvalidOperationException(
-                    "Theatre expected the left-column MedalRow as its only medal-count display and found " +
+                    "Theatre expected TheatreSummary as its only medal-count display and found " +
                     displays.Count + ": " + names + ".");
             }
 
             int[] expected = LedgerWholeTheatreTotals();
             for (int i = 0; i < expected.Length; i++)
             {
-                Transform slot = medalRow.Find("Slot" + i) ?? medalRow.Find("Medal" + i);
-                TMP_Text tier = slot != null ? slot.Find("Count")?.GetComponent<TMP_Text>() : null;
-                string shown = tier != null ? StripBidiMarks(tier.text).Trim() : string.Empty;
-                if (tier == null || !tier.gameObject.activeInHierarchy || shown != expected[i].ToString())
-                {
-                    throw new InvalidOperationException(
-                        "Theatre MedalRow tier " + i + " reads '" + shown +
-                        "'. SkirmishMedalLedger whole-theatre total is " + expected[i] +
-                        ". #66 still shows the selected-district row until #68 writes the ledger tiles. OverallProgressStrip is absent.");
-                }
+                if (shown[i] == expected[i])
+                    continue;
+                throw new InvalidOperationException(
+                    "TheatreSummary " + TheatreMedalNames[i] + " TierCount reads '" + shown[i] +
+                    "'. SkirmishMedalLedger whole-theatre total is " + expected[i] + ".");
             }
+        }
+
+        private static bool TryReadTheatreSummaryCounts(Transform column, out int[] counts)
+        {
+            counts = null;
+            Transform summary = column != null ? column.Find("TheatreSummary") : null;
+            if (summary == null || !summary.gameObject.activeInHierarchy)
+                return false;
+            var read = new int[TheatreMedalNames.Length];
+            for (int i = 0; i < TheatreMedalNames.Length; i++)
+            {
+                Transform tile = summary.Find(TheatreMedalNames[i]);
+                TMP_Text tier = tile != null ? tile.Find("TierCount")?.GetComponent<TMP_Text>() : null;
+                if (tile == null || !tile.gameObject.activeInHierarchy || tier == null || !tier.gameObject.activeInHierarchy)
+                    return false;
+                if (!TryParseTierCount(tier.text, out read[i]))
+                    return false;
+            }
+
+            counts = read;
+            return true;
+        }
+
+        internal static bool TryParseTierCount(string shown, out int value)
+        {
+            value = 0;
+            if (string.IsNullOrEmpty(shown))
+                return false;
+            string cleaned = StripBidiMarks(shown).Trim();
+            var digits = new char[cleaned.Length];
+            int length = 0;
+            for (int i = 0; i < cleaned.Length; i++)
+            {
+                char glyph = cleaned[i];
+                if (glyph >= '۰' && glyph <= '۹')
+                    glyph = (char)('0' + (glyph - '۰'));
+                else if (glyph >= '٠' && glyph <= '٩')
+                    glyph = (char)('0' + (glyph - '٠'));
+                if (glyph < '0' || glyph > '9')
+                    continue;
+                digits[length++] = glyph;
+            }
+
+            if (length == 0)
+                return false;
+            return int.TryParse(new string(digits, 0, length), out value);
         }
 
         private static int[] LedgerWholeTheatreTotals()

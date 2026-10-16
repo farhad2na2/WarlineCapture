@@ -225,28 +225,46 @@ namespace Game.Editor
             if (strip != null && strip.gameObject.activeInHierarchy)
             {
                 SkirmishBattleLibraryCapture.NoteTheatre(
-                    "Theatre still shows OverallProgressStrip. The battles-won strip is removed.");
+                    "Theatre still shows OverallProgressStrip. The battles-won strip and its medal counts are removed. Tier counts belong on TheatreSummary.");
             }
 
-            Transform medalRow = instance.transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn/MedalRow");
-            bool tiles = medalRow != null && medalRow.gameObject.activeInHierarchy;
-            int ready = 0;
-            if (tiles)
+            Transform column = instance.transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn");
+            Transform summary = column != null ? column.Find("TheatreSummary") : null;
+            string[] names =
             {
-                for (int i = 0; i < 4; i++)
+                "TheatreMedal_Recruit",
+                "TheatreMedal_Regular",
+                "TheatreMedal_Veteran",
+                "TheatreMedal_Commander"
+            };
+            bool ready = summary != null && summary.gameObject.activeInHierarchy;
+            var shown = new string[names.Length];
+            if (ready)
+            {
+                for (int i = 0; i < names.Length; i++)
                 {
-                    TMP_Text tier = medalRow.Find("Slot" + i + "/Count")?.GetComponent<TMP_Text>()
-                        ?? medalRow.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
-                    if (tier != null && tier.gameObject.activeInHierarchy && int.TryParse((tier.text ?? string.Empty).Trim(), out _))
-                        ready++;
+                    TMP_Text tier = summary.Find(names[i] + "/TierCount")?.GetComponent<TMP_Text>();
+                    if (tier == null || !tier.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(tier.text))
+                    {
+                        ready = false;
+                        break;
+                    }
+
+                    shown[i] = tier.text;
                 }
             }
 
-            if (ready < 4)
+            if (!ready)
+            {
+                SkirmishBattleLibraryCapture.NoteTheatre("TheatreSummary missing until #68.");
+                return;
+            }
+
+            Transform medalRow = column.Find("MedalRow");
+            if (medalRow != null && medalRow.gameObject.activeInHierarchy)
             {
                 SkirmishBattleLibraryCapture.NoteTheatre(
-                    "Theatre medal check is waiting for Programmer 1. #66 has no OverallProgressStrip, and BriefingColumn/MedalRow does not show four tier counts yet. #68 adds the left-column tiles from SkirmishMedalLedger whole-theatre totals.");
-                return;
+                    "Theatre shows MedalRow. The Theatre has no MedalRow. Tier counts belong on TheatreSummary.");
             }
 
             SkirmishTheaterState theater = view.Library.Theater;
@@ -259,14 +277,11 @@ namespace Game.Editor
             };
             for (int i = 0; i < medals.Length; i++)
             {
-                TMP_Text tier = medalRow.Find("Slot" + i + "/Count")?.GetComponent<TMP_Text>()
-                    ?? medalRow.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
-                if (tier != null && SkirmishBattleLibraryArt.SameRenderedText(tier.text, medals[i].ToString()))
+                if (SkirmishBattleLibraryCapture.TryParseTierCount(shown[i], out int parsed) && parsed == medals[i])
                     continue;
                 SkirmishBattleLibraryCapture.NoteTheatre(
-                    "Theatre MedalRow tier " + i + " reads '" + (tier != null ? tier.text : string.Empty) +
-                    "'. SkirmishMedalLedger whole-theatre total is " + medals[i] +
-                    ". #66 still shows the selected-district row until #68 writes the ledger tiles.");
+                    "TheatreSummary " + names[i] + " TierCount reads '" + shown[i] +
+                    "'. SkirmishMedalLedger whole-theatre total is " + medals[i] + ".");
             }
         }
 

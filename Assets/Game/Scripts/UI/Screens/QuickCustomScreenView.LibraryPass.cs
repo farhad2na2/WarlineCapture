@@ -365,7 +365,7 @@ namespace Game.UI.Runtime
 
         private void PublishMedalCounts(SkirmishTheaterState theater)
         {
-            // Theatre tier counts belong on Programmer 1's left-column MedalRow, not this strip.
+            // Theatre tier counts belong on Programmer 1's TheatreSummary, not this strip.
             if (LibraryLevel == SkirmishLibraryLevel.Theater)
                 return;
             SkirmishMedalTotals medals = MedalCounts(theater);

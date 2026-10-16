@@ -1636,10 +1636,10 @@ namespace Game.UI.Runtime
                 _medalRow = keptMedal;
             var order = battlefield
                 ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
-                : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
+                : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 76f, 40f, 80f, 84f, 112f, 272f };
+                : new[] { 76f, 40f, 84f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -1652,6 +1652,29 @@ namespace Game.UI.Runtime
                     element.preferredHeight = 0f;
                     element.minHeight = 0f;
                     element.flexibleHeight = 0f;
+                }
+            }
+
+            if (!battlefield)
+            {
+                if (scenarioDescription != null)
+                {
+                    scenarioDescription.gameObject.SetActive(false);
+                    LayoutElement description = scenarioDescription.GetComponent<LayoutElement>() ?? scenarioDescription.gameObject.AddComponent<LayoutElement>();
+                    description.ignoreLayout = true;
+                    description.preferredHeight = 0f;
+                    description.minHeight = 0f;
+                    description.flexibleHeight = 0f;
+                }
+
+                if (medalKeep != null)
+                {
+                    medalKeep.gameObject.SetActive(false);
+                    LayoutElement medal = medalKeep.GetComponent<LayoutElement>() ?? medalKeep.gameObject.AddComponent<LayoutElement>();
+                    medal.ignoreLayout = true;
+                    medal.preferredHeight = 0f;
+                    medal.minHeight = 0f;
+                    medal.flexibleHeight = 0f;
                 }
             }
 
@@ -1673,11 +1696,10 @@ namespace Game.UI.Runtime
                 index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null);
             }
 
-            if (scenarioDescription != null)
+            if (battlefield && scenarioDescription != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                if (battlefield)
-                    BindBattlefieldSeed(fa);
+                BindBattlefieldSeed(fa);
                 scenarioDescription.gameObject.SetActive(true);
                 scenarioDescription.margin = new Vector4(24f, 8f, 24f, 8f);
                 scenarioDescription.textWrappingMode = TextWrappingModes.Normal;

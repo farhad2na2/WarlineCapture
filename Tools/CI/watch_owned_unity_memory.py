@@ -141,17 +141,19 @@ def select_reserves(owner, override_id=None, policy=None, now=None):
         state = json.loads((ROOT / "Design/AgentReports/SkirmishExpansion/PRODUCTION_STATE.json").read_bytes())
         policy = state["execution_policy"].get("one_run_reserve_override", {})
     now = now or datetime.datetime.now(datetime.timezone.utc)
+    reserves = (policy.get("freeRamGiB"), policy.get("freeCommitGiB"))
     if (policy.get("id") != override_id or policy.get("authorized") is not True or
             policy.get("status") != "InUse" or
             policy.get("ownerIdentity") != list(identity(owner["process"])) or
             norm(policy.get("log", "")) != norm(owner["log"]) or
             policy.get("executeMethod") != owner.get("executeMethod") or
-            (policy.get("freeRamGiB"), policy.get("freeCommitGiB")) != (8, 12)):
+            any(type(value) is not int for value in reserves) or
+            reserves not in ((8, 8), (8, 12))):
         raise ValueError("No matching single-run reserve authorization")
     expires = datetime.datetime.fromisoformat(policy["expiresUtc"])
     if expires.tzinfo is None or now >= expires:
         raise ValueError("Single-run reserve authorization expired")
-    return 8 * 1024**3, 12 * 1024**3
+    return reserves[0] * 1024**3, reserves[1] * 1024**3
 
 
 def write(path, value):

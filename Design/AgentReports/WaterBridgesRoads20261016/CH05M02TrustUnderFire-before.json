@@ -1,0 +1,19 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "sourceHash": "7c32a9076b3d65aac3593bc655a5ebd93f266b6272ab49e5bf7bc8dd9cf67f8e",
+    "result": "Census",
+    "waterRenderers": 1,
+    "bankMeshes": 1,
+    "channelMeshes": 0,
+    "waterMaterials": 1,
+    "joins": 4,
+    "pavedMaterials": 13,
+    "earthMaterials": 3,
+    "joinRows": [
+        "Map_AshLinePort/Roads/RoadChunk_6_3/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 501.25) dir=(0.00, 1.00) halfWidth=2.68",
+        "Map_AshLinePort/Roads/RoadChunk_6_3/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 508.60) dir=(0.00, -1.00) halfWidth=2.68",
+        "Map_AshLinePort/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 381.25) dir=(0.00, 1.00) halfWidth=2.68",
+        "Map_AshLinePort/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 388.60) dir=(0.00, -1.00) halfWidth=2.68"
+    ],
+    "skipped": []
+}

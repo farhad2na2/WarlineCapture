@@ -1,0 +1,17 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "sourceHash": "d94c38c1995ef6e5c3ae7116a425802d3cb64bf3c0c1ade26e649e0fb22e6d48",
+    "result": "Applied",
+    "waterRenderers": 0,
+    "bankMeshes": 0,
+    "channelMeshes": 0,
+    "waterMaterials": 0,
+    "joins": 0,
+    "pavedMaterials": 3,
+    "earthMaterials": 3,
+    "shoreSegments": 0,
+    "joinRows": [],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH04M05ArmorBreak_54574b5f0ca8545f3bef14b180a57d80.mat roles=paved,excluded"
+    ]
+}

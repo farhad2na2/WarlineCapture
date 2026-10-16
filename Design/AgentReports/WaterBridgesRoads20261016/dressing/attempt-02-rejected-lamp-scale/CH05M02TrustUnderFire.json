@@ -1,0 +1,17 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "beforeHash": "7c32a9076b3d65aac3593bc655a5ebd93f266b6272ab49e5bf7bc8dd9cf67f8e",
+    "afterHash": "96d6b999d4af72bfe6c8e845b22817b4ccb6e2a377a2ad58c3b64ccd59a36331",
+    "protectedHash": "ecad39a7e3649272a424f4f194900abf7e628fde714f94de634df7e8d01b47df",
+    "groups": 6,
+    "renderRows": 38,
+    "materialAssignments": 0,
+    "journal": [
+        "CampaignWaterDressing20261016_Bridge_0 owner=Map_AshLinePort/Props/SM_Prop_Container_01 position=(680.00, 0.08, 385.00)",
+        "CampaignWaterDressing20261016_Bridge_1 owner=Map_AshLinePort/Props/SM_Prop_Barricade_01 position=(680.00, 0.08, 505.00)",
+        "CampaignWaterDressing20261016_Bank_0 owner=Map_AshLinePort/Props/SM_Prop_Barrel_02 position=(657.35, 0.00, 325.48)",
+        "CampaignWaterDressing20261016_Bank_1 owner=Map_AshLinePort/Props/SM_Prop_Barrel_02 position=(702.65, 0.00, 325.48)",
+        "CampaignWaterDressing20261016_Bank_2 owner=Map_AshLinePort/Props/SM_Prop_TireStack_01 position=(657.35, 0.00, 629.14)",
+        "CampaignWaterDressing20261016_Bank_3 owner=Map_AshLinePort/Props/SM_Prop_Wirespool_01 position=(702.65, 0.00, 629.14)"
+    ]
+}

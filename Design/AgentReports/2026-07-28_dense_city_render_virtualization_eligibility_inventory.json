@@ -4,39 +4,39 @@
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-    "candidateSceneDependencyHash": "3ad2139b1ae8e23e6f853a43d45d28b5",
+    "candidateSceneDependencyHash": "04bd95716e24cd55258c1d4af6875e61",
     "packedEvidencePath": "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
     "packedEvidenceRenderRows": 82797,
     "normalizedEmbeddedDestroyedDuplicateRowsRemoved": 4396,
     "correctedLayoutRenderRowsRemoved": 3645,
     "intactVisualNormalizationResult": "Passed",
-    "totalRenderRows": 124305,
-    "eligibleRenderRows": 59501,
-    "excludedRenderRows": 64804,
-    "stableOwnerJoinedRenderRows": 73027,
+    "totalRenderRows": 124473,
+    "eligibleRenderRows": 59666,
+    "excludedRenderRows": 64807,
+    "stableOwnerJoinedRenderRows": 73195,
     "unresolvedOwnerRenderRows": 51278,
-    "eligibleStableOwnerJoinedRenderRows": 59501,
-    "sourceRowCount": 124305,
-    "sourceRowsSha256": "7565f9056234225064fe694204924bbd375d4946b1a8b4a62e0fbf930a038d13",
+    "eligibleStableOwnerJoinedRenderRows": 59666,
+    "sourceRowCount": 124473,
+    "sourceRowsSha256": "31bb064955af8758ee48177a2e8aabaeb10c7fd8449567b615b7a3d420b4db8c",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "cc3eacb26bf5ebb035c4549f63b757f89c987504420fc613aef699100b4a1d3d",
-    "sourceRowsGzipSha256": "7aff8dd8369cc45c6eb450d9b26d6d44c9a620f810b6ad489ca6abc3c00ee666",
+    "sourceRowsJsonSha256": "a74ddd7d2b46565b57e3642d8f1bd649be6416377b81bd4747179914246e7a8d",
+    "sourceRowsGzipSha256": "682c7006a5b0ce7579ca8dd2f725f50514a3ec9e07bfb198d80b6c8b899628da",
     "logicalPlacementCount": 38909,
-    "prototypeCount": 9514,
-    "prototypePartCount": 15130,
-    "prototypeRecipeRowsConsumed": 59501,
-    "prototypeRecipesSha256": "a338b033bac485463d021012c9689e28ec655f8aabbc4a3297a9608338a35739",
+    "prototypeCount": 9523,
+    "prototypePartCount": 15304,
+    "prototypeRecipeRowsConsumed": 59666,
+    "prototypeRecipesSha256": "dd26092a7aec192a3aacd23a9c03f9ebf285dc38a90cc6f3fed103a21444ddf1",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "e3cca5497ed74ccbc17c0417aeda4c2e6f2f149cb780f31b13561a885fccc285",
+    "prototypeRecipesJsonSha256": "51f3e738e45838a53abb6a2b56046b7d3f0048590069fffdb9db066f326e3c83",
     "placementCount": 38909,
     "stateOwnerCount": 4530,
     "stateLinkedPlacementCount": 9060,
     "renderOnlyPlacementCount": 29849,
-    "placementPartRowCount": 59501,
-    "logicalPlacementsSha256": "fa867183ed83f6a141e951c7ba9d5b0304bab4926f61a2e95a157db65e6124b0",
+    "placementPartRowCount": 59666,
+    "logicalPlacementsSha256": "ad0f9d5766c3c8fc183517de9a73ecadcbc9f188cf53df003a3090ddd6e63166",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "571df846b33181f62137216edf1dce2988c369ec8f34153fa5559b810fbe4ef7",
+    "logicalPlacementsJsonSha256": "459f609c9fa0a4a28c1f639e34e6cf92a958d4bc2cb57621c503450dd5af62f6",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -57,13 +57,13 @@
         0
     ],
     "occupiedCellCount": 1961,
-    "cellPlacementIndexCount": 58481,
-    "multiCellPlacementCount": 14772,
+    "cellPlacementIndexCount": 58503,
+    "multiCellPlacementCount": 14780,
     "maximumCellsPerPlacement": 6,
     "maximumPlacementsPerCell": 80,
-    "spatialCellsSha256": "472e9581930f9c2f51de78c5c9ca1bb8ecfccb8dac11a52e00d222bff0e2461c",
+    "spatialCellsSha256": "7b26cf6fc804c0433cb82231c318223c27c8d2761dffc97d5f6e96cd34afd5a0",
     "spatialCellsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json",
-    "spatialCellsJsonSha256": "b4628ff09a2720368702a021c14ba3b337d33a1c13d9c564268a030f28e07961",
+    "spatialCellsJsonSha256": "d5be1148f7a5004dd21c54521086ca06cab81966d26c28bfe51756f598bbb7bb",
     "mutationAuthorized": true,
     "mutationBlocker": "",
     "buildingFamilySelectionPolicy": "Generated building families are selected atomically only when repeated, every canonical owner has intact and destroyed recipes, and every family row satisfies the closed renderer and render-policy schema.",
@@ -101682,15 +101682,15 @@
         },
         {
             "key": "Infrastructure",
-            "eligible": 34365,
+            "eligible": 34426,
             "excluded": 358,
-            "total": 34723
+            "total": 34784
         },
         {
             "key": "Prop",
-            "eligible": 6850,
-            "excluded": 395,
-            "total": 7245
+            "eligible": 6954,
+            "excluded": 398,
+            "total": 7352
         },
         {
             "key": "Vegetation",
@@ -103363,7 +103363,7 @@
             "total": 1
         },
         {
-            "key": "AcceptedMapResident|mesh|||1b9bf60754d8646ca84c30c2305bf376:4300000|9a93f69527d7c4d08abb8df1f49572ed:2100000|0",
+            "key": "AcceptedMapResident|mesh|||1b9bf60754d8646ca84c30c2305bf376:4300000|78c174202205a4c2da3b16502eaa73c2:2100000|0",
             "eligible": 0,
             "excluded": 1,
             "total": 1
@@ -103579,7 +103579,7 @@
             "total": 1
         },
         {
-            "key": "AcceptedMapResident|mesh|||22da87c6d47614f17af4d4175d2173fe:4300000|9a93f69527d7c4d08abb8df1f49572ed:2100000|0",
+            "key": "AcceptedMapResident|mesh|||22da87c6d47614f17af4d4175d2173fe:4300000|78c174202205a4c2da3b16502eaa73c2:2100000|0",
             "eligible": 0,
             "excluded": 1,
             "total": 1
@@ -107641,7 +107641,7 @@
             "total": 10
         },
         {
-            "key": "AcceptedMapResident|mesh|||82635c10d990c47d1a6daac1ab02e559:4300000|9a93f69527d7c4d08abb8df1f49572ed:2100000|0",
+            "key": "AcceptedMapResident|mesh|||82635c10d990c47d1a6daac1ab02e559:4300000|78c174202205a4c2da3b16502eaa73c2:2100000|0",
             "eligible": 0,
             "excluded": 1,
             "total": 1
@@ -108343,10 +108343,16 @@
             "total": 3
         },
         {
+            "key": "AcceptedMapResident|mesh|||9178aa2b356d54f01a2d895bfd15336e:4300000|78c174202205a4c2da3b16502eaa73c2:2100000|0",
+            "eligible": 0,
+            "excluded": 2,
+            "total": 2
+        },
+        {
             "key": "AcceptedMapResident|mesh|||9178aa2b356d54f01a2d895bfd15336e:4300000|9a93f69527d7c4d08abb8df1f49572ed:2100000|0",
             "eligible": 0,
-            "excluded": 83,
-            "total": 83
+            "excluded": 81,
+            "total": 81
         },
         {
             "key": "AcceptedMapResident|mesh|||92291fe757c9a9046b68924a9b761fcd:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -112519,7 +112525,7 @@
             "total": 7
         },
         {
-            "key": "AcceptedMapResident|mesh|||fb3b621f145cd469aa47292039a5ae09:4300000|9a93f69527d7c4d08abb8df1f49572ed:2100000|0",
+            "key": "AcceptedMapResident|mesh|||fb3b621f145cd469aa47292039a5ae09:4300000|78c174202205a4c2da3b16502eaa73c2:2100000|0",
             "eligible": 0,
             "excluded": 1,
             "total": 1
@@ -120277,6 +120283,48 @@
             "total": 1408
         },
         {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|18aeec7ff9aa17e4d968d22617ca2fbc:23392527769662522|8ad95e4a204fecd4f9bd2e48940a0b24:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 8,
+            "excluded": 0,
+            "total": 8
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|419aefbcec9e5084dac11a75d61d329a:23052633184780064|e5264b893aca21f46814e1c8c687b8ce:4300000|a74066172cf19cd4bacae3c6600a7217:2100000|0",
+            "eligible": 6,
+            "excluded": 0,
+            "total": 6
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|451eb4f36adf6034b94897026a9ea9e7:23496019449338922|0af9e1509627af748856df65b4081d22:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 8,
+            "excluded": 0,
+            "total": 8
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|6945f2bb7c40e42438309dedb86c9183:23791353537662288|fc673a48a578bd04ba7eef4f5b3eacfc:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 12,
+            "excluded": 0,
+            "total": 12
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|7bee188e2dcf32c48848224ef9586fd1:23439534752460232|4b074da5d00c736418d64a3cc6a211be:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 12,
+            "excluded": 0,
+            "total": 12
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|acd9f29b32e616e4d94ae20abb2e9f7d:23243969469583192|4934e13574c30894bab62f002e1faece:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 12,
+            "excluded": 0,
+            "total": 12
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|f43df9f6cdcac4247b40d381f708ee00:23582749878854302|735b6f8b4efd2d8409a621b672664866:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 3,
+            "excluded": 0,
+            "total": 3
+        },
+        {
             "key": "Infrastructure|prefab|19ddf3e86f1306542af1df5745ebacfb:4627792861614435960|19ddf3e86f1306542af1df5745ebacfb:4271506048778051823|1bbb265b2cab6de44a670ef7c5d11151:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 4,
             "excluded": 0,
@@ -120745,6 +120793,18 @@
             "total": 348
         },
         {
+            "key": "Prop|prefab|1189b6000eebd470e85b629d3b87142a:1939290389013320|18aeec7ff9aa17e4d968d22617ca2fbc:23392527769662522|8ad95e4a204fecd4f9bd2e48940a0b24:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 9,
+            "excluded": 0,
+            "total": 9
+        },
+        {
+            "key": "Prop|prefab|1189b6000eebd470e85b629d3b87142a:1939290389013320|451eb4f36adf6034b94897026a9ea9e7:23496019449338922|0af9e1509627af748856df65b4081d22:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 9,
+            "excluded": 0,
+            "total": 9
+        },
+        {
             "key": "Prop|prefab|27520cdedc1314291bf4f3f8e7fcebf5:1351276236628500|27520cdedc1314291bf4f3f8e7fcebf5:23532657960606304|66d0394c999737e4488c3589e5c95672:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 317,
             "excluded": 0,
@@ -120775,6 +120835,12 @@
             "total": 13
         },
         {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|18aeec7ff9aa17e4d968d22617ca2fbc:23392527769662522|8ad95e4a204fecd4f9bd2e48940a0b24:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 6,
+            "excluded": 0,
+            "total": 6
+        },
+        {
             "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|3ed84c19eb07146359c5e1d8e67f7336:23043696849486258|810236f6a4d110548996e6294272c7d2:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 393,
             "excluded": 0,
@@ -120793,6 +120859,30 @@
             "total": 393
         },
         {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|419aefbcec9e5084dac11a75d61d329a:23052633184780064|e5264b893aca21f46814e1c8c687b8ce:4300000|a74066172cf19cd4bacae3c6600a7217:2100000|0",
+            "eligible": 2,
+            "excluded": 0,
+            "total": 2
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|451eb4f36adf6034b94897026a9ea9e7:23496019449338922|0af9e1509627af748856df65b4081d22:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 6,
+            "excluded": 0,
+            "total": 6
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|6945f2bb7c40e42438309dedb86c9183:23791353537662288|fc673a48a578bd04ba7eef4f5b3eacfc:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|7bee188e2dcf32c48848224ef9586fd1:23439534752460232|4b074da5d00c736418d64a3cc6a211be:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
+        },
+        {
             "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|8fec0882e4c785142a753943e9d3c4a1:23428469580035822|cef8c9e5c77d20a44a9006c96f73c30c:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 13,
             "excluded": 0,
@@ -120809,6 +120899,18 @@
             "eligible": 13,
             "excluded": 0,
             "total": 13
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|acd9f29b32e616e4d94ae20abb2e9f7d:23243969469583192|4934e13574c30894bab62f002e1faece:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|f43df9f6cdcac4247b40d381f708ee00:23582749878854302|735b6f8b4efd2d8409a621b672664866:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 1,
+            "total": 1
         },
         {
             "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394||015ec18b08d0245b6a14e2db99dd71cb:4300000|8c1852e28ac1e4bd1a4057b81caf05ac:2100000|0",
@@ -123217,10 +123319,40 @@
             "total": 1
         },
         {
+            "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|419aefbcec9e5084dac11a75d61d329a:23052633184780064|e5264b893aca21f46814e1c8c687b8ce:4300000|a74066172cf19cd4bacae3c6600a7217:2100000|0",
+            "eligible": 8,
+            "excluded": 0,
+            "total": 8
+        },
+        {
+            "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|6945f2bb7c40e42438309dedb86c9183:23791353537662288|fc673a48a578bd04ba7eef4f5b3eacfc:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 16,
+            "excluded": 0,
+            "total": 16
+        },
+        {
+            "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|7bee188e2dcf32c48848224ef9586fd1:23439534752460232|4b074da5d00c736418d64a3cc6a211be:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 16,
+            "excluded": 0,
+            "total": 16
+        },
+        {
             "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|a4c3d165b493040639bfc87f5ef7905c:23792544098167630|04fc367986963124c9cddd4d12052fcd:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 378,
             "excluded": 0,
             "total": 378
+        },
+        {
+            "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|acd9f29b32e616e4d94ae20abb2e9f7d:23243969469583192|4934e13574c30894bab62f002e1faece:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 16,
+            "excluded": 0,
+            "total": 16
+        },
+        {
+            "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|f43df9f6cdcac4247b40d381f708ee00:23582749878854302|735b6f8b4efd2d8409a621b672664866:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
         },
         {
             "key": "Prop|prefab|b04f338e0d21e4b2c8cf9ab38a6c41eb:1844669185981364|b04f338e0d21e4b2c8cf9ab38a6c41eb:23835415360087792|15d9e259f16ac5f42b2b4d8784545877:4300000|15b66dd3d2b38484f9e935a11d939890:2100000|0",
@@ -123233,6 +123365,18 @@
             "eligible": 5,
             "excluded": 0,
             "total": 5
+        },
+        {
+            "key": "Prop|prefab|bcc46d82d1a6f469f9b3f7b00411da31:1941315322240426|18aeec7ff9aa17e4d968d22617ca2fbc:23392527769662522|8ad95e4a204fecd4f9bd2e48940a0b24:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 1,
+            "total": 1
+        },
+        {
+            "key": "Prop|prefab|bcc46d82d1a6f469f9b3f7b00411da31:1941315322240426|451eb4f36adf6034b94897026a9ea9e7:23496019449338922|0af9e1509627af748856df65b4081d22:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 1,
+            "total": 1
         },
         {
             "key": "Prop|prefab|bcc46d82d1a6f469f9b3f7b00411da31:1941315322240426|bcc46d82d1a6f469f9b3f7b00411da31:23038449189089250|63c4eb820380cdb4aaff090c308cf579:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -123328,23 +123472,23 @@
     "byRendererType": [
         {
             "key": "UnityEngine.MeshRenderer",
-            "eligible": 59501,
-            "excluded": 64804,
-            "total": 124305
+            "eligible": 59666,
+            "excluded": 64807,
+            "total": 124473
         }
     ],
     "byPolicyBucket": [
         {
             "key": "AlphaClippedShadowsOff|0|1|Object|2",
-            "eligible": 134,
+            "eligible": 144,
             "excluded": 0,
-            "total": 134
+            "total": 144
         },
         {
             "key": "AlphaClippedShadowsOn|0|1|Object|3",
-            "eligible": 209,
+            "eligible": 215,
             "excluded": 137,
-            "total": 346
+            "total": 352
         },
         {
             "key": "OpaqueShadowsOff|0|1|Object|0",
@@ -123354,15 +123498,15 @@
         },
         {
             "key": "OpaqueShadowsOff|0|1|Object|2",
-            "eligible": 13449,
+            "eligible": 13551,
             "excluded": 51420,
-            "total": 64869
+            "total": 64971
         },
         {
             "key": "OpaqueShadowsOn|0|1|Object|3",
-            "eligible": 45709,
-            "excluded": 12881,
-            "total": 58590
+            "eligible": 45756,
+            "excluded": 12884,
+            "total": 58640
         },
         {
             "key": "Unsupported:Transparent render policy does not support cast or static shadows.",
@@ -123374,15 +123518,15 @@
     "byMaterialSurface": [
         {
             "key": "AlphaClipped",
-            "eligible": 343,
+            "eligible": 359,
             "excluded": 137,
-            "total": 480
+            "total": 496
         },
         {
             "key": "Opaque",
-            "eligible": 59158,
-            "excluded": 64302,
-            "total": 123460
+            "eligible": 59307,
+            "excluded": 64305,
+            "total": 123612
         },
         {
             "key": "Transparent",
@@ -123400,27 +123544,27 @@
         },
         {
             "key": "SupportedPolicy:AlphaClippedShadowsOff",
-            "eligible": 134,
+            "eligible": 144,
             "excluded": 0,
-            "total": 134
+            "total": 144
         },
         {
             "key": "SupportedPolicy:AlphaClippedShadowsOn",
-            "eligible": 209,
+            "eligible": 215,
             "excluded": 137,
-            "total": 346
+            "total": 352
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOff",
-            "eligible": 13449,
+            "eligible": 13551,
             "excluded": 51421,
-            "total": 64870
+            "total": 64972
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOn",
-            "eligible": 45709,
-            "excluded": 12881,
-            "total": 58590
+            "eligible": 45756,
+            "excluded": 12884,
+            "total": 58640
         }
     ],
     "byGameplayOwnership": [
@@ -123450,9 +123594,9 @@
         },
         {
             "key": "DenseGenerated:RenderOnly",
-            "eligible": 46899,
-            "excluded": 806,
-            "total": 47705
+            "eligible": 47064,
+            "excluded": 809,
+            "total": 47873
         },
         {
             "key": "Unresolved",
@@ -123470,9 +123614,9 @@
         },
         {
             "key": "eligible",
-            "eligible": 59501,
+            "eligible": 59666,
             "excluded": 0,
-            "total": 59501
+            "total": 59666
         },
         {
             "key": "gameplay-building-family-unsupported-render-policy",
@@ -123489,8 +123633,8 @@
         {
             "key": "unique-presentation-signature",
             "eligible": 0,
-            "excluded": 563,
-            "total": 563
+            "excluded": 566,
+            "total": 566
         },
         {
             "key": "unresolved-owner",

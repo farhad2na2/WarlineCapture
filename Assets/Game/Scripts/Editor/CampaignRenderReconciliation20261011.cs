@@ -16,7 +16,7 @@ namespace Game.Editor
             try
             {
                 var scene=EditorSceneManager.OpenScene(DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,OpenSceneMode.Single);
-                var branches=new SortedDictionary<string,int>();var addedByBranch=new SortedDictionary<string,int>();int additions=0,destinations=0;
+                var branches=new SortedDictionary<string,int>();var addedByBranch=new SortedDictionary<string,int>();int additions=0,destinations=0,waterDressing=0;
                 var baseline=new Dictionary<string,int>{
                     ["AuthoredOperationMapEntityPresentation/GameplayBuildings"]=1584,
                     ["AuthoredOperationMapEntityPresentation/GameplayVehicles"]=340,
@@ -30,10 +30,11 @@ namespace Game.Editor
                     var segments=path.Split('/');string branch=segments[0]+(segments[0]=="CityCrossroads_NorthCourtyard"?"":"/"+segments[1]);
                     int count=r.sharedMaterials.Length;branches.TryGetValue(branch,out int old);branches[branch]=old+count;
                     bool destination=path.Contains("/CampaignDestinationV2_20261011_")||path.Contains("/CampaignDestination20261011_");
-                    if(path.Contains("/CampaignMarketStock20261011/")||destination)
+                    bool water=path.Contains("/CampaignWaterDressing20261016_");
+                    if(path.Contains("/CampaignMarketStock20261011/")||destination||water)
                     {
                         if(r.GetComponentInParent<DenseCityPresentationIdentityAuthoring>()==null&&r.GetComponentInParent<OperationMapEntityPresentationIdentityAuthoring>()==null)throw new Exception("New scenery lacks canonical owner: "+path);
-                        if(destination)destinations+=count;else additions+=count;
+                        if(water)waterDressing+=count;else if(destination)destinations+=count;else additions+=count;
                         addedByBranch.TryGetValue(branch,out int before);addedByBranch[branch]=before+count;
                     }
                 }
@@ -44,11 +45,11 @@ namespace Game.Editor
                 }
                 if(branches.Count!=baseline.Count)throw new Exception("Missing source branch");
                 using var sha=System.Security.Cryptography.SHA256.Create();using var stream=File.OpenRead(scene.path);
-                var lines=new List<string>{"sourceSha256="+BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant(),"marketStockMaterialRows="+additions,"destinationMaterialRows="+destinations};
+                var lines=new List<string>{"sourceSha256="+BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant(),"marketStockMaterialRows="+additions,"destinationMaterialRows="+destinations,"waterDressingMaterialRows="+waterDressing};
                 lines.AddRange(branches.Select(p=>p.Key+"="+p.Value));
                 lines.AddRange(addedByBranch.Select(p=>"addition:"+p.Key+"="+p.Value));
-                const string pathOut="Design/AgentReports/CampaignVisualAudit20261011/fixes/render-reconciliation.txt";
-                File.WriteAllLines(pathOut,lines);Debug.Log("[CampaignRenderReconciliation] result=Passed rows="+branches.Values.Sum()+" marketStockRows="+additions+" destinationRows="+destinations);
+                const string pathOut="Design/AgentReports/WaterBridgesRoads20261016/render-reconciliation.txt";
+                File.WriteAllLines(pathOut,lines);Debug.Log("[CampaignRenderReconciliation] result=Passed rows="+branches.Values.Sum()+" marketStockRows="+additions+" destinationRows="+destinations+" waterDressingRows="+waterDressing);
             }
             finally{EditorSceneManager.RestoreSceneManagerSetup(setup);}
         }

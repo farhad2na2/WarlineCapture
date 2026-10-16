@@ -15,15 +15,15 @@
     "provisionalMapMmiEntityBudget": 38909,
     "mapMmiEntityLimit": 24000,
     "provisionalMapMmiEntityBudgetWithinLimit": false,
-    "totalPeakRequiredPartRows": 6168,
-    "totalProvisionalActiveProxySlots": 7403,
+    "totalPeakRequiredPartRows": 6188,
+    "totalProvisionalActiveProxySlots": 7427,
     "activeProxySlotLimit": 8000,
     "provisionalActiveProxySlotsWithinLimit": true,
     "zeroOverflowProvenForProvisionalCapacity": true,
-    "sourceRowsSha256": "7565f9056234225064fe694204924bbd375d4946b1a8b4a62e0fbf930a038d13",
-    "prototypeRecipesSha256": "a338b033bac485463d021012c9689e28ec655f8aabbc4a3297a9608338a35739",
-    "logicalPlacementsSha256": "fa867183ed83f6a141e951c7ba9d5b0304bab4926f61a2e95a157db65e6124b0",
-    "spatialCellsSha256": "472e9581930f9c2f51de78c5c9ca1bb8ecfccb8dac11a52e00d222bff0e2461c",
+    "sourceRowsSha256": "31bb064955af8758ee48177a2e8aabaeb10c7fd8449567b615b7a3d420b4db8c",
+    "prototypeRecipesSha256": "dd26092a7aec192a3aacd23a9c03f9ebf285dc38a90cc6f3fed103a21444ddf1",
+    "logicalPlacementsSha256": "ad0f9d5766c3c8fc183517de9a73ecadcbc9f188cf53df003a3090ddd6e63166",
+    "spatialCellsSha256": "7b26cf6fc804c0433cb82231c318223c27c8d2761dffc97d5f6e96cd34afd5a0",
     "capacityByPolicy": [
         {
             "policyBucket": "OpaqueShadowsOn",
@@ -32,10 +32,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 3824,
-            "peakSampleIdentity": "grid-cell:40:25:materialized=9x12",
-            "capacity": 4589,
-            "headroomCount": 765
+            "peakRequiredPartRows": 3841,
+            "peakSampleIdentity": "grid-cell:40:28:materialized=9x12",
+            "capacity": 4610,
+            "headroomCount": 769
         },
         {
             "policyBucket": "OpaqueShadowsOff",
@@ -68,9 +68,9 @@
             "motionVectorMode": "Object",
             "shadowFlags": 2,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 22,
-            "peakSampleIdentity": "grid-cell:69:0:materialized=9x12",
-            "capacity": 27,
+            "peakRequiredPartRows": 25,
+            "peakSampleIdentity": "grid-cell:36:20:materialized=9x12",
+            "capacity": 30,
             "headroomCount": 5
         }
     ]

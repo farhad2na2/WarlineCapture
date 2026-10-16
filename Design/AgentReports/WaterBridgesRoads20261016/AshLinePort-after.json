@@ -1,0 +1,22 @@
+{
+    "map": "AshLinePort",
+    "sourceHash": "95ce9b376a704491264f35473b935de7466401a15408dd6d4417380b6f8a0b15",
+    "result": "Applied",
+    "waterRenderers": 2,
+    "bankMeshes": 2,
+    "channelMeshes": 2,
+    "waterMaterials": 1,
+    "joins": 4,
+    "pavedMaterials": 11,
+    "earthMaterials": 3,
+    "shoreSegments": 1530,
+    "joinRows": [
+        "Map_AshLinePort/Roads/RoadChunk_6_3/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 501.25) dir=(0.00, 1.00) halfWidth=2.68",
+        "Map_AshLinePort/Roads/RoadChunk_6_3/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 508.60) dir=(0.00, -1.00) halfWidth=2.68",
+        "Map_AshLinePort/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 381.25) dir=(0.00, 1.00) halfWidth=2.68",
+        "Map_AshLinePort/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 388.60) dir=(0.00, -1.00) halfWidth=2.68"
+    ],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/DestinationPads/AshLinePort_93a7978aa8eb64990a729dfb6cf942d0.mat roles=excluded,earth"
+    ]
+}

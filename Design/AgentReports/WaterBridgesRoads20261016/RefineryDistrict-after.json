@@ -1,0 +1,19 @@
+{
+    "map": "RefineryDistrict",
+    "sourceHash": "700103e37b68e13049ab9a006c42eabfaeac011cfa0e5c38a06299817ff5b25d",
+    "result": "Applied",
+    "waterRenderers": 0,
+    "bankMeshes": 0,
+    "channelMeshes": 0,
+    "waterMaterials": 0,
+    "joins": 1,
+    "pavedMaterials": 6,
+    "earthMaterials": 3,
+    "shoreSegments": 0,
+    "joinRows": [
+        "Map_RefineryDistrict/Roads/RoadChunk_6_3/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_RefineryDistrict/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_T_Intersection/Asphalt seam=(1054.86, 501.25) dir=(0.00, 1.00) halfWidth=2.68"
+    ],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/DestinationPads/RefineryDistrict_723be85b99e0f407fb12178e57245a64.mat roles=excluded,earth"
+    ]
+}

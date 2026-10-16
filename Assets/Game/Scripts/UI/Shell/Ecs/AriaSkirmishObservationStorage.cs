@@ -53,9 +53,42 @@ namespace Game.UI.Shell.Ecs
             var owner=em.GetComponentData<AriaSkirmishObservationOwner>(storage);
             var prior=em.GetComponentData<AriaSkirmishObservationComponent>(storage).Value;
             bool scopeChanged=owner.TransitionSequence!=Sequence(em,boundary)||value.Frame<prior.Frame||value.Time<prior.Time;
-            if(prior.Active&&(!value.Active||scopeChanged))
+            bool ownershipChanged=owner.TransitionSequence!=Sequence(em,boundary) ||
+                !em.HasComponent<UiShellStateComponent>(boundary) ||
+                em.GetComponentData<UiShellStateComponent>(boundary).ActiveRoute!=UIRoute.Match;
+            bool blocked=em.HasComponent<AriaPlaySessionComponent>(boundary) &&
+                em.GetComponentData<AriaPlaySessionComponent>(boundary).Phase==AriaPlayPhase.Blocked;
+#if UNITY_EDITOR
+            if(prior.Active&&(!value.Active||scopeChanged) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ARIA_FIND_BASE_TRACE")))
             {
-                if(em.HasComponent<AriaPlaySessionComponent>(boundary))em.SetComponentData(boundary,default(AriaPlaySessionComponent));
+                var before=em.HasComponent<AriaPlaySessionComponent>(boundary)?em.GetComponentData<AriaPlaySessionComponent>(boundary):default;
+                UnityEngine.Debug.Log("[AriaFindBaseStorageDeactivate] frame="+UnityEngine.Time.frameCount+
+                    " beforePhase="+before.Phase+" beforeActions="+before.Actions+" beforeAttempts="+before.Attempts+
+                    " beforeTarget="+before.TargetId+" beforeReason="+before.StopReason+
+                    " priorActive="+prior.Active+" incomingActive="+value.Active+
+                    " priorFrame="+prior.Frame+" incomingFrame="+value.Frame+" priorTime="+prior.Time+" incomingTime="+value.Time+
+                    " priorSequence="+owner.TransitionSequence+" currentSequence="+Sequence(em,boundary)+" scopeChanged="+scopeChanged);
+            }
+#endif
+            if(prior.Active&&(!value.Active||scopeChanged) || blocked&&ownershipChanged)
+            {
+                if(em.HasComponent<AriaPlaySessionComponent>(boundary))
+                {
+                    var stopped=em.GetComponentData<AriaPlaySessionComponent>(boundary);
+                    // Inactive UI publication follows a stopped session too. Its default
+                    // frame/time are not a new match: retain the reason and retry evidence.
+                    // Explicit Stop already clears the session through the gateway.
+                    bool sameMatch=!value.Active && owner.TransitionSequence==Sequence(em,boundary) &&
+                        em.HasComponent<UiShellStateComponent>(boundary) &&
+                        em.GetComponentData<UiShellStateComponent>(boundary).ActiveRoute==UIRoute.Match;
+                    if(sameMatch && stopped.Phase==AriaPlayPhase.Blocked)
+                    {
+                        stopped.Pressed=stopped.GestureRequested=0;
+                        em.SetComponentData(boundary,stopped);
+                    }
+                    else em.SetComponentData(boundary,default(AriaPlaySessionComponent));
+                }
                 if(em.HasComponent<AriaPlayObservationComponent>(boundary))em.SetComponentData(boundary,default(AriaPlayObservationComponent));
             }
             if(!value.Active||scopeChanged)

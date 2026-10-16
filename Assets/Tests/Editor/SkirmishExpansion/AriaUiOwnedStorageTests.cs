@@ -155,6 +155,61 @@ namespace Game.Tests.Editor
                 f.Tick();Assert.AreEqual(AriaPlayPhase.Manual,f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root).Phase);
             }
         }
+        [Test] public void InactiveSameMatchRetainsStoppedReasonWithoutInputOrPlannerAuthority()
+        {
+            foreach(var phase in new[]{AriaPlayPhase.Blocked})
+            {
+                using var f=new Fixture();var storage=f.Publish();Intent(f,storage);
+                f.Em.SetComponentData(f.Root,new AriaPlaySessionComponent
+                {Phase=phase,Actions=32,Attempts=3,TargetId=-24296,StopReason=6,Pressed=1,GestureRequested=1});
+                // MatchHud emits default after ReadAriaPlay().Active becomes false.
+                UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+                var stopped=f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root);
+                Assert.AreEqual(phase,stopped.Phase);Assert.AreEqual(32,stopped.Actions);
+                Assert.AreEqual(3,stopped.Attempts);Assert.AreEqual(-24296,stopped.TargetId);
+                Assert.AreEqual(6,stopped.StopReason);Assert.AreEqual(0,stopped.Pressed);
+                Assert.AreEqual(0,stopped.GestureRequested);
+                Assert.IsFalse(AriaSkirmishObservationStorage.TryGet(f.Em,f.Root,out _));
+                Assert.AreEqual(default(AriaSkirmishPlanComponent),f.Em.GetComponentData<AriaSkirmishPlanComponent>(storage));
+                Assert.AreEqual(default(AriaPlayObservationComponent),f.Em.GetComponentData<AriaPlayObservationComponent>(f.Root));
+                f.Tick();UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+                Assert.AreEqual(stopped,f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root));
+                UiShellRuntimeGateway.StopAriaPlay();
+                Assert.AreEqual(default(AriaPlaySessionComponent),f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root));
+            }
+        }
+        [Test] public void RetainedInactiveBlockIsClearedAtALaterOwnershipBoundary()
+        {
+            foreach(var kind in new[]{0,1})
+            {
+                using var f=new Fixture();f.Publish();
+                f.Em.SetComponentData(f.Root,new AriaPlaySessionComponent
+                {Phase=AriaPlayPhase.Blocked,Actions=32,Attempts=3});
+                UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+                Assert.AreEqual(AriaPlayPhase.Blocked,f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root).Phase);
+                var shell=f.Em.GetComponentData<UiShellStateComponent>(f.Root);
+                if(kind==0)shell.ActiveRoute=UIRoute.MainMenu;else shell.TransitionSequenceId++;
+                f.Em.SetComponentData(f.Root,shell);
+                UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+                Assert.AreEqual(default(AriaPlaySessionComponent),f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root));
+            }
+        }
+        [Test] public void StoppedDiagnosticsDoNotCrossRouteSequenceOrActiveRewind()
+        {
+            foreach(var kind in new[]{0,1,2,3})
+            {
+                using var f=new Fixture();f.Publish();
+                f.Em.SetComponentData(f.Root,new AriaPlaySessionComponent
+                {Phase=AriaPlayPhase.Blocked,Actions=32,Attempts=3,StopReason=6});
+                var next=default(AriaSkirmishObservation);
+                if(kind==0){var shell=f.Em.GetComponentData<UiShellStateComponent>(f.Root);shell.ActiveRoute=UIRoute.MainMenu;f.Em.SetComponentData(f.Root,shell);}
+                if(kind==1){var shell=f.Em.GetComponentData<UiShellStateComponent>(f.Root);shell.TransitionSequenceId++;f.Em.SetComponentData(f.Root,shell);}
+                if(kind==2){next=View();next.Frame--;}
+                if(kind==3){next=View();next.Time--;}
+                UiShellRuntimeGateway.PublishAriaSkirmishObservation(next);
+                Assert.AreEqual(default(AriaPlaySessionComponent),f.Em.GetComponentData<AriaPlaySessionComponent>(f.Root));
+            }
+        }
         public static void RunFocusedValidation()
         {
             var t=new AriaUiOwnedStorageTests();
@@ -165,14 +220,17 @@ namespace Game.Tests.Editor
             t.DestroyedRootStorageIsRemovedAndReplacementStartsFresh();
             t.DuplicateStorageRefusesAndWorldReplacementHasNoCachedOwner();
             t.RepublishBeforePlannerCannotCarryOldContactIntoNewScope();
-            Debug.Log("[AriaUiOwnedStorageTests] result=Passed controls=7 actualUiShellBootstrap=1 originalTouchOwner=1 normalMissionAcceptance=Pending");
+            t.InactiveSameMatchRetainsStoppedReasonWithoutInputOrPlannerAuthority();
+            t.StoppedDiagnosticsDoNotCrossRouteSequenceOrActiveRewind();
+            t.RetainedInactiveBlockIsClearedAtALaterOwnershipBoundary();
+            Debug.Log("[AriaUiOwnedStorageTests] result=Passed controls=10 actualUiShellBootstrap=1 originalTouchOwner=1 normalMissionAcceptance=Pending");
         }
         public static void RunVerifySharedUiStorageAndWarmup()
         {
             SkirmishInstalledAircraftSharedPreparation.Run();
             RunFocusedValidation();
             Game.Editor.S005SceneArtifactWarmup.Run();
-            Debug.Log("[AriaUiOwnedStoragePreparation] result=Passed sharedControls=150 uiStorageControls=7 warmupScenes=2 snapshotAfterWrapperExit=1 normalMissionAcceptance=Pending");
+            Debug.Log("[AriaUiOwnedStoragePreparation] result=Passed sharedControls=150 uiStorageControls=10 warmupScenes=2 snapshotAfterWrapperExit=1 normalMissionAcceptance=Pending");
         }
     }
 }

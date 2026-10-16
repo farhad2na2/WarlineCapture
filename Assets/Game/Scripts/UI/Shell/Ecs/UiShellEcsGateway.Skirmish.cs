@@ -66,10 +66,24 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        bool IUiSkirmishGateway.TryReadSkirmishContext(out bool expanded)
+        {
+            expanded = false;
+            if (!TryReadSkirmishSession(out var em, out var session, out var match)) return false;
+            // The full model returns before assigning Expanded on startup failure.
+            if (match.StartupFailure == SkirmishStartupFailureCode.None)
+                expanded = SkirmishExpandedSessionControlService.IsExpanded(em, session);
+            return true;
+        }
+
+        private static bool TryReadSkirmishSession(out EntityManager em, out Entity session, out SkirmishMatchState match) =>
+            TrySkirmish(out em, out session, out match) &&
+            (match.Phase >= SkirmishPhase.Playing || match.StartupFailure != SkirmishStartupFailureCode.None);
+
         bool IUiSkirmishGateway.TryReadSkirmish(out UiSkirmishModel model)
         {
             model=default;
-            if(!TrySkirmish(out var em,out var session,out var match)||(match.Phase<SkirmishPhase.Playing&&match.StartupFailure==SkirmishStartupFailureCode.None))return false;
+            if (!TryReadSkirmishSession(out var em, out var session, out var match)) return false;
             if(match.StartupFailure!=SkirmishStartupFailureCode.None)
             {
                 model.StartupFailed=true;

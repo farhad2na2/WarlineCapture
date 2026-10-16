@@ -49,7 +49,7 @@ namespace Game.UI.Runtime
             if(placement!=null && placement.HasPendingPlacement && placement.Root.gameObject.activeInHierarchy)
                 bottom=Mathf.Max(bottom,TopInHeader(placement.Root)-header.rect.yMin+DockGap);
             commandDockBottom=bottom;
-            bool expanded = UiShellRuntimeGateway.TryReadSkirmish(out var mission) && mission.Expanded;
+            bool expanded = UiShellRuntimeGateway.TryReadSkirmishContext(out var expandedContext) && expandedContext;
             // Keep the established left dock. Expanded skirmish raises it above
             // the slim squad pager, leaving both controls readable and tappable.
             bottom=Mathf.Max(bottom,expanded ? 300 : 230);

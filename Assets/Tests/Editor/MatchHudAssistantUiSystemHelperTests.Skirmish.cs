@@ -460,3 +460,89 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         }
     }
 }
+
+
+
+public sealed partial class MatchHudAssistantUiSystemHelperTests
+{
+    private sealed class ContextFallbackGateway : IUiSkirmishGateway
+    {
+        public bool Admitted, Expanded;
+        public int FullReads;
+        public bool TryReadSkirmish(out UiSkirmishModel model)
+        {
+            FullReads++;
+            model = new UiSkirmishModel { Expanded = Expanded };
+            return Admitted;
+        }
+        public bool TryRequestSkirmish(UiSkirmishAction action) => false;
+    }
+
+    [Test]
+    public void SkirmishContextDefaultFallbackPreservesAdmissionAndExpanded()
+    {
+        foreach (bool admitted in new[] { false, true })
+        foreach (bool expanded in new[] { false, true })
+        {
+            var fake = new ContextFallbackGateway { Admitted = admitted, Expanded = expanded };
+            IUiSkirmishGateway gateway = fake;
+            Assert.AreEqual(admitted, gateway.TryReadSkirmishContext(out bool actualExpanded));
+            Assert.AreEqual(admitted && expanded, actualExpanded);
+            Assert.AreEqual(1, fake.FullReads, "Other gateway implementations retain the full-read fallback.");
+        }
+    }
+
+    [Test]
+    public void SkirmishContextMatchesFullReadAcrossAdmissionAndSessionVariants()
+    {
+        var previous = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+        var gateway = (IUiSkirmishGateway)Activator.CreateInstance(typeof(UiShellEcsGateway), true);
+        using var world = new Unity.Entities.World("SkirmishContextEquivalence");
+        try
+        {
+            Unity.Entities.World.DefaultGameObjectInjectionWorld = null;
+            AssertContext(false, false);
+            Unity.Entities.World.DefaultGameObjectInjectionWorld = world;
+            AssertContext(false, false);
+            var em = world.EntityManager;
+            var session = em.CreateEntity(typeof(Game.Components.SkirmishMatchState));
+            var duplicate = em.CreateEntity(typeof(Game.Components.SkirmishMatchState));
+            AssertContext(false, false);
+            em.DestroyEntity(duplicate);
+            foreach (Game.Components.SkirmishPhase phase in Enum.GetValues(typeof(Game.Components.SkirmishPhase)))
+            foreach (Game.Components.SkirmishStartupFailureCode failure in Enum.GetValues(typeof(Game.Components.SkirmishStartupFailureCode)))
+            for (int variant = 0; variant < 3; variant++)
+            {
+                if (em.HasComponent<Game.Components.SkirmishExpandedSessionComponent>(session))
+                    em.RemoveComponent<Game.Components.SkirmishExpandedSessionComponent>(session);
+                if (variant != 0)
+                    em.AddComponentData(session, new Game.Components.SkirmishExpandedSessionComponent { IsLegacy = (byte)(variant == 1 ? 1 : 0) });
+                var match = new Game.Components.SkirmishMatchState { Phase = phase, StartupFailure = failure };
+                em.SetComponentData(session, match);
+                bool admitted = !(phase < Game.Components.SkirmishPhase.Playing && failure == Game.Components.SkirmishStartupFailureCode.None);
+                AssertContext(admitted, admitted && failure == Game.Components.SkirmishStartupFailureCode.None && variant == 2);
+                Assert.AreEqual(match, em.GetComponentData<Game.Components.SkirmishMatchState>(session));
+            }
+        }
+        finally { Unity.Entities.World.DefaultGameObjectInjectionWorld = previous; }
+
+        void AssertContext(bool admitted, bool expanded)
+        {
+            bool fullAdmitted = gateway.TryReadSkirmish(out var full);
+            bool cheapAdmitted = gateway.TryReadSkirmishContext(out bool cheapExpanded);
+            Assert.AreEqual(admitted, fullAdmitted);
+            Assert.AreEqual(fullAdmitted, cheapAdmitted);
+            Assert.AreEqual(fullAdmitted && full.Expanded, cheapExpanded);
+            Assert.AreEqual(expanded, cheapExpanded);
+        }
+    }
+
+    public static void RunSkirmishContextValidation()
+    {
+        if (Application.isPlaying) throw new InvalidOperationException("Edit Mode context controls required.");
+        var tests = new MatchHudAssistantUiSystemHelperTests();
+        tests.SkirmishContextDefaultFallbackPreservesAdmissionAndExpanded();
+        tests.SkirmishContextMatchesFullReadAcrossAdmissionAndSessionVariants();
+        Debug.Log("[SkirmishContextValidation] result=Passed fallback=4 admission=3 matrix=48 nativeMissionAcceptance=Pending");
+    }
+}

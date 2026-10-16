@@ -56,7 +56,7 @@ namespace Game.UI.Runtime
             // Skirmish has a persistent objective briefing, not campaign tutorial actions.
             // Do not re-enable a button that ApplyReadModel has just hidden: doing so
             // alternates the rail's measured height during successive HUD updates.
-            if (UiShellRuntimeGateway.TryReadSkirmish(out _))
+            if (UiShellRuntimeGateway.TryReadSkirmishContext(out _))
             {
                 _embeddedTutorialView.ShowMeButton.gameObject.SetActive(false);
                 _embeddedTutorialView.SetContinueAvailable(false);

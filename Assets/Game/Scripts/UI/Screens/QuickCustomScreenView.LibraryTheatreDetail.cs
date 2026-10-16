@@ -110,7 +110,9 @@ namespace Game.UI.Runtime
                 float cabinetHeight = Mathf.Max(60f, Mathf.Min(objectivesTop - y - 10f, inner * 0.5f + 12f));
                 y = DetailCabinet(root, pin, fa, pad, y, inner, cabinetHeight, 6, 3) + 10f;
                 // The zone's own subtitle copy fills the gap between cabinet and objective types (no invented data).
-                y = DetailBlurb(root, pin, fa, pad, y, inner, objectivesTop - y - 8f);
+                y = DetailBlurb(root, pin, fa, pad, y, inner, objectivesTop - y - 8f - DetailMedalRowHeight);
+                if (objectivesTop - y >= DetailMedalRowHeight)
+                    y = DetailMedalRow(root, pin, fa, pad, Mathf.Max(y, objectivesTop - DetailMedalRowHeight - 4f), inner);
                 DetailObjectives(root, fa, pad, Mathf.Max(y, objectivesTop), inner, objectivesHeight);
             }
         }
@@ -189,9 +191,13 @@ namespace Game.UI.Runtime
             return y + 46f;
         }
 
+        private const bool HideDetailStatsLine = true;
+
         private float DetailStats(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width)
         {
-            // approved-1: "24 battles · 9 won" in normal case and weight, a quieter line under the art.
+            // PM: the battles/time line is hidden entirely until the data exists (no stub).
+            if (HideDetailStatsLine)
+                return y;
             TMP_Text stats = CreateLabel(root, "Stats", 22f);
             PlaceTopLeft(stats.rectTransform, x, y, width, 30f);
             SetCopy(stats, TheatreBattlesWonCopy(pin.PublishedCount, pin.WonCount, fa), LibraryFontFloor, 22f);
@@ -211,6 +217,39 @@ namespace Game.UI.Runtime
             preview.raycastTarget = false;
             if (preview.texture != null)
                 SkirmishBattleCardWidget.FitCover(preview, width, height);
+        }
+
+        private const float DetailMedalRowHeight = 84f; // 2x2: four cells collide in the narrow side panel
+
+        /// <summary>Per-zone medal row: the zone's own ledger counts per tier (pin.Medals), icon + count.</summary>
+        private float DetailMedalRow(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width)
+        {
+            SkirmishDifficultyId[] tiers = { SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander };
+            int[] counts = { pin.Medals.Recruit, pin.Medals.Regular, pin.Medals.Veteran, pin.Medals.Commander };
+            float cellW = width / 2f;
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                int col = i % 2, row = i / 2;
+                int visual = fa ? 1 - col : col;
+                float cx = x + visual * cellW;
+                float cy = y + row * 42f;
+                var icon = new GameObject("ZoneMedal_" + tiers[i], typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                icon.transform.SetParent(root, false);
+                PlaceTopLeft(icon.rectTransform, cx + 4f, cy + 5f, 32f, 32f);
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                ShowIcon(icon, SkirmishBattleLibraryArt.Medal(true, tiers[i]), Color.white);
+                TMP_Text count = CreateLabel(root, "Value", 24f);
+                PlaceTopLeft(count.rectTransform, cx + 40f, cy + 1f, Mathf.Max(16f, cellW - 46f), 40f);
+                SetCopy(count, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), LibraryFontFloor, 26f);
+                count.alignment = TextAlignmentOptions.MidlineLeft;
+                count.isRightToLeftText = false;
+                count.fontStyle = FontStyles.Bold;
+                count.enableAutoSizing = false; // past the Arabic line-box cap for Persian digits
+                count.fontSize = 26f;
+                count.color = new Color(0.98f, 0.95f, 0.86f, 1f);
+            }
+            return y + DetailMedalRowHeight;
         }
 
         private float DetailBlurb(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width, float room)

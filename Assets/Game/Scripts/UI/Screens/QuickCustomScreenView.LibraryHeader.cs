@@ -79,7 +79,7 @@ namespace Game.UI.Runtime
                     screenTitle.anchorMin = Vector2.zero;
                     screenTitle.anchorMax = Vector2.one;
                     // FA: the binding's Arabic fit caps size at rect height / 1.65, so give the Noto line a taller box.
-                    screenTitle.offsetMin = new Vector2(fa ? 8f : 52f, fa ? -16f : 2f);
+                    screenTitle.offsetMin = new Vector2(52f, fa ? -16f : 2f);
                     screenTitle.offsetMax = new Vector2(-8f, fa ? 16f : -2f);
                     TMP_Text screenTitleText = screenTitle.GetComponent<TMP_Text>();
                     if (screenTitleText != null)

@@ -2733,50 +2733,6 @@ namespace Game.Editor
             }
         }
 
-        private static Vector2[] OutlineWorldPoints(RectTransform outline)
-        {
-            V3PolygonGraphic graphic = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
-            int count = graphic != null ? graphic.PointCount : 0;
-            if (count < 3)
-                return null;
-            var shape = new Vector2[count];
-            for (int point = 0; point < count; point++)
-            {
-                Vector2 authored = graphic.LocalPoint(point);
-                Vector3 world = outline.TransformPoint(new Vector3(authored.x, authored.y, 0f));
-                shape[point] = new Vector2(world.x, world.y);
-            }
-
-            return shape;
-        }
-
-        private static bool WorldRectHitsPolygon(Rect rect, Vector2[] shape)
-        {
-            if (shape == null || shape.Length < 3)
-                return false;
-            Vector2[] corners =
-            {
-                new Vector2(rect.xMin, rect.yMin),
-                new Vector2(rect.xMax, rect.yMin),
-                new Vector2(rect.xMax, rect.yMax),
-                new Vector2(rect.xMin, rect.yMax)
-            };
-            for (int i = 0; i < corners.Length; i++)
-            {
-                if (PointInPolygon(corners[i], shape))
-                    return true;
-            }
-
-            for (int i = 0; i < shape.Length; i++)
-            {
-                Vector2 next = shape[(i + 1) % shape.Length];
-                if (SegmentHitsRect(shape[i], next, rect))
-                    return true;
-            }
-
-            return PointInPolygon(rect.center, shape);
-        }
-
         private static bool TryReadTheatreSummaryCounts(Transform column, out int[] counts)
         {
             counts = null;

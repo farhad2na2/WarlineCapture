@@ -1598,10 +1598,10 @@ namespace Game.UI.Runtime
             if (medalKeep is RectTransform keptMedal)
                 _medalRow = keptMedal;
             var order = battlefield
-                ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
+                ? new[] { "BriefingPreview", "Title", "BriefingSubtitle", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
                 : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
-                ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
+                ? new[] { 188f, 40f, 30f, 96f, 84f, 104f, 116f } // P2-approved: subtitle row
                 : new[] { TheatreSummaryHeight, 40f, 84f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {

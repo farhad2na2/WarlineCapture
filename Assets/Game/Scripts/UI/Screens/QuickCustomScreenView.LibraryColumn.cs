@@ -269,7 +269,7 @@ namespace Game.UI.Runtime
                 if (image == null)
                     image = slot.GetComponentInChildren<Image>(true);
                 if (image != null)
-                    ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, 0.78f));
+                    ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, battlefield ? 0.32f : 0.78f));
                 TMP_Text count = slot.Find("Count")?.GetComponent<TMP_Text>();
                 SetCopy(count, battlefield ? string.Empty : counts[i].ToString(), 18f, 22f);
                 if (battlefield)
@@ -410,7 +410,10 @@ namespace Game.UI.Runtime
                 }
                 else
                 {
-                    PlaceTopLeft(slot, column * (cell + 8f), 4f + line * 50f, cell, 46f);
+                    // approved-2: MEDALS heading over four tier circles with names, one row.
+                    float quarter = width / 4f;
+                    int visual = fa ? 3 - i : i;
+                    PlaceTopLeft(slot, visual * quarter, 30f, quarter, 72f);
                 }
                 LayoutElement element = slot.GetComponent<LayoutElement>();
                 if (element != null)
@@ -419,8 +422,71 @@ namespace Game.UI.Runtime
                 if (tiles)
                     LayoutMedalTile(slot, fa);
                 else
-                    LayoutMedalEntry(slot, fa, 24f, 36f);
+                    LayoutMedalCircle(slot, fa, width / 4f);
                 BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), i);
+            }
+
+            if (LibraryLevel == SkirmishLibraryLevel.Battlefield)
+                PlaceMedalsHeading(row, fa, width);
+        }
+
+        private void PlaceMedalsHeading(RectTransform row, bool fa, float width)
+        {
+            Transform existing = row.Find("MedalsHeading");
+            TMP_Text heading = existing != null ? existing.GetComponent<TMP_Text>() : CreateLabel(row, "MedalsHeading", 22f);
+            LayoutElement element = heading.GetComponent<LayoutElement>() ?? heading.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+            PlaceTopLeft(heading.rectTransform, 8f, 0f, width - 16f, 28f);
+            SetCopy(heading, fa ? "مدال ها" : "MEDALS", 18f, 22f);
+            heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            heading.isRightToLeftText = fa;
+            heading.textWrappingMode = TextWrappingModes.NoWrap;
+            heading.overflowMode = TextOverflowModes.Overflow;
+            heading.fontStyle = FontStyles.Bold;
+            heading.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+        }
+
+        /// <summary>approved-2 medal circle: the tier medal centred over its name; count hidden on the battlefield.</summary>
+        private static void LayoutMedalCircle(RectTransform slot, bool fa, float width)
+        {
+            if (slot == null)
+                return;
+            HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>();
+            if (row != null)
+                row.enabled = false;
+            const float icon = 40f;
+            RectTransform iconRect = slot.Find("Icon") as RectTransform;
+            RectTransform caption = slot.Find("Caption") as RectTransform;
+            RectTransform count = slot.Find("Count") as RectTransform;
+            PlaceTopLeft(iconRect, (width - icon) * 0.5f, 0f, icon, icon);
+            PlaceTopLeft(caption, 2f, 44f, width - 4f, 26f);
+            HoldFixed(iconRect, icon, icon, 0f);
+            HoldFixed(caption, width - 4f, 26f, 0f);
+            if (count != null)
+                count.gameObject.SetActive(false);
+            Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;
+            if (image != null)
+            {
+                image.preserveAspect = true;
+                image.type = Image.Type.Simple;
+            }
+
+            TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
+            if (captionText != null)
+            {
+                captionText.alignment = TextAlignmentOptions.Center;
+                captionText.isRightToLeftText = fa;
+                captionText.textWrappingMode = TextWrappingModes.NoWrap;
+                captionText.overflowMode = TextOverflowModes.Overflow;
+                captionText.enableAutoSizing = true;
+                captionText.fontSizeMin = 12f;
+                captionText.fontSizeMax = 17f;
+                captionText.maxVisibleLines = 1;
+                captionText.margin = Vector4.zero;
+                captionText.color = new Color(0.86f, 0.86f, 0.82f, 1f);
+                V3LocalizedTextBindingView binding = captionText.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(12f, 17f);
             }
         }
 
@@ -1203,6 +1269,8 @@ namespace Game.UI.Runtime
                     return _briefingPreview == null || child == _briefingPreview.transform;
                 if (child.name == "BriefingStats")
                     return _statRow == null || child == _statRow;
+                if (child.name == "BriefingSubtitle")
+                    return _briefingSubtitleShown;
                 if (child.name == "MedalDifficultySelector")
                     return _difficultyRow == null || child == _difficultyRow;
                 return false;

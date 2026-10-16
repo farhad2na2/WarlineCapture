@@ -400,7 +400,102 @@ namespace Game.UI.Runtime
             BindStatTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel, false);
             BindStatTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel, false);
             LayoutVisibleStatTiles();
+            // approved-2: icon tiles at mockup weight (icon over value, no caption). Only real values are shown.
+            DecorateIconTile(_statRow.Find("Time"), FooterGlyph.Clock, null, fa);
+            DecorateIconTile(_statRow.Find("Size"), FooterGlyph.Squares, null, fa);
+            DecorateIconTile(_statRow.Find("Objective"), FooterGlyph.None, string.IsNullOrEmpty(objectiveId) ? null : SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), fa);
+            DecorateIconTile(_statRow.Find("Army"), FooterGlyph.Shield, null, fa);
+            DecorateIconTile(_statRow.Find("Start"), FooterGlyph.Pin, null, fa);
+            PresentBriefingSubtitle(armyLabel, startLabel, fa);
         }
+
+        private void DecorateIconTile(Transform tile, FooterGlyph glyph, Sprite sprite, bool fa)
+        {
+            if (tile is not RectTransform rect || !tile.gameObject.activeSelf)
+                return;
+            float width = rect.sizeDelta.x > 20f ? rect.sizeDelta.x : Mathf.Max(60f, rect.rect.width);
+            const float icon = 30f;
+            Transform caption = tile.Find("Caption");
+            if (caption != null)
+                caption.gameObject.SetActive(false);
+            Transform oldRaw = tile.Find("TileGlyph");
+            Transform oldImg = tile.Find("TileArt");
+            if (sprite != null)
+            {
+                if (oldRaw != null)
+                    oldRaw.gameObject.SetActive(false);
+                Image art = oldImg != null ? oldImg.GetComponent<Image>() : null;
+                if (art == null)
+                {
+                    art = new GameObject("TileArt", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                    art.transform.SetParent(tile, false);
+                }
+                art.gameObject.SetActive(true);
+                PlaceTopLeft(art.rectTransform, (width - icon) * 0.5f, 8f, icon, icon);
+                art.preserveAspect = true;
+                art.raycastTarget = false;
+                ShowIcon(art, sprite, new Color(0.96f, 0.93f, 0.84f, 1f));
+            }
+            else if (glyph != FooterGlyph.None)
+            {
+                if (oldImg != null)
+                    oldImg.gameObject.SetActive(false);
+                RawImage raw = oldRaw != null ? oldRaw.GetComponent<RawImage>() : null;
+                if (raw == null)
+                {
+                    raw = new GameObject("TileGlyph", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+                    raw.transform.SetParent(tile, false);
+                }
+                raw.gameObject.SetActive(true);
+                PlaceTopLeft(raw.rectTransform, (width - icon) * 0.5f, 8f, icon, icon);
+                raw.texture = FooterGlyphTexture(glyph);
+                raw.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                raw.raycastTarget = false;
+            }
+
+            TMP_Text value = tile.Find("Value")?.GetComponent<TMP_Text>();
+            if (value != null)
+            {
+                PlaceTopLeft(value.rectTransform, 4f, 42f, width - 8f, 38f);
+                value.alignment = TextAlignmentOptions.Center;
+                value.textWrappingMode = TextWrappingModes.Normal;
+                value.overflowMode = TextOverflowModes.Overflow;
+                value.enableAutoSizing = true;
+                value.fontSizeMin = 13f;
+                value.fontSizeMax = 18f;
+                value.maxVisibleLines = 2;
+                value.fontStyle = FontStyles.Bold;
+                value.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                V3LocalizedTextBindingView binding = value.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(13f, 18f);
+            }
+        }
+
+        /// <summary>approved-2 subtitle under the gold heading: army · start from the catalog (e.g. COMBINED ARMS · FIELD BASE).</summary>
+        private void PresentBriefingSubtitle(string army, string start, bool fa)
+        {
+            Transform column = transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn");
+            if (column == null)
+                return;
+            Transform existing = column.Find("BriefingSubtitle");
+            TMP_Text text = existing != null ? existing.GetComponent<TMP_Text>() : CreateLabel(column, "BriefingSubtitle", 22f);
+            string copy = string.IsNullOrEmpty(army) ? start : string.IsNullOrEmpty(start) ? army : army + " · " + start;
+            _briefingSubtitleShown = !string.IsNullOrWhiteSpace(copy);
+            text.gameObject.SetActive(_briefingSubtitleShown);
+            if (!_briefingSubtitleShown)
+                return;
+            SetCopy(text, UpperLatin(copy), 18f, 24f);
+            text.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            text.isRightToLeftText = fa;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.fontStyle = FontStyles.Bold;
+            text.margin = new Vector4(16f, 0f, 16f, 0f);
+            text.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+        }
+
+        private bool _briefingSubtitleShown;
 
         private void PresentFlaggedTile(string name, bool show, string caption, string value, bool latinValue)
         {

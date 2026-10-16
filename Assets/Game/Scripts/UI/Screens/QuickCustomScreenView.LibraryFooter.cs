@@ -168,7 +168,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private enum FooterGlyph { None, Funnel, Chevrons, Dice, Map, Gear }
+        private enum FooterGlyph { None, Funnel, Chevrons, Dice, Map, Gear, Clock, Squares, Shield, Pin }
 
         private static FooterGlyph FooterGlyphFor(string controlName)
         {
@@ -293,6 +293,41 @@ namespace Game.UI.Runtime
                     float outer = Mathf.Clamp01((teeth - r) / edge);
                     float hole = Mathf.Clamp01((r - 0.13f) / edge);
                     return outer * hole;
+                }
+                case FooterGlyph.Clock:
+                {
+                    float dx = u - 0.5f, dy = v - 0.5f;
+                    float r = Mathf.Sqrt(dx * dx + dy * dy);
+                    float ring = Mathf.Clamp01((0.4f - r) / edge) * Mathf.Clamp01((r - 0.32f) / edge);
+                    float minute = Mathf.Abs(dx) < 0.04f && dy < 0.02f && dy > -0.26f ? 1f : 0f;
+                    float hour = Mathf.Abs(dy) < 0.04f && dx > -0.02f && dx < 0.18f ? 1f : 0f;
+                    return Mathf.Max(ring, Mathf.Max(minute, hour));
+                }
+                case FooterGlyph.Squares:
+                {
+                    float best = 0f;
+                    for (int k = 0; k < 4; k++)
+                    {
+                        float cx = k % 2 == 0 ? 0.32f : 0.68f, cy = k / 2 == 0 ? 0.32f : 0.68f;
+                        float box = Mathf.Max(Mathf.Abs(u - cx), Mathf.Abs(v - cy));
+                        best = Mathf.Max(best, Mathf.Clamp01((0.14f - box) / edge));
+                    }
+                    return best;
+                }
+                case FooterGlyph.Shield:
+                {
+                    if (v < 0.12f || v > 0.9f)
+                        return 0f;
+                    float half = v < 0.5f ? 0.36f : Mathf.Lerp(0.36f, 0.02f, (v - 0.5f) / 0.4f);
+                    return Mathf.Clamp01((half - Mathf.Abs(u - 0.5f)) / edge);
+                }
+                case FooterGlyph.Pin:
+                {
+                    float dx = u - 0.5f, dy = v - 0.38f;
+                    float r = Mathf.Sqrt(dx * dx + dy * dy);
+                    float head = Mathf.Clamp01((0.26f - r) / edge) * Mathf.Clamp01((r - 0.1f) / edge);
+                    float tail = v > 0.5f && v < 0.9f ? Mathf.Clamp01((Mathf.Lerp(0.2f, 0f, (v - 0.5f) / 0.4f) - Mathf.Abs(dx)) / edge) : 0f;
+                    return Mathf.Max(head, tail);
                 }
                 default:
                     return 0f;

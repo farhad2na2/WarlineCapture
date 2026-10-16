@@ -343,6 +343,7 @@ internal static class Program
                 BoxHeight = 44f,
                 PreferredWidth = 108f,
                 PreferredHeight = 40f,
+                StatusHeight = 56f,
                 Band = 212f,
                 CardWidth = 156f,
                 CardHeight = 208f
@@ -376,7 +377,8 @@ internal static class Program
             && Math.Abs(plateHeight - 724f) < 0.05f
             && json.IndexOf("\"portraitMinW\": 112", StringComparison.Ordinal) >= 0
             && json.IndexOf("DESERT\\nBASE", StringComparison.Ordinal) >= 0
-            && !TheatreSeatGeometry.TryReadNameOverflow(json, out _, out _, out _, out _);
+            && !TheatreSeatGeometry.TryReadNameOverflow(json, out _, out _, out _, out _)
+            && !TheatreSeatGeometry.TryReadNameStack(json, out _, out _, out _, out _, out _);
         var overflowName = names[0];
         overflowName.MapId = "MP";
         overflowName.Text = "گذرگاه کوهستان";
@@ -388,8 +390,26 @@ internal static class Program
             && overflowMap == "MP"
             && overflowText.IndexOf("گذرگاه", StringComparison.Ordinal) >= 0
             && Math.Abs(overflowPreferred - 115.9f) < 0.05f
-            && Math.Abs(overflowBox - 112f) < 0.05f;
-        ok = ok && caught;
+            && Math.Abs(overflowBox - 112f) < 0.05f
+            && !TheatreSeatGeometry.TryReadNameStack(overflow, out _, out _, out _, out _, out _);
+        var stackedName = names[0];
+        stackedName.MapId = "MP";
+        stackedName.Text = "گذرگاه کوهستان";
+        stackedName.PreferredWidth = 100f;
+        stackedName.BoxWidth = 112f;
+        stackedName.PreferredHeight = 54f;
+        stackedName.StatusHeight = 40f;
+        stackedName.CardHeight = 156f;
+        string stacked = TheatreSeatGeometry.FormatDump(1039.6f, 724f, detail, view, new[] { stackedName });
+        bool stackCaught = TheatreSeatGeometry.TryReadNameStack(
+            stacked, out string stackMap, out string stackText, out float stackName, out float stackStatus, out float stackCard)
+            && stackMap == "MP"
+            && stackText.IndexOf("گذرگاه", StringComparison.Ordinal) >= 0
+            && Math.Abs(stackName - 54f) < 0.05f
+            && Math.Abs(stackStatus - 40f) < 0.05f
+            && Math.Abs(stackCard - 156f) < 0.05f
+            && !TheatreSeatGeometry.TryReadNameOverflow(stacked, out _, out _, out _, out _);
+        ok = ok && caught && stackCaught;
         Console.WriteLine((ok ? "PASS" : "FAIL") + " dump round-trip plate="
             + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
@@ -429,6 +449,18 @@ internal static class Program
                     + " preferred=" + overflowPreferred.ToString("0.0", CultureInfo.InvariantCulture)
                     + " width=" + overflowBox.ToString("0.0", CultureInfo.InvariantCulture)
                     + " text=" + overflowText);
+            }
+
+            if (TheatreSeatGeometry.TryReadNameStack(
+                json, out string stackMap, out string stackText, out float stackName, out float stackStatus, out float stackCard))
+            {
+                failed++;
+                Console.WriteLine("FAIL replay name stack " + Path.GetFileName(files[i])
+                    + " map=" + stackMap
+                    + " name=" + stackName.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " status=" + stackStatus.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " card=" + stackCard.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " text=" + stackText);
             }
 
             Evaluate(

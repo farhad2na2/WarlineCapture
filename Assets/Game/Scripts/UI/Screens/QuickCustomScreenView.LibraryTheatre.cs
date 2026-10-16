@@ -2449,7 +2449,7 @@ namespace Game.UI.Runtime
                     name.ForceMeshUpdate();
                 }
 
-                float needed = Mathf.Ceil(name.preferredHeight + 2f);
+                float needed = PortraitNameBox(name, source, size, cardH);
                 if (needed < 0.5f)
                     continue;
                 if (TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide) + 1f < needed)
@@ -2477,36 +2477,52 @@ namespace Game.UI.Runtime
                 ? TheatreSeatGeometry.PortraitCompactFontFloor
                 : TheatreSeatGeometry.NameFontFloor;
             float boxWidth = Mathf.Max(8f, card.sizeDelta.x - 12f);
-            if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f && ContainsArabicLetter(source))
+            bool arabic = ContainsArabicLetter(source);
+            if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f && arabic)
                 size = TheatreSeatGeometry.PortraitCompactFontFloor;
+            float stop = arabic ? 13f : size;
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
-            if (binding != null)
-                binding.ConfigureFontBounds(size, size);
-            name.fontSizeMin = size;
-            name.fontSizeMax = size;
-            name.fontSize = size;
-            name.text = source;
-            name.textWrappingMode = TextWrappingModes.NoWrap;
-            name.overflowMode = TextOverflowModes.Overflow;
-            name.maxVisibleLines = 2;
-            if (!WrapZoneName(name, size))
-                return;
-            name.maxVisibleLines = 2;
-            name.textWrappingMode = TextWrappingModes.NoWrap;
-            float limit = Mathf.Max(28f, TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide));
-            for (float spacing = 0f; spacing >= -36f; spacing -= 4f)
+            for (float candidate = size; candidate >= stop - 0.01f; candidate -= 1f)
             {
-                name.lineSpacing = spacing;
+                if (binding != null)
+                    binding.ConfigureFontBounds(candidate, candidate);
+                name.fontSizeMin = candidate;
+                name.fontSizeMax = candidate;
+                name.fontSize = candidate;
+                name.text = source;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.overflowMode = TextOverflowModes.Overflow;
+                name.maxVisibleLines = 1;
+                name.lineSpacing = 0f;
                 name.ForceMeshUpdate();
-                float needed = Mathf.Ceil(name.preferredHeight + 2f);
-                if (needed > limit + 1f)
+                if (name.preferredWidth > boxWidth + 1.5f)
                     continue;
-                ApplyPortraitNameLayout(card, name, needed, card.sizeDelta.y, wide, false);
-                name.lineSpacing = spacing;
+                float needed = PortraitNameBox(name, source, candidate, card.sizeDelta.y);
+                if (TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) + 1f < needed)
+                    continue;
+                ApplyPortraitNameLayout(card, name, needed, card.sizeDelta.y, wide, true);
+                name.lineSpacing = 0f;
                 name.ForceMeshUpdate();
                 if (PortraitNameFitsRect(name, source))
                     return;
             }
+        }
+
+        /// <summary>
+        /// Height the name rect has to be. On a short portrait, Noto Arabic's line box is about
+        /// 1.65em, taller than the preferred height TMP reports, so a wrapped Farsi title is not
+        /// given a rect the status row will cover. Taller cards keep the measured preferred height.
+        /// </summary>
+        private static float PortraitNameBox(TMP_Text name, string source, float size, float cardHeight)
+        {
+            float needed = Mathf.Ceil((name != null ? name.preferredHeight : 0f) + 2f);
+            if (cardHeight >= 190f || !ContainsArabicLetter(source))
+                return needed;
+            int lines = 1;
+            if (name != null && name.textInfo != null && name.textInfo.lineCount > 0)
+                lines = name.textInfo.lineCount;
+            float arabic = Mathf.Ceil(lines * size * 1.65f + 2f);
+            return arabic > needed ? arabic : needed;
         }
 
         private static bool PortraitNameFitsRect(TMP_Text name, string source)
@@ -2571,8 +2587,10 @@ namespace Game.UI.Runtime
                 : (cardH >= 190f ? 56f : compact ? 36f : 44f) + (wide ? 4f : 0f);
             float artFloor = compact ? 36f : 44f;
             float artH = cardH - pad - 4f - nameH - 4f - ringSide - pad;
-            if (artH < artFloor)
+            if (artH < artFloor && pad + artFloor + 4f + nameH + 4f + ringSide + pad <= cardH + 0.5f)
                 artH = artFloor;
+            if (artH < 0f)
+                artH = 0f;
             if (oneLine)
                 nameH = Mathf.Max(nameH, cardH >= 190f ? 40f : 34f);
             float nameY = pad + artH + 4f;
@@ -2770,13 +2788,30 @@ namespace Game.UI.Runtime
             float boxHeight = name.rectTransform.rect.height > 1f
                 ? name.rectTransform.rect.height
                 : name.rectTransform.sizeDelta.y;
+            float statusHeight = 0f;
+            if (card.Find("ProgressRing") is RectTransform ring)
+                statusHeight = ring.rect.height > 1f ? ring.rect.height : ring.sizeDelta.y;
+            float cardHeight = card.rect.height > 1f ? card.rect.height : card.sizeDelta.y;
+            float measuredHeight = name.preferredHeight;
+            if (cardHeight < 190f
+                && ContainsArabicLetter(name.text)
+                && name.textInfo != null
+                && name.textInfo.lineCount > 1)
+            {
+                float lineBox = name.textInfo.lineCount * name.fontSize * 1.65f;
+                if (lineBox > measuredHeight)
+                    measuredHeight = lineBox;
+            }
+
             TheatreSeatGeometry.NoteDrawnName(
                 mapId,
                 name.fontSize,
                 boxWidth,
                 boxHeight,
                 MeasuredNameWidth(name),
-                name.preferredHeight);
+                measuredHeight,
+                statusHeight,
+                cardHeight);
         }
 
         private static bool ContainsArabicLetter(string value)

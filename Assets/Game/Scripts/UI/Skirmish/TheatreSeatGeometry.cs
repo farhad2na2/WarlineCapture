@@ -508,6 +508,7 @@ namespace Game.UI.Runtime
             public float BoxHeight;
             public float PreferredWidth;
             public float PreferredHeight;
+            public float StatusHeight;
             public float Band;
             public float CardWidth;
             public float CardHeight;
@@ -579,6 +580,7 @@ namespace Game.UI.Runtime
                     .Append(", \"boxH\": ").Append(Num(name.BoxHeight))
                     .Append(", \"preferredW\": ").Append(Num(name.PreferredWidth))
                     .Append(", \"preferredH\": ").Append(Num(name.PreferredHeight))
+                    .Append(", \"statusH\": ").Append(Num(name.StatusHeight))
                     .Append(", \"band\": ").Append(Num(name.Band))
                     .Append(", \"cardW\": ").Append(Num(name.CardWidth))
                     .Append(", \"cardH\": ").Append(Num(name.CardHeight)).Append(" }");
@@ -720,7 +722,9 @@ namespace Game.UI.Runtime
             float boxWidth,
             float boxHeight,
             float preferredWidth,
-            float preferredHeight)
+            float preferredHeight,
+            float statusHeight,
+            float cardHeight)
         {
             if (DrawnNames == null || string.IsNullOrEmpty(mapId))
                 return;
@@ -734,6 +738,9 @@ namespace Game.UI.Runtime
                 name.BoxHeight = boxHeight;
                 name.PreferredWidth = preferredWidth;
                 name.PreferredHeight = preferredHeight;
+                name.StatusHeight = statusHeight;
+                if (cardHeight > 1f)
+                    name.CardHeight = cardHeight;
                 DrawnNames[i] = name;
                 break;
             }
@@ -789,6 +796,67 @@ namespace Game.UI.Runtime
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// True when a dumped name plus its status row does not fit in the card.
+        /// The thumbnail and the pads stay, so the two text rows share what is left.
+        /// A dump with no status height is left alone.
+        /// </summary>
+        public static bool TryReadNameStack(
+            string json,
+            out string mapId,
+            out string text,
+            out float nameHeight,
+            out float statusHeight,
+            out float cardHeight)
+        {
+            mapId = string.Empty;
+            text = string.Empty;
+            nameHeight = 0f;
+            statusHeight = 0f;
+            cardHeight = 0f;
+            if (string.IsNullOrEmpty(json) || !JsonStringsAreClean(json))
+                return false;
+            int names = json.IndexOf("\"names\"", StringComparison.Ordinal);
+            if (names < 0)
+                return false;
+            int cursor = names;
+            while (cursor < json.Length)
+            {
+                int id = json.IndexOf("\"id\"", cursor, StringComparison.Ordinal);
+                if (id < 0)
+                    break;
+                int next = json.IndexOf("\"id\"", id + 4, StringComparison.Ordinal);
+                string slice = next < 0 ? json.Substring(id) : json.Substring(id, next - id);
+                float nameH = ReadNumber(slice, "\"preferredH\"", 0);
+                float statusH = ReadNumber(slice, "\"statusH\"", 0);
+                float cardH = ReadNumber(slice, "\"cardH\"", 0);
+                float room = cardH - NameStackChrome(cardH);
+                if (statusH > 0.5f && cardH > 1f && nameH + statusH > room + 1f)
+                {
+                    mapId = ReadString(slice, "id", string.Empty);
+                    text = ReadString(slice, "text", string.Empty);
+                    nameHeight = nameH;
+                    statusHeight = statusH;
+                    cardHeight = cardH;
+                    return true;
+                }
+
+                if (next < 0)
+                    break;
+                cursor = next;
+            }
+
+            return false;
+        }
+
+        /// <summary>Pads, thumbnail floor and the gaps between the name and the status row.</summary>
+        public static float NameStackChrome(float cardHeight)
+        {
+            bool compact = cardHeight < 156f;
+            float art = compact ? 36f : 44f;
+            return 6f + art + 4f + 4f + 6f;
         }
 
         private static string Json(string value)
@@ -1428,11 +1496,14 @@ namespace Game.UI.Runtime
                     continue;
                 string title = ZoneTitle(MapIds[i], fa);
                 Vec2[] own = hexes != null && i < hexes.Length ? hexes[i] : null;
-                if (!TryFitZoneName(title, cards[i], bands[i], wide, own, hexes, out _, out _, out float grown))
+                if (!TryFitZoneName(title, cards[i], bands[i], wide, own, hexes, out float font, out _, out float grown))
                     continue;
-                if (grown <= cards[i].H + 0.5f)
+                float target = grown;
+                if (target <= cards[i].H + 0.5f)
+                    target = ArabicLineBoxHeight(title, cards[i], bands[i], wide, font);
+                if (target <= cards[i].H + 0.5f)
                     continue;
-                var grownCard = new Box(cards[i].X, cards[i].Y, cards[i].W, grown);
+                var grownCard = new Box(cards[i].X, cards[i].Y, cards[i].W, target);
                 bool crowded = false;
                 for (int j = 0; j < n; j++)
                 {
@@ -1444,10 +1515,45 @@ namespace Game.UI.Runtime
                         break;
                     }
                 }
-                if (crowded)
+                if (crowded || (own != null && hexes != null && !SeatHolds(grownCard, own, hexes)))
                     continue;
                 cards[i] = grownCard;
             }
+        }
+
+        /// <summary>
+        /// Extra height a short portrait needs so a wrapped Farsi title and the status row stack.
+        /// Noto Arabic's line box is about 1.65em. Returns the current height when that stack
+        /// already fits, or when the band cannot hold it.
+        /// </summary>
+        private static float ArabicLineBoxHeight(string text, Box card, float bandHeight, bool wide, float font)
+        {
+            if (string.IsNullOrEmpty(text) || font < 1f || card.H >= 190f)
+                return card.H;
+            bool arabic = false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] > 127)
+                {
+                    arabic = true;
+                    break;
+                }
+            }
+
+            if (!arabic)
+                return card.H;
+            float width = Math.Max(1f, card.W - 12f);
+            if (!MeasureName(text, width, font, out int lines, out _, out _) || lines < 2)
+                return card.H;
+            float needed = lines * font * 1.65f + 2f;
+            if (MaxNameBoxHeight(card.H, wide) + 1f >= needed)
+                return card.H;
+            float band = Math.Max(card.H, Math.Min(PortraitMaxHeight, bandHeight));
+            if (MaxNameBoxHeight(band, wide) + 1f < needed)
+                return card.H;
+            while (band - 1f >= card.H && MaxNameBoxHeight(band - 1f, wide) + 1f >= needed)
+                band -= 1f;
+            return band;
         }
 
         private static float NameLineFactor(string text)

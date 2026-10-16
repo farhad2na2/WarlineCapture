@@ -126,6 +126,8 @@ namespace Game.UI.Runtime
             }
 
             IReadOnlyList<SkirmishFooterBarWidget.ButtonSpec> specs = SkirmishFooterBarWidget.Buttons(level);
+            // approved-1/2 + Game PM: Zoom In is the green primary on Theatre, Start Battle on Battlefield.
+            _footerPrimary = battlefield ? launchButton : randomizeSeedButton;
             float gap = 8f;
             Rect[] rects = SkirmishFooterBarWidget.Layout(level, compositionWidth - side * 2f, height, gap, fa);
             for (int i = 0; i < shown.Length && i < specs.Count; i++)
@@ -137,7 +139,9 @@ namespace Game.UI.Runtime
                 HideFooterChevrons(button);
                 HideDiceIcon(button);
                 ClearFooterIcon(button);
-                Color face = specs[i].Color;
+                Color face = button == _footerPrimary ? new Color(0.24f, 0.58f, 0.18f, 1f) : specs[i].Color;
+                if (button != _footerPrimary && face.g > face.r * 1.6f && face.g > face.b * 1.6f)
+                    face = new Color(0.14f, 0.46f, 0.7f, 1f); // only one green primary per footer
                 TintCommand(button, Color.Lerp(face, Color.white, 0.12f), Color.Lerp(face, Color.black, 0.25f));
                 TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
                 if (button == back)
@@ -151,9 +155,7 @@ namespace Game.UI.Runtime
                     label.isRightToLeftText = ContainsArabicScript(label.text);
                 }
 
-                bool primary = specs[i].Weight >= 1.5f;
-                if (primary)
-                    _footerPrimary = button;
+                bool primary = button == _footerPrimary;
                 if (label != null)
                 {
                     // approved mockups: heavy footer type, the green primary largest.

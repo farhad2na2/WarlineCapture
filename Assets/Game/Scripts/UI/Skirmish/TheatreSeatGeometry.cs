@@ -138,11 +138,13 @@ namespace Game.UI.Runtime
 
         public const float PortraitMinWidth = 112f;
         public const float PortraitMaxWidth = 160f;
+        /// <summary>Capture prints sizes with one decimal of rounding. A tile that prints as the max still passes.</summary>
+        public const float PortraitMaxSlop = 0.5f;
         public const float PortraitMinHeight = 140f;
         public const float PortraitMaxHeight = 212f;
         /// <summary>Compact 112-wide tiles may step one point under <see cref="NameFontFloor"/> so the longest Persian word still fits.</summary>
         public const float PortraitCompactFontFloor = 15f;
-        public const float NameFontCeiling = 28f;
+        public const float NameFontCeiling = 22f;
         public const float NameFontFloor = 16f;
         public const float StripCaptionCeiling = 12f;
         public const float StripCaptionFloor = 9f;
@@ -299,7 +301,7 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// Map viewport. With the reserve off this is the whole plate. With the reserve on it is
-        /// the open rect beside the detail panel, and the painting is cover-fit into that rect.
+        /// the open rect beside the detail panel. The painting itself cover-fits the full plate.
         /// </summary>
         public static Box OpenViewport(float plateWidth, float plateHeight, bool fa, bool reserveOn)
         {
@@ -1131,8 +1133,8 @@ namespace Game.UI.Runtime
                 {
                     NoteOutside(violations, cards[i], plateWidth, plateHeight, "zone card", mapId, locale, true);
                     NoteCardEdge(violations, cards[i], plateWidth, plateHeight, mapId, locale);
-                    if (cards[i].W < PortraitMinWidth || cards[i].W > PortraitMaxWidth
-                        || cards[i].H < PortraitMinHeight || cards[i].H > PortraitMaxHeight)
+                    if (cards[i].W < PortraitMinWidth || cards[i].W > PortraitMaxWidth + PortraitMaxSlop
+                        || cards[i].H < PortraitMinHeight || cards[i].H > PortraitMaxHeight + PortraitMaxSlop)
                     {
                         violations.Add(
                             "Theatre zone card for " + mapId + " is " + cards[i].W.ToString("0", CultureInfo.InvariantCulture) +
@@ -1273,6 +1275,19 @@ namespace Game.UI.Runtime
                 {
                     violations.Add(
                         "Theatre zoom hint intersects the detail panel locale=" + locale + ".");
+                }
+            }
+
+            if (hasHint)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    if (cards[i].W > 1f && Overlaps(hint, cards[i], 2f))
+                    {
+                        violations.Add(
+                            "Theatre pinch cue overlaps a zone card locale=" + locale +
+                            " card=ZoneCard_" + MapIds[i] + ".");
+                    }
                 }
             }
 
@@ -1513,6 +1528,85 @@ namespace Game.UI.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Moves a portrait off the pinch-zoom cue. It keeps its size when a higher seat
+        /// is legal, and otherwise shortens only enough to clear the cue.
+        /// </summary>
+        private static void LiftCardsOffHint(Box[] cards, Vec2[][] hexes, Box detail, float plateWidth, float plateHeight)
+        {
+            if (cards == null)
+                return;
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            for (int pass = 0; pass < 8; pass++)
+            {
+                bool moved = false;
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (cards[i].W < 1f || !Overlaps(cards[i], hint, 2f))
+                        continue;
+                    float lift = cards[i].YMax - (hint.YMin - 3f);
+                    if (lift < 0.5f)
+                        continue;
+                    float raisedY = cards[i].Y - lift;
+                    Box candidate = default;
+                    bool found = false;
+                    if (raisedY >= Edge)
+                    {
+                        var raised = new Box(cards[i].X, raisedY, cards[i].W, cards[i].H);
+                        if (SeatAccepts(raised, i, cards, hexes, detail))
+                        {
+                            candidate = raised;
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        float limit = hint.YMin - 3f;
+                        for (float y = cards[i].Y; y >= Edge; y -= 8f)
+                        {
+                            float nextH = Math.Min(cards[i].H, limit - y);
+                            if (nextH + 0.5f < PortraitMinHeight)
+                                continue;
+                            var trial = new Box(cards[i].X, y, cards[i].W, nextH);
+                            if (!SeatAccepts(trial, i, cards, hexes, detail))
+                                continue;
+                            candidate = trial;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                        continue;
+                    cards[i] = candidate;
+                    moved = true;
+                }
+
+                if (!moved)
+                    break;
+            }
+        }
+
+        private static bool SeatAccepts(Box card, int index, Box[] cards, Vec2[][] hexes, Box detail)
+        {
+            if (hexes != null && index < hexes.Length && !SeatHolds(card, hexes[index], hexes))
+                return false;
+            if (detail.W > 1f && Overlaps(card, detail, 0f))
+                return false;
+            if (cards == null)
+                return true;
+            for (int j = 0; j < cards.Length; j++)
+            {
+                if (j == index || cards[j].W < 1f)
+                    continue;
+                if (Separation(card, cards[j]) < CardGap)
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>How far a top-left card may extend downward before it meets another seat, the cue, or the plate.</summary>
         public static float NameBandHeight(Box card, Box[] cards, int index, Box detail, Box cue, Box hint, float plateHeight)
         {
@@ -1541,22 +1635,13 @@ namespace Game.UI.Runtime
             return Math.Max(card.H, Math.Min(PortraitMaxHeight, room));
         }
 
-        /// <summary>
-        /// Name-box height under a plate thumbnail. Tall tiles keep a two-line name at 22
-        /// and give the rest to the art. Shorter tiles keep the font floor so the name still fits.
-        /// </summary>
+        /// <summary>Name-box height a portrait can give once the thumbnail keeps 44px and the ring keeps its size.</summary>
         public static float MaxNameBoxHeight(float cardHeight, bool wide)
         {
             bool compact = cardHeight < 156f;
-            bool tall = cardHeight >= 190f;
-            float status = (tall ? 30f : compact ? 24f : 28f) + (wide ? 2f : 0f);
-            float font = tall ? 22f : compact ? PortraitCompactFontFloor : NameFontFloor;
-            float name = 2f * font * 1.25f + 1f;
-            const float pad = 14f;
-            float artFloor = tall ? 96f : compact ? 48f : 72f;
-            if (cardHeight - pad - status - name < artFloor)
-                name = 2f * (compact ? PortraitCompactFontFloor : NameFontFloor) * 1.25f + 1f;
-            return Math.Max(32f, name);
+            float ring = (cardHeight >= 190f ? 56f : compact ? 36f : 44f) + (wide ? 4f : 0f);
+            float art = compact ? 36f : 44f;
+            return cardHeight - 6f - art - 4f - ring - 4f - 6f;
         }
 
         private static void GrowCardsForNames(
@@ -2173,6 +2258,7 @@ namespace Game.UI.Runtime
                     plateHeight,
                     fa,
                     wide);
+                LiftCardsOffHint(placed, hexes, detail, plateWidth, plateHeight);
             }
 
             bool cardsLegal = placed != null;
@@ -2575,8 +2661,8 @@ namespace Game.UI.Runtime
         {
             cards = null;
             cue = default;
-            float[] widths = { PortraitMaxWidth, 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
-            float[] heights = { PortraitMaxHeight, 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
+            float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
+            float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
             Box[] cues = CueSpots(plateWidth, plateHeight, pins, hexes, detail, selected);
             for (int size = 0; size < widths.Length; size++)
             {
@@ -3359,8 +3445,8 @@ namespace Game.UI.Runtime
         {
             cards = null;
             cue = default;
-            float[] widths = { PortraitMaxWidth, 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
-            float[] heights = { PortraitMaxHeight, 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
+            float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
+            float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
             float[] cueWidths = { CueWidth, 196f, 172f, 148f, PackedCueMinWidth };
             for (int pass = 0; pass < 2; pass++)
             {

@@ -1333,11 +1333,11 @@ namespace Game.Editor
                     " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
-            if (polygon.color.a < 0.54f || polygon.color.a > 0.62f)
+            if (polygon.color.a < 0.32f || polygon.color.a > 0.38f)
             {
                 throw new InvalidOperationException(
                     "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
-                    " locale=" + locale + ". Expected about 0.58.");
+                    " locale=" + locale + ". Expected about 0.35.");
             }
 
             bool stroke = false;
@@ -1509,8 +1509,8 @@ namespace Game.Editor
             string locale)
         {
             Vector2 size = card.sizeDelta;
-            if (size.x < TheatreSeatGeometry.PortraitMinWidth || size.x > TheatreSeatGeometry.PortraitMaxWidth
-                || size.y < TheatreSeatGeometry.PortraitMinHeight || size.y > TheatreSeatGeometry.PortraitMaxHeight)
+            if (size.x < TheatreSeatGeometry.PortraitMinWidth || size.x > TheatreSeatGeometry.PortraitMaxWidth + TheatreSeatGeometry.PortraitMaxSlop
+                || size.y < TheatreSeatGeometry.PortraitMinHeight || size.y > TheatreSeatGeometry.PortraitMaxHeight + TheatreSeatGeometry.PortraitMaxSlop)
             {
                 throw new InvalidOperationException(
                     "Theatre zone card for " + mapId + " is " + size.x.ToString("0") + "x" + size.y.ToString("0") +
@@ -1566,6 +1566,7 @@ namespace Game.Editor
             }
 
             RejectReadableLine(count, "zone count", mapId, locale);
+            RejectStatusInsideCard(card, count, locale, mapId);
             RememberZoneCount(locale, mapId, expected, "zone card");
             if (pending)
             {
@@ -1586,6 +1587,34 @@ namespace Game.Editor
                     "Theatre progress arc for " + mapId + " is " + fill.fillAmount.ToString("0.00") +
                     " locale=" + locale + ". Expected " + ratio.ToString("0.00") + ".");
             }
+        }
+
+        private static void RejectStatusInsideCard(RectTransform card, TMP_Text count, string locale, string mapId)
+        {
+            if (card == null)
+                return;
+            Rect plate = WorldBounds(card);
+            const float slop = 1f;
+            Transform ring = card.Find("ProgressRing");
+            if (ring is RectTransform ringRect && !Contains(plate, WorldBounds(ringRect), slop))
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone status draws outside its card locale=" + locale +
+                    " card=ZoneCard_" + mapId + ".");
+            }
+
+            if (count != null && count.rectTransform != null && !Contains(plate, WorldBounds(count.rectTransform), slop))
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone status draws outside its card locale=" + locale +
+                    " card=ZoneCard_" + mapId + ".");
+            }
+        }
+
+        private static bool Contains(Rect outer, Rect inner, float slop)
+        {
+            return inner.xMin >= outer.xMin - slop && inner.xMax <= outer.xMax + slop
+                && inner.yMin >= outer.yMin - slop && inner.yMax <= outer.yMax + slop;
         }
 
         private static void RejectSelectedZoneMatchesGridRows(

@@ -90,24 +90,16 @@ namespace Game.UI.Runtime
                 plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree(), selectedMap);
             TheatreSeatGeometry.NoteDetailReserve(reserve);
             TheatreSeatGeometry.ShotReserve = reserve;
-            TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
-            bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 raw.transform.SetParent(fit, false);
-                if (reframed)
-                    PlaceTopLeft(raw.rectTransform, viewport.X, viewport.Y, viewport.W, viewport.H);
-                else
-                    Stretch(raw.rectTransform);
+                Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = TheatrePaintDim();
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                if (reframed)
-                    ApplyPlainTheatreCover(raw, viewport.W, viewport.H);
-                else
-                    ApplyTheatreCover(raw, plateWidth, plateHeight);
+                ApplyTheatreCover(raw, plateWidth, plateHeight);
                 var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 shade.transform.SetParent(fit, false);
                 Stretch(shade.rectTransform);
@@ -1531,14 +1523,14 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             Color fill = color;
-            fill.a = 0.58f;
+            fill.a = 0.35f;
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
             PlaceDistrictHalo(root, local, color);
             Color outer = color;
             outer.a = 0.96f;
             Color glow = Color.Lerp(color, Color.white, 0.18f);
             glow.a = 1f;
-            Color ink = Color.Lerp(color, Color.white, selected ? 0.55f : 0.28f);
+            Color ink = Color.Lerp(color, Color.white, selected ? 0.62f : 0.48f);
             ink.a = 1f;
             // The core stroke stays inside the 3–4.5 capture band. The bright edge is the outer glow.
             const float stroke = 4.5f;
@@ -1867,9 +1859,11 @@ namespace Game.UI.Runtime
             bool pending = total <= 0;
             float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
             float statusY = nameY + nameH + 2f;
-            float ring = Mathf.Min(statusH, artW);
+            float room = Mathf.Max(1f, cardH - frame - statusY);
+            float ring = Mathf.Min(statusH, artW, room);
             float ringX = pending ? frame : frame + (artW - ring) * 0.5f;
             float ringW = pending ? artW : ring;
+            float ringH = pending ? Mathf.Min(statusH, room) : ring;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = pending ? ZoneSolidSprite() : ZoneRingSprite();
@@ -1877,7 +1871,7 @@ namespace Game.UI.Runtime
                 ? new Color(0.04f, 0.05f, 0.06f, 0.92f)
                 : new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, statusY, ringW, pending ? Mathf.Max(20f, cardH - statusY - frame) : ring);
+            PlaceTopLeft(track.rectTransform, ringX, statusY, ringW, ringH);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1902,6 +1896,7 @@ namespace Game.UI.Runtime
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
             count.maxVisibleLines = 1;
+            FitCopyInside(count, 11f);
         }
 
         private static void ApplyDistrictThumbnail(RawImage preview, string mapId)
@@ -2006,34 +2001,53 @@ namespace Game.UI.Runtime
                 return;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
+            cue.maxVisibleLines = 1;
+            FitCopyInside(cue, 11f);
             cue.ForceMeshUpdate();
-            float preferred = cue.preferredWidth;
-            if (preferred < 0.5f)
-                preferred = cue.GetPreferredValues(source).x;
-            int drawnLines = cue.textInfo != null ? cue.textInfo.lineCount : 1;
-            if (drawnLines <= 1 && preferred > 0.5f && preferred <= boxW + 1.5f && cue.preferredHeight <= boxH + 1.5f)
+            float line = MeasuredNameWidth(cue);
+            float height = cue.preferredHeight;
+            if (line > 0.5f && line <= boxW + 2f && height <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
                 return;
+            CueLabelSplits(cue, source, cue.fontSize, boxW, boxH);
+        }
 
-            const float floor = 14f;
-            for (float size = 32f; size >= floor - 0.01f; size -= 1f)
+        /// <summary>
+        /// Shrink a one-line label until its mesh width and height sit inside the rect.
+        /// Capture measures the mesh line, which can be wider than preferredWidth.
+        /// </summary>
+        private static void FitCopyInside(TMP_Text text, float floor)
+        {
+            if (text == null || text.rectTransform == null)
+                return;
+            float boxW = text.rectTransform.rect.width > 1f ? text.rectTransform.rect.width : text.rectTransform.sizeDelta.x;
+            float boxH = text.rectTransform.rect.height > 1f ? text.rectTransform.rect.height : text.rectTransform.sizeDelta.y;
+            if (boxW < 8f || boxH < 8f)
+                return;
+            string source = (text.text ?? string.Empty).Replace("\n", " ").Trim();
+            if (source.Length == 0)
+                return;
+            float start = text.fontSizeMax > 1f ? text.fontSizeMax : text.fontSize;
+            if (start < floor)
+                start = floor;
+            var binding = text.GetComponent<V3LocalizedTextBindingView>();
+            for (float size = start; size >= floor - 0.01f; size -= 1f)
             {
-                cue.enableAutoSizing = true;
-                cue.fontSizeMin = size;
-                cue.fontSizeMax = size;
-                cue.fontSize = size;
-                cue.text = source;
-                cue.maxVisibleLines = 1;
-                cue.textWrappingMode = TextWrappingModes.NoWrap;
-                cue.ForceMeshUpdate();
-                float line = cue.preferredWidth;
-                if (line < 0.5f)
-                    line = cue.GetPreferredValues(source).x;
-                float height = cue.preferredHeight;
+                if (binding != null)
+                    binding.ConfigureFontBounds(size, size);
+                text.enableAutoSizing = true;
+                text.fontSizeMin = size;
+                text.fontSizeMax = size;
+                text.fontSize = size;
+                text.text = source;
+                text.textWrappingMode = TextWrappingModes.NoWrap;
+                text.overflowMode = TextOverflowModes.Overflow;
+                text.maxVisibleLines = 1;
+                text.ForceMeshUpdate();
+                float line = MeasuredNameWidth(text);
+                float height = text.preferredHeight;
                 if (height < 0.5f)
-                    height = cue.GetPreferredValues(source).y;
-                if (line > 0.5f && line <= boxW + 1.5f && height <= boxH + 1.5f)
-                    return;
-                if (CueLabelSplits(cue, source, size, boxW, boxH))
+                    height = text.GetPreferredValues(source).y;
+                if (line > 0.5f && line <= boxW + 2f && height <= boxH + 2f && !text.isTextTruncated && !text.isTextOverflowing)
                     return;
             }
         }
@@ -2630,34 +2644,64 @@ namespace Game.UI.Runtime
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
             bool banner = ring != null && ring.sizeDelta.x > ring.sizeDelta.y + 8f;
             bool compact = cardH < 156f;
-            float ringSide = banner
-                ? Mathf.Max(28f, ring.sizeDelta.y)
-                : (cardH >= 190f ? 56f : compact ? 36f : 44f) + (wide ? 4f : 0f);
-            float artFloor = compact ? 36f : 44f;
-            float artH = cardH - pad - 4f - nameH - 4f - ringSide - pad;
-            if (artH < artFloor && pad + artFloor + 4f + nameH + 4f + ringSide + pad <= cardH + 0.5f)
-                artH = artFloor;
-            if (artH < 0f)
-                artH = 0f;
+            float statusH = banner
+                ? (cardH >= 190f ? 36f : 32f)
+                : (cardH >= 190f ? 48f : compact ? 36f : 44f);
+            if (wide && !banner)
+                statusH += 4f;
+            float artFloor = compact ? 48f : 72f;
             if (oneLine)
-                nameH = Mathf.Max(nameH, cardH >= 190f ? 40f : 34f);
+                nameH = Mathf.Max(nameH, cardH >= 190f ? 28f : 24f);
+            float chrome = pad + 4f + nameH + 4f + statusH + pad;
+            float artH = cardH - chrome;
+            if (artH < artFloor)
+            {
+                float shortfall = artFloor - artH;
+                float nameRoom = Mathf.Max(0f, nameH - 22f);
+                float take = Mathf.Min(nameRoom, shortfall);
+                nameH -= take;
+                shortfall -= take;
+                if (shortfall > 0f && statusH > 22f)
+                {
+                    float statusTake = Mathf.Min(statusH - 22f, shortfall);
+                    statusH -= statusTake;
+                    shortfall -= statusTake;
+                }
+
+                artH = cardH - (pad + 4f + nameH + 4f + statusH + pad);
+                if (artH < 28f)
+                    artH = Mathf.Max(0f, artH);
+            }
+
             float nameY = pad + artH + 4f;
             PlaceTopLeft(name.rectTransform, pad, nameY, artW, nameH);
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
             {
-                PlaceTopLeft(thumb, pad, pad, artW, artH);
+                PlaceTopLeft(thumb, pad, pad, artW, Mathf.Max(0f, artH));
                 if (thumb.Find("Thumbnail") is RectTransform preview)
-                    PlaceTopLeft(preview, 2f, 2f, Mathf.Max(8f, artW - 4f), Mathf.Max(8f, artH - 4f));
+                {
+                    const float inset = 5f;
+                    PlaceTopLeft(preview, inset, inset, Mathf.Max(8f, artW - inset * 2f), Mathf.Max(8f, artH - inset * 2f));
+                }
             }
 
             if (ring == null)
                 return;
             float ringY = nameY + nameH + 4f;
+            float limit = cardH - pad;
+            if (ringY + statusH > limit)
+                statusH = Mathf.Max(1f, limit - ringY);
             if (banner)
-                PlaceTopLeft(ring, pad, ringY, artW, Mathf.Max(28f, cardH - ringY - pad));
+                PlaceTopLeft(ring, pad, ringY, artW, statusH);
             else
-                PlaceTopLeft(ring, (cardW - ringSide) * 0.5f, ringY, ringSide, ringSide);
+            {
+                float side = Mathf.Min(statusH, artW);
+                PlaceTopLeft(ring, (cardW - side) * 0.5f, ringY, side, side);
+            }
+
+            if (ring.Find("ZoneCount") is TMP_Text count)
+                FitCopyInside(count, 11f);
         }
 
         private static void FitZoneNames(Transform regions)
@@ -2888,13 +2932,13 @@ namespace Game.UI.Runtime
             }
 
             TMP_TextInfo info = name.textInfo;
-            if (info != null && info.lineCount > 1)
+            if (info != null && info.lineCount > 0 && info.lineInfo != null)
             {
                 float widest = 0f;
                 int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
                 for (int i = 0; i < lines; i++)
                     widest = Mathf.Max(widest, info.lineInfo[i].length);
-                if (widest > 0.5f)
+                if (widest > measured)
                     measured = widest;
             }
 
@@ -3030,13 +3074,38 @@ namespace Game.UI.Runtime
             text.overflowMode = TextOverflowModes.Overflow;
             text.maxVisibleLines = 1;
             text.ForceMeshUpdate();
-            float width = text.rectTransform != null ? text.rectTransform.rect.width : 0f;
+            float width = 0f;
+            float boxHeight = 0f;
+            if (text.rectTransform != null)
+            {
+                width = text.rectTransform.rect.width > 1f ? text.rectTransform.rect.width : text.rectTransform.sizeDelta.x;
+                boxHeight = text.rectTransform.rect.height > 1f ? text.rectTransform.rect.height : text.rectTransform.sizeDelta.y;
+            }
+
             if (width < 8f)
                 return;
-            for (int step = 0; step < 10 && text.preferredWidth > width + 1.5f && text.fontSizeMax > text.fontSizeMin + 0.5f; step++)
+            FitCopyInside(text, Mathf.Min(min, 11f));
+            if (text.fontSizeMax < min)
+                return;
+            for (int step = 0; step < 4 && text.fontSize < max - 0.5f; step++)
             {
-                text.fontSizeMax = Mathf.Max(text.fontSizeMin, text.fontSizeMax - 1f);
+                float trial = Mathf.Min(max, text.fontSize + 1f);
+                float kept = text.fontSize;
+                text.fontSizeMin = trial;
+                text.fontSizeMax = trial;
+                text.fontSize = trial;
                 text.ForceMeshUpdate();
+                float line = MeasuredNameWidth(text);
+                bool wideLine = line > width + 2f;
+                bool tallLine = boxHeight > 8f && text.preferredHeight > boxHeight + 2f;
+                if (wideLine || tallLine || text.isTextTruncated || text.isTextOverflowing)
+                {
+                    text.fontSizeMin = kept;
+                    text.fontSizeMax = kept;
+                    text.fontSize = kept;
+                    text.ForceMeshUpdate();
+                    return;
+                }
             }
         }
 
@@ -3501,11 +3570,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.00f, 0.86f, 0.78f, 1f);
-                case "MP": return new Color(0.64f, 0.16f, 0.96f, 1f);
-                case "IB": return new Color(1.00f, 0.38f, 0.02f, 1f);
-                case "AP": return new Color(0.05f, 0.42f, 1.00f, 1f);
-                default: return new Color(1.00f, 0.84f, 0.02f, 1f);
+                case "CC": return new Color(0.18f, 0.42f, 0.40f, 1f);
+                case "MP": return new Color(0.40f, 0.26f, 0.48f, 1f);
+                case "IB": return new Color(0.62f, 0.40f, 0.14f, 1f);
+                case "AP": return new Color(0.32f, 0.40f, 0.48f, 1f);
+                default: return new Color(0.42f, 0.40f, 0.16f, 1f);
             }
         }
 

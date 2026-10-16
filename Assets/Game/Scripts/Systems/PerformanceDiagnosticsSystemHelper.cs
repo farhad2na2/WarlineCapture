@@ -233,6 +233,174 @@ namespace Game.Runtime
             builder.Append(fraction);
         }
 
+
+        private static readonly bool EnableStartupMemoryCensus = ShouldEnableStartupMemoryCensus();
+        private static bool _startupMemoryCensusCaptured;
+        private const int StartupCensusObjectLimit = 4096;
+        private const int StartupCensusTopLimit = 16;
+        private const double StartupCensusScanSeconds = 0.020d;
+
+        [Serializable]
+        private sealed class StartupCensusObject
+        {
+            public string name, type, detail, nativeEntityId;
+            public long reportedBytes;
+        }
+
+        [Serializable]
+        private sealed class StartupCensusPass
+        {
+            public string category;
+            public int enumeratedReferences, scanned, unavailable, ordinaryObjects, renderTextures;
+            public long referenceSlotsBytes, ordinaryReportedBytes, renderTextureReportedBytes;
+            public double enumerationMs, scanMs;
+            public bool partial;
+            public StartupCensusObject[] topOrdinary, topRenderTextures;
+        }
+
+        [Serializable]
+        private sealed class StartupCensusScene
+        {
+            public string name, path, handle;
+            public int rootCount;
+            public bool loaded;
+        }
+
+        [Serializable]
+        private sealed class StartupCensusReport
+        {
+            public string utc, phase, attempt, catalog, definition, worldSequence;
+            public int frame, seed, contentVersion, sceneCount;
+            public long unityAllocatedBytes, unityReservedBytes, unityUnusedReservedBytes, monoUsedBytes, monoHeapBytes;
+            public long observerManagedBytesBeforeSerialization;
+            public double observerMsBeforeSerialization;
+            public bool sceneListPartial;
+            public StartupCensusScene[] scenes;
+            public StartupCensusPass meshes, textures;
+            public string scope = "Loaded resources; scanned bytes only; counters overlap; full reference arrays allocated; ownership and camera acceptance unproved";
+        }
+
+        private static bool ShouldEnableStartupMemoryCensus()
+        {
+            try { return Application.isEditor && IsTruthy(Environment.GetEnvironmentVariable("WARLINE_S005_STARTUP_MEMORY_CENSUS")); }
+            catch { return false; }
+        }
+
+        internal static void CaptureStartupMemoryCensus(World world, string phase)
+        {
+            if (!EnableStartupMemoryCensus || _startupMemoryCensusCaptured || world == null || !world.IsCreated)
+                return;
+
+            string attempt = "unavailable";
+            double started = UnityEngine.Time.realtimeSinceStartupAsDouble;
+            long allocatedBefore = GC.GetAllocatedBytesForCurrentThread();
+            try
+            {
+                using EntityQuery query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
+                if (query.CalculateEntityCount() != 1)
+                    return;
+                SkirmishExpandedSessionComponent session = query.GetSingleton<SkirmishExpandedSessionComponent>();
+                if (session.CatalogId.ToString() != "S005" || session.SessionId.Length == 0)
+                    return;
+                attempt = session.SessionId.ToString();
+                _startupMemoryCensusCaptured = true;
+                var report = new StartupCensusReport
+                {
+                    utc = DateTime.UtcNow.ToString("O"), phase = phase, attempt = attempt,
+                    catalog = session.CatalogId.ToString(), definition = session.DefinitionId.ToString(),
+                    worldSequence = world.SequenceNumber.ToString(), frame = UnityEngine.Time.frameCount,
+                    seed = session.Seed, contentVersion = session.ContentVersion,
+                    unityAllocatedBytes = Profiler.GetTotalAllocatedMemoryLong(),
+                    unityReservedBytes = Profiler.GetTotalReservedMemoryLong(),
+                    unityUnusedReservedBytes = Profiler.GetTotalUnusedReservedMemoryLong(),
+                    monoUsedBytes = Profiler.GetMonoUsedSizeLong(), monoHeapBytes = Profiler.GetMonoHeapSizeLong(),
+                    sceneCount = UnityEngine.SceneManagement.SceneManager.sceneCount
+                };
+                report.scenes = new StartupCensusScene[Math.Min(report.sceneCount, 32)];
+                report.sceneListPartial = report.scenes.Length != report.sceneCount;
+                for (int i = 0; i < report.scenes.Length; i++)
+                {
+                    var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                    report.scenes[i] = new StartupCensusScene
+                    {
+                        name = StartupCensusLabel(scene.name, 96), path = StartupCensusLabel(scene.path, 256),
+                        handle = scene.handle.GetRawData().ToString(System.Globalization.CultureInfo.InvariantCulture), loaded = scene.isLoaded, rootCount = scene.rootCount
+                    };
+                }
+                report.meshes = CaptureStartupCensusObjects<Mesh>("Meshes");
+                report.textures = CaptureStartupCensusObjects<Texture>("TexturesExceptRenderTextures");
+                report.observerManagedBytesBeforeSerialization = GC.GetAllocatedBytesForCurrentThread() - allocatedBefore;
+                report.observerMsBeforeSerialization = (UnityEngine.Time.realtimeSinceStartupAsDouble - started) * 1000d;
+                LogNoStackTrace("[S005StartupMemoryCensus] " + JsonUtility.ToJson(report));
+                LogNoStackTrace($"[S005StartupMemoryCensusOverhead] attempt={attempt} phase={phase} elapsedMs={(UnityEngine.Time.realtimeSinceStartupAsDouble - started) * 1000d:F1} includesReportSerializationAndLog=1");
+            }
+            catch (Exception error)
+            {
+                _startupMemoryCensusCaptured = true;
+                LogNoStackTrace($"[S005StartupMemoryCensus] status=Unavailable attempt={attempt} phase={phase} errorType={error.GetType().Name} elapsedMs={(UnityEngine.Time.realtimeSinceStartupAsDouble - started) * 1000d:F1}");
+            }
+        }
+
+        private static StartupCensusPass CaptureStartupCensusObjects<T>(string category) where T : UnityEngine.Object
+        {
+            double started = UnityEngine.Time.realtimeSinceStartupAsDouble;
+            // Unity allocates this COMPLETE reference array before the scan can be capped.
+            // It exposes no payload data; these references are not retained after this pass.
+            T[] objects = Resources.FindObjectsOfTypeAll<T>();
+            double scanStarted = UnityEngine.Time.realtimeSinceStartupAsDouble;
+            var result = new StartupCensusPass
+            {
+                category = category, enumeratedReferences = objects.Length,
+                referenceSlotsBytes = (long)objects.Length * IntPtr.Size,
+                enumerationMs = (scanStarted - started) * 1000d
+            };
+            var ordinary = new List<StartupCensusObject>(StartupCensusTopLimit);
+            var renderTextures = new List<StartupCensusObject>(StartupCensusTopLimit);
+            while (result.scanned < objects.Length && result.scanned < StartupCensusObjectLimit &&
+                   UnityEngine.Time.realtimeSinceStartupAsDouble - scanStarted < StartupCensusScanSeconds)
+            {
+                T value = objects[result.scanned++];
+                try
+                {
+                    if (value == null) { result.unavailable++; continue; }
+                    long bytes = Profiler.GetRuntimeMemorySizeLong(value);
+                    bool renderTexture = value is RenderTexture;
+                    if (renderTexture) { result.renderTextures++; result.renderTextureReportedBytes += bytes; }
+                    else { result.ordinaryObjects++; result.ordinaryReportedBytes += bytes; }
+                    List<StartupCensusObject> top = renderTexture ? renderTextures : ordinary;
+                    if (top.Count == StartupCensusTopLimit && bytes <= top[top.Count - 1].reportedBytes)
+                        continue;
+                    string detail = value switch
+                    {
+                        Mesh mesh => $"vertices={mesh.vertexCount},subMeshes={mesh.subMeshCount},readable={mesh.isReadable}",
+                        Texture2D texture => $"size={texture.width}x{texture.height},format={texture.format},mips={texture.mipmapCount},readable={texture.isReadable}",
+                        RenderTexture texture => $"size={texture.width}x{texture.height},format={texture.graphicsFormat},depth={texture.depth},msaa={texture.antiAliasing}",
+                        Texture texture => $"size={texture.width}x{texture.height},dimension={texture.dimension}",
+                        _ => "unavailable"
+                    };
+                    var sample = new StartupCensusObject
+                    {
+                        name = StartupCensusLabel(value.name, 96), type = value.GetType().Name,
+                        nativeEntityId = value.GetEntityId().ToString(), reportedBytes = bytes, detail = detail
+                    };
+                    int insert = 0;
+                    while (insert < top.Count && top[insert].reportedBytes >= bytes) insert++;
+                    if (top.Count == StartupCensusTopLimit) top.RemoveAt(top.Count - 1);
+                    top.Insert(insert, sample);
+                }
+                catch (MissingReferenceException) { result.unavailable++; }
+                catch (UnityException) { result.unavailable++; }
+            }
+            result.partial = result.scanned != objects.Length;
+            result.scanMs = (UnityEngine.Time.realtimeSinceStartupAsDouble - scanStarted) * 1000d;
+            result.topOrdinary = ordinary.ToArray();
+            result.topRenderTextures = renderTextures.ToArray();
+            return result;
+        }
+
+        private static string StartupCensusLabel(string value, int limit) =>
+            value == null ? string.Empty : value.Length <= limit ? value : value.Substring(0, limit);
+
         private static string FormatMilliseconds(double seconds) => (seconds * 1000d).ToString("F1");
 
         public void EndUpdate(

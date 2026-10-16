@@ -1,0 +1,87 @@
+{
+  "status": "IndependentReviewPending",
+  "parent_batch_map": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/manifest.json",
+  "parent_batch_sha256": "4a58b00ac386720a7ecf63464b2431b6b42ee3a0ea564b5df489dc06646fc812",
+  "native_jobs": 0,
+  "sampling_coverage_credit": 0,
+  "targets": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "before_sha256": "33f5f636e8cab73cf3b7ca2530e4caeed39ab9a6f5a7085343554ef96974c7e9",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishProductionCanaryRequest.cs.txt",
+      "source_sha256": "2c8c535e2e69ad5ea2f906d03e46b8d6bbfc24abbb41b1cd641b19e8fc5c041f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "before_sha256": "7e9f9dfec39f14890a6823efde38e9c8302d449e936026a2c296acea2cc9ea7a",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionCanary.cs.txt",
+      "source_sha256": "244da2885c534bf379f710f15817133b0a399f13b01eb0d95940f3bda1d390c1"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "before_sha256": "4dc0808d473debfc7a093f9cba10745c9c796e852037727bab4a4d169bac2269",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.TerminalProbe.cs.txt",
+      "source_sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "before_sha256": "5b69a152de53be5a192186d4771f624f6b395f38ab432a653306acb193cd0c66",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.cs.txt",
+      "source_sha256": "2d6cac73496e5b25d272a84fea394fbc8f8e5a4ef40ac3a6f9c77fba7da0955f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "before_sha256": "a1e1a41f066df6fd7a363989247b7fdde4ccb25e71d93610a2e1462ff87ade37",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionBatch.cs.txt",
+      "source_sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionIdentity.cs.txt",
+      "source_sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionLegacy.cs.txt",
+      "source_sha256": "5eec7f52601c34916296499073a29cd48b66f098fc99081ccf44f79b130d2848"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionControls.cs.txt",
+      "source_sha256": "3abc87351dddd78a9a19a9099201db4f087e590cd122c87267d84ea28706e407"
+    },
+    {
+      "target": "Tools/CI/skirmish_production_queue.py",
+      "before_sha256": "44aea1639d2a2557a0b5aef5a4ef4933ae172508c5d84b86f43de7a34e6668d6",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/skirmish_production_queue.py",
+      "source_sha256": "22f508c8c945e1c8e2f48a7c1e328328364d97d6627eff10f4eca74c581019e2"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs.meta",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionIdentity.cs.meta",
+      "source_sha256": "c9cddc1d959f6b4148eb12e0134013e8f1b21851dbc929c6791277dfcca41f80"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs.meta",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionLegacy.cs.meta",
+      "source_sha256": "2e23b5b84a46fe023e8b8fc025e34c8d096f98de2968690eb53dcb9edddd97a3"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs.meta",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionControls.cs.meta",
+      "source_sha256": "dbe1f2229b67f8b719f196ff1060c213371142d4831320ae754ea492f312593e"
+    },
+    {
+      "target": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "before_sha256": null,
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/prepare_legacy_production_jobs.py",
+      "source_sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c"
+    }
+  ]
+}

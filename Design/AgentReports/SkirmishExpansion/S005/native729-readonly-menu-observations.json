@@ -1,0 +1,13 @@
+{
+  "run": "native729",
+  "scope": "Read-only Unity Pipeline observations; no gameplay mutations",
+  "observations": [
+    {
+      "phase": "Editor starting, before setup visible",
+      "command": "unity command eval --project-path /Users/farhad/Projects/WarlineCapture --format json",
+      "code": "return System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(UnityEngine.Object.FindObjectsByType<Game.UI.Runtime.QuickCustomScreenView>(UnityEngine.FindObjectsInactive.Exclude), s => new { baseAssault = s.IsBaseAssaultSetup, selected = s.SelectedScenarioId, buttons = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(s.GetComponentsInChildren<UnityEngine.UI.Button>(), b => new { name = b.name, enabled = b.interactable, active = b.gameObject.activeInHierarchy })) }));",
+      "success": true,
+      "result": []
+    }
+  ]
+}

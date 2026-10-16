@@ -1,0 +1,12 @@
+{
+  "playerReady": false,
+  "sourceHash": "2516b6c00a2b4f83200d5003f367a0f7274b63490401afe615307978ee670e65",
+  "sourceUnchanged": true,
+  "saveExit": "Passed schema 7",
+  "continueTouch": "Passed",
+  "reconstruction": "Failed NativeStructureRecoveryFailed:building.refinery.1",
+  "camera": "Invalid virtualization camera envelope during recovery",
+  "wrapperExit": 1,
+  "log": "native-583-persistent-reconstruction-player-save-continue-en.log",
+  "evidencePreserved": true
+}

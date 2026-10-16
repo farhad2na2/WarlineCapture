@@ -1,0 +1,78 @@
+{
+  "result": "PassedScopedCameraOwnershipFix",
+  "project": "/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit",
+  "branch": "codex/fighter-camera-input-20261013",
+  "productionSource": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+  "beforeSha256": "dd3779fb618313a34140ec08d32ab6eaa2c84b92210a76480bd297db11c7936d",
+  "afterSha256": "8d656521921df4ea9a0b0a2c8bb72fe4fb75238ca7ea99324d4bb3c6bc10b07b",
+  "testsSha256": "006409406153222cefbd9051372b1f14658637d5dd2f7a3f185b49c94ebe196b",
+  "runs": [
+    {
+      "label": "before",
+      "result": "Passed",
+      "wrapperProcessExit": 0,
+      "requiredPassMarker": "[FighterCameraOwnership] result=Passed mode=Before cases=6 scope=IsolatedProductionCameraHelper",
+      "requiredPassMarkerPresent": true,
+      "compilerErrors": [],
+      "log": "before.log",
+      "logSha256": "84735a3ead36460d4f1fabdf4bce9cd96a831db4b4fdadf1ade5fbe406e46190"
+    },
+    {
+      "label": "after",
+      "result": "Failed",
+      "wrapperProcessExit": 0,
+      "requiredPassMarker": "[FighterCameraOwnership] result=Passed mode=After cases=6 scope=IsolatedProductionCameraHelper",
+      "requiredPassMarkerPresent": false,
+      "compilerErrors": [],
+      "log": "after.log",
+      "logSha256": "658ca9b3eeae3fa62c4b8e6cc4860d94f09734c3194fe1aec44e38988bca524b"
+    },
+    {
+      "label": "after2",
+      "result": "Passed",
+      "wrapperProcessExit": 0,
+      "requiredPassMarker": "[FighterCameraOwnership] result=Passed mode=After cases=6 scope=IsolatedProductionCameraHelper",
+      "requiredPassMarkerPresent": true,
+      "compilerErrors": [],
+      "log": "after2.log",
+      "logSha256": "136de7c124847a05f23ec9d4218eaf09e8d3a453fd0c352cc4f87690115095e2"
+    }
+  ],
+  "cases": 6,
+  "maxMeasuredWorldErrorMeters": 0.01572493,
+  "maxMeasuredViewportCenterError": 0.0003365997,
+  "precisionCorrection": "First after run failed at1.212cm vs1cm; retained. Isolated camera reconstruction allowance5cm plus independent viewport center error<0.001; original>100m snapback reproduction retained. No mission acceptance threshold changed.",
+  "scope": "Explicit public camera pan during ordinary HUD zoom retargets transition center and preserves requested zoom level. Production delivery cancellation and no-active-zoom pan controls pass.",
+  "inputEvidence1381": "Native paidFighter Move receipts256/258 with camera exposure passed twolegs before leg1flighttimeout. No directTouch suppression bypass or pose/visibility writes.",
+  "limitations": [
+    "Fighter final intercept/combat gate remains untested;1381leg1timeout belongs to separate movement diagnosis.",
+    "Isolated camera helper validation; not human/device or full mission readiness."
+  ],
+  "playerReady": false,
+  "commit": "0e4828c667176ea50934aec8f27fac95f3c1cf08",
+  "workingTreeResiduals": "Preexisting Pipeline port and generated fallback font cache remain unstaged; excluded from camera commit.",
+  "mainIntegration": {
+    "sourceHashMatchesValidatedPatch": true,
+    "testHashMatchesValidatedFixture": true,
+    "integrationOwner": "S005 main agent",
+    "nativeMainValidationPending": false,
+    "nativeMainValidationResult": "PassedFocusedSixCases",
+    "nativeRun": 1391,
+    "nativeExit": 0,
+    "requiredMarker": "[FighterCameraOwnership] result=Passed mode=After cases=6 scope=IsolatedProductionCameraHelper",
+    "log": "Design/AgentReports/SkirmishExpansion/S005/native-1391-fighter-camera-main-after.log",
+    "logSha256": "d01c95ca166fa8b592afbaae56101d676cb946b52edab356e578534a0488d653",
+    "compilerErrors": []
+  },
+  "gitDelivery": {
+    "commit": "0e4828c667176ea50934aec8f27fac95f3c1cf08",
+    "branchPushed": "codex/fighter-camera-input-20261013",
+    "remoteMain": "0e4828c667176ea50934aec8f27fac95f3c1cf08",
+    "mainCheckoutHead": "0e4828c667176ea50934aec8f27fac95f3c1cf08",
+    "merge": "FastForward",
+    "pull": "--no-rebase --ff-only",
+    "unrelatedTrackedFilesPreserved": 60,
+    "stagingEmptyAfterPull": true,
+    "effectiveCameraWorkingBytesChangedDuringPull": false
+  }
+}

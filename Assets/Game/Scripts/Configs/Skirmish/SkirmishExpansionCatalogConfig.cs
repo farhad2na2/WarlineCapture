@@ -39,23 +39,37 @@ namespace Game.Configs
 
         public IReadOnlyList<SkirmishScenarioDefinitionConfig> Definitions => definitions;
 
-        public static SkirmishExpansionCatalogConfig Load() =>
-            Resources.Load<SkirmishExpansionCatalogConfig>(ResourceName);
+        public static SkirmishExpansionCatalogConfig Load()
+        {
+#if UNITY_EDITOR
+            if (editorValidationCatalog != null) return editorValidationCatalog;
+#endif
+            return Resources.Load<SkirmishExpansionCatalogConfig>(ResourceName);
+        }
+#if UNITY_EDITOR
+        private static SkirmishExpansionCatalogConfig editorValidationCatalog;
+        public static IDisposable UseEditorValidationCatalog(SkirmishExpansionCatalogConfig candidate)
+        {
+            if (candidate == null || editorValidationCatalog != null) throw new InvalidOperationException("One explicit Editor authored candidate required.");
+            editorValidationCatalog = candidate; return new EditorValidationScope(candidate);
+        }
+        private sealed class EditorValidationScope : IDisposable
+        {
+            private SkirmishExpansionCatalogConfig value;
+            internal EditorValidationScope(SkirmishExpansionCatalogConfig candidate) => value = candidate;
+            public void Dispose(){if(editorValidationCatalog == value)editorValidationCatalog=null;value=null;}
+        }
+#endif
 
         public bool TryGetDefinition(string catalogId, out SkirmishScenarioDefinitionConfig definition)
         {
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                if (definitions[i] != null &&
-                    string.Equals(definitions[i].CatalogId, catalogId, StringComparison.Ordinal))
-                {
-                    definition = definitions[i];
-                    return true;
-                }
-            }
-
-            definition = null;
-            return false;
+            definition = null; int matches = 0;
+            if (definitions == null || string.IsNullOrEmpty(catalogId)) return false;
+            foreach (var candidate in definitions)
+                if (candidate != null && string.Equals(candidate.CatalogId,catalogId,StringComparison.Ordinal))
+                { definition=candidate; matches++; }
+            if (matches==1) return true;
+            definition=null;return false;
         }
 
         public SkirmishDifficultyConfig GetDifficulty(Game.Skirmish.Contracts.SkirmishDifficultyId difficulty)
@@ -74,6 +88,9 @@ namespace Game.Configs
         {
             var set = new SkirmishExpansionAuthoredSet
             {
+                Definitions = definitions == null
+                    ? Array.Empty<SkirmishScenarioDefinitionConfig>()
+                    : (SkirmishScenarioDefinitionConfig[])definitions.Clone(),
                 ObjectiveBa = objectiveBa,
                 ArmyGround = armyGround,
                 ArmyAir = armyAir,
@@ -94,9 +111,9 @@ namespace Game.Configs
                 LayoutDbBa = layoutDbBa,
                 Publication = publication
             };
-            for (int i = 0; i < definitions.Length; i++)
+            for (int i = 0; i < set.Definitions.Count; i++)
             {
-                SkirmishScenarioDefinitionConfig definition = definitions[i];
+                SkirmishScenarioDefinitionConfig definition = set.Definitions[i];
                 if (definition == null)
                     continue;
                 switch (definition.CatalogId)

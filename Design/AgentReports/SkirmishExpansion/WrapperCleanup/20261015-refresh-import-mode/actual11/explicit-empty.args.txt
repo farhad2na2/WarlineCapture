@@ -1,0 +1,9 @@
+-projectPath
+D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0
+-logFile
+D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\explicit-empty.log
+-quit
+-buildTarget
+StandaloneWindows64
+-executeMethod
+Probe.Pass

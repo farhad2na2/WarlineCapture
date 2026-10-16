@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs",
+      "entry": "FixedWingPlayerMoveReturn1361.LoadOnly",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 116,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_FixedWingPlayerMoveReturn1361_5cd7decfbc504e42b129ec18b3bd251b",
+      "success": true,
+      "result": "Loaded only"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

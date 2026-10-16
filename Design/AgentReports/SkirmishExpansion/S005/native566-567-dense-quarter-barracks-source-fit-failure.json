@@ -1,0 +1,20 @@
+{
+  "result": "Failed",
+  "playerReady": false,
+  "sourceHash": "208c1adf0f585b1bf77ba8a25d5684fac2776bc72bd30ea175f3cbd4aaccdb09",
+  "prePostMatched": true,
+  "runs": [
+    566,
+    567
+  ],
+  "reason": "expandedStartupFailure=BlockedSpawn",
+  "building": "Building_Barrack",
+  "faction": 2,
+  "preferredOrigin": [
+    1373,
+    868
+  ],
+  "sourceBuildingsRejected": 43525,
+  "roadOrWaterRejected": 7100,
+  "nativeJourneyComplete": false
+}

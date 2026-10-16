@@ -1,0 +1,7 @@
+D:\Projects\WarlineCapture\Tools\CI\InvokeUnityExecuteMethodValidation.ps1 : Cannot validate argument on parameter 
+'RefreshImportMode'. The argument "Other" does not belong to the set ",InProcess,OutOfProcessPerQueue,OutOfProcess" 
+specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.
+    + CategoryInfo          : InvalidData: (:) [InvokeUnityExecuteMethodValidation.ps1], ParentContainsErrorRecordExce 
+   ption
+    + FullyQualifiedErrorId : ParameterArgumentValidationError,InvokeUnityExecuteMethodValidation.ps1
+ 

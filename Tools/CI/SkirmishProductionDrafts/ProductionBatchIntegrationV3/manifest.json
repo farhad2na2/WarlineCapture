@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "scope": "Two explicit S004/S005 Regular Standard development canaries in one Editor process",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "before_sha256": "e0f96b44d4faebb2099a045c62d5d214b99944456819d6d62ad27120b5348376",
+      "after_sha256": "a17221144b0145c77d17db924d4881a670a6fb6315dc4f9f456c70b81ff7468f",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/00-SkirmishS002AriaRunHarness.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "before_sha256": "5e009eccf5c0aa67427409df8322d4c9d727fa70576722c2cd624a9ba8a7fea1",
+      "after_sha256": "a9f2ef429099caf01f6d7f139199a98e520cfa2cadd101e8cebd248814f54285",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/01-SkirmishS002AriaRunHarness.MenuProbe.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "before_sha256": "791b8230520174256144e3d21c53c5d846e860aa8b61a08b8085780e5fcc3221",
+      "after_sha256": "57b9b3f6662eb5b416a905423e3ad6903bfa001b5f5f0eee71cc70e414ed3ea0",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/02-SkirmishS002AriaRunHarness.TerminalProbe.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "before_sha256": "41c5d27774de7bb8c3c1e7f1675245dd2dc10bea6b3cddfe5b8142a8702944ea",
+      "after_sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/03-SkirmishProductionCanaryRequest.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "before_sha256": null,
+      "after_sha256": "9e5c2d03ff94f3104e2d81ad239b339b59bda4e1ab58282c7aef74cc1bf57407",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/04-SkirmishS002AriaRunHarness.ProductionCanary.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchContract.cs",
+      "before_sha256": null,
+      "after_sha256": "c470d4ccd6310c0ecf2ff69734ce086817e6d1f2f47d35ba1cfb35b3cfaf348b",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/05-SkirmishProductionBatchContract.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchManifest.cs",
+      "before_sha256": null,
+      "after_sha256": "543b849a45bb9c2c7238bca024e57cbbcd5bc25b83ac872213b28ef5f085c381",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/06-SkirmishProductionBatchManifest.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "before_sha256": null,
+      "after_sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/07-SkirmishProductionBatchOwnershipCensus.cs.txt"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "before_sha256": null,
+      "after_sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "draft": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/SourceDrafts/08-SkirmishS002AriaRunHarness.ProductionBatch.cs.txt"
+    }
+  ],
+  "owning_compile_evidence": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/batch-owning-compile-20261015-11",
+  "queue_success_enabled": false,
+  "real_canaries_required": 2,
+  "native_benchmark_performed": false,
+  "actual_canaries_executed": 0,
+  "full_source_dll_guards_required": true,
+  "execute_method_wrapper_compatible": false,
+  "operational_tools": [
+    {
+      "path": "Tools/CI/prepare_skirmish_production_batch_patch.py",
+      "sha256": "7fa94a162de28e59c24fd741c91a6d1fe5f405fd9424ea20cfae67c6066056be"
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_production_batch.py",
+      "sha256": "6c8da7d51f66d3adef83073a65fd72a2b41f03d720659fc5ce55d913f7ec4b23"
+    },
+    {
+      "path": "Tools/CI/capture_skirmish_batch_candidate.py",
+      "sha256": "4e3d1af0c423bece2c6663c0b15e77b41f68b04b82234ab4330e4df99bd319bc"
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_batch_canary_jobs.py",
+      "sha256": "59994a7613310ca30c96a4b595992697f8a617141d55f746f95cdec675da830c"
+    },
+    {
+      "path": "Tools/CI/invoke_skirmish_production_batch.py",
+      "sha256": "dc310ef1ef78fc70cf941ee8a137e6616c7807dc318f0506322326abb4a8dada"
+    },
+    {
+      "path": "Tools/CI/skirmish_production_batch_test.py",
+      "sha256": "8aac095bbf2e907cce7f56a7201220b1300534ce4b930ce49c051cba2df86f4b"
+    },
+    {
+      "path": "Tools/CI/skirmish_production_batch_launcher_test.py",
+      "sha256": "350abc907361c5853659e62c2c91f53e0b8fa2ef894bf9dcee48820962f6a3d5"
+    },
+    {
+      "path": "Tools/CI/skirmish_production_batch_census_test.py",
+      "sha256": "51b422cb12bf7a5d4363ca5a51854faeff9d75f44e2e4c3fa6c6bd7caf2a2452"
+    }
+  ],
+  "preparation_entry": "Game.Editor.SkirmishS002AriaRunHarness.PrepareProductionBatchSources",
+  "preparation_marker": "[SkirmishProductionBatchPreparation] result=Passed sources=2 compiledIdentities=2 gameplayCertified=0",
+  "native_canary_entry": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionBatchCanariesFromEnvironment",
+  "native_canary_marker": "[SkirmishProductionBatch] result=Completed jobs=2 queueSuccessEnabled=0",
+  "shared_manifest_scope": "One full immutable source/DLL manifest for native and external endpoint receipts; existing queue v1 job inputs still embed source rows"
+}

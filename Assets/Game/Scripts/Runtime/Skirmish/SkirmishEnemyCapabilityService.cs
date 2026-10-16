@@ -50,12 +50,30 @@ namespace Game.Runtime
                 if(!air&&!carrier&&role!=SkirmishRoleKind.Radar)continue;
                 // Aircraft and recon are bound only to a real paid, delivered receipt.
                 uint group=em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor).GroupId;
-                if((air||role==SkirmishRoleKind.Radar)&&!PaidReceipt(em,session,own.ReservationId,role,group))continue;
+                if((air||role==SkirmishRoleKind.Radar)&&!PaidReceipt(em,session,own.ReservationId,role,group))
+                {
+                    // A real authored initial helicopter has no purchase receipt.
+                    // Bind its exact immutable force/member identity instead; never
+                    // reinterpret an unpaid produced aircraft as a starting actor.
+                    var setup=em.HasComponent<SkirmishResolvedSetupRecord>(session)?em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup:null;
+                    if(own.ReservationId!=0||!air||!carrier||own.IsStructure!=0||own.CapacityReleased!=0||
+                        !em.HasComponent<UnitSourcePrefabKey>(actor)||
+                        SpawnableKeyText.Normalize(em.GetComponentData<UnitSourcePrefabKey>(actor).Value.ToString())!=SpawnableKeyText.Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role))||
+                        !SkirmishGenericGroundEnemyRollout.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId)&&
+                        !SkirmishEnemyObjectivePolicyScope.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId)&&
+                        !SkirmishGenericAirCombinedEnemyRollout.IsAuthoredStartingTransport(setup,own.StableObjectId.ToString(),role,own.FactionId))continue;
+                }
                 result.Add(new OwnActor{Entity=actor,StableId=own.StableObjectId,ReservationId=own.ReservationId,
                     GroupId=group,Role=role,
                     Position=em.GetComponentData<LocalTransform>(actor).Position,Air=air,Carrier=carrier});
             }
             result.Sort((a,b)=>string.CompareOrdinal(a.StableId.ToString(),b.StableId.ToString()));return result;
+        }
+        internal static List<OwnActor> ReadUnreservedOwnActors(EntityManager em,Entity session,ISet<uint> currentDecisionRepairGroups)
+        {
+            var actors=ReadOwnActors(em,session);var reserved=SkirmishEnemyVehicleRepairPolicy.ReservedGroups(em,session);
+            if(currentDecisionRepairGroups!=null)reserved.UnionWith(currentDecisionRepairGroups);
+            actors.RemoveAll(actor=>reserved.Contains(actor.GroupId));return actors;
         }
         public static Dictionary<SkirmishRoleKind,int> ReadLivingRoleCounts(EntityManager em,Entity session)
         {
@@ -74,14 +92,14 @@ namespace Game.Runtime
         }
         public static void RemoveReservedGroundGroups(EntityManager em,Entity session,SkirmishEnemyPerceptionBuilder.Snapshot facts)
         {
-            if(!em.HasBuffer<SkirmishEnemyCapabilityOperationV1>(session))return;
+
             var reserved=ReservedGroups(em,session);
             for(int i=facts.Groups.Count-1;i>=0;i--)if(reserved.Contains(facts.Groups[i].Id))
             {facts.CombatSupply-=facts.Groups[i].Supply;facts.Groups.RemoveAt(i);}
         }
         public static HashSet<uint> ReservedGroups(EntityManager em,Entity session)
         {
-            var result=new HashSet<uint>();
+            var result=SkirmishEnemyVehicleRepairPolicy.ReservedGroups(em,session);
             if(!em.HasBuffer<SkirmishEnemyCapabilityOperationV1>(session))return result;
             var ops=em.GetBuffer<SkirmishEnemyCapabilityOperationV1>(session,true);
             var phases=new Dictionary<uint,SkirmishEnemyCapabilityPhase>();
@@ -98,13 +116,16 @@ namespace Game.Runtime
         // unit purchase arbiter; this returns a suggestion and never pays/queues.
         public static SkirmishRoleKind Tick(EntityManager em,Entity session,SkirmishResolvedSetup setup,
             SkirmishArmyProfileConfig army,SkirmishEnemyPerceptionBuilder.Snapshot facts,
-            SkirmishEnemyGroupAllocation.Package package,bool defending,float now,ref SkirmishEnemyPlannerV1Component planner,out int dispatched,int commandBudget=-1)
+            SkirmishEnemyGroupAllocation.Package package,bool defending,float now,ref SkirmishEnemyPlannerV1Component planner,out int dispatched,int commandBudget=-1,float3? publicObjectiveDestination=null,ISet<uint> repairDecisionReserved=null)
         {
             dispatched=0;
+            if(publicObjectiveDestination.HasValue && (!math.all(math.isfinite(publicObjectiveDestination.Value)) ||
+                !SkirmishEnemyObjectivePolicyScope.Supports(setup)))return SkirmishRoleKind.None;
+            if(setup!=null && setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault && !publicObjectiveDestination.HasValue)return SkirmishRoleKind.None;
             if(em.WorldUnmanaged.Time.DeltaTime<=0||setup.EnemyPolicy==null||!SkirmishEnemyPlannerService.TryReadActiveClock(em,session,out float actualNow)||
                 actualNow!=now||!EnsureSession(em,session))return SkirmishRoleKind.None;
             bool openingDone=now>=planner.OpeningUntil;
-            var actors=ReadOwnActors(em,session);
+            var actors=ReadUnreservedOwnActors(em,session,repairDecisionReserved);
             var copied=new List<SkirmishEnemyCapabilityOperationV1>();
             foreach(var op in em.GetBuffer<SkirmishEnemyCapabilityOperationV1>(session,true))copied.Add(op);
             foreach(var op in copied)if(!actors.Exists(a=>a.StableId.Equals(op.SourceStableId))||
@@ -116,9 +137,9 @@ namespace Game.Runtime
                 {
                     if(!openingDone||defending||package.Scout==null||!package.Viable)continue;
                     if(!actor.Air&&(!package.Escort.Exists(g=>g.Id==actor.GroupId)||package.Escort.Count<2))continue;
-                    if(!TryPlanTransport(em,session,actor,package.Scout,setup,facts,now))continue;
+                    if(!TryPlanTransport(em,session,actor,package.Scout,setup,facts,now,publicObjectiveDestination))continue;
                 }
-                else Add(em,session,actor,Kind(actor),Survey(setup,facts),now);
+                else Add(em,session,actor,Kind(actor),Survey(setup,facts,publicObjectiveDestination),now);
             }
             int dispatches=0;
             foreach(var actor in actors)
@@ -130,7 +151,7 @@ namespace Game.Runtime
                     AbortTransport(em,session,actor,ref op,now);
                 bool issued=op.Kind==SkirmishEnemyCapabilityKind.Transport
                     ?StepTransport(em,session,actor,ref op,now,setup,facts)
-                    :StepReconOrAir(em,session,actor,ref op,now,setup,facts,defending,openingDone,now>=planner.NextScoutAt);
+                    :StepReconOrAir(em,session,actor,ref op,now,setup,facts,defending,openingDone,now>=planner.NextScoutAt,publicObjectiveDestination);
                 if(issued)dispatches++;
                 if(issued&&op.CommandAccepted!=0&&(op.Kind==SkirmishEnemyCapabilityKind.Recon||op.Kind==SkirmishEnemyCapabilityKind.Radar)&&
                     (op.Phase==SkirmishEnemyCapabilityPhase.Scanning||op.Phase==SkirmishEnemyCapabilityPhase.Investigating))
@@ -160,7 +181,7 @@ namespace Game.Runtime
             return SkirmishRoleKind.None;
         }
         static bool StepReconOrAir(EntityManager em,Entity session,OwnActor actor,ref SkirmishEnemyCapabilityOperationV1 op,
-            float now,SkirmishResolvedSetup setup,SkirmishEnemyPerceptionBuilder.Snapshot facts,bool defending,bool openingDone,bool scoutDue)
+            float now,SkirmishResolvedSetup setup,SkirmishEnemyPerceptionBuilder.Snapshot facts,bool defending,bool openingDone,bool scoutDue,float3? publicObjectiveDestination)
         {
             var air=actor.Air?em.GetComponentData<UnitAirComponent>(actor.Entity):default;
             op.LastObservedAirborne=air.Airborne;
@@ -191,7 +212,7 @@ namespace Game.Runtime
                 if(op.Phase==SkirmishEnemyCapabilityPhase.Investigating)
                 {if(now-op.StartedAt>=setup.EnemyPolicy.ScoutMinSeconds)return Return(em,session,actor,ref op,now);return false;}
                 if(!openingDone||!scoutDue)return false;
-                var survey=Survey(setup,facts);op.DestinationX=survey.x;op.DestinationZ=survey.z;
+                var survey=Survey(setup,facts,publicObjectiveDestination);op.DestinationX=survey.x;op.DestinationZ=survey.z;
                 return Move(em,session,actor,ref op,now,SkirmishEnemyCapabilityPhase.Investigating);
             }
             if(op.Phase==SkirmishEnemyCapabilityPhase.Scanning)
@@ -204,7 +225,7 @@ namespace Game.Runtime
             }
             if(!openingDone||!scoutDue)return false;
             if(actor.Air&&(air.HomeInitialized==0||air.Airborne!=0||air.TakeoffRolling!=0||air.LandingRolling!=0))return false;
-            var point=Survey(setup,facts);op.DestinationX=point.x;op.DestinationZ=point.z;
+            var point=Survey(setup,facts,publicObjectiveDestination);op.DestinationX=point.x;op.DestinationZ=point.z;
             op.PublicAnchorId=new FixedString64Bytes(facts.LastSeen.Count>0?"frozen.contact.investigation":"player.staging");
             bool scan=SkirmishEnemyCapabilityCommands.TryScan(em,session,actor.Entity,point,out int request,out var reason);
             if(scan){op.Phase=SkirmishEnemyCapabilityPhase.Scanning;op.ScanRequestId=request;op.StartedAt=now;Accepted(ref op,now);}
@@ -300,7 +321,7 @@ namespace Game.Runtime
             return false;
         }
         static bool TryPlanTransport(EntityManager em,Entity session,OwnActor carrier,SkirmishEnemyPerceptionBuilder.Group group,
-            SkirmishResolvedSetup setup,SkirmishEnemyPerceptionBuilder.Snapshot facts,float now)
+            SkirmishResolvedSetup setup,SkirmishEnemyPerceptionBuilder.Snapshot facts,float now,float3? publicObjectiveDestination)
         {
             if(ReservedGroups(em,session).Contains(group.Id))return false;
             if(group.Role!=SkirmishRoleKind.Rifle||!SkirmishEnemyGroupAllocation.Healthy(group)||group.Id==carrier.GroupId)return false;
@@ -311,7 +332,7 @@ namespace Game.Runtime
             foreach(var entity in entities)if(em.GetComponentData<SkirmishArmyGroupMembershipComponent>(entity).GroupId==group.Id&&
                 SkirmishActorCommandAuthority.IsActiveOwnedActor(em,session,2,entity))passengers.Add(entity);
             if(passengers.Count!=group.Members||passengers.Count==0||passengers.Count>em.GetComponentData<UnitTransportCapacity>(carrier.Entity).SoldierCapacity)return false;
-            var destination=new float3(setup.PlayerStagingWorldX,0,setup.PlayerStagingWorldZ);
+            var destination=publicObjectiveDestination??new float3(setup.PlayerStagingWorldX,0,setup.PlayerStagingWorldZ);
             if(!SafeDestination(facts,destination))return false;
             var op=Add(em,session,carrier,SkirmishEnemyCapabilityKind.Transport,destination,now);
             Store(em,session,op);
@@ -376,8 +397,8 @@ namespace Game.Runtime
             =>visible&&(openingDone||math.distancesq(home.xz,target.xz)<=60*60);
         public static bool SafeDestination(SkirmishEnemyPerceptionBuilder.Snapshot facts,float3 destination)
         {foreach(var contact in facts.Visible)if(math.distancesq(contact.Position.xz,destination.xz)<30*30)return false;return true;}
-        static float3 Survey(SkirmishResolvedSetup setup,SkirmishEnemyPerceptionBuilder.Snapshot facts)
-            =>facts.LastSeen.Count>0?facts.LastSeen[0]:new float3(setup.PlayerStagingWorldX,0,setup.PlayerStagingWorldZ);
+        static float3 Survey(SkirmishResolvedSetup setup,SkirmishEnemyPerceptionBuilder.Snapshot facts,float3? publicObjectiveDestination=null)
+            =>publicObjectiveDestination??(facts.LastSeen.Count>0?facts.LastSeen[0]:new float3(setup.PlayerStagingWorldX,0,setup.PlayerStagingWorldZ));
         static SkirmishEnemyCapabilityKind Kind(OwnActor actor)=>actor.Role==SkirmishRoleKind.Drone?SkirmishEnemyCapabilityKind.Recon:
             actor.Role==SkirmishRoleKind.Radar?SkirmishEnemyCapabilityKind.Radar:SkirmishEnemyCapabilityKind.CombatAir;
         static bool PaidReceipt(EntityManager em,Entity session,uint id,SkirmishRoleKind role,uint group)

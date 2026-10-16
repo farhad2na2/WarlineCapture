@@ -1,0 +1,486 @@
+{
+  "result": "Passed",
+  "controls": 59,
+  "scope": "Synthetic flat parser controls only; no native execution or gameplay proof",
+  "runnerSha256": "20d18a47437465720fdb58fa02915b4bd4fcc033f3494951d856dd62e0fe3967",
+  "cases": [
+    {
+      "name": "valid complete ordered native witnesses",
+      "expectedAccepted": true,
+      "actualAccepted": true,
+      "errors": []
+    },
+    {
+      "name": "reject nonCampaign public origin",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "True nonterminal Campaign launch provenance missing"
+      ]
+    },
+    {
+      "name": "reject premature terminal destination at launch",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "True nonterminal Campaign launch provenance missing"
+      ]
+    },
+    {
+      "name": "reject terminal outcome disguised as launch",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "True nonterminal Campaign launch provenance missing"
+      ]
+    },
+    {
+      "name": "reject missing native Victory destination",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Exact native terminal Victory route missing",
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject missing frozen return destination",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject nonVictory frozen return",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject missing InitialDragAccepted",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual InitialDragAccepted entry=7"
+      ]
+    },
+    {
+      "name": "reject missing NativeHoldFourAccepted",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual NativeHoldFourAccepted entry=7"
+      ]
+    },
+    {
+      "name": "reject missing NativeVictoryRendered",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual NativeVictoryRendered entry=7"
+      ]
+    },
+    {
+      "name": "reject missing CampaignReturnRendered",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual CampaignReturnRendered entry=7"
+      ]
+    },
+    {
+      "name": "reject missing second resolved convoy",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Both native convoy elements not resolved at Victory"
+      ]
+    },
+    {
+      "name": "reject missing eligible visible countdown",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Independent eligible active defense countdown samples absent entry=7"
+      ]
+    },
+    {
+      "name": "reject genuine eligible missing gap greater than1.5",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Recorded eligible non-owned countdown gap over1.5s"
+      ]
+    },
+    {
+      "name": "allow long legitimate FullMap suppression followed by immediate eligible restoration",
+      "expectedAccepted": true,
+      "actualAccepted": true,
+      "errors": []
+    },
+    {
+      "name": "reset previous missing gap on legitimate own surface",
+      "expectedAccepted": true,
+      "actualAccepted": true,
+      "errors": []
+    },
+    {
+      "name": "reject native explicit countdown failure even after restored visibility",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Native witness explicitly failed"
+      ]
+    },
+    {
+      "name": "reject nonmonotonic status chronology",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Invalid ordered native countdown sample time entry=7"
+      ]
+    },
+    {
+      "name": "reject nonfinite status time",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Invalid ordered native countdown sample time entry=7"
+      ]
+    },
+    {
+      "name": "whitespace is missing and rejects true eligible gap",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Recorded eligible non-owned countdown gap over1.5s"
+      ]
+    },
+    {
+      "name": "reject partial initial Rifle selection",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Initial real drag did not select exact four current native rifles"
+      ]
+    },
+    {
+      "name": "reject partial Rifle Hold",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual four-rifle Hold state missing"
+      ]
+    },
+    {
+      "name": "reject unrendered native Victory",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual rendered native Victory/Campaign return missing"
+      ]
+    },
+    {
+      "name": "reject return before Victory",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "M3 observed journey chronology invalid entry=7",
+        "Rendered Campaign return must follow native Victory frame",
+        "Post-result actual shell census absent"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance terminalSnapshot",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance terminalFrame",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance terminalMission",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance terminalSession",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance terminalAttempt",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance terminalLocale",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance shellPresent",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance shellTransition",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance shellRoute",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance shellMode",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance shellPhase",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance campaignValid",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance renderedCampaignScreenCount",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered bound Campaign title ownership missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance boundTitlePresented",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered bound Campaign title ownership missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance boundTitleOwned",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered bound Campaign title ownership missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance boundTitleOwner",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered bound Campaign title ownership missing"
+      ]
+    },
+    {
+      "name": "reject incorrect menu provenance boundTitleText",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered bound Campaign title ownership missing"
+      ]
+    },
+    {
+      "name": "reject absent post-result census",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Post-result actual shell census absent"
+      ]
+    },
+    {
+      "name": "accept retained runtime when same actual menu evidence exists",
+      "expectedAccepted": true,
+      "actualAccepted": true,
+      "errors": []
+    },
+    {
+      "name": "complete bilingual witnesses",
+      "expectedAccepted": true,
+      "actualAccepted": true,
+      "errors": []
+    },
+    {
+      "name": "reject FA only for bilingual",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual CampaignLaunchObserved entry=2",
+        "Missing actual InitialDragDispatched entry=2",
+        "Missing actual InitialDragAccepted entry=2",
+        "Missing actual NativeHoldFourAccepted entry=2",
+        "Missing actual NativeVictoryRendered entry=2",
+        "Missing actual CampaignReturnRendered entry=2"
+      ]
+    },
+    {
+      "name": "reject EN only for bilingual",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual CampaignLaunchObserved entry=7",
+        "Missing actual InitialDragDispatched entry=7",
+        "Missing actual InitialDragAccepted entry=7",
+        "Missing actual NativeHoldFourAccepted entry=7",
+        "Missing actual NativeVictoryRendered entry=7",
+        "Missing actual CampaignReturnRendered entry=7"
+      ]
+    },
+    {
+      "name": "reject EN unresolved second convoy",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Both native convoy elements not resolved at Victory"
+      ]
+    },
+    {
+      "name": "reject FA unresolved second convoy",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Both native convoy elements not resolved at Victory"
+      ]
+    },
+    {
+      "name": "reject English frozen terminal wrong locale",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Rendered Campaign return lacks exact frozen native terminal identity"
+      ]
+    },
+    {
+      "name": "reject FA wrong rendered return route",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual current Campaign menu route missing"
+      ]
+    },
+    {
+      "name": "reject stale/foreign/unlocalized header boundTitleKey",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual localized approved Campaign header provenance missing"
+      ]
+    },
+    {
+      "name": "reject stale/foreign/unlocalized header boundTitleSource",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual localized approved Campaign header provenance missing"
+      ]
+    },
+    {
+      "name": "reject stale/foreign/unlocalized header boundTitlePath",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual localized approved Campaign header provenance missing"
+      ]
+    },
+    {
+      "name": "reject stale/foreign/unlocalized header boundTitleResolver",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Actual localized approved Campaign header provenance missing"
+      ]
+    },
+    {
+      "name": "reject incomplete native hostiles hostileTotal",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "All seven native M3 hostiles must be defeated at Victory"
+      ]
+    },
+    {
+      "name": "reject incomplete native hostiles hostileDefeated",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "All seven native M3 hostiles must be defeated at Victory"
+      ]
+    },
+    {
+      "name": "English-only complete native witness schema",
+      "expectedAccepted": true,
+      "actualAccepted": true,
+      "errors": []
+    },
+    {
+      "name": "English-only rejects Persian rows",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Missing actual CampaignLaunchObserved entry=2",
+        "Missing actual InitialDragDispatched entry=2",
+        "Missing actual InitialDragAccepted entry=2",
+        "Missing actual NativeHoldFourAccepted entry=2",
+        "Missing actual NativeVictoryRendered entry=2",
+        "Missing actual CampaignReturnRendered entry=2"
+      ]
+    },
+    {
+      "name": "reject consistently wrong locale for Persian entry",
+      "expectedAccepted": false,
+      "actualAccepted": false,
+      "errors": [
+        "Native locale does not match requested entry"
+      ]
+    }
+  ]
+}

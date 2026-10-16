@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":false,\"errors\":[]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

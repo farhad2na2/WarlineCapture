@@ -15,6 +15,8 @@ namespace Game.Runtime
         [Serializable] internal sealed class Snapshot
         {
             public int Version = SchemaVersion;
+            [NonSerialized] public SkirmishNativeRepairCheckpoint.Payload Repairs;
+            public SkirmishNativeObjectiveCheckpoint.Payload Objective;
             public string SessionId;
             public string CatalogId;
             public uint SetupHash;
@@ -82,6 +84,7 @@ namespace Game.Runtime
                 return false;
             var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             if (state.IsLegacy != 0) return false;
+            if (!SkirmishNativeRepairCheckpoint.TryCapture(em,session,out var repairPayload,out failure)) return false;
 
             var identities = new Dictionary<Entity, string> { [session] = "$session" };
             var usedIds = new HashSet<string>(StringComparer.Ordinal) { "$session" };
@@ -214,6 +217,7 @@ namespace Game.Runtime
                 }
                 snapshot = new Snapshot
                 {
+                    Repairs=repairPayload,
                     SessionId = state.SessionId.ToString(), CatalogId = state.CatalogId.ToString(), SetupHash = state.SetupHash,
                     WorldTime = em.WorldUnmanaged.Time.ElapsedTime, UnityTime = Time.time, Frame = Time.frameCount,
                     Actors = actors.ToArray(), MapReferences = references.ToArray(),
@@ -231,6 +235,20 @@ namespace Game.Runtime
                 if (metadata.CalculateEntityCount() == 1)
                     snapshot.MapMetadataHash = metadata.GetSingleton<OperationMapMetadataComponent>().MetadataHash.ToString();
                 failure = string.Empty;
+                if (state.ObjectiveKind != Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault)
+                {
+                    if (!SkirmishNativeObjectiveCheckpoint.TryCapture(em, session, out var objectivePayload, out failure))
+                    { snapshot = null; return false; }
+                    snapshot.Objective = objectivePayload;
+                    snapshot.Version = SkirmishNativeObjectiveCheckpoint.NativeVersion;
+                    var actualSetup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    if (!SkirmishNativeObjectiveCheckpoint.Validate(objectivePayload,snapshot,actualSetup,out failure))
+                    { snapshot = null; return false; }
+                }
+                if(repairPayload!=null&&(!em.HasComponent<SkirmishResolvedSetupRecord>(session)||
+                    !SkirmishNativeRepairCheckpoint.Validate(repairPayload,snapshot,
+                        em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup,out failure)))
+                {snapshot=null;return false;}
                 return true;
             }
             catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)

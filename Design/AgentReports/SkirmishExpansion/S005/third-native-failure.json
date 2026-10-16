@@ -1,0 +1,11 @@
+{
+  "run": "s005-aria-live-104734-en-4fcd09d24a4d41e2807080d88e147ab0",
+  "acceptedForReadiness": false,
+  "normalInputJourney": "Victory, result and return passed",
+  "elapsedSeconds": 412.9835,
+  "inputViolations": 0,
+  "humanInterventions": 0,
+  "setupVisual": "Passed corrected title/brief/preview placement",
+  "failure": "Campaign source render database fails on disabled Dirt rows; scenery incomplete",
+  "rawCountedWin": "Excluded despite raw logger value; visual readiness failed"
+}

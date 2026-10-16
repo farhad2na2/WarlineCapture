@@ -1,0 +1,23 @@
+{
+  "result": "OneUseNative1627Retry1Released",
+  "runId": 1627,
+  "attempt": "retry1-after-memory-only-load-omission",
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "sourceManifestSha256": "1ab0a5396429586a08e99695386b39d5e74cfcf509d97a1387e8179cfe0a4a3a",
+  "fixtureSha256": "ebaf8610ab8c95ff45c3363c7c6478a9c43b04f715c34df873ecf0b2a191980c",
+  "packageSealSha256": "44d7c8c632112bf8b1a56914e6d8eb1a11d5c39a2c786024d12619dafa83c01d",
+  "connectedReviewSha256": "ade00e31f9c6f087adb66bc68ead2f6ce9c77396f8efd384b0182522fed2669b",
+  "liveObserverAssembly": "PipelineRunScript_S005NormalManualR2Recovery1627Observer_3160f3bec49b40a0b4fbf685f4205d9b",
+  "liveObserverMvid": "61647fce-f0f8-43d4-aac9-5f83c37e5b19",
+  "liveObserverWitnessSha256": "34d07ca6d383aefaf537f3eae4bb194cabd50f4da60dd6141ef5b3657d07f03a",
+  "editorStatusSha256": "f6c9c6c1bf30d5f833e730ed2734279b40b2345624c2095474c39ffccf8d560b",
+  "freshConsoleSha256": "7a1294bf6f34305a280cda1927db9b2cc65aae762dae7093dd550afe78f861cd",
+  "sourceFingerprintSha256": "ab46f6d7132e8c3cd8edd7630d3925d193421da69050e39b4fe0b3020e5103aa",
+  "method": "S005NormalManualR2Recovery1627Observer.RunValidation",
+  "log": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1627-retry1-normal-fa_r2-seed155926.log",
+  "nativeDispatchPermitted": true,
+  "used": true,
+  "priorFailedDispatchPreserved": true,
+  "playerReady": false,
+  "dispatchClaim": "S005NormalManualR2Recovery1627Observer.RunValidation"
+}

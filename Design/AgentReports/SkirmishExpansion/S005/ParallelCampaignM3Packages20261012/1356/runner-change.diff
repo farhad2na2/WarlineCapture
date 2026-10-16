@@ -1,0 +1,20 @@
+--- 1345
++++ 1356
+@@ -39,7 +39,7 @@
+  if fields!=['False']*5+[str(ROOT/'Assets'),'0']:raise RuntimeError('Editor not idle/clean on exact project: '+str(value))
+ 
+ def qualify(log,rows,status,scope):
+- errors=[];entries=[7] if scope=='fa-IR' else [2,7]
++ errors=[];entries=[7] if scope=='fa-IR' else [2] if scope=='en' else [2,7]
+  marker='[CampaignM3Journey1345] result=Passed'
+  if marker not in log:errors.append('Missing complete native M3 witness marker')
+  if '[CampaignNativeSelection] result=Passed' not in log:errors.append('Missing paired native companion input gate')
+@@ -63,6 +63,8 @@
+   for x in chosen[:-1]:
+    if x.get('mission')!='saga.ch01.m03.radar_warning':errors.append('Invalid native M3 witness identity')
+   if chosen[0].get('launchOrigin')!='CampaignOperations' or chosen[0].get('returnDestination')!='None' or chosen[0].get('outcome')!='None':errors.append('True nonterminal Campaign launch provenance missing')
++  expected_locale='fa-IR' if entry==7 else 'en'
++  if any(x.get('locale')!=expected_locale for x in chosen):errors.append('Native locale does not match requested entry')
+   victory,returned=chosen[-2:]
+   if victory.get('launchOrigin')!='CampaignOperations' or victory.get('returnDestination')!='CampaignOperations' or victory.get('outcome')!='Victory':errors.append('Exact native terminal Victory route missing')
+   if returned.get('terminalSnapshot') is not True or any(returned.get('terminal'+k)!=victory.get(v) for k,v in [('Frame','frame'),('Mission','mission'),('Session','session'),('Attempt','attempt'),('Locale','locale'),('Outcome','outcome'),('LaunchOrigin','launchOrigin'),('ReturnDestination','returnDestination')]):errors.append('Rendered Campaign return lacks exact frozen native terminal identity')

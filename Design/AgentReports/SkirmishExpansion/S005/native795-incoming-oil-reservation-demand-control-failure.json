@@ -1,0 +1,19 @@
+{
+  "result": "FailedAsExpectedControlledActualRouteRegression",
+  "sourceHash": "63c7313d48dddedf0ca5cb011cc32f4bd7a561a3aae68afc64fdf25157462cda",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-795-incoming-oil-reservation-old-policy-control-pre-source-manifest.json",
+  "postSourceManifest": "final-795-incoming-oil-reservation-old-policy-control-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "requiredPassMarkerAbsent": true,
+  "failureMarkerPresent": true,
+  "log": "native-795-incoming-oil-reservation-old-policy-control.log",
+  "shippingRuntimeUnchangedFromNative794": true,
+  "changedFiles": [
+    "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+  ],
+  "observedFailure": "Actual automatic Oil route chooses refineryId2 with26Oil+16incoming against an unfunded factoryId4 with8Oil/noincoming, despite another Materials batch already funded. Secondary starvation priority ignores inbound reservations.",
+  "scope": "Isolated World actual route selection, recorded native794 storage/reservation values. First faction case fails; faction2/cancellation/further regressions pending fix.",
+  "normalMissionCertified": false,
+  "playerReady": false
+}

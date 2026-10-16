@@ -1,0 +1,14 @@
+{
+  "run": "native681",
+  "result": "Failed",
+  "wrapperExit": 2,
+  "sourceHash": "76373a937df917e5e2a616ea9ba932f240e481f41de9a0943871c7ae1908bdfd",
+  "log": "native-681-current-boarded-apc-save-resume-en.log",
+  "trace": "s005-aria-live-155926-en-76f5efd0b90442329f24aa2d4572fe7b.jsonl",
+  "sourceUnchanged": true,
+  "restoredPassengers": 4,
+  "restoredLinksAndHiddenVisualsVerified": true,
+  "failedGate": "Native passenger unloading after Save/Continue",
+  "reason": "Timed out at recovery step 4 after transport-selection touch; driver did not verify native selection before waiting for passenger control",
+  "countsForReadiness": false
+}

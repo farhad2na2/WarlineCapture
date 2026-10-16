@@ -1,0 +1,16 @@
+{"frame":485,"operation":"AttackMove","receipt":10,"verified":true}
+{"frame":517,"operation":"AttackMove","receipt":14,"verified":true}
+{"frame":618,"operation":"AttackMove","receipt":22,"verified":true}
+{"frame":693,"operation":"Production","receipt":27,"verified":true}
+{"frame":841,"operation":"Production","receipt":31,"verified":true}
+{"frame":1106,"operation":"Production","receipt":38,"verified":true}
+{"frame":1373,"operation":"Placement","receipt":49,"verified":true}
+{"frame":1525,"operation":"Placement","receipt":55,"verified":true}
+{"frame":4409,"operation":"Production","receipt":64,"verified":true}
+{"frame":6501,"operation":"Placement","receipt":75,"verified":true}
+{"frame":7443,"operation":"Placement","receipt":84,"verified":true}
+{"frame":9075,"operation":"Production","receipt":92,"verified":true}
+{"frame":9826,"operation":"Placement","receipt":99,"verified":true}
+{"frame":10932,"operation":"Placement","receipt":108,"verified":true}
+{"frame":17333,"operation":"Research","receipt":110,"verified":true}
+{"frame":24349,"operation":"Research","receipt":111,"verified":true}

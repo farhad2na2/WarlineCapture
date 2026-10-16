@@ -1,0 +1,19 @@
+{
+  "result": "Passed",
+  "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1155-integrated-pre-source-manifest.json",
+  "postSourceManifest": "final-1155-integrated-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-1155-focused-current-integrated.log",
+  "requiredPassMarker": "[S005IntegratedTechnical1155] result=Passed suites=15 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "suites": 15,
+  "plannerCases": 107
+}

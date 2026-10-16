@@ -1,0 +1,10 @@
+{
+  "result": "Failed",
+  "reason": "operationMapFailure=MetadataBindFailed",
+  "sourceHash": "857c00913fc11824a4edfce066d80a02a55d92a404c31a05586fddb7feb72116",
+  "sourcePrePostMatch": true,
+  "allMaterialBytesMatch": true,
+  "wrapperExit": 1,
+  "mapVisualCaptured": false,
+  "playerReady": false
+}

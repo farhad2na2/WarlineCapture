@@ -1,0 +1,331 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SkirmishS002AriaRunHarness.RunS005NativeRecoveryDiagnosticAndExit
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_f68a65c4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Failed to handle /api/exec request: Main thread operation timed out after 5000ms
+UnityEngine.Debug:LogError (object)
+Unity.Pipeline.BasePipelineServer/<HandleExecRequest>d__115:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2071)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<ExecuteGated>d__105:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:1403)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<>c__DisplayClass115_0/<<HandleExecRequest>b__0>d:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2032)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<object>:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<ExecuteCommandByName>d__133:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2478)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<object>:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<ExecuteCommand>d__134:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2517)
+System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:441)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchCatalog (string,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:550)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchFromEnvironment () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:475)
+Game.Editor.SkirmishS002AriaRunHarness:RunFocusedAriaAndExit () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:206)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchS005Validation (bool) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:429)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005StartupEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:406)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005MapReviewAndExit () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:412)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005NativeRecoveryDiagnosticAndExit () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NativeRecovery.cs:20)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f68a65c4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SkirmishLaunch] queued expanded catalog=S005 definition=skirmish.s005 start=FieldBase difficulty=Regular size=Standard seed=104734 mapHint=0
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:136)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:66)
+Game.Editor.SkirmishS002AriaRunHarness:TryQueueExpanded (Unity.Entities.EntityManager) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:912)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:662)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005NativeRecoveryDiagnostic] phase=Queued savedActors=42 savedSources=344 banks=2 playerReady=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:QueueNativeRecoveryDiagnostic (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Configs.SkirmishResolvedSetup) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NativeRecovery.cs:39)
+Game.Editor.SkirmishS002AriaRunHarness:TryQueueExpanded (Unity.Entities.EntityManager) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:916)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:662)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishS002AriaRun] queued catalog=S005 seed=104734 hash=AB417F8E acceptance=Pending normal_speed=1
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TryQueueExpanded (Unity.Entities.EntityManager) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:922)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:662)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishS002AriaRun] selected catalog=S005 definition=skirmish.s005 version=2 size=Standard difficulty=Regular seed=104734 locale=en
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:667)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishAcceptanceCensus] result=Passed catalog=S005 definition=skirmish.s005 version=2 code=ca13fda430def8d28185bab651b7982252ab65e52f41d7cfae5f3f434b583831 config=128f61e981d234a4fe000ef66bced489b14c8875bd07f3ed1224baddd2747b48 setup=AB417F8E seed=104734 playable=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:669)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+'Game.Runtime.SkirmishCheckpointSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishCheckpointSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointSystem.cs:23)
+Game.Runtime.SkirmishCheckpointSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+'Game.Runtime.SkirmishSessionCleanupSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishSessionCleanupSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs:22)
+Game.Runtime.SkirmishSessionCleanupSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Compatibility mission=skirmish.base_assault scenario=scenario.skirmish.desert_base_standard operationMap=opmap.skirmish.desert_base_01
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:241)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:474)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:178)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:766)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[SkirmishNativeRecovery] result=Failed reason=NativeStructurePrefabOrFootprintMissing:Building_OilPump
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.SkirmishNativeCheckpointRecoveryRunner:Fail (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Runtime.SkirmishNativeCheckpointRecoveryRecord,string) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs:104)
+Game.Runtime.SkirmishNativeCheckpointRecoveryRunner:Step (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Configs.SkirmishResolvedSetup) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs:64)
+Game.Runtime.SkirmishScenarioSpawnSystem:TrySpawn (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs:83)
+Game.Runtime.SkirmishScenarioSpawnSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs:36)
+Game.Runtime.SkirmishScenarioSpawnSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.InitializationSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorld.cs:169)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=58223 size=2048x1024 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=1 placements=0 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:490)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:605)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:124)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[MapVehiclePlacement] no baked map vehicle placements configured.
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.MapVehiclePlacementSpawnPrefabSystemHelper:WarnOnce (bool&,Game.Runtime.MapVehiclePlacementSpawnPrefabSystemHelper/Context,string) (at Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs:665)
+Game.Runtime.MapVehiclePlacementSpawnPrefabSystemHelper:SpawnPlacements (Game.Runtime.MapVehiclePlacementSpawnPrefabSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.MapVehiclePlacementProgressState&) (at Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs:200)
+Game.Runtime.MapVehiclePlacementSpawnPrefabSystemHelper:Update (Game.Runtime.MapVehiclePlacementSpawnPrefabSystemHelper/Context) (at Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs:157)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_2:<Initialize>b__62 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:595)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:124)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:124)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[LoadingGate] ready frame=769 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FreezeDetect] Update hitch frame=770 BuildingPlacement=636.7ms, GC=0/0/0, Total=655.6ms
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SkirmishS003Startup] result=Failed reason=expandedStartupFailure=IncompatibleSave
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:FinishEvidence (bool,string,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1204)
+Game.Editor.SkirmishS002AriaRunHarness:PollFinishSourceHash () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1182)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishValidationExit] result=Requested code=2
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:FinishQuitAfterPlayMode () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1411)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.SkirmishS002AriaRunHarness.RunS005NativeRecoveryDiagnosticAndExit
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:150)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,312 @@
+{
+  "schema": 1,
+  "status": "ExternalCandidatePrepared_T7Compiled_Foundation6Passed_AdapterV4NotExecuted",
+  "mainSourceWritten": false,
+  "gitWritten": false,
+  "T7FullPlayStarted": false,
+  "scriptsStillRunning": false,
+  "productionManifestSha256": "43cf893759c9efade91398f63b9b4757bc8fdf56d70a97d318c917ac5816b292",
+  "productionPatchSha256": "7d4defa1b1853455ccb964f99d14539bd8f0ca6b29fb88d19466f8bd7d7c3c6c",
+  "productionFiles": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs",
+      "baseSha256": null,
+      "stagedSha256": "d13f67d6d1b1a88e8d4dfcc9f9e54712ba5de804f8a311ec8a6812a4a5054707",
+      "bytes": 20680
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "7e2dda17302f6136c4414962fb331083c521fe324cc28e20f63881447e795375",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+      "baseSha256": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2",
+      "stagedSha256": "713468bac94cf43de5c994664206448723e13db9d8fc41d31ae8a5e1b4c9a272",
+      "bytes": 99865
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "d41e9dc98307ec3701c3b6cf4411d41ae350194d65f5824258b320e729a45b72",
+      "bytes": 20692
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "9291b01524489fca24a7f1bf30ae8b8dc47a3a4ad41311ed9121fb4ccf801bdf",
+      "bytes": 243
+    }
+  ],
+  "foundationV1Manifest": "/private/tmp/s005-enemy-policy-step1/manifest.json",
+  "foundationCompileFollowup": "/private/tmp/s005-enemy-policy-step1-compile-followup-v2/manifest.json",
+  "initialT7Source": "40c75a4e77de2de63dbb119e8d36cb88f0612d4875c9e73a5676478ae417f7a2",
+  "v3FocusedPreSource": "91d4733d630db4ebf246a4f284d67321dfe8e7d390cf03e22b504f600875d711",
+  "v4ActualPreSource": "e1840790ea3cfc79e80fc7c804029cd571667a055604e08e4d91bbee1e9b89f6",
+  "v3ToV4ObservedSourceDelta": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs",
+      "before": "19b528fc9151d95498b98176dd7bbfe993a22527cbbec133b5187fb1f9b527a1",
+      "current": "d41e9dc98307ec3701c3b6cf4411d41ae350194d65f5824258b320e729a45b72"
+    }
+  ],
+  "v3CompletePostSourceNotCapturedBeforeTestCorrection": true,
+  "compiler": {
+    "v4": "completed",
+    "failed": false,
+    "errors": [],
+    "raw": "t7-recompile-status-production-v4.json"
+  },
+  "foundation6": {
+    "wrapperExit": 0,
+    "nativeExit": 0,
+    "marker": "[SkirmishEnemyPolicyV1Tests] result=Passed tests=6",
+    "log": "t7-foundation-v2-focused.log"
+  },
+  "adapterV3": {
+    "wrapperExit": 1,
+    "nativeExit": 1,
+    "status": "FailedLastCase",
+    "log": "t7-production-v3-focused.log",
+    "cause": "Final test incorrectly used Reserved as producer lock; native existing IsProducerLocked locks Producing or Researching. Core preserves existing rule."
+  },
+  "adapterV4": {
+    "wrapperExit": 6,
+    "nativeReceiptExists": false,
+    "nativeLogExists": false,
+    "status": "DispatchTimeout_NoMatchingOwnership_NotQualified",
+    "dispatch": "t7-production-v4-focused.log.dispatch.json",
+    "cause": "Native eval main-thread5s timeout; wrapper preserved Editor with no matching validation ownership."
+  },
+  "permissionBoundary": "No further T7 dispatch/integration/close; root awaiting owner permission to gracefully close only T7MenuUiUx. No process termination/reset/IPC/Hub close performed.",
+  "GUI": "Hub3.22.2 opened with documented CUA and existing signed-in account verified; main Menu UI responsive/no modal, T7-specific CUA screenshot unavailable. CLI editor_focus was acknowledged once, primitive T7 actual-type/idle gate then passed; later background/reload probes timed out.",
+  "outstanding": "Actual adapter17 wrapper pass; commanderv2 not imported. Root must run integrated focused checks before native paid production/pressure qualification. No current normal win/device/family/player-ready claim.",
+  "backups": [
+    "t7-before-backup/manifest.json",
+    "predecessor-v1",
+    "predecessor-v2",
+    "predecessor-v3",
+    "t7-import-v1-before-v2",
+    "t7-foundation-v1-before-fix",
+    "t7-test-v2-before-fix.cs.txt",
+    "t7-test-v3-before-lock-fixture-fix.cs.txt"
+  ],
+  "evidence": [
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/BuildingProductionRequestSystemHelper.original.cs.txt",
+      "sha256": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2",
+      "bytes": 98586
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/manifest.json",
+      "sha256": "43cf893759c9efade91398f63b9b4757bc8fdf56d70a97d318c917ac5816b292",
+      "bytes": 2486
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-before-independent-fingerprint.json",
+      "sha256": "68bb9ce7272529bb2abddea0df38d21939147b48b1e10a07809928eb390f1b4d",
+      "bytes": 370
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-before-source-manifest.json",
+      "sha256": "0bce0b07d54c55fe91771d3240eb2f72b7c4f7cf08d34135c21384830bed23b8",
+      "bytes": 6926129
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-compile-status-first.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-compiler-console-first.json",
+      "sha256": "553eee886d9506b22767788e4b949ad1e76245a1431e1cff6324f67ccb8d227b",
+      "bytes": 246
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-editor-focus-v4-pending.json",
+      "sha256": "f1e7a47a6da1a89f0ea262c0362c6260df5cd6b9e52491d56a94210223845b24",
+      "bytes": 251
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-editor-focus.json",
+      "sha256": "743aceb9909fa868c96aefa5c3c9dc0838c95f512f8e8a08195941256c6c1045",
+      "bytes": 366
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-focused-pre-independent-fingerprint.json",
+      "sha256": "4bb90a859d2ec00748f0f0d45c09b5ad10b123e4c49cd001ea29caa606ed49df",
+      "bytes": 370
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-focused-pre-source-manifest.json",
+      "sha256": "e422b802d389ec41dfc8efa372c5e60b55690a1c21d7c21b4af13e4f544d66a5",
+      "bytes": 6928814
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-foundation-v2-focused.log",
+      "sha256": "d5331c36f1c3a8dd55f5ab296b64b41f0f6771aa704e8fc89e398667e11a7009",
+      "bytes": 1718
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-foundation-v2-focused.log.dispatch.json",
+      "sha256": "e45e5b51b7f87ce5d9545f3adf326a3f0b0a5abf973e84a29c11610f883cf3d4",
+      "bytes": 969
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-foundation-v2-focused.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-guard-v3-first.json",
+      "sha256": "93b3f54ddb558c4c61f11c82a033589da8276d93de86ba24099f695169ea89ab",
+      "bytes": 234
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-idle-before-recheck.json",
+      "sha256": "c2998b63d47fa08460a79c13b43426acc23433e29295f1fcf6562f9518b0984a",
+      "bytes": 995
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-idle-before.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-primitive-after-focus.json",
+      "sha256": "47cbc0f32dcb5b5c60b03834fd5203ead4445c660f1948645a19e4441e263fb6",
+      "bytes": 960
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-primitive-idle-types-v3.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-production-v4-before-dispatch.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-types-after-v1.json",
+      "sha256": "446d93b1ec8fbdbe2b47e1ce3d48c44a1dd9d943494365e0911b04a9f4f66a82",
+      "bytes": 593
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-native-types-idle-v3.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-production-v3-focused.log",
+      "sha256": "fcb4415878a029fa0eaa57d301b2b388a292097caf34676d233c342669616e44",
+      "bytes": 2426
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-production-v3-focused.log.dispatch.json",
+      "sha256": "a8dbd5cc6dca95a06a04b97dbde6e8276b1f7e8a96f49084a84e5383b072fc85",
+      "bytes": 982
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-production-v3-focused.log.exit",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-production-v4-focused.log.dispatch.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-production-v4-pre-independent-fingerprint.json",
+      "sha256": "3f939598e4e5f7840491917ddd2da327b5426110705c76852dc89322cd0d71f1",
+      "bytes": 370
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-production-v4-pre-source-manifest.json",
+      "sha256": "8e774c7d9c36e18af12b75a44673d59107814982bbb5660d6246b64e66794b70",
+      "bytes": 6928814
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-request-foundation-v2.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-request-production-v3.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-request-production-v4.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-request-v2.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-first.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-foundation-v2-first.json",
+      "sha256": "b7e00085b47f91a43af44ab3a9107cc4d280ffd72b0c9144b18f95bcc13e236d",
+      "bytes": 404
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-foundation-v2-second.json",
+      "sha256": "364dfb224ae2ea88b915584e38d24e823d38a4071352fa3519f7cb2084692cbd",
+      "bytes": 874
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-production-v3-first.json",
+      "sha256": "f539fd51dcc1535544fd7e7e70ddc653614696fad0d0cc3d9307d9a01eb25f80",
+      "bytes": 323
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-production-v3-second.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-production-v4.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-recompile-status-v2-first.json",
+      "sha256": "d4d751573a499203e802e186ec656bf01e262cd27c1da24b871be5ed9cb3f99f",
+      "bytes": 902
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-refresh-after-import.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-test-v2-before-fix.cs.txt",
+      "sha256": "8eab66ed1b2e99f38a466989ef12ba32b396f54b2316d9c2e7b6f18dc38dc576",
+      "bytes": 20573
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-test-v3-before-lock-fixture-fix.cs.txt",
+      "sha256": "19b528fc9151d95498b98176dd7bbfe993a22527cbbec133b5187fb1f9b527a1",
+      "bytes": 20575
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/t7-v2-import.json",
+      "sha256": "f6d7aafa77ce975f26e3153334deb82bd9b9ea626a9ff59b9678e16a2ff95093",
+      "bytes": 512
+    },
+    {
+      "path": "/private/tmp/s005-enemy-production-v1/unity-hub-process-readonly.txt",
+      "sha256": "89a75318f611496a6b1c5a73017ea84deec8a82e202199145cce8170aae52b1f",
+      "bytes": 6259
+    }
+  ]
+}

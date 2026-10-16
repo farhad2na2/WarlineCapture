@@ -1,0 +1,9 @@
+{
+  "sourceHash": "9560906d31b50a9be5d0c402d527800daa45c15b4c8eada4bb158b460923865e",
+  "sourceFiles": 38034,
+  "sourceBytes": 4836986275,
+  "seconds": 10.527975,
+  "method": "Independent Python SHA-256 with C# BinaryWriter UTF-8 manifest and Ordinal UTF-16 path ordering",
+  "scope": "All source extensions in Assets/Packages/ProjectSettings; no exclusions added",
+  "preRunEvidence": "Immediately preceding native601 post fingerprint; no Assets edits before native602."
+}

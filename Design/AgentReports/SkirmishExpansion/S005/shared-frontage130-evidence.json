@@ -1,0 +1,20 @@
+{
+  "result": "Passed",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "log": "map-130-taller-crowns.log",
+  "palms": 179,
+  "details": 1191,
+  "roofShades": 32,
+  "courtyards": 9,
+  "wallSegments": 121,
+  "treeHorizontalScale": 1.35,
+  "treeVerticalScale": 2.1,
+  "treeFootprintsUnchanged": true,
+  "physicalSourceAssetsChecked": 21,
+  "physicalSourceAssetsChanged": 0,
+  "sharedConsumers": "All Campaign, Skirmish and Operations consumers of CityEdgeAirfield",
+  "nativeVisualReview": "Pending",
+  "ownerVisualAcceptance": "Pending",
+  "playerReady": false
+}

@@ -1,0 +1,13 @@
+{
+  "sourceHash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "sourceManifest": "post-aria-unselected-hold-candidate-source-manifest.json",
+  "preflightManifest": "final-1542-bilateral-four-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1542-bilateral-four-air-pre-dispatch-source-manifest.json",
+  "fixtureSha256": "c0d7d1c84624d7aa720b8f16beda4d1e4336a9989eb96757367f863c716ebec6",
+  "runnerSha256": "a9fac99af0123d295c0af076e81c99ef7ce22b82d25b83289444443b76c3a6fb",
+  "dryCompileProof": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1542-bilateral-four-air-dry-run.json",
+  "loadOnlyProof": "/private/tmp/s005-bilateral-four-air1542-2fab-prepared/load-only1542-bilateral-four-air.json",
+  "heavyLaneOwner": "main1542",
+  "normalMissionCertified": false,
+  "playerReady": false
+}

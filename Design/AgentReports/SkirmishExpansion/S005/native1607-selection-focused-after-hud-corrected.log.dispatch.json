@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "Design/AgentReports/SkirmishExpansion/S005/native1607-selection-focused-after-hud-corrected.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 43,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_native1607-selection-focused-after-hud-corrected.log.dispatch_009af8cb4f91414ba7a54385ec63ba43",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

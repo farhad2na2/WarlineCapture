@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "actual_checked_wrapper_exit": 2,
+  "reason": "incompletePackedRenderInitialization",
+  "failed_predicates": [
+    "stateNoOverflow",
+    "metricsNoOverflow"
+  ],
+  "candidate_sha256": "1a325b1969117a14e18a61983af69323db93f5b405a107f5d5252e1308f2bc23",
+  "source_files": 41052,
+  "complete_source_and_build_unchanged": true,
+  "native_launch_and_finish_hash_match": true,
+  "diagnostic_png": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-155926-en-c14ef3a6527348159a1f66f8c5df7aee.jsonl.packed-render-failed-unqualified.png",
+  "diagnostic_scope": "Read-only predicates; raw component structs were omitted by JsonUtility and require explicit scalar DTOs",
+  "cameraAccepted": false,
+  "fullMissionCertified": false,
+  "playerReady": false
+}

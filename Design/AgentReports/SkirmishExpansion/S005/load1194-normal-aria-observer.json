@@ -1,0 +1,100 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-enemy-baseline1194/S005EnemyBaseline1194Observer.cs",
+      "entry": "S005EnemyBaseline1194Observer.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 169,
+          "column": 132,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 169,
+          "column": 59,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 178,
+          "column": 120,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 178,
+          "column": 32,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 222,
+          "column": 127,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 222,
+          "column": 36,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 230,
+          "column": 107,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 230,
+          "column": 34,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 238,
+          "column": 116,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 238,
+          "column": 32,
+          "id": "CS0618"
+        }
+      ],
+      "compileMs": 946,
+      "executeMs": 108,
+      "assemblyName": "PipelineRunScript_S005EnemyBaseline1194Observer_0216c741dae84efb84449640d382014a",
+      "success": false,
+      "error": "Runtime Error",
+      "errorDetails": "InvalidOperationException: Native nested JsonUtility serialization lost primitive/array fields\n  at S005EnemyBaseline1194.SerializationSelfCheck () [0x002af] in /private/tmp/s005-enemy-baseline1194/S005EnemyBaseline1194Observer.cs:304 \n  at S005EnemyBaseline1194Observer.Run () [0x00001] in /private/tmp/s005-enemy-baseline1194/S005EnemyBaseline1194Observer.cs:50 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 "
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

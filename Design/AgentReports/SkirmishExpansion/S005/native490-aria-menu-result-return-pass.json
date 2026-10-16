@@ -1,0 +1,37 @@
+{
+  "sourceHash": "920c9d282096de1a00cdb2031dc0ca0608ae340ed13ad139bd972cf17a03438c",
+  "fullSourceUnchanged": true,
+  "preFingerprint": "final-488-assault-watchdog-pre-independent-fingerprint.json",
+  "postFingerprint": "final-491-aria-watchdog-post-independent-fingerprint.json",
+  "log": "native-490-aria-watchdog-repair-en-seed2.log",
+  "logSha256": "4951e5e888b8ec5b0250dad42c4e670929a5373724e363a286f67350f38c9c02",
+  "wrapperExit": 0,
+  "requiredMarkersVerified": true,
+  "locale": "en",
+  "seed": 130368,
+  "outcome": "Victory",
+  "matchSeconds": 225.8107,
+  "normalInputOutcomeResultReturnPassed": true,
+  "resultFrozen": true,
+  "returnAction": "ADJUST SETUP",
+  "inputAudit": {
+    "trace": "s005-aria-live-130368-en-6bea2dbef52b4e8dae1b9df3eaa1f8f6.jsonl.touch.jsonl",
+    "sha256": "bae50b1c1131648befc57bc2608a8839c6b3565b982672146ae08382335054f2",
+    "recordedContacts": 48,
+    "phases": {
+      "Menu": 5,
+      "Runtime": 42,
+      "Terminal": 1
+    },
+    "errors": [],
+    "strictRecordedContacts": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only; native outcome, result-return, source identity and wrapper pass must be checked separately."
+  },
+  "publishedSetupCertified": false,
+  "completeMissionCertified": false,
+  "playerReady": false,
+  "pending": "Authored starting support actors absent; fixed-wing cycle, full roster, bilateral map capacity, remaining manual/recovery/EN/FA matrix, native visual review and device acceptance remain pending."
+}

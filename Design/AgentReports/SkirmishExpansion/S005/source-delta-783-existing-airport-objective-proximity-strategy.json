@@ -1,0 +1,13 @@
+{
+  "sourceHash": "1330384d9754106f80e43bfd60870d4a5b060b57888f6bc79949bea4865b3a06",
+  "previousSourceHash": "c3e491210ef01a4f4d591d2f60212274fe6cbe79454a154e340dcab89ffcc36f",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs"
+  ],
+  "preSourceManifest": "final-783-objective-nearer-airport-pre-source-manifest.json",
+  "allMaterialsIdentical": true,
+  "shippingRuntimeConfigurationsPhysicalMapsUnchanged": true,
+  "scope": "Editor-only normal paid Airport candidate strategy: sort sites toward the public enemy-base objective rather than own HQ, preserving current Campaign geometry, full native clearance, conservative fuel reserve, costs, force counts and deadline. Flight savings not claimed until native evidence.",
+  "staticDiffCheck": "Passed",
+  "nativeValidation": "Pending783"
+}

@@ -1,0 +1,10 @@
+{
+  "requestedHeavyLaneOwner": "main1184",
+  "preManifest": "final-1175-integrated-post-source-manifest.json",
+  "preflightManifest": "final-1184-role-effects-preflight-source-manifest.json",
+  "fixtureSha256": "f14e5c5ac7611df9f2a26c21ff2fecd975d125752f39e376185940a379df83e7",
+  "executedRunnerSha256": "b92e3219d10005aeac48881837299c06d486fd766a9bd3c712bb8b9876ada76d",
+  "validationMethod": "S005CurrentObserverRoleEffects1184.RunValidation",
+  "expectedSourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "scope": "Isolated paid13role observer effects; funding/readiness/opening retirement/target-only pose and HP/AutoEngage/native death/initial oil stock prerequisites disclosed; no normal whole mission or checkpoint qualification"
+}

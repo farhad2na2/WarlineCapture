@@ -1,0 +1,18 @@
+{
+    "map": "DenseCity",
+    "beforeHash": "14c1280aacc3d0d680e07b3dd707c2f244e11224ff161791f7d4e8d2f1b7418e",
+    "afterHash": "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975",
+    "protectedHash": "0ff83d5abf4cd2c9db49c108ac47dd4eeb4017881c69209a4885a413f0924e00",
+    "bridges": 8,
+    "addedMaterialRows": 32,
+    "measurements": [
+        "bridge=0 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Cart_Stall_01",
+        "bridge=1 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01",
+        "bridge=2 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=3 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=4 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=5 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=6 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01",
+        "bridge=7 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01"
+    ]
+}

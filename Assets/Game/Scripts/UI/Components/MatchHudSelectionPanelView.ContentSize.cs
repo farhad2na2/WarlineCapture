@@ -82,7 +82,7 @@ namespace Game.UI.Runtime
                 cardMask.enabled = !_passengerDrawerOpen;
             float chipHeight = passengerChipRoot != null && passengerChipRoot.activeSelf
                 ? ((RectTransform)passengerChipRoot.transform).rect.height + 8 : 0;
-            float portraitHeight = Mathf.Clamp(selectionHeightLimit - 247 - chipHeight, 100, 180);
+            float portraitHeight = Mathf.Clamp(selectionHeightLimit - 247 - chipHeight - FieldRepairContextHeight, 100, 180);
             Place(frame.Find("PortraitFrame") as RectTransform, 14, 12, -28, portraitHeight);
             if (titleText != null) Place(titleText.rectTransform, 62, 15, -78, 34);
             if (subtitleText != null) Place(subtitleText.rectTransform, 62, 49, -78, 24);
@@ -92,6 +92,7 @@ namespace Game.UI.Runtime
             Place(frame.Find("HealthPanel") as RectTransform, 17, y, -34, 31); y += 39;
             Place(frame.Find("OrderLabel") as RectTransform, 17, y, -34, 55); y += 63;
             Place(frame.Find("V3PlayerControl") as RectTransform, 17, y, -34, 40); y += 48;
+            LayoutFieldRepairContext(ref y);
             if (chipHeight > 0)
             {
                 var chip = (RectTransform)passengerChipRoot.transform;

@@ -1,0 +1,17 @@
+{
+  "result": "Passed",
+  "scope": "Shared production taxi: ordinary delivery, queued Move and queued Hold",
+  "sourceHash": "309f493192630fa951a382e27c699683ed46363b6fb0af8974ec8e26762f6d83",
+  "wrapperExitCode": 0,
+  "preSourceManifest": "tests-701-assigned-parking-queued-command-repaired-pre-source-manifest.json",
+  "postSourceManifest": "tests-701-assigned-parking-queued-command-pass-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "log": "tests-701-assigned-parking-queued-command-green.log",
+  "marker": "[RunwayDeliveryCommandValidation] result=Passed cases=3",
+  "logSha256": "d5266dcb29b187d206de798a178005abe6d5ab9f22e166ce16cc62b583f7b5b5",
+  "reproductionLog": "tests-699-production-taxi-player-command-reproduction.log",
+  "reproductionFailed": true,
+  "reproductionRequiredPassMarkerMissing": true,
+  "nativeProductionTaxiPending": true,
+  "playerReady": false
+}

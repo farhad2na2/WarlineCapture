@@ -1,0 +1,43 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005PaidTransportHeli1101.cs",
+      "entry": "S005PaidTransportHeli1101.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 617,
+          "column": 122,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 617,
+          "column": 34,
+          "id": "CS0618"
+        }
+      ],
+      "compileMs": 1184,
+      "executeMs": 51,
+      "assemblyName": "PipelineRunScript_S005PaidTransportHeli1101_7af5de63e7d542e9a6300f9972ace055",
+      "success": true,
+      "result": "Fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

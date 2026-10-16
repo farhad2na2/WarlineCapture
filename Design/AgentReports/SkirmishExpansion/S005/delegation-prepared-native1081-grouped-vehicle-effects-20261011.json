@@ -1,0 +1,42 @@
+{
+  "scope": "External prepared native fixture; no Unity/source/Editor calls",
+  "fixture": "/private/tmp/S005VehicleCombatEffects1081.cs",
+  "fixtureSha256": "6af010f9470f69c45f7823f867b315a9b3135098e1a3ecc4e06afe7e466eb567",
+  "runner": "/private/tmp/s005-run-vehicle-combat-1081.py",
+  "runnerSha256": "002d54fb578c7650072c75b9782645d2b29d838ad4e7659c1a77356a4e6db2b6",
+  "roles": [
+    "ApcFast",
+    "ApcArmored",
+    "ApcHeavy",
+    "Tank",
+    "Siege"
+  ],
+  "Car": "Existing1061 actual paid exact DirectFire12HP evidence retained, no redundant Car case.",
+  "prerequisite": "Actual1080 CLOSED native/wrapper0 full source17beb unchanged, exact actual paid ApcFast DirectFire14HP. Runner requires preserved successful1080 proof before loading successor.",
+  "original1061FailureCauseProven": false,
+  "nativeTargetProtocol": "Actual opening hostile ArmoredAPC retained. Preserve native CanAttack1; target-only AutoEngage0. Clear actual shared target attack/movement intent before each atomically prepared target pose/grid/living HP/fullvision immediately after native Touch selection and before public API Attack/event baseline. Clear target intent and restore original pose/grid after qualified effect. No target revive or domain/weapon modification.",
+  "rangeProtocol": "Minimum actual UnitAttack.Range and role overlay range. Actual Siege must have GroundMissileLauncherComponent and uses legal midpoint of its positive [MinRange,min(MaxRange,UnitAttack.Range,overlayRange)] interval; interval impossible fails. Native Siege expected GroundMissile, others DirectFire. No range/weapon writes.",
+  "attribution": "Exactly one live actual paid member with exact reservation/native prefab/group/overlay/price producer proof. Every accepted effect requires exact actual SourceEntity, retained native target, native kind, positive new damage event and real HP loss. Broad eligible shooter audit requires no other live armed sources; actual armed target excluded only when AutoEngage0 plus no EngageTarget/AttackMoveOrder. Target ShotCounter must stay baseline; any new positive non-paid-source raw event after attack fails. No null-source fallback.",
+  "technicalIsolationDisclosed": [
+    "Materials/storage refill, FullArsenal readiness",
+    "Opening actors retired except actual enemy ArmoredAPC",
+    "Enemy strategy and building defense systems disabled/restored",
+    "Other native shooters suppressed in disposable session; target and paid actor never suppressed",
+    "Paid own AutoEngage0 during target-distant Touch selection inherited successful1080 protocol; native CanAttack/range/damage untouched",
+    "Target-only pose/grid/living health/full vision and intent clearing; no own pose/selection/order component writes",
+    "Post-effect HealthZero death stimulus, actual reservation/capacity release and idempotency"
+  ],
+  "evidence": [
+    "native1081-vehicle-combat.touch.jsonl",
+    "native1081-vehicle-damage-events.jsonl",
+    "native1081-vehicle-state.jsonl",
+    "native1081-all-new-damage-events.jsonl"
+  ],
+  "inputAudit": "Selection only native Touch AcceptedCommands0 legal; every Touch evidence row requires command/contact/intervention violations0; nonempty complete contacts and exact five distinct ordered public API accepted Attack markers independently required. API Attack not claimed Touch order.",
+  "validation": "Python AST passed; C# dry compilation, load and native execution pending",
+  "guards": "Unique class/files, exact fixture SHA, main idle + explicit root main1081 lane token, complete source preflight/pre-dispatch/post equality, checked GUI reuse wrapper720s vs fixture600s, malformed/missing receipt preserves active owner, exact failed1061 and passed1080 bytes/evidence preserved",
+  "dryCompile": "rtk proxy unity command run_script --file /private/tmp/S005VehicleCombatEffects1081.cs --entry S005VehicleCombatEffects1081.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "command": "rtk proxy python3 /private/tmp/s005-run-vehicle-combat-1081.py <current-source-manifest.json> --heavy-lane-owner main1081",
+  "normalMissionCertified": false,
+  "playerReady": false
+}

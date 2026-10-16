@@ -81,6 +81,7 @@ namespace Game.Runtime
 
         private static bool IsPotentialVehicleCargoPassenger(EntityManager em, Entity entity, bool allowLoadedPassenger, byte faction)
         {
+            if (em.Exists(entity) && em.HasComponent<SkirmishConvoyObjectiveTruckComponent>(entity)) return false;
             if (!em.Exists(entity) ||
                 !em.HasComponent<Faction>(entity) ||
                 em.GetComponentData<Faction>(entity).Id != faction ||

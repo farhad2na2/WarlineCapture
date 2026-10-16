@@ -1,0 +1,13 @@
+{
+  "result": "PassedScopedIsolated",
+  "scope": "External new policy helper prototype; 16 decision boundaries and four native disposable-World perception/group-allocation cases. Not integrated shipping assemblies, complete commander, normal mission, save continuity or player readiness.",
+  "normalInputJourneys": 0,
+  "sourceModified": false,
+  "fixture": "native1197-enemy-perception-focused.cs.txt",
+  "fixtureSha256": "9c1e9680be5a2fb2592f5aabe61d77829de88a77aed70e0e24660c3f026e078a",
+  "log": "native-1197-enemy-perception-focused.log",
+  "logSha256": "98e5114808772f6ea935dab34636a605a241a52461f559b3cd114794cc024c36",
+  "nativeExit": 0,
+  "wrapperExit": 0,
+  "playerReady": false
+}

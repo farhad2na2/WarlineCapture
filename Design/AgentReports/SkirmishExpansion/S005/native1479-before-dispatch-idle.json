@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-fighter-input-diagnostic1479-prepared/S005PaidAirIdle1479.cs",
+      "entry": "S005PaidAirIdle1479.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 28,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005PaidAirIdle1479_b10e9d2490ec41759602d739c4659c48",
+      "success": true,
+      "result": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005MainIdle1242.cs",
+      "entry": "S005MainIdle1242.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 213,
+      "executeMs": 7,
+      "assemblyName": "PipelineRunScript_S005MainIdle1242_e7f31431ce584e1d89eaaed1207a885b",
+      "success": true,
+      "result": "{\"applicationIsPlaying\":false,\"editorIsCompiling\":false,\"editorIsUpdating\":false,\"editorIsPlayingOrWillChangePlaymode\":false,\"assemblyCompilationState\":\"Idle\",\"assemblyCompilationStateOwner\":\"UnityEditor.EditorApplication.isCompiling\",\"activeScenePath\":\"Assets/Game/Scenes/Menu.unity\",\"dataPath\":\"/Users/farhad/Projects/WarlineCapture/Assets\"}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

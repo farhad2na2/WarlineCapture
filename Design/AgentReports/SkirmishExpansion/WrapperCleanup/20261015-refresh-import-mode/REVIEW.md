@@ -1,0 +1,9 @@
+# Optional refresh import mode
+
+The checked focused wrapper now accepts optional `-RefreshImportMode InProcess`, `OutOfProcessPerQueue` or `OutOfProcess`. Omitted/empty retains the original argument list. ValidateSet rejects arbitrary text before launching a child. Only the documented `-refreshImportMode <value>` pair is added; GUI licensing, timeout, explicit log, actual process exit and required marker checks remain unchanged. No ProjectSettings or lower wrapper behavior changed.
+
+Unity documents this as a single-session Asset Pipeline override and lists these three values: [Editor command-line reference](https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/command-line-arguments/editor). This experiment does not establish that InProcess fixes the observed WorkerManagerASIO teardown C5, and the successful default JSON diagnostic remains a valid separate control.
+
+Actual checked-wrapper synthetic validation passed all eleven cases with fresh owned C# executable: default GUI and command-line paths, explicit empty, all three modes, invalid/injected values rejected before launch, missing marker, explicit failure marker, and child exit37. The documented `powershell.exe -File` entry invocation is used. Full argument transcripts preserve build target, executeMethod, project/log path and existing quit behavior. No Unity/Hub process was launched or terminated; no Assets changed.
+
+Evidence is copied under actual11 without binaries. Focused wrapper SHA256 `79205bc9d9660c15627a254d8834cc5feef1513dfa4e12b389caa91d2f2abc1d`; unchanged lower wrapper SHA256 `2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add`. A prior synthetic caller incorrectly nested the wrapper under PowerShell Continue, allowing parameter-binding errors to leave the outer caller at zero; its failed result is retained. The final tests use the documented direct entry file and reject both invalid values with exit1.

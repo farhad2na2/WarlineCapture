@@ -1,0 +1,9 @@
+# Prepared M3 native1090 reserve-card retry — not executed
+
+External fixture `/private/tmp/CampaignSelectionJourney1090.cs` is unique and has not been loaded, compiled or executed. T7 remains idle and root owns the heavy Play lane. It derives the closed1080 native driver, preserving the actual initial required area drag, background input-setting restoration, continuous countdown observer, complete normal-input Victory/result/Campaignreturn gates, and original mission gameplay.
+
+Only late M3 replacement selection (lesson>=11, actual defense acknowledged, public DragSelection/NeedsSelection/RequiredSelectionCount4) may use the existing visible Rifle Squad card when the actual presented world drag is unavailable. Read-only runtime membership verifies one unique healthy friendly four-member mission group exactly fits the public tutorial SelectionMin/Max and centroid; if ambiguous or dead, no card fallback is attempted. No hidden actor index is used to issue an input or order.
+
+The existing presented-button point guard verifies the actual visible interactable card is reachable through normal UI raycast. After every normal card Touch, read-only actual SelectedUnitTag membership must equal the immutable intended healthy four before the generic replay may issue normal Hold. The inherited card cycles nearest four-member soldier clusters; at most6cardcontacts/15seconds are allowed. If any intended member dies before verification, the fixture fails rather than reducing the four-member pass gate. Every candidate/cohort snapshot is recorded separately. These are QA choices only, with no production/source/gameplay mutation.
+
+Compile/load through the existing authorized CLI fixture route only when root permits, and execute through the checked wrapper with unique `/private/tmp/delegation-t7-campaign-m03-fa-1090.log`. Preserve source pre/post and full native closure; do not interpret preparation as a pass.

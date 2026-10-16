@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "status": "ExternalCandidate_ForRootReview_NotNativeCompiled",
+  "baseSource": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs",
+      "baseSha256": null,
+      "stagedSha256": "d13f67d6d1b1a88e8d4dfcc9f9e54712ba5de804f8a311ec8a6812a4a5054707",
+      "bytes": 20680
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "7e2dda17302f6136c4414962fb331083c521fe324cc28e20f63881447e795375",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+      "baseSha256": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2",
+      "stagedSha256": "713468bac94cf43de5c994664206448723e13db9d8fc41d31ae8a5e1b4c9a272",
+      "bytes": 99865
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "d41e9dc98307ec3701c3b6cf4411d41ae350194d65f5824258b320e729a45b72",
+      "bytes": 20692
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "9291b01524489fca24a7f1bf30ae8b8dc47a3a4ad41311ed9121fb4ccf801bdf",
+      "bytes": 243
+    }
+  ],
+  "patchSha256": "7d4defa1b1853455ccb964f99d14539bd8f0ca6b29fb88d19466f8bd7d7c3c6c",
+  "focusedEntry": "Game.Tests.Editor.SkirmishEnemyPaidProductionAdapterTests.RunFocusedValidation",
+  "cases": 17,
+  "scope": "Actual adapter ECS correlation tests, not paid normal-input/native delivery playthrough",
+  "transactionOwnerUntouched": "shared native queue owns cost/caps/timing/delivery/refund; callback only records exact appended queue receipt",
+  "counter": "RequestId positive; NextRequestId next-unused; sameAction preserved; no accepted-without-witness inference",
+  "version": 4,
+  "predecessorManifestSha256": "0e2dcb2c04643bb95942c21cc252ba123a2ff422ee8dcddff085ba9d859d6c2e",
+  "additionalAPI": "CanDispatchNow(em,session,role): actual same authoritative feasibility/producer/research locks; pure/no income-hash reopening",
+  "correction": "Actual native IsProducerLocked only Producing (or Researching); final focused guard fixture now models actual Producing4-member paid receipt. Production v2 unchanged."
+}

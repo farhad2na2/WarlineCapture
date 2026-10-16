@@ -1,0 +1,17 @@
+{
+  "archive": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\ground30-source-chunks-20261015\\IB01\\collected-unqualified-IB18.zip",
+  "sha256": "c480609f4b58221d861cfff561d6cefcd0bd346768aa583a965e5434e4472fb8",
+  "summary": {
+    "group": "IB",
+    "missions": 6,
+    "sizeRows": 18,
+    "normalCompiledRows": 0,
+    "completeFacilityRows": 0,
+    "canonicalBudgetsExactRows": 6,
+    "sourceFitCertified": false,
+    "missionReady": false
+  },
+  "checkedWrapperExit": 0,
+  "sourceDllEqual": true,
+  "candidateSha256": "d23c0206a541301aac31ed8c1478844eb06282048ed15446c7f040feff83b5d7"
+}

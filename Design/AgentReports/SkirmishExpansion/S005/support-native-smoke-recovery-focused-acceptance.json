@@ -1,0 +1,34 @@
+{
+  "result": "Passed",
+  "runs": [
+    {
+      "run": 288,
+      "log": "focused-288-native-support-recovery.log",
+      "sha256": "41db2d36c57780cdb61d49b96cb22affed48029b900fa6bd0cf5a0b4d29e3a01",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 4,
+      "sourceHash": "b7ff53c55030f5b79f9ffa2c80d4831c20dad1ee84b6dcd69987f496e3d97b85"
+    },
+    {
+      "run": 289,
+      "log": "focused-289-native-recovery-regression.log",
+      "sha256": "29c89a4a939fdb4e507658b524c3d5e021082adbc3de18c5dd092885dfdadbf9",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 46,
+      "sourceHash": "b7ff53c55030f5b79f9ffa2c80d4831c20dad1ee84b6dcd69987f496e3d97b85"
+    },
+    {
+      "run": 290,
+      "log": "focused-290-native-support-wire-recovery.log",
+      "sha256": "04fdbdbc148de80dc7d94baa52af6f416965e5d95eaf8c1f04f6b2c0d7fd6a03",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 5,
+      "sourceHash": "d9bdc907477342fd50d3535a6c79e622d4c9e5010421d8ca0931c48556ae781b"
+    }
+  ],
+  "nativePlayerSupportJourney": false,
+  "playerReady": false
+}

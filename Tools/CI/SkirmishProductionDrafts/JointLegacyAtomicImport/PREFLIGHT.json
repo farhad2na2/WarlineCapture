@@ -1,0 +1,10 @@
+{
+  "result": "PlanOnlyPreflightPassed_NoAssetsToolsGitWrites",
+  "reviewed_sources": 6,
+  "new_meta": 1,
+  "source_before_pins_checked": 7,
+  "guid_collision_scan": "ActualAssetsrgmeta zero matches",
+  "adoption_sha256": "f6ed36ca7cb248eefca6c2f4ff96616d0e6ed3d1638e5e65ebf665be67128b93",
+  "importer_sha256": "9f208ce4596afce9036d1f9f199bf7e2cf7ded2a9f633a50d5860a1d26e764fe",
+  "native_executed": false
+}

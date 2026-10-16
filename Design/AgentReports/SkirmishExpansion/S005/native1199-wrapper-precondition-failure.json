@@ -1,0 +1,10 @@
+{
+  "result": "FailedBeforeDispatch",
+  "wrapperExit": 65,
+  "nativeDispatch": false,
+  "nativeExit": null,
+  "reason": "Checked wrapper requires running Unity Hub and reported it absent before any native command dispatch. Existing Editor sessions untouched.",
+  "sourceHash": "78f2dd425245aa8fb449b5e4353f1ccc5e03bed32cf035066716bfb4f83b1a71",
+  "testResult": "NotRun",
+  "playerReady": false
+}

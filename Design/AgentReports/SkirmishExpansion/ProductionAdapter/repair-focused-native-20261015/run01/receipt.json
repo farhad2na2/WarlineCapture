@@ -1,0 +1,9 @@
+{
+  "result": "PassedFocusedEngineeringControls",
+  "wrapperExit": 0,
+  "requiredMarker": "[SkirmishActiveRepairRecoveryValidation] result=Passed tests=55 legacyWire1Preserved=1 normalMissionReadiness=Pending",
+  "archiveSha256": "b942b3ca9ac12dbf4c7f25e6d4f8b455f0eff3351b653b7053097296d60ab531",
+  "normalInputMissionAcceptance": false,
+  "tests": 55,
+  "repairIntegrationCases": 4
+}

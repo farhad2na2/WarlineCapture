@@ -1,0 +1,372 @@
+{
+  "schema": 1,
+  "scope": "Offensive57NativeFootprintCorrectionOnly",
+  "parent": {
+    "path": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/manifest.review.json",
+    "sha256": "5b0fdeaa617bcf65495bf5365e4b3652d3385b34dc413da77246597788b0420c"
+  },
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs.txt",
+      "before_sha256": "524587175587fe88f7b32b2de4de77852b7111cf1c608d69779e7f9c6dfbf764",
+      "sha256": "9bf894d5cc47fb0897fddb0ff8548fea19f8e2a99c8e5a78578802c25ded5aaf"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs.txt",
+      "before_sha256": "1541101bcd88fbf0f89f0f430358763496be802c0d2561092782790e51e392c2",
+      "sha256": "6baaa5655936e5fbc459b620123d1a2d397a2c8b51dbef77cf513a92ef251375"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs.txt",
+      "before_sha256": "d7dfb98ca906c146d679222ab28fea408e53124072e4745b26b88179d4c52d72",
+      "sha256": "a73a97339fe73d0b7e79bad40d50d47ee77e4a95e8b26c2df64d5881bc805428"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaObjectiveSupport/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs.txt",
+      "before_sha256": "ff50ad53db4714ccb1ba1ae5558ba23e12d9cc12540f12f565e5373b667dcad0",
+      "sha256": "fc106cdfc6215d1545e106580f7844c832c98f7a82be6b32b99441eee14bca80"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaObjectiveSupportContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaObjectiveSupportContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "d79d15432ca1f48e8f581df46e95d0c911e7e7368d29c125466fb4674b3523fc"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSupport.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSupport.cs.txt",
+      "before_sha256": null,
+      "sha256": "753c12d32004b98c962850914d3db7d316a03159dcab59646f7e92271db8703f"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.ObjectiveSupport.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.ObjectiveSupport.cs.txt",
+      "before_sha256": null,
+      "sha256": "9cb7239bda7fba757c36fcb1573d0e6bf3fecca5bdc4c20f3ac3a0da43de8a47"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaObjectiveSupport/AriaObjectiveSupportTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "e41cb93ab40f8919278499d03e3cb9a31dccf7df5d404031e69b52ebefa1546b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/Sources/Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs.txt",
+      "before_sha256": "ff35fdb1447204c25b23399057cca4189190b2c218a35c9a55d33d6f6f57fb1e",
+      "sha256": "e2469ebcf3356740c30c0a4dca77d406b5be465d6b22e8562e31875c2351cbda"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs.txt",
+      "before_sha256": "b926bbd0d83b34396900c5bf2f46f9a238e04b22bd86e16eca9e683f3f826499",
+      "sha256": "798a87bf7b34618344f0801c49382761535745ff35fd259b77f3409268cb3dae"
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicAircraftReturnReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/SkirmishPublicAircraftReturnReceipt.cs.txt",
+      "before_sha256": null,
+      "sha256": "54d16618aff734213186e7993bd79317ca9fe2eff8988150bca19bc6459705e9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicAircraftReturnFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/SkirmishPublicAircraftReturnFeedback.cs.txt",
+      "before_sha256": null,
+      "sha256": "ef9e85ef56146c3ca47f37b16517d96f79578fd58c0b4216eae769226062929b"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaAircraftServiceContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaAircraftServiceContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "1c847a3a660cb24e46f67e73520de73ec25c80daf225b5dc6e01f4a91a4f4e52"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiAircraftServiceModel.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/UiAircraftServiceModel.cs.txt",
+      "before_sha256": null,
+      "sha256": "fd6a962c8f4e50ddb5049c1bc0a82181bfe07435fb815b78b0a10276693f1211"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "e4802e4f9e8d508d9c6e179628fadafbb589bd923beca082b1390580e00b0db3"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/MatchHudSelectionPanelView.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "9655ad6d31088c09ed0d3922b5196cdf3a674f55c7f60d5afb1c0c84b4836d91"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "65602518d0fe03776bca478517df66df4dd42d7a389d4e2a1c5add0cdc98c5f1"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.AircraftService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.AircraftService.cs.txt",
+      "before_sha256": null,
+      "sha256": "1462417db35db285fc2e0e1459a413182f7ffb99f7ae83f562696fefd0216b2a"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaAircraftServiceTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaAircraftService/AriaAircraftServiceTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "03f6f01a648419235052c595d8dac332e69ad918b69239ec1ae535d959c8ebd2"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/Sources/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs.txt",
+      "before_sha256": "51d5ecc7d686da660b00e2d6b156f2c733548a939f10edd315d048754bbcf354",
+      "sha256": "7f29026bfec8c13999f7a8285e121382e07b2cce90c5e7166132fca6363ca14f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/Sources/Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs.txt",
+      "before_sha256": "6213c9b0c9c35efe43b345131a81e590508580c5d4838aaa1a6ce7fefbeb5b1f",
+      "sha256": "ac013f490e662cc4e69bde1ca8dd0221958920b0ea01a587680398c0441cb278"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs.txt",
+      "before_sha256": "5c78cf71d61bda8d09d0eb89fbc19b84065d01f40779995353b3a8a8f8e88b23",
+      "sha256": "7ca84d9a5a75f0cfeec86878117e699e53769e383cd4006b69b608750f0e4e33"
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicScanReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/SkirmishPublicScanReceipt.cs.txt",
+      "before_sha256": null,
+      "sha256": "8d19a0b0c3de881bbdf24f520258aeef0ee4b574f89964f30c08bc5659f127e5"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicScanFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/SkirmishPublicScanFeedback.cs.txt",
+      "before_sha256": null,
+      "sha256": "a576be21514ee2f27a2eb24acf5cf4d2a4096d2b3b9c7ce4d3f6790eedf16414"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaPublicScanContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Contracts/AriaPublicScanContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "a47a4ddc41b5d786b307e846b48f3ba18cd3f5a25fd84a37edd4b12c58f78b1b"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.ScanTarget.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/SkirmishMatchView.ScanTarget.cs.txt",
+      "before_sha256": null,
+      "sha256": "bcd48eb6c541ae66b397db3c1f7e54543a6859d3af388525a7a403ab1fffe8e2"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicScan.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicScan.cs.txt",
+      "before_sha256": null,
+      "sha256": "1596cf9101c2cb0bce0f31e1d156bfa152abd9db33a08d376cbbbd40987b3469"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicScan.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicScan.cs.txt",
+      "before_sha256": null,
+      "sha256": "ae67a67c96fa7d33011994f7a16f2d4d7f139b8aa31f86364346fe65957fc4f7"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScanRetrySuccessor/Sources/Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "2fc483e4737ea0e045337981d5dfd128f75214620a400d407c66bf7111ad1e87"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicScanNativeTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScan/AriaPublicScanNativeTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "d4928d5bb5ff16a5fcf8a28bce264be8ad1fd241dc704a835e07b52b40642534"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicScanRetrySuccessor/Sources/Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportValidation.cs.txt",
+      "before_sha256": null,
+      "sha256": "735751c00837da0eabd30856e6184939d4d67d952f612f900549bacbde485266"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs.txt",
+      "before_sha256": "b5c3f556b8c0e75f002ce062e5ddca97e4ab95d626015fe667b4e70b2b8a3740",
+      "sha256": "f8d73895cd24b0d33caaf794702fbae5ef981340600fc808eb4a7452925091e9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs.txt",
+      "before_sha256": "535b2ecd675c23ea72dc1a0aac5d0c9cd628b16acb8fae53576505668552b98e",
+      "sha256": "135992b16af3f059bdd84136c553530bfb70f2cde8cecc60e36ef5b794540600"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs.txt",
+      "before_sha256": "2c34a52e06451df7d72beba80d135881b1c99700640208f4418266bbb1343746",
+      "sha256": "80b2a697a035f8410a097cec035e27a606e810f89ebc19b89b45a5a51942bf92"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/Sources/Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs.txt",
+      "before_sha256": "ea1d277e7eb51c9f7e030d0e7c328836f64ac4e9c749cd09a4ce6c0e80c7a862",
+      "sha256": "6b2c828de43f32734730da6f9e94796448dbb305a63c91380cb7476aad8e6ce8"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicBoardingPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/SkirmishPublicBoardingPresentation.cs.txt",
+      "before_sha256": null,
+      "sha256": "09d43d088d49feb51596a32f700c605177c13bf7deee572d4c966578fb91bf34"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiPublicBoardingModel.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/UiPublicBoardingModel.cs.txt",
+      "before_sha256": null,
+      "sha256": "af1930292401216ffe2dcf4d30dcee479d23c99878fc2213b85f5db129cbb49a"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/UiShellEcsGateway.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "7b91bdafafaf57a34ef846729da2c53ec726cdeffe7fe96e22759afa9bdc84c1",
+      "composed_from": {
+        "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicBoarding.cs",
+        "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/UiShellEcsGateway.PublicBoarding.cs.txt",
+        "before_sha256": null,
+        "sha256": "75cc3d596d8944406c3367bfb4d13eeba7a76c65a64edf62a44942bffdc32da1"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/MatchHudSelectionPanelView.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "3f74fb8df025efbb60741e8239dba8de3c952ef97a1c370c0c5de8a469b69898"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaPublicBoardingContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaPublicBoardingContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "3b3fb4c42e6f48a745a4eebb7722fbfca0d840b2de739d10b4f2561132b081d3"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.BoardingTarget.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/SkirmishMatchView.BoardingTarget.cs.txt",
+      "before_sha256": null,
+      "sha256": "e642db0ddff476b4e4520b56ca1a4596f35cfcf64b0aaa66eedad185806c600c"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/MatchHudAssistantUiSystemHelper.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "bce95cb7f2e797d411fe36e3174f3db212349fe72e8dc2360691dd7ac7f35716"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.PublicBoarding.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaSkirmishPlanSystem.PublicBoarding.cs.txt",
+      "before_sha256": null,
+      "sha256": "e881806a8330f50b8d773bbc45efbc0e2a66f2291fb7f50d670718907f4f634a"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicBoardingTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaPublicBoardingTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "547c6d2f95fb96e10ad5dafe0f7b96bc28df99eae6a637bee179fec4b19580fb"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaPublicBoardingNativeTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaPublicBoardingNativeTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "23736132aafc348ade438e12d6ff265862ac1ac1442d82d1d988eb292c30bc53"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaCompleteObjectiveSupportValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaPublicBoarding/AriaCompleteObjectiveSupportValidation.cs.txt",
+      "before_sha256": null,
+      "sha256": "444d70ac70c78162044ffec9c96dfdb9d4c715a6524177b4c980f99bd80d93f3"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/Sources/Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs.txt",
+      "before_sha256": "cb22071eed2f409350035a707acdbd9ae1f05899c354851168270590d70b816e",
+      "sha256": "594f4c2cc412d109e41522741fabbb7c28c7fe3c0d6ef2611cf22a743192f8c1"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/AriaOffensiveAirContracts.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaOffensiveAirContracts.cs.txt",
+      "before_sha256": null,
+      "sha256": "8f8da2a6c88d43151a1e54137ff6ca57f9cca512ca43e6f3c3fc5a4026c164d2"
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicAirPressureReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/SkirmishPublicAirPressureReceipt.cs.txt",
+      "before_sha256": null,
+      "sha256": "e200a36270434f6716f73b682763f5d9d96bf4f1e3332639f140484bd3cdd1e9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicAirPressureFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/SkirmishPublicAirPressureFeedback.cs.txt",
+      "before_sha256": null,
+      "sha256": "2899e1d55e1ce76af0d72996ba4d7cbdca9889143ad7874e4c34e0312406209f"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/UiAirRecruitModel.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/UiAirRecruitModel.cs.txt",
+      "before_sha256": null,
+      "sha256": "63ac37c261e6ebfedf0e0ac2d926c8ad52ed41abd352fd8debbfab8077514975"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AirRecruit.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/UiShellEcsGateway.AirRecruit.cs.txt",
+      "before_sha256": null,
+      "sha256": "2cbfeea716f4d4b545042b13d49005fa96167a977e77cf0b74e5f1f370354a38"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.OffensiveAir.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/MatchHudAssistantUiSystemHelper.OffensiveAir.cs.txt",
+      "before_sha256": null,
+      "sha256": "f97e455373e8a2af4450cbd7a98bf9bd41d9399f784aa2bf3597b4162a39e9a2"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.OffensiveAir.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaSkirmishPlanSystem.OffensiveAir.cs.txt",
+      "before_sha256": null,
+      "sha256": "b62e36e6871ae3d3daaeefbe9ecec6f52cbd8de05f930a5f5feee5dcc87b9c9f"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaOffensiveAirTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaOffensiveAirTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "fefdf04a8eb16258bc946179bf20f7e3202a1acd2e1bf145ece6290b9b8daa29"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaOffensiveAirNativeTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaOffensiveAirNativeTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "02cdee8aac86ca44b5ea30d6134d9da8f3bcce5b66c71b6eb7843eca4cc73bf5"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaExtendedObjectiveSupportValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/AriaExtendedObjectiveSupportValidation.cs.txt",
+      "before_sha256": null,
+      "sha256": "cf0e0bca385b8ea24ccd1195b322eff38cd78f3179dc8035dce3554663e4ee17",
+      "composed_from": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/AriaExtendedObjectiveSupportValidation.cs",
+        "source": "Tools/CI/SkirmishProductionDrafts/AriaOffensiveAir/AriaExtendedObjectiveSupportValidation.cs.txt",
+        "before_sha256": null,
+        "sha256": "11bb4ffd22664ee97e04316eb48b8a70bfbdb957e9f57d2e4082e93f92abc512"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaBoardingFootprintTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaBoardingFootprintSuccessor/AriaBoardingFootprintTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "f712fe19ddd8ffc0a0e58da3db09afca039900bef188ae64716ab87ce269614e"
+    }
+  ],
+  "native_controls": 70,
+  "native_execution": false
+}

@@ -1,0 +1,30 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] Existing executeMethod: Game.Tests.Editor.SkirmishEnemyCapabilityTests.RunFocusedValidation; LogFile: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1240-capability.log; TimeoutSeconds: 180
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1240-capability.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 88,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_native-1240-capability.log.dispatch_bc0c184ab42d47b7ab23457680502d30",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

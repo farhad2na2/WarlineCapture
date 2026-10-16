@@ -73,13 +73,11 @@ namespace Game.UI.Shell.Ecs
         {
             if (!TryGetBoundary(out var em, out var boundary)) return;
             EnsureAriaPlay(em, boundary);
-            if (!em.HasComponent<AriaSkirmishObservationComponent>(boundary)) em.AddComponent<AriaSkirmishObservationComponent>(boundary);
-            if (!em.HasComponent<AriaSkirmishPlanComponent>(boundary)) em.AddComponent<AriaSkirmishPlanComponent>(boundary);
-            em.SetComponentData(boundary, new AriaSkirmishObservationComponent { Value = value });
+            AriaSkirmishObservationStorage.Publish(em,boundary,value);
         }
         AriaSkirmishIntent IUiAriaPlayGateway.ReadAriaSkirmishIntent() =>
-            TryGetBoundary(out var em, out var boundary) && em.HasComponent<AriaSkirmishPlanComponent>(boundary)
-                ? em.GetComponentData<AriaSkirmishPlanComponent>(boundary).Intent : default;
+            TryGetBoundary(out var em, out var boundary) && AriaSkirmishObservationStorage.TryGet(em,boundary,out var storage)
+                ? em.GetComponentData<AriaSkirmishPlanComponent>(storage).Intent : default;
         bool IUiAriaPlayGateway.TryStartAriaPlay()
         {
             if (!TryGetBoundary(out var em, out var boundary) || !em.HasComponent<AriaPlayObservationComponent>(boundary)) return false;
@@ -91,7 +89,7 @@ namespace Game.UI.Shell.Ecs
             if (em.HasBuffer<AssistantCommandIntentRequestElement>(boundary) && em.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Length != 0) return false;
             var session = em.GetComponentData<AriaPlaySessionComponent>(boundary);
             if (session.Phase is not AriaPlayPhase.Manual and not AriaPlayPhase.Blocked) return false;
-            if (em.HasComponent<AriaSkirmishPlanComponent>(boundary)) em.SetComponentData(boundary, default(AriaSkirmishPlanComponent));
+            AriaSkirmishObservationStorage.ResetPlan(em,boundary,false);
             em.SetComponentData(boundary, new AriaPlaySessionComponent
             { Phase = AriaPlayPhase.Starting, LastProgressAt = observation.Time, DueAt = observation.Time + .3f });
             return true;
@@ -104,8 +102,7 @@ namespace Game.UI.Shell.Ecs
             {
                 if (em.HasComponent<AriaPlaySessionComponent>(boundary))
                     em.SetComponentData(boundary, default(AriaPlaySessionComponent));
-                if (em.HasComponent<AriaSkirmishPlanComponent>(boundary))
-                    em.SetComponentData(boundary, default(AriaSkirmishPlanComponent));
+                AriaSkirmishObservationStorage.ResetPlan(em,boundary,true);
             }
         }
         AriaPlayModel IUiAriaPlayGateway.ReadAriaPlay()

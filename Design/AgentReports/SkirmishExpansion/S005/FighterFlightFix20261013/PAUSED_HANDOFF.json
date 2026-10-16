@@ -1,0 +1,271 @@
+{
+  "status": "PausedAtSafeBoundary",
+  "package": "/private/tmp/s005-fighter-flight1401",
+  "nativeDispatchPermitted": false,
+  "nativeExecutedFromThisLane": false,
+  "diagnosis": "Native Move reached the exact intermediate waypoint; fixture incorrectly required arrival heading that Move did not request. Correct only intermediate heading expectation; preserve all final 32m/forward alignment/receipt/Hold/visibility/damage gates. No production flight change justified.",
+  "evidence": {
+    "file": "Design/AgentReports/SkirmishExpansion/S005/native1392-fighter-leg1-diagnostic.jsonl",
+    "sha256": "ce34707b0153440190b1a42e8f037b53c206e6b1d6a6c17f447640a58467d446",
+    "closestWithTarget": {
+      "stage": "NativeLeg1ReadOnlyTrajectory",
+      "reason": "Interval12Frames",
+      "attemptId": "expanded-s005-104734-33de049aa7654411829e4a05d53faa00",
+      "moveIntentOrder": "None",
+      "frame": 4665,
+      "leg": 1,
+      "actorIndex": 768,
+      "actorVersion": 11,
+      "returningHome": 0,
+      "returnApproachInitialized": 0,
+      "attackRunActive": 1,
+      "takeoffRolling": 0,
+      "landingRolling": 0,
+      "attackPassGoalX": 850,
+      "attackPassGoalZ": 780,
+      "goalX": 850,
+      "goalZ": 780,
+      "gridX": 851,
+      "gridZ": 784,
+      "moveReceipt": 53,
+      "airborne": true,
+      "goalPresent": true,
+      "manualMove": true,
+      "engageTarget": false,
+      "selected": true,
+      "hold": false,
+      "moveIntentPresent": false,
+      "moveIntentActive": false,
+      "fuelEnabled": true,
+      "x": 851.1575317382812,
+      "y": 28.82416343688965,
+      "z": 784.244384765625,
+      "forwardX": -0.1438799500465393,
+      "forwardZ": -0.9895951747894287,
+      "headingDot": 0.6346125602722168,
+      "commandDistance": 4.113572597503662,
+      "alertDistance": 122.5084457397461,
+      "airFuelPerCell": 0.25,
+      "usableFuel": 4753.0,
+      "moveSpeed": 36.0,
+      "moveIntentX": 0.0,
+      "moveIntentZ": 0.0,
+      "editorTime": 5422.8732275
+    },
+    "closestRecorded": {
+      "stage": "NativeLeg1ReadOnlyTrajectory",
+      "reason": "StateOrGoalChanged",
+      "attemptId": "expanded-s005-104734-33de049aa7654411829e4a05d53faa00",
+      "moveIntentOrder": "None",
+      "frame": 4669,
+      "leg": 1,
+      "actorIndex": 768,
+      "actorVersion": 11,
+      "returningHome": 1,
+      "returnApproachInitialized": 0,
+      "attackRunActive": 0,
+      "takeoffRolling": 0,
+      "landingRolling": 0,
+      "attackPassGoalX": 850,
+      "attackPassGoalZ": 780,
+      "goalX": 0,
+      "goalZ": 0,
+      "gridX": 850,
+      "gridZ": 780,
+      "moveReceipt": 53,
+      "airborne": true,
+      "goalPresent": false,
+      "manualMove": false,
+      "engageTarget": false,
+      "selected": true,
+      "hold": false,
+      "moveIntentPresent": false,
+      "moveIntentActive": false,
+      "fuelEnabled": true,
+      "x": 850.6831665039062,
+      "y": 28.82416343688965,
+      "z": 780.9785766601562,
+      "forwardX": -0.14367233216762543,
+      "forwardZ": -0.9896253347396851,
+      "headingDot": 0.6347746849060059,
+      "commandDistance": 0.8304774761199951,
+      "alertDistance": 120.37183380126953,
+      "airFuelPerCell": 0.25,
+      "usableFuel": 4751.75,
+      "moveSpeed": 36.0,
+      "moveIntentX": 0.0,
+      "moveIntentZ": 0.0,
+      "editorTime": 5423.000936
+    }
+  },
+  "offlineControls": {
+    "result": "PassedSyntheticControlsOnly",
+    "controls": 23,
+    "cases": [
+      {
+        "name": "Complete original aligned route still qualifies",
+        "expectedAccepted": true,
+        "errors": []
+      },
+      {
+        "name": "Intermediate point arrival accepts truthful non-axis heading",
+        "expectedAccepted": true,
+        "errors": []
+      },
+      {
+        "name": "Wrong intermediate goal",
+        "expectedAccepted": false,
+        "errors": [
+          "Native goal match contradicts actual UnitTarget cell"
+        ]
+      },
+      {
+        "name": "Missing intermediate native target",
+        "expectedAccepted": false,
+        "errors": [
+          "First approach needs actual accepted native airborne near-goal Move"
+        ]
+      },
+      {
+        "name": "Returning before intermediate admission",
+        "expectedAccepted": false,
+        "errors": [
+          "First approach needs actual accepted native airborne near-goal Move"
+        ]
+      },
+      {
+        "name": "Foreign intermediate Move receipt",
+        "expectedAccepted": false,
+        "errors": [
+          "Approach arrival changed accepted receipt"
+        ]
+      },
+      {
+        "name": "Reused rear receipt",
+        "expectedAccepted": false,
+        "errors": [
+          "Approach arrival changed accepted receipt"
+        ]
+      },
+      {
+        "name": "Intermediate outside actual proximity",
+        "expectedAccepted": false,
+        "errors": [
+          "First approach needs actual accepted native airborne near-goal Move"
+        ]
+      },
+      {
+        "name": "Fabricated intermediate aligned flag",
+        "expectedAccepted": false,
+        "errors": [
+          "Native heading/proximity flags contradict primitive measurements"
+        ]
+      },
+      {
+        "name": "Final heading still required: NativeAlignedApproachArrived",
+        "expectedAccepted": false,
+        "errors": [
+          "Final approach must retain both receipts, real flight and forward firing arc"
+        ]
+      },
+      {
+        "name": "Final heading still required: PublicAlignedHoldTouch",
+        "expectedAccepted": false,
+        "errors": [
+          "Exact near-alert aligned actual Hold Touch admission missing"
+        ]
+      },
+      {
+        "name": "Final heading still required: HeldAlignedObserved",
+        "expectedAccepted": false,
+        "errors": [
+          "Final approach must retain both receipts, real flight and forward firing arc"
+        ]
+      },
+      {
+        "name": "Final heading still required: PublicCameraPreparedAligned",
+        "expectedAccepted": false,
+        "errors": [
+          "Final approach must retain both receipts, real flight and forward firing arc"
+        ]
+      },
+      {
+        "name": "Final heading still required: TargetFlightDepartureAligned",
+        "expectedAccepted": false,
+        "errors": [
+          "Final approach must retain both receipts, real flight and forward firing arc"
+        ]
+      },
+      {
+        "name": "Final native goal required",
+        "expectedAccepted": false,
+        "errors": [
+          "Aligned fly-through must retain actual goal and advancing trajectory before Hold"
+        ]
+      },
+      {
+        "name": "Final 32m alert band required",
+        "expectedAccepted": false,
+        "errors": [
+          "Aligned fly-through must retain actual goal and advancing trajectory before Hold"
+        ]
+      },
+      {
+        "name": "Final distinct receipt required",
+        "expectedAccepted": false,
+        "errors": [
+          "Final approach must retain both receipts, real flight and forward firing arc"
+        ]
+      },
+      {
+        "name": "Final airborne state required",
+        "expectedAccepted": false,
+        "errors": [
+          "Final approach must retain both receipts, real flight and forward firing arc"
+        ]
+      },
+      {
+        "name": "Actual Hold tag required",
+        "expectedAccepted": false,
+        "errors": [
+          "Actual native airborne Hold/near-goal conservation missing"
+        ]
+      },
+      {
+        "name": "Actual Hold contact required",
+        "expectedAccepted": false,
+        "errors": [
+          "Actual native airborne Hold/near-goal conservation missing"
+        ]
+      },
+      {
+        "name": "Final trajectory must advance",
+        "expectedAccepted": false,
+        "errors": [
+          "Aligned fly-through must retain actual goal and advancing trajectory before Hold"
+        ]
+      },
+      {
+        "name": "Missing paired Touch completion rejected",
+        "expectedAccepted": false,
+        "errors": [
+          "Hold must complete a later actual same-device public Touch"
+        ]
+      },
+      {
+        "name": "Incomplete 1392-style route cannot qualify final combat preparation",
+        "expectedAccepted": false,
+        "errors": [
+          "Actual public zoom convergence and per-leg camera request/framed evidence missing"
+        ]
+      }
+    ],
+    "nativeExecuted": false
+  },
+  "nextSteps": [
+    "Independent review of exact successor bytes and final package freeze.",
+    "Native dry compilation and coordinated fresh1401run.",
+    "Qualify complete final intercept and actual Fighter damage; keep1392 failed overall."
+  ],
+  "productionFilesEdited": false
+}

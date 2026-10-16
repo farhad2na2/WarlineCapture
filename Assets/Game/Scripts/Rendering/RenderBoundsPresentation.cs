@@ -14,8 +14,12 @@ namespace Game.Rendering
     {
         public static IRenderBoundsPresentation Create() => new Reader();
 
-        private sealed class Reader : IRenderBoundsPresentation
+        private sealed class Reader : IRenderBoundsPresentation, IRenderVisibleGeometryPresentation, IRenderAircraftVisibleGeometryPresentation
     {
+        public bool TryReadAircraftVisibleGeometryBounds(EntityManager manager,Entity actor,Entity draw,out Bounds bounds,out bool hasDraw,out string failure)
+            =>CanonicalAircraftVisibleGeometryPresentation.TryRead(manager,actor,draw,out bounds,out hasDraw,out failure);
+        public bool TryReadVisibleGeometryBounds(EntityManager manager,Entity entity,out Bounds bounds,out bool hasDraw,out string failure)
+            =>RigidAircraftVisibleGeometryPresentation.TryRead(manager,entity,out bounds,out hasDraw,out failure);
         private static EntityQuery AuthoredBuildingGeometry(EntityManager manager) => manager.CreateEntityQuery(new EntityQueryDesc
         {
             All = new[] { ComponentType.ReadOnly<LocalToWorld>(), ComponentType.ReadOnly<MaterialMeshInfo>(), ComponentType.ReadOnly<RenderMeshArray>() },

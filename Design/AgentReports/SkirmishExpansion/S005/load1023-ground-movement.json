@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005GroundMovement1023.cs",
+      "entry": "S005GroundMovement1023.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 150,
+      "executeMs": 2,
+      "assemblyName": "PipelineRunScript_S005GroundMovement1023_ffba378319d446cdb1158fbffe6c6658",
+      "success": true,
+      "result": "Fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,90 @@
+{
+  "status": "FrozenExternalOnlyNotNativeExecuted",
+  "path": "/private/tmp/s005-stop-manual-takeover1278",
+  "manifestSha256": "2c8fcfc0a1012c27e34bff7b00857d2dbfd874c7ef54df9a4ae434f3e4bfcf70",
+  "fixtureSha256": "afb67d4890ee6cb6218d954f8a2bc929ae01acfac8b81b6cfc9954acf1b2a183",
+  "runnerSha256": "779ff03b303e03f975efa58f9b34d2fab65a73c9caf2789e88c9073ad798034c",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "seed": 155926,
+  "offlineControls": 57,
+  "contracts": 124,
+  "archive": "delegation-stop-manual1278-prepared.zip",
+  "archiveSha256": "1b208829d26328e46f2e243b82a8857579992e0a5d0de6cfa3e7cdc05374a7ac",
+  "postmortem": {
+    "result": "ReadOnlyPostmortem",
+    "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+    "originalProof": "native1260-normal-stop-manual-failure.json",
+    "originalProofSha256": "634912053de9000673a7a72dc5f39e43113135fc59950ee9fcfad43c0f5f8007",
+    "originalFixtureSha256": "c10ab0b0ab7351ffdaa0caeb37b20780b21ece68e0a302b680107c8a9ece8316",
+    "originalRunnerSha256": "c12d0e9bf4b28e1ced1e472849f52143caff4c4a3ea6877fabeba0654741ec2d",
+    "log": "native-1260-normal-stop-manual-en104734.log",
+    "logSha256": "a40875ac99b2d4642d688bf907336f2366050c3e55d92e324cea43d14847c3ab",
+    "actualOutcome": "Defeat",
+    "elapsedSeconds": 568.0200805664062,
+    "enemyBaseHp": 800,
+    "nativeExit": 1,
+    "wrapperExit": 1,
+    "scopedNativeControlsPassedAtSeconds": 123.72125244140625,
+    "manualAcknowledgedAssaults": 0,
+    "actualAcceptedManualTerrainAttackMoveReceipts": [
+      175,
+      182
+    ],
+    "naturalTargetVisibilityAtSeconds": 207.63516235351562,
+    "selectedFallbackCohortLostAtSeconds": 315.621,
+    "sourceEvidence": [
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+        "lines": "182-187,227-246",
+        "finding": "RosterChanged reselects at same slot; three unacknowledged order polls skip slot. Only acknowledged native order increments manualAttackReceipts."
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+        "lines": "1330-1337",
+        "finding": "Whole manual qualification requires native Victory, actual positive manualAttackReceipts and clean audit."
+      }
+    ],
+    "certainty": "No actual QA step/slot/masks/counter samples at failure. No causal production or test acknowledgment bug established. Fog approach naturally revealed actual target; whole defeat cannot be attributed only to fog.",
+    "successor": {
+      "id": 1278,
+      "seed": 155926,
+      "publicEntry": "RunS005EditorAriaEnSeed3",
+      "reason": "Current source seed155926 already has actual ARIA1265 and paidR2/manual1262 victories. Different protocols:1262 included paidR2 HeavyAPC; combined Stop continuation remains unproven.",
+      "changes": "ID/seed/public entry plus passive real QA state/receipt telemetry and explicit native drycompile guard. No tactical behavior repair.",
+      "successGuaranteed": false
+    },
+    "playerReady": false,
+    "noUnityExecuted": true,
+    "originalFailurePromoted": false
+  },
+  "dryCommand": [
+    "rtk",
+    "proxy",
+    "unity",
+    "command",
+    "run_script",
+    "--file",
+    "/private/tmp/s005-stop-manual-takeover1278/S005NormalStopManual1278Observer.cs",
+    "--entry",
+    "S005NormalStopManual1278Observer.Run",
+    "--dry_run",
+    "true",
+    "--timeout_ms",
+    "30000",
+    "--project-path",
+    "/Users/farhad/Projects/WarlineCapture",
+    "--format",
+    "json"
+  ],
+  "runCommand": [
+    "rtk",
+    "proxy",
+    "python3",
+    "/private/tmp/s005-stop-manual-takeover1278/runner.py",
+    "final-1268-normal-aria-post-source-manifest.json",
+    "--dry-compile-proof",
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1278-stop-manual-reviewed-dry-run.json",
+    "--heavy-lane-owner",
+    "main1278"
+  ]
+}

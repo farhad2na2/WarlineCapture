@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-1627-live-observer-presence.cs",
+      "entry": "S005LiveObserverPresence1627.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 30,
+      "executeMs": 834,
+      "assemblyName": "PipelineRunScript_s005-1627-live-observer-presence_9921f536a1614edbbf3c1d3795860217",
+      "success": true,
+      "result": "{\"assemblyName\":\"PipelineRunScript_S005NormalManualR2Recovery1627Observer_3160f3bec49b40a0b4fbf685f4205d9b\",\"assemblyMvid\":\"61647fce-f0f8-43d4-aac9-5f83c37e5b19\",\"observerType\":\"S005NormalManualR2Recovery1627Observer\",\"validationMember\":\"RunValidation\",\"fogCompanionType\":\"S005ManualFogFallback1627\",\"callbackFields\":[\"manualTouch\",\"manualDue\",\"manualActions\",\"manualStep\",\"manualSlot\"],\"editorIdle\":true,\"gameplayStarted\":false}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

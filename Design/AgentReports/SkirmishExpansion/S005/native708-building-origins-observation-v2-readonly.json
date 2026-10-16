@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; var t=typeof(Game.Runtime.SkirmishProductionService).Assembly.GetType(\"Game.Runtime.SkirmishNativeBuildingCheckpointRecord\"); System.Reflection.MethodInfo getter=null;foreach(var m in typeof(Unity.Entities.EntityManager).GetMethods())if(m.Name==\"GetComponentObject\"&&m.IsGenericMethodDefinition&&m.GetParameters().Length==1&&m.GetParameters()[0].ParameterType==typeof(Unity.Entities.Entity))getter=m;var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic;var rows=new System.Collections.Generic.List<string>();using(var q=em.CreateEntityQuery(Unity.Entities.ComponentType.ReadOnly(t)))using(var es=q.ToEntityArray(Unity.Collections.Allocator.Temp)){foreach(var e in es){var record=getter.MakeGenericMethod(t).Invoke(em,new object[]{e});var b=t.GetField(\"Building\",flags).GetValue(record);if(b==null)continue;var bt=b.GetType();if((byte)bt.GetProperty(\"OwnerFactionId\").GetValue(b)!=1)continue;var def=bt.GetField(\"Definition\",flags).GetValue(b);var instance=bt.GetField(\"Instance\",flags).GetValue(b) as UnityEngine.GameObject; rows.Add(\"id=\"+bt.GetProperty(\"Id\").GetValue(b)+\" origin=\"+bt.GetField(\"OriginCell\",flags).GetValue(b)+\" footprint=\"+def.GetType().GetField(\"FootprintCells\").GetValue(def)+\" instance=\"+(instance!=null?instance.transform.position.ToString():\"null\"));}}return string.Join(\"\\n\",rows);"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "id=5 origin=(906, 596) footprint=(15, 4) instance=(913.50, 0.01, 598.00)\nid=7 origin=(906, 610) footprint=(25, 15) instance=(918.50, 0.01, 617.50)\nid=9 origin=(921, 598) footprint=(14, 10) instance=(928.00, 0.01, 603.00)\nid=11 origin=(931, 608) footprint=(19, 16) instance=(940.50, 0.01, 616.00)\nid=1 origin=(919, 641) footprint=(28, 15) instance=(933.00, 0.01, 648.50)\nid=13 origin=(934, 666) footprint=(3, 4) instance=(935.50, 0.01, 668.00)\nid=15 origin=(906, 666) footprint=(19, 16) instance=(915.50, 0.01, 674.00)\nid=16 origin=(878, 637) footprint=(19, 16) instance=(887.50, 0.01, 645.00)\nid=17 origin=(934, 678) footprint=(15, 4) instance=(941.50, 0.01, 680.00)\nid=18 origin=(918, 690) footprint=(25, 15) instance=(930.50, 0.01, 697.50)\nid=19 origin=(921, 713) footprint=(14, 10) instance=(928.00, 0.01, 718.00)\nid=3 origin=(958, 652) footprint=(14, 7) instance=(965.00, 0.01, 655.50)"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

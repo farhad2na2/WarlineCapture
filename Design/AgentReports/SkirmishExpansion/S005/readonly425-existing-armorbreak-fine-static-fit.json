@@ -1,0 +1,104 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var asset=UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.MapSurfaceDataAsset>(\"Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Surface.asset\");\nvar grid=UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.GridAuthoringSceneConfigAsset>(\"Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Grid.asset\");\nif(!asset.TryCreateRuntimeBlobAsset(Unity.Collections.Allocator.Persistent,out var blob))throw new System.Exception(\"Missing source surface\");\ntry {\nvar surface=new Game.Components.MapSurfaceComponent {SurfaceBlob=blob,HasSurfaceData=1,GridOrigin=blob.Value.GridOrigin,CellSize=blob.Value.CellSize,Dimensions=blob.Value.Dimensions};\nint stride=grid.Width+1;var mask=new bool[grid.Width*grid.Height];foreach(var c in grid.BlockedCells)mask[c.y*grid.Width+c.x]=true;\nfor(int z=0;z<grid.Height;z++)for(int x=0;x<grid.Width;x++)if(Game.Components.MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new Unity.Mathematics.int2(x,z),out var sample) && (sample.Flags&(Game.Components.MapSurfaceFlags.Road|Game.Components.MapSurfaceFlags.Bridge|Game.Components.MapSurfaceFlags.Highway))!=0)mask[z*grid.Width+x]=true;\nvar prefix=new int[stride*(grid.Height+1)];for(int z=0;z<grid.Height;z++){int row=0;for(int x=0;x<grid.Width;x++){row+=mask[z*grid.Width+x]?1:0;prefix[(z+1)*stride+x+1]=prefix[z*stride+x+1]+row;}}\nvar method=typeof(Game.Runtime.OperationMapRunwayReadModelUtility).Assembly.GetType(\"Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper\").GetMethod(\"IsSkirmishFootprintLevel\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);\nvar sites=new System.Collections.Generic.List<object>();int tested=0,clear=0,level=0;\nforeach(bool rotated in new[]{false,true}) {int w=rotated?55:210,h=rotated?210:55;\nfor(int z=8;z+h<=grid.Height-8;z+=16)for(int x=8;x+w<=grid.Width-8;x+=16){tested++;int hits=prefix[(z+h)*stride+x+w]-prefix[z*stride+x+w]-prefix[(z+h)*stride+x]+prefix[z*stride+x];if(hits!=0)continue;clear++;if(!(bool)method.Invoke(null,new object[]{surface,new UnityEngine.RectInt(x,z,w,h)}))continue;level++;if(sites.Count<100)sites.Add(new {x,z,w,h,rotated,worldX=grid.Origin.x+x*grid.CellSize,worldZ=grid.Origin.z+z*grid.CellSize});}}\nreturn new {tested,staticAndBakedRoadClear=clear,level,candidates=sites,scope=\"Read-only coarse16m whole Armor Break grid pre-screen: native foundation rule, serialized blockers and primary baked road flags. Full live native placement and aircraft clearance remain untested.\",physicalSourceModified=false};\n} finally {blob.Dispose();}"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "tested": 3358,
+        "staticAndBakedRoadClear": 8,
+        "level": 8,
+        "candidates": [
+          {
+            "x": 776,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1516,
+            "worldZ": 316
+          },
+          {
+            "x": 792,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1532,
+            "worldZ": 316
+          },
+          {
+            "x": 808,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1548,
+            "worldZ": 316
+          },
+          {
+            "x": 824,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1564,
+            "worldZ": 316
+          },
+          {
+            "x": 840,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1580,
+            "worldZ": 316
+          },
+          {
+            "x": 856,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1596,
+            "worldZ": 316
+          },
+          {
+            "x": 872,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1612,
+            "worldZ": 316
+          },
+          {
+            "x": 888,
+            "z": 56,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1628,
+            "worldZ": 316
+          }
+        ],
+        "scope": "Read-only coarse16m whole Armor Break grid pre-screen: native foundation rule, serialized blockers and primary baked road flags. Full live native placement and aircraft clearance remain untested.",
+        "physicalSourceModified": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

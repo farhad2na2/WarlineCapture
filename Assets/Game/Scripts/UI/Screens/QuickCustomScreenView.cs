@@ -57,7 +57,7 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
-            if (baseAssaultPreset && _selectedScenarioId == "S005" && UiShellRuntimeGateway.TryConsumeSkirmishResumeFailure())
+            if (baseAssaultPreset && !string.IsNullOrWhiteSpace(_selectedScenarioId) && UiShellRuntimeGateway.TryConsumeSkirmishResumeFailure())
                 PresentResumeFailure();
         }
 
@@ -126,6 +126,10 @@ namespace Game.UI.Runtime
             PresentScenarioChoices();
             SetDropdownValue(presetDropdown, 0);
             SetDropdownValue(enemyTypeDropdown, (int)config.EnemyType);
+            if(baseAssaultPreset&&_config.SkirmishSelection.Kind==UiSkirmishLibraryLaunchKind.Unspecified&&
+                string.IsNullOrEmpty(_config.SkirmishSelection.CatalogId)&&string.IsNullOrEmpty(_config.SkirmishSelection.DefinitionId)&&_config.SkirmishSelection.ContentVersion==0&&
+                TryFindEntry(_selectedScenarioId,out SkirmishBattleCatalogEntry selectedIdentity)&&selectedIdentity.IsPlayable)
+                _config.SkirmishSelection=LibrarySelection(selectedIdentity);
             BindEnemyCountStepper(Mathf.Clamp(config.EnemyCount, 1, 3));
             BindSegment(difficultySegmented, DifficultyLabels, (int)config.Difficulty);
             BindSegment(startingMoneySegmented, StartingMoneyLabels, (int)config.StartingMoney);
@@ -303,7 +307,7 @@ namespace Game.UI.Runtime
             if (baseAssaultPreset)
             {
                 EnsureLibraryCards();
-                if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable)
+                if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable || !MatchesLibrarySelection(selected))
                     return;
                 _config.ScenarioIndex = selected.PlayableScenarioIndex;
                 if (_savedMatchAvailable)

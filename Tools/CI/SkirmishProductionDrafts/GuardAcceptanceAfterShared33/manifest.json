@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "scope": "Frozen GuardAcceptance11 composed over actual BatchV3/CE/Rigid imported33 base",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "before_sha256": "564f8d910db904fa296e8b827e5a60d44942022b37226e03f9ffda035bdda044",
+      "sha256": "753fb5024c832f78b82fd421dabbe5929c5549340445622e4bca14b5595c759b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "before_sha256": "066caffbd9411e1b42a4c06cb1e62e24b5dddc3cc455c60ca102da83cb2517b8",
+      "sha256": "0d1875e3801c098412c9f8bf90b617b4db6e5b752a5db60f4c9076fa732698e7"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "before_sha256": "63f5fd9da93ff67b5aa7cdb78a7f1ec67d86e2043012a451da6154ae9fdbde68",
+      "sha256": "cb22071eed2f409350035a707acdbd9ae1f05899c354851168270590d70b816e"
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "before_sha256": "f579b244e72cded4c7f64258b0b3fc07cb0612cc5dd41c3e937b51c665f60739",
+      "sha256": "e26011b3277eb6909bc917ba5d74b80bdeef96036cb162e1792fc6e7dce7003b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "before_sha256": "c03a58239162eeef560370931d8347a8c4ee7cf3d1feec41e1f4cb74d9f4bf41",
+      "sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "before_sha256": "9d736b742dc0a49f6f6a4f0f30707ffbab8f90fe4d5f2d7e77eb163a072018bc",
+      "sha256": "7b52175c37767996289bbba55e0c95d1478d55599dc6468d6036af8c09116c55"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "before_sha256": "a17221144b0145c77d17db924d4881a670a6fb6315dc4f9f456c70b81ff7468f",
+      "sha256": "aa503a11b33fce3c768631fd68f66e97c194a12f5084422ec0c048b64083e2f7"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Game/Scripts/Runtime/Skirmish/AriaMoveExecutionEvidence.cs",
+      "before_sha256": null,
+      "sha256": "0bde2b46fcfc48685b230a8681a908f88b51a3479888bbea040931048a4a0244"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Game/Scripts/Editor/Skirmish/S005GuardMoveReceipt.cs",
+      "before_sha256": null,
+      "sha256": "10ffe6e4ed4827a4c9377eb67ef327181d0221055921d313f4941822b31c6e26"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GuardMoveAcceptance.cs",
+      "before_sha256": null,
+      "sha256": "d995c47820a4023aec136b8ec887c2b1d7716304d9c81e04923aef70a64ba4c6"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GuardAcceptanceAfterShared33/NewSources/Assets/Tests/Editor/SkirmishExpansion/S005GuardMoveReceiptTests.cs",
+      "before_sha256": null,
+      "sha256": "aefc70d29c983bb7a064964092b1c284490687db7780180556ce4937d13b1d96"
+    }
+  ],
+  "original_manifest": "Design/AgentReports/SkirmishExpansion/S005/guard-acceptance/READY.json",
+  "original_manifest_sha256": "4de6e64548f51481cfc253b87b88969712ac7f1f3eda940fdbd5abbba80eb5a6",
+  "imported": false,
+  "native_executed": false,
+  "offline_receipt_controls_required": 13,
+  "native_handler_controls_required": 8,
+  "required_native": [
+    {
+      "method": "Game.Tests.Editor.S005GuardMoveReceiptTests.RunFocusedValidation",
+      "marker": "[S005GuardMoveReceipt] result=Passed controls=21 normalMissionPending=1"
+    }
+  ],
+  "geometry": "Explicit QA producer-relative existing-target envelope using actual native formation/search constants and native grid. No authored Defense pad is claimed.",
+  "unchanged": [
+    "Normal order acceptance and target geometry",
+    "BA public HUD eligibility",
+    "Mission budgets/resources/AI",
+    "Eight-page bound and three completed no-progress page attempts",
+    "Legacy probe raw dispatch counts outside the normal paid-plane canary"
+  ],
+  "pending": [
+    "Native eight handler observation controls",
+    "Fresh normal complete living group/card/touch/request result joins",
+    "Actual guard travel/protection and paid Airport/Plane lifecycle",
+    "Readable default/min/max infantry and parked/cruising full aircraft PNGs",
+    "Actual native Victory/result/return and device acceptance"
+  ],
+  "validation": {
+    "owning_compile": "Design/AgentReports/SkirmishExpansion/S005/guard-acceptance-after-shared33/owning-epc2vzqv",
+    "actual_owning_assemblies": 3,
+    "actual_clr_receipt_controls": 13,
+    "native_handler_controls_executed": false,
+    "all11_archived_sources_match": true,
+    "actual_base_pins_unchanged": true,
+    "compiled_source_bytes_unchanged": true,
+    "prior_tool_preflight_failures": [
+      "owning-lk0vgn1n",
+      "owning-ect_ox9f"
+    ]
+  }
+}

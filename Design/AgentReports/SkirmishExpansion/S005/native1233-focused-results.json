@@ -1,0 +1,32 @@
+{
+  "status": "Passed",
+  "results": [
+    {
+      "suite": "checkpoint-parts",
+      "method": "Game.Tests.Editor.SkirmishNativeCheckpointPartsTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishNativeCheckpointPartsTests] result=Passed tests=12 nativeRecoveryComplete=0",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1233-checkpoint-parts.log",
+      "logSha256": "41d4012e2ac3b67adc9c8003455075af58e6a43c48c22873174cdae5fcbb4080"
+    },
+    {
+      "suite": "actor-commands",
+      "method": "Game.Tests.Editor.SkirmishActorCommandPrerequisiteTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishActorCommandPrerequisiteTests] result=Passed cases=24 isolatedNativeWorlds=24",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1233-actor-commands.log",
+      "logSha256": "76b02c6baa234d465586f0f4fd465efdca0c981f15e92d2f86bdbe018b7f88f8"
+    }
+  ],
+  "sourceHash": "30d9daad50e1c354d73cafd9fe29df2ad979dffeefb63759cf1e1d419cc638fe",
+  "preManifest": "final-1233-shared-command-pre-source-manifest.json",
+  "postManifest": "final-1233-focused-post-source-manifest.json",
+  "fullSourceUnchanged": true,
+  "normalWins": 0
+}

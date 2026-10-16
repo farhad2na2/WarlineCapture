@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1580",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "post-aria-unselected-hold-candidate-source-manifest.json",
+  "preflightManifest": "final-1580-normal-paid-south-flank-preflight-source-manifest.json",
+  "fixtureSha256": "ade711cb459205e4b677215e82a8b957ce2dafb8494fbef732b3b39e23f77def",
+  "executedRunnerSha256": "7d41791315fc56d3d98fb2b73941b9afacf2218938d485b72e3b6a655f1cc391",
+  "method": "S005NormalSouthFlank1580Observer.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

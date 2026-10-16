@@ -1,0 +1,17 @@
+{
+  "mission": "S005",
+  "result": "NotAccepted",
+  "sourceHash": "69efe7634459e836193e538902799ee7f9b68945f7f84cd08fd0aef042b9a5e5",
+  "log": "native-725-current-boarded-savecontinue-manual-en-seed155926.log",
+  "wrapperExit": null,
+  "wrapperExitNote": "Prior PTY session no longer available after turn boundary; no persisted actual exit artifact. Requested code=0 is not an observed process exit.",
+  "nativeOutcome": "Victory",
+  "elapsedSeconds": 476.1896,
+  "boardedSaveContinueUnload": "Passed native scoped markers",
+  "frozenResultAndMainMenuReturn": "Passed native marker",
+  "finalTraceClockPaused": 0,
+  "strictInputAuditErrors": 0,
+  "sourceUnchanged": true,
+  "postManifest": "final-725-boarded-clock-discrepancy-post-source-manifest.json",
+  "playerReady": false
+}

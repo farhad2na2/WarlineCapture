@@ -1,0 +1,38 @@
+{
+  "mission": "S005",
+  "run": "native696",
+  "result": "Failed",
+  "reason": "Refueled after native touchdown but second HQ sortie reserve not reached before deadline",
+  "sourceHash": "18cc506d8293e092cce0a5dc97493956cad53067c7edcceccffba061a4f21e45",
+  "wrapperExitCode": 2,
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-696-opening-refinery-three-oil-three-fuel-air-pre-source-manifest.json",
+  "postSourceManifest": "final-696-native-takeoff-fire-touchdown-refuel-deadline-post-source-manifest.json",
+  "log": "native-696-opening-refinery-three-oil-three-fuel-strike-cycle-en.log",
+  "logSha256": "5e61e4af40773ebaa6c61c45c27b9d8bfde54e1efa453803d15379fbc6003209",
+  "trace": "s005-aria-live-155926-en-41cba0e660ff45608835bee883f00713.jsonl",
+  "normalInput": true,
+  "readOnlyCliObservations": 1,
+  "gameplayMutationViaCli": false,
+  "markers": [
+    "[S005FixedWingCycle] phase=FirstSortie airborne=1 nativeFire=1 fuelSpent=153",
+    "[S005FixedWingCycle] phase=Touchdown nativeLanding=1 atHome=1 fuel=593",
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0",
+    "[S004ManualNative] result=Failed outcome=Draw seconds=1080.124 reason=playerSaveResume=Player Save/Resume timed out at step=0 input=Touch ariaStarted=0 actions=0 attackReceipts=0",
+    "[SkirmishValidationExit] result=Requested code=2"
+  ],
+  "scopedObserved": {
+    "paidStrike": true,
+    "nativeRunwayTakeoff": true,
+    "nativeFire": true,
+    "returnInput": true,
+    "nativeTouchdownAtHome": true,
+    "fuelAtTouchdown": 593,
+    "fuelAfterRefuelingBeforeDeadline": 809,
+    "secondSortie": false
+  },
+  "inputAudit": "native696-touch-contact-audit.json",
+  "completeMatchCertified": false,
+  "countedWin": false,
+  "playerReady": false
+}

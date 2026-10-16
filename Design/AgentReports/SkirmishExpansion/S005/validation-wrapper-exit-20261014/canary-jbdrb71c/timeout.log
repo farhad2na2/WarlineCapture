@@ -1,0 +1,13 @@
+﻿[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c\timeout.log
+[UnityInvoke] TimeoutSeconds: 1
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c\timeout.log --exit 0 --sleep 15000 --fatal 0
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c\timeout.log --exit 0 --sleep 15000 --fatal 0
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c\timeout.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-jbdrb71c\timeout.stderr.log
+[UnityInvoke] ERROR: Unity timed out after 1 seconds. Killing process tree for PID 33428.
+[UnityInvoke] taskkill: SUCCESS: The process with PID 1756 (child process of PID 33428) has been terminated.
+[UnityInvoke] taskkill: SUCCESS: The process with PID 33428 (child process of PID 12980) has been terminated.
+[UnityInvoke] ExitCode: 124

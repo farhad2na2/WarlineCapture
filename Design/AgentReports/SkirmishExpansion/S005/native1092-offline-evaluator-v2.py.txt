@@ -1,0 +1,107 @@
+import hashlib, json, pathlib, re, sys
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+ORIGINAL='native1092-fixedwing-capacity-failure.json'
+OUTPUT='native1092-offline-lifecycle-evaluation-v2-20261011.json'
+EXPECTED_FIXTURE='6465db04bd7178992e30be48082ea9edba0018a166f8af978c96bfeded55a85f'
+EXPECTED_RUNNER='ae5aedb92392d278355c603f2655d54e55584ec21001b127556754dece7e1a4c'
+EXPECTED_SOURCE='17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332'
+def read(name):return json.loads((REPORT/name).read_text())
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+def fields(line):return dict(re.findall(r'(\w+)=([^ ]+)',line))
+errors=[]
+def require(condition,message):
+    if not condition:errors.append(message)
+original=read(ORIGINAL)
+require(original['errors']==['Exactly ordered paid Fighter/Plane/FighterReplacement PaidQueueCase observations required'],'Original failure is not limited to known duplicate delivery polling parser')
+require(sha(pathlib.Path('/private/tmp/s005-run-fixedwing-capacity-1092.py'))==EXPECTED_RUNNER,'Original runner bytes changed')
+fixture_path=REPORT/original['fixture'];fixture=fixture_path.read_text()
+require(sha(fixture_path)==EXPECTED_FIXTURE==original['fixtureSha256'],'Executed fixture hash differs')
+# Audit assertions actually present in the frozen compiled/executed fixture; no missing serialized entity fields are invented.
+for snippet in ['paidBank.LifetimeProductionSpent-beforeQueueBank.LifetimeProductionSpent!=roles[index].MaterialsCost',
+ 'owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)',
+ 'receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost',
+ 'receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount',
+ 'overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains',
+ 'request.Status!=BuildingFactionUnitProductionRequest.Failed||request.ResourcesReserved!=0',
+ '!afterCap.Equals(rejectionCapacity)',
+ 'afterBank.LifetimeProductionSpent!=rejectionBank.LifetimeProductionSpent',
+ 'requestId++;', 'RequestId=9000+requestId', 'if(paidAir.HomeInitialized==0||paidAir.UsesRunway==0)return',
+ 'index=2;phase=2;return;', 'if(cap.AirCap!=2||cap.AirLive!=1||cap.AirReserved!=0',
+ 'SkirmishProductionService.TryReleaseDeath(em,session,killed)',
+ 'if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0)']:
+    require(snippet in fixture,'Frozen runtime assertion missing: '+snippet)
+manifest_names=[original[k] for k in ['preManifest','preflightManifest','preDispatchManifest','postManifest']]
+manifests=[read(n) for n in manifest_names]
+require(all(m==manifests[0] for m in manifests),'Full pre/preflight/dispatch/post manifests differ')
+fingerprints=[read(n.replace('-source-manifest.json','-independent-fingerprint.json')) for n in manifest_names]
+require(all(f['sourceHash']==EXPECTED_SOURCE for f in fingerprints),'Independent source fingerprints differ')
+for suffix in ['.exit','.wrapper-exit']:
+    require((REPORT/(original['log']+suffix)).read_text().strip()=='0','Actual completion receipt nonzero '+suffix)
+require(original['actualWrapperExit']==0 and original['nativeBridgeExit']==0,'Original completion summaries not zero')
+for key,hashkey in [('log','logSha256'),('touchEvidence','touchSha256'),('placementEvidence','placementSha256')]:
+    require(sha(REPORT/original[key])==original[hashkey],'Actual evidence changed '+key)
+load=read('load1092-fixedwing-capacity-fixture.json')
+require(load.get('success') and load.get('data',{}).get('result',{}).get('success'),'Actual loaded fixture not successful')
+start=read('native1092-fixedwing-capacity-runner-start.json')
+require(start['fixtureSha256']==EXPECTED_FIXTURE and start['validationMethod']=='S005FixedWingCapacity1092.RunValidation','Runner start identity differs')
+text=(REPORT/original['log']).read_text();lines=text.splitlines()
+require('[S005FixedWingPairMovement] result=Failed' not in text,'Native failure marker present')
+required=['[S005FixedWingPairProducer] phase=NativeQueuePrerequisites airportPresent=1 readiness=FullArsenal',
+ '[S005FixedWingPairProducer] phase=NativeAirportConfirmed forceValid=0 relocationInjected=0',
+ '[S005FixedWingPairAir2Rejection] result=Passed cap=2 live=2 reserved=0 noPayment=1 noReservation=1 nativeApi=1',
+ '[S005FixedWingPairDeathReplacement] phase=SlotReleased result=Passed stimulus=HealthZero live=1 cap=2 idempotent=1 planeSurvives=1',
+ '[S005FixedWingPairPlaneComponents] result=Observed soldierSeats=24 vehicleSlots=2 boardingFlightUnload=Pending',
+ '[S005FixedWingPairPaidQueueDeath] result=Passed', '[S005FixedWingPairMovement] result=Passed cases=3',
+ '[S005FixedWingPairMovementCleanup] result=Passed attemptsRemoved=1']
+for marker in required:require(marker in text,'Missing '+marker)
+funds=[fields(l) for l in lines if l.startswith('[S005FixedWingPairRejectionFunds] result=Observed ')]
+require(len(funds)==1,'Exactly one third-attempt funding baseline required')
+if len(funds)==1:
+ f=funds[0];require(int(f['funded'])>=int(f['required'])==480 and int(f['funded'])<=int(f['nativeBankCapacity']) and f['fundingInjectedBeforeBaseline']=='1' and f['nativeCapacityOrPriceChanged']=='0','Actual third-attempt native bank cannot qualify capacity rejection')
+accepted=[(i,fields(l)) for i,l in enumerate(lines) if l.startswith('[S005FixedWingPairNativeQueueRequest] result=Accepted ')]
+require([(r['role'],int(r['requestId'])) for _,r in accepted]==[('Fighter',9001),('TransportPlane',9002),('Fighter',9004)],'Exactly three accepted native requests 9001/9002/9004 required')
+excess=[(i,fields(l)) for i,l in enumerate(lines) if l.startswith('[S005FixedWingPairExcessNativeRequest] ')]
+require(len(excess)==1 and excess[0][1]=={'status':'Failed','nativeCode':'3','independentlyObservedEligibility':'InsufficientCapacity'},'Actual failed excess native request evidence differs')
+cases=[]
+expected=[('Fighter',9001,1001,480,'Air'),('TransportPlane',9002,1002,440,'None'),('Fighter',9004,1003,480,'Air')]
+if len(accepted)==3:
+ for index,(role,request_id,receipt_id,price,domains) in enumerate(expected):
+  begin=accepted[index][0];end=accepted[index+1][0] if index<2 else len(lines)
+  segment=list(enumerate(lines[begin:end],begin))
+  rows=[(i,fields(l)) for i,l in segment if l.startswith('[S005FixedWingPairPaidQueueCase] ')]
+  # Polling rows only collapse inside one accepted request lifecycle and only when field-for-field identical.
+  require(bool(rows),'Missing actual live delivered observation for request '+str(request_id))
+  canonical=rows[0][1] if rows else {}
+  require(all(r==canonical for _,r in rows),'Nonidentical delivery polls within request '+str(request_id))
+  require(canonical=={'role':role,'paid':str(price),'producer':'15','delivered':'1','targets':domains,'nativeQueue':'1','syntheticSpawn':'0'},'Actual delivered row differs for request '+str(request_id))
+  progress=[fields(l) for _,l in segment if l.startswith('[S005FixedWingPairNativeQueueProgress] ')]
+  require(any(r.get('phase')=='Live' for r in progress),'No live native receipt progression '+str(receipt_id))
+  require(all(r.get('role')==role and int(r['receipt'])==receipt_id and int(r['paid'])==price and int(r['producer'])==15 and int(r['required'])==1 and r['airportPresent']=='True' and r['phase'] in ['Producing','Live'] and int(r['delivered'])==(1 if r['phase']=='Live' else 0) for r in progress),'Receipt/producer/price progression mismatch')
+  selections=[(i,fields(l)) for i,l in segment if l.startswith('[S005FixedWingPairNativeSelection] result=Passed ')]
+  orders=[(i,fields(l)) for i,l in segment if l.startswith('[S005FixedWingPairNativeMovement] phase=Order ')]
+  movements=[(i,fields(l)) for i,l in segment if l.startswith('[S005FixedWingPairNativeMovement] result=Passed ')]
+  require(len(selections)==len(orders)==len(movements)==1,'Exactly one selection/order/movement per accepted lifecycle required')
+  if len(selections)==len(orders)==len(movements)==1:
+   si,s=selections[0];oi,o=orders[0];mi,m=movements[0]
+   require(rows and rows[-1][0]<si<oi<mi,'Delivered→Touchselection→Touchorder→airborne chronology invalid')
+   require(s=={'result':'Passed','role':role,'members':'1','input':'Touch','selectionInjected':'0'},'Actual Touch selection differs')
+   require(o['role']==role and o['input']=='Touch','Actual Move order differs')
+   require(m['role']==role and m['members']=='1' and float(m['minimumDisplacement'])>=5 and m['input']=='Touch' and m['airborneObserved']=='1' and m['actorPositionsSelectionOrdersInjected']=='0','Actual airborne Move differs')
+  cases.append(dict(role=role,requestId=request_id,receiptId=receipt_id,actualRuntimeMaterialsPrice=price,actualProducerRuntimeId=15,identicalLivePollingObservations=len(rows),canonicalPaidDeliveryObservation=canonical,receiptProgress=progress,selection=[r for _,r in selections],movement=[r for _,r in movements]))
+ require(accepted[1][0]<excess[0][0]<accepted[2][0] if len(excess)==1 else False,'Excess rejection must occur between pair and replacement')
+ death_index=[i for i,l in enumerate(lines) if l.startswith('[S005FixedWingPairDeathReplacement] phase=SlotReleased result=Passed ')]
+ require(len(death_index)==1 and excess and excess[0][0]<death_index[0]<accepted[2][0],'Native slot release must precede accepted replacement')
+summary=re.findall(r'\[S005FixedWingPairMovementInput\] dispatched=(\d+) completed=(\d+) acceptedCommands=(\d+) violations=(\d+)',text)
+require(len(summary)==1 and int(summary[0][0])>0 and summary[0][0]==summary[0][1] and int(summary[0][2])>=1 and int(summary[0][3])==0,'Native Touch summary invalid')
+touches=[json.loads(l) for l in (REPORT/original['touchEvidence']).read_text().splitlines() if l.strip()]
+require(touches and all(r['receiptViolations']==r['unexpected']==r['interventions']==0 for r in touches),'Actual Touch rows have violations')
+require(len({(r['device'],r['generation']) for r in touches})==1,'Touch device/generation identity changed')
+require(touches[-1]['dispatched']==touches[-1]['completed']==27,'Touch final actual 27 contacts incomplete')
+require(sum(r['kind']=='Dispatched' for r in touches)==sum(r['kind']=='Ended' for r in touches)==27,'Touch endpoint counts differ')
+placement=[json.loads(l) for l in (REPORT/original['placementEvidence']).read_text().splitlines() if l.strip()]
+require(any(r['phase']=='AfterCompletedGroundTouch' and r['canConfirmNative'] and r['confirmInteractable'] and r['rawNativeStatus'].startswith('Airport: Valid placement') for r in placement),'Native full-valid Airport candidate evidence absent')
+proof=dict(result='Failed' if errors else 'PassedScopedIsolatedFixedWingCapacityOfflineLifecycleCorrection',scope=original['scope'],offlineOnly=True,noUnityRerun=True,originalFailure=ORIGINAL,originalFailureSha256=sha(REPORT/ORIGINAL),originalRunnerSha256=EXPECTED_RUNNER,executedFixtureSha256=EXPECTED_FIXTURE,sourceHash=EXPECTED_SOURCE,fullSourceUnchanged=not any('manifest' in e or 'fingerprint' in e for e in errors),sourceManifests=manifest_names,wrapperExit=0,nativeCompletionExit=0,evidenceHashes={k:sha(REPORT/original[k]) for k in ['log','touchEvidence','placementEvidence']},cases=cases,actualThirdAttemptFunds=funds,actualExcessRequest=excess[0][1] if excess else None,touchContacts=27,pollingCorrection='Only identical PaidQueueCase fields within each actual accepted request lifecycle are collapsed; no receipt ID is invented in the PaidQueueCase schema. Distinct actual native receipt IDs come from NativeQueueProgress and frozen runtime ownership assertions. FighterReplacement is a lifecycle position, not a native role name.',limits=['Actual paid receipt-to-live actor ownership checks are native fixture assertions; individual delivered entity IDs are not serialized in these logs.','Funding/readiness/opening death/enemy strategy/fuel storage setup remains disclosed.','No air combat, Plane cargo/boarding/checkpoint, return/refuel, bilateral airports, normal mission or device acceptance certificate.'],normalMissionCertified=False,fullLifecycleCertified=False,playerReady=False,originalFailurePreserved=True,firstOfflineEvaluationFailurePreserved='native1092-offline-lifecycle-evaluation-20261011.json',errors=errors)
+with (REPORT/OUTPUT).open('x') as f:json.dump(proof,f,indent=2);f.write('\n')
+print(json.dumps(dict(output=OUTPUT,result=proof['result'],cases=len(cases),errors=errors)))
+sys.exit(3 if errors else 0)

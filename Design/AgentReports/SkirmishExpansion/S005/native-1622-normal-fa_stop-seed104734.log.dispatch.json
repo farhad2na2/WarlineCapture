@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1622-normal-fa_stop-seed104734.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 373,
+      "executeMs": 58,
+      "assemblyName": "PipelineRunScript_native-1622-normal-fa_stop-seed104734.log.dispatch_0fabf71a6e0a42f3b82dc4c3fe6ef1b5",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

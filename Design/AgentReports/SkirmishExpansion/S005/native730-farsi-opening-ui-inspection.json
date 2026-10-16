@@ -1,0 +1,10 @@
+{
+  "run": "native730",
+  "sourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+  "screenshot": "s005-aria-live-104734-fa-866330859dca4b6c893ad6193eaee081.jsonl.opening.png",
+  "inspection": "Viewed actual native opening capture. Farsi objective/next-action text, visible ARIA Play button, base health/time, squad cards and colorful command controls are present; no obvious major text/control overlap in this capture.",
+  "scope": "Single opening screen inspection only; full localized journey/result check still running",
+  "ownerVisualAcceptance": "Deferred",
+  "realDeviceAcceptance": "Pending",
+  "playerReady": false
+}

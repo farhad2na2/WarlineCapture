@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Runtime Error\n  Self referencing loop detected for property 'xxxx' with type 'Unity.Mathematics.int4'. Path 'state.ActiveEnvelopeMin.xxxx'."
+    }
+  ],
+  "warnings": []
+}

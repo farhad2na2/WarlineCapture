@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Runtime Error\n  Object of type 'Unity.Entities.Entity' cannot be converted to type 'Unity.Entities.SystemHandle'."
+    }
+  ],
+  "warnings": []
+}

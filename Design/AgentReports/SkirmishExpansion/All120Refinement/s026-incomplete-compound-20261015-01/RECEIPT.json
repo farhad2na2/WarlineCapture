@@ -1,0 +1,16 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/actual-native-evidence.zip",
+  "sha256": "d7a2c71fa08dc2fcca7558b053e193c94401cdc5b142ab4f9df57ef94b7d3be2",
+  "actualWrapperExit": 0,
+  "sourceAndDllEndpointsEqualToMeasuredOpening": true,
+  "sourceFiles": 41580,
+  "candidateSha256": "eb2433b382600876e9d556ce716c8b08b2cedd4c2999f7ef565af4302ffca1b6",
+  "buildSha256": "d079418ffb1f0d5f7f71ee31330da55ad88e26bee6ea36046d378be1af60f3e7",
+  "collectedSizes": 3,
+  "completeFacilityConfigurations": 0,
+  "sourceFitCertified": false,
+  "cleanupVerified": true,
+  "sourcePinsRecheckedAfterMeasurement": true,
+  "normalMissionReady": false,
+  "interpretation": "Native collection completed but all3discovery configurations lack enemyfacilities; no strictpacking/compiler/path/readinessclaim; retainedforboundedlogicalcompound successor"
+}

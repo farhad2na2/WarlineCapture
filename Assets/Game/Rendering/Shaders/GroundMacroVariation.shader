@@ -53,6 +53,14 @@ Shader "Game/Environment/GroundMacroVariation"
         _RoadTerminalEarth("Road End Compacted Earth", Color) = (.65,.60,.49,1)
         _RoadTerminalStrength("Road End Finish", Range(0,1)) = 0
 
+        [Header(Dirt To Asphalt Transition)]
+        _RoadBlendMap("Transition Mask (R signed distance, G join zone, B tyre tracks, A damp bank)", 2D) = "black" {}
+        _RoadBlendRect("Transition World Rect", Vector) = (0,0,1,1)
+        _RoadBlendStrength("Transition Strength", Range(0,1)) = 0
+        _RoadBlendRole("Surface Role (0 earth, 1 asphalt)", Float) = 0
+        _RoadBlendSand("Spilled Sand", Color) = (.66,.59,.46,1)
+        _RoadBlendAsphalt("Broken Asphalt", Color) = (.25,.26,.27,1)
+
         [Header(Runway Surface Finish)]
         _RunwayEdgeRect("Assembled Runway World Min Max", Vector) = (0,0,0,0)
         _RunwayEdgeColor("Runway Shoulder Earth", Color) = (.67,.62,.53,1)
@@ -129,6 +137,7 @@ Shader "Game/Environment/GroundMacroVariation"
             SAMPLER(sampler_DistrictSurfaceMap);
 
             TEXTURE2D(_ActivityMap); SAMPLER(sampler_ActivityMap);
+            TEXTURE2D(_RoadBlendMap); SAMPLER(sampler_RoadBlendMap);
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 float4 _DistrictSurfaceRect;
@@ -171,6 +180,11 @@ Shader "Game/Environment/GroundMacroVariation"
                 half _CivicSurfaceStrength;
                 float4 _ActivityRect;
                 half _ActivityStrength;
+                float4 _RoadBlendRect;
+                half _RoadBlendStrength;
+                half _RoadBlendRole;
+                half4 _RoadBlendSand;
+                half4 _RoadBlendAsphalt;
             CBUFFER_END
 
             // Global runtime toggle (0 = enabled, 1 = disabled). Globals default
@@ -368,6 +382,58 @@ Shader "Game/Environment/GroundMacroVariation"
                     albedo=lerp(albedo,half3(.61,.55,.44),activity.a*(.10+grain*.12));
                 }
 
+                // R carries the signed distance from the mesh seam (0.5 + metres/16, positive into
+                // the pavement) and G the join zone. Both meshes evaluate the same noisy boundary,
+                // so one ragged transition line crosses the straight mesh seam continuously.
+                half roadBlendPresent=0;
+                if(_RoadBlendStrength>.001)
+                {
+                    float2 p=input.positionWS.xz;
+                    half4 blend=SAMPLE_TEXTURE2D(_RoadBlendMap,sampler_RoadBlendMap,(p-_RoadBlendRect.xy)/_RoadBlendRect.zw);
+                    // Avoid procedural detail work on the large untouched part of each map.
+                    if(max(blend.g,max(blend.b,blend.a))>.001)
+                    {
+                    half zone=blend.g*_RoadBlendStrength;
+                    float u=(blend.r-.5)*16;
+                    float fine=ValueNoise(p*3.1+4.1);
+                    float grain=ValueNoise(p*9.3);
+                    // Thresholded value noise lines up on its lattice; scattered grit samples a rotated, warped domain.
+                    float2 scatter=float2(p.x*.8-p.y*.6,p.x*.6+p.y*.8)+(fine-.5)*.9;
+                    // Both materials evaluate the same broken edge, so it crosses the mesh seam unbroken;
+                    // it collapses onto the seam where the zone fades so the stamp never shows an outline.
+                    float boundary=(.15+(Fbm(p*.9+13.7)*2-1)*.6+(fine-.5)*.45)*zone;
+                    float beyond=u-boundary;
+                    half paved=smoothstep(-.04,.04,beyond);
+                    half present=smoothstep(.01,.08,zone);
+                    roadBlendPresent=present;
+                    half3 sand=_RoadBlendSand.rgb*(.92+grain*.14);
+                    if(_RoadBlendRole>.5)
+                    {
+                        half haze=(1-smoothstep(0,1.5,beyond))*(.5+.5*Fbm(p*1.3+2.1))*(.8+.4*grain)*zone*.4;
+                        half track=blend.b*_RoadBlendStrength*(1-smoothstep(0,4,beyond))*(.6+.4*fine)*.35;
+                        half gravel=smoothstep(.86,.9,ValueNoise(scatter*8.7+7.1))*(1-smoothstep(0,1.6,beyond))*zone;
+                        half lip=paved*(1-smoothstep(.03,.2,beyond))*present;
+                        albedo*=1-lip*(.14+fine*.1);
+                        albedo=lerp(albedo,sand,saturate(max((1-paved)*present*smoothstep(-1.5,-.5,u),haze+track)));
+                        albedo=lerp(albedo,sand*.85,gravel*.85);
+                    }
+                    else
+                    {
+                        float inside=-beyond;
+                        // Earth hands over to the shared sand colour before the seam, where the paved side takes the same colour.
+                        half onEarth=1-smoothstep(.2,.8,u);
+                        half handover=smoothstep(-3.2,-.6,u+(Fbm(p*.9+3.3)-.5)*1.2)*present*(1-smoothstep(.8,1.6,u));
+                        albedo=lerp(albedo,sand,handover);
+                        half3 asphalt=_RoadBlendAsphalt.rgb*(.88+grain*.2);
+                        half chunk=smoothstep(.82,.86,ValueNoise(scatter*5.1+5.3))*(1-smoothstep(.05,.9,inside))*present;
+                        half lip=paved*(1-smoothstep(.04,.32,beyond))*present;
+                        albedo=lerp(albedo,asphalt*(1-lip*.2),saturate(max(paved*present,chunk*.9))*onEarth);
+                        albedo*=1-blend.b*_RoadBlendStrength*(1-paved)*(1-smoothstep(0,6,inside))*(.08+fine*.06);
+                        albedo=lerp(albedo,albedo*half3(.74,.76,.70),blend.a*_RoadBlendStrength*(.75+fine*.25));
+                    }
+                    }
+                }
+
                 if(_RoadTerminalStrength>.001)
                 {
                     float edgeA=dot(input.positionWS.xz-_RoadTerminalA.xy,_RoadTerminalA.zw);
@@ -375,7 +441,7 @@ Shader "Game/Environment/GroundMacroVariation"
                     float noise=ValueNoise(input.positionWS.xz*2.8)*.35;
                     float dustA=smoothstep(-2.8,-.1,edgeA+noise)*step(.5,dot(_RoadTerminalA.zw,_RoadTerminalA.zw));
                     float dustB=smoothstep(-2.8,-.1,edgeB+noise)*step(.5,dot(_RoadTerminalB.zw,_RoadTerminalB.zw));
-                    float dust=max(dustA,dustB)*_RoadTerminalStrength;
+                    float dust=max(dustA,dustB)*_RoadTerminalStrength*(1-roadBlendPresent);
                     // Compacted shoulder ingress is restricted to verified outer ends, never module joins.
                     albedo=lerp(albedo,_RoadTerminalEarth.rgb*(.94+ValueNoise(input.positionWS.xz*5)*.12),dust*.92);
                 }

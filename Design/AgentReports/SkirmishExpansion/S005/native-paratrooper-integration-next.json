@@ -1,0 +1,26 @@
+{
+  "sourceHash": "3e0e00d5a8280d22c4efe1dac96125f8c8096a1c4708a830bc79891cef7b9db6",
+  "playerReady": false,
+  "nativeSupportActivated": false,
+  "implemented": [
+    "Admission counts compiled faction infantry ledger live and reserved members",
+    "Pending Support passengers counted once before native promotion",
+    "Population ceiling cannot exceed compiled cap",
+    "Native terminal destroys Support passengers/canopies; pause preserves them",
+    "Released Rifle native source/session/stable identity, squad and combat overlay",
+    "Infantry/supply live promotion once at release; normal death marks cleanup released before destruction; external destruction releases once"
+  ],
+  "nextRequired": [
+    "Payload/canopy/transport/capacity checkpoint aliases and cold-world recovery",
+    "Legal public routes and readiness/scenario policy activation",
+    "Native manual/ARIA/enemy Support use/decline/Stop and Save Continue playthroughs"
+  ],
+  "reuseApis": [
+    "SkirmishArmyGroupSystem.OpenGroup/BindMember",
+    "SkirmishSharedCombatBinding.Bind",
+    "SkirmishProductionService.TryReleaseDeath",
+    "SkirmishRuntimeActorOwnership.DetachFromSourceScene"
+  ],
+  "notes": "Do not enable CSV runtime policy or global catalog readiness until relevant native routes/payload/recovery gates pass; no geometry or budget changes.",
+  "historicalSourceHash": "3fb196e891fd80aace0b7b21da1412a902f2d5e735501a5f7c79bc6521ad5ea4"
+}

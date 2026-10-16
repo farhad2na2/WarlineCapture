@@ -1,0 +1,39 @@
+{
+  "result": "PassedOwnedCleanupStderrRegression",
+  "cases": [
+    {
+      "case": "fatal-child-ended-stderr",
+      "passed": true,
+      "actual_exit": 1,
+      "expected_exit": 1,
+      "owned_pid": 18116,
+      "owned_child_exited": true
+    },
+    {
+      "case": "fatal-stderr-root-fallback",
+      "passed": true,
+      "actual_exit": 1,
+      "expected_exit": 1,
+      "owned_pid": 19548,
+      "owned_child_exited": true
+    },
+    {
+      "case": "timeout-stderr-root-fallback",
+      "passed": true,
+      "actual_exit": 124,
+      "expected_exit": 124,
+      "owned_pid": 3420,
+      "owned_child_exited": true
+    },
+    {
+      "case": "focused-missing-pass-marker",
+      "passed": true,
+      "actual_exit": 1,
+      "expected_exit": 1
+    }
+  ],
+  "output_directory": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\InvokeUnityCleanupStderr\\owned-q65s8ej5",
+  "unity_launched": false,
+  "assets_changed": false,
+  "scope": "Actual InvokeUnity.ps1; synthetic stderr/status shim acts only on exact wrapper-owned child PID; fallback uses cached Process handle."
+}

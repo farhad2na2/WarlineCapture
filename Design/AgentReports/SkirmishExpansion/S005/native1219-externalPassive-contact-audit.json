@@ -1,0 +1,15 @@
+{
+  "recordedContacts": 1,
+  "completedContacts": 1,
+  "phases": {
+    "PassivePressure": 1
+  },
+  "terminalCancellations": [],
+  "errors": [],
+  "strictRecordedContacts": true,
+  "strictAllContactsEnded": true,
+  "nativeMenuContactsRecorded": false,
+  "terminalContactsRecorded": false,
+  "completeMatchCertified": false,
+  "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+}

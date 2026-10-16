@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-normal-manual-recovery1246-diagnostic/S005NormalRecoveryIdle1246.cs",
+      "entry": "S005NormalRecoveryIdle1246.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 7954,
+      "executeMs": 2032,
+      "assemblyName": "PipelineRunScript_S005NormalRecoveryIdle1246_27c71e811b9940b49823c10dacfc917d",
+      "success": true,
+      "result": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

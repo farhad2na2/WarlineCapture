@@ -1,0 +1,80 @@
+--- a/Assets/Tests/Editor/M01FirstContactHudRestrictionTests.cs
++++ b/Assets/Tests/Editor/M01FirstContactHudRestrictionTests.cs
+@@ -29,7 +29,7 @@
+             Run(CinematicInteractionLockTracksOpeningReturn, ref passed);
+             Run(ClearedCampaignStateDoesNotLockSkirmish, ref passed);
+             Run(SkirmishIntroLocksPlayingHudUntilCompletionAndReplay, ref passed);
+-            Run(RightRailDisablesAndGraysBuildAndSupport, ref passed);
++            Run(RightRailDisablesBuildAndHidesUnavailableSupport, ref passed);
+             Run(ResourceHeaderDisablesAndGraysEconomyButPreservesCivilianRisk, ref passed);
+             Run(SquadTrayDisablesAndGraysNonAuthoredCategoriesButPreservesDefaults, ref passed);
+             Run(SquadGuidancePointsAtExactSoldierButtonWithoutBlockingInput, ref passed);
+@@ -221,11 +221,20 @@
+     }
+ 
+     [Test]
+-    public static void RightRailDisablesAndGraysBuildAndSupport()
+-    {
++    public static void RightRailDisablesBuildAndHidesUnavailableSupport()
++    {
++        World previous = World.DefaultGameObjectInjectionWorld;
++        var gatewayField = typeof(UiShellRuntimeGateway).GetField("current", BindingFlags.Static | BindingFlags.NonPublic);
++        Assert.That(gatewayField, Is.Not.Null);
++        var previousGateway = (IUiShellRuntimeGateway)gatewayField.GetValue(null);
++        using World world = new("HUD restrictions without Support session");
+         GameObject root = new("RightRail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
+         try
+         {
++            World.DefaultGameObjectInjectionWorld = world;
++            UiShellEcsGateway.RegisterAsRuntimeGateway();
++            Assert.That(UiShellRuntimeGateway.TryReadSupport(out _), Is.False,
++                "This fixture has no supported session and must not expose Support.");
+             Button build = CreateButton(root.transform, "BuildCommand");
+             Button support = CreateButton(root.transform, "SupportCommand");
+             Button zoomIn = CreateButton(root.transform, "ZoomInButton");
+@@ -240,19 +249,14 @@
+                 supportDisabled: true,
+                 hideUnrelatedControls: true);
+             Assert.That(build.gameObject.activeSelf, Is.True);
+-            Assert.That(support.gameObject.activeSelf, Is.True);
++            Assert.That(support.gameObject.activeSelf, Is.False, "Unavailable Support stays hidden.");
+             Assert.That(build.interactable, Is.False);
+-            Assert.That(support.interactable, Is.False);
+             Assert.That(build.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
+-            Assert.That(support.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
+             var cinematicGroup = build.GetComponent<CanvasGroup>();
+             Assert.That(cinematicGroup.interactable, Is.True, "Mission scope must not become a captured cinematic lock.");
+             Assert.That(cinematicGroup.blocksRaycasts, Is.True);
+             Assert.That(build.colors.disabledColor.a, Is.EqualTo(build.colors.normalColor.a));
+-            Assert.That(support.colors.disabledColor.a, Is.EqualTo(support.colors.normalColor.a));
+             Assert.That(build.GetComponent<Image>().material.shader.name,
+-                Is.EqualTo("Warline/UI/Disabled Grayscale"));
+-            Assert.That(support.GetComponent<Image>().material.shader.name,
+                 Is.EqualTo("Warline/UI/Disabled Grayscale"));
+             Assert.That(zoomIn.gameObject.activeSelf, Is.True);
+             Assert.That(zoomOut.gameObject.activeSelf, Is.True);
+@@ -261,20 +265,21 @@
+             Assert.That(cinematicGroup.interactable, Is.False, "An active cinematic still owns its input lock.");
+             cinematicGroup.interactable = cinematicGroup.blocksRaycasts = true;
+             Assert.That(build.gameObject.activeSelf, Is.True, "Skirmish/default presentation must remain unchanged.");
+-            Assert.That(support.gameObject.activeSelf, Is.True);
++            Assert.That(support.gameObject.activeSelf, Is.False, "Unavailable Support stays hidden.");
+             Assert.That(build.interactable, Is.True);
+-            Assert.That(support.interactable, Is.True);
+             Assert.That(build.IsInteractable(), Is.True, "The new mission's Build becomes usable after cinematic return.");
+         }
+         finally
+         {
++            World.DefaultGameObjectInjectionWorld = previous;
++            UiShellRuntimeGateway.Register(previousGateway);
+             UnityEngine.Object.DestroyImmediate(root);
+         }
+     }
+ 
+     public static void ValidateScopeLockOwnership()
+     {
+-        RightRailDisablesAndGraysBuildAndSupport();
++        RightRailDisablesBuildAndHidesUnavailableSupport();
+         ClearingAbsentDisabledReasonPreservesCurrentVisuals();
+         RightRailDoesNotOverrideMigratedFooterBuild();
+         Debug.Log("[MissionScopeLockOwnership] result=Passed independent input locks and idempotent visual restoration");

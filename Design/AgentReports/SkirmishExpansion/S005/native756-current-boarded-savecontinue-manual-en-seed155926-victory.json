@@ -1,0 +1,82 @@
+{
+  "mission": "S005",
+  "result": "Passed",
+  "sourceHash": "3455d1276fd8f3d46715824520491e1fbb8fbf22e3f99f67f9e5e2a02efc36fb",
+  "wrapperExit": 0,
+  "locale": "en",
+  "seed": 155926,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "mode": "ManualControlsDriver",
+  "realHumanDeviceAcceptance": false,
+  "ariaStarted": false,
+  "normalInput": true,
+  "normalSpeedGuard": "Native TickManualControls rejects any active timeScale other than 1; passed native manual verdict required",
+  "outcome": {
+    "elapsed": 474.957,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 474.957,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "playerUnits": 8,
+    "pathRequests": 5,
+    "pathFollowing": 1,
+    "leadX": 918.5,
+    "leadZ": 608.5
+  },
+  "frozenResult": true,
+  "returnTarget": "MAIN MENU",
+  "inputAudit": {
+    "recordedContacts": 241,
+    "completedContacts": 240,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 50,
+      "Manual": 185,
+      "Terminal": 1
+    },
+    "terminalCancellations": [
+      {
+        "contact": [
+          6,
+          1,
+          185
+        ],
+        "frame": 10412,
+        "acceptedCommands": 60,
+        "reason": "Native Finished disposal; no command accepted during contact"
+      }
+    ],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": false,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-7020296595274d158abe54543f1a67a0.jsonl.touch.jsonl",
+    "sha256": "547066fefaaa5f7973ba31f87e41f14fc73954deafd6025317713405c39ae877"
+  },
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-755-finer-playable-air-fit-completed-post-source-manifest.json",
+  "postManifest": "final-756-current-manual-en-seed155926-post-source-manifest.json",
+  "log": "native-756-current-manual-en-seed155926.log",
+  "trace": "s005-aria-live-155926-en-7020296595274d158abe54543f1a67a0.jsonl",
+  "nativeMarkers": [
+    "[S004ManualReceiptAudit] result=Passed measured=1 touches=184 commands=60 violations=0 unexpected=0 interventions=0",
+    "[S004ManualNative] result=Passed outcome=Victory seconds=474.9566 reason= input=Touch ariaStarted=0 actions=185 attackReceipts=23"
+  ],
+  "playerReady": false,
+  "boardedSaveContinue": true,
+  "recoveryMarkers": [
+    "[S005PassengerSave] result=Passed restoredAndUnloaded=4 input=Touch",
+    "[S005PlayerSaveResume] result=Passed input=Touch gestures=50 oldPhysicalGone=4978 paidReceiptPreserved=1 sameAttempt=1 savedElapsed=161.3563 paidRole=ApcHeavy paidCost=280 combatGestures=0 combatSave=0 boardedSave=1 passengers=4 commands=6 receiptViolations=0 resumedMissionAcceptance=Pending"
+  ],
+  "wrapperExitArtifact": "native-756-current-manual-en-seed155926.log.exit",
+  "logSha256": "eb6924a8ad28309976fd059ae67f23f85989292c13f88f991a58d5572197e41a",
+  "terminalClockChecks": "Native delayed terminal probe requires Playing=0, Paused=1 and unchanged elapsed/HP/simulation inactivity before normal result return."
+}

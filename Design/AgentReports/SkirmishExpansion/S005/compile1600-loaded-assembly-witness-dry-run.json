@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-normal-south-flank1600-source-pending/loaded-assembly-witness1600.cs",
+      "entry": "S005LoadedAssembly1600.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 186,
+      "executeMs": 0,
+      "assemblyName": null,
+      "success": true,
+      "result": null,
+      "message": "Compiled successfully (dry run; nothing was loaded or executed)."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

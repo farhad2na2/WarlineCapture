@@ -1,0 +1,19 @@
+{
+  "run": 147,
+  "sourceHash": "23ee330de45459b3dd3c553e9ba9bdae49596e23e69be7b4ac93a9895800e62d",
+  "result": "Failed",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "outcome": "Abort",
+  "reason": "ariaStopped:Blocked",
+  "matchSeconds": 20.52439,
+  "gestures": 0,
+  "completedGestures": 0,
+  "recordedCommands": 0,
+  "humanInterventions": -1,
+  "diagnosis": "Touch driver never started. No held input controls found after exiting Play; startup condition still under investigation.",
+  "trace": "s005-aria-live-104734-en-ecd60941edca472993793138f23c9efb.jsonl",
+  "log": "native-147-final-en-seed1-replay.log",
+  "playerReady": false
+}

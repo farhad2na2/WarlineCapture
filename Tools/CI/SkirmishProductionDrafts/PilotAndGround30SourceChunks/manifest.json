@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "scope": "ExplicitComposition_OnePilotOrOneGroundSource_OriginalSystems_Unqualified",
+  "original_manifests": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30SourceChunks/manifest.json",
+      "sha256": "64c1205d6626a078126abf0d638edd0650a51d343b31de93446da2c9adb95d95"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/SixPilotBoundedMaterialization/manifest.json",
+      "sha256": "e9430b22d5bf3f01b3ca7ecbea91439f6d601230f11728447e92c58972fd0914"
+    }
+  ],
+  "files": [
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SourceChunks/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs.txt",
+      "before_sha256": "6c589e26e359423e728f8f11fa7aaa09f5068f157e70854ec2b67dcbadfcb971",
+      "sha256": "97b455527c886046de6525e049100f045f44044a23cb0d83eb7007c998842445"
+    },
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SourceChunks/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.txt",
+      "before_sha256": "40c62d7cb0ea1027dde806ae3cd5d4a065e401fb699817e53c159ea6b0232618",
+      "sha256": "d8f5c398e249a4ad55f2ad3b551b67b968ee0de14e2ee06702e44fa9e226c5e0"
+    },
+    {
+      "assembly": "Game.Editor",
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.Ground30SourceChunk.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30SourceChunks/SkirmishGroundSourceFitSurvey.Ground30SourceChunk.cs.txt",
+      "before_sha256": null,
+      "sha256": "9edff9ca42e3e9bc554334f45645817ec9617ef1f9b0639519be392d6ba8abfa"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SixPilotBoundedMaterialization/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs.txt",
+      "before_sha256": "f9569468528cc9fb9dce4d7385854e959b6fb3b505419c59ed1405056079adad",
+      "sha256": "7883a230907692dbf72a18e8f82eb6b02df00ce62642ecbad11a7df7b297363a",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SixPilotBoundedMaterialization/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "before_sha256": "d957e25d59ceed0f8f258d62e8bcedb4576a7b5cd61653158a464012838276d7",
+      "sha256": "51244b0e14d0df4211c9b8d3139fcad47969c84f5adefd454da18762266357ec",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SixPilotBoundedMaterialization/SkirmishGroundSourceFitSurvey.BoundedPilot.cs.txt",
+      "before_sha256": null,
+      "sha256": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishBoundedMaterializedPilotTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SixPilotBoundedMaterialization/SkirmishBoundedMaterializedPilotTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "0f31b1f1d18a095bb1b1e8ab022ad7f6e8577f2378ff662b68a8939ea125a5d0",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "dependencies": [
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0"
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs",
+      "sha256": "97ce4618264011098b465c95da5fe88ea307fc403dd9d2c03fb6603ffbc11c2d"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs",
+      "sha256": "1bca175f71fd74a5511477249970e2c3e2b8829221b52d8ef602cf0a3d11c2fa"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs",
+      "sha256": "50646833c3a33fa760ee70329c31038471223b995c46bdfb4b66d58e39a2433b"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c"
+    }
+  ],
+  "explicit_dependency_replacements": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "original_dependency_sha256": "d957e25d59ceed0f8f258d62e8bcedb4576a7b5cd61653158a464012838276d7",
+      "joint_source_sha256": "51244b0e14d0df4211c9b8d3139fcad47969c84f5adefd454da18762266357ec",
+      "reason": "Explicit reviewed dormant bounded-pilot observer plus complete-only per-size checkpoint branch; exactTypedRosterCaller returns before branch."
+    }
+  ],
+  "combined_owning_proof": "Pending serialized slot release if root requests; individual exact proofs passed",
+  "native_executed": false,
+  "source_fit_certified": false,
+  "readiness": 0
+}

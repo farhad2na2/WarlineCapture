@@ -1,0 +1,31 @@
+{
+  "mission": "S005",
+  "sourceHash": "6b4fad8b9f39d423a9d8b0010763f1fc7268d6f9ae694fdbc7385a1005e97125",
+  "countsForCurrentSource": false,
+  "historicalReason": "Destroyed Campaign scenery recovery fixtures added after this run; runtime code unchanged by that addition.",
+  "playerReady": false,
+  "check": "Fresh native pending ground production recovery",
+  "input": "RecoveryDiagnostic",
+  "acceptedTouchSamples": 0,
+  "normalInputRecovery": false,
+  "freshRecovery": true,
+  "runtimePrefabResolver": true,
+  "editorPrefabResolver": false,
+  "initialUnits": 28,
+  "structures": 14,
+  "materialBanks": 2,
+  "materialsPaid": 220,
+  "balanceAfterRecovery": 230,
+  "receiptId": 1001,
+  "deliveredUnits": 1,
+  "duplicateStartingGrants": 0,
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "log": "native-122-paid-production-recovery.log",
+  "save": "native121-paid-production-checkpoint-wire.json",
+  "limitations": [
+    "Pending ground queue only; no active carrier/drop",
+    "Diagnostic recovery entry; no player-facing Save/Resume journey",
+    "No current-source complete-match acceptance"
+  ]
+}

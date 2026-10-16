@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "reason": "Paid native Strike appeared on page two but public AirMask was zero; cycle stalled before flight",
+  "sourceHash": "3f7c2914408eaa45227b75542666e01c5c63a2879f4ffbd2d231a7e8181ead91",
+  "sourceMatched": true,
+  "log": "native-445-paid-strike-mode-economy-cycle.log",
+  "logSha256": "48a01b87e0129501ee5b33284fc466f240243425ee55720c023320aa2958bb10",
+  "airportBuilt": true,
+  "strikePaid": true,
+  "strikeReceipt": 1004,
+  "nativeStrikeActorObserved": true,
+  "flightCertified": false,
+  "manualEditorStop": true,
+  "strictIndependentContactAudit": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

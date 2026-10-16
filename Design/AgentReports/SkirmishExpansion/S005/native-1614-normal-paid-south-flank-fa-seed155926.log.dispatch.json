@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1614-normal-paid-south-flank-fa-seed155926.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 116,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_native-1614-normal-paid-south-flank-fa-seed155926.log.dispatch_ff4ae5828f01488d8a5065faf8305689",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

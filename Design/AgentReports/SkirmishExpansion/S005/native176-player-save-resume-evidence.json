@@ -1,0 +1,12 @@
+{
+  "run": 176,
+  "sourceHash": "412284d1391e5c1a89eae9fa947c6df910814dd620a67a00cd46d80b12916f1c",
+  "playerReady": false,
+  "result": "Failed",
+  "saveExitContinue": "Passed native touch; same attempt, paid receipt, clock, 386 old entities removed",
+  "resumedMission": "Failed ARIA Blocked at 430.724 seconds; no mission outcome/result/return",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "inputInterventions": 0,
+  "evidencePreserved": true
+}

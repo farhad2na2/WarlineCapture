@@ -1,0 +1,8 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs"
+  ],
+  "toSourceHash": "70571972ae90651b3b4b0df8c88745d8234ed047cd7f4e7f8572fac35e0566e8",
+  "shippingRuntimeConfigsMaterialsAndPhysicalSourceUnchanged": true,
+  "change": "Only start normal factory-supply selection after all three tanker purchases are committed; add read-only pending-state watchdog diagnostics."
+}

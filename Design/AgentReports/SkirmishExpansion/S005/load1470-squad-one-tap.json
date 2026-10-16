@@ -1,0 +1,148 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-squad-one-tap1470-prepared/S005SquadOneTap1470.cs",
+      "entry": "S005SquadOneTap1470.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.InterceptRow.poseVisibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 997,
+          "column": 142,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1470.MilitaryReport.factions' is never assigned to, and will always have its default value 0",
+          "line": 1835,
+          "column": 50,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1470.MilitaryReport.observations' is never assigned to, and will always have its default value null",
+          "line": 1835,
+          "column": 80,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1470.MilitaryReport.buildings' is never assigned to, and will always have its default value 0",
+          "line": 1835,
+          "column": 39,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.fighterPrepareZoomTaps' is never assigned to, and will always have its default value 0",
+          "line": 1295,
+          "column": 64,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.CameraFramingRow.hiddenEnemyPoseRead' is never assigned to, and will always have its default value false",
+          "line": 1648,
+          "column": 85,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.DamageRow.visibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 563,
+          "column": 547,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.DamageRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 563,
+          "column": 534,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.PatrolRow.poseAirborneInjected' is never assigned to, and will always have its default value false",
+          "line": 1241,
+          "column": 320,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 143,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1470.MilitaryReport.result' is never assigned to, and will always have its default value null",
+          "line": 1835,
+          "column": 20,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.DamageRow.airFlagsInjected' is never assigned to, and will always have its default value false",
+          "line": 563,
+          "column": 517,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.QueueRow.synthesized' is never assigned to, and will always have its default value false",
+          "line": 561,
+          "column": 196,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 143,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 143,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005SquadOneTap1470.DamageRow.damageInjected' is never assigned to, and will always have its default value false",
+          "line": 563,
+          "column": 502,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "The field 'S005SquadOneTap1470.shooterAirborneObserved' is assigned but its value is never used",
+          "line": 558,
+          "column": 86,
+          "id": "CS0414"
+        }
+      ],
+      "compileMs": 389,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005SquadOneTap1470_4ffcde6dc3ea4348b375543b1ff7e9ce",
+      "success": true,
+      "result": "One-tap fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

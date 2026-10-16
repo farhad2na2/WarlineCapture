@@ -1,0 +1,146 @@
+{
+  "scope": "Offline Campaign M3 preflight; native drycompile and complete journey required before qualification. No Unity execution.",
+  "sourceHash": "a8cf39d87ddccbd8596ebb2f381b3cd421b832a96edd3c4226533cdf7fc3b546",
+  "packages": [
+    {
+      "runId": 1356,
+      "locale": "fa-IR",
+      "sourceContractsVerified": 158,
+      "offlineParserControls": 59,
+      "preservedHistorical1313FailureRejected": true,
+      "historicalFailureErrors": [
+        "Missing complete native M3 witness marker",
+        "Missing paired native companion input gate",
+        "Generic M3 native journey did not pass",
+        "Native Campaign journey failure",
+        "Native witness explicitly failed",
+        "Missing actual NativeVictoryRendered entry=7",
+        "Missing actual CampaignReturnRendered entry=7",
+        "Actual native read-only witness failed"
+      ],
+      "exactFixtureHash": "aa16239c4e0ae531f98e2cd43b637f70e1bba5830568c96b8cbb9eefc0f155f9",
+      "exactRunnerHash": "eb6932c3322b460623708b6019d79241d1d1369a90457c92308de8b78d10a8fe",
+      "nativeDryCompilePending": true,
+      "nativeExecutionPending": true,
+      "commands": {
+        "dryCompile": [
+          "rtk",
+          "proxy",
+          "unity",
+          "command",
+          "run_script",
+          "--file",
+          "/private/tmp/campaign-m3-current1356/CampaignSelectionJourney1356.cs",
+          "--entry",
+          "CampaignSelectionJourney1356.Run",
+          "--dry_run",
+          "true",
+          "--timeout_ms",
+          "30000",
+          "--project-path",
+          "/Users/farhad/Projects/WarlineCapture",
+          "--format",
+          "json"
+        ],
+        "dryCompileProofPath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1356-campaign-m3-reviewed-dry-run.json",
+        "run": [
+          "rtk",
+          "proxy",
+          "python3",
+          "/private/tmp/campaign-m3-current1356/run_campaign_m3_1356.py",
+          "final-1351-post-campaign-merge-postcompile-source-manifest.json",
+          "--dry-compile-proof",
+          "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1356-campaign-m3-reviewed-dry-run.json",
+          "--heavy-lane-owner",
+          "main1356",
+          "--scope",
+          "fa-IR"
+        ]
+      }
+    },
+    {
+      "runId": 1357,
+      "locale": "en",
+      "sourceContractsVerified": 158,
+      "offlineParserControls": 59,
+      "preservedHistorical1313FailureRejected": true,
+      "historicalFailureErrors": [
+        "Missing complete native M3 witness marker",
+        "Missing paired native companion input gate",
+        "Generic M3 native journey did not pass",
+        "Native Campaign journey failure",
+        "Native witness explicitly failed",
+        "Independent eligible active defense countdown samples absent entry=2",
+        "Actual native read-only witness failed"
+      ],
+      "exactFixtureHash": "b69eccb64ade19a2299d9635bc8e4518ff8a85a4a41a38311b17605cc6d4a6db",
+      "exactRunnerHash": "20d18a47437465720fdb58fa02915b4bd4fcc033f3494951d856dd62e0fe3967",
+      "nativeDryCompilePending": true,
+      "nativeExecutionPending": true,
+      "commands": {
+        "dryCompile": [
+          "rtk",
+          "proxy",
+          "unity",
+          "command",
+          "run_script",
+          "--file",
+          "/private/tmp/campaign-m3-current1357/CampaignSelectionJourney1357.cs",
+          "--entry",
+          "CampaignSelectionJourney1357.Run",
+          "--dry_run",
+          "true",
+          "--timeout_ms",
+          "30000",
+          "--project-path",
+          "/Users/farhad/Projects/WarlineCapture",
+          "--format",
+          "json"
+        ],
+        "dryCompileProofPath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1357-campaign-m3-reviewed-dry-run.json",
+        "run": [
+          "rtk",
+          "proxy",
+          "python3",
+          "/private/tmp/campaign-m3-current1357/run_campaign_m3_1357.py",
+          "final-1351-post-campaign-merge-postcompile-source-manifest.json",
+          "--dry-compile-proof",
+          "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1357-campaign-m3-reviewed-dry-run.json",
+          "--heavy-lane-owner",
+          "main1357",
+          "--scope",
+          "en"
+        ]
+      }
+    }
+  ],
+  "sharedEditorDispatchOwner": "S005 main agent; coordinate lane idle before native calls",
+  "preservedLimits": {
+    "singleLocaleWallSeconds": 420,
+    "wrapperSeconds": 600,
+    "countdownMissingEligibleSeconds": 1.5,
+    "requiredNativeHostilesDefeated": 7,
+    "requiredNativeConvoyResolved": 2,
+    "strictAllTouch": false,
+    "humanDevice": false
+  },
+  "changes": [
+    "Unique unused output IDs1356FA/1357EN",
+    "Current1351 source pins",
+    "Both inherit latest presented Campaign title/return resolver",
+    "English schedule stops only after real Victory and rendered Campaign return",
+    "Require actual native locale matching requested entry"
+  ],
+  "playerReady": false,
+  "independentReview": {
+    "status": "NoActionableDefects",
+    "scope": "Read-only package source/pin/collision/locale and completion review; no native execution",
+    "findings": [
+      "All158source contracts and fixture/runner/idle-helper/source-helper pins match.",
+      "1356FA preserves predecessor schedule;1357EN completes only after real Victory and observed Campaign return at public MenuReady boundary.",
+      "No stale executable1345/1277IDs;1356/1357 outputs are separate and unused.",
+      "Parser locale checks match en/fa-IR and preserve all acceptance gates."
+    ],
+    "nativePending": true
+  }
+}

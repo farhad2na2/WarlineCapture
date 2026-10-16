@@ -1,0 +1,42 @@
+{
+  "result": "Released1608ConnectedProof",
+  "runId": 1608,
+  "sourceHash": "3751581fe7fb8acd2c7c6c865956fbb675b8ebd9e828473db803718d87d8282d",
+  "packageSealSha256": "3846d49c17bf50fa0a5a6a770488f6f4e9867bed90bb8c518f5fd36338c53cd2",
+  "connectedProofHashes": {
+    "sourcePre": "7fe7c285edd89bda70e885aedd286303b760ccccf5b3b03d732857e7335ae938",
+    "fingerprintPre": "3c6144995c0407fcc17320d15a1cfc95feaf84006237816d2cd8f3500a1056e5",
+    "editor": "bbd6640a20161b124a351caf4149e4ce32090dc4ead63944609f6b1facf127e7",
+    "recompile": "978f63a0e4e190be6ba143e44617db95bbf7eb9170c324fd5f42c995f6833595",
+    "console": "c26bd4a9a82f1a7e69c307acded2b2f47e2ebf87a48fa278aa0a946aa5d48c0d",
+    "loadedDry": "64a02c31a34d5be485384e052c2441479f91c9b9753a29ac49a93f6506377712",
+    "loaded": "28145e602ffbc2cd51b7311db157b80f6db61d6a3fb7ac04c6d5b793ac7ec14c",
+    "fixtureDry": "5a3f66bc641739bfbf7fc410676b038418137c5c7bfd98b4ea6ab5f4e0b920f9",
+    "sourcePost": "7fe7c285edd89bda70e885aedd286303b760ccccf5b3b03d732857e7335ae938",
+    "fingerprintPost": "1e50d1e70bcced086a6a2a3ce2719d77eb60cf31b09cc4d720c5936c0ca53c8d"
+  },
+  "fixtureSha256": "45a7ccefdb9d3f07bd3453df37e15bcedafb74bec31aeb7026cc07f0d3779809",
+  "runnerSha256": "0c53f4efc88f65f325897c6654f2dbac34b8145798a4c1d6ba93b29364cca302",
+  "sourceManifestSha256": "7fe7c285edd89bda70e885aedd286303b760ccccf5b3b03d732857e7335ae938",
+  "loadedAssemblyWitness": {
+    "authoringAssembly": "Game.Authoring",
+    "authoringLocation": "/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Authoring.dll",
+    "authoringMvid": "794c3998-4780-415b-9eab-6aae0518a138",
+    "authoringType": "Game.Authoring.UnitGridAuthoring",
+    "bakerType": "Game.Authoring.UnitGridAuthoring+UnitGridBaker",
+    "bakingVersionAttribute": "Unity.Entities.BakingVersionAttribute",
+    "bakingVersionProject": "WarlineCapture",
+    "bakingVersionNumber": "2",
+    "compositionAssembly": "Game.Composition",
+    "compositionLocation": "/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Composition.dll",
+    "compositionMvid": "7ba22064-b83b-495f-b94e-f363cfab801f",
+    "matchSceneViewType": "Game.Composition.MatchSceneView",
+    "uiAssembly": "Game.UI.Runtime",
+    "uiLocation": "/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.UI.Runtime.dll",
+    "uiMvid": "50f458ec-e9be-49d1-a8fe-7b11ae896834"
+  },
+  "dispatchPermittedAfterReview": false,
+  "normalInput": true,
+  "playerReady": false,
+  "dryReviewOnly": true
+}

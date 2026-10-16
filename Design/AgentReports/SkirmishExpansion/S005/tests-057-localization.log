@@ -1,0 +1,361 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=StartThroughM02LocalizationTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=EveryConfiguredStringResolvesThroughSourceAndKeyInEveryPublishedLocale
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=FirstLaunchStaticIdentityAndGuidanceHaveExplicitBindings
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=FarsiLoadingTipStaysAgainstItsLabel
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LoadingProgressRendersEveryPhaseAndHidesTechnicalFailureDetails
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=DirectWritersReplaceAuthoredBindingsAndSurviveLanguageSwitch
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=BuildingAndRecruitmentMessagesTranslateMetadataAndAllResourceFailures
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=ProductionQueueReplacesItsAuthoredPlaceholderWithTheLocalizedUnitName
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=TutorialHeaderUsesSharedLocaleBeforeAndAfterItsFirstReadModel
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=FutureLocaleUsesSameRuntimePathsAndIncompleteTablesFailValidation
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianNavigation_MirrorsForwardGlyphsWithoutChangingRichText
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LocaleLookup_UsesStableKeyAndEnglishFallback
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeSourceLookup_CoversDynamicallyCreatedUi
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=GameTextTryGet_ResolvesKeysOwnedOnlyBySharedCatalog
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeSourceLookup_LocalizesConfiguredDynamicTemplates
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeSourceLookup_DoesNotTreatPlaceholderOnlyTemplateAsArbitraryCopy
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeBinder_SkipsViewsWithDedicatedNarrativeLocalization
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LocalizedRuntimeValue_CanRecoverItsEnglishTemplateForLocaleSwitching
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianLocale_PreservesIntentionalLatinAcronymsInLeftToRightOrder
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianLocale_EnablesSafeAutoSizingAndRestoresEnglishTypography
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFB58 was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFEE8 was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFEDE was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFB58 was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFEEE was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFBFE was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFE8E was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=InactiveLanguageSegmentKeepsRuntimeLabelWhenItsTabOpens
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LocaleMetadata_DrivesSettingsWithoutScreenSpecificLanguageLists
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=MissingTranslation_FallsBackToEnglishSource
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianSeeder_PreservesReviewedValuesAndRejectsUnknownProse
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=SettingsLocaleModel_CarriesFutureLocaleCodeWithoutANewScreenEnum
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[V3UiLocalizationCatalogBuilder] validation=Passed prefabs=40 bindings=1237 en=4185 fa=4185
+UnityEngine.Debug:Log (object)
+Game.Editor.V3UiLocalizationCatalogBuilder:ValidateBindingsAndCoverage () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:387)
+GameLocalizationCatalogTests:EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:419)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:266)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=DisabledUi_KeepsTextMeshProFontMaterialAndReadableGlyphColor
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[V3UiLocalizationCatalogBuilder] validation=Passed prefabs=40 bindings=1237 en=4185 fa=4185
+UnityEngine.Debug:Log (object)
+Game.Editor.V3UiLocalizationCatalogBuilder:ValidateBindingsAndCoverage () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:387)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:279)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   ARIA must clear the minimap.
+  Expected: greater than or equal to -471.01001f
+  But was:  -588.0f
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.GreaterOrEqual (System.Single arg1, System.Single arg2, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+M03PresentationTests.ValidateAriaLessons (System.Boolean extraction) (at Assets/Tests/Editor/M03PresentationTests.cs:129)
+M03PresentationTests.AllTwelveAriaLessonsFitBothLanguagesAndTextSizes () (at Assets/Tests/Editor/M03PresentationTests.cs:55)
+StartThroughM02LocalizationTests.RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:280)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=StartThroughM02LocalizationTests.RunFocusedValidation
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_e36d638f/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

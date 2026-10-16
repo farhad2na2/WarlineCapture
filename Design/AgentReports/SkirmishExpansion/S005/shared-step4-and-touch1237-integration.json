@@ -1,0 +1,138 @@
+{
+  "status": "PartialIntegrationPendingCapabilitiesCoordinatorAndCompile",
+  "bundles": [
+    {
+      "manifest": "/private/tmp/s005-construction-step4-v2/manifest.json",
+      "sha256": "9460ed73f175319cc9edf74490c90f175468898d98137fe772534421d4db58bd",
+      "files": [
+        {
+          "path": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+          "baseSha256": "8c0fa1f9265edb7b27ffb3d5ee4bac191d9c17bfb51e2d8c358e641ef21f24ef",
+          "stagedSha256": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5",
+          "bytes": 16546,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyConstructionIntentV1Component.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyConstructionIntentV1Component.cs",
+          "baseSha256": null,
+          "stagedSha256": "bdbf7e772efb6cb5c4208da72d2c3474ca38598c329f2a51ee8d31725e61829f",
+          "bytes": 874,
+          "newNativeMetaRequired": true
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyConstructionPad.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyConstructionPad.cs",
+          "baseSha256": null,
+          "stagedSha256": "df4620c433a97b85dcb57504ab310fa26067a1caef13875f9466fac794b154f4",
+          "bytes": 1114,
+          "newNativeMetaRequired": true
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs",
+          "baseSha256": "979be0e1c4e58c7ca76e0d5fe02e47b9b6b46a328c407a82f7cae96a916a3b69",
+          "stagedSha256": "88f2f297aa66f041319813245474febee8cc297ff71a84def222770cefe6d976",
+          "bytes": 8782,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs",
+          "baseSha256": "ec282c3dc14bfb6a1f71871e55d52eeecb61b38b1b845e8df63b412c2a94402d",
+          "stagedSha256": "4ba9d3280d1397af32e3aeeb269a874c177f5806e360f57db91a84787b24159e",
+          "bytes": 4083,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+          "baseSha256": "47a416e62f4ccf77d6a26718938ee7a51abcf1d340718a6b0f19644db9013bfc",
+          "stagedSha256": "730b451b145ff8477c9743a4c0d082cfc7c6149c80141cfb33ba36a6a02f668d",
+          "bytes": 7281,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+          "baseSha256": null,
+          "stagedSha256": "76ea754acf8695a4cf8b8159e78baed5207a2bc4ce6779ae254a9e8d22bbd613",
+          "bytes": 32547,
+          "newNativeMetaRequired": true
+        },
+        {
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionCheckpoint.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionCheckpoint.cs",
+          "baseSha256": null,
+          "stagedSha256": "4d97805c531af0aab9090db444380e015c0be53d5692793ccc6c335c5718a3c6",
+          "bytes": 5334,
+          "newNativeMetaRequired": true
+        },
+        {
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+          "baseSha256": "b1650d121d447e30437fd986851cb7a7973c6caf2edfd49234d6d8b9008c424c",
+          "stagedSha256": "242e863a86ba86f6516efc1482328dcd8ab3498a48cef3c31c8813565c02846c",
+          "bytes": 25871,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchSystem.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchSystem.cs",
+          "baseSha256": "a7158fd4f4cd21190ea49c256ae44dc63d88d39e83cca1e020382c7352d73e45",
+          "stagedSha256": "7e098195aa751451f657ee62d299f6bfda2ea629d9fc5deac00f9dd004b2317d",
+          "bytes": 4044,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+          "baseSha256": "b205aa50d12d86a3c799a17cc05c657c71a9075c5f197f25375456a49617e00f",
+          "stagedSha256": "5be349f9ce9ea8514d7b60f198381b5229aeef251566ce9b9efd263e013cd804",
+          "bytes": 32162,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+          "baseSha256": "74e767e6b557dc06724c3b83e1cfc8f87e00eaed239a186fc66026af3775afb5",
+          "stagedSha256": "24fb0a5dd66a0c02371ed58b043500ec4f9b63f087d1652c2cd4bf2f97da68e5",
+          "bytes": 83678,
+          "newNativeMetaRequired": false
+        },
+        {
+          "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyConstructionAdapterTests.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyConstructionAdapterTests.cs",
+          "baseSha256": null,
+          "stagedSha256": "cfc81a471220853569e89bcd41c5f503a88e93e1676140fbf6e6a142e82eb6d1",
+          "bytes": 24081,
+          "newNativeMetaRequired": true
+        },
+        {
+          "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs",
+          "staged": "/private/tmp/s005-construction-step4-v2/staged/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs",
+          "baseSha256": "2cfdd83b8569aae24dfcbb0b4ef7732ab317ec74ade45b16c172191f5c0d83c4",
+          "stagedSha256": "2ca6c301d23efe7795f6eb040d08946ec8c6bf1a425875b45e187b1b45d7ba90",
+          "bytes": 14984,
+          "newNativeMetaRequired": false
+        }
+      ]
+    },
+    {
+      "manifest": "/private/tmp/s005-touch-cadence-v2/manifest.json",
+      "sha256": "f4659b01a44805833b3974ecf86abcfad75b91c88cd75587eb08cde394db6c8a",
+      "files": [
+        {
+          "path": "Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs",
+          "base_sha256": "7adecd80dfc6648317b7b4ad0060c6d17b484e170df6e3eab3ba4583cc40d0a8",
+          "staged_sha256": "32784f3c6988ae4f16ac691460a5440e06a3c6b58a82e867783e808abc031bf1",
+          "base_path": "/private/tmp/s005-touch-cadence-v2/base/Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs",
+          "staged_path": "/private/tmp/s005-touch-cadence-v2/Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs"
+        }
+      ]
+    }
+  ],
+  "newMetas": "Native import pending for five construction C# owners",
+  "normalReadinessClaim": false
+}

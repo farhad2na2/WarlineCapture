@@ -1,0 +1,184 @@
+{
+  "physicalSourceModified": false,
+  "sourceScene": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+  "sourceSceneSha256": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+  "historicalRows": 74876,
+  "currentRows": 124167,
+  "netRowsAdded": 49291,
+  "reconciliation": [
+    {
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly",
+      "previous": 10798,
+      "current": 10842,
+      "net": 44
+    },
+    {
+      "branch": "AuthoredOperationMapEntityPresentation/GameplayVehicles",
+      "previous": 340,
+      "current": 340,
+      "net": 0
+    },
+    {
+      "branch": "AuthoredOperationMapEntityPresentation/GameplayBuildings",
+      "previous": 1584,
+      "current": 1584,
+      "net": 0
+    },
+    {
+      "branch": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly",
+      "previous": 50197,
+      "current": 98597,
+      "net": 48400
+    },
+    {
+      "branch": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/GameplayBuildings",
+      "previous": 11934,
+      "current": 12781,
+      "net": 847
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_03",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_09",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_07",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_01",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_04",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_06",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_05",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_10",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_08",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Palm_02",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_20",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_17",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_22",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_18",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_23",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_19",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_21",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Rock_13",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Rock_12",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Rock_15",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Rock_11",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Rock_14",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    },
+    {
+      "branch": "CityCrossroads_NorthCourtyard/Rock_16",
+      "previous": 1,
+      "current": 1,
+      "net": 0
+    }
+  ],
+  "countGuard": "Exact total124167 and six expected branch totals; identity/material/family/Android/capacity/source-parity checks preserved",
+  "unresolvedSourceRows": 51278,
+  "unresolvedRowsAreNotCertified": true,
+  "sourceFitCertified": false,
+  "playerReady": false,
+  "reason": "Current authored dense-city-v6 foliage and market/roof accents were absent from old packed records. Runtime and device validation still required."
+}

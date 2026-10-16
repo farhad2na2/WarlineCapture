@@ -1,0 +1,31 @@
+{
+  "mission": "S005",
+  "run": "native697",
+  "result": "Failed",
+  "reason": "PhysicalTakeover: normal-input guard detected intervention just after first launch request",
+  "wrapperExitCode": 2,
+  "sourceHash": "4c38cc6b2276677e607b5e25bc940e4e20ad6e41a214eeafe6586481a7fd1cd9",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-697-opening-oil-pump-refinery-three-oil-three-fuel-air-pre-source-manifest.json",
+  "postSourceManifest": "final-697-physical-input-interruption-post-source-manifest.json",
+  "log": "native-697-opening-oil-pump-refinery-three-oil-three-fuel-strike-cycle-en.log",
+  "logSha256": "d69016761a5acc6a88131a3c72d2b3e492c6be3d9e9207c2b881de95a19c3b26",
+  "trace": "s005-aria-live-155926-en-c4cb7322faf74798afdeec00da521e8a.jsonl",
+  "inputAudit": "native697-touch-contact-audit.json",
+  "physicalInterventions": 1,
+  "recordedContacts": 96,
+  "completedContacts": 96,
+  "strictInputAuditPassed": false,
+  "readOnlyCliObservations": 0,
+  "paidSetupMaterialsSpent": 2120,
+  "markers": [
+    "[S005AirportPlacement] result=Passed input=Touch nativeProducer=1 nativeActor=1 originalObjective=0 normalBudget=1 campaignSourceModified=0 gestures=67 commands=11 receiptViolations=0 fixedWingLifecycle=Pending bilateralCapacity=Pending completeMatch=NotClaimed",
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 receipt=1005",
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Save/Resume input interrupted.",
+    "[S004ManualNative] result=Failed outcome=None seconds=812.1497 reason=playerSaveResume=Save/Resume input interrupted. input=Touch ariaStarted=0 actions=0 attackReceipts=0",
+    "[SkirmishValidationExit] result=Requested code=2"
+  ],
+  "completeMatchCertified": false,
+  "countedWin": false,
+  "playerReady": false
+}

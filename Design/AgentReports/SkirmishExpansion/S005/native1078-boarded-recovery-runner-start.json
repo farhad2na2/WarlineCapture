@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1078",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1097-paid-transport-post-source-manifest.json",
+  "preflightManifest": "final-1078-boarded-recovery-preflight-source-manifest.json",
+  "fixtureSha256": "8c85697451fa60fee129798cc1b078b5616ae11090b015719ad1e301c432b85a",
+  "validationMethod": "S005BoardedRecovery1078.RunFastApcValidation"
+}

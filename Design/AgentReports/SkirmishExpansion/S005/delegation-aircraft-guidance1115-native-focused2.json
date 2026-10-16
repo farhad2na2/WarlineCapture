@@ -1,0 +1,18 @@
+{
+  "result": "PassedScopedActualHelperLifecycle2",
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "cases": 2,
+  "wholeSourceUnchanged": true,
+  "wholeSourceSha256": "7a8820a19a70fde24d7b6b29659a3540df978332f8d22a6f1bf9ddaa88f6ddc7",
+  "wholeSourceFiles": 47535,
+  "preSource": "/private/tmp/delegation-t7-guidance1115-complete-pre.json",
+  "postSource": "/private/tmp/delegation-t7-guidance1115-complete-post.json",
+  "nativeIdleSceneExact": true,
+  "log": "/private/tmp/delegation-t7-guidance1115-focused2.log",
+  "logSha256": "ac39149366423f87a7533975dcf6ab8eca513beefc22607bacf5ade98d94746b",
+  "persistentEditorLeak": false,
+  "actualNativePlayStopCertified": false,
+  "wholeMissionCertified": false,
+  "candidateManifestSha256": "25725bfbab7867df56d725e316ff913396ec2b843b7ae416293bd3adf17b7682"
+}

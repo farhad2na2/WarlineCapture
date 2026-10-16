@@ -1,0 +1,9 @@
+{
+  "runId": 1420,
+  "status": "DeferredDispatchDisabled",
+  "reason": "Native1414 ARIA same seed entered Blocked during second Recruit before safe Stop conditions; diagnose shared path before repeating bounded manual runner",
+  "dryCompilePassed": true,
+  "loadOnlyPassed": true,
+  "nativeExecuted": false,
+  "preservedFailure": "native1414-normal-aria-failure.json"
+}

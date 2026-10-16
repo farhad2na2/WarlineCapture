@@ -1,0 +1,19 @@
+{
+  "kind": "MeasuredOpeningQaOneEditorSuccessor",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "before_sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+      "sha256": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "preserved_previous_source_sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+  "native_executed": false,
+  "profile_changed": false,
+  "readiness_claim": false,
+  "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005MeasuredOpeningGroupViewCandidates",
+  "controls": "Game.Editor.SkirmishS002AriaRunHarness.RunS005MeasuredOpeningCandidateControls",
+  "preserved_parent_manifest_sha256": "017020d36a8b64e288101e541338b4f4f455c296f345955cef41798f7699233f"
+}

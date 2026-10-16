@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "timeout_ms": "30000",
+      "file": "/private/tmp/s005-stop-diagnostic1604-source-3751/loaded-assembly-witness1604.cs",
+      "entry": "S005LoadedAssembly1604.Run",
+      "dry_run": "true"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 238,
+      "executeMs": 0,
+      "assemblyName": null,
+      "success": true,
+      "result": null,
+      "message": "Compiled successfully (dry run; nothing was loaded or executed)."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

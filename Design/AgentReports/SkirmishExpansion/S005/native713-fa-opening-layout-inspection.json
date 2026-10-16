@@ -1,0 +1,8 @@
+{
+  "sourceHash": "626c833f1ad22248d51eccbe1ecb4a1d94dc5eb15af4b2b24f27394335575ee1",
+  "run": 713,
+  "image": "s005-aria-live-130368-fa-12be71d48df141f7af579dd0e83229d5.jsonl.opening.png",
+  "inspection": "Native 2400x1080 opening capture: resource strip, both base health panels, objective/ARIA guidance, visible Stop ARIA, army paging and colored command controls present. No obvious overlapping or clipped headline/control labels in this capture.",
+  "scope": "Single opening screen inspection; not full localization, device readability or owner visual acceptance",
+  "playerReady": false
+}

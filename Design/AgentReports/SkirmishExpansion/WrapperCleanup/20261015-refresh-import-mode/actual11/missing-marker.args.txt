@@ -1,0 +1,11 @@
+-projectPath
+D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0
+-logFile
+D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\missing-marker.log
+-quit
+-buildTarget
+StandaloneWindows64
+-refreshImportMode
+InProcess
+-executeMethod
+Probe.Missing

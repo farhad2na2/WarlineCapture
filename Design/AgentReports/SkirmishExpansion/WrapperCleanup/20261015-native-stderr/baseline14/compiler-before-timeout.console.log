@@ -1,0 +1,16 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-before-timeout.log
+[UnityInvoke] TimeoutSeconds: 1
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-before-timeout.log --exit 0 --sleep 15000 --fatal 2
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-before-timeout.log --exit 0 --sleep 15000 --fatal 2
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-before-timeout.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-before-timeout.stderr.log
+[UnityInvoke] ERROR: Unity reported a fatal log marker while running: Assets/Game/Scripts/OwnedSyntheticProbe.cs(5,13): error CS0234: Synthetic compiler failure only
+[UnityInvoke] taskkill: ERROR: The user name or password is incorrect.
+[UnityInvoke] taskkill: System.Management.Automation.RemoteException
+[UnityInvoke] taskkill ExitCode: 1
+[UnityInvoke] WARN: Owned root PID 30608 survived tree cleanup; attempting its cached Process handle.
+[UnityInvoke] ERROR: Unity reported a fatal log marker: Assets/Game/Scripts/OwnedSyntheticProbe.cs(5,13): error CS0234: Synthetic compiler failure only
+[UnityInvoke] ExitCode: 1

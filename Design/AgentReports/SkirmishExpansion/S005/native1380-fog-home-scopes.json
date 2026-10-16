@@ -1,0 +1,35 @@
+{
+  "result": "ScopedGameplayQualification",
+  "sourceHash": "c6b99ef242b7561fe2f76d76516d94b9023d496184dc67e85f7cdc1fc1bef4c1",
+  "attempt": "expanded-s005-104734-57d666932a794968a1b957c7fece073b",
+  "coreManualControls": "Qualified",
+  "fogNaturalVisibility": {
+    "status": "NotQualified",
+    "reason": "ValueError: Save handoff must follow actual accepted public advance"
+  },
+  "homeDefense": {
+    "status": "Qualified",
+    "proof": {
+      "result": "PassedScopedPublicHomeDefense",
+      "boundGroups": [
+        4
+      ],
+      "actualMoveHoldCycles": 1,
+      "visibleHomeAttackCommands": 0,
+      "actualPositiveDefenderEffects": 0,
+      "automaticAttackMoveTargetAcquisitionAllowed": true,
+      "holdSelectionOrderReceiptRequired": false,
+      "nativeExecuted": true,
+      "gameplayInjected": false,
+      "terminalVictoryAndReturnQualifiedByParentOnly": true
+    }
+  },
+  "homeDefenseHandoff": {
+    "status": "NotQualified",
+    "reason": "ValueError: Tactical activity before ownership or on another attempt"
+  },
+  "gameplayStateInjected": false,
+  "playerReady": false,
+  "humanDeviceAcceptance": false,
+  "original1365FailurePreserved": true
+}

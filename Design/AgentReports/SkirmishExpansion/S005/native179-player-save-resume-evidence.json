@@ -1,0 +1,14 @@
+{
+  "run": 179,
+  "sourceHash": "406a703f4179fd10dbc4976e81a889a358e5c86beccf9beff45ac9af21065c73",
+  "result": "Failed",
+  "playerReady": false,
+  "saveExitContinue": "Passed native touch; same attempt, paid receipt and clock preserved; 386 old entities removed",
+  "resumedMission": "Victory at 323.4599 seconds; frozen result and native Adjust Setup return passed",
+  "overallFailure": "Receipt audit rejected initial probe Production with receipt=0; probe driver was not observed by ARIA-only recorder",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "evidencePreserved": true,
+  "countsForCurrentSource": false
+}

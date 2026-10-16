@@ -1,0 +1,39 @@
+{
+  "physicalSourceModified": false,
+  "survey": 542,
+  "buildings": 4931,
+  "playerCandidate": [
+    880,
+    655
+  ],
+  "enemyCandidate": [
+    1332.8,
+    655
+  ],
+  "baseFootprintsStaticClear": false,
+  "baseFootprintMetres": [
+    20,
+    16
+  ],
+  "separationPreservedMetres": 452.8,
+  "airportCandidates": [
+    [
+      1500,
+      600
+    ],
+    [
+      1500,
+      680
+    ]
+  ],
+  "airportFootprintsStaticClear": false,
+  "airportFootprintMetres": [
+    210,
+    55
+  ],
+  "nativeRoadAndOccupantLegality": "Pending",
+  "normalInputCapacity": "Pending",
+  "playerReady": false,
+  "staticClearanceClaimInvalidated": true,
+  "reason": "Authored OriginCell metadata differs from physical world positions; Baker resolves world renderer bounds. Earlier static screen used stale authoring cells and cannot establish native legality."
+}

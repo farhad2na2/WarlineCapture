@@ -1,0 +1,20 @@
+{
+  "scope": "ExplicitInstalledMetadataVerificationAndShared150Resume_NoAssetCreationOrRefresh",
+  "files": [
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishInstalledAircraftSharedPreparation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/SkirmishInstalledAircraftSharedPreparation.cs.txt",
+      "before_sha256": null,
+      "sha256": "9ae82062fedd42739228707b871d411136b095188599c77e2b5210991d1bae8e",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "entry": "Game.Tests.Editor.SkirmishInstalledAircraftSharedPreparation.Run",
+  "shared_and_authoring_warmup_entry": "Game.Tests.Editor.SkirmishInstalledAircraftSharedPreparation.RunVerifySharedAndAuthoringWarmup",
+  "native_executed": false,
+  "type_compile_pending": true,
+  "metadata_creator_never_called": true,
+  "old_cache_refresh_never_called": true,
+  "source_mutation": false,
+  "original_aggregate_unchanged": true
+}

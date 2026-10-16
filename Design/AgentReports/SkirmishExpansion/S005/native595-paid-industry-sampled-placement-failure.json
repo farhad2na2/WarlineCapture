@@ -1,0 +1,12 @@
+{
+  "run": "native595",
+  "result": "Failed",
+  "sourceHash": "7c1a77a843ad1df50f7274c1365211f7e92e8a7b006fb49861532ef0d05af6d4",
+  "independentPrePostMatched": true,
+  "wrapperExit": 1,
+  "groundSiteTouches": 13,
+  "reason": "No legal visible Fabrication site on Campaign source.",
+  "airportReached": false,
+  "sourceFitCertified": false,
+  "nextRepair": "Use read-only native placement validator candidates and normal full-map camera gestures."
+}

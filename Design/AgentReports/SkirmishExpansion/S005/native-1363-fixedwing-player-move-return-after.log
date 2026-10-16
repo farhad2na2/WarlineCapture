@@ -1,0 +1,141 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=FixedWingPlayerMoveReturn1361.RunAfterFixValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=CommandCommitted grouped=False initialPhase=4 returning=1 phase=4 approach=1
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:107)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=PositiveStep grouped=False initialPhase=4 returning=1 phase=1 displacement=3.394113
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:115)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=CommandCommitted grouped=True initialPhase=4 returning=0 phase=0 approach=0
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:107)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=PositiveStep grouped=True initialPhase=4 returning=0 phase=1 displacement=3.394113
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:115)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=CommandCommitted grouped=False initialPhase=5 returning=1 phase=5 approach=1
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:107)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=PositiveStep grouped=False initialPhase=5 returning=1 phase=1 displacement=3.394113
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:115)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=CommandCommitted grouped=True initialPhase=5 returning=0 phase=0 approach=0
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:107)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=PositiveStep grouped=True initialPhase=5 returning=0 phase=1 displacement=3.394113
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:115)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=CommandCommitted grouped=False initialPhase=6 returning=1 phase=6 approach=1
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:107)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=PositiveStep grouped=False initialPhase=6 returning=1 phase=1 displacement=3.394113
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:115)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=CommandCommitted grouped=True initialPhase=6 returning=0 phase=0 approach=0
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:107)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] stage=PositiveStep grouped=True initialPhase=6 returning=0 phase=1 displacement=3.394113
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361Tests:NewCruisingMove (byte,bool,bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:115)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:23)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedWingPlayerMoveReturn1361] result=Passed mode=AfterFix cases=18 nativeCommand=1 nativeAirSystem=1 normalMission=0
+UnityEngine.Debug:Log (object)
+FixedWingPlayerMoveReturn1361:Run (bool) (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:33)
+FixedWingPlayerMoveReturn1361:RunAfterFixValidation () (at /private/tmp/shared-fixedwing-player-move-return1361-v2/FixedWingPlayerMoveReturn1361.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=FixedWingPlayerMoveReturn1361.RunAfterFixValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1363-fixedwing-player-move-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

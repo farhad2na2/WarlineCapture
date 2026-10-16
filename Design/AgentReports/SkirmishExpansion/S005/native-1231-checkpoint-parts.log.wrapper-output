@@ -1,0 +1,31 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] Existing executeMethod: Game.Tests.Editor.SkirmishNativeCheckpointPartsTests.RunFocusedValidation; LogFile: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1231-checkpoint-parts.log; TimeoutSeconds: 180
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1231-checkpoint-parts.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 1445,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_native-1231-checkpoint-parts.log.dispatch_dd7f4a6cefe442b5b1f8bc5992da8884",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}
+[UnityInvokeMac] ERROR: live validation failed with status '1'.

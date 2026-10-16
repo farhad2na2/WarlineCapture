@@ -1,0 +1,11 @@
+{
+  "catalogId": "S005",
+  "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+  "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+  "sourceContentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+  "scene": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+  "physicalMapModified": false,
+  "existingScenarioPreserved": true,
+  "playerReady": false,
+  "publication": "InProgress"
+}

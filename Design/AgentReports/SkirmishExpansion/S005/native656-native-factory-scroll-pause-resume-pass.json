@@ -1,0 +1,38 @@
+{
+  "result": "Passed",
+  "sourceHash": "cd9b6bc8f181c8f4fffa6cc6a004d5365a58cc8c7e30c19959008f3d352ef116",
+  "wrapperExit": 0,
+  "scope": "Native factory world selection, selection-panel scroll, pause and resume only",
+  "seed": 104734,
+  "selectedNativeFactory": 11,
+  "pauseNativeFlagObserved": true,
+  "resumeNativeFlagObserved": true,
+  "normalInput": true,
+  "forcedFlags": false,
+  "gestures": 4,
+  "completeMatchClaimed": false,
+  "airCycleAcceptance": "Pending",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-656-factory-panel-scroll-pre-source-manifest.json",
+  "postManifest": "final-656-factory-panel-scroll-post-source-manifest.json",
+  "trace": "s005-aria-live-104734-en-886de9197b034997a2df9adc2027db6a.jsonl",
+  "log": "native-656-factory-panel-scroll-pause-resume.log",
+  "inputAudit": {
+    "recordedContacts": 10,
+    "completedContacts": 10,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 4
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-en-886de9197b034997a2df9adc2027db6a.jsonl.touch.jsonl",
+    "sha256": "c9c00c182710bc1ffcd9b40c8a0ec088e01b0e9a6c4c1157754a3d4fcbb544a4"
+  }
+}

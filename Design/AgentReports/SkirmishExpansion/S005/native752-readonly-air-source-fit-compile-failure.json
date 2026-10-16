@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "failure": "CS0311: runtime BuildingDefinition is not a UnityEngine.Object asset type",
+  "log": "native-752-current-manual-en-seed104734.log",
+  "preSourceManifest": "final-752-readonly-whole-source-air-fit-pre-source-manifest.json",
+  "preRepairSourceManifest": "failed-752-compile-before-live-repair-post-source-manifest.json",
+  "preRepairSourceUnchanged": true,
+  "actualWrapperExit": 2,
+  "nativeMissionStarted": false,
+  "countsForReadiness": false,
+  "repairScope": "Editor diagnostic only; resolve Airport from existing live configured definitions. Compile-failed Editor has no Pipeline instance/active mission. Any capture from the repaired session will not count as unchanged-source qualification; rerun cleanly.",
+  "actualWrapperExitArtifact": "native-752-current-manual-en-seed104734.log.exit",
+  "actualPostSourceManifest": "final-752-compile-repaired-startup-timeout-post-source-manifest.json",
+  "sourceChangedDuringFailedSession": true,
+  "loadedRepairedSourceHash": "c1fe07b9d048cf1b43858320efd54687c67560a88c2efd00e0974ccc7ec2ca2a",
+  "laterFailure": "Startup diagnostic watchdog expired while full-source coarse scan was still running. No complete source-fit capture/qualification."
+}

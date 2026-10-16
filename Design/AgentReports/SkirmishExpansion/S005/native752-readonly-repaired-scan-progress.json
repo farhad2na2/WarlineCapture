@@ -1,0 +1,8 @@
+{
+  "readOnly": true,
+  "gameplayMutations": false,
+  "code": "var t=typeof(Game.Editor.SkirmishS002AriaRunHarness);var flags=System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic;var result=new System.Collections.Generic.Dictionary<string,object>();foreach(var name in new[]{\"nativeReviewStage\",\"airportSourceFitCursor\",\"airportSourceFitScan\",\"stage\",\"next\",\"deadline\",\"catalogId\"})result[name]=t.GetField(name,flags)?.GetValue(null);return result;",
+  "exitCode": 6,
+  "stdout": "{\n  \"success\": false,\n  \"command\": \"unity command eval\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"code\": \"COMMAND_FAILED\",\n      \"message\": \"No Pipeline instance found for project: /Users/farhad/Projects/WarlineCapture. Make sure Unity Editor is running with the Pipeline package installed.\"\n    }\n  ],\n  \"warnings\": []\n}\n",
+  "stderr": ""
+}

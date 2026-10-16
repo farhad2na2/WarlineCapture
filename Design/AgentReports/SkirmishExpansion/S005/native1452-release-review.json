@@ -1,0 +1,14 @@
+{
+  "result": "Released1452AfterFreshCurrentEditorReview",
+  "manifestBeforeSha256": "f3b51caebdee353a9914be4e4a33d484ec0f335f49e0af39b48ee3b9be4962d2",
+  "manifestAfterSha256": "989f6d175cfe97204e7a454e19ec60783b372a9d8e70a553ec146a9c8ab9b34f",
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "evidence": {
+    "editor": "compile1452-current-editor.json",
+    "compile": "compile1452-current-status.json",
+    "console": "compile1452-current-errors.json",
+    "loaded": "native1452-loaded-assembly-witness.json",
+    "dry": "compile1452-normal-aria-reviewed-dry-run.json",
+    "source": "final-1435-post-campaign-merge-precompile-source-manifest.json"
+  }
+}

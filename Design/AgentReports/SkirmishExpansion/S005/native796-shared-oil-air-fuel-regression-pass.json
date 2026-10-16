@@ -1,0 +1,30 @@
+{
+  "result": "PassedFocusedSharedOilAndAirFuel",
+  "sourceHash": "f58ae1200e0537c452163bcab1ec8fdab74ed4cf675420d7b103e66be618a448",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-796-shared-oil-demand-air-fuel-grid-and-sequential-purchase-pre-source-manifest.json",
+  "postSourceManifest": "final-796-shared-oil-demand-air-fuel-grid-and-sequential-purchase-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "requiredPassMarker": "[SharedOilAndAirFuelValidation] result=Passed oilCases=2 logisticsRegressions=55 economyRegressions=7 fuelContextCases=3 approachCases=2 existingFuelRegressions=8",
+  "log": "native-796-shared-oil-and-air-fuel-regressions.log",
+  "caseMarkers": [
+    "[IncomingOilReservationDemandCase] result=Passed faction=1 preservesMaterialsThenRefineryBatch=1",
+    "[IncomingOilReservationDemandCase] result=Passed faction=2 preservesMaterialsThenRefineryBatch=1",
+    "[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=55",
+    "[SkirmishFacilityEconomyProfileTests] result=Passed tests=7",
+    "[IncomingOilReservationDemandValidation] result=Passed cases=2 logisticsRegressions=55 economyRegressions=7",
+    "[RunwayApproachFuelCase] result=Passed step=0.03333334 elapsed=88.4000046104193 outsideFrames=342 fuelSpent=655.5",
+    "[RunwayApproachFuelCase] result=Passed step=0.1 elapsed=88.4000013172626 outsideFrames=113 fuelSpent=654",
+    "[VehicleFuelConsumptionFocusedValidation] result=Passed tests=8",
+    "[RunwayApproachFuelValidation] result=Passed cases=2 existingFuelRegressions=8",
+    "[FuelGridContextValidation] result=Passed cases=3 approachCases=2 existingFuelRegressions=8",
+    "[SharedOilAndAirFuelValidation] result=Passed oilCases=2 logisticsRegressions=55 economyRegressions=7 fuelContextCases=3 approachCases=2 existingFuelRegressions=8"
+  ],
+  "scope": "Isolated actual-system tests: incoming Oil reservation routing for both factions and cancellation; 55 logistics/production, 7 economy, 3 grid-context, 2 complete recorded runway approaches and 8 fuel/safety regressions.",
+  "normalMissionCertified": false,
+  "playerReady": false,
+  "oldRuntimeControls": [
+    "native792-runway-approach-fuel-accounting-control-failure.json",
+    "native795-incoming-oil-reservation-demand-control-failure.json"
+  ]
+}

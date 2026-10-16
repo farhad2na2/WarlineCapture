@@ -1,0 +1,24 @@
+{
+  "result": "Failed",
+  "sourceHash": "0b1962986b15fb05bfc723535dff7d0dcbf8a2b8011033db9c29ed2755c93d5d",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 2,
+  "preSourceManifest": "tests-703-shared-parking-flight-recovery-pass-post-source-manifest.json",
+  "postSourceManifest": "final-704-airport-camera-placement-failure-post-source-manifest.json",
+  "log": "native-704-shared-production-taxi-checkpoint-fixes-strike-cycle-en.log",
+  "logSha256": "1dcb65ab13a68340697e5ed7ffbf011d1ff061f7e2befe451a700234ad955392",
+  "trace": "s005-aria-live-155926-en-d5f5eee3aee04255b926a746662ec6ac.jsonl",
+  "inputAudit": "native704-touch-contact-audit.json",
+  "failure": "Three native-valid Airport sites exhausted camera visibility retries before purchase.",
+  "physicalMapFitFailureEstablished": false,
+  "paidAircraftReached": false,
+  "sharedParkingFixNativeConfirmed": false,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "termination": {
+    "method": "AbortFailedValidationAndExit",
+    "cliResponse": "Main thread operation timed out after 5000ms",
+    "observedEditorShutdown": true,
+    "wrapperExitCode": 2
+  }
+}

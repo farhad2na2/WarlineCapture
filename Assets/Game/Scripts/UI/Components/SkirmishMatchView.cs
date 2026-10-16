@@ -59,13 +59,13 @@ namespace Game.UI.Runtime
             strip.offsetMin=new Vector2(0,-225);strip.offsetMax=new Vector2(0,-110);
             var row=strip.gameObject.AddComponent<HorizontalLayoutGroup>();row.padding=new RectOffset(8,8,8,8);row.spacing=8;row.childControlWidth=true;row.childControlHeight=true;row.childForceExpandWidth=true;
             row.childScaleWidth=false;
-            player=Button(strip,"YOUR MAIN BASE",()=>Send(UiSkirmishAction.FocusPlayer));
+            player=Button(strip,"YOUR MAIN BASE",()=>FocusPresentedObjectiveOrBase(true));
             player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;player.fontSize=28;
             playerHealth=HealthLabel(player);
             HudIconButtonView.Apply(PlayerFocusButton, HudButtonIcon.YourBase, HudButtonRole.Play,
                 "YOUR BASE", "پایگاه شما", player, true);
-            clock=Label(strip,"TIME LEFT",30);clock.gameObject.AddComponent<LayoutElement>().preferredWidth=240;
-            enemy=Button(strip,"ENEMY MAIN BASE",()=>Send(UiSkirmishAction.FocusEnemy));
+            CreateClock(strip);
+            enemy=Button(strip,"ENEMY MAIN BASE",()=>FocusPresentedObjectiveOrBase(false));
             enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.fontSize=28;
             enemyHealth=HealthLabel(enemy);
             HudIconButtonView.Apply(EnemyFocusButton, HudButtonIcon.EnemyBase, HudButtonRole.Stop,
@@ -109,14 +109,14 @@ namespace Game.UI.Runtime
             RefreshMapInformation(model);
             hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
             if (hud.activeSelf) PositionBelowWarning();
-            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);UiLocalizedText.Set(clock,model.Clock);
+            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);RefreshClock(model.Clock);
             AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
-            clock.color=(model.Clock??string.Empty).Contains("  0:")?new Color(1,.65f,.1f):Color.white;
+            RefreshPublicObjectiveHud(model);
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);
             if(!modal.activeSelf)return;
             resultCard.gameObject.SetActive(terminal);
-            if(terminal) resultCard.Present(BuildResult(model));
+            if(terminal) resultCard.Present(BuildPresentedSkirmishResult(model));
             confirmText.gameObject.SetActive(confirming&&!terminal);
             confirmationActions.SetActive(confirming&&!terminal);
         }
@@ -289,7 +289,7 @@ namespace Game.UI.Runtime
                     top = Mathf.Max(top, root.rect.yMax - bottom.y + 12);
             }
             var rect = (RectTransform)hud.transform;
-            rect.offsetMin = new Vector2(rect.offsetMin.x, -top - 115);
+            rect.offsetMin = new Vector2(rect.offsetMin.x, -top - (previousPublicApplicable ? 147 : 115));
             rect.offsetMax = new Vector2(rect.offsetMax.x, -top);
         }
         private static RectTransform Panel(string name,Transform parent,bool visible=true)

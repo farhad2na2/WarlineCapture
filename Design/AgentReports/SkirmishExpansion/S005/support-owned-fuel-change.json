@@ -1,0 +1,42 @@
+{
+  "status": "Passed compilation, Focused277\u2013284:65 Support checks plus shared Skirmish regressions, Native285/286 complete native journeys",
+  "records": [
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportFuelTransactionSystem.cs",
+      "beforeSha256": "5e26e8e71bed2f9fa9cc3f881ddf50942c130bb4a91f5291a579320c1f7ed975",
+      "afterSha256": "e5a93c15b37e37ef357bfdf2dac3b540095306a18886307f8264e0b2dadd9ec0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportTargetValidationUtilitySystemHelper.cs",
+      "beforeSha256": "eeadc47080b5f97ab9c3ed03e07801402200b184208aeb9c3ee50f7e208e5033",
+      "afterSha256": "8927124609c19badb0a66854270a970d85add52501c7f9808727fbcacb9d507e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAbilityRequestSystem.cs",
+      "beforeSha256": "7c0b391cebcd7287396d1b718164f89db55d989a7d7db02b033acf5dffc82ca1",
+      "afterSha256": "6f39a016a99f6f68a6308925d09a809e51c90608745aac1e0859169b12522fab"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiSupportReadModelSystem.cs",
+      "beforeSha256": "f79915931a9aadce899ee6ad9f291c9a753df184af647be090b12dad53130ef8",
+      "afterSha256": "940a4fa6ba4cc9128e6a3e3cc3801debb30ec91cab41ec97cc286641e7ab6adf"
+    },
+    {
+      "path": "Assets/Tests/Editor/Support/SupportRuntimeValidation.cs",
+      "beforeSha256": "176c5b2507852b6920a0756315212bb803e4d6c167e5ab727fddea01b3e368bd",
+      "afterSha256": "0f31fafb06a3e21dbf8702a2975055c580a11a9b9795b13d2d35892b6296cadb"
+    }
+  ],
+  "sourceHash": "c24ced8ef16ffc1a4022bf60a126690c1230d8812853e438ecaddf3a893cc1d1",
+  "nativeSkirmishSupportActivated": false,
+  "playerReady": false,
+  "failedCompileFingerprint": "final-277-source-independent-fingerprint.json",
+  "compileRepair": "Missing Game.Missions.Contracts import corrected; original compile failure retained in primary Editor log",
+  "evidence": [
+    "support-owned-fuel-focused-acceptance.json",
+    "native285-owned-fuel-manual-fa-evidence.json",
+    "native286-aria-en-evidence.json",
+    "final-286-source-independent-fingerprint.json"
+  ],
+  "limits": "Native Skirmish Support remains inactive; native missions verify ordinary controls and regression, not active Support acceptance"
+}

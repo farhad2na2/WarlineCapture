@@ -1,0 +1,287 @@
+{
+  "status": "PreparedNotExecuted",
+  "technicallyReady": false,
+  "playerReady": false,
+  "scope": "Static acceptance/source analysis and prepared bounded technical fixture; no Unity control or game-source changes performed by this agent.",
+  "preparedAtUtc": "2026-10-11T07:08:36.595620+00:00",
+  "recordedMainSourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "sourceIdentityVerifiedByThisAgent": "Exact listed dependency hashes only; full-source identity supplied by main and not recertified.",
+  "constraints": [
+    "Only main owns active current Editor validation. T7 source differs; no current-source pass may be inferred from old checkout.",
+    "No new terrain/runways/environment geometry; legal native facility placement must fit existing Campaign geometry.",
+    "All fixed prices, caps, clocks and scenario bindings remain unchanged.",
+    "Isolated funding/readiness/enemy-off/HealthZero and API queue requests never count as a normal complete mission."
+  ],
+  "acceptanceAuthority": [
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+      "ids": [
+        "X02",
+        "X03",
+        "X04",
+        "X13",
+        "X14",
+        "X18",
+        "X36",
+        "X37",
+        "X39"
+      ]
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+      "sections": [
+        "role/producer table",
+        "production infrastructure",
+        "Aircraft lifecycle",
+        "Recon visibility authority"
+      ]
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "sections": [
+        "Allowed mission authoring",
+        "Source fit and acceptance"
+      ]
+    }
+  ],
+  "remainingAirRoles": [
+    {
+      "role": "TransportHeli",
+      "producer": "Helipad",
+      "readiness": "Established",
+      "domains": "None",
+      "specificEffect": "Native Board hides exact passenger membership; airborne transport; native disembark restores same owned passengers at legal ground."
+    },
+    {
+      "role": "AttackHeliLight",
+      "producer": "Helipad",
+      "readiness": "Established",
+      "domains": "Ground, Structure",
+      "specificEffect": "Native attack on visible legal ground/structure: shot trace and actual target-health reduction; Return/touchdown/refuel/second sortie."
+    },
+    {
+      "role": "AttackHeli",
+      "producer": "Helipad",
+      "readiness": "Established",
+      "domains": "Ground, Structure",
+      "specificEffect": "Same shared cycle as light helicopter but validate actual distinct paid role/member/producer/domain and visible effect."
+    },
+    {
+      "role": "Drone",
+      "producer": "IntelStation",
+      "readiness": "Established",
+      "domains": "None",
+      "specificEffect": "Native Scan accepted and UnitScanOrder reaches HasStarted; real visibility/reveal update through shared authority; no weapon or hidden-target leakage."
+    },
+    {
+      "role": "Fighter",
+      "producer": "Airport",
+      "readiness": "FullArsenal",
+      "domains": "Air",
+      "specificEffect": "Visible enemy air interception and actual target health reduction; reject ground/structure attack without damaging it; runway launch/return/taxi/refuel."
+    },
+    {
+      "role": "TransportPlane",
+      "producer": "Airport",
+      "readiness": "FullArsenal",
+      "domains": "None",
+      "specificEffect": "Native Board and hidden passenger ownership; runway departure/transport; exposed disembark/airdrop path; exact passengers survive ownership/visibility cleanup."
+    }
+  ],
+  "strikeExistingEvidence": {
+    "normalPaidFullCycle": "native890-normal-paid-strike-cycle-scoped-pass.json",
+    "currentFirstSortie": "native978-current-paid-strike-first-sortie-observation.json",
+    "normalTaxiRecovery": "native945-980-normal-paid-strike-taxi-save-continue-pass.json",
+    "currentFlightRecovery": "native1018 active under main; no outcome assumed",
+    "stillOpen": [
+      "Death/capacity release scope",
+      "Bilateral actual parking/taxi/launch/return capacity",
+      "Complete source/current candidate applicability and cleanup as required by authoritative report"
+    ]
+  },
+  "efficientExecutionOrder": [
+    {
+      "id": "A1",
+      "title": "Drone declared producer preflight",
+      "fixture": "/private/tmp/S005DroneProducerSmoke1045.cs",
+      "archivedFixture": "delegation-aircraft-drone1045-prepared.cs.txt",
+      "status": "PreparedNotCompiledNotRun",
+      "maxSeconds": 360,
+      "scope": "Isolated native API paid queue + real Touch legal facility/selection/movement + HealthZero death release",
+      "preconditions": [
+        "Fresh disposable current-source S005 Field launch. No existing Play session. No same-faction Airport.",
+        "Disclosed funding1800, readinessEstablished, enemyStrategy disabled, opening actors HealthZero; no direct actor spawn or position/selection/order writes.",
+        "Real Touch Satellite Dish placement must pass native preview and Confirm in bounded existing base sector. If no legal site, report fixture/source-fit unresolved; never force preview valid."
+      ],
+      "mustObserve": [
+        "Living IntelStation with owned attempt; no Airport; native paid Drone request status/reason and reservation accounting.",
+        "If rejected or accepted but undelivered, retain actual status/receipt progression, any shared warning and own Failed/cleanup; never call expected failure a functional-producer pass. Metadata overrides mean early Airport rejection is not assumed.",
+        "If delivered, ownership, exact cost/domain/member count, real Touch selection/Move receipt, movement AFTER verified Move acknowledgment, death cap release/idempotence and cleanup."
+      ],
+      "limitations": [
+        "Movement smoke does not establish Scan, airborne path, destination arrival, launch/return, normal economy or whole-mission win.",
+        "Fixture not compiled/run; native legal build site search may need diagnosis if no valid visible site."
+      ],
+      "fixtureRevision": "Own active/open catalog+drawer selection; exact live keys/mission restriction diagnostics and prompt missing-control failure. No catalog mutation or forced Refresh."
+    },
+    {
+      "id": "A2",
+      "title": "Grouped isolated other-air queue/motion smoke",
+      "status": "Prepared heli-group smoke plus precise remaining fixed-wing specification",
+      "scope": "Technical only",
+      "steps": [
+        "Reuse disposable normal native facility placement from A1 for Helipad and Airport; each real preview/Confirm accepted on existing source. No synthetic facility spawn.",
+        "Fund/advance readiness only with declared isolated stimuli; native paid queues sequentially for TransportHeli,AttackHeliLight,AttackHeli,Fighter,TransportPlane.",
+        "For each, receipt phaseLive and DeliveredMembers==MemberCount; no UnitSpawnTransitTag. Card selection must match receipt actor(s), not arbitrary aircraft card.",
+        "Verified native Move receipt>0 after actual TouchEnded; origin captured after receipt. Require actual airborne state and observation outside initial delivery taxi.",
+        "HealthZero technical death releases live/supply and native production slot once; replacement can be paid and delivered. Retain total strict Touch audit and owned cleanup."
+      ],
+      "mustNotInfer": [
+        "No native combat/service or normal lifecycle certification from this smoke.",
+        "A bare >=5m displacement may be taxi/idle/automatic motion; it cannot certify aircraft launch."
+      ],
+      "preparedHelipadFixture": "/private/tmp/S005HelipadRolesSmoke1041.cs",
+      "archivedHelipadFixture": "delegation-aircraft-helipad1041-prepared.cs.txt",
+      "preparedHelipadScope": "Three declared Helipad roles, native Touch legal facility placement, isolated funding/readiness/native API queue, actual Touch selection/positive Move receipt + observed airborne state and >=5m movement after acceptance, HealthZero death release and cleanup. Not compiled/run."
+    },
+    {
+      "id": "A3",
+      "title": "Grouped normal VTOL and Intel lifecycle",
+      "scope": "Normal native Touch, no funding/readiness/outcome/actor/order injection",
+      "steps": [
+        "One real legal readiness/facility/economy development for existing Helipad/IntelStation group; queue roles through visible native catalogs and capture EN/FA role/prerequisite identity.",
+        "Keep at most actual AirCap concurrently; release or retire through supported normal controls before next role, preserving receipts/refunds.",
+        "TransportHeli boards real paid/opening squad, moves airborne with actual passengers, disembarks, then returns/refuels if native supported.",
+        "AttackHeliLight and AttackHeli attack different surviving visible legal targets; each gets actual shots/effect, return/touchdown/fuel spend/refuel and next order. Do not consume all mission targets before later role tests.",
+        "Drone scans before Airport exists; later repeat Scan/return with Airport present to reveal unintended runway reclassification.",
+        "Record actual combat death or supported final disposition separately from isolated death-cap test; retain result/session cleanup."
+      ],
+      "speedBenefit": "Shares one facility/economy development across roles instead of four repeated startup runs. The fixed18-minute match may require more than one attempt; never lengthen it or raise caps to fit."
+    },
+    {
+      "id": "A4",
+      "title": "Grouped normal runway roles",
+      "scope": "Normal native Touch, fixed match clock/budgets",
+      "steps": [
+        "Reuse normal Airport/industry driver once; Stop at facility-ready handoff before Strike-only assumptions advance.",
+        "Queue/select/order actual Fighter against visible enemy air; if enemy never provides a legal target, keep interception gate open rather than inject enemy in counted normal evidence.",
+        "Queue/board real TransportPlane, observe real runway launch and exposed native transport/disembark behavior, exact passenger identity and final disposition.",
+        "Use existing scoped Strike cycle evidence with exact dependency/source applicability instead of repeating unchanged16-minute startup solely to obtain another first-fire screenshot.",
+        "Capacity and economy may prevent both roles in one Standard attempt: report actual limitations and split normal attempts only when necessary."
+      ],
+      "risk": "The existing FixedWingCycleProbe hard-codes Strike520 and AssaultMask; do not rename its role and assume Fighter/TransportPlane certification."
+    },
+    {
+      "id": "A5",
+      "title": "Actual bilateral capacity and recoverable rejection",
+      "scope": "Technical capacity first; normal representative interaction and separate source-fit evidence",
+      "steps": [
+        "Read actual compiled profile/size, not planning numbers. Defaults source Standard2/War4/LargeWar6 tactical air per faction; only currently exposed combinations need publication evidence.",
+        "At each exposed capacity, native paid queues plus real arrivals must preserve live+reserved<=cap. Over-cap rejects without taking unexplained payment or double refund.",
+        "Both factions must retain same-faction airport runway/home binding. Measure actual distinct slot/home positions, rendered hull/clearance, blocked landing recovery, queue cancellation/producer death and one-time reservation release.",
+        "Exercise near-simultaneous native launches/returns to catch runway/landing overlap; inspect actual taxi path and final parking. Do not add runway compounds or move scenery.",
+        "If reused source cannot fit exact capability, keep affected source-fit gate open or choose another existing Campaign source. Do not reduce force/cap/size budgets."
+      ],
+      "coverageLimit": "Technical funded armies are not device performance or normal whole-match acceptance."
+    }
+  ],
+  "staticRisks": [
+    {
+      "id": "DRONE-R2-RUNWAY",
+      "status": "Candidate mismatch, native reproduction required",
+      "declared": "Drone IntelStation/Established with drone launch pad, Campaign Airport behavior preserved.",
+      "sourceChain": [
+        "SkirmishProductionCatalog.cs66 sets UseProducerGroundExit only GroundStaging.",
+        "Drone asset isAirUnit1; no productionTransportPrefab; runway flags0.",
+        "QueueComposition.cs785 returns null default transport for air;397\u2013416 Drone name chooses Plane self-arrival.",
+        "QueueComposition.cs430\u2013438 re-reads same Drone metadata and overwrites requiresAirportRunway=false, but leaves ModePlane unchanged. Thus early Request helper runway rejection is NOT certain.",
+        "ManagedDelivery.cs42\u201354 ModePlane unconditionally needs same-faction nearest Airport runway before active transport creation. Without Airport the accepted paid queue may instead stall before arrival.",
+        "FixedWingRunwayHomeInitializationSystem.cs166\u2013180 classifies Drone as runway unit after arrival."
+      ],
+      "validation": "A1 first: preserve exact request status, paid receipt phase progression, native producer presence and no Airport. Distinguish early rejection from accepted paid queue stalled before arrival. If either reproduces, inspect native delivery state before applying candidate fix. With-Airport and legacy Campaign behavior require separate evidence."
+    },
+    {
+      "id": "AIR-SLOT-CONSERVATION",
+      "status": "Risk coverage, not observed defect",
+      "source": "SkirmishPopulationPolicy.cs ReleasesProductionSlot intentionally excludes Air; native produced slots remain lifetime homes.",
+      "validation": "Multiple living air at capacity need actual distinct legal slots. Air death/retirement/recovery must not orphan slots or let simultaneous requests share one home."
+    },
+    {
+      "id": "TAXI-FALSE-MOVE",
+      "status": "Known validation pitfall",
+      "source": "UnitAirMovementSystem.cs130\u2013158 moves UnitSpawnTransitTag aircraft to assigned home independently of player Move.",
+      "validation": "Wait transit removed and verified positive native Move receipt; capture post-ack origin; require real airborne state and intended route, not only displacement."
+    }
+  ],
+  "notNewRequiredGates": [
+    "No requirement invented for seven separate full normal matches or seven standalone economy startups.",
+    "Native947 completed staged technical X36 cases remain preserved and are not reopened just to repeat serialization.",
+    "Exact EN/FA identity, full lifecycle and devices remain governed by acceptance; fixture results cannot close human/device gates."
+  ],
+  "dependencies": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "sha256": "0cb282d90f60ce7ceb3f5bb7ceb46d8e38cd010ff9a3f3446d7cb77fee7ddd2b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs",
+      "sha256": "7b61ead60feb343acf9d68e6bbe17e4bb262f14fb5788b589cf7e3b43e4d75b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs",
+      "sha256": "af36f8734c0a0e2c1c092240087c4ce1840673401a73ff018d39e5d1517b515b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+      "sha256": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
+      "sha256": "63b41c1c6307f4e93a5cb370b2c8f5a553a7904c4d5c2e924981f43e46481086"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Drone_Config.asset",
+      "sha256": "15d7f0c66451a57acf30dfd80ec90bebc56115f8b288ca932844704e29e2dc0a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSizeConfig.cs",
+      "sha256": "31612e3b080897d9e611fcac686468bb7dc26aa60120731296a723542158556c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.ManagedDelivery.cs",
+      "sha256": "38b49c69c272808ad47de3a8d79b77ec5330c1f18b9090586fbe289ae568a47c"
+    }
+  ],
+  "conditionalFix": {
+    "status": "PreparedNotAppliedNotCompiledNotValidated",
+    "path": "/private/tmp/s005-drone-native-pad-conditional.patch",
+    "archive": "delegation-aircraft-drone-conditional-patch.txt",
+    "condition": "Only if native A1 proves inherited Airport-dependent Drone arrival, by early rejection or accepted receipt stuck waiting for ModePlane transport. Active main source-locked QA must close first.",
+    "scope": "Expanded Drone production recipe chooses native producer exit; only SkirmishSharedActorTag + Drone role skips inherited fixed-wing runway initialization. Legacy/Campaign Drone/Fighter/Strike/TransportPlane behavior unchanged in candidate intent, pending regression proof."
+  },
+  "preparedFixtures": [
+    {
+      "path": "/private/tmp/S005DroneProducerSmoke1040.cs",
+      "sha256": "20e2d9b5829cdc4ea36795c3f36a7b0bada5084a5dc115368a77d5f6ad7abd04",
+      "compiled": false,
+      "executed": false
+    },
+    {
+      "path": "/private/tmp/S005HelipadRolesSmoke1041.cs",
+      "sha256": "60ee385baa88ebb103cfd2edaedc1d0c59a461cbdadefb39a0841e212ea00bf5",
+      "compiled": false,
+      "executed": false
+    },
+    {
+      "path": "/private/tmp/S005DroneProducerSmoke1045.cs",
+      "sha256": "f056263e0631bccbb9edc9fd97869f41b685af234d019e4c7136a742c9c6d006",
+      "compiled": false,
+      "executed": false
+    }
+  ],
+  "native1040Outcome": {
+    "result": "FailedBeforeProducerOrDroneQueue",
+    "source": "Main reports native1040 ended phase21 after PlayerFocus/BuildCommand, ResolveCatalogTarget returnednull; no living IntelStation and no Drone paid request reached.",
+    "certifiesDroneRuntimeMismatch": false
+  }
+}

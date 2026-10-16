@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1462-paid-anti-air-fighter-effects.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 50,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_native-1462-paid-anti-air-fighter-effects.log.dispatch_4c0916c7164c40779cd60b2b538fc16c",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

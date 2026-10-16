@@ -1,0 +1,24 @@
+{
+  "result": "Passed",
+  "sourceHash": "ba35c99af680bae25aa9df70c9a55c8b55ebdcd771647f49150301b5a88b2566",
+  "sourceUnchanged": true,
+  "preManifest": "tests-715-shared-combined-arms-opening-defense-green-pre-source-manifest.json",
+  "postManifest": "tests-715-shared-combined-arms-opening-defense-green-post-source-manifest.json",
+  "log": "tests-715-shared-combined-arms-opening-defense-green.log",
+  "logSha256": "e418a7e43b5a735be4fa825241915223ba9e7927cbca6ad0b6c980329525b938",
+  "wrapperExit": 0,
+  "requiredPassMarkers": [
+    "[SkirmishExpandedAriaTests] result=Passed",
+    "[SkirmishS002AriaHarnessTests] result=Passed"
+  ],
+  "redReproduction": "focused714-combined-arms-opening-defense-red.json",
+  "changedFiles": [
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs"
+  ],
+  "allMaterialsUnchanged": true,
+  "physicalMapUnchanged": true,
+  "normalRulesCostsAndBudgetsUnchanged": true,
+  "nativeValidationPending": true,
+  "playerReady": false
+}

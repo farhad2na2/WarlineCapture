@@ -1,0 +1,50 @@
+{
+  "scope": "BoundedGenericBAEnemy13_NoCodedBindingOrBudgetChange",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "before_sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0",
+      "sha256": "ccaddb274a722793042524d1bd847d1a0381baa2122caab154084b763dff0fb5"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "before_sha256": "b10a6b4715dbfec25d4707dc36c9923fa2be71764379c20837009c80837bd8cf",
+      "sha256": "7addebfaba8680b77080d90c3d691c93a48fc71e1ae334186318894020b21307"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "before_sha256": "dab98c69d01e35b1ec4f0f76967bc72ee31a9d5d5a8945057a97b72dfa4c82cc",
+      "sha256": "9ab858c250ddd773cd25a631637867947cf8f724aa881914bdac96d6373b74c4"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "before_sha256": "81e37f7df652df039aaa9fa124f98e24db8c629a09e38df478a098c65a60b1b3",
+      "sha256": "7a4259f814dde91b16e57d5709a5e7c0eb426a2cb61088660e515ae6d62e6cc9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/Sources/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "before_sha256": "5f182ee3a9dd124206b7643315624e0f15e908b30ba66a40b80481c453e0d414",
+      "sha256": "aa7efa508ac53aa254f69002ca38ee27841a7575f91301b6d531e0d2ac81c912"
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishGenericAirCombinedEnemyRollout.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/SkirmishGenericAirCombinedEnemyRollout.cs.txt",
+      "before_sha256": null,
+      "sha256": "d6591a1a11a8817e04d9a4758cfddcd43eefbfef821bc0f0ffc345b582442bb1",
+      "assembly": "Game.Configs"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyAirCombined13Tests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/EnemyAirCombined13/SkirmishEnemyAirCombined13Tests.cs.txt",
+      "before_sha256": null,
+      "sha256": "6523d552f965469720362f88ce03346121604f579114cec7c54625eeb4c126a2",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "native": false
+}

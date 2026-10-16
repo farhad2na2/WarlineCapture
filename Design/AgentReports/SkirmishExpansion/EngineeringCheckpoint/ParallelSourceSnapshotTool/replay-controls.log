@@ -1,0 +1,12 @@
+test_bounded_workers_and_out_of_order_completion_parity (test_snapshot.SnapshotControls.test_bounded_workers_and_out_of_order_completion_parity) ... ok
+test_build_read_failure_propagates (test_snapshot.SnapshotControls.test_build_read_failure_propagates) ... ok
+test_exact_manifest_candidate_build_and_cli_output_bytes (test_snapshot.SnapshotControls.test_exact_manifest_candidate_build_and_cli_output_bytes) ... ok
+test_hash_read_failure_propagates_without_success (test_snapshot.SnapshotControls.test_hash_read_failure_propagates_without_success) ... ok
+test_job_mismatch_keeps_snapshot_and_no_pass (test_snapshot.SnapshotControls.test_job_mismatch_keeps_snapshot_and_no_pass) ... ok
+test_no_hash_cache_after_file_mutation (test_snapshot.SnapshotControls.test_no_hash_cache_after_file_mutation) ... ok
+test_required_tree_and_missing_build_refusal (test_snapshot.SnapshotControls.test_required_tree_and_missing_build_refusal) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.701s
+
+OK

@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1250-normal-aria-en-seed104734.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 74,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_native-1250-normal-aria-en-seed104734.log.dispatch_7facc473beb74f11b805ebf1fdfc34aa",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

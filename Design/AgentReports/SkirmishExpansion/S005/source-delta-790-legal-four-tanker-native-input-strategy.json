@@ -1,0 +1,11 @@
+{
+  "sourceHash": "9cde6a8019fdfe4514d6961d3b1c642cb3ac264b69d3d030ea04b48b840772d1",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs"
+  ],
+  "shippingRuntimeEquivalentTo789": true,
+  "physicalMapConfigBudgetsRatesDeadlinesUnchanged": true,
+  "materialsIdentical": true,
+  "scope": "Editor normal-input strategy: reserve Tanker140, retire empty paid Oil truck after fabrication, buy fourth Tanker within unchanged support cap6; existing western legal Airport; native790 outcome pending"
+}

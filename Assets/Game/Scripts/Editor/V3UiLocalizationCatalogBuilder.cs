@@ -239,7 +239,7 @@ namespace Game.Editor
             AddRuntimeText("ui.home.commander_default", "Commander", "فرمانده");
             AddRuntimeText("ui.home.store", "STORE   ›", "فروشگاه   ‹");
             AddRuntimeText("ui.home.armory", "ARMORY   ›", "تسلیحات   ‹");
-            AddRuntimeText("ui.home.operations", "Multi-mission strategic operations", "عملیات راهبردی چندمأموریتی");
+            AddRuntimeText("ui.home.operations", "Multi-mission operations", "عملیات راهبردی چندمأموریتی");
             AddRuntimeText("ui.home.skirmish", "Standalone tactical battles", "نبردهای تاکتیکی مستقل");
             AddRuntimeText("ui.home.aria", "Tactical assistant", "دستیار تاکتیکی");
             AddRuntimeText("ui.home.review", "Review your Campaign missions.", "مأموریت‌های کارزار را بررسی کنید.");

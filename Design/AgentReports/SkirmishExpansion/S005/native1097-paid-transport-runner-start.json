@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1097",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1096-transport-scale-post-source-manifest.json",
+  "preflightManifest": "final-1097-paid-transport-preflight-source-manifest.json",
+  "fixtureSha256": "835c6c72052f01951b6ce6c19c2d5a5cc79ee8936811de6a10c20002418633e7",
+  "validationMethod": "S005PaidTransport1097.RunValidation"
+}

@@ -1,0 +1,19 @@
+{
+  "result": "Passed",
+  "sourceHash": "8b484f38d22d527f00574291bf3e60d5ba533265571d23261f0d1effdf15174a",
+  "focused": {
+    "log": "tests-665-alternate-hauler-path-after-fix.log",
+    "wrapperExit": 0,
+    "marker": "[AlternateHaulerPathValidation] result=Passed cases=6 nativeMissionAcceptance=Pending"
+  },
+  "existingRegressions": {
+    "log": "tests-666-shared-hauler-resource-regressions.log",
+    "wrapperExit": 0,
+    "marker": "[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=55"
+  },
+  "beforeFixFailures": [
+    "focused660-pending-path-hauler-regression-failure.json",
+    "focused664-alternate-hauler-path-regression-failure.json"
+  ],
+  "nativeAcceptance": "Pending"
+}

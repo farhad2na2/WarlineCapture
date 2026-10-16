@@ -1,0 +1,19 @@
+{
+  "result": "PassedScopedOfflineAuditedNative1274",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "manifest": "/private/tmp/s005-passive1274-offline-audit/manifest.json",
+  "manifestSha256": "97051c3dcf7661667dc61b8abe6b1fd8fb1a69d7446aa938cd0bb41a0b6b68cc",
+  "auditSha256": "b7235362fe3f44cfb87f8561c3918749982d0b08a6cd900e3540d4123f4c0a13",
+  "qualifiedProof": "native1274-offline-audited-passive-pressure-performance-proof.json",
+  "qualifiedProofSha256": "f8082d9d7c86dfcf55d5ec51b803480caadf97efb04bd82f93fe9a9bc13bf92c",
+  "originalFailureUnchanged": true,
+  "auditControls": 27,
+  "archive": "delegation-native1274-offline-audit.zip",
+  "archiveSha256": "8b281091262247db86477969c85aa1f6da786b406ff266a8bb394d81448f4da0",
+  "nativeDefeatSeconds": 568.171630859375,
+  "performanceBudgetPassed": false,
+  "deviceCertified": false,
+  "fullX17MemoryQualified": false,
+  "playerReady": false,
+  "sharedReadinessWritten": false
+}

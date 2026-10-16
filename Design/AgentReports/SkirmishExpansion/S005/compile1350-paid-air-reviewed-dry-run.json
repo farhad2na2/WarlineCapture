@@ -1,0 +1,115 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-paid-air-effects1350/S005PaidEnemyAirEffects1350.cs",
+      "entry": "S005PaidEnemyAirEffects1350.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 133,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 133,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.QueueRow.synthesized' is never assigned to, and will always have its default value false",
+          "line": 538,
+          "column": 196,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.DamageRow.airFlagsInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 517,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.DamageRow.visibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 547,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.DamageRow.damageInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 502,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.DamageRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 534,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 133,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.fighterPrepareZoomTaps' is never assigned to, and will always have its default value 0",
+          "line": 856,
+          "column": 64,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.PatrolRow.poseAirborneInjected' is never assigned to, and will always have its default value false",
+          "line": 830,
+          "column": 313,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1350.CameraFramingRow.hiddenEnemyPoseRead' is never assigned to, and will always have its default value false",
+          "line": 1075,
+          "column": 85,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "The field 'S005PaidEnemyAirEffects1350.shooterAirborneObserved' is assigned but its value is never used",
+          "line": 535,
+          "column": 86,
+          "id": "CS0414"
+        }
+      ],
+      "compileMs": 2842,
+      "executeMs": 0,
+      "assemblyName": null,
+      "success": true,
+      "result": null,
+      "message": "Compiled successfully (dry run; nothing was loaded or executed)."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

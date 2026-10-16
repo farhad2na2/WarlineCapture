@@ -1,0 +1,11 @@
+{
+  "result": "Failed",
+  "checked_wrapper_exit": 1,
+  "unity_wrapper_exit": 124,
+  "timeout_seconds": 900,
+  "cause": "Entities ILPP requires default constructors on three managed components",
+  "wrapper_owned_editor_pid": 19996,
+  "wrapper_cleanup": "Owned tree taskkill succeeded; verified no Editor remains",
+  "required_pass_marker_found": false,
+  "playerReady": false
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "sourceHash": "ffe5f5829bcc158fa035ed6840c8fcda726e64a3e485900c776b1bf345b7ea90",
+  "postFontSourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "nextMainLaneAfterFighter1403": "ARIA1414 Persian normal-input seed104734, subject to 1403 closure and current-source/Editor checks",
+  "reservations": [
+    {
+      "runId": 1401,
+      "owner": "separate Fighter flight lane",
+      "scope": "Fighter intermediate arrival correction; actual run pending"
+    },
+    {
+      "runId": 1411,
+      "owner": "main S005 ARIA matrix",
+      "scope": "EN104734; replaces unused prepared1401; package renumber in progress"
+    },
+    {
+      "runId": 1402,
+      "owner": "separate Fighter flight lane",
+      "scope": "Post-1401 public camera normalization successor; old ARIA1402 package remains disabled and was never dispatched"
+    },
+    {
+      "runId": 1403,
+      "owner": "main S005 ARIA matrix",
+      "scope": "FA104734; prepared disabled"
+    },
+    {
+      "runId": 1404,
+      "owner": "main S005 ARIA matrix",
+      "scope": "FA130368; prepared disabled"
+    },
+    {
+      "runId": 1405,
+      "owner": "main Campaign regression",
+      "scope": "CH01-M03 FA; prepared disabled"
+    },
+    {
+      "runId": 1406,
+      "owner": "main Campaign regression",
+      "scope": "CH01-M03 EN; prepared disabled"
+    },
+    {
+      "runId": 1394,
+      "owner": "main S005 manual",
+      "scope": "FA Stop/manual card reselect; prepared disabled"
+    },
+    {
+      "runId": 1412,
+      "owner": "main S005 ARIA matrix",
+      "scope": "EN104734 post-font successor; prepared disabled"
+    },
+    {
+      "runId": 1413,
+      "owner": "main S005 ARIA matrix",
+      "scope": "EN130368 post-font successor; prepared disabled"
+    },
+    {
+      "runId": 1414,
+      "owner": "main S005 ARIA matrix",
+      "scope": "FA104734 post-font successor; prepared disabled"
+    },
+    {
+      "runId": 1415,
+      "owner": "main S005 ARIA matrix",
+      "scope": "FA130368 post-font successor; prepared disabled"
+    },
+    {
+      "runId": 1416,
+      "owner": "main Campaign M03 regression",
+      "scope": "FA post-font successor; prepared disabled"
+    },
+    {
+      "runId": 1417,
+      "owner": "main Campaign M03 regression",
+      "scope": "EN post-font successor; prepared disabled"
+    },
+    {
+      "runId": 1418,
+      "owner": "main S005 Persian manual",
+      "scope": "FA Stop/manual post-font corrected evidence successor; native failed at fixture phase0 wall deadline"
+    },
+    {
+      "runId": 1419,
+      "owner": "main S005 paid R2 recovery",
+      "scope": "FA paid Save/Continue/manual successor; preparation pending"
+    },
+    {
+      "runId": 1420,
+      "owner": "main S005 Persian manual",
+      "scope": "FA Stop/manual phase0 bounded-wait successor to failed 1418; offline preparation, dispatch disabled"
+    },
+    {
+      "runId": 1421,
+      "owner": "main S005 ARIA catalog-scroll diagnosis",
+      "scope": "Read-only public catalog scroll observation successor to failed 1414; offline preparation, dispatch disabled"
+    }
+  ],
+  "note": "Run IDs are evidence identities; preserve old disabled packages and failed results. Only main owns the main Unity Editor dispatch lane."
+}

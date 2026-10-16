@@ -1,0 +1,53 @@
+{
+  "scope": "ReadOnlyAllSevenCanonicalAircraftRootBladeDrawBinding_NoGeometryOrCameraAcceptance",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRootProvenance.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AttackHeliRootProvenanceV2/SkirmishAircraftRootProvenance.cs.txt",
+      "before_sha256": null,
+      "sha256": "73cb8033b57db210fd471184b3cbd1bd952d78fc6970b3e19e4f390de175dbf4",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AircraftRootProvenance.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AttackHeliRootProvenanceV2/SkirmishGroundSourceFitSurvey.AircraftRootProvenance.cs.txt",
+      "before_sha256": null,
+      "sha256": "98cb45beef1c3ac1741de75823bc6331af7e00c94d0f067e7e3550bee4fe4c25",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "entry": "Game.Editor.SkirmishAircraftRootProvenance.Collect",
+  "type_compile_pending": true,
+  "native_execution": false,
+  "readinessClaim": false,
+  "predecessor_source_sha256": "deaf87541aaf971ca309a54c6df47211a46a3bf75ba08416e4b37ef680fbd3a2",
+  "note": "Successor to unimported provenance1 only; optional existing default World registry may be absent. Actual baked mapping requires owned normal startup observation; never instantiate or stream just to fabricate it.",
+  "existing_world_entry": "Game.Editor.SkirmishAircraftRootProvenance.CollectExistingWorld(World)",
+  "optional_native_collection": "Read an already-owned Support registry or normal session World; adapter may own one isolated streaming-only Support template World. No actor instantiation/gameplay tick. This is template provenance, never normal-input/runtime readiness.",
+  "roles": [
+    "TransportHeli",
+    "AttackHeliLight",
+    "AttackHeli",
+    "Drone",
+    "Fighter",
+    "Strike",
+    "TransportPlane"
+  ],
+  "role_count": 7,
+  "adapter_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.CollectCanonicalAircraftRootProvenance",
+  "output_environment": "WARLINE_AIRCRAFT_ROOT_SUPPORT_OUTPUT",
+  "required_marker": "[CanonicalAircraftRootSupportProvenance] result=Collected rolesExpected=7 templateOnly=1 defaultWorldPreserved=1 cameraAccepted=0",
+  "dependency_source_pins": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs",
+      "sha256": "6c589e26e359423e728f8f11fa7aaa09f5068f157e70854ec2b67dcbadfcb971"
+    }
+  ],
+  "system_selection": "Original Editor-inclusive StreamingWorld path only; ground30MemoryWriter must be null; actual names/count recorded, no silent experimental subset.",
+  "ownership": "Existing companion prewarm before exact owned baseline; one disposable Support world; exact post-disposal World/default/scene/preview+root ownership equality. No generic preview closure.",
+  "native_coverage_gate": "Owned Support adapter requires available registry + exact seven source keys, sourceTemplate true, unique actual prefab per key and unique prefab handles across keys. Duplicate identical registry references may deduplicate. Raw report is persisted before refusal."
+}

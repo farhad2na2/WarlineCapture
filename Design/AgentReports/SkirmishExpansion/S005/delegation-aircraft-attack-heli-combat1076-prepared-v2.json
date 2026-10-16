@@ -1,0 +1,37 @@
+{
+  "status": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005AttackHeliCombatEffects1076.cs",
+  "fixtureSha256": "9df994c07de96f1dfc4330cc443c9048c05d8d975b8ea42555521326ad64cb4f",
+  "runner": "/private/tmp/s005-run-attack-heli-1076.py",
+  "runnerSha256": "a4c53374b320f4c9e71b9c489bf3d216708e70266b6cb8d451981a7862a87777",
+  "scope": "Two funded Established-readiness actual paid Helipad actors; native Touch selection then explicit public API Attack against retained opening enemy Armored APC with isolated target pose, max-health reset, contact reveal and retaliation disabled. Require exact paid-source actual DirectFire observation, actual health loss, increased real ShotCounter, and death capacity release.",
+  "roles": [
+    "AttackHeliLight",
+    "AttackHeli"
+  ],
+  "inputAudit": "Paired native Touch with zero interventions and receipt violations; acceptedCommands may legitimately be zero because Attack uses explicitly separate public API.",
+  "sourceContracts": [
+    "SkirmishRoleOverlayCatalog: AttackHeliLight damage18/range22/materials300 and AttackHeli damage24/range26/materials420; both Ground|Structure.",
+    "Both Helicopter Attack prefab configurations have null ground/air missile launchers.",
+    "UnitAttackSystem emits CombatDamageSourceKind.DirectFire and increases UnitAttackTraceComponent.ShotCounter."
+  ],
+  "actorOrEffectInjection": {
+    "producer": false,
+    "ownActorPose": false,
+    "selectedTag": false,
+    "shots": false,
+    "damage": false,
+    "damageEvents": false,
+    "enemyTargetPose": true,
+    "enemyHealthBeforeBaseline": true,
+    "contactReveal": true,
+    "globalFullVision": false
+  },
+  "airborneClaim": "Observed flag only; does not claim actual airborne combat if flag is zero.",
+  "normalMissionCertified": false,
+  "playerReady": false,
+  "watchdogSeconds": 900,
+  "playSessionBudgetUnchanged": 1080,
+  "revision": "v2 preserves first prepared archives; actor offense components remain untouched; target setup after native Touch selection atomically before API Attack. Actual UnitAttack.Range*.5 capped8m uses real UnitAttackSystem horizontal delta.y=0 policy; vertical separation logged.",
+  "previousFixtureSha256": "2f40bee1d536e8748834a46a31e902d42de657ba58f46f48c3fa0948e898f825"
+}

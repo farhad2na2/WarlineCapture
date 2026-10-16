@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-full-south-flank1618-source-0df6/S005NormalRecoveryIdle1618.cs",
+      "entry": "S005NormalRecoveryIdle1618.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 141,
+      "executeMs": 15,
+      "assemblyName": "PipelineRunScript_S005NormalRecoveryIdle1618_1360f4c61ded487c9a55d9a69430f0d1",
+      "success": true,
+      "result": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

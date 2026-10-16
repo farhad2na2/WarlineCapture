@@ -1,0 +1,87 @@
+{
+  "result": "PassedScopedIsolatedBilateralAir2ExcessDeathReplacement",
+  "errors": [],
+  "scope": "Isolated current-source paid bilateral Air2 excess refusal, HealthZero/idempotent release, same-owner paid replacement; normal mission and air combat/cargo remain separate",
+  "sourceHash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "sourceUnchanged": true,
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "log": "native-1582-bilateral-excess-air.log",
+  "logSha256": "c618daaf20b268514600e43cb7bd2198f1c1ae26672b668278335fc6ffb0aee8",
+  "fixtureSha256": "19a3d03e8aabb6fe2411e1d12fc2dd0fa8fc848128fa4e557d0d9d961bce7655",
+  "preflightManifest": "final-1582-bilateral-excess-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1582-bilateral-excess-air-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1582-bilateral-excess-air-post-source-manifest.json",
+  "proof": {
+    "result": "PassedScopedIsolatedBilateralAir2ExcessDeathReplacement",
+    "fourPaidAir": {
+      "result": "PassedScopedIsolatedPaidBilateralMixedAir2TaxiTakeoffHomeReturn",
+      "paidActors": [
+        [
+          1,
+          "Fighter",
+          770,
+          1001
+        ],
+        [
+          1,
+          "TransportPlane",
+          833,
+          1002
+        ],
+        [
+          2,
+          "Fighter",
+          903,
+          1003
+        ],
+        [
+          2,
+          "TransportPlane",
+          940,
+          1004
+        ]
+      ],
+      "airportRuntimeIds": {
+        "1": 15,
+        "2": 16
+      },
+      "touchGestures": 33,
+      "airRows": 131,
+      "runwayConvergenceRows": 6,
+      "normalMissionCertified": false,
+      "airCombatCertified": false,
+      "planeCargoCertified": false,
+      "playerReady": false
+    },
+    "lifecycle": {
+      "1": {
+        "refusedRequest": 9201,
+        "replacementRequest": 9301,
+        "replacementReceipt": 1005,
+        "replacementActor": [
+          770,
+          11
+        ],
+        "producerId": 15
+      },
+      "2": {
+        "refusedRequest": 9202,
+        "replacementRequest": 9302,
+        "replacementReceipt": 1006,
+        "replacementActor": [
+          774,
+          791
+        ],
+        "producerId": 16
+      }
+    },
+    "normalMissionCertified": false,
+    "airCombatCertified": false,
+    "planeCargoCertified": false,
+    "playerReady": false
+  },
+  "normalMissionCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

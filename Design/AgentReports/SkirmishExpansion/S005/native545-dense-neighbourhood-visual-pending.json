@@ -1,0 +1,10 @@
+{
+  "sourceHash": "d22b0b68d30abc0b898f699d824b7d9652297b9e55a2dcdce6e05fcd199702c0",
+  "sourcePrePostMatch": true,
+  "wrapperExit": 0,
+  "startupPassed": true,
+  "visualAccepted": false,
+  "checkpointCaptureAvailable": true,
+  "reason": "Density shown in physical footprint survey is not visible at the native camera; packed render health requires investigation",
+  "playerReady": false
+}

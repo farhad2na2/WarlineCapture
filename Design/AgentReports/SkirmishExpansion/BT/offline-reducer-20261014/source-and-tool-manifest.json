@@ -1,0 +1,15 @@
+{
+  "scope": "Actual BT reducer/NUnit offline; no Unity runtime claims",
+  "compiler": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\Roslyn\\bincore\\csc.dll",
+  "sources": {
+    "Assets\\Game\\Scripts\\Skirmish\\Contracts\\SkirmishScenarioContracts.cs": "08420f35bea3da3abc2be02b6d2f5944443a20847082a9929ab2a44af88277c7",
+    "Assets\\Game\\Scripts\\Skirmish\\Contracts\\SkirmishObjectiveContracts.cs": "1827b2fec9a1afc2867e3957994b785d4bc9ef726f2e50930c4d39e1d2760ec9",
+    "Assets\\Game\\Scripts\\Skirmish\\Contracts\\SkirmishReasonCodes.cs": "9afc595c6625b71208028c67d0b097b2fd0b3727ff5cf344b9fe943581f08ee9",
+    "Tools\\CI\\SkirmishProductionDrafts\\SkirmishBreakthroughReducer.cs.txt": "dc415b10b81c6eed9533be73fc82cf2240d5d79dd9f4b48ec4fdade042f338c1",
+    "Tools\\CI\\SkirmishProductionDrafts\\SkirmishBreakthroughReducerTests.cs.txt": "38208013574d14b143b71506b2f7ff3e11b4a274aea94f752a325ddea4a50203",
+    "Tools\\CI\\SkirmishProductionDrafts\\SkirmishBreakthroughOfflineProgram.cs.txt": "a4c0bc877295c0843637f887b89b132cf06301559bc5d83f19724df351f6794d",
+    "Library\\PackageCache\\com.unity.ext.nunit@44f7d31723bd\\net472\\unity-custom\\nunit.framework.dll": "a607364879b5f5c337b979e9de23654459df45ba1a7324d54aa9df93540dc7a2",
+    "Library\\PackageCache\\com.unity.nuget.newtonsoft-json@4dfd81071c64\\Runtime\\Newtonsoft.Json.dll": "7292d3eb508652d14726749dd27094f2d481aeccf2db6427b62f68a71460897e"
+  },
+  "execution_json_backend": "Newtonsoft (offline shim only)"
+}

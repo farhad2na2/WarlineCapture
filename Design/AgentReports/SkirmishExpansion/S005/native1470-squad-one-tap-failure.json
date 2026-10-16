@@ -1,0 +1,25 @@
+{
+  "result": "Failed",
+  "sourceHash": "98785c8f815bc315556e2a5b11de9ea81ec1514389e0c5dc6e32727e155fc9d6",
+  "fullSourceUnchanged": true,
+  "preManifest": "pre1470-one-tap-source-manifest.json",
+  "preflightManifest": "final-1470-squad-one-tap-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1470-squad-one-tap-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1470-squad-one-tap-post-source-manifest.json",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "log": "native-1470-squad-one-tap.log",
+  "logSha256": "b3afee856418b5889d7d4bc1150fdbd9f178c5fa6f19e288c51a43fe9a98911f",
+  "fixtureSha256": "1f483409a824e82d3ee3099e1686cb8cb31e2049a5fe14d44a8095214a2c313f",
+  "runnerSha256": "0761d9a5893579523a06dccd38bcb3e55575615af376dda0240213bfef8f2c29",
+  "dryCompileProofSha256": "bfb90ebdb42ad4629d21fcf6d802771c674ac30fa97ee36fb803ab728383f50e",
+  "loadOnlyProofSha256": "41e1df5febf4605580854bdc826bed5d429c288cc6537a1e0330ed8d826716db",
+  "oneTapAttribution": null,
+  "errors": [
+    "Missing native marker: [SkirmishValidationExit] result=Requested code=0",
+    "Strict one-tap native qualification: ValueError: Unobserved gesture before exact paid-card Touch"
+  ],
+  "paidAirCombatCertified": false,
+  "normalMission": false,
+  "playerReady": false
+}

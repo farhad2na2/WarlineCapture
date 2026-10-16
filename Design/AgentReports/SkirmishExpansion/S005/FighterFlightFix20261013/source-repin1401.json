@@ -1,0 +1,15 @@
+{
+  "sourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "manifest": "current-fighter1401-post-rebuild-source-manifest.json",
+  "delta": {
+    "files": [
+      {
+        "path": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+        "before": "4d8905f129c000e6ebddbcff4d0753305345db9109ff6f900de89bb8bb8a7d58",
+        "after": "f53586850a70c4f308e7e71b99b63881a49f38de4bd40f4edb7fe7ae6ecf8a52"
+      }
+    ],
+    "materials": []
+  },
+  "contractsUnchanged": 258
+}

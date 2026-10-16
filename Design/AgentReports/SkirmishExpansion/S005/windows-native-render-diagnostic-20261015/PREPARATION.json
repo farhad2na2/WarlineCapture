@@ -1,0 +1,9 @@
+{
+  "result": "ReadOnlyDiagnosticProposal",
+  "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+  "source_sha256": "5da55c799105473a569df73170574e0d026b37ba8c94db3cb68c24304d1c6775",
+  "proposed_sha256": "e0f96b44d4faebb2099a045c62d5d214b99944456819d6d62ad27120b5348376",
+  "readiness_predicates_changed": false,
+  "imported": false,
+  "native_failure_predicate": "Unknown until diagnostic executes"
+}

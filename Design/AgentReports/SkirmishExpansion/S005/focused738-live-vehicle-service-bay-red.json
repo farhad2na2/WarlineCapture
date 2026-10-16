@@ -1,0 +1,12 @@
+{
+  "result": "Failed as expected (regression reproduction)",
+  "sourceHash": "74f5e78797698360a26e0dc47778b1a821b90d9be4d6a310ef703b6b4888bd5d",
+  "sourceUnchanged": true,
+  "preSourceManifest": "tests-738-live-vehicle-service-bay-red-pre-source-manifest.json",
+  "postSourceManifest": "tests-738-live-vehicle-service-bay-red-post-source-manifest.json",
+  "log": "tests-738-live-vehicle-service-bay-red.log",
+  "actualWrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "assertion": "A service bay must respect the live hard vehicle footprint used by native pathfinding, even if the bitset lags.",
+  "nativeObservation": "native737-readonly-own-tanker-goal-clearance-observation.json"
+}

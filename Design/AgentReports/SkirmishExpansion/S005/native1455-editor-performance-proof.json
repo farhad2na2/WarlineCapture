@@ -1,0 +1,118 @@
+{
+  "result": "PassedEditorObservationOnly",
+  "scope": "Same native1455 normal-input S005 ARIA attempt; instrumented Editor rendered callback and profiler samples with observer overhead",
+  "attempt": "expanded-s005-155926-a448af2f8d6a46dda7867e9d34daf9b6",
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "parentAriaProof": "native1455-normal-aria-pass.json",
+  "parentAriaProofSha256": "1103d029098fffa1153f9e57a18958056b0f1d8750ef205c462b1064cf905653",
+  "rawSha256": {
+    "native1455-editor-performance.jsonl": "bdc912181a9cdac8c9d0f59cb9fb1e49fef9a26a84269e2359702c576d1288db",
+    "native1455-editor-memory.jsonl": "c93b945044344173630739a43d7b4061147bfc09bbd88edc7da8226877e35aa8",
+    "native1455-normal-aria-observation.jsonl": "729537780b5dd60fce365cda710d2a99535b27c840cd5f9592faefccac0d3253",
+    "native1455-normal-aria-observer.cs.txt": "3eab8cb40ae12791efcd607d1089f7ba923f057c19cb72abd253f0d403b6ab1e",
+    "native1455-executed-runner.py.txt": "59abb5641b718d3f86f02050bc34a3300e753091f927572ae7dd01260f737b53"
+  },
+  "measurement": {
+    "measurementQualified": true,
+    "scope": "InstrumentedEditorRenderedCallbackIntervalsNotDeviceCertification",
+    "deviceCertified": false,
+    "androidCertified": false,
+    "performanceBudgetPassed": false,
+    "renderGpuTimeMeasured": false,
+    "expectedScale": "Actual passive Standard/Regular; no injected population saturation",
+    "sampleCount": 7024,
+    "measuredActiveFrames": 6202,
+    "retainedFrameGaps": 0,
+    "missingFramesNeverImputed": true,
+    "measuredFrameIntervalMs": {
+      "available": true,
+      "count": 6202,
+      "average": 39.416921705245414,
+      "p95": 76.10412687063217,
+      "p99": 92.06004440784454,
+      "max": 1263.3957862854004,
+      "percentileMethod": "NearestRank"
+    },
+    "measuredWallIntervalMs": {
+      "available": true,
+      "count": 6202,
+      "average": 39.41784199322789,
+      "p95": 76.15779200204997,
+      "p99": 91.1835830011114,
+      "max": 1089.2844579975645,
+      "percentileMethod": "NearestRank"
+    },
+    "nativeFrameGcAllocatedBytesInclusive": {
+      "available": true,
+      "count": 6202,
+      "average": 272476.416317317,
+      "p95": 562977,
+      "p99": 994710,
+      "max": 63799724,
+      "percentileMethod": "NearestRank"
+    },
+    "ecsSimulationMilliseconds": {
+      "available": true,
+      "count": 6202,
+      "average": 15.076396725411165,
+      "p95": 47.652334,
+      "p99": 55.426625,
+      "max": 104.258792,
+      "percentileMethod": "NearestRank"
+    },
+    "unavailableGcMeasuredFrames": 0,
+    "unavailableEcsMeasuredFrames": 0,
+    "memoryPeaks": {
+      "managedBytes": 4173135872,
+      "nativeAllocatedBytes": 7581178408,
+      "nativeReservedBytes": 9573515264,
+      "graphicsBytes": 3397598940
+    },
+    "hardware": {
+      "unityVersion": "6000.5.2f1",
+      "operatingSystem": "Mac OS X 26.6.2",
+      "gpu": "Apple M5",
+      "width": 2400,
+      "height": 1080,
+      "quality": 0,
+      "msaa": 0
+    },
+    "recorderAlignment": "Last completed profiler sample; observation frame retained; no exact event-frame/GPU attribution",
+    "observerOverheadIncluded": true
+  },
+  "memoryTrendDiagnostic": {
+    "managedBytes": {
+      "firstTenthMedian": 3746578432,
+      "lastTenthMedian": 4016705536,
+      "firstToLastTenthMedianDelta": 270127104,
+      "peak": 4173135872
+    },
+    "nativeAllocatedBytes": {
+      "firstTenthMedian": 6704306527,
+      "lastTenthMedian": 6963940773,
+      "firstToLastTenthMedianDelta": 259634246,
+      "peak": 7581178408
+    },
+    "nativeReservedBytes": {
+      "firstTenthMedian": 8800747520,
+      "lastTenthMedian": 9091252224,
+      "firstToLastTenthMedianDelta": 290504704,
+      "peak": 9573515264
+    },
+    "graphicsBytes": {
+      "firstTenthMedian": 2282193888,
+      "lastTenthMedian": 3383304152,
+      "firstToLastTenthMedianDelta": 1101110264,
+      "peak": 3397598940
+    }
+  },
+  "memorySamples": 257,
+  "deviceCertified": false,
+  "androidCertified": false,
+  "performanceBudgetPassed": false,
+  "fullX17MemoryQualified": false,
+  "tenReplayMemoryQualified": false,
+  "gpuFrameTimeMeasured": false,
+  "candidatePerformancePass": false,
+  "note": "One Editor ARIA win gives measured diagnostics only. It cannot replace physical Android development/release performance, a ten-cycle leak attribution, saturated P1-P3 loads, or a release budget verdict."
+}

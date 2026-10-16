@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "wrapper_exit_code": 1,
+  "passed_prefix": {
+    "cameraMeasurement": 7,
+    "cameraProfile": 5,
+    "legacyConfigurations": 12,
+    "binder": 8,
+    "areas": 15,
+    "builder": 4,
+    "genericGroundRoster": 8,
+    "expandedDefinitions": "Passed",
+    "combinedArms": "Passed"
+  },
+  "failure": "ExpandedCheckpoint synthetic factory compile lacks certified packaged source/layout",
+  "fullMissionCertified": false,
+  "nativeCameraCapture": false
+}

@@ -1,0 +1,10 @@
+{
+  "result": "Failed",
+  "wrapperExit": 1,
+  "nativeControlsExecuted": false,
+  "failure": "CameraFramingMeasurementTests line113 ambiguous Object after added using System; cleanup must explicitly reference UnityEngine.Object",
+  "failedSourceSha256": "60c1ff6450c5033bc7980d0f7a9c76a1b9d93434b64fb40fae85fdb1ab00f39b",
+  "correctedSourceSha256": "2b04e3f7943ad826c01d860a7082e9ec6be288b8d53b2663a5f30604baa44947",
+  "playerReady": false,
+  "next": "Rerun the same checked native aggregate; investigate why offline owning proof missed this exact fixture body"
+}

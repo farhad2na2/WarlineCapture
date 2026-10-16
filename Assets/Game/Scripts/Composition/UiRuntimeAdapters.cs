@@ -216,6 +216,7 @@ namespace Game.Composition
         private SaveService saveService;
         private QuickGameSaveData saved;
         private QuickGameConfig currentConfig;
+        private UiSkirmishLibrarySelection librarySelection;
 
         internal QuickCustomGameConfigStore(SaveService saveService = null)
         {
@@ -232,15 +233,17 @@ namespace Game.Composition
             currentConfig = saved.configuration;
         }
 
-        public UiQuickCustomGameConfig Current { get { EnsureLoaded(); return ToUiConfig(currentConfig); } }
+        public UiQuickCustomGameConfig Current { get { EnsureLoaded(); var value=ToUiConfig(currentConfig); value.SkirmishSelection=librarySelection; return value; } }
         public UiQuickCustomGameConfig Defaults => ToUiConfig(QuickGameConfig.Defaults);
         internal AISettingsSnapshot CurrentSnapshot { get { EnsureLoaded(); return currentConfig.ToAISettingsSnapshot(); } }
         internal QuickGameConfig CurrentConfig { get { EnsureLoaded(); return currentConfig; } }
+        internal UiSkirmishLibrarySelection CurrentLibrarySelection { get { EnsureLoaded(); return librarySelection; } }
 
         public void Apply(UiQuickCustomGameConfig config)
         {
             EnsureLoaded();
             currentConfig = ToRuntimeConfig(config).NormalizeForBaseAssault();
+            librarySelection = config.SkirmishSelection;
             // Results are written by the match after this setup store was loaded.
             // Refresh the document so changing setup cannot restore a stale result.
             saved = saveService.LoadQuickGame();
@@ -359,7 +362,7 @@ namespace Game.Composition
 
             if (!alreadyQueued)
             {
-                if (!SkirmishLaunchProjection.TryQueue(entityManager, configStore.CurrentConfig))
+                if (!SkirmishLaunchProjection.TryQueueSelected(entityManager, configStore.CurrentConfig, configStore.CurrentLibrarySelection))
                     return false;
                 routeRequests = entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
                 routeRequests.Add(new UiShellRouteRequestComponent

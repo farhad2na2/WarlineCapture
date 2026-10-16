@@ -1,0 +1,73 @@
+"""Offline validation of actual passive1183 capture. No Unity or gameplay APIs."""
+import math
+PHASES={0:'MenuOrLoading',1:'NativePreparation',2:'ActiveWarmup',3:'ActiveNoEngagementAtLatestCensus',4:'ActiveWithNativeEngagementAtLatestCensus',5:'NativeFinished',6:'PostSessionReturn'}
+def distribution(values):
+ if not values:return {'available':False,'count':0,'total':None,'average':None,'p95':None,'p99':None,'max':None}
+ if any(not isinstance(v,(int,float)) or not math.isfinite(v) or v<0 for v in values):raise ValueError('Nonfinite/negative distribution value')
+ a=sorted(values);n=len(a)
+ return {'available':True,'count':n,'total':sum(a),'average':sum(a)/n,'p95':a[max(0,math.ceil(n*.95)-1)],'p99':a[max(0,math.ceil(n*.99)-1)],'max':a[-1],'percentileMethod':'NearestRankCeil(N*p)-1'}
+def analyze(rows,attempt):
+ if not rows or rows[0].get('stage')!='Header' or rows[-1].get('stage')!='Closed':raise ValueError('Exactly ordered Header/Census/Frame/Closed required')
+ headers=[r for r in rows if r.get('stage')=='Header'];closed=[r for r in rows if r.get('stage')=='Closed'];censuses=[r for r in rows if r.get('stage')=='Census'];raw=[r for r in rows if r.get('stage')=='Frame']
+ if len(headers)!=1 or len(closed)!=1 or len(rows)!=len(headers)+len(closed)+len(censuses)+len(raw):raise ValueError('Unknown or duplicated native stages')
+ if [r['stage'] for r in rows] != ['Header']+['Census']*len(censuses)+['Frame']*len(raw)+['Closed']:raise ValueError('Out-of-order capture blocks')
+ head=headers[0];close=closed[0];names=head['markerRequestedNames'];actual=head['markerActualNames'];errors=[]
+ if not names or len(names)!=len(set(names)) or len(names)!=len(actual) or len(names)!=len(head['markerErrors']) or len(names)!=len(head['markerStartAttempts']):raise ValueError('Exact requested/actual recorder array lengths required')
+ if head.get('scope')!='InstrumentedEditorRenderedCallbackIntervalsNotDeviceCertification' or head.get('budgetStatus')!='DiagnosticOnlyScenarioBudgetPending' or head.get('deviceCertified') is not False or head.get('androidCertified') is not False or head.get('performanceBudgetPassed') is not False or head.get('readOnlyGameplay') is not True:raise ValueError('Scope/budget/authority altered')
+ if head['warmupFrames']!=180 or head['warmupSimulationSeconds']!=15 or head['metadataCadenceSeconds']!=1:raise ValueError('Reviewed measurement definitions changed')
+ if close.get('actualPlayClosed') is not True or close.get('reason')!='NormalPlayClosed' or close.get('overflow') is not False or close.get('failure') or not all(close.get(k) is True for k in ['setupSeen','bindingSeen','resultSeen','returnSeen']):errors.append('Native instrumented closure incomplete')
+ if close['samples']!=len(raw) or close['censuses']!=len(censuses) or len(raw)>head['capacity']:raise ValueError('Native bounded capture counts mismatch')
+ if len(raw)<180 or not censuses:errors.append('Insufficient native frame/census samples')
+ for i,c in enumerate(censuses):
+  if i and c['editorWall']<censuses[i-1]['editorWall']:raise ValueError('Census wall clock regressed')
+  if c['hasActualSession'] and c['attempt']!=attempt:raise ValueError('Foreign native attempt census')
+  if any(c[k]<0 for k in ['units','structures','projectiles','pathFollowing','engagements','healthOwnedEntities','knowledgeEntries','ledgerEntries','selectedEntities']):raise ValueError('Invalid native count')
+ native=[c for c in censuses if c['hasActualSession']]
+ if not native or max(c['units'] for c in native)<=0 or max(c['structures'] for c in native)<2:errors.append('Actual mission-native population census absent')
+ if censuses[-1]['hasActualSession'] or censuses[-1]['phase']!=6:errors.append('Actual post-return session absence census missing')
+ samples=[]
+ for i,r in enumerate(raw):
+  f=r['sample'];m=r['markerNanoseconds']
+  if len(m)!=len(names) or any(not isinstance(x,int) or x < -1 for x in m):raise ValueError('Malformed native marker sample')
+  if f['phase'] not in PHASES or not 0<=f['censusIndex']<len(censuses):raise ValueError('Native phase/census binding invalid')
+  if i and (f['frame']<=samples[-1]['frame'] or f['editorWall']<=samples[-1]['editorWall'] or f['frameGap']!=f['frame']-samples[-1]['frame']-1):raise ValueError('Duplicated/out-of-order frames or concealed frame gaps')
+  if not i and f['frameGap']!=0:raise ValueError('First frame gap must0')
+  if censuses[f['censusIndex']]['editorWall']>f['editorWall']:raise ValueError('Future census bound to earlier rendered frame')
+  if f['postWarmup'] and (f['activeWarmupFrames']<=180 or f['simulationElapsed']<15 or f['phase'] not in (3,4,5,6)):raise ValueError('Native warmup accounting altered')
+  if f['unityGcNonempty'] != (f['unityGcValid'] and f['unityAllocatedBytes']>=0):raise ValueError('Missing GC counter represented as zero')
+  if not f['threadCounterAvailable'] and f['threadAllocatedBytes']!=-1:raise ValueError('Missing thread counter represented as zero')
+  for k in ('frameIntervalMs','wallIntervalMs','callbackMs','simulationElapsed'):
+   if not isinstance(f[k],(int,float)) or not math.isfinite(f[k]) or f[k]<0:raise ValueError('Invalid raw metric '+k)
+  samples.append(f)
+ eligible=[i for i,f in enumerate(samples) if f['postWarmup'] and f['phase'] in (3,4) and f['timeScale']>0]
+ if len(eligible)<180:errors.append('Insufficient actual post-warmup active frames')
+ if any(samples[i]['frameIntervalMs']<=0 for i in eligible):errors.append('Nonpositive measured active frame interval')
+ gc=[samples[i]['unityAllocatedBytes'] for i in eligible if samples[i]['unityGcNonempty']]
+ if len(gc)<180:errors.append('Native frame GC recorder has fewer than180 valid measured samples')
+ marker_reports=[]
+ for j,name in enumerate(names):
+  vals=[raw[i]['markerNanoseconds'][j]/1e6 for i in eligible if raw[i]['markerNanoseconds'][j]>=0]
+  marker_reports.append({'requested':name,'actual':actual[j],'category':'Scripts','available':bool(vals),'startAttempts':head['markerStartAttempts'][j],'lastNativeError':head['markerErrors'][j],'measuredSamples':len(eligible),'availableSamples':len(vals),'unavailableSamples':len(eligible)-len(vals),'milliseconds':distribution(vals)})
+ sim=[m for m in marker_reports if m['requested']=='Unity.Entities.SimulationSystemGroup']
+ if len(sim)!=1 or sim[0]['availableSamples']<180:errors.append('Actual ECS SimulationSystemGroup recorder lacks180 measured samples')
+ mini=[m for m in marker_reports if m['requested']=='MainMenuPlayUI.MinimapUpdate']
+ if len(mini)!=1 or not mini[0]['available']:errors.append('Actual minimap hot marker unavailable throughout measured match')
+ phases=[]
+ for p,label in PHASES.items():
+  indices=[i for i,f in enumerate(samples) if f['phase']==p]
+  phases.append({'phase':p,'name':label,'count':len(indices),'frameIntervalMs':distribution([samples[i]['frameIntervalMs'] for i in indices]),'wallIntervalMs':distribution([samples[i]['wallIntervalMs'] for i in indices]),'gcAvailableFrames':sum(samples[i]['unityGcNonempty'] for i in indices),'gcAllocatedBytes':distribution([samples[i]['unityAllocatedBytes'] for i in indices if samples[i]['unityGcNonempty']]),'frameGaps':sum(samples[i]['frameGap'] for i in indices)})
+ hitches=[]
+ for i,f in enumerate(samples):
+  if f['frameIntervalMs']>50 or f['wallIntervalMs']>50 or f['frameGap']:
+   hitches.append({'frame':f['frame'],'phase':PHASES[f['phase']],'frameIntervalMs':f['frameIntervalMs'],'wallIntervalMs':f['wallIntervalMs'],'frameGap':f['frameGap'],'focused':f['focused'],'simulationElapsed':f['simulationElapsed'],'censusIndex':f['censusIndex']})
+ # Every contiguous eligible300-frame window; missing counters/gaps restart the window.
+ windows=[];queue=[];total=0;prior=-2
+ for i in eligible:
+  f=samples[i]
+  if i!=prior+1 or f['frameGap'] or not f['unityGcNonempty']:queue=[];total=0
+  prior=i
+  if not f['unityGcNonempty']:continue
+  queue.append((f['frame'],f['unityAllocatedBytes']));total+=f['unityAllocatedBytes']
+  if len(queue)>300:total-=queue.pop(0)[1]
+  if len(queue)==300:windows.append({'firstFrame':queue[0][0],'lastFrame':queue[-1][0],'allocatedBytes':total,'reference1024BytesExceeded':total>1024})
+ return {'measurementQualified':not errors,'measurementErrors':errors,'scope':head['scope'],'budgetStatus':head['budgetStatus'],'sourceFrameCoverage':{'callbackSamples':len(samples),'editorDistinctFrames':close['editorDistinctFrames'],'nativeFrameSpan':samples[-1]['frame']-samples[0]['frame']+1 if samples else 0,'retainedNativeFrameGaps':sum(f['frameGap'] for f in samples),'measuredActiveFrameGaps':sum(samples[i]['frameGap'] for i in eligible),'gapFreeMeasuredFrames':all(samples[i]['frameGap']==0 for i in eligible),'missingFramesNeverImputed':True},'wholeMatchFrameIntervalMs':distribution([f['frameIntervalMs'] for f in samples]),'measuredActiveFrameIntervalMs':distribution([samples[i]['frameIntervalMs'] for i in eligible]),'measuredActiveWallIntervalMs':distribution([samples[i]['wallIntervalMs'] for i in eligible]),'observerCallbackMs':distribution([f['callbackMs'] for f in samples]),'currentThreadAllocatedBytesInclusive':distribution([samples[i]['threadAllocatedBytes'] for i in eligible if samples[i]['threadCounterAvailable']]),'nativeFrameAllocatedBytesInclusive':distribution(gc),'nativeFrameGcUnavailableMeasuredSamples':len(eligible)-len(gc),'steadyGc300FrameWindows':windows,'phases':phases,'hotMarkers':marker_reports,'rawHitches':hitches,'maximumNativeCounts':{k:max((c[k] for c in censuses),default=0) for k in ['units','structures','projectiles','pathFollowing','engagements','knowledgeEntries','ledgerEntries','selectedEntities']},'censuses':censuses,'presentationCountsMeasured':False,'deviceCertified':False,'androidCertified':False,'performanceBudgetPassed':False,'renderGpuTimeMeasured':False,'tenReplayCyclesCertified':False}

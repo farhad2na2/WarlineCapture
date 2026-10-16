@@ -1,0 +1,47 @@
+[
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016-02.log.gz",
+    "uncompressedSha256": "79f31f5f750670c8aeccbc3e9c72ac2323002dc5ab9be9e5aac54e5720a62956",
+    "uncompressedBytes": 106543
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016-03.log.gz",
+    "uncompressedSha256": "17bfc7dc02bab91770c77c15ed872c159899020811e2cad6255f36864716268b",
+    "uncompressedBytes": 291856
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016-04.log.gz",
+    "uncompressedSha256": "2451c43f41f8869fefcf8eb3cdd721e4d5a25a85cd9a19ef8152a2014e7343b0",
+    "uncompressedBytes": 314445
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016.log.gz",
+    "uncompressedSha256": "bc753ced34964134dfb125f6bb568866ad0778f3a2c3932405126114afcebc02",
+    "uncompressedBytes": 116898
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-before-20261016-02.log.gz",
+    "uncompressedSha256": "cf5f8877ec711ce1c6d132bf8e39f396cf73b998a0bbb3348e18a230612499ec",
+    "uncompressedBytes": 2194
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-before-20261016-03.log.gz",
+    "uncompressedSha256": "5b656512c10934b63821fd1876c759ce3f490a97cec793d6390e411bb40f3771",
+    "uncompressedBytes": 1013690
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-before-preview-20261016.log.gz",
+    "uncompressedSha256": "d3bf7f4a4aaa71eb7b3b6ee19cf01313aacd1e57fed2475c7fed33c00b202c44",
+    "uncompressedBytes": 295739
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-checks-20261016-05.log.gz",
+    "uncompressedSha256": "3ceba0888a20db64d7595e2d234437e1f924d64f29efc100e6410a57a9afaebf",
+    "uncompressedBytes": 292982
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-integrated-20261016-06.log.gz",
+    "uncompressedSha256": "6fa1fd01f1e246fc677bfc9426a6ef2fe2be3097cc63c80141b72c52c18212d0",
+    "uncompressedBytes": 273404
+  }
+]

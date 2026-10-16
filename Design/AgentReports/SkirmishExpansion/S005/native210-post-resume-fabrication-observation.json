@@ -1,0 +1,16 @@
+{
+  "run": 210,
+  "sourceHash": "26fd4ec128abe8c00a0b380129afa4a3f5612d6013e35c80eb258f98e0e7096d",
+  "scope": "Read-only normal fabrication observation after native Continue and passenger unload",
+  "stateMutation": false,
+  "observations": {
+    "materials": 90,
+    "workshop": [
+      {
+        "status": "Producing",
+        "reason": "None",
+        "progress": 25.7984753
+      }
+    ]
+  }
+}

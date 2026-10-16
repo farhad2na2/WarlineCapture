@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "fullSourceUnchanged": true,
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "fingerprintDifferenceOnly": "seconds",
+  "artifacts": {
+    "source-manifest.json": {
+      "baselineSha256": "1ab0a5396429586a08e99695386b39d5e74cfcf509d97a1387e8179cfe0a4a3a",
+      "postrunSha256": "1ab0a5396429586a08e99695386b39d5e74cfcf509d97a1387e8179cfe0a4a3a",
+      "report": "native1624-postrun-source-manifest.json"
+    },
+    "independent-fingerprint.json": {
+      "baselineSha256": "4d9920331eb279c7c1c8afda974cf60be65c2c6d30d23f189a1f71fd25e0466e",
+      "postrunSha256": "d09da2ed2ed1698f67d13b40db5d475eafa127f5881f7015bbd33a5fa590fa74",
+      "report": "native1624-postrun-independent-fingerprint.json"
+    }
+  }
+}

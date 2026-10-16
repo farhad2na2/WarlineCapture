@@ -1,0 +1,19 @@
+{
+  "result": "Passed",
+  "scope": "Current production ARIA assemblies and exact native1422 observer dry compile; not a normal mission playthrough",
+  "sourceHash": "16983c53eaa787206026ec34d50dab56bbf16d7afc21c99419f412ca871d11fc",
+  "sourceManifest": "prepared-1422-scroll-fix-source-manifest.json",
+  "independentEqualManifest": "final-1422-root-after-scroll-focused-source-manifest.json",
+  "editorLoadedMarker": "[AriaPlayDecisionValidation] result=Passed cases=29",
+  "editorLoadedLog": "/private/tmp/s005-aria-scroll-focused-ready-20261013.log",
+  "editorLoadedLogSha256": "569a9120dc0b08f41ef8f1002480a8a7015694eb69664304f29651d1c8466592",
+  "editorLoadedNativeExit": 0,
+  "expandedRegressionMarker": "[SkirmishExpandedAriaTests] result=Passed",
+  "expandedRegressionLog": "/private/tmp/s005-aria-scroll-expanded-focused-qualified-20261013.log",
+  "expandedRegressionLogSha256": "cecca652ac6fbeacc743a335501f5b1a0d7bb0e4e7284f5cea6cce38cba0e276",
+  "expandedRegressionNativeExit": 0,
+  "fixtureDryCompile": "compile1422-scroll-fix-dry.json",
+  "fixtureDryCompileSha256": "df71cec01b9fc8def780337ae7d9bdad31f9c4b59f1f27676702a3a3ae08d207",
+  "fixtureDryCompileErrors": 0,
+  "readinessClaim": false
+}

@@ -1,0 +1,15 @@
+{
+  "run": "native687",
+  "readOnlyCliObservations": 1,
+  "manualStep": 0,
+  "manualSlot": 1,
+  "manualActions": 9,
+  "manualAttackReceipts": 1,
+  "airProbeDefenseMapStep": 1,
+  "airProbeDefenseMapAttempts": 0,
+  "selectedMask": 1,
+  "structureMask": 2,
+  "enemyMarkerVisible": false,
+  "popupOpen": true,
+  "finding": "Camera popup opened during order targeting; roster reset moved driver to squad-selection step, which cannot touch squad controls behind modal. Open-popup continuation must precede roster checks and use latched public target."
+}

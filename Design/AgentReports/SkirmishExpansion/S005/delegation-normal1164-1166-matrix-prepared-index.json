@@ -1,0 +1,40 @@
+{
+  "status": "PreparedExternalOnly_NotNativeRuns",
+  "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+  "cases": [
+    {
+      "id": 1164,
+      "locale": "en",
+      "seed": 155926,
+      "fixtureSha256": "16156412a706fc3115ad3a5f11d0995177bf91619d48a075b68a3e20ec3f4af2",
+      "runnerSha256": "9890b19b677a9db55b1f544d0c9315a2f425750fb0751a5350651f912b6e3731",
+      "preparedReport": "delegation-normal-aria1164-prepared.json",
+      "reportSha256": "4378fa4f8d8b0ebe9573c5eaaeae458c277541220223eff1e074440f8c8db08b",
+      "publicEntry": "RunS005EditorAriaEnSeed3"
+    },
+    {
+      "id": 1165,
+      "locale": "fa-IR",
+      "seed": 130368,
+      "fixtureSha256": "ba1feed58dd6ddf14b6523ed75a1db08215c8baf468b1b5f57f465aeb47eb8bb",
+      "runnerSha256": "9847744b683ac191eadd7a0e2cac5074891f232a642ced32f603a0fc00bfda53",
+      "preparedReport": "delegation-normal-aria1165-prepared.json",
+      "reportSha256": "2a928ecf71b65091e6c22bdd8d12cb1dd98e5000f50bde21bd362c1cfba289aa",
+      "publicEntry": "RunS005EditorAriaFaSeed2"
+    },
+    {
+      "id": 1166,
+      "locale": "fa-IR",
+      "seed": 155926,
+      "fixtureSha256": "88c5cc38b5c6b5dcc0790b4846b304f47fb0e27edce02398e290138fdc2bcac7",
+      "runnerSha256": "c6983d8295145d50f58e41e47717389bc356fcda09ae8cc257aacf8526b90d3c",
+      "preparedReport": "delegation-normal-aria1166-prepared.json",
+      "reportSha256": "ab920a13f8a5e680f96a57f8cf51a2ce9428fa4b2fcc86d48dacd6f21614b1b9",
+      "publicEntry": "RunS005EditorAriaFaSeed3"
+    }
+  ],
+  "existingEN130368Successor": "1157 remains never-loaded prepared; needs actual unique drycompile/review",
+  "actualAcceptance": "Three seeds104734/130368/155926 eachEN/fa-IR; at least two real wins each locale, retain every loss/abort. Preparedfixtures establish no additional nativewins.",
+  "noUnityCalls": true,
+  "noSourceEdits": true
+}

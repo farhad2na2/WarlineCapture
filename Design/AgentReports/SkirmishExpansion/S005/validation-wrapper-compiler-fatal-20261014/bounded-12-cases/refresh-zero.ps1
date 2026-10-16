@@ -1,0 +1,2 @@
+﻿& 'D:\Projects\WarlineCapture\Tools\CI\InvokeUnity.ps1' -UnityExe 'D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-pt20nfoh\OwnedExitProbe.exe' -ProjectPath 'D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-pt20nfoh' -LogFile 'D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-pt20nfoh\refresh-zero.log' -GuiLicensing -TimeoutSeconds 10 -UnityArguments @('--exit','0','--sleep','1250','--fatal','0')
+exit $global:LASTEXITCODE

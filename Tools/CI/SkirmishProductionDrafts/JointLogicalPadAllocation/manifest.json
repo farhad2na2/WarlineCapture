@@ -1,0 +1,17 @@
+{
+  "scope": "FiniteJointLogicalPadFacilityAllocation_NotSourceFit",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "before_sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "sha256": "089291acbaa3d71a3b04ff7d888a9bdf21027bad3ee7d09acb69f23f7c3d948f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.txt",
+      "before_sha256": null,
+      "sha256": "926e2614c4e8a362d05ba08f75b5aa3541e44ea1536ac1918eb68d698c039e9f"
+    }
+  ]
+}

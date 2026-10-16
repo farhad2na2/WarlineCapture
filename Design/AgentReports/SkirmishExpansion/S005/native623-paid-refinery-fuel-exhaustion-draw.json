@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "playerReady": false,
+  "wrapperExit": 2,
+  "sourceHash": "673bb90fc2893ccf53adb658a6edc2213940b1fcffa409ce2c8799d92c8f6c58",
+  "sourceManifestUnchanged": true,
+  "trace": "s005-aria-live-155926-en-834880fcb97c4da692968f0c85f5ce91.jsonl.touch.jsonl",
+  "normalMatchOutcome": "Draw",
+  "paidRefinery": true,
+  "paidAirport": true,
+  "paidStrikeReceipt": 1004,
+  "launch": true,
+  "nativeFire": false,
+  "normalReturn": false,
+  "refuelSecondSortie": false,
+  "reason": "Fuel exhausted before native fire; automatic return observed. Qualification round-trip estimate excludes runway approach trajectory.",
+  "visualReview": "DeferredByOwner"
+}

@@ -1,0 +1,49 @@
+{
+  "status": "Applied after frozen Native241\u2013246 completion",
+  "paths": [
+    "Assets/Game/Scripts/UI/Shell/Ecs/UiSupportReadModelSystem.cs",
+    "Assets/Game/Scripts/Systems/Support/SupportAbilityRequestSystem.cs",
+    "Assets/Tests/Editor/Support/SupportRuntimeValidation.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Support.cs",
+    "Assets/Tests/Editor/Support/SupportUiAriaValidation.cs"
+  ],
+  "records": [
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiSupportReadModelSystem.cs",
+      "beforeSha256": "00a06e21572d84cac189a6d32cd54858f7e701ae8bee13589c2bded28bf9bd6a",
+      "afterSha256": "f79915931a9aadce899ee6ad9f291c9a753df184af647be090b12dad53130ef8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAbilityRequestSystem.cs",
+      "beforeSha256": "7dbce81e8a1f5062f57d1e59da4cb0813819e54e56e3769e2078ecfb752b9b63",
+      "afterSha256": "180184ba01b6716dd3fa92ca6c4078a4e3c07a6b9feba3d8b19b904e030b4dbc"
+    },
+    {
+      "path": "Assets/Tests/Editor/Support/SupportRuntimeValidation.cs",
+      "beforeSha256": "569668959fdd36c67c25aacef787dcaaa2cf20bb8f398fcbc69bb7e648ee4e01",
+      "afterSha256": "176c5b2507852b6920a0756315212bb803e4d6c167e5ab727fddea01b3e368bd"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Support.cs",
+      "beforeSha256": "0bbd9118f744e211312f78f4ab28ce379de387c3cd80ffb4d0f298112fb9e5be",
+      "afterSha256": "e1a9da77affc01bb39c8a4d096943bea25bdc40f6d38539458b470222b3125e2"
+    },
+    {
+      "path": "Assets/Tests/Editor/Support/SupportUiAriaValidation.cs",
+      "beforeSha256": "02a5ff1db0a5a6f91ab20d9535592c606ea352591680f461fe23d41fceb02dc1",
+      "afterSha256": "f2a2c18fbabec175da2fc87cd2d34923e5fbad2cc69127e867e372053696ad65"
+    }
+  ],
+  "compileRepair": {
+    "observed": "CS0315 in three new unmanaged-system test calls",
+    "cause": "Missing using Unity.Entities extension namespace",
+    "fix": "Added Unity.Entities import to SupportRuntimeValidation",
+    "cleanEditorGate": {
+      "compiling": false,
+      "scriptCompilationFailed": false,
+      "updating": false,
+      "playing": false
+    },
+    "evidenceLog": "/private/tmp/warline-s005-player-editor-220.log"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "previousSourceHash": "162af97548a94c4b21429212d8ee45005c3b08500f5ddf32739a2879296bfd38",
+  "sourceHash": "b1a0cf94b8505934722ee1916d1aeca9ea43d7d0032a061dd40f15d44b1f3ee0",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingRuntimeConfigsPhysicalMapsAndAll562MaterialsUnchanged": true,
+  "change": "Read-only actor diagnostic records grid/target/request/haul goal, active path presence and cooldown state; no orders or actor state modified."
+}

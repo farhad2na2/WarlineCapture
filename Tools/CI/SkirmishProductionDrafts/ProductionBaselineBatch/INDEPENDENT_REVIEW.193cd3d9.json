@@ -1,0 +1,38 @@
+{
+  "outcome": "BoundedReviewCompleteSuccessorRequiredBeforeAdoption",
+  "manifest_sha256": "193cd3d9488f9c67a10fd34303df52432bd4f5117479e899fef66ed81ac47d62",
+  "exact_checked_targets": 9,
+  "exact_checked_tools": 4,
+  "pins_match": true,
+  "clear_paths": [
+    "Exact22 canonical catalog/rules/twenty packet pins and all720 packetseed+locale slots",
+    "Explicit1200stress authority has60strata20distinctseeds andactualF/Ealternation; finite dispatch enforcescontiguousordered slice",
+    "Canonicalclaims remainexclusive andsame fullsource/DLL content-addressedmanifest; realBegin/Endnativehashes rechecked",
+    "NormalMenu owner only; actualnative setupidentity suppliesmatrixprovenance, noS002fallback",
+    "Frozen native result/session/outcome/renderedlocalizedtitle, ordinaryMainMenu contact, zeroallEnabledOrDisablednativeSessions, originalownershipcleanup",
+    "OperationalVictory/Defeat/Draw completion isseparate fromcountedVictory; queuequalified remainsdisabled"
+  ],
+  "findings": [
+    {
+      "id": "candidate-admission",
+      "status": "Authoring preparing explicit57fe successor",
+      "detail": "193c blocks claimedS005 Editor-memory candidate scope; handoff59 permitsisolatedQA beforepublication, currentworker supportsit. Restore onlyreviewedcandidatepath, preserve mainpublication."
+    },
+    {
+      "id": "runtime-exception-gate",
+      "status": "Root/authoring scope decision pending",
+      "detail": "BatchFailed/actualexit0 alone do not reject UnityError/Exception/Assert. ActualOpening23935proved0withrepeatedHUDexceptions. Queuequalifieddisabledpreventsfalsepublication, but any cleanoperational/qualificationclaim must additionally auditfullrunexceptions."
+    }
+  ],
+  "proof_attribution": {
+    "producer_owning": "after-storage-zmcrpuo6 Editor830/353 Tests760/332 exact9 noFallback0mismatches",
+    "producer_offline_methods": 29,
+    "independent_native_or_compiler_execution": false
+  },
+  "native_gates_pending": [
+    "Native6controls",
+    "Actual2canaries freshWorld/scene/input/provider/sessioncleanup andactualwrapper0",
+    "Measuredthroughput comparison andfinalcompletionadapterintegration"
+  ],
+  "qualification_or_readiness_claim": false
+}

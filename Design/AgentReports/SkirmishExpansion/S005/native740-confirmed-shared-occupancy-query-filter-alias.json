@@ -1,0 +1,21 @@
+{
+  "result": "Native defect confirmed; fix pending",
+  "sourceHash": "bd1e220020aabf8c0097900c3caaa5c1495fc0df16be11259ef34f3788ad76ee",
+  "proof": "native740-readonly-occupancy-query-alias-observation.json",
+  "liveObservation": {
+    "queriesAlias": true,
+    "filteredTrackedCount": 12,
+    "unfilteredTrackedCount": 53,
+    "cachedTrackedCount": 12
+  },
+  "effect": "The changed-UnitGrid filter is shared with the supposedly full membership query. SyncTrackedEntitiesForCountChange enumerates only filtered movers and removes records for stationary live units. Hauling then sees missing occupancy bits; native pathfinding still checks hard live-unit footprints.",
+  "pairedRecordObservation": "native740-readonly-occupancy-tracking-observation.json",
+  "fixPlan": [
+    "Keep the full-membership query independently owned and unfiltered.",
+    "Preserve changed-grid iteration for movement updates.",
+    "Verify stationary units persist while another unit moves.",
+    "Verify same-count actor replacement removes old occupancy without dropping live neighbors; use structural component-order changes for full membership reconciliation if necessary."
+  ],
+  "nativeConfirmationAfterFix": "Pending",
+  "scope": "Shared DynamicOccupancyRebuildSystem; all missions use the same navigation authority. No geometry or economic rules change."
+}

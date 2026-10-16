@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "families": [
+    {
+      "family": "AP_BA",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_BA.json",
+      "sha256": "12337a140dbee582ef112aaacaf7afb95f2d46aca50980e383c263623b8fe1c8",
+      "mission_count": 6
+    },
+    {
+      "family": "AP_BT",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_BT.json",
+      "sha256": "ecb3e56a1c1fe0ba41809b51166986f74bf6064fde685a23285412daf73c8ad9",
+      "mission_count": 6
+    },
+    {
+      "family": "AP_CE",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_CE.json",
+      "sha256": "c1ce5999fd3ab8f21946664f0a15c1094859006921e94cb9cec900b0a82448d4",
+      "mission_count": 6
+    },
+    {
+      "family": "AP_FC",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_FC.json",
+      "sha256": "a44ee7e774fa446614848c5677cf65ed8cf1cd264bab951c7c59ccce93e56b20",
+      "mission_count": 6
+    },
+    {
+      "family": "CC_BA",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_BA.json",
+      "sha256": "4b763edd9b0c93b7cf97add40c94af19ad43ef411339f1cf25dddd35561c636d",
+      "mission_count": 6
+    },
+    {
+      "family": "CC_BT",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_BT.json",
+      "sha256": "782a189830793167c2b7fe8b61622e3308b23c1bb5f450dcd4ff95ac375eb24b",
+      "mission_count": 6
+    },
+    {
+      "family": "CC_CE",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_CE.json",
+      "sha256": "89d78f32d66e329f65966c858d2fe9dbb7563aeedcdbc8e7e6862403ea0a7457",
+      "mission_count": 6
+    },
+    {
+      "family": "CC_FC",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_FC.json",
+      "sha256": "9387b394d2ddbe45f109206cdba9c6f704c3459d67ee9f3f9d08548bdebf5cdf",
+      "mission_count": 6
+    },
+    {
+      "family": "DB_BA",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_BA.json",
+      "sha256": "105d2db3bebae7d2ced0dd5de31a12641c13756f3c51d8d04de770cda9ae3ebf",
+      "mission_count": 6
+    },
+    {
+      "family": "DB_BT",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_BT.json",
+      "sha256": "3ba1ac05498a3dbcc5fed18e5cda7287f9ca748eba759731f20291760dc26718",
+      "mission_count": 6
+    },
+    {
+      "family": "DB_CE",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_CE.json",
+      "sha256": "5b443c7f051459d44a754474a22ef916905f556c588a5dcf2468bea54d746c2e",
+      "mission_count": 6
+    },
+    {
+      "family": "DB_FC",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_FC.json",
+      "sha256": "7dc53345e89a9218d32445fe219a90f2dc07d7e3f0b2fd2b435f1cb53383feaa",
+      "mission_count": 6
+    },
+    {
+      "family": "IB_BA",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_BA.json",
+      "sha256": "eed30835aa75ebde7bb3b8531e9a07992e1d7b21d4390a7626af767ad87c5f0f",
+      "mission_count": 6
+    },
+    {
+      "family": "IB_BT",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_BT.json",
+      "sha256": "e92f3d68b574e3c0a14367c69aae38f35166f43c12d34999b6da11263007203b",
+      "mission_count": 6
+    },
+    {
+      "family": "IB_CE",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_CE.json",
+      "sha256": "e6e2b43e3900e2376aa76425f8c1a17a684dd3597920379fb69dcd1c45e4e781",
+      "mission_count": 6
+    },
+    {
+      "family": "IB_FC",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_FC.json",
+      "sha256": "8f0e5ed24cc3cb5f833a60be5b38c9d77d5ba98dd53d497f0ebb62aa6fbf97ba",
+      "mission_count": 6
+    },
+    {
+      "family": "MP_BA",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_BA.json",
+      "sha256": "aa3008442c9dae2f040bac465a3d36d7be7d2d14e941271eb189ac8bd85dbbc7",
+      "mission_count": 6
+    },
+    {
+      "family": "MP_BT",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_BT.json",
+      "sha256": "c22ac4d3dfd273553746b80c063997fd9c839019c3e06c91feda91c90202133c",
+      "mission_count": 6
+    },
+    {
+      "family": "MP_CE",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_CE.json",
+      "sha256": "9d33b6af044c56367c581de822cb9e786aeb15870a0a44de6f1da9934de20a95",
+      "mission_count": 6
+    },
+    {
+      "family": "MP_FC",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_FC.json",
+      "sha256": "db128ef8f389c06f6f614d8464b1572a291114cc2cc2e9a00a2d765ada63c434",
+      "mission_count": 6
+    }
+  ],
+  "files": 20,
+  "missions": 120,
+  "ready": false
+}

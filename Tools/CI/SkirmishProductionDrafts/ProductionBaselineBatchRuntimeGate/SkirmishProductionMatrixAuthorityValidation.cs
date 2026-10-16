@@ -1,0 +1,116 @@
+#if UNITY_EDITOR
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Game.Editor;
+using Newtonsoft.Json.Linq;
+
+using UnityEngine;
+using Unity.Entities;
+using Game.Components;
+using Game.Configs;
+namespace Game.Editor
+{
+    static class MatrixControlAssert
+    {
+        internal static void IsTrue(bool value){if(!value)throw new InvalidOperationException("Matrix control expected true");}
+        internal static void AreEqual(object a,object b){if(!Equals(a,b))throw new InvalidOperationException("Matrix control values differ");}
+        internal static void Fail(string message="Unexpected acceptance"){throw new InvalidOperationException(message);}
+        internal static void Throws<T>(Action action) where T:Exception
+        {try{action();}catch(T){return;}throw new InvalidOperationException("Expected refusal "+typeof(T).FullName);}
+    }
+    public sealed class SkirmishProductionMatrixAuthorityValidation
+    {
+        const string Catalog="Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv";
+        const string Rules="Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md";
+        static string Root=>Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+        static JObject Baseline()
+        {
+            var rows=File.ReadAllLines(Path.Combine(Root,Catalog)).Skip(1).Where(v=>!string.IsNullOrWhiteSpace(v)).Select(v=>v.Split(',')).ToArray();
+            var paths=new HashSet<string>(rows.Select(v=>Packet(v)),StringComparer.Ordinal){Catalog,Rules};var slots=new JArray();
+            foreach(var row in rows)
+            {
+                var section=Regex.Match(File.ReadAllText(Path.Combine(Root,Packet(row))),"^## "+row[0]+@"\s*$([\s\S]*?)(?=^## |\z)",RegexOptions.Multiline);
+                var match=Regex.Match(section.Groups[1].Value,@"Regular seeds ((?:`\d+`[ ,and]*)+) in both EN and FA at Standard");
+                MatrixControlAssert.IsTrue(section.Success&&match.Success);
+                foreach(Match seed in Regex.Matches(match.Groups[1].Value,@"`(\d+)`"))foreach(string locale in new[]{"EN","FA"})
+                    slots.Add(Slot(row[0],int.Parse(seed.Groups[1].Value),locale));
+            }
+            return new JObject{["schema_version"]=1,["kind"]="Baseline720",["source_pins"]=new JArray(paths.OrderBy(v=>v,StringComparer.Ordinal).Select(v=>new JObject{["path"]=v,["sha256"]=SkirmishProductionCanaryRequest.FileHash(Path.Combine(Root,v))})),["slots"]=slots};
+        }
+        static string Packet(string[] row)=>"Design/Roadmap/Skirmish_Expansion/Scenarios/"+row[1]+"_"+row[2]+".md";
+        static JObject Slot(string id,int seed,string locale)=>new JObject{["catalog_id"]=id,["seed"]=seed,["locale"]=locale,["size"]="Standard",["difficulty"]="Regular",["control_mode"]="aria"};
+        static void WithPlan(JObject plan,Action<SkirmishProductionMatrixAuthority,string> assertion)
+        {
+            string folder=Path.Combine(Root,"Temp","ProductionMatrixNativeControls",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(folder);string path=Path.Combine(folder,"synthetic-plan.json");
+            try{File.WriteAllText(path,plan.ToString());var authority=new SkirmishProductionMatrixAuthority(Root,path,SkirmishProductionCanaryRequest.FileHash(path));assertion(authority,path);}
+            finally{if(File.Exists(path))File.Delete(path);Directory.Delete(folder);}
+        }
+        static JObject Job(JObject slot)
+        {
+            var row=File.ReadAllLines(Path.Combine(Root,Catalog)).Skip(1).Select(v=>v.Split(',')).Single(v=>v[0]==(string)slot["catalog_id"]);
+            var job=(JObject)slot.DeepClone();string packet=Packet(row);job["packet_path"]=packet;job["packet_sha256"]=SkirmishProductionCanaryRequest.FileHash(Path.Combine(Root,packet));return job;
+        }
+        public void Actual720PacketAuthorityAdmitsExactFlagsOnly()
+        {
+            var plan=Baseline();WithPlan(plan,(authority,_)=>{MatrixControlAssert.AreEqual(720,authority.SlotCount);authority.ValidateJob(Job((JObject)plan["slots"][0]));authority.ValidateJob(Job((JObject)plan["slots"][719]));
+                foreach(var pair in new[]{("size","War"),("difficulty","Commander"),("locale","en"),("control_mode","manual"),("packet_path",Rules)})
+                {var bad=Job((JObject)plan["slots"][0]);bad[pair.Item1]=pair.Item2;MatrixControlAssert.Throws<InvalidDataException>(()=>authority.ValidateJob(bad));}});
+        }
+        public void MissingDuplicateWrongSeedAndAuthorityRefuse()
+        {
+            foreach(int mutation in Enumerable.Range(0,5))
+            {var bad=Baseline();if(mutation==0)((JArray)bad["slots"]).RemoveAt(0);if(mutation==1)bad["slots"][719]=bad["slots"][0].DeepClone();if(mutation==2)bad["slots"][0]["seed"]=1;if(mutation==3)bad["source_pins"][0]["sha256"]=new string('0',64);if(mutation==4)bad["extra"]=true;
+                MatrixControlAssert.Throws<InvalidDataException>(()=>WithPlan(bad,(_,__)=>MatrixControlAssert.Fail("Invalid plan admitted")));}
+        }
+        public void SyntheticStressHasAllSixtyAlternatingTwentySeedStrata()
+        {
+            var plan=Baseline();plan["kind"]="Stress1200";var slots=new JArray();
+            var families=File.ReadAllLines(Path.Combine(Root,Catalog)).Skip(1).Where(v=>!string.IsNullOrWhiteSpace(v)).Select(v=>v.Split(',')).GroupBy(v=>v[1]+"|"+v[2]+"|"+v[3]);
+            foreach(var family in families)for(int i=0;i<20;i++)slots.Add(Slot(family.Single(v=>v[4]==(i%2==0?"F":"E"))[0],700000+i,i%2==0?"EN":"FA"));
+            plan["slots"]=slots;WithPlan(plan,(authority,_)=>{MatrixControlAssert.AreEqual(1200,authority.SlotCount);authority.ValidateJob(Job((JObject)slots[1199]));
+                authority.ValidateBatch(new[]{Job((JObject)slots[0]),Job((JObject)slots[1]),Job((JObject)slots[2])});
+                MatrixControlAssert.Throws<InvalidDataException>(()=>authority.ValidateBatch(new[]{Job((JObject)slots[0]),Job((JObject)slots[2])}));
+                MatrixControlAssert.Throws<InvalidDataException>(()=>authority.ValidateBatch(new[]{Job((JObject)slots[1]),Job((JObject)slots[0])}));});
+            var bad=(JObject)plan.DeepClone();bad["slots"][1]["catalog_id"]=bad["slots"][0]["catalog_id"].DeepClone();MatrixControlAssert.Throws<InvalidDataException>(()=>WithPlan(bad,(_,__)=>MatrixControlAssert.Fail()));
+        }
+        public void ChangedPlanCannotAuthorizeNextJob()
+        {var plan=Baseline();WithPlan(plan,(authority,path)=>{File.WriteAllText(path,"{}");MatrixControlAssert.Throws<InvalidDataException>(()=>authority.ValidateJob(Job((JObject)plan["slots"][0])));});}
+        public void DisabledNativeSessionCannotMasqueradeAsZeroCleanup()
+        {
+            using var world=new World("ProductionMatrixDisabledSessionCensus");
+            int Count()=> (int)((JArray)SkirmishProductionBatchOwnershipCensus.Capture()["worlds"]).OfType<JObject>().Single(v=>(string)v["sequence"]==world.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture))["native_sessions"];
+            MatrixControlAssert.AreEqual(0,Count());var entity=world.EntityManager.CreateEntity(typeof(SkirmishMatchState),typeof(Disabled));
+            MatrixControlAssert.AreEqual(1,Count());world.EntityManager.AddComponent<SkirmishExpandedSessionComponent>(entity);
+            MatrixControlAssert.AreEqual(1,Count());world.EntityManager.DestroyEntity(entity);MatrixControlAssert.AreEqual(0,Count());
+        }
+        public void OperationalDefeatAndDrawRemainLossesAndRequireCleanNativeFacts()
+        {
+            var facts=new SkirmishS002AriaTerminalFacts{MatchFinished=true,NormalSpeed=true,DefinitionVersion=1,CodeHash=new string('a',64),ConfigHash=new string('b',64)};
+            foreach(string outcome in new[]{"Victory","Defeat","Draw"})
+            {facts.MatchOutcome=outcome;MatrixControlAssert.IsTrue(SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,true,true));MatrixControlAssert.AreEqual(outcome=="Victory",SkirmishS002AriaRunLog.IsCountedAriaWin(in facts,outcome));}
+            facts.MatchOutcome="Defeat";
+            for(int i=0;i<8;i++)
+            {var bad=facts;if(i==0)bad.Aborted=true;if(i==1)bad.ForcedVictory=true;if(i==2)bad.NormalSpeed=false;if(i==3)bad.InputViolations=-1;if(i==4)bad.HumanInterventions=1;if(i==5)bad.MatchFinished=false;if(i==6)bad.CodeHash="";if(i==7)bad.ConfigHash="";
+                MatrixControlAssert.IsTrue(!SkirmishProductionMatrixAuthority.IsOperationallyComplete(in bad,true,true));}
+            MatrixControlAssert.IsTrue(!SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,false,true));MatrixControlAssert.IsTrue(!SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,true,false));
+        }
+        public void RuntimeErrorsCannotBecomeCleanOperationalCompletion()
+        {
+            var clean=new SkirmishS002AriaRunHarness.ProductionRuntimeErrorGate();
+            clean.Observe("normal","",LogType.Log);clean.Observe("warning","",LogType.Warning);clean.EnsureClean();
+            foreach(var type in new[]{LogType.Error,LogType.Exception,LogType.Assert})
+            {
+                var gate=new SkirmishS002AriaRunHarness.ProductionRuntimeErrorGate();
+                gate.Observe("actual callback input","stack",type);
+                MatrixControlAssert.AreEqual(1,gate.Count);MatrixControlAssert.Throws<InvalidOperationException>(gate.EnsureClean);
+                gate.Observe("later log","",LogType.Log);MatrixControlAssert.AreEqual(1,gate.Count);
+            }
+        }
+        public static void RunFocusedValidation()
+        {var t=new SkirmishProductionMatrixAuthorityValidation();t.Actual720PacketAuthorityAdmitsExactFlagsOnly();t.MissingDuplicateWrongSeedAndAuthorityRefuse();t.SyntheticStressHasAllSixtyAlternatingTwentySeedStrata();t.ChangedPlanCannotAuthorizeNextJob();t.DisabledNativeSessionCannotMasqueradeAsZeroCleanup();t.OperationalDefeatAndDrawRemainLossesAndRequireCleanNativeFacts();t.RuntimeErrorsCannotBecomeCleanOperationalCompletion();Debug.Log("[SkirmishProductionMatrixAuthorityTests] result=Passed methods=7 baselineSlots=720 syntheticStressSlots=1200 nativeJobs=0 queueSuccessEnabled=0");}
+    }
+}
+#endif

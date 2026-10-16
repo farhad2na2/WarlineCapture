@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs(53,52): error CS0619: 'Object.GetInstanceID()' is obsolete: 'GetInstanceID is deprecated. Use GetEntityId instead. This will be removed in a future version.'\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs(56,38): error CS0619: 'Object.GetInstanceID()' is obsolete: 'GetInstanceID is deprecated. Use GetEntityId instead. This will be removed in a future version.'\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

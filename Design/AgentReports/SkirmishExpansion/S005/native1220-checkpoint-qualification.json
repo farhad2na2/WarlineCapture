@@ -1,0 +1,11 @@
+{
+  "result": "Passed",
+  "sourceHash": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "fullSourceUnchanged": true,
+  "marker": "[SkirmishExpandedCheckpointTests] result=Passed",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "tests": 13,
+  "nativePlayerWins": 0,
+  "playerReady": false
+}

@@ -290,6 +290,7 @@ namespace Game.Runtime
             return domain == SkirmishPopulationCategory.Infantry ||
                    domain == SkirmishPopulationCategory.Ground ||
                    domain == SkirmishPopulationCategory.LogisticsSupport ||
+                   (domain == SkirmishPopulationCategory.ObjectiveSupport && SkirmishConvoyTruckCommandEligibility.AcceptsMove(em,unit)) ||
                    (domain == SkirmishPopulationCategory.Air &&
                     SkirmishSharedCombatBinding.UsesSharedCommands(em, unit) &&
                     em.HasComponent<UnitAirMovement>(unit));

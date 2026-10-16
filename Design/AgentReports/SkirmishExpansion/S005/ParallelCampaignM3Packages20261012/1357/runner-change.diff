@@ -1,0 +1,47 @@
+--- 1345
++++ 1357
+@@ -39,7 +39,7 @@
+  if fields!=['False']*5+[str(ROOT/'Assets'),'0']:raise RuntimeError('Editor not idle/clean on exact project: '+str(value))
+ 
+ def qualify(log,rows,status,scope):
+- errors=[];entries=[7] if scope=='fa-IR' else [2,7]
++ errors=[];entries=[7] if scope=='fa-IR' else [2] if scope=='en' else [2,7]
+  marker='[CampaignM3Journey1345] result=Passed'
+  if marker not in log:errors.append('Missing complete native M3 witness marker')
+  if '[CampaignNativeSelection] result=Passed' not in log:errors.append('Missing paired native companion input gate')
+@@ -63,6 +63,8 @@
+   for x in chosen[:-1]:
+    if x.get('mission')!='saga.ch01.m03.radar_warning':errors.append('Invalid native M3 witness identity')
+   if chosen[0].get('launchOrigin')!='CampaignOperations' or chosen[0].get('returnDestination')!='None' or chosen[0].get('outcome')!='None':errors.append('True nonterminal Campaign launch provenance missing')
++  expected_locale='fa-IR' if entry==7 else 'en'
++  if any(x.get('locale')!=expected_locale for x in chosen):errors.append('Native locale does not match requested entry')
+   victory,returned=chosen[-2:]
+   if victory.get('launchOrigin')!='CampaignOperations' or victory.get('returnDestination')!='CampaignOperations' or victory.get('outcome')!='Victory':errors.append('Exact native terminal Victory route missing')
+   if returned.get('terminalSnapshot') is not True or any(returned.get('terminal'+k)!=victory.get(v) for k,v in [('Frame','frame'),('Mission','mission'),('Session','session'),('Attempt','attempt'),('Locale','locale'),('Outcome','outcome'),('LaunchOrigin','launchOrigin'),('ReturnDestination','returnDestination')]):errors.append('Rendered Campaign return lacks exact frozen native terminal identity')
+@@ -106,7 +108,7 @@
+  return errors
+ 
+ def main():
+- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('pre_manifest');ap.add_argument('--dry-compile-proof',required=True);ap.add_argument('--heavy-lane-owner',choices=['main1345'],required=True);ap.add_argument('--scope',choices=['fa-IR'],default='fa-IR');args=ap.parse_args()
++ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('pre_manifest');ap.add_argument('--dry-compile-proof',required=True);ap.add_argument('--heavy-lane-owner',choices=['main1345'],required=True);ap.add_argument('--scope',choices=['en'],default='en');args=ap.parse_args()
+  state_idle();prep=read(PREP)
+  if pathlib.Path(args.pre_manifest).name!=args.pre_manifest:raise RuntimeError('Source manifest basename required')
+  if sha(REPORT/args.pre_manifest)!=prep['expectedFullSourceManifestSha256']:raise RuntimeError('Full source manifest not reviewed current source')
+@@ -126,7 +128,7 @@
+  raw=cli(['run_script','--file',str(FIXTURE),'--entry','CampaignSelectionJourney1345.Run','--timeout_ms','30000'],'load1345-campaign-m3-current.json')
+  check=json.loads(raw)
+  if not all(check.get(k)==v for k,v in {'stage':'SelfCheck','entry':7,'selected':4,'held':4,'attempt':1345,'group':'native-group','actualRendered':True,'readOnly':True,'terminalSnapshot':True,'terminalFrame':10,'terminalMission':'saga.ch01.m03.radar_warning','terminalSession':'native-terminal','terminalAttempt':1,'terminalLocale':'fa-IR','terminalOutcome':'Victory','terminalLaunchOrigin':'CampaignOperations','terminalReturnDestination':'CampaignOperations','shellPresent':True,'shellTransition':False,'shellMode':'MainMenu','shellPhase':'MenuReady','shellRoute':'Campaign','campaignValid':True,'boundTitlePresented':True,'boundTitleOwned':True,'boundTitleOwner':'typed-campaign-owner','boundTitleText':'CAMPAIGN','boundTitleKey':'ui.campaign.title','boundTitleSource':'CAMPAIGN','boundTitlePath':'Root/CampaignComposition/MenuTitlePanel/MenuTitle','boundTitleResolver':'PresentedOwnedLocalizedMenuTitlePanel'}.items()):raise RuntimeError('Actual flat native serialization selfcheck failed')
+- method='CampaignSelectionJourney1345.RunM03FA'
++ method='CampaignSelectionJourney1345.RunM03EN'
+  predispatch=source_manifest('pre-dispatch')
+  if read(REPORT/predispatch)!=read(REPORT/args.pre_manifest):raise RuntimeError('Source changed before dispatch')
+  native_idle('before-dispatch');s=state_idle();s.update(activeRun='native1345',activeLog=LOG.name,activeScope=method,activePreManifest=args.pre_manifest);STATE.write_text(json.dumps(s,indent=2)+'\n')
+@@ -151,7 +153,7 @@
+  errors.extend(qualify(log,rows,status,args.scope))
+  if wrapper!=0 or native!=0:errors.append('Actual wrapper/native exits not both0')
+  if not same:errors.append('Whole source/material manifests changed')
+- proof={'result':'Failed' if errors else 'PassedScopedNativeCampaignM3Journey','scope':args.scope,'sourceHash':prep['currentCandidateSourceHash'],'fullSourceUnchanged':same,'actualWrapperExit':wrapper,'nativeBridgeExit':native,'preManifest':args.pre_manifest,'postManifest':post,'log':LOG.name,'logSha256':sha(LOG),'fixtureSha256':sha(FIXTURE),'runnerSha256':sha(pathlib.Path(__file__)),'rawEvidence':archives,'errors':errors,'fullJourneyStrictTouchAudit':False,'disclosedQA':'Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.','playerReady':False}
++ proof={'result':'Failed' if errors else 'PassedScopedNativeCampaignM3Journey','scope':args.scope,'sourceHash':prep['currentCandidateSourceHash'],'fullSourceUnchanged':same,'actualWrapperExit':wrapper,'nativeBridgeExit':native,'preManifest':args.pre_manifest,'postManifest':post,'log':LOG.name,'logSha256':sha(LOG),'fixtureSha256':sha(FIXTURE),'runnerSha256':sha(pathlib.Path(__file__)),'rawEvidence':archives,'errors':errors,'fullJourneyStrictTouchAudit':False,'disclosedQA':'Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; EN-only does not close FA.','playerReady':False}
+  write_new(REPORT/('native1345-campaign-m3-'+('failure' if errors else 'pass')+'.json'),proof)
+  s=read(STATE)
+  if s.get('activeRun')!='native1345':raise RuntimeError('Run ownership changed; preserve shared state')

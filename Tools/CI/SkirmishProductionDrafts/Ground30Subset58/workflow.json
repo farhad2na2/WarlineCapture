@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "scope": "ExplicitSubsetSuccessor_PreservesOriginalV2AndProfileFreeDraft",
+  "source_map_sha256": "e16d04d462d9a4785cfe3b8e653b8f7ee2e845069381baeea12482f741f8cf3e",
+  "files": [
+    {
+      "target": "Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Workflow/Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+      "before_sha256": "82b01eae7347f464cc9a634e0d6765ee69d76fe45976709409717e8c6d9c8321",
+      "sha256": "90771567f42e221c4958b6bfe5003a1fbc5b5169b3cbdfcb440c4a784870518f"
+    },
+    {
+      "target": "Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Workflow/Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+      "before_sha256": "82d6cd73b86a09f3d05a645c651f8bd0a77ae2f3117b71dfda31de0b20b25bc2",
+      "sha256": "af0fbc3e9d30f2eed5c4188d149d60063812c06dfa4d3ff793ea8b4607480606"
+    }
+  ],
+  "native_execution": false,
+  "activation": "Root only after source freeze release; projected subset actual wrapper0 required",
+  "pending": [
+    "Independent review",
+    "Queued HEAD278+exact11G30overrides+entry owning proof after S005/qualification slots",
+    "Native standalone30/60+5+3 on projected committed subset with exact marker and actual0"
+  ],
+  "forbidden_claims": [
+    "WarmNone acceptance attributed to subset",
+    "Mission source fit or readiness",
+    "Camera profile acceptance"
+  ]
+}

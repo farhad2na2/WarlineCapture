@@ -36,7 +36,9 @@ namespace Game.Composition
         private bool IsSkirmishSession =>
             MissionId == SkirmishLaunchProjection.MissionId ||
             MissionId == "skirmish.city_crossroads" ||
-            MissionId == SkirmishPresetConfig.IndustrialBasinMissionId;
+            MissionId == SkirmishPresetConfig.IndustrialBasinMissionId ||
+            (World.DefaultGameObjectInjectionWorld is { IsCreated: true } world &&
+                SkirmishGenericMissionSource.MatchesMission(world.EntityManager, MissionId));
 
         private SkirmishPresetConfig SkirmishPreset
         {

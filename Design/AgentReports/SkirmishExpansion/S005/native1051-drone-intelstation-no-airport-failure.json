@@ -1,0 +1,40 @@
+{
+  "result": "Failed",
+  "scope": "Isolated funded Established-readiness Drone production from legal native IntelStation without Airport; actual paid queue API and native Touch selection/movement; no normal whole mission or full air lifecycle certificate",
+  "sourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1053-current-manual-fa-IR-seed104734-post-source-manifest.json",
+  "postManifest": "final-1051-drone-producer-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1051-drone-intelstation-no-airport-smoke.log",
+  "logSha256": "2635ecdb2cbae1ceed9ed10cb6c9d561af2003dad0835e12984b04dff7c49128",
+  "fixture": "native1051-drone-producer-fixture.cs.txt",
+  "fixtureSha256": "96f51d5fd234d1791f740a1e8c89da3bbbaca393550335cfe56a9c56d77f4997",
+  "touchEvidence": "delegation-aircraft-drone1051.touch.jsonl",
+  "fundingInjected": true,
+  "readinessGranted": "Established",
+  "enemyStrategyDisabled": true,
+  "deathStimulus": "HealthZero",
+  "actorPositionsSelectionOrdersInjected": false,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing [S005DroneProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0",
+    "Missing [S005DroneNativeSelection] result=Passed",
+    "Missing [S005DroneNativeMovement] result=Passed",
+    "Missing [S005DronePaidQueueDeath] result=Passed"
+  ],
+  "nativeMarkers": [
+    "[S005DroneMovement] scope=IsolatedNativeDroneR2ProducerAndTouchMovement normalMission=0 fundingInjected=1 readinessGranted=Established deathStimulus=HealthZero pricesCapsRatesMapsUnchanged=1",
+    "[S005DroneProducer] phase=NativeLegalIntelStationBuild airportPresent=0 readiness=Established fundingInjected=1",
+    "[S005DroneProducer] phase=NativePlacementTouch candidate=(949.98, 0.01, 617.41) input=Touch",
+    "[S005DroneProducer] phase=NativePlacementTouch candidate=(963.96, 0.01, 702.17) input=Touch",
+    "[S005DroneProducer] phase=NativePlacementTouch candidate=(904.03, 0.01, 699.31) input=Touch",
+    "[S005DroneMovement] result=Failed cases=0 normalInput=0 fullLifecycle=Pending nativeTouchSelectionMovement=Measured nativeAirLifecycle=Pending scanReturnCapacity=Pending reason=System.InvalidOperationException: No legal visible IntelStation site in bounded existing base sector; fixture/source-fit unresolved.",
+    "[S005DroneMovementCleanup] result=Passed attemptsRemoved=1"
+  ]
+}

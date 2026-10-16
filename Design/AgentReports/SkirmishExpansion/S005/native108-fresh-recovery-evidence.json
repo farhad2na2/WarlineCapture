@@ -1,0 +1,22 @@
+{
+  "log": "native108-fresh-recovery.log",
+  "sourceHash": "ad1dd633294ebc5ec81b545a85963756d6f3ff35dbbc61d38adb247d9e052a2f",
+  "wrapperExit": 0,
+  "completionReceipt": 0,
+  "logSha256": "ca73a690668950164f0636b20a75e36e705ad5a8e4a46a019c6596d2107009ec",
+  "freshNativeScene": true,
+  "actors": 42,
+  "sourceStructures": 344,
+  "banks": 2,
+  "functionalBuildings": 14,
+  "units": 28,
+  "readySessions": 1,
+  "input": "Editor diagnostic",
+  "editorPrefabResolver": true,
+  "normalInputRecovery": false,
+  "playerReady": false,
+  "nativeRecoveryComplete": false,
+  "countsForCurrentSource": false,
+  "opening": "native-108-recovered-opening.png",
+  "historicalAfter": "Runtime configured prefab registry integration"
+}

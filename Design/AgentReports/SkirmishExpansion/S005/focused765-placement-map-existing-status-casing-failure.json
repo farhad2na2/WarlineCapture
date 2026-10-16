@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "actualWrapperExit": 0,
+  "requiredPassMarkerFound": false,
+  "fullSourceUnchanged": true,
+  "sourceHash": "6ae95ed56be763f6f19138e74b1eed516ce2d1dcbf4e835403a1d22e627ed000",
+  "preManifest": "final-765-placement-full-map-controls-pre-source-manifest.json",
+  "postManifest": "final-765-placement-full-map-controls-failed-post-source-manifest.json",
+  "log": "tests-765-placement-full-map-controls.log",
+  "reason": "Existing status assertion expected uppercase INVALID but actual English status was Invalid placement; new input regression was not reached",
+  "playerReady": false
+}

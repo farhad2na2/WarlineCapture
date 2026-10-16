@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1216",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1220-checkpoint-pre-source-manifest.json",
+  "preflightManifest": "final-1216-lifecycle-preflight-source-manifest.json",
+  "fixtureSha256": "f6851d34e8ef1d660bd402d875f6dc062fa0c5db5ae1906158e1ac4902852533",
+  "executedRunnerSha256": "f469f00769864199e4b3d04c5a81b1bd9b18995b3b2da4659734b9fbb3996fea",
+  "method": "S005Lifecycle1216.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

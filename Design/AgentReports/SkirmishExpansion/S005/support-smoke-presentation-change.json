@@ -1,0 +1,46 @@
+{
+  "status": "Passed Focused266\u2013273:62 Support checks plus shared regressions; Native274/275 complete journeys passed",
+  "paths": [
+    "Assets/Game/Scripts/Rendering/Systems/SupportSmokePresentationSystem.cs",
+    "Assets/Tests/Editor/Support/SupportSmokeValidation.cs",
+    "Assets/Game/Scripts/Systems/Support/SupportSmokeSystem.cs",
+    "Assets/Game/Scripts/Systems/Support/SupportAttemptCleanupSystem.cs"
+  ],
+  "note": "Restore original Burst execution for allocation-free lifecycle helpers; host FPS cause remains unconfirmed",
+  "records": [
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/SupportSmokePresentationSystem.cs",
+      "beforeSha256": "e4be185d3b883dc7cf211f313fba49c440a6a0d206dd543e1bcda3fceed1d05a",
+      "afterSha256": "3de953624aea4b712fc11745d18d1c1cbaa7747b7ec4b34992e0678278e46f17"
+    },
+    {
+      "path": "Assets/Tests/Editor/Support/SupportSmokeValidation.cs",
+      "beforeSha256": "4773e9e14df82603e64ab1999766c8d8f8f220ac890b6e7f3f6204359ba86872",
+      "afterSha256": "4dcf13d3dc9432cbdbdf3c80e08df9874d8583425f184799c2f13d044e513ae3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportSmokeSystem.cs",
+      "beforeSha256": "8420006c53215e66960a949aa0cf15a4bf18b8381a232a7804299005a523102a",
+      "afterSha256": "30df9483f208fcbfb255ab2619ce592a5526660076d445fe9faaa1f648884d74"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAttemptCleanupSystem.cs",
+      "beforeSha256": "a71959e853d8a03fb0c5c30f0db5827ae1ab5ef24a170603612dc4a9ecc6d688",
+      "afterSha256": "fb87d1fa843617465610d9fc162940a4a20572926a4f4d6aa0dc0bdeeb4bf820"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/SupportEffectComponents.cs",
+      "beforeSha256": "e3b2d4a26c58861f5398715ddf476e6aa673c8de436967b3c2124e63dbbb992e",
+      "beforeDigestEvidence": "support-lifecycle-change.json",
+      "afterSha256": "069a624e9cc480d4e4b65dfafd998170cab9f7a81328a8fb472c091c775c6d96",
+      "reason": "Read-only shared session resolver relocated without adding assembly dependencies"
+    }
+  ],
+  "sourceHash": "1f69b3e85fe87dc82499cbfc056becd1df42e96ebf67f4ff9563a668aa26c967",
+  "evidence": [
+    "support-smoke-owner-focused-acceptance.json",
+    "native274-smoke-owner-manual-fa-evidence.json",
+    "native275-aria-en-evidence.json",
+    "final-275-source-independent-fingerprint.json"
+  ]
+}

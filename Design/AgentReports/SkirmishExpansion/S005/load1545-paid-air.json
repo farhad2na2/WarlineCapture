@@ -1,0 +1,155 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-paid-air-lead1545-prepared/S005PaidEnemyAirEffects1545.cs",
+      "entry": "S005PaidEnemyAirEffects1545.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.DamageRow.damageInjected' is never assigned to, and will always have its default value false",
+          "line": 751,
+          "column": 502,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1366.MilitaryReport.result' is never assigned to, and will always have its default value null",
+          "line": 2184,
+          "column": 20,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.AttackResolutionRow.sourceRoute' is never assigned to, and will always have its default value null",
+          "line": 38,
+          "column": 35,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 316,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.DamageRow.visibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 751,
+          "column": 547,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1366.MilitaryReport.observations' is never assigned to, and will always have its default value null",
+          "line": 2184,
+          "column": 80,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.DamageRow.airFlagsInjected' is never assigned to, and will always have its default value false",
+          "line": 751,
+          "column": 517,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 316,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1366.MilitaryReport.buildings' is never assigned to, and will always have its default value 0",
+          "line": 2184,
+          "column": 39,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.InterceptRow.poseVisibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 1228,
+          "column": 142,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.fighterPrepareZoomTaps' is never assigned to, and will always have its default value 0",
+          "line": 1526,
+          "column": 64,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 316,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.DamageRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 751,
+          "column": 534,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005GeometryClearance1366.MilitaryReport.factions' is never assigned to, and will always have its default value 0",
+          "line": 2184,
+          "column": 50,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.QueueRow.synthesized' is never assigned to, and will always have its default value false",
+          "line": 749,
+          "column": 196,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.CameraFramingRow.hiddenEnemyPoseRead' is never assigned to, and will always have its default value false",
+          "line": 1873,
+          "column": 85,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1545.PatrolRow.poseAirborneInjected' is never assigned to, and will always have its default value false",
+          "line": 1472,
+          "column": 320,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "The field 'S005PaidEnemyAirEffects1545.shooterAirborneObserved' is assigned but its value is never used",
+          "line": 746,
+          "column": 86,
+          "id": "CS0414"
+        }
+      ],
+      "compileMs": 667,
+      "executeMs": 12,
+      "assemblyName": "PipelineRunScript_S005PaidEnemyAirEffects1545_6961ccc6aa984836a213264bcbad723e",
+      "success": true,
+      "result": "Fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

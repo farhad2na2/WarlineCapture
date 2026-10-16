@@ -1,0 +1,27 @@
+{
+  "targets": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs",
+      "input_sha256": "d6fe1246ac1564d5bb0d78bdd3a4bf5a3e6b806725ac6507709516ac1e1627fd",
+      "output_utf8_lf_sha256": "4def48759cf7a8a86ee28d3f96b812fc30ad6724a96433091894e9a10970e959"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedVisualTests.cs",
+      "input_sha256": "cd1951908932ca4aae1255db139ad381e0ef18f0727ed54c22fb3de047459534",
+      "output_utf8_lf_sha256": "88b0fecdbba61fca82164a2b18141c6d50bc20f40efa6c8fd94d89f4a486b646"
+    }
+  ],
+  "audit": {
+    "ExpandedCheckpoint": "Changed shared LoadAuthored only: all4 positive spawn/restore/replay paths now use actual packaged definitions; negative checkpoint payload/header mutations unchanged.",
+    "ExpandedVisual": "Changed only S002/S003 successful CompileAndSpawn helpers. Existing S004 packaged correction retained. Registry/production/stand-in fixtures unchanged.",
+    "NativeCheckpointCodec": "No SetupCompiler/factory path. Deliberate synthetic wire/snapshot identity/integrity controls unchanged.",
+    "EnemyPolicyV1": "No SetupCompiler path. In-memory route deep-copy/missing-anchor/transit mutation directly tests EnemyPolicyCompiler; retain deliberate synthetic mutable layout.",
+    "StartingBuildings": "No SetupCompiler/factory path in three aggregate tests; shared grants/result ownership controls unchanged.",
+    "CampaignCurrent/Grid/AddressablesOwnership": "No Skirmish factory/SetupCompiler path in aggregate test files; source ownership/binding negative controls unchanged.",
+    "Continuation": "Pure42 objective reducer validation plus immutable source/load signature checks. No factory/mission compile path.",
+    "AlreadyPassed04": "Legacy12,binder8,areas15,builder4,Ground16-8,ExpandedDefinition,CombinedArms passed natively; no changes to those suites in this patch."
+  },
+  "production_changes": false,
+  "matcher_weakened": false,
+  "native_execution": false
+}

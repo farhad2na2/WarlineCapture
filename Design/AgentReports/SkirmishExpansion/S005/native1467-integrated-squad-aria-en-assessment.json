@@ -1,0 +1,59 @@
+{
+  "result": "PassedScopedCurrentSourceNormalAriaEN",
+  "run": "native1467-integrated-squad-aria-en",
+  "scope": "S005 Standard/Regular, English, seed 104734, normal public Menu and ARIA input through actual Victory, frozen rendered result, and Touch return to Adjust Setup on integrated squad UI source. This is one journey, not complete S005 or device acceptance.",
+  "sourceHash": "7026c612e038266aee61d3d7c1c9b345f224646330a4e6ffee95c3067e61d426",
+  "sourceFiles": 43310,
+  "sourceBytes": 4851915351,
+  "fullSourceUnchanged": true,
+  "sourceComparison": {
+    "fileSha256Mismatches": 0,
+    "missingFiles": 0,
+    "materialSha256Mismatches": 0,
+    "preManifest": "integrated-squad-focused03-source-manifest.json",
+    "preManifestSha256": "a4f21a1de92baf596f50d77afab8dbe8233af7a5f697bddce6b7d51dd5caf07b"
+  },
+  "checkedWrapperExit": 0,
+  "checkedWrapperExitProvenance": "Root verified the checked fresh-Editor wrapper session exit code 0; this run did not archive a separate .exit receipt beside the log.",
+  "nativeExitRequested": 0,
+  "normalInput": {
+    "menuLaunch": "Passed native Touch Skirmish, Scroll, S005, Launch",
+    "ariaPlayConfirm": "Passed native Touch Play and Confirm; zero interventions and unexpected contacts",
+    "recordedContacts": 78,
+    "completedContacts": 77,
+    "terminalCancellations": 1,
+    "terminalCancellationReason": "Native Finished disposal with no command accepted during contact",
+    "auditErrors": 0,
+    "unexpectedMax": 0,
+    "interventionsMax": 0,
+    "receiptViolationsMax": 0,
+    "physicalTakeoverRows": 0,
+    "terminalContactRecorded": true
+  },
+  "outcome": {
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "elapsedSeconds": 266.57,
+    "enemyBaseHp": 0,
+    "playerBaseHp": 800,
+    "countedWin": true,
+    "frozenResult": "Two final trace rows retain elapsed 266.57, simulationActive 0 and clockPaused 1; rendered Victory screenshot inspected.",
+    "return": "SkirmishTerminalProbe passed frozenResultAnd:ADJUST SETUP with one completed Touch and zero interventions; destination screenshot inspected."
+  },
+  "evidence": {
+    "log": "native1467-integrated-squad-aria-en.log",
+    "logSha256": "cb02bdb119dab9f860f13bf8a8bc2991f4ff2ff8e2ce353eb0a0ed77c89cef34",
+    "trace": "s005-aria-live-104734-en-c9a3441a517743d68cbc3fd911d11f70.jsonl",
+    "traceSha256": "bc4aaa7c038a6b72ad6e2f6ee33fdce0844276d92f049251ea0b7d2b742fd572",
+    "touchTrace": "s005-aria-live-104734-en-c9a3441a517743d68cbc3fd911d11f70.jsonl.touch.jsonl",
+    "touchTraceSha256": "e0c37b6a0256c5713afbd2064cce54fe2352ef174e858ea601c1ec3c42a8a3c1",
+    "renderedResult": "s005-aria-live-104734-en-c9a3441a517743d68cbc3fd911d11f70.jsonl.terminal-result.png",
+    "renderedResultSha256": "cd5b6b33a57eb2fb94e8e76ba88dd5c5dfab7b7bbdc7bb689f33d527ca36e694",
+    "renderedReturn": "s005-aria-live-104734-en-c9a3441a517743d68cbc3fd911d11f70.jsonl.terminal-destination.png",
+    "renderedReturnSha256": "d282151201cc67c032a02fd98ffc2938b6e8e4d0359c6dd29914e846528067a4"
+  },
+  "playerReady": false,
+  "realPlayerDeviceAcceptance": false,
+  "remaining": "Other seeds/locales, FA manual and Stop/manual journeys, broader S005 role/Campaign/performance gates, owner visual review, and real device acceptance remain separate."
+}

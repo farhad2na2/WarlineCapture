@@ -1,0 +1,10 @@
+{
+  "result": "PreflightInfrastructureFailure",
+  "reason": "Runner invoked under default network sandbox could not reach local Unity Pipeline; Unity CLI in approved elevated context succeeded. No observer load, activeRun, checked wrapper or gameplay.",
+  "filesSha256": {
+    "final-1592-normal-paid-south-flank-preflight-source-manifest.json": "5f9449f04fc12f00354ef44f0d8baacd067ece21655ffe6e59feb1464a468ce2",
+    "final-1592-normal-paid-south-flank-preflight-independent-fingerprint.json": "0d89e561608711bd1a401c74a1cceb90a9cd90db3eb3bd2240ef242a01399893",
+    "native1592-before-load-native-idle.json": "166a43c3fe90761ac3013f9994fdc1dd9e9e3b1bee2353f4e5ddf44d2f800372"
+  },
+  "nativeMissionExecuted": false
+}

@@ -1,0 +1,9 @@
+{
+  "result": "ConditionalSourceProposal_NativeEnvelopeReplayRequired",
+  "source": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+  "source_sha256": "8b2543aec4efc43443d95c769050eec488e0d9f6e0c67159909e836bbc598260",
+  "proposed_sha256": "1b1e6a10bd9280a18dec7b1a09b5657a0e213b0052777f81d58bd80eee65b180",
+  "readiness_gate_changed": false,
+  "budgets_changed": false,
+  "imported": false
+}

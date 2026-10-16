@@ -1,0 +1,42 @@
+{
+  "result": "Passed",
+  "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
+  "wrapperExit": 0,
+  "scope": "Native Airport-area map camera, public HQ focus, factory world selection/scroll/pause/resume only",
+  "seed": 104734,
+  "cameraTroopCommandsAdded": 0,
+  "pauseNativeFlagObserved": true,
+  "resumeNativeFlagObserved": true,
+  "normalInput": true,
+  "forcedFlags": false,
+  "gestures": 8,
+  "completeMatchClaimed": false,
+  "airCycleAcceptance": "Pending",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-658-airport-camera-factory-return-pre-source-manifest.json",
+  "postManifest": "final-658-airport-camera-factory-return-post-source-manifest.json",
+  "trace": "s005-aria-live-104734-en-e681f5b8f76546238400463dad94eb4f.jsonl",
+  "log": "native-658-airport-view-hq-return-factory-controls.log",
+  "screenshots": [
+    "s005-aria-live-104734-en-e681f5b8f76546238400463dad94eb4f.jsonl.factory-paused.png",
+    "s005-aria-live-104734-en-e681f5b8f76546238400463dad94eb4f.jsonl.factory-resumed.png"
+  ],
+  "inputAudit": {
+    "recordedContacts": 13,
+    "completedContacts": 13,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 8
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-en-e681f5b8f76546238400463dad94eb4f.jsonl.touch.jsonl",
+    "sha256": "88100f3fafe0a8db9f0ae60ca4599bd8840993b018cba461ab679c52e6e946bb"
+  }
+}

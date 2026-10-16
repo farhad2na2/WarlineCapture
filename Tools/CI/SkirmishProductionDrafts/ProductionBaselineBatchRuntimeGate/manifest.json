@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "scope": "ExistingBatchV3FiniteBaseline720AndExplicitStress1200Admission",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "before_sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "sha256": "33f5f636e8cab73cf3b7ca2530e4caeed39ab9a6f5a7085343554ef96974c7e9"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "before_sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "sha256": "a1e1a41f066df6fd7a363989247b7fdde4ccb25e71d93610a2e1462ff87ade37",
+      "runtime_gate_parent_source": {
+        "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+        "sha256": "995e54660645d3e63f007e1249655f6a27a08766795b542f90599fb7a3ff5d4a"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "before_sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "sha256": "a22d1c4d619e2465a523716bdc72365a4cacc0355aaa298237ffaee43f428fda"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "before_sha256": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe",
+      "sha256": "7e9f9dfec39f14890a6823efde38e9c8302d449e936026a2c296acea2cc9ea7a"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishS002AriaRunHarness.cs",
+      "before_sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "sha256": "5b69a152de53be5a192186d4771f624f6b395f38ab432a653306acb193cd0c66",
+      "composed_from": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+        "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/SkirmishS002AriaRunHarness.cs.txt",
+        "before_sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+        "sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba"
+      },
+      "actual_before_at_preparation": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+      "runtime_gate_parent_source": {
+        "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+        "sha256": "0cdf99dc3b1eeb56ab304e4b1f4b56ca016c97669ec25c3ec6f3cbe107ff62d6"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/SkirmishS002AriaRunHarness.MenuProbe.cs.txt",
+      "before_sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "composed_parent_source": {
+        "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+        "sha256": "01c4cf9a13d730b4cfacd8b6fbeba60b9c17b0961827a512f3f74af115d12a76"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthority.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/SkirmishProductionMatrixAuthority.cs.txt",
+      "before_sha256": null,
+      "sha256": "0baa1631733e25c549a70daee4a6f68414554387bb5742068b2fd30113663abd"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthorityValidation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishProductionMatrixAuthorityValidation.cs",
+      "before_sha256": null,
+      "sha256": "837dd9e8b2b27793a7f4f8ff0a6c083c5ae3b45f83666e38655fa017a4d48f2c",
+      "runtime_gate_parent_source": {
+        "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/SkirmishProductionMatrixAuthorityValidation.cs.txt",
+        "sha256": "bccffd52897065306b096d5e2d02b3ee675b8bf9cb7b8da72692a5eaee5ae654"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionMatrixAuthorityTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishProductionMatrixAuthorityTests.cs",
+      "before_sha256": null,
+      "sha256": "796f53130926cb40fbaea4c6e4889ae24e6004d36c346bd2f57acf1c512cf222",
+      "runtime_gate_parent_source": {
+        "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/SkirmishProductionMatrixAuthorityTests.cs.txt",
+        "sha256": "7e4483d20a36eb5032844755ca784122448ac1ad5a6ca28e432b1464bd72b29f"
+      }
+    }
+  ],
+  "tools": [
+    {
+      "target": "Tools/CI/skirmish_production_queue.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Tools/CI/skirmish_production_queue.py",
+      "before_sha256": "4fb6d6c26d6ae2974d99fb6f89a09005f8e2b097e6bdad7b075758e49c330aa1",
+      "sha256": "44aea1639d2a2557a0b5aef5a4ef4933ae172508c5d84b86f43de7a34e6668d6"
+    },
+    {
+      "target": "Tools/CI/prepare_skirmish_production_batch.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Tools/CI/prepare_skirmish_production_batch.py",
+      "before_sha256": "6c8da7d51f66d3adef83073a65fd72a2b41f03d720659fc5ce55d913f7ec4b23",
+      "sha256": "0282f06d90a121aecf8e1b4187663d584a029cb90ee723f92e46cc8d7042a51a"
+    },
+    {
+      "target": "Tools/CI/invoke_skirmish_production_batch.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/invoke_skirmish_production_batch.py",
+      "before_sha256": "dc310ef1ef78fc70cf941ee8a137e6616c7807dc318f0506322326abb4a8dada",
+      "sha256": "bbde0ef1e3f608cfeaef37e0a8e9f6bd24a9b66d28bd889c10c04222b7c3f05f",
+      "runtime_gate_parent_source": {
+        "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Tools/CI/invoke_skirmish_production_batch.py",
+        "sha256": "0bfa7c8c421431dbd792e4ab080bc3bab9f97da53b0001d9f8774666d58d2725"
+      }
+    },
+    {
+      "target": "Tools/CI/skirmish_production_matrix_authority.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/skirmish_production_matrix_authority.py",
+      "before_sha256": null,
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85"
+    }
+  ],
+  "native_execution": false,
+  "queue_success_enabled": false,
+  "parents": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "5e3f889ae957a8d24b7d484a06de846e6ee2d69df72cc837cf00dd5a25c9754a"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json",
+      "sha256": "c98531ea647895ba48439d2b67123be416c6e975f087e47990d287dc897f5d98"
+    }
+  ],
+  "application_order": "After exact AriaUiOwnedStorage c985 parent; preserve original BatchV3 and all prior failed proofs.",
+  "proof_manifest_sha256": "86c8712707748baf657801f00d859050a35fa1db8936461458446b40f329485a",
+  "successor_parent": {
+    "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/manifest.json",
+    "sha256": "193cd3d9488f9c67a10fd34303df52432bd4f5117479e899fef66ed81ac47d62"
+  },
+  "delta": "Existing S005 candidate QA admission restored plus actual scoped Unity runtime Error/Exception/Assert observation from first dispatch through final quitting. Checked launcher requires exact clean quitting marker and event; late errors invalidate it. Clean losses remain operational only, never wins.",
+  "runtime_gate_parent": {
+    "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/manifest.json",
+    "sha256": "57fe24a4ab181437fba16c95eddda0c9521479f82d2b265ff8b213a9098dd5bc"
+  }
+}

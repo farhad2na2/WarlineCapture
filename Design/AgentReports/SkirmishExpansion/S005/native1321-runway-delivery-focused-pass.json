@@ -1,0 +1,17 @@
+{
+  "result": "PassedScopedFocusedNative",
+  "sourceHash": "c69396566ba9875bb46514d07a9b1972d717debe59abb538c7fb6100d85098d0",
+  "sourceManifest": "final-1322-runway-delivery-repair-source-manifest.json",
+  "executeMethod": "RunwayDeliveryTaxiCleanupTests.RunFocusedValidation",
+  "cases": 8,
+  "wrapperExit": 0,
+  "compile": {
+    "status": "completed",
+    "failed": false,
+    "errors": []
+  },
+  "log": "native1321-runway-delivery-focused.log",
+  "logSha256": "50b98c643f7ef9deed72835f6cfac0f4743dc9714c5aafef6c8c03495fdbc5be",
+  "scope": "IsolatedActualSystemNotNormalMission",
+  "playerReady": false
+}

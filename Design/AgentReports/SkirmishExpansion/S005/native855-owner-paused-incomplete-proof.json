@@ -1,0 +1,25 @@
+{
+  "mission": "S005",
+  "run": "native855",
+  "result": "OwnerPausedIncomplete",
+  "ownerRequestedPause": true,
+  "playerReady": false,
+  "technicallyReady": false,
+  "countsForReadiness": false,
+  "sourceHash": "bf460941af9ae42d8c6cf3108515a2fe22680da263cfbad20ca4fd3644815272",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-854-multi-factory-priority-green-closed-post-source-manifest.json",
+  "postSourceManifest": "final-855-owner-paused-closed-post-source-manifest.json",
+  "log": "native-855-current-manual-en-seed155926.log",
+  "wrapperExitCode": 128,
+  "nativeBridgeExitCode": 1,
+  "note": "Owner pause before flight qualification; wrapper fork failure exit 128 retained separately from generic abort bridge exit 1. No gameplay pass or completed failure qualification inferred.",
+  "contactAudits": [
+    {
+      "trace": "s005-aria-live-155926-en-9f47a9b736b04ffbac2a49632ded3d92.jsonl",
+      "auditExit": 0,
+      "audit": "{\n  \"recordedContacts\": 22,\n  \"completedContacts\": 22,\n  \"phases\": {\n    \"Menu\": 9,\n    \"PlayerResume\": 13\n  },\n  \"terminalCancellations\": [],\n  \"errors\": [],\n  \"strictRecordedContacts\": true,\n  \"strictAllContactsEnded\": true,\n  \"nativeMenuContactsRecorded\": true,\n  \"terminalContactsRecorded\": false,\n  \"completeMatchCertified\": false,\n  \"note\": \"Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.\",\n  \"trace\": \"s005-aria-live-155926-en-9f47a9b736b04ffbac2a49632ded3d92.jsonl.touch.jsonl\",\n  \"sha256\": \"68dc8ab6117bdc53b7d5b4d7a6f0144195640892f63ceb2df64ef16d0c740ed7\"\n}\n",
+      "auditError": ""
+    }
+  ]
+}

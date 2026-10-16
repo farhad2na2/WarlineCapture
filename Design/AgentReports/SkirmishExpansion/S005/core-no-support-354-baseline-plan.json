@@ -1,0 +1,45 @@
+{
+  "sourceHash": "65937778fdf21f6334b14be9883c6bb2b31c67688eeebc67b39f37286cca5f75",
+  "supportEnabled": false,
+  "status": "Not started: combat save failed, checkpoint repair changes candidate",
+  "active": null,
+  "runs": [
+    {
+      "run": 354,
+      "locale": "en",
+      "seed": 104734,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEn"
+    },
+    {
+      "run": 355,
+      "locale": "en",
+      "seed": 130368,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed2"
+    },
+    {
+      "run": 356,
+      "locale": "en",
+      "seed": 155926,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3"
+    },
+    {
+      "run": 357,
+      "locale": "fa-IR",
+      "seed": 104734,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFa"
+    },
+    {
+      "run": 358,
+      "locale": "fa-IR",
+      "seed": 130368,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed2"
+    },
+    {
+      "run": 359,
+      "locale": "fa-IR",
+      "seed": 155926,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed3"
+    }
+  ],
+  "playerReady": false
+}

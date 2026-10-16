@@ -112,6 +112,8 @@ function Find-UnityLoggedFailure {
         'The re-connection attempt was UN-successful\.',
         'Test run completed\. Exiting with code [1-9][0-9]* \(Failed\)\.',
         'Aborting batchmode due to failure',
+        '(?m)^[^\r\n]*\.cs\([0-9]+,[0-9]+\):[ \t]*error CS[0-9]+:[^\r\n]*',
+        '(?m)^[ \t]*Unity\.Entities\.CodeGen\.EntitiesILPostProcessors: ILPostProcessor has thrown an exception:',
         'Crash!!!',
         'A crash has been intercepted by the crash handler\.'
     )
@@ -250,18 +252,56 @@ $process = Start-Process `
     -RedirectStandardError $stderrLogFile `
     -PassThru
 
+# Windows PowerShell 5.1 can return a detached Process wrapper from Start-Process.
+# Cache its native handle before Refresh/HasExited observe shutdown, so WaitForExit
+# and ExitCode still query the actual child rather than losing the exit status.
+# Failure to acquire the handle remains an error; no log marker substitutes here.
+$null = $process.Handle
+
 function Stop-UnityProcessTree {
     param(
         [Parameter(Mandatory = $true)]
         [System.Diagnostics.Process] $UnityProcess
     )
 
-    $taskkillExe = Join-Path $env:SystemRoot "System32\taskkill.exe"
-    if (-not (Test-Path -LiteralPath $taskkillExe -PathType Leaf)) {
-        throw "Windows taskkill executable is missing: $taskkillExe"
+    if ($UnityProcess.HasExited) {
+        Write-InvocationLog "[UnityInvoke] Owned root already exited; no process-ID cleanup attempted."
+        return
     }
-    & $taskkillExe /PID $UnityProcess.Id /T /F 2>&1 | ForEach-Object {
-        Write-InvocationLog "[UnityInvoke] taskkill: $_"
+    $taskkillExe = Join-Path $env:SystemRoot "System32\taskkill.exe"
+    $taskkillOutput = @()
+    $taskkillExitCode = $null
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+        if (-not (Test-Path -LiteralPath $taskkillExe -PathType Leaf)) {
+            throw "Windows taskkill executable is missing: $taskkillExe"
+        }
+        # PowerShell 5.1 wraps native stderr as NativeCommandError. A diagnostic
+        # about an already-ended child must not abort the remaining cleanup or
+        # replace the original fatal/timeout failure. Scope this preference to
+        # this owned-tree command, retaining both output and its real status.
+        $ErrorActionPreference = "Continue"
+        $taskkillOutput = @(& $taskkillExe /PID $UnityProcess.Id /T /F 2>&1)
+        $taskkillExitCode = $LASTEXITCODE
+    } catch {
+        Write-InvocationLog "[UnityInvoke] WARN: Owned-tree taskkill invocation failed: $($_.Exception.Message)"
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    foreach ($line in $taskkillOutput) {
+        Write-InvocationLog "[UnityInvoke] taskkill: $line"
+    }
+    Write-InvocationLog "[UnityInvoke] taskkill ExitCode: $taskkillExitCode"
+    try {
+        if (-not $UnityProcess.WaitForExit(5000)) {
+            Write-InvocationLog "[UnityInvoke] WARN: Owned root PID $($UnityProcess.Id) survived tree cleanup; attempting its cached Process handle."
+            $UnityProcess.Kill()
+            if (-not $UnityProcess.WaitForExit(5000)) {
+                Write-InvocationLog "[UnityInvoke] ERROR: Owned root PID $($UnityProcess.Id) remains active after cleanup."
+            }
+        }
+    } catch {
+        Write-InvocationLog "[UnityInvoke] ERROR: Owned root cleanup failed: $($_.Exception.Message)"
     }
 }
 
@@ -287,10 +327,15 @@ while (-not $process.HasExited) {
     $process.Refresh()
 }
 
-$process.WaitForExit()
+$cleanupIncomplete = -not $process.WaitForExit(10000)
+if ($cleanupIncomplete) {
+    Write-InvocationLog "[UnityInvoke] ERROR: Owned process did not exit after cleanup; preserving the failed invocation."
+}
 $exitCode = if ($timedOut) {
     124
 } elseif (-not [string]::IsNullOrWhiteSpace($fatalLogFailure)) {
+    1
+} elseif ($cleanupIncomplete) {
     1
 } else {
     $process.ExitCode

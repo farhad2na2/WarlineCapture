@@ -1,0 +1,218 @@
+{
+  "status": "Read-only dependency audit; no production or Unity changes",
+  "source_candidate": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "scope": {
+    "pilot": "S005 Combined Arms/Field/R1 Standard Regular",
+    "preserved": [
+      "450 Materials /120 Oil /350 Fuel initial stock",
+      "1080-second deadline",
+      "existing Campaign geometry and costs/caps/readiness",
+      "ground package and legal observation ownership"
+    ],
+    "ground_exit": "Steps1-3 coordinated ground/replacement/scouting can be proved before Step4; it does not certify all enabled combined-arms AI behavior",
+    "future_only": [
+      "unimplemented S006 Established mission",
+      "new FC/BT/CE objective policies",
+      "unexposed sizes/difficulties",
+      "future Support"
+    ]
+  },
+  "current_required_step4_behavior": [
+    "Reserve affordable immediate counter/logistics replacement without starving urgent defense; evaluate authoritative prices/locks/live+reserved caps",
+    "Conditional paid R1\u2192R2 research when producer/time/defense economics permit; no unconditional tech rush or free unlock",
+    "Restore missing non-designated functional production/economy only through native paid legal construction; never recreate designated objective",
+    "Retreat/regroup stays distinct from physical service/refuel; preserve same-faction physical resource transfers",
+    "Current Combined Arms later enables supported Drone/VTOL/fixed-wing/transport orchestration only after actual producer/readiness/source-fit and native operational gates; these are not certified by generic ground routing"
+  ],
+  "authoritative_boundaries": [
+    {
+      "capability": "Research",
+      "owner": "SkirmishResearchService.CanQueue/TryQueue/Tick + SkirmishResearchSystem",
+      "paths": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
+        "Assets/Game/Scripts/Skirmish/Contracts/SkirmishResearchContracts.cs"
+      ],
+      "facts": [
+        "faction2 state is SkirmishEnemyResearchStateComponent; same queue stores explicit FactionId",
+        "R1\u2192R2 costs240/45s, R2\u2192R3 costs480/60s; categories200/45s",
+        "Readiness locks Barracks; category locks chosen producer; completion/loss/refund owned by native service",
+        "Only actual completed research changes readiness/effects; initial fixed R1 retained"
+      ]
+    },
+    {
+      "capability": "Paid unit/support",
+      "owner": "SkirmishProductionService.EvaluateQueue + native correlated SkirmishEnemyPaidProductionAdapter",
+      "facts": [
+        "Exact setup army allows role; read actual stock/live+reserved caps/producers/readiness; logistics cap independently checked",
+        "Rifle80/Rocketeer120/LogisticsTruck100/Tanker140 current overlay prices",
+        "AA220 remains R1 but GroundStaging required; Drone140/TransportHeli240/light300/heavy420 require R2 and true Intel/Helipad",
+        "Fighter480/Strike520/Plane440 require R3 + true Airport; no automatic paid aircraft from initial Field state"
+      ]
+    },
+    {
+      "capability": "Construction",
+      "owner": "AIBuildPlannerSystem + FactionConstructionResourceUtilitySystemHelper + BuildingRuntimeSpawnRequest native processor",
+      "facts": [
+        "Native planner pays exact faction material bank before enqueue; success advances plan, failure rolls back exact receipt",
+        "Use current typed legal pads/full native preview including roads/sidewalks/trees/footprint; require intended origin, no generic random off-road fallback",
+        "1104/1106 separately paid enemy Airport mechanics are technical funded/controller fixtures, not normal autonomous economy proof",
+        "AIBuildPlan/AIBuildPlanEntry/raw BuildingRuntimeSpawnRequest absent from native checkpoint registry; reconstruction code handles captured completed facilities, not pending original paid construction. Define preserved pending/refund ownership before enabling this stage"
+      ]
+    },
+    {
+      "capability": "Logistics",
+      "owner": "BuildingResourceHaulerBridgeCompositionSystemHelper.TryAssignAutomaticHaulerOrder + ResourceHaulerAutomaticRoutePolicySystemHelper + physical transfer owners",
+      "facts": [
+        "Automatic route reads actor Faction and only same-faction real source/destination; no need a second logistics economy",
+        "Replace a truly lost LogisticsTruck/Tanker through existing paid production only when needed and feasible; strategic cash reserve is not a resource write",
+        "Existing size-specific fabrication/refinery recipes remain unchanged; service cannot inject fuel/HP"
+      ]
+    },
+    {
+      "capability": "Drone Scan",
+      "owner": "ScanIntelCommandSystem.EnqueueScan + UnitScanOrderExecutionSystem + SkirmishFogService",
+      "facts": [
+        "IsValidScanSource already accepts a valid current expanded faction2 source through TryGetActiveScanObserverFaction; explicit source avoids player selected-unit resolver",
+        "Must naturally move paid Drone and issue actual native Scan; frozen ledger remains shared owner, no visibility injection"
+      ]
+    },
+    {
+      "capability": "Air/return/transport",
+      "owner": "UnitAirMovementSystem/native producer home binding; narrow shared faction adapter still required for player-only command paths",
+      "facts": [
+        "Selected Return helper TryIssueReturnToBase is private; extract/share validated entity/faction path preserving natural home/flight semantics, never set Airborne/poses",
+        "Transport IsBoardablePlayerTransport and passenger validation explicitly require player identity; enemy cannot use them by relabeling faction/selection",
+        "Keep existing UI wrapper faction1 behavior; add explicit owned faction2 cohort/manifest input through same capacity/boarding/disembark validators",
+        "UnitTargetOrderSystem public source/target validation is player-relative; enemy attack must use existing faction-aware shared group/attack boundary, never copy player-only API naively"
+      ]
+    }
+  ],
+  "sequence": [
+    {
+      "step": "A ground closure first",
+      "proposed_code_owner": "root commander + aircraft_tests paid adapter + placement_audit policy/Parts; no extra framework",
+      "gate": [
+        "combined native compile/focused tests",
+        "passive normal source-frozen pressure run with paid replacement/scout telemetry",
+        "local defense/route/recovery and AI checkpoint no duplicate spend"
+      ]
+    },
+    {
+      "step": "B small paid economy/research coordinator",
+      "proposed_paths": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs (proposed narrow new companion)",
+        "existing Commander service decision call",
+        "existing Research/Production services unchanged authorities"
+      ],
+      "gate": [
+        "actual faction2 paid R2 CanQueue\u2192Queued\u2192Researching\u2192Completed and lock contention",
+        "stock reserve uses authoritative counter/logistics costs; urgent defense supersedes upgrade",
+        "native pending research Save/Continue retains same payment/producer queue/faction2 effects; player stock invariant"
+      ]
+    },
+    {
+      "step": "C one correlated legal facility replacement",
+      "proposed_code_owner": "aircraft_tests/native transaction adapter; placement_audit versioned checkpoint intent; root only strategy",
+      "gate": [
+        "missing non-designated factory or resource facility rebuilt on existing legal pad, exact paid receipt/completion/refund",
+        "pending construction Continue/loss/late callback no duplicate payment/free facility; attempt cleanup once",
+        "true designated base loss remains terminal; blocked/no-fit pads fail honestly"
+      ]
+    },
+    {
+      "step": "D R2 physical service + Drone/VTOL",
+      "proposed_code_owner": "aircraft_tests narrow operational adapter + existing haul/fog/flight owners; root candidate priority",
+      "gate": [
+        "real paid supplier/tanker actual faction2 delivery/service conservation",
+        "paid Intel/Helipad as needed, legal Drone source Scan or VTOL route/attack/return; actual low-fuel/lost-producer/second sortie",
+        "native operation/checkpoint/cleanup distinct from normal AI tactical qualification"
+      ]
+    },
+    {
+      "step": "E conditional R3/airport/fixed-wing/transport",
+      "proposed_code_owner": "aircraft_tests shared faction Return/transport methods; placement_audit policy capabilities/Parts review",
+      "gate": [
+        "only current allowed profiles and real source-fit air2/producer home binding; reuse frozen1106 physical evidence as applicable foundation",
+        "actual paid readiness/facility/role and natural taxi/takeoff/service/return/second sortie",
+        "same-faction actual complete passenger manifest Board\u2192Move\u2192Unload, capacity/hidden/unlink/death/Continue conservation",
+        "normal AI choices observe legal target/terrain and do not require every 22 roles or every four-minute full journey again"
+      ]
+    }
+  ],
+  "separate_gates": [
+    "Current mechanics proofs remain scoped; isolated funding/controller fixtures do not certify normal enemy growth",
+    "AirMobile and other BaseAssault profiles currently receiving policy still need capability-specific certification; cannot claim ground-only planner completes them",
+    "Owner visual/challenge review and target-device performance/player acceptance remain separate",
+    "No unsupported catalog/profile option is published by this plan"
+  ],
+  "bounded_test_gap": {
+    "source": "AircraftFuelSafetyReturnSystem.OnUpdate has no explicit positive-clock/gameplay check in this file",
+    "meaning": "Before enabling AI air service, exercise low-fuel-at-pause conservation; static absence alone is not a reproduced production defect; do not patch without relevant native evidence"
+  },
+  "source_proof": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/ENEMY_AI_IMPROVEMENT_PLAN_20261011.md",
+      "sha256": "2be0b2105821dab8be018c95a74f1fc9857444c4ab52d4dedd89c7344d9a2c8c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
+      "sha256": "ccb766cd303eebedb4fddb3d7512d78e3d74897752f55f46e5ed96d686eedc30"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishResearchContracts.cs",
+      "sha256": "87b9b75969dcfb37d64c5b4552aa926a4a2e0c475b14a9c4cf187b011d49c237"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs",
+      "sha256": "8b11221ca57a1f4849f0c8935b2cc664ad5623a3145bc54c00526c9ddd7908a1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "sha256": "d571606996dcfa1ff6b52ed6ed1fa21a5673af38b588843a6ba2f9d72012c4f4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+      "sha256": "eda456b1a09ea0e82462ef28de7e2c1d708e3a6a14ca08c11a217cb3f9233ad4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "sha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointStructureReconstruction.cs",
+      "sha256": "de481ba1fa3a13dcbe3fc9163913d43c49022832b1474db861a2f70896df674e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCapacitySystemHelper.cs",
+      "sha256": "55e6ad04496be49218b8d151d087980a57d46f4e08ef7cb78d5bb7d69885ee2b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandPlanning.cs",
+      "sha256": "b87567ea373fbafa6363089ea3ce50a7e6a04e99c6cc303b0228756c56ea9c9a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "sha256": "03c5299df33735f65d96bcd01bc0c37d80dcbb3eed52019423c403e4dcd53480"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "sha256": "51d5ecc7d686da660b00e2d6b156f2c733548a939f10edd315d048754bbcf354"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+      "sha256": "81dce6ecea80604f1d17a2b0744a1e6793ccfe4375102803c1897ab2a28df0ad"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+      "sha256": "c15db9583c8637fbfcba14dca3e4bc11294db743745940d65f1aace3746019be"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFacilityEconomyProfile.cs",
+      "sha256": "d5f9ce8292a68e6396f0975dff2dcd3845d228df78f0a755f8ea8de3ecf603a5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
+      "sha256": "63506cbf731ef8000111368275ac58b0dc346591726504d38ac7003d5cb73fcd"
+    }
+  ]
+}

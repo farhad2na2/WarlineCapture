@@ -1,0 +1,59 @@
+{
+  "result": "Passed",
+  "wrapper_exit": 0,
+  "required_marker": "[SkirmishProductionContinuationValidation] result=Passed",
+  "objective_rules": {
+    "FC": 13,
+    "BT": 15,
+    "CE": 14
+  },
+  "actual_unity_json": true,
+  "north_load_only": true,
+  "paid_plane_entry_loaded": true,
+  "gameplay_started": false,
+  "editor_mvid": "90f6ba1a-8af6-4ffb-9580-60d3b37bae3e",
+  "archive_sha256": "199cdd4250e7092b2477cc093f17b8c2527cc6e085f4a44d5bfafaf27931a443",
+  "sources": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFrontlineReducer.cs",
+      "sha256": "644a49a4e68c6c5b8a0172f7ccf0b67434f9dbaf41e813b2fe69ecfc29e6a4a8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBreakthroughReducer.cs",
+      "sha256": "dc415b10b81c6eed9533be73fc82cf2240d5d79dd9f4b48ec4fdade042f338c1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyReducer.cs",
+      "sha256": "2c7dea0d1033bbbebd288e691d515ffde10a7faf7bf1ee89caca5be7f320c74c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFrontlineReducerTests.cs",
+      "sha256": "b701ff01c63fb4532b5fc67f44a8920ab1d355c9525b71d2881f6a5dbb75aeb3"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishBreakthroughReducerTests.cs",
+      "sha256": "38208013574d14b143b71506b2f7ff3e11b4a274aea94f752a325ddea4a50203"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyReducerTests.cs",
+      "sha256": "37d165a83204c651394938fac75b69520efd7bfc3e71197a2951e5a28fc808b9"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedObjectiveReducerValidation.cs",
+      "sha256": "cc939cc470984f09a3fa7fe3596b9e746fcb4926d538b0499f4375293151f706"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs",
+      "sha256": "5f3401432592e7635989207ac7fb2d0f7a7d2026028d654f01cdb9cf37db3f86"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S005NormalNorthFlank1632Observer.cs",
+      "sha256": "5dda43e1f4a9b6c2aad6d7b2d5b0e6659aeb5541851113da8153fea02ba90fd7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
+      "sha256": "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e"
+    }
+  ],
+  "pending": "Native objective integration, real normal-input mission wins, device/player acceptance"
+}

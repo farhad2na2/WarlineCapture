@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var path = UnityEditor.AssetDatabase.GUIDToAssetPath(\"4d993162c8c844f27b6f7775e5324ef6\");\nvar asset = UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.MapSurfaceDataAsset>(path);\nif (!asset.TryCreateRuntimeBlobAsset(Unity.Collections.Allocator.Persistent, out var blob)) throw new System.Exception(\"No source surface blob\");\ntry {\nvar surface = new Game.Components.MapSurfaceComponent { SurfaceBlob=blob, HasSurfaceData=1, GridOrigin=blob.Value.GridOrigin, CellSize=blob.Value.CellSize, Dimensions=blob.Value.Dimensions };\nvar type = typeof(Game.Runtime.OperationMapRunwayReadModelUtility).Assembly.GetType(\"Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper\");\nvar method=type.GetMethod(\"IsSkirmishFootprintLevel\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);\nvar gridAsset=UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.GridAuthoringSceneConfigAsset>(\"Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Grid.asset\"); var blocked=new System.Collections.Generic.HashSet<UnityEngine.Vector2Int>(gridAsset.BlockedCells);\nvar sites=new System.Collections.Generic.List<object>(); int tested=0, level=0;\nforeach (bool rotated in new[]{false,true}) { int w=rotated?55:210, h=rotated?210:55;\nfor(int z=8;z+h<=surface.Dimensions.y-8;z+=128) for(int x=8;x+w<=surface.Dimensions.x-8;x+=128) {\nvar rect=new UnityEngine.RectInt(x,z,w,h); tested++;\nif (!(bool)method.Invoke(null,new object[]{surface,rect})) continue;\nlevel++; int blockedCount=0,roadCount=0; for(int rz=z;rz<z+h;rz++) for(int rx=x;rx<x+w;rx++) { if(blocked.Contains(new UnityEngine.Vector2Int(rx,rz))) blockedCount++; if(Game.Components.MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new Unity.Mathematics.int2(rx,rz),out var sample) && (sample.Flags & (Game.Components.MapSurfaceFlags.Road|Game.Components.MapSurfaceFlags.Bridge|Game.Components.MapSurfaceFlags.Highway))!=0) roadCount++; } if(blockedCount!=0 || roadCount!=0) continue; if(sites.Count<80) sites.Add(new {x,z,w,h,rotated,worldX=surface.GridOrigin.x+x*surface.CellSize,worldZ=surface.GridOrigin.z+z*surface.CellSize});\n}}\nreturn new { sourceSurface=path,dimensionsX=surface.Dimensions.x,dimensionsZ=surface.Dimensions.y,cellSize=surface.CellSize,originX=surface.GridOrigin.x,originZ=surface.GridOrigin.z, tested, level, candidates=sites, scope=\"Read-only surface-only coarse128m scan of existing Armor Break Campaign source; native level rule plus serialized blocked-cell and baked-road flags pre-screen; live buildings/sidewalks/occupancy and full native placement remain untested\", physicalSourceModified=false };\n} finally { blob.Dispose(); }"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "sourceSurface": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Surface.asset",
+        "dimensionsX": 1280,
+        "dimensionsZ": 520,
+        "cellSize": 1,
+        "originX": 740,
+        "originZ": 260,
+        "tested": 66,
+        "level": 54,
+        "candidates": [],
+        "scope": "Read-only surface-only coarse128m scan of existing Armor Break Campaign source; native level rule plus serialized blocked-cell and baked-road flags pre-screen; live buildings/sidewalks/occupancy and full native placement remain untested",
+        "physicalSourceModified": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

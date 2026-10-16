@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005Live1589Probe.cs",
+      "entry": "S005Live1589Probe.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 1037,
+      "executeMs": 80,
+      "assemblyName": "PipelineRunScript_S005Live1589Probe_2fa560f51bf44c3f9baf8bd73a8a2faf",
+      "success": true,
+      "result": "phase=5 tacticStep=0 cameraStep=0 lease=True now=32781.42 next=32612.856528042 touch=True busy=False running=True completed=25 dispatched=25 stop=True stopInteractable=True stopActive=False"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

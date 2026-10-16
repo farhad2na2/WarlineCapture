@@ -1,0 +1,21 @@
+{
+  "result": "Passed",
+  "wrapper_exit": 0,
+  "required_marker": "[SkirmishCandidateSourceHashWindowsValidation] result=Passed",
+  "assertions": 7,
+  "benchmark_bytes": 16777216,
+  "native_milliseconds": 14.6154,
+  "managed_reference_milliseconds": 1737.3758,
+  "scope": "DisposableFixtureOnly; full-project equivalence pending next source-pinned diagnostic",
+  "archive_sha256": "9061dd9954ae080e338a1d4db14dc165702c2d930b5a61f447579596fd02cc38",
+  "sources": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs",
+      "sha256": "93623e3618fd6148911efc88dd6a5609e05ddb4cac4c141da7680f8c99792200"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHashWindowsValidation.cs",
+      "sha256": "429f0d889c42fe596f59a753763bea259f4f7a948fee188c7973957585fd548e"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "result": "Released1455OptionalEditorPerformanceAfterFreshCurrentEditorReview",
+  "manifestBeforeSha256": "34a97be1f8ce9b3244253cebd23e2d9d6c9871d426d4e3db32b6ebc491614740",
+  "manifestAfterSha256": "9049847621029c4ac3b59ebf47d90e02d6e0148d679e525ace8972284ee2139f",
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "evidence": {
+    "editor": "compile1455-current-editor.json",
+    "compile": "compile1455-current-status.json",
+    "console": "compile1455-current-errors.json",
+    "loaded": "native1455-loaded-assembly-witness.json",
+    "dry": "compile1455-normal-aria-perf-reviewed-dry-run.json",
+    "source": "final-1435-post-campaign-merge-precompile-source-manifest.json"
+  },
+  "scope": "Native ARIA gate preserved; supplemental Editor performance is diagnostic only"
+}

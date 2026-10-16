@@ -1,0 +1,23 @@
+{
+  "result": "IndependentSourceReviewClear",
+  "scope": "One sequential facade only; parent seven-source delta preserves previous review",
+  "manifestSha256": "bfa14999bb1a132a695a1e1c67c28f42e8f279d385e4f6c398dfbf60af70476c",
+  "sourceSha256": "ccb334aa6188e82d2f117db09b3aa18948a899be2c66d6ba1f7bf533b9c37866",
+  "parentSha256": "e6b84964a937328db6a9ee343a395d90424cc599bf73fbdac494a1df812c758f",
+  "checks": [
+    "Exact authority-derived113 catalog IDs across4 fixed source groups",
+    "Distinct3 size labels per mission;339 vectors independent of refinement passes",
+    "Durable mission JSON deep equality/SHA and pass-size file SHA joins",
+    "Exact World/default/scene/root ownership before and after each source",
+    "No later source World after unrestored ownership",
+    "Independent failures retained and aggregate failure before final marker",
+    "Original environment restored in finally",
+    "No binding/source-fit/camera/normal-readiness promotion"
+  ],
+  "remaining": [
+    "Narrow owning Editor proof",
+    "Actual runtime/memory cost and all4 source collection checked0",
+    "Per-seed normal mission/source-fit/camera acceptance"
+  ],
+  "assetsNativeGitWrites": false
+}

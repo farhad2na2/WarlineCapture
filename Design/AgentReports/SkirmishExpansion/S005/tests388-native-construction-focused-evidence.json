@@ -1,0 +1,16 @@
+{
+  "sourceHash": "feb01da23b2a83f1688df256aeb0cac9b32a4063413fd53b0ce66d876e2affd4",
+  "countsForCurrentSource": false,
+  "result": "Passed",
+  "recoveryTests": 51,
+  "log": "tests-388-native-construction-recovery.log",
+  "logSha256": "98be97eeb666dedc0e2007e23a618d198935292509cc357b5bb4be5655700b79",
+  "requiredMarkers": [
+    "[SkirmishNativeCheckpointSnapshotTests] result=Passed tests=6",
+    "[SkirmishNativeRecoveryStagingValidation] result=Passed tests=51",
+    "[ExistingEditorValidation] result=Passed"
+  ],
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "playerReady": false
+}

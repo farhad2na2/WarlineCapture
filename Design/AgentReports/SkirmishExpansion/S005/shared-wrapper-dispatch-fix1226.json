@@ -1,0 +1,25 @@
+{
+  "applied": true,
+  "files": [
+    {
+      "path": "Tools/CI/invoke_unity_macos.sh",
+      "baseSha256": "962deaefce86aba9d04e688cf7fc9ca8c8626ce8fad8271fb3587e869b4fab92",
+      "stagedPath": "/private/tmp/s005-wrapper-dispatch-fix/Tools/CI/invoke_unity_macos.sh",
+      "stagedSha256": "42be5b26166954408447c37a68a98c17ac3fc50fbefbdd8870e659595c84d396"
+    },
+    {
+      "path": "Tools/CI/tests/test_unity_macos_reuse_dispatch.py",
+      "baseSha256": null,
+      "stagedPath": "/private/tmp/s005-wrapper-dispatch-fix/Tools/CI/tests/test_unity_macos_reuse_dispatch.py",
+      "stagedSha256": "f860642b890f96a361b6d0a2a15ca40ed97d218477c251d868a9e64792f652ae"
+    }
+  ],
+  "monitorUnchanged": true,
+  "nativeQualification": "PassedActual1226TenCycleWrapperAndNativeClosure",
+  "tests": "10stubcasesPassedAfterTestOnlyTimeoutWordingCorrection",
+  "nativeLog": "native-1226-lifecycle-fa-seed104734.log",
+  "nativeWrapperExit": 0,
+  "nativeExit": 0,
+  "testsLog": "wrapper1226-stub-tests-final.log",
+  "testCurrentSha256": "03f0fd2463b4bbd2121b37c95a94b7572a7214a84447618bf847014046ca6811"
+}

@@ -1,0 +1,29 @@
+{
+  "result": "PreparedNotCompiledNotLoadedNotRun",
+  "fixture": "/private/tmp/S005BilateralAirportPrerequisite1103.cs",
+  "fixtureSha256": "9a7459fae76149613ff25db3245e38baae7f42fe4be40bbbe4f649fe2d4afc9b",
+  "runner": "/private/tmp/s005-run-bilateral-airport-prerequisite-1103.py",
+  "runnerSha256": "0b4b8578153fe26cc2daf3d87425ca8f146898512b72ed160193a429dc6c4cae",
+  "scope": "First genuine independently paid bilateral nativeAirport source-fit gate only. Existing unchanged Campaign geometry, true owner1 UIpaid Airport + true owner2 nativeAIBuildPlanner paid Airport. StandardAirCap2/config read forboth; actual4aircraft paid capacity/taxi/launch/return/nativeenemyairtarget combat NOTperformed or certified.",
+  "producerProtocol": [
+    "First owner1 Airport actual normal nativeTouch focus/build/catalog/currentfullvalidator/Confirm payment/construction and living nativeadoption. ActualLifetimeConstructionSpent delta equals actualpreviewprice, nativeorigin/footprint/runtimeowner exact.",
+    "Second unrotated currentfull-native-preview scanned AFTER first real occupancy; player UI is only read-only legality preview and CancelTouch, never second playerConfirm/ownershipswap. Fundingplayer topup allows native CanConfirm affordability gate despite first purchase; no secondplayer spend.",
+    "Temporary actual AIBuildPlanner disabled externally to capture pending/completed native receipts; existingplans preserved+paused, singletyped faction2 Airportplan built. SameEditorTick temporaryAIControlled2=1 onlyduring actual Unmanaged.UpdateSystem; finally restores exactcontrol beforeframe.",
+    "Actual native plan creates/spends true faction2 pendingrequest, actual native buildingruntimevalidator processing constructs ownedAirport; require flagsHasOwner1, noAuthoredStartingGrant/nonbuildable/rotation, zeroCredits/fullactualMaterials, exactCurrentbank/LifetimeConstructionSpent payment.",
+    "Require actualruntimeorigin/footprint matches fresh qualified preview, nativeeffectiveAirportrunwayRectinsideS005logicalbounds and nooverlapownrunwayRect; actualnativeownrunwayreadmodel IDs1/2 independentlyowned.",
+    "Consume actual completed request via actual nativeplanner update; currenttime/longinterval on isolatedtechnicalplan preventsretry/newrequest during settlement; success requiresNextIndex1 andrequestremoved. Restoreplans/planner/control exactly."
+  ],
+  "limits": [
+    "Nativepaidplanner singlefacility protocol prepared but not yet exercised; root must review/drycompile/load.",
+    "TemporaryAIplanner/factioncontrol/funding/readiness/openingHealthZero retirement is isolatedtechnicalsetup, not normalenemygrowth certification.",
+    "Candidate sourcefit nonexhaustive; nativefailure/relocation rejectsgate, no proof existingmapimpossible and no newphysicalmaps/budgets/caps.",
+    "Allmandatoryreceipt parserfields explicitJsonUtility.Serializable primitive/string, flatpublic struct; no nested Entity/array output assumption.",
+    "Playerfacility native payment+entity proof doesnotserializefake constructionrequestID; enemyfacility actualplanrequestID pending/completed captured.",
+    "Four actualpaidPlane/Fighter actors/cap2 perfaction/taxi-launch-return and actualenemyairtargetAA/Fightereffects need bounded successor afterrealpaidfacilitygate."
+  ],
+  "dryCompile": "rtk proxy unity command run_script --file /private/tmp/S005BilateralAirportPrerequisite1103.cs --entry S005BilateralAirportPrerequisite1103.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "nativeInvocation": "rtk proxy python3 /private/tmp/s005-run-bilateral-airport-prerequisite-1103.py <CURRENT_FULL_SOURCE_MANIFEST_BASENAME> --heavy-lane-owner main1103",
+  "staticApiSourceProof": "delegation-bilateral-standard-air2-api-protocol-20261011.json",
+  "noUnityCallsByAgent": true,
+  "noProductionSourceEdits": true
+}

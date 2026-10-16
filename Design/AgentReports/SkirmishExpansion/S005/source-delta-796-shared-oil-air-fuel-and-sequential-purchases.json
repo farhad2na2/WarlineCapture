@@ -1,0 +1,16 @@
+{
+  "sourceHash": "f58ae1200e0537c452163bcab1ec8fdab74ed4cf675420d7b103e66be618a448",
+  "previousFullSourceHash": "63c7313d48dddedf0ca5cb011cc32f4bd7a561a3aae68afc64fdf25157462cda",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+    "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+    "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs",
+    "Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs"
+  ],
+  "materialsIdentical": true,
+  "physicalMapConfigBudgetsRatesDeadlinesUnchanged": true,
+  "scope": "Shared expanded Oil demand accounts for inbound/outbound reservations; aircraft fuel optional GridConfig lookup tolerates absent/nonunique grids. Validation driver buys Strike520 then each Tanker140 sequentially while factories operate and support count stays within6.",
+  "focusedProof": "native796-shared-oil-air-fuel-regression-pass.json",
+  "normalInputConfirmation": "Pending"
+}

@@ -1,0 +1,17 @@
+{
+  "result": "OneUseNative1627DispatchReleased",
+  "runId": 1627,
+  "lane": "fa_r2",
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "sourceManifestSha256": "1ab0a5396429586a08e99695386b39d5e74cfcf509d97a1387e8179cfe0a4a3a",
+  "fixtureSha256": "ebaf8610ab8c95ff45c3363c7c6478a9c43b04f715c34df873ecf0b2a191980c",
+  "packageSealSha256": "44d7c8c632112bf8b1a56914e6d8eb1a11d5c39a2c786024d12619dafa83c01d",
+  "connectedReviewSha256": "ade00e31f9c6f087adb66bc68ead2f6ce9c77396f8efd384b0182522fed2669b",
+  "postclosureOfflineReviewSha256": "5251306834bf6903a4f1b1a30f835d9f27bb5e9e92d9e53a302b79e7d58fdd98",
+  "method": "S005NormalManualR2Recovery1627Observer.RunValidation",
+  "log": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1627-normal-fa_r2-seed155926.log",
+  "nativeDispatchPermitted": true,
+  "used": true,
+  "playerReady": false,
+  "dispatchClaim": "S005NormalManualR2Recovery1627Observer.RunValidation"
+}

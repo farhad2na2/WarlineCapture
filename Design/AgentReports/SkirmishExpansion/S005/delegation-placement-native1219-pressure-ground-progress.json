@@ -1,0 +1,125 @@
+{
+  "result": "ReadOnlyClosedNativePressureAuditAndExternalRepairPrepared",
+  "nativeProof": "native1219-passive-pressure-pass.json",
+  "actualPressureResult": "PassedScopedNormalPassiveEnemyPressure",
+  "sourceHash": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "naturalDefeatSeconds": 731.3532104492188,
+  "playerBase": {
+    "initialHp": 800,
+    "finalHp": 0,
+    "playerUnitsLost": 12,
+    "enemyUnitsLost": 21,
+    "playerBuildingsLost": 2,
+    "enemyBuildingsLost": 0
+  },
+  "playerOrders": 0,
+  "ariaStarted": false,
+  "enemyDisabled": false,
+  "ordinaryNativeDefenderAutoEngagement": true,
+  "paidEnemyReceipts": [
+    {
+      "id": 1001,
+      "role": "Rifle",
+      "paidMaterials": 80,
+      "delivered": 4,
+      "finalPhase": "Live"
+    },
+    {
+      "id": 1002,
+      "role": "Rifle",
+      "paidMaterials": 80,
+      "delivered": 4,
+      "finalPhase": "Live"
+    },
+    {
+      "id": 1003,
+      "role": "Rifle",
+      "paidMaterials": 80,
+      "delivered": 4,
+      "finalPhase": "Live"
+    },
+    {
+      "id": 1004,
+      "role": "Rocketeer",
+      "paidMaterials": 120,
+      "delivered": 4,
+      "finalPhase": "Released"
+    },
+    {
+      "id": 1005,
+      "role": "Rocketeer",
+      "paidMaterials": 120,
+      "delivered": 4,
+      "finalPhase": "Released"
+    },
+    {
+      "id": 1006,
+      "role": "Rocketeer",
+      "paidMaterials": 120,
+      "delivered": 4,
+      "finalPhase": "Live"
+    },
+    {
+      "id": 1007,
+      "role": "Rocketeer",
+      "paidMaterials": 120,
+      "delivered": 0,
+      "finalPhase": "Producing"
+    }
+  ],
+  "strictScreens": [
+    "NaturalMainBaseDestroyed_Defeat_SaveAcknowledged1",
+    "CanvasRenderedLocalizedDefeat",
+    "ActualLeaveTouch_TypedRenderedMainMenu"
+  ],
+  "separateKnownIssue": {
+    "windowSeconds": [
+      330,
+      525
+    ],
+    "groups": [
+      {
+        "groupId": 9,
+        "role": "Car",
+        "actionKey": 134,
+        "waypoint": 2,
+        "destination": [
+          1101.8210449,
+          582.8
+        ],
+        "order": "Move",
+        "duty": "Escort",
+        "lastIssuedAt": 312.67
+      },
+      {
+        "groupId": 10,
+        "role": "ApcArmored",
+        "actionKey": 131,
+        "waypoint": 2,
+        "destination": [
+          1161.4,
+          650
+        ],
+        "order": "Move",
+        "duty": "Escort",
+        "lastIssuedAt": 304.4
+      }
+    ],
+    "observation": "Unchanged accepted goal/ActionKey/waypoint, repeated >2m local motion without arrival, LastProgressAt refreshed every4\u201313s, retries0. No destination-churn cause established.",
+    "sourceCause": "SkirmishEnemyCommanderService.Issue calls DecisionRules.Progressed(any displacement) to reset timer/retries; this permits fixed-goal oscillation to bypass bounded recovery."
+  },
+  "externalCandidateManifest": "/private/tmp/s005-ground-progress1219-v1/manifest.json",
+  "externalManifestSha256": "3f03ba583c2e678f9cbe5ed2cc93418f59a7fca935feba9620821c82ab43d881",
+  "repairNativeCompileExecuted": false,
+  "repairApplied": false,
+  "scopeLimits": [
+    "Radial local-waypoint progress is not authoritative remaining path distance. A legitimate native obstacle detour lasting >=existing10s without net waypoint approach can trigger existing recovery; targeted native route behavior remains required.",
+    "Focused tests use isolated owned ledger actors and real shared group-order acceptance, not native prefab paid delivery or a normal mission.",
+    "Native compile and focused execution are pending; no pass claim from external static preparation."
+  ],
+  "playerReadyClaim": false,
+  "allEnemyPlanStepsCertified": false
+}

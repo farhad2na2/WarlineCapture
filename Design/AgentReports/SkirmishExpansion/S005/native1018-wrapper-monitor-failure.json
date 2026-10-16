@@ -1,0 +1,17 @@
+{
+  "result": "FailedWrapperMonitor",
+  "actualWrapperExit": 128,
+  "nativeCompletionPending": false,
+  "nativeLog": "native-1018-normal-strike-flight-save-continue.log",
+  "observedOutput": [
+    "invoke_unity_macos.sh: fork: Resource temporarily unavailable",
+    "rtk: Failed to execute command: python3: Resource temporarily unavailable (os error 35)"
+  ],
+  "unityRemainsRunning": true,
+  "processesTerminated": false,
+  "licensingFailureClaimed": false,
+  "recovery": "Replace per-second polling forks with one bounded Python monitor; native result remains separate and original wrapper failure remains retained.",
+  "technicallyReady": false,
+  "playerReady": false,
+  "nativeBridgeExit": 1
+}

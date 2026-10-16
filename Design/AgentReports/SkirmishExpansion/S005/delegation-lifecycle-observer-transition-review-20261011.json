@@ -1,0 +1,89 @@
+{
+  "scope": "ReadOnlyActual1213ObserverSessionReadPrerequisiteReviewNotNative1213Result",
+  "sourceHash": "93e8d14c9143a3bf6e451ce4a08730255d5ecd270dc22182443a3a31a38d4d96",
+  "fixture": "/private/tmp/s005-lifecycle1213/S005Lifecycle1213.cs",
+  "fixtureSha256": "4e2bc989af0c9faefc7e466c07362908eaa65cd18bef08bb129acc1c6c3e089d",
+  "noAssetsUnityGitOrActiveStateChanges": true,
+  "findings": [
+    {
+      "read": "Tick runtime clock",
+      "fixtureLines": [
+        71,
+        74,
+        191
+      ],
+      "prerequisite": "Live requires Clock alongside ExpandedSession/MatchState/ResolvedSetupRecord, exact singleton; prevents proven1212 phase8 missing-clock read",
+      "status": "DemonstratedObserverDefectNarrow1213QueryRepairAlreadyPrepared"
+    },
+    {
+      "read": "CaptureFresh groups/research/caps/queues/stock/actors",
+      "fixtureLines": [
+        155,
+        157,
+        164,
+        170
+      ],
+      "prerequisite": "SpawnComplete1, SpawnVisualPending0, expandedPhasePlaying, fresh identity; reads remain exact assertions",
+      "productionContract": "SkirmishScenarioSpawnSystem.TrySpawn calls TrySpawnLedgers and only then sets SpawnComplete1/Playing107\u2013109. TrySpawnLedgers creates capacities/stock/productionbuffer152\u2013179 and calls ArmyGroup.EnsureSession181 +Research.EnsureSession182 before completion.",
+      "status": "NoAdditionalPartialReadDefectDemonstrated; do not hide missing complete-session state"
+    },
+    {
+      "read": "Snapshot bank/cap/research/production/researchqueue",
+      "fixtureLines": [
+        79,
+        89,
+        93,
+        217,
+        218
+      ],
+      "prerequisite": "Only phase4\u20135 after already accepted fresh attempt, actualselectedHold then Pause. All actor optional pose/health reads check HasComponent. No Snapshot in Replay-wait phase8.",
+      "status": "StablePostSpawnScope; no speculative guard change"
+    },
+    {
+      "read": "SelectedMarker role/owner/typedmarker",
+      "fixtureLines": [
+        201,
+        215
+      ],
+      "prerequisite": "Phase2 after phase1 requires freshAttempts identity and activePlaying; query owner+Selected and same attempt/faction; optionalmarker/Parent/transform read guards already present.",
+      "status": "NoPartialStartupReadBeforeSpawnComplete"
+    },
+    {
+      "read": "Result component",
+      "fixtureLines": [
+        220,
+        226
+      ],
+      "prerequisite": "Phase7 requires Live and matchPhaseFinished. Actual outcome owner adds frozen Result then projects terminalMatch in same synchronous Update68\u201381. Replay phase8 reads no Result.",
+      "status": "NoMissingResultDemonstrated; missing genuine Finished result would remain failure rather than skip gate"
+    },
+    {
+      "read": "Confirmation diagnostic clock",
+      "fixtureLines": [
+        283
+      ],
+      "prerequisite": "Live plus explicit HasComponent guard",
+      "status": "AlreadyGuarded"
+    },
+    {
+      "read": "Final menu/Adjust session absence",
+      "fixtureLines": [
+        227,
+        236
+      ],
+      "prerequisite": "Live false alone is not total entity cleanup proof; subsequent fresh and after-close physical census plus source/Touch/result gates remain separate.",
+      "status": "NoRelaxedPhysicalCleanupClaim"
+    }
+  ],
+  "recommendation": "Keep1213 immutable one-query prerequisite change. No additional fixture, gate expansion, broad optional-component skipping, or production repair justified by current evidence. Any actual future missing-component failure must retain exact phase/attempt/component evidence before narrowing its observer prerequisite.",
+  "limited1212Evidence": {
+    "proof": "native1212-limited-confirmation-defeat-prefix.json",
+    "sha256": "1f31170f23816aadc3af1945ccbb235a6d5d40111a9e12199a09d53dc9466e17",
+    "overallFailed": true,
+    "confirmedRenderedDefeats": 1,
+    "cycle0NormalControls": 6,
+    "freshReplacementQualified": false,
+    "fullTenCycleOrReadyClaim": false
+  },
+  "active1213Outcome": "NotReadOrClaimed"
+}

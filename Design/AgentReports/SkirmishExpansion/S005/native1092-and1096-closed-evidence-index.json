@@ -1,0 +1,196 @@
+{
+  "scope": "Closed native1092 fixed-wing capacity runtime with retained parser failure/offline correction; closed native1096 exact visual diagnostic with retained strict native failure. No readiness certificate.",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1092-fixedwing-capacity-dry-run.json",
+      "sha256": "4abd54a7804f5077e6cc3d3b15dddd4b50a457f5effd453a11a040dec7b2d6bd",
+      "bytes": 726
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/compile1096-transport-scale-diagnostic-dry-run.json",
+      "sha256": "84cf15b71bbead8fce10cf3e40cd638e53b3af49860773e90c2b589239f1b9ad",
+      "bytes": 1555
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-native1096-scale-diagnosis-20261011.json",
+      "sha256": "225a0e60d677c7308a14b19b26e58e54d139be696acdcf46c1232763bb8b4cad",
+      "bytes": 29041
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1092-fixedwing-capacity-post-independent-fingerprint.json",
+      "sha256": "2caaf974700acfa3b63cebc7e77b774c0cb1bae19bbb19d89b76de0609d0c1dc",
+      "bytes": 376
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1092-fixedwing-capacity-post-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1092-fixedwing-capacity-pre-dispatch-independent-fingerprint.json",
+      "sha256": "897e02a7fae36299366dda3517008ba123b0de70698b0a86d2e9ddb6add7453d",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1092-fixedwing-capacity-pre-dispatch-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1092-fixedwing-capacity-preflight-independent-fingerprint.json",
+      "sha256": "dcdc4411ba3b2a68b772f43669d9276602bc0ffca0205bbc71e51f6dfa1b20cc",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1092-fixedwing-capacity-preflight-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1096-transport-scale-post-independent-fingerprint.json",
+      "sha256": "70604baba76fb335473f0e904f9821f8c93cff1ad61639414386a4ea7eba6db3",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1096-transport-scale-post-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1096-transport-scale-pre-dispatch-independent-fingerprint.json",
+      "sha256": "f6eaf9250ff56a74750a96e993c348d237431d14271ca47caa16a62084700557",
+      "bytes": 369
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1096-transport-scale-pre-dispatch-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1096-transport-scale-preflight-independent-fingerprint.json",
+      "sha256": "f4cd9fc6844b3c6e0ff98d898bbbc4c9c6c4577ae74e9529792c78d3cd830872",
+      "bytes": 375
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/final-1096-transport-scale-preflight-source-manifest.json",
+      "sha256": "f31ceb18520fe125aff1e51f7bbfec5cbe3989f534189b60444c786d8869af94",
+      "bytes": 6922035
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/load1092-fixedwing-capacity-fixture.json",
+      "sha256": "40ea02b65a834be1db3409f2f9998d421e03ca2a76feef0a3d446e407a93a732",
+      "bytes": 762
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/load1096-transport-scale-fixture.json",
+      "sha256": "fc40eacdd272402e39c97de8b282a712a888840b2af7ac2bbf7fe7bd19591052",
+      "bytes": 1598
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1092-isolated-paid-fixedwing-capacity.log",
+      "sha256": "fad7043d068b6a857c628b7efb023029b4c53ee1d51a2500d2fc431ca6752681",
+      "bytes": 145801
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1092-isolated-paid-fixedwing-capacity.log.dispatch.json",
+      "sha256": "2cf60854445d1c1f71203d4e1942bc707d55ee4b99338d327d9438334db1c068",
+      "bytes": 999
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1092-isolated-paid-fixedwing-capacity.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1092-isolated-paid-fixedwing-capacity.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1096-isolated-transport-scale-diagnostic.log",
+      "sha256": "c3356f77cdeddc151b5e9d4dfddfe44ce68925cd2b652f5cf2b6f35f49066e4a",
+      "bytes": 120511
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1096-isolated-transport-scale-diagnostic.log.dispatch.json",
+      "sha256": "dab42996288a36688956a9112d0a85650a83a6a8e28fab5981729f071c0e6cb1",
+      "bytes": 1009
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1096-isolated-transport-scale-diagnostic.log.exit",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native-1096-isolated-transport-scale-diagnostic.log.wrapper-exit",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-fixedwing-capacity-failure.json",
+      "sha256": "b924395b2e63c846287659740d4a39c4aac0712f29a78b116224831abb0b3205",
+      "bytes": 57031
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-fixedwing-capacity-fixture.cs.txt",
+      "sha256": "6465db04bd7178992e30be48082ea9edba0018a166f8af978c96bfeded55a85f",
+      "bytes": 52983
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-fixedwing-capacity-runner-start.json",
+      "sha256": "428b9cc8b9cb5b20688113fd9062c406d560471f4fdd1848597391aa74b7bf99",
+      "bytes": 471
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-fixedwing-capacity.placement.jsonl",
+      "sha256": "99b832b2964a843ce83a5db407916d295f9a24960150e4bf1c066ef068766ed8",
+      "bytes": 3288
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-fixedwing-capacity.touch.jsonl",
+      "sha256": "9d02bec46f9e183265ea33c7f68e910b8ccc0ade63a284db95625a279a8da29a",
+      "bytes": 28963
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-offline-evaluator-v2.py.txt",
+      "sha256": "4e69867b638bb512e2b361ccd71465e2afc278d8e07d5fa1578acbacbc11a045",
+      "bytes": 12499
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-offline-lifecycle-evaluation-20261011.json",
+      "sha256": "01605122b9ad0b2b1930ba2373bf0af22ce372a24015080d0b00e33d1b16a24b",
+      "bytes": 7544
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1092-offline-lifecycle-evaluation-v2-20261011.json",
+      "sha256": "1a7d129916e128f2fc7e00f8283dd97e3c9d7fbf732f6b435cf0ffd7c3f89c71",
+      "bytes": 7619
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1096-transport-scale-diagnostic.json",
+      "sha256": "b843d6708af72caea6c6980caed5727045a83fc4c3cbc5d1e3ce93def9064e14",
+      "bytes": 6915
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1096-transport-scale-fixture.cs.txt",
+      "sha256": "76198c5ba2352f01f726b46d486606d141447080123a0d2c615526aa09c9cf96",
+      "bytes": 36410
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1096-transport-scale-runner-start.json",
+      "sha256": "82b0a0c16ef3e46f4ceb23712e3382ed90695b374242aa5ef775a0e0e1992a22",
+      "bytes": 475
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1096-transport-scale.touch.jsonl",
+      "sha256": "1a775b7ebf5158947bc34a60480a69293b8e3a5b3a511fd3fdf00444a0e3237d",
+      "bytes": 30589
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1096-transport-scale.visuals.jsonl",
+      "sha256": "e1932357ac110207db094a9c8d02be8be56faf46b1702ec833c435c12fe7a2b6",
+      "bytes": 594253
+    }
+  ],
+  "traceSelection": "Only actual trace basenames referenced by closed native log, never run-number substring in random session IDs."
+}

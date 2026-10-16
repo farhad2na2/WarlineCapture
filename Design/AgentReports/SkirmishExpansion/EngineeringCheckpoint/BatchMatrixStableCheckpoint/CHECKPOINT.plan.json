@@ -1,0 +1,810 @@
+{
+  "schema": 1,
+  "base_head": "358506ccf",
+  "scope": "Imported finite Batch matrix/runtime error gate plus actual seven native controls and preserved S026 unfit measurement",
+  "no_Assets_Git_native_mutations": true,
+  "root_only_stage_commit_push": true,
+  "installed_targets": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "33f5f636e8cab73cf3b7ca2530e4caeed39ab9a6f5a7085343554ef96974c7e9",
+      "before_sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "a1e1a41f066df6fd7a363989247b7fdde4ccb25e71d93610a2e1462ff87ade37",
+      "before_sha256": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "sha256": "a22d1c4d619e2465a523716bdc72365a4cacc0355aaa298237ffaee43f428fda",
+      "before_sha256": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "7e9f9dfec39f14890a6823efde38e9c8302d449e936026a2c296acea2cc9ea7a",
+      "before_sha256": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "5b69a152de53be5a192186d4771f624f6b395f38ab432a653306acb193cd0c66",
+      "before_sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "before_sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "unchanged_parent": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthority.cs",
+      "sha256": "0baa1631733e25c549a70daee4a6f68414554387bb5742068b2fd30113663abd",
+      "before_sha256": null,
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthorityValidation.cs",
+      "sha256": "837dd9e8b2b27793a7f4f8ff0a6c083c5ae3b45f83666e38655fa017a4d48f2c",
+      "before_sha256": null,
+      "unchanged_parent": false
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionMatrixAuthorityTests.cs",
+      "sha256": "796f53130926cb40fbaea4c6e4889ae24e6004d36c346bd2f57acf1c512cf222",
+      "before_sha256": null,
+      "unchanged_parent": false
+    },
+    {
+      "target": "Tools/CI/skirmish_production_queue.py",
+      "sha256": "44aea1639d2a2557a0b5aef5a4ef4933ae172508c5d84b86f43de7a34e6668d6",
+      "before_sha256": "4fb6d6c26d6ae2974d99fb6f89a09005f8e2b097e6bdad7b075758e49c330aa1",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Tools/CI/prepare_skirmish_production_batch.py",
+      "sha256": "0282f06d90a121aecf8e1b4187663d584a029cb90ee723f92e46cc8d7042a51a",
+      "before_sha256": "6c8da7d51f66d3adef83073a65fd72a2b41f03d720659fc5ce55d913f7ec4b23",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Tools/CI/invoke_skirmish_production_batch.py",
+      "sha256": "bbde0ef1e3f608cfeaef37e0a8e9f6bd24a9b66d28bd889c10c04222b7c3f05f",
+      "before_sha256": "dc310ef1ef78fc70cf941ee8a137e6616c7807dc318f0506322326abb4a8dada",
+      "unchanged_parent": false
+    },
+    {
+      "target": "Tools/CI/skirmish_production_matrix_authority.py",
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "before_sha256": null,
+      "unchanged_parent": false
+    }
+  ],
+  "payload": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "sha256": "a22d1c4d619e2465a523716bdc72365a4cacc0355aaa298237ffaee43f428fda",
+      "bytes": 10285,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "33f5f636e8cab73cf3b7ca2530e4caeed39ab9a6f5a7085343554ef96974c7e9",
+      "bytes": 17036,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthority.cs",
+      "sha256": "0baa1631733e25c549a70daee4a6f68414554387bb5742068b2fd30113663abd",
+      "bytes": 8903,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthority.cs.meta",
+      "sha256": "7d1cd98cdbdae20c039fc44dc8f9101151b28206d8bbb62d2ab5c998447371dd",
+      "bytes": 59,
+      "contains_crlf": false,
+      "roles": [
+        "new Unity-generated script meta"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthorityValidation.cs",
+      "sha256": "837dd9e8b2b27793a7f4f8ff0a6c083c5ae3b45f83666e38655fa017a4d48f2c",
+      "bytes": 10184,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthorityValidation.cs.meta",
+      "sha256": "dade6f56ba13c8acae82a819f35763d147996e7989dcafd27c38ae03d551f8c0",
+      "bytes": 59,
+      "contains_crlf": false,
+      "roles": [
+        "new Unity-generated script meta"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "bytes": 25163,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "a1e1a41f066df6fd7a363989247b7fdde4ccb25e71d93610a2e1462ff87ade37",
+      "bytes": 34201,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "7e9f9dfec39f14890a6823efde38e9c8302d449e936026a2c296acea2cc9ea7a",
+      "bytes": 18342,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "5b69a152de53be5a192186d4771f624f6b395f38ab432a653306acb193cd0c66",
+      "bytes": 94019,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionMatrixAuthorityTests.cs",
+      "sha256": "796f53130926cb40fbaea4c6e4889ae24e6004d36c346bd2f57acf1c512cf222",
+      "bytes": 1636,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionMatrixAuthorityTests.cs.meta",
+      "sha256": "d5ae5a514ef0bbe446085fce02f0bceebf325bb797772a3566e4f9c0ff5264bc",
+      "bytes": 59,
+      "contains_crlf": false,
+      "roles": [
+        "new Unity-generated script meta"
+      ]
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/RECEIPT.json",
+      "sha256": "3550976aa38b0a944b8cf8cb6d68228ae8b6cebe99e40a5b948b6955c661661f",
+      "bytes": 908,
+      "contains_crlf": true,
+      "roles": [
+        "actual native evidence receipt"
+      ]
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/actual-native-evidence.zip",
+      "sha256": "d7a2c71fa08dc2fcca7558b053e193c94401cdc5b142ab4f9df57ef94b7d3be2",
+      "bytes": 2022692,
+      "contains_crlf": true,
+      "roles": [
+        "actual native evidence archive"
+      ]
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/BatchMatrixStableCheckpoint/PROOF_ARCHIVE.json",
+      "sha256": "486ddf9fab909aae2a1aed071b79f015ffee6fea3a74ee65b835cfaaee550dfc",
+      "bytes": 3706,
+      "contains_crlf": false,
+      "roles": [
+        "proof member hashes and attribution"
+      ]
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/BatchMatrixStableCheckpoint/owning-and-offline-evidence.zip",
+      "sha256": "814f6675ad7fbfc3577dd1206950dad74dd63bfd859ab9c3144cd66f751ee499",
+      "bytes": 536996,
+      "contains_crlf": true,
+      "roles": [
+        "small owning/offline proof archive; no DLLs"
+      ]
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/RECEIPT.json",
+      "sha256": "0eb81889b998971493e95fda10cea16f4ab1661e65a317ed68aefa456eb57f73",
+      "bytes": 621,
+      "contains_crlf": true,
+      "roles": [
+        "actual native evidence receipt"
+      ]
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/actual-native-evidence.zip",
+      "sha256": "98f1d3a81c539b972a6981420859446d1e784ddfc031260942e890136b7d782f",
+      "bytes": 2092180,
+      "contains_crlf": true,
+      "roles": [
+        "actual native evidence archive"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/INDEPENDENT_REVIEW.193cd3d9.json",
+      "sha256": "ffea3fd8de25c71d2f68207d4b7b61980ac3a857d23b2c480df46912b529c317",
+      "bytes": 2233,
+      "contains_crlf": true,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/READY.json",
+      "sha256": "275b4699fc1a9813b3aaa4c28108f1f7642de2b7cc2cb53cf6a90478734f81e6",
+      "bytes": 1605,
+      "contains_crlf": true,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/SkirmishProductionMatrixAuthority.cs.txt",
+      "sha256": "0baa1631733e25c549a70daee4a6f68414554387bb5742068b2fd30113663abd",
+      "bytes": 8903,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/SkirmishProductionMatrixAuthorityTests.cs.txt",
+      "sha256": "7e4483d20a36eb5032844755ca784122448ac1ad5a6ca28e432b1464bd72b29f",
+      "bytes": 1437,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source",
+        "explicit preserved source parent"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/SkirmishProductionMatrixAuthorityValidation.cs.txt",
+      "sha256": "bccffd52897065306b096d5e2d02b3ee675b8bf9cb7b8da72692a5eaee5ae654",
+      "bytes": 9333,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source",
+        "explicit preserved source parent"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "sha256": "a22d1c4d619e2465a523716bdc72365a4cacc0355aaa298237ffaee43f428fda",
+      "bytes": 10285,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "33f5f636e8cab73cf3b7ca2530e4caeed39ab9a6f5a7085343554ef96974c7e9",
+      "bytes": 17036,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "sha256": "01c4cf9a13d730b4cfacd8b6fbeba60b9c17b0961827a512f3f74af115d12a76",
+      "bytes": 25191,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source",
+        "explicit preserved source parent"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "995e54660645d3e63f007e1249655f6a27a08766795b542f90599fb7a3ff5d4a",
+      "bytes": 31419,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source",
+        "explicit preserved source parent"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "7e9f9dfec39f14890a6823efde38e9c8302d449e936026a2c296acea2cc9ea7a",
+      "bytes": 18342,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "0cdf99dc3b1eeb56ab304e4b1f4b56ca016c97669ec25c3ec6f3cbe107ff62d6",
+      "bytes": 93895,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source",
+        "explicit preserved source parent"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Tools/CI/invoke_skirmish_production_batch.py",
+      "sha256": "0bfa7c8c421431dbd792e4ab080bc3bab9f97da53b0001d9f8774666d58d2725",
+      "bytes": 13234,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source",
+        "explicit preserved source parent"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Tools/CI/prepare_skirmish_production_batch.py",
+      "sha256": "0282f06d90a121aecf8e1b4187663d584a029cb90ee723f92e46cc8d7042a51a",
+      "bytes": 4556,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/Sources/Tools/CI/skirmish_production_queue.py",
+      "sha256": "44aea1639d2a2557a0b5aef5a4ef4933ae172508c5d84b86f43de7a34e6668d6",
+      "bytes": 17478,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/manifest.json",
+      "sha256": "193cd3d9488f9c67a10fd34303df52432bd4f5117479e899fef66ed81ac47d62",
+      "bytes": 6557,
+      "contains_crlf": true,
+      "roles": [
+        "preserved package authority"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/prepare.py",
+      "sha256": "72151be620c79f4a862092a028a0eb5478d20322b6e76dec2425516b26abb4e8",
+      "bytes": 23542,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/skirmish_production_matrix_authority.py",
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "bytes": 7726,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/test_matrix.py",
+      "sha256": "0a92ea9d174ee07dbbfd62eca63042b419c670d41d18926ea5897adc0abc5d71",
+      "bytes": 7906,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/PLAN_AUTHORITY.json",
+      "sha256": "6591bebb9b198552aa9187fa466cc60b3c7eed4dcb7e2e81244f89a09767e058",
+      "bytes": 232898,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/SkirmishS002AriaRunHarness.MenuProbe.cs.txt",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "bytes": 25163,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/baseline720.plan.json",
+      "sha256": "ed272f92260d235459712fda21e4a233bd4f7305fd0cb659ef06e42925cde6f6",
+      "bytes": 126861,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/manifest.json",
+      "sha256": "57fe24a4ab181437fba16c95eddda0c9521479f82d2b265ff8b213a9098dd5bc",
+      "bytes": 7119,
+      "contains_crlf": false,
+      "roles": [
+        "preserved package authority"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/prepare.py",
+      "sha256": "c5690da37a155628c107026eaf0db78919bded4686f763a30ed2cee0a44bf198",
+      "bytes": 4724,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/stress1200.plan.json",
+      "sha256": "ccacba14f1901e9109ac1bb36bbe1e5e1261e457b22f8bbb3bc34ce900d9c13a",
+      "bytes": 213145,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/test_successor.py",
+      "sha256": "fc5a9b5ffa29f285aabc16e02d0671a3f93002993d31357af0af1ce8bf3c49eb",
+      "bytes": 4066,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/INDEPENDENT_REVIEW.4a58b00a.json",
+      "sha256": "49906b6ba5bc2cb1f7a397f5ca9d92ff7f2df2a83249829c412f95124d59328e",
+      "bytes": 1668,
+      "contains_crlf": true,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/READY.json",
+      "sha256": "d7194fbe233b965393ee21ccfbd62bba1cde6bc01e75fa422c56171dc083898c",
+      "bytes": 6512,
+      "contains_crlf": true,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishProductionMatrixAuthorityTests.cs",
+      "sha256": "796f53130926cb40fbaea4c6e4889ae24e6004d36c346bd2f57acf1c512cf222",
+      "bytes": 1636,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishProductionMatrixAuthorityValidation.cs",
+      "sha256": "837dd9e8b2b27793a7f4f8ff0a6c083c5ae3b45f83666e38655fa017a4d48f2c",
+      "bytes": 10184,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "a1e1a41f066df6fd7a363989247b7fdde4ccb25e71d93610a2e1462ff87ade37",
+      "bytes": 34201,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/SkirmishS002AriaRunHarness.cs",
+      "sha256": "5b69a152de53be5a192186d4771f624f6b395f38ab432a653306acb193cd0c66",
+      "bytes": 94019,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/compile_exact.py",
+      "sha256": "03b51ffc002f792d919d2ccf4e541e1410b2a57350d5afcee4672f482b2000aa",
+      "bytes": 4158,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/invoke_skirmish_production_batch.py",
+      "sha256": "bbde0ef1e3f608cfeaef37e0a8e9f6bd24a9b66d28bd889c10c04222b7c3f05f",
+      "bytes": 14212,
+      "contains_crlf": false,
+      "roles": [
+        "exact package source"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/manifest.json",
+      "sha256": "4a58b00ac386720a7ecf63464b2431b6b42ee3a0ea564b5df489dc06646fc812",
+      "bytes": 8887,
+      "contains_crlf": true,
+      "roles": [
+        "preserved package authority"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/prepare.py",
+      "sha256": "196b687afbd4e78d50b03a8640483c44cf3bc5399d230436bcab4841b999a147",
+      "bytes": 9384,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/test_runtime_gate.py",
+      "sha256": "ff8aee1855379f620277d5994bfbcac0edf1ef07d86352c1bd098106fa5923fa",
+      "bytes": 4588,
+      "contains_crlf": false,
+      "roles": [
+        "authority, review or reproducible focused control"
+      ]
+    },
+    {
+      "path": "Tools/CI/invoke_skirmish_production_batch.py",
+      "sha256": "bbde0ef1e3f608cfeaef37e0a8e9f6bd24a9b66d28bd889c10c04222b7c3f05f",
+      "bytes": 14212,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_production_batch.py",
+      "sha256": "0282f06d90a121aecf8e1b4187663d584a029cb90ee723f92e46cc8d7042a51a",
+      "bytes": 4556,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Tools/CI/skirmish_production_matrix_authority.py",
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "bytes": 7726,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    },
+    {
+      "path": "Tools/CI/skirmish_production_queue.py",
+      "sha256": "44aea1639d2a2557a0b5aef5a4ef4933ae172508c5d84b86f43de7a34e6668d6",
+      "bytes": 17478,
+      "contains_crlf": false,
+      "roles": [
+        "installed Batch target"
+      ]
+    }
+  ],
+  "existing_prerequisites": [
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+      "sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCALABLE_MISSION_PRODUCTION_HANDOFF.md",
+      "sha256": "5f91b02d0b28adbd830261cf9538ccf82a0167554525f733032361ea6af266ef",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCALABLE_MISSION_PRODUCTION_STRATEGY.md",
+      "sha256": "03729f79e7a689e941c55a06cd27165188fca0bbe31b247b076add3d6d6c7c22",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+      "sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+      "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BT.md",
+      "sha256": "266dadd1b80c13dad1ed640c9a34cf2aa68721f8cf514ce57c01cca0a482706b",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_CE.md",
+      "sha256": "56e5af7a83ef9e63a1723733f7462bf9fff57c3c7ccdffdf4a30021e2e02f378",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_FC.md",
+      "sha256": "bca718e725c0fa9b7e34172742882db2b202d62116a228a1443820683732e5da",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BT.md",
+      "sha256": "74a674a06b2be733795f73d6ae586745c2e6b1aa3680c9675bd86d40348938d3",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_CE.md",
+      "sha256": "d0390d46e133159f857f7c768766eca177fc8b860dd9e92a0e174b6335199f2c",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_FC.md",
+      "sha256": "d58000a4e6df306f15c6100c5f313b964128de1a92be38a4bc704112fc373864",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+      "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BT.md",
+      "sha256": "4826ac5e0df2e1f9d3143980f22ca50fe6906b09185cd1c8438da940ede43283",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_CE.md",
+      "sha256": "1c8fe561d7f12bdfa679f646cec76db762b8efacd6f9fdea058ec4eee8d9d598",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_FC.md",
+      "sha256": "360daeb60270b2a2eaac6f0150169dd638df412fe3457af49bea43bdae9ad857",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BA.md",
+      "sha256": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BT.md",
+      "sha256": "37c4339d8dc04f37fad29ecf77ed42db4183fa6c32494475c7bd634052f97b08",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_CE.md",
+      "sha256": "b2271c088c5aba6ad99b97e23b7aad9885b61696ace3620d39e732123b7751f6",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_FC.md",
+      "sha256": "26c191bb0fe880a26c3d5bd0cfaef4b5c22892e539b7cf8ee1cbde3c56a9741e",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md",
+      "sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BT.md",
+      "sha256": "2a213f44779fb125e29f8d9de74644a553c68fd001ae2879a68a64591b473ee8",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_CE.md",
+      "sha256": "e06743489475be561348c1eeea8f9360a0bfb2b31a4f31ba1fb37d5bfc0f5324",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_FC.md",
+      "sha256": "4a6b5a80eac93485fd6d8e58723ebc4eea18831ef0ada635b70aba4114e30678",
+      "disposition": "Existing HEAD prerequisite; root verifies no missing or changed dependency. No broad directory staging."
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json",
+      "sha256": "c98531ea647895ba48439d2b67123be416c6e975f087e47990d287dc897f5d98",
+      "disposition": "Existing committed parent authority; no restaging historical closure."
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBatchIntegrationV3/manifest.json",
+      "sha256": "5e3f889ae957a8d24b7d484a06de846e6ee2d69df72cc837cf00dd5a25c9754a",
+      "disposition": "Existing committed parent authority; no restaging historical closure."
+    }
+  ],
+  "native_evidence": [
+    {
+      "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/actual-native-evidence.zip",
+      "sha256": "98f1d3a81c539b972a6981420859446d1e784ddfc031260942e890136b7d782f",
+      "actualWrapperExit": 0,
+      "methods": 7,
+      "baselineSlotControls": 720,
+      "syntheticStressSlotControls": 1200,
+      "nativeRealJobs": 0,
+      "queueSuccessEnabled": false,
+      "sourceFiles": 41586,
+      "candidateSha256": "eb7e094c3c8d3685c47d82cae06756efd509018fc967ef7149b50574a6cdac0e",
+      "buildSha256": "c624b6e1525465c9e7510e2de80a902b9097e56ddb1144a810f2d0649b395f0e",
+      "readiness": false
+    },
+    {
+      "archive": "Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/actual-native-evidence.zip",
+      "sha256": "d7a2c71fa08dc2fcca7558b053e193c94401cdc5b142ab4f9df57ef94b7d3be2",
+      "actualWrapperExit": 0,
+      "sourceAndDllEndpointsEqualToMeasuredOpening": true,
+      "sourceFiles": 41580,
+      "candidateSha256": "eb2433b382600876e9d556ce716c8b08b2cedd4c2999f7ef565af4302ffca1b6",
+      "buildSha256": "d079418ffb1f0d5f7f71ee31330da55ad88e26bee6ea36046d378be1af60f3e7",
+      "collectedSizes": 3,
+      "completeFacilityConfigurations": 0,
+      "sourceFitCertified": false,
+      "cleanupVerified": true,
+      "sourcePinsRecheckedAfterMeasurement": true,
+      "normalMissionReady": false,
+      "interpretation": "Native collection completed but all3discovery configurations lack enemyfacilities; no strictpacking/compiler/path/readinessclaim; retainedforboundedlogicalcompound successor"
+    }
+  ],
+  "acceptance": {
+    "native_batch_controls": 7,
+    "actual_batch_controls_wrapper_exit": 0,
+    "native_real_jobs": 0,
+    "baseline_wins": 0,
+    "stress_runs": 0,
+    "queue_success_enabled": false,
+    "source_fit_certified": false,
+    "mission_readiness": false,
+    "camera_acceptance": false,
+    "s026_complete_facility_configurations": 0
+  },
+  "excluded": [
+    "BoundedCompoundRefinement and all related successor proofs/inputs",
+    "S005OpeningPlacementWitness and related successor proofs/inputs",
+    "Other unrelated WIP, folder metas, Library, DLLs, production claims or job results"
+  ],
+  "root_checks": [
+    "Compare exact forward-slash path list against HEAD358506ccf and stage only changed/missing scoped paths; MenuProbe is byte-identical to its committed parent.",
+    "Verify installed source/current DLL endpoint attribution using the actual archive; do not claim owning proof represents all unrelated WIP.",
+    "Append only the supplied exact CRLF -text lines to .gitattributes; preserve all preexisting rules. Root alone edits/stages .gitattributes.",
+    "Rehash every staged blob against payload raw SHA and verify no unrelated staged paths. No new Unity run is required to restate these completed seven controls."
+  ],
+  "plan_artifacts": [
+    "CHECKPOINT.plan.json",
+    "stage.paths",
+    "byte-preservation.fragment.gitattributes",
+    "NOTES.md"
+  ]
+}

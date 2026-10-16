@@ -1,0 +1,50 @@
+{
+  "sourceHash": "cd08265f9882c706ed723fc6c059deef86d2da00ce2680ecaca6354934602941",
+  "sourcePrePostMatched": true,
+  "materialsPrePostMatched": true,
+  "log": "native-517-palette-locale-aria-en-seed2.log",
+  "logSha256": "1df0c63d76a370ffc15bc0f2088aeace0e4ae127bafd5e6bffd5e9f3f883eae1",
+  "trace": "s005-aria-live-130368-en-97cb757649be4f8c93a7d2de6b5b9645.jsonl",
+  "touchTraceSha256": "b63530f579b353295ea9a9d55e100f138c2416c96eb70a69689a05cb421e04b6",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "requiredMarkersVerified": true,
+  "terminal": {
+    "elapsed": 217.864,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 217.864,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "playerUnits": 23,
+    "pathRequests": 4,
+    "pathFollowing": 2,
+    "leadX": 440.701,
+    "leadZ": 473.371
+  },
+  "inputAudit": {
+    "recordedContacts": 100,
+    "completedContacts": 100,
+    "phases": {
+      "Menu": 5,
+      "Runtime": 94,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "normalInputMenuAriaResultReturn": true,
+  "seed": 130368,
+  "locale": "en",
+  "playerReady": false,
+  "scope": "One complete English native journey. Capacity, paid flight cycle, other seeds, manual/recovery, final map visual and device acceptance remain pending."
+}

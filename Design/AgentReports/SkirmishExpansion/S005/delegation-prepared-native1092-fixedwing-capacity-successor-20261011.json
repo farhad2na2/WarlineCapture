@@ -1,0 +1,18 @@
+{
+  "scope": "Prepared successor outsideAssets only; no Unity/source/Editor calls",
+  "fixture": "/private/tmp/S005FixedWingCapacity1092.cs",
+  "fixtureSha256": "6465db04bd7178992e30be48082ea9edba0018a166f8af978c96bfeded55a85f",
+  "runner": "/private/tmp/s005-run-fixedwing-capacity-1092.py",
+  "runnerSha256": "ae5aedb92392d278355c603f2655d54e55584ec21001b127556754dece7e1a4c",
+  "original1074": "native1074-fixedwing-pair-fixture.cs.txt and failed proof unchanged/preserved; original SHA6f1ff47b1570b24bfa982779fdeff402d0446a674c0048cf80a98def108699d6. Actual native Airport paid Fighter/Plane native Touch Move and airborne observations passed; third eligibility failed InsufficientMaterials, so capacity-rejection/replacement gates remain pending.",
+  "minimalNativeCorrection": "Phase30 third-attempt disclosed Materials Write uses existing native bank clamp before rejectionBank baseline and EvaluateQueue. Assert actual native bank Current>=native Fighter MaterialsCost and native bank Capacity unchanged before expecting InsufficientCapacity. Log before/funded/required/capacity. No capacity, prices, budgets, spending or actor state modified.",
+  "inheritedProtocol": "Actual paid Airport through native current-geometry legal Touch placement; actual queues/materials spend, paid Fighter+Plane live at Standard Air2; real third eligibility and failed queue with no ResourcesReserved/receipt/spend/cap mutation; real first Fighter HealthZero/death release/idempotency while Plane survives; paid Fighter replacement/native Touch Move/airborne then full death capacity cleanup.",
+  "runnerGuards": "Unique1092 class/evidence and SHA enforcement; main idle + explicit main1092 heavy lane root token; full source preflight/pre-dispatch/post exact equality; checked GUI reuse wrapper1140s vs fixture1020s; malformed/missing receipt preserves ownership; all raw Touch rows zero contact/intervention/command violations; strict ordered Fighter/Plane/Fighter paid selection/airborne movement markers, independently parsed actual funds>=cost before rejection.",
+  "serialization": "Mandatory runner data uses primitive log fields and existing actual native1074 primitive Touch rows. No new nested object/array field required. Placement evidence must exist and native confirmed legal placement marker must pass.",
+  "validation": "Python AST and filenames/marker static audit passed; native dry compile/load/execute pending",
+  "dryCompile": "rtk proxy unity command run_script --file /private/tmp/S005FixedWingCapacity1092.cs --entry S005FixedWingCapacity1092.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "command": "rtk proxy python3 /private/tmp/s005-run-fixedwing-capacity-1092.py <current-source-manifest.json> --heavy-lane-owner main1092",
+  "normalMissionCertified": false,
+  "fullAircraftLifecycleCertified": false,
+  "playerReady": false
+}

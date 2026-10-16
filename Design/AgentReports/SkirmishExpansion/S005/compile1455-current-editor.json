@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "command": "command editor_status",
+  "data": {
+    "command": "editor_status",
+    "parameters": {},
+    "result": {
+      "status": "ready",
+      "compiling": false,
+      "domainReloadInProgress": false,
+      "playMode": "stopped",
+      "lastHeartbeat": "2026-10-13T17:52:43.466319Z",
+      "projectPath": "/Users/farhad/Projects/WarlineCapture",
+      "unityVersion": "6000.5.2f1"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var scenes=new System.Collections.Generic.List<object>();for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++){var s=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);scenes.Add(new {Path=s.path,Name=s.name,IsLoaded=s.isLoaded,IsDirty=s.isDirty,IsActive=s==UnityEngine.SceneManagement.SceneManager.GetActiveScene()});}return new {Project=UnityEngine.Application.dataPath,IsPlaying=UnityEditor.EditorApplication.isPlaying,IsCompiling=UnityEditor.EditorApplication.isCompiling,IsUpdating=UnityEditor.EditorApplication.isUpdating,ValidationRunning=Game.Editor.ExistingEditorValidation.IsRunning,ActualAA=UnityEngine.QualitySettings.antiAliasing,ActualPipeline=UnityEditor.AssetDatabase.GetAssetPath(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline),Scenes=scenes};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "Project": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets",
+        "IsPlaying": false,
+        "IsCompiling": false,
+        "IsUpdating": false,
+        "ValidationRunning": false,
+        "ActualAA": 0,
+        "ActualPipeline": "Assets/Settings/Mobile_RPAsset.asset",
+        "Scenes": [
+          {
+            "Path": "Assets/Game/Scenes/Menu.unity",
+            "Name": "Menu",
+            "IsLoaded": true,
+            "IsDirty": false,
+            "IsActive": true
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

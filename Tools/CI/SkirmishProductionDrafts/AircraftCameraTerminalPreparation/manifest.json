@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "scope": "Exactly metadata generation then framing55 then terminal6; collect independent failures before final aggregate",
+  "files": [
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftCameraTerminalPreparation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AircraftCameraTerminalPreparation/SkirmishAircraftCameraTerminalPreparation.cs.txt",
+      "before_sha256": null,
+      "sha256": "9cbb7e542175c85247c96cd96d6ab8019e9095f3cd9a17f7fc0ff400c16ac7c1",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "native_execution": false
+}

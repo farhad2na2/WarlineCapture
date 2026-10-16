@@ -1,0 +1,23 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "sourceEdits": false,
+  "unityCalls": false,
+  "actual1096Diagnosis": "delegation-native1096-scale-diagnosis-20261011.json",
+  "fixture1097": "/private/tmp/S005PaidTransport1097.cs",
+  "fixture1097Sha256": "835c6c72052f01951b6ce6c19c2d5a5cc79ee8936811de6a10c20002418633e7",
+  "runner1097": "/private/tmp/s005-run-paid-transport-1097.py",
+  "runner1097Sha256": "6966d8ca55872eca57bd8041fe1592b7fa8d3775c1e132e58e02660f9b098091",
+  "fixture1078": "/private/tmp/S005BoardedRecovery1078.cs",
+  "fixture1078Sha256": "8c85697451fa60fee129798cc1b078b5616ae11090b015719ad1e301c432b85a",
+  "runner1078": "/private/tmp/s005-run-boarded-recovery-1078.py",
+  "runner1078Sha256": "d4d2000e6f8fbbecf5324cdd3a8e0271d00d31ecf78e271e62fd6dfaa836effe",
+  "prior1078PreparedBytesPreserved": "/private/tmp/S005BoardedRecovery1078-pre-scale-contract-20261011.cs",
+  "scope": "Correct only exact native SelectionMarkerVisualChild.Value render child after unload. Derive current visibility from exact authoritative marker Parent passenger+selected/health/passenger/air states, verify LocalTransform.Scale and full PostTransformMatrix. Every nonselection visual (root/model/body/otherchildren) retains original strict snapshot scale. Native unlinks/hidden/disabled/capacity/death/saveRecovery checks unchanged.",
+  "mandatoryJsonSchema": "VisualRestoreRow explicit primitive/string fields, typed reference Index/Version serialized explicitly, no Entity JsonUtility identity reliance.",
+  "oldExecutedFixturesPreserved": [
+    "1072",
+    "1096"
+  ],
+  "playerReady": false,
+  "runnerContract": "Both validate EVERY raw Touch row receiptViolations/unexpected/interventions0 across audit resets; complete final contact. Both parse actual explicit primitive VisualRestoreRows: all passed, exactly4 typed marker references/matrix matches, complete4 passenger identities and restored positive visible root body scales; every nonselection visual exact snapshot."
+}

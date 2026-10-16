@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "scope": "Explicit reviewed All120 eight-target parent plus authoring/warmup facade",
+  "parents": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/All120FutureSeparateCheckpoint/manifest.plan.json",
+      "sha256": "293657986a5b0b9f3d57002410b4dd98a861641c3ebfc542f4dd80ec9d4463f2",
+      "targets": 8
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/All120AuthoringSceneWarmup/manifest.json",
+      "sha256": "6131d34f66627507816beb48dd6d81d4d4bcb8d69d3eb4f84d6bf5e368e0b59c"
+    }
+  ],
+  "fileCount": 9,
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "before_sha256": "10fea77ebd30f5978d802677c1710d5ae44610279fba6b330d7b9c5bd4452fc7",
+      "sha256": "50806d3a297ba205c6bc012ac6c2e5861c2706c7717187ed1cc1099f2efddd76",
+      "composed_from": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+        "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+        "before_sha256": null,
+        "sha256": "10fea77ebd30f5978d802677c1710d5ae44610279fba6b330d7b9c5bd4452fc7"
+      },
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.meta",
+        "currentSha256": "29e5c48320898ce2dbabf50c182af0aa80fc44e8bf4626c2cb9b93ee7ad083a3",
+        "disposition": "Preserve existing native meta GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs",
+      "before_sha256": "b9be58676aabe221d1cdbe9dd4f672cf7973c0b817dd8f86e4e40450026212c9",
+      "sha256": "afd09342084fc5b5139af2c54dce7780fa7d14337ccbaa541300b5671051fd5c",
+      "composed_from": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs",
+        "source": "Tools/CI/SkirmishProductionDrafts/Ground30SimultaneousRefinement/SkirmishGroundSourceFitSurvey.RefinementOutput.cs.txt",
+        "before_sha256": null,
+        "sha256": "b9be58676aabe221d1cdbe9dd4f672cf7973c0b817dd8f86e4e40450026212c9"
+      },
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs.meta",
+        "currentSha256": "70381e959939078dd1aa7265a742d7454d1637e52e45d7d04753365f1ffdfbf9",
+        "disposition": "Preserve existing native meta GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "before_sha256": "60f1a555b71e3c7d8589daca262ba947bb2fce10026bbdd9131b3f4d158722f8",
+      "sha256": "093247ec2fd2ae20b31c9230886dca17c86ed30b5de7cadb25452483dcb9e2f7",
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs.meta",
+        "currentSha256": "2bdbcbb4b5b39ed46890c796a4ab8b33199f7d9e9588fea9ffb98a3157d7b5e2",
+        "disposition": "Preserve existing native meta GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "0f6517db0c39c4a3c8484c588f0248f8813feb01e71d779c3b206e1d72437cfe",
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs.meta",
+        "currentSha256": null,
+        "disposition": "Root Unity import generates exact native meta before checkpoint; no invented GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Refinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/SkirmishGroundSourceFitSurvey.All120Refinement.cs.txt",
+      "before_sha256": null,
+      "sha256": "58a1dab63b51e04b6a9c732e12d8979f544956208a3f69ed4248f603305363f3",
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Refinement.cs.meta",
+        "currentSha256": null,
+        "disposition": "Root Unity import generates exact native meta before checkpoint; no invented GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120RefinementControls.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/SkirmishGroundSourceFitSurvey.All120RefinementControls.cs.txt",
+      "before_sha256": null,
+      "sha256": "11ee97c1f4531a4bfe9389cd138f79efd8996f225c5a79844a89d7d44a28e828",
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120RefinementControls.cs.meta",
+        "currentSha256": null,
+        "disposition": "Root Unity import generates exact native meta before checkpoint; no invented GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Materialization.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/SkirmishGroundSourceFitSurvey.All120Materialization.cs.txt",
+      "before_sha256": null,
+      "sha256": "3adc79b62d27bf34a2f416eb146dd24c69e66e9dba2235c51f00c1268dd70fdf",
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Materialization.cs.meta",
+        "currentSha256": null,
+        "disposition": "Root Unity import generates exact native meta before checkpoint; no invented GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120AllSourceGroups.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SequentialSourceGroups/SkirmishGroundSourceFitSurvey.All120AllSourceGroups.cs.txt",
+      "before_sha256": null,
+      "sha256": "ccb334aa6188e82d2f117db09b3aa18948a899be2c66d6ba1f7bf533b9c37866",
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120AllSourceGroups.cs.meta",
+        "currentSha256": null,
+        "disposition": "Root Unity import generates exact native meta before checkpoint; no invented GUID"
+      },
+      "adoption": "Future separate checkpoint only; not shared160 stage"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAll120AuthoringSceneWarmup.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120AuthoringSceneWarmup/SkirmishAll120AuthoringSceneWarmup.cs.txt",
+      "before_sha256": null,
+      "sha256": "bed0eed82d2a320b11baacc21272118a08da2cb8cacdb0be8b21f904bd6c24f3"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S005SceneArtifactWarmup.cs",
+      "sha256": "89b2e7c67026cec9f8e0df821b2345ff1dde19c38ca720cd1b1421d04825d6fb"
+    }
+  ],
+  "native_execution": false,
+  "mission_ready": false
+}

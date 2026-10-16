@@ -1,0 +1,20 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Tests.Editor.SkirmishFogConsumerTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_02066c68/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishFogConsumerTests] result=Passed cases=13 scope=IsolatedActualSystemsNotNormalMission
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishFogConsumerTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_02066c68/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Tests.Editor.SkirmishFogConsumerTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_02066c68/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

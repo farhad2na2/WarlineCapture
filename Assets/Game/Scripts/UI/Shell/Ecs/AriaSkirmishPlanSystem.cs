@@ -11,13 +11,49 @@ namespace Game.UI.Shell.Ecs
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            foreach (var (view, plan, touch, output) in SystemAPI.Query<RefRO<AriaSkirmishObservationComponent>, RefRW<AriaSkirmishPlanComponent>, RefRW<AriaPlaySessionComponent>, RefRW<AriaPlayObservationComponent>>())
-                if (view.ValueRO.Value.Active) Step(view.ValueRO.Value, ref plan.ValueRW, ref touch.ValueRW, ref output.ValueRW);
+            var em=state.EntityManager;
+            using var cleanup=new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+            foreach (var (view, plan, owner, storage) in SystemAPI.Query<RefRW<AriaSkirmishObservationComponent>, RefRW<AriaSkirmishPlanComponent>, RefRO<AriaSkirmishObservationOwner>>().WithEntityAccess())
+            {
+                var boundary=owner.ValueRO.Boundary;
+                if(!em.Exists(boundary)||!em.HasComponent<UiShellRootComponent>(boundary))
+                {cleanup.DestroyEntity(storage);continue;}
+                if(!em.HasComponent<AriaPlaySessionComponent>(boundary)||!em.HasComponent<AriaPlayObservationComponent>(boundary)||
+                    !em.HasComponent<UiShellStateComponent>(boundary)||em.GetComponentData<UiShellStateComponent>(boundary).ActiveRoute!=UIRoute.Match||
+                    owner.ValueRO.TransitionSequence!=em.GetComponentData<UiShellStateComponent>(boundary).TransitionSequenceId)
+                {
+                    plan.ValueRW=default;
+                    if(view.ValueRO.Value.Active)
+                    {
+                        view.ValueRW=default;
+                        if(em.HasComponent<AriaPlaySessionComponent>(boundary))em.SetComponentData(boundary,default(AriaPlaySessionComponent));
+                        if(em.HasComponent<AriaPlayObservationComponent>(boundary))em.SetComponentData(boundary,default(AriaPlayObservationComponent));
+                    }
+                    continue;
+                }
+                if(!view.ValueRO.Value.Active){plan.ValueRW=default;continue;}
+                var touch=em.GetComponentData<AriaPlaySessionComponent>(boundary);
+                var output=em.GetComponentData<AriaPlayObservationComponent>(boundary);
+                Step(view.ValueRO.Value,ref plan.ValueRW,ref touch,ref output);
+                em.SetComponentData(boundary,touch);em.SetComponentData(boundary,output);
+            }
+            cleanup.Playback(em);
         }
         public static void Step(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
+            if (view.PublicObjective.Applicable)
+            {
+                if (StepPublicBoarding(view,ref plan,ref touch,ref output)) return;
+                if (StepOffensiveAir(view,ref plan,ref touch,ref output)) return;
+                if (StepPublicScan(view,ref plan,ref touch,ref output)) return;
+                if (StepPublicObjectiveSupport(view,ref plan,ref touch,ref output)) return;
+                plan.Intent = view.PublicObjective.Intent;
+                StepPublicObjective(view, view.PublicObjective, ref plan.ObjectiveTouch, ref touch, ref output);
+                if (plan.ObjectiveTouch.Stage == 4) plan.Intent = AriaSkirmishIntent.ObserveObjective;
+                return;
+            }
             if (view.ExpandedSession)
             {
                 // Blocked remains stopped until the player explicitly retries ARIA.
@@ -553,6 +589,48 @@ namespace Game.UI.Shell.Ecs
             }
         }
 
+        private static bool StepExpandedAdvanceNavigation(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            if (plan.AdvanceNavigation == 0)
+                return view.Time < plan.ObserveUntil && view.Time < plan.MapNavigationReadyAt;
+            plan.Intent = AriaSkirmishIntent.FindBase;
+            if (!view.MapOpen)
+            {
+                if (plan.MapNavigationStage == 1)
+                {
+                    Target(view.FocusAdvance, false, ref output);
+                    return true;
+                }
+                plan.AdvanceNavigation = 0; plan.MapNavigationStage = 0; plan.MapOpenedAt = 0;
+                plan.MapNavigationReadyAt = view.Time + 6;
+                plan.ObserveUntil = view.Time + 1;
+                return true;
+            }
+            if (plan.MapOpenedAt == 0) plan.MapOpenedAt = view.Time;
+            if (plan.MapNavigationStage == 1)
+            {
+                if (!view.FocusAdvance.Available && view.Time < plan.MapOpenedAt + 5) return true;
+                if (view.FocusAdvance.Available)
+                {
+                    plan.MapNavigationStage = 2;
+                    plan.MapFocusActions = touch.Actions;
+                }
+            }
+            if (plan.MapNavigationStage == 2 &&
+                !(touch.TargetId == -20011 && touch.Actions > plan.MapFocusActions))
+            {
+                Target(view.FocusAdvance, false, ref output);
+                if (view.FocusAdvanceDrag) { output.Drag = 1; output.DragEnd = view.FocusAdvanceDragEnd; }
+                return true;
+            }
+            // One camera gesture, then close and settle before any separate order.
+            plan.MapNavigationStage = 3;
+            Target(view.CloseMap, false, ref output);
+            return true;
+        }
+
         private static void StepExpandedBaseAssault(in AriaSkirmishObservation view,
             ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
             ref AriaPlayObservationComponent output)
@@ -588,7 +666,9 @@ namespace Game.UI.Shell.Ecs
             // Only a new closest approach on the player's presented minimap
             // counts. Paging, jitter and retreat/re-advance cannot mask a stall.
             bool assaultAdvance = false;
-            if (plan.AssaultIssued != 0 && view.AssaultDistanceVisible &&
+            // Public accepted assault intent may precede completion of the full roster sweep.
+            bool acceptedAssaultOnPage = (view.ExpandedAssaultMask & view.ExpandedAttackOrderMask) != 0;
+            if ((plan.AssaultIssued != 0 || acceptedAssaultOnPage) && view.AssaultDistanceVisible &&
                 view.NearestFriendlyObjectiveDistance >= 0f &&
                 !float.IsNaN(view.NearestFriendlyObjectiveDistance) &&
                 !float.IsInfinity(view.NearestFriendlyObjectiveDistance))
@@ -619,6 +699,7 @@ namespace Game.UI.Shell.Ecs
                 touch.GestureRequested = 0;
                 return;
             }
+            if (StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
             if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
             // An air-capable starting force cannot leave its base undefended.
             // Reuse the visible, bounded construction sequence used by legacy
@@ -681,7 +762,14 @@ namespace Game.UI.Shell.Ecs
                 else
                 {
                     plan.Intent = AriaSkirmishIntent.FindBase;
-                    Target(view.FocusEnemy, false, ref output);
+                    if (view.FocusAdvance.Available &&
+                        (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011))
+                    {
+                        if (view.Time < plan.MapNavigationReadyAt) return;
+                        plan.AdvanceNavigation = 1; plan.MapNavigationStage = 1;
+                        StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output);
+                    }
+                    else Target(view.FocusEnemy, false, ref output);
                 }
                 return;
             }

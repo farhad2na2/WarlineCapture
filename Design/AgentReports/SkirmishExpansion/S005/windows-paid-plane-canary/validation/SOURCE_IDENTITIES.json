@@ -1,0 +1,37 @@
+{
+  "result": "VerifiedCopiedOfflineTypeCompileEvidence",
+  "candidate_path": "Design/AgentReports/SkirmishExpansion/S005/windows-paid-plane-canary/NormalPaidPlaneLineageCanary.cs.txt",
+  "candidate_sha256": "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e",
+  "candidate_bytes": 17522,
+  "captured_compile_source_sha256": "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e",
+  "files": {
+    "offline-type-compile.log": {
+      "sha256": "8d4bb7a4425a5e6f4537ef4e47da9adbdc451a116bab63619e8e614b93c6fd96",
+      "bytes": 76333,
+      "copied_from": "D:\\Projects\\WarlineCapture\\Temp\\S005PaidPlaneOfflineCompile\\compile-j4cc4l3k\\compiler.log"
+    },
+    "offline-type-compile-result.json": {
+      "sha256": "bbdfcd1db757094d61aeaa362e34aa5c0fc7e69fc4df92cbe95029581eec7f5b",
+      "bytes": 576,
+      "copied_from": "D:\\Projects\\WarlineCapture\\Temp\\S005PaidPlaneOfflineCompile\\compile-j4cc4l3k\\result.json"
+    },
+    "offline-type-compile.rsp.txt": {
+      "sha256": "47da48445b0982cc3278ac0e3bceb4c5ff0f01b83b7ee1f822107daab6e1d588",
+      "bytes": 100545,
+      "copied_from": "D:\\Projects\\WarlineCapture\\Temp\\S005PaidPlaneOfflineCompile\\compile-j4cc4l3k\\paid-plane-Game.Editor.rsp"
+    }
+  },
+  "diagnostic_analyzers_omitted": 18,
+  "native_execution": false,
+  "compiled_dll_copied": false,
+  "whole_native_source_manifest_captured": false,
+  "source_scope": "Exact external draft and captured compiler response; current harness entries preserved in response. No whole Assets byte hashing performed.",
+  "pending": [
+    "Unity generators and ILPP",
+    "Current exact source/build pin",
+    "Loaded assembly identity",
+    "Normal paid-plane native capture/input/schema proof",
+    "Full mission Victory/result/return",
+    "Device/player acceptance"
+  ]
+}

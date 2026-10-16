@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005AircraftRecovery978.cs",
+      "entry": "S005AircraftRecovery978.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 174,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005AircraftRecovery978_08518f01a369492194061783875f7859",
+      "success": true,
+      "result": "Loaded only; run through repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

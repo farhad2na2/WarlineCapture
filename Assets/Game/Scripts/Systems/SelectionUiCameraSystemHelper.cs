@@ -50,8 +50,13 @@ namespace Game.Runtime
         public bool IsCameraDragging => _cameraSystem != null && _cameraSystem.IsDragging;
         public Camera WorldCamera => _worldCamera;
 
-        public void ApplyRuntimeCameraProfile(SelectionRuntimeConfigStartupSystemHelper.State profile)
+        public void ApplyRuntimeCameraProfile(SelectionRuntimeConfigStartupSystemHelper.State profile, bool applyMissionZoomLimits = false)
         {
+            if (applyMissionZoomLimits)
+            {
+                _minZoomHeight = profile.MinZoomHeight;
+                _maxZoomHeight = profile.MaxZoomHeight;
+            }
             _normalModeZoomHeight = profile.NormalModeZoomHeight;
             _normalModePitch = profile.NormalModePitch;
             _normalModeYaw = profile.NormalModeYaw;
@@ -141,12 +146,15 @@ namespace Game.Runtime
 
         public MatchHudZoomControlState ReadZoomControlState()
         {
+            if(_cameraSystem!=null&&_cameraSystem.HasPlacementPreviewPose)return MatchHudZoomControlState.Disabled;
             if (_cameraRequestSystem == null || _cameraSystem == null || _worldCamera == null)
                 return MatchHudZoomControlState.Disabled;
 
             if (!TryGetDefaultEntityManager(out EntityManager em) || HasValidTacticalFollowPose(em))
                 return MatchHudZoomControlState.Disabled;
 
+            if(_cameraSystem.HasAircraftFocusContext)
+                return new MatchHudZoomControlState(_cameraSystem.AircraftFocusZoomLevel>-1,_cameraSystem.AircraftFocusZoomLevel<1);
             return new MatchHudZoomControlState(
                 zoomInEnabled: _matchHudZoomLevel != MatchHudZoomLevel.ZoomedIn,
                 zoomOutEnabled: _matchHudZoomLevel != MatchHudZoomLevel.ZoomedOut);
@@ -154,6 +162,7 @@ namespace Game.Runtime
 
         public void UpdateZoomTransition()
         {
+            if(UpdateAircraftFocus()){DeactivateMatchHudZoomTransition();return;}
             if (!_matchHudZoomTransitionActive)
                 return;
             if (_cameraSystem == null || _cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
@@ -192,6 +201,8 @@ namespace Game.Runtime
 
         public bool RequestZoomInLevel()
         {
+            if(_cameraSystem!=null&&_cameraSystem.HasPlacementPreviewPose)return false;
+            if(_cameraSystem!=null&&_cameraSystem.HasAircraftFocusContext)return RequestAircraftZoom(-1);
             MatchHudZoomLevel targetLevel = _matchHudZoomLevel switch
             {
                 MatchHudZoomLevel.ZoomedOut => MatchHudZoomLevel.Default,
@@ -204,6 +215,8 @@ namespace Game.Runtime
 
         public bool RequestZoomOutLevel()
         {
+            if(_cameraSystem!=null&&_cameraSystem.HasPlacementPreviewPose)return false;
+            if(_cameraSystem!=null&&_cameraSystem.HasAircraftFocusContext)return RequestAircraftZoom(1);
             MatchHudZoomLevel targetLevel = _matchHudZoomLevel switch
             {
                 MatchHudZoomLevel.ZoomedIn => MatchHudZoomLevel.Default,

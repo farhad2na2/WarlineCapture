@@ -1,0 +1,25 @@
+{
+  "status": "ArchivedExecutedScopedOfflineProof_DurableReplayRunnerPrepared",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "originalFailure": "native1262-normal-manual-r2-recovery-failure.json",
+  "originalFailureSha256": "2b731a6a5dbd827c41ff308f96e6c8bf19e40213db4d031e9c8fec5678f1c8e4",
+  "originalExecutedRunner": "native1262-executed-runner.py.txt",
+  "originalExecutedRunnerSha256": "2c203a14361e78975cdf0e57bd5415aa5b1f6511068250dde18313e7b4732f63",
+  "files": {
+    "native1262-offline-audited-proof.json": "f309b1294e7255e8ba95ad1ec73b1c1ce5b7ab15efd05ba44cc99d5ed7200757",
+    "native1262-offline-executed-qualifier.py": "e29c7018aba21120b5400ccd87d7f5de1bc22ab5724828d8f5e2dc5d2ff26a72",
+    "native1262-offline-paid-remap-qualifier.py": "cf9d9cf9b44a861f90e4cf939c0c035dfa74291b4e5224fc33a3fb1d6fdeffad",
+    "native1262-offline-paid-remap-qualifier.diff": "958fc6f58d4da0b9523945e460ee676521fe6ba25e34552831689caac60561b6",
+    "native1262-offline-original-prepared.json": "e8d7766144b3c54536544d721ab85822808e697552242bd918c961afc240a569",
+    "native1262-offline-original-fog-qualifier.py": "a7f1acecdda9a930e40d8485cdadd77dd76005a636c0502136822c453d398705",
+    "native1262-offline-durable-qualifier.py": "d2dc1b5133468d3d25a040c7a88aac3851a0c7f60cdb2791e692f9a7bfaad971"
+  },
+  "qualification": "All original immutable post-native gates replayed offline; producer remap correction only. No Unity calls, original evidence unchanged.",
+  "durableRunnerChanges": "Only archived dependency paths and required exclusive output argument; native qualification predicates identical to executed script.",
+  "durableRunnerInvocation": "rtk proxy python3 /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1262-offline-durable-qualifier.py --output /private/tmp/native1262-offline-durable-replay-proof.json",
+  "limitations": [
+    "Post-recovery producer stable building ID was not directly censused; producer attribution relies on authenticated snapshot and source-pinned native reconstruction/remap/commit.",
+    "No overall player-ready, real-human/device, all-Touch ARIA or Stop/takeover qualification."
+  ],
+  "acceptanceAndReadinessEdited": false
+}

@@ -1,0 +1,56 @@
+{
+  "scope": "Exact staging suggestion for aircraft agent prepared fixtures and offline guards only; no production source edits or native PASS evidence claimed. Root decides commit.",
+  "live1076": "C# v2 SHA9df994c0 and runner v3 SHA250e2ae6; first versions preserved as superseded preparation.",
+  "live1077": "C# SHA bc49f487 and runner SHA10cb427d; prepared unexecuted.",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared.json",
+      "sha256": "9b2b9b65a00cad70326d11b114c73edeed8b2d790e5f44885e09bfb2299f0a17"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared.cs.txt",
+      "sha256": "2f40bee1d536e8748834a46a31e902d42de657ba58f46f48c3fa0948e898f825"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared-runner.py.txt",
+      "sha256": "735db8208ecd0edaae826ec48fde7bd7a5e2631d4998214fdd0ab7fc1cf822d0"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared-v2.json",
+      "sha256": "2150ccdc107bdd535edb2be0a87975a42bf916ac8c8b5c9a4607e91713259b0a"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared-v2.cs.txt",
+      "sha256": "9df994c07de96f1dfc4330cc443c9048c05d8d975b8ea42555521326ad64cb4f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared-v2-runner.py.txt",
+      "sha256": "a4c53374b320f4c9e71b9c489bf3d216708e70266b6cb8d451981a7862a87777"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared-v3.json",
+      "sha256": "6072de7b914fff762a26b2a4a72eba378bd55bd93cebe7ee666d7468d8c9fc52"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-prepared-v3-runner.py.txt",
+      "sha256": "250e2ae64aff920556f9e7de61eca37c96af77119a4a26f75b26355687905b75"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-attack-heli-combat1076-runner-guard-tests.json",
+      "sha256": "f51163f934c8ae4b464e8f2eb01bf5ce79c1411976dbb32a6cebc49e7aa578e4"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-recon1077-prepared.json",
+      "sha256": "e5f4f65aa1f044ddc34038e0e98a2736ef4448861e3b80e16ab353e8cd8807b1"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-recon1077-prepared.cs.txt",
+      "sha256": "bc49f487a5fa4a91e546c976e67a7058631c8aa2a212de869fcd7a8d1347f6b8"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-recon1077-prepared-runner.py.txt",
+      "sha256": "10cb427d110da9ba82307b10f7ef813995dd52a84aa5621c2958d9cc1d1769c4"
+    }
+  ],
+  "pendingNativeArtifacts": "Do not stage a preparation report as a PASS. Root can explicitly add actual native1076/native1077 load, compile, full log, wrapper/bridge exit, pre/post manifest, touch/placement/effect and result proof paths only after their actual runs close."
+}

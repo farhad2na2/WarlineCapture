@@ -1,0 +1,120 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=GroundPauseRepro1227.RunBeforeFix
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"EngagedInfantryInRange","system":"UnitEngagedMovementSystem","mode":"BeforeFix","delta":0.0,"positionDelta":0.0,"rotationDelta":0.7653668522834778,"simulationActive":false,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:81)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"EngagedInfantryChase","system":"UnitEngagedMovementSystem","mode":"BeforeFix","delta":0.0,"positionDelta":0.0,"rotationDelta":0.7653668522834778,"simulationActive":false,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:82)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"GridInfantryZeroDeltaControl","system":"UnitGridMovementSystem","mode":"BeforeFix","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:83)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"GridVehicleZeroDeltaControl","system":"UnitGridMovementSystem","mode":"BeforeFix","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:84)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"GridVehicleNearArrivalCleanup","system":"UnitGridMovementSystem","mode":"BeforeFix","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":true,"pathChanged":true,"targetChanged":true,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:85)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"EngagedActiveZeroDeltaControl","system":"UnitEngagedMovementSystem","mode":"BeforeFix","delta":0.0,"positionDelta":0.0,"rotationDelta":0.7653668522834778,"simulationActive":true,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:86)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"EngagedChasePositiveDelta","system":"UnitEngagedMovementSystem","mode":"BeforeFix","delta":0.25,"positionDelta":0.5,"rotationDelta":0.7653668522834778,"simulationActive":true,"transformChanged":true,"gridChanged":true,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:87)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"GridInfantryPositiveDelta","system":"UnitGridMovementSystem","mode":"BeforeFix","delta":0.25,"positionDelta":0.5,"rotationDelta":0.7653668522834778,"simulationActive":true,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:88)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"GridVehiclePositiveDelta","system":"UnitGridMovementSystem","mode":"BeforeFix","delta":0.25,"positionDelta":0.5,"rotationDelta":0.0,"simulationActive":true,"transformChanged":true,"gridChanged":true,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:89)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227Case] {"scenario":"EngagedInRangePositiveDeltaFacing","system":"UnitEngagedMovementSystem","mode":"BeforeFix","delta":0.25,"positionDelta":0.0,"rotationDelta":0.7653668522834778,"simulationActive":true,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at /private/tmp/GroundPauseRepro1227.cs:102)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:90)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[GroundPauseSystem1227] result=Passed mode=BeforeFixReproduced actualSystems=2 cases=10 pausedTransformMutations=2 positiveControls=4 missionFailureCauseCertified=0
+UnityEngine.Debug:Log (object)
+GroundPauseRepro1227:Validate (bool) (at /private/tmp/GroundPauseRepro1227.cs:91)
+GroundPauseRepro1227:RunBeforeFix () (at /private/tmp/GroundPauseRepro1227.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1227-ground-pause-before.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=GroundPauseRepro1227.RunBeforeFix
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

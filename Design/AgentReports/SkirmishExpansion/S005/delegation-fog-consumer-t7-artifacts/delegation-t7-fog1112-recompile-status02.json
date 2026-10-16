@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs(171,37): error CS1061: 'EntityManager' does not contain a definition for 'GetComponentLookup' and no accessible extension method 'GetComponentLookup' accepting a first argument of type 'EntityManager' could be found (are you missing a using directive or an assembly reference?)\",\"Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs(172,37): error CS1061: 'EntityManager' does not contain a definition for 'GetComponentLookup' and no accessible extension method 'GetComponentLookup' accepting a first argument of type 'EntityManager' could be found (are you missing a using directive or an assembly reference?)\",\"Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs(173,41): error CS1061: 'EntityManager' does not contain a definition for 'GetBufferLookup' and no accessible extension method 'GetBufferLookup' accepting a first argument of type 'EntityManager' could be found (are you missing a using directive or an assembly reference?)\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

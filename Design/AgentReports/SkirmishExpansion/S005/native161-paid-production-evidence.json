@@ -1,0 +1,11 @@
+{
+  "run": 161,
+  "log": "native-161-paid-production-current.log",
+  "result": "Passed",
+  "sourceHash": "5b85078da9e492d989d6380d26ace9a6bfda6d0f0236fe06a0b45223ea76c028",
+  "freshSceneRecovery": false,
+  "normalInputPlayerRecovery": false,
+  "playerReady": false,
+  "countsForCurrentSource": false,
+  "historicalReason": "Missile checkpoint schema5 changes follow this diagnostic."
+}

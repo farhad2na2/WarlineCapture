@@ -1,0 +1,96 @@
+{
+  "manifestStatus": "FrozenForRootT7Compilation",
+  "checks": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs",
+      "t7BaseSha256": null,
+      "stagedActualSha256": "d7e496aac47e910810c3f83993ef000abfac5b30062a3746332e5d295e5b3e36",
+      "expectedBase": null,
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs",
+      "t7BaseSha256": "f16754231d6eda98f2b2f28fd7750656bb01a4b7fc6a798c672f9e1e6b8219b8",
+      "stagedActualSha256": "762c6cf2d7b1a035b337045af3c12e6b16b25b43d20e3d8071b1ed23c3ba3535",
+      "expectedBase": "f16754231d6eda98f2b2f28fd7750656bb01a4b7fc6a798c672f9e1e6b8219b8",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "t7BaseSha256": "6844b7c855f8946204e7ca45e924952b850956d15a5a977a979e49f60559910a",
+      "stagedActualSha256": "27d4a04afc69364b609e1144fbecdf57ff66c434d4d307a0c581d83a4a13ec1a",
+      "expectedBase": "6844b7c855f8946204e7ca45e924952b850956d15a5a977a979e49f60559910a",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "t7BaseSha256": "167a4b03d02fa2afc8b73a41b0c59395e82cc79ea7fe388a8b9f2426aa0752bb",
+      "stagedActualSha256": "0031bb7905203788aba0b3c3f686428b20fe40c73ad070d8b54da1dde9d6871e",
+      "expectedBase": "167a4b03d02fa2afc8b73a41b0c59395e82cc79ea7fe388a8b9f2426aa0752bb",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "t7BaseSha256": "a821bac4c57aea8eb2f2ad917833a7d6b5cf89800ba6f5982273b9528393189c",
+      "stagedActualSha256": "b830c138e24720b64325223ce859f711cb56ed7054cb3f8876d8cf4e88c46b34",
+      "expectedBase": "a821bac4c57aea8eb2f2ad917833a7d6b5cf89800ba6f5982273b9528393189c",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs",
+      "t7BaseSha256": null,
+      "stagedActualSha256": "d40c735192b172233eb7915b24c4bdfd702f9de496f18b52f40ae9c4f8bf038e",
+      "expectedBase": null,
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "t7BaseSha256": "66cb59bc46cdb3e27b70cd2b7a20b43a73cdaf1b05b9dad939e19e3698f3d051",
+      "stagedActualSha256": "3e17d0fbdab1c071328298530131c510151ea7a6259050af2d785aa949cb9e0e",
+      "expectedBase": "66cb59bc46cdb3e27b70cd2b7a20b43a73cdaf1b05b9dad939e19e3698f3d051",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+      "t7BaseSha256": "d0c88104345eb046ed97826f55d7742a1f4ad3ec43ca8872fc25bd6c7076b647",
+      "stagedActualSha256": "662ad652fbd101344afb5104f4fcf16c043eb3b99231a85d7903c844980d3d82",
+      "expectedBase": "d0c88104345eb046ed97826f55d7742a1f4ad3ec43ca8872fc25bd6c7076b647",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs",
+      "t7BaseSha256": "e6d6f63d98d744c8b0d6b871d5fc14ea8fdedeafca2b2791c7bbc8dfb29a5c45",
+      "stagedActualSha256": "b0b6fb9a8b19e3d5136412d39e4f407b168e5b9a0de645963b7c178ddcf1e942",
+      "expectedBase": "e6d6f63d98d744c8b0d6b871d5fc14ea8fdedeafca2b2791c7bbc8dfb29a5c45",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs",
+      "t7BaseSha256": "edbfb845f3eead46fe15ffe15ba4fcf93a25e9df68e92909675073ca41fa1bed",
+      "stagedActualSha256": "3d1938ef7cdef4e4140661e98420714c97fb06a06943dc9f3dfb17c9d94db2ba",
+      "expectedBase": "edbfb845f3eead46fe15ffe15ba4fcf93a25e9df68e92909675073ca41fa1bed",
+      "baseMatches": true,
+      "stagedMatches": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "t7BaseSha256": null,
+      "stagedActualSha256": "0a98107b87d9dfa2d939845dc9b4fea2202a3dd80128ec6e952baa7d507cbd6b",
+      "expectedBase": null,
+      "baseMatches": true,
+      "stagedMatches": true
+    }
+  ],
+  "errors": [],
+  "head": "94d949c92b79660762dc6a3cac967d9598507163",
+  "branch": "codex/s005-parallel-validation"
+}

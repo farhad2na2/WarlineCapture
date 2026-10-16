@@ -54,7 +54,7 @@ namespace Game.UI.Runtime
             float available=900;
             if(mapDock!=null && mapDock.Minimap!=null)
                 available=mapDock.AssistantHeight(rail);
-            int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
+            int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|(_rightToLeft?1<<28:0)|
                 (watchCount<<20)|(utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0)|(selectionActive?128:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text &&
@@ -68,18 +68,18 @@ namespace Game.UI.Runtime
             _layoutDirty=false; measuredAvailable=available; measuredState=state; measuredWidth=rail.rect.width; measuredFont=bodyText.font;
             measuredTitle=titleText.text; measuredBody=bodyText.text; measuredAlert=alertCopy?.text; measuredOpening=openingCopy?.text;
             measuredWatchExplanation=watchExplanation != null && watchExplanation.gameObject.activeSelf ? watchExplanation.text : null;
+            ApplyInstructionTypography();
             float width=rail.rect.width-40;
-            float titleHeight=tutorial ? Measure(titleText,width,26) : 0;
-            float bodyHeight=tutorial ? Measure(bodyText,width,24) : 0;
+            float titleHeight=tutorial ? Measure(titleText,width,26*InstructionScale) : 0;
+            float bodyHeight=tutorial ? Measure(bodyText,width,InstructionBodySize) : 0;
             float watchExplanationHeight = HasText(watchExplanation) && watchExplanation.gameObject.activeSelf
-                ? Measure(watchExplanation,width,24)+12 : 0;
+                ? Measure(watchExplanation,width,InstructionBodySize)+12 : 0;
             float utilityHeight=(utilityCount+extractionCount+watchCount)*84+watchExplanationHeight;
-            float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
-            float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
-            missionPortraitStage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight);
-            missionPortraitClip.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight-12);
-            var fitter=portraitImage.GetComponent<AspectRatioFitter>();
-            if(fitter!=null) fitter.aspectMode=AspectRatioFitter.AspectMode.FitInParent;
+            // Reserve readable controls and a text viewport. Prose length never
+            // determines the portrait size; additional copy belongs in the scroll area.
+            float fixedContent=20+titleHeight+56+(titleHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
+            float portraitHeight=hasText ? Mathf.Clamp(available-fixedContent,88,124) : 230;
+            ApplyPortraitHeader(portraitHeight,hasText);
             if(missionTelemetry!=null) missionTelemetry.SetActive(!hasText);
             float y=8+portraitHeight+12;
             if(tutorial)
@@ -108,8 +108,8 @@ namespace Game.UI.Runtime
             {
                 // No reserved tutorial rectangle or inactive text raycast surface.
                 if(briefingLayout.gameObject.activeSelf) briefingLayout.gameObject.SetActive(false);
-                if(opening) {float h=Measure(openingCopy,width,24);Place(openingLayout,20,y,width,h);Place(openingCopy.rectTransform,0,0,width,h);y+=h+12;}
-                else if(alert) {float h=Measure(alertCopy,width,24);Place(alertCopy.rectTransform,20,y,width,h);y+=h+12;}
+                if(opening) {float h=Measure(openingCopy,width,InstructionBodySize);Place(openingLayout,20,y,width,h);Place(openingCopy.rectTransform,0,0,width,h);y+=h+12;}
+                else if(alert) {float h=Measure(alertCopy,width,InstructionBodySize);Place(alertCopy.rectTransform,20,y,width,h);y+=h+12;}
             }
             if(utilityActions!=null && utilityActions.gameObject.activeSelf)
             {PlaceUtilityRow(utilityActions,y,width);y+=utilityCount*84;}

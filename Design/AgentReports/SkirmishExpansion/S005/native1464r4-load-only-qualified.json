@@ -1,0 +1,8 @@
+{
+  "result": "ExactLifecycleFixtureLoadedOnly",
+  "fixture": "/private/tmp/s005-lifecycle-memory1464r4-prepared/S005LifecycleResource1464R4.cs",
+  "entry": "S005Lifecycle1464R4.Run",
+  "project": "/Users/farhad/Projects/WarlineCapture",
+  "assemblyName": "PipelineRunScript_S005LifecycleResource1464R4_7d890f65dc544bb2a4bf9873516d845a",
+  "gameplayStarted": false
+}

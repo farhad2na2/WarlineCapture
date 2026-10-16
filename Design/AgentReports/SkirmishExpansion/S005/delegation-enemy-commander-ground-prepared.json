@@ -1,0 +1,54 @@
+{
+  "status": "External frozen preparation; root review and actual native compile/focused tests pending",
+  "manifest_path": "/private/tmp/s005-enemy-commander-v1/manifest.json",
+  "manifest_sha256": "4c7d6736ed66688d37bd45aa825ec8c7bb662dbac7073d6791349ea56659335b",
+  "patch_sha256": "5b454777b8ba751b790b0f7312bf99cd6984a47f660cfb0b71867f9c6e2fc8c4",
+  "candidate_base": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "production_paths": [
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs"
+  ],
+  "tests": [
+    {
+      "entry": "Game.Tests.Editor.SkirmishEnemyPerceptionTests.RunFocusedValidation",
+      "cases": 4
+    },
+    {
+      "entry": "Game.Tests.Editor.SkirmishEnemyDecisionRulesTests.RunFocusedValidation",
+      "checks": 27
+    },
+    {
+      "entry": "Game.Tests.Editor.SkirmishEnemyCommanderTests.RunFocusedValidation",
+      "cases": 4,
+      "difficulty_seed_pairs": 4,
+      "scope": "isolated actual shared group-order API; no native prefab/full mission claim"
+    }
+  ],
+  "repairs": [
+    "Bounded response due bypasses cheap probe cadence with fresh legal snapshot",
+    "LastSeen ledger must match current session identity",
+    "Terminal authored assault route uses public objective point and normal Move validation",
+    "Minimal defense keeps nonselected offense from chasing local home contacts",
+    "No time-only stationary recovery reset",
+    "Two-waypoint/uneven route scout reaches actual nearest third",
+    "Missing scout requested as real paid Rifle only after supported assault/escort and actual reserve",
+    "Frozen-knowledge investigation confined to authored patrol reach",
+    "Scout cooldown advances only after actual accepted scout dispatch"
+  ],
+  "limits": [
+    "New physical geometry/budgets/statistics unchanged",
+    "Focused commander tests use isolated ledger actors and actual shared command API; no native prefab/fullmatch certification",
+    "Frozen EnemyPerceptionFocused1197.cs unchanged and excluded because revised ledger contract requires state owner",
+    "Air orchestration/economic growth/transport tactics remain separate gates",
+    "Public final approach can still honestly fail native geometry validation; no source-fit claim",
+    "Old policyless legacy strategy fallback retained"
+  ],
+  "main_source_edited": false,
+  "t7_source_edited_by_this_agent": false,
+  "unity_called": false,
+  "git_called": false,
+  "preserved_predecessor_directory": "/private/tmp/s005-enemy-commander-v1/before-placement-review-v1"
+}

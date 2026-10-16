@@ -1,0 +1,38 @@
+{
+  "mission": "S005",
+  "basis": "Historical native709 normal-input economy diagnostics, not a current-source qualification",
+  "trace": "s005-aria-live-155926-en-3b132a759fd548b6b85dbf996ca243b7.jsonl.economy.jsonl",
+  "sampleElapsed": 1076.546875,
+  "fuelStorages": [
+    {
+      "id": 7,
+      "producer": true,
+      "storedFuel": 848.0,
+      "receivedHaulerFuel": 0.0
+    },
+    {
+      "id": 9,
+      "producer": false,
+      "storedFuel": 74.10012817382812,
+      "receivedHaulerFuel": 944.0
+    },
+    {
+      "id": 16,
+      "producer": true,
+      "storedFuel": 468.0,
+      "receivedHaulerFuel": 0.0
+    },
+    {
+      "id": 17,
+      "producer": false,
+      "storedFuel": 452.6696472167969,
+      "receivedHaulerFuel": 1032.0
+    }
+  ],
+  "fuelStillInRefineries": 1316.0,
+  "fuelInUsableNonProducerStores": 526.769775390625,
+  "inference": "The two-refinery four-oil/two-tanker attempt ended with substantial produced fuel still waiting in refineries. Export throughput warrants a controlled three-oil/three-tanker comparison with the same paid two-refinery industry, rather than another source/map or rate change. Oil throughput could regress; this does not prove the alternative can finish.",
+  "candidateChangeScope": "Qualification driver purchases only, existing UI prices/cap6/production/deadline/source unchanged",
+  "nativeAcceptance": "Pending",
+  "playerReady": false
+}

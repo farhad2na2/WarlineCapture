@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return new {projectPath=System.IO.Path.GetDirectoryName(UnityEngine.Application.dataPath),isPlaying=UnityEditor.EditorApplication.isPlaying,changing=UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,isCompiling=UnityEditor.EditorApplication.isCompiling,updating=UnityEditor.EditorApplication.isUpdating,qaRunning=Game.Editor.ExistingEditorValidation.IsRunning};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "projectPath": "/Users/farhad/Projects/WarlineCapture",
+        "isPlaying": false,
+        "changing": false,
+        "isCompiling": false,
+        "updating": false,
+        "qaRunning": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

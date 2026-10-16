@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-native1628-connected-review-only/S005NormalRecoveryIdle1628.cs",
+      "entry": "S005NormalRecoveryIdle1628.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 196,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_S005NormalRecoveryIdle1628_df4b8b0b02f24cfd8d57548f357dd601",
+      "success": true,
+      "result": "False|False|False|False|False|/Volumes/T7/Projects/WarlineCapture/Assets"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

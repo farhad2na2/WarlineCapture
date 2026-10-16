@@ -1,0 +1,48 @@
+{
+  "scope": "LargeAriaObservationAndPlanOnExactUiOwnedEntity_OriginalTouchAuthorityPreserved",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishComponents.cs.txt",
+      "before_sha256": "6baaa5655936e5fbc459b620123d1a2d397a2c8b51dbef77cf513a92ef251375",
+      "sha256": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "assembly": "Game.UI.Shell.Contracts.Ecs"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/UiShellEcsGateway.AriaPlay.cs.txt",
+      "before_sha256": "8463942295169681e6f7c744d36554642fcd639eeb9dae22c5b9a8ffd2fe0943",
+      "sha256": "70c83c7f5bc0fd9613ac24b8361f822d94a200c9ced2ce666dc0ec3b8a391f63",
+      "assembly": "Game.UI.Shell.Ecs"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishPlanSystem.cs.txt",
+      "before_sha256": "a73a97339fe73d0b7e79bad40d50d47ee77e4a95e8b26c2df64d5881bc805428",
+      "sha256": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "assembly": "Game.UI.Shell.Ecs"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/SkirmishS002AriaRunHarness.cs.txt",
+      "before_sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+      "sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishObservationStorage.cs.txt",
+      "before_sha256": null,
+      "sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "assembly": "Game.UI.Shell.Ecs"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaUiOwnedStorageTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "6a90a17af058b7e92da90f6c024c6d5ffb38d879a848bd551901a54b517fb830",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "native_executed": false
+}

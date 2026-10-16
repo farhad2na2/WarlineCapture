@@ -1,0 +1,26 @@
+{
+  "scope": "Shared skirmish confirmation/result nested modal ordering and raycaster; preserve paused underlying simulation and command gateway. Two disposable native overlapping raycast regression cases; full normal-input lifecycle separately required.",
+  "demonstratedFailure": "native1195-confirmation-ui-diagnostic.jsonl samples1-3 Pause32766 above confirmation32700 blocks actual normal Touch",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.cs",
+      "beforeSha256": "2c48887dee25a19716bc03996e7dfac07d88508024c1678a5263773ba82607c9",
+      "afterSha256": "6f11bc4e7fdae2460946eeedbebcc6cbb52f49194f7f45716bdfb3bb6a7e56cb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiChromeStack.cs",
+      "beforeSha256": "66436015501d7626e1965f3006ba11ff0bb7c28b70810af3615df514a89e60a0",
+      "afterSha256": "72d1ec5f7fab33bf801c9e28bfd5143287041ac86a84f2e493f086a427e66629"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishModalLayeringTests.cs",
+      "beforeSha256": null,
+      "afterSha256": "1c3b22113b7c1347c58ffa359b09f12efa23350a09c107d0c383fba534496b2f"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishModalLayeringTests.cs.meta",
+      "beforeSha256": null,
+      "afterSha256": "690c25b7169a902502e276b4677d196e6f124b529e5e273110186c10cd43889d"
+    }
+  ]
+}

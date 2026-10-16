@@ -1,0 +1,16 @@
+{
+  "run": "native753",
+  "result": "Failed",
+  "reason": "Opening roster assertion repeated during long read-only scan; native live building count changed 14 to 13 during gameplay",
+  "wrapperExit": 2,
+  "requiredCompletedMarkerPresent": false,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-753-clean-readonly-source-air-fit-pre-source-manifest.json",
+  "postManifest": "final-753-readonly-scan-opening-roster-drift-failure-post-source-manifest.json",
+  "sourceHash": "24bf288aa48e157d6a8c72fd83ed8df9af3aead7d441e63c82dd7898eb7e4f33",
+  "lastProgress": "cursor=2961 total=4096 nativeValid=495 frames=1020",
+  "capacityCertified": false,
+  "playerReady": false,
+  "log": "native-753-current-manual-en-seed104734.log",
+  "logSha256": "c0b3314db44fbe65f2a345f2dcd8cc341f33734c20524894f4dc0c5fbb3b7ca3"
+}

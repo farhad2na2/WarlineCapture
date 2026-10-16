@@ -1,0 +1,15 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\timeout.log
+[UnityInvoke] TimeoutSeconds: 1
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\timeout.log --exit 0 --sleep 15000 --fatal 0
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\timeout.log --exit 0 --sleep 15000 --fatal 0
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\timeout.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\timeout.stderr.log
+[UnityInvoke] ERROR: Unity timed out after 1 seconds. Killing process tree for PID 30040.
+[UnityInvoke] taskkill: ERROR: The user name or password is incorrect.
+[UnityInvoke] taskkill: System.Management.Automation.RemoteException
+[UnityInvoke] taskkill ExitCode: 1
+[UnityInvoke] WARN: Owned root PID 30040 survived tree cleanup; attempting its cached Process handle.
+[UnityInvoke] ExitCode: 124

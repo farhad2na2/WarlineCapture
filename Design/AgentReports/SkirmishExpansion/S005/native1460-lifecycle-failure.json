@@ -1,0 +1,67 @@
+{
+  "result": "Failed",
+  "scope": "Current-source S005 FA104734 NORMAL public Menu, eleven genuine native Surrender Defeats/ten Replay/one MainMenu; exact first-frame authored package plus current typed AI reset and pause conservation. Desktop memory review remains separate; no complete combat win, EN Defeat/device claim.",
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "fullSourceUnchanged": true,
+  "preManifest": "current-lifecycle1460-predispatch-source-manifest.json",
+  "preflightManifest": "final-1460-lifecycle-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1460-lifecycle-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1460-lifecycle-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeExit": 1,
+  "fixture": "native1460-lifecycle-observer.cs.txt",
+  "fixtureSha256": "62f8fb005eea589d419cd9802cb69082eec18934b589fec71d77491c34f65693",
+  "executedRunnerSha256": "64176762086420b1e4972fee8a9d6c3c26225a6dae994efb9e564df2d2b43493",
+  "parserSha256": "4d4a84926a000fbd208d0ca439e4fe8afdc62c1ff1f36bc8f04fa73cbcd1e358",
+  "log": "native-1460-lifecycle-fa-seed104734.log",
+  "logSha256": "8ae80cd76de2741bb853a2dee9633b44f51f2898efd2b8e67f972e9603029b10",
+  "observation": "native1460-lifecycle-observation.jsonl",
+  "observationSha256": "339e1c91aaee34061d87de38e7f672cbfd610c703d6d352efdaf6b6e8a8edfb7",
+  "qualification": null,
+  "lifecycleErrors": [
+    "Actual wrapper/native exit must both be0",
+    "Missing exact native marker [S005Lifecycle1460] result=Passed cycles=11 scope=NormalNativeSurrenderTenReplayLifecycle wins=0 playerReady=0",
+    "Missing exact native marker [ExistingEditorValidation] result=Passed executeMethod=S005Lifecycle1460.RunValidation",
+    "Actual lifecycle evidence rejected: Native lifecycle failure recorded"
+  ],
+  "resourceErrors": [
+    "Read-only resource evidence incomplete: Native lifecycle unqualified; resource coupling withheld"
+  ],
+  "resourceCensus": null,
+  "resourceAdapter": null,
+  "memoryDiagnostic": null,
+  "frameBudgetQualified": false,
+  "memoryCleanupQualified": false,
+  "deviceBudgetQualified": false,
+  "freshness": {
+    "result": "PassedScopedCurrentAssemblyFreshness",
+    "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+    "bakingVersion": 2,
+    "loadedAssemblies": 3,
+    "scope": "Current Editor compile and representative loaded assemblies; exact native fixture dry compile is separate"
+  },
+  "loadOnly": {
+    "result": "ExactLifecycleFixtureLoadedOnly",
+    "fixture": "/private/tmp/s005-lifecycle-memory1460-prepared/S005LifecycleResource1460.cs",
+    "entry": "S005Lifecycle1460.Run",
+    "project": "/Users/farhad/Projects/WarlineCapture",
+    "assemblyName": "PipelineRunScript_S005LifecycleResource1460_c2ea30e11a954deab6b630f33ce9215b",
+    "gameplayStarted": false
+  },
+  "normalResourcesPosesDamageVisibilityClocksOutcomeInjected": false,
+  "qaOneWinWatcherAndManualAutoCombatCoordinated": true,
+  "genuineDefeats": null,
+  "countedWins": 0,
+  "fullX17Certified": false,
+  "memoryGrowthReviewRequired": true,
+  "shippingPublicationModified": false,
+  "errors": [
+    "Actual wrapper/native exit must both be0",
+    "Missing exact native marker [S005Lifecycle1460] result=Passed cycles=11 scope=NormalNativeSurrenderTenReplayLifecycle wins=0 playerReady=0",
+    "Missing exact native marker [ExistingEditorValidation] result=Passed executeMethod=S005Lifecycle1460.RunValidation",
+    "Actual lifecycle evidence rejected: Native lifecycle failure recorded",
+    "Read-only resource evidence incomplete: Native lifecycle unqualified; resource coupling withheld"
+  ],
+  "playerReady": false,
+  "realHumanDeviceAcceptance": false
+}

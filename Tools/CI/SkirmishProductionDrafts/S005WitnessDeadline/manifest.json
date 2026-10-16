@@ -1,0 +1,15 @@
+{
+  "parent": "Logs/SkirmishProduction/Offline/pilot-prefix-oorcs3bu/result.json",
+  "parent_sha256": "7b3921270bd488d6fe31711416b72c1321640a43b1bcc988ad0084cd4aad60d8",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "before_sha256": "b9ab5d23766f504072b3e48d469a3a5f8e0fc1127d30c617b6860ab6e7b14085",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005WitnessDeadline/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "sha256": "b8501cac55fd30bce71d1bcdeb6c453963f79bbb166cca20e7d513a21b43e11c",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "scope": "Explicit placement-witness diagnostic only. 480s total startup+views; at most180s after candidate readiness. All other startup/gameplay budgets unchanged.",
+  "native_execution": false
+}

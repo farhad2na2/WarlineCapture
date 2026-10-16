@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "command": "command set_quality_settings",
+  "data": {
+    "command": "set_quality_settings",
+    "parameters": {
+      "settings": "{\"antiAliasing\":0}",
+      "confirm": "true"
+    },
+    "result": {
+      "success": true,
+      "group": "quality",
+      "applied": true,
+      "dryRun": false,
+      "requiresDomainReload": false,
+      "requiresReimport": false,
+      "values": {
+        "level": 1,
+        "levelName": "Mobile",
+        "levelNames": [
+          "Low",
+          "Mobile",
+          "PC",
+          "Ultra"
+        ],
+        "vSyncCount": 0,
+        "antiAliasing": 0
+      },
+      "message": "Set quality settings: antiAliasing 4 -> 0"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

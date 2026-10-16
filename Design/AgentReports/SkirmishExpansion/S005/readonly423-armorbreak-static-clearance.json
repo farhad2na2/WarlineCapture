@@ -1,0 +1,410 @@
+{
+  "scope": "Read-only pre-screen of first 40 level coarse-grid footprints against serialized authored blocked cells; no complete native placement or source binding changes",
+  "definition": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+  "physicalSourceModified": false,
+  "levelSamples": 54,
+  "recordedSamples": 40,
+  "clearSamples": 2,
+  "candidates": [
+    {
+      "x": 8,
+      "z": 8,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 748,
+      "worldZ": 268,
+      "authoredBlockedCells": 1182
+    },
+    {
+      "x": 136,
+      "z": 8,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 876,
+      "worldZ": 268,
+      "authoredBlockedCells": 954
+    },
+    {
+      "x": 264,
+      "z": 8,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1004,
+      "worldZ": 268,
+      "authoredBlockedCells": 731
+    },
+    {
+      "x": 8,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 748,
+      "worldZ": 396,
+      "authoredBlockedCells": 976
+    },
+    {
+      "x": 136,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 876,
+      "worldZ": 396,
+      "authoredBlockedCells": 1545
+    },
+    {
+      "x": 264,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1004,
+      "worldZ": 396,
+      "authoredBlockedCells": 3630
+    },
+    {
+      "x": 392,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1132,
+      "worldZ": 396,
+      "authoredBlockedCells": 2915
+    },
+    {
+      "x": 520,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1260,
+      "worldZ": 396,
+      "authoredBlockedCells": 1525
+    },
+    {
+      "x": 648,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1388,
+      "worldZ": 396,
+      "authoredBlockedCells": 495
+    },
+    {
+      "x": 776,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1516,
+      "worldZ": 396,
+      "authoredBlockedCells": 1268
+    },
+    {
+      "x": 904,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1644,
+      "worldZ": 396,
+      "authoredBlockedCells": 2283
+    },
+    {
+      "x": 1032,
+      "z": 136,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1772,
+      "worldZ": 396,
+      "authoredBlockedCells": 1017
+    },
+    {
+      "x": 8,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 748,
+      "worldZ": 524,
+      "authoredBlockedCells": 3290
+    },
+    {
+      "x": 136,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 876,
+      "worldZ": 524,
+      "authoredBlockedCells": 2405
+    },
+    {
+      "x": 264,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1004,
+      "worldZ": 524,
+      "authoredBlockedCells": 1918
+    },
+    {
+      "x": 392,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1132,
+      "worldZ": 524,
+      "authoredBlockedCells": 1477
+    },
+    {
+      "x": 520,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1260,
+      "worldZ": 524,
+      "authoredBlockedCells": 343
+    },
+    {
+      "x": 648,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1388,
+      "worldZ": 524,
+      "authoredBlockedCells": 0
+    },
+    {
+      "x": 776,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1516,
+      "worldZ": 524,
+      "authoredBlockedCells": 49
+    },
+    {
+      "x": 904,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1644,
+      "worldZ": 524,
+      "authoredBlockedCells": 161
+    },
+    {
+      "x": 1032,
+      "z": 264,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1772,
+      "worldZ": 524,
+      "authoredBlockedCells": 215
+    },
+    {
+      "x": 8,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 748,
+      "worldZ": 652,
+      "authoredBlockedCells": 2168
+    },
+    {
+      "x": 136,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 876,
+      "worldZ": 652,
+      "authoredBlockedCells": 1900
+    },
+    {
+      "x": 264,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1004,
+      "worldZ": 652,
+      "authoredBlockedCells": 1915
+    },
+    {
+      "x": 392,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1132,
+      "worldZ": 652,
+      "authoredBlockedCells": 2327
+    },
+    {
+      "x": 520,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1260,
+      "worldZ": 652,
+      "authoredBlockedCells": 435
+    },
+    {
+      "x": 648,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1388,
+      "worldZ": 652,
+      "authoredBlockedCells": 89
+    },
+    {
+      "x": 776,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1516,
+      "worldZ": 652,
+      "authoredBlockedCells": 0
+    },
+    {
+      "x": 904,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1644,
+      "worldZ": 652,
+      "authoredBlockedCells": 86
+    },
+    {
+      "x": 1032,
+      "z": 392,
+      "w": 210,
+      "h": 55,
+      "rotated": false,
+      "worldX": 1772,
+      "worldZ": 652,
+      "authoredBlockedCells": 136
+    },
+    {
+      "x": 8,
+      "z": 8,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 748,
+      "worldZ": 268,
+      "authoredBlockedCells": 1155
+    },
+    {
+      "x": 136,
+      "z": 8,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 876,
+      "worldZ": 268,
+      "authoredBlockedCells": 732
+    },
+    {
+      "x": 264,
+      "z": 8,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 1004,
+      "worldZ": 268,
+      "authoredBlockedCells": 1026
+    },
+    {
+      "x": 392,
+      "z": 8,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 1132,
+      "worldZ": 268,
+      "authoredBlockedCells": 2749
+    },
+    {
+      "x": 648,
+      "z": 8,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 1388,
+      "worldZ": 268,
+      "authoredBlockedCells": 113
+    },
+    {
+      "x": 8,
+      "z": 136,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 748,
+      "worldZ": 396,
+      "authoredBlockedCells": 2116
+    },
+    {
+      "x": 136,
+      "z": 136,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 876,
+      "worldZ": 396,
+      "authoredBlockedCells": 2079
+    },
+    {
+      "x": 264,
+      "z": 136,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 1004,
+      "worldZ": 396,
+      "authoredBlockedCells": 1761
+    },
+    {
+      "x": 392,
+      "z": 136,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 1132,
+      "worldZ": 396,
+      "authoredBlockedCells": 3263
+    },
+    {
+      "x": 520,
+      "z": 136,
+      "w": 55,
+      "h": 210,
+      "rotated": true,
+      "worldX": 1260,
+      "worldZ": 396,
+      "authoredBlockedCells": 1698
+    }
+  ]
+}

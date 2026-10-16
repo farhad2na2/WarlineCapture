@@ -1,0 +1,135 @@
+"""Strict fixed-daylight Replay interpretation; URP unnamed objects remain diagnostic."""
+from __future__ import annotations
+
+import gzip
+import json
+import math
+from pathlib import Path
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
+
+
+def rows(path: Path) -> list[dict]:
+    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+
+
+def raw_objects(directory: Path, boundary: int) -> list[dict]:
+    path = directory / f"{boundary:03d}-objects.jsonl.gz"
+    with gzip.open(path, "rt") as stream:
+        return [json.loads(line) for line in stream]
+
+
+def counts(objects: list[dict]) -> dict:
+    live = [row for row in objects if not row.get("persistent")]
+    return {
+        "runtimeDayNightProfiles": sum(row["type"] == "UnityEngine.Rendering.VolumeProfile" and
+                                       row["name"].endswith("_RuntimeDayNight") for row in live),
+        "runtimeDayNightSkyboxes": sum(row["type"] == "UnityEngine.Material" and
+                                       row["name"].endswith("_RuntimeDayNight") for row in live),
+        "namedWhiteBalance": sum(row["type"] == "UnityEngine.Rendering.Universal.WhiteBalance" and
+                                 row["name"] == "WhiteBalance" for row in live),
+    }
+
+
+def unnamed_rendering(objects: list[dict]) -> dict[int, str]:
+    return {row["instanceId"]: row["type"] for row in objects
+            if not row.get("persistent") and row["name"] == "" and
+            row["type"].startswith("UnityEngine.Rendering.")}
+
+
+def color_matches(actual: dict, expected: tuple[float, float, float]) -> bool:
+    # JsonUtility prints float32 channels; this is serialization precision only.
+    return all(math.isclose(actual.get(channel, float("nan")), value, abs_tol=1e-5)
+               for channel, value in zip(("r", "g", "b", "a"), (*expected, 1.0)))
+
+
+def qualify(report: Path, observation: str, census_directory: Path, attempts: list[str]) -> dict:
+    report = Path(report)
+    census_directory = Path(census_directory)
+    evidence = rows(report / observation)
+    require(len(attempts) == 11 and len(set(attempts)) == 11, "Eleven distinct lifecycle attempts required")
+    fresh = [row for row in evidence if row.get("stage") == "FreshVisualPolicy"]
+    settled = [row for row in evidence if row.get("stage") == "NativeSettledVisualPolicy"]
+    menu = [row for row in evidence if row.get("stage") == "PostUnloadVisualPolicy"]
+    require(len(fresh) == len(settled) == 11 and len(menu) == 1,
+            "First/replay/final visual observations incomplete")
+    require([row["attempt"] for row in fresh] == attempts and
+            [row["attempt"] for row in settled] == attempts and menu[0]["attempt"] == attempts[-1],
+            "Visual observations not tied to actual chronological Replay attempts")
+    ordered = [row for row in evidence if row.get("stage") in
+               {"FreshVisualPolicy", "NativeSettledVisualPolicy", "PostUnloadVisualPolicy"}]
+    require(ordered[-1] is menu[0], "Final visual check did not follow all Replays")
+    require(all(row.get("passed") is True and row.get("runtimeDayNightProfiles") == 0 and
+                row.get("runtimeDayNightSkyboxes") == 0 and
+                type(row.get("namedWhiteBalance")) is int and row["namedWhiteBalance"] >= 0
+                for row in ordered), "Runtime day/night object or failed visual observation")
+    require(all(row.get("dayNightDisabled") is True for row in fresh + settled),
+            "Persistent DayNight system reenabled or retained runtime visuals")
+    require(all(row.get("fixedDaylight") is True for row in settled),
+            "Authored Campaign daylight fill changed in a settled match")
+    named = [row["namedWhiteBalance"] for row in ordered]
+    require(all(next_count <= count for count, next_count in zip(named, named[1:])),
+            "Named dynamically added WhiteBalance objects accumulated across Replay")
+    for row in settled:
+        state = json.loads(row["snapshot"])
+        require(state["fog"] is False and state["ambientMode"] == "Trilight" and
+                state["lightIntensity"] > 0 and
+                color_matches(state["sky"], (.79, .86, .96)) and
+                color_matches(state["equator"], (.72, .73, .74)) and
+                color_matches(state["ground"], (.48, .42, .34)),
+                "Settled visual snapshot does not match authored fixed daylight")
+
+    raw = [raw_objects(census_directory, index) for index in range(12)]
+    require(all(counts(raw[index]) == {key: row[key] for key in
+                ("runtimeDayNightProfiles", "runtimeDayNightSkyboxes", "namedWhiteBalance")}
+                for index, row in enumerate(fresh + menu)),
+            "Read-only visual rows disagree with 12-boundary raw Unity object census")
+    unnamed = [unnamed_rendering(objects) for objects in raw]
+    owner_snapshots = [json.loads((census_directory / f"{index:03d}-urp-owners.json").read_text())
+                       for index in range(12)]
+    require(all(row.get("schema") == "ReadOnlyUrpOwnerSnapshotV1" for row in owner_snapshots),
+            "Twelve read-only URP owner snapshots required")
+    final_ids = set(unnamed[-1])
+    cohorts = []
+    for index in range(1, 11):
+        new_ids = set(unnamed[index]) - set(unnamed[index - 1])
+        by_type = {}
+        for identity in new_ids:
+            type_name = unnamed[index][identity]
+            by_type[type_name] = by_type.get(type_name, 0) + 1
+        owners = owner_snapshots[index]
+        default_ids = set(owners.get("defaultStateComponentIds", []))
+        stack_ids = {value for stack in owners.get("stacks", []) for value in stack.get("componentIds", [])}
+        cohorts.append({"fromBoundary": index - 1, "toBoundary": index,
+                        "newUnnamedRenderingObjects": len(new_ids),
+                        "retainedAtFinalMenu": len(new_ids & final_ids),
+                        "observedInDefaultState": len(new_ids & default_ids),
+                        "observedInVolumeStacks": len(new_ids & stack_ids),
+                        "byType": dict(sorted(by_type.items()))})
+    return {
+        "result": "PassedScopedFixedDaylightTenReplayObservation",
+        "freshAttempts": 11,
+        "actualReplays": 10,
+        "postUnloadMenuObserved": True,
+        "namedWhiteBalanceCounts": named,
+        "runtimeDayNightProfileCounts": [row["runtimeDayNightProfiles"] for row in ordered],
+        "unnamedUrpCohortsDiagnosticOnly": cohorts,
+        "urpOwnerSnapshotsDiagnosticOnly": [{"boundary": index,
+                                              "available": owner.get("available", False),
+                                              "reason": owner.get("reason", ""),
+                                              "managerAlreadyCreated": owner.get("managerAlreadyCreated", False),
+                                              "qualityPipelineAssetId": owner.get("qualityPipelineAssetId", 0),
+                                              "currentPipelineAssetId": owner.get("currentPipelineAssetId", 0),
+                                              "currentPipelineManagedIdentity": owner.get("currentPipelineManagedIdentity", 0),
+                                              "defaultStateCount": len(owner.get("defaultStateComponentIds", [])),
+                                              "stackCount": len(owner.get("stacks", []))}
+                                             for index, owner in enumerate(owner_snapshots)],
+        "unnamedUrpOwnerQualified": False,
+        "memoryCleanupQualified": False,
+        "frameBudgetQualified": False,
+        "deviceBudgetQualified": False,
+        "playerReady": False,
+    }

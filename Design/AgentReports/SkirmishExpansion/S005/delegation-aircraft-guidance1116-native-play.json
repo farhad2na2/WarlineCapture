@@ -1,0 +1,51 @@
+{
+  "result": "PassedScopedActualNativePlayGuidanceTeardownAndRebind",
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "actualOwnerOnDestroy": 1,
+  "transientOverlayRecreation": 0,
+  "newOwnerVisibleRebind": 1,
+  "M3OverlayHierarchyPreserved": true,
+  "actualEnterExitPlayModePerform": true,
+  "nativePositiveFrameNullYields": true,
+  "temporaryEmptySceneOnly": true,
+  "denseMissionStarted": false,
+  "nativeAutomaticWorldMenuBootstrapObserved": true,
+  "wholeSourceUnchanged": true,
+  "wholeSourceSha256": "7a8820a19a70fde24d7b6b29659a3540df978332f8d22a6f1bf9ddaa88f6ddc7",
+  "wholeSourceFiles": 47535,
+  "preSource": "/private/tmp/delegation-t7-guidance1116-complete-pre.json",
+  "postSource": "/private/tmp/delegation-t7-guidance1116-complete-post.json",
+  "nativeIdleSceneExact": true,
+  "actualOriginalSetup": [
+    {
+      "path": "Assets/Game/Scenes/Menu.unity",
+      "loaded": true,
+      "active": true
+    }
+  ],
+  "actualRestoredSetup": [
+    {
+      "path": "Assets/Game/Scenes/Menu.unity",
+      "loaded": true,
+      "active": true
+    }
+  ],
+  "scenePreservationEvidence": "Independent full native CLI pre/post census plus read-only actual driver cached SceneSetup[] compared against current native setup",
+  "driverJsonUtilitySerializationGap": "Private nested SceneRow[]/SetupRow[] silently omitted. Internal sceneSetupExact marker alone not accepted; full independent native fields and cached native setup comparison supplied. Original used fixture bytes retained unchanged.",
+  "driverPartialCensus": "1116-partial-driver-jsonutility-census.json",
+  "log": "/private/tmp/delegation-t7-guidance1116-small-native-play.log",
+  "logSha256": "7fdc31ecc7979b8d0f10d57c51df40afa3519f88abb6a2f613322d6b64d2bc73",
+  "noCleanupWarningObserved": true,
+  "otherWarnings": "Existing ECS UpdateBefore/After ordering warnings on default world bootstrap; preserved in native log.",
+  "allOriginalScenesCleanRetained": true,
+  "settingsWrites": false,
+  "originalNativeMenuDirty": false,
+  "afterNativeMenuDirty": false,
+  "remainingOverlays": 0,
+  "fixtureSha256": "179165d4daa85ff745c1407955ebf676e04697f0c19237e08ac799a010f81a61",
+  "candidateManifestSha256": "25725bfbab7867df56d725e316ff913396ec2b843b7ae416293bd3adf17b7682",
+  "wholeMissionCertified": false,
+  "playerReady": false,
+  "artifacts": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/evidence-index.json"
+}

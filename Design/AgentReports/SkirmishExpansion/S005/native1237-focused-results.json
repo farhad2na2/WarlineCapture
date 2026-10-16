@@ -1,0 +1,27 @@
+{
+  "status": "IncompleteOrFailed",
+  "results": [
+    {
+      "suite": "touch-cadence",
+      "method": "Game.Editor.AriaTouchInputValidation.RunTouchCadenceFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[AriaTouchCadenceValidation] result=Passed cases=6 existingCases=22",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1237-touch-cadence.log",
+      "logSha256": "9c62093d417e0d59cbeec8598ac072a0638dd5d1afe1b0b55b1932665bb4b38e"
+    },
+    {
+      "suite": "construction",
+      "method": "Game.Tests.Editor.SkirmishEnemyConstructionAdapterTests.RunFocusedValidation",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "marker": "[SkirmishEnemyConstructionAdapterTests] result=Passed tests=16 scope=IsolatedNativeBoundaryNotNormalMission",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1237-construction.log",
+      "logSha256": "a2b364f28b812e2b575fd27a8afa513a3181b0e5e2779f02bcd41892d19db487"
+    }
+  ]
+}

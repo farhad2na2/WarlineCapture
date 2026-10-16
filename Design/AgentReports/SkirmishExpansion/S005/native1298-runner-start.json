@@ -1,0 +1,16 @@
+{
+  "explicitHeavyLaneOwner": "main1298",
+  "sourceHash": "7e011bec803581698324950acc01d039ea17f3656ccb0b885bf7453013104d69",
+  "preManifest": "final-1300-post-shared-fixes-source-manifest.json",
+  "preflightManifest": "final-1298-paid-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1298-paid-air-pre-dispatch-source-manifest.json",
+  "method": "S005PaidEnemyAirEffects1298.RunValidation",
+  "fixtureSha256": "db8eb4905f4450cd038b3a69c41a79913f0e08a6af776d92d65ae7bf09b734f3",
+  "runnerSha256": "297352f07ab4a2908a64d65f3549d9590340f55c5d39f9dad1f1e9a97b85e477",
+  "dryCompileProof": "compile1298-paid-air-reviewed-dry-run.json",
+  "dryCompileProofSha256": "4c7fcce8299a9b28c08409585d73a58cd2c092d37dbeaca3a04f5a68486bfed2",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

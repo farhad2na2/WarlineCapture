@@ -1,0 +1,27 @@
+{
+  "sourceHash": "e91a56df494140a75a7366753d7e45c47a6b82fbac4692230956afb2b836ad37",
+  "fullSourceUnchanged": true,
+  "preFingerprint": "final-485-menu-to-result-pre-independent-fingerprint.json",
+  "postFingerprint": "final-487-aria-menu-to-result-post-independent-fingerprint.json",
+  "log": "native-486-aria-menu-to-result-en-seed2.log",
+  "logSha256": "f64c4ecc49e649d0aaae5fc685b23440fd31e8bb56980e2b2f349d905da65b75",
+  "wrapperExit": 1,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "inputAudit": {
+    "trace": "s005-aria-live-130368-en-fdb474d7a362405ebc9e5a583801c913.jsonl.touch.jsonl",
+    "sha256": "0ba6aafec95499df618f54e88f8eb578f41e83ff90ca24b00ce511b3c6947a87",
+    "recordedContacts": 48,
+    "phases": {
+      "Menu": 5,
+      "Runtime": 43
+    },
+    "errors": [],
+    "strictRecordedContacts": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only; native outcome, result-return, source identity and wrapper pass must be checked separately."
+  },
+  "reason": "ARIA blocked while its normally ordered troops were still approaching the target. Harness aborted before terminal capture; while source hashing completed, native combat destroyed enemy base at ~226.17s. No terminal/return proof; normal speed finish check failed because the aborted run reached paused result before snapshot."
+}

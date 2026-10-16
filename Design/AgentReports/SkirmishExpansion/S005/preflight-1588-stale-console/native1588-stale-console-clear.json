@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-console-clear1588.cs",
+      "entry": "S005ConsoleCleanup1588.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 185,
+      "executeMs": 4,
+      "assemblyName": "PipelineRunScript_s005-console-clear1588_c29e9df822d648038459222a945df386",
+      "success": true,
+      "result": "Cleared preserved native1587 console errors before fresh native1588 compilation"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

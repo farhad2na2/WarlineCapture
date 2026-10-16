@@ -367,6 +367,13 @@ namespace Game.Configs
             pad = default;
             if (layout == null)
                 return false;
+            if (force.RoleKind == SkirmishRoleKind.ConvoyLogic)
+            {
+                string slot = force.ObjectiveRoleId == "convoy.1" ? "1" : force.ObjectiveRoleId == "convoy.2" ? "2" : force.ObjectiveRoleId == "convoy.3" ? "3" : null;
+                return slot != null && force.FactionId == 1 && force.Quantity == 1 && force.SupplyCost == 0 &&
+                    layout.TryGetPad("convoy.origin." + slot, out pad) && pad.Kind == SkirmishLegalPadKind.ObjectiveTruckSpawn &&
+                    pad.FactionId == 1 && pad.AnchorId == force.SpawnAnchorId;
+            }
             SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
             SkirmishLegalPadKind kind = category == SkirmishPopulationCategory.Infantry
                 ? SkirmishLegalPadKind.InfantrySpawn
@@ -384,11 +391,20 @@ namespace Game.Configs
             pad = default;
             if (layout == null)
                 return false;
+            if(structure.StructureId==SkirmishStructureIds.DefenseApproachA||structure.StructureId==SkirmishStructureIds.DefenseApproachB)
+            {
+                string role=structure.StructureId==SkirmishStructureIds.DefenseApproachA?"defense.approach.a":"defense.approach.b";
+                return structure.FactionId==2&&layout.TryGetPad(role,out pad)&&pad.FactionId==2&&
+                    pad.Kind==SkirmishLegalPadKind.DefenseApproach&&layout.TryGetAnchor(role,out var anchor)&&anchor.AnchorId==pad.AnchorId&&
+                    structure.SpawnAnchorId==anchor.AnchorId;
+            }
             return layout.TryGetPad(structure.FactionId, PadKindForStructure(structure.StructureId), out pad);
         }
 
         public static SkirmishLegalPadKind PadKindForStructure(string structureId)
         {
+            if(structureId==SkirmishStructureIds.DefenseApproachA||structureId==SkirmishStructureIds.DefenseApproachB)
+                return SkirmishLegalPadKind.DefenseApproach;
             if (structureId == SkirmishStructureIds.GroundStaging)
                 return SkirmishLegalPadKind.GroundStaging;
             if (structureId == SkirmishStructureIds.Helipad || structureId == SkirmishStructureIds.Airport)

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "observed_at_utc": "2026-10-14T22:35:21.413956+00:00",
+  "goal": "Complete all 120 existing Skirmish missions with required acceptance evidence",
+  "coordinator_thread": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
+  "heartbeat": "complete-120-skirmish-missions",
+  "main_pushed_head": "37879cf38",
+  "visual_review": "Asynchronous; continue authorized implementation/technical validation, send native screenshots, do not infer approval",
+  "native_lane": {
+    "owner": "/root",
+    "kind": "S005 camera calibration native import/load and scene warmup",
+    "state": "Idle after preparation02 wrapper0: exact observer sources and54 native rules/API checks passed; actual Editor zero-key scene artifacts verified. Fresh source/DLL snapshot is next, then source-frozen normal camera calibration.",
+    "project": "D:/Projects/WarlineCapture",
+    "editor_pid": null,
+    "wrapper_session": null,
+    "log": "Logs/SkirmishProduction/camera-calibration-preparation-20261015-02.log",
+    "timeout_seconds": 900,
+    "source_frozen": true,
+    "required_pass_marker": "[SkirmishGenericCompilerIntegrationValidation] result=Passed",
+    "ownership_rule": "Inspect matching actual process command line and wrapper completion before another run; never terminate it to make room"
+  },
+  "validated": [
+    "19 queue tests",
+    "4 planning portability tests plus full120/360/75 generator check",
+    "4 S005 north offline controls and independent actual-writer review",
+    "4 real Windows PowerShell plan-only portability tests",
+    "Unity aggregate wrapper exit0: generic lookup,4 builder tests,2 selection tests; archived full logs",
+    "10 pure C# adapter parser/reservation tests; Unity partial remains unimported",
+    "3 Windows CNG offline/native oracle tests; Unity optimization remains unimported",
+    "13 actual FC reducer NUnit rules offline plus matching Unity reference compilation; unimported",
+    "Windows CNG native7 assertions and checked wrapper exit0; 16MiB14.6154ms vs managed1737.3758ms; full project equality pending",
+    "15 actual BT reducer NUnit rules offline plus matching Unity reference compilation; unimported",
+    "14 actual CE reducer NUnit rules offline plus matching Unity reference compilation; unimported",
+    "Full project CNG launch fingerprint equals independent Python binary-manifest hash883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8 over40982files",
+    "Native Unity42actualNUnit rules/JsonUtility + northload-only/paidplaneentry currentMVID;checkedwrapper0",
+    "Nativebinder8+areas15;durable4legacy/12setupbaselines,S005FA155926identity captured withwrapper0",
+    "Run03 native camera measurement7/profile5 passed; broad aggregate failed S004 stale coordinate fixture, no full native camera capture",
+    "Run04 native Ground16-8, ExpandedDefinition and CombinedArms passed; aggregate failed remaining ExpandedCheckpoint fixture",
+    "Run05 checked wrapper0: all generic/camera/legacy/checkpoint/visual/Campaign and42objective regressions passed; exact S005FA nativeSetupHash E3D3D033 retained"
+  ],
+  "workers": [
+    {
+      "task": "/root/qualification_pipeline",
+      "scope": "Implement native FC/BT/CE checkpoint payload validation and prepared reconstruction/rollback outside Assets",
+      "imported_changes_allowed": false
+    },
+    {
+      "task": "/root/authoring_foundation",
+      "scope": "Implement original lifecycle, successful departures and mode-owned CE Cargo Truck spawn outside Assets",
+      "imported_changes_allowed": false
+    },
+    {
+      "task": "/root/s005_completion",
+      "scope": "Review north1632 normal-input route against the new camera profile and prepare fresh exact-candidate trial packet",
+      "imported_changes_allowed": false
+    }
+  ],
+  "next_actions": [
+    "Apply one audited correction for remaining synthetic compile fixtures; run broad native regressions to wrapper zero",
+    "Commit/push only technically validated source slices with preserved failures",
+    "Create logical S005 camera profile after native tests; capture actual normal default/min/max/Follow including paid cruising Transport",
+    "Refresh complete source/DLL/native identity pins before S005 north full normal-input trial",
+    "Materialize six source-fit-qualified BA/G pilots and integrate native FC/BT/CE lifecycle/checkpoint systems"
+  ],
+  "player_ready": false,
+  "new_missions_qualified_this_session": 0,
+  "latest_native_screenshot": "Design/AgentReports/SkirmishExpansion/S005/windows-native-review-20261014/s005-native-en-1920x1080-opening.png",
+  "pending_imports": [],
+  "camera_acceptance": "Every mission requires readable infantry rather than dots/impostors and comfortable transport-plane framing. Check native opening/default zoom, zoom range, actual render kind and projected bounds. Review is asynchronous; continue authorized work without waiting. Use mission-specific view configuration and focus elevation; preserve shared Campaign sources and separate camera guidance from orders.",
+  "local_calibration_asset": {
+    "path": "Assets/Game/Resources/SkirmishMissionViewProfile_S005.asset",
+    "sha256": "262cec6d470c96e71985414f7e964647c75c4721b7fae7b675418449024df59c",
+    "committed": false,
+    "native_visual_accepted": false
+  },
+  "qualification_policy": "Development canaries remain tied to their exact complete source candidate. Finish shared systems and logical authoring before the final large qualification freeze; never carry an old-candidate win forward.",
+  "fresh_native_census": "Logs/SkirmishProduction/NativeIdentity/s005-regular-standard-155926-fa-5bff448ae11741ec99c241273e1e4a6e.json"
+}

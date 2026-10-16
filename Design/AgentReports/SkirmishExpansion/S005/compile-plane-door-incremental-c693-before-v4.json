@@ -1,0 +1,80 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/shared-plane-door-incremental-regression-v4/PlaneDoorIncrementalRegression.cs",
+      "entry": "PlaneDoorIncrementalRegressionV4.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 135,
+          "column": 211,
+          "id": "CS0619"
+        },
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 135,
+          "column": 242,
+          "id": "CS0619"
+        },
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 135,
+          "column": 299,
+          "id": "CS0619"
+        },
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 140,
+          "column": 204,
+          "id": "CS0619"
+        },
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 140,
+          "column": 235,
+          "id": "CS0619"
+        },
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 140,
+          "column": 292,
+          "id": "CS0619"
+        },
+        {
+          "severity": "error",
+          "message": "'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'",
+          "line": 140,
+          "column": 325,
+          "id": "CS0619"
+        }
+      ],
+      "compileMs": 485,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_PlaneDoorIncrementalRegression_f35fc0d04dc548a79c26326bb6e7bba4",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

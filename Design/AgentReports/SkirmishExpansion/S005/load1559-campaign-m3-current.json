@@ -1,0 +1,50 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/campaign-m3-source2fab-1559-prepared/CampaignSelectionJourney1559.cs",
+      "entry": "CampaignSelectionJourney1559.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 280,
+          "column": 89,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 280,
+          "column": 31,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'CampaignSelectionJourney1559.ProofRow.screen' is never assigned to, and will always have its default value null",
+          "line": 314,
+          "column": 112,
+          "id": "CS0649"
+        }
+      ],
+      "compileMs": 263,
+      "executeMs": 4,
+      "assemblyName": "PipelineRunScript_CampaignSelectionJourney1559_b2d8b2468bea45be9255978bab901f59",
+      "success": true,
+      "result": "{\"stage\":\"SelfCheck\",\"locale\":\"\",\"mission\":\"\",\"session\":\"\",\"phase\":\"\",\"outcome\":\"\",\"group\":\"native-group\",\"expectedGroup\":\"\",\"selectionKind\":\"\",\"title\":\"\",\"source\":\"\",\"screen\":\"\",\"launchOrigin\":\"\",\"returnDestination\":\"\",\"frame\":0,\"entry\":7,\"lesson\":0,\"selected\":4,\"held\":4,\"elapsedMs\":0,\"attempt\":1559,\"convoyElements\":0,\"convoyResolved\":0,\"hostileTotal\":0,\"hostileDefeated\":0,\"wall\":0.0,\"readOnly\":true,\"actualRendered\":true,\"publicNeedsSelection\":false,\"shellMode\":\"MainMenu\",\"shellPhase\":\"MenuReady\",\"shellRoute\":\"Campaign\",\"campaignSelectedMission\":\"\",\"campaignTitleCandidates\":\"\",\"boundTitleOwner\":\"typed-campaign-owner\",\"boundTitleText\":\"CAMPAIGN\",\"boundTitleKey\":\"ui.campaign.title\",\"boundTitleSource\":\"CAMPAIGN\",\"boundTitlePath\":\"Root/CampaignComposition/MenuTitlePanel/MenuTitle\",\"boundTitleResolver\":\"PresentedOwnedLocalizedMenuTitlePanel\",\"shellPresent\":true,\"shellTransition\":false,\"campaignValid\":true,\"boundTitlePresented\":true,\"boundTitleOwned\":true,\"terminalSnapshot\":true,\"runtimeCount\":0,\"terminalFrame\":10,\"terminalAttempt\":1,\"campaignScreenCount\":0,\"renderedCampaignScreenCount\":0,\"worldCreated\":false,\"terminalMission\":\"saga.ch01.m03.radar_warning\",\"terminalSession\":\"native-terminal\",\"terminalLocale\":\"fa-IR\",\"terminalOutcome\":\"Victory\",\"terminalLaunchOrigin\":\"CampaignOperations\",\"terminalReturnDestination\":\"CampaignOperations\"}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

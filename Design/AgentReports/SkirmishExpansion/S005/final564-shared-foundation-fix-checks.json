@@ -1,0 +1,20 @@
+{
+  "sourceHash": "208c1adf0f585b1bf77ba8a25d5684fac2776bc72bd30ea175f3cbd4aaccdb09",
+  "focusedFoundationTest": {
+    "run": 562,
+    "passed": true,
+    "tests": 2
+  },
+  "sharedMovementSuite": {
+    "run": 563,
+    "passed": true
+  },
+  "setupMatrix": {
+    "run": 564,
+    "passed": true,
+    "configurations": 12
+  },
+  "scope": "All authored OperationMapBuildingComponent foundations; other static blockers retain their origin convention",
+  "nativeJourney": "565 running",
+  "playerReady": false
+}

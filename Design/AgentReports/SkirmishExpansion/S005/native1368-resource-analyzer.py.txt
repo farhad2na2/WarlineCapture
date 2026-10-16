@@ -1,0 +1,58 @@
+"""Observational resource census only. Never qualifies frame/device budgets or proves a leak from global counters."""
+import argparse,collections,gzip,hashlib,json,pathlib,re
+SCHEMA='WarlineResetResourceCensusV1'
+def require(ok,why):
+ if not ok:raise ValueError(why)
+def evaluate(headers,objects,memory,worlds,edges,closed):
+ require(len(headers)>0 and closed.get('schema')==SCHEMA and closed.get('boundaries')==len(headers),'Missing exact observer closure')
+ require(all(closed.get(k) is False for k in ('gameplayWritten','forcedGC','resourcesUnloaded','frameBudgetQualified')),'Unexpected authority/GC/budget claim')
+ source=headers[0].get('sourceHash');study=headers[0].get('study');require(re.fullmatch('[0-9a-f]{64}',source or '') and study,'Exact source/study required')
+ attempts=set();lifetimes={};maxToken=0;groups=collections.defaultdict(list);inventory=[];candidates=[];physical=[]
+ for i,h in enumerate(headers):
+  require(h.get('schema')==SCHEMA and h.get('ordinal')==i and h.get('sourceHash')==source and h.get('study')==study and h.get('complete') is True,'Incomplete/mixed header')
+  require(h.get('compiled') is True and h.get('isUpdating') is False and h.get('frameBudgetIncluded') is False and h.get('loadedAssemblyFreshnessQualified') is False,'Invalid settled/scope flags')
+  require(h.get('finishedAt',-1)>=h.get('startedAt',0),'Invalid census duration')
+  phase=h.get('phase');require(phase in ('FreshMatch','PostUnloadMenu','PostUnloadSetup','InitialMenu'),'Unknown boundary')
+  if phase=='FreshMatch':
+   require(h.get('sessionCount')==1 and h.get('attempt')==h.get('expectedAttempt') and h.get('attempt') and h.get('matchPhase')=='Playing','Fresh actual attempt missing');require(h['attempt'] not in attempts,'Duplicate fresh attempt');attempts.add(h['attempt'])
+  else:require(h.get('sessionCount')==0,'Unloaded boundary retained session')
+  if phase=='PostUnloadMenu':require(h.get('shellRoute')=='MainMenu','Not actual MainMenu')
+  if phase=='PostUnloadSetup':require(h.get('shellRoute')=='QuickCustomSetup','Not actual setup')
+  for rows,key in ((objects[i],'objectRows'),(edges[i],'edgeRows'),(worlds[i],'worldRows')):require(len(rows)==h.get(key),'Inventory count mismatch '+key)
+  ids=set();tokens=set();persistent=collections.Counter();scene=collections.Counter();unknown=0;bytesKnown=0
+  for row in objects[i]:
+   oid=row.get('instanceId');token=row.get('lifetimeToken');require(type(oid) is int and type(token) is int and token>0 and oid not in ids and token not in tokens,'Duplicate/invalid native object identity');ids.add(oid);tokens.add(token)
+   require(row.get('continuityProven') is not True or row.get('continuityUnknown') is False,'Contradictory continuity')
+   if row.get('continuityProven'):
+    require(lifetimes.get(oid)==(token,row.get('type')),'Unsubstantiated same-native continuity')
+   else:require(token>maxToken,'Lifetime token reused without native continuity')
+   typ=row.get('type');require(isinstance(typ,str) and typ,'Missing type');persistent[typ]+=int(row.get('persistent') is True);scene[typ]+=int(row.get('sceneLoaded') is True and row.get('persistent') is False);unknown+=int(row.get('continuityUnknown') is True)
+   if row.get('estimatedBytes',-1)>=0:bytesKnown+=row['estimatedBytes']
+   if phase in ('PostUnloadMenu','PostUnloadSetup') and row.get('continuityProven') and row.get('persistent') is False and row.get('sceneLoaded') is not True:candidates.append(dict(boundary=i,instanceId=oid,lifetimeToken=token,type=typ,name=row.get('name'),classification='ContinuousNonpersistentUnloadedOrUnowned_CandidateNotLeakProof'))
+  for edge in edges[i]:require(edge.get('ownerId') in ids and edge.get('referencedId') in ids,'Reference edge missing current object')
+  seq=set()
+  for w in worlds[i]:
+   require(type(w.get('sequence')) is int and w['sequence'] not in seq and w.get('sequence')>=0,'Duplicate/invalid World');seq.add(w['sequence']);owned=set(filter(None,w.get('ownedAttempts','').split('|')));retired=owned&attempts-{h.get('attempt','')}
+   if retired:physical.append(dict(boundary=i,world=w.get('name'),sequence=w['sequence'],retiredStudyAttempts=sorted(retired),ownedPhysical=w.get('ownedPhysical')))
+  require(len(memory[i])==2 and [x.get('stage') for x in memory[i]]==['Before','After'],'Exact pre/post observer overhead missing')
+  for row in memory[i]:
+   for key in ('nativeAllocated','nativeReserved','graphicsDriver','managed','resident','peakResident'):require(type(row.get(key)) is int and row[key]>=-1,'Invalid/unavailable counter schema '+key)
+  groups[phase].append(i);inventory.append(dict(boundary=i,phase=phase,cycle=h.get('cycle'),objects=len(ids),persistentByType=dict(persistent),loadedSceneByType=dict(scene),continuityUnknown=unknown,estimatedObjectBytes=bytesKnown,estimatedBytesAreNotGlobalMemory=True,observerDuration=h['finishedAt']-h['startedAt'],observerMemoryDelta={k:memory[i][1][k]-memory[i][0][k] if min(memory[i][1][k],memory[i][0][k])>=0 else None for k in ('nativeAllocated','graphicsDriver','managed')}));lifetimes={r['instanceId']:(r['lifetimeToken'],r['type']) for r in objects[i]};maxToken=max([maxToken]+list(tokens))
+ trends=[]
+ for phase,indexes in groups.items():
+  if len(indexes)<2:continue
+  for key in ('nativeAllocated','graphicsDriver','managed','resident'):
+   values=[memory[i][0][key] for i in indexes];available=all(x>=0 for x in values);trends.append(dict(phase=phase,counter=key,boundaries=indexes,available=available,values=values,strictlyIncreasing=available and all(b>a for a,b in zip(values,values[1:])),delta=values[-1]-values[0] if available else None,attribution='Unproven_EditorQAAndNativeOwnershipRequireProfilerCapture'))
+ return dict(result='CompleteReadOnlyCensus',sourceHash=source,study=study,boundaries=len(headers),freshAttempts=len(attempts),inventory=inventory,equivalentPhaseMemoryTrends=trends,retiredStudyPhysicalInAnyWorld=physical,continuousUnownedRuntimeCandidates=candidates,physicalCleanupObserved=len(physical)==0 and all(h.get('ownedOldPhysical',0)==0 for h in headers),memoryCleanupQualified=False,frameBudgetQualified=False,deviceBudgetQualified=False,leakProven=False,scope='Weak reference loss is unknown; assets/global caches and retained resources are separate; census allocates and cannot attribute global bytes. No forced GC/unload or AI/gameplay changes.')
+def load(directory):
+ headers=[];objects=[];memory=[];worlds=[];edges=[];raw=[]
+ def rows(path):
+  packed=path.read_bytes();content=gzip.decompress(packed) if path.suffix=='.gz' else packed;raw.append(dict(file=path.name,sha256=hashlib.sha256(packed).hexdigest(),uncompressedSha256=hashlib.sha256(content).hexdigest(),bytes=len(packed),uncompressedBytes=len(content)));return [json.loads(x) for x in content.decode().splitlines() if x.strip()]
+ for h in sorted(directory.glob('*-header.json')):
+  d=json.loads(h.read_text());headers.append(d);prefix=h.name[:-len('-header.json')];objects.append(rows(directory/(prefix+'-objects.jsonl.gz')));edges.append(rows(directory/(prefix+'-edges.jsonl.gz')));memory.append(rows(directory/(prefix+'-memory.jsonl')));worlds.append(rows(directory/(prefix+'-worlds.jsonl')))
+  for suffix,key in (('-scenes.jsonl','sceneRows'),('-assemblies.jsonl','assemblyRows')):require(len(rows(directory/(prefix+suffix)))==d.get(key),'Supplemental inventory incomplete')
+ result=evaluate(headers,objects,memory,worlds,edges,json.loads((directory/'closed.json').read_text()));result['losslessRawInventory']=raw;return result
+if __name__=='__main__':
+ ap=argparse.ArgumentParser();ap.add_argument('census_directory');ap.add_argument('--output',required=True);a=ap.parse_args();result=load(pathlib.Path(a.census_directory));path=pathlib.Path(a.output)
+ with path.open('x') as f:f.write(json.dumps(result,indent=2)+'\n')
+ print('Complete read-only census; memory/device/frame qualification remains false')

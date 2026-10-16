@@ -1,0 +1,18 @@
+{
+  "run": 559,
+  "sourceHash": "d7af73ff5777794cfacdf900fd31666b2016251f5d1417dc4ce2d881e9feda31",
+  "prePostSourceHashMatched": true,
+  "nativeStartupPassed": true,
+  "buildings": 14,
+  "units": 32,
+  "checkpoint": {
+    "captureAvailable": true,
+    "actors": 46,
+    "mapReferences": 4931,
+    "persisted": false,
+    "nativeRecoveryComplete": false
+  },
+  "nativeMapScreenshot": "native559-dense-town-opening.png",
+  "visualReview": "Dense town visible; camera should also expose starting army",
+  "playerReady": false
+}

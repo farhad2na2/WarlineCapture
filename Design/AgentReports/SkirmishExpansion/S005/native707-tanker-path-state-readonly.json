@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; var rows=new System.Collections.Generic.List<string>(); using(var q=em.CreateEntityQuery(typeof(Game.Components.UnitResourceHaulOrder),typeof(Game.Components.SkirmishUnitRoleComponent),typeof(Game.Components.Faction))) using(var es=q.ToEntityArray(Unity.Collections.Allocator.Temp)){foreach(var e in es){if(em.GetComponentData<Game.Components.Faction>(e).Id!=1 || em.GetComponentData<Game.Components.SkirmishUnitRoleComponent>(e).Role!=Game.Skirmish.Contracts.SkirmishRoleKind.Tanker)continue; string s=\"entity=\"+e.Index+\" haul=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitResourceHaulOrder>(e)); if(em.HasComponent<Game.Components.UnitTarget>(e))s+=\" target=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitTarget>(e)); if(em.HasComponent<Game.Components.UnitPathFollow>(e))s+=\" follow=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitPathFollow>(e)); if(em.HasComponent<Game.Components.UnitPathRange>(e))s+=\" range=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitPathRange>(e)); if(em.HasComponent<Game.Components.UnitPathRetryCooldown>(e))s+=\" retry=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitPathRetryCooldown>(e)); if(em.HasComponent<Game.Components.UnitLongDistanceMove>(e))s+=\" long=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitLongDistanceMove>(e)); if(em.HasComponent<Game.Components.UnitGrid>(e))s+=\" grid=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitGrid>(e)); rows.Add(s);}} return string.Join(\"\\n\",rows);"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "entity=984 haul={\"SourceBuildingId\":18,\"DestinationBuildingId\":9,\"TargetCell\":{\"x\":916,\"y\":688},\"ActionEndsAt\":0.0,\"Phase\":1,\"ResourceKind\":1} target={\"Cell\":{\"x\":919,\"y\":684}} follow={\"PathIndex\":1} range={\"Start\":2733,\"Length\":9} grid={\"Cell\":{\"x\":904,\"y\":624}}\nentity=2619 haul={\"SourceBuildingId\":18,\"DestinationBuildingId\":9,\"TargetCell\":{\"x\":916,\"y\":688},\"ActionEndsAt\":0.0,\"Phase\":1,\"ResourceKind\":1} target={\"Cell\":{\"x\":916,\"y\":688}} follow={\"PathIndex\":5} range={\"Start\":2661,\"Length\":10} grid={\"Cell\":{\"x\":907,\"y\":652}}\nentity=858 haul={\"SourceBuildingId\":18,\"DestinationBuildingId\":9,\"TargetCell\":{\"x\":919,\"y\":688},\"ActionEndsAt\":0.0,\"Phase\":1,\"ResourceKind\":1} target={\"Cell\":{\"x\":919,\"y\":688}} grid={\"Cell\":{\"x\":915,\"y\":608}}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

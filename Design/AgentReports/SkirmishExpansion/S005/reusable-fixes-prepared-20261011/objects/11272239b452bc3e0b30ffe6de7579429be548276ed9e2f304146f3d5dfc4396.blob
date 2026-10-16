@@ -1,0 +1,63 @@
+using Game.Components;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+
+namespace Game.Runtime
+{
+    public static class SkirmishEnemyPlannerService
+    {
+        public static bool EnsureSession(EntityManager em, Entity session, SkirmishResolvedSetup setup)
+        {
+            if (setup?.EnemyPolicy == null) return true;
+            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault || !em.Exists(session)) return false;
+            var policy = setup.EnemyPolicy;
+            if (em.HasComponent<SkirmishEnemyPlannerV1Component>(session))
+            {
+                var existing = em.GetComponentData<SkirmishEnemyPlannerV1Component>(session);
+                return existing.Initialized == 1 && existing.PolicyVersion == policy.Version &&
+                    existing.PolicyHash == policy.Hash && existing.PolicyFingerprint.ToString() == policy.Fingerprint &&
+                    em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(session) && em.HasComponent<SkirmishEnemyProductionIntentV1Component>(session);
+            }
+            // Partial pre-existing new state is incompatible, never silently reset.
+            if (em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(session) || em.HasComponent<SkirmishEnemyProductionIntentV1Component>(session)) return false;
+            float now = em.HasComponent<SkirmishObjectiveClockComponent>(session) ?
+                em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds : 0f;
+            if (!float.IsFinite(now) || now < 0) return false;
+            uint random = policy.InitialRandomState;
+            float stagger = RandomRange(ref random, 0f, policy.StrategicCadenceSeconds);
+            float scout = RandomRange(ref random, policy.ScoutMinSeconds, policy.ScoutMaxSeconds);
+            em.AddComponentData(session, new SkirmishEnemyPlannerV1Component {
+                PolicyVersion = policy.Version, PolicyHash = policy.Hash,
+                PolicyFingerprint = new FixedString128Bytes(policy.Fingerprint), RandomState = random,
+                Personality = policy.Personality, Initialized = 1, CurrentPlan = SkirmishEnemyPlanKind.Hold,
+                NextActionKey = 1, NextDecisionAt = now + stagger, NextObservationAt = now,
+                NextScoutAt = now + scout, OpeningUntil = now + policy.OpeningRestraintSeconds,
+                PlanStartedAt = now, LastDecisionAt = now
+            });
+            em.AddBuffer<SkirmishEnemyGroupAssignmentV1>(session);
+            em.AddComponentData(session, new SkirmishEnemyProductionIntentV1Component { Version = 1, NextRequestId = 1 });
+            return true;
+        }
+        public static bool TryReadActiveClock(EntityManager em, Entity session, out float elapsed)
+        {
+            elapsed = 0;
+            if (!em.Exists(session) || !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                !em.HasComponent<SkirmishObjectiveClockComponent>(session)) return false;
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+            if (state.IsLegacy != 0 || state.Phase != SkirmishSessionPhase.Playing || clock.Playing != 1 || clock.Paused != 0 ||
+                !float.IsFinite(clock.ElapsedSeconds) || clock.ElapsedSeconds < 0) return false;
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (!gameplay.IsEmptyIgnoreFilter && (gameplay.CalculateEntityCount() != 1 || gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)) return false;
+            elapsed = clock.ElapsedSeconds; return true;
+        }
+        public static uint NextRandom(ref uint state)
+        {
+            if (state == 0) state = 0x6D2B79F5;
+            state ^= state << 13; state ^= state >> 17; state ^= state << 5; return state;
+        }
+        public static float RandomRange(ref uint state, float min, float max) => min + (max - min) * ((NextRandom(ref state) >> 8) / 16777216f);
+    }
+}

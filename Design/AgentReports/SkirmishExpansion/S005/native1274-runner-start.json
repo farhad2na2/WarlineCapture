@@ -1,0 +1,16 @@
+{
+  "explicitHeavyLaneOwner": "main1274",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "preManifest": "final-1258-ground-carrier-post-source-manifest.json",
+  "preflightManifest": "final-1274-passive-performance-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1274-passive-performance-pre-dispatch-source-manifest.json",
+  "method": "S005PassivePerformance1274.RunValidation",
+  "fixtureSha256": "d0ca4430483eb7011fa409a392b8b351db5315ca182fe2824c462c1feb39849a",
+  "runnerSha256": "a7d652f13966ed1bc2caefa0a5f4a5c14c228bd14f053fad8325bff855276a37",
+  "normalInput": true,
+  "playerOrdersBeforeTerminalReturn": 0,
+  "gameplayStateInjected": false,
+  "readOnlyPerformanceProbe": true,
+  "dryCompileProof": "compile1274-passive-v2-reviewed-dry-run.json",
+  "dryCompileProofSha256": "455206f5aebdf3389f37c18d8baff9ea729c6be04e86a1281114cb0815b3d347"
+}

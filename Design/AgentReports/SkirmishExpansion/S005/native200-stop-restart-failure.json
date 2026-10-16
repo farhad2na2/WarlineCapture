@@ -1,0 +1,19 @@
+{
+  "mission": "S005",
+  "sourceHash": "080fabd62e1f9def14cd31070d0b11ca1a44819787ec9f2f0c7da0b5feabdc92",
+  "result": "Failed",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "log": "native-200-aria-stop-restart-en.log",
+  "logSha256": "74c80e5434cd14d319988780e337139b77319d0eae87a7f53dd665c0c37234f2",
+  "failure": "Recorder rejected: all three ARIA slots for this seed/locale already occupied. Planned Stop touch also appears in the full-run intervention counter; no unattended pass claimed.",
+  "stopControl": "Observed ARIA inactive after native Stop touch",
+  "restartControl": "Observed native Play/Confirm restart; five completed consent gestures, zero unexpected consent input",
+  "intentionalStopPhysicalTakeovers": 1,
+  "outcomeObserved": "Victory",
+  "frozenResultAndReturnObserved": true,
+  "fullMissionAcceptance": false,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false
+}

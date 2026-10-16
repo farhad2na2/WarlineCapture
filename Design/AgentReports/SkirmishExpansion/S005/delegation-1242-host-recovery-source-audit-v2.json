@@ -1,0 +1,46 @@
+{
+  "scope": "Read-only host-restart source recovery audit; no Unity calls/Assets edits/validation pass inference",
+  "sourceHelper": {
+    "restored": "/private/tmp/warline-s005-source-manifest.py",
+    "sha256": "bbcbe12d05c2fe24705f58113b5f6525115f13b3d3f55650e202ec804e687144",
+    "recoveredFrom": "commit-evidence-20261011-core1160-supplement/objects/bbcbe12d05c2fe24705f58113b5f6525115f13b3d3f55650e202ec804e687144.gz",
+    "rawBytes": 2108,
+    "archivedAggregateMatches": "6a9e83273e80dd7f3a2dc699834b07f26abccf196f152fa930572c4c0ede3fc6"
+  },
+  "currentSourceHash": "746a4680c6445adf8c350cffb139c3cbb25362501507f6ed00be2b449a08650d",
+  "currentManifest": "delegation-1242-recovered-current-source-manifest.json",
+  "currentManifestSha256": "42dd74b8d6784d0ae2f1f91a07232510fac88b65bc6cad4eb31df1190290c88d",
+  "exactExpectedTwoTestOnlyDelta": true,
+  "delta": [
+    {
+      "scope": "files",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs",
+      "beforeSha256": "8c66f7be16e2aae6240643e543a7ee643f5a3cac169f1a4d633984a32d88faac",
+      "currentSha256": "5500aad25c70eb4f969d77f53285c869274cd2bd67f6e8bd03c91d3bccc9e9bc"
+    },
+    {
+      "scope": "files",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs",
+      "beforeSha256": "b1c2b69ccd442c1fe58c0b8c9403ab3021fe6a930dfea5e562a3869a40913d7e",
+      "currentSha256": "44a5757c0e0a76cf3f95aa62ffd4836c05c0b22eac808e7635bdf83275d24501"
+    }
+  ],
+  "materialDelta": false,
+  "idleHelper": {
+    "originalExpectedSha256": "fffb7ca1fd2b9f1c897ba69bc09d53746f552d8aeb6cde1a35e693696596e2b6",
+    "exactSourceRecovered": false,
+    "searched": [
+      "all selected commit evidence index objects",
+      "dedicated cs/cs.txt sources",
+      "native1232 camera evidence archive members",
+      "Library/Temp/Tools/Design source caches"
+    ],
+    "remaining": "Prepare explicitly new reviewed primitive idle helper and repin dependent neverloaded runners; do not claim original bytes or original hash.",
+    "newReconstructedPath": "/private/tmp/S005MainIdle1242.cs",
+    "newReconstructedSha256": "36a51b43c9bc71a73d3b629028010cee27ac03446b7bfe88d59a2b733558ce51",
+    "durableSource": "delegation-1242-reconstructed-idle-helper.cs.txt",
+    "nativeCompileExecuted": false,
+    "assemblyStateOwner": "Explicit projection of UnityEditor.EditorApplication.isCompiling, not independent Pipeline state"
+  },
+  "native1241Scope": "No compiler/commander/fullmission pass inferred; root-owned economy diagnostic and actual1242 gates separate."
+}

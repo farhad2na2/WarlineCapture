@@ -299,8 +299,10 @@ namespace Game.Runtime
                 Result result;
                 if (request.HasTargetCell != 0 && request.HasTargetEntity == 0)
                 {
+                    using var guardObservation=new AriaMoveExecutionEvidence.AttackRequestScope(request);
                     var command = AttackMoveSystem.IssueSelected(em, request.TargetCell, request.WorldPosition, request.Frame);
                     result = command.Accepted ? Result.Accepted(command, Entity.Null, request.WorldPosition) : Result.Rejected(command);
+                    SkirmishPublicAirPressureFeedback.Observe(em,request,command.Accepted);
                 }
                 else
                 {

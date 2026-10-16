@@ -1,0 +1,16 @@
+{
+  "status": "IncompleteOrFailed",
+  "results": [
+    {
+      "suite": "ground-pause",
+      "method": "Game.Tests.Editor.UnitGroundMovementPauseTests.RunFocusedValidation",
+      "wrapperExit": 6,
+      "nativeExit": null,
+      "marker": "[UnitGroundMovementPauseTests] result=Passed actualSystems=2 cases=18",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1228-ground-pause.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

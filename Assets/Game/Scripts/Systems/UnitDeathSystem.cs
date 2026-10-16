@@ -460,6 +460,10 @@ namespace Game.Runtime
             if (!TransportBoardingCommandSystem.CanFinalizeSharedGroundCarrier(em, entity))
                 return;
 
+            // Keep original objective destruction distinct from successful removal.
+            // Unknown lifecycle evidence becomes TechnicalFailure, never Victory.
+            if (!SkirmishNativeObjectiveLifecycleHooks.TryBeforeDestroyedActorRemoved(em, entity, out string objectiveRemovalError))
+                UnityEngine.Debug.LogError("[SkirmishObjectiveLifecycle] result=Failed " + objectiveRemovalError);
             SkirmishFogService.NotifyObservedDeath(em, entity);
             var destroySet = new HashSet<Entity> { entity };
             CollectDescendants(em, entity, destroySet);

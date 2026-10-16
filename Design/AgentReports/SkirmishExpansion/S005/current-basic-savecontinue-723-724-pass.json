@@ -1,0 +1,24 @@
+{
+  "result": "Passed",
+  "sourceHash": "69efe7634459e836193e538902799ee7f9b68945f7f84cd08fd0aef042b9a5e5",
+  "proofs": [
+    "native723-current-savecontinue-en-seed104734-victory.json",
+    "native724-current-savecontinue-fa-IR-seed104734-victory.json"
+  ],
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "publicSaveAndContinue": true,
+  "sameAttemptClockAndPaidReceiptPreserved": true,
+  "oldPhysicalActorsRemoved": true,
+  "completeResumedVictoriesAndNativeResultReturn": true,
+  "allTouchAuditsPassed": true,
+  "actualWrapperExitCodes": [
+    0,
+    0
+  ],
+  "sourceAndAllMaterialHashesUnchanged": true,
+  "combatBoardedAndTransitRecoveryStillPending": true,
+  "playerReady": false
+}

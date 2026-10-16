@@ -1,0 +1,37 @@
+{
+  "sourceHash": "15ac57ca89814c6bec180746504d5750913389515a95a14ec6949a3564a46b81",
+  "method": "Read-only Unity CLI eval of native MatchHudSquadTrayView serialized Button references and public tray read model during Play",
+  "cards": [
+    {
+      "index": 0,
+      "active": true,
+      "visible": true,
+      "interactable": true
+    },
+    {
+      "index": 1,
+      "active": true,
+      "visible": true,
+      "interactable": true
+    },
+    {
+      "index": 2,
+      "active": true,
+      "visible": true,
+      "interactable": true
+    },
+    {
+      "index": 3,
+      "active": false,
+      "visible": false,
+      "interactable": false
+    },
+    {
+      "index": 4,
+      "active": false,
+      "visible": false,
+      "interactable": false
+    }
+  ],
+  "scope": "Native casualty state shows 3 surviving squad cards and hides 2 unused slots; no gameplay mutation"
+}

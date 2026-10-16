@@ -1,0 +1,62 @@
+{
+  "mission": "S005",
+  "result": "Passed",
+  "sourceHash": "76373a937df917e5e2a616ea9ba932f240e481f41de9a0943871c7ae1908bdfd",
+  "wrapperExit": 0,
+  "locale": "fa-IR",
+  "seed": 104734,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "mode": "ManualControlsDriver",
+  "realHumanDeviceAcceptance": false,
+  "ariaStarted": false,
+  "normalInput": true,
+  "normalSpeedGuard": "Native TickManualControls rejects any active timeScale other than 1; passed native manual verdict required",
+  "outcome": {
+    "elapsed": 166.169,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 166.169,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "playerUnits": 16,
+    "pathRequests": 4,
+    "pathFollowing": 0,
+    "leadX": 917.5,
+    "leadZ": 660.5
+  },
+  "frozenResult": true,
+  "returnTarget": "MAIN MENU",
+  "inputAudit": {
+    "recordedContacts": 24,
+    "completedContacts": 24,
+    "phases": {
+      "Menu": 5,
+      "Manual": 18,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-fa-f369601b2eca4d91ba9e290a7c0f7ca1.jsonl.touch.jsonl",
+    "sha256": "e16c4e3327329651cbd3d817f7af5074c17d8d8824fca3da91701c5989a2839a"
+  },
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-680-manual-escort-receipt-ack-pre-source-manifest.json",
+  "postManifest": "final-680-manual-escort-receipt-ack-post-source-manifest.json",
+  "log": "native-680-manual-escort-receipt-ack-fa.log",
+  "trace": "s005-aria-live-104734-fa-f369601b2eca4d91ba9e290a7c0f7ca1.jsonl",
+  "nativeMarkers": [
+    "[S004ManualReceiptAudit] result=Passed measured=1 touches=18 commands=10 violations=0 unexpected=0 interventions=0",
+    "[S004ManualNative] result=Passed outcome=Victory seconds=166.1694 reason= input=Touch ariaStarted=0 actions=18 attackReceipts=3"
+  ],
+  "playerReady": false
+}

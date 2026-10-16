@@ -1,0 +1,172 @@
+{
+  "scope": "Twelve existing bridges: road markings, sidewalks, deck faces, fine water ripples; visual-only",
+  "baseCommit": "6cb14726bf579e8a02a909015f4a3d1a25fa2457",
+  "nativeVisualReview": "Passed for six bridge sites in three maps using fresh-load player-angle and oblique captures; all twelve sites pass structural checks",
+  "automatedResult": "Passed",
+  "requiredPassMarkers": [
+    "[BridgeContinuityIntegration] result=Passed bridges=12 addedRows=48 sourceParity=Passed",
+    "[CampaignRenderReconciliation] result=Passed rows=124505",
+    "sourceParity=Passed sourceRows=124505",
+    "determinism=Passed"
+  ],
+  "sourceReceipts": [
+    {
+      "map": "AshLinePort",
+      "beforeHash": "56c926cb5e1d180ca199c2c814c6f5e7968bfd55f6003b998981830aecd3296b",
+      "afterHash": "72d07da2877a3c942c9b4df62a1f23e54b537be17351623d9f7c3e7ec935f5bf",
+      "protectedHash": "ddef250773e6d93c2f2492e5b69fbfe6eeee5976b9f97176cb5c9a1e2fb91c70",
+      "bridges": 2,
+      "addedMaterialRows": 8,
+      "measurements": [
+        "bridge=0 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Crate_Stack_01",
+        "bridge=1 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Crate_Wood_01"
+      ]
+    },
+    {
+      "map": "CH05M02TrustUnderFire",
+      "beforeHash": "20e8d84967a63a60b8b8cec281e32d7ccaa93226da0557e9f348082c670adc99",
+      "afterHash": "d582c4df50273d12b51b189abd9aae57666ef67d6254e1b4b91e300e6d44269d",
+      "protectedHash": "8938ba126f1f8cd287b35ba2cb186098e5d3bf4ed2802e8db221cab0d4fa8ec6",
+      "bridges": 2,
+      "addedMaterialRows": 8,
+      "measurements": [
+        "bridge=0 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Container_01",
+        "bridge=1 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Barricade_01"
+      ]
+    },
+    {
+      "map": "DenseCity",
+      "beforeHash": "14c1280aacc3d0d680e07b3dd707c2f244e11224ff161791f7d4e8d2f1b7418e",
+      "afterHash": "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975",
+      "protectedHash": "0ff83d5abf4cd2c9db49c108ac47dd4eeb4017881c69209a4885a413f0924e00",
+      "bridges": 8,
+      "addedMaterialRows": 32,
+      "measurements": [
+        "bridge=0 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Cart_Stall_01",
+        "bridge=1 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01",
+        "bridge=2 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=3 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=4 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=5 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Intersection/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+        "bridge=6 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01",
+        "bridge=7 length=12.800 width=8.600 roadWidth=5.000 sidewalkWidth=1.375 roadY=0.545 sidewalkY=0.695 road=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01"
+      ]
+    }
+  ],
+  "packedDatabase": {
+    "schema": "warline.operation-map.render-virtualization-database",
+    "schemaVersion": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "result": "Passed",
+    "contentHash": "fb9782db3133172ef0957c97a4bd6d19644b5b3e66653ab67141656320191859",
+    "recordOrderingSha256": "8c9292d1a8da0724ef87d55bb848ad1220ca8716f4d750fe40812f8443a5e6a6",
+    "configPath": "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset",
+    "configSerializedSha256": "4906f3c467582f1b03aa0f32af2014ee736add52b5056a0eda5db9afa8b4bd1d",
+    "meshCount": 447,
+    "materialCount": 160,
+    "prototypeCount": 9523,
+    "partCount": 15304,
+    "placementCount": 38909,
+    "cellCount": 1961,
+    "cellPlacementIndexCount": 58503,
+    "policyBucketCount": 4,
+    "totalPoolSlotCapacity": 7427,
+    "sourceRenderRowCount": 124505,
+    "eligibleSourceRowCount": 59666,
+    "logicalRenderRowCount": 59666,
+    "residentSourceRowCount": 64839,
+    "sourceRowsRemoved": 0,
+    "logicalParityResult": "Passed",
+    "isolationResult": "Passed"
+  },
+  "capacity": {
+    "schema": "warline.operation-map.render-virtualization-capacity-budget",
+    "schemaVersion": 2,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "result": "Passed",
+    "samplingPolicy": "Device-informed deterministic all-grid-cell materialized-envelope sweep. The exact VRP-067 House interior envelope measured 12x9 inclusive 32 m cells; both 12x9 and 9x12 orientations are swept at every accepted-origin-aligned grid cell. Full camera pose, projection, zoom, and tactical-follow sweeps remain required before final acceptance.",
+    "provisionalOnly": true,
+    "cameraProjectionSweepPending": true,
+    "observedMaterializedEnvelopeWidthCells": 12,
+    "observedMaterializedEnvelopeHeightCells": 9,
+    "observedMaterializedEnvelopeOrientationCount": 2,
+    "canonicalSampleCount": 14592,
+    "policyCount": 4,
+    "placementCount": 38909,
+    "provisionalMapMmiEntityBudget": 38909,
+    "mapMmiEntityLimit": 24000,
+    "provisionalMapMmiEntityBudgetWithinLimit": false,
+    "totalPeakRequiredPartRows": 6188,
+    "totalProvisionalActiveProxySlots": 7427,
+    "activeProxySlotLimit": 8000,
+    "provisionalActiveProxySlotsWithinLimit": true,
+    "zeroOverflowProvenForProvisionalCapacity": true,
+    "sourceRowsSha256": "550086de6806becb51873f5ecfbdbe5d7a4db182057a84854afa003ccdf6b863",
+    "prototypeRecipesSha256": "4f984c16e7054c699ecd8a84e305297a8bc726062c9be8fd743ff45b66f0e646",
+    "logicalPlacementsSha256": "657e6f787a6e820c7994ec441944ad57890b4d3f36ed9fd0cac031517f992410",
+    "spatialCellsSha256": "7b26cf6fc804c0433cb82231c318223c27c8d2761dffc97d5f6e96cd34afd5a0",
+    "capacityByPolicy": [
+      {
+        "policyBucket": "OpaqueShadowsOn",
+        "layer": 0,
+        "renderingLayerMask": 1,
+        "motionVectorMode": "Object",
+        "shadowFlags": 3,
+        "sweepSampleCount": 14592,
+        "peakRequiredPartRows": 3841,
+        "peakSampleIdentity": "grid-cell:40:28:materialized=9x12",
+        "capacity": 4610,
+        "headroomCount": 769
+      },
+      {
+        "policyBucket": "OpaqueShadowsOff",
+        "layer": 0,
+        "renderingLayerMask": 1,
+        "motionVectorMode": "Object",
+        "shadowFlags": 2,
+        "sweepSampleCount": 14592,
+        "peakRequiredPartRows": 2278,
+        "peakSampleIdentity": "grid-cell:57:26:materialized=9x12",
+        "capacity": 2734,
+        "headroomCount": 456
+      },
+      {
+        "policyBucket": "AlphaClippedShadowsOn",
+        "layer": 0,
+        "renderingLayerMask": 1,
+        "motionVectorMode": "Object",
+        "shadowFlags": 3,
+        "sweepSampleCount": 14592,
+        "peakRequiredPartRows": 44,
+        "peakSampleIdentity": "grid-cell:68:23:materialized=9x12",
+        "capacity": 53,
+        "headroomCount": 9
+      },
+      {
+        "policyBucket": "AlphaClippedShadowsOff",
+        "layer": 0,
+        "renderingLayerMask": 1,
+        "motionVectorMode": "Object",
+        "shadowFlags": 2,
+        "sweepSampleCount": 14592,
+        "peakRequiredPartRows": 25,
+        "peakSampleIdentity": "grid-cell:36:20:materialized=9x12",
+        "capacity": 30,
+        "headroomCount": 5
+      }
+    ]
+  },
+  "normalInputMissionPlaythrough": "Not performed for this visual pass",
+  "realDeviceAcceptance": "Not performed for this visual pass",
+  "gpuPerformanceMeasurement": "Not performed",
+  "existingReadinessLimitations": [
+    "MMI entity count remains above the unchanged 24000 limit",
+    "Full camera/projection/device sweep remains pending; capacity is provisional"
+  ],
+  "failedEvidence": [
+    "build-01 visual rejection",
+    "build-02 visual rejection",
+    "integration-01 mesh-name assertion failure; fixed to use saved asset path"
+  ],
+  "unityExecution": "Repository macOS wrapper, GUI licensing, Unity 6000.5.8f1; full logs compressed losslessly"
+}

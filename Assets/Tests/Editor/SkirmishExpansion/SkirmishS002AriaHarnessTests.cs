@@ -1554,7 +1554,7 @@ namespace Game.Tests.Editor
         {
             EntityManager em = world.EntityManager;
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(ProjectRoot(), out var matrix, out string error), error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionAuthoredSet authored = CreateLedgerFixture();
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,
@@ -1652,10 +1652,31 @@ namespace Game.Tests.Editor
             return false;
         }
 
+        private static SkirmishExpansionAuthoredSet CreateLedgerFixture()
+        {
+            // Preserve the original prefab-free ledger profiles; only their reviewed
+            // packaged map/source references replace the stale generated layout.
+            var catalog=SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(catalog,"Packaged skirmish expansion catalog is required.");
+            var fixture=SkirmishExpansionCatalogFactory.CreateInMemory();
+            foreach(var definition in new[]{fixture.DefinitionS002,fixture.DefinitionS003,fixture.DefinitionS004})
+            {
+                Assert.IsTrue(catalog.TryGetDefinition(definition.CatalogId,out var packaged));
+                definition.Configure(definition.CatalogId,definition.ObjectiveConfig,definition.ArmyProfileConfig,
+                    definition.StartPackageConfig,definition.EconomyConfig,definition.UpgradeCatalog,
+                    definition.IntelConfig,definition.RoleCatalog,packaged.MapLayout,
+                    definition.RecommendedSize,definition.RequiredFeatureIds);
+                definition.BindCampaignMap(packaged.CampaignMap);
+                Assert.AreNotSame(packaged.RoleCatalog,definition.RoleCatalog);
+            }
+            fixture.LayoutDbBa=fixture.DefinitionS002.MapLayout;
+            return fixture;
+        }
+
         private static void CompileAndSpawn(EntityManager em, out Entity session)
         {
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(ProjectRoot(), out var matrix, out string error), error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionAuthoredSet authored = CreateLedgerFixture();
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,

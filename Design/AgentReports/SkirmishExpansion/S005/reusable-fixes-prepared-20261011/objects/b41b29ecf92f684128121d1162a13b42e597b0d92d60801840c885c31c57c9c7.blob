@@ -1,0 +1,144 @@
+{
+  "version": 2,
+  "status": "Prepared; native compile/test pending; root review required",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyCommanderService.cs",
+      "base_sha256": null,
+      "staged_sha256": "4fab180b1c400a97fd99cf23d5cf0befab27b77f50b1a65a13c05439632306b8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyCommanderService.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "a1b218edb2e48181dae4425b1ffb1920abaca49d5c66821c9d0110cd01b23220"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyPerceptionBuilder.cs",
+      "base_sha256": null,
+      "staged_sha256": "791eb690e000b340b1b67fde925b4dca0afbf76acc543702450981b4a2daea73"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyPerceptionBuilder.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "7648442cdde9477f24cc96fefb405fcbcd02b93aa99d193379e2c0506c65210c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyGroupAllocation.cs",
+      "base_sha256": null,
+      "staged_sha256": "e6995e3015198c1c689f6c3a34d251bed36af453a2a9740b880e0fd69e844ade"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyGroupAllocation.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "90430895cb286447a60f20e17a70946c64c59111e9e3961ea684c53912124d05"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyDecisionRules.cs",
+      "base_sha256": null,
+      "staged_sha256": "af4e63071af6f0ef01d018b3927981f488b2ae16d5ab0e52eedf0c3a8650a9b8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyDecisionRules.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "d429fe3dcb587ca88660f7162f82f5a100c244c5dea37fe651d9427e7fe91f8f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyStrategySystem.cs",
+      "base_sha256": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e",
+      "staged_sha256": "a51a2162938940732a42e3c5297067340b42ef20244b3100326bf9e03c720127"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyPerceptionTests.cs",
+      "base_sha256": null,
+      "staged_sha256": "2635d69a3f2397020f74bbf6146a5062db4c3e1a04f7cc303c49dc864e2398ca"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyPerceptionTests.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "473e57f687373c2911c0006ef7ab6957e6cf8fe9838155be32805fcf20eb41d2"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyDecisionRulesTests.cs",
+      "base_sha256": null,
+      "staged_sha256": "5c0577f8b24a7f612028d340557ae80142cc2fdb70809ea429d654273ac116ba"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyDecisionRulesTests.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "117debaac07fffbbb18362c9b3d53039a9e150ee7ccdd6a48139af8443759c76"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyCommanderTests.cs",
+      "base_sha256": null,
+      "staged_sha256": "a79f5b486cc14cd2bda7134c7ee991105ad2ef17cfafbea8368a17ad411e229d"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs.meta",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyCommanderTests.cs.meta",
+      "base_sha256": null,
+      "staged_sha256": "7470b8532eb671534e4eb57092f6fbc017a423e77a19b5bc7a40cfd57b93cf47"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "staged_path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyCheckpointPolicy.cs",
+      "base_sha256": "2b98cbcfc04e9205b74b984ca3563f46df9b29895ce0aa9664f29d7eb19ae42d",
+      "base_stage": "policy foundation v1 staged bytes; apply foundation first",
+      "staged_sha256": "47a416e62f4ccf77d6a26718938ee7a51abcf1d340718a6b0f19644db9013bfc"
+    }
+  ],
+  "patch_path": "/private/tmp/s005-enemy-commander-v2/commander-repair.patch",
+  "patch_sha256": "a3dffdce2e449f0ac47abfb7ae9b29a054484880e42c5e23794ad953f1af5870",
+  "source_candidate": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "depends_on": [
+    "/private/tmp/s005-enemy-policy-step1/manifest.json",
+    "/private/tmp/s005-enemy-policy-step1-compile-followup-v2/manifest.json",
+    "/private/tmp/s005-enemy-production-v1/manifest.json"
+  ],
+  "focused_entries": [
+    "Game.Tests.Editor.SkirmishEnemyPerceptionTests.RunFocusedValidation",
+    "Game.Tests.Editor.SkirmishEnemyDecisionRulesTests.RunFocusedValidation",
+    "Game.Tests.Editor.SkirmishEnemyCommanderTests.RunFocusedValidation"
+  ],
+  "repairs": [
+    "Bounded response due bypasses cheap probe cadence with fresh legal snapshot",
+    "LastSeen ledger must match current session identity",
+    "Terminal authored assault route uses public objective point and normal Move validation",
+    "Minimal defense keeps nonselected offense from chasing local home contacts",
+    "No time-only stationary recovery reset",
+    "Two-waypoint/uneven route scout reaches actual nearest third",
+    "Missing scout requested as real paid Rifle only after supported assault/escort and actual reserve",
+    "Frozen-knowledge investigation confined to authored patrol reach",
+    "Scout cooldown advances only after actual accepted scout dispatch",
+    "Persist one-past route waypoint Count for completed non-scout route; subsequent movement/Continue retains public goal; checkpoint rejects >Count and Scout sentinel"
+  ],
+  "limits": [
+    "New physical geometry/budgets/statistics unchanged",
+    "Focused commander tests use isolated ledger actors and actual shared command API; no native prefab/fullmatch certification",
+    "Frozen EnemyPerceptionFocused1197.cs unchanged and excluded because revised ledger contract requires state owner",
+    "Air orchestration/economic growth/transport tactics remain separate gates",
+    "Public final approach can still honestly fail native geometry validation; no source-fit claim",
+    "Old policyless legacy strategy fallback retained"
+  ],
+  "preserved_v1_manifest_sha256": "4c7d6736ed66688d37bd45aa825ec8c7bb662dbac7073d6791349ea56659335b",
+  "route_completion_contract": {
+    "sentinel": "RouteWaypointIndex == immutable route.Waypoints.Count",
+    "accepted_duties": "nonScout",
+    "reset": "route change initializes own-side endpoint; Scout resets actual index; recovery may clear RouteId",
+    "layout_change": false,
+    "byte_schema_change": false
+  }
+}

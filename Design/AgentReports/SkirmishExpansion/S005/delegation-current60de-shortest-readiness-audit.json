@@ -1,0 +1,245 @@
+{
+  "schema": 1,
+  "status": "ReadOnlyCurrentSourceDependencyAudit_NotFullReadinessQualification",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "sourceManifest": "final-1258-ground-carrier-post-source-manifest.json",
+  "sourceManifestSha256": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+  "asOf": "Native1265 closed;1266 active per root. Do not treat1266\u20131268 preparation or active work as passes.",
+  "currentClosed": {
+    "ariaBaseline": {
+      "closed": 3,
+      "requiredCases": 6,
+      "cases": [
+        {
+          "id": 1263,
+          "proof": "native1263-normal-aria-pass.json",
+          "sha256": "dd0ded303d5da8b02cbb881f3cb6abecb457bc39b77c03bedf32ea3e2fd2784b",
+          "locale": "en",
+          "seed": 104734,
+          "victorySeconds": 263.784,
+          "contacts": 67,
+          "wrapperNative": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1264,
+          "proof": "native1264-normal-aria-pass.json",
+          "sha256": "febbf0ce15e223ca44068c4cfc3ea3ecfa924379bb010e609c73f96de75306b4",
+          "locale": "en",
+          "seed": 130368,
+          "victorySeconds": 232.481,
+          "contacts": 69,
+          "wrapperNative": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1265,
+          "proof": "native1265-normal-aria-pass.json",
+          "sha256": "b414100f39919acf3ef3f5509b62e3c35346a43eb38f4624acefcf9b70d167c7",
+          "locale": "en",
+          "seed": 155926,
+          "victorySeconds": 236.016,
+          "contacts": 57,
+          "wrapperNative": [
+            0,
+            0
+          ]
+        }
+      ],
+      "remaining": [
+        {
+          "id": 1266,
+          "locale": "fa-IR",
+          "seed": 104734
+        },
+        {
+          "id": 1267,
+          "locale": "fa-IR",
+          "seed": 130368
+        },
+        {
+          "id": 1268,
+          "locale": "fa-IR",
+          "seed": 155926
+        }
+      ]
+    },
+    "normalManualR2Recovery": {
+      "proof": "native1262-offline-durable-replay-proof.json",
+      "sha256": "d8c32a6738bb10f2830a5f9d572ef8a8c2fa8493b9e09589a81e6e9895f31ae9",
+      "result": "PassedScopedOfflineAuditedNative1262",
+      "originalFailurePreserved": "native1262-normal-manual-r2-recovery-failure.json",
+      "victorySeconds": 311.942,
+      "livePaidActorRecovered": true,
+      "stable": "production.1003.0",
+      "reservation": 1003,
+      "recoveredHealth": 360,
+      "scope": "Genuine public EN155926 hybrid manual normal-input R2/paidHeavyAPC publicSaveContinue/live actor/receipt recovery/Victory/frozen rendered result/MainMenu. Producer runtime remap3\u219214 requalified offline against immutable evidence/source; no native rerun.",
+      "notClosed": [
+        "ARIA baseline",
+        "Stop/takeover",
+        "discreteMove/Hold",
+        "FA manual/flank",
+        "human/device"
+      ]
+    },
+    "groundCarrierFix": {
+      "proof": "native1258-wrapper-exit.json",
+      "log": "native-1258-ground-carrier-death.log",
+      "marker": "[SkirmishGroundCarrierDeathTests] result=Passed cases=9 scope=IsolatedActualSystemNotNormalMission",
+      "actualWrapperNative": [
+        0,
+        0
+      ],
+      "scope": "Real isolated wreck cleanup/legal cargo settlement including blocked/partial/multiple carrier conditions, strict checkpoint references preserved; ordinary1262SaveContinue now passes onsamecomplete source."
+    }
+  },
+  "exactDependencyDeltaFrom1242": {
+    "historicalSource": "746a4680c6445adf8c350cffb139c3cbb25362501507f6ed00be2b449a08650d",
+    "changedFiles": [
+      "Assets/Game/Scripts/Systems/TransportBoardingCommandDisembarkApplication.cs",
+      "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs.meta"
+    ],
+    "removedFiles": [],
+    "materialsIdentical": true,
+    "interpretation": "Economy/commander corrections1242 and construction/coordinator/capability/policy/codec1240 retain unchanged production dependencies. They are historical whole-source focused passes with exact unchanged scope, not current whole-source mission or air/cargo certificates. New death/disembark owner requires its9cases and affected transport/death/save journey; it does not justify repeating every basic queue/damage fixture or physical map validation."
+  },
+  "shortestRemainingOrderAfterSixBaseline": [
+    {
+      "step": 1,
+      "action": "Run frozen1260 genuine ARIAStart\u2192Stop\u2192same-attempt normal manualMove/Hold/PauseResume/Move\u2192naturalVictory/MainMenu.",
+      "artifact": "/private/tmp/s005-stop-manual-takeover1260/{prepared.json,runner.py,S005NormalStopManual1260Observer.cs}",
+      "sourcePin": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+      "reason": "1262/ARIAwins do not prove actualStop/control replacement. This single complete journey closes command/pause/takeover together; ordinaryPauseResume is notReplay orSavedContinue.",
+      "pending": "Root native drycompile/review/exclusive release; no agent dispatch."
+    },
+    {
+      "step": 2,
+      "action": "One genuine current-source FA manual flank win/result/MainMenu, using normal public FA entry and legal input. Combine useful flat Editor performance sampling if a reviewed observer exists.",
+      "artifact": "No current frozen flank successor confirmed; historical1186 plan is not runnable proof after host recovery. Reconstruct bounded external normal-input driver only.",
+      "reason": "DB_BA:S005 line164 explicitly requires direct and flank assaults; CURRENT_ACCEPTANCE line82 retains manualEN/FA. Existing1262 is EN and frontline/terrain advance, not documented south-flank proof. RequiredFAARIAwins cover localization but do not silently close the separately recorded FAmanual/flank scope."
+    },
+    {
+      "step": 3,
+      "action": "Grouped actual paidAntiAir+Fighter damage against naturally taxiing/airborne/observed paid enemyPlane.",
+      "artifact": "/private/tmp/s005-paid-air-effects1270/manifest.json",
+      "status": "Peer reports frozencurrent60de candidate,31offlinecontrols/201contracts, actualnative execution pending.",
+      "reason": "PaidAir2 flight1106 and isolatedcapability23 do not establish legal real enemyair hits. Preserve original1148failure; exactpaidSourceEntity/nativeevent/HP/airborne/fog evidence and allTouch/sourceclosure remain."
+    },
+    {
+      "step": 4,
+      "action": "Actual paidPlane mixedcargo Board\u2192natural runway taxi/takeoff\u2192Return/touchdown\u2192physicalunload/death/capacity.",
+      "artifact": "1272 reconstruction owned by aircraft_tests from recovered1122; not yet frozen/qualified.",
+      "reason": "GroundAPC orVTOLrope mechanics cannot establish fixedwing passenger+vehicle cargo.1272 deliberately does not performSaveContinue; retain loaded-air recovery/settledrope scopes separately if claiming those capabilities. No aircraftpose/visibility/flightflag writes."
+    },
+    {
+      "step": 5,
+      "action": "Current affectedCampaignM3 EN+FA normal journeys via frozen1261.",
+      "artifact": "/private/tmp/campaign-m3-current1261/run_campaign_m3_1261.py",
+      "sourcePin": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+      "entries": [
+        "CampaignSelectionJourney1261.RunM03",
+        "CampaignSelectionJourney1261.RunM03FA"
+      ],
+      "reason": "SharedUI/order/transport/save owners changed since priorCampaign acceptance. M3is concretely open; do not repeat everyM1\u2013M5 fulljourney without an affected dependency. Groundrepair excludeslegacy/air and tests that guard; otherCampaign scopedcompatibility retained honestly.",
+      "pending": "Drycompile/load-onlyserialization/execution closure; hybrid UI/worldprojection disclosed."
+    },
+    {
+      "step": 6,
+      "action": "One bounded fresh ten-cycle normalSurrender\u2192realDefeat\u2192Replay/AdjustSetupLaunch/MainMenu lifecycle on finalAI schema, preserving startingresources,playerselection/Hold, queues/caps, freshAIintent/operation reset and owned physicalcleanup.",
+      "artifact": "Historical native1226-lifecycle-offline-render-qualification.json and its lossless archive are templates; no current60de continuous10cycle proof located.",
+      "reason": "1226 on8f predatescombinedStep4 policyversion/construction/capabilitycheckpoint state. FocusedPolicy/Parts/research tests and six independently startedARIAwins do not certify10continuousrealReplaycycles. Reuse lawfulearlySurrender; no10fullwins required. Pendingmemorytrendreview stays honest; no forcedGC/budget invention."
+    },
+    {
+      "step": 7,
+      "action": "One current native passive-player control with read-only assignment/replacement/escortprogress telemetry; add flat frame/decision/GC measurements in that same run if possible.",
+      "artifact": "Historical1219pass at8f and1230prepared telemetry design; no actualpost-goal-repair1230pass located, no recoveredcurrent successor confirmed.",
+      "reason": "ApprovedAIplanSteps2/3/4 andline197 require naturalpressure/coherentforce before1080s; currentwins demonstrate faircounterplay/realpaidRifle+Rocketeer reinforcements but not passiveobjectivepressure aftergoalprogress/Step4changes. No compulsorydamage quotas in defendedwins. Existing1192preparation is not currentperformancepass. Do not replay baseline1196 or runsecondpassive solelyforperf."
+    },
+    {
+      "step": 8,
+      "action": "Reconcile the applicableenabled capability recovery/service gaps and declaredAIchallenge/held-out checks, then update source-scopedreadiness/evidence.",
+      "reason": "All22playerroles remainenabled; do not labelground-focusedtests or isolatedair mechanics as completeenemyair/transportorchestration. NativeVTOLloadedrecovery/settledrope andPlanecheckpoint specialpath limits remain recorded, not closedby1262groundvehicle. Approvedplanline208held-outdeploymentseed,189lifecycle/scheduling and169/187enablednativeflight/service/return/cargo remaindeclared; use sharedParts/focusedexactdependency evidence toavoid22independentjourneys. No source edits solely to broadenunexposedfuturecapabilities.",
+      "scopeDecision": "If anyrecordedgate is intentionally deferred, labeltechnicalpartialscope ratherthan silentlyerase it orclaimfullplayerready."
+    }
+  ],
+  "doNotRepeat": [
+    "Do not rerun1262manualSaveContinue because the originalstrictproducerRuntimeIdoraclefailed; durableofflineproof alreadyqualifiesexactnativecompletedjourney withdocumentedlimits.",
+    "Do not rerun entire8focusedAI suites solelyforfourdeath/disembark/test deltas; sourceidentity confirmsunchangedowners.",
+    "Do not rerun1106bilateralAirport/Air2emptyflight prerequisites if newlyreviewedair/cargofixture alreadyusesactualpaidfacilities and matchesleaf dependencies; preservehistorical scope.",
+    "Do not rerunall15groundqueue basics/fiveinfantry/sixvehicledamage fixtures solelybecausewholehashchanged; proveunchangedleafdependencies and rerunaffectedbindings only.",
+    "Do not runS006/20alternatingFieldEstablished family matrix, War/LargeWar/extradifficulty/Support/newmaps as currentpublicStandardRegular technicalwork; preservetheirunexposed/future/device gates.",
+    "Do not repeatnew6ARIA matrix after source-neutralexternaldiagnostic/report corrections; anyactualsourcechange needs explicitdependency/current-source qualification decision.",
+    "Do not callARIAFAwin a manual/flankwin orPauseResume a replay/savedcheckpoint proof."
+  ],
+  "staleStatements": [
+    {
+      "file": "CURRENT_ACCEPTANCE.md",
+      "lines": "1,3,9,11",
+      "finding": "Headercalls746a current, listsold1250\u20131254 baseline ascurrent and sayscarrierrepair/manualSaveContinueneeded. Current60de hasnew1258repair9cases,1262qualifiedliveR2recovery and1263\u201365wins. Preservefailures butplacehistorybeneathnewaccurateheader."
+    },
+    {
+      "file": "CURRENT_ACCEPTANCE.md",
+      "lines": "19,25,29,82",
+      "finding": "1241/1242focusedcorrectionsstillpending andconstruction/airorchestration describedexternal inoldercurrentheadings;1240sixsuites+1242two correctionsclosed. Do notconfusefocusedcompletion withactualnativeair/cargo/orchestrationgaps stillopen."
+    },
+    {
+      "file": "TECHNICAL_READINESS_CURRENT.json",
+      "keys": [
+        "currentSourceFingerprint",
+        "currentManualControlsProof",
+        "currentCombatSaveContinueProof",
+        "latestNormalManual1262",
+        "currentManualLocalePair",
+        "currentBilateralAir2Placements"
+      ],
+      "finding": "Fingerprintpoints746a;currentmanual/SaveContinue null,latest1262pointsimmutablefailureonly despitequalifieddurableproof; someAir2statusstringssayflightpending despite1106completedhistorically. Rootshould update scopedproofreferences aftersafe boundary, neverreplacefailurefiles ormarkFApair/aircombatready."
+    },
+    {
+      "file": "CURRENT_ACCEPTANCE.md",
+      "line": 82,
+      "finding": "PendingmanualEN/paidR2SaveContinue blanketstatement nowpartlyclosedby1262. Stop,FAmanual/flank,air/cargo,currentCampaign,performance and applicablelifecycle remainopen. No newfullnormalENrecoveryrerun needed."
+    }
+  ],
+  "separatePublicationGates": [
+    "Owneraestheticreview is deferreduntiltechnicalreadiness perhumaninstruction; no terrain/mockup acceptance inferred.",
+    "Human/phone/unfamiliarplayer, deviceframebudget/audio/background/processinterruption and platformentitlement acceptance remainseparate. Editor measurements do not certifyAndroid.",
+    "S005remainsPlanned untilapplicablepublicationgates; sixwins+compile alonecannotlabelall120entriesaccepted.",
+    "Family20seedsalternatingField/Established requiresS006 whichisnotimplemented; currentField-onlyrepeatscannotcloseit."
+  ],
+  "aggregateVerifier": {
+    "path": "/private/tmp/s005-repaired-aria-matrix1263-1268/verify_current_aria_matrix.py",
+    "sha256": "5fad4a926c58b9498a63e6fc174c77a5c02aa3f5704d25731305798fb174601e",
+    "status": "SyntaxcheckedOnly_NotExecuted_WaitAllSixClosedPassFiles",
+    "source": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+    "checks": [
+      "Sixdistinctlocale/seed slots andsixfreshattempts",
+      "EachnativeproofPassed/normal/current/sourceflags/wrappernative0",
+      "Completefiles/materials pre/preflight/predispatch/post equality andsourcefingerprints",
+      "Exactexecutedfixture/runner/log/observerhashes",
+      "ActualnormalcountCSV+rawnativefrozenVictory",
+      "AllrawTouchzerointerventions/noPhysicalTakeover/strictrecordedMenuRuntimeTerminalcontacts andverifiedcommandreceipts",
+      "ActualCanvasboundglyph/alpha/cull/viewport andlocalizedVictorythenSameAttemptAdjustSetup chronology",
+      "Actualafter-close nativeidle"
+    ],
+    "runAfterAllSix": "rtk proxy python3 /private/tmp/s005-repaired-aria-matrix1263-1268/verify_current_aria_matrix.py --output /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1263-1268-current-aria-matrix.json",
+    "nativeCalls": 0,
+    "activeReadinessMutated": false
+  },
+  "reviewedReferences": {
+    "acceptance": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md:X02/X04/X07/X14/X17/X18/X27/X30/X36-X39",
+    "mission": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md:S005146\u2013168",
+    "approvedAI": "ENEMY_AI_IMPROVEMENT_PLAN_20261011.md:163\u2013170,180\u2013218"
+  },
+  "noUnityCalls": true,
+  "noSourceEdits": true,
+  "noActiveReadinessEdits": true,
+  "technicallyReady": false,
+  "playerReady": false
+}

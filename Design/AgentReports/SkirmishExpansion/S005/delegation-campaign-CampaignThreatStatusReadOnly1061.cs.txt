@@ -1,0 +1,88 @@
+using System;
+using System.IO;
+using System.Reflection;
+using System.Collections;
+using System.Globalization;
+using UnityEngine;
+using UnityEditor;
+using Unity.Entities;
+using Game.Components;
+using Game.UI.Runtime;
+using Game.Composition;
+using Game.Editor;
+
+public static class CampaignThreatStatusReadOnly1061
+{
+    static string path; static double due,until;static int frame=-1;static double missingSince;static bool capturedMissing;
+    static readonly BindingFlags fields=BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public;
+    static object Read(object o,string name)=>o==null?null:o.GetType().GetField(name,fields)?.GetValue(o)??o.GetType().GetProperty(name,fields)?.GetValue(o);
+    static string Value(object o,string field)=>Convert.ToString(Read(o,field),CultureInfo.InvariantCulture);
+    static string State(UnityEngine.Object value)
+    {
+        if(value==null)return "null";
+        var c=value as Component;var go=value as GameObject??c?.gameObject;
+        return value.GetType().Name+":"+value.name+":id="+value.GetEntityId()+":self="+go?.activeSelf+":hierarchy="+go?.activeInHierarchy+":enabled="+(value is Behaviour b?b.enabled.ToString():"n/a");
+    }
+    public static string Run()=>"Loaded exact read-only threat status observer; not attached";
+    public static void Install(string file)
+    {
+        Stop();path=file;due=0;until=EditorApplication.timeSinceStartup+420;frame=-1;missingSince=0;capturedMissing=false;
+        File.WriteAllText(path,"{\"observer\":\"CampaignThreatStatusReadOnly1061\",\"writesToGameState\":false,\"sampleSeconds\":0.1,\"boundedWallSeconds\":420}\n");
+        Canvas.willRenderCanvases+=Observe;
+    }
+    public static void Stop()=>Canvas.willRenderCanvases-=Observe;
+    [Serializable]sealed class Row
+    {
+        public int frame,entry,lesson;public double wall,worldElapsed,missingSeconds,predicateMissingSince;public float unityUnscaled,unityScaled,delta,unscaledDelta;
+        public string locale,mission,phase,outcome,session,title,statusText,visibleUntil,predicatePanel,boundHeader,boundTitle,visibility,localizedBinding,cacheState,suppressors,popups,wheels,fullMaps,worldTargeting,cameraGuide,cameraState,command,body,defenseModel;
+        public bool activePredicatePanel,headerRequested,cameraTour,passengerDrawerOpen,fieldGuide,readOnly=true;public int elapsedMs,attempt;
+    }
+    static void Observe()
+    {
+        if(EditorApplication.timeSinceStartup>until){Stop();return;}
+        if(!EditorApplication.isPlaying||Time.frameCount==frame||EditorApplication.timeSinceStartup<due)return;
+        frame=Time.frameCount;due=EditorApplication.timeSinceStartup+.1;
+        try
+        {
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;var em=world.EntityManager;
+            using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent));
+            if(q.CalculateEntityCount()!=1)return;var root=q.GetSingletonEntity();var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(runtime.MissionId.ToString()!="saga.ch01.m03.radar_warning")return;
+            var match=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();var boot=Read(match,"MatchBootstrap");var menu=Read(boot,"MainMenu");
+            var header=Read(menu,"_matchHudThreatJumpPanel") as GameObject;var label=Read(menu,"_matchHudThreatTitle") as TMPro.TMP_Text;var visibility=header?.GetComponent<MatchHudThreatVisibilityView>();
+            var predicate=GameObject.Find("ThreatJumpPanel");var predicateLabel=predicate?.GetComponentInChildren<TMPro.TMP_Text>();
+            var probe=typeof(CampaignTutorialEntryEditorProbe);object Probe(string name)=>probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic)?.GetValue(null);
+            var row=new Row{frame=frame,wall=EditorApplication.timeSinceStartup,worldElapsed=world.Time.ElapsedTime,unityUnscaled=Time.unscaledTime,unityScaled=Time.time,delta=Time.deltaTime,unscaledDelta=Time.unscaledDeltaTime,locale=Game.Configs.GameLocalization.CurrentLocaleCode,mission=runtime.MissionId.ToString(),phase=runtime.Phase.ToString(),outcome=runtime.Outcome.ToString(),session=runtime.SessionToken.ToString(),attempt=runtime.AttemptOrdinal,elapsedMs=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).ElapsedMilliseconds,entry=Probe("entry") is int e?e:-1,lesson=Probe("journeyStep") is int l?l:-1,predicateMissingSince=Probe("missingDefenseStatusSince") is double m?m:0,activePredicatePanel=predicate!=null,predicatePanel=State(predicate),boundHeader=State(header),boundTitle=State(label),visibility=State(visibility),title=label?.text,statusText=predicateLabel?.text,visibleUntil=Value(menu,"_matchHudThreatVisibleUntil"),headerRequested=Read(visibility,"requested") is bool requested&&requested,cameraTour=UiShellRuntimeGateway.TryReadMissionCameraTour()};
+            var binding=label?.GetComponent<V3LocalizedTextBindingView>();row.localizedBinding=State(binding);
+            var state=Read(Read(boot,"gameplayRuntimeUpdate"),"_threatWarningPresentation");
+            row.cacheState="state="+(state==null?"null":state.GetType().Name)+" visible="+Value(state,"_defenseVisible")+" text="+Value(state,"_defenseText")+" session="+Value(state,"_defenseSession")+" attempt="+Value(state,"_defenseAttempt");
+            var suppressors=Read(visibility,"suppressors") as IEnumerable;if(suppressors!=null)foreach(object s in suppressors)row.suppressors+=State(s as UnityEngine.Object)+"|";
+            foreach(var p in UnityEngine.Object.FindObjectsByType<ThreatAlertV3PopupView>(FindObjectsInactive.Include))
+                row.popups+=State(p)+" route="+p.IsRoutePreview+" suppressedPanel="+State(Read(p,"_suppressedThreatPanel") as UnityEngine.Object)+" boundPanel="+State(Read(p,"_boundLegacyThreatPanel") as UnityEngine.Object)+" alert="+State(p.AlertSurface)+" routeSurface="+State(p.RoutePreviewSurface)+" routeStrip="+State(p.RoutePreviewStrip)+" worldOverlay="+State(p.RouteWorldOverlay)+"|";
+            foreach(var w in UnityEngine.Object.FindObjectsByType<CommandWheelPanelView>(FindObjectsInactive.Include))
+                row.wheels+=State(w)+" open="+w.IsOpen+" targeting="+State(Read(w,"targetingRoot") as UnityEngine.Object)+" threatRoot="+State(Read(w,"threatRoot") as UnityEngine.Object)+"|";
+            foreach(var f in UnityEngine.Object.FindObjectsByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include))row.fullMaps+=State(f)+" open="+f.IsOpen+"|";
+            var selection=Read(boot,"SelectionUiCommand");var input=Read(selection,"_inputSystem");
+            var targetArgs=new object[]{default(Game.Tactical.Contracts.TacticalCommandMode)};
+            bool hasWorldTarget=input!=null&&(bool)input.GetType().GetMethod("HasActiveWorldTargetCommandMode",fields).Invoke(input,targetArgs);
+            row.worldTargeting="active="+hasWorldTarget+" mode="+targetArgs[0]+" ignoredUntil="+Value(input,"IgnoreWorldCommandsUntilFrame")+" capturedUi="+Value(input,"IgnoreUiClickUntilRelease");
+            if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))row.command=command.ActiveCommandMode+" buildDrawer="+command.BuildDrawerVisible;
+            var panel=Read(menu,"_matchHudSelectionPanelView");row.passengerDrawerOpen=Read(panel,"IsPassengerDrawerOpen") is bool drawer&&drawer;
+            var assistant=Read(menu,"_matchHudAssistantUiSystem");var highlight=Read(assistant,"_highlightPresentationSystem");
+            row.cameraGuide="focusUntil="+Value(assistant,"_tutorialFocusPendingUntil")+" focusStep="+Value(assistant,"_tutorialFocusPendingStep")+" destinationFocusReady="+Value(assistant,"_marketDestinationFocusReadyAt")+" guideRect="+State(Read(highlight,"_directTutorialTarget") as UnityEngine.Object)+" directWorld="+Value(highlight,"_directTutorialWorldTarget")+" worldRequested="+Value(highlight,"_worldTargetShowRequested")+" awaitingMode="+Value(highlight,"_awaitingWorldTargetMode")+" guideWorldCamera="+State(Read(highlight,"_worldCamera") as UnityEngine.Object)+" cameraPosition="+match?.WorldCamera?.transform.position;
+            using var cameraQuery=em.CreateEntityQuery(typeof(RtsCameraStateComponent));if(cameraQuery.CalculateEntityCount()==1)row.cameraState=JsonUtility.ToJson(cameraQuery.GetSingleton<RtsCameraStateComponent>());
+            if(UiShellRuntimeGateway.TryReadMissionDefense(out var defense))row.defenseModel="active="+defense.IsActive+" warning="+defense.HasWarning+" canFocus="+defense.CanFocus+" returnCamera="+defense.CanReturnCamera+" attention="+defense.WarningNeedsAttention+" holdResume="+defense.RequiresHoldResume+" guidance="+defense.GuidanceId+" version="+defense.Version+" text="+defense.WarningText;
+            row.fieldGuide=UiShellRuntimeGateway.IsMissionFieldGuidePresenting();
+            row.body=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>(FindObjectsInactive.Include)?.CurrentInstructionBody;
+            bool missing=predicateLabel==null||string.IsNullOrWhiteSpace(predicateLabel.text);
+            if(missing){if(missingSince==0)missingSince=row.wall;row.missingSeconds=row.wall-missingSince;}else{missingSince=0;capturedMissing=false;}
+            File.AppendAllText(path,JsonUtility.ToJson(row)+"\n");
+            if(row.predicateMissingSince>0&&row.wall-row.predicateMissingSince>=.8&&!capturedMissing)
+            {
+                capturedMissing=true;probe.GetMethod("CaptureJourney",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{"countdown-missing-before-1p5s"});
+                Debug.Log("[CampaignThreatStatusReadOnly1061] missingCountdownSnapshot="+JsonUtility.ToJson(row));
+            }
+        }
+        catch(Exception e){File.WriteAllText(path+".observer-error.txt",e.ToString());Stop();}
+    }
+}

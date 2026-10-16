@@ -1,0 +1,975 @@
+using System;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
+using Game.UI.Contracts;
+
+namespace Game.UI.Runtime
+{
+    public sealed partial class MatchHudMinimapInputUiSystemHelper
+    {
+        private const int CaptureResolution = 512;
+        private static readonly Color32 RasterBackgroundA = new(150, 136, 116, 255);
+        private static readonly Color32 RasterBackgroundB = new(126, 116, 101, 255);
+        private static readonly Color32 RasterGrid = new(97, 109, 97, 255);
+        private static readonly Color32 RasterRoad = new(83, 75, 61, 255);
+        private static readonly Color32 RasterDirtRoad = new(112, 91, 62, 255);
+        private static readonly Color32 RasterSidewalk = new(150, 145, 130, 255);
+        private static readonly Color32 RasterBridge = new(82, 103, 116, 255);
+        private static readonly Color32 RasterRamp = new(132, 103, 58, 255);
+        private static readonly Color32 RasterPlaza = new(119, 112, 99, 255);
+        private static readonly Color32 RasterBlocked = new(86, 78, 70, 255);
+        private static readonly Color PlayerMarkerColor = new(0.2f, 0.95f, 0.62f, 0.95f);
+        private static readonly Color EnemyMarkerColor = new(1f, 0.22f, 0.18f, 0.95f);
+        private static readonly Color NeutralMarkerColor = new(1f, 0.78f, 0.25f, 0.95f);
+        private const int MaxMarkers = 1024;
+        private const int WarmupStaticMapRefreshCount = 1;
+        private const float WarmupStaticMapRefreshSeconds = 1f;
+        private const float CameraCenteredMapRefreshSeconds = 0.75f;
+        private const float CameraCenteredMapSizeRefreshFraction = 0.08f;
+        private const float CameraDragRecaptureDebounceSeconds = 0.45f;
+        private const float CameraViewportEdgeRefreshMargin = 0.12f;
+        private const float MinimapZoomedInScale = 0.5f;
+        private const float ViewportRefreshSeconds = 0.15f;
+        private const float ViewportDragRefreshSeconds = 0.05f;
+        private const float MarkerRefreshSeconds = 0.2f;
+        private const int MinRasterFeatureCount = 24;
+        private MatchHudMinimapView _view;
+        private IMatchRuntimeState _runtimeGameplayStateSystem;
+        private IMatchHudCameraControl _selectionUiCameraSystem;
+        private IMatchHudMinimapDataSource _minimapDataSource;
+        private readonly System.Collections.Generic.List<Image> _markerImagePool = new();
+        private readonly System.Collections.Generic.List<MatchHudMinimapMarkerModel> _markerScratch = new();
+        private readonly System.Collections.Generic.List<MatchHudMinimapRoadCellModel> _roadScratch = new();
+        private readonly System.Collections.Generic.List<MatchHudMinimapSurfaceFeatureModel> _surfaceScratch = new();
+        private Camera _captureCamera;
+        private RenderTexture _renderTexture;
+        private Texture2D _readbackTexture;
+        private Texture2D _rasterTexture;
+        private Sprite _captureSprite;
+        private Sprite _rasterSprite;
+        private Color32[] _rasterPixels;
+        private Color32[] _rasterBasePixels;
+        private readonly Vector3[] _mapWorldCorners = new Vector3[4];
+        private readonly MatchHudMinimapProjectionGrid[] _rasterProjectionCandidates = new MatchHudMinimapProjectionGrid[4];
+        private bool _staticMapDirty = true;
+        private float _nextStaticMapRetryTime;
+        private int _warmupStaticMapRefreshesRemaining;
+        private bool _hasCapturedProjectionGrid, _hasCachedGrid;
+        private bool _markersDirty = true;
+        private MatchHudMinimapProjectionGrid _capturedProjectionGrid;
+        private MatchHudMinimapProjectionGrid _currentProjectionGrid;
+        private MatchHudMinimapGridModel _cachedGrid;
+        private float _nextViewportRefreshTime;
+        private float _nextMarkerRefreshTime;
+        private float _cameraDragRefreshBlockedUntil;
+        private bool _minimapZoomedIn;
+        private bool _rawPointerWasPressedLastFrame;
+        private bool _rawViewportDragActive;
+        private bool _useStableFullMapProjection;
+        private int _rawActiveTouchId = -1;
+
+        public void Bind(
+            MatchHudMinimapView view,
+            IMatchRuntimeState runtimeGameplayStateSystem,
+            IMatchHudCameraControl selectionUiCameraSystem,
+            IMatchHudMinimapDataSource minimapDataSource,
+            bool useFullMapProjection = true,
+            bool showViewport = true,
+            bool allowViewportDrag = true,
+            bool allowMapFocus = true,
+            bool allowZoom = true,
+            bool openFullMapOnClick = false,
+            bool useStableFullMapProjection = false)
+        {
+            Unbind();
+            _view = view;
+            _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
+            _selectionUiCameraSystem = selectionUiCameraSystem;
+            _minimapDataSource = minimapDataSource;
+            _useStableFullMapProjection = useStableFullMapProjection;
+
+            if (_view == null)
+                return;
+
+            RebindMarkerPool();
+            _view.FocusRequested += HandleFocusRequested;
+            _view.ZoomHeldChanged += HandleZoomHeldChanged;
+            _hasCapturedProjectionGrid = false;
+            _hasCachedGrid = false;
+            _markersDirty = true;
+            _cachedGrid = default;
+            _currentProjectionGrid = default;
+            _capturedProjectionGrid = default;
+            _nextMarkerRefreshTime = 0f;
+            _nextViewportRefreshTime = 0f;
+            _nextStaticMapRetryTime = 0f;
+            _cameraDragRefreshBlockedUntil = 0f;
+            _warmupStaticMapRefreshesRemaining = 0;
+            _minimapZoomedIn = false;
+            _rawPointerWasPressedLastFrame = false;
+            _rawViewportDragActive = false;
+            _rawActiveTouchId = -1;
+            _staticMapDirty = true;
+            _view.ApplyInteractionOptions(
+                useFullMapProjection,
+                showViewport,
+                allowViewportDrag,
+                allowMapFocus,
+                allowZoom,
+                openFullMapOnClick);
+            Update();
+        }
+
+        public void Unbind()
+        {
+            if (_view != null)
+            {
+                _view.FocusRequested -= HandleFocusRequested;
+                _view.ZoomHeldChanged -= HandleZoomHeldChanged;
+            }
+
+            if (_runtimeGameplayStateSystem != null)
+            {
+                _runtimeGameplayStateSystem.ZoomInHeld = false;
+                _runtimeGameplayStateSystem.ZoomOutHeld = false;
+            }
+
+            _view = null;
+            _runtimeGameplayStateSystem = null;
+            _selectionUiCameraSystem = null;
+            _minimapDataSource = null;
+            DeactivateMarkerPool();
+            _rawPointerWasPressedLastFrame = false;
+            _rawViewportDragActive = false;
+            _rawActiveTouchId = -1;
+            _useStableFullMapProjection = false;
+        }
+
+        public void Dispose()
+        {
+            Unbind();
+            ReleaseMarkerPool();
+            ReleaseCaptureResources();
+        }
+
+        public void NotifyStaticMapChanged()
+        {
+            _staticMapDirty = _markersDirty = true;
+            _hasCachedGrid = false;
+            _nextViewportRefreshTime = 0f;
+        }
+
+        public void Update()
+        {
+            if (_view == null || !_view.isActiveAndEnabled || !TryGetGrid(out MatchHudMinimapGridModel grid))
+                return;
+
+            Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
+            MatchHudMinimapProjectionGrid desiredProjectionGrid = _useStableFullMapProjection
+                ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
+                : _view.UseFullMapProjection
+                ? MatchHudMinimapProjectionUiSystemHelper.CreateFullGridIncludingCamera(grid, worldCamera)
+                : MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(
+                    grid,
+                    worldCamera,
+                    ResolveMapAspect());
+            desiredProjectionGrid = ApplyMinimapZoom(desiredProjectionGrid);
+            bool cameraRefreshBlocked = IsCameraRefreshBlocked();
+
+            if (ShouldRefreshCameraCenteredMap(desiredProjectionGrid, worldCamera, cameraRefreshBlocked))
+                _staticMapDirty = true;
+
+            MatchHudMinimapProjectionGrid projectionGrid = _hasCapturedProjectionGrid
+                ? _capturedProjectionGrid
+                : desiredProjectionGrid;
+            _currentProjectionGrid = projectionGrid;
+
+            if (_staticMapDirty)
+            {
+                if (_hasCapturedProjectionGrid && cameraRefreshBlocked)
+                {
+                    projectionGrid = _capturedProjectionGrid;
+                    _currentProjectionGrid = _capturedProjectionGrid;
+                }
+                else if (Time.unscaledTime >= _nextStaticMapRetryTime)
+                {
+                    bool wasFirstCapture = !_hasCapturedProjectionGrid;
+                    bool rendered = RenderStaticMap(
+                        desiredProjectionGrid,
+                        out MatchHudMinimapProjectionGrid renderedProjectionGrid);
+                    _staticMapDirty = !rendered;
+                    if (rendered)
+                    {
+                        projectionGrid = renderedProjectionGrid;
+                        _currentProjectionGrid = renderedProjectionGrid;
+                        _capturedProjectionGrid = renderedProjectionGrid;
+                        _hasCapturedProjectionGrid = true;
+                        _markersDirty = true;
+                        if (!_view.IsDraggingViewport)
+                            _view.ClearManualViewportOverride();
+                    }
+
+                    if (rendered)
+                    {
+                        if (wasFirstCapture && !_useStableFullMapProjection)
+                            _warmupStaticMapRefreshesRemaining = WarmupStaticMapRefreshCount;
+                        else if (_warmupStaticMapRefreshesRemaining > 0)
+                            _warmupStaticMapRefreshesRemaining--;
+                    }
+
+                    _nextStaticMapRetryTime = Time.unscaledTime + (_warmupStaticMapRefreshesRemaining > 0
+                        ? WarmupStaticMapRefreshSeconds
+                        : CameraCenteredMapRefreshSeconds);
+                }
+                else if (_hasCapturedProjectionGrid)
+                {
+                    projectionGrid = _capturedProjectionGrid;
+                    _currentProjectionGrid = _capturedProjectionGrid;
+                }
+            }
+            else if (_warmupStaticMapRefreshesRemaining > 0 && Time.unscaledTime >= _nextStaticMapRetryTime)
+            {
+                _staticMapDirty = true;
+            }
+
+            UpdateViewportDragInput();
+            UpdateViewportIfDue(worldCamera, projectionGrid);
+            UpdateMarkersIfDue(projectionGrid);
+        }
+
+        private void HandleFocusRequested(Vector2 normalized)
+        {
+            if (_runtimeGameplayStateSystem == null ||
+                _selectionUiCameraSystem == null ||
+                !TryGetGrid(out MatchHudMinimapGridModel grid))
+            {
+                return;
+            }
+
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+            MatchHudMinimapProjectionGrid projectionGrid = _currentProjectionGrid.Width > 0f
+                ? _currentProjectionGrid
+                : _view != null && _view.UseFullMapProjection
+                    ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
+                    : MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(
+                        grid,
+                        _selectionUiCameraSystem.WorldCamera,
+                        ResolveMapAspect());
+            Vector3 focusWorld = MatchHudMinimapProjectionUiSystemHelper.ClampWorldToGrid(
+                grid,
+                MatchHudMinimapProjectionUiSystemHelper.NormalizedToWorld(projectionGrid, normalized));
+            _selectionUiCameraSystem.MoveCameraGroundCenterTo(focusWorld);
+            bool draggingViewport = _view != null && _view.IsDraggingViewport;
+            if (!draggingViewport)
+            {
+                _view.ClearManualViewportOverride();
+                if (!_view.UseFullMapProjection)
+                    _staticMapDirty = true;
+                _nextStaticMapRetryTime = 0f;
+                _nextViewportRefreshTime = 0f;
+                Update();
+                return;
+            }
+
+            _nextViewportRefreshTime = 0f;
+        }
+
+        private float ResolveMapAspect()
+        {
+            RectTransform mapRect = _view != null ? _view.MapRect : null;
+            if (mapRect == null || mapRect.rect.height <= 0.001f)
+                return 1f;
+
+            return Mathf.Max(0.1f, mapRect.rect.width / mapRect.rect.height);
+        }
+
+        private MatchHudMinimapProjectionGrid ApplyMinimapZoom(MatchHudMinimapProjectionGrid projectionGrid)
+        {
+            if (!_minimapZoomedIn)
+                return projectionGrid;
+
+            float width = Mathf.Max(1f, projectionGrid.Width * MinimapZoomedInScale);
+            float height = Mathf.Max(1f, projectionGrid.Height * MinimapZoomedInScale);
+            Vector3 center = projectionGrid.Origin + new Vector3(projectionGrid.Width * 0.5f, 0f, projectionGrid.Height * 0.5f);
+            return new MatchHudMinimapProjectionGrid(
+                new Vector3(center.x - width * 0.5f, projectionGrid.Origin.y, center.z - height * 0.5f),
+                width,
+                height);
+        }
+
+        private bool ShouldRefreshCameraCenteredMap(
+            MatchHudMinimapProjectionGrid desiredProjectionGrid,
+            Camera worldCamera,
+            bool cameraRefreshBlocked)
+        {
+            if (!_hasCapturedProjectionGrid)
+                return true;
+            if (_useStableFullMapProjection)
+                return false;
+            if (_view != null && _view.UseFullMapProjection)
+                return false;
+            if (_view != null && _view.IsDraggingViewport)
+                return false;
+            if (cameraRefreshBlocked)
+                return false;
+
+            if (!MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(worldCamera, _capturedProjectionGrid, out Rect capturedViewport))
+                return true;
+            if (IsViewportNearRefreshEdge(capturedViewport))
+                return true;
+
+            float widthDelta = Mathf.Abs(desiredProjectionGrid.Width - _capturedProjectionGrid.Width);
+            float heightDelta = Mathf.Abs(desiredProjectionGrid.Height - _capturedProjectionGrid.Height);
+            return widthDelta >= Mathf.Max(1f, _capturedProjectionGrid.Width * CameraCenteredMapSizeRefreshFraction) ||
+                   heightDelta >= Mathf.Max(1f, _capturedProjectionGrid.Height * CameraCenteredMapSizeRefreshFraction);
+        }
+
+        private bool IsCameraRefreshBlocked()
+        {
+            if (_selectionUiCameraSystem != null && _selectionUiCameraSystem.IsCameraDragging)
+                _cameraDragRefreshBlockedUntil = Time.unscaledTime + CameraDragRecaptureDebounceSeconds;
+
+            return Time.unscaledTime < _cameraDragRefreshBlockedUntil;
+        }
+
+        private static bool IsViewportNearRefreshEdge(Rect viewport)
+        {
+            return viewport.xMin <= CameraViewportEdgeRefreshMargin ||
+                   viewport.yMin <= CameraViewportEdgeRefreshMargin ||
+                   viewport.xMax >= 1f - CameraViewportEdgeRefreshMargin ||
+                   viewport.yMax >= 1f - CameraViewportEdgeRefreshMargin;
+        }
+
+        private void HandleZoomHeldChanged(int direction, bool held)
+        {
+            if (!held || direction == 0)
+                return;
+
+            bool zoomedIn = direction > 0;
+            if (_minimapZoomedIn == zoomedIn)
+                return;
+
+            _minimapZoomedIn = zoomedIn;
+            _view?.ClearManualViewportOverride();
+            if (_runtimeGameplayStateSystem != null)
+                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+            _staticMapDirty = true;
+            _markersDirty = true;
+            _nextStaticMapRetryTime = 0f;
+            _nextViewportRefreshTime = 0f;
+            Update();
+        }
+
+        private bool RenderStaticMap(
+            MatchHudMinimapProjectionGrid requestedGrid,
+            out MatchHudMinimapProjectionGrid renderedGrid)
+        {
+            renderedGrid = requestedGrid;
+            Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
+            if (_view == null)
+                return false;
+
+            EnsureCaptureResources();
+            // Compact minimap is always visible; avoid a recurring GPU readback there.
+            bool captured = worldCamera != null && !Application.isBatchMode && _view.UseFullMapProjection;
+
+            bool readbackMatchesRenderTexture = false;
+            if (captured)
+            {
+                CaptureMap(renderedGrid, ResolveCaptureMask());
+                readbackMatchesRenderTexture = true;
+            }
+
+            if (!captured || IsFlatCapture())
+            {
+                DrawRasterMap(renderedGrid, out renderedGrid, _view.UseFullMapProjection && !_minimapZoomedIn);
+                readbackMatchesRenderTexture = false;
+            }
+
+            ApplyRenderedMapToView(readbackMatchesRenderTexture);
+            return true;
+        }
+
+        private void ApplyRenderedMapToView(bool readbackMatchesRenderTexture)
+        {
+            if (_view == null || _view.MapImage == null)
+                return;
+
+            if (readbackMatchesRenderTexture)
+            {
+                ReadRenderTextureInto(_readbackTexture);
+                if (_captureSprite == null)
+                {
+                    _captureSprite = Sprite.Create(
+                        _readbackTexture,
+                        new Rect(0, 0, CaptureResolution, CaptureResolution),
+                        new Vector2(0.5f, 0.5f),
+                        100f);
+                    _captureSprite.name = "Runtime_MatchHudMinimapCaptureSprite";
+                }
+
+                _view.SetMapSprite(_captureSprite);
+                return;
+            }
+
+            if (_rasterTexture == null)
+                return;
+
+            if (_rasterSprite == null)
+            {
+                _rasterSprite = Sprite.Create(
+                    _rasterTexture,
+                    new Rect(0, 0, CaptureResolution, CaptureResolution),
+                    new Vector2(0.5f, 0.5f),
+                    100f);
+                _rasterSprite.name = "Runtime_MatchHudMinimapRasterSprite";
+            }
+
+            _view.SetMapSprite(_rasterSprite);
+        }
+
+        private void UpdateMarkersIfDue(MatchHudMinimapProjectionGrid grid)
+        {
+            if (!_markersDirty && Time.unscaledTime < _nextMarkerRefreshTime)
+                return;
+
+            _markersDirty = false;
+            _nextMarkerRefreshTime = Time.unscaledTime + MarkerRefreshSeconds;
+            UpdateMarkers(grid);
+        }
+
+        private void UpdateViewportIfDue(Camera worldCamera, MatchHudMinimapProjectionGrid projectionGrid)
+        {
+            if (_view == null)
+                return;
+            if (!_view.ShowsViewport)
+                return;
+
+            float now = Time.unscaledTime;
+            bool dragging = _view.IsDraggingViewport;
+            if (!dragging && now < _nextViewportRefreshTime)
+                return;
+
+            _nextViewportRefreshTime = now + (dragging ? ViewportDragRefreshSeconds : ViewportRefreshSeconds);
+            if (_view.HasManualViewportOverride)
+            {
+                _view.SetViewportNormalizedRect(_view.ManualViewportNormalizedRect);
+                return;
+            }
+
+            if (MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(worldCamera, projectionGrid, out Rect viewport))
+                _view.SetViewportNormalizedRect(viewport);
+        }
+
+        private void UpdateViewportDragInput()
+        {
+            if (_view == null || !_view.UseFullMapProjection || !_view.ShowsViewport)
+            {
+                if (_rawViewportDragActive && _view != null)
+                    _view.EndViewportDrag();
+                _rawPointerWasPressedLastFrame = false;
+                _rawViewportDragActive = false;
+                _rawActiveTouchId = -1;
+                return;
+            }
+
+            if (!TryGetPrimaryPointer(out PointerState pointer))
+            {
+                if (_rawViewportDragActive)
+                    _view.EndViewportDrag();
+                _rawPointerWasPressedLastFrame = false;
+                _rawViewportDragActive = false;
+                _rawActiveTouchId = -1;
+                return;
+            }
+
+            RectTransform mapRectTransform = _view.MapRect;
+            RectTransform viewportRectTransform = _view.ViewportRect;
+            RectTransform eventRectTransform = mapRectTransform != null ? mapRectTransform : viewportRectTransform;
+            Camera eventCamera = ResolveEventCamera(eventRectTransform);
+            bool pressedThisFrame = pointer.WasPressedThisFrame || (pointer.IsPressed && !_rawPointerWasPressedLastFrame);
+            bool releasedThisFrame = pointer.WasReleasedThisFrame || (!pointer.IsPressed && _rawPointerWasPressedLastFrame);
+
+            if (pressedThisFrame)
+            {
+                _rawViewportDragActive = _view.TryBeginViewportDrag(pointer.Position, eventCamera);
+                if (!_rawViewportDragActive && pointer.IsTouch)
+                    _rawActiveTouchId = -1;
+            }
+
+            if (pointer.IsPressed && _rawViewportDragActive)
+                _view.DragViewport(pointer.Position, eventCamera);
+
+            if (releasedThisFrame && _rawViewportDragActive)
+            {
+                _view.EndViewportDrag();
+                _rawViewportDragActive = false;
+            }
+
+            _rawPointerWasPressedLastFrame = pointer.IsPressed;
+            if (pointer.IsTouch && releasedThisFrame)
+                _rawActiveTouchId = -1;
+        }
+
+        private void UpdateMarkers(MatchHudMinimapProjectionGrid grid)
+        {
+            if (_view == null || _view.MapRect == null)
+                return;
+
+            RectTransform markerParent = _view.MarkerRoot != null ? _view.MarkerRoot : _view.MapRect;
+            if (markerParent == null || !TryGetRectInParentSpace(_view.MapRect, markerParent, _mapWorldCorners, out Rect mapRect))
+                return;
+
+            Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
+            int markerIndex = 0;
+            _view.PresentedProjection = grid;
+            _view.PresentedContacts.Clear();
+            _markerScratch.Clear();
+            _minimapDataSource?.GetMarkers(ToAreaModel(grid), _markerScratch);
+            for (int i = 0; i < _markerScratch.Count && markerIndex < MaxMarkers; i++)
+            {
+                MatchHudMinimapMarkerModel marker = _markerScratch[i];
+                if (!MatchHudMinimapProjectionUiSystemHelper.TryWorldToNormalized(grid, marker.Position, out Vector2 normalized))
+                    continue;
+                if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
+                    continue;
+
+                SetMarker(markerIndex, normalized, marker.Allegiance, ResolveMarkerColor(marker.Allegiance), mapRect, parentTopLeft);
+                _view.RecordPresentedContact(marker, _markerImagePool[markerIndex].rectTransform);
+                markerIndex++;
+            }
+
+            for (int i = markerIndex; i < _markerImagePool.Count; i++)
+            {
+                Image marker = _markerImagePool[i];
+                if (marker == null)
+                    continue;
+
+                GameObject markerObject = marker.gameObject;
+                if (markerObject.activeSelf)
+                    markerObject.SetActive(false);
+            }
+        }
+
+        private void SetMarker(
+            int index,
+            Vector2 normalized,
+            MatchHudMinimapMarkerAllegiance allegiance,
+            Color color,
+            Rect mapRect,
+            Vector2 parentTopLeft)
+        {
+            Image marker = EnsureMarker(index);
+            if (marker == null)
+                return;
+
+            Sprite markerSprite = allegiance switch
+            {
+                MatchHudMinimapMarkerAllegiance.Player => _view.PlayerMarkerSprite,
+                MatchHudMinimapMarkerAllegiance.Enemy => _view.EnemyMarkerSprite,
+                _ => _view.NeutralMarkerSprite
+            };
+            if (marker.sprite != markerSprite)
+            {
+                marker.sprite = markerSprite;
+                marker.preserveAspect = markerSprite != null;
+            }
+
+            RectTransform rect = marker.rectTransform;
+
+            Vector2 anchor = new(0f, 1f);
+            if (rect.anchorMin != anchor)
+                rect.anchorMin = anchor;
+            if (rect.anchorMax != anchor)
+                rect.anchorMax = anchor;
+            Vector2 pivot = new(0.5f, 0.5f);
+            if (rect.pivot != pivot)
+                rect.pivot = pivot;
+            Vector2 mapPoint = new(
+                mapRect.xMin + mapRect.width * Mathf.Clamp01(normalized.x),
+                mapRect.yMin + mapRect.height * Mathf.Clamp01(normalized.y));
+            Vector2 anchoredPosition = new(
+                mapPoint.x - parentTopLeft.x,
+                mapPoint.y - parentTopLeft.y);
+            if (!Approximately(rect.anchoredPosition.x, anchoredPosition.x) ||
+                !Approximately(rect.anchoredPosition.y, anchoredPosition.y))
+            {
+                rect.anchoredPosition = anchoredPosition;
+            }
+
+            if (!ApproximatelyColor(marker.color.r, color.r) ||
+                !ApproximatelyColor(marker.color.g, color.g) ||
+                !ApproximatelyColor(marker.color.b, color.b) ||
+                !ApproximatelyColor(marker.color.a, color.a))
+            {
+                marker.color = color;
+            }
+
+            if (!marker.gameObject.activeSelf)
+                marker.gameObject.SetActive(true);
+        }
+
+        private Image EnsureMarker(int index)
+        {
+            if (index < _markerImagePool.Count && _markerImagePool[index] == null)
+                _markerImagePool.RemoveRange(index, _markerImagePool.Count - index);
+
+            while (_markerImagePool.Count <= index)
+            {
+                RectTransform parent = _view != null && _view.MarkerRoot != null ? _view.MarkerRoot : _view != null ? _view.MapRect : null;
+                if (parent == null)
+                    return null;
+
+                GameObject markerObject = new("MinimapMarker");
+                markerObject.transform.SetParent(parent, false);
+                markerObject.layer = parent.gameObject.layer;
+                RectTransform rect = markerObject.AddComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(22f, 22f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                Image image = markerObject.AddComponent<Image>();
+                image.raycastTarget = false;
+                _markerImagePool.Add(image);
+            }
+
+            return _markerImagePool[index];
+        }
+
+        private void RebindMarkerPool()
+        {
+            RectTransform parent = _view != null && _view.MarkerRoot != null
+                ? _view.MarkerRoot
+                : _view != null ? _view.MapRect : null;
+            if (parent == null)
+                return;
+
+            for (int i = _markerImagePool.Count - 1; i >= 0; i--)
+            {
+                Image marker = _markerImagePool[i];
+                if (marker == null)
+                {
+                    _markerImagePool.RemoveAt(i);
+                    continue;
+                }
+
+                marker.transform.SetParent(parent, false);
+                marker.gameObject.layer = parent.gameObject.layer;
+                marker.gameObject.SetActive(false);
+            }
+        }
+
+        private void DeactivateMarkerPool()
+        {
+            for (int i = 0; i < _markerImagePool.Count; i++)
+            {
+                Image marker = _markerImagePool[i];
+                if (marker != null && marker.gameObject.activeSelf)
+                    marker.gameObject.SetActive(false);
+            }
+        }
+
+        private void ReleaseMarkerPool()
+        {
+            for (int i = 0; i < _markerImagePool.Count; i++)
+            {
+                Image marker = _markerImagePool[i];
+                if (marker != null)
+                    DestroyRuntimeObject(marker.gameObject);
+            }
+
+            _markerImagePool.Clear();
+        }
+
+        private bool TryGetGrid(out MatchHudMinimapGridModel grid)
+        {
+            if (_hasCachedGrid && _cachedGrid.IsValid)
+            {
+                grid = _cachedGrid;
+                return true;
+            }
+
+            grid = default;
+            if (_minimapDataSource == null || !_minimapDataSource.TryGetGrid(out grid) || !grid.IsValid)
+                return false;
+
+            _cachedGrid = grid;
+            _hasCachedGrid = true;
+            return true;
+        }
+
+        private readonly struct PointerState
+        {
+            public readonly Vector2 Position;
+            public readonly bool IsPressed;
+            public readonly bool WasPressedThisFrame;
+            public readonly bool WasReleasedThisFrame;
+            public readonly bool IsTouch;
+            public readonly int TouchId;
+
+            public PointerState(
+                Vector2 position,
+                bool isPressed,
+                bool wasPressedThisFrame,
+                bool wasReleasedThisFrame,
+                bool isTouch = false,
+                int touchId = -1)
+            {
+                Position = position;
+                IsPressed = isPressed;
+                WasPressedThisFrame = wasPressedThisFrame;
+                WasReleasedThisFrame = wasReleasedThisFrame;
+                IsTouch = isTouch;
+                TouchId = touchId;
+            }
+        }
+
+        private bool TryGetPrimaryPointer(out PointerState pointer)
+        {
+            pointer = default;
+            Touchscreen touchscreen = Touchscreen.current;
+            if (touchscreen != null && TryGetTouchPointer(touchscreen, out pointer))
+                return true;
+
+            Mouse mouse = Mouse.current;
+            if (mouse == null)
+                return false;
+
+            pointer = new PointerState(
+                mouse.position.ReadValue(),
+                mouse.leftButton.isPressed,
+                mouse.leftButton.wasPressedThisFrame,
+                mouse.leftButton.wasReleasedThisFrame);
+            return true;
+        }
+
+        private bool TryGetTouchPointer(Touchscreen touchscreen, out PointerState pointer)
+        {
+            pointer = default;
+            if (touchscreen == null)
+                return false;
+
+            if (_rawActiveTouchId >= 0 && TryReadTouchById(touchscreen, _rawActiveTouchId, out pointer))
+                return true;
+
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                var touch = touchscreen.touches[i];
+                if (!touch.press.wasPressedThisFrame)
+                    continue;
+
+                pointer = ReadTouchPointer(touch);
+                _rawActiveTouchId = pointer.TouchId;
+                return true;
+            }
+
+            if (TryReadTouchControl(touchscreen.primaryTouch, out pointer))
+            {
+                if (pointer.IsPressed || pointer.WasPressedThisFrame)
+                    _rawActiveTouchId = pointer.TouchId;
+                return true;
+            }
+
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                if (TryReadTouchControl(touchscreen.touches[i], out pointer))
+                {
+                    if (pointer.IsPressed || pointer.WasPressedThisFrame)
+                        _rawActiveTouchId = pointer.TouchId;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryReadTouchById(Touchscreen touchscreen, int touchId, out PointerState pointer)
+        {
+            pointer = default;
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                PointerState candidate = ReadTouchPointer(touchscreen.touches[i]);
+                if (candidate.TouchId != touchId)
+                    continue;
+
+                if (!candidate.IsPressed && !candidate.WasPressedThisFrame && !candidate.WasReleasedThisFrame)
+                    return false;
+
+                pointer = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryReadTouchControl(UnityEngine.InputSystem.Controls.TouchControl touch, out PointerState pointer)
+        {
+            pointer = ReadTouchPointer(touch);
+            return pointer.IsPressed || pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame;
+        }
+
+        private static PointerState ReadTouchPointer(UnityEngine.InputSystem.Controls.TouchControl touch)
+        {
+            return new PointerState(
+                touch.position.ReadValue(),
+                touch.press.isPressed,
+                touch.press.wasPressedThisFrame,
+                touch.press.wasReleasedThisFrame,
+                isTouch: true,
+                touchId: touch.touchId.ReadValue());
+        }
+
+        private static Camera ResolveEventCamera(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+                return null;
+
+            Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+            if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return null;
+
+            return canvas.worldCamera;
+        }
+
+        private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, Vector3[] corners, out Rect rect)
+        {
+            rect = default;
+            if (source == null || parent == null || corners == null || corners.Length < 4)
+                return false;
+
+            source.GetWorldCorners(corners);
+            Vector2 min = parent.InverseTransformPoint(corners[0]);
+            Vector2 max = min;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = parent.InverseTransformPoint(corners[i]);
+                min = Vector2.Min(min, point);
+                max = Vector2.Max(max, point);
+            }
+
+            rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+            return rect.width > 0f && rect.height > 0f;
+        }
+
+        private static bool Approximately(float a, float b)
+        {
+            return Mathf.Abs(a - b) < 0.5f;
+        }
+
+        private static bool ApproximatelyColor(float a, float b)
+        {
+            return Mathf.Abs(a - b) < 0.001f;
+        }
+
+        private static Color ResolveMarkerColor(MatchHudMinimapMarkerAllegiance allegiance)
+        {
+            return allegiance switch
+            {
+                MatchHudMinimapMarkerAllegiance.Player => PlayerMarkerColor,
+                MatchHudMinimapMarkerAllegiance.Enemy => EnemyMarkerColor,
+                _ => NeutralMarkerColor
+            };
+        }
+
+        private void EnsureCaptureResources()
+        {
+            if (_renderTexture == null)
+            {
+                _renderTexture = new RenderTexture(CaptureResolution, CaptureResolution, 16, RenderTextureFormat.ARGB32)
+                {
+                    name = "Runtime_MatchHudMinimapRenderTexture",
+                    useMipMap = false,
+                    autoGenerateMips = false
+                };
+                _renderTexture.Create();
+            }
+
+            if (_readbackTexture == null)
+            {
+                _readbackTexture = new Texture2D(CaptureResolution, CaptureResolution, TextureFormat.RGBA32, false)
+                {
+                    name = "Runtime_MatchHudMinimapReadbackTexture",
+                    wrapMode = TextureWrapMode.Clamp,
+                    filterMode = FilterMode.Bilinear
+                };
+            }
+
+            if (_rasterTexture == null)
+            {
+                _rasterTexture = new Texture2D(CaptureResolution, CaptureResolution, TextureFormat.RGBA32, false)
+                {
+                    name = "Runtime_MatchHudMinimapRasterTexture",
+                    wrapMode = TextureWrapMode.Clamp,
+                    filterMode = FilterMode.Bilinear
+                };
+            }
+
+            if (_captureCamera == null)
+            {
+                GameObject cameraObject = new("Runtime_MatchHudMinimapCaptureCamera");
+                if (Application.isPlaying)
+                    UnityEngine.Object.DontDestroyOnLoad(cameraObject);
+                cameraObject.hideFlags = HideFlags.HideAndDontSave;
+                _captureCamera = cameraObject.AddComponent<Camera>();
+                _captureCamera.enabled = false;
+                UniversalAdditionalCameraData cameraData = cameraObject.AddComponent<UniversalAdditionalCameraData>();
+                cameraData.renderPostProcessing = false;
+                cameraData.antialiasing = AntialiasingMode.None;
+            }
+        }
+
+        private void ReleaseCaptureResources()
+        {
+            if (_captureSprite != null)
+                DestroyRuntimeObject(_captureSprite);
+            if (_rasterSprite != null)
+                DestroyRuntimeObject(_rasterSprite);
+            if (_renderTexture != null)
+            {
+                _renderTexture.Release();
+                DestroyRuntimeObject(_renderTexture);
+            }
+            if (_readbackTexture != null)
+                DestroyRuntimeObject(_readbackTexture);
+            if (_rasterTexture != null)
+                DestroyRuntimeObject(_rasterTexture);
+            if (_captureCamera != null)
+                DestroyRuntimeObject(_captureCamera.gameObject);
+
+            _renderTexture = null;
+            _readbackTexture = null;
+            _rasterTexture = null;
+            _captureSprite = null;
+            _rasterSprite = null;
+            _rasterPixels = null;
+            _rasterBasePixels = null;
+            _captureCamera = null;
+        }
+
+        private static void DestroyRuntimeObject(UnityEngine.Object value)
+        {
+            if (value == null)
+                return;
+
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(value);
+            else
+                UnityEngine.Object.DestroyImmediate(value);
+        }
+
+        private static int ResolveCaptureMask()
+        {
+            return RemoveUiLayer(~0);
+        }
+
+        private static int RemoveUiLayer(int mask)
+        {
+            int uiLayer = LayerMask.NameToLayer("UI");
+            if (uiLayer >= 0)
+                mask &= ~(1 << uiLayer);
+
+            return mask;
+        }
+
+    }
+}

@@ -1,0 +1,11 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\fatal-over-zero.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\fatal-over-zero.log --exit 0 --sleep 0 --fatal 1
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\fatal-over-zero.log --exit 0 --sleep 0 --fatal 1
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\fatal-over-zero.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\fatal-over-zero.stderr.log
+[UnityInvoke] ERROR: Unity reported a fatal log marker: Crash!!!
+[UnityInvoke] ExitCode: 1

@@ -232,7 +232,10 @@ namespace Game.Rendering
                 OperationMapRenderGuardEnvelopeDecision.Contains(
                     _guardEnvelope,
                     requiredEnvelope);
-            if (!stateChanged && guardContainsRequired)
+            var publishedState = state.EntityManager.GetComponentData<OperationMapRenderVirtualizationStateComponent>(databaseEntity);
+            bool replaceOverflowedGuard = guardContainsRequired &&
+                OperationMapRenderOverflowGuardRecovery.ShouldReplace(publishedState.OverflowCount, _guardEnvelope, materializedEnvelope);
+            if (!stateChanged && guardContainsRequired && !replaceOverflowedGuard)
             {
                 _scheduledCameraVersion = camera.PublicationVersion;
                 return;
@@ -261,7 +264,7 @@ namespace Game.Rendering
             _commandStateLookup.Update(ref state);
             state.Dependency = _nativeState.Schedule(
                 database.Blob,
-                stateChanged && guardContainsRequired
+                stateChanged && guardContainsRequired && !replaceOverflowedGuard
                     ? _guardEnvelope
                     : materializedEnvelope,
                 canonicalStates.AsNativeArray(),
@@ -276,7 +279,7 @@ namespace Game.Rendering
                 _metricsLookup,
                 _commandStateLookup,
                 state.Dependency);
-            if (!guardContainsRequired)
+            if (!guardContainsRequired || replaceOverflowedGuard)
                 _guardEnvelope = materializedEnvelope;
             _hasGuardEnvelope = 1;
             _scheduledCameraVersion = camera.PublicationVersion;

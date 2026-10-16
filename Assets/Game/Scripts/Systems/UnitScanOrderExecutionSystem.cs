@@ -22,6 +22,7 @@ namespace Game.Runtime
             EntityCommandBuffer ecb = new(Allocator.TempJob);
             NativeList<PendingScanReveal> pendingReveals = new(16, Allocator.TempJob);
             NativeList<PendingPatrolMove> pendingPatrolMoves = new(16, Allocator.TempJob);
+            NativeList<PendingScanCompletion> pendingCompletions=new(4,Allocator.TempJob);
             bool hasGridConfig = SystemAPI.TryGetSingleton(out GridConfig gridConfig);
             try
             {
@@ -29,6 +30,7 @@ namespace Game.Runtime
                 {
                     Ecb = ecb,
                     PendingReveals = pendingReveals,
+                    PendingCompletions=pendingCompletions,
                     PendingPatrolMoves = pendingPatrolMoves,
                     DisabledLookup = SystemAPI.GetComponentLookup<Disabled>(true),
                     DeathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true),
@@ -44,6 +46,7 @@ namespace Game.Runtime
                     GridConfig = gridConfig
                 }.Schedule(state.Dependency);
                 state.Dependency.Complete();
+                foreach(var completed in pendingCompletions)SkirmishPublicScanFeedback.ObserveCompleted(state.EntityManager,completed.Actor,completed.RequestId);
 
                 UnitMoveOrderSystem moveOrderSystem = new();
                 for (int i = 0; i < pendingPatrolMoves.Length; i++)
@@ -75,6 +78,7 @@ namespace Game.Runtime
                     pendingReveals.Dispose();
                 if (pendingPatrolMoves.IsCreated)
                     pendingPatrolMoves.Dispose();
+                if(pendingCompletions.IsCreated)pendingCompletions.Dispose();
                 ecb.Dispose();
             }
         }
@@ -84,6 +88,7 @@ namespace Game.Runtime
         {
             public EntityCommandBuffer Ecb;
             public NativeList<PendingScanReveal> PendingReveals;
+            public NativeList<PendingScanCompletion> PendingCompletions;
             public NativeList<PendingPatrolMove> PendingPatrolMoves;
             [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
             [ReadOnly] public ComponentLookup<UnitDeathAnimationComponent> DeathAnimationLookup;
@@ -121,6 +126,7 @@ namespace Game.Runtime
                 if (order.DurationSeconds > 0f &&
                     Now - order.StartedTimeSeconds >= order.DurationSeconds)
                 {
+                    PendingCompletions.Add(new PendingScanCompletion{Actor=entity,RequestId=order.RequestId});
                     CompleteScanOrder(
                         Ecb,
                         AirLookup,
@@ -303,6 +309,7 @@ namespace Game.Runtime
                 ecb.RemoveComponent<T>(entity);
         }
 
+        private struct PendingScanCompletion {public Entity Actor;public int RequestId;}
         private struct PendingScanReveal
         {
             public int RequestId;

@@ -1,0 +1,13 @@
+{
+  "result": "FailedBeforeFighterCombat",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "fullSourceUnchanged": true,
+  "intermediateCorrectionValidated": true,
+  "finalApproachDistance": 31.27250099,
+  "finalHeadingDot": 0.96803248,
+  "actualPublicHold": true,
+  "blocker": "Public ZoomOut rejected at already far camera level; public flags not captured in predecessor",
+  "productionFlightChanged": false,
+  "successor": 1402
+}

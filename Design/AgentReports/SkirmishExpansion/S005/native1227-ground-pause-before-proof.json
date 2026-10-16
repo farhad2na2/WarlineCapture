@@ -1,0 +1,13 @@
+{
+  "result": "PassedActualSharedPauseDefectReproduction",
+  "sourceHash": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "fullSourceUnchanged": true,
+  "nativeExit": 0,
+  "wrapperExit": 0,
+  "log": "native-1227-ground-pause-before.log",
+  "logSha256": "d05fdd71e78ef4c62e5d1b38b97a133235a970e2b5be870b337e69c17c8bfee9",
+  "cases": 10,
+  "positiveControls": 4,
+  "scope": "Disposable real-system Worlds; engaged facing and kinematics mutate at zero delta, grid kinematics and near-arrival path/target also mutate. Exact native1216 failure cause not certified.",
+  "missionReadinessCertified": false
+}

@@ -1,0 +1,50 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005BilateralAirportPrerequisite1104.cs",
+      "entry": "S005BilateralAirportPrerequisite1104.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralAirportPrerequisite1104.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralAirportPrerequisite1104.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 128,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralAirportPrerequisite1104.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 390,
+          "id": "CS0649"
+        }
+      ],
+      "compileMs": 505,
+      "executeMs": 20,
+      "assemblyName": "PipelineRunScript_S005BilateralAirportPrerequisite1104_5a7b8dc8d20645069aeaae46ff696062",
+      "success": true,
+      "result": "Fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

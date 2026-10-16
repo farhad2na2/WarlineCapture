@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "preSourceHash": "78296f070aa8be95c31c198fce48938dd962fd380f08fde548207b325b04562d",
+  "postSourceHash": "a8c9015fdc02035c914d080425cfeb8b33baf9813d2aa69a7007bd2db2c4d32a",
+  "independentPrePostMatch": false,
+  "wrapperExit": 1,
+  "diagnosis": "Ground Staging native id3 disappeared; Fuel Bladder id9 healthy500 and delivering fuel. Abstract Tanker producer GroundStaging absent; catalog misleadingly names legacy Fuel Bladder.",
+  "endedContacts": 57,
+  "inputErrors": [],
+  "aircraftCertified": false,
+  "playerReady": false
+}

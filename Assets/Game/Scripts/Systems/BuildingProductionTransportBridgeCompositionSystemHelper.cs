@@ -24,6 +24,7 @@ namespace Game.Runtime
             public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
             public readonly BooleanQuery IsBuildDrawerOpen;
             public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
+            public readonly System.Func<Entity,bool> FocusProducedAircraft;
 
             public Context(
                 TryGetEntityManagerDelegate tryGetEntityManager,
@@ -32,7 +33,7 @@ namespace Game.Runtime
                 BuildingSpawnCompositionSystemHelper spawnSystem,
                 BuildingSpawnCompositionSystemHelper.Context spawnContext,
                 BooleanQuery isBuildDrawerOpen,
-                CameraFocusAction smoothMoveCameraGroundCenterTo)
+                CameraFocusAction smoothMoveCameraGroundCenterTo,System.Func<Entity,bool> focusProducedAircraft=null)
             {
                 TryGetEntityManager = tryGetEntityManager;
                 TryGetGridData = tryGetGridData;
@@ -41,6 +42,7 @@ namespace Game.Runtime
                 SpawnContext = spawnContext;
                 IsBuildDrawerOpen = isBuildDrawerOpen;
                 SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
+                FocusProducedAircraft=focusProducedAircraft;
             }
         }
 
@@ -222,6 +224,8 @@ namespace Game.Runtime
                 return false;
             }
 
+            if(SkirmishMissionViewProfileApplication.RequiresRigidAircraftFraming(em,newest))
+                return context.FocusProducedAircraft?.Invoke(newest)==true;
             LocalTransform transform = em.GetComponentData<LocalTransform>(newest);
             context.SmoothMoveCameraGroundCenterTo(transform.Position);
             return true;

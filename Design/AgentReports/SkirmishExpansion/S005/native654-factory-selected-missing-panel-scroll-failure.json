@@ -1,0 +1,35 @@
+{
+  "result": "Failed",
+  "sourceHash": "5556d1bfd94b7257e877e87b296f206f260c258de9c4a1380af4b195069f8e75",
+  "wrapperExit": 2,
+  "scope": "Short native factory selection/pause/resume only",
+  "seed": 104734,
+  "selectedFactoryThroughWorldTouch": true,
+  "pauseObserved": false,
+  "resumeObserved": false,
+  "reason": "Driver omitted scrolling the existing compact selection ScrollRect; PassengerChip below visible viewport, firstHit=Map",
+  "terminal": "180-second qualification watchdog; no match completion claimed",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-654-short-fabrication-input-pre-source-manifest.json",
+  "postManifest": "final-654-factory-chip-clipped-post-source-manifest.json",
+  "trace": "s005-aria-live-104734-en-e5748f919389439a88020c0759e91f0f.jsonl",
+  "log": "native-654-short-fabrication-selection-pause-resume.log",
+  "inputAudit": {
+    "recordedContacts": 7,
+    "completedContacts": 7,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-en-e5748f919389439a88020c0759e91f0f.jsonl.touch.jsonl",
+    "sha256": "6285bae0b4fd6945cbba52731f4a52ebc2df28984cc86df8f2cfbf837790e1cd"
+  }
+}

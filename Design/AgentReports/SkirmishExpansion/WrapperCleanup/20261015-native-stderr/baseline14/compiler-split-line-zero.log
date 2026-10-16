@@ -1,0 +1,13 @@
+﻿[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-split-line-zero.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-split-line-zero.log --exit 0 --sleep 0 --fatal 4
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-split-line-zero.log --exit 0 --sleep 0 --fatal 4
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-split-line-zero.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\compiler-split-line-zero.stderr.log
+
+Assets/Game/Scripts/OwnedSyntheticProbe.cs(5,13):
+error CS0234: Separate synthetic line only
+[UnityInvoke] ExitCode: 0

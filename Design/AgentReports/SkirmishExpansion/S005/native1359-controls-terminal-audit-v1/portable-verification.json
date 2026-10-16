@@ -1,0 +1,23 @@
+{
+  "result": "PassedPortableReadOnlyNative1359ScopedReplay",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "attempt": "expanded-s005-104734-a6c167b7e870448ebd96551b7262ace9",
+  "referencesVerified": 37,
+  "frozenPackageByteExact": true,
+  "scopedProofByteSha256": "8892dd0e07352f503afdbe3f53d0d38997b9ea708dddf6ed2162e7ff0e2dd49a",
+  "originalFailureByteSha256": "e4025719a24267f021f3f72d878d2716e86f29a12088acccb522f19a154b3872",
+  "originalFailureRemainsFailed": true,
+  "controlsQualified": true,
+  "sameAttemptVictoryResultMainMenuWitness": true,
+  "fogFallbackQualified": false,
+  "completeOriginalFixtureQualified": false,
+  "normalMissionReadinessQualified": false,
+  "playerReady": false,
+  "negativePortableControls": [
+    "wrong-native-exit",
+    "wrong-source-fingerprint",
+    "lost-fog-restore"
+  ],
+  "unityCalled": false,
+  "nativeReplayed": false
+}

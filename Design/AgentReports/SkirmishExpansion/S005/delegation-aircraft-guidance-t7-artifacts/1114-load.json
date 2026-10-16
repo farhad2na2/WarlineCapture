@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005GuidanceLifecycleRepro20261011.cs",
+      "entry": "S005GuidanceLifecycleRepro20261011.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 905,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005GuidanceLifecycleRepro20261011_e06429a7e6614d7a99f1406bb273cbeb",
+      "success": true,
+      "result": "Prepared external actual-owner disposal reproduction; execute only via repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

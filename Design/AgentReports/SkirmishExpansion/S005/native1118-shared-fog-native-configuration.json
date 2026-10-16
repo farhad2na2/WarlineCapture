@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "if(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorUtility.scriptCompilationFailed) throw new System.InvalidOperationException(\"Editor not idle/compiled\"); var asset=UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(\"Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset\"); if(asset==null) throw new System.InvalidOperationException(\"SharedFog missing\"); var s=new UnityEditor.SerializedObject(asset); var v=s.FindProperty(\"developmentFullVision\"); if(v==null) throw new System.MissingMemberException(\"developmentFullVision\"); bool before=v.boolValue; v.boolValue=false; s.ApplyModifiedPropertiesWithoutUndo(); UnityEditor.AssetDatabase.SaveAssetIfDirty(asset); var pipeline=UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset; return new { developmentFullVisionBefore=before, developmentFullVisionAfter=v.boolValue, assetPath=UnityEditor.AssetDatabase.GetAssetPath(asset), quality=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()], msaa=UnityEngine.QualitySettings.antiAliasing, pipelinePath=UnityEditor.AssetDatabase.GetAssetPath(pipeline), pipelineSamples=pipeline.msaaSampleCount, playing=UnityEditor.EditorApplication.isPlaying, compiling=UnityEditor.EditorApplication.isCompiling };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "developmentFullVisionBefore": true,
+        "developmentFullVisionAfter": false,
+        "assetPath": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+        "quality": "Mobile",
+        "msaa": 0,
+        "pipelinePath": "Assets/Settings/Mobile_RPAsset.asset",
+        "pipelineSamples": 1,
+        "playing": false,
+        "compiling": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

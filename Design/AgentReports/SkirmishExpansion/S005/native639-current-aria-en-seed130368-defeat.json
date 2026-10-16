@@ -1,0 +1,49 @@
+{
+  "result": "Failed",
+  "playerReady": false,
+  "wrapperExit": 2,
+  "sourceHash": "45fec66e1f6c98ae3aae21e18b7923ad31ab2b8bcb8c2db3e7cff07460773420",
+  "sourceManifestUnchanged": true,
+  "outcome": {
+    "elapsed": 217.759,
+    "phase": "Finished",
+    "outcome": "Defeat",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 217.759,
+    "clockPaused": 1,
+    "playerBaseHp": -1,
+    "enemyBaseHp": 206,
+    "playerUnits": 23,
+    "pathRequests": 1,
+    "pathFollowing": 0,
+    "leadX": 904.584,
+    "leadZ": 602.865
+  },
+  "frozenResult": true,
+  "returnTarget": "ADJUST SETUP",
+  "inputAudit": {
+    "recordedContacts": 55,
+    "completedContacts": 55,
+    "phases": {
+      "Menu": 6,
+      "Runtime": 48,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "readOnlyInspections": [
+    "readonly639-rear-logistics-spawn-snapshot.json",
+    "readonly639-enemy-rear-logistics-spawn-snapshot.json"
+  ],
+  "inspectionCausality": "Not isolated; native spawn search writes only scratch reserved bits; no actors/orders/resources/assets changed.",
+  "trace": "s005-aria-live-130368-en-445dbed4210648eb8bf1e02b0438f42d.jsonl",
+  "log": "native-639-current-aria-en-seed130368.log"
+}

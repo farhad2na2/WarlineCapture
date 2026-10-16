@@ -1,0 +1,165 @@
+{
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "references": {
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-normal-stop-manual-failure.json": {
+      "sha256": "e4025719a24267f021f3f72d878d2716e86f29a12088acccb522f19a154b3872",
+      "bytes": 7324
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-runner-start.json": {
+      "sha256": "e4f0c7358b22da0e0485ee1d93a19a040e820003ceff7c31dd14c77097e20219",
+      "bytes": 716
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1359-normal-stop-manual-en104734.log": {
+      "sha256": "69e8d4aa961311273d66afeeba6407b09572fb992fefac6811813091ca60eb58",
+      "bytes": 739856
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1359-normal-stop-manual-en104734.log.exit": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1359-normal-stop-manual-en104734.log.wrapper-exit": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1359-normal-stop-manual-en104734.log.dispatch.json": {
+      "sha256": "6c699479a0d64758c9249f292cd7c55de4c7960cc2b01524c10136dfda55146a",
+      "bytes": 826
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1359-normal-stop-manual-en104734.log.dispatch.cs": {
+      "sha256": "30eb2009be0010c3550d6e5550e7843e6ee0fc9ed59996478d68451edf958dc9",
+      "bytes": 644
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-after-close-idle.json": {
+      "sha256": "197ed3b87bfe9bcbbfad768388792332411d1f20a1949daf86e6d2add2da9856",
+      "bytes": 795
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-before-load-idle.json": {
+      "sha256": "7e477d767db1cf993cf9596f3b9c5c7db363033ade1300e34924fa4eaf4676c2",
+      "bytes": 795
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-before-dispatch-idle.json": {
+      "sha256": "e8696716f335315697b4f7156fabf79afdf79bafa24145e6a424a540233d5929",
+      "bytes": 794
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/load1359-stop-manual.json": {
+      "sha256": "9ddf5313a4ebeac597827b0d52a647d9e37e4ddfd40c51caffd4e7d51ecc9a98",
+      "bytes": 13884
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-normal-stop-manual-observation.jsonl": {
+      "sha256": "e8a2753918fcb93a8c1b0ac2333231c144ec142f8864721be4590a7351818b43",
+      "bytes": 35230003
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-stop-manual-controls.jsonl": {
+      "sha256": "090e1d7e00145bd560ad872bac6bcac703df3c0536a457b232bf8ce7c634723b",
+      "bytes": 303216
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-manual-fog-fallback.jsonl": {
+      "sha256": "8b29012c7d7a0efae89dce7d94f2c96db6d3e2f0938c6f56efc0200e543b7b78",
+      "bytes": 1001976
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-manual-home-defense.jsonl": {
+      "sha256": "7c242c865693b1eec09e785e72ffaaf1771165bbb7d52cac2dc14fd2390746c7",
+      "bytes": 12893
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-en-d05f96813497489db7e2ed5bb9a59790.jsonl": {
+      "sha256": "332ea48efe56bc467fddc2a640da2d774282898aa1702fdf46cd14dbc3e6071e",
+      "bytes": 44230
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-en-d05f96813497489db7e2ed5bb9a59790.jsonl.touch.jsonl": {
+      "sha256": "83490724a1611b66611e717a940c1f6119d5213538954e2461843a46c1ec1992",
+      "bytes": 210796
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-en-d05f96813497489db7e2ed5bb9a59790.jsonl.commands.jsonl": {
+      "sha256": "8fad43008eed551908b54b19699564a128e1016fd4dfbc2b35fa5cebf894e274",
+      "bytes": 1430
+    },
+    "/Users/farhad/Projects/WarlineCapture/Tools/CI/audit_skirmish_native_contacts.py": {
+      "sha256": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+      "bytes": 4201
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/prepared.json": {
+      "sha256": "a6ab0a914c9da5e8c4a9a4ce7c63114e9301851eee6a857ae8c8f0c503dda2ad",
+      "bytes": 27029
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/manifest.json": {
+      "sha256": "9d54795b299b2a9c426ae27c10d0ac371d4e57471b1a59ab61b202457d829335",
+      "bytes": 4106
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1363-fixedwing-player-after-source-manifest.json": {
+      "sha256": "c7dd04d65a3e607c625b63b87b2d4c7830fcfd61433eff432e3954c1ce61e70f",
+      "bytes": 7822402
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1363-fixedwing-player-after-independent-fingerprint.json": {
+      "sha256": "ccbbd7330f5a328f382ef8adb1714c8a16cb91de9fa7e6c56c57ea7033a7b526",
+      "bytes": 367
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1359-normal-stop-preflight-source-manifest.json": {
+      "sha256": "c7dd04d65a3e607c625b63b87b2d4c7830fcfd61433eff432e3954c1ce61e70f",
+      "bytes": 7822402
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1359-normal-stop-preflight-independent-fingerprint.json": {
+      "sha256": "a910ec8f52793deff7415fae3c20e04e4456bf779d7197d15823195d1df71d09",
+      "bytes": 375
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1359-normal-stop-pre-dispatch-source-manifest.json": {
+      "sha256": "c7dd04d65a3e607c625b63b87b2d4c7830fcfd61433eff432e3954c1ce61e70f",
+      "bytes": 7822402
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1359-normal-stop-pre-dispatch-independent-fingerprint.json": {
+      "sha256": "13a94817c04819098ff823d8d0c163b3f74d9174e64c0d1126c7f4dbfb76ff98",
+      "bytes": 375
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1359-normal-stop-post-source-manifest.json": {
+      "sha256": "c7dd04d65a3e607c625b63b87b2d4c7830fcfd61433eff432e3954c1ce61e70f",
+      "bytes": 7822402
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/final-1359-normal-stop-post-independent-fingerprint.json": {
+      "sha256": "6543343db984af528f7a085c82184743e745e1bb2c24e6931bd6072d855449ae",
+      "bytes": 375
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/runner.py": {
+      "sha256": "9786be5b51c72c752d706f30aa2ad42750588c98c2e5b78684712a5b26a267ad",
+      "bytes": 13122
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/qualifier.py": {
+      "sha256": "96dab260764f8ac96847848ab1fe6e0b31aa166b898cdc3d8695d5c78abfd874",
+      "bytes": 12982
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/fog-qualifier.py": {
+      "sha256": "a7f1acecdda9a930e40d8485cdadd77dd76005a636c0502136822c453d398705",
+      "bytes": 9421
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/handoff_qualifier.py": {
+      "sha256": "37b3c9ca391a649c0e5ae1c1bed2aca4c7a8275199faa28bae2d6ec8ddcfb20a",
+      "bytes": 2469
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/home-defense-qualifier.py": {
+      "sha256": "8f61b8629cf75ca7a301fa0b0416c4fdb8b2ef4c97f132740997c89090621fb3",
+      "bytes": 8247
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/S005NormalStopManual1359Observer.cs": {
+      "sha256": "02a69b982954e49a1b6231e10dffeac5e6da445ec71a5e0345d3b50319869901",
+      "bytes": 119315
+    },
+    "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/S005NormalStopIdle1359.cs": {
+      "sha256": "d86678e585b0c14862faddc31ccc595b5a792887fd9207d32e2aadcc1e3d8458",
+      "bytes": 376
+    },
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1359-stop-manual-reviewed-dry-run.json": {
+      "sha256": "21b5d21638d7819ab3b7af3afb0dba12bf169fcaa54e320ca2d5847e2036f169",
+      "bytes": 13913
+    }
+  },
+  "originalFailurePath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1359-normal-stop-manual-failure.json",
+  "executedPackage": "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1",
+  "attempt": "expanded-s005-104734-a6c167b7e870448ebd96551b7262ace9",
+  "exactOriginalErrors": [
+    "Missing/malformed actual proof ValueError: Fallback companion failed or QA lease unclosed"
+  ],
+  "limits": [
+    "Original overall result remains Failed",
+    "Fog fallback round4 failed and is not certified",
+    "Home-defense effect not certified",
+    "No unattendedARIA seed/physical takeover/fullmission/player/device certification"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "command": "rtk proxy python Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/test_legacy_fallback.py",
+  "actual_exit_code": 0,
+  "actual_methods_passed": 4,
+  "elapsed_seconds_reported": 24.993,
+  "positive_legacy_proposal_slots": 18,
+  "metadata_negative_cases": 12,
+  "evidence_scope": "Summary of actual tool session1801 output; not a fabricated raw native log",
+  "native_executed": false
+}

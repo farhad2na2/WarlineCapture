@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic;\nvar scene=UnityEngine.Object.FindAnyObjectByType<Game.Composition.MatchSceneView>();\nvar boot=scene.GetType().GetProperty(\"MatchBootstrap\",flags).GetValue(scene);\nvar ctx=boot.GetType().GetProperty(\"BuildingUiCommandContext\",flags).GetValue(boot);\nvar callback=ctx.GetType().GetField(\"CanConfirmBuildingPlacement\",flags).GetValue(ctx);\nvar harness=typeof(Game.Editor.SkirmishS002AriaRunHarness);\nvar find=harness.GetMethod(\"FindAirportPlacementSource\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);\nvar src=find.Invoke(null,new object[]{callback,new System.Collections.Generic.HashSet<object>(),0});\nvar defs=src.GetType().GetField(\"BuildingDefinitionPrefabSystemHelper\",flags).GetValue(src);\nvar entries=(System.Collections.IEnumerable)defs.GetType().GetProperty(\"ConfiguredSpawnableDefinitions\",flags).GetValue(defs);\nobject definition=null;\nforeach(var d in entries) { var prefab=(UnityEngine.GameObject)d.GetType().GetField(\"Prefab\",flags).GetValue(d); if(prefab!=null && prefab.name==\"Building_Airport\") { definition=d; break; } }\nif(definition==null) throw new System.Exception(\"Missing Airport definition\");\nvar stat=System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic;\nvar read=harness.GetMethod(\"ReadAirportGrid\",stat); var args=new object[]{src,null,null,null,null};\nif(!(bool)read.Invoke(null,args)) throw new System.Exception(\"Missing grid\");\nvar grid=(Game.Components.GridConfig)args[2];\nvar adapter=src.GetType().GetField(\"BuildingPlacementAdapterCompositionSystemHelper\",flags).GetValue(src);\nvar validator=adapter.GetType().GetMethod(\"IsPlacementValid\",flags); var ps=validator.GetParameters();\nvar effective=harness.GetMethod(\"AirportEffectiveRect\",stat);\nvar rectDelegate=System.Delegate.CreateDelegate(ps[8].ParameterType,effective);\nvar overlapsDelegate=System.Delegate.CreateDelegate(ps[9].ParameterType,harness.GetMethod(\"AirportOverlapsOccupant\",stat));\nvar cache=src.GetType().GetField(\"BuildingPlacementInvalidCellCacheCompositionSystemHelper\",flags).GetValue(src);\nvar invalid=cache.GetType().GetMethod(\"HasCachedInvalidCellInFootprint\",flags);\nvar footprint=(UnityEngine.Vector2Int)definition.GetType().GetField(\"FootprintCells\",flags).GetValue(definition);\nint tested=0,clear=0,valid=0;var sites=new System.Collections.Generic.List<string>();\nforeach(bool rotated in new[]{false,true}) for(int z=300;z<900;z+=48) for(int x=400;x<1400;x+=48) {\nvar origin=new UnityEngine.Vector2Int(x,z);\nvar rect=(UnityEngine.RectInt)effective.Invoke(null,new object[]{src,definition,origin,grid,rotated});\nif(rect.xMin<400 || rect.yMin<300 || rect.xMax>1400 || rect.yMax>900) continue; tested++;\nif((bool)invalid.Invoke(cache,new object[]{rect.position,rect.size})) continue; clear++;\nif(!(bool)validator.Invoke(adapter,new object[]{src,definition,origin,footprint,rotated,grid,args[3],args[4],rectDelegate,overlapsDelegate})) continue;\nvalid++;sites.Add(\"origin=\"+origin+\" rotated=\"+rotated+\" effective=\"+rect);\n}\nreturn new { tested,clear,valid,sites,scope=\"Read-only full native placement validator, coarse48m sample of existing source beyond current logical playable sector; current occupants, no logical/physical mutation or global impossibility claim\", previewMutated=false,physicalSourceModified=false };\n"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "tested": 384,
+        "clear": 384,
+        "valid": 2,
+        "sites": [
+          "origin=(400, 636) rotated=False effective=(x:400, y:636, width:210, height:55)",
+          "origin=(448, 636) rotated=False effective=(x:448, y:636, width:210, height:55)"
+        ],
+        "scope": "Read-only full native placement validator, coarse48m sample of existing source beyond current logical playable sector; current occupants, no logical/physical mutation or global impossibility claim",
+        "previewMutated": false,
+        "physicalSourceModified": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

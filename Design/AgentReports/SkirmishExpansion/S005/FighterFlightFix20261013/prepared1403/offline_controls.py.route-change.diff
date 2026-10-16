@@ -1,0 +1,20 @@
+--- 1402-id-normalized
++++ 1403
+@@ -83,7 +83,7 @@
+ 
+ for name, stage, values in [
+     ('Final native goal required', 'NativeAlignedApproachArrived', dict(nativeGoalPresent=False, nativeGoalMatches=False)),
+-    ('Final 32m alert band required', 'NativeAlignedApproachArrived', dict(actorX=33., signedAlong=33., alertDistance=33., commandDistance=87., nearAlertGoal=False)),
++    ('Final 32m alert band required', 'NativeAlignedApproachArrived', dict(actorX=33., signedAlong=33., alertDistance=33., commandDistance=27., nearAlertGoal=False)),
+     ('Final distinct receipt required', 'NativeAlignedApproachArrived', dict(moveReceipt=11)),
+     ('Final airborne state required', 'NativeAlignedApproachArrived', dict(airborne=False)),
+     ('Actual Hold tag required', 'HeldAlignedObserved', dict(hold=False)),
+@@ -95,7 +95,7 @@
+ 
+ rows = copy.deepcopy(actual)
+ samples = [r for r in rows if r['stage'] == 'NativeFlyThroughSample']
+-samples[0].update(actorX=4., signedAlong=4., alertDistance=4., commandDistance=116.)
++samples[0].update(actorX=4., signedAlong=4., alertDistance=4., commandDistance=56.)
+ check('Final trajectory must advance', rows, False)
+ check('Missing paired Touch completion rejected', actual, False, touch[:-1])
+ check('Incomplete 1392-style route cannot qualify final combat preparation', actual[:8], False)

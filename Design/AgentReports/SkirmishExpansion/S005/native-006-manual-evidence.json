@@ -1,0 +1,14 @@
+{
+  "mission": "S005",
+  "locale": "fa-IR",
+  "input": "Touch normal squad cards/attack/visible enemy base, ARIA inactive",
+  "result": "Victory",
+  "elapsedSeconds": 191.882,
+  "completedGestures": 110,
+  "interventions": 0,
+  "unexpectedSamples": 0,
+  "terminal": "Frozen result/Main Menu return Passed",
+  "checkpointCaptureAvailable": false,
+  "checkpointAcceptance": "PendingNativeForceRecovery",
+  "visualOwnerReview": "Pending"
+}

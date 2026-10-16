@@ -1,0 +1,78 @@
+{
+  "archive": "actual-parity-and-controls.zip",
+  "sha256": "add43277f6b5c79b281a75c8b563815105a68db893f14718dc092bc6a95cb7d0",
+  "members": [
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/snapshot-host-parity-result.json",
+      "sha256": "7bb5898bb0b0222bcd7ca83c4f01a2e644c41b1a85c5758568dce8a212dd651d",
+      "bytes": 71517
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-before.json",
+      "sha256": "63403a45a193ad4969f39b36123b64546b4a7d705400e357b3c01350a6a4a650",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-after.json",
+      "sha256": "56c5f2c6b26f830c1f8c61bdfa5f3eb1569483203881fdac6e4d161dfdbe10df",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/source-after-parallel.json",
+      "sha256": "56c5f2c6b26f830c1f8c61bdfa5f3eb1569483203881fdac6e4d161dfdbe10df",
+      "bytes": 9151183
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/old-snapshot.stdout.log",
+      "sha256": "c2be0a64d89447c8ae050ebabe32ec7d6a9bd96778ab17214c915f0f6121d64d",
+      "bytes": 68
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/old-snapshot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/parallel-snapshot.stdout.log",
+      "sha256": "c2be0a64d89447c8ae050ebabe32ec7d6a9bd96778ab17214c915f0f6121d64d",
+      "bytes": 68
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/parallel-snapshot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/run-snapshot-host-parity.py",
+      "sha256": "b83abbcca46ca66bdc759ca4cf99ce873c9cdd6244e23843ba848d7ff6a635f8",
+      "bytes": 5811
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/PARALLEL_TOOL_IMPORT.json",
+      "sha256": "3926f9afafbb25939aaebf29a3ed83043157f6b441da8f9d59ddb474a0cbf7e5",
+      "bytes": 798
+    },
+    {
+      "path": "Logs/SkirmishProduction/All120Refinement/20261015-s026-03-logical-frame/import-parallel-snapshot.py",
+      "sha256": "fe80fff07488d3a70217db20ce0329a4c8eeba9c07e3a06c2389af723e56574a",
+      "bytes": 1894
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ParallelSourceSnapshotControls/5b3a57219c67447fa39fb00aadcc132d/result.json",
+      "sha256": "26f7aebacd02ec5698fcac94bceee10b87ec57835f2d8c498949a7ceb560d0d7",
+      "bytes": 1174
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ParallelSourceSnapshotControls/5b3a57219c67447fa39fb00aadcc132d/controls.log",
+      "sha256": "4608eb9276c5e2311d95c4ba05c4275986b9606074d6231461884e82ae702559",
+      "bytes": 1009
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ParallelSourceSnapshot/test_snapshot.py",
+      "sha256": "b7b7b5cd602f6faf3133036ba61314e8dead2c3b160e4cb148fb166138c24446",
+      "bytes": 5837
+    }
+  ],
+  "contains_dll_binaries": false,
+  "scope": "Actual host old/new fullCLI output byte parity41598source rows/192DLL hash rows. Concurrent elapsed values are not isolated speed benchmark. Original smallfixture7 proof and import receipt retained. Sourcebefore is historical candidate reference, not accepted mission evidence."
+}

@@ -1,0 +1,16 @@
+{
+  "status": "IncompleteOrFailed",
+  "results": [
+    {
+      "suite": "touch-cadence",
+      "method": "Game.Editor.AriaTouchInputValidation.RunTouchCadenceFocusedValidation",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "marker": "[AriaTouchCadenceValidation] result=Passed cases=6 existingCases=22",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1236-touch-cadence.log",
+      "logSha256": "42b4201e336d7b9a89f04ca85ea5a784997a339923f66a450f50131105341758"
+    }
+  ]
+}

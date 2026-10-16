@@ -1,0 +1,15 @@
+{
+  "baselineFocusedProof": "focused693-694-shared-runway-liftoff-pass.json",
+  "baselineSourceHash": "e0a413507b7151078bc7e86d519a2d5e77fa1b67c18b0bbe3e838daf8835faa7",
+  "currentSourceHash": "4c38cc6b2276677e607b5e25bc940e4e20ad6e41a214eeafe6586481a7fd1cd9",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeUnchanged": true,
+  "configsAndPhysicalMapUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "nativeCyclePending": true,
+  "playerReady": false
+}

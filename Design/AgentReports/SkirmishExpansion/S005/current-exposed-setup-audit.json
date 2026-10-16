@@ -1,0 +1,28 @@
+{
+  "mission": "S005",
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "scope": "Current packaged expanded mission launch exposure; not certification of unexposed presets",
+  "launchSource": "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
+  "launchSourceSha256": "7ea6bd2dd2451cc2c04e290b51d010bcf21bcd9d77baae62388d489cf21a7501",
+  "launchLines": [
+    117,
+    120,
+    121
+  ],
+  "exposedSize": "Standard",
+  "exposedDifficulty": "Regular",
+  "additionalExposedSizeDifficultyFound": false,
+  "runtimeCompileCallSites": [
+    "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
+    "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs"
+  ],
+  "checkpointCallSitePurpose": "Restores saved setup identity; does not expose a new setup selector",
+  "nativeBaselineProofs": [
+    "native670-current-aria-en-seed104734-victory.json",
+    "native671-current-aria-fa-IR-seed104734-victory.json",
+    "native672-current-aria-en-seed130368-victory.json",
+    "native673-current-aria-fa-IR-seed130368-victory.json"
+  ],
+  "hiddenPresetCertification": false,
+  "repeatExposureAuditIfLaunchUiChanges": true
+}

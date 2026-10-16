@@ -1,0 +1,14 @@
+{
+  "fromSourceHash": "69efe7634459e836193e538902799ee7f9b68945f7f84cd08fd0aef042b9a5e5",
+  "toSourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedSessionControlService.cs",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishObjectiveFactProjectionSystem.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedObjectiveTests.cs"
+  ],
+  "physicalSourcesAndAllMaterialHashesUnchanged": true,
+  "missionConfigBudgetsRatesCapsDeadlinesUnchanged": true,
+  "runtimeBehaviorChanged": "Expanded terminal clock flags are frozen synchronously with result and preserved by later fact projection.",
+  "nativeReadiness": "Pending"
+}

@@ -1,0 +1,9 @@
+{
+  "outcome": "SourceReviewClearNativePending",
+  "manifest_sha256": "c98531ea647895ba48439d2b67123be416c6e975f087e47990d287dc897f5d98",
+  "prior_review_sha256": "17644402243bb10362b8a2c67f66b4ce56c88e2507d5db7cab02a48c23e2207a",
+  "sole_changed_target": "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs",
+  "delta_review": "Initial DefendBase is now asserted before planner update; post-update expected Handback matches unchanged actual StepExpandedBaseAssault Finished branch. Publication equality, root authority and real planner output checks remain. No production source changes.",
+  "proof_attribution": "Producer four-owner owning-142sui8j passed predecessor test source; final Tests assertion-only proof pending terminal receipt",
+  "native_acceptance": "Pending seven actual-root controls plus normal HUD opening without runtime/chunk exceptions"
+}

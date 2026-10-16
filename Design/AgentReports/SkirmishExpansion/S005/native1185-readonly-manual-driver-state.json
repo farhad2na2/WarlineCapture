@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var t=typeof(Game.Editor.SkirmishS002AriaRunHarness);object F(string n)=>t.GetField(n,System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic)?.GetValue(null);var h=UnityEngine.Object.FindAnyObjectByType<Game.UI.Runtime.SkirmishMatchView>();return new {manualStep=F(\"manualStep\"),manualSlot=F(\"manualSlot\"),manualDue=F(\"manualDue\"),manualDeadline=F(\"manualDeadline\"),now=UnityEditor.EditorApplication.timeSinceStartup,needsReplacement=F(\"manualNeedsReplacement\"),baseVisible=h!=null&&h.EnemyBaseMarkerVisible};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "manualStep": 3,
+        "manualSlot": 2,
+        "manualDue": 69310.86106537501,
+        "manualDeadline": 69369.061502,
+        "now": 69310.883642625,
+        "needsReplacement": false,
+        "baseVisible": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

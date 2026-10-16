@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "wrapper_exit": 1,
+  "reported_reason": "timeout",
+  "shutdown_failure": "Crash!!! fatal marker",
+  "screenshot_count": 0,
+  "source_before_sha256": "883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8",
+  "native_launch_sha256": "883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8",
+  "native_finish_sha256": "883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8",
+  "full_project_equivalence": "Passed;40982sourcefiles",
+  "native_launch_hash_ms": 18369.9347,
+  "native_finish_hash_ms": 32895.1331,
+  "cache_import_seconds": 176.004,
+  "archive_sha256": "c64342024f1f605f043f23a29fa8aa3f8f132d61bfaa7aeb9cba1c3a81bfee99",
+  "complete_manifest_archive": "s005-native-review-20261014-02-complete-source-manifests.zip",
+  "complete_manifest_archive_sha256": "8bd5572b5041aedbf312b5b298585e5ab74db249f87ab9ec8863953095cbac02",
+  "complete_manifest_comparison": "Unchanged;0added/removed/changed;after snapshot taken during subsequent unchanged-candidate Editor startup"
+}

@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var rows=new System.Collections.Generic.List<string>(); foreach(var b in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(UnityEngine.FindObjectsInactive.Exclude)){if(b.name!=\"PauseButton\")continue;string p=b.name;for(var t=b.transform.parent;t!=null;t=t.parent)p=t.name+\"/\"+p;rows.Add(p+\" active=\"+b.IsActive()+\" interactable=\"+b.IsInteractable()+\" id=\"+b.GetEntityId());}return string.Join(\"\\n\",rows);"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "GameUIRoot/GameUICanvas/NarrativeLayer/SafeArea/PlaybackControls/PauseButton active=True interactable=False id=568105589204694416\nGameUIRoot/GameUICanvas/WarlineCaptureRuntimeShell/HeaderRegion/ContentRoot/HeaderContent/PauseButton active=True interactable=True id=568105589204679818"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

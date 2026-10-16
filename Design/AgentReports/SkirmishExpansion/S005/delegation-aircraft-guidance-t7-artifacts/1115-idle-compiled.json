@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var scenes=new System.Collections.Generic.List<object>(); for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++){var s=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);scenes.Add(new {path=s.path,name=s.name,loaded=s.isLoaded,active=s==UnityEngine.SceneManagement.SceneManager.GetActiveScene(),dirty=s.isDirty,roots=s.rootCount});} return new {project=UnityEngine.Application.dataPath,playing=UnityEditor.EditorApplication.isPlaying,changingPlay=UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,compiling=UnityEditor.EditorApplication.isCompiling,updating=UnityEditor.EditorApplication.isUpdating,failed=UnityEditor.EditorUtility.scriptCompilationFailed,qa=Game.Editor.ExistingEditorValidation.IsRunning,scenes=scenes,optionsEnabled=UnityEditor.EditorSettings.enterPlayModeOptionsEnabled,options=(int)UnityEditor.EditorSettings.enterPlayModeOptions,overlays=System.Linq.Enumerable.Count(UnityEngine.Resources.FindObjectsOfTypeAll<UnityEngine.Canvas>(),c=>c!=null&&c.gameObject.scene.IsValid()&&c.name==\"AriaGuidanceOverlay\")};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "project": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets",
+        "playing": false,
+        "changingPlay": false,
+        "compiling": false,
+        "updating": false,
+        "failed": false,
+        "qa": false,
+        "scenes": [
+          {
+            "path": "Assets/Game/Scenes/Menu.unity",
+            "name": "Menu",
+            "loaded": true,
+            "active": true,
+            "dirty": false,
+            "roots": 2
+          }
+        ],
+        "optionsEnabled": true,
+        "options": 1,
+        "overlays": 0
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

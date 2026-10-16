@@ -183,6 +183,7 @@ namespace Game.Editor
                 Require(Vector2.Distance(hand.rectTransform.position, driver.ContactPosition) < .01f, "hand fingertip matches press");
                 PumpInput(); module.Process(); // Separate UI consumption opportunity before moving.
                 driver.Tick(10.6f); PumpInput(); module.Process();
+                PumpInput();module.Process();driver.Tick(10.6f);PumpInput();module.Process(); // Consume priming, then nominal midpoint.
                 hand.Present(new AriaPlayModel(AriaPlayPhase.Touching, driver.ContactPosition, true, 0));
                 InvokeFixtureLifecycle(hand, "LateUpdate");
                 Require(Vector2.Distance(hand.rectTransform.position, driver.ContactPosition) < .01f, "hand fingertip tracks drag without lag");
@@ -261,6 +262,12 @@ namespace Game.Editor
                 driver.Tick(overdue); Pump();
                 Require(driver.AcceptedSamples == accepted && driver.IsPressed, "same-consumption drag cannot advance");
                 driver.Tick(overdue); Pump();
+                if(Vector2.Distance(driver.ContactPosition,destination)>=.01f)
+                {
+                    Require(driver.IsPressed&&driver.IsBusy&&Vector2.Distance(driver.ContactPosition,origin)>.01f,
+                        "overdue scroll must first expose a distinct intermediate move");
+                    Pump();driver.Tick(overdue);Pump();
+                }
                 Require(driver.IsPressed && driver.IsBusy && Vector2.Distance(driver.ContactPosition, destination) < .01f,
                     "overdue drag must expose accepted final Moved before release");
             }
@@ -274,6 +281,7 @@ namespace Game.Editor
                 {
                     Pump();
                     driver.Tick(now + .25f); Pump();
+                    Pump();driver.Tick(now + .25f);Pump();
                     Require(driver.IsPressed && Vector2.Distance(driver.ContactPosition, origin + Vector2.right * 40) < .1f,
                         "normal intermediate drag is retained");
                 }
@@ -314,6 +322,42 @@ namespace Game.Editor
                 "sparse stationary tap retains ordinary one-click timing");
             Require(driver.UnexpectedSamples == 0, "cadence changes cannot create unexpected touch samples");
             driver.Stop(); Pump();
+            RunSparseScrollCases(driver,module,target,origin,Pump,clicks);
+        }
+
+        private static void RunSparseScrollCases(AriaTouchInputUiSystemHelper driver,InputSystemUIInputModule module,
+            GameObject target,Vector2 origin,Action pump,Func<int> clicks)
+        {
+            var oldParent=target.transform.parent;
+            var viewport=new GameObject("SparseScrollFixture",typeof(RectTransform),typeof(ScrollRect));
+            viewport.transform.SetParent(oldParent,false);
+            var rect=(RectTransform)viewport.transform;rect.sizeDelta=new Vector2(300,100);
+            var content=new GameObject("Content",typeof(RectTransform));content.transform.SetParent(viewport.transform,false);
+            var contentRect=(RectTransform)content.transform;contentRect.sizeDelta=new Vector2(900,100);
+            var scroll=viewport.GetComponent<ScrollRect>();scroll.content=contentRect;scroll.viewport=rect;
+            scroll.horizontal=true;scroll.vertical=false;scroll.inertia=false;scroll.movementType=ScrollRect.MovementType.Unrestricted;
+            target.transform.SetParent(content.transform,false);
+            try
+            {
+                foreach(int sign in new[]{-1,1})
+                {
+                    int beforeClicks=clicks();Vector2 baseline=contentRect.anchoredPosition;
+                    uint baselineUnexpected=driver.UnexpectedSamples,baselineInterventions=driver.PhysicalInterventions;
+                    Require(driver.Start(),"sparse scroll driver start");
+                    Require(driver.TryGesture(origin,origin+Vector2.right*(sign*160),.12f,.4f,100),"sparse scroll enqueue");
+                    pump();
+                    int steps=0;
+                    while(driver.IsBusy&&steps++<10){pump();driver.Tick(105);pump();}
+                    Require(!driver.IsBusy&&steps<=10,"sparse scroll contact bounded completion");
+                    float actual=contentRect.anchoredPosition.x-baseline.x;
+                    Require(actual*sign>100,"real ScrollRect must move under sparse native UI updates; delta="+actual);
+                    Require(clicks()==beforeClicks,"sparse scroll cannot click its source child");
+                    Require(driver.UnexpectedSamples==baselineUnexpected&&driver.PhysicalInterventions==baselineInterventions,"sparse scroll input ownership: unexpected="+baselineUnexpected+"->"+driver.UnexpectedSamples+" interventions="+baselineInterventions+"->"+driver.PhysicalInterventions);
+                    driver.Stop();pump();
+                }
+                Debug.Log("[AriaSparseScroll] result=Passed controls=2 realScrollRect=1 directScrollWrites=0 missionCertified=0");
+            }
+            finally{driver.Stop();pump();target.transform.SetParent(oldParent,false);UnityEngine.Object.DestroyImmediate(viewport);}
         }
 
         private static void InvokeFixtureLifecycle(Component component, string method)

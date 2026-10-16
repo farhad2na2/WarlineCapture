@@ -1,0 +1,28 @@
+{
+  "result": "PreparedOfflineDraft",
+  "runId": "1632",
+  "gitHeadAtPreparation": "303ebf8b537328a7c9664f6781b3c9174f2737b3",
+  "archive": "Design/AgentReports/SkirmishExpansion/S005/native1628-executed-observer.cs.txt",
+  "archiveSha256": "5e000245113dc390f731ebb05559bc3c851eef521c4b4edef34a6787664abd37",
+  "candidate": "S005NormalNorthFlank1632Observer.cs.txt",
+  "candidateSha256": "2237d7d0a6310e13cdbe0bbf4e331563c42f0945bf4225aba2716ea8b83e6276",
+  "dispatchEnabled": false,
+  "loadedInUnity": false,
+  "nativeIdentityFieldsCaptured": true,
+  "normalMissionCertified": false,
+  "playerReady": false,
+  "portableReportPathReplacements": 18,
+  "patches": [
+    "Actual public nonzero receipt instead of hard-coded 1004",
+    "New immutable evidence/observer identity",
+    "Windows report paths"
+  ],
+  "pending": [
+    "Independent candidate review and connected compile/load proof",
+    "Fresh complete source fingerprint and candidate freeze",
+    "Portable checked-wrapper runner and strict raw north-flank qualifier",
+    "Fresh one-use release/permit for the current Windows Editor",
+    "Normal-input trial with exact actor effects and Victory/result/return"
+  ],
+  "warning": "This draft is not the missing sealed 1631 package and inherits no historical release."
+}

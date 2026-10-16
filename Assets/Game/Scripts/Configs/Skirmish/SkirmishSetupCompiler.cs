@@ -71,6 +71,76 @@ namespace Game.Configs
             return true;
         }
 
+#if UNITY_EDITOR
+        // Read-only authoring diagnostics. A returned roster is NOT a compiled setup,
+        // source-fit proof, native identity, launch permission or readiness declaration.
+        public static bool TryInspectStaticAuthoringBudget(SkirmishScenarioDefinitionConfig definition,
+            SkirmishDifficultyId difficulty, SkirmishSizeId size, int seed, SkirmishContentManifest manifest,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix, out SkirmishStaticAuthoringBudget budget,
+            out List<SkirmishCompileReason> reasons)
+        {
+            budget=null;reasons=new List<SkirmishCompileReason>();
+            if(matrix==null||definition==null||definition.ObjectiveConfig==null||definition.ArmyProfileConfig==null||
+                definition.StartPackageConfig==null||definition.EconomyConfig==null||definition.RoleCatalog==null||definition.MapLayout==null)
+            {reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference,"staticAuthoringBudget","Actual typed definition/catalog/layout required."));return false;}
+            ValidateIdentity(definition,reasons);RejectMissingCapabilities(definition,manifest,reasons);
+            if(difficulty==SkirmishDifficultyId.None||(size!=SkirmishSizeId.Standard&&size!=SkirmishSizeId.War&&size!=SkirmishSizeId.LargeWar)||!SkirmishSetupMatrixTable.TryFind(matrix,definition.CatalogId,size,out var vector))
+            {reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch,"staticAuthoringBudget","Exact canonical difficulty/size vector required."));return false;}
+            CompareIdentity(definition,vector,reasons);if(reasons.Count!=0)return false;
+            bool normal=TryCompile(definition,difficulty,size,seed,manifest,matrix,out var accepted,out var normalReasons);
+            // Reuse the actual budget owner even when its later source/proof gates reject.
+            // The rejected internal object and its hash/payload never leave this method.
+            var observed=new List<SkirmishCompileReason>();var resolved=accepted??BuildSetup(definition,difficulty,size,seed,vector,observed);
+            reasons.AddRange(normalReasons);
+            var forces=new List<SkirmishResolvedForceEntry>(resolved.Forces);var errors=new List<string>();
+            Tally(forces,1,out int pi,out int pg,out int pa,out int pc,out int ps);
+            Tally(forces,2,out int ei,out int eg,out int ea,out int ec,out int es);
+            if(pi!=vector.PlayerInfantry||pg!=vector.PlayerGround||pa!=vector.PlayerAir||pc!=vector.PlayerCombat||ps!=vector.PlayerSupply||
+                ei!=vector.EnemyInfantry||eg!=vector.EnemyGround||ea!=vector.EnemyAir||ec!=vector.EnemyCombat||es!=vector.EnemySupply)
+                errors.Add("Actual typed combat roster does not match canonical totals/Supply.");
+            int playerSupport=0,enemySupport=0,playerTrucks=0,enemyTrucks=0,playerStructures=0,enemyStructures=0;
+            foreach(var force in forces)
+            {
+                if(force.FactionId!=1&&force.FactionId!=2||force.Quantity<=0||string.IsNullOrEmpty(force.RuntimePrefabKey)||string.IsNullOrEmpty(force.RoleId))
+                    errors.Add("Actual force identity/count/native prefab binding missing.");
+                if(force.RoleId==SkirmishRoleIds.Tanker||force.RoleId==SkirmishRoleIds.LogisticsTruck)
+                {if(force.FactionId==1)playerSupport+=force.Quantity;else if(force.FactionId==2)enemySupport+=force.Quantity;}
+                if(force.RoleKind==SkirmishRoleKind.ConvoyLogic)
+                {if(force.FactionId==1)playerTrucks+=force.Quantity;else if(force.FactionId==2)enemyTrucks+=force.Quantity;}
+            }
+            foreach(var structure in resolved.Structures){if(structure.FactionId==1)playerStructures++;else if(structure.FactionId==2)enemyStructures++;else errors.Add("Invalid actual structure faction.");}
+            if(playerSupport!=vector.PlayerLogisticsSupport||enemySupport!=vector.EnemyLogisticsSupport||
+                playerTrucks!=vector.PlayerObjectiveTrucks||enemyTrucks!=vector.EnemyObjectiveTrucks||
+                playerStructures!=vector.PlayerStartingStructures||enemyStructures!=vector.EnemyStartingStructures)
+                errors.Add("Actual support/objective-truck/structure roster does not match canonical counts.");
+            budget=new SkirmishStaticAuthoringBudget(definition.CatalogId,definition.DefinitionId,size,
+                resolved.Forces,resolved.Structures,normal,errors.ToArray());
+            return true;
+        }
+        public static bool TryCaptureMissionLogicalAuthoringInputs(SkirmishScenarioDefinitionConfig definition,
+            SkirmishDifficultyId difficulty,SkirmishSizeId size,int seed,SkirmishContentManifest manifest,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix,out SkirmishMissionLogicalAuthoringInputs inputs,
+            out List<SkirmishCompileReason> reasons)
+        {
+            inputs=null;
+            bool valid=TryCompile(definition,difficulty,size,seed,manifest,matrix,out var setup,out reasons);
+            if(definition==null||definition.CampaignMap==null||definition.ObjectiveConfig==null||
+                !SkirmishMissionLogicalBindingCompiler.RequiresBinding(new SkirmishResolvedSetup {CatalogId=definition.CatalogId,ObjectiveKind=definition.ObjectiveConfig.Kind}))return false;
+            if(!valid)
+            {
+                if(reasons.Count==0)return false;
+                foreach(var reason in reasons)if(reason.Field!="missionLogicalBinding")return false;
+                if(!SkirmishSetupMatrixTable.TryFind(matrix,definition.CatalogId,size,out var vector))return false;
+                var observed=new List<SkirmishCompileReason>();
+                setup=BuildSetup(definition,difficulty,size,seed,vector,observed);
+                foreach(var reason in observed)if(reason.Field!="missionLogicalBinding")return false;
+            }
+            // A failed normal compile remains failed. Return ONLY measured logical
+            // authoring inputs, never its rejected setup/native hash or launch data.
+            if(setup==null||string.IsNullOrEmpty(setup.LayoutBindingFingerprint))return false;
+            inputs=SkirmishMissionLogicalAuthoringInputs.Capture(definition,setup);return true;
+        }
+#endif
         public static bool TryCompileCatalog(
             SkirmishExpansionAuthoredSet authored,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,
@@ -248,6 +318,20 @@ namespace Game.Configs
             AddForce(forces, definition, 2, SkirmishRoleIds.Tanker, vector.EnemyLogisticsSupport > 0 ? 1 : 0, "staging.enemy", reasons);
             AddForce(forces, definition, 2, SkirmishRoleIds.LogisticsTruck, System.Math.Max(0, vector.EnemyLogisticsSupport - 1), "staging.enemy", reasons);
 
+            if (setup.ObjectiveKind == SkirmishObjectiveKind.ConvoyEscort)
+            {
+                var objectiveTruck = SkirmishConvoyTruckDefinition.Load();
+                if (objectiveTruck == null || vector.EnemyObjectiveTrucks != 0 ||
+                    !objectiveTruck.TryAppendForces(definition.MapLayout, vector.PlayerObjectiveTrucks, vector.ObjectiveSupportExtraPlayer,
+                        forces, out var bays, out string truckError))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference, "objectiveTruck", "Explicit pinned Cargo Truck definition and three measured bays required."));
+                else
+                {
+                    setup.ObjectiveActorDefinitionFingerprint = objectiveTruck.Fingerprint();
+                    setup.ObjectiveTruckBays = bays;
+                }
+            }
+
             Tally(forces, 1, out setup.PlayerInfantry, out setup.PlayerGround, out setup.PlayerAir, out setup.PlayerCombat, out setup.PlayerSupply);
             Tally(forces, 2, out setup.EnemyInfantry, out setup.EnemyGround, out setup.EnemyAir, out setup.EnemyCombat, out setup.EnemySupply);
             setup.PlayerLogisticsSupport = vector.PlayerLogisticsSupport;
@@ -305,22 +389,28 @@ namespace Game.Configs
                 setup.LastSeenExpireSeconds = 20;
             }
 
-            setup.Structures = BuildStructures(definition, vector);
+            SkirmishLegacyLayoutBaselineContract.TryGetReviewedLayoutFingerprint(setup.CatalogId, out string reviewedLegacyLayoutFingerprint);
+            bool preserveLegacyBinding = SkirmishMeasuredLayoutBinder.PreservesPackagedLegacyBinding(setup, definition, reviewedLegacyLayoutFingerprint);
+            setup.Structures = BuildStructures(definition, vector, preserveLegacyBinding);
             setup.TitleKey = definition.TitleKey ?? string.Empty;
             setup.BriefingKey = definition.BriefingKey ?? string.Empty;
             setup.ObjectiveKey = definition.ObjectiveKey ?? string.Empty;
             setup.ResultVictoryKey = definition.ResultVictoryKey ?? string.Empty;
             setup.ResultDefeatKey = definition.ResultDefeatKey ?? string.Empty;
-            setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.Kind == SkirmishArmyProfileId.CombinedArms
-                ? SkirmishRoleOverlayCatalog.CreateCombinedArmsSlice()
-                : definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
-                ? SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
-                : SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
             setup.Forces = forces.ToArray();
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
-            SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
-            if (SupportsGroundCommanderRollout(setup))
+            setup.RoleOverlays = SkirmishRoleOverlayCatalog.CreateForArmy(definition.ArmyProfileConfig, preserveLegacyBinding);
+            if (preserveLegacyBinding)
+            {
+                SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
+            }
+            else if (SkirmishMeasuredLayoutBinder.TryBind(setup, definition, reasons, out string bindingFingerprint))
+            {
+                setup.LayoutBindingFingerprint = bindingFingerprint;
+            }
+            // Failed generic binding adds reasons; outer TryCompile discards setup.
+            if (SupportsGroundCommanderRollout(setup) || (!preserveLegacyBinding && (SkirmishGenericGroundEnemyRollout.Supports(setup) || SkirmishGenericAirCombinedEnemyRollout.Supports(setup))))
             {
                 var policyCatalog = SkirmishExpansionCatalogConfig.Load();
                 SkirmishDifficultyConfig difficultyConfig = policyCatalog != null &&
@@ -332,6 +422,22 @@ namespace Game.Configs
                 {
                     setup.EnemyPolicy = policy;
                     setup.ContentHash = (setup.ContentHash ?? string.Empty) + "/enemy-policy-v1/" + policy.Fingerprint;
+                }
+            }
+            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault || definition.MissionLogicalBinding != null)
+            {
+                if (!SkirmishMissionLogicalBindingCompiler.TryCompile(definition,setup,out var logicalBinding,out string logicalError))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference,"missionLogicalBinding",logicalError));
+                else setup.MissionLogicalBindingFingerprint = logicalBinding.Fingerprint;
+            }
+            if (SkirmishEnemyObjectivePolicyScope.Supports(setup))
+            {
+                if (!SkirmishEnemyPolicyCompiler.TryCompile(setup,definition.MapLayout,out var objectivePolicy))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference,"enemyObjectivePolicy","Exact non-BA enemy policy inputs unavailable."));
+                else
+                {
+                    setup.EnemyPolicy=objectivePolicy;
+                    setup.ContentHash=(setup.ContentHash??string.Empty)+"/enemy-objective-policy-v1/"+objectivePolicy.Fingerprint;
                 }
             }
             setup.SetupHash = ComputeHash(setup, seed);
@@ -430,7 +536,8 @@ namespace Game.Configs
 
         private static SkirmishResolvedStructureEntry[] BuildStructures(
             SkirmishScenarioDefinitionConfig definition,
-            SkirmishSetupMatrixRow vector)
+            SkirmishSetupMatrixRow vector,
+            bool preserveLegacyBinding)
         {
             string playerAnchor = definition.MapLayout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig player)
                 ? player.AnchorId
@@ -455,7 +562,8 @@ namespace Game.Configs
             // Field backbone (7 per side): designated Barracks, Ground Staging, and the
             // supply yard (pump, refinery, bladder, fabrication depot) plus one watchtower.
             // Established adds the approach tower and Satellite Dish. A functional Helipad
-            // is only the offensive-air grant. A second refinery is the War/Large module.
+            // preserves its legacy grant; generic G also grants its allowed transport heli.
+            // A second refinery is the War/Large module.
             // Queue capacity stays on the starting Barracks; it is not a second building.
             AddMirrored(structures, definition, SkirmishStructureIds.OilPump, "economy.player", "economy.enemy", -12f, -8f);
             AddMirrored(structures, definition, SkirmishStructureIds.Refinery, "economy.player", "economy.enemy", 12f, -8f);
@@ -468,7 +576,7 @@ namespace Game.Configs
                 AddMirrored(structures, definition, SkirmishStructureIds.SatelliteDish, "service.player", "service.enemy", 0f, 14f);
             }
 
-            if (GrantsEstablishedHelipad(definition))
+            if (GrantsEstablishedHelipad(definition, preserveLegacyBinding))
             {
                 string playerAir = definition.MapLayout.TryGetAnchor("air.player", out SkirmishLayoutAnchorConfig playerPad)
                     ? playerPad.AnchorId
@@ -483,6 +591,19 @@ namespace Game.Configs
             if (vector.RefineryModulesEach >= 2)
                 AddMirrored(structures, definition, SkirmishStructureIds.RefineryModule, "economy.player", "economy.enemy", 0f, 24f);
 
+            // MATCH_SETUP canonical BT/CE defenders have two EXTRA approach
+            // towers. Established's mirrored service tower is independent.
+            if(definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.Breakthrough||
+               definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.ConvoyEscort)
+            {
+                foreach(var pair in new[]{
+                    (SkirmishStructureIds.DefenseApproachA,"defense.approach.a"),
+                    (SkirmishStructureIds.DefenseApproachB,"defense.approach.b")})
+                {
+                    string anchor=definition.MapLayout.TryGetAnchor(pair.Item2,out var actual)?actual.AnchorId:pair.Item2;
+                    structures.Add(Structure(2,pair.Item1,anchor,string.Empty,false));
+                }
+            }
             return structures.ToArray();
         }
 
@@ -513,12 +634,14 @@ namespace Game.Configs
             structures.Add(Structure(2, structureId, enemyAnchor, string.Empty, false, -acrossMetres, forwardMetres));
         }
 
-        private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition)
+        private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition, bool preserveLegacyBinding)
         {
             return definition.StartPackageConfig != null &&
                    definition.StartPackageConfig.Kind == SkirmishStartPackageId.EstablishedBase &&
                    definition.ArmyProfileConfig != null &&
-                   definition.ArmyProfileConfig.AllowsOffensiveAir;
+                   (definition.ArmyProfileConfig.AllowsOffensiveAir ||
+                    (!preserveLegacyBinding && definition.ArmyProfileConfig.Kind == SkirmishArmyProfileId.GroundManeuver &&
+                     definition.ArmyProfileConfig.Allows(SkirmishRoleIds.TransportHeli)));
         }
 
         private static SkirmishResolvedStructureEntry Structure(
@@ -575,6 +698,27 @@ namespace Game.Configs
                 .Append(setup.PlayerTankCount()).Append('|')
                 .Append(setup.MaterialsEach).Append('|')
                 .Append(setup.DeadlineSeconds);
+            if (!string.IsNullOrEmpty(setup.LayoutBindingFingerprint))
+                builder.Append("|layout-binding-v1|").Append(setup.LayoutBindingFingerprint);
+            // Only new generic G bindings receive the complete roster semantics.
+            // Exact certified legacy bindings retain their historical hash text.
+            if (setup.ArmyProfileId == SkirmishArmyProfileId.GroundManeuver && !string.IsNullOrEmpty(setup.LayoutBindingFingerprint))
+            {
+                builder.Append("|ground-roster-v1|");
+                if (setup.RoleOverlays != null) foreach (var role in setup.RoleOverlays)
+                {
+                    builder.Append(role.RoleId).Append(':').Append((int)role.RoleKind).Append(':')
+                        .Append(role.MaxHealth).Append(':').Append(role.Damage).Append(':')
+                        .Append(role.RangeWorld.ToString("R", CultureInfo.InvariantCulture)).Append(':')
+                        .Append(role.SupplyCost).Append(':').Append(role.MaterialsCost).Append(':').Append(role.FuelCost).Append(':')
+                        .Append((int)role.Producer).Append(':').Append((int)role.TargetDomains).Append(':')
+                        .Append(role.SquadMembers).Append(';');
+                }
+            }
+            if (!string.IsNullOrEmpty(setup.ObjectiveActorDefinitionFingerprint))
+                builder.Append("|objective-actor-v1|").Append(setup.ObjectiveActorDefinitionFingerprint).Append('|').Append(UnityEngine.JsonUtility.ToJson(new ConvoyBayHash { Bays = setup.ObjectiveTruckBays }));
+            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault || !string.IsNullOrEmpty(setup.MissionLogicalBindingFingerprint))
+                builder.Append("|mission-logical-v1|").Append(setup.MissionLogicalBindingFingerprint);
             if (includePolicy && setup.EnemyPolicy != null) builder.Append("|enemy-policy-v1|").Append(setup.EnemyPolicy.Fingerprint);
             unchecked
             {
@@ -585,6 +729,8 @@ namespace Game.Configs
                 return hash;
             }
         }
+
+        [System.Serializable] private sealed class ConvoyBayHash { public SkirmishResolvedConvoyBay[] Bays; }
 
         private static string BuildReport(SkirmishResolvedSetup setup)
         {

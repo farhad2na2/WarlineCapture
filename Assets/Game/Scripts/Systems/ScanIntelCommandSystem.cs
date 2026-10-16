@@ -238,6 +238,7 @@ namespace Game.Runtime
                     gridConfigQuery,
                     tryGetClickedCell);
 
+                SkirmishPublicScanFeedback.ObserveAccepted(em,request,result);
                 AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
                 if (em.Exists(commandEntity))
                 {

@@ -1,0 +1,16 @@
+{
+  "fixtureSha256": "6af010f9470f69c45f7823f867b315a9b3135098e1a3ecc4e06afe7e466eb567",
+  "runnerSha256": "002d54fb578c7650072c75b9782645d2b29d838ad4e7659c1a77356a4e6db2b6",
+  "audit": "External read-only field/schema applicability; no fixture edits, Unity calls or synthetic serialized data",
+  "result": "No mandatory nested-object/array serialization dependency found",
+  "actualSerializationEvidence": "Closed actual1080 same primitive/string/Vector3 damage and diagnostic row shape; public component UnitCombat and UnitAttackTrace serialize to JSON strings with CanAttack/AutoEngage and ShotCounter, seen in actual recorded rows.",
+  "1081NewMandatoryFields": [
+    "RawEventRow.role string",
+    "DiagnosticRow.role string",
+    "DiagnosticRow.targetTrace/targetEngage/targetAttackMove strings, Read<T> returns JSON string or literal Absent",
+    "DiagnosticRow.actorLauncher/actorLauncherState strings, optional informative native component dump"
+  ],
+  "mandatoryFields": "Only explicit public primitive/string/Vector3 fields; no CohortMemberRow arrays or nested ActorDiagnostic values. Target trace read uses same actual supported UnitAttackTrace type as prior actorTrace. No fixtures loaded to establish new actual serialization.",
+  "remainingGate": "Actual1081 native execution and parser remain mandatory; source schema audit is not runtime serialization test. Runner fails closed on absent/malformed required fields, no member fields invented.",
+  "nested1070Limitation": "Kept as actual omitted fields in corrected1070 proof;1081 does not inherit omitted nested-object dependency."
+}

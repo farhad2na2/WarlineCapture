@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "checked_wrapper_exit": 1,
+  "unity_wrapper_exit": 1,
+  "native_rules_before_failure": [
+    "legacy12before",
+    "binder8",
+    "areas15",
+    "collector15",
+    "convoy5"
+  ],
+  "failure": "Test fixture cached a DynamicBuffer across CreateEntity/AddComponent structural changes",
+  "code_fix_scope": "Reacquire session tracked-unit buffer after actor structural changes; runtime implementation unchanged",
+  "before_sha256": "003ca8b422c966bf279e9e14fde40769188e2ac444870a204b7b5f3da2858e71",
+  "after_sha256": "abb1801b7687dbf03de4debb8e8183077e9ac4b80b77a41b0963a4a17567ca6d",
+  "playerReady": false
+}

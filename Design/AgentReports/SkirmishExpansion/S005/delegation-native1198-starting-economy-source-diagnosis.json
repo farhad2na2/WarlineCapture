@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "status": "ReadOnly_SourceDiagnosis_NoCausalClaim",
+  "failedRun": 1198,
+  "candidate": "d038cf676ad9bee2142bc533f04035a50067c074472371cd609747eab76cbb47",
+  "result": "Native cycle0 exact starting bank/supply combined assertion failed; actual violating values were not emitted. Native1195 first observation elapsed.333333343 passed450/450Materials120/120Oil350/350Fuel. Neither failure proves missing grants nor native income fault.",
+  "concreteSourceFacts": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+      "lines": "16\u201369",
+      "fact": "Initialize waits SharedBuildingsReady and is idempotenttagged. Validates both factions before mutation. Adds exact authored OilEach/FuelEach on top of existing attempt-owned physical stores, preserving fractions/preexisting production. Tags after both grants."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "lines": "86\u2013129,149\u2013150,340\u2013346",
+      "fact": "Starting building requests must complete before material initialize/supply grant; after successfulgrant marksSpawnComplete/Playing. Objective clock starts0. Progressive bound facilities exist before complete grant."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMaterialsService.cs",
+      "lines": "15\u201349,129\u2013139",
+      "fact": "Initialize resets each selected faction bank to authored materials/capacity/Version1 with zero lifetimes/events. FindEconomy selects first matchingFactionEconomy, not an ownershipunique witness. Passive census must count everymatchingbank."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+      "lines": "80\u2013116",
+      "fact": "ReadOil/ReadUsableFuel query all faction storage, not just current attempt, and floor summed float. Fuel excludes outbound/civilian reserves and non-usable producers. Native read must be reconciled with exact owned/nonowned stores."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFacilityEconomyProfile.cs",
+      "lines": "19\u201356",
+      "fact": "Standard OilPump120barrels/60seconds=2/sec. Fabrication consumes10oil produces50materials per30seconds. Refinery consumes30oil produces60fuel per30seconds; fresh profile startsFuelBatchProgress0."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+      "lines": "194\u2013242",
+      "fact": "Resource callback uses accumulated positive delta until real-time resource cadence, then passes max(currentdelta,accumulated) and resets accumulator. No ExpandedSessionPhase/grant boundary in helper."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs",
+      "lines": "62,129\u2013150,264\u2013277",
+      "fact": "Outer runtime building simulation is guarded by gameplayInitialized+SimulationActive; skip helper concerns CampaignFirstContact only. Cannot infer exact grant-relative producer timing from objective clock alone."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+      "lines": "52\u201368,245\u2013285",
+      "fact": "Fabrication global system resets its elapsed whileSimulationActive0, otherwise ticks at1second and actualcycleprogress/nativeoil/cap allows award. Runtime event queue records realcycles/oil/materials."
+    }
+  ],
+  "possibleCausesNotProven": [
+    "Legitimate postgrant fractional pumping crossing next wholebarrel beforeEditorTick observes fresh state.",
+    "Pregrant native production on progressively constructed facility, later exactgrant adds to existingoil.",
+    "Nativebankquery selects duplicate/mismatched faction bank; no raw count.",
+    "Unowned/map/previous-attempt faction storage enters global reads, or native hauler/reseveration delta changes usablefuel.",
+    "Actually incomplete/incorrect grant or storage binding remains possible; do not relax assertion without exact causal rows."
+  ],
+  "minimalPassiveObservation": {
+    "owner": "campaign_driver successor1203; no duplicate fixture by placement_audit",
+    "beforeExistingAssertions": [
+      "SessionId,index/version,Phase,SpawnComplete,SpawnVisualPending,SharedBuildingsReady,SharedSupplyInitialized,SharedMaterialsInitialized,InitializationComplete,Clockelapsed/playing/paused,Time.deltaTime and samplingcallback,SimulationActive.",
+      "For EACH faction bank: EntityIndex/Version,FactionEconomy.FactionId,materialsFaction,Current,Capacity,Version,ALLlifetime counters,bankcount,materialfabricationeventqueueid/events without lossysum.",
+      "For EACH active storage includedbyglobalreads: EntityIndex/Version,attemptStableId/session ifpresent,OwnerFactionId,StoredOil/StoredFuel asfloat,Oil/FuelCapacity,ReservedInbound/Outbound,CivilianFuelReserve,Version,IsUsableFuelStorage. Reconcile currentattempt subtotal vsotherattempt/nonowned total and floorednative reads.",
+      "Per storage nativeprofile PeriodSeconds/OilPerPeriod/FuelPerPeriod/FuelBatchProgress andbatchquantities; fabricationCycleProgress/cycleduration/oilinput/output/status/Version and actualevents.",
+      "Actual production/research pendingreceipts if any and legitimate actorhaulerreservations/cargo where relevant; do not disableenemyAI or normal economy."
+    ],
+    "smallestTimingDiscriminator": "Read same primitive snapshot each rendered/nativeUpdate from first session spawning through complete-grant/firstPlaying; only if existingfixture makes this practical. If observedtag transition cannot be caught, record limitation and avoid manufacturing an exact-grant callback. No writes/timingfreeze/privatecomponentreset."
+  },
+  "interpretation": "Oil120.666floor120 versus121.333floor121 is naturally possible at native2/sec. Only observed profileprogress/storageversions/events can attribute it. Materials lifetimefabricated>0 with corresponding actualevent can distinguishcycle income frombadgrant; Version1/zero counters but wrongcurrent would requiredifferentcause. Duplicatebank/nonattemptstore rows must remain failure/diagnostic, not be hidden by choosingpreferredrow.",
+  "scopeLimits": "No patch, no Unity, no Git. Existing1198 failure preserved. No qualification of ten cycles or economic gate; no arbitrary tolerance/first-frame allowance proposed.",
+  "sourceProof": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+      "sha256": "7402f89d8151a463deb518a5ab4c0287b2d18824d69e44ec1608dbebf2b8fb4b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMaterialsService.cs",
+      "sha256": "a7da50462d1390425cb4406d0a715ba22ff42a3a15831d2511403d3348938c20"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "sha256": "b205aa50d12d86a3c799a17cc05c657c71a9075c5f197f25375456a49617e00f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs",
+      "sha256": "4f27a8008616f5817592710eefbac93cb115149458fb40906edd0d4f544f79ad"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFacilityEconomyProfile.cs",
+      "sha256": "d5f9ce8292a68e6396f0975dff2dcd3845d228df78f0a755f8ea8de3ecf603a5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+      "sha256": "49c2dec1faf41350439544433a7aee05f64f6dafc4d5640ce3c49f2925041aac"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
+      "sha256": "11f6c89188c9c61e61d756f298d919ea6cdbef21570ea4a7627282dd8f49b9bd"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+      "sha256": "8a8fc21f7bb058da6fa67a7e19e39fd825f742e2d643d58f2d8f718b62bceac8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickCompositionSystemHelper.cs",
+      "sha256": "fbf74ceab8a3a35f7626dea6526f775c6a34d07d7c64e15d22f046d93e29ab07"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs",
+      "sha256": "04cec1886ab0a30a42a40279d1e9654dcac5dbb0bfee6aa0dd72931d77ee29c1"
+    }
+  ]
+}

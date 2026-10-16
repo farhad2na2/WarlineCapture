@@ -1,0 +1,29 @@
+{
+  "sourceHash": "3986ae0d0abf89331a6eb6c464cf4897c5fdffa1f2ea82e47a16905f1a242030",
+  "review": "Assistant native-screen inspection",
+  "captures": [
+    {
+      "file": "native-220-opening-en.png",
+      "sha256": "8b602a77a0175e4b317d3e989a87753d546528ea6ada1162d40d45e360ddc2bb"
+    },
+    {
+      "file": "native-221-opening-fa.png",
+      "sha256": "990c482e867f769374c837bfd1f0df5bb3ed649a1f1fea6f677cce923f4ebbb9"
+    }
+  ],
+  "observed": [
+    "Base health and match clock visible",
+    "Materials/oil/fuel and infantry cap visible",
+    "ARIA portrait, Field Guide and visible Stop control",
+    "Existing colorful command buttons and squad portraits",
+    "Persian shaping and reversed squad-card presentation visible without observed clipping",
+    "Varied ground patches, palm line, props and source buildings visible"
+  ],
+  "limitations": [
+    "Editor 2400x1080 screenshots; not physical phone readability",
+    "Final owner native visual approval pending",
+    "No claim of exact ImageGen mockup equivalence"
+  ],
+  "realPlayerDeviceAcceptance": false,
+  "playerReady": false
+}

@@ -1,0 +1,19 @@
+{
+  "result": "Failed",
+  "reason": "Strike selected and attack mode target tapped, but Airport remained managed HUD selection; aircraft stayed grounded without UnitTarget/EngageTarget",
+  "sourceHash": "a9209d2d910c54b432651abecd97c63ecea92bbc8f590231b7f53333e0d5513c",
+  "sourceMatched": true,
+  "airportConstructionPassed": true,
+  "paidStrikeDeliveryObserved": true,
+  "nativeFlightCertified": false,
+  "nativeFireObserved": false,
+  "manualEditorStop": true,
+  "physicalInterventions": 1,
+  "recordedContacts": 91,
+  "independentContactPairsValid": true,
+  "strictIndependentContactAudit": false,
+  "playerReady": false,
+  "log": "native-454-strike-public-mask-cycle.log",
+  "logSha256": "0eac502077dfe53405773808b9ff95aa8414a93f7e07d70537153b7d4b0b717d",
+  "wrapperExit": "1"
+}

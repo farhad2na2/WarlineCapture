@@ -1,0 +1,82 @@
+{
+  "sourceHash": "1f69b3e85fe87dc82499cbfc056becd1df42e96ebf67f4ff9563a668aa26c967",
+  "result": "Passed",
+  "supportChecks": 62,
+  "runs": [
+    {
+      "run": 266,
+      "kind": "Smoke",
+      "tests": 6,
+      "log": "tests-266-smoke-owner-smoke.log",
+      "logSha256": "84fe219b5a0e362101e480d200cb856bb2161a4d5b2a1b98df988657c705d01f",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 267,
+      "kind": "UiAria",
+      "tests": 13,
+      "log": "tests-267-smoke-owner-uiaria.log",
+      "logSha256": "aa0d6df31996ace70ac9c9e159b81a28fa4688dbe3c216619ba6d77f31ceed5c",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 268,
+      "kind": "Supply",
+      "tests": 10,
+      "log": "tests-268-smoke-owner-supply.log",
+      "logSha256": "dd7b379cc3788a34c9af1b6c14f6ee5451d7beeda4b0223892abf6b387fa6894",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 269,
+      "kind": "Runtime",
+      "tests": 8,
+      "log": "tests-269-smoke-owner-runtime.log",
+      "logSha256": "dfd605548060dedb54a4bdc545382eb985b7c86d321cf167d94e27038653be2f",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 270,
+      "kind": "Campaign",
+      "tests": 6,
+      "log": "tests-270-smoke-owner-campaign.log",
+      "logSha256": "32765df8f69db7a9941f12757bd09b3d154f5f424682e3135d189967974a21c9",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 271,
+      "kind": "Strike",
+      "tests": 10,
+      "log": "tests-271-smoke-owner-strike.log",
+      "logSha256": "9d600651c90505c93e186d6a6471561c123bb46638023e002dab3d1e137c69e5",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 272,
+      "kind": "Paratrooper",
+      "tests": 9,
+      "log": "tests-272-smoke-owner-paratrooper.log",
+      "logSha256": "f55400281e3c1a541085dda1f0368ddaad921a76adb1fb89ca4cb87221ab7179",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 273,
+      "kind": "SkirmishSharedMaterials",
+      "tests": null,
+      "log": "tests-273-smoke-owner-skirmishsharedmaterials.log",
+      "logSha256": "0ecb2f34aa78e951297858faa6d2fabfe2a3e4a92ff67dac10f633514c036ecf",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    }
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "normalInputAcceptance": false,
+  "playerReady": false
+}

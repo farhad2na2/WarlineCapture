@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-stale-callback-audit.cs",
+      "entry": "S005StaleCallbackAudit.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 663,
+      "executeMs": 71,
+      "assemblyName": "PipelineRunScript_s005-stale-callback-audit_916a2f486d1f4f5dbb2f0d39a1efa09e",
+      "success": true,
+      "result": "EditorApplication:update=S005EarlyRoute1611.Tick;S005GroundTouchDiagnostic1611.Editor|Canvas:willRenderCanvases=S005ManualHomeDefense1611.Tick;S005GroundTouchDiagnostic1611.Canvas;S005FreshRocketeerPlanner1611.Tick;S005ManualHomeDefense1612.Tick|Application:s_LogCallbackHandler=S005GroundTouchDiagnostic1611.NativeLog|AriaCommandEvidence:Recorded=S005ManualHomeDefense1611.Receipt;S005ManualHomeDefense1612.Receipt"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,26 @@
+{
+  "result": "Failed",
+  "sourceHash": "15b41d0ac471971d86d274d309162b612426aefbe2956cd1d27b3936e41f41b7",
+  "log": "native-204-heavy-apc-combat-save-resume-en.log",
+  "logSha256": "f28203f1f401f7aa2276ab7d107ea5828eab63c48d7435a21f81274347fc0d03",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "readOnlyObservation": {
+    "role": "ApcHeavy",
+    "readiness": 2,
+    "materials": 310,
+    "displayedCost": 280,
+    "displayedFailure": "ArmyCapacityReached",
+    "authoritativeFailure": "MissingProducer",
+    "authoritativeField": "producer.ground_staging",
+    "groundLive": 0,
+    "groundCap": 8,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 800
+  },
+  "validationEnd": "Harness cutoff shortened after confirmed MissingProducer; native timeout recorded failure. No gameplay clock/resources/state altered; Editor and Hub preserved.",
+  "fix": "Shared native preflight reports missing producer and passes required-building display name; probe now defends producer frontage before buying readiness/APC. Fix acceptance pending.",
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false
+}

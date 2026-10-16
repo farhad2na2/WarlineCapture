@@ -1,0 +1,78 @@
+{
+  "originalCompilerSha256": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0",
+  "method": "Exact unchanged pre-policy ComputeHash FNV canonical text; derived offline from authored matrix, not an executed native compile",
+  "rows": [
+    {
+      "catalogId": "S002",
+      "size": "Standard",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S002|skirmish.s002|Standard|Regular|104734|20|3|1|900|1080",
+      "expectedSetupHash": 1456422027
+    },
+    {
+      "catalogId": "S002",
+      "size": "War",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S002|skirmish.s002|War|Regular|104734|28|5|2|1350|1500",
+      "expectedSetupHash": 3249294366
+    },
+    {
+      "catalogId": "S002",
+      "size": "LargeWar",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S002|skirmish.s002|LargeWar|Regular|104734|40|7|3|1800|1800",
+      "expectedSetupHash": 3315376489
+    },
+    {
+      "catalogId": "S003",
+      "size": "Standard",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S003|skirmish.s003|Standard|Regular|104734|12|2|0|450|1080",
+      "expectedSetupHash": 245742882
+    },
+    {
+      "catalogId": "S003",
+      "size": "War",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S003|skirmish.s003|War|Regular|104734|20|3|0|675|1500",
+      "expectedSetupHash": 2908795141
+    },
+    {
+      "catalogId": "S003",
+      "size": "LargeWar",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S003|skirmish.s003|LargeWar|Regular|104734|24|4|0|900|1800",
+      "expectedSetupHash": 2147126139
+    },
+    {
+      "catalogId": "S004",
+      "size": "Standard",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S004|skirmish.s004|Standard|Regular|104734|20|3|0|900|1080",
+      "expectedSetupHash": 778784702
+    },
+    {
+      "catalogId": "S004",
+      "size": "War",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S004|skirmish.s004|War|Regular|104734|28|5|0|1350|1500",
+      "expectedSetupHash": 2606276204
+    },
+    {
+      "catalogId": "S004",
+      "size": "LargeWar",
+      "seed": 104734,
+      "difficulty": "Regular",
+      "canonicalPrePolicyHashInput": "S004|skirmish.s004|LargeWar|Regular|104734|40|7|0|1800|1800",
+      "expectedSetupHash": 2615847972
+    }
+  ]
+}

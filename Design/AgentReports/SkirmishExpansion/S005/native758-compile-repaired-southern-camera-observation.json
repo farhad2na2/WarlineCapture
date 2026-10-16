@@ -1,0 +1,38 @@
+{
+  "result": "Failed",
+  "wrapperExit": 2,
+  "initialCompileFailed": true,
+  "sourceChangedDuringFailedSession": true,
+  "countsForQualification": false,
+  "initialManifest": "final-758-southern-normal-camera-observation-pre-source-manifest.json",
+  "failedInitialPost": "failed-758-compile-before-observation-repair-post-source-manifest.json",
+  "repairedPost": "final-758-compile-repaired-southern-camera-red-post-source-manifest.json",
+  "loadedRepairedSourceHash": "aa9134801845a36470bfd80358d825b1df7a24ef683788fc95a1b2eb81d08654",
+  "observations": {
+    "target": [
+      1399,
+      177.5
+    ],
+    "point": [
+      1255.3,
+      93.24
+    ],
+    "firstHit": "SCN08_FullMapPopup",
+    "focusEventObserved": false,
+    "mapRectCorners": [
+      [
+        709.93,
+        61.98
+      ],
+      [
+        1676.3,
+        1028.35
+      ]
+    ],
+    "nativeViewReached": false
+  },
+  "cause": "Full-map AspectRatioFitter EnvelopeParent crops rectangular clip; edge touch falls onto popup background",
+  "log": "native-758-current-manual-en-seed104734.log",
+  "trace": "s005-aria-live-104734-en-5a7e6f7c0e1f472a95b73036c4a7d9c5.jsonl",
+  "playerReady": false
+}

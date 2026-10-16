@@ -1,0 +1,64 @@
+Unimported Frontline Control implementation draft, 2026-10-14.
+
+Proposed new runtime file:
+Assets/Game/Scripts/Runtime/Skirmish/SkirmishFrontlineReducer.cs
+Proposed new test file:
+Assets/Tests/Editor/SkirmishExpansion/SkirmishFrontlineReducerTests.cs
+No existing imported source is modified by this draft.
+
+Exact governing contract:
+Design/Roadmap/Skirmish_Expansion/OBJECTIVE_IMPLEMENTATION.md, Common + FC sections.
+Design/Roadmap/Skirmish_Expansion/TECHNICAL_ARCHITECTURE.md, ownership/order/state tables.
+
+Implemented pure state/reducer:
+- Three distinct stable zone IDs, neutral owners, 500 tickets each.
+- Standard/War/LargeWar deadlines 1200/1500/1800 simulation seconds.
+- 8 seconds neutralization + 8 capture; neutral begins with one 8-second phase.
+- Counts only select presence; more infantry never speeds capture.
+- Both sides contest/freeze progress/reset empty grace; owner defense clears opposing work.
+- Capturing-faction changes reset partial work; empty grace exactly 10 seconds then 1:1 decay.
+- Ownership-after-transitions majority drains opponent 1 ticket/s; 3 owners does not stack.
+- Integer persisted progress/grace/ticket fractions, no wall-clock or rendering dependency.
+- Combined base/ticket terminal facts resolve before deadline; reciprocal terminals draw.
+- Accepted Playing surrender freezes defeat before the next tick; frozen results cannot overwrite.
+- Invalid/overflowing input throws before committing partial state; missing authoritative base
+  facts fail technically rather than treating default false as original bases destroyed.
+
+Time representation is TimeSpan ticks (100ns) and is not a new gameplay simulation rate.
+The native clock adapter must convert authoritative simulation delta using a persisted
+sub-tick fractional accumulator. It must not use wall time or round every frame independently.
+
+13 proposed focused tests exercise exact timings, contested final tick, 64-vs-1 presence,
+defense/faction switch, grace/decay, owned contest drain, 2-vs-3 rate, fraction/7.9s serialization,
+same-tick ownership/ticket/base result, base death at deadline, higher/equal/lower deadline,
+pause, surrender, frozen outcome, malformed facts and overflow/no partial mutation.
+Method: Game.Tests.Editor.SkirmishFrontlineReducerTests.RunFocusedValidation
+Marker: [SkirmishFrontlineReducerTests] result=Passed tests=13
+Offline execution completed with
+rtk proxy python Tools/CI/skirmish_frontline_reducer_offline_test.py
+All 13 actual NUnit methods passed against the actual reducer and repository contracts.
+The execution-only UnityEngine.JsonUtility adapter uses installed Newtonsoft for state
+round trips; it does not validate actual Unity JSON/native checkpoint behavior.
+Separately, exact reducer/test sources compile against the installed matching
+Unity 6000.5.2f1 CoreModule/JSONSerialize/NUnit references without that adapter.
+Eight source/dependency SHA pins remained unchanged. Evidence:
+Design/AgentReports/SkirmishExpansion/FC/offline-reducer-20261014/
+Markers:
+[SkirmishFrontlineOffline] result=Passed tests=13 passed=13
+[SkirmishFrontlineEditorReferenceCompile] result=Passed editor=6000.5.2f1 executedInUnity=0
+No Unity Editor execution, native placement, occupancy or mission certificate is claimed.
+
+Explicit next integration gates:
+- ECS capture footprint and living dismounted combat-infantry fact collector; exclude actual
+  pilots/civilians/passengers/vehicles/aircraft. Pure count tests cannot certify that collector.
+- Typed startup role projection, source-fit/no-build zones and scalable 60+ squad occupancy.
+- One scheduled FC objective owner after damage/passenger playback, then single outcome arbiter.
+  Reducer Outcome is a local decision; do not add a competing result/settlement owner.
+- Config/definition/compiler FC setup + catalog capability gates; preserve fixed counts/budgets.
+- Public zone/ticket HUD and legal enemy/ARIA split-group/counter policy, no hidden contacts.
+- Checkpoint DTO/version adapters for phase, capturing side, progress/grace, ticket remainders,
+  authoritative clock and stable IDs; pure JSON round trip is not native recovery evidence.
+- Result/replay/return, normal manual/ARIA matrices, EN/FA and separate player/device evidence.
+
+No S-ID branch, physical map edit, actor spawn, funding, resource income, command actuation,
+ARIA control or publication change is included.

@@ -1,0 +1,618 @@
+using UnityEngine.EventSystems;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Editor;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Game.UI.Runtime;
+using Game.UI.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Profiling;
+using TMPro;
+using System.IO.Compression;
+using UnityEngine.SceneManagement;
+using UObject=UnityEngine.Object;
+
+
+// External QA only: normal public Manual/Menu entry, real Touch controls, no gameplay writes.
+public static class S005Lifecycle1460
+{
+    const string Root="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/";
+    const string Evidence=Root+"native1460-lifecycle-observation.jsonl", TouchPath=Root+"native1460-lifecycle-touch.jsonl";
+    static readonly BindingFlags Private=BindingFlags.Static|BindingFlags.NonPublic;
+    static Type Harness=>typeof(SkirmishS002AriaRunHarness);
+    static MethodInfo Method(string name)=>Harness.GetMethod(name,Private)??throw new MissingMethodException(name);
+    static FieldInfo Field(string name)=>Harness.GetField(name,Private)??throw new MissingFieldException(name);
+    static void Call(string name)=>Method(name).Invoke(null,null);
+    static World world; static Entity session; static AriaTouchInputUiSystemHelper touch;
+    static EditorApplication.CallbackFunction nativeTick; static MonoBehaviour qaFrame;
+    static TaskCompletionSource<int> completion; static bool coordinated,closing,failed,renderedDefeat;
+    static int cycle,phase,lastInputFrame=-1; static double deadline,due,phaseDeadline; static string attempt="",priorAttempt="",pauseSnapshot="",freshBaseline="",failure="";
+    static readonly HashSet<string> freshAttempts=new();
+    [Serializable] public sealed class ContactRow { public int frame,device,acceptedCommands,receiptViolations; public bool matchFinished,commandAuditActive; public string kind,phase; public uint generation,dispatched,completed,samples,unexpected,interventions; public float time; public Vector2 position; } static readonly List<Entity> oldEntities=new();
+    static readonly Dictionary<string,string> savedEnv=new(); static readonly string[] envNames={"WARLINE_VALIDATION_SAVE_ROOT","WARLINE_ARIA_BACKGROUND_VALIDATION","WARLINE_ARIA_QUIT","WARLINE_S004_MANUAL_PROBE","WARLINE_TERMINAL_ACTION"};
+    static float pauseClock; static bool originalQaEnabled; static uint beforeTap; static int baselineOwned=-1,baselineMarkers=-1,baselineHud=-1;
+    [Serializable] public sealed class Row {
+      public string stage="",attempt="",priorAttempt="",action="",reason="",outcome="",title="",sourceCopy="",snapshot="",tracePath="",role="",actorId="",samplingPhase="",shellRoute="",resultSession="",controlPath="",mainMenuTitlePath="",mainMenuIntent="",mainMenuRoute="",expectedMainMenuCaption="",actualMainMenuCaption="";
+      public int plannerVersion,capabilityVersion,operationRows,transportRows,assignmentRows,productionIntentState,constructionPhase; public uint policyHash,nextProductionRequest,nextOperation; public bool constructionPresent;
+      public int cycle,phase,frame,seed,freshOrdinal,totalEntities,physicalEntities,cleanupShells,actorIndex,actorVersion,owned,oldPhysical,oldShells,selected,hold,markers,hud,productionRows,researchRows,readiness,playerMaterials,enemyMaterials,playerOil,enemyOil,playerFuel,enemyFuel,initialActors,deliveredActors,visibleGlyphs,violations,saveAcknowledged;
+      public long managedBytes,nativeAllocatedBytes,nativeReservedBytes,graphicsBytes,residentBytes,peakResidentBytes;
+      public float elapsed,baselineElapsed,timeScale,screenWidth,screenHeight,canvasWidth,canvasHeight;
+      public uint completed,dispatched,unexpected,interventions,receipt,groupId,lastGroupId,reservationId;
+      public int faction,memberCount,aliveCount,enemyHold,groupCount,targetIndex,targetVersion,counterCommitted,failedAttempts;
+      public string groupOrder="",strategyPriority="",moveOrder="",targetId="",actorSession="";
+      public bool hasStrategy,hasMembership,hasMoveIntent,intentActive,hasHold,hasSelected,markerParentMatches,markerTagged,markerExists,markerChildExists;
+      public int markerIndex,markerVersion,markerChildIndex,markerChildVersion;public float markerScale,markerChildScale;
+      public bool passed,paused,playing,simulationActive,frozen,rendered,captionMatches,viewportMatches,sessionAbsent,sameBudget,sameRoster,oldRemoved,qaOnlyCoordination,verified,sharedFog,developmentFullVision,exactMainMenuOwner,exactMainMenuTitle;
+    }
+    static void Write(Row r){r.frame=Time.frameCount;r.cycle=cycle;r.phase=phase;r.timeScale=Time.timeScale;File.AppendAllText(Evidence,JsonUtility.ToJson(r)+"\n");UnityResetResourceLifecycleAdapter1460V1.OnLifecycleRow(r.stage,r.cycle,r.attempt,r.passed);}
+    public static object Run()=>"Loaded only; no gameplay started.";
+    public static Task<int> RunValidation(){
+      if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("1460 requires idle owned Editor");
+      if(File.Exists(Evidence)||File.Exists(TouchPath))throw new IOException("Preserve existing1460 evidence");
+      using(File.Open(Evidence,FileMode.CreateNew)){} using(File.Open(TouchPath,FileMode.CreateNew)){}
+      BeginConfirmationDiagnostic();
+      foreach(var name in envNames)savedEnv[name]=Environment.GetEnvironmentVariable(name);
+      foreach(var name in new[]{"Tick","LiveTracePath","TryPresentedButtonPoint","RestoreBackgroundInput","StopS004ManualProbe","StopS004AriaConsentProbe","StopS004MenuProbe","RestoreS004EditorJourneyOptions","ValidationProfileRoot"})Method(name);Field("manualTouch");
+      completion=new TaskCompletionSource<int>();cycle=phase=0;deadline=EditorApplication.timeSinceStartup+1800;
+      coordinated=closing=failed=false;freshAttempts.Clear();oldEntities.Clear();freshBaseline="";baselineOwned=baselineMarkers=baselineHud=-1;
+      nativeTick=(EditorApplication.CallbackFunction)Delegate.CreateDelegate(typeof(EditorApplication.CallbackFunction),Method("Tick"));
+      AriaTouchInputUiSystemHelper.Evidence+=ObserveTouch;AriaCommandEvidence.Recorded+=ObserveReceipt;
+      EditorApplication.update+=Tick;Canvas.willRenderCanvases+=RenderFrame;
+      try{UnityResetResourceLifecycleAdapter1460V1.Begin("/private/tmp/s005-native1460-resource-census","4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170","native1460");SkirmishS002AriaRunHarness.RunS005EditorManualFa();string profile=(string)Method("ValidationProfileRoot").Invoke(null,null);if(string.IsNullOrWhiteSpace(profile)||Path.GetFullPath(profile)!=profile||Path.GetFileName(Path.GetDirectoryName(profile))!="aria-play-validation-profile"||!Guid.TryParseExact(Path.GetFileName(profile),"N",out _)||Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")!=profile)throw new InvalidOperationException("Normal native Menu must own its initialized GUID QA profile; no personal save allowed");Write(new Row{stage="NativeProfileOwnership",reason=profile,passed=true,qaOnlyCoordination=true});}
+      catch{UnityResetResourceLifecycleAdapter1460V1.OnLifecycleRow("ClosedLifecycle",cycle,attempt,false);EditorApplication.update-=Tick;Canvas.willRenderCanvases-=RenderFrame;AriaTouchInputUiSystemHelper.Evidence-=ObserveTouch;AriaCommandEvidence.Recorded-=ObserveReceipt;throw;}
+      Write(new Row{stage="StartedPublicNormalManualMenu",reason="RunS005EditorManualFa; candidate profile/catalog QA only; no resources/health/actors/poses/orders/outcomes injected",qaOnlyCoordination=true});
+      return completion.Task;
+    }
+    static bool Live(out EntityManager em,out SkirmishMatchState match){
+      em=default;match=default;world=World.DefaultGameObjectInjectionWorld;
+      if(world==null||!world.IsCreated)return false;em=world.EntityManager;
+      using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishMatchState),typeof(SkirmishResolvedSetupRecord),typeof(SkirmishObjectiveClockComponent));
+      if(q.CalculateEntityCount()!=1)return false;session=q.GetSingletonEntity();match=em.GetComponentData<SkirmishMatchState>(session);return true;
+    }
+    static List<Entity> Owned(EntityManager em){using var q=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities});using var a=q.ToEntityArray(Allocator.Temp);var list=new List<Entity>();foreach(var e in a)list.Add(e);return list;}
+    static bool Physical(EntityManager em,Entity e)=>em.Exists(e)&&(em.HasComponent<LocalTransform>(e)||em.HasComponent<LocalToWorld>(e)||em.HasComponent<UnitHealth>(e)||em.HasComponent<UnitGrid>(e)||em.HasComponent<RuntimeBuildingCombatInfo>(e)||em.HasComponent<BuildingResourceStorageComponent>(e)||em.HasComponent<SkirmishUnitRoleComponent>(e)||em.HasComponent<SelectionMarkerOwner>(e));
+    static string Snapshot(EntityManager em,Entity s,bool includePos){
+      var rows=new List<string>();
+      foreach(var e in Owned(em)){
+        if(!Physical(em,e))continue;var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);
+        string row=o.SessionId+"|"+o.StableObjectId+"|"+o.FactionId+"|"+o.ReservationId;
+        if(em.HasComponent<SkirmishUnitRoleComponent>(e))row+="|"+JsonUtility.ToJson(em.GetComponentData<SkirmishUnitRoleComponent>(e));
+        if(includePos&&em.HasComponent<LocalTransform>(e))row+="|"+JsonUtility.ToJson(em.GetComponentData<LocalTransform>(e));
+        if(includePos&&em.HasComponent<UnitHealth>(e))row+="|"+JsonUtility.ToJson(em.GetComponentData<UnitHealth>(e));
+        row+="|selected="+em.HasComponent<SelectedUnitTag>(e)+"|hold="+em.HasComponent<HoldPositionOrderTag>(e);rows.Add(row);
+      }
+      for(byte f=1;f<=2;f++){var b=SkirmishMaterialsService.FindEconomy(em,f);if(b==Entity.Null)throw new InvalidOperationException("Native bank missing");rows.Add("bank"+f+JsonUtility.ToJson(em.GetComponentData<FactionTacticalMaterialsComponent>(b)));rows.Add("stock"+f+":"+SkirmishStartingSupplyService.ReadOil(em,s,f)+":"+SkirmishStartingSupplyService.ReadFuel(em,s,f));}
+      rows.Add("capacity"+JsonUtility.ToJson(em.GetComponentData<SkirmishCapacityComponent>(s)));rows.Add("enemyCapacity"+JsonUtility.ToJson(em.GetComponentData<SkirmishEnemyCapacityComponent>(s)));
+      rows.Add("research"+JsonUtility.ToJson(em.GetComponentData<SkirmishResearchStateComponent>(s)));rows.Add("enemyResearch"+JsonUtility.ToJson(em.GetComponentData<SkirmishEnemyResearchStateComponent>(s)));
+      foreach(var r in em.GetBuffer<SkirmishProductionReservation>(s,true))rows.Add("production"+JsonUtility.ToJson(r));
+      foreach(var r in em.GetBuffer<SkirmishResearchQueueItem>(s,true))rows.Add("researchQueue"+JsonUtility.ToJson(r));
+      AppendEnemyState(em,s,rows);
+      rows.Sort(StringComparer.Ordinal);return string.Join("\n",rows);
+    }
+    // Read-only canonical primitive fields avoid JsonUtility losing FixedString/component data.
+    static string PrimitiveFields<T>(T value) where T:struct {
+      var fields=typeof(T).GetFields(BindingFlags.Public|BindingFlags.Instance);
+      Array.Sort(fields,(a,b)=>StringComparer.Ordinal.Compare(a.Name,b.Name));
+      var rows=new List<string>();foreach(var f in fields){object v=f.GetValue(value);
+        string text=v is IFormattable formatted?formatted.ToString(null,System.Globalization.CultureInfo.InvariantCulture):v?.ToString()??"";
+        rows.Add(f.Name+"="+text);}return string.Join("|",rows);
+    }
+    static void AppendEnemyState(EntityManager em,Entity s,List<string> rows){
+      if(em.HasComponent<SkirmishEnemyPlannerV1Component>(s))rows.Add("planner:"+PrimitiveFields(em.GetComponentData<SkirmishEnemyPlannerV1Component>(s)));
+      if(em.HasComponent<SkirmishEnemyProductionIntentV1Component>(s))rows.Add("productionIntent:"+PrimitiveFields(em.GetComponentData<SkirmishEnemyProductionIntentV1Component>(s)));
+      if(em.HasComponent<SkirmishEnemyConstructionIntentV1Component>(s))rows.Add("constructionIntent:"+PrimitiveFields(em.GetComponentData<SkirmishEnemyConstructionIntentV1Component>(s)));
+      if(em.HasComponent<SkirmishEnemyCapabilityStateV1Component>(s))rows.Add("capabilityState:"+PrimitiveFields(em.GetComponentData<SkirmishEnemyCapabilityStateV1Component>(s)));
+      if(em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(s))foreach(var item in em.GetBuffer<SkirmishEnemyGroupAssignmentV1>(s,true))rows.Add("assignment:"+PrimitiveFields(item));
+      if(em.HasBuffer<SkirmishEnemyCapabilityOperationV1>(s))foreach(var item in em.GetBuffer<SkirmishEnemyCapabilityOperationV1>(s,true))rows.Add("operation:"+PrimitiveFields(item));
+      if(em.HasBuffer<SkirmishEnemyTransportPlanV1>(s))foreach(var item in em.GetBuffer<SkirmishEnemyTransportPlanV1>(s,true))rows.Add("transportPlan:"+PrimitiveFields(item));
+    }
+    static void ObserveFreshEnemyState(EntityManager em,SkirmishResolvedSetup setup,string id){
+      if(setup.EnemyPolicy==null)throw new InvalidOperationException("Current S005 typed shared policy absent");
+      var raw=new List<string>();AppendEnemyState(em,session,raw);raw.Sort(StringComparer.Ordinal);
+      bool complete=em.HasComponent<SkirmishEnemyPlannerV1Component>(session)&&em.HasComponent<SkirmishEnemyProductionIntentV1Component>(session)&&em.HasComponent<SkirmishEnemyCapabilityStateV1Component>(session)&&em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(session)&&em.HasBuffer<SkirmishEnemyCapabilityOperationV1>(session)&&em.HasBuffer<SkirmishEnemyTransportPlanV1>(session);
+      if(!complete){Write(new Row{stage="FreshCurrentEnemyState",attempt=id,snapshot=string.Join("\n",raw),passed=false,reason="Required current typed parts missing; no initializer called"});throw new InvalidOperationException("Fresh current enemy state incomplete");}
+      var p=em.GetComponentData<SkirmishEnemyPlannerV1Component>(session);var i=em.GetComponentData<SkirmishEnemyProductionIntentV1Component>(session);var c=em.GetComponentData<SkirmishEnemyCapabilityStateV1Component>(session);
+      int ops=em.GetBuffer<SkirmishEnemyCapabilityOperationV1>(session,true).Length, cargo=em.GetBuffer<SkirmishEnemyTransportPlanV1>(session,true).Length;
+      bool hasConstruction=em.HasComponent<SkirmishEnemyConstructionIntentV1Component>(session);var construction=hasConstruction?em.GetComponentData<SkirmishEnemyConstructionIntentV1Component>(session):default;
+      bool valid=p.Initialized==1&&p.PolicyVersion==setup.EnemyPolicy.Version&&p.PolicyHash==setup.EnemyPolicy.Hash&&p.PolicyFingerprint.ToString()==setup.EnemyPolicy.Fingerprint&&p.NextActionKey>=1&&i.Version==1&&i.State==SkirmishEnemyProductionIntentState.Idle&&i.RequestId==0&&i.NextRequestId==1&&i.ReservationId==0&&i.ActionKey.IsEmpty&&c.Version==SkirmishEnemyCapabilityService.FeatureVersion&&c.NextOperationId==1&&ops==0&&cargo==0&&(!hasConstruction||(construction.Version==1&&construction.SessionId.ToString()==id&&construction.Phase==(byte)SkirmishEnemyConstructionPhase.Idle&&construction.MaterialsPaid==0&&construction.RequestId==0));
+      Write(new Row{stage="FreshCurrentEnemyState",attempt=id,plannerVersion=p.PolicyVersion,policyHash=p.PolicyHash,title=p.PolicyFingerprint.ToString(),sourceCopy=setup.EnemyPolicy.Fingerprint,capabilityVersion=c.Version,nextOperation=c.NextOperationId,nextProductionRequest=(uint)i.NextRequestId,productionIntentState=(int)i.State,operationRows=ops,transportRows=cargo,assignmentRows=em.GetBuffer<SkirmishEnemyGroupAssignmentV1>(session,true).Length,constructionPresent=hasConstruction,constructionPhase=construction.Phase,snapshot=string.Join("\n",raw),passed=valid,reason="Actual first-frame current shared AI parts; current accepted assignments permitted; no state initialization/reset/mutation"});
+      if(!valid)throw new InvalidOperationException("Fresh current enemy purchase/capability/construction carryover");
+    }
+    // Primitive pre-assertion observations preserve the actual culprit even on an early failure.
+    static void ObserveFreshIntents(EntityManager em,string id){
+      bool has=em.HasComponent<SkirmishEnemyStrategyComponent>(session);var strategy=has?em.GetComponentData<SkirmishEnemyStrategyComponent>(session):default;
+      Write(new Row{stage="FreshEnemyStrategy",attempt=id,hasStrategy=has,strategyPriority=strategy.Priority.ToString(),lastGroupId=strategy.LastGroupId,counterCommitted=strategy.CounterCommitted,failedAttempts=strategy.FailedAttempts});
+      var observedSetup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+      if(observedSetup.EnemyPolicy!=null){var p=observedSetup.EnemyPolicy;bool exists=em.HasComponent<SkirmishEnemyPlannerV1Component>(session);Write(new Row{stage="FreshEnemyPlanner",attempt=id,passed=exists,snapshot=exists?JsonUtility.ToJson(em.GetComponentData<SkirmishEnemyPlannerV1Component>(session)):"",title=exists?em.GetComponentData<SkirmishEnemyPlannerV1Component>(session).PolicyFingerprint.ToString():"",sourceCopy=p.Fingerprint,reason="Actual current session optional typed planner; no initialization invoked",receipt=p.Hash,memberCount=p.Version,aliveCount=p.MaxDispatchPerDecision});if(em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(session))foreach(var a in em.GetBuffer<SkirmishEnemyGroupAssignmentV1>(session,true))Write(new Row{stage="FreshEnemyAssignment",attempt=id,groupId=a.GroupId,groupOrder=a.Order.ToString(),receipt=a.ActionKey,lastGroupId=a.Revision,snapshot=JsonUtility.ToJson(a),targetId=a.TargetStableId.ToString(),reason="Actual buffer on same session before fresh assertions"});}
+      foreach(var g in em.GetBuffer<SkirmishArmyGroupRecord>(session,true))Write(new Row{stage="FreshGroupIntent",attempt=id,groupId=g.GroupId,faction=g.FactionId,role=g.Role.ToString(),groupOrder=g.LastOrder.ToString(),selected=g.Selected,memberCount=g.MemberCount,aliveCount=g.AliveCount});
+      foreach(var e in Owned(em)){
+        if(!Physical(em,e))continue;var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);bool member=em.HasComponent<SkirmishArmyGroupMembershipComponent>(e),moving=em.HasComponent<SkirmishMoveIntentComponent>(e);var intent=moving?em.GetComponentData<SkirmishMoveIntentComponent>(e):default;
+        string target="";if(intent.AttackTarget!=Entity.Null&&em.Exists(intent.AttackTarget)&&em.HasComponent<SkirmishAttemptOwnedComponent>(intent.AttackTarget))target=em.GetComponentData<SkirmishAttemptOwnedComponent>(intent.AttackTarget).StableObjectId.ToString();
+        Write(new Row{stage="FreshActorIntent",attempt=id,actorSession=o.SessionId.ToString(),actorId=o.StableObjectId.ToString(),actorIndex=e.Index,actorVersion=e.Version,faction=o.FactionId,reservationId=o.ReservationId,role=em.HasComponent<SkirmishUnitRoleComponent>(e)?em.GetComponentData<SkirmishUnitRoleComponent>(e).Role.ToString():"Structure",hasMembership=member,groupId=member?em.GetComponentData<SkirmishArmyGroupMembershipComponent>(e).GroupId:0,snapshot=moving?JsonUtility.ToJson(intent):"",hasMoveIntent=moving,moveOrder=intent.Order.ToString(),intentActive=intent.Active!=0,hasHold=em.HasComponent<HoldPositionOrderTag>(e),hasSelected=em.HasComponent<SelectedUnitTag>(e),targetId=target,targetIndex=intent.AttackTarget.Index,targetVersion=intent.AttackTarget.Version});
+      }
+    }
+    static bool CurrentEnemyOrder(SkirmishEnemyStrategyComponent strategy,SkirmishArmyGroupRecord group){
+      if(group.FactionId!=2||group.GroupId!=strategy.LastGroupId)return false;
+      return strategy.Priority==SkirmishStrategyPriority.AttackBase?(group.LastOrder==SkirmishGroupOrderKind.Move||group.LastOrder==SkirmishGroupOrderKind.Attack):
+        (strategy.Priority==SkirmishStrategyPriority.Hold||strategy.Priority==SkirmishStrategyPriority.DefendHome||strategy.Priority==SkirmishStrategyPriority.Reserve)&&group.LastOrder==SkirmishGroupOrderKind.Hold;
+    }
+    static Dictionary<uint,SkirmishEnemyGroupAssignmentV1> CurrentPolicyAssignments(EntityManager em,SkirmishResolvedSetup setup,string id){
+      var map=new Dictionary<uint,SkirmishEnemyGroupAssignmentV1>();if(setup.EnemyPolicy==null)return map;
+      if(em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString()!=id||!em.HasComponent<SkirmishEnemyPlannerV1Component>(session)||!em.HasBuffer<SkirmishEnemyGroupAssignmentV1>(session))throw new InvalidOperationException("Fresh typed planner missing or wrong current session");
+      var p=setup.EnemyPolicy;var state=em.GetComponentData<SkirmishEnemyPlannerV1Component>(session);float now=em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+      if(state.Initialized!=1||state.PolicyVersion!=p.Version||state.PolicyHash!=p.Hash||state.PolicyFingerprint.ToString()!=p.Fingerprint)throw new InvalidOperationException("Fresh typed planner policy identity mismatch");
+      var keys=new HashSet<uint>();var groups=em.GetBuffer<SkirmishArmyGroupRecord>(session,true);
+      foreach(var a in em.GetBuffer<SkirmishEnemyGroupAssignmentV1>(session,true)){
+        bool own=false;foreach(var g in groups)if(g.GroupId==a.GroupId&&g.FactionId==2)own=true;
+        if(!own||map.ContainsKey(a.GroupId)||a.Revision>state.PlanRevision||a.ActionKey==0||a.ActionKey>state.NextActionKey||!keys.Add(a.ActionKey)||a.OrderAccepted>1||!float.IsFinite(a.AssignedAt)||!float.IsFinite(a.LastIssuedAt)||a.AssignedAt<0||a.LastIssuedAt<a.AssignedAt||a.LastIssuedAt>now)throw new InvalidOperationException("Fresh typed enemy assignment identity/action/time carryover");map.Add(a.GroupId,a);
+      }
+      if(state.DecisionCount==0&&map.Count!=0)throw new InvalidOperationException("Fresh assignments without actual planner decision");return map;
+    }
+    static bool AcceptedPolicyOrder(Dictionary<uint,SkirmishEnemyGroupAssignmentV1> assignments,SkirmishArmyGroupRecord group)=>group.FactionId==2&&assignments.TryGetValue(group.GroupId,out var a)&&a.OrderAccepted==1&&a.Order==group.LastOrder;
+    static void ValidateFreshGroups(EntityManager em,SkirmishResolvedSetup setup,string id){
+      var expected=new List<SkirmishArmyGroupRecord>();var members=new Dictionary<string,uint>();uint open=0;byte faction=0;SkirmishRoleKind role=SkirmishRoleKind.None;int fill=0;
+      for(int i=0;i<setup.Forces.Length;i++){
+        var force=setup.Forces[i];var domain=SkirmishRoleIds.Category(force.RoleKind);bool infantry=domain==SkirmishPopulationCategory.Infantry;
+        for(int n=0;n<Math.Max(1,force.Quantity);n++){
+          if(open==0||force.FactionId!=faction||force.RoleKind!=role||!infantry||fill>=SkirmishRoleIds.InfantrySquadMembers){open=(uint)expected.Count+1;faction=force.FactionId;role=force.RoleKind;fill=0;expected.Add(new SkirmishArmyGroupRecord{GroupId=open,FactionId=faction,Role=role,Domain=domain});}
+          var g=expected[(int)open-1];g.MemberCount++;g.AliveCount++;expected[(int)open-1]=g;fill++;members.Add(force.RoleId+"."+force.FactionId+"."+i+"."+n,open);
+        }
+      }
+      var groups=em.GetBuffer<SkirmishArmyGroupRecord>(session,true);var selection=em.GetComponentData<SkirmishArmySelectionComponent>(session);
+      if(groups.Length!=expected.Count||selection.NextGroupId!=(uint)expected.Count)throw new InvalidOperationException("Fresh native authored group count/IDs carryover");
+      bool has=em.HasComponent<SkirmishEnemyStrategyComponent>(session);var strategy=has?em.GetComponentData<SkirmishEnemyStrategyComponent>(session):default;int currentOrders=0;bool typed=setup.EnemyPolicy!=null;var assignments=CurrentPolicyAssignments(em,setup,id);
+      for(int i=0;i<groups.Length;i++){
+        var g=groups[i];var x=expected[i];if(g.GroupId!=x.GroupId||g.FactionId!=x.FactionId||g.Role!=x.Role||g.Domain!=x.Domain||g.MemberCount!=x.MemberCount||g.AliveCount!=x.AliveCount||g.Selected!=0)throw new InvalidOperationException("Fresh native group ownership/membership/selection carryover");
+        if(g.LastOrder==SkirmishGroupOrderKind.None)continue;
+        if(g.FactionId==1||(typed?!AcceptedPolicyOrder(assignments,g):!has||!CurrentEnemyOrder(strategy,g)))throw new InvalidOperationException("Unexpected player or unattributed enemy group intent on fresh native attempt");currentOrders++;
+      }
+      if(typed){var ps=em.GetComponentData<SkirmishEnemyPlannerV1Component>(session);if((ulong)currentOrders>(ulong)setup.EnemyPolicy.MaxDispatchPerDecision*ps.DecisionCount)throw new InvalidOperationException("Fresh ordered groups exceed actual bounded native decisions");}else if(currentOrders>1)throw new InvalidOperationException("Unexpected multiple legacy startup group orders");
+      var seen=new HashSet<string>();foreach(var e in Owned(em)){
+        if(!Physical(em,e))continue;var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(o.SessionId.ToString()!=id)throw new InvalidOperationException("Old physical actor during fresh group validation");
+        if(em.HasComponent<SkirmishUnitRoleComponent>(e)){
+          string key=o.StableObjectId.ToString();if(o.ReservationId!=0||!members.TryGetValue(key,out uint group)||!seen.Add(key)||!em.HasComponent<SkirmishArmyGroupMembershipComponent>(e)||em.GetComponentData<SkirmishArmyGroupMembershipComponent>(e).GroupId!=group)throw new InvalidOperationException("Fresh owned authored group member identity carryover");
+          if(em.HasComponent<HoldPositionOrderTag>(e)){var g=groups[(int)group-1];if(o.FactionId!=2||g.LastOrder!=SkirmishGroupOrderKind.Hold||(typed?!AcceptedPolicyOrder(assignments,g):!has||!CurrentEnemyOrder(strategy,g)))throw new InvalidOperationException("Fresh player or unattributed enemy Hold carryover");}
+          if(typed&&em.HasComponent<SkirmishMoveIntentComponent>(e)){var intent=em.GetComponentData<SkirmishMoveIntentComponent>(e);var g=groups[(int)group-1];if(intent.Active!=0){if(o.FactionId!=2||!AcceptedPolicyOrder(assignments,g)||intent.Order!=g.LastOrder)throw new InvalidOperationException("Fresh active player/unattributed native intent");var a=assignments[group];if(intent.Order==SkirmishGroupOrderKind.Move&&(Mathf.Abs(intent.DestinationX-a.DestinationX)>.001f||Mathf.Abs(intent.DestinationZ-a.DestinationZ)>.001f))throw new InvalidOperationException("Fresh native Move differs from accepted assignment");if(intent.Order==SkirmishGroupOrderKind.Attack){var t=intent.AttackTarget;if(t==Entity.Null||!em.Exists(t)||!em.HasComponent<SkirmishAttemptOwnedComponent>(t))throw new InvalidOperationException("Fresh Attack target missing native current owner");var targetOwner=em.GetComponentData<SkirmishAttemptOwnedComponent>(t);if(targetOwner.SessionId.ToString()!=id||targetOwner.FactionId!=1||!targetOwner.StableObjectId.Equals(a.TargetStableId))throw new InvalidOperationException("Fresh native Attack target differs from accepted assignment");}}if(em.HasComponent<HoldPositionOrderTag>(e)&&(intent.Active!=0||intent.Order!=SkirmishGroupOrderKind.Hold||intent.AttackTarget!=Entity.Null||intent.Engaged!=0||intent.Cooldown!=0))throw new InvalidOperationException("Fresh accepted Hold retained native intent");}
+        }else if(em.HasComponent<HoldPositionOrderTag>(e))throw new InvalidOperationException("Unexpected structure/unowned group Hold carryover");
+      }
+      if(seen.Count!=members.Count)throw new InvalidOperationException("Incomplete fresh authored group member identities");
+    }
+    static void ObserveFreshResources(EntityManager em,SkirmishResolvedSetup setup,SkirmishExpandedSessionComponent state,SkirmishObjectiveClockComponent clock){
+      string id=state.SessionId.ToString();bool supply=em.HasComponent<SkirmishSharedSupplyInitialized>(session);
+      Write(new Row{stage="FreshResourceState",attempt=id,elapsed=clock.ElapsedSeconds,baselineElapsed=Mathf.Max(.1f,Time.deltaTime*2+.001f),reason="ReadOnlyBeforeUnchangedAssertions;SpawnComplete="+state.SpawnComplete+";SpawnVisualPending="+state.SpawnVisualPending+";InitializationComplete="+state.InitializationComplete+";Phase="+state.Phase+";SupplyInitialized="+supply+";SharedBuildingsReady="+em.HasComponent<SkirmishSharedBuildingsReady>(session)+";ExpectedMaterials="+setup.MaterialsEach+";ExpectedCapacity="+setup.MaterialsCapacityEach+";ExpectedOil="+setup.OilEach+";ExpectedFuel="+setup.UsableFuelEach,paused=clock.Paused!=0,playing=clock.Playing!=0,simulationActive=SkirmishLaunchProjectionBridge.IsActive(em)});
+      for(byte f=1;f<=2;f++){
+        Entity bank=SkirmishMaterialsService.FindEconomy(em,f);bool present=bank!=Entity.Null&&em.Exists(bank)&&em.HasComponent<FactionTacticalMaterialsComponent>(bank);
+        Write(new Row{stage="FreshResourceBank",attempt=id,faction=f,actorIndex=bank.Index,actorVersion=bank.Version,playerMaterials=present?em.GetComponentData<FactionTacticalMaterialsComponent>(bank).Current:-1,playerOil=SkirmishStartingSupplyService.ReadOil(em,session,f),playerFuel=SkirmishStartingSupplyService.ReadFuel(em,session,f),snapshot=present?JsonUtility.ToJson(em.GetComponentData<FactionTacticalMaterialsComponent>(bank)):"",reason="Actual bank flat component snapshot including capacity and every lifetime; actual authoritative floored supply reads before exact assertion",passed=present});
+        Write(new Row{stage="FreshResourceUsableFuel",attempt=id,faction=f,snapshot=SkirmishStartingSupplyService.ReadUsableFuel(em,f).ToString("R",System.Globalization.CultureInfo.InvariantCulture),reason="Actual shared unfloored global usable fuel; read only"});
+      }
+      using var storageQuery=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));using var stores=storageQuery.ToEntityArray(Allocator.Temp);
+      foreach(var e in stores){
+        var storage=em.GetComponentData<BuildingResourceStorageComponent>(e);bool owned=em.HasComponent<SkirmishAttemptOwnedComponent>(e);var owner=owned?em.GetComponentData<SkirmishAttemptOwnedComponent>(e):default;
+        Write(new Row{stage="FreshResourceStorage",attempt=id,faction=storage.OwnerFactionId,actorIndex=e.Index,actorVersion=e.Version,actorId=owned?owner.StableObjectId.ToString():"",actorSession=owned?owner.SessionId.ToString():"",snapshot=JsonUtility.ToJson(storage),reason="Actual all-stores census matches authoritative global ReadOil/ReadFuel scope; current-attempt ownership distinguished, no live state changed"});
+        if(em.HasComponent<BuildingResourceProductionProfileComponent>(e))Write(new Row{stage="FreshResourceProductionProfile",attempt=id,faction=storage.OwnerFactionId,actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(em.GetComponentData<BuildingResourceProductionProfileComponent>(e)),reason="Actual native extraction/refinery rate and batch progress"});
+        if(em.HasComponent<MaterialFabricationComponent>(e))Write(new Row{stage="FreshResourceFabrication",attempt=id,faction=storage.OwnerFactionId,actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(em.GetComponentData<MaterialFabricationComponent>(e)),reason="Actual native fabrication enable/status/block/progress/rate"});
+      }
+    }
+    static void CaptureFresh(EntityManager em,SkirmishMatchState match){
+      var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);var id=state.SessionId.ToString();
+      if(state.SpawnComplete==0||state.SpawnVisualPending!=0||state.Phase!=SkirmishSessionPhase.Playing||freshAttempts.Contains(id))return;
+      ObserveFreshIntents(em,id);
+      var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+      ObserveFreshResources(em,setup,state,clock);ObserveFreshEnemyState(em,setup,id);
+      if(clock.ElapsedSeconds>Mathf.Max(.1f,Time.deltaTime*2+.001f))throw new InvalidOperationException("Fresh native clock missed first rendered/gameplay frame; no timer injection allowed");
+      if(setup.CatalogId!="S005"||setup.DefinitionId!="skirmish.s005"||setup.Seed!=104734||setup.SizeId!=SkirmishSizeId.Standard||setup.DifficultyId!=SkirmishDifficultyId.Regular||setup.ArmyProfileId!=SkirmishArmyProfileId.CombinedArms||setup.StartPackageId!=SkirmishStartPackageId.FieldBase||setup.Readiness!=SkirmishReadinessStage.Field||setup.DeadlineSeconds!=1080||setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||!setup.SharedFog||setup.DevelopmentFullVision)throw new InvalidOperationException("Wrong native authored S005 binding");
+      if(!SkirmishS002AriaRunHarness.NativeStartupRosterMatches(em,session,setup,out int initial,out int delivered)||delivered!=0)throw new InvalidOperationException("Fresh native roster differs from complete authored package");
+      var r=em.GetComponentData<SkirmishResearchStateComponent>(session);var er=em.GetComponentData<SkirmishEnemyResearchStateComponent>(session).State;
+      if(r.Readiness!=SkirmishReadinessStage.Field||er.Readiness!=SkirmishReadinessStage.Field||r.InfantryWeapons+r.VehicleProtection+r.AircraftEfficiency+er.InfantryWeapons+er.VehicleProtection+er.AircraftEfficiency!=0)throw new InvalidOperationException("Fresh research/upgrade carryover");
+      var selection=em.GetComponentData<SkirmishArmySelectionComponent>(session);if(selection.SelectedGroupCount!=0||selection.PageIndex!=0)throw new InvalidOperationException("Fresh native army UI selection/page carryover");ValidateFreshGroups(em,setup,id);
+      int selected=0,held=0,enemyHeld=0,physical=0,shells=0,markers=0;foreach(var e in Owned(em)){if(!Physical(em,e)){shells++;continue;}physical++;var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(o.SessionId.ToString()!=id)throw new InvalidOperationException("Old owned physical actor survived native return");if(em.HasComponent<SelectedUnitTag>(e))selected++;if(em.HasComponent<HoldPositionOrderTag>(e)){if(o.FactionId==1)held++;else enemyHeld++;}}
+      using(var mq=em.CreateEntityQuery(typeof(SelectionMarkerOwner),typeof(LocalTransform)))markers=mq.CalculateEntityCount();
+      int hud=UnityEngine.Object.FindObjectsByType<SkirmishMatchView>(FindObjectsInactive.Include,FindObjectsSortMode.None).Length;
+      var cp=em.GetComponentData<SkirmishCapacityComponent>(session);var ce=em.GetComponentData<SkirmishEnemyCapacityComponent>(session);
+      if(cp.InfantryCap!=setup.InfantryCapEach||cp.GroundCap!=setup.GroundCapEach||cp.AirCap!=setup.TacticalAirCapEach||cp.SupplyCap!=setup.SupplyCapEach||ce.InfantryCap!=cp.InfantryCap||ce.GroundCap!=cp.GroundCap||ce.AirCap!=cp.AirCap||ce.SupplyCap!=cp.SupplyCap||cp.InfantryReserved+cp.GroundReserved+cp.AirReserved+cp.SupplyReserved+ce.InfantryReserved+ce.GroundReserved+ce.AirReserved+ce.SupplyReserved!=0)throw new InvalidOperationException("Fresh actual caps/reservations mismatch");
+      if(em.GetBuffer<SkirmishProductionReservation>(session,true).Length!=0||em.GetBuffer<SkirmishResearchQueueItem>(session,true).Length!=0||selected!=0||held!=0)throw new InvalidOperationException("Native queue/selection/Hold carryover");
+      for(byte f=1;f<=2;f++){var b=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,f));if(b.Current!=setup.MaterialsEach||b.Capacity!=setup.MaterialsCapacityEach||b.LifetimeSpent+b.LifetimeFabricated+b.LifetimeImported+b.LifetimeRewarded+b.LifetimeExported+b.LifetimeConstructionSpent+b.LifetimeRepairSpent+b.LifetimeInfrastructureSpent+b.LifetimeUpgradeSpent+b.LifetimeProductionSpent!=0||SkirmishStartingSupplyService.ReadOil(em,session,f)!=setup.OilEach||SkirmishStartingSupplyService.ReadFuel(em,session,f)!=setup.UsableFuelEach)throw new InvalidOperationException("Fresh native exact starting bank/supply grant mismatch");}
+      int oldPhysical=0,oldShells=0;foreach(var e in oldEntities)if(em.Exists(e)){if(Physical(em,e))oldPhysical++;else oldShells++;}if(oldPhysical!=0)throw new InvalidOperationException("Old physical actor/entity leaked");
+      var forceRows=new List<string>();foreach(var e in Owned(em))if(Physical(em,e)){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);forceRows.Add(o.StableObjectId+"|"+o.FactionId+"|"+o.IsStructure+"|"+(em.HasComponent<SkirmishUnitRoleComponent>(e)?em.GetComponentData<SkirmishUnitRoleComponent>(e).Role.ToString():"Structure"));}forceRows.Sort(StringComparer.Ordinal);string package=string.Join("\n",forceRows)+"\n"+JsonUtility.ToJson(cp)+"\n"+JsonUtility.ToJson(ce);
+      if(freshBaseline==""){freshBaseline=package;baselineOwned=physical;baselineMarkers=markers;}if(package!=freshBaseline||physical!=baselineOwned||markers!=baselineMarkers)throw new InvalidOperationException("Native fresh role/cap/owned-marker package changed or accumulated");
+      freshAttempts.Add(id);attempt=id;using var all=em.GetAllEntities(Allocator.Temp);int allPhysical=0;foreach(var e in all)if(Physical(em,e))allPhysical++;
+      Write(new Row{stage="FreshNativeAttempt",sharedFog=setup.SharedFog,developmentFullVision=setup.DevelopmentFullVision,snapshot=package,freshOrdinal=freshAttempts.Count,totalEntities=all.Length,physicalEntities=allPhysical,cleanupShells=shells,attempt=id,priorAttempt=priorAttempt,seed=setup.Seed,elapsed=clock.ElapsedSeconds,baselineElapsed=Mathf.Max(.1f,Time.deltaTime*2+.001f),owned=physical,oldPhysical=oldPhysical,oldShells=oldShells,markers=markers,hud=hud,selected=selected,hold=held,enemyHold=enemyHeld,groupCount=em.GetBuffer<SkirmishArmyGroupRecord>(session,true).Length,readiness=(int)r.Readiness,initialActors=initial,deliveredActors=delivered,sameBudget=true,sameRoster=true,oldRemoved=true,playerMaterials=SkirmishMaterialsService.Read(em,session,1),enemyMaterials=SkirmishMaterialsService.Read(em,session,2),playerOil=SkirmishStartingSupplyService.ReadOil(em,session,1),enemyOil=SkirmishStartingSupplyService.ReadOil(em,session,2),playerFuel=SkirmishStartingSupplyService.ReadFuel(em,session,1),enemyFuel=SkirmishStartingSupplyService.ReadFuel(em,session,2),managedBytes=GC.GetTotalMemory(false),nativeAllocatedBytes=Profiler.GetTotalAllocatedMemoryLong(),nativeReservedBytes=Profiler.GetTotalReservedMemoryLong(),passed=true});
+    }
+    static void Tick(){try{
+      if(closing){if(EditorApplication.isPlayingOrWillChangePlaymode)return;Call("RestoreS004EditorJourneyOptions");foreach(var name in envNames)Environment.SetEnvironmentVariable(name,savedEnv[name]);if(World.DefaultGameObjectInjectionWorld!=null&&World.DefaultGameObjectInjectionWorld.IsCreated){foreach(var e in Owned(World.DefaultGameObjectInjectionWorld.EntityManager))if(Physical(World.DefaultGameObjectInjectionWorld.EntityManager,e))throw new InvalidOperationException("Owned physical actors after closed Play cleanup");}EditorApplication.update-=Tick;Write(new Row{stage="ClosedLifecycle",passed=!failed,reason=failure,qaOnlyCoordination=true});completion.TrySetResult(failed?1:0);return;}
+      if(EditorApplication.timeSinceStartup>deadline)throw new TimeoutException("1460 exceeded bounded1800s");
+      if(!EditorApplication.isPlaying){
+        if(!EditorApplication.isPlayingOrWillChangePlaymode&&completion!=null&&!completion.Task.IsCompleted){
+          var exitType=Harness.Assembly.GetType("Game.Editor.MissionEditorValidationExit",true);
+          var last=exitType.GetField("LastCompletion",BindingFlags.Static|BindingFlags.NonPublic)??throw new MissingFieldException(exitType.FullName,"LastCompletion");
+          if(last.FieldType!=typeof(int?))throw new InvalidOperationException("Unexpected owned public completion field type");
+          if(last.GetValue(null) is int code&&code!=0){Write(new Row{stage="PublicHarnessFailedAfterPlayStopped",reason="Actual owned MissionEditorValidationExit.LastCompletion="+code+";custom task still pending; fail-close code control only",passed=false,qaOnlyCoordination=true});Fail(new InvalidOperationException("Public normal harness stopped Play with actual nonzero completion="+code+" while owned lifecycle task pending"));}
+        }
+        return;
+      }
+      if(Live(out var em,out var match)){CaptureFresh(em,match);if(coordinated){var c=em.GetComponentData<SkirmishObjectiveClockComponent>(session);bool active=SkirmishLaunchProjectionBridge.IsActive(em);if(active&&!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Actual normal native playing speed not1");Write(new Row{stage="NativeLifecycleRuntime",attempt=match.SessionId.ToString(),elapsed=c.ElapsedSeconds,paused=c.Paused!=0,playing=c.Playing!=0,simulationActive=active,outcome=match.Outcome.ToString()});}}
+      if(!coordinated&&EditorApplication.isPlaying&&Field("manualTouch").GetValue(null) is AriaTouchInputUiSystemHelper t){
+        if(t.IsBusy)return;touch=t;var frameType=Harness.Assembly.GetType("Game.Editor.SkirmishS004ManualInputFrame",true);var frames=UnityEngine.Object.FindObjectsByType(frameType,FindObjectsInactive.Exclude,FindObjectsSortMode.None);if(frames.Length!=1||frames[0].GetType()!=frameType||frames[0] is not MonoBehaviour frame||frame.gameObject.name!="S004ManualControlsProbe"||!frame.gameObject.scene.IsValid()||!frame.isActiveAndEnabled)throw new InvalidOperationException("Native owned manual QA frame/type not unique");qaFrame=frame;originalQaEnabled=qaFrame.enabled;qaFrame.enabled=false;EditorApplication.update-=nativeTick;coordinated=true;phase=1;phaseDeadline=EditorApplication.timeSinceStartup+90;
+        string trace=(string)Method("LiveTracePath").Invoke(null,null);Write(new Row{stage="QaLifecycleCoordination",qaOnlyCoordination=true,tracePath=trace,reason="Suspend only QA one-win Tick and manual auto-combat frame; original native Touch reused; all gameplay systems remain enabled"});
+      }
+    }catch(Exception error){if(closing){failed=true;failure+=";Cleanup:"+error.Message;Write(new Row{stage="ClosedLifecycle",passed=false,reason=failure});EditorApplication.update-=Tick;completion.TrySetResult(1);}else Fail(error);}}
+    static bool Point(Button b,out Vector2 p){var args=new object[]{b,default(Vector2)};bool ok=b!=null&&(bool)Method("TryPresentedButtonPoint").Invoke(null,args);p=(Vector2)args[1];return ok;}
+    static bool Tap(Button b,string action){if(!Point(b,out var p))return false;if(!touch.TryGesture(p,p,.15f,0,Time.unscaledTime))return false;beforeTap=touch.CompletedGestures;phaseDeadline=EditorApplication.timeSinceStartup+90;due=EditorApplication.timeSinceStartup+.3;Write(new Row{stage="NativeControlTouch",attempt=attempt,action=action,completed=beforeTap,dispatched=touch.DispatchedGestures});return true;}
+    static Button Named(string name,Transform under=null){foreach(var b in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))if(b.name==name&&(under==null||b.transform.IsChildOf(under))&&Point(b,out _))return b;return null;}
+    static bool Unobscured(){var v=UnityEngine.Object.FindAnyObjectByType<UIShellView>();return v==null||!v.TryGetRegion(UIShellRegionId.LoadingLayer,out var layer)||layer.CanvasGroup==null||layer.CanvasGroup.alpha<=.01f;}
+    static bool SelectedMarker(EntityManager em,Entity actor,out Row row){
+      var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);row=new Row{stage="NativeSelectedMarkerProbe",attempt=attempt,actorId=owner.StableObjectId.ToString(),actorIndex=actor.Index,actorVersion=actor.Version,role=em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role.ToString(),selected=1};
+      if(!em.HasComponent<UnitSelectionMarkerInstanceReference>(actor))return false;var marker=em.GetComponentData<UnitSelectionMarkerInstanceReference>(actor).Instance;row.markerIndex=marker.Index;row.markerVersion=marker.Version;row.markerExists=marker!=Entity.Null&&em.Exists(marker);if(!row.markerExists)return false;
+      row.markerTagged=em.HasComponent<SelectionMarkerTag>(marker);row.markerParentMatches=em.HasComponent<Parent>(marker)&&em.GetComponentData<Parent>(marker).Value==actor;if(em.HasComponent<LocalTransform>(marker))row.markerScale=em.GetComponentData<LocalTransform>(marker).Scale;
+      if(!em.HasComponent<SelectionMarkerVisualChild>(marker))return false;var child=em.GetComponentData<SelectionMarkerVisualChild>(marker).Value;row.markerChildIndex=child.Index;row.markerChildVersion=child.Version;row.markerChildExists=child!=Entity.Null&&em.Exists(child)&&em.HasComponent<LocalTransform>(child);if(row.markerChildExists)row.markerChildScale=em.GetComponentData<LocalTransform>(child).Scale;
+      row.passed=row.markerTagged&&row.markerParentMatches&&row.markerChildExists&&row.markerScale>0&&row.markerChildScale>0&&!float.IsNaN(row.markerScale)&&!float.IsInfinity(row.markerScale)&&!float.IsNaN(row.markerChildScale)&&!float.IsInfinity(row.markerChildScale);return row.passed;
+    }
+    static double holdDiagnosticDue;static int holdDiagnosticCycle=-1,holdDiagnosticBurst,holdDiagnosticSamples;
+    static object ReadOwnedField(object owner,string name){if(owner==null)return null;return owner.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public)?.GetValue(owner);}
+    static void CaptureHoldDiagnostic(bool beforeTouch=false,MatchOverlayCommandControlsView supplied=null){
+      if(holdDiagnosticCycle!=cycle){holdDiagnosticCycle=cycle;holdDiagnosticBurst=0;holdDiagnosticDue=0;}
+      if(!beforeTouch&&holdDiagnosticBurst>=12&&EditorApplication.timeSinceStartup<holdDiagnosticDue)return;
+      if(holdDiagnosticSamples>=500)return;holdDiagnosticSamples++;holdDiagnosticBurst++;holdDiagnosticDue=EditorApplication.timeSinceStartup+1;
+      try{
+        if(!Live(out var em,out var match))return;var controls=supplied!=null?supplied:UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();var button=controls?.HoldButton;
+        Write(new Row{stage="HoldDiagnosticState",attempt=match.SessionId.ToString(),action=beforeTouch?"BeforeActualHoldTouch":"DuringUnchangedPhase3",reason="ReadOnly;sample="+holdDiagnosticSamples+";noTouchTick/noForceLayout/noCommandInvoke",elapsed=em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds,completed=touch?.CompletedGestures??0,dispatched=touch?.DispatchedGestures??0});
+        using(var selected=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(SkirmishAttemptOwnedComponent))){using var actors=selected.ToEntityArray(Allocator.Temp);foreach(var e in actors){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);bool accepts=new SelectionUiReadModelLookup().CanHoldPosition(em,e,out var rejection);Write(new Row{stage="HoldDiagnosticSelected",attempt=match.SessionId.ToString(),actorSession=o.SessionId.ToString(),actorId=o.StableObjectId.ToString(),actorIndex=e.Index,actorVersion=e.Version,faction=o.FactionId,hasHold=em.HasComponent<HoldPositionOrderTag>(e),hasSelected=true,passed=accepts,reason="NativeCanAccept="+accepts+";Rejection="+rejection+";UnitGrid="+em.HasComponent<UnitGrid>(e)+";UnitMove="+em.HasComponent<UnitMove>(e)+";Passenger="+em.HasComponent<UnitTransportPassenger>(e),snapshot=em.HasComponent<UnitHealth>(e)?JsonUtility.ToJson(em.GetComponentData<UnitHealth>(e)):""});}}
+        using(var intro=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.MatchIntroTransitionComponent))){using var entities=intro.ToEntityArray(Allocator.Temp);Write(new Row{stage="HoldDiagnosticIntroCount",owned=entities.Length,reason="Actual defaultWorld boundaryCount; >1 invalid/locked, count1 requires UiShellState;0missing/unlocked if worldvalid"});foreach(var e in entities)Write(new Row{stage="HoldDiagnosticIntro",actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(em.GetComponentData<Game.UI.Shell.Contracts.Ecs.MatchIntroTransitionComponent>(e)),passed=em.HasComponent<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>(e),reason="HasUiShellState="+em.HasComponent<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>(e)});}
+        using(var finale=em.CreateEntityQuery(typeof(CampaignMissionFinalePresentationComponent))){using var entities=finale.ToEntityArray(Allocator.Temp);foreach(var e in entities)Write(new Row{stage="HoldDiagnosticFinale",actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(em.GetComponentData<CampaignMissionFinalePresentationComponent>(e)),reason="Actual finale; lock only singletonRequired andStage1to3"});}
+        using(var input=em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent))){using var entities=input.ToEntityArray(Allocator.Temp);Write(new Row{stage="HoldDiagnosticInputCount",owned=entities.Length});foreach(var e in entities){Write(new Row{stage="HoldDiagnosticInputState",actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(em.GetComponentData<RtsSelectionInputStateComponent>(e))});if(em.HasBuffer<RtsSelectionCommandIntentRequestElement>(e))foreach(var request in em.GetBuffer<RtsSelectionCommandIntentRequestElement>(e,true))Write(new Row{stage="HoldDiagnosticQueuedRequest",actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(request),action=request.Kind.ToString(),receipt=request.InputReceipt});if(em.HasBuffer<RtsSelectionCommandResultElement>(e))foreach(var result in em.GetBuffer<RtsSelectionCommandResultElement>(e,true))Write(new Row{stage="HoldDiagnosticCommandResult",actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(result),action=result.Kind.ToString(),passed=result.Accepted!=0});}}
+        using(var runtime=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent))){using var entities=runtime.ToEntityArray(Allocator.Temp);foreach(var e in entities)Write(new Row{stage="HoldDiagnosticGameplay",actorIndex=e.Index,actorVersion=e.Version,snapshot=JsonUtility.ToJson(em.GetComponentData<RuntimeGameplayStateComponent>(e))});}
+        foreach(var feedback in UnityEngine.Object.FindObjectsByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None)){var result=feedback.LastCommandResult;Write(new Row{stage="HoldDiagnosticFeedback",controlPath=PathOf(feedback.transform),action=feedback.CurrentCommandMode.ToString(),passed=result.Accepted,reason="HasLast="+feedback.HasLastCommandResult+";Sticky="+feedback.StickyCommandMode+";Reason="+result.ReasonCode+";Message="+result.Message});}
+        if(button==null){Write(new Row{stage="HoldDiagnosticButtonUnavailable",reason="No actual current active HoldButton"});return;}
+        bool presented=Point(button,out var point);Write(new Row{stage="HoldDiagnosticButton",controlPath=PathOf(button.transform),passed=presented,reason="ActualPoint="+presented+";interactable="+button.interactable+";enabled="+button.enabled+";persistentListeners="+button.onClick.GetPersistentEventCount()});
+        if(EventSystem.current!=null&&presented){var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);for(int i=0;i<Math.Min(3,hits.Count);i++){var hit=hits[i];Write(new Row{stage="HoldDiagnosticRaycast",owned=i,controlPath=hit.gameObject!=null?PathOf(hit.gameObject.transform):"",passed=hit.gameObject!=null&&(hit.gameObject==button.gameObject||hit.gameObject.transform.IsChildOf(button.transform)),reason="Actual ordered frontHits; no event dispatch"});}}
+        object calls=typeof(UnityEngine.Events.UnityEventBase).GetField("m_Calls",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(button.onClick);object runtimeCalls=ReadOwnedField(calls,"m_RuntimeCalls");if(runtimeCalls is not System.Collections.IEnumerable listeners){Write(new Row{stage="HoldDiagnosticRuntimeListenersUnknown",reason="Read-only Unity runtime listener field unavailable; neverinvoke/PrepareInvoke"});return;}
+        int listenerCount=0;foreach(object listener in listeners){listenerCount++;object current=listener;Delegate callback=null;for(Type t=current.GetType();t!=null;t=t.BaseType){var field=t.GetField("Delegate",BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.DeclaredOnly);if(field!=null){callback=field.GetValue(current) as Delegate;break;}}
+          if(callback==null){Write(new Row{stage="HoldDiagnosticRuntimeListener",reason="Delegate unknown; listenerType="+current.GetType().FullName});continue;}
+          foreach(var invocation in callback.GetInvocationList()){object binding=invocation.Target;Write(new Row{stage="HoldDiagnosticRuntimeListener",action=invocation.Method.Name,reason="Actual delegate target="+(binding?.GetType().FullName??"static")});
+            if(invocation.Method.Name!="OnHoldButtonClicked"||binding==null)continue;
+            object read=ReadOwnedField(binding,"_selectionUiReadModel");object command=ReadOwnedField(binding,"_selectionUiCommandSystem");var boundView=ReadOwnedField(binding,"_view") as MatchOverlayCommandControlsView;
+            Write(new Row{stage="HoldDiagnosticBinding",passed=boundView==controls,reason="Actual bindingViewMatches="+(boundView==controls)+";readModel="+(read?.GetType().FullName??"null")+";command="+(command?.GetType().FullName??"null")});
+            if(read is ISelectionUiReadModel model)Write(new Row{stage="HoldDiagnosticReadModel",hasSelected=model.HasAnySelectedUnits,passed=model.FocusedUnitCanHold,reason="Actual public readModel;HasAny="+model.HasAnySelectedUnits+";HasFocus="+model.HasFocusedUnit+";CanHold="+model.FocusedUnitCanHold+";HoldReason="+model.FocusedUnitHoldDisabledReason});
+            object lockValue=ReadOwnedField(command,"_isGameplayInputLocked");if(lockValue is Func<bool> locked)Write(new Row{stage="HoldDiagnosticBoundInputLock",passed=!locked(),reason="Actual existing read-only intro/finale lock closure; no Queue call"});
+            object input=ReadOwnedField(command,"_inputSystem");object inputState=ReadOwnedField(input,"_inputStateSystem");var boundWorld=ReadOwnedField(inputState,"_world") as World;object stateValue=ReadOwnedField(inputState,"_stateEntity");Entity boundState=stateValue is Entity state?state:Entity.Null;Write(new Row{stage="HoldDiagnosticBoundInputOwner",actorIndex=boundState.Index,actorVersion=boundState.Version,passed=boundWorld==world&&boundWorld!=null&&boundWorld.IsCreated&&em.Exists(boundState),reason="Read-only cached owner;worldMatches="+(boundWorld==world)+";worldCreated="+(boundWorld!=null&&boundWorld.IsCreated)+";stateExistsInCurrentWorld="+em.Exists(boundState)+";inputStateComponent="+(em.Exists(boundState)&&em.HasComponent<RtsSelectionInputStateComponent>(boundState))});
+          }
+        }Write(new Row{stage="HoldDiagnosticListenerCount",owned=listenerCount,reason="Actual runtime calls read only; persistent count separately recorded"});
+      }catch(Exception error){Write(new Row{stage="HoldDiagnosticReadFailure",reason=error.ToString(),passed=false});}
+    }
+    static bool IntroInputReady(EntityManager em,out Game.UI.Shell.Contracts.Ecs.MatchIntroTransitionComponent state){
+      state=default;
+      using var q=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.MatchIntroTransitionComponent));
+      if(q.CalculateEntityCount()!=1)return false;var e=q.GetSingletonEntity();
+      if(!em.HasComponent<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>(e))return false;
+      state=em.GetComponentData<Game.UI.Shell.Contracts.Ecs.MatchIntroTransitionComponent>(e);
+      if(state.State!=Game.UI.Contracts.MatchIntroTransitionStateKind.Complete||state.InputLocked!=0)return false;
+      using var finale=em.CreateEntityQuery(typeof(CampaignMissionFinalePresentationComponent));
+      if(finale.CalculateEntityCount()==1){var f=finale.GetSingleton<CampaignMissionFinalePresentationComponent>();if(f.Required!=0&&f.Stage is >=1 and <=3)return false;}
+      return true;
+    }
+    static void RenderFrame(){try{
+      if(!coordinated||closing||lastInputFrame==Time.frameCount)return;if(EditorApplication.timeSinceStartup>phaseDeadline)throw new TimeoutException("Native lifecycle UI phase exceeded90s");lastInputFrame=Time.frameCount;touch.Tick(Time.unscaledTime);
+      if(touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0||touch.PlayerInterrupted||!touch.IsRunning)throw new InvalidOperationException("Native lifecycle input violation");
+      if(touch.IsBusy||EditorApplication.timeSinceStartup<due)return;
+      if(phase>=2&&touch.CompletedGestures!=touch.DispatchedGestures)throw new InvalidOperationException("Native Touch dispatch/completion mismatch");
+      bool live=Live(out var em,out var match);
+      if(phase==1){if(!live||!freshAttempts.Contains(match.SessionId.ToString())||match.Phase!=SkirmishPhase.Playing||!SkirmishLaunchProjectionBridge.IsActive(em)||!IntroInputReady(em,out _)||!Unobscured())return;attempt=match.SessionId.ToString();renderedDefeat=false;var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();if(hud==null)return;int n=UnityEngine.Object.FindObjectsByType<SkirmishMatchView>(FindObjectsInactive.Include,FindObjectsSortMode.None).Length;if(baselineHud<0)baselineHud=n;if(n!=baselineHud)throw new InvalidOperationException("HUD roots accumulated");var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();if(tray!=null&&Point(tray.VisibleCardButton(0),out _)){using var process=System.Diagnostics.Process.GetCurrentProcess();var gm=typeof(Profiler).GetMethod("GetAllocatedMemoryForGraphicsDriver",BindingFlags.Public|BindingFlags.Static);Write(new Row{stage="NativeSettledMemory",attempt=attempt,hud=n,managedBytes=GC.GetTotalMemory(false),nativeAllocatedBytes=Profiler.GetTotalAllocatedMemoryLong(),nativeReservedBytes=Profiler.GetTotalReservedMemoryLong(),graphicsBytes=gm==null?-1:(long)gm.Invoke(null,null),residentBytes=process.WorkingSet64,peakResidentBytes=process.PeakWorkingSet64,reason="Measured desktop process/raw memory only; no forcedGC/no invented device budget/no ten-cycle memory plateau pass from architecture"});if(Tap(tray.VisibleCardButton(0),"SelectStartingSquad")){IntroInputReady(em,out var selectionIntro);Write(new Row{stage="NativeIntroInputReady",attempt=attempt,action="SelectStartingSquad",snapshot=JsonUtility.ToJson(selectionIntro),passed=true,reason="Actual singleton UiShell intro Complete/InputLocked0; no delay, queue or state mutation"});phase=2;}}return;}
+      if(phase==2){if(!live||!IntroInputReady(em,out var holdIntro))return;using var selected=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(SkirmishAttemptOwnedComponent));if(selected.CalculateEntityCount()==0)return;using var actors=selected.ToEntityArray(Allocator.Temp);var markerRows=new List<Row>();bool markersReady=true;foreach(var e in actors){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(o.FactionId!=1||o.SessionId.ToString()!=attempt)throw new InvalidOperationException("Foreign/native stale selection");bool ready=SelectedMarker(em,e,out var markerRow);Write(markerRow);markerRows.Add(markerRow);markersReady&=ready;}if(!markersReady)return;foreach(var markerRow in markerRows){markerRow.stage="NativeSelectedMarker";Write(markerRow);}foreach(var e in actors){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);Write(new Row{stage="NativeSelectedActor",attempt=attempt,actorId=o.StableObjectId.ToString(),actorIndex=e.Index,actorVersion=e.Version,role=em.GetComponentData<SkirmishUnitRoleComponent>(e).Role.ToString(),selected=1,passed=true});}var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();if(controls!=null){CaptureHoldDiagnostic(true,controls);if(Tap(controls.HoldButton,"HoldSelectedSquad")){Write(new Row{stage="NativeIntroInputReady",attempt=attempt,action="HoldSelectedSquad",snapshot=JsonUtility.ToJson(holdIntro),passed=true,reason="Actual singleton UiShell intro Complete/InputLocked0 before first Hold; no retry or state mutation"});phase=3;}}return;}
+      if(phase==3){if(!live)return;CaptureHoldDiagnostic();using var selected=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(SkirmishAttemptOwnedComponent));using var actors=selected.ToEntityArray(Allocator.Temp);if(actors.Length==0)return;foreach(var e in actors)if(!em.HasComponent<HoldPositionOrderTag>(e))return;var pause=Named("PauseButton");if(Tap(pause,"Pause"))phase=4;return;}
+      if(phase==4){if(!live)return;var c=em.GetComponentData<SkirmishObjectiveClockComponent>(session);if(c.Paused==0||SkirmishLaunchProjectionBridge.IsActive(em)||!Mathf.Approximately(Time.timeScale,0))return;pauseSnapshot=Snapshot(em,session,true);pauseClock=c.ElapsedSeconds;Write(new Row{stage="NativePausedBaseline",attempt=attempt,elapsed=pauseClock,paused=true,simulationActive=false,snapshot=pauseSnapshot,passed=true});due=EditorApplication.timeSinceStartup+.5;phase=5;return;}
+      if(phase==5){if(!live)return;var c=em.GetComponentData<SkirmishObjectiveClockComponent>(session);string actualAfterPause=Snapshot(em,session,true);Write(new Row{stage="NativePauseComparison",attempt=attempt,elapsed=c.ElapsedSeconds,baselineElapsed=pauseClock,paused=c.Paused!=0,playing=c.Playing!=0,simulationActive=SkirmishLaunchProjectionBridge.IsActive(em),snapshot=actualAfterPause,passed=c.ElapsedSeconds==pauseClock&&c.Paused!=0&&actualAfterPause==pauseSnapshot,reason="ReadOnly actual after-pause snapshot before unchanged exact equality assertion; no tolerance, delay, state writes or retry"});if(c.ElapsedSeconds!=pauseClock||c.Paused==0||actualAfterPause!=pauseSnapshot)throw new InvalidOperationException("Native pause changed actors/queue/resources/selection/caps");Write(new Row{stage="NativePauseConservation",attempt=attempt,elapsed=c.ElapsedSeconds,baselineElapsed=pauseClock,paused=true,snapshot=pauseSnapshot,passed=true});var popup=UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>();if(popup!=null){var label=popup.ExitButton?.GetComponentInChildren<TMP_Text>();if(Rendered(label)&&Matches(label,UiShellRuntimeGateway.Localization.Get("ui.skirmish.surrender","SURRENDER"))&&Tap(popup.ExitButton,"Surrender"))phase=6;}return;}
+      if(phase==6){CaptureConfirmationDiagnostic();if(closing||!live)return;var view=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();if(view==null)return;var confirm=view.transform.Find("SkirmishResult/ConfirmationActions");if(confirm==null||!confirm.gameObject.activeInHierarchy)return;var presentedConfirm=Named("CONFIRM",confirm);if(presentedConfirm!=null&&Point(presentedConfirm,out _))CaptureConfirmationDiagnostic(true);if(Tap(presentedConfirm,"ConfirmSurrender")){oldEntities.Clear();oldEntities.AddRange(Owned(em));phase=7;}return;}
+      if(phase==7){if(!live||match.Phase!=SkirmishPhase.Finished)return;var result=em.GetComponentData<SkirmishResultComponent>(session);var c=em.GetComponentData<SkirmishObjectiveClockComponent>(session);if(match.Outcome!=SkirmishOutcome.Defeat||match.Reason!=SkirmishEndReason.Surrender||result.Outcome!=SkirmishOutcomeKind.Defeat||result.Reason!=SkirmishEndReasonKind.Surrender||result.Frozen==0||result.SessionId.ToString()!=attempt||c.Playing!=0||c.Paused==0||SkirmishLaunchProjectionBridge.IsActive(em))throw new InvalidOperationException("Native Surrender did not produce genuine frozen Defeat");
+        Write(new Row{stage="NativeDefeatSettlementState",attempt=attempt,resultSession=result.SessionId.ToString(),outcome=result.Outcome.ToString(),reason=result.Reason.ToString(),saveAcknowledged=result.SaveAcknowledged,frozen=result.Frozen!=0,elapsed=c.ElapsedSeconds,paused=c.Paused!=0,playing=c.Playing!=0,simulationActive=SkirmishLaunchProjectionBridge.IsActive(em),passed=result.SaveAcknowledged==1});
+        if(result.SaveAcknowledged!=1)return; // Read-only wait for actual native settlement; no repeated outcome callback.
+        if(!UiShellRuntimeGateway.TryReadSkirmish(out var model))return;var view=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();var card=view?.transform.Find("SkirmishResult/CampaignStyleResult");if(card==null)return;var titleField=card.GetComponent<CampaignStyleResultCard>();var text=(TMP_Text)typeof(CampaignStyleResultCard).GetField("title",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(titleField);if(!Rendered(text)||!Matches(text,model.ResultTitle))return;renderedDefeat=true;
+        Write(new Row{stage="NativeFrozenRenderedDefeat",attempt=attempt,resultSession=result.SessionId.ToString(),saveAcknowledged=result.SaveAcknowledged,outcome=match.Outcome.ToString(),reason=match.Reason.ToString(),title=text.text,sourceCopy=model.ResultTitle,elapsed=c.ElapsedSeconds,frozen=true,rendered=true,captionMatches=true,visibleGlyphs=Glyphs(text),viewportMatches=Viewport(text),samplingPhase="CanvasWillRenderCanvases",passed=true});
+        string action=cycle<10?"Replay":"Leave";var button=Named(action,card);if(Tap(button,action)){priorAttempt=attempt;phase=8;}return;}
+      if(phase==8){if(!renderedDefeat)throw new InvalidOperationException("Result action before actual rendered Defeat");if(cycle<10){if(!live||match.SessionId.ToString()==priorAttempt||!freshAttempts.Contains(match.SessionId.ToString()))return;Write(new Row{stage="NativeReplayDestination",attempt=match.SessionId.ToString(),priorAttempt=priorAttempt,action="Replay",passed=true});cycle++;phase=1;phaseDeadline=EditorApplication.timeSinceStartup+90;return;}
+        if(!UiShellRuntimeGateway.TryReadShellState(out var shell)||shell.IsTransitionRunning||!Unobscured()||live)return;
+        if(shell.ActiveRoute!=UIRoute.MainMenu)return;Button menu=null;TMP_Text menuTitle=null;UIShellRouteButtonView menuRoute=null;
+        foreach(var route in UnityEngine.Object.FindObjectsByType<UIShellRouteButtonView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None)){
+          var button=route.GetComponent<Button>();var card=button?.transform.parent;
+          if(button==null||card==null||card.name!="Card_Skirmish"||button.name!="Hotspot"||card.Find("Hotspot")!=button.transform||route.Intent!=UiShellRouteIntent.OpenMenuRoute||route.Route!=UIRoute.QuickCustomSetup||!route.PushHistory||!Point(button,out _))continue;
+          var title=card.Find("Title")?.GetComponent<TMP_Text>();if(title==null||title.transform.parent!=card||!Rendered(title)||!Matches(title,"SKIRMISH"))continue;
+          menu=button;menuTitle=title;menuRoute=route;break;
+        }
+        if(menu==null)return;Write(new Row{stage="NativeMainMenuDestination",attempt=priorAttempt,shellRoute="MainMenu",sessionAbsent=true,rendered=true,captionMatches=true,visibleGlyphs=Glyphs(menuTitle),viewportMatches=Viewport(menuTitle),samplingPhase="CanvasWillRenderCanvases",title=menuTitle.text,sourceCopy=UiLocalizedText.CatalogLabel("SKIRMISH"),controlPath=PathOf(menu.transform),mainMenuTitlePath=PathOf(menuTitle.transform),mainMenuIntent=menuRoute.Intent.ToString(),mainMenuRoute=menuRoute.Route.ToString(),expectedMainMenuCaption=UiLocalizedText.CatalogLabel("SKIRMISH"),actualMainMenuCaption=menuTitle is RTLTMPro.RTLTextMeshPro rtl?rtl.OriginalText:menuTitle.text,exactMainMenuOwner=true,exactMainMenuTitle=true,passed=true});cycle++;if(cycle!=11||freshAttempts.Count!=11)throw new InvalidOperationException("Exactly eleven actual native attempts and ten Replay transitions required");Close(false,"ElevenNativeSurrenderAttemptsTenReplayOneMainMenu");return;
+      }
+    }catch(Exception error){Fail(error);}}
+    static string PathOf(Transform t){if(t==null)return "";var path=t.name;while(t.parent!=null){t=t.parent;path=t.name+"/"+path;}return path;}
+    static int Glyphs(TMP_Text t){int n=0;if(t?.textInfo!=null)for(int i=0;i<t.textInfo.characterCount;i++)if(t.textInfo.characterInfo[i].isVisible)n++;return n;}
+    static bool Viewport(TMP_Text t){var c=t?.GetComponentInParent<Canvas>()?.rootCanvas;return c!=null&&Mathf.Abs(c.pixelRect.width-Screen.width)<=1&&Mathf.Abs(c.pixelRect.height-Screen.height)<=1;}
+    static bool Rendered(TMP_Text t){if(t==null||!t.isActiveAndEnabled||string.IsNullOrWhiteSpace(t.text)||t.color.a<=.01f||t.canvasRenderer.cull||Glyphs(t)==0||!Viewport(t))return false;foreach(var g in t.GetComponentsInParent<CanvasGroup>())if(g.alpha<=.01f)return false;var corners=new Vector3[4];t.rectTransform.GetWorldCorners(corners);var c=t.GetComponentInParent<Canvas>().rootCanvas;var a=RectTransformUtility.WorldToScreenPoint(c.renderMode==RenderMode.ScreenSpaceOverlay?null:c.worldCamera,corners[0]);var b=RectTransformUtility.WorldToScreenPoint(c.renderMode==RenderMode.ScreenSpaceOverlay?null:c.worldCamera,corners[2]);return new Rect(Vector2.Min(a,b),Vector2.Max(a,b)-Vector2.Min(a,b)).Overlaps(Screen.safeArea);}
+    static bool Matches(TMP_Text t,string s){if(string.IsNullOrEmpty(s))return false;string expected=UiLocalizedText.CatalogLabel(s);string raw=t is RTLTMPro.RTLTextMeshPro rtl?rtl.OriginalText:t.text;return raw==expected||raw==V3LocalizedTextBindingView.ShapeForRendering(expected);}
+    static void ObserveTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 p){if(!coordinated||!ReferenceEquals(driver,touch))return;// Existing harness RecordTouchEvidence observes this same native manualTouch release exactly once.
+      File.AppendAllText(TouchPath,JsonUtility.ToJson(new ContactRow{frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Lifecycle",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=p,matchFinished=UiShellRuntimeGateway.TryReadSkirmish(out var m)&&m.Finished,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,commandAuditActive=AriaCommandEvidence.Active})+"\n");
+      Write(new Row{stage="NativeTouchAudit",attempt=attempt,action=kind,completed=driver.CompletedGestures,dispatched=driver.DispatchedGestures,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,violations=AriaCommandEvidence.Violations});}
+    static void ObserveReceipt(string op,uint receipt,bool verified){if(!coordinated)return;Write(new Row{stage="NativeCommandReceipt",attempt=attempt,action=op,receipt=receipt,verified=verified});}
+    static void Fail(Exception error){Debug.LogException(error);Write(new Row{stage="LifecycleFailure",attempt=attempt,reason=error.ToString(),passed=false});Close(true,error.Message);}
+    static void Close(bool abort,string reason){if(closing)return;
+      WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="ClosedDiagnostic",reason=reason});closing=true;failed=abort;failure=reason;Canvas.willRenderCanvases-=RenderFrame;AriaTouchInputUiSystemHelper.Evidence-=ObserveTouch;AriaCommandEvidence.Recorded-=ObserveReceipt;
+      if(touch!=null&&(touch.IsBusy||touch.CompletedGestures!=touch.DispatchedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0||AriaCommandEvidence.Violations!=0)){failed=true;failure+=";NativeTouchAuditNotClosed";}
+      Write(new Row{stage="NativeLifecycleSummary",passed=!failed,reason=failure,completed=touch?.CompletedGestures??0,dispatched=touch?.DispatchedGestures??0,unexpected=touch?.UnexpectedSamples??0,interventions=touch?.PhysicalInterventions??0,violations=AriaCommandEvidence.Violations});
+      EditorApplication.update-=nativeTick;Call("RestoreBackgroundInput");Call("StopS004ManualProbe");Call("StopS004AriaConsentProbe");Call("StopS004MenuProbe");if(qaFrame!=null)qaFrame.enabled=originalQaEnabled;
+      SessionState.SetBool("Warline.S002.AriaRun",false);
+      var type=Harness.Assembly.GetType("Game.Editor.MissionEditorValidationExit",true);type.GetMethod("Complete",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{!failed});
+      Debug.Log("[S005Lifecycle1460] result="+(!failed?"Passed":"Failed")+" cycles="+cycle+" scope=NormalNativeSurrenderTenReplayLifecycle wins=0 playerReady=0 reason="+failure);
+    }
+    // Read-only bridge keeps internal projection internal; no gameplay API action from adapter.
+
+    const string ConfirmationDiagnosticPath=Root+"native1460-confirmation-ui-diagnostic.jsonl";
+    static double diagnosticDue;static int diagnosticSample,consecutiveBlockedProbe;
+    [Serializable] public sealed class ConfirmationDiagnosticRow
+    {
+        public string stage="",scope="ReadOnlyNativeConfirmationUiRaycastNotGameplayFix",attempt="",reason="",path="",caption="",shellRoute="",shellMode="",shellPhase="",pendingAction="",module="",canvasMode="",sortingLayerName="",eventSystemPath="";
+        public int confirmedBlockedProbeCount,frame,cycle,phase,sample,hitRank,hitCount,sortingOrder,rootSortingOrder,sortingLayer,depth,targetDisplay,visibleGlyphs;
+        public uint completed,dispatched;
+        public double wall;
+        public float timeScale,elapsed,x,y,screenWidth,screenHeight,rectX,rectY,rectWidth,rectHeight,alpha,distance;
+        public bool captureBeforePresentedConfirmTouch,exists,activeSelf,activeHierarchy,enabled,interactable,actualPointAccepted,safeArea,rendered,confirming,confirmingFieldKnown,pendingFieldKnown,viewIsOpen,paused,simulationActive,shellTransition,eventSystemPresent,isConfirmHit,isPauseHit,overrideSorting,canvasRootPresent,raycasterPresent,raycasterEnabled,blocksRaycasts;
+    }
+    static void WriteConfirmationDiagnostic(ConfirmationDiagnosticRow row){row.frame=Time.frameCount;row.wall=EditorApplication.timeSinceStartup;row.timeScale=Time.timeScale;row.attempt=attempt;row.cycle=cycle;row.phase=phase;row.sample=diagnosticSample;File.AppendAllText(ConfirmationDiagnosticPath,JsonUtility.ToJson(row)+"\n");}
+    static void BeginConfirmationDiagnostic(){if(File.Exists(ConfirmationDiagnosticPath))throw new IOException("Preserve1215 confirmation diagnostic");using(File.Open(ConfirmationDiagnosticPath,FileMode.CreateNew)){}diagnosticDue=0;diagnosticSample=consecutiveBlockedProbe=0;WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="Protocol",reason="Passive bounded1Hz actual phase6 state/raycast/caption/Canvas; original90s phase gate and normal Touch path unchanged; no ForceUpdate/layout/input/Confirm invocation"});}
+    static string DiagnosticPath(Transform t)=>t==null?"":t.parent==null?t.name:DiagnosticPath(t.parent)+"/"+t.name;
+    static Rect DiagnosticRect(RectTransform t,Canvas canvas){if(t==null)return default;var corners=new Vector3[4];t.GetWorldCorners(corners);var camera=canvas!=null&&canvas.renderMode!=RenderMode.ScreenSpaceOverlay?canvas.worldCamera:null;var a=RectTransformUtility.WorldToScreenPoint(camera,corners[0]);var b=RectTransformUtility.WorldToScreenPoint(camera,corners[2]);return new Rect(Mathf.Min(a.x,b.x),Mathf.Min(a.y,b.y),Mathf.Abs(a.x-b.x),Mathf.Abs(a.y-b.y));}
+    static void DiagnosticCanvasChain(Transform t,string stage){if(t==null)return;foreach(var c in t.GetComponentsInParent<Canvas>(true)){var r=c.GetComponent<GraphicRaycaster>();WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage=stage,path=DiagnosticPath(c.transform),exists=true,activeSelf=c.gameObject.activeSelf,activeHierarchy=c.gameObject.activeInHierarchy,enabled=c.enabled,sortingOrder=c.sortingOrder,rootSortingOrder=c.rootCanvas!=null?c.rootCanvas.sortingOrder:0,sortingLayer=c.sortingLayerID,sortingLayerName=c.sortingLayerName,canvasMode=c.renderMode.ToString(),overrideSorting=c.overrideSorting,targetDisplay=c.targetDisplay,canvasRootPresent=c.rootCanvas!=null,raycasterPresent=r!=null,raycasterEnabled=r!=null&&r.isActiveAndEnabled});}foreach(var g in t.GetComponentsInParent<CanvasGroup>(true))WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage=stage+"Group",path=DiagnosticPath(g.transform),exists=true,activeHierarchy=g.gameObject.activeInHierarchy,alpha=g.alpha,interactable=g.interactable,blocksRaycasts=g.blocksRaycasts});}
+    static void CaptureConfirmationDiagnostic(bool beforePresentedConfirmTouch=false)
+    {
+        double now=EditorApplication.timeSinceStartup;if((!beforePresentedConfirmTouch&&now<diagnosticDue)||diagnosticSample>=1000)return;diagnosticDue=now+1;diagnosticSample++;
+        var view=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();var pause=UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>();
+        var r=new ConfirmationDiagnosticRow{stage="ConfirmationState",captureBeforePresentedConfirmTouch=beforePresentedConfirmTouch,exists=view!=null,activeHierarchy=view!=null&&view.gameObject.activeInHierarchy,viewIsOpen=view!=null&&view.IsOpen,screenWidth=Screen.width,screenHeight=Screen.height,completed=touch!=null?touch.CompletedGestures:0,dispatched=touch!=null?touch.DispatchedGestures:0};
+        if(UiShellRuntimeGateway.TryReadShellState(out var shell)){r.shellRoute=shell.ActiveRoute.ToString();r.shellMode=shell.CurrentMode.ToString();r.shellPhase=shell.Phase.ToString();r.shellTransition=shell.IsTransitionRunning;}
+        if(Live(out var em,out var match)&&em.HasComponent<SkirmishObjectiveClockComponent>(session)){var c=em.GetComponentData<SkirmishObjectiveClockComponent>(session);r.elapsed=c.ElapsedSeconds;r.paused=c.Paused!=0;r.simulationActive=SkirmishLaunchProjectionBridge.IsActive(em);}
+        if(view!=null){var flags=BindingFlags.NonPublic|BindingFlags.Instance;var cf=typeof(SkirmishMatchView).GetField("confirming",flags);var pf=typeof(SkirmishMatchView).GetField("pendingAction",flags);r.confirmingFieldKnown=cf!=null;r.pendingFieldKnown=pf!=null;r.confirming=cf!=null&&(bool)cf.GetValue(view);r.pendingAction=pf==null?"Unknown":pf.GetValue(view).ToString();}
+        WriteConfirmationDiagnostic(r);
+        if(view!=null){var tf=typeof(SkirmishMatchView).GetField("confirmText",BindingFlags.NonPublic|BindingFlags.Instance);var text=tf==null?null:tf.GetValue(view) as TMP_Text;WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="ConfirmationPrompt",exists=text!=null,path=text==null?"":DiagnosticPath(text.transform),caption=text==null?"":text.text,rendered=Rendered(text),activeHierarchy=text!=null&&text.gameObject.activeInHierarchy,visibleGlyphs=text==null?0:Glyphs(text)});}
+        var confirm=view!=null?view.transform.Find("SkirmishResult/ConfirmationActions"):null;
+        WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="ConfirmationPanel",path=DiagnosticPath(confirm),exists=confirm!=null,activeSelf=confirm!=null&&confirm.gameObject.activeSelf,activeHierarchy=confirm!=null&&confirm.gameObject.activeInHierarchy});
+        if(pause!=null){WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="PausePanel",path=DiagnosticPath(pause.transform),exists=true,activeSelf=pause.gameObject.activeSelf,activeHierarchy=pause.gameObject.activeInHierarchy});DiagnosticCanvasChain(pause.transform,"PauseCanvas");}
+        Button button=null;if(confirm!=null)foreach(var b in confirm.GetComponentsInChildren<Button>(true))if(b.name=="CONFIRM"){button=b;break;}
+        if(button==null){WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="ConfirmButton",exists=false,reason="Missing actual CONFIRM descendant; no UI invocation"});return;}
+        var canvas=button.GetComponentInParent<Canvas>();var rect=DiagnosticRect(button.transform as RectTransform,canvas);bool accepted=Point(button,out var point);if(!accepted)point=rect.center;
+        var label=button.GetComponentInChildren<TMP_Text>(true);
+        WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="ConfirmButton",path=DiagnosticPath(button.transform),exists=true,activeSelf=button.gameObject.activeSelf,activeHierarchy=button.gameObject.activeInHierarchy,enabled=button.enabled,interactable=button.IsInteractable(),actualPointAccepted=accepted,x=point.x,y=point.y,rectX=rect.x,rectY=rect.y,rectWidth=rect.width,rectHeight=rect.height,safeArea=Screen.safeArea.Contains(point),caption=label==null?"":label.text,visibleGlyphs=label==null?0:Glyphs(label),rendered=Rendered(label),reason=accepted?"Existing native guard accepts point":"Existing native guard rejects; raw rendered rect center used for read-only raycast only"});
+        DiagnosticCanvasChain(button.transform,"ConfirmCanvas");
+        var es=UnityEngine.EventSystems.EventSystem.current;WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="EventSystem",eventSystemPresent=es!=null,eventSystemPath=es==null?"":DiagnosticPath(es.transform),enabled=es!=null&&es.isActiveAndEnabled});if(es==null)return;
+        var results=new List<UnityEngine.EventSystems.RaycastResult>();es.RaycastAll(new UnityEngine.EventSystems.PointerEventData(es){position=point},results);
+        for(int i=0;i<results.Count;i++){var h=results[i];var t=h.gameObject!=null?h.gameObject.transform:null;WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="RaycastHit",hitRank=i,hitCount=results.Count,path=DiagnosticPath(t),exists=t!=null,activeHierarchy=t!=null&&t.gameObject.activeInHierarchy,module=h.module==null?"":h.module.GetType().FullName,sortingLayer=h.sortingLayer,sortingOrder=h.sortingOrder,depth=h.depth,distance=h.distance,x=point.x,y=point.y,isConfirmHit=t!=null&&(t==button.transform||t.IsChildOf(button.transform)),isPauseHit=t!=null&&pause!=null&&(t==pause.transform||t.IsChildOf(pause.transform))});}
+        if(results.Count==0)WriteConfirmationDiagnostic(new ConfirmationDiagnosticRow{stage="RaycastEmpty",hitCount=0,x=point.x,y=point.y});
+
+
+    }
+
+    static class SkirmishLaunchProjectionBridge {
+      static MethodInfo Resolve(){
+        const string name="Game.Composition.SkirmishLaunchProjection";Type type=null;
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()){
+          var candidate=assembly.GetType(name,false);if(candidate==null)continue;
+          if(type!=null&&type!=candidate)throw new TypeLoadException("Multiple exact native launch projection types");type=candidate;
+        }
+        if(type==null||type.FullName!=name)throw new TypeLoadException("Exact native launch projection type absent");
+        MethodInfo method=null;
+        foreach(var candidate in type.GetMethods(BindingFlags.Public|BindingFlags.Static|BindingFlags.DeclaredOnly)){
+          if(candidate.Name!="IsSimulationActive")continue;var parameters=candidate.GetParameters();
+          if(candidate.ReturnType!=typeof(bool)||candidate.IsGenericMethod||parameters.Length!=1||parameters[0].ParameterType!=typeof(EntityManager))continue;
+          if(method!=null)throw new AmbiguousMatchException("Exact native simulation predicate not unique");method=candidate;
+        }
+        return method??throw new MissingMethodException(name,"public static bool IsSimulationActive(EntityManager)");
+      }
+      public static bool IsActive(EntityManager em)=> (bool)Resolve().Invoke(null,new object[]{em});
+    }
+}
+
+
+// External QA observation. No lifecycle/input driver, gameplay state, asset loading, GC or unload calls.
+public static class UnityResetResourceCensus1460V1
+{
+    const int MaximumObjects=500000,MaximumBoundaries=64;
+    static string directory,sourceHash,study;static bool active,performanceWindow;static int ordinal,nextToken;
+    static Dictionary<ulong,Identity> previous=new();
+    sealed class Identity {public WeakReference<UObject> weak;public int token;public string type;}
+    [Serializable] sealed class MemoryRow {public string stage="",reason="";public long nativeAllocated=-1,nativeReserved=-1,graphicsDriver=-1,managed=-1,resident=-1,peakResident=-1;public double editorTime;public int frame;}
+    [Serializable] sealed class Header
+    {
+        public string schema="WarlineResetResourceCensusV1",study="",sourceHash="",boundary="",phase="",attempt="",expectedAttempt="",sceneName="",scenePath="",shellMode="",shellRoute="",matchPhase="";
+        public int ordinal,cycle,frame,sessionCount,ownedCurrentPhysical,ownedOldPhysical,ownedCleanupShells,allEntities,hudRoots,selectionMarkers;
+        public long worldSequence;public float elapsed;public bool playing,compiled,isUpdating,complete,hasWorld,frameBudgetIncluded=false,loadedAssemblyFreshnessQualified=false;
+        public int objectRows,edgeRows,sceneRows,assemblyRows,worldRows,observerWeakEntries,initialObjectRows,referenceEndpointRows;public bool referenceClosureCaptured;public double startedAt,finishedAt;
+    }
+    [Serializable] sealed class ObjectRow
+    {
+        public string kind="Object",type="",name="",assetPath="",assetGuid="",sceneName="",scenePath="",identityStatus="",captureSource="";
+        public ulong instanceId;public int lifetimeToken,hideFlags;public long assetLocalId,estimatedBytes=-1;
+        public bool persistent,sceneValid,sceneLoaded,continuityProven,continuityUnknown;
+    }
+    [Serializable] sealed class EdgeRow {public string kind="Reference",relation="",sceneName="",scenePath="";public ulong ownerId,referencedId;public bool ownerPersistent;}
+    [Serializable] sealed class SceneRow {public string kind="Scene",name="",path="";public int buildIndex,rootCount;public bool loaded,active;}
+    [Serializable] sealed class AssemblyRow {public string kind="Assembly",name="",location="",mvid="";public bool sourceFreshnessQualified=false;}
+    [Serializable] sealed class WorldRow {public string kind="World",name="",flags="",ownedAttempts="",sessionAttempts="";public long sequence;public int entities,ownedPhysical,ownedCleanupShells;public bool isDefault;}
+    public static void Run()=>Debug.Log("[UnityResetResourceCensus1460V1] loadedOnly=1 nativeCollectionStarted=0");
+    public static void Begin(string outputDirectory,string completeSourceHash,string studyId)
+    {
+        if(active||string.IsNullOrEmpty(studyId)||!System.Text.RegularExpressions.Regex.IsMatch(completeSourceHash??"","^[0-9a-f]{64}$"))throw new ArgumentException("Unique study and complete candidate sourceHash required");
+        if(!Path.IsPathFullyQualified(outputDirectory)||Directory.Exists(outputDirectory))throw new IOException("New absolute external census directory required");
+        string full=Path.GetFullPath(outputDirectory);if(!full.StartsWith("/private/tmp/",StringComparison.Ordinal))throw new IOException("External census must be under/private/tmp");
+        Directory.CreateDirectory(full);directory=full;sourceHash=completeSourceHash;study=studyId;ordinal=nextToken=0;previous=new();active=true;performanceWindow=false;
+    }
+    public static void BeginPerformanceWindow(){if(!active||performanceWindow)throw new InvalidOperationException("Unique separately-owned performance window required");performanceWindow=true;}
+    public static void EndPerformanceWindow(){if(!active||!performanceWindow)throw new InvalidOperationException("No performance window owned");performanceWindow=false;}
+    public static void End()
+    {
+        if(!active||performanceWindow)throw new InvalidOperationException("Finish separate performance window first");
+        File.WriteAllText(Path.Combine(directory,"closed.json"),"{\"schema\":\"WarlineResetResourceCensusV1\",\"boundaries\":"+ordinal+",\"gameplayWritten\":false,\"forcedGC\":false,\"resourcesUnloaded\":false,\"frameBudgetQualified\":false}");
+        previous.Clear();active=false;directory=null;
+    }
+    // Caller invokes only after its unchanged public lifecycle assertions at settled equivalent boundaries.
+    public static void CaptureBoundary(string boundary,string phase,int cycle,string expectedAttempt)
+    {
+        if(!active||performanceWindow||ordinal>=MaximumBoundaries||cycle<0||string.IsNullOrEmpty(boundary))throw new InvalidOperationException("Bounded capture outside performance window required");
+        if(phase!="FreshMatch"&&phase!="PostUnloadMenu"&&phase!="PostUnloadSetup"&&phase!="InitialMenu")throw new ArgumentException("Explicit comparable normal lifecycle phase required");
+        int index=ordinal;string prefix=Path.Combine(directory,index.ToString("D3"));var header=new Header{study=study,sourceHash=sourceHash,boundary=boundary,phase=phase,cycle=cycle,ordinal=index,expectedAttempt=expectedAttempt??"",frame=Time.frameCount,playing=Application.isPlaying,compiled=!EditorApplication.isCompiling,isUpdating=EditorApplication.isUpdating,startedAt=EditorApplication.timeSinceStartup};
+        if(!header.compiled||header.isUpdating)throw new InvalidOperationException("Actual Editor must be settled before census");
+        using var memory=new StreamWriter(File.Open(prefix+"-memory.jsonl",FileMode.CreateNew));Write(memory,Memory("Before"));
+        try
+        {
+            CaptureContext(header);if(phase=="FreshMatch"&&(header.sessionCount!=1||header.attempt!=header.expectedAttempt||string.IsNullOrEmpty(header.attempt)||header.matchPhase!="Playing"))throw new InvalidOperationException("Fresh capture needs exact current live attempt");
+            if(phase!="FreshMatch"&&header.sessionCount!=0)throw new InvalidOperationException("Post-unload/menu capture cannot retain expanded session");
+            if(phase=="PostUnloadMenu"&&header.shellRoute!="MainMenu")throw new InvalidOperationException("Actual MainMenu route required");
+            if(phase=="PostUnloadSetup"&&header.shellRoute!="QuickCustomSetup")throw new InvalidOperationException("Actual setup route required");
+            using(var writer=new StreamWriter(File.Open(prefix+"-scenes.jsonl",FileMode.CreateNew))){var activeScene=SceneManager.GetActiveScene();header.sceneName=activeScene.name;header.scenePath=activeScene.path;for(int i=0;i<SceneManager.sceneCount;i++){var scene=SceneManager.GetSceneAt(i);Write(writer,new SceneRow{name=scene.name,path=scene.path,loaded=scene.isLoaded,active=scene==activeScene,buildIndex=scene.buildIndex,rootCount=scene.rootCount});header.sceneRows++;}}
+            using(var writer=new StreamWriter(File.Open(prefix+"-assemblies.jsonl",FileMode.CreateNew))){foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()){var name=assembly.GetName().Name;if(!name.StartsWith("Game.",StringComparison.Ordinal))continue;Write(writer,new AssemblyRow{name=name,location=assembly.IsDynamic?"":assembly.Location,mvid=assembly.ManifestModule.ModuleVersionId.ToString("D")});header.assemblyRows++;}}
+            CaptureWorlds(prefix,header);
+            var current=new Dictionary<ulong,Identity>();
+            using(var objectWriter=CompressedWriter(prefix+"-objects.jsonl.gz"))
+            using(var edgeWriter=CompressedWriter(prefix+"-edges.jsonl.gz"))
+            {
+                // Initial inventory precedes native reference getters, which may lazily load assets.
+                foreach(var obj in Resources.FindObjectsOfTypeAll<UObject>())
+                {
+                    if(obj==null||!SupportedObject(obj))continue;
+                    if(header.objectRows>=MaximumObjects)throw new InvalidOperationException("Object census cap exceeded; partial inventory is not proof");
+                    var row=Describe(obj,current);row.captureSource="InitialSweep";Write(objectWriter,row);header.objectRows++;header.initialObjectRows++;
+                }
+                var materials=new List<Material>();
+                foreach(var renderer in Resources.FindObjectsOfTypeAll<Renderer>())
+                {
+                    if(renderer==null)continue;
+                    materials.Clear();renderer.GetSharedMaterials(materials);
+                    foreach(var material in materials)if(material!=null)Edge(edgeWriter,objectWriter,current,renderer,material,"RendererSharedMaterial",header);
+                    Mesh mesh=null;
+                    if(renderer is SkinnedMeshRenderer skinned)mesh=skinned.sharedMesh;
+                    else{var filter=renderer.GetComponent<MeshFilter>();if(filter!=null)mesh=filter.sharedMesh;}
+                    if(mesh!=null)Edge(edgeWriter,objectWriter,current,renderer,mesh,"RendererSharedMesh",header);
+                }
+                foreach(var material in Resources.FindObjectsOfTypeAll<Material>())
+                {
+                    if(material==null)continue;
+                    foreach(var property in material.GetTexturePropertyNames())
+                    {
+                        var texture=material.GetTexture(property);
+                        if(texture!=null)Edge(edgeWriter,objectWriter,current,material,texture,"MaterialTexture:"+property,header);
+                    }
+                }
+            }
+            if(header.objectRows!=header.initialObjectRows+header.referenceEndpointRows)throw new InvalidOperationException("Reference-closed object counts differ");
+            previous=current;header.observerWeakEntries=previous.Count;header.referenceClosureCaptured=true;
+            header.complete=true;ordinal++;
+        }
+        finally{header.finishedAt=EditorApplication.timeSinceStartup;Write(memory,Memory("After"));File.WriteAllText(prefix+"-header.json",JsonUtility.ToJson(header));}
+    }
+    static void CaptureContext(Header h)
+    {
+        var world=World.DefaultGameObjectInjectionWorld;h.hasWorld=world!=null&&world.IsCreated;if(!h.hasWorld)return;h.worldSequence=(long)world.SequenceNumber;var em=world.EntityManager;
+        using(var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishMatchState))){h.sessionCount=q.CalculateEntityCount();if(h.sessionCount==1){var e=q.GetSingletonEntity();h.attempt=em.GetComponentData<SkirmishExpandedSessionComponent>(e).SessionId.ToString();var m=em.GetComponentData<SkirmishMatchState>(e);h.matchPhase=m.Phase.ToString();h.elapsed=m.ElapsedSeconds;}}
+        using(var q=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.UiShellStateComponent))){if(q.CalculateEntityCount()==1){var s=q.GetSingleton<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>();h.shellMode=s.CurrentMode.ToString();h.shellRoute=s.ActiveRoute.ToString();}}
+        using(var q=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IgnoreComponentEnabledState})){using var owned=q.ToEntityArray(Allocator.Temp);foreach(var e in owned){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);bool physical=Physical(em,e);if(!physical)h.ownedCleanupShells++;else if(o.SessionId.ToString()==h.attempt&&h.attempt.Length>0)h.ownedCurrentPhysical++;else h.ownedOldPhysical++;}}
+        using(var all=em.GetAllEntities(Allocator.Temp))h.allEntities=all.Length;
+        using(var q=em.CreateEntityQuery(typeof(SelectionMarkerOwner)))h.selectionMarkers=q.CalculateEntityCount();
+        h.hudRoots=UObject.FindObjectsByType<Game.UI.Runtime.SkirmishMatchView>(FindObjectsInactive.Include,FindObjectsSortMode.None).Length;
+    }
+    static void CaptureWorlds(string prefix,Header h)
+    {
+        using var writer=new StreamWriter(File.Open(prefix+"-worlds.jsonl",FileMode.CreateNew));
+        foreach(var world in World.All)
+        {
+            if(world==null||!world.IsCreated)continue;
+            var em=world.EntityManager;var row=new WorldRow{name=world.Name,flags=world.Flags.ToString(),sequence=(long)world.SequenceNumber,isDefault=world==World.DefaultGameObjectInjectionWorld};
+            using(var all=em.GetAllEntities(Allocator.Temp))row.entities=all.Length;
+            var ownedAttempts=new SortedSet<string>(StringComparer.Ordinal);var sessions=new SortedSet<string>(StringComparer.Ordinal);
+            using(var q=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IgnoreComponentEnabledState}))
+            {using var owned=q.ToEntityArray(Allocator.Temp);foreach(var e in owned){var id=em.GetComponentData<SkirmishAttemptOwnedComponent>(e).SessionId.ToString();if(Physical(em,e)){row.ownedPhysical++;ownedAttempts.Add(id);}else row.ownedCleanupShells++;}}
+            using(var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent))){using var entities=q.ToEntityArray(Allocator.Temp);foreach(var e in entities)sessions.Add(em.GetComponentData<SkirmishExpandedSessionComponent>(e).SessionId.ToString());}
+            row.ownedAttempts=string.Join("|",ownedAttempts);row.sessionAttempts=string.Join("|",sessions);Write(writer,row);h.worldRows++;
+        }
+    }
+    static StreamWriter CompressedWriter(string path)=>new StreamWriter(new GZipStream(File.Open(path,FileMode.CreateNew),System.IO.Compression.CompressionLevel.Fastest));
+    static bool Physical(EntityManager em,Entity e)=>em.HasComponent<LocalTransform>(e)||em.HasComponent<LocalToWorld>(e)||em.HasComponent<UnitHealth>(e)||em.HasComponent<UnitGrid>(e)||em.HasComponent<RuntimeBuildingCombatInfo>(e)||em.HasComponent<BuildingResourceStorageComponent>(e)||em.HasComponent<SkirmishUnitRoleComponent>(e)||em.HasComponent<SelectionMarkerOwner>(e);
+    static ObjectRow Describe(UObject obj,Dictionary<ulong,Identity> current)
+    {
+        ulong id=obj.GetEntityId().GetRawData();if(current.ContainsKey(id))throw new InvalidOperationException("Duplicate native object identity in census");string type=obj.GetType().FullName;var row=new ObjectRow{instanceId=id,type=type,name=obj.name,hideFlags=(int)obj.hideFlags,persistent=EditorUtility.IsPersistent(obj),assetPath=AssetDatabase.GetAssetPath(obj)};
+        bool existed=previous.TryGetValue(id,out var old);UObject prior=null;bool reachable=existed&&old.weak.TryGetTarget(out prior);row.continuityProven=reachable&&prior!=null&&prior==obj&&old.type==type;row.continuityUnknown=existed&&!reachable;
+        row.lifetimeToken=row.continuityProven?old.token:++nextToken;row.identityStatus=row.continuityProven?"SameLiveNativeReference":row.continuityUnknown?"WeakReferenceUnavailable_ContinuityUnknown":existed?"PreviousReferenceDestroyedOrDifferent":"FirstObserved";
+        current.Add(id,new Identity{weak=new WeakReference<UObject>(obj),token=row.lifetimeToken,type=type});
+        if(row.persistent){if(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj,out string guid,out long local)){row.assetGuid=guid;row.assetLocalId=local;}}
+        var go=obj as GameObject;if(go==null&&obj is Component component)go=component.gameObject;if(go!=null){var scene=go.scene;row.sceneValid=scene.IsValid();if(row.sceneValid){row.sceneName=scene.name;row.scenePath=scene.path;row.sceneLoaded=scene.isLoaded;}}
+        try{row.estimatedBytes=Profiler.GetRuntimeMemorySizeLong(obj);}catch{row.estimatedBytes=-1;}return row;
+    }
+    static bool SupportedObject(UObject obj)=>obj is GameObject||obj is Component||obj is Mesh||obj is Material||obj is Texture||obj is ScriptableObject;
+    static void EnsureEndpoint(StreamWriter objectWriter,Dictionary<ulong,Identity> current,UObject obj,Header h)
+    {
+        if(obj==null||!SupportedObject(obj))throw new InvalidOperationException("Reference endpoint absent or unsupported; no omitted edge");
+        ulong id=obj.GetEntityId().GetRawData();
+        if(current.TryGetValue(id,out var captured))
+        {
+            if(!captured.weak.TryGetTarget(out var prior)||prior==null||prior!=obj||captured.type!=obj.GetType().FullName)throw new InvalidOperationException("Reference endpoint native identity changed during census");
+            return;
+        }
+        if(h.objectRows>=MaximumObjects)throw new InvalidOperationException("Referenced object census cap exceeded; partial inventory is not proof");
+        var row=Describe(obj,current);row.captureSource="ReferencedEndpoint";Write(objectWriter,row);h.objectRows++;h.referenceEndpointRows++;
+    }
+    static void Edge(StreamWriter writer,StreamWriter objectWriter,Dictionary<ulong,Identity> current,UObject owner,UObject referenced,string relation,Header h)
+    {
+        EnsureEndpoint(objectWriter,current,owner,h);EnsureEndpoint(objectWriter,current,referenced,h);
+        var row=new EdgeRow{ownerId=owner.GetEntityId().GetRawData(),referencedId=referenced.GetEntityId().GetRawData(),relation=relation,ownerPersistent=EditorUtility.IsPersistent(owner)};if(owner is Component c){row.sceneName=c.gameObject.scene.name;row.scenePath=c.gameObject.scene.path;}Write(writer,row);h.edgeRows++;
+    }
+    static MemoryRow Memory(string stage)
+    {
+        var r=new MemoryRow{stage=stage,frame=Time.frameCount,editorTime=EditorApplication.timeSinceStartup,nativeAllocated=Profiler.GetTotalAllocatedMemoryLong(),nativeReserved=Profiler.GetTotalReservedMemoryLong(),managed=GC.GetTotalMemory(false)};
+        try{var m=typeof(Profiler).GetMethod("GetAllocatedMemoryForGraphicsDriver",BindingFlags.Static|BindingFlags.Public);if(m!=null)r.graphicsDriver=(long)m.Invoke(null,null);}catch{r.reason+="GraphicsUnavailable;";}
+        try{using var process=System.Diagnostics.Process.GetCurrentProcess();r.resident=process.WorkingSet64;r.peakResident=process.PeakWorkingSet64;}catch{r.reason+="ResidentUnavailable;";}return r;
+    }
+    static void Write<T>(StreamWriter writer,T value)=>writer.WriteLine(JsonUtility.ToJson(value));
+}
+
+// External QA adapter only. Calls the read-only census; never launches a lifecycle or issues gameplay/input.
+public static class UnityResetResourceLifecycleAdapter1460V1
+{
+    static System.Type service;static string output;static bool active,failed;
+    static readonly System.Collections.Generic.HashSet<string> seen=new();
+    [System.Serializable] sealed class Event {public string stage="",nativeStage="",attempt="",reason="";public int cycle;public bool nativePassed,censusFailed;}
+    public static void Run()=>UnityEngine.Debug.Log("[UnityResetResourceLifecycleAdapter1460V1] loadedOnly=1 lifecycleStarted=0");
+    public static void Begin(string uniqueDirectory,string sourceHash,string studyId)
+    {
+        if(active)throw new System.InvalidOperationException("Adapter already owns a study");
+        service=null;foreach(var assembly in System.AppDomain.CurrentDomain.GetAssemblies()){var candidate=assembly.GetType("UnityResetResourceCensus1460V1",false);if(candidate==null)continue;if(service!=null)throw new System.InvalidOperationException("Duplicate loaded census type");service=candidate;}
+        if(service==null||!service.IsPublic||!service.IsAbstract||!service.IsSealed)throw new System.TypeLoadException("Unique public static read-only census required");
+        Exact("Begin",typeof(string),typeof(string),typeof(string));Exact("CaptureBoundary",typeof(string),typeof(string),typeof(int),typeof(string));Exact("End");
+        Exact("Begin",typeof(string),typeof(string),typeof(string)).Invoke(null,new object[]{uniqueDirectory,sourceHash,studyId});
+        output=System.IO.Path.Combine(uniqueDirectory,"adapter.jsonl");using(System.IO.File.Open(output,System.IO.FileMode.CreateNew)){}active=true;failed=false;seen.Clear();Record(new Event{stage="AdapterStarted",reason="No lifecycle launch; existing unchanged public driver owns input/outcomes/closure"});
+    }
+    static System.Reflection.MethodInfo Exact(string name,params System.Type[] parameters)
+    {
+        var method=service.GetMethod(name,System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public,null,parameters,null);
+        if(method==null||method.ReturnType!=typeof(void)||method.DeclaringType!=service)throw new System.MissingMethodException("Exact read-only census API "+name);return method;
+    }
+    // Invoke synchronously immediately after the existing lifecycle Write has persisted the original row.
+    // Only existing successful assertions are observed; no phase/clock/callback/gameplay mutation.
+    public static void OnLifecycleRow(string nativeStage,int cycle,string attempt,bool nativePassed)
+    {
+        if(!active)return;
+        if(nativeStage=="ClosedLifecycle")
+        {
+            if(!nativePassed)failed=true;
+            try{Exact("End").Invoke(null,null);}catch(System.Exception error){failed=true;Record(new Event{stage="CensusFailure",nativeStage=nativeStage,attempt=attempt,cycle=cycle,nativePassed=nativePassed,censusFailed=true,reason=error.ToString()});}
+            Record(new Event{stage="AdapterClosed",nativeStage=nativeStage,attempt=attempt,cycle=cycle,nativePassed=nativePassed,censusFailed=failed});active=false;service=null;return;
+        }
+        string phase=Phase(nativeStage);if(phase==null||!nativePassed||failed)return;
+        string key=nativeStage+"|"+cycle+"|"+attempt;if(!seen.Add(key))return;
+        try{Exact("CaptureBoundary",typeof(string),typeof(string),typeof(int),typeof(string)).Invoke(null,new object[]{nativeStage,phase,cycle,phase=="FreshMatch"?attempt:""});Record(new Event{stage="CapturedActualBoundary",nativeStage=nativeStage,attempt=attempt,cycle=cycle,nativePassed=true});}
+        catch(System.Exception error){failed=true;Record(new Event{stage="CensusFailure",nativeStage=nativeStage,attempt=attempt,cycle=cycle,nativePassed=nativePassed,censusFailed=true,reason=error.ToString()});}
+    }
+    static string Phase(string stage)=>stage=="FreshNativeAttempt"?"FreshMatch":stage=="NativeMainMenuDestination"?"PostUnloadMenu":null;
+    static void Record(Event row)=>System.IO.File.AppendAllText(output,UnityEngine.JsonUtility.ToJson(row)+"\n");
+}

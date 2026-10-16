@@ -1,0 +1,24 @@
+{
+  "result": "Failed",
+  "qualified": false,
+  "failure_category": "NativePreAttemptRenderingFailure",
+  "native_failure_reasons": [
+    "incompletePackedRenderInitialization"
+  ],
+  "wrapper_exit": 2,
+  "native_attempt_observed": false,
+  "provenance_errors": [
+    "Actual checked wrapper zero exit absent",
+    "Unique actual current native contact trace path absent/ambiguous"
+  ],
+  "cameraAccepted": false,
+  "fullMissionCertified": false,
+  "playerReady": false,
+  "cruise_exercised": false,
+  "pending": [
+    "native rendering readiness diagnosis",
+    "fresh normal-input capture",
+    "owner screenshot/readability review",
+    "normal mission Victory/result/return"
+  ]
+}

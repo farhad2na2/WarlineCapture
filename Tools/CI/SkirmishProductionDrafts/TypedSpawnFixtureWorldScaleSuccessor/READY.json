@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "result": "SourceReviewedAndOwningTypechecked_NativePending",
+  "manifestSha256": "57f777c8eab537970e922d4c5ab7d3ab3692bed4e039a02f23c2782e9b55b781",
+  "sourceSha256": "1a5e995bff4d4a8fb66eebb2af1e7c0f5ab43a660b62cbe78d2e7de02da19a89",
+  "runtimeChanged": false,
+  "assertionsWeakened": false,
+  "controlsUnchanged": 5,
+  "independentSourceReview": "authoring_foundation clear57f777c8 actual-beforef62d/source1a5e; inverse scale and projectededge checks inspected",
+  "analyticControl": {
+    "path": "Tools\\CI\\SkirmishProductionDrafts\\TypedSpawnFixtureWorldScaleSuccessor\\analytic-control.json",
+    "sha256": "ebb43aac3c40a1ef2d5e681a3076e1f83f9638e78dbea5219b7a5638fb9660a1",
+    "scope": "Numeric algebra only, not Unity execution"
+  },
+  "coherentOwningProof": {
+    "path": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/installed-resume-owning-nrt4blbn/result.json",
+    "sha256": "daa1c1d107884e694171af47bd4dbd68bd585ca5d6c47369be97c7026e4c1aee",
+    "result": "PassedStrict160EditorTestsExplicit15",
+    "all15Consumed": true,
+    "mismatches": 0,
+    "noFallback": true
+  },
+  "finalCompositionReview": {
+    "path": "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/INDEPENDENT_FINAL_REVIEW.json",
+    "sha256": "1521f79c69af4fe5459522a66049d17b7349f1cf19ca6fd3ecf871e714e91ce4"
+  },
+  "nativeFailurePreserved": {
+    "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared-native-preparation-20261015-01/failed-native-two-fixtures.zip",
+    "sha256": "b74421ca0f41c74cfe4c427bd065389a8a6afd76ecf7a939a3aa5c54c0d1b290",
+    "cause": "Source fixture envelope units were mistaken for actual projected metres; runtime correctly blocked narrowpad edge crossing"
+  },
+  "nextNative": "Installed shared verification entry; never recreate already installed metadata or rerun oldcachehash refresh",
+  "nativeControlsPassed": false,
+  "cameraMissionAcceptance": false,
+  "assetsNativeGitWrites": false
+}

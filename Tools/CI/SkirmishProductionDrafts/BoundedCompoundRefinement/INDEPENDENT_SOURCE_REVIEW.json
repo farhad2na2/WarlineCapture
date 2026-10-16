@@ -1,0 +1,20 @@
+{
+  "outcome": "BoundedSourceReviewClearTypeAndNativePending",
+  "manifest_sha256": "2487c28f37ecb1c73af91aca36ccdccac38bd89cc4bb38d7c7d471b98d3177a9",
+  "exact_two_source_and_before_pins": true,
+  "findings": [],
+  "review": [
+    "Optin flag isonlysetbynewentry andrestoredfinally; existingthreepasspolicyunchanged",
+    "Originalcompounds anddiscovery0 all3size failures retainedbefore16/32/64 candidateexpansions",
+    "Actual axisalignedtypedpad helperguardspreventrotatedAABBshortcut; envelopeclippedtoactualprojectedlayout, Campaignplayablebounds andgrid",
+    "Eachcandidateexpandsfromoriginalrectangles, refusesfactionoverlap, malformedbounds andnoadditionalarea",
+    "Maximumsixpasses bounds4discovery+2strict; existingnormalfacilityallocator/simultaneousreservations/fullforcepacking/routequeries andstrictpad/repair/circulationchecksretained",
+    "No Assets, physicalsource, canonicalbudget, launchseed, publicationorcameraacceptance changes"
+  ],
+  "limitations": [
+    "Expansion is triggered forincompletefacilities only; army/path-only failuresremainhonestfailedgates",
+    "No guaranteeanyexpandedcompoundfits; exactsourcefit/nativeownership/cleanup andnormalmatchingseedsstillpending",
+    "Owningproof intentionallyhelduntilrootBatchnativeDLLrelease"
+  ],
+  "compiler_or_native_run_by_reviewer": false
+}

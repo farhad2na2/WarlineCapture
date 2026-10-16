@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "wrapperExit": 0,
+  "marker": "[SkirmishProducerMessageTests] result=Passed tests=3",
+  "tests": 3,
+  "sourceHash": "673bb90fc2893ccf53adb658a6edc2213940b1fcffa409ce2c8799d92c8f6c58",
+  "changedSourceFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs"
+  ],
+  "materialsUnchanged": true,
+  "nativeFlightCertification": false
+}

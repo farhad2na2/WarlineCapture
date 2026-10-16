@@ -1,0 +1,32 @@
+{
+  "manifest_sha256": "f9e8f33ad1745d203b6888b6dc7aec2beddb390a190bc8dcaef271f4c0cb13b6",
+  "proof": "Logs/SkirmishProduction/Offline/legacy-source-fallback-z94qbkgx/result.json",
+  "proof_sha256": "dbe8068a170c2230e01cd22ee427c4015e78ee98322fc3bd114313fb74a2fdf8",
+  "records": [
+    {
+      "assembly": "Game.Editor",
+      "sources": 836,
+      "reference_arguments": 354,
+      "exit_code": 0
+    },
+    {
+      "assembly": "Game.Tests.Editor",
+      "sources": 760,
+      "reference_arguments": 332,
+      "exit_code": 0
+    }
+  ],
+  "mismatches": [],
+  "no_fallback": true,
+  "parent_proof": "Logs/SkirmishProduction/Offline/late-ecs-5ea4p5ng/result.json",
+  "parent_proof_sha256": "478326206245b3a26fc421806fbefba268d79be7c3e42d07554600096e6d276b",
+  "offline_control_result_sha256": "8a5d4c4ce90fdc6b496762fdd3900c504282b0727c1d29e32e373669d3a97883",
+  "additional_required_marker": "[SkirmishLegacySourceResolutionControls] result=Passed explicitPresets=2 compatibilityFallbacks=1 ordinarySelections=3 nativeJobs=0",
+  "native_identity_schema_version": 2,
+  "old_expected_metadata_must_regenerate": true,
+  "existing_combined_execute_method": "Game.Editor.SkirmishLegacyProductionControls.RunLegacyAndOpeningWitnessPreparation",
+  "native_jobs": 0,
+  "sampling_coverage_credit": 0,
+  "native_execution": false,
+  "checkpoint_plan_9a710": "HOLD; successor pins/native failure evidence append required before staging"
+}

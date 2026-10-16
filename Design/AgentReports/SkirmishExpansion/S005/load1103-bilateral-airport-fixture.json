@@ -1,0 +1,65 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005BilateralAirportPrerequisite1103.cs",
+      "entry": "S005BilateralAirportPrerequisite1103.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "'MatchSceneView' does not contain a definition for 'MatchBootstrap' and no accessible extension method 'MatchBootstrap' accepting a first argument of type 'MatchSceneView' could be found (are you missing a using directive or an assembly reference?)",
+          "line": 209,
+          "column": 179,
+          "id": "CS1061"
+        },
+        {
+          "severity": "error",
+          "message": "'WorldUnmanaged' does not contain a definition for 'UpdateSystem' and no accessible extension method 'UpdateSystem' accepting a first argument of type 'WorldUnmanaged' could be found (are you missing a using directive or an assembly reference?)",
+          "line": 235,
+          "column": 88,
+          "id": "CS1061"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralAirportPrerequisite1103.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralAirportPrerequisite1103.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralAirportPrerequisite1103.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 128,
+          "column": 288,
+          "id": "CS0649"
+        }
+      ],
+      "compileMs": 384,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005BilateralAirportPrerequisite1103_f74cb178f4be45eb810abba73e32e454",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

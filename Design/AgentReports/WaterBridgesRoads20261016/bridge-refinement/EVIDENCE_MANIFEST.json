@@ -1,0 +1,749 @@
+{
+  "files": [
+    {
+      "path": "AshLinePort-after-bridge-0-oblique.png",
+      "bytes": 1891740,
+      "sha256": "a2f4823c4abe4dc7daa0edd2434f922a84e21c44da4c2e45bb8337cd06a53ee2",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-after-bridge-0-player.png",
+      "bytes": 1784848,
+      "sha256": "b93f01e53415c0ab8a41f39268eafb241065dc206c20f4a92124dc7ed91eee74",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-after-bridge-1-oblique.png",
+      "bytes": 1937038,
+      "sha256": "e3a7ed2dbdb2cc9c8df02981fe17e1b7fe28c4ce88c611ccf6cc2da02f94f0c2",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-after-bridge-1-player.png",
+      "bytes": 1853947,
+      "sha256": "04a784943429a3dd858dc6b9d3ed768a12f2fe4c5d2e172eabd916114ef94ade",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-after-detail.png",
+      "bytes": 2039798,
+      "sha256": "522877c09e224ff1c4c058f541e1bf03960a0eaed98efa8c1dfacc5cbb02f5af",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-after-overview.png",
+      "bytes": 1956887,
+      "sha256": "8bd5d11d4b75df6474ddd39de8d35b892d43192297862ad6541617edc73b8c81",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-audit.txt",
+      "bytes": 10790,
+      "sha256": "dc466aafe77e4999972337559051a0e373449a1f270c84895bdf07996816f007",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-before-bridge-oblique.png",
+      "bytes": 1521400,
+      "sha256": "0d8ec106832f5c21123b99726b89ade45707ccde369752b6aab96105e12d3f85",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-before-bridge-player.png",
+      "bytes": 1336733,
+      "sha256": "dbfe3fad74d7d564e1a1722b52e1e0c8a1edb3a8d929907f9b42e57534b1d06e",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-before-detail.png",
+      "bytes": 2038309,
+      "sha256": "72012548c2dd67c1fa471124c8574f6088f7bdd4b533ffa788803e99b12a3050",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-before-overview.png",
+      "bytes": 2023739,
+      "sha256": "013bfe20bb004314486f2d52858eacf1efa976e886b87afa28d2bb2119ba5e00",
+      "committed": false
+    },
+    {
+      "path": "AshLinePort-final-bridge-0-oblique.png",
+      "bytes": 1888164,
+      "sha256": "881ce57b48ada294bfdf44505f616060bb28de5e03fc7fcc7494b0c595d1cdac",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-final-bridge-0-player.png",
+      "bytes": 1779932,
+      "sha256": "0fb76bda742d5a1f2d9ca27e4be5e251d7e769636ea766cae7039532f90d2a2d",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-final-bridge-1-oblique.png",
+      "bytes": 1928744,
+      "sha256": "38bc29e31ccc71d64a3d8acdba3fc3d59c9c1ced0687c315bdbad3cbbb261b9a",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-final-bridge-1-player.png",
+      "bytes": 1824284,
+      "sha256": "490a76dc98c5f081bb34793f8f5c3d25d2350f75f3b8426ad4adb55f25117a83",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-final-detail.png",
+      "bytes": 2039893,
+      "sha256": "17c0bbfeb767efa2a7ffb3ea00e90fdb4b0572328c8d22c9b7859a02d20c5833",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-final-overview.png",
+      "bytes": 1956922,
+      "sha256": "a4904619b80da4c9378452e9525ff6f795bf9ff95699805a7a6a31235b78ffb9",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-receipt.json",
+      "bytes": 855,
+      "sha256": "0b0ce0cd30e597c9509955bd1415cf242f6b9fee9676eae7945bc14f9faa29fc",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after-bridge-0-oblique.png",
+      "bytes": 1936465,
+      "sha256": "bb94a053070ffe573be0b66c27d98bace61658d68c082f2508f3bf55e7f70fb5",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after-bridge-0-player.png",
+      "bytes": 1911104,
+      "sha256": "9773cd3da87ded05a1ee55c2e0a14587ce443e8d1512b7cbd3e0078bf348aaea",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after-bridge-1-oblique.png",
+      "bytes": 1924756,
+      "sha256": "9c6f72be24989338c66640597c15181e4714bbef0c3b5bfa7dd07a0f69f2d804",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after-bridge-1-player.png",
+      "bytes": 1910907,
+      "sha256": "a400eb333b9740cd3b0ce760aefa59ef7c3e58cd4a500f55ee2d4dc15978d5fc",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1864201,
+      "sha256": "cd620c960b465a103a247c4db4638ac67cc8a943726583a105928a039d31090b",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2290954,
+      "sha256": "79d532dbfacb9f5856b5de5449660a61088d1604b3b526686f4fa12b3f2b3c04",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-audit.txt",
+      "bytes": 10776,
+      "sha256": "3f00f43f4ceae8ae5a8ee75f206cb6af1a2de72db15d1712fd181f4c79db016d",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-before-bridge-oblique.png",
+      "bytes": 1489285,
+      "sha256": "75a557b170168b86cbe9bfd43c094d7f040ab80e00847a173c69fb122814aef8",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-before-bridge-player.png",
+      "bytes": 1411107,
+      "sha256": "6c0c5bc18b48ea11cdff0631f2e68f235d3328d71fb156ae48a832dbe7e309d3",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-before-detail.png",
+      "bytes": 1859633,
+      "sha256": "7b16b65e8c77c05f49845349d40017eddbbd05bd90ad7e2448e7dc25badf8946",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-before-overview.png",
+      "bytes": 2230326,
+      "sha256": "2d9f6e1a72da7a426c39e27d1e3a8eaaa748c7016166dd73f9971355fdeee526",
+      "committed": false
+    },
+    {
+      "path": "CH05M02TrustUnderFire-final-bridge-0-oblique.png",
+      "bytes": 1930185,
+      "sha256": "f72ef24f1edc1b6ac7604c247f20d98692619c55eb1ac273a91e97907f859c9b",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-final-bridge-0-player.png",
+      "bytes": 1895510,
+      "sha256": "a0e4f613d40e6f2e713f28b0a4d7a263a75edabf5f844c5fba8da2eb8ed418b3",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-final-bridge-1-oblique.png",
+      "bytes": 1915820,
+      "sha256": "4cbedb9ca3039f58d9c0b922fd995a05ad16d4c2f0358d25dc76518ddc761be9",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-final-bridge-1-player.png",
+      "bytes": 1889511,
+      "sha256": "9f7c5414f189e934537fd45fd7a71c5103878c5f933fcf0b5b52e3c2bf35c7a2",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-final-detail.png",
+      "bytes": 1864279,
+      "sha256": "38c3d7f236b223c37db3d153c0fa811b27d533c8edef4857b057fe343f6fd32d",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-final-overview.png",
+      "bytes": 2290786,
+      "sha256": "9db6dd9179b20150ea8daf301ce0d3c6ac17c17f2bc9ead022681f88cd49b222",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-receipt.json",
+      "bytes": 862,
+      "sha256": "a10a01633cf31918b619473f893c56f8f7b88bc2400583c5667465a7f0fd3c66",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-after-bridge-0-oblique.png",
+      "bytes": 1592017,
+      "sha256": "3165a6be60bc8fb540be6285d87205a31c86954b5a579d7d12e0f72c5b1e1ef9",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-after-bridge-0-player.png",
+      "bytes": 1466157,
+      "sha256": "20e3ca75a6d112decf5bc300ab1aff3aebd8904e61303bb932a45554dbc96be4",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-after-bridge-1-oblique.png",
+      "bytes": 1688639,
+      "sha256": "65d6d2d8b81c91ca03d206bc9f5621b083868944045e0e894afa712c8213a8d7",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-after-bridge-1-player.png",
+      "bytes": 1417538,
+      "sha256": "d004dd894776ab974632f2dd5c3a0c28ba40ccce3e61c24601147950ce961531",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-after-detail.png",
+      "bytes": 2051147,
+      "sha256": "7f03e90b5316eee9b60008f3e4b230430f53d1418febf6f2adf77529661fc77d",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-after-overview.png",
+      "bytes": 2331682,
+      "sha256": "ede7e9e03da71244e040fae17174cb8c6413f14aba3d7f51ec150a2fac989ec6",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-audit.txt",
+      "bytes": 42682,
+      "sha256": "8f21409bc65a81718a02012b3d5b5ef97e0b0fd233d6d61fecb01c908248c694",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-before-bridge-oblique.png",
+      "bytes": 1636141,
+      "sha256": "86f9ccf83657b1bc5ee68e519387feef8899212ff5d3b4b119c94a8a0113053a",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-before-bridge-player.png",
+      "bytes": 1476936,
+      "sha256": "66086cf68d7e218e41b29c67d644f4f0970eef2c24068af04160558beea72685",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-before-detail.png",
+      "bytes": 2051144,
+      "sha256": "5c8d94d61edd5830c5496483fbd6439e76c6a907f0b7e1bffa17d1fe3e45bf19",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-before-overview.png",
+      "bytes": 2331916,
+      "sha256": "4f8c401bf4dd731693d253310cbef7b78ffe63a6661092f228abb0afe8dc3712",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-final-bridge-0-oblique.png",
+      "bytes": 1592131,
+      "sha256": "92495c0f0e29d395208521e30aa0ea1a4cc737a28218c4bd228d3272d9a26fc5",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-final-bridge-0-player.png",
+      "bytes": 1465535,
+      "sha256": "05fa69f5263b1990cffdea7c202320bdd75f248f2fa0c3e1c38bf0bd524b6e51",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-final-bridge-1-oblique.png",
+      "bytes": 1687134,
+      "sha256": "699392b945ee8b1efdf3e5de74345f555c2194489cb16ff210ab132c755a754d",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-final-bridge-1-player.png",
+      "bytes": 1415950,
+      "sha256": "584065b50527dae1fdc965e4942e67fb41a70c826011441f817f3fc04c8af250",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-final-detail.png",
+      "bytes": 2051147,
+      "sha256": "7f03e90b5316eee9b60008f3e4b230430f53d1418febf6f2adf77529661fc77d",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-final-overview.png",
+      "bytes": 2342712,
+      "sha256": "e1b721a53dfcbfb761fc7127cdc244387147a0ee1e0cb00d6a5586d9ecab6d4b",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-isolated-bridge-player.png",
+      "bytes": 169978,
+      "sha256": "01901758cb6a7f70a917d8bfa02da7b340f80e74472dd4537082952ed29620c2",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-isolated-detail.png",
+      "bytes": 99851,
+      "sha256": "fe5b10e408179e853c2f0a7d2db7bcf22f22f1f393a6cc903f3ce37ba9f9cc31",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-isolated-overview.png",
+      "bytes": 33383,
+      "sha256": "cfe17b488681fa3a9f04e23fdfed86d4092a15e854a86419f6b193c669e76c7d",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-receipt.json",
+      "bytes": 3137,
+      "sha256": "c9959712436bff4cc905b9c8798dc02c82ea96a34ee6af2e2d514eb413bdc305",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-without-flat-paving-bridge-player.png",
+      "bytes": 1481669,
+      "sha256": "61e3b870fe14b2cbfbfa286d4a917e9ccf47b9aafb5fa8fdcdb1985d64f88eb6",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-without-flat-paving-detail.png",
+      "bytes": 2064991,
+      "sha256": "bd261458c6b8275f45eebd94842ee8896093925fabb966b00339d508be7e8953",
+      "committed": false
+    },
+    {
+      "path": "DenseCity-without-flat-paving-overview.png",
+      "bytes": 2063741,
+      "sha256": "0992a6116f9a70da5f987a5aeb325bf954ebba11c4057ffa3c6d6237793308a3",
+      "committed": false
+    },
+    {
+      "path": "README.md",
+      "bytes": 5190,
+      "sha256": "947b812dd4cd7a745d42d2233ed0ea5b48c693e564cbf2b655a5c0508c08386c",
+      "committed": true
+    },
+    {
+      "path": "VALIDATION.json",
+      "bytes": 10508,
+      "sha256": "65eb1f7f86928b4c4c72a73485ff23000124f02efeaae00ccce14245000c1345",
+      "committed": true
+    },
+    {
+      "path": "audit-01.log",
+      "bytes": 247419,
+      "sha256": "2e093b521825f0a28d4907e9359aa10095300c7ff104648bd078fe2fe840d03d",
+      "committed": false
+    },
+    {
+      "path": "audit-01.log.gz",
+      "bytes": 20296,
+      "sha256": "6fcc980c8eaa888d34322f4787f9adca5687d7854e39887ead4bf310e6e61cb1",
+      "committed": true
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-after-bridge-0-oblique.png",
+      "bytes": 1741506,
+      "sha256": "dae3632f7c84298ef7833493ee910e9075943e5f86134a8be12633f903d2af40",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-after-bridge-0-player.png",
+      "bytes": 1557325,
+      "sha256": "23de1caae8ffe4706ac16cd724e290acbbd9b5e54e729d87fbaa3b9d5f8cff18",
+      "committed": true
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-after-bridge-1-oblique.png",
+      "bytes": 1785682,
+      "sha256": "ed891d0629f80200f81a63a8f0f8b5b41503c02fe739c25514bc17335d6f8a99",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-after-bridge-1-player.png",
+      "bytes": 1630596,
+      "sha256": "4db83e9552577999fc7cc7d5696045d028c83c74af487a3ac6b5432775b5a8f6",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-after-detail.png",
+      "bytes": 2038720,
+      "sha256": "f606a39d9c374e5e1953d84d1225faf0cb567d8dd385ae3452ee34a638223abe",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-after-overview.png",
+      "bytes": 2040036,
+      "sha256": "a897a8e8eea4926b20af21799ff5e94874225afba50f2fd022f966c5d0e2385c",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/AshLinePort-receipt.json",
+      "bytes": 855,
+      "sha256": "c9269c9d8f5a9eaa2a7cb5a4805b20423cb03debf58526dabdedb2a2b97b2964",
+      "committed": true
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-after-bridge-0-oblique.png",
+      "bytes": 1811757,
+      "sha256": "f5f544ff61db9d5de9c974447f10d4468a806dc249f7d5fab0e105c281d02cf4",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-after-bridge-0-player.png",
+      "bytes": 1704556,
+      "sha256": "8b311e4ae62b8e5867d2d8077d210ff135bf8eb2a631fe3ef56e8941028aeab8",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-after-bridge-1-oblique.png",
+      "bytes": 1797733,
+      "sha256": "16bc20153346841e1a4a48802f38e8c118ca4144eedb09027546ebc86d689dd6",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-after-bridge-1-player.png",
+      "bytes": 1695422,
+      "sha256": "57f9794454d109a8a45d2022c448e434a8a0d4b351ead6212478de64a0bcab35",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1860920,
+      "sha256": "e25d655b6182162da8d367ceebeb735542fb521066e5cb64e4edfaaa0999d104",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2241131,
+      "sha256": "14ffc4441b9cbe4e068c033b3a4171a08f50a3b918cabb11b62a705fd731cf94",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/CH05M02TrustUnderFire-receipt.json",
+      "bytes": 862,
+      "sha256": "fc9bba79f94dc8e0c652a371d6f97336927f9dd865995003a85c4b42a932fd8f",
+      "committed": true
+    },
+    {
+      "path": "build-01-superseded/DenseCity-after-bridge-0-oblique.png",
+      "bytes": 1561155,
+      "sha256": "5d04e08777c70197b55de0623af89d5c3278fe2f50d3687ce47211500c09d88c",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/DenseCity-after-bridge-0-player.png",
+      "bytes": 1435296,
+      "sha256": "33491a7c44981a5b53ba3af06da25179f7c30d4598c305396979e97278dc51dd",
+      "committed": true
+    },
+    {
+      "path": "build-01-superseded/DenseCity-after-bridge-1-oblique.png",
+      "bytes": 1664936,
+      "sha256": "5c4cde692bca451bb77157a1f9a22d11328b92715c30fa4bc5193a95c7e22d4c",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/DenseCity-after-bridge-1-player.png",
+      "bytes": 1385338,
+      "sha256": "95c8b30909984d63e4c0f5a0cec1f08387d4b580396ab99f73b62349db7b2275",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/DenseCity-after-detail.png",
+      "bytes": 2051144,
+      "sha256": "5c8d94d61edd5830c5496483fbd6439e76c6a907f0b7e1bffa17d1fe3e45bf19",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/DenseCity-after-overview.png",
+      "bytes": 2331799,
+      "sha256": "3399bbb70eb4f98de0035cb155720bf15b444a15aa8c448a99a0c904e2452ed7",
+      "committed": false
+    },
+    {
+      "path": "build-01-superseded/DenseCity-receipt.json",
+      "bytes": 3137,
+      "sha256": "8d3b5f6101edd7edcea957cd296fff41dcad3187909440f494820936605502bf",
+      "committed": true
+    },
+    {
+      "path": "build-01.log",
+      "bytes": 475940,
+      "sha256": "cbdbc3d5ca9d961c0cc7c75200f7466122efec0dd57d7409035338a15ed97ba6",
+      "committed": false
+    },
+    {
+      "path": "build-01.log.gz",
+      "bytes": 51590,
+      "sha256": "4607f65c1e4eea4d5dc4edfa15f044f289a3f174811650eaf88d9f7d9ed5b7b0",
+      "committed": true
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-after-bridge-0-oblique.png",
+      "bytes": 1888897,
+      "sha256": "95252678525010a6564b14497d52519cbaf326be3b39172d358f48230cbef80c",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-after-bridge-0-player.png",
+      "bytes": 1780728,
+      "sha256": "a768e379ecea07f28c2ff09342654b2d755fdbabca2b400b1d9c9b3c05c0b965",
+      "committed": true
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-after-bridge-1-oblique.png",
+      "bytes": 1930654,
+      "sha256": "baa42d2f50d564d4f884c8784ffa5c161d56ae2b5c86138231fbea2b7e5486c8",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-after-bridge-1-player.png",
+      "bytes": 1848130,
+      "sha256": "c70e43ff10836c82ac903b99691e3ec28644e78459c1378cb1a4e9a74d83971a",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-after-detail.png",
+      "bytes": 2039887,
+      "sha256": "27ecd94f9a7bf1fd879a928df6e3d205cb17cef662926233dab085d94049bc29",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-after-overview.png",
+      "bytes": 1956266,
+      "sha256": "4c64d9e0863f821e38feec71f5818a4cd983d12af5971c714ba9215aba4953f4",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/AshLinePort-receipt.json",
+      "bytes": 855,
+      "sha256": "04d37b63e2c320183ebb62cdde0d4447ecddd7cc0ae10bfec22859226eee9a73",
+      "committed": true
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-after-bridge-0-oblique.png",
+      "bytes": 1930052,
+      "sha256": "c2fecaeb0c86b49d56cfb92b02676b5959a77d80bb0b90997d04809c20553a32",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-after-bridge-0-player.png",
+      "bytes": 1906337,
+      "sha256": "e33cd31070c01626c9a298e6279db90dbc713bf69e38adf9984a455d9e51de90",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-after-bridge-1-oblique.png",
+      "bytes": 1916406,
+      "sha256": "da3c29257f9b69507180899df6a19981b4278faffe603090be03a680ea55fd4d",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-after-bridge-1-player.png",
+      "bytes": 1905648,
+      "sha256": "b8ceb7b0c485a15c80ed5aecaacfe0bccaab493eece640d76e8899dd986d9217",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1864025,
+      "sha256": "14ab1b788260440f71eac01a9ab558b7d27bb9b7ace03bcc297976b9d6ccf407",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2290663,
+      "sha256": "68234117ca4bb9858e2565a81ec422321e4e5c854f69a9b82865e29e2a09876a",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/CH05M02TrustUnderFire-receipt.json",
+      "bytes": 862,
+      "sha256": "41c2f9b185dd06c89f0283fa2f7d8064efac058a93bf16d70da8dfe07c93edf9",
+      "committed": true
+    },
+    {
+      "path": "build-02-superseded/DenseCity-after-bridge-0-oblique.png",
+      "bytes": 1571933,
+      "sha256": "7480b9bce45a6e432c603c352b46835117cddf4ec9b89483b7cb9cd114fb958f",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/DenseCity-after-bridge-0-player.png",
+      "bytes": 1464050,
+      "sha256": "9ddb8e7d7eb5d4f84ba599b4530beade13d9526980d76de0fadcb29b3dcc059f",
+      "committed": true
+    },
+    {
+      "path": "build-02-superseded/DenseCity-after-bridge-1-oblique.png",
+      "bytes": 1680150,
+      "sha256": "47c89c43a676ed09e1c6d22c358d96d2a8562eb3849113a7387747fcdcbd288c",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/DenseCity-after-bridge-1-player.png",
+      "bytes": 1420867,
+      "sha256": "68b24883c405666162855e3fd294abbf7ca462c92cfe06a1eab7dff52555bb84",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/DenseCity-after-detail.png",
+      "bytes": 2051147,
+      "sha256": "7f03e90b5316eee9b60008f3e4b230430f53d1418febf6f2adf77529661fc77d",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/DenseCity-after-overview.png",
+      "bytes": 2331872,
+      "sha256": "e8238ac30f77b655157fcb6ee8a5e892acda8b92a39f70f9e39c4d347a835fa0",
+      "committed": false
+    },
+    {
+      "path": "build-02-superseded/DenseCity-receipt.json",
+      "bytes": 3137,
+      "sha256": "1a5321e55c2d91b02f5ec41ed4f3a85d0520f1381b5e548491929fc366da3416",
+      "committed": true
+    },
+    {
+      "path": "build-02.log",
+      "bytes": 433570,
+      "sha256": "903cf20ed9a3984718843f6c47f7b6207fb62366db5a2b9279592e0053759773",
+      "committed": false
+    },
+    {
+      "path": "build-02.log.gz",
+      "bytes": 42148,
+      "sha256": "7c36b87529edcc579ad1637c1928f23f0ac6581963a50172c5cc7af91235ae78",
+      "committed": true
+    },
+    {
+      "path": "build-03.log",
+      "bytes": 355875,
+      "sha256": "a4b9a5b60c369131b5969f17bfbbe9efdbdafb2743c7b7eb95650330d775b92d",
+      "committed": false
+    },
+    {
+      "path": "build-03.log.gz",
+      "bytes": 35343,
+      "sha256": "abadd747624372fd01582b7749a68cb9bbd112e67443b55dc82ffc27b66c9786",
+      "committed": true
+    },
+    {
+      "path": "integration-01.log",
+      "bytes": 244216,
+      "sha256": "4f7d63b0cd399f9c02a5ee1f82b103b996810a61135d1cb7cf92343b5798559d",
+      "committed": false
+    },
+    {
+      "path": "integration-01.log.gz",
+      "bytes": 19630,
+      "sha256": "7b42f5bc895471ddfedaceef95175bc5f0cb2d7d4cb52fc0fe76cfb55e225fe3",
+      "committed": true
+    },
+    {
+      "path": "integration-02.log",
+      "bytes": 312321,
+      "sha256": "2033f8ee0a046cd0f289aa70fd8d21e6073e4431d0403f8dcd73633247736554",
+      "committed": false
+    },
+    {
+      "path": "integration-02.log.gz",
+      "bytes": 25580,
+      "sha256": "db2f3757745c8a554f4d925cf80bf1871ff94e49d96a394a006c43e0036e5f8e",
+      "committed": true
+    },
+    {
+      "path": "owner-reference.png",
+      "bytes": 1574737,
+      "sha256": "fc7530a4117c0a238226fa2c186c257c7fbede7d760a3aff139fa7769837ffc2",
+      "committed": true
+    },
+    {
+      "path": "paving-cutout.txt",
+      "bytes": 303,
+      "sha256": "4a13f5b22331c58cfa5377463663ffae98468b705b690af6711022bf51654723",
+      "committed": true
+    },
+    {
+      "path": "render-reconciliation.txt",
+      "bytes": 671,
+      "sha256": "aebb3683c52f6d95da3ac7f13a017fdeeaac7f750366af9d9227fa7dc0b3eb67",
+      "committed": true
+    },
+    {
+      "path": "visibility-01.log",
+      "bytes": 268704,
+      "sha256": "707e1d221b5703a87851654fd0ca51dc625437403ac60bf6714f126bbd49a4bb",
+      "committed": false
+    },
+    {
+      "path": "visibility-01.log.gz",
+      "bytes": 20198,
+      "sha256": "48e88ac7be95267869b1d6f3fe3b467e525bdf0e803a65a72f61b9b7c2a2efc7",
+      "committed": true
+    },
+    {
+      "path": "visibility-02.log",
+      "bytes": 269953,
+      "sha256": "b6e62d1f954f9f34673b8b51e5368afbbff5f450ab91a9601acc3546026f31a8",
+      "committed": false
+    },
+    {
+      "path": "visibility-02.log.gz",
+      "bytes": 20477,
+      "sha256": "83c7cab5eb8ab239a1e76577e0eda98e4cb8c0a9add3921ee8a873062e38e930",
+      "committed": true
+    },
+    {
+      "path": "visibility.txt",
+      "bytes": 12535,
+      "sha256": "9d3ecd54f464fd8b6f5a5c5e6fcb812704b56f9ad8b7da0de6465dc06bf6a230",
+      "committed": true
+    }
+  ],
+  "note": "Nonselected evidence is retained in the checkout; complete native logs are committed as lossless gzip."
+}

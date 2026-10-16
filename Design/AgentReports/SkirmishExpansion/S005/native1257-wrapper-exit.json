@@ -1,0 +1,8 @@
+{
+  "wrapperExit": 1,
+  "nativeExit": "1",
+  "marker": "[SkirmishGroundCarrierDeathTests] result=Passed cases=9 scope=IsolatedActualSystemNotNormalMission",
+  "markerPresent": false,
+  "log": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1257-ground-carrier-death.log",
+  "scope": "IsolatedActualSystemNotNormalMission"
+}

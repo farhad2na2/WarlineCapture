@@ -1,0 +1,37 @@
+{
+  "result": "Failed",
+  "scope": "Isolated funded Established-readiness Drone production from legal native IntelStation without Airport; actual paid queue API and native Touch selection/movement; no normal whole mission or full air lifecycle certificate",
+  "sourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1045-drone-producer-post-source-manifest.json",
+  "postManifest": "final-1048-drone-producer-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1048-drone-intelstation-no-airport-smoke.log",
+  "logSha256": "09899ac04da3f822dc5129d71ed9924ae7af8ee6d6e5f76acda5dd8792497668",
+  "fixture": "native1048-drone-producer-fixture.cs.txt",
+  "fixtureSha256": "c57ccf0453f9c8ba0fde3e69bfcb6a7a9ce5bcc20e9bee043602214d813c55d5",
+  "touchEvidence": "delegation-aircraft-drone1048.touch.jsonl",
+  "fundingInjected": true,
+  "readinessGranted": "Established",
+  "enemyStrategyDisabled": true,
+  "deathStimulus": "HealthZero",
+  "actorPositionsSelectionOrdersInjected": false,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing [S005DroneProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0",
+    "Missing [S005DroneNativeSelection] result=Passed",
+    "Missing [S005DroneNativeMovement] result=Passed",
+    "Missing [S005DronePaidQueueDeath] result=Passed"
+  ],
+  "nativeMarkers": [
+    "[S005DroneMovement] scope=IsolatedNativeDroneR2ProducerAndTouchMovement normalMission=0 fundingInjected=1 readinessGranted=Established deathStimulus=HealthZero pricesCapsRatesMapsUnchanged=1",
+    "[S005DroneProducer] phase=NativeLegalIntelStationBuild airportPresent=0 readiness=Established fundingInjected=1",
+    "[S005DroneMovement] result=Failed cases=0 normalInput=0 fullLifecycle=Pending nativeTouchSelectionMovement=Measured nativeAirLifecycle=Pending scanReturnCapacity=Pending reason=System.TimeoutException: Role Drone phase 21 exceeded native queue/death timeout.",
+    "[S005DroneMovementCleanup] result=Passed attemptsRemoved=1"
+  ]
+}

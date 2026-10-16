@@ -1,0 +1,13 @@
+{
+  "playerReady": false,
+  "result": "Failed",
+  "sourceHash": "cdfe2fb4b53f6be19348d903b999cb72a5df5ad9d2c97a13f2945118bfe9a553",
+  "prePostMatched": true,
+  "saveAndExitPassed": true,
+  "schema": 7,
+  "savedSession": "expanded-s005-104734-2eb27f68e0834e6a9d943f8d127f7ffe",
+  "continueTouched": true,
+  "nativeRecoveryComplete": false,
+  "failure": "NativePhysicalMapAmbiguous",
+  "rootCause": "Remaining reconstruction preflight used legacy rounded-cell source aliases"
+}

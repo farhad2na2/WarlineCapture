@@ -1,0 +1,13 @@
+{
+  "result": "ScopedFogLogicPassed",
+  "cases": 13,
+  "sourceSha256": "d491a06049f2ec45b6ddcdfe2a0025f9ae00add57203e67ac71b1abff37ec17a",
+  "nativeReceipt": 0,
+  "sourceDelta": [],
+  "compiler": "Corrected completed failed=false errors[]; initial3 errors retained",
+  "scope": "T7 isolated actual systems; not currentmain wholemission/quality acceptance",
+  "savedMobileAA": 0,
+  "nativeActualAA": 4,
+  "qualityCause": "Active Mobile uses PC_RPAsset msaaSampleCount4; URP constructor sets actualAA fromasset; proven package source and native read",
+  "qualityReadEvidence": "/private/tmp/delegation-t7-fog1112-native-urp-aa-read.json"
+}

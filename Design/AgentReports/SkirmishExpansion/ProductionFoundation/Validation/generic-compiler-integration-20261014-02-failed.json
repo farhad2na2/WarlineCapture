@@ -1,0 +1,21 @@
+{
+  "result": "Failed",
+  "wrapper_exit_code": 1,
+  "failure": "ExpandedDefinition S002StandardRegularMatchesSetupMatrix: synthetic factory layout fails strict source/layout binding",
+  "passed_prefix": [
+    "legacy12",
+    "binder8",
+    "areas15",
+    "builder4"
+  ],
+  "not_reached": [
+    "camera7",
+    "north v2 load",
+    "native identity census"
+  ],
+  "logs": [
+    "generic-compiler-integration-20261014-02.log",
+    "generic-compiler-integration-20261014-02.stderr.log",
+    "generic-compiler-integration-20261014-02.stdout.log"
+  ]
+}

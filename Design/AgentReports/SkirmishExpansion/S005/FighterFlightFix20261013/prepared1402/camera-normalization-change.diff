@@ -1,0 +1,71 @@
+--- 1401-id-normalized
++++ 1402
+@@ -855,7 +855,7 @@
+         public float actorX,actorZ,signedAlong,crossTrack,nativeGoalX,nativeGoalZ,nativeGoalDistance;public int nativeGoalCellX,nativeGoalCellZ,trajectorySamples;public bool nativeGoalPresent,nativeGoalMatches;
+         public double editorTime;public int acceptedCommands;public int resolvedFrame,successFrame,resolvedCellX,resolvedCellZ;public uint contactDispatch;public float touchScreenX,touchScreenY;public string nativeResolveLog,nativeSuccessLog,nativeQueueLog;public bool cameraPreframed,requestPreResolved;public int nativeRequestId,nativeRequestFrame;public uint nativeRequestReceipt;public float nativeRequestWorldX,nativeRequestWorldY,nativeRequestWorldZ,nativeRequestScreenX,nativeRequestScreenY;
+     }
+-    static void ResetIntercept(){enemyPublicAirportCenter=patrolCommandDestination=interceptAxis=Vector3.zero;enemyPublicAirportPreviewObserved=false;publicAirportGridOrigin=default;publicAirportCellSize=0;interceptCycle=interceptLeg=0;interceptApproachReceipt=interceptRearReceipt=0;interceptCameraReady=false;interceptCameraStage=0;interceptCameraFrame=-1;interceptZoomRequestedAt=0;interceptZoomStableFrames=0;trajectoryFrame=-1;trajectorySamples=0;previousAlong=float.NegativeInfinity;}
++    static void ResetIntercept(){fighterNormalizeStarted=fighterNormalizeReady=false;fighterNormalizeRequests=0;fighterNormalizeDirection="None";enemyPublicAirportCenter=patrolCommandDestination=interceptAxis=Vector3.zero;enemyPublicAirportPreviewObserved=false;publicAirportGridOrigin=default;publicAirportCellSize=0;interceptCycle=interceptLeg=0;interceptApproachReceipt=interceptRearReceipt=0;interceptCameraReady=false;interceptCameraStage=0;interceptCameraFrame=-1;interceptZoomRequestedAt=0;interceptZoomStableFrames=0;trajectoryFrame=-1;trajectorySamples=0;previousAlong=float.NegativeInfinity;}
+     static InterceptRow ReadIntercept(EntityManager em,string stage,string reason="")
+     {
+         if(ownActor==Entity.Null||!em.Exists(ownActor)||!em.HasComponent<SkirmishAttemptOwnedComponent>(ownActor)||!em.HasComponent<LocalTransform>(ownActor)||!em.HasComponent<UnitAirComponent>(ownActor))throw new InvalidOperationException("Intercept own paid actor absent");
+@@ -1151,6 +1151,51 @@
+         }
+         if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);
+     }
++    static bool fighterNormalizeStarted,fighterNormalizeReady;
++    static int fighterNormalizeRequests;
++    static string fighterNormalizeDirection="None";
++    [Serializable] sealed class CameraNormalizationRow
++    {
++        public string stage,attempt,direction;
++        public int frame,actorIndex,actorVersion,reservation,requests,acceptedBefore,acceptedNow,stableFrames;
++        public bool zoomInEnabled,zoomOutEnabled,requestAccepted,hiddenEnemyPoseRead;
++        public float cameraX,cameraY,cameraZ,cameraFov,cameraOrtho;
++        public double stableSeconds;
++    }
++    static void LogCameraNormalization(string stage,IMatchHudCameraControl control,bool accepted,double now)
++    {
++        var state=control.ReadZoomControlState();var c=control.WorldCamera;var pos=c.transform.position;
++        var row=new CameraNormalizationRow{stage=stage,attempt=attempt.ToString(),direction=fighterNormalizeDirection,frame=Time.frameCount,actorIndex=ownActor.Index,actorVersion=ownActor.Version,reservation=ownReceipt,requests=fighterNormalizeRequests,acceptedBefore=fighterPrepareAcceptedBefore,acceptedNow=AriaCommandEvidence.AcceptedCommands,stableFrames=fighterCameraStableFrames,zoomInEnabled=state.ZoomInEnabled,zoomOutEnabled=state.ZoomOutEnabled,requestAccepted=accepted,hiddenEnemyPoseRead=false,cameraX=pos.x,cameraY=pos.y,cameraZ=pos.z,cameraFov=c.fieldOfView,cameraOrtho=c.orthographicSize,stableSeconds=now-fighterCameraStableSince};
++        File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1402-fighter-camera-normalization.jsonl",JsonUtility.ToJson(row)+"\n");
++    }
++    static bool NormalizeFighterCameraDefault(EntityManager em,double now)
++    {
++        if(fighterNormalizeReady)return true;
++        var control=PublicInterceptCameraControl();var camera=control.WorldCamera;var state=control.ReadZoomControlState();
++        if(!fighterNormalizeStarted)
++        {
++            fighterCameraStableSince=now;fighterCameraStableFrames=0;
++            LogCameraNormalization("PublicDefaultBaselineInspected",control,false,now);
++            if(!state.ZoomInEnabled&&!state.ZoomOutEnabled)throw new InvalidOperationException("Public camera zoom unavailable; Default normalization cannot proceed");
++            bool accepted=true;
++            if(!(state.ZoomInEnabled&&state.ZoomOutEnabled))
++            {
++                fighterNormalizeDirection=state.ZoomInEnabled?"ZoomIn":"ZoomOut";fighterNormalizeRequests++;
++                accepted=state.ZoomInEnabled?control.RequestZoomInLevel():control.RequestZoomOutLevel();
++                LogCameraNormalization("PublicDefaultNormalizationRequested",control,accepted,now);
++                if(!accepted)throw new InvalidOperationException("Public Default camera normalization rejected; no override");
++            }
++            fighterNormalizeStarted=true;fighterPreviousCamera=camera.transform.position;fighterPreviousCameraRotation=camera.transform.rotation;
++            return false;
++        }
++        if(!state.ZoomInEnabled||!state.ZoomOutEnabled||fighterNormalizeRequests>1||AriaCommandEvidence.AcceptedCommands!=fighterPrepareAcceptedBefore)throw new InvalidOperationException("Default normalization lost public zoom state or changed troop receipts");
++        bool stable=Vector3.Distance(camera.transform.position,fighterPreviousCamera)<.01f&&Quaternion.Angle(camera.transform.rotation,fighterPreviousCameraRotation)<.01f;
++        fighterPreviousCamera=camera.transform.position;fighterPreviousCameraRotation=camera.transform.rotation;
++        if(stable)fighterCameraStableFrames++;else{fighterCameraStableFrames=0;fighterCameraStableSince=now;}
++        if(fighterCameraStableFrames<5||now-fighterCameraStableSince<.5)return false;
++        LogCameraNormalization("PublicDefaultBaselineSettled",control,true,now);fighterNormalizeReady=true;return true;
++    }
++
+     static void PrepareFighterPublicAttack(EntityManager em,double now)
+     {
+         // All target movement is still pending. Camera focus uses only the publicly selected own actor.
+@@ -1190,6 +1235,7 @@
+         }
+         if(fighterPrepareStage==2)
+         {
++            if(!NormalizeFighterCameraDefault(em,now))return;
+             var rail=UnityEngine.Object.FindAnyObjectByType<MatchHudRightQuickRailView>();
+             var zoom=rail!=null&&rail.gameObject.activeInHierarchy?rail.ZoomOutButton:null;
+             fighterOfficialZoomPresent=zoom!=null&&zoom.gameObject.activeInHierarchy;

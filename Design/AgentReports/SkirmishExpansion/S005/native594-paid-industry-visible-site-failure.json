@@ -1,0 +1,12 @@
+{
+  "run": "native594",
+  "result": "Failed",
+  "reason": "No legal visible Fabrication site on Campaign source.",
+  "sourceHash": "5d3ab5e2564d215f068b28984c0c1833f674cef8d626752f8fa70e88998a2249",
+  "independentPrePostMatched": true,
+  "wrapperExit": 1,
+  "airportReached": false,
+  "physicalSourceFitCertified": false,
+  "diagnosis": "All 24 camera-local samples skipped before ground touch; UI visibility search failure does not prove global source impossibility.",
+  "preservedLog": "native-594-current-source-paid-airport-placement.log"
+}

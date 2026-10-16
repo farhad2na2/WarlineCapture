@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs(101,29): error CS1729: 'SkirmishEnemyPolicySnapshot' does not contain a constructor that takes 13 arguments\",\"Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs(254,13): error CS1612: Cannot modify the return value of 'EntityManager.GetBuffer<SkirmishEnemyCapabilityOperationV1>(Entity, bool)' because it is not a variable\",\"Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs(284,13): error CS1612: Cannot modify the return value of 'EntityManager.GetBuffer<RespawnFactionSpawnPoint>(Entity, bool)' because it is not a variable\",\"Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs(291,13): error CS1612: Cannot modify the return value of 'EntityManager.GetBuffer<SkirmishEnemyCapabilityOperationV1>(Entity, bool)' because it is not a variable\",\"Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs(299,13): error CS1612: Cannot modify the return value of 'EntityManager.GetBuffer<SkirmishEnemyCapabilityOperationV1>(Entity, bool)' because it is not a variable\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

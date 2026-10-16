@@ -1,0 +1,51 @@
+{
+  "result": "PassedScopedPersianRenderedVisualRequalification",
+  "scope": "Existing native1394 seed104734 Persian setup purpose/failure copy and HUD purpose, plus unchanged strict rendered Victory/MainMenu visual qualifier",
+  "sourceHash": "ffe5f5829bcc158fa035ed6840c8fcda726e64a3e485900c776b1bf345b7ea90",
+  "originalCompositeResult": "Failed",
+  "originalFailurePreserved": "native1394-normal-stop-manual-failure.json",
+  "originalFailureReason": "Actual setup purpose/failure copy absent",
+  "exactNativeAttempt": "expanded-s005-104734-f68a4ecb0a62466b9149618cbabb542c",
+  "normalization": "Unicode NFKC plus U+200C removal only for RTLTMPro presentation; full sentence/punctuation/space equality",
+  "setupFrame": 958,
+  "setupBoundVisibleFrames": [
+    135,
+    151
+  ],
+  "purposeVisibleFrames": [
+    992,
+    3510,
+    6058
+  ],
+  "correctedFields": [
+    "NativeSetupBriefing.localizedObjectiveCopy",
+    "NativeHudPurpose.localizedPurposeCopy"
+  ],
+  "unchangedStrictVisualProof": {
+    "nativeRenderedVictory": true,
+    "sameAttemptMainMenuReturn": true,
+    "strictBoundText": true
+  },
+  "negativeControls": {
+    "wrongSeed": "Actual setup purpose/failure copy absent",
+    "truncatedFailureRule": "Actual setup purpose/failure copy absent",
+    "hiddenSetupObjective": "Actual setup purpose/failure copy absent",
+    "wrongHudPurpose": "Actual HUD purpose absent",
+    "missingMenuReturn": "Strict native same-attempt MainMenu return absent"
+  },
+  "pinnedSha256": {
+    "observation": "9bcb7d692f971944655fb1f0bd188e4311af3d50a3f07b505c164cabb7611da9",
+    "failure": "d3fb555244bf666395decf1d99974572d44a90492b8c05e81842765056152b71",
+    "nativeLog": "4257c3f10ebdcf298318837083ad1e3ef263d0a9624ff5cd7db836c91021884d",
+    "postManifest": "eeca6dabda6febafc8f0ee58e6ba8e09875f3839acee1714c7126d17d6b96ae1",
+    "frozenQualifier": "e848ea4d12eec57cd044cc454423f7bdb023cabf59c25d118ab72a17211faac2",
+    "authoredBriefingSource": "7c12c4ec9b799883b34706c6cbb58fb79a99560c70cd0d86c23447da03679b30"
+  },
+  "fogQualified": false,
+  "homeDefenseHandoffQualified": false,
+  "fullCompositeQualified": false,
+  "normalStopManualControlsQualifiedByThisProof": false,
+  "gameplayStateInjected": false,
+  "playerReady": false,
+  "humanDeviceAcceptance": false
+}

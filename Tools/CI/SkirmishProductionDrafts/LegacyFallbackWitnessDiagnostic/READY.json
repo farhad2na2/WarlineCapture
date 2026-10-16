@@ -1,0 +1,18 @@
+{
+  "result": "ReadyForIndependentReview",
+  "manifest_sha256": "c3588da14e009f5ecc6e6f736d939252cc9ef6b7ce865cdd4eff5ee330f53285",
+  "proof": "Logs/SkirmishProduction/Offline/legacy-opening-diagnostic-9ux4rqc2/result.json",
+  "proof_sha256": "2ea04027ebff18deeb2edc6dbbd56377fc4989b9f280e81556fa7a49787ce307",
+  "sources": [
+    836,
+    760
+  ],
+  "final_input_mismatches": 0,
+  "no_fallback": true,
+  "native_executed": false,
+  "sampling_coverage_credit": 0,
+  "execute_method": "Game.Editor.SkirmishLegacyProductionControls.RunLegacyRegressionAndOpeningWitnessDiagnostic",
+  "wrapper_no_quit": true,
+  "dispatch_marker_not_completion": true,
+  "fresh_compiled_snapshot_required_after_wrapper_before_real_jobs": true
+}

@@ -6877,7 +6877,7 @@ MonoBehaviour:
     - key: ui.home.download
       value: Content download required.
     - key: ui.home.operations
-      value: Multi-mission strategic operations
+      value: Multi-mission operations
     - key: ui.home.owned
       value: Campaign Edition required.
     - key: ui.home.progression

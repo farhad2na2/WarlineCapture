@@ -1,0 +1,29 @@
+{
+  "result": "Failed",
+  "sourceHash": "26fd4ec128abe8c00a0b380129afa4a3f5612d6013e35c80eb258f98e0e7096d",
+  "scope": "Native logistics delivery, APC passenger recovery/unload and resumed fabrication passed; full manual strategy failed on unsupported target retry loop",
+  "log": "native-210-logistics-boarded-apc-save-resume-en.log",
+  "logSha256": "a1383774fbadfb97e2ad235a0613efff9ef7f62beb5275036cf2ff3114bda278",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "passengerRecovery": {
+    "result": "Passed",
+    "pausedPassengers": 2,
+    "restoredAndUnloaded": 2,
+    "nativeGestures": 46,
+    "oldPhysicalGone": 386,
+    "paidReceiptPreservedOnce": true,
+    "sameAttempt": true,
+    "savedElapsed": 294.4193,
+    "receiptViolations": 0
+  },
+  "logistics": {
+    "nativePaidDelivered": true,
+    "cost": 100,
+    "postResumeFabrication": "native210-post-resume-fabrication-observation.json"
+  },
+  "fullMissionFailure": "Heavy APC could not attack Structure base; fixed manual strategy repeated that rejected order and never reached its replacement cycle",
+  "earlyCutoff": "Only failed fixture deadline shortened after read-only diagnosis; no clock/stocks/health/outcome injection",
+  "countedWin": 0,
+  "playerReady": false
+}

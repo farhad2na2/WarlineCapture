@@ -1,0 +1,31 @@
+{
+  "mission": "S005",
+  "run": "native698",
+  "result": "Failed",
+  "reason": "Delivery taxi was interrupted by Attack; temporary runway/home persisted, fuel exhausted during return; second sortie not launched",
+  "wrapperExitCode": 2,
+  "sourceHash": "4c38cc6b2276677e607b5e25bc940e4e20ad6e41a214eeafe6586481a7fd1cd9",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-697-physical-input-interruption-post-source-manifest.json",
+  "postSourceManifest": "final-698-delivery-taxi-command-race-failure-post-source-manifest.json",
+  "log": "native-698-opening-oil-pump-refinery-three-oil-three-fuel-strike-cycle-en.log",
+  "logSha256": "c006eceb6e2ff0e086308fd2aa8d8b4a96a3dc6164142e4b67e018d320f422e2",
+  "trace": "s005-aria-live-155926-en-418992120a534f8cabae0ad772b2cae1.jsonl",
+  "inputAudit": "native698-touch-contact-audit.json",
+  "readOnlyCliObservations": 3,
+  "diagnosticFiles": [
+    "native698-tanker-path-state-readonly.json",
+    "native698-strike-runway-return-state-readonly.json"
+  ],
+  "markers": [
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 receipt=1005",
+    "[S005FixedWingCycle] phase=FirstSortie airborne=1 nativeFire=1 fuelSpent=344",
+    "[S005FixedWingCycle] phase=Touchdown nativeLanding=1 atHome=1 fuel=0",
+    "[S004ManualNative] result=Failed outcome=Draw seconds=1080.001 reason=playerSaveResume=Player Save/Resume timed out at step=0 input=Touch ariaStarted=0 actions=0 attackReceipts=0",
+    "[SkirmishValidationExit] result=Requested code=2"
+  ],
+  "nativeProperFullFlightCyclePassed": false,
+  "completeMatchCertified": false,
+  "countedWin": false,
+  "playerReady": false
+}

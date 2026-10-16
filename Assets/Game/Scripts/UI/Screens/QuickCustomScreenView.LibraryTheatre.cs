@@ -77,7 +77,7 @@ namespace Game.UI.Runtime
                 out float cropH);
 
             NoteHostCanvas(plate);
-            string selectedMap = theater != null && !string.IsNullOrEmpty(theater.SelectedMapId)
+            string selectedMap = !string.IsNullOrEmpty(theater.SelectedMapId)
                 ? theater.SelectedMapId
                 : "DB";
             bool reserve = TheatreSeatGeometry.DetailReserveOn(

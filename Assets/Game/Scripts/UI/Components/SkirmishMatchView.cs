@@ -60,7 +60,7 @@ namespace Game.UI.Runtime
             playerHealth=HealthLabel(player);
             HudIconButtonView.Apply(PlayerFocusButton, HudButtonIcon.YourBase, HudButtonRole.Play,
                 "YOUR BASE", "پایگاه شما", player, true);
-            clock=Label(strip,"TIME LEFT",30);clock.gameObject.AddComponent<LayoutElement>().preferredWidth=240;
+            CreateClock(strip);
             enemy=Button(strip,"ENEMY MAIN BASE",()=>FocusPresentedObjectiveOrBase(false));
             enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.fontSize=28;
             enemyHealth=HealthLabel(enemy);
@@ -101,9 +101,8 @@ namespace Game.UI.Runtime
             RefreshMapInformation(model);
             hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
             if (hud.activeSelf) PositionBelowWarning();
-            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);UiLocalizedText.Set(clock,model.Clock);
+            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);RefreshClock(model.Clock);
             AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
-            clock.color=(model.Clock??string.Empty).Contains("  0:")?new Color(1,.65f,.1f):Color.white;
             RefreshPublicObjectiveHud(model);
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);
@@ -260,7 +259,7 @@ namespace Game.UI.Runtime
                     top = Mathf.Max(top, root.rect.yMax - bottom.y + 12);
             }
             var rect = (RectTransform)hud.transform;
-            rect.offsetMin = new Vector2(rect.offsetMin.x, -top - 115);
+            rect.offsetMin = new Vector2(rect.offsetMin.x, -top - (previousPublicApplicable ? 147 : 115));
             rect.offsetMax = new Vector2(rect.offsetMax.x, -top);
         }
         private static RectTransform Panel(string name,Transform parent,bool visible=true)

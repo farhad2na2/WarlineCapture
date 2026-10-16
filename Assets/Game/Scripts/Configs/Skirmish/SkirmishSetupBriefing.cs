@@ -36,21 +36,21 @@ namespace Game.Configs
 
         public static string MatchHelp(SkirmishResolvedSetup setup, bool fa)
         {
+            // Constant combinations keep this frequently read HUD copy allocation-free.
+            const string en = "Destroy the original enemy Barracks and protect yours.\nSelect a squad. Tap Attack, then tap the target.";
+            const string faHelp = "سربازخانهٔ اصلی دشمن را نابود کن و پایگاهت را حفظ کن.\nگروه را انتخاب کن؛ حمله و سپس هدف را لمس کن.";
             var army = setup != null ? SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId) : null;
             if (army != null && army.Kind == SkirmishArmyProfileId.CombinedArms)
                 return fa
-                    ? "سربازخانهٔ اصلی دشمن را نابود کن و از پایگاهت دفاع کن. با خودروهای زرهی و پیاده‌ها پیشروی کن، یا آمادگی را ارتقا بده و هلی‌پد بساز. کارت نیرو ← حمله ← هدف."
-                    : "Destroy the original enemy Barracks and defend yours. Advance with armor and infantry, or upgrade readiness and build a Helipad. Squad card → Attack → target.";
-            bool air = army?.AllowsOffensiveAir == true;
-            if (air && setup.StartPackageId == SkirmishStartPackageId.EstablishedBase)
-                return fa
-                    ? "سربازخانهٔ اصلی دشمن را نابود کن و از پایگاهت دفاع کن. پد بالگردت آماده است؛ بالگرد رزمی جذب کن یا با پشتیبانی پیاده‌ها پیشروی کن. کارت نیرو ← حمله ← هدف."
-                    : "Destroy the original enemy Barracks and defend yours. Your Helipad is ready: recruit attack helicopters or advance with infantry support. Squad card → Attack → target.";
-            return air
-                ? (fa ? "سربازخانهٔ اصلی دشمن را نابود کن. از راکت‌اندازها با پیاده‌ها پشتیبانی کن، یا مسیر تدارکات را حفظ کن و پس از ارتقای آمادگی، هلی‌پد بساز. کارت نیرو ← حمله ← هدف."
-                    : "Destroy the original enemy Barracks. Support Rocketeers with infantry, or protect supply and upgrade readiness to build a Helipad. Squad card → Attack → target.")
-                : (fa ? "سربازخانهٔ اصلی دشمن را نابود کن و از پایگاه خودت دفاع کن. کارت نیرو را انتخاب کن، سپس حمله و هدف را لمس کن."
-                    : "Destroy the original enemy Barracks and defend your own. Select a squad card, then Attack and its target.");
+                    ? faHelp + "\nبا زرهی‌ها و پیاده‌ها پیشروی کن؛ برای هلی‌پد، آمادگی را ارتقا بده."
+                    : en + "\nAdvance with armor and infantry, or upgrade readiness for a Helipad.";
+            if (army?.AllowsOffensiveAir == true)
+                return setup.StartPackageId == SkirmishStartPackageId.EstablishedBase
+                    ? (fa ? faHelp + "\nهلی‌پد آماده است؛ بالگرد رزمی جذب کن یا با پشتیبانی پیاده‌ها پیشروی کن."
+                        : en + "\nYour Helipad is ready. Recruit attack helicopters or advance with infantry support.")
+                    : (fa ? faHelp + "\nاز راکت‌اندازها با پیاده‌ها پشتیبانی کن. با حفظ تدارکات و ارتقای آمادگی، هلی‌پد بساز."
+                        : en + "\nSupport Rocketeers with infantry, or protect supply and upgrade readiness for a Helipad.");
+            return fa ? faHelp : en;
         }
 
         public static bool TryLoad(string catalogId, int seed, out SkirmishResolvedSetup setup)

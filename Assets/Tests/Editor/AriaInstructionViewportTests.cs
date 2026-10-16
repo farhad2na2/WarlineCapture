@@ -83,18 +83,21 @@ public sealed class AriaInstructionViewportTests
             var viewport=(RectTransform)view.BodyText.transform.parent;
             if(dockTransition)
             {
-                // First layout has room for all copy; final minimap layout reduces the
+                // First layout has room for all copy; final command-dock budget reduces the
                 // available rail height without changing the lesson's title.
                 var originalBody=view.BodyText is RTLTMPro.RTLTextMeshPro source ? source.OriginalText : view.BodyText.text;
                 view.BodyText.text=string.Join(" ",Enumerable.Repeat(originalBody,3));
-                var mapPosition=dock.Minimap.anchoredPosition;
+                // The independent left minimap no longer bounds ARIA. Exercise the
+                // actual command-dock budget without changing the instruction text.
+                var dockLimit=typeof(MissionHudTouchLayoutView).GetField("commandDockBottom",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                float finalLimit=(float)dockLimit.GetValue(dock);
                 dock.enabled=false;
-                dock.Minimap.anchoredPosition+=Vector2.down*4000;
+                dockLimit.SetValue(dock,finalLimit-4000);
                 view.RefreshContentLayout();Canvas.ForceUpdateCanvases();
                 var scroll=viewport.GetComponent<UnityEngine.UI.ScrollRect>();
                 Assert.IsFalse(scroll.vertical,"Expanded layout must initially fit the copy.");
                 scroll.verticalNormalizedPosition=0;
-                dock.Minimap.anchoredPosition=mapPosition;
+                dockLimit.SetValue(dock,finalLimit);
                 view.RefreshContentLayout();Canvas.ForceUpdateCanvases();
                 Assert.IsTrue(scroll.vertical,"Final dock layout requires scrolling.");
                 Assert.That(scroll.verticalNormalizedPosition,Is.EqualTo(1).Within(.01f),"First lines must stay visible when overflow first appears.");
@@ -121,7 +124,7 @@ public sealed class AriaInstructionViewportTests
             var buttonBounds=BoundsIn(view.transform,(RectTransform)view.ShowMeButton.transform);
             Assert.That(bodyBounds.min.y-buttonBounds.max.y,Is.GreaterThanOrEqualTo(15.9f));
             var build=hud.GetComponentInChildren<MatchOverlayCommandControlsView>(true).BuildButton;
-            Assert.That(BoundsIn(dock.transform,dock.Minimap).min.y-BoundsIn(dock.transform,(RectTransform)build.transform).max.y,Is.EqualTo(8f).Within(.2f));
+            Assert.That(BoundsIn(dock.transform,dock.Minimap).min.y-BoundsIn(dock.transform,(RectTransform)build.transform).max.y,Is.GreaterThanOrEqualTo(7.8f),"The independent map must keep at least the touch-safe dock gap.");
         }
         finally {UnityEngine.Object.DestroyImmediate(canvas);GameLocalization.SetLocale(previousLocale,false);}
     }

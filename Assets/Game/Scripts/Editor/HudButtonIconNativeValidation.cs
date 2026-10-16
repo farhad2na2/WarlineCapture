@@ -23,10 +23,11 @@ namespace Game.Editor
         public static Task<int> RunIconAlignmentScreens() => RunScreens(true);
         public static Task<int> RunTextureScreens() => RunScreens(true, MilitaryUiMaterialAuthoring.ValidateLive);
         public static Task<int> RunPlacementProbe() => RunScreens(true, SkirmishBuildingPlacementProbe.Inspect);
-        private static async Task<int> RunScreens(bool alignmentOnly, Action inspect = null)
+        public static Task<int> RunPolishReview(string outputDirectory, Action inspect = null) => RunScreens(true, inspect, outputDirectory);
+        private static async Task<int> RunScreens(bool alignmentOnly, Action inspect = null, string outputDirectory = Output)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Requires Edit mode");
-            Directory.CreateDirectory(Output);
+            Directory.CreateDirectory(outputDirectory);
             bool optionsEnabled=EditorSettings.enterPlayModeOptionsEnabled;
             var options=EditorSettings.enterPlayModeOptions;
             var inputSettings=InputSystem.settings;
@@ -69,9 +70,9 @@ namespace Game.Editor
                 foreach(string language in new[]{"en","fa-IR"})
                 {
                     GameLocalization.SetLocale(language,false);
-                    foreach(int width in new[]{1920,1280})
+                    foreach(int width in outputDirectory == Output ? new[]{1920,1280} : new[]{1920,1280,2400})
                     {
-                        int height=width==1920?1080:720;
+                        int height=width==1280?720:1080;
                         MainMenuV3PrefabBuilder.SetGameViewResolution(width,height);
                         await Task.Delay(1800);
                         var match=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
@@ -82,19 +83,24 @@ namespace Game.Editor
                         await Tap(touch,match.PlayerFocusButton);
                         var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
                         AuditButtons(alignmentOnly);
-                        await Shot(language+"-"+width+"-hud",width,height);
+                        await Shot(language+"-"+width+"-hud",width,height,outputDirectory);
                         var watch=Field<Button>(aria,"watchButton");
                         await Tap(touch,watch);
                         await Task.Delay(400);
                         AuditButtons(alignmentOnly);
-                        await Shot(language+"-"+width+"-consent",width,height);
+                        await Shot(language+"-"+width+"-consent",width,height,outputDirectory);
                         await Tap(touch,Field<Button>(aria,"watchCancel"));
                     }
                 }
                 await Tap(touch,selection.CommandWheelOpenButton);
                 await Task.Delay(700);
-                await Shot("fa-IR-1280-commands-open",1280,720);
-                Debug.Log((alignmentOnly ? "[HudIconAlignmentNative]" : "[HudButtonIconsNative]") + " result=Passed screens=9 locales=en,fa-IR widths=1920,1280 input=Touch cameraOrders=Unchanged completeMatch=NotClaimed deviceAcceptance=Pending");
+                MainMenuV3PrefabBuilder.SetGameViewResolution(1280,720);
+                await Task.Delay(900);
+                await Shot("fa-IR-1280-commands-open",1280,720,outputDirectory);
+                Debug.Log((alignmentOnly ? "[HudIconAlignmentNative]" : "[HudButtonIconsNative]") +
+                    " result=Passed screens=" + (outputDirectory == Output ? 9 : 13) +
+                    " locales=en,fa-IR widths=" + (outputDirectory == Output ? "1920,1280" : "1920,1280,2400") +
+                    " input=Touch cameraOrders=Unchanged completeMatch=NotClaimed deviceAcceptance=Pending");
                 return 0;
             }
             catch(Exception exception)
@@ -179,9 +185,9 @@ namespace Game.Editor
                         throw new InvalidOperationException("Inherited role background visible: "+view.name);
             }
         }
-        private static async Task Shot(string name,int width,int height)
+        private static async Task Shot(string name,int width,int height,string outputDirectory)
         {
-            string path=Output+"/"+name+".png";
+            string path=outputDirectory+"/"+name+".png";
             ScreenCapture.CaptureScreenshot(path);
             await Task.Delay(900);
             await Until(()=>File.Exists(path),10);

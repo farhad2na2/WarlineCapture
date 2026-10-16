@@ -148,7 +148,7 @@ def select_reserves(owner, override_id=None, policy=None, now=None):
             norm(policy.get("log", "")) != norm(owner["log"]) or
             policy.get("executeMethod") != owner.get("executeMethod") or
             any(type(value) is not int for value in reserves) or
-            reserves not in ((8, 8), (8, 12))):
+            reserves not in ((4, 4), (8, 8), (8, 12))):
         raise ValueError("No matching single-run reserve authorization")
     expires = datetime.datetime.fromisoformat(policy["expiresUtc"])
     if expires.tzinfo is None or now >= expires:

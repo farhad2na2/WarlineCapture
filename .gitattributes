@@ -377,3 +377,6 @@ Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.js
 /Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/final-stage.paths -text
 /Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.fragment -text
 /Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.proposed -text
+
+# Native visual evidence for the approved water/bridge pass.
+/Design/AgentReports/WaterBridgesRoads20261016/**/*.png filter=lfs diff=lfs merge=lfs -text

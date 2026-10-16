@@ -1,0 +1,17 @@
+{
+    "map": "CH05M05CommandNode",
+    "sourceHash": "5e06fc94534015d787f5705402ae481591c2b30f214ccbba9c3b8d3744b91f11",
+    "result": "Applied",
+    "waterRenderers": 46,
+    "bankMeshes": 8,
+    "channelMeshes": 8,
+    "waterMaterials": 2,
+    "joins": 0,
+    "pavedMaterials": 5,
+    "earthMaterials": 2,
+    "shoreSegments": 0,
+    "joinRows": [],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M05CommandNode_d90068bfe6ce4c78a2d95bf6fd876882.mat roles=earth,kerb"
+    ]
+}

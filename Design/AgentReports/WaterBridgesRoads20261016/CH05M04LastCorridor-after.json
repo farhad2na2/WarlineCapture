@@ -1,0 +1,17 @@
+{
+    "map": "CH05M04LastCorridor",
+    "sourceHash": "c2c868f1d875c3a44f1de3c1395fb7d9a0ceea2e202cd9be7712f46fc2d314b0",
+    "result": "Applied",
+    "waterRenderers": 46,
+    "bankMeshes": 8,
+    "channelMeshes": 8,
+    "waterMaterials": 2,
+    "joins": 0,
+    "pavedMaterials": 5,
+    "earthMaterials": 2,
+    "shoreSegments": 0,
+    "joinRows": [],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M04LastCorridor_d90068bfe6ce4c78a2d95bf6fd876882.mat roles=earth,kerb"
+    ]
+}

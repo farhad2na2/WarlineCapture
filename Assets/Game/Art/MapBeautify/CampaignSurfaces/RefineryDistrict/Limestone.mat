@@ -24,6 +24,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _ActivityMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -80,6 +84,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RoadBlendMap:
+        m_Texture: {fileID: 2800000, guid: a979d2e71b38044b0aed220aebeefac3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -98,6 +106,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _ActivityStrength: 0
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -105,6 +114,7 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
+    - _CivicSurfaceStrength: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -139,6 +149,10 @@ Material:
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RoadBlendRole: 1
+    - _RoadBlendStrength: 0.4
+    - _RoadTerminalStrength: 0
+    - _RunwayEdgeStrength: 0
     - _SandPaletteStrength: 0
     - _SandScrubCoverage: 0
     - _Smoothness: 0.04
@@ -152,7 +166,9 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
+    - _ActivityRect: {r: 0, g: 0, b: 1, a: 1}
     - _BaseColor: {r: 0.5, g: 0.47, b: 0.4, a: 1}
+    - _CivicSurfaceRect: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5, g: 0.4699999, b: 0.39999998, a: 1}
     - _DirtShoulderColorScale: {r: 1, g: 1, b: 1, a: 1}
     - _DistrictSurfaceConstant: {r: 0, g: 1, b: 0, a: 0}
@@ -160,6 +176,14 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MacroTintA: {r: 0.82, g: 0.73, b: 0.57, a: 1}
     - _MacroTintB: {r: 1.06, g: 1.02, b: 0.9, a: 1}
+    - _RoadBlendAsphalt: {r: 0.23, g: 0.25, b: 0.28, a: 1}
+    - _RoadBlendRect: {r: 320, g: 220, b: 760, a: 560}
+    - _RoadBlendSand: {r: 0.72, g: 0.665, b: 0.56, a: 1}
+    - _RoadTerminalA: {r: 0, g: 0, b: 0, a: 0}
+    - _RoadTerminalB: {r: 0, g: 0, b: 0, a: 0}
+    - _RoadTerminalEarth: {r: 0.65, g: 0.6, b: 0.49, a: 1}
+    - _RunwayEdgeColor: {r: 0.67, g: 0.62, b: 0.53, a: 1}
+    - _RunwayEdgeRect: {r: 0, g: 0, b: 0, a: 0}
     - _SandDryColor: {r: 0.88, g: 0.75, b: 0.50999993, a: 1}
     - _SandScrubColor: {r: 0.65, g: 0.65, b: 0.42999998, a: 1}
     - _SandWornColor: {r: 0.69, g: 0.56999993, b: 0.38999996, a: 1}

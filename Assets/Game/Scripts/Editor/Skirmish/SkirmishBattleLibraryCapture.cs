@@ -882,6 +882,7 @@ namespace Game.Editor
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
             GuardTheatre(() => RejectZoomPillOverCards(regions, locale, selectedMapId));
             GuardTheatre(() => RejectZoomPillOverHexes(regions, locale, selectedMapId));
+            GuardTheatre(() => RejectZoomCueOverSelectedName(regions, locale, selectedMapId));
             GuardTheatre(() => RejectLatinNameInsideCard(regions, locale));
             GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
@@ -1347,11 +1348,11 @@ namespace Game.Editor
                     " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
-            if (polygon.color.a < 0.35f || polygon.color.a > 0.45f)
+            if (polygon.color.a < 0.88f)
             {
                 throw new InvalidOperationException(
                     "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
-                    " locale=" + locale + ". Expected about 0.40.");
+                    " locale=" + locale + ". Expected an opaque district fill.");
             }
 
             bool stroke = false;
@@ -2714,6 +2715,26 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     "Theatre zoom pill overlaps a zone card locale=" + locale + " card=" + card.name + ".");
             }
+        }
+
+        private static void RejectZoomCueOverSelectedName(Transform regions, string locale, string selectedMapId)
+        {
+            if (regions == null || string.IsNullOrEmpty(selectedMapId))
+                return;
+            RectTransform pill = FindNamed(regions, "CuePlate") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                pill = FindNamed(regions, "ZoomCue") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                return;
+            if (FindNamed(regions, "ZoneCard_" + selectedMapId) is not RectTransform card || !card.gameObject.activeInHierarchy)
+                return;
+            if (card.Find("ZoneName") is not RectTransform name || !name.gameObject.activeInHierarchy)
+                return;
+            if (!WorldOverlap(pill, name, 0f))
+                return;
+            throw new InvalidOperationException(
+                "Theatre zoom hint overlaps the selected zone name locale=" + locale +
+                " card=" + card.name + ".");
         }
 
         private static void RejectZoomPillOverHexes(Transform regions, string locale, string selectedMapId)

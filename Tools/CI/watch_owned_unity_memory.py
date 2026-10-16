@@ -95,6 +95,37 @@ def memory(kernel):
         raise OSError(ctypes.get_last_error(), "Memory observation failed")
     return value.free_ram, value.free_commit
 
+class ProcessMemory(ctypes.Structure):
+    _fields_ = [("cb", ctypes.c_ulong), ("PageFaultCount", ctypes.c_ulong)] + [
+        (name, ctypes.c_size_t) for name in ("PeakWorkingSetSize", "WorkingSetSize",
+        "QuotaPeakPagedPoolUsage", "QuotaPagedPoolUsage", "QuotaPeakNonPagedPoolUsage",
+        "QuotaNonPagedPoolUsage", "PagefileUsage", "PeakPagefileUsage", "PrivateUsage")]
+
+
+def process_memory(kernel, handle, expected_created):
+    """Optional telemetry on the existing limited-query handle; never affect cancellation."""
+    try:
+        kernel.GetProcessTimes.argtypes = [ctypes.c_void_p] + [ctypes.POINTER(ctypes.c_ulonglong)] * 4
+        kernel.GetProcessTimes.restype = ctypes.c_int
+        times = [ctypes.c_ulonglong() for _ in range(4)]
+        if not kernel.GetProcessTimes(handle, *(ctypes.byref(value) for value in times)):
+            return {"telemetryUnavailable": "GetProcessTimes", "winError": ctypes.get_last_error()}
+        observed_created = times[0].value // 10000 - 11644473600000
+        if observed_created != expected_created:
+            return {"telemetryUnavailable": "CreationIdentityMismatch"}
+        kernel.K32GetProcessMemoryInfo.argtypes = [ctypes.c_void_p, ctypes.POINTER(ProcessMemory), ctypes.c_ulong]
+        kernel.K32GetProcessMemoryInfo.restype = ctypes.c_int
+        counters = ProcessMemory()
+        counters.cb = ctypes.sizeof(counters)
+        if not kernel.K32GetProcessMemoryInfo(handle, ctypes.byref(counters), counters.cb):
+            return {"telemetryUnavailable": "K32GetProcessMemoryInfo", "winError": ctypes.get_last_error()}
+        return {"workingSetBytes": counters.WorkingSetSize,
+                "peakWorkingSetBytes": counters.PeakWorkingSetSize,
+                "privateCommitBytes": counters.PrivateUsage}
+    except (AttributeError, OSError) as error:
+        return {"telemetryUnavailable": type(error).__name__, "error": str(error)}
+
+
 def low(ram, commit):
     return ram < RAM_FLOOR or commit < COMMIT_FLOOR
 
@@ -134,7 +165,8 @@ def watch(owner_path, output):
                 write(output, {"kind": "Exited", "processExit": status.value, "cancelled": False})
                 return 0
             ram, commit = memory(kernel)
-            write(output, {"kind": "Resource", "freeRamBytes": ram, "freeCommitBytes": commit})
+            write(output, {"kind": "Resource", "freeRamBytes": ram, "freeCommitBytes": commit,
+                           "ownedEditorMemory": process_memory(kernel, handle, created(initial))})
             if low(ram, commit):
                 rows = census()
                 current = verify(rows, owner)

@@ -44,8 +44,8 @@ namespace Game.UI.Runtime
                 compositionHeight = 941f;
             if (compositionWidth < 200f)
                 compositionWidth = 1672f;
-            float height = 84f;
-            float y = compositionHeight - 104f;
+            float height = 100f; // approved-1/2/3 footer weight
+            float y = compositionHeight - 112f;
             float gap = 6f;
             float side = 10f;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -152,6 +152,8 @@ namespace Game.UI.Runtime
                 }
 
                 bool primary = specs[i].Weight >= 1.5f;
+                if (primary)
+                    _footerPrimary = button;
                 if (label != null)
                 {
                     // approved mockups: heavy footer type, the green primary largest.
@@ -371,6 +373,39 @@ namespace Game.UI.Runtime
             edge.transform.SetAsFirstSibling();
             edge.transform.SetSiblingIndex(Mathf.Min(1, parent.childCount - 1));
         }
+
+        /// <summary>
+        /// Late re-pin of footer label sizes: the library text passes (EnforceLibraryFontFloor/FinishLibraryText) run
+        /// after PlaceLibraryFooter and shrink the labels; this runs from PlaceLibraryHeader, after them.
+        /// </summary>
+        private void ReassertFooterLabels()
+        {
+            Button[] all = { backButtonRef(), resetButton, _libraryFavouritesButton, _libraryAdvancedButton, randomizeSeedButton, launchButton };
+            for (int i = 0; i < all.Length; i++)
+            {
+                Button button = all[i];
+                if (button == null || !button.gameObject.activeInHierarchy)
+                    continue;
+                TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+                if (label == null)
+                    continue;
+                bool primary = button == _footerPrimary; // Zoom In (Theatre) / Start Battle (Battlefield)
+                float max = primary ? 44f : 34f;
+                float min = primary ? 28f : 24f;
+                label.enableAutoSizing = true;
+                label.fontSizeMin = min;
+                label.fontSizeMax = max;
+                label.fontStyle = FontStyles.Bold;
+                label.overflowMode = TextOverflowModes.Overflow;
+                V3LocalizedTextBindingView binding = label.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(min, max);
+            }
+        }
+
+        private Button _footerPrimary;
+
+        private Button backButtonRef() => transform.Find("SkirmishSetupComposition/BackButton")?.GetComponent<Button>();
 
         private static void FitFooterLabel(Button button, bool fa, float buttonWidth)
         {

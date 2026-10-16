@@ -1170,6 +1170,11 @@ namespace Game.UI.Runtime
                         tierName.enableAutoSizing = false;
                         tierName.fontSize = 30f; // +25%
                     }
+                    // Per-tile fit: keep the bigger size, but shrink a long name (4:3 VETERAN/COMMANDER) to its tile with a gap.
+                    tierName.rectTransform.offsetMin = new Vector2(8f, tierName.rectTransform.offsetMin.y);
+                    tierName.rectTransform.offsetMax = new Vector2(-8f, tierName.rectTransform.offsetMax.y);
+                    if (tierName.rectTransform.rect.width > 40f)
+                        FitDetailLine(tierName, 16f, fa ? 30f : 28f);
                 }
 
                 TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();

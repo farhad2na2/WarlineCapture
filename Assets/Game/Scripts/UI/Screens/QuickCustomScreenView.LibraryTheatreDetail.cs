@@ -128,8 +128,14 @@ namespace Game.UI.Runtime
             Transform panel = _libraryRegions != null ? _libraryRegions.Find(TheatreDetailPanelName) : null;
             if (panel == null)
                 return;
-            FitDetailLine(panel.Find("Title")?.GetComponent<TMP_Text>(), 16f, 28f);
-            FitDetailLine(panel.Find("ObjectiveHeading")?.GetComponent<TMP_Text>(), 14f, 22f);
+            FitDetailLine(panel.Find("Title")?.GetComponent<TMP_Text>(), 18f, 32f); // type scale up (Game PM)
+            FitDetailLine(panel.Find("ObjectiveHeading")?.GetComponent<TMP_Text>(), 16f, 24f);
+            for (int i = 0; i < panel.childCount; i++)
+            {
+                Transform child = panel.GetChild(i);
+                if (child.name == "Subtitle")
+                    FitDetailLine(child.GetComponent<TMP_Text>(), 14f, 22f); // objective names, past the text pass's subtitle floor
+            }
         }
 
         private static void FitDetailLine(TMP_Text text, float min, float max)
@@ -181,14 +187,14 @@ namespace Game.UI.Runtime
         private float DetailTitleAndStats(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width, bool compact)
         {
             TMP_Text title = CreateLabel(root, "Title", 26f);
-            PlaceTopLeft(title.rectTransform, x, y, width, 34f);
+            PlaceTopLeft(title.rectTransform, x, y, width, 38f);
             // FA line metrics run taller than the box; the next block starts 12 px below so the ink never meets the art.
             SetCopy(title, MapDisplayTitle(pin.MapId, fa), LibraryFontFloor, compact ? 24f : 28f);
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.isRightToLeftText = fa;
             title.fontStyle = FontStyles.Bold;
             title.color = new Color(0.96f, 0.93f, 0.84f, 1f);
-            return y + 46f;
+            return y + 50f;
         }
 
         private const bool HideDetailStatsLine = true;
@@ -323,7 +329,7 @@ namespace Game.UI.Runtime
         private void DetailObjectives(RectTransform root, bool fa, float x, float y, float width, float height)
         {
             TMP_Text heading = CreateLabel(root, "ObjectiveHeading", 22f);
-            PlaceTopLeft(heading.rectTransform, x, y, width, 28f);
+            PlaceTopLeft(heading.rectTransform, x, y, width, 30f);
             SetCopy(heading, fa ? "نوع هدف" : "OBJECTIVE TYPE", LibraryFontFloor, 22f);
             heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             heading.isRightToLeftText = fa;

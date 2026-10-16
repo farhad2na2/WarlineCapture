@@ -73,6 +73,7 @@ namespace Game.UI.Runtime
         private void PlaceLibraryHeader()
         {
             ReassertRailLabels();
+            ReassertFooterLabels();
             FitTheatreDetailHeadings();
             Transform composition = transform.Find("SkirmishSetupComposition");
             if (composition is not RectTransform compositionRect)

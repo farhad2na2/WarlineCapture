@@ -100,6 +100,9 @@ namespace Game.UI.Runtime
                             titleBinding.ConfigureFontBounds(fa ? 36f : 28f, fa ? 64f : 50f);
                             if (fa)
                                 titleBinding.ApplyLocalization(); // re-pick the locale (Noto) font and re-fit to the taller box
+                            // ApplyLocalization re-mirrors the captured source alignment (V3LocalizedTextBindingView
+                            // ApplyLocalizedPresentation), which lands FA on the left beside the crest; mirror explicitly.
+                            screenTitleText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                         }
                         // Runs after EnforceLibraryFontFloor/FinishLibraryText: re-assert gold, and in FA pin the size,
                         // since the binding's Arabic line-box fit re-autosizes the Noto face small.

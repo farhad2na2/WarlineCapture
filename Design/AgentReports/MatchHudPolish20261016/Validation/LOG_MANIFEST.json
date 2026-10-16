@@ -38,5 +38,10 @@
     "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-checks-20261016-05.log.gz",
     "uncompressedSha256": "3ceba0888a20db64d7595e2d234437e1f924d64f29efc100e6410a57a9afaebf",
     "uncompressedBytes": 292982
+  },
+  {
+    "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-integrated-20261016-06.log.gz",
+    "uncompressedSha256": "6fa1fd01f1e246fc677bfc9426a6ef2fe2be3097cc63c80141b72c52c18212d0",
+    "uncompressedBytes": 273404
   }
 ]

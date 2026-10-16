@@ -77,7 +77,7 @@ namespace Game.UI.Runtime
         }
         private string SkirmishWatchInstruction(string fallback)
         {
-            if (!UiShellRuntimeGateway.TryReadSkirmish(out _) || !UiShellRuntimeGateway.ReadAriaPlay().Active) return fallback;
+            if (!UiShellRuntimeGateway.TryReadSkirmishContext(out _) || !UiShellRuntimeGateway.ReadAriaPlay().Active) return fallback;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (TryPublicObjectiveInstruction(UiShellRuntimeGateway.ReadAriaSkirmishIntent(), fa, out string objectiveInstruction)) return objectiveInstruction;
             return UiShellRuntimeGateway.ReadAriaSkirmishIntent() switch

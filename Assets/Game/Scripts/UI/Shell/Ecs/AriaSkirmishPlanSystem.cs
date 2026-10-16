@@ -666,7 +666,9 @@ namespace Game.UI.Shell.Ecs
             // Only a new closest approach on the player's presented minimap
             // counts. Paging, jitter and retreat/re-advance cannot mask a stall.
             bool assaultAdvance = false;
-            if (plan.AssaultIssued != 0 && view.AssaultDistanceVisible &&
+            // Public accepted assault intent may precede completion of the full roster sweep.
+            bool acceptedAssaultOnPage = (view.ExpandedAssaultMask & view.ExpandedAttackOrderMask) != 0;
+            if ((plan.AssaultIssued != 0 || acceptedAssaultOnPage) && view.AssaultDistanceVisible &&
                 view.NearestFriendlyObjectiveDistance >= 0f &&
                 !float.IsNaN(view.NearestFriendlyObjectiveDistance) &&
                 !float.IsInfinity(view.NearestFriendlyObjectiveDistance))

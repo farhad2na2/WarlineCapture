@@ -630,7 +630,7 @@ namespace Game.UI.Runtime
                 plateRect.anchorMin = new Vector2(0f, 0f);
                 plateRect.anchorMax = new Vector2(1f, 1f);
                 plateRect.pivot = new Vector2(0f, 1f);
-                plateRect.offsetMin = new Vector2(theater ? 0f : 8f, theater ? 128f : 8f);
+                plateRect.offsetMin = new Vector2(theater ? 0f : 8f, 8f);
                 plateRect.offsetMax = new Vector2(theater ? 0f : -8f, theater ? -8f : -112f);
                 MaskRect(plateRect);
             }
@@ -947,8 +947,8 @@ namespace Game.UI.Runtime
             rect.anchorMin = new Vector2(0f, 0f);
             rect.anchorMax = new Vector2(1f, 0f);
             rect.pivot = new Vector2(0f, 0f);
-            // Strip is inactive. Keep the hint in the band ZoomHintRect clears, 10px above the clip.
-            const float clipBottom = 128f;
+            // The plate now fills the old 128px band. Keep the hint on the bottom edge ZoomHintRect clears.
+            const float clipBottom = 8f;
             rect.anchoredPosition = new Vector2(36f, clipBottom + 10f);
             rect.sizeDelta = new Vector2(-36f, 36f);
             rect.SetAsLastSibling();

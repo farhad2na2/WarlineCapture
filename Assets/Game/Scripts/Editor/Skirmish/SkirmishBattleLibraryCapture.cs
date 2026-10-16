@@ -869,6 +869,7 @@ namespace Game.Editor
             }
 
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
+            GuardTheatre(() => RejectZoomPillOverCards(regions, locale));
             GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
 
@@ -2641,7 +2642,8 @@ namespace Game.Editor
             }
 
             Transform column = FindNamed(root != null ? root.transform : null, "BriefingColumn");
-            if (!TryReadTheatreSummaryCounts(column, out _))
+            if (!TryReadTheatreSummaryCounts(column, out int[] shown)
+                || !TryReadTheatreSummaryWon(column, out int wonShown, out int totalShown))
             {
                 throw new InvalidOperationException("TheatreSummary missing until #68.");
             }
@@ -2651,6 +2653,49 @@ namespace Game.Editor
             {
                 throw new InvalidOperationException(
                     "Theatre shows MedalRow. The Theatre has no MedalRow. Tier counts belong on TheatreSummary.");
+            }
+
+            int[] expected = LedgerWholeTheatreTotals();
+            for (int i = 0; i < expected.Length; i++)
+            {
+                if (shown[i] == expected[i])
+                    continue;
+                throw new InvalidOperationException(
+                    "TheatreSummary " + TheatreMedalNames[i] + " TierCount reads '" + shown[i] +
+                    "'. SkirmishMedalLedger whole-theatre total is " + expected[i] + ".");
+            }
+
+            int expectedWon = LedgerBattlesWon();
+            QuickCustomScreenView view = root != null ? root.GetComponent<QuickCustomScreenView>() : null;
+            int expectedTotal = view != null && view.LibraryViewModel != null
+                ? view.LibraryViewModel.Theater.OverallPublishedCount
+                : totalShown;
+            if (wonShown != expectedWon || totalShown != expectedTotal)
+            {
+                throw new InvalidOperationException(
+                    "TheatreSummary reads '" + wonShown + " / " + totalShown +
+                    "'. SkirmishMedalLedger whole-theatre total is " + expectedWon + " / " + expectedTotal + ".");
+            }
+        }
+
+        private static void RejectZoomPillOverCards(Transform regions, string locale)
+        {
+            if (regions == null)
+                return;
+            RectTransform pill = FindNamed(regions, "CuePlate") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                pill = FindNamed(regions, "ZoomCue") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                return;
+            for (int i = 0; i < regions.childCount; i++)
+            {
+                Transform child = regions.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
+                    continue;
+                if (!card.gameObject.activeInHierarchy || !WorldOverlap(pill, card))
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre zoom pill overlaps a zone card locale=" + locale + " card=" + card.name + ".");
             }
         }
 
@@ -2673,6 +2718,103 @@ namespace Game.Editor
 
             counts = read;
             return true;
+        }
+
+        private static bool TryReadTheatreSummaryWon(Transform column, out int won, out int total)
+        {
+            won = 0;
+            total = 0;
+            Transform summary = column != null ? column.Find("TheatreSummary") : null;
+            if (summary == null || !summary.gameObject.activeInHierarchy)
+                return false;
+            Transform track = summary.Find("ProgressTrack");
+            if (track == null || !track.gameObject.activeInHierarchy || track.Find("Fill") == null)
+                return false;
+            TMP_Text line = summary.Find("Summary")?.GetComponent<TMP_Text>();
+            if (line == null || !line.gameObject.activeInHierarchy)
+                return false;
+            return TryReadWonTotal(line.text, out won, out total);
+        }
+
+        private static bool TryReadWonTotal(string shown, out int won, out int total)
+        {
+            won = 0;
+            total = 0;
+            if (string.IsNullOrEmpty(shown))
+                return false;
+            string cleaned = StripBidiMarks(shown);
+            int first = -1;
+            int second = -1;
+            int run = 0;
+            bool inRun = false;
+            for (int i = 0; i < cleaned.Length; i++)
+            {
+                char glyph = cleaned[i];
+                if (glyph >= '۰' && glyph <= '۹')
+                    glyph = (char)('0' + (glyph - '۰'));
+                else if (glyph >= '٠' && glyph <= '٩')
+                    glyph = (char)('0' + (glyph - '٠'));
+                if (glyph < '0' || glyph > '9')
+                {
+                    if (inRun)
+                    {
+                        if (first < 0)
+                            first = run;
+                        else if (second < 0)
+                            second = run;
+                        inRun = false;
+                        run = 0;
+                    }
+
+                    continue;
+                }
+
+                inRun = true;
+                run = run * 10 + (glyph - '0');
+            }
+
+            if (inRun)
+            {
+                if (first < 0)
+                    first = run;
+                else if (second < 0)
+                    second = run;
+            }
+
+            if (first < 0 || second < 0)
+                return false;
+            won = first;
+            total = second;
+            return true;
+        }
+
+        private static int[] LedgerWholeTheatreTotals()
+        {
+            SkirmishMedalDifficultyTotals ledger = CaptureLedger().TotalsByDifficulty();
+            return new[] { ledger.Recruit, ledger.Regular, ledger.Veteran, ledger.Commander };
+        }
+
+        private static int LedgerBattlesWon()
+        {
+            return CaptureLedger().BattlesWon();
+        }
+
+        private static SkirmishMedalLedger CaptureLedger()
+        {
+            var grants = QuickCustomScreenView.CaptureMedalGrants;
+            var rows = new SkirmishMedalSaveData[grants.Length];
+            for (int i = 0; i < grants.Length; i++)
+            {
+                rows[i] = new SkirmishMedalSaveData
+                {
+                    catalogId = grants[i].CatalogId,
+                    difficulty = (byte)grants[i].Difficulty,
+                    contentVersion = 1,
+                    sessionId = "capture"
+                };
+            }
+
+            return new SkirmishMedalLedger(rows);
         }
 
         internal static bool TryParseTierCount(string shown, out int value)

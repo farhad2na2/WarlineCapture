@@ -1837,7 +1837,7 @@ namespace Game.UI.Runtime
             name.isRightToLeftText = fa;
             name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
-            name.maxVisibleLines = 2;
+            name.maxVisibleLines = 1;
             name.enableAutoSizing = true;
             name.fontSizeMin = 16f;
             name.fontSizeMax = 32f;
@@ -2119,7 +2119,8 @@ namespace Game.UI.Runtime
             }
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             RectTransform placedCue = cue.rectTransform;
-            if (placedCue.sizeDelta.x + 0.5f >= TheatreSeatGeometry.PackedCueMinWidth && placedCue.sizeDelta.y >= 40f)
+            if (placedCue.sizeDelta.x + 0.5f >= TheatreSeatGeometry.PackedCueMinWidth && placedCue.sizeDelta.y >= 40f
+                && PackedCueClearsForeignHexes(placedCue))
             {
                 Transform cuePlate = cue.transform.parent != null ? cue.transform.parent.Find("CuePlate") : null;
                 if (cuePlate is RectTransform cuePlateRect)
@@ -2274,6 +2275,7 @@ namespace Game.UI.Runtime
 
             if (!cueSeated)
                 cueRect = fullCue;
+            SlideCueBesideForeignHex(ref cueRect, selectedId, frameW, frameH, inset, detail, parent);
 
             PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
 
@@ -2619,10 +2621,14 @@ namespace Game.UI.Runtime
             name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 1;
-            name.ForceMeshUpdate();
-            bool oneLine = MeasuredNameWidth(name) > 0.5f && MeasuredNameWidth(name) <= boxWidth + 2f;
+            name.characterSpacing = 0f;
+            bool latin = !ContainsArabicLetter(source);
+            bool oneLine = FitsNameLine(name, source, size, boxWidth, latin ? -12f : 0f);
             if (!oneLine)
             {
+                name.characterSpacing = 0f;
+                if (latin)
+                    return false;
                 name.textWrappingMode = TextWrappingModes.NoWrap;
                 name.maxVisibleLines = 2;
                 if (!WrapZoneName(name, size))
@@ -2645,6 +2651,40 @@ namespace Game.UI.Runtime
             name.lineSpacing = 0f;
             name.ForceMeshUpdate();
             return PortraitNameFitsRect(name, source);
+        }
+
+        /// <summary>
+        /// One line at <paramref name="size"/>. Tracking may tighten down to <paramref name="minSpacing"/>
+        /// so a two-word title stays on one line instead of wrapping.
+        /// </summary>
+        private static bool FitsNameLine(TMP_Text name, string source, float size, float boxWidth, float minSpacing)
+        {
+            if (name == null || size < 1f || boxWidth < 8f)
+                return false;
+            var binding = name.GetComponent<V3LocalizedTextBindingView>();
+            if (minSpacing > 0f)
+                minSpacing = 0f;
+            for (float spacing = 0f; spacing >= minSpacing - 0.01f; spacing -= 1f)
+            {
+                if (binding != null)
+                    binding.ConfigureFontBounds(size, size);
+                name.enableAutoSizing = true;
+                name.fontSizeMin = size;
+                name.fontSizeMax = size;
+                name.fontSize = size;
+                name.characterSpacing = spacing;
+                name.text = source;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.overflowMode = TextOverflowModes.Overflow;
+                name.maxVisibleLines = 1;
+                name.ForceMeshUpdate();
+                float line = MeasuredNameWidth(name);
+                if (line > 0.5f && line <= boxWidth + 2f && !name.isTextTruncated && !name.isTextOverflowing)
+                    return true;
+            }
+
+            name.characterSpacing = 0f;
+            return false;
         }
 
         private static void TightenPortraitName(TMP_Text name, RectTransform card, string source, bool wide)
@@ -2672,8 +2712,8 @@ namespace Game.UI.Runtime
                 name.overflowMode = TextOverflowModes.Overflow;
                 name.maxVisibleLines = 1;
                 name.lineSpacing = 0f;
-                name.ForceMeshUpdate();
-                if (MeasuredNameWidth(name) > boxWidth + 2f)
+                name.characterSpacing = 0f;
+                if (!FitsNameLine(name, source, candidate, boxWidth, arabic ? 0f : -12f))
                     continue;
                 float needed = PortraitNameBox(name, source, candidate, card.sizeDelta.y);
                 if (TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) + 1f < needed)
@@ -3700,6 +3740,8 @@ namespace Game.UI.Runtime
                                 continue;
                             if (!CueReadsAsSelected(parent, centre, pinCentre, selectedId, frameW, frameH))
                                 continue;
+                            if (PillHitsForeignHex(spot, selectedId, frameW, frameH))
+                                continue;
                             if (TryAcceptCue(spot, frameW, frameH, inset, margin, detail, cards, pins, ref placed))
                                 return true;
                         }
@@ -3721,6 +3763,86 @@ namespace Game.UI.Runtime
         /// The cue has to read as the selected district: its centre stays out of every other hex
         /// and is not closer to another pin.
         /// </summary>
+        private bool PackedCueClearsForeignHexes(RectTransform cue)
+        {
+            if (cue == null || cue.parent is not RectTransform parent)
+                return true;
+            float frameW = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
+            float frameH = parent.rect.height > 2f ? parent.rect.height : parent.sizeDelta.y;
+            string selectedId = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
+            if (string.IsNullOrEmpty(selectedId))
+                selectedId = "DB";
+            var spot = new Rect(cue.anchoredPosition.x, -cue.anchoredPosition.y, cue.sizeDelta.x, cue.sizeDelta.y);
+            return !PillHitsForeignHex(spot, selectedId, frameW, frameH);
+        }
+
+        private static bool PillHitsForeignHex(Rect spot, string selectedId, float frameW, float frameH)
+        {
+            if (frameW < 2f || frameH < 2f || spot.width < 1f || spot.height < 1f)
+                return false;
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                if (string.Equals(mapIds[i], selectedId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                Vector2[] hex = DistrictHex(mapIds[i], frameW, frameH);
+                if (hex != null && hex.Length >= 3 && RectHitsPolygon(spot, hex))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Moves the zoom pill off a foreign district. The packed seat can land on Industrial Basin
+        /// in fa-IR 4:3 while its centre still reads as the selected pin.
+        /// </summary>
+        private static void SlideCueBesideForeignHex(
+            ref Rect cue,
+            string selectedId,
+            float frameW,
+            float frameH,
+            float inset,
+            Rect detail,
+            RectTransform parent)
+        {
+            if (!PillHitsForeignHex(cue, selectedId, frameW, frameH))
+                return;
+            var cards = new List<Rect>(8);
+            CollectOverlayRects(parent, "ZoneCard_", cards);
+            Rect origin = cue;
+            float best = float.MaxValue;
+            Rect chosen = cue;
+            bool found = false;
+            for (int step = 8; step <= 320; step += 8)
+            {
+                float[] dx = { step, -step, 0f, 0f, step, -step, step, -step };
+                float[] dy = { 0f, 0f, step, -step, step, step, -step, -step };
+                for (int i = 0; i < dx.Length; i++)
+                {
+                    var spot = new Rect(origin.x + dx[i], origin.y + dy[i], origin.width, origin.height);
+                    if (spot.xMin < inset || spot.yMin < inset || spot.xMax > frameW - inset || spot.yMax > frameH - inset)
+                        continue;
+                    if (PillHitsForeignHex(spot, selectedId, frameW, frameH))
+                        continue;
+                    if (!CueMissesDetail(spot, detail) || !CueClears(spot, cards, 8f))
+                        continue;
+                    float reach = dx[i] * dx[i] + dy[i] * dy[i];
+                    if (reach >= best)
+                        continue;
+                    best = reach;
+                    chosen = spot;
+                    found = true;
+                }
+
+                if (found && best <= step * step)
+                    break;
+            }
+
+            if (found)
+                cue = chosen;
+        }
+
         private static bool CueReadsAsSelected(RectTransform parent, Vector2 centre, Vector2 pin, string selectedId, float frameW, float frameH)
         {
             float own = Vector2.Distance(centre, pin);

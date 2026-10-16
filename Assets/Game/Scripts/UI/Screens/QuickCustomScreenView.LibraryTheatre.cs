@@ -1840,10 +1840,10 @@ namespace Game.UI.Runtime
             name.maxVisibleLines = 2;
             name.enableAutoSizing = true;
             name.fontSizeMin = 16f;
-            name.fontSizeMax = 22f;
+            name.fontSizeMax = 28f;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 22f);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 28f);
 
             var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
             medallion.transform.SetParent(card.transform, false);
@@ -1864,7 +1864,8 @@ namespace Game.UI.Runtime
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = ZoneRingSprite();
-            track.color = new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
+            track.type = Image.Type.Simple;
+            track.color = new Color(1f, 1f, 1f, 0f);
             track.raycastTarget = false;
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
@@ -1875,7 +1876,7 @@ namespace Game.UI.Runtime
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
             fill.fillAmount = ratio;
-            fill.color = Color.Lerp(slot.Zone, Color.white, 0.45f);
+            fill.color = Color.Lerp(slot.Zone, Color.white, 0.22f);
             fill.raycastTarget = false;
             fill.enabled = !pending;
             var count = CreateLabel(card.transform, "ZoneCount", pending ? 18f : 20f);
@@ -2465,10 +2466,7 @@ namespace Game.UI.Runtime
                     continue;
                 }
                 if (text.name == "ZoneCount")
-                {
-                    bool pending = SkirmishBattleLibraryArt.IsRenderedComingSoon(text.text);
-                    RaiseTheatreLine(text, 14f, pending ? 20f : 22f);
-                }
+                    RaiseTheatreLine(text, 16f, 24f);
                 else if (text.name == "ZoomCue")
                     RaiseTheatreLine(text, 14f, 24f);
             }
@@ -2477,6 +2475,8 @@ namespace Game.UI.Runtime
 
         private const float ZoneNameFontCeiling = 26f;
         private const float ZoneNameFontFloor = 16f;
+        /// <summary>Drawn name size. The packer still stops at NameFontCeiling so the seats do not move.</summary>
+        private const float DrawnNameCeiling = 28f;
 
         /// <summary>
         /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
@@ -2562,7 +2562,7 @@ namespace Game.UI.Runtime
             // only until two whole words fit inside the v47 name budget.
             if (ContainsArabicLetter(source))
                 fontFloor = Mathf.Min(fontFloor, 13f);
-            for (float size = TheatreSeatGeometry.NameFontCeiling; size >= fontFloor - 0.01f; size -= 1f)
+            for (float size = DrawnNameCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
                 if (binding != null)
                     binding.ConfigureFontBounds(size, size);
@@ -2750,7 +2750,7 @@ namespace Game.UI.Runtime
             if (card == null)
                 return;
             float cardW = card.sizeDelta.x;
-            const float pad = 6f;
+            const float pad = 4f;
             const float gap = 4f;
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
@@ -2758,7 +2758,7 @@ namespace Game.UI.Runtime
                 nameH = maxName;
             if (nameH < 1f)
                 nameH = 1f;
-            float statusH = cardH >= 190f ? 28f : 24f;
+            float statusH = cardH >= 190f ? 32f : 28f;
             float room = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
             if (nameH + statusH > room + 0.5f)
                 statusH = Mathf.Max(18f, room - nameH);
@@ -2772,28 +2772,43 @@ namespace Game.UI.Runtime
             float midH = statusY - gap - midTop;
             if (midH < 8f)
                 midH = 8f;
-            float side = Mathf.Min(midH, Mathf.Max(1f, (innerW - gap) * 0.5f));
-            if (side < 1f)
-                side = 1f;
+            float ringCap = cardH >= 190f ? 56f : 44f;
+            float portrait = Mathf.Min(midH, Mathf.Max(1f, innerW - gap - 36f));
+            float ringSide = Mathf.Min(ringCap, midH, Mathf.Max(1f, innerW - gap - portrait));
+            if (portrait + 0.5f < ringSide)
+            {
+                float share = Mathf.Max(1f, innerW - gap);
+                portrait = Mathf.Min(midH, share * 0.62f);
+                ringSide = Mathf.Min(ringCap, midH, Mathf.Max(1f, share - portrait));
+            }
+
+            if (portrait + gap + ringSide > innerW + 0.5f)
+                portrait = Mathf.Max(1f, innerW - gap - ringSide);
             float pairTop = midTop;
-            if (midH > side + 1f)
-                pairTop = midTop + (midH - side) * 0.5f;
+            if (midH > portrait + 1f)
+                pairTop = midTop + (midH - portrait) * 0.5f;
+            float bandBottom = statusY - gap;
+            float ringTop = pairTop + (portrait - ringSide) * 0.5f;
+            if (ringTop < midTop)
+                ringTop = midTop;
+            if (ringTop + ringSide > bandBottom)
+                ringTop = Mathf.Max(midTop, bandBottom - ringSide);
 
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
             {
-                PlaceTopLeft(thumb, pad, pairTop, side, side);
+                PlaceTopLeft(thumb, pad, pairTop, portrait, portrait);
                 if (thumb.Find("Thumbnail") is RectTransform preview)
                 {
-                    const float inset = 4f;
-                    float art = Mathf.Max(4f, side - inset * 2f);
+                    const float inset = 1f;
+                    float art = Mathf.Max(4f, portrait - inset * 2f);
                     PlaceTopLeft(preview, inset, inset, art, art);
                 }
             }
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
             if (ring != null)
-                PlaceTopLeft(ring, pad + side + gap, pairTop, side, side);
+                PlaceTopLeft(ring, pad + portrait + gap, ringTop, ringSide, ringSide);
 
             Transform countNode = card.Find("ZoneCount");
             if (countNode == null && ring != null)
@@ -3958,7 +3973,7 @@ namespace Game.UI.Runtime
                 for (int x = 0; x < size; x++)
                 {
                     float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
-                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.68f) / 0.28f);
+                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.72f) / 0.14f);
                     pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(ring * 255f));
                 }
             }
@@ -3966,7 +3981,13 @@ namespace Game.UI.Runtime
             texture.SetPixels32(pixels);
             texture.Apply(false, true);
             texture.hideFlags = HideFlags.HideAndDontSave;
-            _zoneRing = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _zoneRing = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, size, size),
+                new Vector2(0.5f, 0.5f),
+                size,
+                0,
+                SpriteMeshType.FullRect);
             _zoneRing.hideFlags = HideFlags.HideAndDontSave;
             return _zoneRing;
         }

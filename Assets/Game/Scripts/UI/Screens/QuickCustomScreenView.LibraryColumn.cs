@@ -437,7 +437,7 @@ namespace Game.UI.Runtime
             LayoutElement element = heading.GetComponent<LayoutElement>() ?? heading.gameObject.AddComponent<LayoutElement>();
             element.ignoreLayout = true;
             PlaceTopLeft(heading.rectTransform, 8f, 0f, width - 16f, 28f);
-            SetCopy(heading, fa ? "مدال ها" : "MEDALS", 18f, 22f);
+            SetCopy(heading, fa ? "مدال ها" : "MEDALS", 20f, 26f);
             heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             heading.isRightToLeftText = fa;
             heading.textWrappingMode = TextWrappingModes.NoWrap;
@@ -496,14 +496,14 @@ namespace Game.UI.Runtime
                 captionText.textWrappingMode = TextWrappingModes.NoWrap;
                 captionText.overflowMode = TextOverflowModes.Overflow;
                 captionText.enableAutoSizing = true;
-                captionText.fontSizeMin = 12f;
-                captionText.fontSizeMax = 17f;
+                captionText.fontSizeMin = 14f;
+                captionText.fontSizeMax = 19f;
                 captionText.maxVisibleLines = 1;
                 captionText.margin = Vector4.zero;
                 captionText.color = new Color(0.86f, 0.86f, 0.82f, 1f);
                 V3LocalizedTextBindingView binding = captionText.GetComponent<V3LocalizedTextBindingView>();
                 if (binding != null)
-                    binding.ConfigureFontBounds(12f, 17f);
+                    binding.ConfigureFontBounds(14f, 19f);
             }
         }
 

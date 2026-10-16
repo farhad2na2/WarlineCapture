@@ -461,14 +461,14 @@ namespace Game.UI.Runtime
                 value.textWrappingMode = TextWrappingModes.Normal;
                 value.overflowMode = TextOverflowModes.Overflow;
                 value.enableAutoSizing = true;
-                value.fontSizeMin = 13f;
-                value.fontSizeMax = 18f;
+                value.fontSizeMin = 15f;
+                value.fontSizeMax = 22f;
                 value.maxVisibleLines = 2;
                 value.fontStyle = FontStyles.Bold;
                 value.color = new Color(0.96f, 0.93f, 0.84f, 1f);
                 V3LocalizedTextBindingView binding = value.GetComponent<V3LocalizedTextBindingView>();
                 if (binding != null)
-                    binding.ConfigureFontBounds(13f, 18f);
+                    binding.ConfigureFontBounds(15f, 22f);
             }
         }
 
@@ -485,7 +485,7 @@ namespace Game.UI.Runtime
             text.gameObject.SetActive(_briefingSubtitleShown);
             if (!_briefingSubtitleShown)
                 return;
-            SetCopy(text, UpperLatin(copy), 18f, 24f);
+            SetCopy(text, UpperLatin(copy), 20f, 28f);
             text.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             text.isRightToLeftText = fa;
             text.textWrappingMode = TextWrappingModes.NoWrap;

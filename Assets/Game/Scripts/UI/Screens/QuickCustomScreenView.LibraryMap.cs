@@ -66,8 +66,10 @@ namespace Game.UI.Runtime
                 return;
             for (int i = 0; i < field.MapCards.Length; i++)
             {
-                if (!IsEmptyCard(field.MapCards[i]))
-                    CreateBattleCard(_libraryPins, field.MapCards[i], true);
+                if (IsEmptyCard(field.MapCards[i]))
+                    continue;
+                RectTransform pinRect = CreateBattleCard(_libraryPins, field.MapCards[i], true);
+                LightenPlannedShade(pinRect, field.MapCards[i].Access == SkirmishCardAccess.Playable);
             }
         }
 
@@ -107,7 +109,13 @@ namespace Game.UI.Runtime
         private RectTransform CreateBattleCard(Transform parent, SkirmishBattleCardState card, bool pin, float width = LibraryPinWidth, float height = LibraryPinHeight, GridCardSlots gridSlots = default)
         {
             // Card bodies (frame, title, type line, medal slots) come only from P2's LibraryCardArt path below;
-            // P1 keeps only the approved-2 packed pin placement.
+            // P1 keeps only the approved-2 packed pin size and placement (the slot), set before P2 lays out the body.
+            if (pin && SkirmishBattlefieldPinLayout.TryGet(card.PinId, out Vector2 sizeCentre) &&
+                TryPackedPinSlot(parent as RectTransform, sizeCentre, out Rect sizeSlot))
+            {
+                width = sizeSlot.width;
+                height = sizeSlot.height;
+            }
             var button = CreateChromeButton(parent, SkirmishLibraryControlNames.BattleCard(card.ScenarioId));
             var rect = button.GetComponent<RectTransform>();
             if (pin && SkirmishBattlefieldPinLayout.TryGet(card.PinId, out Vector2 centre))
@@ -351,7 +359,7 @@ namespace Game.UI.Runtime
             if (_objectiveColumn == null)
                 return;
             ClearChildren(_objectiveColumn);
-            const float listWidth = 196f;
+            const float listWidth = ObjectiveListWidth;
             const float rowHeight = 92f;
             PlaceTopLeft(_objectiveColumn, 8f, 8f, listWidth, 4f * (rowHeight + 8f));
             if (field.Tabs == null)
@@ -390,7 +398,7 @@ namespace Game.UI.Runtime
                 label.textWrappingMode = TextWrappingModes.Normal;
                 label.overflowMode = TextOverflowModes.Overflow;
                 label.maxVisibleLines = 2;
-                SetCopy(label, UpperLatin(shortLabel), LibraryFontFloor, 26f);
+                SetCopy(label, UpperLatin(shortLabel), LibraryFontFloor, 28f);
                 label.color = selected ? new Color(0.98f, 0.84f, 0.42f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
                 count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
@@ -423,7 +431,26 @@ namespace Game.UI.Runtime
         }
 
         private const float PinGutter = 14f;
-        private const float PinRailReserve = 196f + 8f + 14f;
+        private const float ObjectiveListWidth = 224f;
+        private const float PinRailReserve = ObjectiveListWidth + 8f + 14f;
+
+        /// <summary>The slot shade behind a pin: Planned (not playable) pins sit on a lighter shade so they read as pending, not sunk.</summary>
+        private static void LightenPlannedShade(RectTransform widget, bool playable)
+        {
+            if (widget == null || widget.parent == null)
+                return;
+            int index = widget.GetSiblingIndex();
+            for (int i = index - 1; i >= 0 && i >= index - 2; i--)
+            {
+                Transform sibling = widget.parent.GetChild(i);
+                if (sibling.name != "DepthShadow")
+                    continue;
+                Image shade = sibling.GetComponent<Image>();
+                if (shade != null)
+                    shade.color = playable ? new Color(0.1f, 0.04f, 0.01f, 0.6f) : new Color(0.1f, 0.06f, 0.03f, 0.3f);
+                return;
+            }
+        }
 
         /// <summary>
         /// Lays the six pins out as approved-2 does: two columns by three rows (S001/S002 on top, S005/S006 at the bottom),

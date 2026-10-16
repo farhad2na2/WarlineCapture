@@ -156,8 +156,8 @@ namespace Game.UI.Runtime
                 {
                     // approved mockups: heavy footer type, the green primary largest.
                     label.fontStyle = FontStyles.Bold;
-                    label.fontSizeMin = primary ? 24f : 20f;
-                    label.fontSizeMax = primary ? 38f : 30f;
+                    label.fontSizeMin = primary ? 28f : 24f; // type scale up (Game PM)
+                    label.fontSizeMax = primary ? 44f : 34f;
                 }
 
                 if (button != back)

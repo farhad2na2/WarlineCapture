@@ -2479,6 +2479,8 @@ namespace Game.UI.Runtime
         private const float ZoneNameFontFloor = 16f;
         /// <summary>Drawn name size. The packer still stops at NameFontCeiling so the seats do not move.</summary>
         private const float DrawnNameCeiling = 28f;
+        /// <summary>Square kept on a 156-wide card once the name and status still fit.</summary>
+        private const float WidePortraitFloor = 60f;
 
         /// <summary>
         /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
@@ -2522,6 +2524,8 @@ namespace Game.UI.Runtime
             if (plate.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
                 cue = PlateBoxOf(cueRect);
             TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
+            // One size for the plate: the largest at which every title still fits the full
+            // card width, wrapping after a space instead of stepping down to a one-line size.
             float shared = DrawnNameCeiling;
             bool any = false;
             for (int i = 0; i < names.Count && i < cards.Count; i++)
@@ -2565,7 +2569,7 @@ namespace Game.UI.Runtime
             if (name == null || card == null)
                 return 0f;
             float cardW = card.sizeDelta.x;
-            float boxWidth = Mathf.Max(8f, cardW - 12f);
+            float boxWidth = PortraitNameWidth(cardW);
             string source = FlattenCopy(name.text);
             if (name.rectTransform != null)
                 name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
@@ -2599,7 +2603,7 @@ namespace Game.UI.Runtime
             if (name == null || card == null || size < 1f)
                 return false;
             float cardH = card.sizeDelta.y;
-            float boxWidth = Mathf.Max(8f, card.sizeDelta.x - 12f);
+            float boxWidth = PortraitNameWidth(card.sizeDelta.x);
             string source = FlattenCopy(name.text);
             if (name.rectTransform != null)
                 name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
@@ -2650,7 +2654,7 @@ namespace Game.UI.Runtime
             float size = card.sizeDelta.x <= TheatreSeatGeometry.PortraitMinWidth + 8f
                 ? TheatreSeatGeometry.PortraitCompactFontFloor
                 : TheatreSeatGeometry.NameFontFloor;
-            float boxWidth = Mathf.Max(8f, card.sizeDelta.x - 12f);
+            float boxWidth = PortraitNameWidth(card.sizeDelta.x);
             bool arabic = ContainsArabicLetter(source);
             if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f && arabic)
                 size = TheatreSeatGeometry.PortraitCompactFontFloor;
@@ -2774,6 +2778,15 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Title width. Two pixels of rim on each side; the rest of the card is the name,
+        /// so a long word wraps onto a second line instead of shrinking the shared size.
+        /// </summary>
+        private static float PortraitNameWidth(float cardWidth)
+        {
+            return Mathf.Max(8f, cardWidth - 4f);
+        }
+
+        /// <summary>
         /// Header across the card, then a square portrait beside an equal ring, then the
         /// status line across the full inner width. The seat rect is left alone.
         /// </summary>
@@ -2782,8 +2795,10 @@ namespace Game.UI.Runtime
             if (card == null)
                 return;
             float cardW = card.sizeDelta.x;
-            const float pad = 4f;
-            const float gap = 4f;
+            const float pad = 2f;
+            const float gap = 2f;
+            float nameW = PortraitNameWidth(cardW);
+            float nameX = Mathf.Max(0f, (cardW - nameW) * 0.5f);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
             if (nameH > maxName)
@@ -2796,15 +2811,31 @@ namespace Game.UI.Runtime
                 statusH = Mathf.Max(18f, room - nameH);
             if (statusH < 18f)
                 statusH = 18f;
+            float widthSide = (innerW - gap) * 0.5f;
+            if (cardW >= 150f && widthSide >= WidePortraitFloor)
+            {
+                float statusYProbe = cardH - pad - statusH;
+                float midTopProbe = pad + nameH + gap;
+                float midProbe = statusYProbe - gap - midTopProbe;
+                float sideProbe = Mathf.Min(midProbe, widthSide);
+                if (sideProbe + 0.5f < WidePortraitFloor)
+                {
+                    float shortfall = WidePortraitFloor - sideProbe;
+                    float statusFloor = 20f;
+                    if (statusH - shortfall >= statusFloor)
+                        statusH -= shortfall;
+                }
+            }
+
             if (name != null && name.rectTransform != null)
-                PlaceTopLeft(name.rectTransform, pad, pad, innerW, nameH);
+                PlaceTopLeft(name.rectTransform, nameX, pad, nameW, nameH);
 
             float statusY = cardH - pad - statusH;
             float midTop = pad + nameH + gap;
             float midH = statusY - gap - midTop;
             if (midH < 8f)
                 midH = 8f;
-            float side = Mathf.Min(midH, (innerW - gap) * 0.5f);
+            float side = Mathf.Min(midH, widthSide);
             if (side < 1f)
                 side = 1f;
             float pairTop = midTop;
@@ -2816,11 +2847,7 @@ namespace Game.UI.Runtime
             {
                 PlaceTopLeft(thumb, pad, pairTop, side, side);
                 if (thumb.Find("Thumbnail") is RectTransform preview)
-                {
-                    const float inset = 1f;
-                    float art = Mathf.Max(4f, side - inset * 2f);
-                    PlaceTopLeft(preview, inset, inset, art, art);
-                }
+                    PlaceTopLeft(preview, 0f, 0f, side, side);
             }
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
@@ -3990,7 +4017,8 @@ namespace Game.UI.Runtime
                 for (int x = 0; x < size; x++)
                 {
                     float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
-                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.62f) / 0.24f);
+                    // Outer edge sits on the square so the ring reads as large as the portrait.
+                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.74f) / 0.24f);
                     pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(ring * 255f));
                 }
             }

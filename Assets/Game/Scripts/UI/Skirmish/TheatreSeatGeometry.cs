@@ -142,7 +142,7 @@ namespace Game.UI.Runtime
         public const float PortraitMaxHeight = 212f;
         /// <summary>Compact 112-wide tiles may step one point under <see cref="NameFontFloor"/> so the longest Persian word still fits.</summary>
         public const float PortraitCompactFontFloor = 15f;
-        public const float NameFontCeiling = 22f;
+        public const float NameFontCeiling = 28f;
         public const float NameFontFloor = 16f;
         public const float StripCaptionCeiling = 12f;
         public const float StripCaptionFloor = 9f;
@@ -169,7 +169,8 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Theatre map clip on a capture canvas after the search bar and the floating title
         /// are removed. Matches <c>SkirmishLibraryFrame</c> plus the theatre clip insets
-        /// (top 8, bottom 128) inside the header and footer bands.
+        /// (top 8, bottom 128) inside the header and footer bands. The strip widget is
+        /// inactive; the inset stays so district glow still clears the plate.
         /// </summary>
         public static void CaptureMapSize(float canvasWidth, float canvasHeight, out float mapWidth, out float mapHeight)
         {
@@ -1540,13 +1541,22 @@ namespace Game.UI.Runtime
             return Math.Max(card.H, Math.Min(PortraitMaxHeight, room));
         }
 
-        /// <summary>Name-box height a portrait can give once the thumbnail keeps 44px and the ring keeps its size.</summary>
+        /// <summary>
+        /// Name-box height under a plate thumbnail. Tall tiles keep a two-line name at 22
+        /// and give the rest to the art. Shorter tiles keep the font floor so the name still fits.
+        /// </summary>
         public static float MaxNameBoxHeight(float cardHeight, bool wide)
         {
             bool compact = cardHeight < 156f;
-            float ring = (cardHeight >= 190f ? 56f : compact ? 36f : 44f) + (wide ? 4f : 0f);
-            float art = compact ? 36f : 44f;
-            return cardHeight - 6f - art - 4f - ring - 4f - 6f;
+            bool tall = cardHeight >= 190f;
+            float status = (tall ? 30f : compact ? 24f : 28f) + (wide ? 2f : 0f);
+            float font = tall ? 22f : compact ? PortraitCompactFontFloor : NameFontFloor;
+            float name = 2f * font * 1.25f + 1f;
+            const float pad = 14f;
+            float artFloor = tall ? 96f : compact ? 48f : 72f;
+            if (cardHeight - pad - status - name < artFloor)
+                name = 2f * (compact ? PortraitCompactFontFloor : NameFontFloor) * 1.25f + 1f;
+            return Math.Max(32f, name);
         }
 
         private static void GrowCardsForNames(
@@ -2565,8 +2575,8 @@ namespace Game.UI.Runtime
         {
             cards = null;
             cue = default;
-            float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
-            float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
+            float[] widths = { PortraitMaxWidth, 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
+            float[] heights = { PortraitMaxHeight, 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
             Box[] cues = CueSpots(plateWidth, plateHeight, pins, hexes, detail, selected);
             for (int size = 0; size < widths.Length; size++)
             {
@@ -3349,8 +3359,8 @@ namespace Game.UI.Runtime
         {
             cards = null;
             cue = default;
-            float[] widths = { 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
-            float[] heights = { 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
+            float[] widths = { PortraitMaxWidth, 156f, 148f, 140f, 132f, 124f, 120f, 116f, PortraitMinWidth };
+            float[] heights = { PortraitMaxHeight, 208f, 196f, 184f, 172f, 156f, 152f, 146f, PortraitMinHeight };
             float[] cueWidths = { CueWidth, 196f, 172f, 148f, PackedCueMinWidth };
             for (int pass = 0; pass < 2; pass++)
             {

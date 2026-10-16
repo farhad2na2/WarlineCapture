@@ -1531,15 +1531,19 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             Color fill = color;
-            fill.a = 0.32f;
+            fill.a = 0.58f;
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
             PlaceDistrictHalo(root, local, color);
-            float stroke = selected ? 4f : 3.5f;
-            Color glow = Color.Lerp(color, Color.white, 0.78f);
-            glow.a = 0.98f;
-            Color ink = selected ? Color.Lerp(color, Color.white, 0.35f) : Color.Lerp(color, Color.white, 0.12f);
+            Color outer = color;
+            outer.a = 0.96f;
+            Color glow = Color.Lerp(color, Color.white, 0.18f);
+            glow.a = 1f;
+            Color ink = Color.Lerp(color, Color.white, selected ? 0.55f : 0.28f);
             ink.a = 1f;
-            DrawHexEdges(root, local, glow, 16f, ZoneStrokeSprite());
+            // The core stroke stays inside the 3–4.5 capture band. The bright edge is the outer glow.
+            const float stroke = 4.5f;
+            DrawHexEdges(root, local, outer, 26f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, glow, 14f, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             DrawHexLattice(root, local, color);
             for (int i = 0; i < local.Length; i++)
@@ -1564,8 +1568,8 @@ namespace Game.UI.Runtime
             image.transform.SetParent(root, false);
             image.sprite = halo;
             image.type = Image.Type.Simple;
-            Color glow = Color.Lerp(color, Color.white, 0.84f);
-            glow.a = 0.92f;
+            Color glow = Color.Lerp(color, Color.white, 0.35f);
+            glow.a = 1f;
             image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
@@ -1797,7 +1801,7 @@ namespace Game.UI.Runtime
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.fontStyle = FontStyles.Bold;
             cue.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 18f, 24f);
+            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 22f, 32f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1820,58 +1824,60 @@ namespace Game.UI.Runtime
 
             float cardW = slot.Card.width;
             float cardH = slot.Card.height;
-            const float pad = 6f;
-            float nameH = cardH >= 190f ? 48f : 40f;
-            float ring = cardH >= 190f ? 56f : 44f;
-            if (wideFrame)
-                ring += 4f;
-            float artH = Mathf.Max(56f, cardH - pad - 4f - nameH - 4f - ring - pad);
-            float artW = Mathf.Max(48f, cardW - pad * 2f);
-            float nameY = pad + artH + 4f;
-            var name = CreateLabel(card.transform, "ZoneName", 18f);
-            PlaceTopLeft(name.rectTransform, pad, nameY, artW, nameH);
+            const float frame = 5f;
+            float nameH = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame);
+            float statusH = (cardH >= 190f ? 30f : cardH < 156f ? 24f : 28f) + (wideFrame ? 2f : 0f);
+            float artH = Mathf.Max(48f, cardH - frame - nameH - 4f - statusH - frame);
+            float artW = Mathf.Max(48f, cardW - frame * 2f);
+            card.sprite = ZoneSolidSprite();
+            card.type = Image.Type.Simple;
+            card.color = new Color(0.04f, 0.05f, 0.07f, 0.96f);
+            float nameY = frame + artH + 2f;
+            var name = CreateLabel(card.transform, "ZoneName", 22f);
+            PlaceTopLeft(name.rectTransform, frame, nameY, artW, nameH);
             name.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             name.isRightToLeftText = fa;
-            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.textWrappingMode = TextWrappingModes.Normal;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
             name.enableAutoSizing = true;
-            name.fontSizeMin = 16f;
-            name.fontSizeMax = 22f;
+            name.fontSizeMin = cardH < 156f ? 16f : 18f;
+            name.fontSizeMax = cardH < 156f ? 24f : 28f;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 22f);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), name.fontSizeMin, name.fontSizeMax);
 
             var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
             medallion.transform.SetParent(card.transform, false);
             medallion.sprite = ZoneSolidSprite();
-            medallion.color = Color.white;
+            medallion.color = slot.Zone;
             medallion.raycastTarget = false;
-            PlaceTopLeft(medallion.rectTransform, pad, pad, artW, artH);
+            PlaceTopLeft(medallion.rectTransform, frame, frame, artW, artH);
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
-            var preview = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-            preview.transform.SetParent(medallion.transform, false);
-            PlaceTopLeft(preview.rectTransform, 2f, 2f, Mathf.Max(8f, artW - 4f), Mathf.Max(8f, artH - 4f));
-            ApplyDistrictThumbnail(preview, slot.MapId);
-            preview.color = Color.white;
-            preview.raycastTarget = false;
+            var art = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+            art.transform.SetParent(medallion.transform, false);
+            const float artInset = 6f;
+            PlaceTopLeft(art.rectTransform, artInset, artInset, Mathf.Max(8f, artW - artInset * 2f), Mathf.Max(8f, artH - artInset * 2f));
+            ApplyDistrictThumbnail(art, slot.MapId);
+            art.color = Color.white;
+            art.raycastTarget = false;
 
             int total = Mathf.Max(0, slot.Playable);
             bool pending = total <= 0;
             float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
-            float ringY = nameY + nameH + 4f;
-            float ringX = pending ? pad : (cardW - ring) * 0.5f;
+            float statusY = nameY + nameH + 2f;
+            float ring = Mathf.Min(statusH, artW);
+            float ringX = pending ? frame : frame + (artW - ring) * 0.5f;
             float ringW = pending ? artW : ring;
-            float ringH = pending ? Mathf.Max(28f, cardH - ringY - pad) : ring;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = pending ? ZoneSolidSprite() : ZoneRingSprite();
             track.color = pending
                 ? new Color(0.04f, 0.05f, 0.06f, 0.92f)
-                : new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.9f);
+                : new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, ringY, ringW, ringH);
+            PlaceTopLeft(track.rectTransform, ringX, statusY, ringW, pending ? Mathf.Max(20f, cardH - statusY - frame) : ring);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1881,18 +1887,18 @@ namespace Game.UI.Runtime
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
             fill.fillAmount = ratio;
-            fill.color = Color.Lerp(slot.Zone, Color.white, 0.35f);
+            fill.color = Color.Lerp(slot.Zone, Color.white, 0.45f);
             fill.raycastTarget = false;
             fill.enabled = !pending;
-            var count = CreateLabel(track.transform, "ZoneCount", pending ? 16f : 18f);
-            Stretch(count.rectTransform, pending ? 6f : 2f, pending ? 2f : 2f, pending ? 4f : 2f, pending ? 2f : 2f);
+            var count = CreateLabel(track.transform, "ZoneCount", pending ? 18f : 20f);
+            Stretch(count.rectTransform, pending ? 6f : 1f, pending ? 1f : 1f, pending ? 4f : 1f, pending ? 1f : 1f);
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
             count.textWrappingMode = TextWrappingModes.NoWrap;
             count.overflowMode = TextOverflowModes.Overflow;
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
-            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 14f : 14f, pending ? 20f : 22f);
+            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, pending ? 16f : 16f, pending ? 24f : 24f);
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
             count.maxVisibleLines = 1;
@@ -2008,8 +2014,8 @@ namespace Game.UI.Runtime
             if (drawnLines <= 1 && preferred > 0.5f && preferred <= boxW + 1.5f && cue.preferredHeight <= boxH + 1.5f)
                 return;
 
-            const float floor = 12f;
-            for (float size = 18f; size >= floor - 0.01f; size -= 1f)
+            const float floor = 14f;
+            for (float size = 32f; size >= floor - 0.01f; size -= 1f)
             {
                 cue.enableAutoSizing = true;
                 cue.fontSizeMin = size;
@@ -2117,8 +2123,8 @@ namespace Game.UI.Runtime
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.enableAutoSizing = true;
-            cue.fontSizeMin = 18f;
-            cue.fontSizeMax = 24f;
+            cue.fontSizeMin = 22f;
+            cue.fontSizeMax = 32f;
             cue.maxVisibleLines = 1;
             cue.ForceMeshUpdate();
             Vector2 preferred = cue.GetPreferredValues();
@@ -3495,11 +3501,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.02f, 0.72f, 0.70f, 1f);
-                case "MP": return new Color(0.55f, 0.22f, 0.82f, 1f);
-                case "IB": return new Color(0.95f, 0.40f, 0.05f, 1f);
-                case "AP": return new Color(0.12f, 0.42f, 0.95f, 1f);
-                default: return new Color(0.98f, 0.78f, 0.08f, 1f);
+                case "CC": return new Color(0.00f, 0.86f, 0.78f, 1f);
+                case "MP": return new Color(0.64f, 0.16f, 0.96f, 1f);
+                case "IB": return new Color(1.00f, 0.38f, 0.02f, 1f);
+                case "AP": return new Color(0.05f, 0.42f, 1.00f, 1f);
+                default: return new Color(1.00f, 0.84f, 0.02f, 1f);
             }
         }
 

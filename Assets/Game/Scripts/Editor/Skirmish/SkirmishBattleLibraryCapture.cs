@@ -1333,11 +1333,11 @@ namespace Game.Editor
                     " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
-            if (polygon.color.a < 0.27f || polygon.color.a > 0.37f)
+            if (polygon.color.a < 0.54f || polygon.color.a > 0.62f)
             {
                 throw new InvalidOperationException(
                     "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
-                    " locale=" + locale + ". Expected about 0.32.");
+                    " locale=" + locale + ". Expected about 0.58.");
             }
 
             bool stroke = false;
@@ -1647,34 +1647,11 @@ namespace Game.Editor
         {
             bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
             Transform strip = FindNamed(root.transform, "OverallProgressStrip");
-            if (strip == null || !strip.gameObject.activeInHierarchy)
+            if (strip != null && strip.gameObject.activeInHierarchy)
             {
                 throw new InvalidOperationException(
-                    "Theatre strip is missing locale=" + locale + ". Farsi has nothing to mirror.");
-            }
-
-            if (strip.Find("Medal0") is not RectTransform recruit || strip.Find("Medal3") is not RectTransform commander)
-            {
-                throw new InvalidOperationException("Theatre medal order is missing locale=" + locale + ".");
-            }
-
-            float recruitX = WorldBounds(recruit).center.x;
-            float commanderX = WorldBounds(commander).center.x;
-            if (fa ? recruitX <= commanderX : recruitX >= commanderX)
-            {
-                throw new InvalidOperationException(
-                    "Theatre medal order does not follow the reading direction locale=" + locale + ".");
-            }
-
-            if (recruit.Find("Icon") is RectTransform icon && recruit.Find("Count") is RectTransform count)
-            {
-                float iconX = WorldBounds(icon).center.x;
-                float countX = WorldBounds(count).center.x;
-                if (fa ? iconX <= countX : iconX >= countX)
-                {
-                    throw new InvalidOperationException(
-                        "Theatre medal slot does not mirror locale=" + locale + ".");
-                }
+                    "Theatre still shows OverallProgressStrip locale=" + locale +
+                    ". The battles-won strip is removed.");
             }
 
             if (FindNamed(root.transform, "MapPreviewClip") is RectTransform plate
@@ -1761,22 +1738,12 @@ namespace Game.Editor
             }
 
             Transform strip = FindNamed(root.transform, "OverallProgressStrip");
-            if (strip == null || !strip.gameObject.activeInHierarchy)
+            if (strip != null && strip.gameObject.activeInHierarchy)
             {
                 throw new InvalidOperationException(
-                    "Battles-won strip is missing in theatre locale=" + locale +
-                    ". Tier counts have nowhere else to appear.");
+                    "Battles-won strip is still in theatre locale=" + locale +
+                    ". Medal counts belong in the left-column MedalRow.");
             }
-
-            TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
-            string expected = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
-            if (count == null || !SkirmishBattleLibraryArt.SameRenderedText(count.text, expected))
-            {
-                throw new InvalidOperationException(
-                    "Battles-won strip reads '" + (count != null ? count.text : string.Empty) +
-                    "' locale=" + locale + ". Expected " + expected + ".");
-            }
-
         }
 
         private static void RejectVisibleGridRowTotals(GameObject root, string locale)
@@ -2591,7 +2558,12 @@ namespace Game.Editor
             RejectBlankImages(composition != null ? composition.Find("BaseAssaultRules") : null, state);
             RejectBlankImages(composition != null ? composition.Find("OperationPreview") : null, null);
             if (!string.IsNullOrEmpty(state))
-                RejectOneMedalCountDisplay(instance, state);
+            {
+                if (string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
+                    RejectTheatreMedalColumn(instance);
+                else
+                    RejectOneMedalCountDisplay(instance, state);
+            }
         }
 
         private static void RejectBlankImages(Transform root, string state)
@@ -2623,6 +2595,71 @@ namespace Game.Editor
             RejectNarrowGreyOverText(root);
             RejectMedalOverForeignText(root);
             RejectBriefingStack(root, state);
+        }
+
+        private static void RejectTheatreMedalColumn(GameObject root)
+        {
+            Transform strip = FindNamed(root != null ? root.transform : null, "OverallProgressStrip");
+            if (strip != null && strip.gameObject.activeInHierarchy)
+            {
+                throw new InvalidOperationException(
+                    "Theatre still shows OverallProgressStrip. The battles-won strip and its medal counts are removed. Tier counts belong in BriefingColumn/MedalRow.");
+            }
+
+            Transform column = FindNamed(root != null ? root.transform : null, "BriefingColumn");
+            Transform medalRow = column != null ? column.Find("MedalRow") : null;
+            bool tiles = medalRow != null && medalRow.gameObject.activeInHierarchy && ReadsFourTierCounts(medalRow);
+            if (!tiles)
+            {
+                throw new InvalidOperationException(
+                    "Theatre medal check is waiting for Programmer 1. #66 has no OverallProgressStrip, and BriefingColumn/MedalRow does not show four tier counts yet. #68 adds the left-column tiles: Battles won X / N, a progress bar, and 2x2 tiers read from SkirmishMedalLedger whole-theatre totals.");
+            }
+
+            var displays = new List<Transform>();
+            CollectMedalCountDisplays(root.transform, displays);
+            if (displays.Count != 1 || displays[0] != medalRow)
+            {
+                string names = displays.Count == 0
+                    ? "none"
+                    : string.Join(",", displays.ConvertAll(item => item.name));
+                throw new InvalidOperationException(
+                    "Theatre expected the left-column MedalRow as its only medal-count display and found " +
+                    displays.Count + ": " + names + ".");
+            }
+
+            int[] expected = LedgerWholeTheatreTotals();
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Transform slot = medalRow.Find("Slot" + i) ?? medalRow.Find("Medal" + i);
+                TMP_Text tier = slot != null ? slot.Find("Count")?.GetComponent<TMP_Text>() : null;
+                string shown = tier != null ? StripBidiMarks(tier.text).Trim() : string.Empty;
+                if (tier == null || !tier.gameObject.activeInHierarchy || shown != expected[i].ToString())
+                {
+                    throw new InvalidOperationException(
+                        "Theatre MedalRow tier " + i + " reads '" + shown +
+                        "'. SkirmishMedalLedger whole-theatre total is " + expected[i] +
+                        ". #66 still shows the selected-district row until #68 writes the ledger tiles. OverallProgressStrip is absent.");
+                }
+            }
+        }
+
+        private static int[] LedgerWholeTheatreTotals()
+        {
+            var grants = QuickCustomScreenView.CaptureMedalGrants;
+            var rows = new SkirmishMedalSaveData[grants.Length];
+            for (int i = 0; i < grants.Length; i++)
+            {
+                rows[i] = new SkirmishMedalSaveData
+                {
+                    catalogId = grants[i].CatalogId,
+                    difficulty = (byte)grants[i].Difficulty,
+                    contentVersion = 1,
+                    sessionId = "capture"
+                };
+            }
+
+            SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
+            return new[] { ledger.Recruit, ledger.Regular, ledger.Veteran, ledger.Commander };
         }
 
         private static void RejectOneMedalCountDisplay(GameObject root, string state)

@@ -365,6 +365,9 @@ namespace Game.UI.Runtime
 
         private void PublishMedalCounts(SkirmishTheaterState theater)
         {
+            // Theatre tier counts belong on Programmer 1's left-column MedalRow, not this strip.
+            if (LibraryLevel == SkirmishLibraryLevel.Theater)
+                return;
             SkirmishMedalTotals medals = MedalCounts(theater);
             string[] text =
             {
@@ -373,15 +376,6 @@ namespace Game.UI.Runtime
                 medals.Veteran.ToString(),
                 medals.Commander.ToString()
             };
-            if (_overallStrip != null && _overallStrip.gameObject.activeInHierarchy)
-            {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    TMP_Text tier = _overallStrip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
-                    SetCopy(tier, text[i], 13f, 18f);
-                }
-            }
-
             if (_medalRow != null && _medalRow.gameObject.activeInHierarchy)
             {
                 for (int i = 0; i < text.Length; i++)
@@ -394,102 +388,8 @@ namespace Game.UI.Runtime
 
         private void PresentProgress(SkirmishTheaterState theater, bool fa)
         {
-            if (_overallStrip == null)
-                return;
-            bool show = LibraryLevel != SkirmishLibraryLevel.Battlefield;
-            _overallStrip.gameObject.SetActive(show);
-            if (!show)
-                return;
-
-            int won = theater.OverallWonCount;
-            int published = theater.OverallPublishedCount;
-            float ratio = published > 0 ? Mathf.Clamp01(won / (float)published) : 0f;
-            if (_overallFill != null)
-            {
-                RectTransform fill = _overallFill.rectTransform;
-                fill.anchorMin = Vector2.zero;
-                fill.anchorMax = new Vector2(ratio, 1f);
-                fill.offsetMin = Vector2.zero;
-                fill.offsetMax = Vector2.zero;
-                fill.pivot = new Vector2(0f, 0.5f);
-            }
-
-            float stripWidth = TheatreStripWidth();
-            string progress = won + " / " + published;
-            TMP_Text battles = _overallStrip.Find("Caption")?.GetComponent<TMP_Text>();
-            SetCopy(battles, LibraryText("ui.skirmish.library.battles_won", fa), 14f, 20f);
-            TMP_Text count = _overallStrip.Find("Count")?.GetComponent<TMP_Text>();
-            SetCopy(count, progress, 15f, 22f);
-            const float captionWidth = 168f;
-            const float countWidth = 96f;
-            const float pairGap = 6f;
-            float pairX = fa ? stripWidth - 8f - captionWidth - pairGap - countWidth : 8f;
-            if (battles != null)
-            {
-                battles.gameObject.SetActive(true);
-                battles.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                battles.isRightToLeftText = fa;
-                battles.overflowMode = TextOverflowModes.Overflow;
-                battles.textWrappingMode = TextWrappingModes.NoWrap;
-                PlaceTopLeft(battles.rectTransform, fa ? pairX + countWidth + pairGap : pairX, 4f, captionWidth, 32f);
-            }
-
-            if (count != null)
-            {
-                count.gameObject.SetActive(true);
-                count.isRightToLeftText = false;
-                count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                count.text = progress;
-                PlaceTopLeft(count.rectTransform, fa ? pairX : pairX + captionWidth + pairGap, 6f, countWidth, 28f);
-            }
-
-            if (_overallFill != null && _overallFill.transform.parent is RectTransform bar)
-            {
-                bar.gameObject.SetActive(true);
-                PlaceTopLeft(bar, pairX, 46f, captionWidth + pairGap + countWidth, 22f);
-                Image track = bar.GetComponent<Image>();
-                if (track != null)
-                    track.color = new Color(0.05f, 0.07f, 0.08f, 1f);
-                Outline rim = bar.GetComponent<Outline>() ?? bar.gameObject.AddComponent<Outline>();
-                rim.effectColor = new Color(0.93f, 0.78f, 0.38f, 1f);
-                rim.effectDistance = new Vector2(1.5f, -1.5f);
-            }
-
-            SkirmishMedalTotals medals = MedalCounts(theater);
-            int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
-            var tierNames = new[]
-            {
-                SkirmishDifficultyId.Recruit,
-                SkirmishDifficultyId.Regular,
-                SkirmishDifficultyId.Veteran,
-                SkirmishDifficultyId.Commander
-            };
-            for (int i = 0; i < tiers.Length; i++)
-            {
-                Transform slot = _overallStrip.Find("Medal" + i);
-                if (slot == null)
-                    continue;
-                TMP_Text tier = slot.Find("Count")?.GetComponent<TMP_Text>();
-                SetCopy(tier, tiers[i].ToString(), 13f, 18f);
-                if (tier != null)
-                {
-                    tier.isRightToLeftText = false;
-                    tier.alignment = TextAlignmentOptions.MidlineLeft;
-                    tier.overflowMode = TextOverflowModes.Overflow;
-                }
-
-                SkirmishBattleLibraryArt.DifficultyCopy(tierNames[i], fa, out string tierLabel);
-                TMP_Text caption = slot.Find("Caption")?.GetComponent<TMP_Text>();
-                if (caption == null)
-                    caption = CreateLabel(slot, "Caption", 12f);
-                SetCopy(caption, tierLabel, 11f, 15f);
-                caption.isRightToLeftText = fa;
-                caption.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                caption.overflowMode = TextOverflowModes.Overflow;
-                caption.textWrappingMode = TextWrappingModes.NoWrap;
-            }
-
-            LayoutTheatreMedals(fa);
+            if (_overallStrip != null)
+                _overallStrip.gameObject.SetActive(false);
         }
 
         private void LayoutTheatreMedals(bool fa)

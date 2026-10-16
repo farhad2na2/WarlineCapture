@@ -222,11 +222,28 @@ namespace Game.Editor
         private static void AssertOverallProgress(GameObject instance, QuickCustomScreenView view)
         {
             Transform strip = instance.transform.Find("SkirmishSetupComposition/OperationPreview/OverallProgressStrip");
-            AssertStep(strip != null && strip.gameObject.activeInHierarchy, "Theatre overall progress strip is missing.");
+            AssertStep(strip == null || !strip.gameObject.activeInHierarchy, "Theatre still shows OverallProgressStrip. The battles-won strip is removed.");
+            Transform medalRow = instance.transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn/MedalRow");
+            bool tiles = medalRow != null && medalRow.gameObject.activeInHierarchy;
+            int ready = 0;
+            if (tiles)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    TMP_Text tier = medalRow.Find("Slot" + i + "/Count")?.GetComponent<TMP_Text>()
+                        ?? medalRow.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
+                    if (tier != null && tier.gameObject.activeInHierarchy && int.TryParse((tier.text ?? string.Empty).Trim(), out _))
+                        ready++;
+                }
+            }
+
+            if (ready < 4)
+            {
+                throw new InvalidOperationException(
+                    "Theatre medal check is waiting for Programmer 1. #66 has no OverallProgressStrip, and BriefingColumn/MedalRow does not show four tier counts yet. #68 adds the left-column tiles from SkirmishMedalLedger whole-theatre totals.");
+            }
+
             SkirmishTheaterState theater = view.Library.Theater;
-            string progress = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
-            TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
-            AssertStep(count != null && SkirmishBattleLibraryArt.SameRenderedText(count.text, progress), "Overall progress count is not " + progress + ".");
             int[] medals =
             {
                 theater.OverallMedalTotals.Recruit,
@@ -236,8 +253,13 @@ namespace Game.Editor
             };
             for (int i = 0; i < medals.Length; i++)
             {
-                TMP_Text tier = strip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
-                AssertStep(tier != null && SkirmishBattleLibraryArt.SameRenderedText(tier.text, medals[i].ToString()), "Medal tier " + i + " is not the view-model total.");
+                TMP_Text tier = medalRow.Find("Slot" + i + "/Count")?.GetComponent<TMP_Text>()
+                    ?? medalRow.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
+                AssertStep(
+                    tier != null && SkirmishBattleLibraryArt.SameRenderedText(tier.text, medals[i].ToString()),
+                    "Theatre MedalRow tier " + i + " reads '" + (tier != null ? tier.text : string.Empty) +
+                    "'. SkirmishMedalLedger whole-theatre total is " + medals[i] +
+                    ". #66 still shows the selected-district row until #68 writes the ledger tiles.");
             }
         }
 

@@ -338,7 +338,7 @@ namespace Game.UI.Runtime
                 SetActive(_libraryFilters, _filtersOpen);
                 SetActive(_recommendedPanel, !battlefield);
                 SetActive(_difficultyRow, battlefield);
-                SetActive(_medalRow, battlefield);
+                SetActive(_medalRow, true);
                 SetActive(_progressTrack, !battlefield);
                 SetActive(_statRow, battlefield);
                 SetActive(_medalGrid, false);
@@ -946,16 +946,9 @@ namespace Game.UI.Runtime
             rect.anchorMin = new Vector2(0f, 0f);
             rect.anchorMax = new Vector2(1f, 0f);
             rect.pivot = new Vector2(0f, 0f);
-            float stripTop = 96f;
-            if (preview.Find("OverallProgressStrip") is RectTransform strip)
-            {
-                float occupied = strip.rect.height > 8f ? strip.rect.height : strip.sizeDelta.y;
-                if (occupied < 8f)
-                    occupied = 88f;
-                stripTop = strip.anchoredPosition.y + occupied;
-            }
-
-            rect.anchoredPosition = new Vector2(36f, stripTop + 42f);
+            // Strip is inactive. Keep the hint in the band ZoomHintRect clears, 10px above the clip.
+            const float clipBottom = 128f;
+            rect.anchoredPosition = new Vector2(36f, clipBottom + 10f);
             rect.sizeDelta = new Vector2(-36f, 36f);
             rect.SetAsLastSibling();
             hint.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
@@ -963,9 +956,9 @@ namespace Game.UI.Runtime
             hint.textWrappingMode = TextWrappingModes.NoWrap;
             hint.overflowMode = TextOverflowModes.Overflow;
             hint.enableAutoSizing = true;
-            hint.fontSizeMin = LibraryFontFloor;
-            hint.fontSizeMax = 26f;
-            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", LibraryFontFloor, 26f);
+            hint.fontSizeMin = 18f;
+            hint.fontSizeMax = 30f;
+            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 18f, 30f);
             hint.overflowMode = TextOverflowModes.Overflow;
             hint.fontSizeMin = LibraryFontFloor;
             hint.isRightToLeftText = fa;
@@ -1643,10 +1636,10 @@ namespace Game.UI.Runtime
                 _medalRow = keptMedal;
             var order = battlefield
                 ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
-                : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "RecommendedNext" };
+                : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 76f, 40f, 80f, 84f, 272f };
+                : new[] { 76f, 40f, 80f, 84f, 112f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -1659,22 +1652,6 @@ namespace Game.UI.Runtime
                     element.preferredHeight = 0f;
                     element.minHeight = 0f;
                     element.flexibleHeight = 0f;
-                }
-            }
-
-            if (!battlefield)
-            {
-                for (int i = 0; i < column.childCount; i++)
-                {
-                    Transform medal = column.GetChild(i);
-                    if (medal == null || medal.name != "MedalRow")
-                        continue;
-                    medal.gameObject.SetActive(false);
-                    LayoutElement medalElement = medal.GetComponent<LayoutElement>() ?? medal.gameObject.AddComponent<LayoutElement>();
-                    medalElement.ignoreLayout = true;
-                    medalElement.preferredHeight = 0f;
-                    medalElement.minHeight = 0f;
-                    medalElement.flexibleHeight = 0f;
                 }
             }
 

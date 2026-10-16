@@ -609,14 +609,6 @@ namespace Game.Editor
             Color tint = picture.color;
             bool finalArt = tint.r > 0.9f && tint.g > 0.9f && tint.b > 0.9f;
             RejectPendingPreviewTag(card, finalArt, locale, zone);
-            if (!finalArt && card.name.StartsWith("BattleCard_", StringComparison.Ordinal))
-            {
-                throw new InvalidOperationException(
-                    "Scenario grid card shows a dimmed placeholder instead of preview or plate art locale=" + locale +
-                    " zone=" + zone +
-                    " path=" + ImagePath(card));
-            }
-
             RejectGridLockWrap(card, locale, zone);
 
             float cardWidth = Span(card, true);

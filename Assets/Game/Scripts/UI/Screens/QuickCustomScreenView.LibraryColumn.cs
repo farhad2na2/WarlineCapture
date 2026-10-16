@@ -463,7 +463,24 @@ namespace Game.UI.Runtime
             HoldFixed(iconRect, icon, icon, 0f);
             HoldFixed(caption, width - 4f, 26f, 0f);
             if (count != null)
-                count.gameObject.SetActive(false);
+            {
+                // The ledger count stays (capture contract: one medal-count display); a small badge beside the medal.
+                count.gameObject.SetActive(true);
+                PlaceTopLeft(count, width * 0.5f + icon * 0.5f + 2f, 8f, Mathf.Max(18f, width * 0.5f - icon * 0.5f - 4f), 26f);
+                HoldFixed(count, Mathf.Max(18f, width * 0.5f - icon * 0.5f - 4f), 26f, 0f);
+                TMP_Text countText = count.GetComponent<TMP_Text>();
+                if (countText != null)
+                {
+                    countText.isRightToLeftText = false;
+                    countText.alignment = TextAlignmentOptions.MidlineLeft;
+                    countText.textWrappingMode = TextWrappingModes.NoWrap;
+                    countText.overflowMode = TextOverflowModes.Overflow;
+                    countText.enableAutoSizing = false;
+                    countText.fontSize = 18f;
+                    countText.fontStyle = FontStyles.Bold;
+                    countText.color = Color.white;
+                }
+            }
             Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;
             if (image != null)
             {

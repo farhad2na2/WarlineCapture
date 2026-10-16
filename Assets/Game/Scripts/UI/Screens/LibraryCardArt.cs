@@ -153,6 +153,39 @@ namespace Game.UI.Runtime
             PlaceCoverPreview(preview, rect.sizeDelta.x, previewHeight, preview.texture as Texture2D, false);
         }
 
+        /// <summary>
+        /// Scenario art when the preview file exists. S005 and S006 have no plate of their own,
+        /// so the card covers with the zone painting instead of an empty black frame.
+        /// </summary>
+        private static void ShowPinPreview(
+            RawImage preview,
+            string previewKey,
+            string mapId,
+            float x,
+            float y,
+            float frameWidth,
+            float frameHeight)
+        {
+            Texture2D scenario = LoadScenarioPreview(previewKey);
+            if (scenario != null)
+            {
+                PlaceFittedPreview(preview, previewKey, x, y, frameWidth, frameHeight);
+                return;
+            }
+
+            if (preview == null)
+                return;
+            Texture2D plate = PaintedPlate(mapId);
+            preview.raycastTarget = false;
+            preview.texture = plate;
+            preview.color = Color.white;
+            preview.enabled = plate != null;
+            if (plate == null)
+                return;
+            PlaceTopLeft(preview.rectTransform, x, y, frameWidth, frameHeight);
+            CoverCrop(preview, frameWidth, frameHeight);
+        }
+
         private static void TintNamedImage(Transform card, string childName, Color color)
         {
             Transform node = card.Find(childName);

@@ -2466,6 +2466,13 @@ namespace Game.UI.Runtime
                     RelaxLibraryText(text, 10f, 15f, false);
                     text.overflowMode = TextOverflowModes.Overflow;
                     text.maxVisibleLines = 1;
+                    if (medalCaption && text.rectTransform != null)
+                    {
+                        float captionWidth = text.rectTransform.rect.width > 1f
+                            ? text.rectTransform.rect.width
+                            : text.rectTransform.sizeDelta.x;
+                        FitMedalCaption(text, captionWidth);
+                    }
                 }
                 else if (difficulty)
                     RelaxLibraryText(text, 12f, 18f, true);

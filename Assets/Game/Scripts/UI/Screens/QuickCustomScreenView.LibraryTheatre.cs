@@ -2481,8 +2481,6 @@ namespace Game.UI.Runtime
         private const float ZoneNameFontFloor = 16f;
         /// <summary>Drawn name size. The packer still stops at NameFontCeiling so the seats do not move.</summary>
         private const float DrawnNameCeiling = 28f;
-        /// <summary>Square kept on a 156-wide card once the name and status still fit.</summary>
-        private const float WidePortraitFloor = 60f;
 
         /// <summary>
         /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
@@ -2789,8 +2787,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Header across the card, then a square portrait beside an equal ring, then the
-        /// status line across the full inner width. The seat rect is left alone.
+        /// Name across the top, a full-width portrait at about 70% of the card, the progress
+        /// ring over that portrait's bottom corner, and the status line across the bottom.
+        /// The seat rect is left alone.
         /// </summary>
         private static void LayoutZoneCardStack(RectTransform card, TMP_Text name, float nameH, float cardH, bool wide)
         {
@@ -2802,52 +2801,29 @@ namespace Game.UI.Runtime
             float nameW = PortraitNameWidth(cardW);
             float nameX = Mathf.Max(0f, (cardW - nameW) * 0.5f);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
+            DominantCardBands(cardH, out float nameRoom, out float portraitH, out float statusH);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
             if (nameH > maxName)
                 nameH = maxName;
             if (nameH < 1f)
                 nameH = 1f;
-            float statusH = cardH >= 190f ? 32f : 28f;
+            if (nameH > nameRoom)
+                nameH = nameRoom;
             float room = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
             if (nameH + statusH > room + 0.5f)
                 statusH = Mathf.Max(18f, room - nameH);
-            if (statusH < 18f)
-                statusH = 18f;
-            float widthSide = (innerW - gap) * 0.5f;
-            if (cardW >= 150f && widthSide >= WidePortraitFloor)
-            {
-                float statusYProbe = cardH - pad - statusH;
-                float midTopProbe = pad + nameH + gap;
-                float midProbe = statusYProbe - gap - midTopProbe;
-                float sideProbe = Mathf.Min(midProbe, widthSide);
-                if (sideProbe + 0.5f < WidePortraitFloor)
-                {
-                    float shortfall = WidePortraitFloor - sideProbe;
-                    float statusFloor = 20f;
-                    if (statusH - shortfall >= statusFloor)
-                        statusH -= shortfall;
-                }
-            }
 
             if (name != null && name.rectTransform != null)
                 PlaceTopLeft(name.rectTransform, nameX, pad, nameW, nameH);
 
             float statusY = cardH - pad - statusH;
-            float midTop = pad + nameH + gap;
-            float midH = statusY - gap - midTop;
-            if (midH < 8f)
-                midH = 8f;
-            float side = Mathf.Min(midH, widthSide);
-            if (side < 1f)
-                side = 1f;
-            float pairTop = midTop;
-            if (midH > side + 1f)
-                pairTop = midTop + (midH - side) * 0.5f;
+            float portraitTop = pad + nameH + gap;
+            float portraitW = innerW;
 
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
             {
-                PlaceTopLeft(thumb, pad, pairTop, side, side);
+                PlaceTopLeft(thumb, pad, portraitTop, portraitW, portraitH);
                 thumb.localScale = Vector3.one;
                 KeepAuthoredSize(thumb);
                 if (thumb.Find("Thumbnail") is RectTransform preview)
@@ -2855,13 +2831,24 @@ namespace Game.UI.Runtime
                     Stretch(preview);
                     preview.localScale = Vector3.one;
                     KeepAuthoredSize(preview);
+                    RawImage picture = preview.GetComponent<RawImage>();
+                    if (picture != null && picture.texture != null)
+                        CoverCrop(picture, portraitW, portraitH);
                 }
             }
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
             if (ring != null)
             {
-                PlaceTopLeft(ring, pad + side + gap, pairTop, side, side);
+                bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.42f, 44f, 68f);
+                if (ringSide > portraitH - 4f)
+                    ringSide = Mathf.Max(28f, portraitH - 4f);
+                float ringX = fa ? pad + 4f : pad + portraitW - 4f - ringSide;
+                float ringY = portraitTop + portraitH - 4f - ringSide;
+                if (ringY < portraitTop)
+                    ringY = portraitTop;
+                PlaceTopLeft(ring, ringX, ringY, ringSide, ringSide);
                 ring.localScale = Vector3.one;
                 KeepAuthoredSize(ring);
             }
@@ -2875,9 +2862,32 @@ namespace Game.UI.Runtime
                 countNode.SetParent(card, false);
             if (countNode is RectTransform countRect)
                 PlaceTopLeft(countRect, pad, statusY, innerW, Mathf.Max(1f, statusH));
+            if (thumb != null)
+                thumb.SetAsFirstSibling();
+            if (ring != null)
+                ring.SetSiblingIndex(thumb != null ? thumb.GetSiblingIndex() + 1 : 0);
+            if (name != null)
+                name.transform.SetAsLastSibling();
             countNode.SetAsLastSibling();
             if (countNode.TryGetComponent<TMP_Text>(out var count))
                 FitCopyInside(count, 11f);
+        }
+
+        /// <summary>
+        /// Portrait target is 70% of the card. The name and status keep the rest, and the
+        /// portrait gives back a few pixels when a short card would leave the name under 18.
+        /// </summary>
+        private static void DominantCardBands(float cardH, out float nameRoom, out float portraitH, out float statusH)
+        {
+            const float pad = 2f;
+            const float gap = 2f;
+            statusH = cardH >= 190f ? 28f : 20f;
+            portraitH = Mathf.Max(8f, Mathf.Round(cardH * 0.70f));
+            nameRoom = cardH - pad - portraitH - gap - statusH - pad;
+            if (nameRoom >= 18f)
+                return;
+            portraitH = Mathf.Max(8f, portraitH - (18f - nameRoom));
+            nameRoom = 18f;
         }
 
         /// <summary>
@@ -2898,8 +2908,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Last theatre pass, after the frame has the final plate. Lays the square out from the
-        /// card's live size and logs the rect the capture camera will draw.
+        /// Last theatre pass, after the frame has the final plate. Lays the full-width portrait
+        /// from the card's live size and logs the rect the capture camera will draw.
         /// </summary>
         private void RefitTheatreCardArt()
         {
@@ -3357,20 +3367,9 @@ namespace Game.UI.Runtime
             RectTransform card = name.parent as RectTransform;
             if (card == null)
                 return name.sizeDelta.y;
-            float top = -name.anchoredPosition.y;
-            RectTransform ring = card.Find("ProgressRing") as RectTransform;
-            RectTransform bar = card.Find("ProgressBar") as RectTransform;
-            float cardBottom = card.sizeDelta.y;
-            float barTop = bar != null ? -bar.anchoredPosition.y : cardBottom - 8f;
-            bool pendingBanner = ring != null && ring.sizeDelta.x > ring.sizeDelta.y + 8f;
-            float stop;
-            if (pendingBanner)
-                stop = -ring.anchoredPosition.y;
-            else if (ring != null)
-                stop = Mathf.Min(barTop, cardBottom - 4f - ring.sizeDelta.y);
-            else
-                stop = barTop;
-            return Mathf.Max(18f, stop - 4f - top);
+            float cardH = card.sizeDelta.y > 1f ? card.sizeDelta.y : card.rect.height;
+            DominantCardBands(cardH, out float nameRoom, out _, out _);
+            return Mathf.Max(18f, nameRoom);
         }
 
         private static void NudgeRingBelowName(RectTransform name)

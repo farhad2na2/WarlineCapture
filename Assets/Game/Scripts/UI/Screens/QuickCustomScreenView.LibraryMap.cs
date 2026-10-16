@@ -43,7 +43,10 @@ namespace Game.UI.Runtime
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
                 var label = CreateLabel(button.transform, "Label", 18f);
                 Stretch(label.rectTransform, 6f, 6f, 4f, 4f);
-                SetCopy(label, LibraryText(objective.TitleLocKey, fa) + "\n" + objective.WonCount + "/" + objective.PublishedCount);
+                string tally = objective.PublishedCount <= 0
+                    ? SkirmishBattleLibraryArt.ComingSoon(fa)
+                    : objective.WonCount + "/" + objective.PublishedCount;
+                SetCopy(label, LibraryText(objective.TitleLocKey, fa) + "\n" + tally);
                 _objectiveTabButtons.Add(button);
             }
         }
@@ -92,7 +95,7 @@ namespace Game.UI.Runtime
             if (string.IsNullOrEmpty(previewKey) && !string.IsNullOrEmpty(card.ScenarioId))
                 previewKey = "skirmish.preview." + card.ScenarioId;
             if (pin)
-                PlaceFittedPreview(preview, previewKey, 3f, 3f, width - 6f, previewHeight);
+                ShowPinPreview(preview, previewKey, card.MapId, 3f, 3f, width - 6f, previewHeight);
             else
             {
                 Texture2D shown = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
@@ -310,11 +313,23 @@ namespace Game.UI.Runtime
 
                 label.textWrappingMode = TextWrappingModes.Normal;
                 label.overflowMode = TextOverflowModes.Overflow;
+                bool pending = objective.PublishedCount <= 0;
+                string tally = pending
+                    ? SkirmishBattleLibraryArt.ComingSoon(fa)
+                    : objective.WonCount + "/" + objective.PublishedCount;
+                if (pending)
+                {
+                    PlaceTopLeft(label.rectTransform, 4f, 58f, 104f, 18f);
+                    PlaceTopLeft(count.rectTransform, 4f, 76f, 104f, 20f);
+                    label.alignment = TextAlignmentOptions.Center;
+                    count.alignment = TextAlignmentOptions.Center;
+                }
+
                 SetCopy(label, shortLabel, 12f, 16f);
                 count.alignment = TextAlignmentOptions.Center;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
                 count.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(count, objective.WonCount + "/" + objective.PublishedCount, 13f, 16f);
+                SetCopy(count, tally, 12f, 15f);
                 count.isRightToLeftText = false;
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));

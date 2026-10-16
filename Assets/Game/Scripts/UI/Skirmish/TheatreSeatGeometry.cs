@@ -301,6 +301,70 @@ namespace Game.UI.Runtime
             return new Box(0f, 0f, Math.Max(2f, detail.XMin), plateHeight);
         }
 
+        /// <summary>
+        /// Farsi mirrors the theatre chrome the same way on every plate: the reserve sits on the
+        /// trailing edge, medal 0 stays first in reading order, and the cue keeps its place in the
+        /// open viewport. Map geography is not flipped.
+        /// </summary>
+        public static bool FaChromeMirrors(out string failure)
+        {
+            failure = null;
+            const float plateWidth = 1294f;
+            const float plateHeight = 724f;
+            Box enDetail = DetailRect(plateWidth, plateHeight, false, true);
+            Box faDetail = DetailRect(plateWidth, plateHeight, true, true);
+            float mirrored = plateWidth - enDetail.XMax;
+            if (enDetail.Center.X <= plateWidth * 0.5f || faDetail.Center.X >= plateWidth * 0.5f
+                || Math.Abs(faDetail.X - mirrored) > 1f)
+            {
+                failure = "reserve side";
+                return false;
+            }
+
+            float stripWidth = Math.Max(200f, plateWidth - 16f);
+            for (int i = 0; i < 4; i++)
+            {
+                StripMedal(plateWidth, false, i, out Box enSlot, out _, out _);
+                StripMedal(plateWidth, true, i, out Box faSlot, out _, out _);
+                float mirrorX = stripWidth - enSlot.XMax;
+                if (Math.Abs(faSlot.X - mirrorX) > 1f || Math.Abs(faSlot.W - enSlot.W) > 1f)
+                {
+                    failure = "medal " + i;
+                    return false;
+                }
+            }
+
+            StripMedal(plateWidth, true, 0, out Box recruit, out _, out _);
+            StripMedal(plateWidth, true, 3, out Box commander, out _, out _);
+            if (recruit.X <= commander.X)
+            {
+                failure = "medal order";
+                return false;
+            }
+
+            Layout en = Arrange(plateWidth, plateHeight, false, true, "DB");
+            Layout fa = Arrange(plateWidth, plateHeight, true, true, "DB");
+            Box enView = OpenViewport(plateWidth, plateHeight, false, true);
+            Box faView = OpenViewport(plateWidth, plateHeight, true, true);
+            if (Math.Abs((en.Cue.X - enView.X) - (fa.Cue.X - faView.X)) > 1f
+                || Math.Abs(en.Cue.Y - fa.Cue.Y) > 1f
+                || Math.Abs(en.Cue.W - fa.Cue.W) > 1f)
+            {
+                failure = "cue";
+                return false;
+            }
+
+            Layout enOpen = Arrange(plateWidth, plateHeight, false, false, "DB");
+            Layout faOpen = Arrange(plateWidth, plateHeight, true, false, "DB");
+            if (Math.Abs(enOpen.Cue.X - faOpen.Cue.X) > 1f || Math.Abs(enOpen.Cue.Y - faOpen.Cue.Y) > 1f)
+            {
+                failure = "open cue";
+                return false;
+            }
+
+            return true;
+        }
+
         public static Box ZoomHintRect(float plateWidth, float plateHeight)
         {
             float top = plateHeight - ZoomHintTopGap;
@@ -1811,9 +1875,12 @@ namespace Game.UI.Runtime
                 labelWidth = 48f;
             float labelX = fa ? edge + countBox + MedalGap : edge + icon + gap;
             float countX = fa ? edge : inner - edge - countBox;
-            slot = new Box(slotX, 4f, inner, 44f);
-            label = new Box(slotX + labelX, 8f, Math.Max(1f, labelWidth), 28f);
-            count = new Box(slotX + countX, 10f, countBox, 24f);
+            // The cell is 8px narrower than its pitch. English keeps that gutter on the right;
+            // Persian keeps it on the left so the cell mirrors across the strip.
+            float boxX = fa ? slotX + (slotWidth - inner) : slotX;
+            slot = new Box(boxX, 4f, inner, 44f);
+            label = new Box(boxX + labelX, 8f, Math.Max(1f, labelWidth), 28f);
+            count = new Box(boxX + countX, 10f, countBox, 24f);
         }
 
         /// <summary>Caption size that fits the strip slot. Wide plates stay at 12; a narrow 4:3 slot steps down to 9.</summary>

@@ -852,6 +852,7 @@ namespace Game.Editor
             GuardTheatre(() => RejectDistrictHalo(regions, mapIds, locale));
             GuardTheatre(() => RejectZoneProgressMatchesCard(root, view, locale));
             GuardTheatre(() => RejectStripMatchesZoneTotals(root, view, locale));
+            GuardTheatre(() => RejectMirroredTheatreChrome(root, locale));
 
             RectTransform cue = null;
             Transform cueNode = FindNamed(regions, "ZoomCue");
@@ -1641,6 +1642,68 @@ namespace Game.Editor
             RememberZoneCount(locale, mapId, shown, "zone progress");
         }
 
+        private static void RejectMirroredTheatreChrome(GameObject root, string locale)
+        {
+            bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            Transform strip = FindNamed(root.transform, "OverallProgressStrip");
+            if (strip == null || !strip.gameObject.activeInHierarchy)
+            {
+                throw new InvalidOperationException(
+                    "Theatre strip is missing locale=" + locale + ". Farsi has nothing to mirror.");
+            }
+
+            if (strip.Find("Medal0") is not RectTransform recruit || strip.Find("Medal3") is not RectTransform commander)
+            {
+                throw new InvalidOperationException("Theatre medal order is missing locale=" + locale + ".");
+            }
+
+            float recruitX = WorldBounds(recruit).center.x;
+            float commanderX = WorldBounds(commander).center.x;
+            if (fa ? recruitX <= commanderX : recruitX >= commanderX)
+            {
+                throw new InvalidOperationException(
+                    "Theatre medal order does not follow the reading direction locale=" + locale + ".");
+            }
+
+            if (recruit.Find("Icon") is RectTransform icon && recruit.Find("Count") is RectTransform count)
+            {
+                float iconX = WorldBounds(icon).center.x;
+                float countX = WorldBounds(count).center.x;
+                if (fa ? iconX <= countX : iconX >= countX)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre medal slot does not mirror locale=" + locale + ".");
+                }
+            }
+
+            if (FindNamed(root.transform, "MapPreviewClip") is RectTransform plate
+                && FindNamed(root.transform, "TheatreDetailPanel") is RectTransform panel
+                && panel.gameObject.activeInHierarchy)
+            {
+                float panelX = WorldBounds(panel).center.x;
+                float plateX = WorldBounds(plate).center.x;
+                if (fa ? panelX >= plateX : panelX <= plateX)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre reserve is on the leading edge locale=" + locale + ".");
+                }
+
+                if (FindNamed(root.transform, "ZoomCue") is RectTransform cue && cue.gameObject.activeInHierarchy)
+                {
+                    Rect cueBounds = WorldBounds(cue);
+                    Rect panelBounds = WorldBounds(panel);
+                    bool inOpen = fa
+                        ? cueBounds.xMin + 1f >= panelBounds.xMax
+                        : cueBounds.xMax - 1f <= panelBounds.xMin;
+                    if (!inOpen)
+                    {
+                        throw new InvalidOperationException(
+                            "Theatre zoom cue is outside the mirrored open viewport locale=" + locale + ".");
+                    }
+                }
+            }
+        }
+
         private static void RejectStripMatchesZoneTotals(GameObject root, QuickCustomScreenView view, string locale)
         {
             if (view == null || view.LibraryViewModel == null)
@@ -1682,52 +1745,6 @@ namespace Game.Editor
                     "' locale=" + locale + ". Expected " + expected + ".");
             }
 
-            RejectStripMatchesLedger(strip, locale);
-        }
-
-        private static void RejectStripMatchesLedger(Transform strip, string locale)
-        {
-            if (strip == null || !strip.gameObject.activeInHierarchy)
-            {
-                throw new InvalidOperationException(
-                    "Battles-won strip is missing in theatre locale=" + locale +
-                    ". Tier counts have nowhere else to appear.");
-            }
-
-            var grants = QuickCustomScreenView.CaptureMedalGrants;
-            var rows = new SkirmishMedalSaveData[grants.Length];
-            for (int i = 0; i < grants.Length; i++)
-            {
-                rows[i] = new SkirmishMedalSaveData
-                {
-                    catalogId = grants[i].CatalogId,
-                    difficulty = (byte)grants[i].Difficulty,
-                    contentVersion = 1,
-                    sessionId = "capture"
-                };
-            }
-
-            // Whole-theatre rows. A selected-zone pin (capture lives on IB: S073 Recruit only) is a different total.
-            SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
-            int[] expected =
-            {
-                ledger.Recruit,
-                ledger.Regular,
-                ledger.Veteran,
-                ledger.Commander
-            };
-            for (int i = 0; i < expected.Length; i++)
-            {
-                Transform node = strip.Find("Medal" + i + "/Count");
-                TMP_Text tier = node != null ? node.GetComponent<TMP_Text>() : null;
-                string shown = tier != null ? StripBidiMarks(tier.text).Trim() : string.Empty;
-                if (tier == null || !tier.gameObject.activeInHierarchy || shown != expected[i].ToString())
-                {
-                    throw new InvalidOperationException(
-                        "Battles-won strip tier " + i + " reads '" + shown +
-                        "' locale=" + locale + ". The whole-theatre medal ledger has " + expected[i] + ".");
-                }
-            }
         }
 
         private static void RejectVisibleGridRowTotals(GameObject root, string locale)
@@ -2541,6 +2558,8 @@ namespace Game.Editor
             Transform composition = instance.transform.Find("SkirmishSetupComposition");
             RejectBlankImages(composition != null ? composition.Find("BaseAssaultRules") : null, state);
             RejectBlankImages(composition != null ? composition.Find("OperationPreview") : null, null);
+            if (!string.IsNullOrEmpty(state))
+                RejectOneMedalCountDisplay(instance, state);
         }
 
         private static void RejectBlankImages(Transform root, string state)
@@ -2574,6 +2593,95 @@ namespace Game.Editor
             RejectBriefingStack(root, state);
         }
 
+        private static void RejectOneMedalCountDisplay(GameObject root, string state)
+        {
+            var displays = new List<Transform>();
+            CollectMedalCountDisplays(root != null ? root.transform : null, displays);
+            if (displays.Count != 1)
+            {
+                string names = displays.Count == 0
+                    ? "none"
+                    : string.Join(",", displays.ConvertAll(item => item.name));
+                throw new InvalidOperationException(
+                    "Expected one medal-count display in state " + state + " and found " + displays.Count + ": " + names + ".");
+            }
+
+            int[] expected = ExpectedMedalCounts(root);
+            Transform display = displays[0];
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Transform slot = display.Find("Medal" + i) ?? display.Find("Slot" + i);
+                TMP_Text tier = slot != null ? slot.Find("Count")?.GetComponent<TMP_Text>() : null;
+                string shown = tier != null ? StripBidiMarks(tier.text).Trim() : string.Empty;
+                if (tier == null || !tier.gameObject.activeInHierarchy || shown != expected[i].ToString())
+                {
+                    throw new InvalidOperationException(
+                        "Medal-count display " + display.name + " tier " + i + " reads '" + shown +
+                        "' in state " + state + ". ReadMedalCounts has " + expected[i] + ".");
+                }
+            }
+        }
+
+        private static int[] ExpectedMedalCounts(GameObject root)
+        {
+            QuickCustomScreenView view = root != null ? root.GetComponent<QuickCustomScreenView>() : null;
+            if (QuickCustomScreenView.ReadMedalCounts != null && view != null && view.LibraryViewModel != null)
+            {
+                SkirmishMedalTotals totals = QuickCustomScreenView.ReadMedalCounts(view.LibraryViewModel.Theater);
+                return new[] { totals.Recruit, totals.Regular, totals.Veteran, totals.Commander };
+            }
+
+            var grants = QuickCustomScreenView.CaptureMedalGrants;
+            var rows = new SkirmishMedalSaveData[grants.Length];
+            for (int i = 0; i < grants.Length; i++)
+            {
+                rows[i] = new SkirmishMedalSaveData
+                {
+                    catalogId = grants[i].CatalogId,
+                    difficulty = (byte)grants[i].Difficulty,
+                    contentVersion = 1,
+                    sessionId = "capture"
+                };
+            }
+
+            SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
+            return new[] { ledger.Recruit, ledger.Regular, ledger.Veteran, ledger.Commander };
+        }
+
+        private static void CollectMedalCountDisplays(Transform node, List<Transform> displays)
+        {
+            if (node == null || !node.gameObject.activeInHierarchy)
+                return;
+            if (ReadsFourTierCounts(node))
+            {
+                displays.Add(node);
+                return;
+            }
+
+            for (int i = 0; i < node.childCount; i++)
+                CollectMedalCountDisplays(node.GetChild(i), displays);
+        }
+
+        private static bool ReadsFourTierCounts(Transform group)
+        {
+            if (group == null)
+                return false;
+            for (int i = 0; i < 4; i++)
+            {
+                Transform slot = group.Find("Medal" + i) ?? group.Find("Slot" + i);
+                if (slot == null || !slot.gameObject.activeInHierarchy)
+                    return false;
+                TMP_Text count = slot.Find("Count")?.GetComponent<TMP_Text>();
+                if (count == null || !count.gameObject.activeInHierarchy)
+                    return false;
+                string shown = StripBidiMarks(count.text).Trim();
+                if (!int.TryParse(shown, out _))
+                    return false;
+            }
+
+            return true;
+        }
+
         private static void RejectBriefingStack(Transform root, string state)
         {
             if (root == null || root.name != "BaseAssaultRules")
@@ -2582,15 +2690,12 @@ namespace Game.Editor
             if (column == null)
                 return;
             var active = new List<string>();
-            int medalRows = 0;
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
                 if (child == null || !child.gameObject.activeInHierarchy)
                     continue;
                 active.Add(child.name);
-                if (child.name == "MedalRow")
-                    medalRows++;
             }
 
             string listed = string.Join(",", active);
@@ -2608,21 +2713,6 @@ namespace Game.Editor
                         throw new InvalidOperationException(
                             "Briefing column has " + forbidden[i] + " active in state " + state + ": " + listed);
                     }
-                }
-
-                if (theatre)
-                {
-                    if (medalRows != 0)
-                    {
-                        throw new InvalidOperationException(
-                            "Briefing column must have no MedalRow in state " + state +
-                            "; tier counts belong on the battles-won strip. Found " + medalRows + ": " + listed);
-                    }
-                }
-                else if (medalRows != 1)
-                {
-                    throw new InvalidOperationException(
-                        "Briefing column expected one MedalRow in state " + state + " and found " + medalRows + ": " + listed);
                 }
 
                 if (!theatre)

@@ -24,6 +24,14 @@ namespace Game.UI.Runtime
         private bool _suppressSavedMatch;
 
         /// <summary>
+        /// Visible tier counts for every library level. Null keeps the medal ledger:
+        /// <c>SkirmishMedalLedger.TotalsByDifficulty</c>, already stored on
+        /// <see cref="SkirmishTheaterState.OverallMedalTotals"/> by <c>CountTier</c>.
+        /// Programmer 1 assigns the left-column projection here when rebasing PR #68.
+        /// </summary>
+        public static Func<SkirmishTheaterState, SkirmishMedalTotals> ReadMedalCounts;
+
+        /// <summary>
         /// The capture save. One row per catalog id and difficulty, the same shape as <c>skirmishMedals</c>.
         /// S001 and S002 are Desert Base, S025 is City Crossroads, S073 is Industrial Basin.
         /// </summary>
@@ -344,6 +352,42 @@ namespace Game.UI.Runtime
             }
         }
 
+        private static SkirmishMedalTotals MedalCounts(SkirmishTheaterState theater)
+        {
+            if (ReadMedalCounts != null)
+                return ReadMedalCounts(theater);
+            return theater.OverallMedalTotals;
+        }
+
+        private void PublishMedalCounts(SkirmishTheaterState theater)
+        {
+            SkirmishMedalTotals medals = MedalCounts(theater);
+            string[] text =
+            {
+                medals.Recruit.ToString(),
+                medals.Regular.ToString(),
+                medals.Veteran.ToString(),
+                medals.Commander.ToString()
+            };
+            if (_overallStrip != null && _overallStrip.gameObject.activeInHierarchy)
+            {
+                for (int i = 0; i < text.Length; i++)
+                {
+                    TMP_Text tier = _overallStrip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
+                    SetCopy(tier, text[i], 13f, 18f);
+                }
+            }
+
+            if (_medalRow != null && _medalRow.gameObject.activeInHierarchy)
+            {
+                for (int i = 0; i < text.Length; i++)
+                {
+                    TMP_Text count = _medalRow.Find("Slot" + i + "/Count")?.GetComponent<TMP_Text>();
+                    SetCopy(count, text[i], 14f, 18f);
+                }
+            }
+        }
+
         private void PresentProgress(SkirmishTheaterState theater, bool fa)
         {
             if (_overallStrip == null)
@@ -407,7 +451,7 @@ namespace Game.UI.Runtime
                 rim.effectDistance = new Vector2(1.5f, -1.5f);
             }
 
-            SkirmishMedalTotals medals = theater.OverallMedalTotals;
+            SkirmishMedalTotals medals = MedalCounts(theater);
             int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
             var tierNames = new[]
             {

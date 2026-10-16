@@ -12,7 +12,7 @@ internal static class Program
         int seated = 0;
         int blocked = 0;
         int failed = 0;
-        if (!StampHolds() || !DumpRoundTrips())
+        if (!StampHolds() || !DumpRoundTrips() || !MirrorHolds())
             failed++;
 
         RunCanvasPlates(ref seated, ref blocked, ref failed);
@@ -324,6 +324,13 @@ internal static class Program
             Console.WriteLine("  " + hex);
         }
 
+        return ok;
+    }
+
+    private static bool MirrorHolds()
+    {
+        bool ok = TheatreSeatGeometry.FaChromeMirrors(out string failure);
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " fa mirror" + (ok ? "" : " " + failure));
         return ok;
     }
 

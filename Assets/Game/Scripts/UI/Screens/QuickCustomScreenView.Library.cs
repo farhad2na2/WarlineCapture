@@ -378,6 +378,7 @@ namespace Game.UI.Runtime
                 ClampStrayMedalBars();
                 RaiseLaunchTransition();
                 ApplyBriefingColumnState();
+                PublishMedalCounts(theater);
             }
             finally
             {

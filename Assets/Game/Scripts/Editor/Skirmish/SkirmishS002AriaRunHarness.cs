@@ -1082,6 +1082,13 @@ namespace Game.Editor
             public string phase, intent, observation;
             public int actions, attempts, targetId, observedTargetId, stopReason, pageSeen, navigationStage;
             public float progressAt, objectiveProgressAt, openingUntil;
+            public int frame, observationFrame, pageCount, totalGroups, selectedGroups;
+            public int assaultMask, attackOrderMask, selectedMask, structureMask;
+            public uint rosterRevision, sweepRosterRevision;
+            public int pagedToAssault, assaultSelecting, structureOrdered, pagesOrdered, homeDefenseStage;
+            public bool attackMode, selectionVisible, presentedHomeThreat, mapOpen, placementOpen, approachVisible;
+            public float publicApproachDistance, bestApproachDistance;
+            public byte approachBaselineObserved;
             public bool assaultStarted, assaultIssued;
             public int materials, infantry, page, structureAttackUnits;
             public bool drawer, riflePending, rocketeerPending, truckCommitted, readiness, pad;
@@ -1108,6 +1115,17 @@ namespace Game.Editor
                 actions = input.Actions, attempts = input.Attempts, targetId = input.TargetId,
                 observedTargetId = target.TargetId, stopReason = input.StopReason,
                 pageSeen = plan.AssaultPageSeen, navigationStage = plan.MapNavigationStage,
+                frame = view.Frame, observationFrame = target.Frame,
+                pageCount = view.ExpandedPageCount, totalGroups = view.ExpandedTotalGroups, selectedGroups = view.ExpandedSelectedGroups,
+                assaultMask = view.ExpandedAssaultMask, attackOrderMask = view.ExpandedAttackOrderMask,
+                selectedMask = view.ExpandedSelectedMask, structureMask = view.ExpandedStructureMask,
+                rosterRevision = view.ExpandedRosterRevision, sweepRosterRevision = plan.SweepRosterRevision,
+                pagedToAssault = plan.PagedToAssault, assaultSelecting = plan.AssaultSelecting,
+                structureOrdered = plan.StructureOrdered, pagesOrdered = plan.PagesOrdered, homeDefenseStage = plan.HomeDefenseStage,
+                attackMode = view.AttackMode, selectionVisible = view.SelectionVisible, presentedHomeThreat = view.PresentedHomeThreat,
+                mapOpen = view.MapOpen, placementOpen = view.PlacementOpen, approachVisible = view.AssaultDistanceVisible,
+                publicApproachDistance = view.NearestFriendlyObjectiveDistance, bestApproachDistance = plan.BestAssaultDistance,
+                approachBaselineObserved = plan.AssaultDistanceObserved,
                 progressAt = plan.LastProgressAt, objectiveProgressAt = input.LastObjectiveProgressAt,
                 openingUntil = plan.OpeningUntil, assaultStarted = plan.AssaultStarted != 0, assaultIssued = plan.AssaultIssued != 0,
                 materials = view.OwnMaterials, infantry = view.Infantry, page = view.ExpandedPageIndex,

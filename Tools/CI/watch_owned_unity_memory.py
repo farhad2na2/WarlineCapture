@@ -126,18 +126,39 @@ def process_memory(kernel, handle, expected_created):
         return {"telemetryUnavailable": type(error).__name__, "error": str(error)}
 
 
-def low(ram, commit):
-    return ram < RAM_FLOOR or commit < COMMIT_FLOOR
+def low(ram, commit, ram_floor=RAM_FLOOR, commit_floor=COMMIT_FLOOR):
+    return ram < ram_floor or commit < commit_floor
 
 def authorization():
     state = json.loads((ROOT / "Design/AgentReports/SkirmishExpansion/PRODUCTION_STATE.json").read_bytes())
     return state["execution_policy"]["owned_validation_threshold_cancellation"].get("authorized") is True
 
+def select_reserves(owner, override_id=None, policy=None, now=None):
+    """A lower reserve requires an unexpired grant bound to this exact owned process."""
+    if override_id is None:
+        return RAM_FLOOR, COMMIT_FLOOR
+    if policy is None:
+        state = json.loads((ROOT / "Design/AgentReports/SkirmishExpansion/PRODUCTION_STATE.json").read_bytes())
+        policy = state["execution_policy"].get("one_run_reserve_override", {})
+    now = now or datetime.datetime.now(datetime.timezone.utc)
+    if (policy.get("id") != override_id or policy.get("authorized") is not True or
+            policy.get("status") != "InUse" or
+            policy.get("ownerIdentity") != list(identity(owner["process"])) or
+            norm(policy.get("log", "")) != norm(owner["log"]) or
+            policy.get("executeMethod") != owner.get("executeMethod") or
+            (policy.get("freeRamGiB"), policy.get("freeCommitGiB")) != (8, 12)):
+        raise ValueError("No matching single-run reserve authorization")
+    expires = datetime.datetime.fromisoformat(policy["expiresUtc"])
+    if expires.tzinfo is None or now >= expires:
+        raise ValueError("Single-run reserve authorization expired")
+    return 8 * 1024**3, 12 * 1024**3
+
+
 def write(path, value):
     with path.open("a", encoding="utf-8") as stream:
         stream.write(json.dumps(dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(), **value)) + "\n")
 
-def watch(owner_path, output):
+def watch(owner_path, output, reserve_override_id=None):
     owner = json.loads(owner_path.read_bytes())
     if norm(owner["project"]) != norm(ROOT) or not Path(owner["log"]).resolve().is_relative_to(ROOT / "Logs/SkirmishProduction"):
         raise ValueError("Owner scope outside this workspace")
@@ -147,6 +168,14 @@ def watch(owner_path, output):
     if initial is None:
         write(output, {"kind": "AlreadyExited", "cancelled": False})
         return 0
+    try:
+        ram_floor, commit_floor = select_reserves(owner, reserve_override_id)
+    except (ValueError, OSError, KeyError, TypeError) as error:
+        # A malformed/revoked grant must never leave an already-started Editor unguarded.
+        write(output, {"kind": "ReserveOverrideRefused", "requestedOverrideId": reserve_override_id,
+                       "error": str(error), "fallbackRamGiB": 12, "fallbackCommitGiB": 16})
+        reserve_override_id = None
+        ram_floor, commit_floor = RAM_FLOOR, COMMIT_FLOOR
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
     kernel.OpenProcess.restype = ctypes.c_void_p
@@ -155,7 +184,8 @@ def watch(owner_path, output):
     handle = kernel.OpenProcess(0x1000, False, initial["ProcessId"])
     if not handle:
         raise OSError(ctypes.get_last_error(), "Cannot observe owned process")
-    write(output, {"kind": "Armed", "pid": initial["ProcessId"], "ramFloorGiB": 12, "commitFloorGiB": 16})
+    write(output, {"kind": "Armed", "pid": initial["ProcessId"], "ramFloorGiB": ram_floor / 1024**3,
+                   "commitFloorGiB": commit_floor / 1024**3, "reserveOverrideId": reserve_override_id})
     try:
         while True:
             status = ctypes.c_ulong()
@@ -167,7 +197,7 @@ def watch(owner_path, output):
             ram, commit = memory(kernel)
             write(output, {"kind": "Resource", "freeRamBytes": ram, "freeCommitBytes": commit,
                            "ownedEditorMemory": process_memory(kernel, handle, created(initial))})
-            if low(ram, commit):
+            if low(ram, commit, ram_floor, commit_floor):
                 rows = census()
                 current = verify(rows, owner)
                 if current is None:

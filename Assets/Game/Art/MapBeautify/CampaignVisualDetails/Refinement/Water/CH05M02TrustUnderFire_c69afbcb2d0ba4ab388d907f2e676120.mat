@@ -37,9 +37,10 @@ Material:
     - _RippleStrength: 0.075
     - _ShoreStrength: 1
     - _SkyReflection: 0.12
-    - _Smoothness: 0.46
+    - _Smoothness: 0.4
+    - _SurfaceDetail: 1
     m_Colors:
-    - _BaseColor: {r: 0.24, g: 0.38, b: 0.42, a: 1}
+    - _BaseColor: {r: 0.18, g: 0.335, b: 0.37, a: 1}
     - _FoamColor: {r: 0.8, g: 0.8399999, b: 0.8, a: 1}
     - _ShallowColor: {r: 0.32799998, g: 0.43999994, b: 0.42399997, a: 1}
     - _ShoreRect: {r: 656, g: 256, b: 48, a: 486}

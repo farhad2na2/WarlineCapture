@@ -16,6 +16,7 @@ Shader "Game/Environment/CampaignWater"
         _ShoreDistance("Terrain Shore Distance", 2D) = "white" {}
         _ShoreRect("Shore World Rect", Vector) = (0,0,1,1)
         _ShoreStrength("Terrain Shore Strength", Range(0,1)) = 0
+        _SurfaceDetail("Fine Surface Ripples", Range(0,1)) = 0
         _BankColors("Use Authored Banks", Float) = 0
     }
     SubShader
@@ -45,7 +46,7 @@ Shader "Game/Environment/CampaignWater"
             CBUFFER_START(UnityPerMaterial)
                 half4 _BaseColor,_ShallowColor,_FoamColor,_SkyColor;
                 half _Smoothness, _RippleStrength, _BankColors, _FoamStrength, _SkyReflection;
-                float _DepthFalloff, _FlowSpeed, _FoamWidth, _ShoreStrength;
+                float _DepthFalloff, _FlowSpeed, _FoamWidth, _ShoreStrength, _SurfaceDetail;
                 float4 _ShoreRect;
             CBUFFER_END
             // Channel UV0: x across (0..1), y along (0..1), zw object-space width and length.
@@ -110,6 +111,14 @@ Shader "Game/Environment/CampaignWater"
                 float c=dot(q,float2(.37,1.9))+t*.41;
                 float2 rippleLocal=float2(cos(a)+cos(b)*.45+cos(c)*.22*channelled,sin(a*.67)+sin(b)*.55)*_RippleStrength;
                 float2 ripple=lerp(rippleLocal,rippleLocal.x*side+rippleLocal.y*axis,channelled);
+                // Smaller, irregular crossing wavelets break up the broad parallel bands near bridges.
+                if(_SurfaceDetail>.001)
+                {
+                    float2 drift=p*1.25+float2(t*.09,-t*.07);
+                    float warp=WaterNoise(p*.43+t*.025);
+                    float2 fineRipple=float2(WaterNoise(drift+warp*1.7)-.5,WaterNoise(drift*1.83+float2(7.1,-3.2)-warp)-.5);
+                    ripple=ripple*lerp(1,.05,_SurfaceDetail)+fineRipple*(_SurfaceDetail*.32);
+                }
                 half calmEdge=lerp(1,smoothstep(0,1.2,edge),edged);
                 half3 normal=NormalizeNormalPerPixel(i.normalWS+float3(ripple.x,0,ripple.y)*(1-bank)*(.45+.55*calmEdge));
                 float variation=sin(dot(p,float2(.037,.029)))*sin(dot(p,float2(-.019,.041)));

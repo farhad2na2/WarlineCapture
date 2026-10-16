@@ -60,8 +60,8 @@ namespace Game.Editor
         internal const int ExpectedReviewedRunwayMaterialRowAddition = 1;
         // CampaignVisualAudit20261011/fixes/render-reconciliation.txt explains every new row.
         internal const int ExpectedCampaignVisualRenderRowAddition = 52 + 85;
-        // WaterBridgesRoads20261016/dressing/DenseCity-ledger.txt: visual-only children of existing owners.
-        internal const int ExpectedWaterBridgeDressingRenderRowAddition = 168;
+        // WaterBridgesRoads20261016/dressing/DenseCity-ledger.txt plus bridge-refinement/DenseCity-receipt.json: visual-only children of existing owners.
+        internal const int ExpectedWaterBridgeDressingRenderRowAddition = 168 + 32;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -
@@ -247,13 +247,13 @@ namespace Game.Editor
         {
             // Pin the reviewed visual revision; see MapVisualRefinement20261010/
             // dense-render-cache-source-reconciliation.json and native phase receipts.
-            // WaterBridgesRoads20261016/render-reconciliation.txt records this revision. A later
+            // WaterBridgesRoads20261016/bridge-refinement/render-reconciliation.txt records this revision. A later
             // scene change requires its own reconciliation, even if row totals
             // happen to remain equal.
             using (var stream = File.OpenRead(scene.path))
             using (var hash = System.Security.Cryptography.SHA256.Create())
                 if (BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() !=
-                    "d1f099ac88ed6585433da2d22b37003985a9cb40ba35c4ee88adbebb5a6fa267")
+                    "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975")
                     throw new InvalidOperationException("Dense source revision changed; reconcile it before rebuilding render packaging.");
             Renderer[] renderers = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))

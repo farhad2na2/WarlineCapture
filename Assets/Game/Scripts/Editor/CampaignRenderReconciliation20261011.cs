@@ -48,7 +48,7 @@ namespace Game.Editor
                 var lines=new List<string>{"sourceSha256="+BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant(),"marketStockMaterialRows="+additions,"destinationMaterialRows="+destinations,"waterDressingMaterialRows="+waterDressing};
                 lines.AddRange(branches.Select(p=>p.Key+"="+p.Value));
                 lines.AddRange(addedByBranch.Select(p=>"addition:"+p.Key+"="+p.Value));
-                const string pathOut="Design/AgentReports/WaterBridgesRoads20261016/render-reconciliation.txt";
+                const string pathOut="Design/AgentReports/WaterBridgesRoads20261016/bridge-refinement/render-reconciliation.txt";
                 File.WriteAllLines(pathOut,lines);Debug.Log("[CampaignRenderReconciliation] result=Passed rows="+branches.Values.Sum()+" marketStockRows="+additions+" destinationRows="+destinations+" waterDressingRows="+waterDressing);
             }
             finally{EditorSceneManager.RestoreSceneManagerSetup(setup);}

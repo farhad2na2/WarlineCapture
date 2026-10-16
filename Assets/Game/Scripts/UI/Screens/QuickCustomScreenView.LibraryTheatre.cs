@@ -2168,6 +2168,12 @@ namespace Game.UI.Runtime
             return true;
         }
 
+        private static void SyncCuePlate(RectTransform parent, Rect spot)
+        {
+            if (parent != null && parent.Find("CuePlate") is RectTransform plate)
+                PlaceTopLeft(plate, spot.x, spot.y, spot.width, spot.height);
+        }
+
         private static bool MarginSpotClear(RectTransform parent, Rect spot, float frameW, float frameH, Rect detail)
         {
             const float edge = 12f;

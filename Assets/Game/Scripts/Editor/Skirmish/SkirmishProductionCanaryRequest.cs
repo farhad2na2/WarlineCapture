@@ -34,15 +34,16 @@ namespace Game.Editor
             jobPath = Path.GetFullPath(jobPath); claimPath = Path.GetFullPath(claimPath);
             var job = ReadObject(jobPath); var claim = ReadObject(claimPath);
             bool legacy = job["schema_version"]?.Type == JTokenType.Integer && (int)job["schema_version"] == 2;
-            Exact(job, "schema_version job_id catalog_id " + (legacy ? "legacy_preset_index legacy_preset_resource legacy_preset_sha256" : "definition_id definition_version") + " candidate_sha256 build_sha256 setup_sha256 content_sha256 source_manifest packet_path packet_sha256 seed locale size difficulty control_mode required_stages timeout_seconds");
+            bool counterpart = job["schema_version"]?.Type == JTokenType.Integer && (int)job["schema_version"] == 3;
+            Exact(job, "schema_version job_id catalog_id " + (legacy ? "legacy_preset_index legacy_preset_resource legacy_preset_sha256" : "definition_id definition_version") + " candidate_sha256 build_sha256 setup_sha256 content_sha256 source_manifest packet_path packet_sha256 seed locale size difficulty control_mode required_stages timeout_seconds" + (counterpart ? " counterpart_authority" : ""));
             Exact(claim, "attempt_id token worker started_utc job_sha256 artifact_directory");
-            Integer(job, "schema_version", 1, 2); if (!legacy) Integer(job, "definition_version", 1, int.MaxValue);
+            Integer(job, "schema_version", 1, 3); if (!legacy) Integer(job, "definition_version", 1, int.MaxValue);
             Integer(job, "seed", 1, int.MaxValue); Integer(job, "timeout_seconds", 1, 14400);
             Require(Regex.IsMatch(Text(job, "job_id"), "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"), "Unsafe job ID.");
             var catalog = Text(job, "catalog_id");
             Require(matrix != null || catalog == "S004" || catalog == "S005", "Only S004/S005 canary dispatch exists without an explicit matrix plan.");
             if (legacy) { Require(matrix != null, "Legacy jobs require an exact complete sampling plan"); SkirmishLegacyProductionIdentity.ValidateJob(job); }
-            else { Require(!SkirmishLegacyProductionIdentity.IsProtected(catalog), "Protected presets cannot manufacture expanded identity"); Require(Text(job, "definition_id") == "skirmish." + catalog.ToLowerInvariant(), "Definition mismatch."); }
+            else { Require(counterpart ? matrix != null && SkirmishLegacyProductionIdentity.IsProtected(catalog) : !SkirmishLegacyProductionIdentity.IsProtected(catalog), "Protected expanded counterpart requires exact schema3 measured authority and complete sampling plan"); Require(Text(job, "definition_id") == "skirmish." + catalog.ToLowerInvariant(), "Definition mismatch."); }
             Require(Text(job, "size") == "Standard" && Text(job, "difficulty") == "Regular", "Only Regular/Standard canary dispatch exists.");
             Require(new[] { "EN", "FA" }.Contains(Text(job, "locale")), "Locale must be EN/FA.");
             Require(new[] { "manual", "aria" }.Contains(Text(job, "control_mode")), "Unknown control mode.");
@@ -82,6 +83,7 @@ namespace Game.Editor
             Require(!Within(artifacts, Path.Combine(root, "Assets")), "Artifacts inside imported Assets.");
             Require(Directory.Exists(artifacts) && !File.Exists(Path.Combine(artifacts, "result.json")) && !File.Exists(Path.Combine(artifacts, "adapter-started.json")), "Attempt absent/already finished/started.");
             Require(Canonical(ReadObject(Path.Combine(artifacts, "claim.json"))) == Canonical(claim), "Immutable attempt claim differs from live claim.");
+            if(counterpart)SkirmishProtectedCounterpartAuthority.Validate(job,root);
             return result;
         }
 

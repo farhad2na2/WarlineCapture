@@ -409,9 +409,23 @@ namespace Game.Editor
                         throw new InvalidOperationException("Gameplay system unexpectedly entered streaming-only batch preparation");
                 var catalog=SkirmishExpansionCatalogConfig.Load();
                     var guids=new HashSet<string>(StringComparer.Ordinal);
-                    foreach(string id in plannedJobs==null?new[]{"S004","S005"}:plannedJobs.Select(v=>(string)v["catalog_id"]).Distinct(StringComparer.Ordinal))
+                    foreach(var mode in plannedJobs==null?new[]{new JObject{["catalog_id"]="S004",["schema_version"]=1},new JObject{["catalog_id"]="S005",["schema_version"]=1}}:
+                        plannedJobs.OfType<JObject>().GroupBy(v=>(string)v["catalog_id"]+":"+(string)v["schema_version"],StringComparer.Ordinal).Select(g=>g.First()).ToArray())
                     {
-                        if(SkirmishLegacyProductionIdentity.IsProtected(id)) { guids.Add(SkirmishLegacyProductionIdentity.ResolveSource(id,out _).NavigationMetadata.AuthoredSubSceneGuid); continue; }
+                        string id=(string)mode["catalog_id"];
+                        if(SkirmishLegacyProductionIdentity.IsProtected(id))
+                        {
+                            if((int?)mode["schema_version"]==3)
+                            {
+                                SkirmishProtectedCounterpartAuthority.Validate(mode,Path.GetFullPath(Path.Combine(Application.dataPath,"..")));
+                                var authored=SkirmishProtectedExpandedCounterpartScope.LoadDevelopmentCatalog(id);
+                                if(!authored.TryGetDefinition(id,out var counterpart)||counterpart.CampaignMap==null)
+                                    throw new InvalidDataException("Exact measured counterpart warmup source missing");
+                                guids.Add(counterpart.CampaignMap.NavigationMetadata.AuthoredSubSceneGuid);
+                            }
+                            else guids.Add(SkirmishLegacyProductionIdentity.ResolveSource(id,out _).NavigationMetadata.AuthoredSubSceneGuid);
+                            continue;
+                        }
                         if(catalog==null||!catalog.TryGetDefinition(id,out var definition)||definition.CampaignMap==null)
                             throw new InvalidDataException("Actual packaged canary source definition missing");
                         guids.Add(definition.CampaignMap.NavigationMetadata.AuthoredSubSceneGuid);

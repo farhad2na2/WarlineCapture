@@ -23,6 +23,7 @@ namespace Game.Editor
     public static partial class SkirmishS002AriaRunHarness
     {
         private static ProductionCanaryContext productionCanary;
+        private static IDisposable productionCounterpartScope;
 
         public static void RunProductionJobFromEnvironment()
         {
@@ -33,7 +34,8 @@ namespace Game.Editor
             var request = SkirmishProductionCanaryRequest.Read(root,
                 Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_JOB"),
                 Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM"),productionBatch==null,productionBatch?.Matrix);
-            var packaged = SkirmishExpansionCatalogConfig.Load();
+            var packaged = !request.IsLegacyPreset&&SkirmishMissionDispatch.IsExpandedCounterpart(request.CatalogId)
+                ? SkirmishProtectedExpandedCounterpartScope.LoadDevelopmentCatalog(request.CatalogId) : SkirmishExpansionCatalogConfig.Load();
             SkirmishScenarioDefinitionConfig definition;
             if (request.IsLegacyPreset) SkirmishLegacyProductionIdentity.RequireBinding(request.CatalogId);
             else if (packaged == null || !packaged.TryGetDefinition(request.CatalogId, out definition) ||
@@ -45,6 +47,8 @@ namespace Game.Editor
             productionCanary = context;
             try
             {
+                if(!request.IsLegacyPreset&&SkirmishMissionDispatch.IsExpandedCounterpart(request.CatalogId))
+                    productionCounterpartScope=SkirmishProtectedExpandedCounterpartScope.Open(packaged,request.CatalogId);
                 // One existing normal Menu runner. No LaunchCatalog direct bootstrap.
                 RunEditorJourney(request.Locale, request.Manual, false, request.CatalogId, request.Seed);
                 // Existing method defaults ARIA to ADJUST SETUP; v1 canary requires Main Menu.
@@ -80,6 +84,7 @@ namespace Game.Editor
             var owned = productionCanary;
             // Retain the context if restore fails, preventing another dispatch.
             owned.Restore();
+            productionCounterpartScope?.Dispose(); productionCounterpartScope=null;
             productionCanary = null;
         }
 

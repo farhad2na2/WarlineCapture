@@ -21,7 +21,7 @@ namespace Game.Editor
         // metadata/caches. Static proposals do not stand in for live scene fitting.
         static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
-            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null)
+            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false)
         {
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
@@ -156,6 +156,44 @@ namespace Game.Editor
                     bool CachedSourceInvalid(Vector2Int candidate,Vector2Int size)=>
                         PilotStaticPrefixAllowed(definition)&&BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(
                             staticPrefix,prefixWidth,prefixHeight,candidate,size);
+                    if(capacityOnly)
+                    {
+                        complete=false;
+                        result["status"]="IndependentSourceQaCapacityHints_NotConfigurationAcceptance";
+                        result["priorFacilityReservationsIncluded"]=false;
+                        result["existingTypedPadIgnoredForHintsOnly"]=true;
+                        result["additionalQaClearanceScope"]="WholeDeclaredCompound_OriginalTypedPadNotCertified_FixedSpawnRallyRepairAndActualApproachClearance";
+                        if(faction!=2){result["status"]="NotRequested_PlayerPreferencesFixed";continue;}
+                        var plots=new JArray();var representatives=new List<RectInt>();
+                        result["representativePlots"]=plots;
+                        var hintFootprint=geometry.GetPlacementFootprint(definition,false);
+                        result["nativePlacementFootprint"]=new JArray(hintFootprint.x,hintFootprint.y);
+                        long examined=0,outsideFullCompound=0,prefixRejected=0,qaRejected=0,nativeRejected=0,sourceLegal=0;
+                        // Full finite source-compound enumeration, not an enlargement
+                        // of the normal runtime relocation radius. These are hints.
+                        for(int z=compound.yMin;z<compound.yMax;z++)for(int x=compound.xMin;x<compound.xMax;x++)
+                        {
+                            examined++;var originHint=new Vector2Int(x,z);
+                            var rect=Effective(definition,originHint,grid,false);
+                            if(!PilotCompoundContains(compound,rect)){outsideFullCompound++;continue;}
+                            if(CachedSourceInvalid(rect.position,rect.size)){prefixRejected++;continue;}
+                            if(serviceKeepClear.Any(rect.Overlaps)||!serviceAvailable[faction]){qaRejected++;continue;}
+                            if(!NativeValid(definition,originHint,hintFootprint,false,grid,roads,blocker)){nativeRejected++;continue;}
+                            sourceLegal++;
+                            if(representatives.Count>=32||representatives.Any(rect.Overlaps))continue;
+                            representatives.Add(rect);var plot=RectJson(rect);
+                            plot["preferredOriginCell"]=new JArray(originHint.x,originHint.y);plots.Add(plot);
+                        }
+                        result["allCompoundOriginsExamined"]=examined;
+                        Require(examined==outsideFullCompound+prefixRejected+qaRejected+nativeRejected+sourceLegal,"Complete finite inventory outcome accounting required");
+                        result["outsideFullCompound"]=outsideFullCompound;result["nativeSourceRejected"]=nativeRejected;
+                        result["staticPrefixRejected"]=prefixRejected;result["qaRejected"]=qaRejected;
+                        result["independentlySourceQaLegalOriginCount"]=sourceLegal;
+                        result["representativeLimit"]=32;
+                        result["representativesAreExhaustivePacking"]=false;
+                        result["maximumRepresentativeLimitReached"]=representatives.Count==32;
+                        continue;
+                    }
                     var context=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
                         geometry.GetPlacementFootprint,Effective,Valid,CachedSourceInvalid,null,null,null,null);
                     var footprint=geometry.GetPlacementFootprint(definition,false);
@@ -194,6 +232,7 @@ namespace Game.Editor
                     result["entireConfigurationFound"]=complete;
                 if(boundedPilotObserver!=null)BoundedPilotCheckpoint("FacilitySizeCompleted",new JObject{["catalogId"]=configuration.Key.Item1,["size"]=configuration.Key.Item2,["complete"]=complete,["rows"]=new JArray(output.OfType<JObject>().Where(r=>(string)r["catalogId"]==configuration.Key.Item1&&(string)r["size"]==configuration.Key.Item2).Select(r=>r.DeepClone()))});
             }
+            if(capacityOnly){report["normalFacilityRelocationStatus"]="CollectedIndependentSourceQaHints_NotConfigurationFit";return;}
             if(exactTypedRosterCaller){report["normalFacilityRelocationStatus"]="CollectedStaticFacilities_ExactTypedRosterCallerOwnsPacking";return;}
             // Preserve original force/facility rows. Re-query canonical force budgets
             // against ONLY complete new reservation sets, never partial successes.

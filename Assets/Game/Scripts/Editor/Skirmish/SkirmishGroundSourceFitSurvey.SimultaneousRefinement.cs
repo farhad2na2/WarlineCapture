@@ -62,7 +62,7 @@ namespace Game.Editor
         // The caller owns definition/layout lifetime. This core creates only
         // proposal metadata and uses the same native allocator for every family.
         static JObject RefineLoadedCandidateCore(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
-            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false)
+            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false,bool preparedAuthoring=false)
         {
             using var live=em.CreateEntityQuery(typeof(SkirmishMatchState));
             Require(live.IsEmptyIgnoreFilter,"Refinement requires disposable source world, never live gameplay");
@@ -72,8 +72,8 @@ namespace Game.Editor
                 owner.Definition.CatalogId==(string)mission["catalog_id"],"Exact caller-owned source/definition/layout identity required");
             string error;
             {
-                AddRefinementDefenseApproaches(owner.Definition,grid);
-                RebuildRefinementConvoyBays(owner.Definition,em,grid);
+                if(!preparedAuthoring)
+                {AddRefinementDefenseApproaches(owner.Definition,grid);RebuildRefinementConvoyBays(owner.Definition,em,grid);}
                 Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
                 var budgets=new List<SkirmishStaticAuthoringBudget>();
                 foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
@@ -123,6 +123,8 @@ namespace Game.Editor
                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));
                 if(requireExactJointBaseline&&baselineRoutes.OfType<JObject>().Any(r=>!JointRoutesExact(r)))
                 {output["jointRouteRefused"]="Actual all-profile baseline contains nonexact native path; no facility search or fit claim";return output;}
+                if(refinementFacilityPreferencesRequested&&!refinementPreferenceReplay)
+                    return RefineFacilityPreferences(mission,owner,source,em,gridEntity,grid,surface,budgets,(JArray)output["baselineNativeApproaches"],artifactPrefix,checkpoint);
                 // Discovery can relocate the entire roster inside declared logical
                 // compounds. Derived hulls must then pass the ordinary strict-pad
                 // allocator and complete army occupancy on another pass.
@@ -172,6 +174,12 @@ namespace Game.Editor
                         row["routeQueriesWithSameFacilityReservations"]=Ground30RouteQueries(budget,owner.Layout,em,gridEntity,grid,surface,facilities);
                         if(requireExactJointRoutes&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
                         {row["jointRouteRefused"]="Nonexact native route with actual facility blockers";complete=false;}
+                        if(refinementPreferenceReplay)
+                        {
+                            bool independent=PreferencePathsIndependent(owner.Layout,grid,(JObject)row["routeQueriesWithSameFacilityReservations"],out var independence);
+                            row["actualProfileRouteIndependence"]=independence;
+                            if(!independent)complete=false;
+                        }
                         }
                         catch(Exception failure){row["sizeError"]=failure.ToString();throw;}
                         finally{checkpoint?.Invoke(new JObject{["catalogId"]=mission["catalog_id"],["pass"]=pass,["discoveryOnly"]=discovery,["size"]=budget.Size.ToString(),["facts"]=row.DeepClone()});}

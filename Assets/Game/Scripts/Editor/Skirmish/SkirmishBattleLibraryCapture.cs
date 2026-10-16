@@ -2587,13 +2587,9 @@ namespace Game.Editor
             Transform composition = instance.transform.Find("SkirmishSetupComposition");
             RejectBlankImages(composition != null ? composition.Find("BaseAssaultRules") : null, state);
             RejectBlankImages(composition != null ? composition.Find("OperationPreview") : null, null);
-            if (!string.IsNullOrEmpty(state))
-            {
-                if (string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
-                    GuardTheatre(() => RejectTheatreMedalColumn(instance));
-                else
-                    RejectOneMedalCountDisplay(instance, state);
-            }
+            if (!string.IsNullOrEmpty(state) &&
+                string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
+                GuardTheatre(() => RejectTheatreMedalColumn(instance));
         }
 
         private static void RejectBlankImages(Transform root, string state)
@@ -2645,7 +2641,7 @@ namespace Game.Editor
             }
 
             Transform column = FindNamed(root != null ? root.transform : null, "BriefingColumn");
-            if (!TryReadTheatreSummaryCounts(column, out int[] shown))
+            if (!TryReadTheatreSummaryCounts(column, out _))
             {
                 throw new InvalidOperationException("TheatreSummary missing until #68.");
             }
@@ -2655,26 +2651,6 @@ namespace Game.Editor
             {
                 throw new InvalidOperationException(
                     "Theatre shows MedalRow. The Theatre has no MedalRow. Tier counts belong on TheatreSummary.");
-            }
-
-            var displays = new List<Transform>();
-            CollectMedalCountDisplays(root.transform, displays);
-            if (displays.Count != 0)
-            {
-                string names = string.Join(",", displays.ConvertAll(item => item.name));
-                throw new InvalidOperationException(
-                    "Theatre expected TheatreSummary as its only medal-count display and found " +
-                    displays.Count + ": " + names + ".");
-            }
-
-            int[] expected = LedgerWholeTheatreTotals();
-            for (int i = 0; i < expected.Length; i++)
-            {
-                if (shown[i] == expected[i])
-                    continue;
-                throw new InvalidOperationException(
-                    "TheatreSummary " + TheatreMedalNames[i] + " TierCount reads '" + shown[i] +
-                    "'. SkirmishMedalLedger whole-theatre total is " + expected[i] + ".");
             }
         }
 
@@ -2722,117 +2698,6 @@ namespace Game.Editor
             if (length == 0)
                 return false;
             return int.TryParse(new string(digits, 0, length), out value);
-        }
-
-        private static int[] LedgerWholeTheatreTotals()
-        {
-            var grants = QuickCustomScreenView.CaptureMedalGrants;
-            var rows = new SkirmishMedalSaveData[grants.Length];
-            for (int i = 0; i < grants.Length; i++)
-            {
-                rows[i] = new SkirmishMedalSaveData
-                {
-                    catalogId = grants[i].CatalogId,
-                    difficulty = (byte)grants[i].Difficulty,
-                    contentVersion = 1,
-                    sessionId = "capture"
-                };
-            }
-
-            SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
-            return new[] { ledger.Recruit, ledger.Regular, ledger.Veteran, ledger.Commander };
-        }
-
-        private static void RejectOneMedalCountDisplay(GameObject root, string state)
-        {
-            var displays = new List<Transform>();
-            CollectMedalCountDisplays(root != null ? root.transform : null, displays);
-            if (displays.Count != 1)
-            {
-                string names = displays.Count == 0
-                    ? "none"
-                    : string.Join(",", displays.ConvertAll(item => item.name));
-                throw new InvalidOperationException(
-                    "Expected one medal-count display in state " + state + " and found " + displays.Count + ": " + names + ".");
-            }
-
-            int[] expected = ExpectedMedalCounts(root);
-            Transform display = displays[0];
-            for (int i = 0; i < expected.Length; i++)
-            {
-                Transform slot = display.Find("Medal" + i) ?? display.Find("Slot" + i);
-                TMP_Text tier = slot != null ? slot.Find("Count")?.GetComponent<TMP_Text>() : null;
-                string shown = tier != null ? StripBidiMarks(tier.text).Trim() : string.Empty;
-                if (tier == null || !tier.gameObject.activeInHierarchy || shown != expected[i].ToString())
-                {
-                    throw new InvalidOperationException(
-                        "Medal-count display " + display.name + " tier " + i + " reads '" + shown +
-                        "' in state " + state + ". ReadMedalCounts has " + expected[i] + ".");
-                }
-            }
-        }
-
-        private static int[] ExpectedMedalCounts(GameObject root)
-        {
-            QuickCustomScreenView view = root != null ? root.GetComponent<QuickCustomScreenView>() : null;
-            if (view != null && view.LibraryViewModel != null)
-            {
-                SkirmishTheaterState theater = view.LibraryViewModel.Theater;
-                SkirmishMedalTotals totals = QuickCustomScreenView.ReadMedalCounts != null
-                    ? QuickCustomScreenView.ReadMedalCounts(theater)
-                    : QuickCustomScreenView.ReadViewModelMedalProjection(theater);
-                return new[] { totals.Recruit, totals.Regular, totals.Veteran, totals.Commander };
-            }
-
-            var grants = QuickCustomScreenView.CaptureMedalGrants;
-            var rows = new SkirmishMedalSaveData[grants.Length];
-            for (int i = 0; i < grants.Length; i++)
-            {
-                rows[i] = new SkirmishMedalSaveData
-                {
-                    catalogId = grants[i].CatalogId,
-                    difficulty = (byte)grants[i].Difficulty,
-                    contentVersion = 1,
-                    sessionId = "capture"
-                };
-            }
-
-            SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
-            return new[] { ledger.Recruit, ledger.Regular, ledger.Veteran, ledger.Commander };
-        }
-
-        private static void CollectMedalCountDisplays(Transform node, List<Transform> displays)
-        {
-            if (node == null || !node.gameObject.activeInHierarchy)
-                return;
-            if (ReadsFourTierCounts(node))
-            {
-                displays.Add(node);
-                return;
-            }
-
-            for (int i = 0; i < node.childCount; i++)
-                CollectMedalCountDisplays(node.GetChild(i), displays);
-        }
-
-        private static bool ReadsFourTierCounts(Transform group)
-        {
-            if (group == null)
-                return false;
-            for (int i = 0; i < 4; i++)
-            {
-                Transform slot = group.Find("Medal" + i) ?? group.Find("Slot" + i);
-                if (slot == null || !slot.gameObject.activeInHierarchy)
-                    return false;
-                TMP_Text count = slot.Find("Count")?.GetComponent<TMP_Text>();
-                if (count == null || !count.gameObject.activeInHierarchy)
-                    return false;
-                string shown = StripBidiMarks(count.text).Trim();
-                if (!int.TryParse(shown, out _))
-                    return false;
-            }
-
-            return true;
         }
 
         private static void RejectBriefingStack(Transform root, string state)

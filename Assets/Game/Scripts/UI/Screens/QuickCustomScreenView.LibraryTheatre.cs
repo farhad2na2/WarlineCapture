@@ -1828,7 +1828,7 @@ namespace Game.UI.Runtime
             card.rectTransform.localScale = Vector3.one;
 
             float cardH = slot.Card.height;
-            float nameH = Mathf.Min(TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame), cardH >= 190f ? 44f : 40f);
+            float nameH = Mathf.Min(TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame), cardH >= 190f ? 64f : 48f);
             card.sprite = ZoneSolidSprite();
             card.type = Image.Type.Simple;
             card.color = new Color(0.04f, 0.05f, 0.07f, 0.96f);
@@ -1840,10 +1840,10 @@ namespace Game.UI.Runtime
             name.maxVisibleLines = 2;
             name.enableAutoSizing = true;
             name.fontSizeMin = 16f;
-            name.fontSizeMax = 28f;
+            name.fontSizeMax = 32f;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 28f);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 32f);
 
             var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
             medallion.transform.SetParent(card.transform, false);
@@ -1889,7 +1889,7 @@ namespace Game.UI.Runtime
             count.fontStyle = FontStyles.Bold;
             count.color = Color.white;
             count.maxVisibleLines = 1;
-            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, 16f, 24f);
+            SetCopy(count, pending ? SkirmishBattleLibraryArt.ComingSoon(fa) : slot.Won + "/" + total, 18f, 28f);
             count.alignment = TextAlignmentOptions.Center;
             count.isRightToLeftText = pending && fa;
             LayoutZoneCardStack(card.rectTransform, name, nameH, cardH, wideFrame);
@@ -2466,21 +2466,21 @@ namespace Game.UI.Runtime
                 if (text.name == "ZoneName")
                 {
                     if (!ZoneCardIsCompact(text))
-                        RaiseTheatreLine(text, 18f, 26f);
+                        RaiseTheatreLine(text, 18f, 32f);
                     continue;
                 }
                 if (text.name == "ZoneCount")
-                    RaiseTheatreLine(text, 16f, 24f);
+                    RaiseTheatreLine(text, 18f, 28f);
                 else if (text.name == "ZoomCue")
-                    RaiseTheatreLine(text, 14f, 24f);
+                    RaiseTheatreLine(text, 16f, 28f);
             }
 
         }
 
-        private const float ZoneNameFontCeiling = 26f;
+        private const float ZoneNameFontCeiling = 32f;
         private const float ZoneNameFontFloor = 16f;
         /// <summary>Drawn name size. The packer still stops at NameFontCeiling so the seats do not move.</summary>
-        private const float DrawnNameCeiling = 28f;
+        private const float DrawnNameCeiling = 32f;
 
         /// <summary>
         /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
@@ -2787,9 +2787,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Name across the top, tall enough for two lines, then a full-width portrait, the
-        /// progress ring on that portrait's bottom corner, and the status line across the bottom.
-        /// The portrait gives up height for the two-line header and lands near 60% of the card.
+        /// Full-width portrait at about 68% of the card, name overlaid on its top so two lines
+        /// stay legal, progress ring on the portrait's bottom corner, status line across the bottom.
         /// The seat rect is left alone.
         /// </summary>
         private static void LayoutZoneCardStack(RectTransform card, TMP_Text name, float nameH, float cardH, bool wide)
@@ -2802,7 +2801,7 @@ namespace Game.UI.Runtime
             float nameW = PortraitNameWidth(cardW);
             float nameX = Mathf.Max(0f, (cardW - nameW) * 0.5f);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
-            DominantCardBands(cardH, wide, out float nameRoom, out _, out float statusH);
+            DominantCardBands(cardH, wide, out float nameRoom, out float portraitH, out float statusH);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
             if (nameH > maxName)
                 nameH = maxName;
@@ -2818,10 +2817,11 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(name.rectTransform, nameX, pad, nameW, nameH);
 
             float statusY = cardH - pad - statusH;
-            float portraitTop = pad + nameH + gap;
-            float portraitH = statusY - gap - portraitTop;
-            if (portraitH < 8f)
-                portraitH = 8f;
+            float portraitTop = statusY - gap - portraitH;
+            if (portraitTop < pad)
+                portraitTop = pad;
+            if (portraitTop + portraitH > cardH)
+                portraitH = Mathf.Max(8f, cardH - portraitTop);
             float portraitW = innerW;
 
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
@@ -2850,7 +2850,8 @@ namespace Game.UI.Runtime
                 if (ringSide > portraitH - 4f)
                     ringSide = Mathf.Max(28f, portraitH - 4f);
                 float ringX = fa ? pad + 4f : pad + portraitW - 4f - ringSide;
-                float ringY = portraitTop + portraitH - 4f - ringSide;
+                float ringBottom = Mathf.Min(portraitTop + portraitH, statusY) - 4f;
+                float ringY = ringBottom - ringSide;
                 if (ringY < portraitTop)
                     ringY = portraitTop;
                 disc = EnsureRingDisc(card);
@@ -2862,12 +2863,19 @@ namespace Game.UI.Runtime
                 KeepAuthoredSize(ring);
             }
 
+            RectTransform shade = null;
+            if (name != null)
+            {
+                shade = EnsureNameShade(card);
+                PlaceTopLeft(shade, nameX, pad, nameW, nameH);
+                shade.localScale = Vector3.one;
+                KeepAuthoredSize(shade);
+            }
+
             Transform countNode = card.Find("ZoneCount");
             if (countNode == null && ring != null)
                 countNode = ring.Find("ZoneCount");
-            if (countNode == null)
-                return;
-            if (countNode.parent != card)
+            if (countNode != null && countNode.parent != card)
                 countNode.SetParent(card, false);
             if (countNode is RectTransform countRect)
                 PlaceTopLeft(countRect, pad, statusY, innerW, Mathf.Max(1f, statusH));
@@ -2877,39 +2885,51 @@ namespace Game.UI.Runtime
                 disc.SetSiblingIndex(thumb != null ? thumb.GetSiblingIndex() + 1 : 0);
             if (ring != null)
                 ring.SetSiblingIndex(disc != null ? disc.GetSiblingIndex() + 1 : (thumb != null ? thumb.GetSiblingIndex() + 1 : 0));
+            if (shade != null)
+                shade.SetSiblingIndex(ring != null ? ring.GetSiblingIndex() + 1 : (disc != null ? disc.GetSiblingIndex() + 1 : 0));
             if (name != null)
                 name.transform.SetAsLastSibling();
-            countNode.SetAsLastSibling();
-            if (countNode.TryGetComponent<TMP_Text>(out var count))
+            if (countNode != null)
+                countNode.SetAsLastSibling();
+            if (countNode != null && countNode.TryGetComponent<TMP_Text>(out var count))
                 FitCopyInside(count, 11f);
         }
 
         /// <summary>
-        /// Header room for two lines, and a status row tall enough for "به زودی".
-        /// The portrait keeps what is left, about 60% on a 208-tall card.
+        /// Portrait is 68% of the card (kept inside 65–70%). The name overlays that portrait,
+        /// so its room is the full two-line budget. The status row is tall enough for "به زودی".
         /// </summary>
         private static void DominantCardBands(float cardH, bool wide, out float nameRoom, out float portraitH, out float statusH)
         {
-            const float pad = 2f;
-            const float gap = 2f;
-            statusH = cardH >= 190f ? 36f : 32f;
+            statusH = cardH >= 190f ? 40f : 34f;
             float cap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
-            float twoLines = cardH >= 190f ? 50f : 46f;
-            if (twoLines > cap)
-                twoLines = cap;
-            if (twoLines < 18f)
-                twoLines = 18f;
-            nameRoom = twoLines;
-            portraitH = cardH - pad - nameRoom - gap - statusH - pad;
-            float tallestPortrait = Mathf.Round(cardH * 0.65f);
-            if (portraitH > tallestPortrait && nameRoom + (portraitH - tallestPortrait) <= cap)
-            {
-                nameRoom += portraitH - tallestPortrait;
-                portraitH = tallestPortrait;
-            }
-
+            nameRoom = cap;
+            if (nameRoom < 18f)
+                nameRoom = 18f;
+            float low = cardH * 0.65f;
+            float high = cardH * 0.70f;
+            portraitH = Mathf.Round(cardH * 0.68f);
+            if (portraitH < low)
+                portraitH = Mathf.Ceil(low);
+            if (portraitH > high)
+                portraitH = Mathf.Floor(high);
             if (portraitH < 8f)
                 portraitH = 8f;
+        }
+
+        /// <summary>Dark bar behind the overlaid title so a two-line name still reads on the photo.</summary>
+        private static RectTransform EnsureNameShade(RectTransform card)
+        {
+            RectTransform shade = card.Find("NameShade") as RectTransform;
+            if (shade != null)
+                return shade;
+            var image = new GameObject("NameShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            image.transform.SetParent(card, false);
+            image.sprite = ZoneSolidSprite();
+            image.type = Image.Type.Simple;
+            image.raycastTarget = false;
+            image.color = new Color(0.03f, 0.04f, 0.05f, 0.72f);
+            return image.rectTransform;
         }
 
         /// <summary>Dark circle drawn behind the progress ring so the arc reads on the photo.</summary>

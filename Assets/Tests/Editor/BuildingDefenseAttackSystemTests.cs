@@ -3,6 +3,7 @@ using System.IO;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
+using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Core;
@@ -28,6 +29,10 @@ public sealed partial class BuildingDefenseAttackSystemTests
             tests.GuardTowerDefense_MissionOverlayBindsBothFactionsAndPreservesLegacy();
             passed++;
             tests.GuardTowerDefense_PolicyAppliesAtAcquisitionAndBeforeCachedShot();
+            passed++;
+            tests.GuardTowerDefense_RangeBoundaryPreservesAttemptFogAndCachedShot(1);
+            passed++;
+            tests.GuardTowerDefense_RangeBoundaryPreservesAttemptFogAndCachedShot(2);
             passed++;
             tests.GuardTowerDefense_IgnoresNeutralTargetsAndFiresAtHostileTarget();
             passed++;
@@ -162,6 +167,54 @@ public sealed partial class BuildingDefenseAttackSystemTests
         var slot = slots[0]; slot.CooldownRemaining = 0; slots[0] = slot;
         Update(world, attack, 1.05, .05f); // Before the next acquisition pass.
         Assert.AreEqual(90, GetHealth(em, eligible));
+        Assert.AreEqual(Entity.Null, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+    }
+
+    [TestCase(1)]
+    [TestCase(2)]
+    public void GuardTowerDefense_RangeBoundaryPreservesAttemptFogAndCachedShot(int observerId)
+    {
+        using World world = new(nameof(GuardTowerDefense_RangeBoundaryPreservesAttemptFogAndCachedShot));
+        var em = world.EntityManager;
+        byte observer = (byte)observerId, enemy = observer == 1 ? (byte)2 : (byte)1;
+        var tower = CreateGuardTower(em, float3.zero, observer, 1);
+        var weapon = em.GetComponentData<BuildingDefenseWeapon>(tower);
+        weapon.Range = 10f;
+        em.SetComponentData(tower, weapon);
+        em.AddComponentData(tower, new SkirmishAttemptOwnedComponent
+        { SessionId = "defense.range.current", FactionId = observer });
+
+        Entity Contact(float x, float y, byte faction, bool visible, bool foreignAttempt = false)
+        {
+            var contact = CreateTarget(em, new float3(x, y, 0), 100, faction);
+            em.AddComponentData(contact, new SkirmishAttemptOwnedComponent
+            { SessionId = foreignAttempt ? "defense.range.foreign" : "defense.range.current", FactionId = faction });
+            em.AddBuffer<SkirmishContactKnowledgeElement>(contact).Add(new SkirmishContactKnowledgeElement
+            { ObserverFactionId = observer, Sight = visible ? SkirmishContactSight.Visible : SkirmishContactSight.Unknown });
+            return contact;
+        }
+
+        var friendly = Contact(1, 0, observer, true);
+        var neutral = Contact(1, 0, 0, true);
+        var hidden = Contact(2, 0, enemy, false);
+        var foreign = Contact(3, 0, enemy, true, true);
+        var outside = Contact(10.01f, 0, enemy, true);
+        // Exact horizontal boundary remains eligible even at a different height.
+        var boundary = Contact(10, 50, enemy, true);
+        var attack = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attack, 1, .1f);
+        foreach (var rejected in new[] { friendly, neutral, hidden, foreign, outside })
+            Assert.AreEqual(100, GetHealth(em, rejected));
+        Assert.AreEqual(90, GetHealth(em, boundary));
+        Assert.AreEqual(boundary, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+
+        var boundaryKnowledge = em.GetBuffer<SkirmishContactKnowledgeElement>(boundary);
+        boundaryKnowledge[0] = new SkirmishContactKnowledgeElement
+        { ObserverFactionId = observer, Sight = SkirmishContactSight.Unknown };
+        var slots = em.GetBuffer<BuildingDefenseAttackSlot>(tower);
+        var slot = slots[0]; slot.CooldownRemaining = 0; slots[0] = slot;
+        Update(world, attack, 1.05, .05f); // Cached shot before the next acquisition.
+        Assert.AreEqual(90, GetHealth(em, boundary));
         Assert.AreEqual(Entity.Null, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
     }
 

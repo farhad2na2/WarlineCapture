@@ -423,7 +423,6 @@ namespace Game.Runtime
                 Entity candidate = target.Entity;
                 if (candidate == source ||
                     target.Health.Current <= 0 ||
-                    !AllowsTarget(ref directAccess, source, candidate) ||
                     !FactionIdentity.CanAutoTargetForCombat(sourceFaction, target.Faction.Id))
                     continue;
 
@@ -432,6 +431,10 @@ namespace Game.Runtime
                 delta.y = 0f;
                 float distSq = math.lengthsq(delta);
                 if (distSq > rangeSq)
+                    continue;
+
+                // Policy and fog lookups are only needed for in-range hostiles.
+                if (!AllowsTarget(ref directAccess, source, candidate))
                     continue;
 
                 InsertCandidate(

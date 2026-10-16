@@ -1880,6 +1880,48 @@ namespace Game.UI.Runtime
             rect.localScale = Vector3.one;
         }
 
+        /// <summary>The leader follows the selected card when that card drops to free the top tab.</summary>
+        private static void RefreshZoneLeader(RectTransform parent, string mapId)
+        {
+            if (parent == null || string.IsNullOrEmpty(mapId))
+                return;
+            if (parent.Find("ZoneLeader_" + mapId) is not RectTransform line)
+                return;
+            if (parent.Find("ZonePin_" + mapId) is not RectTransform pin)
+                return;
+            if (parent.Find("ZoneCard_" + mapId) is not RectTransform card)
+                return;
+            float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+            float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+            var pinRect = new Rect(pin.anchoredPosition.x, -pin.anchoredPosition.y, pinW, pinH);
+            var cardRect = new Rect(
+                card.anchoredPosition.x,
+                -card.anchoredPosition.y,
+                card.sizeDelta.x,
+                card.sizeDelta.y);
+            Vector2 from = pinRect.center;
+            Vector2 to = NearestPointOnRect(cardRect, from);
+            float dx = to.x - from.x;
+            float dy = to.y - from.y;
+            float length = Mathf.Sqrt(dx * dx + dy * dy);
+            float start = ZonePinSize * 0.5f + 2f;
+            float draw = length - start - TheatreSeatGeometry.ForeignLeaderClearance;
+            if (draw < 4f || length < 1f)
+            {
+                line.gameObject.SetActive(false);
+                return;
+            }
+
+            line.gameObject.SetActive(true);
+            line.anchorMin = line.anchorMax = new Vector2(0f, 1f);
+            line.pivot = new Vector2(0f, 0.5f);
+            Vector2 origin = from + (to - from) * (start / length);
+            line.sizeDelta = new Vector2(draw, 6f);
+            line.anchoredPosition = new Vector2(origin.x, -origin.y);
+            line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-dy, dx) * Mathf.Rad2Deg);
+            line.localScale = Vector3.one;
+        }
+
         private static Vector2 NearestPointOnRect(Rect rect, Vector2 point)
         {
             float x = Mathf.Clamp(point.x, rect.xMin, rect.xMax);
@@ -2281,8 +2323,19 @@ namespace Game.UI.Runtime
 
             Rect detailRect = SeatingDetailRect(frameW, frameH, fa);
             var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            float cardXBefore = cards[selected].X;
+            float cardYBefore = cards[selected].Y;
             if (!TheatreSeatGeometry.TryAttachCueToCard(frameW, frameH, pins, cards, hexes, detail, selected, out TheatreSeatGeometry.Box seated))
                 return false;
+            if ((Mathf.Abs(cards[selected].X - cardXBefore) > 0.5f
+                    || Mathf.Abs(cards[selected].Y - cardYBefore) > 0.5f)
+                && parent.Find("ZoneCard_" + ids[selected]) is RectTransform movedCard)
+            {
+                PlaceTopLeft(movedCard, cards[selected].X, cards[selected].Y, cards[selected].W, cards[selected].H);
+                KeepAuthoredSize(movedCard);
+                RefreshZoneLeader(parent, ids[selected]);
+            }
+
             var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
             KeepAuthoredSize(cue.rectTransform);
@@ -2382,9 +2435,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Keep 6px between the cue and the name ink on every side. A tab that covers the
-        /// card's top-right corner beside a right-aligned title slides left; the name then
-        /// moves if the ink is still inside that margin.
+        /// Keep 6px between the cue and the name ink on every side. The cue stays at the
+        /// card's x and width; only the name moves when the ink is still inside that margin.
         /// </summary>
         private static void DropNameBelowCue(TMP_Text cue, string selectedId)
         {
@@ -2396,12 +2448,9 @@ namespace Game.UI.Runtime
                 return;
             if (card.Find("ZoneName") is not RectTransform name)
                 return;
-            float cardX = card.anchoredPosition.x;
-            float cardY = -card.anchoredPosition.y;
             float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
             float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
             TMP_Text nameText = name.GetComponent<TMP_Text>();
-            SlideCueOffNameCorner(parent, cue, card, nameText, selectedId, cardX, cardY, cardW);
             if (!TryPlateInk(nameText, card, out Rect ink))
                 return;
             Rect cueRect = PlateRect(cue.rectTransform);
@@ -2460,65 +2509,6 @@ namespace Game.UI.Runtime
             }
 
             PlaceNameBand(card, nameX, nameY, nameW, nameH, cardW, cardH);
-        }
-
-        /// <summary>
-        /// The 4:3 Farsi Industrial Basin tab covers the card's top-right, beside the title.
-        /// Slide that full-width bar left until the corner is clear, when the pin stays in range.
-        /// </summary>
-        private static void SlideCueOffNameCorner(
-            RectTransform parent,
-            TMP_Text cue,
-            RectTransform card,
-            TMP_Text nameText,
-            string selectedId,
-            float cardX,
-            float cardY,
-            float cardW)
-        {
-            if (!TryPlateInk(nameText, card, out Rect ink))
-                return;
-            Rect cueRect = PlateRect(cue.rectTransform);
-            float cardRight = cardX + cardW;
-            bool coversCorner = cueRect.xMax > cardRight - 4f
-                && cueRect.yMin < cardY + 8f
-                && cueRect.yMax > cardY + 2f;
-            bool nameOnRight = ink.xMax > cardX + cardW * 0.55f;
-            if (!coversCorner || !nameOnRight)
-                return;
-            const float uncover = 32f;
-            float shift = cueRect.xMax - (cardRight - uncover);
-            if (shift <= 1f)
-                return;
-            float newX = cueRect.xMin - shift;
-            if (newX < 8f)
-                return;
-            var spot = new Rect(newX, cueRect.yMin, cueRect.width, cueRect.height);
-            if (ForeignHexHits(parent, spot, selectedId))
-                return;
-            if (parent.Find("ZonePin_" + selectedId) is RectTransform pin)
-            {
-                float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
-                float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
-                Vector2 pinCentre = new Vector2(pin.anchoredPosition.x + pinW * 0.5f, -pin.anchoredPosition.y + pinH * 0.5f);
-                Vector2 cueCentre = new Vector2(spot.x + spot.width * 0.5f, spot.y + spot.height * 0.5f);
-                bool inside = false;
-                if (parent.Find("ZoneOutline_" + selectedId) is RectTransform outline)
-                {
-                    Vector2[] shape = OutlinePlatePoints(outline);
-                    if (shape.Length >= 3)
-                        inside = PointInsidePolygon(cueCentre, shape);
-                }
-
-                if (Vector2.Distance(cueCentre, pinCentre) > 160f && !inside)
-                    return;
-            }
-
-            PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
-            KeepAuthoredSize(cue.rectTransform);
-            SyncCuePlate(parent, spot);
-            if (parent.Find("CuePlate") is RectTransform plate)
-                KeepAuthoredSize(plate);
         }
 
         private static bool ForeignHexHits(RectTransform parent, Rect spot, string selectedId)
@@ -2726,7 +2716,7 @@ namespace Game.UI.Runtime
             string heldSelection = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
             if (string.IsNullOrEmpty(heldSelection))
                 heldSelection = "DB";
-            if (SeatZoomCueClearOfHexes(cue, fa, heldSelection) || PlaceBottomCueStrip(cue, heldSelection))
+            if (SeatZoomCueClearOfHexes(cue, fa, heldSelection))
             {
                 RaiseTheatreReadability(_libraryRegions);
                 FitCueInsidePackedRect(cue);
@@ -2738,150 +2728,10 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            cue.alignment = TextAlignmentOptions.Center;
-            cue.isRightToLeftText = fa;
-            cue.textWrappingMode = TextWrappingModes.NoWrap;
-            cue.overflowMode = TextOverflowModes.Overflow;
-            cue.enableAutoSizing = true;
-            cue.fontSizeMin = 22f;
-            cue.fontSizeMax = 32f;
-            cue.maxVisibleLines = 1;
-            cue.ForceMeshUpdate();
-            Vector2 preferred = cue.GetPreferredValues();
-            const float padX = 28f;
-            const float padY = 14f;
-            float width = Mathf.Max(220f, Mathf.Ceil(preferred.x + padX));
-            float height = Mathf.Max(44f, Mathf.Ceil(preferred.y + padY));
-            RectTransform rect = cue.rectTransform;
-            RectTransform parent = rect.parent as RectTransform;
-            string selectedId = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
-            if (string.IsNullOrEmpty(selectedId))
-                selectedId = "DB";
-            RectTransform pin = parent != null ? parent.Find("ZonePin_" + selectedId) as RectTransform : null;
-
-            float frameW = parent != null ? parent.rect.width : 0f;
-            float frameH = parent != null ? parent.rect.height : 0f;
-            if (frameW < 2f && parent != null)
-                frameW = parent.sizeDelta.x;
-            if (frameH < 2f && parent != null)
-                frameH = parent.sizeDelta.y;
-            const float inset = 12f;
-            const float pinGap = 8f;
-            float left = rect.anchoredPosition.x;
-            float top = -rect.anchoredPosition.y;
-            if (pin != null)
-                PlaceCueClearOfPin(pin, width, height, frameW, frameH, inset, pinGap, ref left, ref top);
-            if (frameW > width + inset * 2f)
-                left = Mathf.Clamp(left, inset, frameW - inset - width);
-            if (frameH > height + inset * 2f)
-                top = Mathf.Clamp(top, inset, frameH - inset - height);
-            PlaceTopLeft(rect, left, top, width, height);
-            if (parent == null)
-            {
-                RaiseTheatreReadability(_libraryRegions);
-                LogTheatreSeats(_libraryRegions, fa);
-                return;
-            }
-            Rect cueRect = new Rect(left, top, width, height);
-            for (int pass = 0; pass < 8; pass++)
-            {
-                bool hit = false;
-                for (int i = 0; i < parent.childCount; i++)
-                {
-                    Transform child = parent.GetChild(i);
-                    if (child == null)
-                        continue;
-                    bool card = child.name.StartsWith("ZoneCard_", StringComparison.Ordinal);
-                    bool pinHit = child.name.StartsWith("ZonePin_", StringComparison.Ordinal);
-                    if (!card && !pinHit)
-                        continue;
-                    var block = child as RectTransform;
-                    if (block == null)
-                        continue;
-                    Rect blockRect = new Rect(block.anchoredPosition.x, -block.anchoredPosition.y, block.sizeDelta.x, block.sizeDelta.y);
-                    if (!Overlaps(cueRect, blockRect, 0f))
-                        continue;
-                    hit = true;
-                    if (pinHit)
-                    {
-                        float below = blockRect.yMax + pinGap;
-                        float beside = blockRect.xMax + pinGap;
-                        if (below + cueRect.height <= frameH - inset)
-                            cueRect.y = below;
-                        else
-                            cueRect.x = beside;
-                    }
-                    else
-                    {
-                        cueRect.y = cueRect.center.y <= blockRect.center.y
-                            ? blockRect.yMin - cueRect.height - pinGap
-                            : blockRect.yMax + pinGap;
-                    }
-                }
-
-                if (frameW > cueRect.width + inset * 2f)
-                    cueRect.x = Mathf.Clamp(cueRect.x, inset, frameW - inset - cueRect.width);
-                if (frameH > cueRect.height + inset * 2f)
-                    cueRect.y = Mathf.Clamp(cueRect.y, inset, frameH - inset - cueRect.height);
-                if (!hit)
-                    break;
-            }
-
-            ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-            ShiftCueOffCards(parent, frameW, frameH, inset, ref cueRect);
-            ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-            PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-            cue.ForceMeshUpdate();
-            float natural = Mathf.Max(cue.preferredWidth, cue.GetPreferredValues().x);
-            if (natural + padX > cueRect.width + 1f)
-            {
-                float fitted = Mathf.Ceil(natural + padX);
-                float center = cueRect.x + cueRect.width * 0.5f;
-                cueRect.width = fitted;
-                cueRect.x = center - fitted * 0.5f;
-                if (frameW > cueRect.width + inset * 2f)
-                    cueRect.x = Mathf.Clamp(cueRect.x, inset, frameW - inset - cueRect.width);
-                ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-                ShiftCueOffCards(parent, frameW, frameH, inset, ref cueRect);
-                ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-                PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-                cue.ForceMeshUpdate();
-            }
-
-            Rect detail = SeatingDetailRect(frameW, frameH, fa);
-            float worldScaleX = Mathf.Max(0.05f, Mathf.Abs(parent.lossyScale.x));
-            float worldScaleY = Mathf.Max(0.05f, Mathf.Abs(parent.lossyScale.y));
-            const float nearLimit = 160f;
-            Rect fullCue = cueRect;
-            bool cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
-            if (!cueSeated)
-            {
-                float naturalWidth = fullCue.width;
-                for (float candidateWidth = naturalWidth - 20f; candidateWidth >= 96f; candidateWidth -= 12f)
-                {
-                    cueRect.width = candidateWidth;
-                    if (!SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect))
-                        continue;
-                    cueSeated = true;
-                    break;
-                }
-            }
-
-            if (!cueSeated)
-            {
-                cueRect.width = 96f;
-                cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
-            }
-
-            if (!cueSeated)
-                cueRect = fullCue;
-            PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-
-            Transform plate = parent.Find("CuePlate");
-            if (plate is RectTransform plateRect)
-                PlaceTopLeft(plateRect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-            RaiseTheatreReadability(parent);
-            LogTheatreSeats(parent, fa);
+            RaiseTheatreReadability(_libraryRegions);
+            LockCueFont(cue);
+            LogTheatreCue(cue);
+            LogTheatreSeats(cue.transform.parent, fa);
         }
 
         private static bool TryApplyArrangedSeats(List<TheatreZoneSlot> slots, float plateWidth, float plateHeight, bool fa)
@@ -3585,7 +3435,7 @@ namespace Game.UI.Runtime
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.46f, 52f, 76f);
+                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.70f, 68f, 104f);
                 if (ringSide > portraitH - 4f)
                     ringSide = Mathf.Max(28f, portraitH - 4f);
                 float ringX = fa ? pad + 4f : pad + portraitW - 4f - ringSide;
@@ -3860,7 +3710,7 @@ namespace Game.UI.Runtime
             if (string.IsNullOrEmpty(selected))
                 selected = "DB";
             if (zoom != null)
-                DropNameBelowCue(zoom, selected);
+                FitZoomCue();
         }
 
         /// <summary>One line per zone card: authored size, live rect, lossy scale, and world-corner span.</summary>

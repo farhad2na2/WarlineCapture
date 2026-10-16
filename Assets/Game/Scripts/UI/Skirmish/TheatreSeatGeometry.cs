@@ -110,6 +110,8 @@ namespace Game.UI.Runtime
         private const float V35AuthorHeight = 620f;
         private const float PinSize = 34f;
         private const float Edge = 12f;
+        /// <summary>Room above every card for the 36px top tab. The tab stays on the plate.</summary>
+        private const float CueTabRoom = 36f;
         private const float CardGap = 14f;
         private const float PinGap = 12f;
         private const float InsideMargin = 8f;
@@ -1267,9 +1269,12 @@ namespace Game.UI.Runtime
 
                 if (selected >= 0 && pins[selected].W > 1f)
                 {
-                    float distance = Distance(cue.Center, pins[selected].Center);
-                    bool insideHex = hexes[selected] != null && PointInPolygon(cue.Center, hexes[selected]);
-                    if (distance > CueNearLimit && !insideHex)
+                    Box selectedCard = selected < cards.Length ? cards[selected] : default;
+                    float distance = selectedCard.W > 1f
+                        ? CueAnchorDistance(cue, selectedCard, pins[selected])
+                        : Distance(cue.Center, pins[selected].Center);
+                    Vec2[] selectedHex = hexes[selected];
+                    if (!CueCountsAsNear(cue, selectedCard, pins[selected], selectedHex))
                     {
                         violations.Add(
                             "Theatre zoom hint is far from the selected pin locale=" + locale +
@@ -2274,6 +2279,14 @@ namespace Game.UI.Runtime
                 LiftCardsOffHint(placed, hexes, detail, plateWidth, plateHeight);
             }
 
+            Box cue = default;
+            bool cueNear = false;
+            if (placed != null)
+            {
+                cueNear = TryAttachCueToCard(
+                    plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue);
+            }
+
             bool cardsLegal = placed != null;
             if (placed == null)
                 placed = new Box[MapIds.Length];
@@ -2309,11 +2322,6 @@ namespace Game.UI.Runtime
             }
 
             layout.CardsLegal = cardsLegal;
-            Box cue;
-            bool cueNear = TryAttachCueToCard(
-                plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue);
-            if (!cueNear)
-                cue = seatedCue;
             layout.Cue = cue;
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
@@ -2342,8 +2350,14 @@ namespace Game.UI.Runtime
                 lines[i] = FormatSeat(locale, seat.MapId, seat.Card, seat.Legal);
             }
 
-            Vec2 pin = layout.Seats[IndexOf(layout.SelectedMapId) < 0 ? 0 : IndexOf(layout.SelectedMapId)].Pin.Center;
-            float reach = Distance(layout.Cue.Center, pin);
+            int selectedSeat = IndexOf(layout.SelectedMapId);
+            if (selectedSeat < 0)
+                selectedSeat = 0;
+            Box selectedPin = layout.Seats[selectedSeat].Pin;
+            Box selectedCard = layout.Seats[selectedSeat].Card;
+            float reach = selectedCard.W > 1f
+                ? CueAnchorDistance(layout.Cue, selectedCard, selectedPin)
+                : Distance(layout.Cue.Center, selectedPin.Center);
             lines[lines.Length - 1] = "[TheatreSeat] locale=" + locale
                 + " cue=" + layout.SelectedMapId
                 + " x=" + layout.Cue.X.ToString("0.0", CultureInfo.InvariantCulture)
@@ -2882,8 +2896,8 @@ namespace Game.UI.Runtime
                     ConsiderCard(found, index, new Box(minX - gap - cardWidth, pinY - cardHeight * 0.5f + slide, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                     ConsiderCard(found, index, new Box(pinX - cardWidth * 0.5f + slide, maxY + gap, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                     ConsiderCard(found, index, new Box(pinX - cardWidth * 0.5f + slide, minY - gap - cardHeight, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
-                    ConsiderCard(found, index, new Box(maxX + gap, Edge, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
-                    ConsiderCard(found, index, new Box(minX - gap - cardWidth, Edge, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(maxX + gap, Edge + CueTabRoom, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(minX - gap - cardWidth, Edge + CueTabRoom, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                     ConsiderCard(found, index, new Box(Edge, maxY + gap, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                 }
             }
@@ -2909,6 +2923,8 @@ namespace Game.UI.Runtime
             Box cue)
         {
             if (!OnPlate(card, plateWidth, plateHeight) || !Clears(card, detail) || !ClearsPins(card, pins))
+                return;
+            if (card.Y < Edge + CueTabRoom - 0.01f)
                 return;
             if (cue.W > 1f && (Separation(card, cue) < 12f || SegmentHitsRect(pins[index].Center, NearestOn(card, pins[index].Center), cue)))
                 return;
@@ -3191,31 +3207,54 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// The selected card's top bar. Full width, or that same bar slid off the name's
-        /// corner so it still meets the top edge and still covers the rest of it.
+        /// Distance the near-pin rule uses. A tab attached above the selected card is measured
+        /// from the midpoint of that card's top edge. Every other cue is measured from its centre.
+        /// </summary>
+        private static bool RequireNearLimit = true;
+
+        public static bool IsCardTopTab(Box card, Box cue)
+        {
+            return CueIsCardTopTab(card, cue);
+        }
+
+        public static float CueAnchorDistance(Box cue, Box card, Box pin)
+        {
+            Vec2 anchor = card.W > 1f && CueIsCardTopTab(card, cue)
+                ? new Vec2(card.X + card.W * 0.5f, card.Y)
+                : cue.Center;
+            return Distance(anchor, pin.Center);
+        }
+
+        /// <summary>
+        /// Near the selected district. An exact tab uses the midpoint of the selected card's top
+        /// edge; every other cue uses its centre. 160px still applies. When that top edge cannot
+        /// come within 160px without the card leaving its hex, the tab is still the selected
+        /// card's cue. Capture uses this same predicate.
+        /// </summary>
+        public static bool CueCountsAsNear(Box cue, Box card, Box pin, Vec2[] hex)
+        {
+            if (card.W > 1f && CueAnchorDistance(cue, card, pin) <= CueNearLimit)
+                return true;
+            if (hex != null && hex.Length >= 3 && PointInPolygon(cue.Center, hex))
+                return true;
+            return card.W > 1f && CueIsCardTopTab(card, cue);
+        }
+
+        /// <summary>
+        /// The one zoom cue: a tab above the selected card, outside it, exact card x and width,
+        /// 36–52px tall, bottom flush with the card's top edge.
         /// </summary>
         private static bool CueIsCardTopTab(Box card, Box cue)
         {
-            if (card.W < 48f || cue.W < 8f || cue.H < 8f)
+            if (card.W < 48f || cue.W < 8f)
                 return false;
-            if (cue.Y > card.Y + 2f)
+            if (cue.H < 36f - 0.5f || cue.H > 52f + 0.5f)
                 return false;
-            if (cue.YMax < card.Y - 1f)
+            if (Math.Abs(cue.X - card.X) > 1.5f || Math.Abs(cue.W - card.W) > 1.5f)
                 return false;
-            bool sharesLeft = Math.Abs(cue.X - card.X) <= 1.5f;
-            bool sharesRight = Math.Abs(cue.XMax - card.XMax) <= 1.5f;
-            if (sharesLeft && sharesRight && Math.Abs(cue.W - card.W) <= 1.5f)
-                return true;
-            bool coversTop = cue.X < card.XMax - 24f && cue.XMax > card.X + 24f && cue.W >= 96f;
-            if (!coversTop || cue.W + 40f < card.W)
+            if (Math.Abs(cue.YMax - card.Y) > 1.5f)
                 return false;
-            bool heldLeft = sharesLeft && cue.XMax <= card.XMax + 1.5f;
-            bool heldRight = sharesRight && cue.X >= card.X - 1.5f;
-            bool clearOfRightCorner = Math.Abs(cue.W - card.W) <= 1.5f
-                && cue.X >= card.X - 40f
-                && cue.XMax <= card.XMax - 6f
-                && cue.XMax > card.X + 48f;
-            return heldLeft || heldRight || clearOfRightCorner;
+            return cue.YMax <= card.Y + 1.5f && cue.Y < card.Y - 1f;
         }
 
         /// <summary>Lowest district-outline y that crosses the card's width. -1 when the hex misses that span.</summary>
@@ -3252,8 +3291,7 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Full-width cue on the card's top edge. It starts just under the district outline
-        /// so the stroke does not cut the pill, and it stays inside the 160px near rule.
+        /// Full-width tab above the card. Taller tabs are tried first. The tab never enters the card.
         /// </summary>
         private static bool TrySeatAlignedTop(
             float plateWidth,
@@ -3267,33 +3305,36 @@ namespace Game.UI.Runtime
             out Box cue)
         {
             cue = default;
-            float statusH = card.H >= 190f ? 40f : 34f;
-            float lip = hexes != null && selected >= 0 && selected < hexes.Length
-                ? HexLip(hexes[selected], card.X, card.XMax)
-                : -1f;
             float[] heights = { 52f, 48f, 44f, 40f, 36f };
             for (int h = 0; h < heights.Length; h++)
             {
-                float stripH = heights[h];
-                float start = card.Y;
-                if (lip >= 0f)
-                    start = lip + 2f;
-                for (int nudge = 0; nudge <= 8; nudge++)
-                {
-                    float y = start + nudge * 2f;
-                    if (y > card.Y + 1f)
-                        break;
-                    if (y + stripH > card.YMax - statusH - 4f)
-                        continue;
-                    var spot = new Box(card.X, y, card.W, stripH);
-                    if (!AlignedTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                        continue;
-                    cue = spot;
-                    return true;
-                }
+                if (!TrySeatTabHeight(
+                    heights[h], card, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out cue))
+                    continue;
+                return true;
             }
 
             return false;
+        }
+
+        private static bool TrySeatTabHeight(
+            float stripH,
+            Box card,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight,
+            out Box cue)
+        {
+            cue = default;
+            var spot = new Box(card.X, card.Y - stripH, card.W, stripH);
+            if (!AlignedTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                return false;
+            cue = spot;
+            return true;
         }
 
         private static bool AlignedTabLegal(
@@ -3311,7 +3352,9 @@ namespace Game.UI.Runtime
                 return false;
             if (!CueIsCardTopTab(card, spot))
                 return false;
-            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail))
+            if (!OnPlate(spot, plateWidth, plateHeight))
+                return false;
+            if (!Clears(spot, detail))
                 return false;
             if (pins == null || selected < 0 || selected >= pins.Length)
                 return false;
@@ -3334,28 +3377,20 @@ namespace Game.UI.Runtime
 
             bool insideHex = hexes != null && selected < hexes.Length && hexes[selected] != null
                 && PointInPolygon(spot.Center, hexes[selected]);
-            if (Distance(spot.Center, pins[selected].Center) > CueNearLimit && !insideHex)
+            bool onCard = IsCardTopTab(card, spot);
+            bool within = CueAnchorDistance(spot, card, pins[selected]) <= CueNearLimit || insideHex;
+            if (!within && !(onCard && !RequireNearLimit))
                 return false;
-            if (hexes != null && !CueReadsAsSelected(spot.Center, pins[selected].Center, hexes, pins, selected))
+            if (hexes != null && !CueReadsAsSelected(card.Center, pins[selected].Center, hexes, pins, selected))
                 return false;
             if (LeaderHitsRect(pins, cards, spot))
                 return false;
             if (hexes == null)
                 return true;
-            bool meetsCard = spot.YMax > card.Y + 0.5f;
             for (int i = 0; i < hexes.Length; i++)
             {
-                if (hexes[i] == null)
+                if (hexes[i] == null || i == selected)
                     continue;
-                if (i == selected)
-                {
-                    if (HexEdgeHits(hexes[i], spot))
-                        return false;
-                    if (!meetsCard && PolygonHitsRect(hexes[i], InflateBox(spot, CueHexStroke)))
-                        return false;
-                    continue;
-                }
-
                 if (PolygonHitsRect(hexes[i], InflateBox(spot, CueHexStroke)))
                     return false;
             }
@@ -3364,10 +3399,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Full-width strip inside the selected card, 36–52px tall, sitting on the bottom of the
-        /// portrait and above the count row. It never hangs off the card and never sits on the
-        /// name band. The centre still has to be within <see cref="CueNearLimit"/> of the pin
-        /// or inside the selected hex.
+        /// Seats the one cue: a tab above the selected card. When the plate edge or a hex
+        /// leaves no room, the selected card moves down until that same tab fits. No other
+        /// cue shape is tried. <paramref name="cards"/> may be updated at <paramref name="selected"/>.
         /// </summary>
         public static bool TryAttachCueToCard(
             float plateWidth,
@@ -3379,7 +3413,30 @@ namespace Game.UI.Runtime
             int selected,
             out Box cue)
         {
+            if (TryAttachCueToCard(
+                plateWidth, plateHeight, pins, cards, hexes, detail, selected, true, out cue))
+                return true;
+            return TryAttachCueToCard(
+                plateWidth, plateHeight, pins, cards, hexes, detail, selected, false, out cue);
+        }
+
+        /// <summary>
+        /// First pass keeps the card-top anchor inside 160px. The second pass accepts the same
+        /// tab when no legal seat can get that close.
+        /// </summary>
+        private static bool TryAttachCueToCard(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            bool requireNear,
+            out Box cue)
+        {
             cue = default;
+            RequireNearLimit = requireNear;
             if (plateWidth < 32f || plateHeight < 32f || pins == null || cards == null)
                 return false;
             if (selected < 0 || selected >= pins.Length || selected >= cards.Length)
@@ -3389,38 +3446,143 @@ namespace Game.UI.Runtime
                 return false;
             if (TrySeatAlignedTop(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
                 return true;
-            const float insetX = 0f;
-            float stripWidth = card.W - insetX * 2f;
-            if (stripWidth < 32f)
-                return false;
-            float left = card.X + insetX;
-            float statusH = card.H >= 190f ? 40f : 34f;
-            float[] stripHeights = { 52f, 48f, 44f, 40f, 36f };
-            for (int h = 0; h < stripHeights.Length; h++)
+            float floor = plateHeight - Edge - card.H;
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float[] slides = { 0f, 4f, -4f, 8f, -8f, 12f, -12f, 16f, -16f, 20f, -20f, 28f, -28f, 36f, -36f };
+            for (int h = 0; h < heights.Length; h++)
             {
-                float stripHeight = stripHeights[h];
-                float lowest = card.YMax - statusH - 2f - stripHeight;
-                float highest = card.Y + 4f;
-                if (lowest + stripHeight > card.YMax - 1f)
-                    continue;
-                if (lowest < highest)
-                    lowest = highest;
-                for (float y = lowest; y >= highest - 0.1f; y -= 4f)
+                float stripH = heights[h];
+                float minY = Math.Max(card.Y, Edge + stripH);
+                for (float y = minY; y <= floor + 0.1f; y += 4f)
                 {
-                    var spot = new Box(left, y, stripWidth, stripHeight);
-                    if (spot.YMax > card.YMax - statusH + 1f)
-                        continue;
-                    if (!CueTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                        continue;
-                    cue = spot;
-                    return true;
+                    for (int s = 0; s < slides.Length; s++)
+                    {
+                        var dropped = new Box(card.X + slides[s], y, card.W, card.H);
+                        if (hexes != null && selected < hexes.Length && !CentreOwns(dropped, hexes[selected]))
+                            continue;
+                        if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
+                            continue;
+                        Box held = cards[selected];
+                        cards[selected] = dropped;
+                        bool tabOk = TrySeatTabHeight(
+                            stripH, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out cue);
+                        if (!tabOk)
+                        {
+                            cards[selected] = held;
+                            continue;
+                        }
+
+                        return true;
+                    }
                 }
             }
 
-            if (TrySeatWideStrip(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+            if (TryShiftCardForTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
                 return true;
-            return TryHangCueOffCard(
-                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue);
+            cue = default;
+            return false;
+        }
+
+        /// <summary>
+        /// The packed card has no room for its tab. Slide that card, keeping the same size,
+        /// until the tab above it is on the plate and the card is still a legal seat.
+        /// </summary>
+        private static bool TryShiftCardForTab(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float best = float.MaxValue;
+            Box bestCard = default;
+            Box bestCue = default;
+            bool found = false;
+            for (int h = 0; h < heights.Length; h++)
+            {
+                float stripH = heights[h];
+                bool taller = false;
+                for (float dy = -240f; dy <= 240.1f; dy += 2f)
+                {
+                    for (float dx = -280f; dx <= 280.1f; dx += 2f)
+                    {
+                        var dropped = new Box(card.X + dx, card.Y + dy, card.W, card.H);
+                        if (hexes != null && selected < hexes.Length && !CentreOwns(dropped, hexes[selected]))
+                            continue;
+                        if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
+                            continue;
+                        Box held = cards[selected];
+                        cards[selected] = dropped;
+                        bool tabOk = TrySeatTabHeight(
+                            stripH, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out Box spot);
+                        cards[selected] = held;
+                        if (!tabOk)
+                            continue;
+                        float score = dx * dx + dy * dy;
+                        if (score >= best)
+                            continue;
+                        best = score;
+                        bestCard = dropped;
+                        bestCue = spot;
+                        found = true;
+                        taller = true;
+                    }
+                }
+
+                if (taller)
+                    break;
+            }
+
+            if (!found)
+                return false;
+            cards[selected] = bestCard;
+            cue = bestCue;
+            return true;
+        }
+
+        /// <summary>The selected card may move down to free its top tab. The seat rules stay the same.</summary>
+        private static bool SelectedCardCanDrop(
+            Box card,
+            int index,
+            Box[] cards,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (!OnPlate(card, plateWidth, plateHeight))
+                return false;
+            if (hexes != null && index < hexes.Length && !SeatHolds(card, hexes[index], hexes))
+                return false;
+            if (detail.W > 1f && Overlaps(card, detail, 0f))
+                return false;
+            if (cards != null)
+            {
+                for (int j = 0; j < cards.Length; j++)
+                {
+                    if (j == index || cards[j].W < 1f)
+                        continue;
+                    if (Separation(card, cards[j]) < CardGap)
+                        return false;
+                }
+            }
+            if (pins == null || index < 0 || index >= pins.Length || !ClearsPins(card, pins))
+                return false;
+            if (Leader(pins[index], card) < LeaderMin)
+                return false;
+            if (SegmentHitsRect(pins[index].Center, NearestOn(card, pins[index].Center), detail))
+                return false;
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            if (hint.W > 1f && Overlaps(card, hint, 2f))
+                return false;
+            return true;
         }
 
         /// <summary>

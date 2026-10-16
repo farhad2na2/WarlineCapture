@@ -1239,27 +1239,31 @@ namespace Game.Editor
 
         private static void RejectCueNearSelectedPin(QuickCustomScreenView view, Transform regions, RectTransform cue, string locale)
         {
-            if (view == null || regions == null || cue == null || view.LibraryViewModel == null)
+            if (view == null || regions is not RectTransform space || cue == null || view.LibraryViewModel == null)
                 return;
             string mapId = view.LibraryViewModel.Theater.SelectedMapId;
             if (string.IsNullOrEmpty(mapId))
                 return;
-            Transform pinNode = FindNamed(regions, "ZonePin_" + mapId);
-            Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapId);
-            if (pinNode is not RectTransform pin)
+            if (FindNamed(regions, "ZonePin_" + mapId) is not RectTransform pin)
                 return;
-            Vector2 cueCentre = WorldBounds(cue).center;
-            Vector2 pinCentre = WorldBounds(pin).center;
-            const float near = 160f;
-            if (Vector2.Distance(cueCentre, pinCentre) <= near)
-                return;
-            Vector2[] shape = outlineNode is RectTransform outline ? OutlineWorldPoints(outline) : Array.Empty<Vector2>();
-            if (shape.Length >= 3 && PointInPolygon(cueCentre, shape))
+            TheatreSeatGeometry.Box cueBox = PlateBox(space, cue);
+            TheatreSeatGeometry.Box pinBox = PlateBox(space, pin);
+            TheatreSeatGeometry.Box cardBox = default;
+            if (FindNamed(regions, "ZoneCard_" + mapId) is RectTransform card)
+                cardBox = PlateBox(space, card);
+            float distance = TheatreSeatGeometry.CueAnchorDistance(cueBox, cardBox, pinBox);
+            Vector2[] shape = FindNamed(regions, "ZoneOutline_" + mapId) is RectTransform outline
+                ? PlateVectors(PlateShape(space, outline))
+                : Array.Empty<Vector2>();
+            var hex = new TheatreSeatGeometry.Vec2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+                hex[i] = new TheatreSeatGeometry.Vec2(shape[i].x, shape[i].y);
+            if (TheatreSeatGeometry.CueCountsAsNear(cueBox, cardBox, pinBox, hex))
                 return;
             throw new InvalidOperationException(
                 "Theatre zoom hint is far from the selected pin locale=" + locale +
                 " map=" + mapId +
-                " distance=" + Vector2.Distance(cueCentre, pinCentre).ToString("0") + ".");
+                " distance=" + distance.ToString("0") + ".");
         }
 
         private static void RejectZoomHintOffDistrictEdges(GameObject root, Transform regions, string[] mapIds, string locale)
@@ -2939,7 +2943,8 @@ namespace Game.Editor
             {
                 TheatreSeatGeometry.Box box = PlateBox(space, pills[p]);
                 bool contained = PlateBoxInside(box, selectedBox);
-                bool attached = contained || PlateBoxesOverlap(box, selectedBox);
+                bool topTab = selectedBox.W > 1f && TheatreSeatGeometry.IsCardTopTab(selectedBox, box);
+                bool attached = contained || PlateBoxesOverlap(box, selectedBox) || topTab;
                 if (contained)
                     continue;
                 int selectedIndex = -1;

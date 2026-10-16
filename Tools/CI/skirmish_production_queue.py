@@ -151,14 +151,14 @@ def enqueue(queue, job, project, sampling_authority=None):
     return {"job_directory": str(directory.resolve()), "status": "pending"}
 
 
-def validate_completion(job, record, evidence, artifacts, project):
+def validate_completion(job, record, evidence, artifacts, project, sampling_authority=None):
     """Check the proposed adapter contract, without assigning readiness/publication.
 
     The adapter must independently capture these native facts. This routine checks
     consistency and actual artifact bytes; caller-provided facts alone are not a
     replacement for wrapper ownership or normal-input observation.
     """
-    preflight(job, project)
+    preflight(job, project, sampling_authority)
     required = {"schema_version", "job_sha256", "attempt_id", "worker", "source_start", "source_end", "candidate_sha256", "build_sha256", "setup_sha256", "content_sha256", "stages", "outcome", "simulation_speed", "human_interventions", "artifacts", "wrapper"}
     require(isinstance(evidence, dict) and set(evidence) == required, "completion fields missing/unknown")
     require(type(evidence["schema_version"]) is int and evidence["schema_version"] == VERSION, "completion schema mismatch")

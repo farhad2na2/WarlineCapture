@@ -30,7 +30,7 @@ class ProductionQueueTests(unittest.TestCase):
     def completion(self):
         record = self.start()
         artifacts = Path(record["artifact_directory"])
-        common = {"attempt_id": record["attempt_id"], "job_sha256": q.fingerprint(self.job), "catalog_id": "S026"}
+        common = {"attempt_id": record["attempt_id"], "job_sha256": q.fingerprint(self.job), "catalog_id": self.job["catalog_id"]}
         values = {
             "wrapper_log": "[SyntheticCanary] result=Passed\n",
             "terminal": {**common, "outcome": "Victory", "rendered": True},
@@ -201,13 +201,13 @@ class ProductionQueueTests(unittest.TestCase):
             q.validate_completion(self.job, record, evidence, artifacts, self.root)
 
     def test_all_120_real_packet_baseline_sections(self):
-        """720 job preparations, not 720 gameplay runs or qualification evidence."""
+        """Audit 720 packet slots; protected counterparts need separate authority."""
         project = Path(__file__).resolve().parents[2]
         packet_root = project / "Design" / "Roadmap" / "Skirmish_Expansion" / "Scenarios"
         packets = [p for p in packet_root.glob("*.md") if p.name != "README.md"]
         self.assertEqual(len(packets), 20, "restore the 20 governing packet files before running this check")
         found = set()
-        prepared = 0
+        audited = admitted = protected_refusals = 0
         for packet in sorted(packets):
             relative = packet.relative_to(project).as_posix()
             packet_hash = q.digest(packet)
@@ -223,10 +223,18 @@ class ProductionQueueTests(unittest.TestCase):
                     for locale in ("EN", "FA"):
                         job = {**self.job, "job_id": catalog + "-" + locale + "-" + str(seed), "catalog_id": catalog, "definition_id": "skirmish." + catalog.lower(), "seed": seed, "locale": locale, "packet_path": relative, "packet_sha256": packet_hash, "source_manifest": [{"path": relative, "sha256": packet_hash}]}
                         with self.subTest(catalog=catalog, locale=locale, seed=seed):
-                            self.assertEqual(q.preflight(job, project)["native_qualification"], "pending")
-                        prepared += 1
+                            if catalog in ("S001", "S025", "S073"):
+                                with self.assertRaisesRegex(q.ContractError, "protected preset cannot be represented|schema3 requires exact protected counterpart"):
+                                    q.preflight(job, project)
+                                protected_refusals += 1
+                            else:
+                                self.assertEqual(q.preflight(job, project)["native_qualification"], "pending")
+                                admitted += 1
+                        audited += 1
         self.assertEqual(found, {"S" + str(i).zfill(3) for i in range(1, 121)})
-        self.assertEqual(prepared, 720)
+        self.assertEqual(audited, 720)
+        self.assertEqual(admitted, 702)
+        self.assertEqual(protected_refusals, 18)
 
 
 if __name__ == "__main__":

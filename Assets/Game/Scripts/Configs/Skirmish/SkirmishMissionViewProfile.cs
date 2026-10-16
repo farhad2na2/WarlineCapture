@@ -8,6 +8,12 @@ namespace Game.Configs
     public sealed class SkirmishMissionViewProfile : ScriptableObject
     {
         public SkirmishMissionOpeningFocusPolicy OpeningFocusPolicy;
+        // Optional scoped S005 hint; empty preserves the established first-actor policy.
+        public string OpeningFocusStableActorId;
+        // Scoped override preserves aircraft heading when this ground candidate rotates.
+        public bool UseSeparateAircraftYaw;
+        public float AircraftYaw;
+        public float EffectiveAircraftYaw => UseSeparateAircraftYaw ? AircraftYaw : Yaw;
         public bool AuthoredNonBaseAssault, AuthoredGenericBaseAssault;
         public Game.Skirmish.Contracts.SkirmishObjectiveKind ObjectiveKind;
         public int SchemaVersion = 1, ContentVersion = 1, DefinitionVersion;
@@ -49,7 +55,10 @@ namespace Game.Configs
         public bool IsValid => System.Enum.IsDefined(typeof(SkirmishMissionOpeningFocusPolicy),OpeningFocusPolicy) &&
             (OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.None||!AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault&&CatalogId=="S005"&&DefinitionId=="skirmish.s005") &&
             SchemaVersion == 1 && ContentVersion > 0 && DefinitionVersion > 0 &&
-            ValidIdentity && !string.IsNullOrWhiteSpace(CampaignSourceContentHash) &&
+            ValidIdentity &&
+            (string.IsNullOrEmpty(OpeningFocusStableActorId) || OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.S005FirstOpeningOwnedRifle) &&
+            (!UseSeparateAircraftYaw || !AuthoredNonBaseAssault && !AuthoredGenericBaseAssault && CatalogId=="S005" && float.IsFinite(AircraftYaw)) &&
+            !string.IsNullOrWhiteSpace(CampaignSourceContentHash) &&
             !string.IsNullOrWhiteSpace(LayoutContentHash) && Positive(MinHeight) && Positive(MaxHeight) && MaxHeight >= MinHeight &&
             NormalHeight >= MinHeight && NormalHeight <= MaxHeight && BuildHeight >= NormalHeight && BuildHeight <= MaxHeight &&
             Positive(Pitch) && Pitch < 90 && float.IsFinite(Yaw) && Positive(NormalFieldOfView) && NormalFieldOfView < 179 &&

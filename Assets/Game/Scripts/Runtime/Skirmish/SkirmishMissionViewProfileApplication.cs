@@ -121,7 +121,7 @@ namespace Game.Runtime
             position = default; rotation = default;
             if (!float.IsFinite(minimumDistance)||minimumDistance<=0||profile == null || !profile.IsValid || !float.IsFinite(aspect) || aspect <= 0 || !float.IsFinite(nearClip) || nearClip <= 0 ||
                 !Finite(bounds.center) || !Finite(bounds.extents) || bounds.extents.x <= 0 || bounds.extents.y <= 0 || bounds.extents.z <= 0) return false;
-            rotation = Quaternion.Euler(profile.AircraftPitch, profile.Yaw, 0);
+            rotation = Quaternion.Euler(profile.AircraftPitch, profile.EffectiveAircraftYaw, 0);
             Vector3 right = rotation * Vector3.right, up = rotation * Vector3.up, forward = rotation * Vector3.forward;
             float tangent = Mathf.Tan(profile.AircraftFieldOfView * Mathf.Deg2Rad * .5f);
             float fraction = profile.PlaneMaximumViewportDimension;

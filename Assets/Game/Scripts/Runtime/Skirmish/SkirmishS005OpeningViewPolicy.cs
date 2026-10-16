@@ -61,7 +61,7 @@ namespace Game.Runtime
             }
             var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(session);
             if(clock.ElapsedSeconds!=0||clock.Playing!=1||clock.Paused!=0||
-                !TryFindOpeningRifle(em,native,setup,out var actorId,out var position)||
+                !TryFindOpeningFocus(em,session,native,setup,profile,out var actorId,out var position)||
                 !SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(position,profile.NormalHeight,profile.Pitch,profile.Yaw,out var ground))return false;
             var facade=new RuntimeGameplayStateSystem(em);facade.ReadCameraFocusRequest();
             using var requests=em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
@@ -78,6 +78,72 @@ namespace Game.Runtime
                 " normalHeight="+profile.NormalHeight+" nativeVisualAccepted=0");
 #endif
             error=null;return true;
+        }
+        internal static bool TryFindOpeningFocus(EntityManager em,Entity session,in SkirmishExpandedSessionComponent native,
+            SkirmishResolvedSetup setup,SkirmishMissionViewProfile profile,out string id,out float3 position)
+        {
+            if(string.IsNullOrEmpty(profile.OpeningFocusStableActorId))
+                return TryFindOpeningRifle(em,native,setup,out id,out position);
+            id=profile.OpeningFocusStableActorId;position=default;
+            if(!IsOriginalRifleId(setup,id)||!em.HasBuffer<SkirmishArmyGroupRecord>(session))return false;
+            using var query=em.CreateEntityQuery(new EntityQueryDesc {
+                All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},
+                Options=EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IgnoreComponentEnabledState });
+            using var actors=query.ToEntityArray(Allocator.Temp);Entity hint=Entity.Null;uint group=0;
+            foreach(var actor in actors)
+            {
+                var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                if(own.SessionId!=native.SessionId||own.StableObjectId.ToString()!=id)continue;
+                if(hint!=Entity.Null||!ValidOriginalRifle(em,actor,own,setup)||!em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))return false;
+                var member=em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor);
+                if(member.GroupId==0||member.Domain!=SkirmishPopulationCategory.Infantry)return false;
+                hint=actor;group=member.GroupId;
+            }
+            if(hint==Entity.Null)return false;
+            int records=0;
+            foreach(var record in em.GetBuffer<SkirmishArmyGroupRecord>(session,true))
+            {
+                if(record.GroupId!=group)continue;
+                if(record.FactionId!=1||record.Role!=SkirmishRoleKind.Rifle||record.Domain!=SkirmishPopulationCategory.Infantry||
+                    record.MemberCount!=SkirmishRoleIds.InfantrySquadMembers||record.AliveCount!=SkirmishRoleIds.InfantrySquadMembers)return false;
+                records++;
+            }
+            if(records!=1)return false;
+            var ids=new System.Collections.Generic.HashSet<string>(System.StringComparer.Ordinal);float3 sum=default;
+            foreach(var actor in actors)
+            {
+                var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                if(own.SessionId!=native.SessionId||!em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))continue;
+                var member=em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor);if(member.GroupId!=group)continue;
+                if(member.Domain!=SkirmishPopulationCategory.Infantry||!ValidOriginalRifle(em,actor,own,setup)||
+                    !ids.Add(own.StableObjectId.ToString())||ids.Count>SkirmishRoleIds.InfantrySquadMembers)return false;
+                sum+=em.GetComponentData<LocalTransform>(actor).Position;
+            }
+            if(ids.Count!=SkirmishRoleIds.InfantrySquadMembers)return false;
+            position=sum/ids.Count;return math.all(math.isfinite(position));
+        }
+        static bool IsOriginalRifleId(SkirmishResolvedSetup setup,string id)
+        {
+            if(setup?.Forces==null)return false;
+            for(int i=0;i<setup.Forces.Length;i++)
+            {
+                var force=setup.Forces[i];if(force.FactionId!=1||force.RoleKind!=SkirmishRoleKind.Rifle)continue;
+                for(int member=0;member<force.Quantity;member++)
+                    if(id==force.RoleId+".1."+i.ToString(System.Globalization.CultureInfo.InvariantCulture)+"."+member.ToString(System.Globalization.CultureInfo.InvariantCulture))return true;
+            }
+            return false;
+        }
+        static bool ValidOriginalRifle(EntityManager em,Entity actor,SkirmishAttemptOwnedComponent own,SkirmishResolvedSetup setup)
+        {
+            if(own.FactionId!=1||own.IsStructure!=0||own.ReservationId!=0||own.CapacityReleased!=0||!IsOriginalRifleId(setup,own.StableObjectId.ToString())||
+                !em.HasComponent<SkirmishSharedActorTag>(actor)||!em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=1||
+                !em.HasComponent<SkirmishUnitRoleComponent>(actor)||!em.HasComponent<UnitHealth>(actor)||!em.HasComponent<LocalTransform>(actor)||
+                em.HasComponent<Disabled>(actor)||em.HasComponent<Parent>(actor)||em.HasComponent<PostTransformMatrix>(actor)||
+                em.HasComponent<UnitTransportPassenger>(actor)||em.HasComponent<UnitTransportCargoPassenger>(actor)||
+                em.HasComponent<UnitTransportParachuteDropComponent>(actor)||em.HasComponent<UnitTransportRopeDropComponent>(actor))return false;
+            var role=em.GetComponentData<SkirmishUnitRoleComponent>(actor);var health=em.GetComponentData<UnitHealth>(actor);
+            return role.Role==SkirmishRoleKind.Rifle&&role.Category==SkirmishPopulationCategory.Infantry&&health.Current>0&&health.Max>0&&
+                math.all(math.isfinite(em.GetComponentData<LocalTransform>(actor).Position));
         }
         internal static bool TryFindOpeningRifle(EntityManager em,in SkirmishExpandedSessionComponent native,SkirmishResolvedSetup setup,
             out string id,out float3 position)

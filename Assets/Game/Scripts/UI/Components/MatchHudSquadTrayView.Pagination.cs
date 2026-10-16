@@ -93,6 +93,17 @@ namespace Game.UI.Runtime
             var oldLayout = GetComponent<HorizontalLayoutGroup>();
             if (oldLayout != null) oldLayout.enabled = false;
             if (GetComponent<RectMask2D>() == null) gameObject.AddComponent<RectMask2D>();
+            // Empty card gaps must receive the same ordinary pointer drag as cards.
+            // Keep this surface behind card graphics and inside the existing viewport mask.
+            var inputSurface = new GameObject("SquadScrollInputSurface", typeof(RectTransform), typeof(Image));
+            inputSurface.layer = gameObject.layer;
+            var inputRect = inputSurface.GetComponent<RectTransform>();
+            inputRect.SetParent(viewport, false); inputRect.SetAsFirstSibling();
+            inputRect.anchorMin = Vector2.zero; inputRect.anchorMax = Vector2.one;
+            inputRect.offsetMin = inputRect.offsetMax = Vector2.zero;
+            var inputImage = inputSurface.GetComponent<Image>();
+            inputImage.color = Color.clear; inputImage.raycastTarget = true;
+            inputImage.canvasRenderer.cullTransparentMesh = false;
             var contentObject = new GameObject("SquadScrollContent", typeof(RectTransform), typeof(HorizontalLayoutGroup));
             contentObject.layer = gameObject.layer;
             _scrollContent = contentObject.GetComponent<RectTransform>();
@@ -487,8 +498,15 @@ namespace Game.UI.Runtime
         {
             visibleCard = null; swipeFrom = swipeTo = Vector2.zero;
             int index = _logicalPage * 5 + logicalSlot;
-            return logicalSlot >= 0 && logicalSlot < 5 && index < _rosterModels.Count &&
-                TryGetExpandedCardTarget(_rosterModels[index].GroupId, out visibleCard, out swipeFrom, out swipeTo);
+            if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic)
+            {
+                ref var diagnostic = ref MatchHudSquadTouchNavigation.CurrentSlotDiagnostic;
+                diagnostic.stage = "TraySlot"; diagnostic.slotLookupEvaluated = true;
+                diagnostic.page = _logicalPage; diagnostic.rosterIndex = index; diagnostic.rosterCount = _rosterModels.Count;
+            }
+            bool valid = logicalSlot >= 0 && logicalSlot < 5 && index < _rosterModels.Count;
+            if (!valid) { MatchHudSquadTouchNavigation.RefuseSlot("LogicalSlotMissing"); return false; }
+            return TryGetExpandedCardTarget(_rosterModels[index].GroupId, out visibleCard, out swipeFrom, out swipeTo);
         }
 
         // Read-only input geometry. Callers must execute a normal pointer swipe/tap;
@@ -497,11 +515,17 @@ namespace Game.UI.Runtime
             out Vector2 swipeFrom, out Vector2 swipeTo)
         {
             visibleCard = null; swipeFrom = swipeTo = Vector2.zero;
-            if (!_rosterActive || _squadScroll == null || groupId == 0) return false;
+            if (!_rosterActive) { MatchHudSquadTouchNavigation.RefuseSlot("RosterInactive"); return false; }
+            if (_squadScroll == null) { MatchHudSquadTouchNavigation.RefuseSlot("RosterScrollMissing"); return false; }
+            if (groupId == 0) { MatchHudSquadTouchNavigation.RefuseSlot("RosterGroupZero"); return false; }
             for (int i = 0; i < _rosterModels.Count; i++)
             {
                 if (_rosterModels[i].GroupId != groupId) continue;
+                if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic)
+                    MatchHudSquadTouchNavigation.CurrentSlotDiagnostic.rosterFound = true;
                 var button = _rosterCards[i].Button;
+                if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic && button != null)
+                    MatchHudSquadTouchNavigation.CurrentSlotDiagnostic.requestedCardIdentity = button.GetEntityId().GetHashCode();
                 if (IsCardPresented(button)) { visibleCard = button; return true; }
                 var viewport = _squadScroll.viewport;
                 var cardRect = (RectTransform)button.transform;
@@ -513,6 +537,13 @@ namespace Game.UI.Runtime
                 // window jump that would change the caller's logical slot identity.
                 float half = Mathf.Min(viewport.rect.width * .56f, Mathf.Max(12f, missing + 8f)) * .5f;
                 float y = viewport.rect.center.y;
+                if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic)
+                {
+                    ref var diagnostic = ref MatchHudSquadTouchNavigation.CurrentSlotDiagnostic;
+                    diagnostic.stage = "TrayAlignmentSwipe";
+                    diagnostic.cardLow = low; diagnostic.cardHigh = high;
+                    diagnostic.moveLeft = moveLeft; diagnostic.missing = missing; diagnostic.half = half;
+                }
                 var canvas = GetComponentInParent<Canvas>();
             if (canvas != null) canvas = canvas.rootCanvas;
                 var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
@@ -520,19 +551,36 @@ namespace Game.UI.Runtime
                 swipeTo = RectTransformUtility.WorldToScreenPoint(camera, viewport.TransformPoint(new Vector3(viewport.rect.center.x + (moveLeft ? -half : half), y)));
                 return true;
             }
+            MatchHudSquadTouchNavigation.RefuseSlot("RosterGroupNotFound");
             return false;
         }
 
         private bool IsCardPresented(Button button)
         {
-            if (button == null || !button.gameObject.activeInHierarchy) return false;
+            if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic)
+                MatchHudSquadTouchNavigation.CurrentSlotDiagnostic.presentationEvaluated = true;
+            if (button == null) { MatchHudSquadTouchNavigation.RefuseSlot("PresentationButtonMissing"); return false; }
+            bool active = button.gameObject.activeInHierarchy;
+            if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic)
+                MatchHudSquadTouchNavigation.CurrentSlotDiagnostic.cardActive = active;
+            if (!active) { MatchHudSquadTouchNavigation.RefuseSlot("PresentationButtonInactive"); return false; }
             if (_squadScroll == null) return true;
             var viewport = _squadScroll.viewport;
             var rect = (RectTransform)button.transform;
             var low = viewport.InverseTransformPoint(rect.TransformPoint(rect.rect.min));
             var high = viewport.InverseTransformPoint(rect.TransformPoint(rect.rect.max));
-            return low.x >= viewport.rect.xMin - .5f && high.x <= viewport.rect.xMax + .5f &&
+            var presentedViewport = viewport.rect;
+            bool presented = low.x >= presentedViewport.xMin - .5f && high.x <= viewport.rect.xMax + .5f &&
                 low.y >= viewport.rect.yMin - .5f && high.y <= viewport.rect.yMax + .5f;
+            if (MatchHudSquadTouchNavigation.CapturingSlotDiagnostic)
+            {
+                ref var diagnostic = ref MatchHudSquadTouchNavigation.CurrentSlotDiagnostic;
+                diagnostic.cardLow = low; diagnostic.cardHigh = high; diagnostic.viewportRect = presentedViewport;
+                diagnostic.horizontalPresented = low.x >= diagnostic.viewportRect.xMin - .5f && high.x <= diagnostic.viewportRect.xMax + .5f;
+                diagnostic.verticalPresented = low.y >= diagnostic.viewportRect.yMin - .5f && high.y <= diagnostic.viewportRect.yMax + .5f;
+                diagnostic.fullyPresented = presented;
+            }
+            return presented;
         }
         private void CapturePressedGroup(int index, PointerEventData eventData)
         {

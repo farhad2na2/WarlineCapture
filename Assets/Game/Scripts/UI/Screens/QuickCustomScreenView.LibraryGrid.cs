@@ -14,6 +14,7 @@ namespace Game.UI.Runtime
     {
         private void PresentGrid(SkirmishBattlefieldState field, bool fa)
         {
+            ApplyGridPlate(field);
             ClearChildren(_libraryGrid);
             if (field.GridCards == null || field.Tabs == null)
                 return;
@@ -378,6 +379,7 @@ namespace Game.UI.Runtime
             PlaceTopLeft(subtitle.rectTransform, 4f, textY + titleHeight, width - 8f, subtitleHeight);
             ShowCardSubtitle(subtitle, detail, fa, false);
             AddMedalIcons(rect, SkirmishMedalMask.None, 4f, textY + titleHeight + subtitleHeight + LibraryGridMedalGap, medalSize);
+            StyleBattleCard(rect, false, false, false);
             return rect;
         }
 

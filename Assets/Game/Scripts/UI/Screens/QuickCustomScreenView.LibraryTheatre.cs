@@ -1901,9 +1901,7 @@ namespace Game.UI.Runtime
                 return;
             preview.color = Color.white;
             preview.uvRect = new Rect(0f, 0f, 1f, 1f);
-            Texture2D plate = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(mapId));
-            if (plate == null)
-                plate = SkirmishLibraryPreviewAssets.Load("skirmish.plate." + mapId);
+            Texture2D plate = PaintedPlate(mapId);
             if (plate != null)
             {
                 preview.texture = plate;

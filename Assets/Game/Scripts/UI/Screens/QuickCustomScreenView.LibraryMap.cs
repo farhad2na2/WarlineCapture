@@ -14,12 +14,7 @@ namespace Game.UI.Runtime
     {
         private void PresentBattlefieldPlate(RawImage map, SkirmishBattlefieldState field, float plateWidth, float plateHeight)
         {
-            string mapId = string.IsNullOrEmpty(field.MapId) ? LibraryMapId : field.MapId;
-            string key = TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin)
-                ? pin.PlatePreviewKey
-                : null;
-            ApplyBoundPreview(map, key, plateWidth, plateHeight);
-            Stretch(map.rectTransform);
+            ApplyMapPlate(map, field, plateWidth, plateHeight);
         }
 
         private void PresentObjectiveTabs(SkirmishBattlefieldState field, bool fa)
@@ -174,6 +169,7 @@ namespace Game.UI.Runtime
             button.onClick.AddListener(() => OnLibraryCard(captured));
             if (pin)
                 AddSiblingShadow(rect);
+            StyleBattleCard(button.transform, card.IsSelected, playable, pin);
             return rect;
         }
 

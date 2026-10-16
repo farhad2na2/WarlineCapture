@@ -24,12 +24,16 @@ namespace Game.UI.Runtime
         private bool _suppressSavedMatch;
 
         /// <summary>
-        /// Visible tier counts for every library level. Null keeps the medal ledger:
-        /// <c>SkirmishMedalLedger.TotalsByDifficulty</c>, already stored on
-        /// <see cref="SkirmishTheaterState.OverallMedalTotals"/> by <c>CountTier</c>.
-        /// Programmer 1 assigns the left-column projection here when rebasing PR #68.
+        /// Visible tier counts for every library level. The default reads the view-model
+        /// projection of <c>SkirmishMedalLedger</c>: <see cref="SkirmishTheaterState.OverallMedalTotals"/>,
+        /// filled by <c>CountTier</c> from <c>SkirmishMedalLedger.TotalsByDifficulty</c>.
+        /// Replace the delegate only to point at a different projection of that same ledger.
         /// </summary>
-        public static Func<SkirmishTheaterState, SkirmishMedalTotals> ReadMedalCounts;
+        public static Func<SkirmishTheaterState, SkirmishMedalTotals> ReadMedalCounts = ReadViewModelMedalProjection;
+
+        /// <summary>The view-model projection of the medal ledger. This is the strip's default source.</summary>
+        public static SkirmishMedalTotals ReadViewModelMedalProjection(SkirmishTheaterState theater) =>
+            theater.OverallMedalTotals;
 
         /// <summary>
         /// The capture save. One row per catalog id and difficulty, the same shape as <c>skirmishMedals</c>.
@@ -356,7 +360,7 @@ namespace Game.UI.Runtime
         {
             if (ReadMedalCounts != null)
                 return ReadMedalCounts(theater);
-            return theater.OverallMedalTotals;
+            return ReadViewModelMedalProjection(theater);
         }
 
         private void PublishMedalCounts(SkirmishTheaterState theater)

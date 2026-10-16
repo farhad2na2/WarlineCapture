@@ -286,6 +286,17 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// True when the detail rect sits on the left half of the plate. Callers that inset
+        /// seating read this from the rect. Farsi places that rect at x = 10.
+        /// </summary>
+        public static bool DetailOccupiesLeft(float plateWidth, float detailX, float detailWidth)
+        {
+            if (detailWidth <= 1f || plateWidth <= 1f)
+                return false;
+            return detailX + detailWidth * 0.5f < plateWidth * 0.5f;
+        }
+
+        /// <summary>
         /// Map viewport. With the reserve off this is the whole plate. With the reserve on it is
         /// the open rect beside the detail panel, and the painting is cover-fit into that rect.
         /// </summary>
@@ -296,7 +307,7 @@ namespace Game.UI.Runtime
             Box detail = DetailRect(plateWidth, plateHeight, fa, reserveOn);
             if (detail.W < 1f)
                 return new Box(0f, 0f, plateWidth, plateHeight);
-            if (fa)
+            if (DetailOccupiesLeft(plateWidth, detail.X, detail.W))
                 return new Box(detail.XMax, 0f, Math.Max(2f, plateWidth - detail.XMax), plateHeight);
             return new Box(0f, 0f, Math.Max(2f, detail.XMin), plateHeight);
         }
@@ -314,7 +325,10 @@ namespace Game.UI.Runtime
             Box enDetail = DetailRect(plateWidth, plateHeight, false, true);
             Box faDetail = DetailRect(plateWidth, plateHeight, true, true);
             float mirrored = plateWidth - enDetail.XMax;
-            if (enDetail.Center.X <= plateWidth * 0.5f || faDetail.Center.X >= plateWidth * 0.5f
+            if (Math.Abs(faDetail.X - 10f) > 1f
+                || !DetailOccupiesLeft(plateWidth, faDetail.X, faDetail.W)
+                || DetailOccupiesLeft(plateWidth, enDetail.X, enDetail.W)
+                || enDetail.Center.X <= plateWidth * 0.5f || faDetail.Center.X >= plateWidth * 0.5f
                 || Math.Abs(faDetail.X - mirrored) > 1f)
             {
                 failure = "reserve side";

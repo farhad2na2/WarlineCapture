@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Skirmish.Contracts;
@@ -12,6 +13,9 @@ namespace Game.UI.Runtime
 {
     public sealed partial class QuickCustomScreenView
     {
+        /// <summary>Plate-space reserve rect this seating pass inset for. Capture compares it with TheatreDetailRect.</summary>
+        public Rect SeatingReserveRect { get; private set; }
+
         private void PresentTheatrePlate(RawImage map, float plateWidth, float plateHeight)
         {
             Texture2D painted = LoadTheatreBase();
@@ -29,6 +33,7 @@ namespace Game.UI.Runtime
             if (!TheatreSeatGeometry.SeatingReady)
             {
                 TheatreSeatGeometry.NoteDetailReserve(false);
+                SeatingReserveRect = default;
                 return;
             }
             ClearChildren(_libraryRegions);
@@ -39,6 +44,7 @@ namespace Game.UI.Runtime
             if (battlefield || theater.Pins == null)
             {
                 TheatreSeatGeometry.NoteDetailReserve(false);
+                SeatingReserveRect = default;
                 if (map != null)
                     map.enabled = true;
                 HideTheaterLabels(map);
@@ -119,6 +125,15 @@ namespace Game.UI.Runtime
                 TheatreSafeTop,
                 Mathf.Max(TheatreSafeLeft + ZoneCardWidth, plateWidth - TheatreSafeRight),
                 Mathf.Max(TheatreSafeTop + ZoneCardHeight, plateHeight - TheatreSafeBottom));
+            Rect detail = SeatingDetailRect(plateWidth, plateHeight, fa);
+            if (reserve
+                && TryCopyTheatreDetailRect(out Rect placed)
+                && placed.width > 1f
+                && placed.width < plateWidth * 0.5f
+                && placed.height > plateHeight * 0.45f)
+                detail = placed;
+            SeatingReserveRect = detail;
+            safe = ShrinkSeatingForDetail(safe, plateWidth, detail);
             var slots = new List<TheatreZoneSlot>(SkirmishBattleLibraryArt.MapIds.Length);
             for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
             {
@@ -901,26 +916,49 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Pulls the safe rect off the trailing edge. If the safe rect is already inset, it is returned unchanged.
+        /// Pulls the safe rect off the side occupied by <paramref name="detail"/>.
+        /// The side is the rect's, including P1's TheatreDetailRect when that panel has already reported one.
         /// </summary>
-        private static Rect ShrinkSeatingForDetail(Rect safe, float plateWidth, bool fa)
+        private static Rect ShrinkSeatingForDetail(Rect safe, float plateWidth, Rect detail)
         {
-            float reserve = SeatingDetailReserve(plateWidth);
-            if (reserve <= 0f)
+            if (detail.width <= 1f)
+                return safe;
+            bool onLeft = TheatreSeatGeometry.DetailOccupiesLeft(plateWidth, detail.x, detail.width);
+            float column = onLeft
+                ? detail.xMax + Mathf.Max(0f, detail.xMin)
+                : (plateWidth - detail.xMin) + Mathf.Max(0f, plateWidth - detail.xMax);
+            if (column <= 1f)
                 return safe;
             float fullRight = Mathf.Max(TheatreSafeLeft + ZoneCardWidth, plateWidth - TheatreSafeRight);
-            if (fa)
+            if (onLeft)
             {
                 if (safe.xMin > TheatreSafeLeft + 1f)
                     return safe;
-                float xMin = Mathf.Min(safe.xMax - 40f, safe.xMin + reserve);
+                float xMin = Mathf.Min(safe.xMax - 40f, safe.xMin + column);
                 return Rect.MinMaxRect(xMin, safe.yMin, safe.xMax, safe.yMax);
             }
 
             if (safe.xMax < fullRight - 1f)
                 return safe;
-            float xMax = Mathf.Max(safe.xMin + 40f, safe.xMax - reserve);
+            float xMax = Mathf.Max(safe.xMin + 40f, safe.xMax - column);
             return Rect.MinMaxRect(safe.xMin, safe.yMin, xMax, safe.yMax);
+        }
+
+        /// <summary>
+        /// Reads P1's <c>TheatreDetailRect</c> when that partial is compiled in. Absent on this branch until rebase.
+        /// </summary>
+        public bool TryCopyTheatreDetailRect(out Rect rect)
+        {
+            rect = default;
+            PropertyInfo property = GetType().GetProperty(
+                "TheatreDetailRect",
+                BindingFlags.Instance | BindingFlags.Public);
+            if (property == null || property.PropertyType != typeof(Rect) || property.GetMethod == null)
+                return false;
+            if (property.GetValue(this) is not Rect placed)
+                return false;
+            rect = placed;
+            return true;
         }
 
         private static Rect SeatingDetailRect(float plateWidth, float plateHeight, bool fa)
@@ -1031,8 +1069,12 @@ namespace Game.UI.Runtime
                         if (leader > leaderCap)
                             continue;
                         bool inside = CardInsidePolygon(cand, slot.Hex) && CardBoundaryGap(slot.Hex, cand) + 0.01f >= 8f;
-                        // The open side is the side facing away from the detail panel.
-                        bool closedSide = fa ? cand.center.x < pin.x - 24f : cand.center.x > pin.x + 24f;
+                        // The closed side is the side the detail rect occupies.
+                        bool panelOnLeft = detail.width > 1f
+                            && TheatreSeatGeometry.DetailOccupiesLeft(frameWidth, detail.x, detail.width);
+                        bool closedSide = detail.width > 1f
+                            ? (panelOnLeft ? cand.center.x < pin.x - 24f : cand.center.x > pin.x + 24f)
+                            : (fa ? cand.center.x < pin.x - 24f : cand.center.x > pin.x + 24f);
                         float score = leader + (inside ? 0f : 36f) + (closedSide ? 48f : 0f);
                         if (score >= bestScore)
                             continue;

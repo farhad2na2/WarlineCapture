@@ -853,6 +853,7 @@ namespace Game.Editor
             GuardTheatre(() => RejectZoneProgressMatchesCard(root, view, locale));
             GuardTheatre(() => RejectStripMatchesZoneTotals(root, view, locale));
             GuardTheatre(() => RejectMirroredTheatreChrome(root, locale));
+            GuardTheatre(() => RejectReserveOverlapsDetailSide(root, view, locale));
 
             RectTransform cue = null;
             Transform cueNode = FindNamed(regions, "ZoomCue");
@@ -1701,6 +1702,37 @@ namespace Game.Editor
                             "Theatre zoom cue is outside the mirrored open viewport locale=" + locale + ".");
                     }
                 }
+            }
+        }
+
+        private static void RejectReserveOverlapsDetailSide(GameObject root, QuickCustomScreenView view, string locale)
+        {
+            if (view == null || !TheatreSeatGeometry.TheatreDetailReserved)
+                return;
+            if (!view.TryCopyTheatreDetailRect(out Rect detail))
+                return;
+            Rect reserve = view.SeatingReserveRect;
+            if (reserve.width <= 1f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre reserve rect is empty while the detail column is reserved locale=" + locale + ".");
+            }
+
+            var clip = FindNamed(root.transform, "MapPreviewClip") as RectTransform;
+            float plateWidth = clip != null && clip.rect.width > 2f
+                ? clip.rect.width
+                : Mathf.Max(reserve.xMax, detail.xMax) + 10f;
+            bool reserveLeft = TheatreSeatGeometry.DetailOccupiesLeft(plateWidth, reserve.x, reserve.width);
+            bool detailLeft = TheatreSeatGeometry.DetailOccupiesLeft(plateWidth, detail.x, detail.width);
+            float overlap = Mathf.Min(reserve.xMax, detail.xMax) - Mathf.Max(reserve.xMin, detail.xMin);
+            if (detail.width <= 1f || reserveLeft != detailLeft || overlap <= 1f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre reserve rect does not overlap TheatreDetailRect locale=" + locale +
+                    " reserveX=" + reserve.x.ToString("0.0") +
+                    " reserveW=" + reserve.width.ToString("0.0") +
+                    " detailX=" + detail.x.ToString("0.0") +
+                    " detailW=" + detail.width.ToString("0.0") + ".");
             }
         }
 
@@ -2625,9 +2657,12 @@ namespace Game.Editor
         private static int[] ExpectedMedalCounts(GameObject root)
         {
             QuickCustomScreenView view = root != null ? root.GetComponent<QuickCustomScreenView>() : null;
-            if (QuickCustomScreenView.ReadMedalCounts != null && view != null && view.LibraryViewModel != null)
+            if (view != null && view.LibraryViewModel != null)
             {
-                SkirmishMedalTotals totals = QuickCustomScreenView.ReadMedalCounts(view.LibraryViewModel.Theater);
+                SkirmishTheaterState theater = view.LibraryViewModel.Theater;
+                SkirmishMedalTotals totals = QuickCustomScreenView.ReadMedalCounts != null
+                    ? QuickCustomScreenView.ReadMedalCounts(theater)
+                    : QuickCustomScreenView.ReadViewModelMedalProjection(theater);
                 return new[] { totals.Recruit, totals.Regular, totals.Veteran, totals.Commander };
             }
 

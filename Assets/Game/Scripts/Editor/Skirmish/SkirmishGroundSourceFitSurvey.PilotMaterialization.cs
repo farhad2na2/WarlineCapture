@@ -373,16 +373,10 @@ namespace Game.Editor
 
         static void RecordMaterializedIndependence(SkirmishMapLayoutConfig layout,GridConfig grid,JArray routes,JObject report)
         {
-            var min=new int2[2];var max=new int2[2];var zones=new JArray();
-            foreach(byte faction in new byte[]{1,2})
-            {
-                Require(layout.TryGetPad(faction,SkirmishLegalPadKind.GroundStaging,out var pad),"Actual typed compound entry required");
-                Require(layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z),"Actual compound entry projection required");
-                var center=GridUtils.WorldToCell(grid,new float3(x,0,z));
-                var half=math.min((int2)math.floor(new float2(pad.WidthMetres,pad.DepthMetres)/(2*grid.CellSize)),new int2(SharedEndpointRadiusCells));
-                Require(math.all(half>0),"Positive actual bounded endpoint zone required");min[faction-1]=center-half;max[faction-1]=center+half;
-                zones.Add(new JObject{["faction"]=faction,["typedPadId"]=pad.PadId,["minInclusive"]=new JArray(min[faction-1].x,min[faction-1].y),["maxInclusive"]=new JArray(max[faction-1].x,max[faction-1].y)});
-            }
+            Require(TryReadAuthoredEndpointZones(layout,grid,out var min,out var max,out var actualZones,out string zoneError),zoneError);
+            var zones=new JArray(actualZones.OfType<JObject>().Select(z=>(JToken)new JObject{
+                ["faction"]=z["faction"].DeepClone(),["typedPadId"]=z["actualTypedPadId"].DeepClone(),
+                ["minInclusive"]=z["minCellInclusive"].DeepClone(),["maxInclusive"]=z["maxCellInclusive"].DeepClone()}));
             var rows=new JArray();report["threeApproachIndependenceWithPlacedFacilities"]=rows;
             var ids=layout.Routes.Where(v=>v.AllowsVehicles).Select(v=>v.RouteId).ToArray();
             foreach(var role in new[]{SkirmishRoleKind.Tank,SkirmishRoleKind.Siege,SkirmishRoleKind.ApcHeavy})

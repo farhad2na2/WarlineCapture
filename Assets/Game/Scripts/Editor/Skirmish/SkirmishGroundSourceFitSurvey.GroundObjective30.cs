@@ -227,9 +227,14 @@ namespace Game.Editor
 
         static JObject Ground30RouteQueries(SkirmishStaticAuthoringBudget budget,SkirmishMapLayoutConfig layout,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JArray facilities)
         {
+            if(!TryPreflightAuthoredRouteEndpoints(layout,grid,out var endpointPolicy))
+                return new JObject{["scope"]="ExactPathfindJobInputs_WithCompleteStaticFacilityReservations_NotLiveFit",
+                    ["status"]="NotQueried_AuthoredEndpointPolicyRefused",["endpointPolicyPreflight"]=endpointPolicy,
+                    ["nativeQueriesExecuted"]=0,["roleLegReferences"]=0,["queries"]=new JArray(),["roleReferences"]=new JArray(),["sourceFitCertified"]=false};
             using var blockers=new NativeBitArray(grid.Width*grid.Height,Allocator.Persistent,NativeArrayOptions.ClearMemory);Ground30OccupyFacilities(facilities,grid,blockers);
             var queries=new JArray();var roleRefs=new JArray();var cache=new Dictionary<string,int>(StringComparer.Ordinal);
             var report=new JObject{["scope"]="ExactPathfindJobInputs_WithCompleteStaticFacilityReservations_NotLiveFit",["queries"]=queries,["roleReferences"]=roleRefs,["sourceFitCertified"]=false};
+            report["endpointPolicyPreflight"]=endpointPolicy;
             int index=0;
             foreach(var force in budget.Forces)
             {

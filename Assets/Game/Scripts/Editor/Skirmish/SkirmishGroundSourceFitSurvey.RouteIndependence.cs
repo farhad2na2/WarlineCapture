@@ -16,27 +16,136 @@ namespace Game.Editor
         const int SharedEndpointRadiusCells = 16;
         const int MinimumUniqueInteriorCells = 32;
 
+        static bool EndpointCellInZone(int2 cell,int2 min,int2 max)
+            => math.all(cell>=min)&&math.all(cell<=max);
+
+        static bool TryReadAuthoredEndpointZones(SkirmishMapLayoutConfig layout,GridConfig grid,
+            out int2[] min,out int2[] max,out JArray rows,out string error)
+        {
+            min=new int2[2];max=new int2[2];rows=new JArray();error=null;
+            if(layout==null||layout.Pads==null||!float.IsFinite(grid.CellSize)||grid.CellSize<=0)
+            {error="Missing layout/pads or invalid actual cell size";return false;}
+            for(byte faction=1;faction<=2;faction++)
+            {
+                if(!layout.TryGetPad(faction,SkirmishLegalPadKind.GroundStaging,out var pad)||
+                    !float.IsFinite(pad.WidthMetres)||!float.IsFinite(pad.DepthMetres)||
+                    !layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z)||
+                    !float.IsFinite(x)||!float.IsFinite(z))
+                {error="Actual typed GroundStaging pad/projection required";return false;}
+                var center=GridUtils.WorldToCell(grid,new float3(x,0,z));
+                var half=math.min((int2)math.floor(new float2(pad.WidthMetres,pad.DepthMetres)/(2*grid.CellSize)),new int2(SharedEndpointRadiusCells));
+                if(!math.all(half>0)){error="Positive actual bounded endpoint zone required";return false;}
+                min[faction-1]=center-half;max[faction-1]=center+half;
+                rows.Add(new JObject{["faction"]=faction,["actualTypedPadId"]=pad.PadId,
+                    ["minCellInclusive"]=new JArray(min[faction-1].x,min[faction-1].y),
+                    ["maxCellInclusive"]=new JArray(max[faction-1].x,max[faction-1].y),
+                    ["scope"]="Actual source-pinned GroundStaging pad clipped to maximum16 cells; not a new clear compound"});
+            }
+            return true;
+        }
+
+        static bool TryPreflightAuthoredRouteEndpoints(SkirmishMapLayoutConfig layout,GridConfig grid,out JObject evidence)
+        {
+            evidence=new JObject{["scope"]="NecessaryAuthoredEndpointPolicyOnly_NotPathOrSourceFit",
+                ["nativeQueriesExecuted"]=0,["sourceFitCertified"]=false,["missionReady"]=false};
+            if(!TryReadAuthoredEndpointZones(layout,grid,out var min,out var max,out var zones,out string error))
+            {evidence["accepted"]=false;evidence["rejection"]=error;return false;}
+            evidence["actualAuthoredEndpointZones"]=zones;
+            if(layout.Routes==null||layout.Routes.Length!=3)
+            {evidence["accepted"]=false;evidence["rejection"]="Three authored approaches required";return false;}
+            var routes=new JArray();evidence["routes"]=routes;int2? start=null,goal=null;
+            foreach(var route in layout.Routes)
+            {
+                var ids=route.WaypointAnchorIds;float ax=0,az=0,bx=0,bz=0;
+                if(ids==null||ids.Length<2||!layout.TryGetAnchorById(ids[0],out var a)||
+                    !layout.TryGetAnchorById(ids[ids.Length-1],out var b)||
+                    !layout.TryProjectLocalToMap(a.WorldX,a.WorldZ,out ax,out az)||
+                    !layout.TryProjectLocalToMap(b.WorldX,b.WorldZ,out bx,out bz)||
+                    !float.IsFinite(ax)||!float.IsFinite(az)||!float.IsFinite(bx)||!float.IsFinite(bz))
+                {evidence["accepted"]=false;evidence["rejection"]="Actual authored route endpoint/projection required";return false;}
+                var from=GridUtils.WorldToCell(grid,new float3(ax,0,az));var to=GridUtils.WorldToCell(grid,new float3(bx,0,bz));
+                routes.Add(new JObject{["routeId"]=route.RouteId,["fromCell"]=new JArray(from.x,from.y),["toCell"]=new JArray(to.x,to.y)});
+                if(start.HasValue&&(!start.Value.Equals(from)||!goal.Value.Equals(to)))
+                {evidence["accepted"]=false;evidence["rejection"]="Approaches must share exact authored entry and exit";return false;}
+                start=from;goal=to;
+                if(!EndpointCellInZone(from,min[0],max[0])||!EndpointCellInZone(to,min[1],max[1]))
+                {evidence["accepted"]=false;evidence["rejection"]="Native path endpoint is outside actual authored compound entry/exit";return false;}
+            }
+            evidence["accepted"]=true;return true;
+        }
+
+        public static void RunAuthoredRouteEndpointPreflightControls()
+        {
+            Require(!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,"Edit Mode endpoint controls required");
+            int controls=0;
+            void Check(bool ok,string message){Require(ok,message);controls++;}
+            var layout=UnityEngine.ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
+            var grid=new GridConfig{Width=2048,Height=1024,CellSize=1,Origin=float3.zero};
+            JObject Fixture(int sx=961,int sz=650,int ex=1352,int ez=650)
+            {
+                JObject Anchor(string id,float x,float z)=>new JObject{["AnchorId"]=id,["WorldX"]=x,["WorldZ"]=z};
+                return new JObject{["originX"]=0,["originZ"]=0,["worldWidthMetres"]=2048,["worldDepthMetres"]=1024,
+                    ["worldBinding"]=new JObject{["OriginX"]=0,["OriginZ"]=512,["ForwardX"]=1,["ForwardZ"]=0,["AcrossX"]=0,["AcrossZ"]=1,
+                        ["ForwardMetres"]=2048,["AcrossMetres"]=1024,["PlayerAnchorId"]="stageP",["EnemyAnchorId"]="stageE"},
+                    ["anchors"]=new JArray(Anchor("s",sx+.5f,sz+.5f),Anchor("m",1161.5f,674.5f),Anchor("e",ex+.5f,ez+.5f),
+                        Anchor("stageP",970.7473f,650),Anchor("stageE",1352.0526f,650)),
+                    ["pads"]=new JArray(new JObject{["PadId"]="stageP",["AnchorId"]="stageP",["Kind"]=(int)SkirmishLegalPadKind.GroundStaging,
+                        ["FactionId"]=1,["CenterX"]=970.7473f,["CenterZ"]=650,["WidthMetres"]=19.85965f,["DepthMetres"]=14},
+                        new JObject{["PadId"]="stageE",["AnchorId"]="stageE",["Kind"]=(int)SkirmishLegalPadKind.GroundStaging,
+                        ["FactionId"]=2,["CenterX"]=1352.0526f,["CenterZ"]=650,["WidthMetres"]=19.85965f,["DepthMetres"]=14}),
+                    ["routes"]=new JArray(Enumerable.Range(0,3).Select(i=>(JToken)new JObject{["RouteId"]="route"+i,["WaypointAnchorIds"]=new JArray("s","m","e")}))};
+            }
+            bool LoadAndPreflight(JObject data)
+            {
+                UnityEngine.JsonUtility.FromJsonOverwrite(data.ToString(Newtonsoft.Json.Formatting.None),layout);
+                string before=UnityEngine.JsonUtility.ToJson(layout);
+                bool accepted=TryPreflightAuthoredRouteEndpoints(layout,grid,out var evidence);
+                Require(before==UnityEngine.JsonUtility.ToJson(layout)&&!(bool)evidence["sourceFitCertified"]&&(int)evidence["nativeQueriesExecuted"]==0,
+                    "Preflight must be pure, query-free and never source-fit proof");
+                return accepted;
+            }
+            try
+            {
+                Check(LoadAndPreflight(Fixture()),"Known in-zone961,650 accepts necessary endpoint gate");
+                Check(TryReadAuthoredEndpointZones(layout,grid,out var min,out var max,out _,out _)&&
+                    min[0].Equals(new int2(961,643))&&max[0].Equals(new int2(979,657)),"Actual S032 decimal-width floor is preserved");
+                Check(LoadAndPreflight(Fixture(961,643,1361,657)),"Inclusive minimum/maximum corners accept");
+                Check(LoadAndPreflight(Fixture(979,657,1343,643)),"Opposite inclusive corners accept");
+                foreach(var point in new[]{new int2(960,650),new int2(980,650),new int2(970,642),new int2(970,658)})
+                    Check(!LoadAndPreflight(Fixture(point.x,point.y)),"One-cell exterior must reject without enlarging zone");
+                Check(!LoadAndPreflight(Fixture(961,650,1362,650)),"Enemy exterior rejects, protecting reversed-faction exit");
+                var data=Fixture();((JArray)data["pads"]).RemoveAt(1);Check(!LoadAndPreflight(data),"Missing actual faction pad rejects");
+                data=Fixture();((JArray)data["anchors"]).Add(new JObject{["AnchorId"]="other",["WorldX"]=962.5f,["WorldZ"]=650.5f});
+                data["routes"][1]["WaypointAnchorIds"]=new JArray("other","m","e");Check(!LoadAndPreflight(data),"Different in-zone route endpoints still reject");
+                data=Fixture();data["routes"][0]["WaypointAnchorIds"]=new JArray("missing","m","e");
+                Check(!LoadAndPreflight(data),"Missing endpoint anchor rejects");
+                data=Fixture();data["pads"][0]["WidthMetres"]=1.99f;Check(!LoadAndPreflight(data),"Zero floored half-span rejects");
+                data=Fixture(986,650);data["pads"][0]["WidthMetres"]=100;data["pads"][0]["DepthMetres"]=100;
+                Check(LoadAndPreflight(data)&&TryReadAuthoredEndpointZones(layout,grid,out min,out max,out _,out _)&&
+                    min[0].Equals(new int2(954,634))&&max[0].Equals(new int2(986,666)),"Existing16-cell cap remains exact");
+                data=Fixture(987,650);data["pads"][0]["WidthMetres"]=100;data["pads"][0]["DepthMetres"]=100;
+                Check(!LoadAndPreflight(data),"One beyond existing16-cell cap rejects");
+                LoadAndPreflight(Fixture());var shifted=grid;shifted.CellSize=2;shifted.Origin=new float3(740,0,260);
+                Check(TryReadAuthoredEndpointZones(layout,shifted,out min,out max,out _,out _)&&
+                    min[0].Equals(new int2(111,192))&&max[0].Equals(new int2(119,198)),"Actual grid origin/cell size is used");
+                LoadAndPreflight(Fixture(960,650));
+                var refused=Ground30RouteQueries(null,layout,default(Unity.Entities.EntityManager),Unity.Entities.Entity.Null,grid,default(MapSurfaceComponent),new JArray());
+                Check((string)refused["status"]=="NotQueried_AuthoredEndpointPolicyRefused"&&(int)refused["nativeQueriesExecuted"]==0&&
+                    ((JArray)refused["queries"]).Count==0&&!JointRoutesExact(refused),"Actual collector rejects before ECS/grid allocation or path query");
+                RunPilotRouteIndependenceControls();
+                UnityEngine.Debug.Log("[AuthoredRouteEndpointPreflightControls] result=Passed controls="+controls+
+                    " existingIndependenceControls=3 nativeQueries=0 sourceFitCertified=0 missionReady=0");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(layout);}
+        }
+
         static void RecordPilotRouteIndependence(JObject report, SkirmishMapLayoutConfig layout, GridConfig grid)
         {
             var frame = layout.WorldBinding;
             Require(math.abs(frame.ForwardX - 1) < .0001f && math.abs(frame.ForwardZ) < .0001f &&
                 math.abs(frame.AcrossX) < .0001f && math.abs(frame.AcrossZ - 1) < .0001f,
                 "This bounded endpoint-zone adapter requires the actual axis-aligned AP/CC authored frame");
-            var zoneMin = new int2[2]; var zoneMax = new int2[2]; var zoneRows = new JArray();
-            for (byte faction = 1; faction <= 2; faction++)
-            {
-                Require(layout.TryGetPad(faction, SkirmishLegalPadKind.GroundStaging, out var pad), "Actual typed compound entry pad required");
-                Require(layout.TryProjectLocalToMap(pad.CenterX, pad.CenterZ, out float x, out float z), "Exact typed entry projection required");
-                var center = GridUtils.WorldToCell(grid, new float3(x, 0, z));
-                var half = (int2)math.floor(new float2(pad.WidthMetres, pad.DepthMetres) / (2 * grid.CellSize));
-                half = math.min(half, new int2(SharedEndpointRadiusCells));
-                Require(math.all(half > 0), "Positive bounded authored entry zone required");
-                zoneMin[faction - 1] = center - half; zoneMax[faction - 1] = center + half;
-                zoneRows.Add(new JObject { ["faction"] = faction, ["actualTypedPadId"] = pad.PadId,
-                    ["minCellInclusive"] = new JArray((center - half).x, (center - half).y),
-                    ["maxCellInclusive"] = new JArray((center + half).x, (center + half).y),
-                    ["scope"] = "Actual source-pinned GroundStaging pad clipped to maximum16 cells; not a new clear compound" });
-            }
+            Require(TryReadAuthoredEndpointZones(layout,grid,out var zoneMin,out var zoneMax,out var zoneRows,out string zoneError),zoneError);
             var groups = new List<JObject[]>();
             var source = (string)report["group"];
             var retained = ((JArray)report["endpointCandidateRouteQueries"]).OfType<JObject>()
@@ -99,15 +208,14 @@ namespace Game.Editor
                 "Three bounded native path centerlines required");
             var start = paths[0][0]; var goal = paths[0][paths[0].Count - 1];
             Require(paths.All(p => p[0].Equals(start) && p[p.Count - 1].Equals(goal)), "Approaches must share exact native entry and exit");
-            bool InZone(int2 p, int2 min, int2 max) => math.all(p >= min) && math.all(p <= max);
-            if (!InZone(start, entryMin, entryMax) || !InZone(goal, exitMin, exitMax))
+            if (!EndpointCellInZone(start, entryMin, entryMax) || !EndpointCellInZone(goal, exitMin, exitMax))
                 return new JObject { ["independentUnderDeclaredProbePolicy"] = false, ["rejection"] = "Native path endpoint is outside actual authored compound entry/exit" };
             var centers = new List<HashSet<int2>>(); var corridors = new List<HashSet<int2>>();
             foreach (var path in paths)
             {
                 var center = RasterizePilotCenterline(path);
-                center.RemoveWhere(p => (InZone(p, entryMin, entryMax) && math.lengthsq(p - start) <= SharedEndpointRadiusCells * SharedEndpointRadiusCells) ||
-                    (InZone(p, exitMin, exitMax) && math.lengthsq(p - goal) <= SharedEndpointRadiusCells * SharedEndpointRadiusCells));
+                center.RemoveWhere(p => (EndpointCellInZone(p, entryMin, entryMax) && math.lengthsq(p - start) <= SharedEndpointRadiusCells * SharedEndpointRadiusCells) ||
+                    (EndpointCellInZone(p, exitMin, exitMax) && math.lengthsq(p - goal) <= SharedEndpointRadiusCells * SharedEndpointRadiusCells));
                 centers.Add(center); var corridor = new HashSet<int2>();
                 foreach (var cell in center) for (int x = -clearance; x <= clearance; x++) for (int z = -clearance; z <= clearance; z++)
                     corridor.Add(cell + new int2(x, z));

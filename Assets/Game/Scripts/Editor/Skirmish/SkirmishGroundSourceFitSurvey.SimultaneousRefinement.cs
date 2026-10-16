@@ -172,6 +172,9 @@ namespace Game.Editor
                             (int?)f["insideTypedPadCount"]==(int?)f["requestedCount"]);
                         row["allActorsInsidePads"]=allActors;complete&=allActors;
                         row["routeQueriesWithSameFacilityReservations"]=Ground30RouteQueries(budget,owner.Layout,em,gridEntity,grid,surface,facilities);
+                        if((bool?)row["routeQueriesWithSameFacilityReservations"]?["endpointPolicyPreflight"]?["accepted"]!=true)
+                        {row["jointRouteRefused"]="Authored endpoint policy preflight refused; no native route queries";complete=false;}
+
                         if(requireExactJointRoutes&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
                         {row["jointRouteRefused"]="Nonexact native route with actual facility blockers";complete=false;}
                         if(refinementPreferenceReplay)

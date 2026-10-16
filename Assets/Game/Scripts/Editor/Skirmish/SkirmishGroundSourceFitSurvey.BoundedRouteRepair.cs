@@ -193,15 +193,9 @@ namespace Game.Editor
             evidence=new JObject{["scope"]="ActualCanonicalProfileNativeLegs_ExistingSharedEndpointPolicy",["sourceFitCertified"]=false};
             var queries=(JArray)measured["queries"];var references=(JArray)measured["roleReferences"];
             var rows=new JArray();evidence["profiles"]=rows;
-            var min=new int2[2];var max=new int2[2];
-            for(byte side=1;side<=2;side++)
-            {
-                if(!layout.TryGetPad(side,Game.Configs.SkirmishLegalPadKind.GroundStaging,out var pad))return false;
-                if(!layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z))return false;
-                var center=GridUtils.WorldToCell(grid,new float3(x,0,z));
-                var half=math.min((int2)math.floor(new float2(pad.WidthMetres,pad.DepthMetres)/(2*grid.CellSize)),new int2(SharedEndpointRadiusCells));
-                if(!math.all(half>0))return false;min[side-1]=center-half;max[side-1]=center+half;
-            }
+            if(!TryReadAuthoredEndpointZones(layout,grid,out var min,out var max,out var zones,out string zoneError))
+            {evidence["endpointPolicyRefusal"]=zoneError;return false;}
+            evidence["actualAuthoredEndpointZones"]=zones;
             var groups=references.OfType<JObject>().Where(r=>r["nativeQueryId"]!=null).GroupBy(r=>
                 string.Join("/",((string)queries[(int)r["nativeQueryId"]]["exactInputKey"]).Split('/').Take(5)));
             bool all=true;int count=0;

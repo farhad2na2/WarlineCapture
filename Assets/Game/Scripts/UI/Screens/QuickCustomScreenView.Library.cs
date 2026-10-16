@@ -96,6 +96,7 @@ namespace Game.UI.Runtime
         private static Sprite _zoneSolid;
         private static Sprite _zoneCap;
         private static Sprite _zoneRing;
+        private static Sprite _zoneDisc;
         private static Sprite _solidSprite;
         private static Sprite _softShadow;
         private float _sideWonRatio;
@@ -2466,13 +2467,6 @@ namespace Game.UI.Runtime
                     RelaxLibraryText(text, 10f, 15f, false);
                     text.overflowMode = TextOverflowModes.Overflow;
                     text.maxVisibleLines = 1;
-                    if (medalCaption && text.rectTransform != null)
-                    {
-                        float captionWidth = text.rectTransform.rect.width > 1f
-                            ? text.rectTransform.rect.width
-                            : text.rectTransform.sizeDelta.x;
-                        FitMedalCaption(text, captionWidth);
-                    }
                 }
                 else if (difficulty)
                     RelaxLibraryText(text, 12f, 18f, true);

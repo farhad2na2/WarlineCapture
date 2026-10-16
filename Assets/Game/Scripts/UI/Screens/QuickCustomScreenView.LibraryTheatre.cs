@@ -1866,8 +1866,8 @@ namespace Game.UI.Runtime
             track.sprite = ZoneRingSprite();
             track.type = Image.Type.Simple;
             track.color = pending
-                ? new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.42f)
-                : new Color(1f, 1f, 1f, 0f);
+                ? new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.55f)
+                : new Color(1f, 1f, 1f, 0.55f);
             track.raycastTarget = false;
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
@@ -1878,7 +1878,7 @@ namespace Game.UI.Runtime
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
             fill.fillAmount = ratio;
-            fill.color = Color.Lerp(slot.Zone, Color.white, 0.22f);
+            fill.color = BrightRingFill(slot.Zone);
             fill.raycastTarget = false;
             fill.enabled = !pending;
             var count = CreateLabel(card.transform, "ZoneCount", pending ? 18f : 20f);
@@ -2787,8 +2787,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Name across the top, a full-width portrait at about 70% of the card, the progress
-        /// ring over that portrait's bottom corner, and the status line across the bottom.
+        /// Name across the top, tall enough for two lines, then a full-width portrait, the
+        /// progress ring on that portrait's bottom corner, and the status line across the bottom.
+        /// The portrait gives up height for the two-line header and lands near 60% of the card.
         /// The seat rect is left alone.
         /// </summary>
         private static void LayoutZoneCardStack(RectTransform card, TMP_Text name, float nameH, float cardH, bool wide)
@@ -2801,7 +2802,7 @@ namespace Game.UI.Runtime
             float nameW = PortraitNameWidth(cardW);
             float nameX = Mathf.Max(0f, (cardW - nameW) * 0.5f);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
-            DominantCardBands(cardH, out float nameRoom, out float portraitH, out float statusH);
+            DominantCardBands(cardH, wide, out float nameRoom, out _, out float statusH);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
             if (nameH > maxName)
                 nameH = maxName;
@@ -2809,15 +2810,18 @@ namespace Game.UI.Runtime
                 nameH = 1f;
             if (nameH > nameRoom)
                 nameH = nameRoom;
-            float room = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
-            if (nameH + statusH > room + 0.5f)
-                statusH = Mathf.Max(18f, room - nameH);
+            float stackRoom = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
+            if (nameH + statusH > stackRoom + 0.5f)
+                statusH = Mathf.Max(22f, stackRoom - nameH);
 
             if (name != null && name.rectTransform != null)
                 PlaceTopLeft(name.rectTransform, nameX, pad, nameW, nameH);
 
             float statusY = cardH - pad - statusH;
             float portraitTop = pad + nameH + gap;
+            float portraitH = statusY - gap - portraitTop;
+            if (portraitH < 8f)
+                portraitH = 8f;
             float portraitW = innerW;
 
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
@@ -2838,16 +2842,21 @@ namespace Game.UI.Runtime
             }
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
+            RectTransform disc = null;
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.42f, 44f, 68f);
+                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.46f, 52f, 76f);
                 if (ringSide > portraitH - 4f)
                     ringSide = Mathf.Max(28f, portraitH - 4f);
                 float ringX = fa ? pad + 4f : pad + portraitW - 4f - ringSide;
                 float ringY = portraitTop + portraitH - 4f - ringSide;
                 if (ringY < portraitTop)
                     ringY = portraitTop;
+                disc = EnsureRingDisc(card);
+                PlaceTopLeft(disc, ringX, ringY, ringSide, ringSide);
+                disc.localScale = Vector3.one;
+                KeepAuthoredSize(disc);
                 PlaceTopLeft(ring, ringX, ringY, ringSide, ringSide);
                 ring.localScale = Vector3.one;
                 KeepAuthoredSize(ring);
@@ -2864,8 +2873,10 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(countRect, pad, statusY, innerW, Mathf.Max(1f, statusH));
             if (thumb != null)
                 thumb.SetAsFirstSibling();
+            if (disc != null)
+                disc.SetSiblingIndex(thumb != null ? thumb.GetSiblingIndex() + 1 : 0);
             if (ring != null)
-                ring.SetSiblingIndex(thumb != null ? thumb.GetSiblingIndex() + 1 : 0);
+                ring.SetSiblingIndex(disc != null ? disc.GetSiblingIndex() + 1 : (thumb != null ? thumb.GetSiblingIndex() + 1 : 0));
             if (name != null)
                 name.transform.SetAsLastSibling();
             countNode.SetAsLastSibling();
@@ -2874,20 +2885,57 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Portrait target is 70% of the card. The name and status keep the rest, and the
-        /// portrait gives back a few pixels when a short card would leave the name under 18.
+        /// Header room for two lines, and a status row tall enough for "به زودی".
+        /// The portrait keeps what is left, about 60% on a 208-tall card.
         /// </summary>
-        private static void DominantCardBands(float cardH, out float nameRoom, out float portraitH, out float statusH)
+        private static void DominantCardBands(float cardH, bool wide, out float nameRoom, out float portraitH, out float statusH)
         {
             const float pad = 2f;
             const float gap = 2f;
-            statusH = cardH >= 190f ? 28f : 20f;
-            portraitH = Mathf.Max(8f, Mathf.Round(cardH * 0.70f));
-            nameRoom = cardH - pad - portraitH - gap - statusH - pad;
-            if (nameRoom >= 18f)
-                return;
-            portraitH = Mathf.Max(8f, portraitH - (18f - nameRoom));
-            nameRoom = 18f;
+            statusH = cardH >= 190f ? 36f : 32f;
+            float cap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
+            float twoLines = cardH >= 190f ? 50f : 46f;
+            if (twoLines > cap)
+                twoLines = cap;
+            if (twoLines < 18f)
+                twoLines = 18f;
+            nameRoom = twoLines;
+            portraitH = cardH - pad - nameRoom - gap - statusH - pad;
+            float tallestPortrait = Mathf.Round(cardH * 0.65f);
+            if (portraitH > tallestPortrait && nameRoom + (portraitH - tallestPortrait) <= cap)
+            {
+                nameRoom += portraitH - tallestPortrait;
+                portraitH = tallestPortrait;
+            }
+
+            if (portraitH < 8f)
+                portraitH = 8f;
+        }
+
+        /// <summary>Dark circle drawn behind the progress ring so the arc reads on the photo.</summary>
+        private static RectTransform EnsureRingDisc(RectTransform card)
+        {
+            RectTransform disc = card.Find("RingDisc") as RectTransform;
+            if (disc != null)
+                return disc;
+            var image = new GameObject("RingDisc", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            image.transform.SetParent(card, false);
+            image.sprite = ZoneDiscSprite();
+            image.type = Image.Type.Simple;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
+            image.color = new Color(0.05f, 0.04f, 0.03f, 0.92f);
+            return image.rectTransform;
+        }
+
+        /// <summary>Full-brightness zone hue, pulled a little toward white so a half arc stays obvious.</summary>
+        private static Color BrightRingFill(Color zone)
+        {
+            float peak = Mathf.Max(zone.r, Mathf.Max(zone.g, zone.b));
+            Color hue = peak > 0.01f ? zone / peak : Color.white;
+            Color bright = Color.Lerp(hue, Color.white, 0.28f);
+            bright.a = 1f;
+            return bright;
         }
 
         /// <summary>
@@ -3368,7 +3416,11 @@ namespace Game.UI.Runtime
             if (card == null)
                 return name.sizeDelta.y;
             float cardH = card.sizeDelta.y > 1f ? card.sizeDelta.y : card.rect.height;
-            DominantCardBands(cardH, out float nameRoom, out _, out _);
+            RectTransform plate = card.parent as RectTransform;
+            bool wide = false;
+            if (plate != null && TryFrameSize(plate, out float plateWidth, out float plateHeight))
+                wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            DominantCardBands(cardH, wide, out float nameRoom, out _, out _);
             return Mathf.Max(18f, nameRoom);
         }
 
@@ -4144,8 +4196,15 @@ namespace Game.UI.Runtime
                 for (int x = 0; x < size; x++)
                 {
                     float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
-                    // Outer edge sits on the square so the ring reads as large as the portrait.
-                    float ring = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.74f) / 0.24f);
+                    const float inner = 0.52f;
+                    const float outer = 0.96f;
+                    float ring = 0f;
+                    if (distance >= inner && distance <= outer)
+                        ring = 1f;
+                    else if (distance < inner)
+                        ring = Mathf.Clamp01(1f - (inner - distance) / 0.06f);
+                    else
+                        ring = Mathf.Clamp01(1f - (distance - outer) / 0.04f);
                     pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(ring * 255f));
                 }
             }
@@ -4162,6 +4221,38 @@ namespace Game.UI.Runtime
                 SpriteMeshType.FullRect);
             _zoneRing.hideFlags = HideFlags.HideAndDontSave;
             return _zoneRing;
+        }
+
+        private static Sprite ZoneDiscSprite()
+        {
+            if (_zoneDisc != null)
+                return _zoneDisc;
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
+                    float alpha = distance <= 0.94f ? 1f : Mathf.Clamp01((1.02f - distance) / 0.08f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(alpha * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneDisc = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, size, size),
+                new Vector2(0.5f, 0.5f),
+                size,
+                0,
+                SpriteMeshType.FullRect);
+            _zoneDisc.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneDisc;
         }
 
         private static Sprite _zonePill;

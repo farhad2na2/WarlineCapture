@@ -489,7 +489,7 @@ namespace Game.UI.Runtime
             float slotWidth = slot.sizeDelta.x > 40f ? slot.sizeDelta.x : slot.rect.width;
             if (slotWidth < 40f)
                 slotWidth = 148f;
-            const float gap = 12f;
+            const float gap = 8f;
             float icon = iconSize;
             float countBox = Mathf.Max(28f, countWidth);
             float labelWidth = slotWidth - (4f + icon + gap + gap + countBox + 4f);
@@ -522,16 +522,22 @@ namespace Game.UI.Runtime
             TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
             if (captionText != null)
             {
+                float fitted = Mathf.Max(10f, labelWidth / 5.4f);
                 captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 captionText.isRightToLeftText = fa;
                 captionText.overflowMode = TextOverflowModes.Overflow;
                 captionText.textWrappingMode = TextWrappingModes.NoWrap;
                 captionText.enableAutoSizing = false;
+                captionText.fontSize = fitted;
+                captionText.fontSizeMin = fitted;
+                captionText.fontSizeMax = fitted;
                 captionText.maxVisibleLines = 1;
                 captionText.margin = Vector4.zero;
-                FitMedalCaption(captionText, labelWidth);
                 if (caption.GetComponent<RectMask2D>() == null)
                     caption.gameObject.AddComponent<RectMask2D>();
+                V3LocalizedTextBindingView binding = captionText.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(fitted, fitted);
             }
 
             TMP_Text countText = count != null ? count.GetComponent<TMP_Text>() : null;
@@ -542,56 +548,6 @@ namespace Game.UI.Runtime
                 countText.overflowMode = TextOverflowModes.Overflow;
                 countText.textWrappingMode = TextWrappingModes.NoWrap;
             }
-        }
-
-        /// <summary>
-        /// Keeps the difficulty word inside its box so it cannot run into the count.
-        /// The slot already leaves a gap; this stops COMMANDER from drawing across it.
-        /// </summary>
-        private static void FitMedalCaption(TMP_Text captionText, float labelWidth)
-        {
-            if (captionText == null || labelWidth < 8f)
-                return;
-            string word = captionText.text ?? string.Empty;
-            int letters = 0;
-            float factor = 0.62f;
-            for (int i = 0; i < word.Length; i++)
-            {
-                if (char.IsWhiteSpace(word[i]))
-                    continue;
-                letters++;
-                if (word[i] > 127)
-                    factor = 0.95f;
-            }
-
-            if (letters < 1)
-                letters = 1;
-            float fitted = labelWidth / (letters * factor);
-            if (fitted > 15f)
-                fitted = 15f;
-            if (fitted < 10f)
-                fitted = 10f;
-            captionText.fontSize = fitted;
-            captionText.fontSizeMin = fitted;
-            captionText.fontSizeMax = fitted;
-            captionText.ForceMeshUpdate();
-            for (int step = 0; step < 8 && fitted > 9f; step++)
-            {
-                float drawn = captionText.preferredWidth;
-                if (drawn < 0.5f || drawn <= labelWidth - 1f)
-                    break;
-                fitted -= 1f;
-                if (fitted < 9f)
-                    fitted = 9f;
-                captionText.fontSize = fitted;
-                captionText.fontSizeMin = fitted;
-                captionText.fontSizeMax = fitted;
-                captionText.ForceMeshUpdate();
-            }
-
-            V3LocalizedTextBindingView binding = captionText.GetComponent<V3LocalizedTextBindingView>();
-            if (binding != null)
-                binding.ConfigureFontBounds(fitted, fitted);
         }
 
         private static void HoldFixed(RectTransform rect, float width, float height, float flexibleWidth)

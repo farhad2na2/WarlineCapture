@@ -33,6 +33,11 @@ namespace Game.Editor
         public static void RunS005EditorAriaEnSeed3() => RunEditorJourney("en", false, false, "S005", 155926);
         public static void RunS005EditorAriaFaSeed2() => RunEditorJourney("fa-IR", false, false, "S005", 130368);
         public static void RunS005EditorAriaFaSeed3() => RunEditorJourney("fa-IR", false, false, "S005", 155926);
+        public static void RunS005EditorAriaFaSeed3MainMenu()
+        {
+            RunEditorJourney("fa-IR", false, false, "S005", 155926);
+            Environment.SetEnvironmentVariable("WARLINE_TERMINAL_ACTION", "MAIN MENU");
+        }
         public static void RunS005EditorManualFa() => RunEditorJourney("fa-IR", true, false, "S005");
         public static void RunS005EditorPlacementClearanceProbe()
         {

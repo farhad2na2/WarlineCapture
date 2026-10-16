@@ -2096,8 +2096,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Keeps a zoom pill that already misses every district, or moves it to a plate corner
-        /// or edge margin that does. Zone cards are not moved.
+        /// Keeps a zoom pill that is within 160px of the selected pin and misses every district,
+        /// or moves it into that seat. Zone cards are not moved.
         /// </summary>
         private static bool SeatZoomCueClearOfHexes(TMP_Text cue, bool fa, string selectedId)
         {
@@ -2113,30 +2113,21 @@ namespace Game.UI.Runtime
                 cue.rectTransform.sizeDelta.x,
                 cue.rectTransform.sizeDelta.y);
             Rect detail = SeatingDetailRect(frameW, frameH, fa);
-            if (current.width >= 96f && current.height >= 28f && MarginSpotClear(parent, current, frameW, frameH, detail))
+            Vector2 pin = SelectedPinCentre(parent, selectedId);
+            bool nearPin = Vector2.Distance(current.center, pin) <= 160f;
+            if (nearPin && current.width >= 48f && current.height >= 16f && MarginSpotClear(parent, current, frameW, frameH, detail))
             {
                 SyncCuePlate(parent, current);
                 FitCueInsidePackedRect(cue);
                 return true;
             }
 
-            float[] heights = { 44f, 32f };
-            float widest = Mathf.Max(current.width, 220f);
-            for (int pass = 0; pass < heights.Length; pass++)
-            {
-                float height = heights[pass];
-                for (float width = widest; width >= 120f - 0.5f; width -= 20f)
-                {
-                    if (!TryMarginSpot(parent, frameW, frameH, width, height, detail, selectedId, out Rect spot))
-                        continue;
-                    PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
-                    SyncCuePlate(parent, spot);
-                    FitCueInsidePackedRect(cue);
-                    return true;
-                }
-            }
-
-            return false;
+            if (!TrySeatRuntimeCueNear(parent, frameW, frameH, detail, selectedId, out Rect spot))
+                return false;
+            PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+            SyncCuePlate(parent, spot);
+            FitCueInsidePackedRect(cue);
+            return true;
         }
 
         private static void SyncCuePlate(RectTransform parent, Rect spot)
@@ -2145,66 +2136,134 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(plate, spot.x, spot.y, spot.width, spot.height);
         }
 
-        private static bool TryMarginSpot(
+        /// <summary>
+        /// Largest pill whose centre is within 160px of the selected pin and that misses every hex.
+        /// Looks beside the selected card before scanning the pin neighbourhood. Cards stay put.
+        /// </summary>
+        private static bool TrySeatRuntimeCueNear(
             RectTransform parent,
             float frameW,
             float frameH,
-            float width,
-            float height,
             Rect detail,
             string selectedId,
             out Rect spot)
         {
             spot = default;
-            if (width < 8f || height < 8f || width > frameW - 24f || height > frameH - 24f)
-                return false;
             Vector2 pin = SelectedPinCentre(parent, selectedId);
-            const float edge = 12f;
-            var corners = new[]
+            Rect card = default;
+            bool hasCard = false;
+            if (parent != null && parent.Find("ZoneCard_" + selectedId) is RectTransform cardRect)
             {
-                new Rect(edge, edge, width, height),
-                new Rect(frameW - edge - width, edge, width, height),
-                new Rect(edge, frameH - edge - height, width, height),
-                new Rect(frameW - edge - width, frameH - edge - height, width, height)
-            };
-            float best = float.MaxValue;
-            bool found = false;
-            for (int i = 0; i < corners.Length; i++)
-                TakeMarginSpot(parent, corners[i], frameW, frameH, detail, pin, ref spot, ref best, ref found);
-            for (float x = edge; x + width <= frameW - edge + 0.1f; x += 8f)
-            {
-                TakeMarginSpot(parent, new Rect(x, edge, width, height), frameW, frameH, detail, pin, ref spot, ref best, ref found);
-                TakeMarginSpot(parent, new Rect(x, frameH - edge - height, width, height), frameW, frameH, detail, pin, ref spot, ref best, ref found);
+                card = new Rect(
+                    cardRect.anchoredPosition.x,
+                    -cardRect.anchoredPosition.y,
+                    cardRect.sizeDelta.x,
+                    cardRect.sizeDelta.y);
+                hasCard = card.width > 1f && card.height > 1f;
             }
 
-            for (float y = edge; y + height <= frameH - edge + 0.1f; y += 8f)
+            float[] widths = { 220f, 200f, 180f, 160f, 140f, 120f, 100f, 88f, 72f, 64f, 48f };
+            float[] pillHeights = { 44f, 36f, 32f, 28f, 24f, 20f, 18f, 16f };
+            for (int w = 0; w < widths.Length; w++)
             {
-                TakeMarginSpot(parent, new Rect(edge, y, width, height), frameW, frameH, detail, pin, ref spot, ref best, ref found);
-                TakeMarginSpot(parent, new Rect(frameW - edge - width, y, width, height), frameW, frameH, detail, pin, ref spot, ref best, ref found);
+                for (int h = 0; h < pillHeights.Length; h++)
+                {
+                    if (!TryRuntimeCueSize(parent, frameW, frameH, widths[w], pillHeights[h], detail, pin, card, hasCard, out spot))
+                        continue;
+                    return true;
+                }
             }
 
-            return found;
+            return false;
         }
 
-        private static void TakeMarginSpot(
+        private static bool TryRuntimeCueSize(
             RectTransform parent,
-            Rect candidate,
             float frameW,
             float frameH,
+            float width,
+            float pillHeight,
             Rect detail,
             Vector2 pin,
-            ref Rect spot,
-            ref float best,
-            ref bool found)
+            Rect card,
+            bool hasCard,
+            out Rect spot)
         {
-            if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
-                return;
-            float reach = Vector2.Distance(candidate.center, pin);
-            if (found && reach >= best)
-                return;
-            spot = candidate;
-            best = reach;
-            found = true;
+            spot = default;
+            if (width < 8f || pillHeight < 8f || width > frameW - 24f || pillHeight > frameH - 24f)
+                return false;
+            if (hasCard && TryRuntimeCueBesideCard(parent, frameW, frameH, width, pillHeight, detail, pin, card, out spot))
+                return true;
+            float step = pillHeight <= 20f ? 4f : 8f;
+            float x0 = pin.x - 160f - width * 0.5f;
+            float y0 = pin.y - 160f - pillHeight * 0.5f;
+            float x1 = pin.x + 160f - width * 0.5f;
+            float y1 = pin.y + 160f - pillHeight * 0.5f;
+            for (float y = y0; y <= y1 + 0.1f; y += step)
+            {
+                for (float x = x0; x <= x1 + 0.1f; x += step)
+                {
+                    var candidate = new Rect(x, y, width, pillHeight);
+                    if (Vector2.Distance(candidate.center, pin) > 160f)
+                        continue;
+                    if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
+                        continue;
+                    spot = candidate;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryRuntimeCueBesideCard(
+            RectTransform parent,
+            float frameW,
+            float frameH,
+            float width,
+            float pillHeight,
+            Rect detail,
+            Vector2 pin,
+            Rect card,
+            out Rect spot)
+        {
+            spot = default;
+            const float gap = 4f;
+            float[] lefts = { card.xMax + gap, card.xMin - gap - width };
+            float yStart = card.yMin - pillHeight - gap;
+            float yEnd = card.yMax + gap;
+            for (int i = 0; i < lefts.Length; i++)
+            {
+                for (float y = yStart; y <= yEnd + 0.1f; y += 4f)
+                {
+                    var candidate = new Rect(lefts[i], y, width, pillHeight);
+                    if (Vector2.Distance(candidate.center, pin) > 160f)
+                        continue;
+                    if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
+                        continue;
+                    spot = candidate;
+                    return true;
+                }
+            }
+
+            float[] tops = { card.yMin - gap - pillHeight, card.yMax + gap };
+            float xStart = card.xMin - width - gap;
+            float xEnd = card.xMax + gap;
+            for (int i = 0; i < tops.Length; i++)
+            {
+                for (float x = xStart; x <= xEnd + 0.1f; x += 4f)
+                {
+                    var candidate = new Rect(x, tops[i], width, pillHeight);
+                    if (Vector2.Distance(candidate.center, pin) > 160f)
+                        continue;
+                    if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
+                        continue;
+                    spot = candidate;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool MarginSpotClear(RectTransform parent, Rect spot, float frameW, float frameH, Rect detail)
@@ -2214,13 +2273,41 @@ namespace Game.UI.Runtime
                 return false;
             if (!CueMissesDetail(spot, detail))
                 return false;
-            if (PillHitsLiveHex(parent, InflateRect(spot, 16f)))
+            if (PillHitsLiveHex(parent, InflateRect(spot, 13f)))
+                return false;
+            if (PillCrossesLeader(parent, spot))
                 return false;
             var cards = new List<Rect>(8);
             var pins = new List<Rect>(8);
             CollectOverlayRects(parent, "ZoneCard_", cards);
             CollectOverlayRects(parent, "ZonePin_", pins);
-            return CueClears(spot, cards, 4f) && CueClears(spot, pins, 4f);
+            return CueClears(spot, cards, 2f) && CueClears(spot, pins, 1f);
+        }
+
+        private static bool PillCrossesLeader(RectTransform parent, Rect spot)
+        {
+            if (parent == null)
+                return false;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZonePin_", StringComparison.Ordinal) || child is not RectTransform pin)
+                    continue;
+                string mapId = child.name.Substring("ZonePin_".Length);
+                if (parent.Find("ZoneCard_" + mapId) is not RectTransform card)
+                    continue;
+                float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+                float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+                Vector2 from = new Vector2(pin.anchoredPosition.x + pinW * 0.5f, -pin.anchoredPosition.y + pinH * 0.5f);
+                var cardRect = new Rect(card.anchoredPosition.x, -card.anchoredPosition.y, card.sizeDelta.x, card.sizeDelta.y);
+                Vector2 to = new Vector2(
+                    Mathf.Clamp(from.x, cardRect.xMin, cardRect.xMax),
+                    Mathf.Clamp(from.y, cardRect.yMin, cardRect.yMax));
+                if (SegmentHitsRect(from, to, spot))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool PillHitsLiveHex(RectTransform parent, Rect spot)
@@ -2435,25 +2522,12 @@ namespace Game.UI.Runtime
 
             if (!cueSeated)
                 cueRect = fullCue;
-            if (!MarginSpotClear(parent, cueRect, frameW, frameH, detail))
+            Vector2 selectedPin = SelectedPinCentre(parent, selectedId);
+            if (!MarginSpotClear(parent, cueRect, frameW, frameH, detail)
+                || Vector2.Distance(cueRect.center, selectedPin) > 160f)
             {
-                float[] heights = { cueRect.height >= 32f ? cueRect.height : 44f, 32f };
-                for (int pass = 0; pass < heights.Length; pass++)
-                {
-                    float height = heights[pass];
-                    bool placed = false;
-                    for (float marginWidth = Mathf.Max(cueRect.width, 160f); marginWidth >= 120f - 0.5f; marginWidth -= 20f)
-                    {
-                        if (!TryMarginSpot(parent, frameW, frameH, marginWidth, height, detail, selectedId, out Rect margin))
-                            continue;
-                        cueRect = margin;
-                        placed = true;
-                        break;
-                    }
-
-                    if (placed)
-                        break;
-                }
+                if (TrySeatRuntimeCueNear(parent, frameW, frameH, detail, selectedId, out Rect seatedCue))
+                    cueRect = seatedCue;
             }
 
             PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);

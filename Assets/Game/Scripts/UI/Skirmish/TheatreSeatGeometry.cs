@@ -1262,9 +1262,7 @@ namespace Game.UI.Runtime
                 {
                     float distance = Distance(cue.Center, pins[selected].Center);
                     bool insideHex = hexes[selected] != null && PointInPolygon(cue.Center, hexes[selected]);
-                    // A pill that has to leave the hex sits in the plate margin, which can be
-                    // farther than CueNearLimit from the selected pin.
-                    if (distance > CueNearLimit && !insideHex && !CueRestsClearInMargin(cue, plateWidth, plateHeight, hexes))
+                    if (distance > CueNearLimit && !insideHex)
                     {
                         violations.Add(
                             "Theatre zoom hint is far from the selected pin locale=" + locale +
@@ -2303,9 +2301,13 @@ namespace Game.UI.Runtime
             if (!cueNear)
                 cueNear = TryPlaceCue(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue)
                     && CueAccepted(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight);
-            if (cueNear && CueCoversHex(cue, hexes)
-                && TrySeatCueInMargin(plateWidth, plateHeight, pins, placed, hexes, detail, selected, cue.W, out Box marginCue))
-                cue = marginCue;
+            if (CueSitsNearAndClear(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight))
+                cueNear = true;
+            else if (TrySeatCueNearAndClear(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out Box nearCue))
+            {
+                cue = nearCue;
+                cueNear = true;
+            }
             layout.Cue = cue;
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
@@ -3183,129 +3185,35 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Puts the zoom pill in a plate corner or edge margin that misses every district hex.
-        /// Cards stay where they were seated. A near-pin seat on 4:3 sits inside Industrial Basin,
-        /// so the margin may be farther than <see cref="CueNearLimit"/>.
+        /// Keeps a pill whose centre is within <see cref="CueNearLimit"/> of the selected pin
+        /// and whose body, grown by the capture hex reach, misses every district.
         /// </summary>
-        private static bool TrySeatCueInMargin(
-            float plateWidth,
-            float plateHeight,
+        private static bool CueSitsNearAndClear(
+            Box spot,
             Box[] pins,
             Box[] cards,
             Vec2[][] hexes,
             Box detail,
             int selected,
-            float cueWidth,
-            out Box cue)
-        {
-            cue = default;
-            if (plateWidth < 32f || plateHeight < 32f)
-                return false;
-            float widest = cueWidth > CueWidth ? cueWidth : CueWidth;
-            if (widest < 100f)
-                widest = 100f;
-            float[] heights = { CueHeight, 32f };
-            Vec2 pin = default;
-            if (pins != null && selected >= 0 && selected < pins.Length)
-                pin = pins[selected].Center;
-            for (int pass = 0; pass < heights.Length; pass++)
-            {
-                float height = heights[pass];
-                for (float width = widest; width >= 100f - 0.5f; width -= 20f)
-                {
-                    Box best = default;
-                    float bestDist = float.MaxValue;
-                    bool found = false;
-                    ConsiderMarginSpots(
-                        plateWidth, plateHeight, pins, cards, hexes, detail, width, height, pin,
-                        ref best, ref bestDist, ref found);
-                    if (!found)
-                        continue;
-                    cue = best;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static void ConsiderMarginSpots(
-            float plateWidth,
-            float plateHeight,
-            Box[] pins,
-            Box[] cards,
-            Vec2[][] hexes,
-            Box detail,
-            float width,
-            float height,
-            Vec2 pin,
-            ref Box best,
-            ref float bestDist,
-            ref bool found)
-        {
-            if (width < 8f || height < 8f || width > plateWidth - Edge * 2f || height > plateHeight - Edge * 2f)
-                return;
-            var corners = new[]
-            {
-                new Box(Edge, Edge, width, height),
-                new Box(plateWidth - Edge - width, Edge, width, height),
-                new Box(Edge, plateHeight - Edge - height, width, height),
-                new Box(plateWidth - Edge - width, plateHeight - Edge - height, width, height)
-            };
-            for (int i = 0; i < corners.Length; i++)
-                ConsiderMarginSpot(corners[i], pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
-            for (float x = Edge; x + width <= plateWidth - Edge + 0.1f; x += 8f)
-            {
-                ConsiderMarginSpot(new Box(x, Edge, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
-                ConsiderMarginSpot(new Box(x, plateHeight - Edge - height, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
-            }
-
-            for (float y = Edge; y + height <= plateHeight - Edge + 0.1f; y += 8f)
-            {
-                ConsiderMarginSpot(new Box(Edge, y, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
-                ConsiderMarginSpot(new Box(plateWidth - Edge - width, y, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
-            }
-        }
-
-        private static void ConsiderMarginSpot(
-            Box spot,
-            Box[] pins,
-            Box[] cards,
-            Vec2[][] hexes,
-            Box detail,
-            float plateWidth,
-            float plateHeight,
-            Vec2 pin,
-            ref Box best,
-            ref float bestDist,
-            ref bool found)
-        {
-            if (!MarginCueOk(spot, pins, cards, hexes, detail, plateWidth, plateHeight))
-                return;
-            float reach = Distance(spot.Center, pin);
-            if (found && reach >= bestDist)
-                return;
-            best = spot;
-            bestDist = reach;
-            found = true;
-        }
-
-        private static bool MarginCueOk(
-            Box spot,
-            Box[] pins,
-            Box[] cards,
-            Vec2[][] hexes,
-            Box detail,
             float plateWidth,
             float plateHeight)
         {
-            if (spot.W < 8f || spot.H < 8f)
+            if (spot.W < 8f || spot.H < 8f || pins == null || selected < 0 || selected >= pins.Length)
                 return false;
-            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail) || !ClearsPins(spot, pins))
+            if (Distance(spot.Center, pins[selected].Center) > CueNearLimit)
                 return false;
-            if (cards != null && !ClearsCards(spot, cards, 4f))
+            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail))
                 return false;
-            if (CueCoversHex(InflateBox(spot, 16f), hexes))
+            for (int i = 0; i < pins.Length; i++)
+            {
+                if (pins[i].W > 1f && Separation(spot, pins[i]) < 1f)
+                    return false;
+            }
+
+            if (cards != null && !ClearsCards(spot, cards, 2f))
+                return false;
+            // Capture rejects a pill inflated by 12px. One extra pixel keeps the seat off that test.
+            if (CueCoversHex(InflateBox(spot, 13f), hexes))
                 return false;
             if (LeaderHitsRect(pins, cards, spot))
                 return false;
@@ -3313,18 +3221,127 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// A margin pill is clear of every hex, including the stroke around the fill, and sits on a plate edge.
+        /// Finds a pill within <see cref="CueNearLimit"/> of the selected pin that misses every hex.
+        /// Tries the gap beside the selected card, then a smaller pill, and never moves the cards.
         /// </summary>
-        private static bool CueRestsClearInMargin(Box cue, float plateWidth, float plateHeight, Vec2[][] hexes)
+        private static bool TrySeatCueNearAndClear(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            out Box cue)
         {
-            if (cue.W < 1f || plateWidth < 2f || plateHeight < 2f)
+            cue = default;
+            if (plateWidth < 32f || plateHeight < 32f || pins == null || selected < 0 || selected >= pins.Length)
                 return false;
-            const float band = 36f;
-            bool alongEdge = cue.YMin <= band || cue.XMin <= band
-                || plateHeight - cue.YMax <= band || plateWidth - cue.XMax <= band;
-            if (!alongEdge)
+            Vec2 pin = pins[selected].Center;
+            Box card = cards != null && selected < cards.Length ? cards[selected] : default;
+            float[] widths = { 220f, 200f, 180f, 160f, 140f, 120f, 100f, 88f, 72f, 64f, 48f };
+            float[] pillHeights = { 44f, 36f, 32f, 28f, 24f, 20f, 18f, 16f };
+            for (int w = 0; w < widths.Length; w++)
+            {
+                for (int h = 0; h < pillHeights.Length; h++)
+                {
+                    if (!TryCueNearClearSize(
+                        plateWidth, plateHeight, pins, cards, hexes, detail, selected, pin, card,
+                        widths[w], pillHeights[h], out cue))
+                        continue;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryCueNearClearSize(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Vec2 pin,
+            Box card,
+            float width,
+            float pillHeight,
+            out Box cue)
+        {
+            cue = default;
+            if (width < 8f || pillHeight < 8f || width > plateWidth - Edge * 2f || pillHeight > plateHeight - Edge * 2f)
                 return false;
-            return !CueCoversHex(InflateBox(cue, 8f), hexes);
+            if (card.W > 1f && TryCueBesideCard(
+                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, width, pillHeight, out cue))
+                return true;
+            float step = pillHeight <= 20f ? 4f : 8f;
+            float x0 = pin.X - CueNearLimit - width * 0.5f;
+            float y0 = pin.Y - CueNearLimit - pillHeight * 0.5f;
+            float x1 = pin.X + CueNearLimit - width * 0.5f;
+            float y1 = pin.Y + CueNearLimit - pillHeight * 0.5f;
+            for (float y = y0; y <= y1 + 0.1f; y += step)
+            {
+                for (float x = x0; x <= x1 + 0.1f; x += step)
+                {
+                    var spot = new Box(x, y, width, pillHeight);
+                    if (!CueSitsNearAndClear(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                        continue;
+                    cue = spot;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryCueBesideCard(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float width,
+            float pillHeight,
+            out Box cue)
+        {
+            cue = default;
+            const float gap = 4f;
+            float[] lefts = { card.XMax + gap, card.XMin - gap - width };
+            float yStart = card.YMin - pillHeight - gap;
+            float yEnd = card.YMax + gap;
+            for (int i = 0; i < lefts.Length; i++)
+            {
+                for (float y = yStart; y <= yEnd + 0.1f; y += 4f)
+                {
+                    var spot = new Box(lefts[i], y, width, pillHeight);
+                    if (!CueSitsNearAndClear(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                        continue;
+                    cue = spot;
+                    return true;
+                }
+            }
+
+            float[] tops = { card.YMin - gap - pillHeight, card.YMax + gap };
+            float xStart = card.XMin - width - gap;
+            float xEnd = card.XMax + gap;
+            for (int i = 0; i < tops.Length; i++)
+            {
+                for (float x = xStart; x <= xEnd + 0.1f; x += 4f)
+                {
+                    var spot = new Box(x, tops[i], width, pillHeight);
+                    if (!CueSitsNearAndClear(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                        continue;
+                    cue = spot;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static Box InflateBox(Box box, float margin)

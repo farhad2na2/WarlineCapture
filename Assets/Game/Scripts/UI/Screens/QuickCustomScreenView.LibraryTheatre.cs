@@ -2700,7 +2700,8 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(ring, (cardW - side) * 0.5f, ringY, side, side);
             }
 
-            if (ring.Find("ZoneCount") is TMP_Text count)
+            Transform countNode = ring.Find("ZoneCount");
+            if (countNode != null && countNode.TryGetComponent<TMP_Text>(out var count))
                 FitCopyInside(count, 11f);
         }
 

@@ -374,7 +374,7 @@ namespace Game.UI.Runtime
                 // City Crossroads' wide eastern flank projected into blocked fabric here.
                 view.AdvancePreferred = !view.AssaultAtBase && close < 8;
             }
-            if (!view.AdvancePreferred || view.MapOpen) return;
+            if (!view.AdvancePreferred) return;
             // The two labelled base objectives remain public when the camera leaves
             // the army. Keep a usable approach instead of repeatedly focusing the base.
             if (distance == float.MaxValue) nearest = watchSkirmish.PlayerBaseObjectivePosition;
@@ -383,6 +383,12 @@ namespace Game.UI.Runtime
             // offsets project behind its neutral ruins and become rejected attacks.
             float standoff = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? 30f : 25f;
             var ground = objective + direction.normalized * standoff;
+            if (view.MapOpen)
+            {
+                if (watchScenarioIndex != SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+                    ObserveAdvanceMapFocus(ground, ref view);
+                return;
+            }
             if (watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex)
             {
                 view.AdvanceGround = ObserveClearAttackGround(ground,
@@ -396,6 +402,9 @@ namespace Game.UI.Runtime
                 watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex &&
                 view.FocusEnemy.Available)
                 view.FocusAdvance = view.FocusEnemy;
+            else if (!view.AdvanceGround.Available &&
+                watchScenarioIndex != SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+                ObserveAdvanceMapFocus(ground, ref view);
         }
         private void ObserveAdvanceMapFocus(Vector3 goal, ref AriaSkirmishObservation view)
         {

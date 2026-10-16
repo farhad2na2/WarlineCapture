@@ -589,6 +589,48 @@ namespace Game.UI.Shell.Ecs
             }
         }
 
+        private static bool StepExpandedAdvanceNavigation(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            if (plan.AdvanceNavigation == 0)
+                return view.Time < plan.ObserveUntil && view.Time < plan.MapNavigationReadyAt;
+            plan.Intent = AriaSkirmishIntent.FindBase;
+            if (!view.MapOpen)
+            {
+                if (plan.MapNavigationStage == 1)
+                {
+                    Target(view.FocusAdvance, false, ref output);
+                    return true;
+                }
+                plan.AdvanceNavigation = 0; plan.MapNavigationStage = 0; plan.MapOpenedAt = 0;
+                plan.MapNavigationReadyAt = view.Time + 6;
+                plan.ObserveUntil = view.Time + 1;
+                return true;
+            }
+            if (plan.MapOpenedAt == 0) plan.MapOpenedAt = view.Time;
+            if (plan.MapNavigationStage == 1)
+            {
+                if (!view.FocusAdvance.Available && view.Time < plan.MapOpenedAt + 5) return true;
+                if (view.FocusAdvance.Available)
+                {
+                    plan.MapNavigationStage = 2;
+                    plan.MapFocusActions = touch.Actions;
+                }
+            }
+            if (plan.MapNavigationStage == 2 &&
+                !(touch.TargetId == -20011 && touch.Actions > plan.MapFocusActions))
+            {
+                Target(view.FocusAdvance, false, ref output);
+                if (view.FocusAdvanceDrag) { output.Drag = 1; output.DragEnd = view.FocusAdvanceDragEnd; }
+                return true;
+            }
+            // One camera gesture, then close and settle before any separate order.
+            plan.MapNavigationStage = 3;
+            Target(view.CloseMap, false, ref output);
+            return true;
+        }
+
         private static void StepExpandedBaseAssault(in AriaSkirmishObservation view,
             ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
             ref AriaPlayObservationComponent output)
@@ -655,6 +697,7 @@ namespace Game.UI.Shell.Ecs
                 touch.GestureRequested = 0;
                 return;
             }
+            if (StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
             if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
             // An air-capable starting force cannot leave its base undefended.
             // Reuse the visible, bounded construction sequence used by legacy
@@ -717,7 +760,14 @@ namespace Game.UI.Shell.Ecs
                 else
                 {
                     plan.Intent = AriaSkirmishIntent.FindBase;
-                    Target(view.FocusEnemy, false, ref output);
+                    if (view.FocusAdvance.Available &&
+                        (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011))
+                    {
+                        if (view.Time < plan.MapNavigationReadyAt) return;
+                        plan.AdvanceNavigation = 1; plan.MapNavigationStage = 1;
+                        StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output);
+                    }
+                    else Target(view.FocusEnemy, false, ref output);
                 }
                 return;
             }

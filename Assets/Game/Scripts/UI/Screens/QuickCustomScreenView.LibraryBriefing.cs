@@ -257,24 +257,11 @@ namespace Game.UI.Runtime
                 slotWidth = 540f;
             if (slotHeight < 2f)
                 slotHeight = 200f;
-            float aspect = texture.width / (float)texture.height;
-            float fittedWidth = slotWidth;
-            float fittedHeight = fittedWidth / aspect;
-            if (fittedHeight > slotHeight)
-            {
-                fittedHeight = slotHeight;
-                fittedWidth = fittedHeight * aspect;
-            }
-
-            picture.uvRect = new Rect(0f, 0f, 1f, 1f);
+            // approved-2/3: the battle art is a full-bleed plate across the panel, cropped to cover.
             picture.color = Color.white;
             picture.raycastTarget = false;
-            PlaceTopLeft(
-                picture.rectTransform,
-                (slotWidth - fittedWidth) * 0.5f,
-                (slotHeight - fittedHeight) * 0.5f,
-                fittedWidth,
-                fittedHeight);
+            PlaceTopLeft(picture.rectTransform, 0f, 0f, slotWidth, slotHeight);
+            SkirmishBattleCardWidget.FitCover(picture, slotWidth, slotHeight);
         }
 
         private string BriefingPreviewKey(SkirmishBriefingState briefing)

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -237,10 +238,12 @@ namespace Game.UI.Runtime
 
         public void BindRuntimeDependencies(
             IQuickCustomGameConfigStore configStore,
-            IMatchLaunchCommand launchCommand)
+            IMatchLaunchCommand launchCommand,
+            SkirmishLibraryFactory libraryFactory = null)
         {
             _configStore = configStore;
             _launchCommand = launchCommand;
+            UseLibraryFactory(libraryFactory);
             flowSystem.Initialize(this, _configStore);
         }
 
@@ -248,6 +251,8 @@ namespace Game.UI.Runtime
         {
             if (!baseAssaultPreset) return;
             SelectScenario(scenarioIndex);
+            if (!string.IsNullOrEmpty(SkirmishLibraryReturn.PendingScenarioId))
+                ReturnLibraryToScenario(SkirmishLibraryReturn.PendingScenarioId);
             _config.MapSeed = seed;
             Bind(_config);
             _configStore?.Apply(ReadConfigFromControls());
@@ -311,9 +316,28 @@ namespace Game.UI.Runtime
                         PresentResumeFailure();
                     return;
                 }
+
+                if (!LibraryAllowsLaunch(selected.ScenarioId))
+                    return;
             }
 
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);
+        }
+
+        private bool LibraryAllowsLaunch(string scenarioId)
+        {
+            try
+            {
+                ISkirmishLibraryViewModel library = Library;
+                if (!library.SelectScenarioId(scenarioId))
+                    return true;
+                return library.Launch();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("Skirmish library launch check skipped: " + exception.Message);
+                return true;
+            }
         }
 
         private void WireEvents()
@@ -353,7 +377,7 @@ namespace Game.UI.Runtime
 
         private void RandomizeSeed()
         {
-            _config.MapSeed = Random.Range(1, int.MaxValue);
+            _config.MapSeed = UnityEngine.Random.Range(1, int.MaxValue);
             if (seedInput != null)
                 seedInput.SetTextWithoutNotify(_config.MapSeed.ToString());
 

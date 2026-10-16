@@ -49,6 +49,27 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void NonProducerStartingStructureIsBoundIntoExpandedCatalog()
+        {
+            var baseline = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Skirmish/Construction.asset");
+            var scene = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset");
+            Assert.IsFalse(baseline.Spawnables.Exists(p => p != null && p.name == "Building_Satelite_Dish"),
+                "Precondition: the Base Assault baseline does not carry the Satellite Dish.");
+            var setup = new SkirmishResolvedSetup {
+                Readiness = Game.Skirmish.Contracts.SkirmishReadinessStage.Established,
+                ArmyProfileId = Game.Skirmish.Contracts.SkirmishArmyProfileId.GroundManeuver,
+                RoleOverlays = SkirmishRoleOverlayCatalog.CreateS002GroundSlice(),
+                Structures = new[] {
+                    new SkirmishResolvedStructureEntry { FactionId = 1, StructureId = Game.Skirmish.Contracts.SkirmishStructureIds.SatelliteDish }
+                }
+            };
+            using var catalog = SkirmishProductionCatalog.Create(setup, baseline, scene);
+            Assert.IsTrue(catalog.Config.Spawnables.Exists(p => p != null && p.name == "Building_Satelite_Dish"));
+        }
+
+        [Test]
         public void ProducerMessageOverrideDoesNotApplyToLegacyWorld()
         {
             using var world = new Unity.Entities.World("LegacyProducerMessage");

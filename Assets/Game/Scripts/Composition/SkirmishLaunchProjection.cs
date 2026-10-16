@@ -145,10 +145,13 @@ namespace Game.Composition
             UnitPrefabRegistryAuthoringConfig registry = mapPreset != null && mapPreset.buildingPlacement != null
                 ? mapPreset.buildingPlacement.UnitPrefabRegistryConfig
                 : null;
+            SkirmishDifficultyId difficulty = Game.Runtime.SkirmishLibraryLaunchContext.Difficulty;
+            if (difficulty < SkirmishDifficultyId.Recruit || difficulty > SkirmishDifficultyId.Commander)
+                difficulty = SkirmishDifficultyId.Regular;
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
                     catalogId,
-                    SkirmishDifficultyId.Regular,
+                    difficulty,
                     SkirmishSizeId.Standard,
                     seed,
                     authored,

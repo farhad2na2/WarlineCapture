@@ -1,0 +1,5114 @@
+{
+  "entries": [
+    {
+      "key": "ui.skirmish.theater.mp.title",
+      "source": "ARMOR APPROACH",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theater.ap.title",
+      "source": "CITY AIRFIELD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شهری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theater.db.subtitle",
+      "source": "Desert base battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theater.cc.subtitle",
+      "source": "City crossroads battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theater.mp.subtitle",
+      "source": "Armor approach battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theater.ib.subtitle",
+      "source": "Industrial basin battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theater.ap.subtitle",
+      "source": "City airfield battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای فرودگاه شهری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.objective.ba",
+      "source": "Base assault",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.objective.fc",
+      "source": "Frontline control",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.objective.bt",
+      "source": "Breakthrough",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.size.standard",
+      "source": "Standard",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "استاندارد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.size.war",
+      "source": "War",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جنگ"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.size.large_war",
+      "source": "Large War",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جنگ بزرگ"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.objective.ce",
+      "source": "Convoy escort",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.army.g",
+      "source": "Ground maneuver",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی زمینی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.army.a",
+      "source": "Air mobile",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی هوایی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.army.c",
+      "source": "Combined arms",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی ترکیبی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start.f",
+      "source": "Field base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start.e",
+      "source": "Established base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.locked.not_owned",
+      "source": "This battle is not owned yet.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "این نبرد مال تو نیست"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.locked.unavailable",
+      "source": "This battle is unavailable.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "این نبرد در دسترس نیست"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.locked.progression",
+      "source": "This battle is still locked.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "این نبرد هنوز قفل‌شده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.locked.missing",
+      "source": "This battle is missing.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "این نبرد گم‌شده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.locked.unknown",
+      "source": "This battle cannot open.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "این نبرد باز نمی‌شه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.locked.planned",
+      "source": "This battle is not ready.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "این نبرد هنوز آماده نیست"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.medal.first",
+      "source": "First medal",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نشان اول"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.medal.recruit",
+      "source": "Recruit medal",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نشان تازه‌کار"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.medal.regular",
+      "source": "Regular medal",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نشان عادی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.medal.veteran",
+      "source": "Veteran medal",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نشان پیشرفته"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.medal.commander",
+      "source": "Commander medal",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نشان فرمانده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.result.battlefield",
+      "source": "BATTLEFIELD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "میدان نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s001.title",
+      "source": "Desert Base · Base Assault · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s001.subtitle",
+      "source": "Desert Base · Base Assault · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s001.description",
+      "source": "Briefing for Desert Base · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s001.purpose",
+      "source": "Objective for Desert Base · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s002.title",
+      "source": "Desert Base · Base Assault · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s002.subtitle",
+      "source": "Desert Base · Base Assault · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s002.description",
+      "source": "Briefing for Desert Base · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s002.purpose",
+      "source": "Objective for Desert Base · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s003.title",
+      "source": "Desert Base · Base Assault · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s003.subtitle",
+      "source": "Desert Base · Base Assault · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s003.description",
+      "source": "Briefing for Desert Base · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s003.purpose",
+      "source": "Objective for Desert Base · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s004.title",
+      "source": "Desert Base · Base Assault · Air Mobile · Established Base (ui.skirmish.s004.title)",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s004.subtitle",
+      "source": "Desert Base · Base Assault · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s004.description",
+      "source": "Briefing for Desert Base · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s004.purpose",
+      "source": "Objective for Desert Base · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s005.title",
+      "source": "Desert Base · Base Assault · Combined Arms · Field Base (ui.skirmish.s005.title)",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s005.subtitle",
+      "source": "Desert Base · Base Assault · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s005.description",
+      "source": "Briefing for Desert Base · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s005.purpose",
+      "source": "Objective for Desert Base · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s006.title",
+      "source": "Desert Base · Base Assault · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s006.subtitle",
+      "source": "Desert Base · Base Assault · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s006.description",
+      "source": "Briefing for Desert Base · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s006.purpose",
+      "source": "Objective for Desert Base · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s007.title",
+      "source": "Desert Base · Frontline Control · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s007.subtitle",
+      "source": "Desert Base · Frontline Control · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s007.description",
+      "source": "Briefing for Desert Base · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s007.purpose",
+      "source": "Objective for Desert Base · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s008.title",
+      "source": "Desert Base · Frontline Control · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s008.subtitle",
+      "source": "Desert Base · Frontline Control · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s008.description",
+      "source": "Briefing for Desert Base · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s008.purpose",
+      "source": "Objective for Desert Base · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s009.title",
+      "source": "Desert Base · Frontline Control · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s009.subtitle",
+      "source": "Desert Base · Frontline Control · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s009.description",
+      "source": "Briefing for Desert Base · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s009.purpose",
+      "source": "Objective for Desert Base · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s010.title",
+      "source": "Desert Base · Frontline Control · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s010.subtitle",
+      "source": "Desert Base · Frontline Control · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s010.description",
+      "source": "Briefing for Desert Base · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s010.purpose",
+      "source": "Objective for Desert Base · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s011.title",
+      "source": "Desert Base · Frontline Control · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s011.subtitle",
+      "source": "Desert Base · Frontline Control · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s011.description",
+      "source": "Briefing for Desert Base · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s011.purpose",
+      "source": "Objective for Desert Base · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s012.title",
+      "source": "Desert Base · Frontline Control · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s012.subtitle",
+      "source": "Desert Base · Frontline Control · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s012.description",
+      "source": "Briefing for Desert Base · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s012.purpose",
+      "source": "Objective for Desert Base · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s013.title",
+      "source": "Desert Base · Breakthrough · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s013.subtitle",
+      "source": "Desert Base · Breakthrough · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s013.description",
+      "source": "Briefing for Desert Base · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s013.purpose",
+      "source": "Objective for Desert Base · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s014.title",
+      "source": "Desert Base · Breakthrough · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s014.subtitle",
+      "source": "Desert Base · Breakthrough · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s014.description",
+      "source": "Briefing for Desert Base · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s014.purpose",
+      "source": "Objective for Desert Base · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s015.title",
+      "source": "Desert Base · Breakthrough · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s015.subtitle",
+      "source": "Desert Base · Breakthrough · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s015.description",
+      "source": "Briefing for Desert Base · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s015.purpose",
+      "source": "Objective for Desert Base · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s016.title",
+      "source": "Desert Base · Breakthrough · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s016.subtitle",
+      "source": "Desert Base · Breakthrough · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s016.description",
+      "source": "Briefing for Desert Base · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s016.purpose",
+      "source": "Objective for Desert Base · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s017.title",
+      "source": "Desert Base · Breakthrough · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s017.subtitle",
+      "source": "Desert Base · Breakthrough · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s017.description",
+      "source": "Briefing for Desert Base · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s017.purpose",
+      "source": "Objective for Desert Base · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s018.title",
+      "source": "Desert Base · Breakthrough · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s018.subtitle",
+      "source": "Desert Base · Breakthrough · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s018.description",
+      "source": "Briefing for Desert Base · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s018.purpose",
+      "source": "Objective for Desert Base · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s019.title",
+      "source": "Desert Base · Convoy Escort · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s019.subtitle",
+      "source": "Desert Base · Convoy Escort · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s019.description",
+      "source": "Briefing for Desert Base · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s019.purpose",
+      "source": "Objective for Desert Base · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s020.title",
+      "source": "Desert Base · Convoy Escort · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s020.subtitle",
+      "source": "Desert Base · Convoy Escort · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s020.description",
+      "source": "Briefing for Desert Base · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s020.purpose",
+      "source": "Objective for Desert Base · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s021.title",
+      "source": "Desert Base · Convoy Escort · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s021.subtitle",
+      "source": "Desert Base · Convoy Escort · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s021.description",
+      "source": "Briefing for Desert Base · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s021.purpose",
+      "source": "Objective for Desert Base · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s022.title",
+      "source": "Desert Base · Convoy Escort · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s022.subtitle",
+      "source": "Desert Base · Convoy Escort · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s022.description",
+      "source": "Briefing for Desert Base · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s022.purpose",
+      "source": "Objective for Desert Base · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s023.title",
+      "source": "Desert Base · Convoy Escort · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s023.subtitle",
+      "source": "Desert Base · Convoy Escort · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s023.description",
+      "source": "Briefing for Desert Base · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s023.purpose",
+      "source": "Objective for Desert Base · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s024.title",
+      "source": "Desert Base · Convoy Escort · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s024.subtitle",
+      "source": "Desert Base · Convoy Escort · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s024.description",
+      "source": "Briefing for Desert Base · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه پایگاه کویری اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s024.purpose",
+      "source": "Objective for Desert Base · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s025.title",
+      "source": "City Crossroads · Base Assault · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s025.subtitle",
+      "source": "City Crossroads · Base Assault · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s025.description",
+      "source": "Briefing for City Crossroads · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s025.purpose",
+      "source": "Objective for City Crossroads · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s026.title",
+      "source": "City Crossroads · Base Assault · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s026.subtitle",
+      "source": "City Crossroads · Base Assault · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s026.description",
+      "source": "Briefing for City Crossroads · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s026.purpose",
+      "source": "Objective for City Crossroads · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s027.title",
+      "source": "City Crossroads · Base Assault · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s027.subtitle",
+      "source": "City Crossroads · Base Assault · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s027.description",
+      "source": "Briefing for City Crossroads · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s027.purpose",
+      "source": "Objective for City Crossroads · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s028.title",
+      "source": "City Crossroads · Base Assault · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s028.subtitle",
+      "source": "City Crossroads · Base Assault · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s028.description",
+      "source": "Briefing for City Crossroads · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s028.purpose",
+      "source": "Objective for City Crossroads · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s029.title",
+      "source": "City Crossroads · Base Assault · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s029.subtitle",
+      "source": "City Crossroads · Base Assault · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s029.description",
+      "source": "Briefing for City Crossroads · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s029.purpose",
+      "source": "Objective for City Crossroads · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s030.title",
+      "source": "City Crossroads · Base Assault · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s030.subtitle",
+      "source": "City Crossroads · Base Assault · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s030.description",
+      "source": "Briefing for City Crossroads · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s030.purpose",
+      "source": "Objective for City Crossroads · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s031.title",
+      "source": "City Crossroads · Frontline Control · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s031.subtitle",
+      "source": "City Crossroads · Frontline Control · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s031.description",
+      "source": "Briefing for City Crossroads · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s031.purpose",
+      "source": "Objective for City Crossroads · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s032.title",
+      "source": "City Crossroads · Frontline Control · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s032.subtitle",
+      "source": "City Crossroads · Frontline Control · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s032.description",
+      "source": "Briefing for City Crossroads · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s032.purpose",
+      "source": "Objective for City Crossroads · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s033.title",
+      "source": "City Crossroads · Frontline Control · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s033.subtitle",
+      "source": "City Crossroads · Frontline Control · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s033.description",
+      "source": "Briefing for City Crossroads · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s033.purpose",
+      "source": "Objective for City Crossroads · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s034.title",
+      "source": "City Crossroads · Frontline Control · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s034.subtitle",
+      "source": "City Crossroads · Frontline Control · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s034.description",
+      "source": "Briefing for City Crossroads · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s034.purpose",
+      "source": "Objective for City Crossroads · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s035.title",
+      "source": "City Crossroads · Frontline Control · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s035.subtitle",
+      "source": "City Crossroads · Frontline Control · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s035.description",
+      "source": "Briefing for City Crossroads · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s035.purpose",
+      "source": "Objective for City Crossroads · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s036.title",
+      "source": "City Crossroads · Frontline Control · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s036.subtitle",
+      "source": "City Crossroads · Frontline Control · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s036.description",
+      "source": "Briefing for City Crossroads · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s036.purpose",
+      "source": "Objective for City Crossroads · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s037.title",
+      "source": "City Crossroads · Breakthrough · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s037.subtitle",
+      "source": "City Crossroads · Breakthrough · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s037.description",
+      "source": "Briefing for City Crossroads · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s037.purpose",
+      "source": "Objective for City Crossroads · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s038.title",
+      "source": "City Crossroads · Breakthrough · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s038.subtitle",
+      "source": "City Crossroads · Breakthrough · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s038.description",
+      "source": "Briefing for City Crossroads · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s038.purpose",
+      "source": "Objective for City Crossroads · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s039.title",
+      "source": "City Crossroads · Breakthrough · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s039.subtitle",
+      "source": "City Crossroads · Breakthrough · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s039.description",
+      "source": "Briefing for City Crossroads · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s039.purpose",
+      "source": "Objective for City Crossroads · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s040.title",
+      "source": "City Crossroads · Breakthrough · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s040.subtitle",
+      "source": "City Crossroads · Breakthrough · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s040.description",
+      "source": "Briefing for City Crossroads · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s040.purpose",
+      "source": "Objective for City Crossroads · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s041.title",
+      "source": "City Crossroads · Breakthrough · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s041.subtitle",
+      "source": "City Crossroads · Breakthrough · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s041.description",
+      "source": "Briefing for City Crossroads · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s041.purpose",
+      "source": "Objective for City Crossroads · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s042.title",
+      "source": "City Crossroads · Breakthrough · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s042.subtitle",
+      "source": "City Crossroads · Breakthrough · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s042.description",
+      "source": "Briefing for City Crossroads · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s042.purpose",
+      "source": "Objective for City Crossroads · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s043.title",
+      "source": "City Crossroads · Convoy Escort · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s043.subtitle",
+      "source": "City Crossroads · Convoy Escort · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s043.description",
+      "source": "Briefing for City Crossroads · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s043.purpose",
+      "source": "Objective for City Crossroads · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s044.title",
+      "source": "City Crossroads · Convoy Escort · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s044.subtitle",
+      "source": "City Crossroads · Convoy Escort · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s044.description",
+      "source": "Briefing for City Crossroads · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s044.purpose",
+      "source": "Objective for City Crossroads · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s045.title",
+      "source": "City Crossroads · Convoy Escort · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s045.subtitle",
+      "source": "City Crossroads · Convoy Escort · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s045.description",
+      "source": "Briefing for City Crossroads · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s045.purpose",
+      "source": "Objective for City Crossroads · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s046.title",
+      "source": "City Crossroads · Convoy Escort · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s046.subtitle",
+      "source": "City Crossroads · Convoy Escort · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s046.description",
+      "source": "Briefing for City Crossroads · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s046.purpose",
+      "source": "Objective for City Crossroads · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s047.title",
+      "source": "City Crossroads · Convoy Escort · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s047.subtitle",
+      "source": "City Crossroads · Convoy Escort · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s047.description",
+      "source": "Briefing for City Crossroads · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s047.purpose",
+      "source": "Objective for City Crossroads · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s048.title",
+      "source": "City Crossroads · Convoy Escort · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "چهارراه شهر اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s048.subtitle",
+      "source": "City Crossroads · Convoy Escort · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت چهارراه شهر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s048.description",
+      "source": "Briefing for City Crossroads · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه چهارراه شهر اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s048.purpose",
+      "source": "Objective for City Crossroads · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s049.title",
+      "source": "Mountain Pass · Base Assault · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s049.subtitle",
+      "source": "Mountain Pass · Base Assault · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s049.description",
+      "source": "Briefing for Mountain Pass · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s049.purpose",
+      "source": "Objective for Mountain Pass · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s050.title",
+      "source": "Mountain Pass · Base Assault · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s050.subtitle",
+      "source": "Mountain Pass · Base Assault · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s050.description",
+      "source": "Briefing for Mountain Pass · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s050.purpose",
+      "source": "Objective for Mountain Pass · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s051.title",
+      "source": "Mountain Pass · Base Assault · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s051.subtitle",
+      "source": "Mountain Pass · Base Assault · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s051.description",
+      "source": "Briefing for Mountain Pass · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s051.purpose",
+      "source": "Objective for Mountain Pass · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s052.title",
+      "source": "Mountain Pass · Base Assault · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s052.subtitle",
+      "source": "Mountain Pass · Base Assault · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s052.description",
+      "source": "Briefing for Mountain Pass · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s052.purpose",
+      "source": "Objective for Mountain Pass · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s053.title",
+      "source": "Mountain Pass · Base Assault · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s053.subtitle",
+      "source": "Mountain Pass · Base Assault · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s053.description",
+      "source": "Briefing for Mountain Pass · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s053.purpose",
+      "source": "Objective for Mountain Pass · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s054.title",
+      "source": "Mountain Pass · Base Assault · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s054.subtitle",
+      "source": "Mountain Pass · Base Assault · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s054.description",
+      "source": "Briefing for Mountain Pass · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s054.purpose",
+      "source": "Objective for Mountain Pass · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s055.title",
+      "source": "Mountain Pass · Frontline Control · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s055.subtitle",
+      "source": "Mountain Pass · Frontline Control · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s055.description",
+      "source": "Briefing for Mountain Pass · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s055.purpose",
+      "source": "Objective for Mountain Pass · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s056.title",
+      "source": "Mountain Pass · Frontline Control · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s056.subtitle",
+      "source": "Mountain Pass · Frontline Control · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s056.description",
+      "source": "Briefing for Mountain Pass · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s056.purpose",
+      "source": "Objective for Mountain Pass · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s057.title",
+      "source": "Mountain Pass · Frontline Control · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s057.subtitle",
+      "source": "Mountain Pass · Frontline Control · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s057.description",
+      "source": "Briefing for Mountain Pass · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s057.purpose",
+      "source": "Objective for Mountain Pass · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s058.title",
+      "source": "Mountain Pass · Frontline Control · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s058.subtitle",
+      "source": "Mountain Pass · Frontline Control · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s058.description",
+      "source": "Briefing for Mountain Pass · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s058.purpose",
+      "source": "Objective for Mountain Pass · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s059.title",
+      "source": "Mountain Pass · Frontline Control · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s059.subtitle",
+      "source": "Mountain Pass · Frontline Control · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s059.description",
+      "source": "Briefing for Mountain Pass · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s059.purpose",
+      "source": "Objective for Mountain Pass · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s060.title",
+      "source": "Mountain Pass · Frontline Control · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s060.subtitle",
+      "source": "Mountain Pass · Frontline Control · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s060.description",
+      "source": "Briefing for Mountain Pass · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s060.purpose",
+      "source": "Objective for Mountain Pass · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s061.title",
+      "source": "Mountain Pass · Breakthrough · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s061.subtitle",
+      "source": "Mountain Pass · Breakthrough · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s061.description",
+      "source": "Briefing for Mountain Pass · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s061.purpose",
+      "source": "Objective for Mountain Pass · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s062.title",
+      "source": "Mountain Pass · Breakthrough · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s062.subtitle",
+      "source": "Mountain Pass · Breakthrough · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s062.description",
+      "source": "Briefing for Mountain Pass · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s062.purpose",
+      "source": "Objective for Mountain Pass · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s063.title",
+      "source": "Mountain Pass · Breakthrough · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s063.subtitle",
+      "source": "Mountain Pass · Breakthrough · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s063.description",
+      "source": "Briefing for Mountain Pass · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s063.purpose",
+      "source": "Objective for Mountain Pass · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s064.title",
+      "source": "Mountain Pass · Breakthrough · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s064.subtitle",
+      "source": "Mountain Pass · Breakthrough · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s064.description",
+      "source": "Briefing for Mountain Pass · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s064.purpose",
+      "source": "Objective for Mountain Pass · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s065.title",
+      "source": "Mountain Pass · Breakthrough · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s065.subtitle",
+      "source": "Mountain Pass · Breakthrough · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s065.description",
+      "source": "Briefing for Mountain Pass · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s065.purpose",
+      "source": "Objective for Mountain Pass · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s066.title",
+      "source": "Mountain Pass · Breakthrough · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s066.subtitle",
+      "source": "Mountain Pass · Breakthrough · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s066.description",
+      "source": "Briefing for Mountain Pass · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s066.purpose",
+      "source": "Objective for Mountain Pass · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s067.title",
+      "source": "Mountain Pass · Convoy Escort · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s067.subtitle",
+      "source": "Mountain Pass · Convoy Escort · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s067.description",
+      "source": "Briefing for Mountain Pass · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s067.purpose",
+      "source": "Objective for Mountain Pass · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s068.title",
+      "source": "Mountain Pass · Convoy Escort · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s068.subtitle",
+      "source": "Mountain Pass · Convoy Escort · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s068.description",
+      "source": "Briefing for Mountain Pass · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s068.purpose",
+      "source": "Objective for Mountain Pass · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s069.title",
+      "source": "Mountain Pass · Convoy Escort · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s069.subtitle",
+      "source": "Mountain Pass · Convoy Escort · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s069.description",
+      "source": "Briefing for Mountain Pass · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s069.purpose",
+      "source": "Objective for Mountain Pass · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s070.title",
+      "source": "Mountain Pass · Convoy Escort · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s070.subtitle",
+      "source": "Mountain Pass · Convoy Escort · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s070.description",
+      "source": "Briefing for Mountain Pass · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s070.purpose",
+      "source": "Objective for Mountain Pass · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s071.title",
+      "source": "Mountain Pass · Convoy Escort · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s071.subtitle",
+      "source": "Mountain Pass · Convoy Escort · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s071.description",
+      "source": "Briefing for Mountain Pass · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s071.purpose",
+      "source": "Objective for Mountain Pass · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s072.title",
+      "source": "Mountain Pass · Convoy Escort · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذر زرهی اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s072.subtitle",
+      "source": "Mountain Pass · Convoy Escort · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گذر زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s072.description",
+      "source": "Briefing for Mountain Pass · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه گذر زرهی اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s072.purpose",
+      "source": "Objective for Mountain Pass · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s073.title",
+      "source": "Industrial Basin · Base Assault · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s073.subtitle",
+      "source": "Industrial Basin · Base Assault · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s073.description",
+      "source": "Briefing for Industrial Basin · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s073.purpose",
+      "source": "Objective for Industrial Basin · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s074.title",
+      "source": "Industrial Basin · Base Assault · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s074.subtitle",
+      "source": "Industrial Basin · Base Assault · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s074.description",
+      "source": "Briefing for Industrial Basin · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s074.purpose",
+      "source": "Objective for Industrial Basin · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s075.title",
+      "source": "Industrial Basin · Base Assault · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s075.subtitle",
+      "source": "Industrial Basin · Base Assault · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s075.description",
+      "source": "Briefing for Industrial Basin · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s075.purpose",
+      "source": "Objective for Industrial Basin · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s076.title",
+      "source": "Industrial Basin · Base Assault · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s076.subtitle",
+      "source": "Industrial Basin · Base Assault · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s076.description",
+      "source": "Briefing for Industrial Basin · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s076.purpose",
+      "source": "Objective for Industrial Basin · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s077.title",
+      "source": "Industrial Basin · Base Assault · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s077.subtitle",
+      "source": "Industrial Basin · Base Assault · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s077.description",
+      "source": "Briefing for Industrial Basin · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s077.purpose",
+      "source": "Objective for Industrial Basin · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s078.title",
+      "source": "Industrial Basin · Base Assault · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s078.subtitle",
+      "source": "Industrial Basin · Base Assault · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s078.description",
+      "source": "Briefing for Industrial Basin · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s078.purpose",
+      "source": "Objective for Industrial Basin · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s079.title",
+      "source": "Industrial Basin · Frontline Control · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s079.subtitle",
+      "source": "Industrial Basin · Frontline Control · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s079.description",
+      "source": "Briefing for Industrial Basin · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s079.purpose",
+      "source": "Objective for Industrial Basin · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s080.title",
+      "source": "Industrial Basin · Frontline Control · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s080.subtitle",
+      "source": "Industrial Basin · Frontline Control · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s080.description",
+      "source": "Briefing for Industrial Basin · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s080.purpose",
+      "source": "Objective for Industrial Basin · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s081.title",
+      "source": "Industrial Basin · Frontline Control · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s081.subtitle",
+      "source": "Industrial Basin · Frontline Control · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s081.description",
+      "source": "Briefing for Industrial Basin · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s081.purpose",
+      "source": "Objective for Industrial Basin · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s082.title",
+      "source": "Industrial Basin · Frontline Control · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s082.subtitle",
+      "source": "Industrial Basin · Frontline Control · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s082.description",
+      "source": "Briefing for Industrial Basin · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s082.purpose",
+      "source": "Objective for Industrial Basin · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s083.title",
+      "source": "Industrial Basin · Frontline Control · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s083.subtitle",
+      "source": "Industrial Basin · Frontline Control · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s083.description",
+      "source": "Briefing for Industrial Basin · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s083.purpose",
+      "source": "Objective for Industrial Basin · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s084.title",
+      "source": "Industrial Basin · Frontline Control · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s084.subtitle",
+      "source": "Industrial Basin · Frontline Control · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s084.description",
+      "source": "Briefing for Industrial Basin · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s084.purpose",
+      "source": "Objective for Industrial Basin · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s085.title",
+      "source": "Industrial Basin · Breakthrough · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s085.subtitle",
+      "source": "Industrial Basin · Breakthrough · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s085.description",
+      "source": "Briefing for Industrial Basin · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s085.purpose",
+      "source": "Objective for Industrial Basin · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s086.title",
+      "source": "Industrial Basin · Breakthrough · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s086.subtitle",
+      "source": "Industrial Basin · Breakthrough · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s086.description",
+      "source": "Briefing for Industrial Basin · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s086.purpose",
+      "source": "Objective for Industrial Basin · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s087.title",
+      "source": "Industrial Basin · Breakthrough · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s087.subtitle",
+      "source": "Industrial Basin · Breakthrough · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s087.description",
+      "source": "Briefing for Industrial Basin · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s087.purpose",
+      "source": "Objective for Industrial Basin · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s088.title",
+      "source": "Industrial Basin · Breakthrough · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s088.subtitle",
+      "source": "Industrial Basin · Breakthrough · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s088.description",
+      "source": "Briefing for Industrial Basin · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s088.purpose",
+      "source": "Objective for Industrial Basin · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s089.title",
+      "source": "Industrial Basin · Breakthrough · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s089.subtitle",
+      "source": "Industrial Basin · Breakthrough · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s089.description",
+      "source": "Briefing for Industrial Basin · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s089.purpose",
+      "source": "Objective for Industrial Basin · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s090.title",
+      "source": "Industrial Basin · Breakthrough · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s090.subtitle",
+      "source": "Industrial Basin · Breakthrough · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s090.description",
+      "source": "Briefing for Industrial Basin · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s090.purpose",
+      "source": "Objective for Industrial Basin · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s091.title",
+      "source": "Industrial Basin · Convoy Escort · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s091.subtitle",
+      "source": "Industrial Basin · Convoy Escort · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s091.description",
+      "source": "Briefing for Industrial Basin · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s091.purpose",
+      "source": "Objective for Industrial Basin · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s092.title",
+      "source": "Industrial Basin · Convoy Escort · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s092.subtitle",
+      "source": "Industrial Basin · Convoy Escort · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s092.description",
+      "source": "Briefing for Industrial Basin · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s092.purpose",
+      "source": "Objective for Industrial Basin · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s093.title",
+      "source": "Industrial Basin · Convoy Escort · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s093.subtitle",
+      "source": "Industrial Basin · Convoy Escort · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s093.description",
+      "source": "Briefing for Industrial Basin · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s093.purpose",
+      "source": "Objective for Industrial Basin · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s094.title",
+      "source": "Industrial Basin · Convoy Escort · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s094.subtitle",
+      "source": "Industrial Basin · Convoy Escort · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s094.description",
+      "source": "Briefing for Industrial Basin · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s094.purpose",
+      "source": "Objective for Industrial Basin · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s095.title",
+      "source": "Industrial Basin · Convoy Escort · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s095.subtitle",
+      "source": "Industrial Basin · Convoy Escort · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s095.description",
+      "source": "Briefing for Industrial Basin · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s095.purpose",
+      "source": "Objective for Industrial Basin · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s096.title",
+      "source": "Industrial Basin · Convoy Escort · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حوضه صنعتی اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s096.subtitle",
+      "source": "Industrial Basin · Convoy Escort · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت حوضه صنعتی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s096.description",
+      "source": "Briefing for Industrial Basin · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه حوضه صنعتی اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s096.purpose",
+      "source": "Objective for Industrial Basin · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s097.title",
+      "source": "Airfield Plains · Base Assault · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s097.subtitle",
+      "source": "Airfield Plains · Base Assault · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s097.description",
+      "source": "Briefing for Airfield Plains · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه یورش پایگاه زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s097.purpose",
+      "source": "Objective for Airfield Plains · Base Assault · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s098.title",
+      "source": "Airfield Plains · Base Assault · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s098.subtitle",
+      "source": "Airfield Plains · Base Assault · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s098.description",
+      "source": "Briefing for Airfield Plains · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه یورش پایگاه زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s098.purpose",
+      "source": "Objective for Airfield Plains · Base Assault · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s099.title",
+      "source": "Airfield Plains · Base Assault · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s099.subtitle",
+      "source": "Airfield Plains · Base Assault · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s099.description",
+      "source": "Briefing for Airfield Plains · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه یورش پایگاه هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s099.purpose",
+      "source": "Objective for Airfield Plains · Base Assault · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s100.title",
+      "source": "Airfield Plains · Base Assault · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s100.subtitle",
+      "source": "Airfield Plains · Base Assault · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s100.description",
+      "source": "Briefing for Airfield Plains · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه یورش پایگاه هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s100.purpose",
+      "source": "Objective for Airfield Plains · Base Assault · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s101.title",
+      "source": "Airfield Plains · Base Assault · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s101.subtitle",
+      "source": "Airfield Plains · Base Assault · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s101.description",
+      "source": "Briefing for Airfield Plains · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه یورش پایگاه ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s101.purpose",
+      "source": "Objective for Airfield Plains · Base Assault · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s102.title",
+      "source": "Airfield Plains · Base Assault · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s102.subtitle",
+      "source": "Airfield Plains · Base Assault · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s102.description",
+      "source": "Briefing for Airfield Plains · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه یورش پایگاه ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s102.purpose",
+      "source": "Objective for Airfield Plains · Base Assault · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف یورش پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s103.title",
+      "source": "Airfield Plains · Frontline Control · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s103.subtitle",
+      "source": "Airfield Plains · Frontline Control · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s103.description",
+      "source": "Briefing for Airfield Plains · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه کنترل خط مقدم زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s103.purpose",
+      "source": "Objective for Airfield Plains · Frontline Control · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s104.title",
+      "source": "Airfield Plains · Frontline Control · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s104.subtitle",
+      "source": "Airfield Plains · Frontline Control · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s104.description",
+      "source": "Briefing for Airfield Plains · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه کنترل خط مقدم زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s104.purpose",
+      "source": "Objective for Airfield Plains · Frontline Control · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s105.title",
+      "source": "Airfield Plains · Frontline Control · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s105.subtitle",
+      "source": "Airfield Plains · Frontline Control · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s105.description",
+      "source": "Briefing for Airfield Plains · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه کنترل خط مقدم هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s105.purpose",
+      "source": "Objective for Airfield Plains · Frontline Control · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s106.title",
+      "source": "Airfield Plains · Frontline Control · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s106.subtitle",
+      "source": "Airfield Plains · Frontline Control · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s106.description",
+      "source": "Briefing for Airfield Plains · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه کنترل خط مقدم هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s106.purpose",
+      "source": "Objective for Airfield Plains · Frontline Control · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s107.title",
+      "source": "Airfield Plains · Frontline Control · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s107.subtitle",
+      "source": "Airfield Plains · Frontline Control · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s107.description",
+      "source": "Briefing for Airfield Plains · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه کنترل خط مقدم ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s107.purpose",
+      "source": "Objective for Airfield Plains · Frontline Control · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s108.title",
+      "source": "Airfield Plains · Frontline Control · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s108.subtitle",
+      "source": "Airfield Plains · Frontline Control · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s108.description",
+      "source": "Briefing for Airfield Plains · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه کنترل خط مقدم ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s108.purpose",
+      "source": "Objective for Airfield Plains · Frontline Control · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف کنترل خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s109.title",
+      "source": "Airfield Plains · Breakthrough · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s109.subtitle",
+      "source": "Airfield Plains · Breakthrough · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s109.description",
+      "source": "Briefing for Airfield Plains · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه شکستن خط زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s109.purpose",
+      "source": "Objective for Airfield Plains · Breakthrough · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s110.title",
+      "source": "Airfield Plains · Breakthrough · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s110.subtitle",
+      "source": "Airfield Plains · Breakthrough · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s110.description",
+      "source": "Briefing for Airfield Plains · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه شکستن خط زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s110.purpose",
+      "source": "Objective for Airfield Plains · Breakthrough · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s111.title",
+      "source": "Airfield Plains · Breakthrough · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s111.subtitle",
+      "source": "Airfield Plains · Breakthrough · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s111.description",
+      "source": "Briefing for Airfield Plains · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه شکستن خط هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s111.purpose",
+      "source": "Objective for Airfield Plains · Breakthrough · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s112.title",
+      "source": "Airfield Plains · Breakthrough · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s112.subtitle",
+      "source": "Airfield Plains · Breakthrough · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s112.description",
+      "source": "Briefing for Airfield Plains · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه شکستن خط هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s112.purpose",
+      "source": "Objective for Airfield Plains · Breakthrough · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s113.title",
+      "source": "Airfield Plains · Breakthrough · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s113.subtitle",
+      "source": "Airfield Plains · Breakthrough · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s113.description",
+      "source": "Briefing for Airfield Plains · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه شکستن خط ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s113.purpose",
+      "source": "Objective for Airfield Plains · Breakthrough · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s114.title",
+      "source": "Airfield Plains · Breakthrough · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s114.subtitle",
+      "source": "Airfield Plains · Breakthrough · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s114.description",
+      "source": "Briefing for Airfield Plains · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه شکستن خط ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s114.purpose",
+      "source": "Objective for Airfield Plains · Breakthrough · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف شکستن خط"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s115.title",
+      "source": "Airfield Plains · Convoy Escort · Ground Maneuver · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s115.subtitle",
+      "source": "Airfield Plains · Convoy Escort · Ground Maneuver · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s115.description",
+      "source": "Briefing for Airfield Plains · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه اسکورت کاروان زمینی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s115.purpose",
+      "source": "Objective for Airfield Plains · Convoy Escort · Ground Maneuver · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s116.title",
+      "source": "Airfield Plains · Convoy Escort · Ground Maneuver · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s116.subtitle",
+      "source": "Airfield Plains · Convoy Escort · Ground Maneuver · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s116.description",
+      "source": "Briefing for Airfield Plains · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه اسکورت کاروان زمینی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s116.purpose",
+      "source": "Objective for Airfield Plains · Convoy Escort · Ground Maneuver · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s117.title",
+      "source": "Airfield Plains · Convoy Escort · Air Mobile · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s117.subtitle",
+      "source": "Airfield Plains · Convoy Escort · Air Mobile · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s117.description",
+      "source": "Briefing for Airfield Plains · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه اسکورت کاروان هوایی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s117.purpose",
+      "source": "Objective for Airfield Plains · Convoy Escort · Air Mobile · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s118.title",
+      "source": "Airfield Plains · Convoy Escort · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s118.subtitle",
+      "source": "Airfield Plains · Convoy Escort · Air Mobile · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s118.description",
+      "source": "Briefing for Airfield Plains · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه اسکورت کاروان هوایی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s118.purpose",
+      "source": "Objective for Airfield Plains · Convoy Escort · Air Mobile · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s119.title",
+      "source": "Airfield Plains · Convoy Escort · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s119.subtitle",
+      "source": "Airfield Plains · Convoy Escort · Combined Arms · Field Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s119.description",
+      "source": "Briefing for Airfield Plains · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه اسکورت کاروان ترکیبی پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s119.purpose",
+      "source": "Objective for Airfield Plains · Convoy Escort · Combined Arms · Field Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s120.title",
+      "source": "Airfield Plains · Convoy Escort · Combined Arms · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرودگاه اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s120.subtitle",
+      "source": "Airfield Plains · Convoy Escort · Combined Arms · Established Base card",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت فرودگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s120.description",
+      "source": "Briefing for Airfield Plains · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توجیه فرودگاه اسکورت کاروان ترکیبی پایگاه آماده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.s120.purpose",
+      "source": "Objective for Airfield Plains · Convoy Escort · Combined Arms · Established Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اسکورت کاروان"
+        }
+      ]
+    }
+  ]
+}

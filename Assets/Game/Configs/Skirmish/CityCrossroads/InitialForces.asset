@@ -36,15 +36,15 @@ MonoBehaviour:
       spawnOffset: {x: 20, y: -35}
     buildings:
     - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
-      originOffset: {x: 0, y: -20}
+      originOffset: {x: -53, y: -28}
     - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
-      originOffset: {x: -20, y: 10}
+      originOffset: {x: -74, y: -30}
     - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
-      originOffset: {x: 15, y: 19}
+      originOffset: {x: 15, y: 22}
     - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
-      originOffset: {x: -30, y: -12}
+      originOffset: {x: -103, y: -90}
     - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-      originOffset: {x: -20, y: -30}
+      originOffset: {x: -14, y: -30}
   - factionId: 2
     spawnCell: {x: 1100, y: 400}
     units:

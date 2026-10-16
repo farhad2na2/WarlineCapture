@@ -34,7 +34,11 @@ namespace Game.UI.Runtime
         {
             if(!IsOpen)return false;
             if(confirming){confirming=false;modal.SetActive(false);return true;}
-            if(UiShellRuntimeGateway.TryReadSkirmish(out var model)&&model.Finished)Send(UiSkirmishAction.MainMenu);
+            if(UiShellRuntimeGateway.TryReadSkirmish(out var model)&&model.Finished)
+            {
+                if(!string.IsNullOrEmpty(model.CatalogId)) ReturnToLibrary(model);
+                else Send(UiSkirmishAction.MainMenu);
+            }
             return true;
         }
         public static SkirmishMatchView Create()
@@ -75,6 +79,10 @@ namespace Game.UI.Runtime
                 ()=>Send(UiSkirmishAction.Replay),
                 ()=>Send(UiSkirmishAction.MainMenu),
                 ()=>Send(UiSkirmishAction.AdjustSetup));
+            resultCard.BindBattlefield(()=>
+            {
+                if(UiShellRuntimeGateway.TryReadSkirmish(out var open)) ReturnToLibrary(open);
+            });
             var confirmation=Panel("ConfirmationActions",shade,false);
             confirmation.anchorMin=confirmation.anchorMax=new Vector2(.5f,.5f);
             confirmation.sizeDelta=new Vector2(760,280);
@@ -172,6 +180,14 @@ namespace Game.UI.Runtime
         }
 
         private static void Send(UiSkirmishAction action)=>UiShellRuntimeGateway.TryRequestSkirmish(action);
+        private static void ReturnToLibrary(UiSkirmishModel model)
+        {
+            string scenarioId = !string.IsNullOrEmpty(model.CatalogId) ? model.CatalogId : model.MedalScenarioId;
+            SkirmishLibraryReturn.Queue(scenarioId);
+            foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Include))
+                setup.ReturnLibraryToScenario(scenarioId);
+            Send(UiSkirmishAction.AdjustSetup);
+        }
         private static ModeResultContent BuildResult(UiSkirmishModel model)
         {
             string mapKey = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "ui.skirmish.industrial_basin_map"
@@ -185,6 +201,15 @@ namespace Game.UI.Runtime
             string complete = Text("complete", "Complete");
             string failed = Text("failed", "Failed");
             bool victory = model.ResultStars > 0;
+            SkirmishResultMedalLine medal = SkirmishResultMedalPresentation.Describe(
+                model.MedalIsFirstAward, model.MedalScenarioId, model.MedalDifficulty);
+            string medalText = string.Empty;
+            if (medal.Visible)
+            {
+                string first = UiShellRuntimeGateway.Localization.Get(medal.FirstLocKey, "First medal");
+                string difficulty = UiShellRuntimeGateway.Localization.Get(medal.DifficultyLocKey, "Medal");
+                medalText = first + "\n" + model.MedalScenarioId + "\n" + difficulty;
+            }
             return new ModeResultContent
             {
                 Victory = victory,
@@ -215,7 +240,12 @@ namespace Game.UI.Runtime
                 LeaveLabel = "MAIN MENU",
                 ShowAdjust = true,
                 ActionsEnabled = true,
+                ShowMedal = medal.Visible,
+                MedalText = medalText,
+                ShowBattlefieldBack = !string.IsNullOrEmpty(model.CatalogId),
+                BattlefieldBackLabel = Text("battlefield", "BATTLEFIELD"),
                 Signature = model.ResultTitle + "|" + model.ResultStars + "|" + model.PlayerUnitsLost + "|" + model.ScenarioIndex + "|" +
+                            (medal.Visible ? model.MedalScenarioId : string.Empty) + "|" + model.CatalogId + "|" +
                             UiShellRuntimeGateway.Localization.CurrentLocaleCode
             };
         }

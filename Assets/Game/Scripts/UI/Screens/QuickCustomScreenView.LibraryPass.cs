@@ -23,16 +23,26 @@ namespace Game.UI.Runtime
         private bool _libraryLayoutHooked;
         private bool _suppressSavedMatch;
 
+        /// <summary>
+        /// The capture save. One row per catalog id and difficulty, the same shape as <c>skirmishMedals</c>.
+        /// S001 and S002 are Desert Base, S025 is City Crossroads, S073 is Industrial Basin.
+        /// </summary>
+        public static readonly (string CatalogId, SkirmishDifficultyId Difficulty)[] CaptureMedalGrants =
+        {
+            ("S001", SkirmishDifficultyId.Recruit),
+            ("S001", SkirmishDifficultyId.Regular),
+            ("S002", SkirmishDifficultyId.Recruit),
+            ("S025", SkirmishDifficultyId.Regular),
+            ("S073", SkirmishDifficultyId.Recruit)
+        };
+
         public void ApplyLibraryCaptureDemo(Action<SkirmishDifficultyId> setLaunchDifficulty = null)
         {
             _suppressSavedMatch = true;
             EnsureLibraryCards();
             var medals = new CaptureMedalReader(_catalogEntries);
-            medals.Grant("S001", SkirmishDifficultyId.Recruit);
-            medals.Grant("S001", SkirmishDifficultyId.Regular);
-            medals.Grant("S002", SkirmishDifficultyId.Recruit);
-            medals.Grant("S025", SkirmishDifficultyId.Regular);
-            medals.Grant("S073", SkirmishDifficultyId.Recruit);
+            for (int i = 0; i < CaptureMedalGrants.Length; i++)
+                medals.Grant(CaptureMedalGrants[i].CatalogId, CaptureMedalGrants[i].Difficulty);
             var model = new SkirmishLibraryViewModel(
                 _catalogEntries,
                 medals,
@@ -56,6 +66,20 @@ namespace Game.UI.Runtime
 
             public bool Has(string catalogId, SkirmishDifficultyId difficulty) =>
                 _earned.Contains(Key(catalogId, difficulty));
+
+            public int CountTier(SkirmishDifficultyId difficulty)
+            {
+                string tier = ((byte)difficulty).ToString();
+                int count = 0;
+                foreach (string key in _earned)
+                {
+                    int bar = key.LastIndexOf('|');
+                    if (bar >= 0 && bar < key.Length - 1 && key.Substring(bar + 1) == tier)
+                        count++;
+                }
+
+                return count;
+            }
 
             public int CountFor(string mapId) => CountFor(mapId, null);
 

@@ -338,7 +338,7 @@ namespace Game.UI.Runtime
                 SetActive(_libraryFilters, _filtersOpen);
                 SetActive(_recommendedPanel, !battlefield);
                 SetActive(_difficultyRow, battlefield);
-                SetActive(_medalRow, true);
+                SetActive(_medalRow, battlefield);
                 SetActive(_progressTrack, !battlefield);
                 SetActive(_statRow, battlefield);
                 SetActive(_medalGrid, false);
@@ -1642,10 +1642,10 @@ namespace Game.UI.Runtime
                 _medalRow = keptMedal;
             var order = battlefield
                 ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
-                : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "MedalRow", "RecommendedNext" };
+                : new[] { "TheatreSummary", "Title", descriptionName, "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 76f, 40f, 80f, 84f, 104f, 272f };
+                : new[] { 76f, 40f, 80f, 84f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -1658,6 +1658,22 @@ namespace Game.UI.Runtime
                     element.preferredHeight = 0f;
                     element.minHeight = 0f;
                     element.flexibleHeight = 0f;
+                }
+            }
+
+            if (!battlefield)
+            {
+                for (int i = 0; i < column.childCount; i++)
+                {
+                    Transform medal = column.GetChild(i);
+                    if (medal == null || medal.name != "MedalRow")
+                        continue;
+                    medal.gameObject.SetActive(false);
+                    LayoutElement medalElement = medal.GetComponent<LayoutElement>() ?? medal.gameObject.AddComponent<LayoutElement>();
+                    medalElement.ignoreLayout = true;
+                    medalElement.preferredHeight = 0f;
+                    medalElement.minHeight = 0f;
+                    medalElement.flexibleHeight = 0f;
                 }
             }
 

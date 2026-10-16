@@ -1667,7 +1667,12 @@ namespace Game.Editor
 
             Transform strip = FindNamed(root.transform, "OverallProgressStrip");
             if (strip == null || !strip.gameObject.activeInHierarchy)
-                return;
+            {
+                throw new InvalidOperationException(
+                    "Battles-won strip is missing in theatre locale=" + locale +
+                    ". Tier counts have nowhere else to appear.");
+            }
+
             TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
             string expected = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
             if (count == null || !SkirmishBattleLibraryArt.SameRenderedText(count.text, expected))
@@ -1675,6 +1680,52 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     "Battles-won strip reads '" + (count != null ? count.text : string.Empty) +
                     "' locale=" + locale + ". Expected " + expected + ".");
+            }
+
+            RejectStripMatchesLedger(strip, locale);
+        }
+
+        private static void RejectStripMatchesLedger(Transform strip, string locale)
+        {
+            if (strip == null || !strip.gameObject.activeInHierarchy)
+            {
+                throw new InvalidOperationException(
+                    "Battles-won strip is missing in theatre locale=" + locale +
+                    ". Tier counts have nowhere else to appear.");
+            }
+
+            var grants = QuickCustomScreenView.CaptureMedalGrants;
+            var rows = new SkirmishMedalSaveData[grants.Length];
+            for (int i = 0; i < grants.Length; i++)
+            {
+                rows[i] = new SkirmishMedalSaveData
+                {
+                    catalogId = grants[i].CatalogId,
+                    difficulty = (byte)grants[i].Difficulty,
+                    contentVersion = 1,
+                    sessionId = "capture"
+                };
+            }
+
+            SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
+            int[] expected =
+            {
+                ledger.Recruit,
+                ledger.Regular,
+                ledger.Veteran,
+                ledger.Commander
+            };
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Transform node = strip.Find("Medal" + i + "/Count");
+                TMP_Text tier = node != null ? node.GetComponent<TMP_Text>() : null;
+                string shown = tier != null ? StripBidiMarks(tier.text).Trim() : string.Empty;
+                if (tier == null || !tier.gameObject.activeInHierarchy || shown != expected[i].ToString())
+                {
+                    throw new InvalidOperationException(
+                        "Battles-won strip tier " + i + " reads '" + shown +
+                        "' locale=" + locale + ". The medal ledger has " + expected[i] + ".");
+                }
             }
         }
 
@@ -2558,7 +2609,16 @@ namespace Game.Editor
                     }
                 }
 
-                if (medalRows != 1)
+                if (theatre)
+                {
+                    if (medalRows != 0)
+                    {
+                        throw new InvalidOperationException(
+                            "Briefing column must have no MedalRow in state " + state +
+                            "; tier counts belong on the battles-won strip. Found " + medalRows + ": " + listed);
+                    }
+                }
+                else if (medalRows != 1)
                 {
                     throw new InvalidOperationException(
                         "Briefing column expected one MedalRow in state " + state + " and found " + medalRows + ": " + listed);

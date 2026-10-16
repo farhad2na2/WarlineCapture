@@ -11,6 +11,9 @@ namespace Game.Skirmish.Contracts
 
         int CountFor(string mapId, string objectiveId);
 
+        /// <summary>Rows of this tier in the medal ledger. Not the selected district.</summary>
+        int CountTier(SkirmishDifficultyId difficulty);
+
         void Refresh();
     }
 }

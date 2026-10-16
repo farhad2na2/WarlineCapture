@@ -842,24 +842,14 @@ namespace Game.UI.Runtime
 
         private SkirmishMedalTotals TotalsAcrossCatalog()
         {
-            var totals = new SkirmishMedalTotals();
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < _catalog.Count; i++)
+            // Theatre overall tiers are the ledger rows, not the selected district's pin.
+            return new SkirmishMedalTotals
             {
-                string scenarioId = _catalog[i].ScenarioId;
-                if (!seen.Add(scenarioId))
-                    continue;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Recruit))
-                    totals.Recruit++;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Regular))
-                    totals.Regular++;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Veteran))
-                    totals.Veteran++;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Commander))
-                    totals.Commander++;
-            }
-
-            return totals;
+                Recruit = _medals.CountTier(SkirmishDifficultyId.Recruit),
+                Regular = _medals.CountTier(SkirmishDifficultyId.Regular),
+                Veteran = _medals.CountTier(SkirmishDifficultyId.Veteran),
+                Commander = _medals.CountTier(SkirmishDifficultyId.Commander)
+            };
         }
 
         private int CountPublished(string mapId, string objectiveId)
@@ -1156,6 +1146,7 @@ namespace Game.UI.Runtime
             public bool Has(string catalogId, SkirmishDifficultyId difficulty) => false;
             public int CountFor(string mapId) => 0;
             public int CountFor(string mapId, string objectiveId) => 0;
+            public int CountTier(SkirmishDifficultyId difficulty) => 0;
             public void Refresh() { }
         }
     }

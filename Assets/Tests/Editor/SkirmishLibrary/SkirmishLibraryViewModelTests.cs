@@ -519,6 +519,19 @@ namespace Game.Tests.Editor
         public int CountFor(string mapId, string objectiveId) =>
             _ledger.CountFor(mapId, objectiveId);
 
+        public int CountTier(SkirmishDifficultyId difficulty)
+        {
+            SkirmishMedalDifficultyTotals totals = _ledger.TotalsByDifficulty();
+            switch (difficulty)
+            {
+                case SkirmishDifficultyId.Recruit: return totals.Recruit;
+                case SkirmishDifficultyId.Regular: return totals.Regular;
+                case SkirmishDifficultyId.Veteran: return totals.Veteran;
+                case SkirmishDifficultyId.Commander: return totals.Commander;
+                default: return 0;
+            }
+        }
+
         public void Refresh() { }
     }
 }

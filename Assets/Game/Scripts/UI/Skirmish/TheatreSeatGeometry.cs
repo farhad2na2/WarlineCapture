@@ -694,9 +694,101 @@ namespace Game.UI.Runtime
                 };
             }
 
+            DrawnPlateWidth = plateWidth;
+            DrawnPlateHeight = plateHeight;
+            DrawnDetail = detail;
+            DrawnViewport = viewport;
+            DrawnNames = names;
             TryWriteDump(
                 DumpFileName(plateWidth, plateHeight, ShotSelected),
                 FormatDump(plateWidth, plateHeight, detail, viewport, names));
+        }
+
+        private static float DrawnPlateWidth;
+        private static float DrawnPlateHeight;
+        private static Box DrawnDetail;
+        private static Box DrawnViewport;
+        private static NameMeasure[] DrawnNames;
+
+        /// <summary>
+        /// Replaces one dumped name with the width TMP measured after the label was fitted.
+        /// The replay reads these numbers instead of estimating the Persian line again.
+        /// </summary>
+        public static void NoteDrawnName(
+            string mapId,
+            float font,
+            float boxWidth,
+            float boxHeight,
+            float preferredWidth,
+            float preferredHeight)
+        {
+            if (DrawnNames == null || string.IsNullOrEmpty(mapId))
+                return;
+            for (int i = 0; i < DrawnNames.Length; i++)
+            {
+                if (!string.Equals(DrawnNames[i].MapId, mapId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                NameMeasure name = DrawnNames[i];
+                name.Font = font;
+                name.BoxWidth = boxWidth;
+                name.BoxHeight = boxHeight;
+                name.PreferredWidth = preferredWidth;
+                name.PreferredHeight = preferredHeight;
+                DrawnNames[i] = name;
+                break;
+            }
+
+            if (!SeatingReady || string.IsNullOrEmpty(DumpDirectory))
+                return;
+            TryWriteDump(
+                DumpFileName(DrawnPlateWidth, DrawnPlateHeight, ShotSelected),
+                FormatDump(DrawnPlateWidth, DrawnPlateHeight, DrawnDetail, DrawnViewport, DrawnNames));
+        }
+
+        /// <summary>
+        /// True when a dumped name is wider than its box. <paramref name="mapId"/> is the first overflow.
+        /// </summary>
+        public static bool TryReadNameOverflow(
+            string json,
+            out string mapId,
+            out string text,
+            out float preferred,
+            out float boxWidth)
+        {
+            mapId = string.Empty;
+            text = string.Empty;
+            preferred = 0f;
+            boxWidth = 0f;
+            if (string.IsNullOrEmpty(json) || !JsonStringsAreClean(json))
+                return false;
+            int names = json.IndexOf("\"names\"", StringComparison.Ordinal);
+            if (names < 0)
+                return false;
+            int cursor = names;
+            while (cursor < json.Length)
+            {
+                int id = json.IndexOf("\"id\"", cursor, StringComparison.Ordinal);
+                if (id < 0)
+                    break;
+                int next = json.IndexOf("\"id\"", id + 4, StringComparison.Ordinal);
+                string slice = next < 0 ? json.Substring(id) : json.Substring(id, next - id);
+                float line = ReadNumber(slice, "\"preferredW\"", 0);
+                float box = ReadNumber(slice, "\"boxW\"", 0);
+                if (box > 1f && line > box + 2f)
+                {
+                    mapId = ReadString(slice, "id", string.Empty);
+                    text = ReadString(slice, "text", string.Empty);
+                    preferred = line;
+                    boxWidth = box;
+                    return true;
+                }
+
+                if (next < 0)
+                    break;
+                cursor = next;
+            }
+
+            return false;
         }
 
         private static string Json(string value)

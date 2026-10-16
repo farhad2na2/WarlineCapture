@@ -375,7 +375,21 @@ internal static class Program
             && Math.Abs(plateWidth - 1039.6f) < 0.05f
             && Math.Abs(plateHeight - 724f) < 0.05f
             && json.IndexOf("\"portraitMinW\": 112", StringComparison.Ordinal) >= 0
-            && json.IndexOf("DESERT\\nBASE", StringComparison.Ordinal) >= 0;
+            && json.IndexOf("DESERT\\nBASE", StringComparison.Ordinal) >= 0
+            && !TheatreSeatGeometry.TryReadNameOverflow(json, out _, out _, out _, out _);
+        var overflowName = names[0];
+        overflowName.MapId = "MP";
+        overflowName.Text = "گذرگاه کوهستان";
+        overflowName.PreferredWidth = 115.9f;
+        overflowName.BoxWidth = 112f;
+        string overflow = TheatreSeatGeometry.FormatDump(1039.6f, 724f, detail, view, new[] { overflowName });
+        bool caught = TheatreSeatGeometry.TryReadNameOverflow(
+            overflow, out string overflowMap, out string overflowText, out float overflowPreferred, out float overflowBox)
+            && overflowMap == "MP"
+            && overflowText.IndexOf("گذرگاه", StringComparison.Ordinal) >= 0
+            && Math.Abs(overflowPreferred - 115.9f) < 0.05f
+            && Math.Abs(overflowBox - 112f) < 0.05f;
+        ok = ok && caught;
         Console.WriteLine((ok ? "PASS" : "FAIL") + " dump round-trip plate="
             + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
@@ -406,6 +420,17 @@ internal static class Program
             }
 
             bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            if (TheatreSeatGeometry.TryReadNameOverflow(
+                json, out string overflowMap, out string overflowText, out float overflowPreferred, out float overflowBox))
+            {
+                failed++;
+                Console.WriteLine("FAIL replay name " + Path.GetFileName(files[i])
+                    + " map=" + overflowMap
+                    + " preferred=" + overflowPreferred.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " width=" + overflowBox.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " text=" + overflowText);
+            }
+
             Evaluate(
                 ratio,
                 notch,

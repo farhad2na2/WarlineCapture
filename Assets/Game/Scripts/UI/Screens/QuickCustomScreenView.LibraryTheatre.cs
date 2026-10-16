@@ -2416,6 +2416,10 @@ namespace Game.UI.Runtime
             float fontFloor = cardW <= TheatreSeatGeometry.PortraitMinWidth + 8f
                 ? TheatreSeatGeometry.PortraitCompactFontFloor
                 : TheatreSeatGeometry.NameFontFloor;
+            if (fontFloor > TheatreSeatGeometry.PortraitCompactFontFloor
+                && boxWidth <= 114f
+                && ContainsArabicLetter(source))
+                fontFloor = TheatreSeatGeometry.PortraitCompactFontFloor;
             for (float size = TheatreSeatGeometry.NameFontCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
                 if (binding != null)
@@ -2455,10 +2459,14 @@ namespace Game.UI.Runtime
                 name.lineSpacing = 0f;
                 name.ForceMeshUpdate();
                 if (PortraitNameFitsRect(name, source))
+                {
+                    RecordDrawnZoneName(name);
                     return;
+                }
             }
 
             TightenPortraitName(name, card, source, wide);
+            RecordDrawnZoneName(name);
         }
 
         private static void TightenPortraitName(TMP_Text name, RectTransform card, string source, bool wide)
@@ -2468,6 +2476,9 @@ namespace Game.UI.Runtime
             float size = card.sizeDelta.x <= TheatreSeatGeometry.PortraitMinWidth + 8f
                 ? TheatreSeatGeometry.PortraitCompactFontFloor
                 : TheatreSeatGeometry.NameFontFloor;
+            float boxWidth = Mathf.Max(8f, card.sizeDelta.x - 12f);
+            if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f && ContainsArabicLetter(source))
+                size = TheatreSeatGeometry.PortraitCompactFontFloor;
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(size, size);
@@ -2503,6 +2514,11 @@ namespace Game.UI.Runtime
             if (name == null || name.rectTransform == null)
                 return false;
             if (name.isTextTruncated || name.isTextOverflowing)
+                return false;
+            float width = name.rectTransform.rect.width > 1f
+                ? name.rectTransform.rect.width
+                : name.rectTransform.sizeDelta.x;
+            if (MeasuredNameWidth(name) > width + 2f)
                 return false;
             if (name.preferredHeight > name.rectTransform.rect.height + 1.5f)
                 return false;
@@ -2728,7 +2744,7 @@ namespace Game.UI.Runtime
             if (rect != null && height > rect.sizeDelta.y + 0.5f)
                 rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
             float line = MeasuredNameWidth(name);
-            if (needed > height + 1.5f || line > boxWidth + 1.5f)
+            if (line > boxWidth + 1.5f)
             {
                 name.text = source;
                 name.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2738,6 +2754,42 @@ namespace Game.UI.Runtime
             }
 
             return true;
+        }
+
+        private static void RecordDrawnZoneName(TMP_Text name)
+        {
+            if (name == null || name.rectTransform == null)
+                return;
+            RectTransform card = name.rectTransform.parent as RectTransform;
+            if (card == null || !card.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
+                return;
+            string mapId = card.name.Substring("ZoneCard_".Length);
+            float boxWidth = name.rectTransform.rect.width > 1f
+                ? name.rectTransform.rect.width
+                : name.rectTransform.sizeDelta.x;
+            float boxHeight = name.rectTransform.rect.height > 1f
+                ? name.rectTransform.rect.height
+                : name.rectTransform.sizeDelta.y;
+            TheatreSeatGeometry.NoteDrawnName(
+                mapId,
+                name.fontSize,
+                boxWidth,
+                boxHeight,
+                MeasuredNameWidth(name),
+                name.preferredHeight);
+        }
+
+        private static bool ContainsArabicLetter(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return false;
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (value[i] > 127)
+                    return true;
+            }
+
+            return false;
         }
 
         private static float MeasuredNameWidth(TMP_Text name)

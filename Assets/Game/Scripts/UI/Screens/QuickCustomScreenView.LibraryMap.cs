@@ -60,8 +60,43 @@ namespace Game.UI.Runtime
             }
         }
 
+        private TMP_FontAsset _libraryWidgetFont;
+
+        /// <summary>Widget context for the standalone battle-library widgets, sized to the live safe frame.</summary>
+        private SkirmishWidgetContext LibraryWidgetContext(SkirmishBattleCardState card)
+        {
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            Canvas canvas = _libraryPins != null ? _libraryPins.GetComponentInParent<Canvas>() : null;
+            RectTransform canvasRect = canvas != null && canvas.rootCanvas != null ? canvas.rootCanvas.transform as RectTransform : null;
+            Vector2 size = canvasRect != null && canvasRect.rect.width > 10f ? canvasRect.rect.size : new Vector2(1920f, 1080f);
+            SkirmishWidgetContext context = SkirmishWidgetContext.ForFrame(size, new Rect(Vector2.zero, size), fa);
+            // The library canvas works in a 1080-tall reference space; keep widget pixels in that space.
+            context.Scale = 1f;
+            context.Font = LibraryWidgetFont();
+            context.Localize = key => GameLocalization.Get(key, string.Empty);
+            context.ApplyText = (text, value, min, max) => SetCopy(text, value, min, max);
+            context.ZoneTitle = mapId => MapDisplayTitle(mapId, context.RightToLeft);
+            string scenarioId = card.ScenarioId;
+            string mapId = card.MapId;
+            context.LoadPreview = key => ResolveGridPreview(key, scenarioId, mapId, out _);
+            return context;
+        }
+
+        private TMP_FontAsset LibraryWidgetFont()
+        {
+            if (_libraryWidgetFont != null)
+                return _libraryWidgetFont;
+            Transform host = _libraryPins != null ? _libraryPins : transform;
+            TMP_Text probe = CreateLabel(host, "FontProbe", 16f);
+            _libraryWidgetFont = probe.font;
+            DestroyImmediate(probe.gameObject);
+            return _libraryWidgetFont;
+        }
+
         private RectTransform CreateBattleCard(Transform parent, SkirmishBattleCardState card, bool pin, float width = LibraryPinWidth, float height = LibraryPinHeight, GridCardSlots gridSlots = default)
         {
+            if (pin)
+                return CreateMapPinWidget(parent, card);
             var button = CreateChromeButton(parent, SkirmishLibraryControlNames.BattleCard(card.ScenarioId));
             var rect = button.GetComponent<RectTransform>();
             if (pin && SkirmishBattlefieldPinLayout.TryGet(card.PinId, out Vector2 centre))
@@ -173,6 +208,35 @@ namespace Game.UI.Runtime
             return rect;
         }
 
+        private RectTransform CreateMapPinWidget(Transform parent, SkirmishBattleCardState card)
+        {
+            SkirmishWidgetContext context = LibraryWidgetContext(card);
+            bool laid = SkirmishBattlefieldPinLayout.TryGet(card.PinId, out Vector2 centre);
+            Rect slot = default;
+            bool packed = laid && TryPackedPinSlot(parent as RectTransform, centre, out slot);
+            if (packed)
+            {
+                // approved-2: two pins per row, three rows, sized from the plate rather than a fixed reference.
+                float narrow = context.Aspect == SkirmishWidgetAspect.Narrow ? 0.82f : 1f;
+                context.Scale = slot.width / (SkirmishBattleCardWidget.PinReferenceSize.x * narrow);
+            }
+
+            RectTransform rect = SkirmishBattleCardWidget.BuildMapPin(parent, card, context, OnLibraryCard);
+            if (packed)
+            {
+                PlaceTopLeft(rect, slot.x, slot.y, slot.width, slot.height);
+            }
+            else if (laid)
+            {
+                rect.anchorMin = rect.anchorMax = new Vector2(centre.x, 1f - centre.y);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition = Vector2.zero;
+            }
+
+            AddSiblingShadow(rect);
+            return rect;
+        }
+
         private void AddMedalIcons(Transform parent, SkirmishMedalMask medals, float x, float y, float size = 24f)
         {
             var difficulties = new[]
@@ -269,56 +333,124 @@ namespace Game.UI.Runtime
             if (_objectiveColumn == null)
                 return;
             ClearChildren(_objectiveColumn);
-            PlaceTopLeft(_objectiveColumn, 8f, 8f, 116f, 520f);
+            const float listWidth = 196f;
+            const float rowHeight = 92f;
+            PlaceTopLeft(_objectiveColumn, 8f, 8f, listWidth, 4f * (rowHeight + 8f));
             if (field.Tabs == null)
                 return;
             for (int i = 0; i < field.Tabs.Length; i++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[i];
                 var button = CreateChromeButton(_objectiveColumn, SkirmishLibraryControlNames.ObjectiveTab(objective.ObjectiveId));
-                PlaceTopLeft(button.GetComponent<RectTransform>(), 0f, i * 108f, 112f, 100f);
+                PlaceTopLeft(button.GetComponent<RectTransform>(), 0f, i * (rowHeight + 8f), listWidth, rowHeight);
                 bool selected = string.Equals(objective.ObjectiveId, field.SelectedObjectiveId, StringComparison.OrdinalIgnoreCase);
                 TintButton(button, selected, true);
+                // approved-2 labelled list: medallion tile on the leading edge, name and count stacked beside it.
+                const float tile = 56f;
+                float tileX = fa ? listWidth - 6f - tile : 6f;
                 var medallion = new GameObject("Medallion", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 medallion.transform.SetParent(button.transform, false);
-                PlaceTopLeft(medallion.rectTransform, 28f, 4f, 56f, 56f);
+                PlaceTopLeft(medallion.rectTransform, tileX, (rowHeight - tile) * 0.5f, tile, tile);
                 medallion.sprite = ZoneMedallionSprite();
                 medallion.preserveAspect = true;
                 medallion.raycastTarget = false;
                 medallion.color = selected ? new Color(1f, 0.96f, 0.82f, 1f) : Color.white;
                 var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 icon.transform.SetParent(button.transform, false);
-                PlaceTopLeft(icon.rectTransform, 40f, 16f, 32f, 32f);
+                PlaceTopLeft(icon.rectTransform, tileX + 12f, (rowHeight - 32f) * 0.5f, 32f, 32f);
                 icon.preserveAspect = true;
                 ShowIcon(icon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
                 SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
-                var label = CreateLabel(button.transform, "Label", 14f);
-                var count = CreateLabel(button.transform, "Count", 14f);
-                const float countWidth = 40f;
-                if (fa)
-                {
-                    PlaceTopLeft(count.rectTransform, 4f, 64f, countWidth, 28f);
-                    PlaceTopLeft(label.rectTransform, 46f, 62f, 62f, 32f);
-                    label.alignment = TextAlignmentOptions.MidlineRight;
-                }
-                else
-                {
-                    PlaceTopLeft(label.rectTransform, 4f, 62f, 62f, 32f);
-                    PlaceTopLeft(count.rectTransform, 68f, 64f, countWidth, 28f);
-                    label.alignment = TextAlignmentOptions.MidlineLeft;
-                }
-
+                var label = CreateLabel(button.transform, "Label", 22f);
+                var count = CreateLabel(button.transform, "Count", 22f);
+                float textX = fa ? 6f : 6f + tile + 6f;
+                float textWidth = listWidth - tile - 18f;
+                PlaceTopLeft(label.rectTransform, textX, 6f, textWidth, 52f);
+                PlaceTopLeft(count.rectTransform, textX, 58f, textWidth, 28f);
+                label.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                label.isRightToLeftText = fa;
                 label.textWrappingMode = TextWrappingModes.Normal;
                 label.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(label, shortLabel, 12f, 16f);
-                count.alignment = TextAlignmentOptions.Center;
+                label.maxVisibleLines = 2;
+                SetCopy(label, UpperLatin(shortLabel), LibraryFontFloor, 26f);
+                label.color = selected ? new Color(0.98f, 0.84f, 0.42f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
+                count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
                 count.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(count, objective.WonCount + "/" + objective.PublishedCount, 13f, 16f);
-                count.isRightToLeftText = false;
+                bool comingSoon = objective.PublishedCount <= 0;
+                string ratio = objective.WonCount + "/" + objective.PublishedCount;
+                string countCopy = comingSoon ? SkirmishBattleLibraryArt.ComingSoon(fa) : fa ? SkirmishWidgetContext.ToPersianDigits(ratio) : ratio;
+                // FinishLibraryText forces ObjectiveTab_/Count to LTR (it expects digits), which reversed "به زودی".
+                if (comingSoon)
+                    count.gameObject.name = "ComingSoon";
+                count.isRightToLeftText = comingSoon && fa;
+                count.overflowMode = TextOverflowModes.Overflow;
+                SetCopy(count, countCopy, comingSoon ? 14f : LibraryFontFloor, 24f);
+                if (comingSoon)
+                {
+                    count.enableAutoSizing = true;
+                    count.fontSizeMin = 12f;
+                    count.fontSizeMax = 18f;
+                    V3LocalizedTextBindingView countBinding = count.GetComponent<V3LocalizedTextBindingView>();
+                    if (countBinding != null)
+                        countBinding.ConfigureFontBounds(12f, 18f);
+                }
+                if (!comingSoon)
+                    count.isRightToLeftText = false;
+                label.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
             }
+        }
+
+        private const float PinGutter = 14f;
+        private const float PinRailReserve = 196f + 8f + 14f;
+
+        /// <summary>
+        /// Lays the six pins out as approved-2 does: two columns by three rows (S001/S002 on top, S005/S006 at the bottom),
+        /// with a light zigzag. The ordinal comes from the shared pin layout (left/centre/right, top/bottom), so ordering stays
+        /// with P2's layout. Pin height is bounded by three rows in the plate, which is approved-2's proportion (about a quarter).
+        /// </summary>
+        private static readonly float[] PinZigzagLeft = { 0f, -0.03f, -0.04f };
+        private static readonly float[] PinZigzagRight = { 0f, 0.04f, -0.02f };
+
+        private static bool TryPackedPinSlot(RectTransform parent, Vector2 centre, out Rect slot)
+        {
+            slot = default;
+            if (parent == null)
+                return false;
+            float width = parent.rect.width;
+            float height = parent.rect.height;
+            if (width < 400f || height < 260f)
+                return false;
+            int legacyColumn = centre.x < 0.42f ? 0 : centre.x < 0.68f ? 1 : 2;
+            int legacyRow = centre.y < 0.5f ? 0 : 1;
+            int ordinal = legacyRow * 3 + legacyColumn;
+            int column = ordinal % 2;
+            int row = ordinal / 2;
+            float left = PinRailReserve;
+            float availWidth = width - left - 12f;
+            float availHeight = height - 24f;
+            float aspect = SkirmishBattleCardWidget.PinReferenceSize.y / SkirmishBattleCardWidget.PinReferenceSize.x;
+            float pinHeight = (availHeight - PinGutter * 2f) / 3f;
+            float pinWidth = pinHeight / aspect;
+            float maxWidth = Mathf.Min(availWidth * 0.42f, 360f);
+            if (pinWidth > maxWidth)
+            {
+                pinWidth = maxWidth;
+                pinHeight = pinWidth * aspect;
+            }
+
+            float blockHeight = pinHeight * 3f + PinGutter * 2f;
+            float y0 = 12f + (availHeight - blockHeight) * 0.5f;
+            float centreX = column == 0
+                ? 0.27f + PinZigzagLeft[row]
+                : 0.73f + PinZigzagRight[row];
+            float x = left + availWidth * centreX - pinWidth * 0.5f;
+            x = Mathf.Clamp(x, left, left + availWidth - pinWidth);
+            slot = new Rect(x, y0 + row * (pinHeight + PinGutter), pinWidth, pinHeight);
+            return true;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Game.UI.Runtime
             _progressTrack.gameObject.SetActive(true);
             TMP_Text caption = _progressTrack.Find("Caption")?.GetComponent<TMP_Text>();
             TMP_Text count = _progressTrack.Find("Count")?.GetComponent<TMP_Text>();
-            SetCopy(caption, LibraryText("ui.skirmish.library.zone_progress", fa), 14f, 18f);
+            SetCopy(caption, LibraryText("ui.skirmish.library.zone_progress", fa), 18f, 22f);
             bool pending = pin.PublishedCount <= 0;
             SetCopy(
                 count,
@@ -271,8 +271,9 @@ namespace Game.UI.Runtime
                 if (image != null)
                     ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, 0.78f));
                 TMP_Text count = slot.Find("Count")?.GetComponent<TMP_Text>();
-                SetCopy(count, battlefield ? string.Empty : counts[i].ToString(), 14f, 18f);
-                KeepSingleLine(count, 12f, 16f);
+                SetCopy(count, battlefield ? string.Empty : counts[i].ToString(), 18f, 22f);
+                if (battlefield)
+                    KeepSingleLine(count, 12f, 16f);
                 if (count != null)
                     count.isRightToLeftText = false;
                 SkirmishBattleLibraryArt.DifficultyCopy(difficulties[i], fa, out string label);
@@ -298,8 +299,76 @@ namespace Game.UI.Runtime
         {
             if (slot == null)
                 return;
-            LayoutMedalEntry(slot, fa, 24f, 36f);
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield)
+                LayoutMedalTile(slot, fa);
+            else
+                LayoutMedalEntry(slot, fa, 24f, 36f);
             BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), index);
+        }
+
+        private const float MedalTileHeight = 100f;
+        private const float TheatreMedalRowHeight = MedalTileHeight * 2f + 14f;
+
+        /// <summary>approved-1 medal tile: a big medal, the tier name and the count stacked and centred.</summary>
+        private static void LayoutMedalTile(RectTransform slot, bool fa)
+        {
+            if (slot == null)
+                return;
+            HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>();
+            if (row != null)
+                row.enabled = false;
+            float width = slot.sizeDelta.x > 40f ? slot.sizeDelta.x : Mathf.Max(120f, slot.rect.width);
+            const float icon = 52f;
+            RectTransform iconRect = slot.Find("Icon") as RectTransform;
+            RectTransform caption = slot.Find("Caption") as RectTransform;
+            RectTransform count = slot.Find("Count") as RectTransform;
+            PlaceTopLeft(iconRect, (width - icon) * 0.5f, 4f, icon, icon);
+            PlaceTopLeft(caption, 4f, 54f, width - 8f, 22f);
+            PlaceTopLeft(count, 4f, 72f, width - 8f, 28f);
+            HoldFixed(iconRect, icon, icon, 0f);
+            HoldFixed(caption, width - 8f, 24f, 0f);
+            HoldFixed(count, width - 8f, 28f, 0f);
+            Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;
+            if (image != null)
+            {
+                image.preserveAspect = true;
+                image.type = Image.Type.Simple;
+            }
+
+            TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
+            if (captionText != null)
+            {
+                captionText.alignment = TextAlignmentOptions.Center;
+                captionText.isRightToLeftText = fa;
+                captionText.textWrappingMode = TextWrappingModes.NoWrap;
+                captionText.overflowMode = TextOverflowModes.Overflow;
+                captionText.enableAutoSizing = true;
+                captionText.fontSizeMin = 13f;
+                captionText.fontSizeMax = 20f;
+                captionText.maxVisibleLines = 1;
+                captionText.margin = Vector4.zero;
+                captionText.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                V3LocalizedTextBindingView binding = captionText.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(13f, 20f);
+            }
+
+            TMP_Text countText = count != null ? count.GetComponent<TMP_Text>() : null;
+            if (countText != null)
+            {
+                countText.isRightToLeftText = false;
+                countText.alignment = TextAlignmentOptions.Center;
+                countText.textWrappingMode = TextWrappingModes.NoWrap;
+                countText.overflowMode = TextOverflowModes.Overflow;
+                countText.enableAutoSizing = true;
+                countText.fontSizeMin = 24f;
+                countText.fontSizeMax = 30f;
+                countText.fontStyle = FontStyles.Bold;
+                countText.color = Color.white;
+                V3LocalizedTextBindingView binding = countText.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(24f, 30f);
+            }
         }
 
         private void LockMedalArtwork()
@@ -332,12 +401,25 @@ namespace Game.UI.Runtime
                 if (fa)
                     column = 1 - column;
                 int line = i / 2;
-                PlaceTopLeft(slot, column * (cell + 8f), 4f + line * 50f, cell, 46f);
+                bool tiles = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+                if (tiles)
+                {
+                    // approved-1: 2 x 2 big medal tiles.
+                    float tile = Mathf.Max(100f, (width - 10f) * 0.5f);
+                    PlaceTopLeft(slot, column * (tile + 10f), 2f + line * (MedalTileHeight + 8f), tile, MedalTileHeight);
+                }
+                else
+                {
+                    PlaceTopLeft(slot, column * (cell + 8f), 4f + line * 50f, cell, 46f);
+                }
                 LayoutElement element = slot.GetComponent<LayoutElement>();
                 if (element != null)
                     element.ignoreLayout = false;
                 DropExtraMedalImages(slot);
-                LayoutMedalEntry(slot, fa, 24f, 36f);
+                if (tiles)
+                    LayoutMedalTile(slot, fa);
+                else
+                    LayoutMedalEntry(slot, fa, 24f, 36f);
                 BindMedalIcon(slot.Find("Icon")?.GetComponent<Image>(), i);
             }
         }
@@ -489,7 +571,7 @@ namespace Game.UI.Runtime
             float slotWidth = slot.sizeDelta.x > 40f ? slot.sizeDelta.x : slot.rect.width;
             if (slotWidth < 40f)
                 slotWidth = 148f;
-            const float gap = 8f;
+            const float gap = 10f;
             float icon = iconSize;
             float countBox = Mathf.Max(28f, countWidth);
             float labelWidth = slotWidth - (4f + icon + gap + gap + countBox + 4f);
@@ -522,7 +604,15 @@ namespace Game.UI.Runtime
             TMP_Text captionText = caption != null ? caption.GetComponent<TMP_Text>() : null;
             if (captionText != null)
             {
-                float fitted = Mathf.Max(10f, labelWidth / 5.4f);
+                float fitted = Mathf.Clamp(labelWidth / 5.4f, 10f, 18f);
+                // Long captions (COMMANDER, FA labels) must end before the count: shrink to the measured width.
+                if (!string.IsNullOrEmpty(captionText.text))
+                {
+                    captionText.fontSize = fitted;
+                    float natural = captionText.GetPreferredValues(captionText.text, 9999f, 30f).x;
+                    if (natural > labelWidth - 2f && natural > 1f)
+                        fitted = Mathf.Max(10f, Mathf.Floor(fitted * (labelWidth - 2f) / natural));
+                }
                 captionText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 captionText.isRightToLeftText = fa;
                 captionText.overflowMode = TextOverflowModes.Overflow;
@@ -701,7 +791,7 @@ namespace Game.UI.Runtime
             if (_medalRow != null)
             {
                 _medalRow.SetParent(column, false);
-                FitLayout(_medalRow, 0f, 104f, 1f);
+                FitLayout(_medalRow, 0f, LibraryLevel == SkirmishLibraryLevel.Battlefield ? 104f : TheatreMedalRowHeight, 1f);
             }
 
             if (_difficultyRow != null)
@@ -754,15 +844,24 @@ namespace Game.UI.Runtime
             group.childScaleHeight = false;
             int index = 0;
             Transform summary = column.Find("TheatreSummary");
-            index = StackColumnChild(summary as RectTransform, index, 76f, !battlefield && summary != null);
+            index = StackColumnChild(summary as RectTransform, index, TheatreSummaryHeight, !battlefield && summary != null);
             bool previewShown = battlefield && _briefingPreview != null && _briefingPreview.gameObject.activeSelf;
             index = StackColumnChild(_briefingPreview != null ? _briefingPreview.rectTransform : null, index, 188f, previewShown);
-            Transform title = rules.Find("BriefingColumn/Title") ?? rules.Find("Title");
-            index = StackColumnChild(title as RectTransform, index, 40f, title != null);
+            // The heading label is authored under RulesScroll/Content, which is hidden unless Advanced is open, so it was
+            // filled in but never drawn. Adopt it into the briefing column so it stacks under the preview as in approved-2/3.
+            Transform title = rules.Find("BriefingColumn/Title") ?? rules.Find("Title") ?? rules.Find("RulesScroll/Content/Title");
+            // The Theatre column keeps its pass-3 stack (TheatreSummary carries the map name), so the label goes back there.
+            Transform rulesContent = rules.Find("RulesScroll/Content");
+            if (title != null && battlefield && title.parent != column)
+                title.SetParent(column, false);
+            else if (title != null && !battlefield && rulesContent != null && title.parent == column)
+                title.SetParent(rulesContent, false);
+            bool titleInColumn = title != null && title.parent == column;
+            index = StackColumnChild(titleInColumn ? title as RectTransform : null, index, 40f, titleInColumn);
             index = StackColumnChild(scenarioDescription != null ? scenarioDescription.rectTransform : null, index, battlefield ? 96f : 80f, scenarioDescription != null);
-            index = StackColumnChild(_progressTrack, index, 84f, !battlefield && _progressTrack != null);
+            index = StackColumnChild(_progressTrack, index, 84f, false);
             index = StackColumnChild(_statRow, index, 84f, battlefield && _statRow != null);
-            index = StackColumnChild(_medalRow, index, 104f, _medalRow != null);
+            index = StackColumnChild(_medalRow, index, 104f, battlefield && _medalRow != null);
             index = StackColumnChild(_difficultyRow, index, 116f, battlefield && _difficultyRow != null);
             StackColumnChild(_recommendedPanel, index, 272f, !battlefield && _recommendedPanel != null);
             if (_medalGrid != null)
@@ -783,8 +882,8 @@ namespace Game.UI.Runtime
                 scenarioDescription.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                 scenarioDescription.isRightToLeftText = fa;
                 scenarioDescription.margin = new Vector4(fa ? 12f : leading, 6f, fa ? leading : 12f, 6f);
-                scenarioDescription.fontSizeMin = 15f;
-                scenarioDescription.fontSizeMax = 24f;
+                scenarioDescription.fontSizeMin = 20f;
+                scenarioDescription.fontSizeMax = 26f;
                 ReleaseTextClip(column);
                 ReleaseTextClip(rules);
             }
@@ -869,7 +968,7 @@ namespace Game.UI.Runtime
             {
                 PlaceSummaryLine(heading.rectTransform, 0f, 28f, fa, ornamentInset);
                 string battles = UpperLatin(LibraryText("ui.skirmish.library.battles_won", fa));
-                SetCopy(heading, battles, 18f, 22f);
+                SetCopy(heading, battles, 22f, 26f);
                 heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 heading.isRightToLeftText = fa;
                 heading.textWrappingMode = TextWrappingModes.NoWrap;
@@ -895,6 +994,143 @@ namespace Game.UI.Runtime
             summary.fontSizeMin = 28f;
             summary.fontSizeMax = 36f;
             summary.maxVisibleLines = 1;
+            PresentTheatreProgressBar(plate, won, published, fa, ornamentInset);
+            PresentTheatreMedalTiles(plate, _libraryViewModel.Theater.OverallMedalTotals, fa);
+        }
+
+        /// <summary>Height of the Theatre left-column progress block: heading, X / N, bar and 2 x 2 medal tiles.</summary>
+        internal const float TheatreSummaryHeight = 330f;
+
+        private void PresentTheatreProgressBar(RectTransform plate, int won, int published, bool fa, float inset)
+        {
+            var track = plate.Find("ProgressTrack") as RectTransform;
+            if (track != null && (track.GetComponent<Image>() == null || track.Find("Fill")?.GetComponent<Image>() == null))
+            {
+                DestroyUi(track.gameObject);
+                track = null;
+            }
+
+            if (track == null)
+            {
+                track = new GameObject("ProgressTrack", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+                track.SetParent(plate, false);
+                var fill = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+                fill.SetParent(track, false);
+            }
+
+            PlaceSummaryLine(track, 80f, 12f, fa, inset);
+            Image back = track.GetComponent<Image>();
+            back.color = new Color(0.12f, 0.13f, 0.14f, 1f);
+            back.raycastTarget = false;
+            var fillRect = track.Find("Fill") as RectTransform;
+            float ratio = published > 0 ? Mathf.Clamp01(won / (float)published) : 0f;
+            // Fills from the leading edge: left in LTR, right in RTL.
+            fillRect.anchorMin = new Vector2(fa ? 1f - ratio : 0f, 0f);
+            fillRect.anchorMax = new Vector2(fa ? 1f : ratio, 1f);
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+            Image fillImage = fillRect.GetComponent<Image>();
+            fillImage.color = new Color(0.93f, 0.7f, 0.2f, 1f);
+            fillImage.raycastTarget = false;
+        }
+
+        /// <summary>approved-1 2 x 2 medal tiles (icon, tier name, count) with whole-theatre ledger totals.</summary>
+        private void PresentTheatreMedalTiles(RectTransform plate, SkirmishMedalTotals totals, bool fa)
+        {
+            SkirmishDifficultyId[] tiers = { SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander };
+            int[] counts = { totals.Recruit, totals.Regular, totals.Veteran, totals.Commander };
+            string[] en = { "RECRUIT", "REGULAR", "VETERAN", "COMMANDER" };
+            string[] faNames = { "تازه‌کار", "عادی", "کهنه‌کار", "فرمانده" };
+            const float top = 106f;
+            const float tileHeight = 108f;
+            const float gap = 8f;
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                int column = i % 2;
+                int row = i / 2;
+                int visual = fa ? 1 - column : column;
+                string name = "TheatreMedal_" + tiers[i];
+                var tile = plate.Find(name) as RectTransform;
+                // Rebuilt each pass: the library's blank-image sweep can strip Image components between passes.
+                if (tile != null)
+                    DestroyUi(tile.gameObject);
+                tile = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+                tile.SetParent(plate, false);
+                var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+                icon.SetParent(tile, false);
+                CreateLabel(tile, "TierName", 22f);
+                CreateLabel(tile, "TierCount", 30f);
+
+                tile.anchorMin = new Vector2(visual * 0.5f, 1f);
+                tile.anchorMax = new Vector2((visual + 1) * 0.5f, 1f);
+                tile.pivot = new Vector2(0.5f, 1f);
+                float yTop = top + row * (tileHeight + gap);
+                tile.offsetMin = new Vector2(visual == 0 ? 8f : gap * 0.5f, -(yTop + tileHeight));
+                tile.offsetMax = new Vector2(visual == 0 ? -gap * 0.5f : -8f, -yTop);
+                Image frame = tile.GetComponent<Image>();
+                if (frame != null)
+                {
+                    frame.color = new Color(0.06f, 0.08f, 0.09f, 0.9f);
+                    frame.raycastTarget = false;
+                }
+
+                var iconRect = tile.Find("Icon") as RectTransform;
+                iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 1f);
+                iconRect.pivot = new Vector2(0.5f, 1f);
+                iconRect.sizeDelta = new Vector2(42f, 42f);
+                iconRect.anchoredPosition = new Vector2(0f, -6f);
+                Image iconImage = iconRect.GetComponent<Image>();
+                if (iconImage != null)
+                {
+                    iconImage.preserveAspect = true;
+                    iconImage.raycastTarget = false;
+                    ShowIcon(iconImage, SkirmishBattleLibraryArt.Medal(true, tiers[i]), Color.white);
+                }
+
+                TMP_Text tierName = tile.Find("TierName")?.GetComponent<TMP_Text>();
+                if (tierName != null)
+                {
+                    PlaceTileLine(tierName.rectTransform, 50f, 26f);
+                    SetCopy(tierName, fa ? faNames[i] : en[i], fa ? 26f : LibraryFontFloor, fa ? 28f : 22f); // FA glyphs run small: higher floor
+                    tierName.alignment = TextAlignmentOptions.Center;
+                    tierName.isRightToLeftText = fa;
+                    tierName.textWrappingMode = TextWrappingModes.NoWrap;
+                    tierName.overflowMode = TextOverflowModes.Overflow;
+                    tierName.color = new Color(0.9f, 0.9f, 0.86f, 1f);
+                    if (fa)
+                    {
+                        // V3LocalizedTextBindingView.FitArabicLineBox caps Arabic-script max at rect height / 1.65
+                        // (26 px line -> ~16 px). Pin a fixed size after SetCopy so the floor holds.
+                        tierName.enableAutoSizing = false;
+                        tierName.fontSize = 24f;
+                    }
+                }
+
+                TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();
+                if (tierCount != null)
+                {
+                    PlaceTileLine(tierCount.rectTransform, 76f, 30f);
+                    SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), fa ? 32f : 26f, fa ? 36f : 30f);
+                    tierCount.alignment = TextAlignmentOptions.Center;
+                    tierCount.isRightToLeftText = false;
+                    tierCount.fontStyle = FontStyles.Bold;
+                    tierCount.color = new Color(0.98f, 0.95f, 0.86f, 1f);
+                    if (fa)
+                    {
+                        tierCount.enableAutoSizing = false;
+                        tierCount.fontSize = 30f;
+                    }
+                }
+            }
+        }
+
+        private static void PlaceTileLine(RectTransform rect, float y, float height)
+        {
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(0.5f, 1f);
+            rect.offsetMin = new Vector2(4f, -(y + height));
+            rect.offsetMax = new Vector2(-4f, -y);
         }
 
         private static void PlaceSummaryLine(RectTransform rect, float y, float height, bool fa, float inset)
@@ -954,7 +1190,7 @@ namespace Game.UI.Runtime
             if (child == null)
                 return false;
             if (child.name == "MedalRow")
-                return child == medalKeep;
+                return battlefield && child == medalKeep; // Theatre medal counts live in P2's bottom strip.
             if (child.name == "Title")
                 return true;
             if (scenarioDescription != null && child == scenarioDescription.transform)
@@ -973,9 +1209,9 @@ namespace Game.UI.Runtime
             }
 
             if (child.name == "TheatreSummary")
-                return true;
+                return true; // Pass 12: the Theatre left column is the only progress display (approved-1).
             if (child.name == "BattlesWonTrack")
-                return _progressTrack == null || child == _progressTrack;
+                return false; // approved-1 left column: battles won, medal tiles, recommended next only.
             if (child.name == "RecommendedNext")
                 return _recommendedPanel == null || child == _recommendedPanel;
             return false;

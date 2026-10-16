@@ -22,7 +22,18 @@ namespace Game.UI.Runtime
             if (titleTransform != null)
                 title = titleTransform.GetComponent<TMP_Text>();
             if (battlefield && !string.IsNullOrEmpty(briefing.ScenarioId))
-                SetCopy(title, LibraryText(briefing.TitleLocKey, fa), 26f, 34f);
+            {
+                // approved-2 heading: "S005 · BASE ASSAULT" in gold.
+                string objectiveTitle = string.Empty;
+                if (TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry headingEntry) && !string.IsNullOrEmpty(headingEntry.ObjectiveId))
+                    SkirmishBattleLibraryArt.ObjectiveCopy(headingEntry.ObjectiveId, fa, out objectiveTitle, out _);
+                string heading = string.IsNullOrEmpty(objectiveTitle)
+                    ? LibraryText(briefing.TitleLocKey, fa)
+                    : briefing.ScenarioId + " · " + UpperLatin(objectiveTitle);
+                SetCopy(title, MixedText(heading, fa), 26f, 34f);
+                if (title != null)
+                    title.color = new Color(0.93f, 0.78f, 0.38f, 1f);
+            }
             else if (hasPin)
                 SetCopy(title, MapDisplayTitle(pin.MapId, fa), 26f, 34f);
             KeepSingleLine(title, 26f, 34f);
@@ -113,7 +124,7 @@ namespace Game.UI.Runtime
             {
                 string purpose = MixedText(LibraryPurpose(briefing, fa), fa);
                 string reason = LibraryReason(briefing, fa);
-                SetCopy(scenarioDescription, string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason, 15f, 22f);
+                SetCopy(scenarioDescription, string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason, 20f, 26f);
             }
 
             if (launchButton != null && !_savedMatchAvailable)
@@ -335,7 +346,7 @@ namespace Game.UI.Runtime
             string copy = string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason;
             if (string.IsNullOrWhiteSpace(copy))
                 return;
-            SetCopy(scenarioDescription, copy, 15f, 22f);
+            SetCopy(scenarioDescription, copy, 20f, 26f);
         }
 
         private void EnsureStatTile(RectTransform row, string name, float x, string captionText)
@@ -591,6 +602,17 @@ namespace Game.UI.Runtime
                 ClearChildren(_medalGrid);
                 _medalGrid.gameObject.SetActive(false);
             }
+        }
+
+        /// <summary>
+        /// Map and Grid put the briefing on the trailing side per approved-2/3 (right in LTR, left in RTL).
+        /// The Theatre keeps the frame default, where the briefing column is approved-1's left column.
+        /// </summary>
+        private bool? LibraryBriefingOnLeft()
+        {
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield)
+                return null;
+            return UiShellRuntimeGateway.Localization.IsRightToLeft;
         }
     }
 }

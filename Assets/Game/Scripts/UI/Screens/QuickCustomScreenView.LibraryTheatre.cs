@@ -214,6 +214,8 @@ namespace Game.UI.Runtime
                 button.onClick.AddListener(() => SelectTheaterRegion(captured));
                 _regionButtons.Add(button);
             }
+
+            PresentTheatreDetailPanel(theater, fa, plateWidth, plateHeight);
         }
 
         private static void HideTheaterLabels(RawImage map)

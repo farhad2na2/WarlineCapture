@@ -90,16 +90,24 @@ namespace Game.UI.Runtime
                 plateWidth, plateHeight, fa, plateWidth >= 600f, TheatreSeatGeometry.ShotIsFourByThree(), selectedMap);
             TheatreSeatGeometry.NoteDetailReserve(reserve);
             TheatreSeatGeometry.ShotReserve = reserve;
+            TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
+            bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 raw.transform.SetParent(fit, false);
-                Stretch(raw.rectTransform);
+                if (reframed)
+                    PlaceTopLeft(raw.rectTransform, viewport.X, viewport.Y, viewport.W, viewport.H);
+                else
+                    Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = TheatrePaintDim();
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                ApplyTheatreCover(raw, plateWidth, plateHeight);
+                if (reframed)
+                    ApplyPlainTheatreCover(raw, viewport.W, viewport.H);
+                else
+                    ApplyTheatreCover(raw, plateWidth, plateHeight);
                 var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 shade.transform.SetParent(fit, false);
                 Stretch(shade.rectTransform);
@@ -213,7 +221,7 @@ namespace Game.UI.Runtime
 
         private static Color TheatrePaintDim()
         {
-            return new Color(0.94f, 0.95f, 0.96f, 1f);
+            return new Color(1f, 0.96f, 0.90f, 1f);
         }
 
         private static Texture2D LoadTheatreBase()
@@ -1523,17 +1531,17 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             Color fill = color;
-            fill.a = 0.35f;
+            fill.a = 0.40f;
             root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
             PlaceDistrictHalo(root, local, color);
             Color outer = color;
             outer.a = 0.96f;
             Color glow = Color.Lerp(color, Color.white, 0.18f);
             glow.a = 1f;
-            Color ink = Color.Lerp(color, Color.white, selected ? 0.62f : 0.48f);
+            Color ink = Color.Lerp(color, Color.white, selected ? 0.74f : 0.62f);
             ink.a = 1f;
-            // The core stroke stays inside the 3–4.5 capture band. The bright edge is the outer glow.
-            const float stroke = 4.5f;
+            // Vivid core inside the 3–4.5 capture band. The bright edge is the outer glow.
+            const float stroke = 4f;
             DrawHexEdges(root, local, outer, 26f, ZoneStrokeSprite());
             DrawHexEdges(root, local, glow, 14f, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
@@ -1816,41 +1824,42 @@ namespace Game.UI.Runtime
 
             float cardW = slot.Card.width;
             float cardH = slot.Card.height;
-            const float frame = 5f;
-            float nameH = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame);
-            float statusH = (cardH >= 190f ? 30f : cardH < 156f ? 24f : 28f) + (wideFrame ? 2f : 0f);
-            float artH = Mathf.Max(48f, cardH - frame - nameH - 4f - statusH - frame);
-            float artW = Mathf.Max(48f, cardW - frame * 2f);
+            const float frame = 6f;
+            float nameH = Mathf.Min(TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame), cardH >= 190f ? 44f : 40f);
+            float innerW = Mathf.Max(48f, cardW - frame * 2f);
+            float bodyTop = frame + nameH + 4f;
+            float bodyH = Mathf.Max(28f, cardH - bodyTop - frame);
+            float ring = Mathf.Min(bodyH, innerW * 0.56f);
+            float photoW = Mathf.Max(8f, innerW - 6f - ring);
             card.sprite = ZoneSolidSprite();
             card.type = Image.Type.Simple;
             card.color = new Color(0.04f, 0.05f, 0.07f, 0.96f);
-            float nameY = frame + artH + 2f;
-            var name = CreateLabel(card.transform, "ZoneName", 22f);
-            PlaceTopLeft(name.rectTransform, frame, nameY, artW, nameH);
+            var name = CreateLabel(card.transform, "ZoneName", 18f);
+            PlaceTopLeft(name.rectTransform, frame, frame, innerW, nameH);
             name.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
             name.isRightToLeftText = fa;
-            name.textWrappingMode = TextWrappingModes.Normal;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 2;
             name.enableAutoSizing = true;
-            name.fontSizeMin = cardH < 156f ? 16f : 18f;
-            name.fontSizeMax = cardH < 156f ? 24f : 28f;
+            name.fontSizeMin = 16f;
+            name.fontSizeMax = 22f;
             name.fontStyle = FontStyles.Bold;
             name.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(name, MapDisplayTitle(slot.MapId, fa), name.fontSizeMin, name.fontSizeMax);
+            SetCopy(name, MapDisplayTitle(slot.MapId, fa), 16f, 22f);
 
             var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
             medallion.transform.SetParent(card.transform, false);
             medallion.sprite = ZoneSolidSprite();
             medallion.color = slot.Zone;
             medallion.raycastTarget = false;
-            PlaceTopLeft(medallion.rectTransform, frame, frame, artW, artH);
+            PlaceTopLeft(medallion.rectTransform, frame, bodyTop, photoW, bodyH);
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
             var art = new GameObject("Thumbnail", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             art.transform.SetParent(medallion.transform, false);
             const float artInset = 6f;
-            PlaceTopLeft(art.rectTransform, artInset, artInset, Mathf.Max(8f, artW - artInset * 2f), Mathf.Max(8f, artH - artInset * 2f));
+            PlaceTopLeft(art.rectTransform, artInset, artInset, Mathf.Max(8f, photoW - artInset * 2f), Mathf.Max(8f, bodyH - artInset * 2f));
             ApplyDistrictThumbnail(art, slot.MapId);
             art.color = Color.white;
             art.raycastTarget = false;
@@ -1858,12 +1867,8 @@ namespace Game.UI.Runtime
             int total = Mathf.Max(0, slot.Playable);
             bool pending = total <= 0;
             float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
-            float statusY = nameY + nameH + 2f;
-            float room = Mathf.Max(1f, cardH - frame - statusY);
-            float ring = Mathf.Min(statusH, artW, room);
-            float ringX = pending ? frame : frame + (artW - ring) * 0.5f;
-            float ringW = pending ? artW : ring;
-            float ringH = pending ? Mathf.Min(statusH, room) : ring;
+            float ringX = frame + photoW + 6f;
+            float ringY = bodyTop + (bodyH - ring) * 0.5f;
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
             track.sprite = pending ? ZoneSolidSprite() : ZoneRingSprite();
@@ -1871,7 +1876,7 @@ namespace Game.UI.Runtime
                 ? new Color(0.04f, 0.05f, 0.06f, 0.92f)
                 : new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.95f);
             track.raycastTarget = false;
-            PlaceTopLeft(track.rectTransform, ringX, statusY, ringW, ringH);
+            PlaceTopLeft(track.rectTransform, ringX, ringY, ring, ring);
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
@@ -1996,7 +2001,7 @@ namespace Game.UI.Runtime
             float boxH = rect.rect.height > 1f ? rect.rect.height : rect.sizeDelta.y;
             if (boxW < 8f || boxH < 8f)
                 return;
-            string source = (cue.text ?? string.Empty).Replace("\n", " ").Trim();
+            string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2023,7 +2028,7 @@ namespace Game.UI.Runtime
             float boxH = text.rectTransform.rect.height > 1f ? text.rectTransform.rect.height : text.rectTransform.sizeDelta.y;
             if (boxW < 8f || boxH < 8f)
                 return;
-            string source = (text.text ?? string.Empty).Replace("\n", " ").Trim();
+            string source = FlattenCopy(text.text);
             if (source.Length == 0)
                 return;
             float start = text.fontSizeMax > 1f ? text.fontSizeMax : text.fontSize;
@@ -2473,7 +2478,9 @@ namespace Game.UI.Runtime
             float cardW = card.sizeDelta.x;
             float cardH = card.sizeDelta.y;
             float boxWidth = Mathf.Max(8f, cardW - 12f);
-            string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
+            string source = FlattenCopy(name.text);
+            if (name.rectTransform != null)
+                name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
             float fontFloor = cardW <= TheatreSeatGeometry.PortraitMinWidth + 8f
                 ? TheatreSeatGeometry.PortraitCompactFontFloor
@@ -2482,6 +2489,10 @@ namespace Game.UI.Runtime
                 && boxWidth <= 114f
                 && ContainsArabicLetter(source))
                 fontFloor = TheatreSeatGeometry.PortraitCompactFontFloor;
+            // Noto's Arabic line box is taller than the Latin one. Step under the compact floor
+            // only until two whole words fit inside the v47 name budget.
+            if (ContainsArabicLetter(source))
+                fontFloor = Mathf.Min(fontFloor, 13f);
             for (float size = TheatreSeatGeometry.NameFontCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
                 if (binding != null)
@@ -2496,7 +2507,7 @@ namespace Game.UI.Runtime
                 name.overflowMode = TextOverflowModes.Overflow;
                 name.maxVisibleLines = 1;
                 name.ForceMeshUpdate();
-                bool oneLine = name.preferredWidth > 0.5f && name.preferredWidth <= boxWidth + 1.5f;
+                bool oneLine = MeasuredNameWidth(name) > 0.5f && MeasuredNameWidth(name) <= boxWidth + 2f;
                 if (!oneLine)
                 {
                     name.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2557,7 +2568,7 @@ namespace Game.UI.Runtime
                 name.maxVisibleLines = 1;
                 name.lineSpacing = 0f;
                 name.ForceMeshUpdate();
-                if (name.preferredWidth > boxWidth + 1.5f)
+                if (MeasuredNameWidth(name) > boxWidth + 2f)
                     continue;
                 float needed = PortraitNameBox(name, source, candidate, card.sizeDelta.y);
                 if (TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) + 1f < needed)
@@ -2568,6 +2579,23 @@ namespace Game.UI.Runtime
                 if (PortraitNameFitsRect(name, source))
                     return;
             }
+
+            float wrapped = arabic ? 13f : size;
+            if (binding != null)
+                binding.ConfigureFontBounds(wrapped, wrapped);
+            name.fontSizeMin = wrapped;
+            name.fontSizeMax = wrapped;
+            name.fontSize = wrapped;
+            name.text = source;
+            name.maxVisibleLines = 2;
+            if (!WrapZoneName(name, wrapped))
+                return;
+            float wrappedHeight = PortraitNameBox(name, source, wrapped, card.sizeDelta.y);
+            if (TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) + 1f < wrappedHeight)
+                return;
+            ApplyPortraitNameLayout(card, name, wrappedHeight, card.sizeDelta.y, wide, false);
+            name.lineSpacing = 0f;
+            name.ForceMeshUpdate();
         }
 
         /// <summary>
@@ -2640,65 +2668,38 @@ namespace Game.UI.Runtime
             float cardY = -card.anchoredPosition.y;
             PlaceTopLeft(card, cardX, cardY, cardW, cardH);
             const float pad = 6f;
-            float artW = Mathf.Max(48f, cardW - pad * 2f);
-            RectTransform ring = card.Find("ProgressRing") as RectTransform;
-            bool banner = ring != null && ring.sizeDelta.x > ring.sizeDelta.y + 8f;
-            bool compact = cardH < 156f;
-            float statusH = banner
-                ? (cardH >= 190f ? 36f : 32f)
-                : (cardH >= 190f ? 48f : compact ? 36f : 44f);
-            if (wide && !banner)
-                statusH += 4f;
-            float artFloor = compact ? 48f : 72f;
+            float innerW = Mathf.Max(48f, cardW - pad * 2f);
             if (oneLine)
                 nameH = Mathf.Max(nameH, cardH >= 190f ? 28f : 24f);
-            float chrome = pad + 4f + nameH + 4f + statusH + pad;
-            float artH = cardH - chrome;
-            if (artH < artFloor)
-            {
-                float shortfall = artFloor - artH;
-                float nameRoom = Mathf.Max(0f, nameH - 22f);
-                float take = Mathf.Min(nameRoom, shortfall);
-                nameH -= take;
-                shortfall -= take;
-                if (shortfall > 0f && statusH > 22f)
-                {
-                    float statusTake = Mathf.Min(statusH - 22f, shortfall);
-                    statusH -= statusTake;
-                    shortfall -= statusTake;
-                }
-
-                artH = cardH - (pad + 4f + nameH + 4f + statusH + pad);
-                if (artH < 28f)
-                    artH = Mathf.Max(0f, artH);
-            }
-
-            float nameY = pad + artH + 4f;
-            PlaceTopLeft(name.rectTransform, pad, nameY, artW, nameH);
+            float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
+            if (nameH > maxName)
+                nameH = maxName;
+            PlaceTopLeft(name.rectTransform, pad, pad, innerW, Mathf.Max(1f, nameH));
+            float bodyTop = pad + nameH + 4f;
+            float bodyH = cardH - bodyTop - pad;
+            if (bodyH < 28f)
+                bodyH = Mathf.Max(1f, bodyH);
+            float gap = 6f;
+            float stackRoom = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
+            float statusCap = Mathf.Max(28f, stackRoom - nameH);
+            float ringSide = Mathf.Min(Mathf.Max(1f, bodyH), innerW * 0.56f, statusCap);
+            float photoW = Mathf.Max(8f, innerW - gap - ringSide);
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
             {
-                PlaceTopLeft(thumb, pad, pad, artW, Mathf.Max(0f, artH));
+                PlaceTopLeft(thumb, pad, bodyTop, photoW, Mathf.Max(1f, bodyH));
                 if (thumb.Find("Thumbnail") is RectTransform preview)
                 {
                     const float inset = 5f;
-                    PlaceTopLeft(preview, inset, inset, Mathf.Max(8f, artW - inset * 2f), Mathf.Max(8f, artH - inset * 2f));
+                    PlaceTopLeft(preview, inset, inset, Mathf.Max(8f, photoW - inset * 2f), Mathf.Max(8f, bodyH - inset * 2f));
                 }
             }
 
+            RectTransform ring = card.Find("ProgressRing") as RectTransform;
             if (ring == null)
                 return;
-            float ringY = nameY + nameH + 4f;
-            float limit = cardH - pad;
-            if (ringY + statusH > limit)
-                statusH = Mathf.Max(1f, limit - ringY);
-            if (banner)
-                PlaceTopLeft(ring, pad, ringY, artW, statusH);
-            else
-            {
-                float side = Mathf.Min(statusH, artW);
-                PlaceTopLeft(ring, (cardW - side) * 0.5f, ringY, side, side);
-            }
+            float ringY = bodyTop + Mathf.Max(0f, (bodyH - ringSide) * 0.5f);
+            PlaceTopLeft(ring, pad + photoW + gap, ringY, ringSide, ringSide);
 
             Transform countNode = ring.Find("ZoneCount");
             if (countNode != null && countNode.TryGetComponent<TMP_Text>(out var count))
@@ -2802,7 +2803,7 @@ namespace Game.UI.Runtime
 
         private static bool WrapZoneName(TMP_Text name, float size)
         {
-            string source = (name.text ?? string.Empty).Replace("\n", " ").Trim();
+            string source = FlattenCopy(name.text);
             float boxWidth = ZoneNameBoxWidth(name);
             int split = -1;
             float bestGap = float.MaxValue;
@@ -2838,7 +2839,7 @@ namespace Game.UI.Runtime
                 return false;
             }
 
-            string first = source.Substring(0, split + 1);
+            string first = source.Substring(0, split).TrimEnd();
             string second = source.Substring(split + 1).TrimStart();
             name.text = first + "\n" + second;
             name.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2907,6 +2908,39 @@ namespace Game.UI.Runtime
                 cardHeight);
         }
 
+        /// <summary>
+        /// One line of source text. A wrapped title is stored as "DESERT \nBASE"; turning the
+        /// newline into a space without collapsing the leftover space drew "DESERT  BASE" and
+        /// then refused to break on the word.
+        /// </summary>
+        private static string FlattenCopy(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+            var builder = new System.Text.StringBuilder(value.Length);
+            bool pendingSpace = false;
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (c == '\u00A0' || c == '\u202F' || char.IsWhiteSpace(c))
+                {
+                    if (builder.Length > 0)
+                        pendingSpace = true;
+                    continue;
+                }
+
+                if (pendingSpace)
+                {
+                    builder.Append(' ');
+                    pendingSpace = false;
+                }
+
+                builder.Append(c);
+            }
+
+            return builder.ToString();
+        }
+
         private static bool ContainsArabicLetter(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -2933,6 +2967,16 @@ namespace Game.UI.Runtime
             }
 
             TMP_TextInfo info = name.textInfo;
+            if (info != null && info.lineCount > 1 && info.lineInfo != null)
+            {
+                float widest = 0f;
+                int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
+                for (int i = 0; i < lines; i++)
+                    widest = Mathf.Max(widest, info.lineInfo[i].length);
+                if (widest > 0.5f)
+                    return widest;
+            }
+
             if (info != null && info.lineCount > 0 && info.lineInfo != null)
             {
                 float widest = 0f;
@@ -3571,11 +3615,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.18f, 0.42f, 0.40f, 1f);
-                case "MP": return new Color(0.40f, 0.26f, 0.48f, 1f);
-                case "IB": return new Color(0.62f, 0.40f, 0.14f, 1f);
-                case "AP": return new Color(0.32f, 0.40f, 0.48f, 1f);
-                default: return new Color(0.42f, 0.40f, 0.16f, 1f);
+                case "CC": return new Color(0.82f, 0.32f, 0.28f, 1f);
+                case "MP": return new Color(0.92f, 0.46f, 0.12f, 1f);
+                case "IB": return new Color(0.78f, 0.56f, 0.16f, 1f);
+                case "AP": return new Color(0.14f, 0.55f, 0.50f, 1f);
+                default: return new Color(0.88f, 0.62f, 0.18f, 1f);
             }
         }
 

@@ -301,7 +301,7 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// Map viewport. With the reserve off this is the whole plate. With the reserve on it is
-        /// the open rect beside the detail panel. The painting itself cover-fits the full plate.
+        /// the open rect beside the detail panel. The painting cover-fits that viewport.
         /// </summary>
         public static Box OpenViewport(float plateWidth, float plateHeight, bool fa, bool reserveOn)
         {

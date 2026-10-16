@@ -1333,11 +1333,11 @@ namespace Game.Editor
                     " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
-            if (polygon.color.a < 0.32f || polygon.color.a > 0.38f)
+            if (polygon.color.a < 0.35f || polygon.color.a > 0.45f)
             {
                 throw new InvalidOperationException(
                     "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
-                    " locale=" + locale + ". Expected about 0.35.");
+                    " locale=" + locale + ". Expected about 0.40.");
             }
 
             bool stroke = false;

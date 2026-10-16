@@ -1084,6 +1084,8 @@ namespace Game.Editor
             public float progressAt, objectiveProgressAt, openingUntil;
             public int frame, observationFrame, pageCount, totalGroups, selectedGroups;
             public int assaultMask, attackOrderMask, selectedMask, structureMask;
+            public int squadCardMask, squadTargetMask, squadDragMask, airMask;
+            public AriaTouchTarget squad4;
             public uint rosterRevision, sweepRosterRevision;
             public int pagedToAssault, assaultSelecting, structureOrdered, pagesOrdered, homeDefenseStage;
             public bool attackMode, selectionVisible, presentedHomeThreat, mapOpen, placementOpen, approachVisible;
@@ -1119,6 +1121,10 @@ namespace Game.Editor
                 pageCount = view.ExpandedPageCount, totalGroups = view.ExpandedTotalGroups, selectedGroups = view.ExpandedSelectedGroups,
                 assaultMask = view.ExpandedAssaultMask, attackOrderMask = view.ExpandedAttackOrderMask,
                 selectedMask = view.ExpandedSelectedMask, structureMask = view.ExpandedStructureMask,
+                squadCardMask = view.AvailableSquads, airMask = view.ExpandedAirMask,
+                squadTargetMask = (view.Squad0.Available ? 1 : 0) | (view.Squad1.Available ? 2 : 0) | (view.Squad2.Available ? 4 : 0) | (view.Squad3.Available ? 8 : 0) | (view.Squad4.Available ? 16 : 0),
+                squadDragMask = (view.Squad0.Drag ? 1 : 0) | (view.Squad1.Drag ? 2 : 0) | (view.Squad2.Drag ? 4 : 0) | (view.Squad3.Drag ? 8 : 0) | (view.Squad4.Drag ? 16 : 0),
+                squad4 = view.Squad4,
                 rosterRevision = view.ExpandedRosterRevision, sweepRosterRevision = plan.SweepRosterRevision,
                 pagedToAssault = plan.PagedToAssault, assaultSelecting = plan.AssaultSelecting,
                 structureOrdered = plan.StructureOrdered, pagesOrdered = plan.PagesOrdered, homeDefenseStage = plan.HomeDefenseStage,

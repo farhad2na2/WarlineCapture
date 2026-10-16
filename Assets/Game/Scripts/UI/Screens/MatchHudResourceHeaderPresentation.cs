@@ -292,7 +292,7 @@ namespace Game.UI.Runtime
             SetLabelIfChanged(_fuelSlotLabel, fuelLabel);
             SetLabelIfChanged(
                 _civilianRiskSlotLabel,
-                UiShellRuntimeGateway.TryReadSkirmish(out _) ? UiShellRuntimeGateway.Localization.Get("ui.skirmish.infantry", "Infantry") : UiShellRuntimeGateway.Localization.Get("ui.hud.civilian_risk", "Civilian Risk"));
+                UiShellRuntimeGateway.TryReadSkirmishContext(out _) ? UiShellRuntimeGateway.Localization.Get("ui.skirmish.infantry", "Infantry") : UiShellRuntimeGateway.Localization.Get("ui.hud.civilian_risk", "Civilian Risk"));
             _labelsApplied = true;
         }
 

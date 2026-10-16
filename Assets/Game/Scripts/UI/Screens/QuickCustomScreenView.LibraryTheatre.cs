@@ -1940,7 +1940,7 @@ namespace Game.UI.Runtime
             PresentScenarioChoices();
         }
 
-        private static void SealTheatreMapEdge(RectTransform map, RectTransform briefing, bool theater)
+        private void SealTheatreMapEdge(RectTransform map, RectTransform briefing, bool theater)
         {
             if (map == null)
                 return;

@@ -25,6 +25,13 @@ namespace Game.Runtime
         private const int MaxAutoProfilerMarkerRecorders = 200;
         private const int MaxTopSystemProfilerMarkers = 8;
         private const int MaxLastStepSamples = 16;
+        private const int MaxMainMenuMarkerRegistrationAttempts = 8;
+        private static readonly string[] MainMenuDiagnosticMarkerNames =
+        {
+            "GameplayRuntimeUpdate.ThreatWarningPresentation",
+            "GameplayRuntimeUpdate.MainMenuUi",
+            "MainMenuPlayUI.MinimapUpdate"
+        };
         private static readonly string[] DrawCallsProfilerCounterNames = { "Draw Calls Count", "Draw Calls", "DrawCalls Count", "DrawCalls" };
         private static readonly string[] BatchesProfilerCounterNames = { "Batches Count", "Batches" };
         private static readonly string[] SetPassCallsProfilerCounterNames = { "SetPass Calls Count", "SetPass Calls", "SetPassCalls Count", "SetPassCalls" };
@@ -71,6 +78,7 @@ namespace Game.Runtime
         private readonly System.Text.StringBuilder _lastStepLogBuilder = new(256);
         private readonly StepSample[] _lastStepSamples = new StepSample[MaxLastStepSamples];
         private readonly List<NamedProfilerRecorder> _markerRecorders = new();
+        private int _mainMenuMarkerRegistrationAttempts;
         private double _lastUpdateTimestamp;
         private double _suppressFrameGapUntilTimestamp;
         private double _nextFrameRateDiagTimestamp;
@@ -239,6 +247,7 @@ namespace Game.Runtime
             double totalSeconds = now - _frameStartTimestamp;
             RecordUpdateFrameStats(totalSeconds);
             SampleAndroidPerformanceRecorder(gameplayActive, camera);
+            EnsureMainMenuMarkerRecorders(simulationActive);
             if (!PerformanceDiagnosticsCapturePolicy.SuppressLogging &&
                 gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
             {
@@ -305,6 +314,7 @@ namespace Game.Runtime
             if (!_enableProfilerMarkerDiagnostics)
                 return;
 
+            _mainMenuMarkerRegistrationAttempts = 0;
             AddProfilerMarkerRecorder(ProfilerCategory.Internal, "PlayerLoop");
             AddProfilerMarkerRecorder(ProfilerCategory.Internal, "EditorLoop");
             AddProfilerMarkerRecorder(ProfilerCategory.Internal, "Overhead");
@@ -421,6 +431,50 @@ namespace Game.Runtime
                 .Replace(" ", string.Empty)
                 .Replace("-", string.Empty)
                 .Replace("_", string.Empty);
+        }
+
+        private void EnsureMainMenuMarkerRecorders(bool simulationActive)
+        {
+            if (!_enableProfilerMarkerDiagnostics || !simulationActive ||
+                _mainMenuMarkerRegistrationAttempts >= MaxMainMenuMarkerRegistrationAttempts)
+                return;
+
+            _mainMenuMarkerRegistrationAttempts++;
+            bool allRegistered = true;
+            for (int i = 0; i < MainMenuDiagnosticMarkerNames.Length; i++)
+            {
+                string name = MainMenuDiagnosticMarkerNames[i];
+                AddProfilerMarkerRecorder(ProfilerCategory.Scripts, name);
+                allRegistered &= HasProfilerMarkerRecorder(name);
+            }
+            if (allRegistered)
+                _mainMenuMarkerRegistrationAttempts = MaxMainMenuMarkerRegistrationAttempts;
+        }
+
+        private void AppendMainMenuMarkerDiagnostics(System.Text.StringBuilder builder)
+        {
+            for (int i = 0; i < MainMenuDiagnosticMarkerNames.Length; i++)
+            {
+                string name = MainMenuDiagnosticMarkerNames[i];
+                if (builder.Length > 0)
+                    builder.Append("|");
+                builder.Append(name).Append("=");
+                int recorderIndex = -1;
+                for (int j = 0; j < _markerRecorders.Count; j++)
+                {
+                    if (_markerRecorders[j].Name != name)
+                        continue;
+                    recorderIndex = j;
+                    break;
+                }
+                if (recorderIndex < 0 || !_markerRecorders[recorderIndex].Recorder.Valid)
+                    builder.Append("unavailable");
+                else if (_markerRecorders[recorderIndex].Recorder.Count == 0)
+                    builder.Append("uncollected");
+                else
+                    builder.Append((_markerRecorders[recorderIndex].Recorder.LastValue / 1000000d).ToString("F1")).Append("ms");
+            }
+            builder.Append("|targetSample=latestCompletedFrame");
         }
 
         private void AddProfilerMarkerRecorder(ProfilerCategory category, string statName)
@@ -798,14 +852,12 @@ namespace Game.Runtime
             if (!_enableProfilerMarkerDiagnostics)
                 return "disabled";
 
-            if (_markerRecorders.Count == 0)
-                return "none";
-
             System.Text.StringBuilder builder = new();
+            AppendMainMenuMarkerDiagnostics(builder);
             for (int i = 0; i < _markerRecorders.Count; i++)
             {
                 NamedProfilerRecorder entry = _markerRecorders[i];
-                if (!entry.Recorder.Valid)
+                if (Array.IndexOf(MainMenuDiagnosticMarkerNames, entry.Name) >= 0 || !entry.Recorder.Valid)
                     continue;
 
                 long value = entry.Recorder.LastValue;

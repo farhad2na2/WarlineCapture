@@ -1262,7 +1262,9 @@ namespace Game.UI.Runtime
                 {
                     float distance = Distance(cue.Center, pins[selected].Center);
                     bool insideHex = hexes[selected] != null && PointInPolygon(cue.Center, hexes[selected]);
-                    if (distance > CueNearLimit && !insideHex)
+                    // A pill that has to leave the hex sits in the plate margin, which can be
+                    // farther than CueNearLimit from the selected pin.
+                    if (distance > CueNearLimit && !insideHex && !CueRestsClearInMargin(cue, plateWidth, plateHeight, hexes))
                     {
                         violations.Add(
                             "Theatre zoom hint is far from the selected pin locale=" + locale +
@@ -2302,8 +2304,8 @@ namespace Game.UI.Runtime
                 cueNear = TryPlaceCue(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue)
                     && CueAccepted(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight);
             if (cueNear && CueCoversHex(cue, hexes)
-                && TrySlideCueOffHexes(plateWidth, plateHeight, pins, placed, hexes, detail, selected, cue.W, fa, out Box slid))
-                cue = slid;
+                && TrySeatCueInMargin(plateWidth, plateHeight, pins, placed, hexes, detail, selected, cue.W, out Box marginCue))
+                cue = marginCue;
             layout.Cue = cue;
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
@@ -3178,6 +3180,156 @@ namespace Game.UI.Runtime
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Puts the zoom pill in a plate corner or edge margin that misses every district hex.
+        /// Cards stay where they were seated. A near-pin seat on 4:3 sits inside Industrial Basin,
+        /// so the margin may be farther than <see cref="CueNearLimit"/>.
+        /// </summary>
+        private static bool TrySeatCueInMargin(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float cueWidth,
+            out Box cue)
+        {
+            cue = default;
+            if (plateWidth < 32f || plateHeight < 32f)
+                return false;
+            float widest = cueWidth > CueWidth ? cueWidth : CueWidth;
+            if (widest < 100f)
+                widest = 100f;
+            float[] heights = { CueHeight, 32f };
+            Vec2 pin = default;
+            if (pins != null && selected >= 0 && selected < pins.Length)
+                pin = pins[selected].Center;
+            for (int pass = 0; pass < heights.Length; pass++)
+            {
+                float height = heights[pass];
+                for (float width = widest; width >= 100f - 0.5f; width -= 20f)
+                {
+                    Box best = default;
+                    float bestDist = float.MaxValue;
+                    bool found = false;
+                    ConsiderMarginSpots(
+                        plateWidth, plateHeight, pins, cards, hexes, detail, width, height, pin,
+                        ref best, ref bestDist, ref found);
+                    if (!found)
+                        continue;
+                    cue = best;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static void ConsiderMarginSpots(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            float width,
+            float height,
+            Vec2 pin,
+            ref Box best,
+            ref float bestDist,
+            ref bool found)
+        {
+            if (width < 8f || height < 8f || width > plateWidth - Edge * 2f || height > plateHeight - Edge * 2f)
+                return;
+            var corners = new[]
+            {
+                new Box(Edge, Edge, width, height),
+                new Box(plateWidth - Edge - width, Edge, width, height),
+                new Box(Edge, plateHeight - Edge - height, width, height),
+                new Box(plateWidth - Edge - width, plateHeight - Edge - height, width, height)
+            };
+            for (int i = 0; i < corners.Length; i++)
+                ConsiderMarginSpot(corners[i], pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
+            for (float x = Edge; x + width <= plateWidth - Edge + 0.1f; x += 8f)
+            {
+                ConsiderMarginSpot(new Box(x, Edge, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
+                ConsiderMarginSpot(new Box(x, plateHeight - Edge - height, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
+            }
+
+            for (float y = Edge; y + height <= plateHeight - Edge + 0.1f; y += 8f)
+            {
+                ConsiderMarginSpot(new Box(Edge, y, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
+                ConsiderMarginSpot(new Box(plateWidth - Edge - width, y, width, height), pins, cards, hexes, detail, plateWidth, plateHeight, pin, ref best, ref bestDist, ref found);
+            }
+        }
+
+        private static void ConsiderMarginSpot(
+            Box spot,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            Vec2 pin,
+            ref Box best,
+            ref float bestDist,
+            ref bool found)
+        {
+            if (!MarginCueOk(spot, pins, cards, hexes, detail, plateWidth, plateHeight))
+                return;
+            float reach = Distance(spot.Center, pin);
+            if (found && reach >= bestDist)
+                return;
+            best = spot;
+            bestDist = reach;
+            found = true;
+        }
+
+        private static bool MarginCueOk(
+            Box spot,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (spot.W < 8f || spot.H < 8f)
+                return false;
+            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail) || !ClearsPins(spot, pins))
+                return false;
+            if (cards != null && !ClearsCards(spot, cards, 4f))
+                return false;
+            if (CueCoversHex(InflateBox(spot, 16f), hexes))
+                return false;
+            if (LeaderHitsRect(pins, cards, spot))
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// A margin pill is clear of every hex, including the stroke around the fill, and sits on a plate edge.
+        /// </summary>
+        private static bool CueRestsClearInMargin(Box cue, float plateWidth, float plateHeight, Vec2[][] hexes)
+        {
+            if (cue.W < 1f || plateWidth < 2f || plateHeight < 2f)
+                return false;
+            const float band = 36f;
+            bool alongEdge = cue.YMin <= band || cue.XMin <= band
+                || plateHeight - cue.YMax <= band || plateWidth - cue.XMax <= band;
+            if (!alongEdge)
+                return false;
+            return !CueCoversHex(InflateBox(cue, 8f), hexes);
+        }
+
+        private static Box InflateBox(Box box, float margin)
+        {
+            return new Box(box.X - margin, box.Y - margin, box.W + margin * 2f, box.H + margin * 2f);
         }
 
         /// <summary>

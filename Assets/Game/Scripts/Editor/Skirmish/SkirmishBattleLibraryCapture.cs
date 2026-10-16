@@ -871,6 +871,7 @@ namespace Game.Editor
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
             GuardTheatre(() => RejectZoomPillOverCards(regions, locale));
             GuardTheatre(() => RejectZoomPillOverHexes(regions, locale));
+            GuardTheatre(() => RejectLatinNameInsideCard(regions, locale));
             GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
 
@@ -2702,35 +2703,112 @@ namespace Game.Editor
 
         private static void RejectZoomPillOverHexes(Transform regions, string locale)
         {
-            if (regions == null)
+            if (regions is not RectTransform space)
                 return;
-            RectTransform pill = FindNamed(regions, "CuePlate") as RectTransform;
-            if (pill == null || !pill.gameObject.activeInHierarchy)
-                pill = FindNamed(regions, "ZoomCue") as RectTransform;
-            if (pill == null || !pill.gameObject.activeInHierarchy)
+            var pills = new List<RectTransform>(2);
+            if (FindNamed(regions, "CuePlate") is RectTransform plate && plate.gameObject.activeInHierarchy)
+                pills.Add(plate);
+            if (FindNamed(regions, "ZoomCue") is RectTransform cue && cue.gameObject.activeInHierarchy)
+                pills.Add(cue);
+            if (pills.Count == 0)
                 return;
-            Rect bounds = WorldBounds(pill);
-            const float slop = 2f;
-            bounds.xMin += slop;
-            bounds.yMin += slop;
-            bounds.xMax -= slop;
-            bounds.yMax -= slop;
-            if (bounds.width <= 1f || bounds.height <= 1f)
-                return;
-            for (int i = 0; i < regions.childCount; i++)
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            var shapes = new Vector2[mapIds.Length][];
+            for (int i = 0; i < mapIds.Length; i++)
             {
-                Transform child = regions.GetChild(i);
-                if (child == null || !child.name.StartsWith("ZoneOutline_", StringComparison.Ordinal))
+                if (FindNamed(regions, "ZoneOutline_" + mapIds[i]) is not RectTransform outline || !outline.gameObject.activeInHierarchy)
                     continue;
-                if (child is not RectTransform outline || !outline.gameObject.activeInHierarchy)
-                    continue;
-                Vector2[] shape = OutlineWorldPoints(outline);
-                if (shape == null || shape.Length < 3 || !WorldRectHitsPolygon(bounds, shape))
-                    continue;
-                string district = child.name.Substring("ZoneOutline_".Length);
-                throw new InvalidOperationException(
-                    "Theatre zoom pill overlaps a zone hex locale=" + locale + " district=" + district + ".");
+                shapes[i] = PlateVectors(PlateShape(space, outline));
             }
+
+            const float reach = 12f;
+            for (int p = 0; p < pills.Count; p++)
+            {
+                TheatreSeatGeometry.Box box = PlateBox(space, pills[p]);
+                var inflated = new Rect(box.X - reach, box.Y - reach, box.W + reach * 2f, box.H + reach * 2f);
+                if (inflated.width <= 1f || inflated.height <= 1f)
+                    continue;
+                for (int i = 0; i < mapIds.Length; i++)
+                {
+                    if (shapes[i] == null || shapes[i].Length < 3 || !WorldRectHitsPolygon(inflated, shapes[i]))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre zoom pill overlaps a zone hex locale=" + locale + " district=" + mapIds[i] + ".");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Latin titles stay inside their card. A title that runs onto a neighbouring district is a violation.
+        /// Farsi is already covered by the seat-geometry name box check.
+        /// </summary>
+        private static void RejectLatinNameInsideCard(Transform regions, string locale)
+        {
+            if (regions is not RectTransform space)
+                return;
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            var shapes = new Vector2[mapIds.Length][];
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                if (FindNamed(regions, "ZoneOutline_" + mapIds[i]) is not RectTransform outline || !outline.gameObject.activeInHierarchy)
+                    continue;
+                shapes[i] = PlateVectors(PlateShape(space, outline));
+            }
+
+            const float slop = 1f;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                if (FindNamed(regions, "ZoneCard_" + mapIds[i]) is not RectTransform card || !card.gameObject.activeInHierarchy)
+                    continue;
+                if (card.Find("ZoneName") is not RectTransform name || !name.gameObject.activeInHierarchy)
+                    continue;
+                TMP_Text text = name.GetComponent<TMP_Text>();
+                if (text == null || ContainsArabicLetter(text.text))
+                    continue;
+                TheatreSeatGeometry.Box nameBox = PlateBox(space, name);
+                TheatreSeatGeometry.Box cardBox = PlateBox(space, card);
+                bool overhangs = nameBox.XMin < cardBox.XMin - slop || nameBox.XMax > cardBox.XMax + slop
+                    || nameBox.YMin < cardBox.YMin - slop || nameBox.YMax > cardBox.YMax + slop;
+                if (overhangs)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre zone name overhangs its card locale=" + locale + " card=" + card.name + ".");
+                }
+
+                var nameRect = new Rect(nameBox.X, nameBox.Y, nameBox.W, nameBox.H);
+                for (int h = 0; h < mapIds.Length; h++)
+                {
+                    if (h == i || shapes[h] == null || shapes[h].Length < 3 || !WorldRectHitsPolygon(nameRect, shapes[h]))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Theatre zone name touches a zone hex locale=" + locale +
+                        " card=" + card.name + " district=" + mapIds[h] + ".");
+                }
+            }
+        }
+
+        private static bool ContainsArabicLetter(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return false;
+            for (int i = 0; i < value.Length; i++)
+            {
+                char letter = value[i];
+                if (letter >= '\u0600' && letter <= '\u06FF')
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static Vector2[] PlateVectors(TheatreSeatGeometry.Vec2[] shape)
+        {
+            if (shape == null || shape.Length == 0)
+                return Array.Empty<Vector2>();
+            var points = new Vector2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+                points[i] = new Vector2(shape[i].X, shape[i].Y);
+            return points;
         }
 
         private static bool TryReadTheatreSummaryCounts(Transform column, out int[] counts)

@@ -115,6 +115,8 @@ namespace Game.UI.Runtime
         private const float InsideMargin = 8f;
         private const float OutsideGap = 1f;
         private const float LeaderMin = 25f;
+        /// <summary>A card must stay this far from every other district's leader segment.</summary>
+        public const float ForeignLeaderClearance = 4f;
         private const float CueNearLimit = 160f;
         private const float CueWidth = 220f;
         private const float CueHeight = 44f;
@@ -1237,6 +1239,7 @@ namespace Game.UI.Runtime
             }
 
             NoteLeaderCrossings(violations, pins, cards, locale);
+            NoteForeignLeaders(violations, pins, cards, locale);
             NoteStripMedals(violations, plateWidth, fa, locale);
             for (int i = stampFrom; i < violations.Count; i++)
                 violations[i] = Stamp(violations[i]);
@@ -1702,6 +1705,33 @@ namespace Game.UI.Runtime
             }
         }
 
+        private static void NoteForeignLeaders(IList<string> violations, Box[] pins, Box[] cards, string locale)
+        {
+            if (pins == null || cards == null)
+                return;
+            int count = Math.Min(pins.Length, Math.Min(cards.Length, MapIds.Length));
+            for (int leader = 0; leader < count; leader++)
+            {
+                if (pins[leader].W < 1f || cards[leader].W < 1f)
+                    continue;
+                Vec2 from = pins[leader].Center;
+                Vec2 to = NearestOn(cards[leader], from);
+                for (int card = 0; card < count; card++)
+                {
+                    if (card == leader || cards[card].W < 1f)
+                        continue;
+                    float gap = SegmentClearance(from, to, cards[card]);
+                    if (gap + 0.05f >= ForeignLeaderClearance)
+                        continue;
+                    violations.Add(
+                        "Theatre zone card is within 4px of a foreign leader locale=" + locale +
+                        " card=ZoneCard_" + MapIds[card] +
+                        " leader=" + MapIds[leader] +
+                        " gap=" + gap.ToString("0.0", CultureInfo.InvariantCulture) + ".");
+                }
+            }
+        }
+
         private static void NoteLeaderCrossings(IList<string> violations, Box[] pins, Box[] cards, string locale)
         {
             if (pins == null || cards == null)
@@ -1896,11 +1926,23 @@ namespace Game.UI.Runtime
             Vec2 from = pin.Center;
             Vec2 to = NearestOn(card, from);
             float length = Distance(from, to);
-            float draw = length - PinSize * 0.5f - 4f;
+            float draw = length - PinSize * 0.5f - 2f - ForeignLeaderClearance;
             if (draw < 4f)
             {
                 violations.Add("Theatre leader is missing for " + mapId + " locale=" + locale + ".");
                 return;
+            }
+
+            float ux = (to.X - from.X) / length;
+            float uy = (to.Y - from.Y) / length;
+            var drawnEnd = new Vec2(to.X - ux * ForeignLeaderClearance, to.Y - uy * ForeignLeaderClearance);
+            float meet = SegmentClearance(from, drawnEnd, card);
+            if (meet + 0.05f < ForeignLeaderClearance)
+            {
+                violations.Add(
+                    "Theatre leader meets its zone card locale=" + locale +
+                    " card=ZoneCard_" + mapId +
+                    " gap=" + meet.ToString("0.0", CultureInfo.InvariantCulture) + ".");
             }
 
             if (detail.W > 1f && SegmentHitsRect(from, to, detail))
@@ -2646,7 +2688,7 @@ namespace Game.UI.Runtime
                 {
                     if (!used[i])
                         continue;
-                    if (Separation(card, placed[i]) < CardGap || SegmentHitsRect(from, to, placed[i]))
+                    if (Separation(card, placed[i]) < CardGap || SegmentClearance(from, to, placed[i]) + 0.05f < ForeignLeaderClearance)
                     {
                         blocked = true;
                         break;
@@ -2654,7 +2696,7 @@ namespace Game.UI.Runtime
 
                     Vec2 otherFrom = pins[i].Center;
                     Vec2 otherTo = NearestOn(placed[i], otherFrom);
-                    if (SegmentsCross(from, to, otherFrom, otherTo) || SegmentHitsRect(otherFrom, otherTo, card))
+                    if (SegmentsCross(from, to, otherFrom, otherTo) || SegmentClearance(otherFrom, otherTo, card) + 0.05f < ForeignLeaderClearance)
                     {
                         blocked = true;
                         break;
@@ -3630,6 +3672,51 @@ namespace Game.UI.Runtime
         private static bool Contains(Box rect, Vec2 point)
         {
             return point.X >= rect.XMin && point.X < rect.XMax && point.Y >= rect.YMin && point.Y < rect.YMax;
+        }
+
+        private static float SegmentClearance(Vec2 a, Vec2 b, Box rect)
+        {
+            if (rect.W < 1f || rect.H < 1f)
+                return 999f;
+            if (SegmentHitsRect(a, b, rect))
+                return 0f;
+            float best = PointRectDistance(a, rect);
+            best = Math.Min(best, PointRectDistance(b, rect));
+            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMin, rect.YMin), a, b));
+            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMax, rect.YMin), a, b));
+            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMax, rect.YMax), a, b));
+            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMin, rect.YMax), a, b));
+            return best;
+        }
+
+        private static float PointRectDistance(Vec2 point, Box rect)
+        {
+            float dx = 0f;
+            if (point.X < rect.XMin)
+                dx = rect.XMin - point.X;
+            else if (point.X > rect.XMax)
+                dx = point.X - rect.XMax;
+            float dy = 0f;
+            if (point.Y < rect.YMin)
+                dy = rect.YMin - point.Y;
+            else if (point.Y > rect.YMax)
+                dy = point.Y - rect.YMax;
+            if (dx == 0f && dy == 0f)
+                return 0f;
+            return (float)Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        private static float PointSegmentDistance(Vec2 point, Vec2 a, Vec2 b)
+        {
+            float ex = b.X - a.X;
+            float ey = b.Y - a.Y;
+            float lengthSq = ex * ex + ey * ey;
+            float t = lengthSq < 0.0001f
+                ? 0f
+                : Clamp(((point.X - a.X) * ex + (point.Y - a.Y) * ey) / lengthSq, 0f, 1f);
+            float dx = point.X - (a.X + ex * t);
+            float dy = point.Y - (a.Y + ey * t);
+            return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
         private static bool SegmentHitsRect(Vec2 a, Vec2 b, Box rect)

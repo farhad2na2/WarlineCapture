@@ -1707,6 +1707,7 @@ namespace Game.Editor
                 };
             }
 
+            // Whole-theatre rows. A selected-zone pin (capture lives on IB: S073 Recruit only) is a different total.
             SkirmishMedalDifficultyTotals ledger = new SkirmishMedalLedger(rows).TotalsByDifficulty();
             int[] expected =
             {
@@ -1724,7 +1725,7 @@ namespace Game.Editor
                 {
                     throw new InvalidOperationException(
                         "Battles-won strip tier " + i + " reads '" + shown +
-                        "' locale=" + locale + ". The medal ledger has " + expected[i] + ".");
+                        "' locale=" + locale + ". The whole-theatre medal ledger has " + expected[i] + ".");
                 }
             }
         }

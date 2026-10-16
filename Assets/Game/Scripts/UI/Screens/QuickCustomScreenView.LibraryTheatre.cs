@@ -1686,7 +1686,7 @@ namespace Game.UI.Runtime
             float dy = to.y - from.y;
             float length = Mathf.Sqrt(dx * dx + dy * dy);
             float start = ZonePinSize * 0.5f + 2f;
-            float draw = length - start - 2f;
+            float draw = length - start - TheatreSeatGeometry.ForeignLeaderClearance;
             if (draw < 4f || length < 1f)
                 return;
             var line = new GameObject("ZoneLeader_" + slot.MapId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();

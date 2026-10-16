@@ -124,6 +124,11 @@ namespace Game.UI.Runtime
         public const float CardReach = 120f;
         /// <summary>Halo is drawn this far outside the hex vertices. The clip mask cuts anything past the plate.</summary>
         public const float HaloReach = 22f;
+        /// <summary>
+        /// Outer district stroke. The hex edge is 26px thick and pivot-centred, so it reaches
+        /// 13px past the fill and about 18px at a sharp tip. A 12px inflate misses a pill on that tip.
+        /// </summary>
+        public const float CueHexStroke = 26f;
         /// <summary>Laid-out gap. The check rejects anything under <see cref="MedalGapMinimum"/>.</summary>
         private const float MedalGap = 8f;
         public const float MedalGapMinimum = 6f;
@@ -1239,10 +1244,12 @@ namespace Game.UI.Runtime
 
             if (hasCue)
             {
+                int selected = IndexOf(selectedMapId);
                 NoteOutside(violations, cue, plateWidth, plateHeight, "zoom hint", "selected", locale, true);
                 for (int i = 0; i < count; i++)
                 {
-                    if (cards[i].W > 1f && Overlaps(cue, cards[i], 2f))
+                    // The zoom cue is a strip on the selected card. Other cards still fail.
+                    if (cards[i].W > 1f && Overlaps(cue, cards[i], 2f) && i != selected)
                     {
                         violations.Add(
                             "Theatre zoom hint overlaps a zone card locale=" + locale +
@@ -1257,7 +1264,6 @@ namespace Game.UI.Runtime
                     }
                 }
 
-                int selected = IndexOf(selectedMapId);
                 if (selected >= 0 && pins[selected].W > 1f)
                 {
                     float distance = Distance(cue.Center, pins[selected].Center);
@@ -2296,18 +2302,11 @@ namespace Game.UI.Runtime
             }
 
             layout.CardsLegal = cardsLegal;
-            Box cue = seatedCue;
-            bool cueNear = CueAccepted(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight);
+            Box cue;
+            bool cueNear = TryAttachCueToCard(
+                plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue);
             if (!cueNear)
-                cueNear = TryPlaceCue(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue)
-                    && CueAccepted(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight);
-            if (CueSitsNearAndClear(cue, pins, placed, hexes, detail, selected, plateWidth, plateHeight))
-                cueNear = true;
-            else if (TrySeatCueNearAndClear(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out Box nearCue))
-            {
-                cue = nearCue;
-                cueNear = true;
-            }
+                cue = seatedCue;
             layout.Cue = cue;
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
@@ -3185,11 +3184,180 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Keeps a pill whose centre is within <see cref="CueNearLimit"/> of the selected pin
-        /// and whose body, grown by the capture hex reach, misses every district.
+        /// Full-width strip on the selected card, inset so the leader (which stops on the card edge)
+        /// misses it. Tall enough for a 16–20px label on one or two lines. The strip stays inside the
+        /// card, so it does not sit on another card or on a hex the card itself clears.
         /// </summary>
-        private static bool CueSitsNearAndClear(
+        public static bool TryAttachCueToCard(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            out Box cue)
+        {
+            cue = default;
+            if (plateWidth < 32f || plateHeight < 32f || pins == null || cards == null)
+                return false;
+            if (selected < 0 || selected >= pins.Length || selected >= cards.Length)
+                return false;
+            Box card = cards[selected];
+            if (card.W < 48f || card.H < 48f)
+                return false;
+            const float insetX = 2f;
+            const float insetY = 4f;
+            float stripWidth = card.W - insetX * 2f;
+            if (stripWidth < 32f)
+                return false;
+            float left = card.X + insetX;
+            float[] stripHeights = { 52f, 48f, 44f, 40f };
+            for (int h = 0; h < stripHeights.Length; h++)
+            {
+                float stripHeight = stripHeights[h];
+                if (stripHeight > card.H - insetY * 2f)
+                    continue;
+                var foot = new Box(left, card.YMax - insetY - stripHeight, stripWidth, stripHeight);
+                if (CueTabLegal(foot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                {
+                    cue = foot;
+                    return true;
+                }
+
+                var head = new Box(left, card.Y + insetY, stripWidth, stripHeight);
+                if (CueTabLegal(head, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                {
+                    cue = head;
+                    return true;
+                }
+            }
+
+            return TryHangCueOffCard(
+                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue);
+        }
+
+        /// <summary>
+        /// When a strip inside the card is farther than <see cref="CueNearLimit"/> and outside the
+        /// hex, hang a tab off the card toward the pin. It still overlaps the card, misses the
+        /// leader, and stays off every other district. The selected hex is allowed: that is how
+        /// the centre gets inside the near-pin rule.
+        /// </summary>
+        private static bool TryHangCueOffCard(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            float[] stripHeights = { 52f, 48f, 44f, 40f, 36f };
+            float[] stripWidths = { card.W, 148f, 132f, 120f, 108f, 96f };
+            for (int h = 0; h < stripHeights.Length; h++)
+            {
+                float stripHeight = stripHeights[h];
+                for (int w = 0; w < stripWidths.Length; w++)
+                {
+                    float stripWidth = stripWidths[w] > card.W ? card.W : stripWidths[w];
+                    if (stripWidth < 32f || stripHeight < 16f)
+                        continue;
+                    if (TryHangCueSize(
+                        plateWidth, plateHeight, pins, cards, hexes, detail, selected, card,
+                        stripWidth, stripHeight, out cue))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryHangCueSize(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float stripWidth,
+            float stripHeight,
+            out Box cue)
+        {
+            cue = default;
+            float x0 = card.X - stripWidth + 8f;
+            float x1 = card.XMax - 8f;
+            float y0 = card.Y - stripHeight + 8f;
+            float y1 = card.YMax - 8f;
+            float[] ys =
+            {
+                card.Y - stripHeight + 8f,
+                card.YMax - 8f,
+                card.Y + 4f,
+                card.YMax - stripHeight - 4f
+            };
+            float[] xs = { card.X, card.XMax - stripWidth };
+            for (int yi = 0; yi < ys.Length; yi++)
+            {
+                for (int xi = 0; xi < xs.Length; xi++)
+                {
+                    if (TryHangSpot(
+                        plateWidth, plateHeight, pins, cards, hexes, detail, selected, card,
+                        xs[xi], ys[yi], stripWidth, stripHeight, out cue))
+                        return true;
+                }
+            }
+
+            Vec2 pin = pins[selected].Center;
+            for (float y = y0; y <= y1 + 0.1f; y += 8f)
+            {
+                for (float x = x0; x <= x1 + 0.1f; x += 8f)
+                {
+                    var spot = new Box(x, y, stripWidth, stripHeight);
+                    if (Distance(spot.Center, pin) > CueNearLimit
+                        && !(hexes != null && selected < hexes.Length && hexes[selected] != null
+                            && PointInPolygon(spot.Center, hexes[selected])))
+                        continue;
+                    if (!CueHangLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                        continue;
+                    cue = spot;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryHangSpot(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float x,
+            float y,
+            float stripWidth,
+            float stripHeight,
+            out Box cue)
+        {
+            cue = default;
+            var spot = new Box(x, y, stripWidth, stripHeight);
+            if (!CueHangLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                return false;
+            cue = spot;
+            return true;
+        }
+
+        private static bool CueHangLegal(
             Box spot,
+            Box card,
             Box[] pins,
             Box[] cards,
             Vec2[][] hexes,
@@ -3200,7 +3368,11 @@ namespace Game.UI.Runtime
         {
             if (spot.W < 8f || spot.H < 8f || pins == null || selected < 0 || selected >= pins.Length)
                 return false;
-            if (Distance(spot.Center, pins[selected].Center) > CueNearLimit)
+            if (!Overlaps(spot, card, 0f))
+                return false;
+            float overlapW = Math.Min(spot.XMax, card.XMax) - Math.Max(spot.XMin, card.XMin);
+            float overlapH = Math.Min(spot.YMax, card.YMax) - Math.Max(spot.YMin, card.YMin);
+            if (overlapW < 8f || overlapH < 8f)
                 return false;
             if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail))
                 return false;
@@ -3210,138 +3382,89 @@ namespace Game.UI.Runtime
                     return false;
             }
 
-            if (cards != null && !ClearsCards(spot, cards, 2f))
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == selected || cards[i].W < 1f)
+                        continue;
+                    if (Overlaps(spot, cards[i], 2f))
+                        return false;
+                }
+            }
+
+            bool insideHex = hexes != null && selected < hexes.Length && hexes[selected] != null
+                && PointInPolygon(spot.Center, hexes[selected]);
+            if (Distance(spot.Center, pins[selected].Center) > CueNearLimit && !insideHex)
                 return false;
-            // Capture rejects a pill inflated by 12px. One extra pixel keeps the seat off that test.
-            if (CueCoversHex(InflateBox(spot, 13f), hexes))
+            if (LeaderHitsRect(pins, cards, spot))
+                return false;
+            if (BoxInside(spot, card, 0.5f))
+                return true;
+            if (hexes == null)
+                return true;
+            Box grown = InflateBox(spot, CueHexStroke);
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == selected || hexes[i] == null)
+                    continue;
+                if (PolygonHitsRect(hexes[i], grown))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool CueTabLegal(
+            Box spot,
+            Box card,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (spot.W < 8f || spot.H < 8f || pins == null || selected < 0 || selected >= pins.Length)
+                return false;
+            if (!BoxInside(spot, card, 0.5f))
+                return false;
+            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail))
+                return false;
+            for (int i = 0; i < pins.Length; i++)
+            {
+                if (pins[i].W > 1f && Separation(spot, pins[i]) < 1f)
+                    return false;
+            }
+
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == selected || cards[i].W < 1f)
+                        continue;
+                    if (Overlaps(spot, cards[i], 2f))
+                        return false;
+                }
+            }
+
+            bool insideHex = hexes != null && selected < hexes.Length && hexes[selected] != null
+                && PointInPolygon(spot.Center, hexes[selected]);
+            if (Distance(spot.Center, pins[selected].Center) > CueNearLimit && !insideHex)
                 return false;
             if (LeaderHitsRect(pins, cards, spot))
                 return false;
             return true;
         }
 
-        /// <summary>
-        /// Finds a pill within <see cref="CueNearLimit"/> of the selected pin that misses every hex.
-        /// Tries the gap beside the selected card, then a smaller pill, and never moves the cards.
-        /// </summary>
-        private static bool TrySeatCueNearAndClear(
-            float plateWidth,
-            float plateHeight,
-            Box[] pins,
-            Box[] cards,
-            Vec2[][] hexes,
-            Box detail,
-            int selected,
-            out Box cue)
+        private static bool BoxInside(Box inner, Box outer, float slop)
         {
-            cue = default;
-            if (plateWidth < 32f || plateHeight < 32f || pins == null || selected < 0 || selected >= pins.Length)
-                return false;
-            Vec2 pin = pins[selected].Center;
-            Box card = cards != null && selected < cards.Length ? cards[selected] : default;
-            float[] widths = { 220f, 200f, 180f, 160f, 140f, 120f, 100f, 88f, 72f, 64f, 48f };
-            float[] pillHeights = { 44f, 36f, 32f, 28f, 24f, 20f, 18f, 16f };
-            for (int w = 0; w < widths.Length; w++)
-            {
-                for (int h = 0; h < pillHeights.Length; h++)
-                {
-                    if (!TryCueNearClearSize(
-                        plateWidth, plateHeight, pins, cards, hexes, detail, selected, pin, card,
-                        widths[w], pillHeights[h], out cue))
-                        continue;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool TryCueNearClearSize(
-            float plateWidth,
-            float plateHeight,
-            Box[] pins,
-            Box[] cards,
-            Vec2[][] hexes,
-            Box detail,
-            int selected,
-            Vec2 pin,
-            Box card,
-            float width,
-            float pillHeight,
-            out Box cue)
-        {
-            cue = default;
-            if (width < 8f || pillHeight < 8f || width > plateWidth - Edge * 2f || pillHeight > plateHeight - Edge * 2f)
-                return false;
-            if (card.W > 1f && TryCueBesideCard(
-                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, width, pillHeight, out cue))
-                return true;
-            float step = pillHeight <= 20f ? 4f : 8f;
-            float x0 = pin.X - CueNearLimit - width * 0.5f;
-            float y0 = pin.Y - CueNearLimit - pillHeight * 0.5f;
-            float x1 = pin.X + CueNearLimit - width * 0.5f;
-            float y1 = pin.Y + CueNearLimit - pillHeight * 0.5f;
-            for (float y = y0; y <= y1 + 0.1f; y += step)
-            {
-                for (float x = x0; x <= x1 + 0.1f; x += step)
-                {
-                    var spot = new Box(x, y, width, pillHeight);
-                    if (!CueSitsNearAndClear(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                        continue;
-                    cue = spot;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool TryCueBesideCard(
-            float plateWidth,
-            float plateHeight,
-            Box[] pins,
-            Box[] cards,
-            Vec2[][] hexes,
-            Box detail,
-            int selected,
-            Box card,
-            float width,
-            float pillHeight,
-            out Box cue)
-        {
-            cue = default;
-            const float gap = 4f;
-            float[] lefts = { card.XMax + gap, card.XMin - gap - width };
-            float yStart = card.YMin - pillHeight - gap;
-            float yEnd = card.YMax + gap;
-            for (int i = 0; i < lefts.Length; i++)
-            {
-                for (float y = yStart; y <= yEnd + 0.1f; y += 4f)
-                {
-                    var spot = new Box(lefts[i], y, width, pillHeight);
-                    if (!CueSitsNearAndClear(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                        continue;
-                    cue = spot;
-                    return true;
-                }
-            }
-
-            float[] tops = { card.YMin - gap - pillHeight, card.YMax + gap };
-            float xStart = card.XMin - width - gap;
-            float xEnd = card.XMax + gap;
-            for (int i = 0; i < tops.Length; i++)
-            {
-                for (float x = xStart; x <= xEnd + 0.1f; x += 4f)
-                {
-                    var spot = new Box(x, tops[i], width, pillHeight);
-                    if (!CueSitsNearAndClear(spot, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                        continue;
-                    cue = spot;
-                    return true;
-                }
-            }
-
-            return false;
+            return inner.W > 1f && outer.W > 1f
+                && inner.XMin >= outer.XMin - slop
+                && inner.YMin >= outer.YMin - slop
+                && inner.XMax <= outer.XMax + slop
+                && inner.YMax <= outer.YMax + slop;
         }
 
         private static Box InflateBox(Box box, float margin)

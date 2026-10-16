@@ -1806,12 +1806,12 @@ namespace Game.UI.Runtime
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.fontStyle = FontStyles.Bold;
             cue.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 22f, 32f);
+            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 16f, 20f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
-            cue.maxVisibleLines = 1;
+            cue.maxVisibleLines = 2;
             cue.fontStyle = FontStyles.Bold;
             cue.color = new Color(1f, 0.97f, 0.9f, 1f);
         }
@@ -1981,8 +1981,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// The packer already left the cue clear of the leader. Fit the label inside that rect.
-        /// A one-line cue that already fits is left alone, so the wide plates keep their label.
+        /// Zoom label at 16–20px. One line when the card width holds it, otherwise a split at a space.
+        /// Tracking may tighten to −12. The size never drops under 16.
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
@@ -1996,16 +1996,25 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
-            cue.textWrappingMode = TextWrappingModes.NoWrap;
-            cue.overflowMode = TextOverflowModes.Overflow;
-            cue.maxVisibleLines = 1;
-            FitCopyInside(cue, 11f);
-            cue.ForceMeshUpdate();
-            float line = MeasuredNameWidth(cue);
-            float height = cue.preferredHeight;
-            if (line > 0.5f && line <= boxW + 2f && height <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
-                return;
-            CueLabelSplits(cue, source, cue.fontSize, boxW, boxH);
+            const float cueCeiling = 20f;
+            const float cueFloor = 16f;
+            for (float size = cueCeiling; size >= cueFloor - 0.01f; size -= 1f)
+            {
+                if (FitsNameLine(cue, source, size, boxW, -12f))
+                {
+                    cue.maxVisibleLines = 1;
+                    cue.ForceMeshUpdate();
+                    if (cue.preferredHeight <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
+                        return;
+                }
+
+                cue.characterSpacing = 0f;
+                if (CueLabelSplits(cue, source, size, boxW, boxH))
+                    return;
+                cue.characterSpacing = -12f;
+                if (CueLabelSplits(cue, source, size, boxW, boxH))
+                    return;
+            }
         }
 
         /// <summary>
@@ -2096,174 +2105,67 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Keeps a zoom pill that is within 160px of the selected pin and misses every district,
-        /// or moves it into that seat. Zone cards are not moved.
+        /// Puts the zoom cue on the selected card. The same attachment the seat harness uses,
+        /// so a full-width strip or a tab hung off the card stays inside the near-pin rule.
         /// </summary>
         private static bool SeatZoomCueClearOfHexes(TMP_Text cue, bool fa, string selectedId)
         {
             if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
                 return false;
+            if (string.IsNullOrEmpty(selectedId))
+                selectedId = "DB";
             float frameW = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
             float frameH = parent.rect.height > 2f ? parent.rect.height : parent.sizeDelta.y;
             if (frameW < 32f || frameH < 32f)
                 return false;
-            Rect current = new Rect(
-                cue.rectTransform.anchoredPosition.x,
-                -cue.rectTransform.anchoredPosition.y,
-                cue.rectTransform.sizeDelta.x,
-                cue.rectTransform.sizeDelta.y);
-            Rect detail = SeatingDetailRect(frameW, frameH, fa);
-            Vector2 pin = SelectedPinCentre(parent, selectedId);
-            bool nearPin = Vector2.Distance(current.center, pin) <= 160f;
-            if (nearPin && current.width >= 48f && current.height >= 16f && MarginSpotClear(parent, current, frameW, frameH, detail))
+            string[] ids = TheatreSeatGeometry.MapIds;
+            var cards = new TheatreSeatGeometry.Box[ids.Length];
+            var pins = new TheatreSeatGeometry.Box[ids.Length];
+            var hexes = new TheatreSeatGeometry.Vec2[ids.Length][];
+            int selected = 0;
+            for (int i = 0; i < ids.Length; i++)
             {
-                SyncCuePlate(parent, current);
-                FitCueInsidePackedRect(cue);
-                return true;
+                if (string.Equals(ids[i], selectedId, StringComparison.OrdinalIgnoreCase))
+                    selected = i;
+                if (parent.Find("ZoneCard_" + ids[i]) is RectTransform cardNode)
+                {
+                    cards[i] = new TheatreSeatGeometry.Box(
+                        cardNode.anchoredPosition.x,
+                        -cardNode.anchoredPosition.y,
+                        cardNode.sizeDelta.x,
+                        cardNode.sizeDelta.y);
+                }
+
+                if (parent.Find("ZonePin_" + ids[i]) is RectTransform pinNode)
+                {
+                    float pinW = pinNode.sizeDelta.x > 2f ? pinNode.sizeDelta.x : ZonePinSize;
+                    float pinH = pinNode.sizeDelta.y > 2f ? pinNode.sizeDelta.y : ZonePinSize;
+                    pins[i] = new TheatreSeatGeometry.Box(
+                        pinNode.anchoredPosition.x,
+                        -pinNode.anchoredPosition.y,
+                        pinW,
+                        pinH);
+                }
+
+                if (parent.Find("ZoneOutline_" + ids[i]) is RectTransform outline)
+                {
+                    Vector2[] points = OutlinePlatePoints(outline);
+                    var shape = new TheatreSeatGeometry.Vec2[points.Length];
+                    for (int p = 0; p < points.Length; p++)
+                        shape[p] = new TheatreSeatGeometry.Vec2(points[p].x, points[p].y);
+                    hexes[i] = shape;
+                }
             }
 
-            if (!TrySeatRuntimeCueNear(parent, frameW, frameH, detail, selectedId, out Rect spot))
+            Rect detailRect = SeatingDetailRect(frameW, frameH, fa);
+            var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            if (!TheatreSeatGeometry.TryAttachCueToCard(frameW, frameH, pins, cards, hexes, detail, selected, out TheatreSeatGeometry.Box seated))
                 return false;
+            var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
             SyncCuePlate(parent, spot);
             FitCueInsidePackedRect(cue);
             return true;
-        }
-
-        private static void SyncCuePlate(RectTransform parent, Rect spot)
-        {
-            if (parent != null && parent.Find("CuePlate") is RectTransform plate)
-                PlaceTopLeft(plate, spot.x, spot.y, spot.width, spot.height);
-        }
-
-        /// <summary>
-        /// Largest pill whose centre is within 160px of the selected pin and that misses every hex.
-        /// Looks beside the selected card before scanning the pin neighbourhood. Cards stay put.
-        /// </summary>
-        private static bool TrySeatRuntimeCueNear(
-            RectTransform parent,
-            float frameW,
-            float frameH,
-            Rect detail,
-            string selectedId,
-            out Rect spot)
-        {
-            spot = default;
-            Vector2 pin = SelectedPinCentre(parent, selectedId);
-            Rect card = default;
-            bool hasCard = false;
-            if (parent != null && parent.Find("ZoneCard_" + selectedId) is RectTransform cardRect)
-            {
-                card = new Rect(
-                    cardRect.anchoredPosition.x,
-                    -cardRect.anchoredPosition.y,
-                    cardRect.sizeDelta.x,
-                    cardRect.sizeDelta.y);
-                hasCard = card.width > 1f && card.height > 1f;
-            }
-
-            float[] widths = { 220f, 200f, 180f, 160f, 140f, 120f, 100f, 88f, 72f, 64f, 48f };
-            float[] pillHeights = { 44f, 36f, 32f, 28f, 24f, 20f, 18f, 16f };
-            for (int w = 0; w < widths.Length; w++)
-            {
-                for (int h = 0; h < pillHeights.Length; h++)
-                {
-                    if (!TryRuntimeCueSize(parent, frameW, frameH, widths[w], pillHeights[h], detail, pin, card, hasCard, out spot))
-                        continue;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool TryRuntimeCueSize(
-            RectTransform parent,
-            float frameW,
-            float frameH,
-            float width,
-            float pillHeight,
-            Rect detail,
-            Vector2 pin,
-            Rect card,
-            bool hasCard,
-            out Rect spot)
-        {
-            spot = default;
-            if (width < 8f || pillHeight < 8f || width > frameW - 24f || pillHeight > frameH - 24f)
-                return false;
-            if (hasCard && TryRuntimeCueBesideCard(parent, frameW, frameH, width, pillHeight, detail, pin, card, out spot))
-                return true;
-            float step = pillHeight <= 20f ? 4f : 8f;
-            float x0 = pin.x - 160f - width * 0.5f;
-            float y0 = pin.y - 160f - pillHeight * 0.5f;
-            float x1 = pin.x + 160f - width * 0.5f;
-            float y1 = pin.y + 160f - pillHeight * 0.5f;
-            for (float y = y0; y <= y1 + 0.1f; y += step)
-            {
-                for (float x = x0; x <= x1 + 0.1f; x += step)
-                {
-                    var candidate = new Rect(x, y, width, pillHeight);
-                    if (Vector2.Distance(candidate.center, pin) > 160f)
-                        continue;
-                    if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
-                        continue;
-                    spot = candidate;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool TryRuntimeCueBesideCard(
-            RectTransform parent,
-            float frameW,
-            float frameH,
-            float width,
-            float pillHeight,
-            Rect detail,
-            Vector2 pin,
-            Rect card,
-            out Rect spot)
-        {
-            spot = default;
-            const float gap = 4f;
-            float[] lefts = { card.xMax + gap, card.xMin - gap - width };
-            float yStart = card.yMin - pillHeight - gap;
-            float yEnd = card.yMax + gap;
-            for (int i = 0; i < lefts.Length; i++)
-            {
-                for (float y = yStart; y <= yEnd + 0.1f; y += 4f)
-                {
-                    var candidate = new Rect(lefts[i], y, width, pillHeight);
-                    if (Vector2.Distance(candidate.center, pin) > 160f)
-                        continue;
-                    if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
-                        continue;
-                    spot = candidate;
-                    return true;
-                }
-            }
-
-            float[] tops = { card.yMin - gap - pillHeight, card.yMax + gap };
-            float xStart = card.xMin - width - gap;
-            float xEnd = card.xMax + gap;
-            for (int i = 0; i < tops.Length; i++)
-            {
-                for (float x = xStart; x <= xEnd + 0.1f; x += 4f)
-                {
-                    var candidate = new Rect(x, tops[i], width, pillHeight);
-                    if (Vector2.Distance(candidate.center, pin) > 160f)
-                        continue;
-                    if (!MarginSpotClear(parent, candidate, frameW, frameH, detail))
-                        continue;
-                    spot = candidate;
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static bool MarginSpotClear(RectTransform parent, Rect spot, float frameW, float frameH, Rect detail)
@@ -2381,6 +2283,7 @@ namespace Game.UI.Runtime
             if (SeatZoomCueClearOfHexes(cue, fa, heldSelection))
             {
                 RaiseTheatreReadability(_libraryRegions);
+                FitCueInsidePackedRect(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
             }
@@ -2522,14 +2425,6 @@ namespace Game.UI.Runtime
 
             if (!cueSeated)
                 cueRect = fullCue;
-            Vector2 selectedPin = SelectedPinCentre(parent, selectedId);
-            if (!MarginSpotClear(parent, cueRect, frameW, frameH, detail)
-                || Vector2.Distance(cueRect.center, selectedPin) > 160f)
-            {
-                if (TrySeatRuntimeCueNear(parent, frameW, frameH, detail, selectedId, out Rect seatedCue))
-                    cueRect = seatedCue;
-            }
-
             PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
 
             Transform plate = parent.Find("CuePlate");
@@ -2727,7 +2622,7 @@ namespace Game.UI.Runtime
                 if (text.name == "ZoneCount")
                     RaiseTheatreLine(text, 18f, 28f);
                 else if (text.name == "ZoomCue")
-                    RaiseTheatreLine(text, 16f, 28f);
+                    continue;
             }
 
         }
@@ -2738,6 +2633,8 @@ namespace Game.UI.Runtime
         private const float DrawnNameCeiling = 32f;
         /// <summary>About 80% of the approved-1 cap height. One line at this size is the aim.</summary>
         private const float DrawnNameTarget = 26f;
+        /// <summary>Latin titles stay at least this large. Arabic keeps its own floor and must not pull Latin down.</summary>
+        private const float LatinNameFloor = 20f;
 
         /// <summary>
         /// Titles on a full 320x110 card stay on the v35 18–26 line. A card that had to shrink
@@ -2781,24 +2678,43 @@ namespace Game.UI.Runtime
             if (plate.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
                 cue = PlateBoxOf(cueRect);
             TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
-            // One size for the plate: the largest that fits inside every card, using tracking
-            // and a second line when one line will not.
-            float shared = DrawnNameCeiling;
-            bool any = false;
+            // Latin and Arabic each take the largest size that fits every card of that script.
+            // Arabic's 13px floor must not become the Latin size.
+            float latinShared = DrawnNameCeiling;
+            float arabicShared = DrawnNameCeiling;
+            bool anyLatin = false;
+            bool anyArabic = false;
+            var arabic = new bool[names.Count];
             for (int i = 0; i < names.Count && i < cards.Count; i++)
             {
+                arabic[i] = ContainsArabicLetter(FlattenCopy(names[i].text));
                 float used = FitOnePortraitName(names[i], cards[i], boxes, i, detail, cue, hint, plateHeight, wide);
                 if (used < 1f)
                     continue;
-                any = true;
-                if (used < shared)
-                    shared = used;
+                if (arabic[i])
+                {
+                    anyArabic = true;
+                    if (used < arabicShared)
+                        arabicShared = used;
+                }
+                else
+                {
+                    anyLatin = true;
+                    if (used < latinShared)
+                        latinShared = used;
+                }
             }
 
-            if (!any)
+            if (!anyLatin && !anyArabic)
                 return;
             for (int i = 0; i < names.Count && i < cards.Count; i++)
             {
+                bool script = arabic[i];
+                if (script && !anyArabic)
+                    continue;
+                if (!script && !anyLatin)
+                    continue;
+                float shared = script ? arabicShared : latinShared;
                 if (Mathf.Abs(names[i].fontSize - shared) > 0.4f)
                     TryCommitPortraitName(names[i], cards[i], shared, wide);
                 RecordDrawnZoneName(names[i]);
@@ -2830,17 +2746,8 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(name.text);
             if (name.rectTransform != null)
                 name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
-            float fontFloor = cardW <= TheatreSeatGeometry.PortraitMinWidth + 8f
-                ? TheatreSeatGeometry.PortraitCompactFontFloor
-                : TheatreSeatGeometry.NameFontFloor;
-            if (fontFloor > TheatreSeatGeometry.PortraitCompactFontFloor
-                && boxWidth <= 114f
-                && ContainsArabicLetter(source))
-                fontFloor = TheatreSeatGeometry.PortraitCompactFontFloor;
-            // Noto's Arabic line box is taller than the Latin one. Step under the compact floor
-            // only until two whole words fit inside the v47 name budget.
-            if (ContainsArabicLetter(source))
-                fontFloor = Mathf.Min(fontFloor, 13f);
+            bool arabic = ContainsArabicLetter(source);
+            float fontFloor = arabic ? 13f : LatinNameFloor;
             for (float size = DrawnNameCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
                 if (TryCommitPortraitName(name, card, size, wide))
@@ -2886,7 +2793,14 @@ namespace Game.UI.Runtime
                 name.characterSpacing = 0f;
                 name.textWrappingMode = TextWrappingModes.NoWrap;
                 name.maxVisibleLines = 2;
-                if (!WrapZoneName(name, size))
+                bool wrapped = WrapZoneName(name, size);
+                if (!wrapped && latin)
+                {
+                    name.characterSpacing = -12f;
+                    wrapped = WrapZoneName(name, size);
+                }
+
+                if (!wrapped)
                     return false;
                 name.fontSizeMin = size;
                 name.fontSizeMax = size;
@@ -2899,7 +2813,7 @@ namespace Game.UI.Runtime
             float needed = PortraitNameBox(name, source, size, cardH);
             if (needed < 0.5f)
                 return false;
-            if (TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide) + 1f < needed)
+            if (NameBandLimit(cardH) + 1f < needed)
                 return false;
 
             ApplyPortraitNameLayout(card, name, needed, cardH, wide, oneLine);
@@ -2946,14 +2860,10 @@ namespace Game.UI.Runtime
         {
             if (name == null || card == null)
                 return;
-            float size = card.sizeDelta.x <= TheatreSeatGeometry.PortraitMinWidth + 8f
-                ? TheatreSeatGeometry.PortraitCompactFontFloor
-                : TheatreSeatGeometry.NameFontFloor;
-            float boxWidth = PortraitNameWidth(card.sizeDelta.x);
             bool arabic = ContainsArabicLetter(source);
-            if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f && arabic)
-                size = TheatreSeatGeometry.PortraitCompactFontFloor;
-            float stop = arabic ? 13f : size;
+            float size = arabic ? 13f : LatinNameFloor;
+            float boxWidth = PortraitNameWidth(card.sizeDelta.x);
+            float stop = size;
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
             for (float candidate = Mathf.Max(size, DrawnNameTarget); candidate >= stop - 0.01f; candidate -= 1f)
             {
@@ -2973,7 +2883,7 @@ namespace Game.UI.Runtime
                 if (!FitsNameLine(name, source, candidate, boxWidth, arabic ? 0f : -12f))
                     continue;
                 float needed = PortraitNameBox(name, source, candidate, card.sizeDelta.y);
-                if (TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) + 1f < needed)
+                if (NameBandLimit(card.sizeDelta.y) + 1f < needed)
                     continue;
                 ApplyPortraitNameLayout(card, name, needed, card.sizeDelta.y, wide, true);
                 name.lineSpacing = 0f;
@@ -2998,7 +2908,7 @@ namespace Game.UI.Runtime
                 if (!WrapZoneName(name, wrapped))
                     continue;
                 float wrappedHeight = PortraitNameBox(name, source, wrapped, card.sizeDelta.y);
-                if (TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) + 1f < wrappedHeight)
+                if (NameBandLimit(card.sizeDelta.y) + 1f < wrappedHeight)
                     continue;
                 ApplyPortraitNameLayout(card, name, wrappedHeight, card.sizeDelta.y, wide, false);
                 name.lineSpacing = 0f;
@@ -3118,13 +3028,17 @@ namespace Game.UI.Runtime
                 nameW = Mathf.Max(8f, cardW - nameX);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
             DominantCardBands(cardH, wide, out float nameRoom, out float portraitH, out float statusH);
-            float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
-            if (nameH > maxName)
-                nameH = maxName;
-            if (nameH < 1f)
-                nameH = 1f;
             if (nameH > nameRoom)
                 nameH = nameRoom;
+            if (nameH < 1f)
+                nameH = 1f;
+            float oldCap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
+            if (nameH > oldCap + 1f)
+            {
+                float floor = cardH * 0.60f;
+                portraitH = Mathf.Max(floor, portraitH - (nameH - oldCap));
+            }
+
             float stackRoom = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
             if (nameH + statusH > stackRoom + 0.5f)
                 statusH = Mathf.Max(22f, stackRoom - nameH);
@@ -3212,17 +3126,14 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Portrait is 68% of the card (kept inside 65–70%). The name overlays that portrait,
-        /// so its room is the full two-line budget. The status row is tall enough for "به زودی".
+        /// Portrait starts at 68% and may shrink toward 60% when a two-line title needs the room.
+        /// The name overlays the portrait and stops above the status row.
         /// </summary>
         private static void DominantCardBands(float cardH, bool wide, out float nameRoom, out float portraitH, out float statusH)
         {
             statusH = cardH >= 190f ? 40f : 34f;
-            float cap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
-            nameRoom = cap;
-            if (nameRoom < 18f)
-                nameRoom = 18f;
-            float low = cardH * 0.65f;
+            nameRoom = NameBandLimit(cardH);
+            float low = cardH * 0.60f;
             float high = cardH * 0.70f;
             portraitH = Mathf.Round(cardH * 0.68f);
             if (portraitH < low)
@@ -3231,6 +3142,13 @@ namespace Game.UI.Runtime
                 portraitH = Mathf.Floor(high);
             if (portraitH < 8f)
                 portraitH = 8f;
+        }
+
+        /// <summary>Room for the title above the status row. The portrait may sit under part of that band.</summary>
+        private static float NameBandLimit(float cardH)
+        {
+            float statusH = cardH >= 190f ? 40f : 34f;
+            return Mathf.Max(24f, cardH - 4f - statusH - 2f);
         }
 
         /// <summary>Dark bar behind the overlaid title so a two-line name still reads on the photo.</summary>

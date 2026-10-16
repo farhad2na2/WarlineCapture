@@ -868,9 +868,12 @@ namespace Game.Editor
                 });
             }
 
+            string selectedMapId = view != null && view.LibraryViewModel != null
+                ? view.LibraryViewModel.Theater.SelectedMapId
+                : string.Empty;
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
-            GuardTheatre(() => RejectZoomPillOverCards(regions, locale));
-            GuardTheatre(() => RejectZoomPillOverHexes(regions, locale));
+            GuardTheatre(() => RejectZoomPillOverCards(regions, locale, selectedMapId));
+            GuardTheatre(() => RejectZoomPillOverHexes(regions, locale, selectedMapId));
             GuardTheatre(() => RejectLatinNameInsideCard(regions, locale));
             GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
@@ -2497,11 +2500,12 @@ namespace Game.Editor
                 return;
             for (int i = 0; i < cards.Length; i++)
             {
-                if (cards[i] != null && WorldOverlap(cue, cards[i]))
-                {
-                    throw new InvalidOperationException(
-                        "Theatre zoom hint overlaps a zone card locale=" + locale + " card=" + cards[i].name + ".");
-                }
+                if (cards[i] == null || !WorldOverlap(cue, cards[i]))
+                    continue;
+                if (CueContainedInCard(cue, cards[i]))
+                    continue;
+                throw new InvalidOperationException(
+                    "Theatre zoom hint overlaps a zone card locale=" + locale + " card=" + cards[i].name + ".");
             }
 
             for (int i = 0; i < names.Length; i++)
@@ -2680,7 +2684,7 @@ namespace Game.Editor
             }
         }
 
-        private static void RejectZoomPillOverCards(Transform regions, string locale)
+        private static void RejectZoomPillOverCards(Transform regions, string locale, string selectedMapId)
         {
             if (regions == null)
                 return;
@@ -2689,6 +2693,7 @@ namespace Game.Editor
                 pill = FindNamed(regions, "ZoomCue") as RectTransform;
             if (pill == null || !pill.gameObject.activeInHierarchy)
                 return;
+            string selectedCard = string.IsNullOrEmpty(selectedMapId) ? string.Empty : "ZoneCard_" + selectedMapId;
             for (int i = 0; i < regions.childCount; i++)
             {
                 Transform child = regions.GetChild(i);
@@ -2696,12 +2701,14 @@ namespace Game.Editor
                     continue;
                 if (!card.gameObject.activeInHierarchy || !WorldOverlap(pill, card))
                     continue;
+                if (selectedCard.Length > 0 && string.Equals(child.name, selectedCard, StringComparison.Ordinal))
+                    continue;
                 throw new InvalidOperationException(
                     "Theatre zoom pill overlaps a zone card locale=" + locale + " card=" + card.name + ".");
             }
         }
 
-        private static void RejectZoomPillOverHexes(Transform regions, string locale)
+        private static void RejectZoomPillOverHexes(Transform regions, string locale, string selectedMapId)
         {
             if (regions is not RectTransform space)
                 return;
@@ -2721,21 +2728,75 @@ namespace Game.Editor
                 shapes[i] = PlateVectors(PlateShape(space, outline));
             }
 
-            const float reach = 12f;
+            RectTransform selected = string.IsNullOrEmpty(selectedMapId)
+                ? null
+                : FindNamed(regions, "ZoneCard_" + selectedMapId) as RectTransform;
+            TheatreSeatGeometry.Box selectedBox = selected != null && selected.gameObject.activeInHierarchy
+                ? PlateBox(space, selected)
+                : default;
+            // The visible hex is the fill plus a 26px edge. Inflating by 12 stopped short of that
+            // stroke, so a pill on the tip of Industrial Basin did not register.
+            float reach = TheatreSeatGeometry.CueHexStroke;
             for (int p = 0; p < pills.Count; p++)
             {
                 TheatreSeatGeometry.Box box = PlateBox(space, pills[p]);
+                bool contained = PlateBoxInside(box, selectedBox);
+                bool attached = contained || PlateBoxesOverlap(box, selectedBox);
+                if (contained)
+                    continue;
+                int selectedIndex = -1;
+                for (int m = 0; m < mapIds.Length; m++)
+                {
+                    if (string.Equals(mapIds[m], selectedMapId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        selectedIndex = m;
+                        break;
+                    }
+                }
+
                 var inflated = new Rect(box.X - reach, box.Y - reach, box.W + reach * 2f, box.H + reach * 2f);
                 if (inflated.width <= 1f || inflated.height <= 1f)
                     continue;
                 for (int i = 0; i < mapIds.Length; i++)
                 {
+                    if (attached && i == selectedIndex)
+                        continue;
                     if (shapes[i] == null || shapes[i].Length < 3 || !WorldRectHitsPolygon(inflated, shapes[i]))
                         continue;
                     throw new InvalidOperationException(
                         "Theatre zoom pill overlaps a zone hex locale=" + locale + " district=" + mapIds[i] + ".");
                 }
             }
+        }
+
+        private static bool PlateBoxesOverlap(TheatreSeatGeometry.Box left, TheatreSeatGeometry.Box right)
+        {
+            return left.W > 1f && right.W > 1f
+                && left.XMin < right.XMax && right.XMin < left.XMax
+                && left.YMin < right.YMax && right.YMin < left.YMax;
+        }
+
+        private static bool PlateBoxInside(TheatreSeatGeometry.Box inner, TheatreSeatGeometry.Box outer)
+        {
+            const float slop = 1.5f;
+            return inner.W > 1f && outer.W > 1f
+                && inner.XMin >= outer.XMin - slop
+                && inner.YMin >= outer.YMin - slop
+                && inner.XMax <= outer.XMax + slop
+                && inner.YMax <= outer.YMax + slop;
+        }
+
+        private static bool CueContainedInCard(RectTransform cue, RectTransform card)
+        {
+            if (cue == null || card == null)
+                return false;
+            Rect cueBounds = WorldBounds(cue);
+            Rect cardBounds = WorldBounds(card);
+            const float slop = 1.5f;
+            return cueBounds.xMin >= cardBounds.xMin - slop
+                && cueBounds.yMin >= cardBounds.yMin - slop
+                && cueBounds.xMax <= cardBounds.xMax + slop
+                && cueBounds.yMax <= cardBounds.yMax + slop;
         }
 
         /// <summary>

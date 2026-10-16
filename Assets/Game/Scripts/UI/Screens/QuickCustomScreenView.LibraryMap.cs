@@ -193,7 +193,7 @@ namespace Game.UI.Runtime
                 image.transform.SetParent(parent, false);
                 PlaceTopLeft(image.rectTransform, x + i * (size + 2f), y, size, size);
                 bool earned = MedalEarned(medals, difficulties[i]);
-                ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, 0.78f));
+                PaintDifficultyMedal(image, difficulties[i], earned);
             }
         }
 

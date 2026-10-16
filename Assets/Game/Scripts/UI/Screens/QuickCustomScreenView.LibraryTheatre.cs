@@ -1965,6 +1965,9 @@ namespace Game.UI.Runtime
             // The closed seam only hides the briefing edge when the opaque map is painted above it.
             if (briefing != null && map.parent == briefing.parent && map.GetSiblingIndex() < briefing.GetSiblingIndex())
                 map.SetSiblingIndex(briefing.GetSiblingIndex());
+            // The frame pass runs after the seat stack. Refit from the card's final rect so a
+            // layout group, an early size, or a parent scale cannot leave a ~38px tile.
+            RefitTheatreCardArt();
         }
 
         private static void HideEdgeShadow(Transform shadow)
@@ -2094,6 +2097,7 @@ namespace Game.UI.Runtime
 
         private void FitZoomCue()
         {
+            FitBattleCardSubtitles();
             if (_libraryRegions == null || !_libraryRegions.gameObject.activeInHierarchy)
                 return;
             TMP_Text cue = null;
@@ -2844,13 +2848,23 @@ namespace Game.UI.Runtime
             if (thumb != null)
             {
                 PlaceTopLeft(thumb, pad, pairTop, side, side);
+                thumb.localScale = Vector3.one;
+                KeepAuthoredSize(thumb);
                 if (thumb.Find("Thumbnail") is RectTransform preview)
-                    PlaceTopLeft(preview, 0f, 0f, side, side);
+                {
+                    Stretch(preview);
+                    preview.localScale = Vector3.one;
+                    KeepAuthoredSize(preview);
+                }
             }
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
             if (ring != null)
+            {
                 PlaceTopLeft(ring, pad + side + gap, pairTop, side, side);
+                ring.localScale = Vector3.one;
+                KeepAuthoredSize(ring);
+            }
 
             Transform countNode = card.Find("ZoneCount");
             if (countNode == null && ring != null)
@@ -2864,6 +2878,122 @@ namespace Game.UI.Runtime
             countNode.SetAsLastSibling();
             if (countNode.TryGetComponent<TMP_Text>(out var count))
                 FitCopyInside(count, 11f);
+        }
+
+        /// <summary>
+        /// A parent layout group must not rewrite the portrait after the seat is applied.
+        /// </summary>
+        private static void KeepAuthoredSize(RectTransform rect)
+        {
+            if (rect == null)
+                return;
+            LayoutElement element = rect.GetComponent<LayoutElement>();
+            if (element == null)
+                element = rect.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+            if (rect.TryGetComponent<ContentSizeFitter>(out ContentSizeFitter fitter))
+                fitter.enabled = false;
+            if (rect.TryGetComponent<AspectRatioFitter>(out AspectRatioFitter aspect))
+                aspect.enabled = false;
+        }
+
+        /// <summary>
+        /// Last theatre pass, after the frame has the final plate. Lays the square out from the
+        /// card's live size and logs the rect the capture camera will draw.
+        /// </summary>
+        private void RefitTheatreCardArt()
+        {
+            if (_libraryRegions == null)
+                return;
+            TMP_Text[] texts = _libraryRegions.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text name = texts[i];
+                if (name == null || name.name != "ZoneName" || !name.gameObject.activeInHierarchy)
+                    continue;
+                RectTransform card = name.rectTransform != null ? name.rectTransform.parent as RectTransform : null;
+                if (card == null || !card.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
+                    continue;
+                KeepAuthoredSize(card);
+                float cardW = card.sizeDelta.x;
+                float cardH = card.sizeDelta.y;
+                float liveW = card.rect.width;
+                float liveH = card.rect.height;
+                if (liveW > 2f && Mathf.Abs(liveW - cardW) > 8f)
+                    cardW = liveW;
+                if (liveH > 2f && Mathf.Abs(liveH - cardH) > 8f)
+                    cardH = liveH;
+                if (Mathf.Abs(cardW - card.sizeDelta.x) > 0.5f || Mathf.Abs(cardH - card.sizeDelta.y) > 0.5f)
+                {
+                    PlaceTopLeft(card, card.anchoredPosition.x, -card.anchoredPosition.y, cardW, cardH);
+                    card.localScale = Vector3.one;
+                }
+
+                float nameH = name.rectTransform.rect.height > 1f
+                    ? name.rectTransform.rect.height
+                    : name.rectTransform.sizeDelta.y;
+                RectTransform plate = card.parent as RectTransform;
+                bool wide = false;
+                if (plate != null && TryFrameSize(plate, out float plateWidth, out float plateHeight))
+                    wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+                LayoutZoneCardStack(card, name, nameH, cardH, wide);
+                LogTheatreCardArt(card);
+            }
+        }
+
+        /// <summary>One line per zone card: authored size, live rect, lossy scale, and world-corner span.</summary>
+        private static void LogTheatreCardArt(RectTransform card)
+        {
+            if (card == null)
+                return;
+            string mapId = card.name.StartsWith("ZoneCard_", StringComparison.Ordinal)
+                ? card.name.Substring("ZoneCard_".Length)
+                : card.name;
+            RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
+            RectTransform ring = card.Find("ProgressRing") as RectTransform;
+            Debug.Log("[TheatreCardArt] map=" + mapId
+                + " card=" + F(card.sizeDelta.x) + "x" + F(card.sizeDelta.y)
+                + " cardRect=" + F(card.rect.width) + "x" + F(card.rect.height)
+                + " cardScale=" + F(card.lossyScale.x) + "," + F(card.lossyScale.y)
+                + " cardWorld=" + F(WorldSpan(card))
+                + " thumb=" + SizeText(thumb)
+                + " thumbRect=" + RectText(thumb)
+                + " thumbScale=" + ScaleText(thumb)
+                + " thumbWorld=" + F(WorldSpan(thumb))
+                + " ring=" + SizeText(ring)
+                + " ringRect=" + RectText(ring)
+                + " ringScale=" + ScaleText(ring)
+                + " ringWorld=" + F(WorldSpan(ring)));
+        }
+
+        private static string SizeText(RectTransform rect)
+        {
+            if (rect == null)
+                return "none";
+            return F(rect.sizeDelta.x) + "x" + F(rect.sizeDelta.y);
+        }
+
+        private static string RectText(RectTransform rect)
+        {
+            if (rect == null)
+                return "none";
+            return F(rect.rect.width) + "x" + F(rect.rect.height);
+        }
+
+        private static string ScaleText(RectTransform rect)
+        {
+            if (rect == null)
+                return "none";
+            return F(rect.lossyScale.x) + "," + F(rect.lossyScale.y);
+        }
+
+        private static float WorldSpan(RectTransform rect)
+        {
+            if (rect == null)
+                return 0f;
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            return Vector3.Distance(corners[0], corners[3]);
         }
 
         private static void FitZoneNames(Transform regions)

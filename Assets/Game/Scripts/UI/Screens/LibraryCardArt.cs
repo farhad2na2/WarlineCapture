@@ -158,5 +158,153 @@ namespace Game.UI.Runtime
             if (node != null && node.TryGetComponent<Image>(out Image image))
                 image.color = color;
         }
+
+        /// <summary>
+        /// The difficulty medal itself. Earned stays full colour from the ledger mask.
+        /// Unearned keeps that same icon and dims it. The empty outline is not a slot.
+        /// </summary>
+        private static void PaintDifficultyMedal(Image image, SkirmishDifficultyId difficulty, bool earned)
+        {
+            if (image == null)
+                return;
+            string path = SkirmishBattleLibraryArt.Medal(true, difficulty);
+            Sprite sprite = LoadLibraryIcon(path);
+            if (sprite == null)
+                sprite = Resources.Load<Sprite>(path);
+            image.sprite = sprite;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = true;
+            image.useSpriteMesh = false;
+            image.raycastTarget = false;
+            image.color = earned ? Color.white : new Color(0.46f, 0.46f, 0.46f, 0.9f);
+            bool shown = sprite != null;
+            image.enabled = shown;
+            if (image.gameObject.activeSelf != shown)
+                image.gameObject.SetActive(shown);
+        }
+
+        /// <summary>
+        /// Pin subtitles are forced onto one 22px line after the card is built, which clips
+        /// "GROUND · ESTABLISHED". Shrink onto one line, or wrap onto two, so the full type shows.
+        /// </summary>
+        private void FitBattleCardSubtitles()
+        {
+            FitCardSubtitles(_libraryPins);
+            FitCardSubtitles(_libraryGrid);
+        }
+
+        private static void FitCardSubtitles(Transform root)
+        {
+            if (root == null || !root.gameObject.activeInHierarchy)
+                return;
+            TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text subtitle = texts[i];
+                if (subtitle == null || subtitle.name != "Subtitle" || subtitle.rectTransform == null)
+                    continue;
+                Transform parent = subtitle.transform.parent;
+                if (parent == null)
+                    continue;
+                bool card = parent.name == "EmptyCell" || parent.name.StartsWith("BattleCard_", StringComparison.Ordinal);
+                if (!card || string.IsNullOrWhiteSpace(subtitle.text))
+                    continue;
+                FitOneCardSubtitle(subtitle);
+            }
+        }
+
+        private static void FitOneCardSubtitle(TMP_Text subtitle)
+        {
+            float boxW = subtitle.rectTransform.rect.width > 2f
+                ? subtitle.rectTransform.rect.width
+                : subtitle.rectTransform.sizeDelta.x;
+            float boxH = subtitle.rectTransform.rect.height > 2f
+                ? subtitle.rectTransform.rect.height
+                : subtitle.rectTransform.sizeDelta.y;
+            if (boxW < 8f)
+                return;
+            string source = subtitle.text;
+            V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
+            subtitle.enableAutoSizing = true;
+            subtitle.overflowMode = TextOverflowModes.Overflow;
+            for (float size = 20f; size >= 11f - 0.01f; size -= 1f)
+            {
+                if (!SubtitleFits(subtitle, source, size, boxW, boxH, false))
+                    continue;
+                CommitCardSubtitle(subtitle, binding, size, false);
+                return;
+            }
+
+            for (float size = 18f; size >= 10f - 0.01f; size -= 1f)
+            {
+                if (!SubtitleFits(subtitle, source, size, boxW, boxH, true))
+                    continue;
+                CommitCardSubtitle(subtitle, binding, size, true);
+                return;
+            }
+
+            CommitCardSubtitle(subtitle, binding, 10f, true);
+        }
+
+        private static bool SubtitleFits(TMP_Text subtitle, string source, float size, float boxW, float boxH, bool wrap)
+        {
+            subtitle.text = source;
+            subtitle.fontSizeMin = size;
+            subtitle.fontSizeMax = size;
+            subtitle.fontSize = size;
+            subtitle.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            subtitle.maxVisibleLines = wrap ? 2 : 1;
+            subtitle.overflowMode = TextOverflowModes.Overflow;
+            subtitle.ForceMeshUpdate();
+            if (subtitle.isTextTruncated)
+                return false;
+            if (!wrap)
+                return subtitle.preferredWidth <= boxW + 1.5f && subtitle.preferredHeight <= boxH + 2f;
+            if (subtitle.preferredHeight > boxH + 2f)
+                return false;
+            return SubtitleShowsSource(subtitle, source);
+        }
+
+        private static void CommitCardSubtitle(TMP_Text subtitle, V3LocalizedTextBindingView binding, float size, bool wrap)
+        {
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            subtitle.enableAutoSizing = true;
+            subtitle.fontSizeMin = size;
+            subtitle.fontSizeMax = size;
+            subtitle.fontSize = size;
+            subtitle.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            subtitle.overflowMode = TextOverflowModes.Overflow;
+            subtitle.maxVisibleLines = wrap ? 2 : 1;
+            subtitle.ForceMeshUpdate();
+        }
+
+        private static bool SubtitleShowsSource(TMP_Text text, string source)
+        {
+            if (text == null)
+                return false;
+            int expected = 0;
+            string flat = source ?? string.Empty;
+            for (int i = 0; i < flat.Length; i++)
+            {
+                if (char.IsLetterOrDigit(flat[i]))
+                    expected++;
+            }
+
+            TMP_TextInfo info = text.textInfo;
+            if (info == null || info.characterInfo == null)
+                return expected == 0;
+            int visible = 0;
+            int count = Mathf.Min(info.characterCount, info.characterInfo.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (!info.characterInfo[i].isVisible)
+                    continue;
+                if (char.IsLetterOrDigit(info.characterInfo[i].character))
+                    visible++;
+            }
+
+            return visible >= expected;
+        }
     }
 }

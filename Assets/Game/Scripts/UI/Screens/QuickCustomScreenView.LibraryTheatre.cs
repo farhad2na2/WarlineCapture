@@ -115,7 +115,7 @@ namespace Game.UI.Runtime
                 wash.transform.SetParent(fit, false);
                 Stretch(wash.rectTransform);
                 wash.sprite = ZoneSolidSprite();
-                wash.color = new Color(0.04f, 0.05f, 0.06f, 0.48f);
+                wash.color = new Color(0.04f, 0.05f, 0.06f, 0.08f);
                 wash.raycastTarget = false;
                 wash.rectTransform.localScale = Vector3.one;
                 var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -233,8 +233,54 @@ namespace Game.UI.Runtime
 
         private static Color TheatrePaintDim()
         {
-            // Cool gray multiply. The sand plate loses its brightness and its warmth together.
-            return new Color(0.46f, 0.44f, 0.42f, 1f);
+            // A light cool multiply. The district tint does the darkening, so the painting's grain survives.
+            return new Color(0.96f, 0.93f, 0.90f, 1f);
+        }
+
+        /// <summary>
+        /// Saturated multiply factor. Light enough that the painting's local contrast stays above the
+        /// capture variance floor, dark enough that the hex is not a pale wash.
+        /// </summary>
+        private static Color DistrictMultiplyTint(Color zone)
+        {
+            float peak = Mathf.Max(zone.r, Mathf.Max(zone.g, zone.b));
+            Color hue = peak > 0.01f ? zone / peak : zone;
+            Color tint = Color.Lerp(hue, new Color(0.72f, 0.68f, 0.62f, 1f), 0.34f);
+            float lum = tint.r * 0.299f + tint.g * 0.587f + tint.b * 0.114f;
+            if (lum < 0.62f && lum > 0.01f)
+                tint *= 0.62f / lum;
+            tint.r = Mathf.Clamp01(tint.r);
+            tint.g = Mathf.Clamp01(tint.g);
+            tint.b = Mathf.Clamp01(tint.b);
+            tint.a = 1f;
+            return tint;
+        }
+
+        /// <summary>The district hue at full strength, with a small hot lift. Not a white-gold mix.</summary>
+        private static Color DistrictNeon(Color zone, float whiteLift)
+        {
+            float peak = Mathf.Max(zone.r, Mathf.Max(zone.g, zone.b));
+            Color hue = peak > 0.01f ? zone / peak : zone;
+            Color neon = Color.Lerp(hue, Color.white, Mathf.Clamp01(whiteLift));
+            neon.a = 1f;
+            return neon;
+        }
+
+        private static void ApplyDistrictMultiply(GameObject host)
+        {
+            Graphic polygon = host != null ? host.GetComponent<Graphic>() : null;
+            if (polygon == null)
+                return;
+            Shader shader = Shader.Find("Game/UI/DistrictMultiply");
+            if (shader == null)
+            {
+                Debug.LogWarning("District multiply shader is missing. Theatre tints will not blend.");
+                return;
+            }
+
+            Material mat = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            mat.SetTexture("_MainTex", Texture2D.whiteTexture);
+            polygon.material = mat;
         }
 
         private static Texture2D LoadTheatreBase()
@@ -1543,20 +1589,22 @@ namespace Game.UI.Runtime
             var local = new Vector2[screenPoints.Length];
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
-            Color fill = color;
-            fill.a = 0.94f;
-            root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
+            V3PolygonGraphic polygon = root.GetComponent<V3PolygonGraphic>();
+            Color fill = DistrictMultiplyTint(color);
+            polygon.Configure(local, fill);
+            ApplyDistrictMultiply(root.gameObject);
             PlaceDistrictHalo(root, local, color);
-            Color outer = Color.Lerp(color, Color.white, 0.62f);
-            outer.a = 1f;
-            Color glow = Color.Lerp(color, Color.white, 0.84f);
+            Color neon = DistrictNeon(color, 0.08f);
+            Color outer = DistrictNeon(color, 0f);
+            outer.a = 0.82f;
+            Color glow = neon;
             glow.a = 1f;
-            Color ink = Color.Lerp(color, Color.white, selected ? 0.88f : 0.74f);
+            Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
             ink.a = 1f;
-            // 4px core stays inside the 3–4.5 capture band. 14 and 26 stay inside HaloReach 22.
+            // 4px core stays inside the 3–4.5 capture band. The neon edge is thinner than the old 26px white rim.
             const float stroke = 4f;
-            DrawHexEdges(root, local, outer, 26f, ZoneStrokeSprite());
-            DrawHexEdges(root, local, glow, 14f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, outer, 16f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, glow, 10f, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             DrawHexLattice(root, local, color);
             for (int i = 0; i < local.Length; i++)
@@ -1581,8 +1629,8 @@ namespace Game.UI.Runtime
             image.transform.SetParent(root, false);
             image.sprite = halo;
             image.type = Image.Type.Simple;
-            Color glow = Color.Lerp(color, Color.white, 0.62f);
-            glow.a = 1f;
+            Color glow = DistrictNeon(color, 0.05f);
+            glow.a = 0.9f;
             image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
@@ -2295,17 +2343,22 @@ namespace Game.UI.Runtime
             float nameW = name.sizeDelta.x;
             float nameH = name.sizeDelta.y;
             float namePlateX = cardX + nameX;
-            float namePlateY = cardY + nameY;
-            bool overlaps = cueX < namePlateX + nameW - 1f && namePlateX < cueX + cueW - 1f
-                && cueY < namePlateY + nameH - 1f && namePlateY < cueBottom - 1f;
-            if (!overlaps)
+            bool sharesX = cueX < namePlateX + nameW - 1f && namePlateX < cueX + cueW - 1f;
+            if (!sharesX)
                 return;
-            float next = cueBottom - cardY + 4f;
+            TMP_Text nameText = name.GetComponent<TMP_Text>();
+            float inkInset = NameInkTopInset(nameText);
+            float inkTop = cardY + nameY + inkInset;
+            const float nameClearance = 6f;
+            float gap = inkTop - cueBottom;
+            if (gap >= nameClearance)
+                return;
+            float next = nameY + (nameClearance - gap);
             float statusH = cardH >= 190f ? 40f : 34f;
             float limit = cardH - 2f - statusH - 4f - nameH;
             if (next > limit)
                 next = limit;
-            if (next < nameY + 1f || cardY + next < cueBottom - 1f)
+            if (next <= nameY + 0.5f)
                 return;
             PlaceTopLeft(name, nameX, next, nameW, nameH);
             if (card.Find("NameShade") is RectTransform shade)
@@ -2442,6 +2495,7 @@ namespace Game.UI.Runtime
                 FitCueInsidePackedRect(cue);
                 LockCueFont(cue);
                 DropNameBelowCue(cue, heldSelection);
+                InkZoneNames(_libraryRegions);
                 LogTheatreCue(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
@@ -3315,7 +3369,7 @@ namespace Game.UI.Runtime
             if (name != null)
             {
                 shade = EnsureNameShade(card);
-                float shadeH = nameH + 28f;
+                float shadeH = nameH + 40f;
                 float shadeLimit = portraitTop + portraitH - 8f;
                 if (pad + shadeH > shadeLimit)
                     shadeH = Mathf.Max(nameH, shadeLimit - pad);
@@ -3743,7 +3797,62 @@ namespace Game.UI.Runtime
             name.characterSpacing = spacing;
             name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
+            InkZoneName(name);
             name.ForceMeshUpdate();
+        }
+
+        private static void InkZoneNames(Transform regions)
+        {
+            if (regions == null)
+                return;
+            TMP_Text[] texts = regions.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text name = texts[i];
+                if (name != null && name.name == "ZoneName" && name.gameObject.activeInHierarchy)
+                    InkZoneName(name);
+            }
+        }
+
+        /// <summary>How far the first glyph sits below the label's top edge, in y-down pixels.</summary>
+        private static float NameInkTopInset(TMP_Text name)
+        {
+            if (name == null)
+                return 0f;
+            name.ForceMeshUpdate();
+            if (name.textInfo == null || name.textInfo.characterCount <= 0)
+                return 0f;
+            float top = float.NegativeInfinity;
+            int count = name.textInfo.characterCount;
+            for (int i = 0; i < count; i++)
+            {
+                TMP_CharacterInfo info = name.textInfo.characterInfo[i];
+                if (!info.isVisible)
+                    continue;
+                if (info.topLeft.y > top)
+                    top = info.topLeft.y;
+            }
+
+            if (top == float.NegativeInfinity)
+                return 0f;
+            float inset = -top;
+            return inset < 0f ? 0f : inset;
+        }
+
+        /// <summary>White title, dark outline and drop shadow, so the glyphs read on a pale photo.</summary>
+        private static void InkZoneName(TMP_Text name)
+        {
+            if (name == null)
+                return;
+            name.color = new Color(1f, 0.98f, 0.94f, 1f);
+            name.outlineWidth = 0.2f;
+            name.outlineColor = new Color(0.01f, 0.01f, 0.02f, 1f);
+            Shadow shadow = name.GetComponent<Shadow>();
+            if (shadow == null)
+                shadow = name.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.95f);
+            shadow.effectDistance = new Vector2(0f, -1.6f);
+            shadow.useGraphicAlpha = true;
         }
 
         private static void RecordDrawnZoneName(TMP_Text name)
@@ -4949,10 +5058,12 @@ namespace Game.UI.Runtime
             for (int y = 0; y < height; y++)
             {
                 float fromTop = 1f - y / (float)(height - 1);
-                float alpha = fromTop * fromTop;
-                byte a = (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 230f), 0, 230);
+                float cover = Mathf.Clamp01((fromTop - 0.02f) / 0.98f);
+                cover = cover * cover * (3f - 2f * cover);
+                float alpha = Mathf.Lerp(0.55f, 1f, cover);
+                byte a = (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 250f), 0, 250);
                 for (int x = 0; x < width; x++)
-                    pixels[y * width + x] = new Color32(6, 8, 10, a);
+                    pixels[y * width + x] = new Color32(4, 6, 8, a);
             }
 
             texture.SetPixels32(pixels);

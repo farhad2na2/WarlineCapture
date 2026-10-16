@@ -43,7 +43,18 @@ namespace Game.UI.Runtime
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
                 var label = CreateLabel(button.transform, "Label", 18f);
                 Stretch(label.rectTransform, 6f, 6f, 4f, 4f);
-                SetCopy(label, LibraryText(objective.TitleLocKey, fa) + "\n" + objective.WonCount + "/" + objective.PublishedCount);
+                // Zones with no playable battles read "Coming soon" (localised) instead of 0/0, fitted inside the tab.
+                bool tabPending = objective.PublishedCount <= 0;
+                string tabRatio = objective.WonCount + "/" + objective.PublishedCount;
+                string tabCount = tabPending ? SkirmishBattleLibraryArt.ComingSoon(fa) : fa ? SkirmishWidgetContext.ToPersianDigits(tabRatio) : tabRatio;
+                SetCopy(label, LibraryText(objective.TitleLocKey, fa) + "\n" + tabCount, 12f, 18f);
+                label.isRightToLeftText = fa; // Persian copy shapes RTL; digits are already Persian so nothing reverses
+                label.alignment = TextAlignmentOptions.Center;
+                label.textWrappingMode = TextWrappingModes.Normal;
+                label.overflowMode = TextOverflowModes.Overflow;
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 12f;
+                label.fontSizeMax = 18f;
                 _objectiveTabButtons.Add(button);
             }
         }
@@ -95,8 +106,8 @@ namespace Game.UI.Runtime
 
         private RectTransform CreateBattleCard(Transform parent, SkirmishBattleCardState card, bool pin, float width = LibraryPinWidth, float height = LibraryPinHeight, GridCardSlots gridSlots = default)
         {
-            if (pin)
-                return CreateMapPinWidget(parent, card);
+            // Card bodies (frame, title, type line, medal slots) come only from P2's LibraryCardArt path below;
+            // P1 keeps only the approved-2 packed pin placement.
             var button = CreateChromeButton(parent, SkirmishLibraryControlNames.BattleCard(card.ScenarioId));
             var rect = button.GetComponent<RectTransform>();
             if (pin && SkirmishBattlefieldPinLayout.TryGet(card.PinId, out Vector2 centre))
@@ -105,6 +116,13 @@ namespace Game.UI.Runtime
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 rect.sizeDelta = new Vector2(width, height);
                 rect.anchoredPosition = Vector2.zero;
+                if (TryPackedPinSlot(parent as RectTransform, centre, out Rect packedSlot))
+                {
+                    // approved-2: two pins per row, three rows; keep P2's card size, centred in the packed slot.
+                    rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+                    rect.pivot = new Vector2(0.5f, 0.5f);
+                    rect.anchoredPosition = new Vector2(packedSlot.center.x, -packedSlot.center.y);
+                }
             }
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;

@@ -409,7 +409,7 @@ namespace Game.UI.Runtime
             PresentBriefingSubtitle(armyLabel, startLabel, fa);
         }
 
-        private void DecorateIconTile(Transform tile, FooterGlyph glyph, Sprite sprite, bool fa)
+        private void DecorateIconTile(Transform tile, FooterGlyph glyph, string sprite, bool fa)
         {
             if (tile is not RectTransform rect || !tile.gameObject.activeSelf)
                 return;
@@ -420,7 +420,7 @@ namespace Game.UI.Runtime
                 caption.gameObject.SetActive(false);
             Transform oldRaw = tile.Find("TileGlyph");
             Transform oldImg = tile.Find("TileArt");
-            if (sprite != null)
+            if (!string.IsNullOrEmpty(sprite))
             {
                 if (oldRaw != null)
                     oldRaw.gameObject.SetActive(false);

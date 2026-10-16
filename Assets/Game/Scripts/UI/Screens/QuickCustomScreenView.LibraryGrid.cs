@@ -30,10 +30,6 @@ namespace Game.UI.Runtime
             float titleHeight = roomy ? LibraryGridRoomyTitleHeight : LibraryGridTitleHeight;
             float subtitleHeight = roomy ? LibraryGridRoomySubtitleHeight : LibraryGridSubtitleHeight;
             ResolveGridCard(viewport, objectives, titleHeight, subtitleHeight, out float cardHeight, out float previewHeight);
-            // Art-first cells carry no text slots, so the rows share the viewport and the grid never scrolls.
-            cardHeight = Mathf.Max(56f, (viewport - LibraryGridContentTop - LibraryGridContentBottom -
-                Mathf.Max(0, objectives - 1) * LibraryGridRowGap) / Mathf.Max(1, objectives));
-            previewHeight = cardHeight;
             float stack = objectives * cardHeight + Mathf.Max(0, objectives - 1) * LibraryGridRowGap;
             float contentHeight = LibraryGridContentTop + stack + LibraryGridContentBottom;
             bool scrolls = contentHeight > viewport + 2f;
@@ -92,7 +88,10 @@ namespace Game.UI.Runtime
                         break;
                     float x = LibraryLabelColumnWidth() + column * (cardWidth + LibraryGridCardGap);
                     SkirmishBattleCardState card = field.GridCards[index];
-                    RectTransform widget = CreateGridCellWidget(zone, card, objective.ObjectiveId, armies[column / 2], starts[column % 2], cardWidth, cardHeight, fa);
+                    // Card bodies come only from P2's LibraryCardArt path (CreateBattleCard / CreateEmptyGridCell).
+                    RectTransform widget = IsEmptyCard(card)
+                        ? CreateEmptyGridCell(zone, objective.ObjectiveId, armies[column / 2], starts[column % 2], card.PreviewSpriteKey, card.MapId, slots, cardWidth)
+                        : CreateBattleCard(zone, card, false, cardWidth, cardHeight, slots);
                     PlaceTopLeft(widget, x, 0f, cardWidth, cardHeight);
                     AddSiblingShadow(widget);
                 }

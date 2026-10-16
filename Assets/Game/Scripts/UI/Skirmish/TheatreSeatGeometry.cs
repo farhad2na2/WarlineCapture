@@ -3184,9 +3184,10 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Full-width strip on the selected card, inset so the leader (which stops on the card edge)
-        /// misses it. Tall enough for a 16–20px label on one or two lines. The strip stays inside the
-        /// card, so it does not sit on another card or on a hex the card itself clears.
+        /// Full-width strip inside the selected card, 36–52px tall, sitting on the bottom of the
+        /// portrait and above the count row. It never hangs off the card and never sits on the
+        /// name band. The centre still has to be within <see cref="CueNearLimit"/> of the pin
+        /// or inside the selected hex.
         /// </summary>
         public static bool TryAttachCueToCard(
             float plateWidth,
@@ -3207,34 +3208,122 @@ namespace Game.UI.Runtime
             if (card.W < 48f || card.H < 48f)
                 return false;
             const float insetX = 2f;
-            const float insetY = 4f;
             float stripWidth = card.W - insetX * 2f;
             if (stripWidth < 32f)
                 return false;
             float left = card.X + insetX;
-            float[] stripHeights = { 52f, 48f, 44f, 40f };
+            float statusH = card.H >= 190f ? 40f : 34f;
+            float[] stripHeights = { 52f, 48f, 44f, 40f, 36f };
             for (int h = 0; h < stripHeights.Length; h++)
             {
                 float stripHeight = stripHeights[h];
-                if (stripHeight > card.H - insetY * 2f)
+                float lowest = card.YMax - statusH - 2f - stripHeight;
+                float highest = card.Y + 4f;
+                if (lowest + stripHeight > card.YMax - 1f)
                     continue;
-                var foot = new Box(left, card.YMax - insetY - stripHeight, stripWidth, stripHeight);
-                if (CueTabLegal(foot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                if (lowest < highest)
+                    lowest = highest;
+                for (float y = lowest; y >= highest - 0.1f; y -= 4f)
                 {
-                    cue = foot;
-                    return true;
-                }
-
-                var head = new Box(left, card.Y + insetY, stripWidth, stripHeight);
-                if (CueTabLegal(head, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                {
-                    cue = head;
+                    var spot = new Box(left, y, stripWidth, stripHeight);
+                    if (spot.YMax > card.YMax - statusH + 1f)
+                        continue;
+                    if (!CueTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                        continue;
+                    cue = spot;
                     return true;
                 }
             }
 
+            if (TrySeatWideStrip(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                return true;
             return TryHangCueOffCard(
                 plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue);
+        }
+
+        /// <summary>
+        /// When the portrait-bottom strip is outside the 160px near rule, keep a 36–52px strip
+        /// as wide as the card allows and as low as the rule allows. A side tab is only used
+        /// when a full-width bar would cover the leader.
+        /// </summary>
+        private static bool TrySeatWideStrip(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            float statusH = card.H >= 190f ? 40f : 34f;
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            bool found = false;
+            float bestScore = float.MaxValue;
+            Box best = default;
+            for (int h = 0; h < heights.Length; h++)
+            {
+                float stripH = heights[h];
+                float yBottom = card.YMax - statusH - 2f - stripH;
+                float yHang = card.Y - stripH + 8f;
+                for (float stripW = card.W; stripW >= 96f - 0.1f; stripW -= 8f)
+                {
+                    float xCenter = card.X + (card.W - stripW) * 0.5f;
+                    float xLeft = card.X;
+                    float xRight = card.XMax - stripW;
+                    float pinX = pins[selected].Center.X;
+                    float xMissLeft = pinX - stripW - 2f;
+                    float xMissRight = pinX + 2f;
+                    float[] xs = { xCenter, xLeft, xRight, xMissLeft, xMissRight };
+                    for (int xi = 0; xi < xs.Length; xi++)
+                    {
+                        for (float y = yBottom; y >= yHang - 0.1f; y -= 8f)
+                        {
+                            var spot = new Box(xs[xi], y, stripW, stripH);
+                            if (!CueStripSeatable(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                                continue;
+                            bool inside = BoxInside(spot, card, 0.5f);
+                            float score = (inside ? 0f : 100000f)
+                                + (card.W - stripW) * 40f
+                                + Math.Abs(y - yBottom);
+                            if (found && score >= bestScore)
+                                continue;
+                            found = true;
+                            bestScore = score;
+                            best = spot;
+                        }
+                    }
+
+                    if (found && best.W > card.W - 4f)
+                        break;
+                }
+
+                if (found && best.W > card.W - 4f)
+                    break;
+            }
+
+            if (!found)
+                return false;
+            cue = best;
+            return true;
+        }
+
+        private static bool CueStripSeatable(
+            Box spot,
+            Box card,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (BoxInside(spot, card, 0.5f))
+                return CueTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight);
+            return CueHangLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight);
         }
 
         /// <summary>

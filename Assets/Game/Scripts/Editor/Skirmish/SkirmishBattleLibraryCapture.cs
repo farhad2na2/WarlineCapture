@@ -864,7 +864,15 @@ namespace Game.Editor
                     cue = RequireTheaterOverlay(regions, clip, "ZoomCue", "zoom hint", "selected", locale);
                     TMP_Text cueText = cue != null ? cue.GetComponent<TMP_Text>() : null;
                     if (cueText != null)
+                    {
                         RejectReadableLine(cueText, "zoom hint", "selected", locale);
+                        if (cueText.fontSize < 14f)
+                        {
+                            throw new InvalidOperationException(
+                                "Theatre zoom hint text is under 14px locale=" + locale +
+                                " font=" + cueText.fontSize.ToString("0.0") + ".");
+                        }
+                    }
                 });
             }
 

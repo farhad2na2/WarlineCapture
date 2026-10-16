@@ -2163,9 +2163,100 @@ namespace Game.UI.Runtime
                 return false;
             var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+            KeepAuthoredSize(cue.rectTransform);
             SyncCuePlate(parent, spot);
+            if (parent.Find("CuePlate") is RectTransform plate)
+                KeepAuthoredSize(plate);
             FitCueInsidePackedRect(cue);
+            LockCueFont(cue);
+            PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+            SyncCuePlate(parent, spot);
+            LogTheatreCue(cue);
             return true;
+        }
+
+        /// <summary>
+        /// The seat search missed. Still paint a full-width strip on the bottom of the portrait,
+        /// above the count row, instead of the old squeezed pill.
+        /// </summary>
+        private static bool PlaceBottomCueStrip(TMP_Text cue, string selectedId)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return false;
+            if (string.IsNullOrEmpty(selectedId))
+                selectedId = "DB";
+            if (parent.Find("ZoneCard_" + selectedId) is not RectTransform card)
+                return false;
+            float cardX = card.anchoredPosition.x;
+            float cardY = -card.anchoredPosition.y;
+            float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+            float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+            if (cardW < 48f || cardH < 48f)
+                return false;
+            float statusH = cardH >= 190f ? 40f : 34f;
+            float stripH = 44f;
+            float room = cardH - statusH - 8f;
+            if (stripH > room)
+                stripH = room;
+            if (stripH > 52f)
+                stripH = 52f;
+            if (stripH < 36f)
+                stripH = 36f;
+            float stripW = Mathf.Max(32f, cardW - 4f);
+            float stripY = cardY + cardH - statusH - 2f - stripH;
+            if (stripY < cardY + 2f)
+                stripY = cardY + 2f;
+            var spot = new Rect(cardX + 2f, stripY, stripW, stripH);
+            PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+            SyncCuePlate(parent, spot);
+            return true;
+        }
+
+        /// <summary>
+        /// Keeps the fitted 16–20px cue size when the localization binding refreshes.
+        /// </summary>
+        private static void LockCueFont(TMP_Text cue)
+        {
+            if (cue == null)
+                return;
+            float size = cue.fontSize;
+            if (size < 16f)
+                size = 16f;
+            if (size > 20f)
+                size = 20f;
+            string drawn = cue.text;
+            int lines = cue.maxVisibleLines;
+            float spacing = cue.characterSpacing;
+            V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.SetFontBounds(size, size);
+            cue.enableAutoSizing = true;
+            cue.fontSizeMin = size;
+            cue.fontSizeMax = size;
+            cue.fontSize = size;
+            cue.text = drawn;
+            cue.maxVisibleLines = lines > 0 ? lines : 2;
+            cue.characterSpacing = spacing;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.alignment = TextAlignmentOptions.Center;
+            cue.ForceMeshUpdate();
+        }
+
+        private static void LogTheatreCue(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null)
+                return;
+            RectTransform rect = cue.rectTransform;
+            float x = rect.anchoredPosition.x;
+            float y = -rect.anchoredPosition.y;
+            float w = rect.sizeDelta.x;
+            float h = rect.sizeDelta.y;
+            Debug.Log("[TheatreCue] x=" + F(x)
+                + " y=" + F(y)
+                + " w=" + F(w)
+                + " h=" + F(h)
+                + " font=" + F(cue.fontSize));
         }
 
         private static void SyncCuePlate(RectTransform parent, Rect spot)
@@ -2286,10 +2377,12 @@ namespace Game.UI.Runtime
             string heldSelection = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
             if (string.IsNullOrEmpty(heldSelection))
                 heldSelection = "DB";
-            if (SeatZoomCueClearOfHexes(cue, fa, heldSelection))
+            if (SeatZoomCueClearOfHexes(cue, fa, heldSelection) || PlaceBottomCueStrip(cue, heldSelection))
             {
                 RaiseTheatreReadability(_libraryRegions);
                 FitCueInsidePackedRect(cue);
+                LockCueFont(cue);
+                LogTheatreCue(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
             }
@@ -2667,6 +2760,9 @@ namespace Game.UI.Runtime
             if (plate == null || !TryFrameSize(plate, out float plateWidth, out float plateHeight))
                 return;
             bool fa = names[0].isRightToLeftText;
+            // Locale owns the branch. A Farsi plate can still be holding the English source
+            // when this pass runs, and a Latin plate must not inherit the Arabic floor.
+            bool plateFarsi = UiShellRuntimeGateway.Localization.IsRightToLeft || fa;
             bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
             var cards = new List<RectTransform>(names.Count);
             for (int i = 0; i < names.Count; i++)
@@ -2684,8 +2780,8 @@ namespace Game.UI.Runtime
             if (plate.Find("ZoomCue") is RectTransform cueRect && cueRect.gameObject.activeInHierarchy)
                 cue = PlateBoxOf(cueRect);
             TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
-            // Latin and Arabic each take the largest size that fits every card of that script.
-            // Arabic's 13px floor must not become the Latin size.
+            // Latin and Farsi each take the largest size that fits every card of that branch.
+            // Farsi keeps the 3e2c86f45 Arabic floor. That floor must not become the Latin size.
             float latinShared = DrawnNameCeiling;
             float arabicShared = DrawnNameCeiling;
             bool anyLatin = false;
@@ -2693,8 +2789,8 @@ namespace Game.UI.Runtime
             var arabic = new bool[names.Count];
             for (int i = 0; i < names.Count && i < cards.Count; i++)
             {
-                arabic[i] = ContainsArabicLetter(FlattenCopy(names[i].text));
-                float used = FitOnePortraitName(names[i], cards[i], boxes, i, detail, cue, hint, plateHeight, wide);
+                arabic[i] = plateFarsi || ZoneNameIsFarsi(names[i]);
+                float used = FitOnePortraitName(names[i], cards[i], boxes, i, detail, cue, hint, plateHeight, wide, arabic[i]);
                 if (used < 1f)
                     continue;
                 if (arabic[i])
@@ -2721,10 +2817,26 @@ namespace Game.UI.Runtime
                 if (!script && !anyLatin)
                     continue;
                 float shared = script ? arabicShared : latinShared;
+                if (!script && shared < LatinNameFloor - 0.1f)
+                    shared = LatinNameFloor;
                 if (Mathf.Abs(names[i].fontSize - shared) > 0.4f)
-                    TryCommitPortraitName(names[i], cards[i], shared, wide);
+                    TryCommitPortraitName(names[i], cards[i], shared, wide, script);
+                LockDrawnZoneName(names[i], shared, script);
                 RecordDrawnZoneName(names[i]);
             }
+        }
+
+        /// <summary>
+        /// Farsi when the locale is right-to-left, the label is marked right-to-left, or the
+        /// glyphs are already Arabic. Latin titles on an English plate stay on the other side.
+        /// </summary>
+        private static bool ZoneNameIsFarsi(TMP_Text name)
+        {
+            if (name == null)
+                return false;
+            if (name.isRightToLeftText)
+                return true;
+            return ContainsArabicLetter(FlattenCopy(name.text));
         }
 
         private static TheatreSeatGeometry.Box PlateBoxOf(RectTransform rect)
@@ -2743,7 +2855,8 @@ namespace Game.UI.Runtime
             TheatreSeatGeometry.Box cue,
             TheatreSeatGeometry.Box hint,
             float plateHeight,
-            bool wide)
+            bool wide,
+            bool farsi)
         {
             if (name == null || card == null)
                 return 0f;
@@ -2752,15 +2865,27 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(name.text);
             if (name.rectTransform != null)
                 name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
-            bool arabic = ContainsArabicLetter(source);
-            float fontFloor = arabic ? 13f : LatinNameFloor;
+            float fontFloor;
+            if (farsi)
+            {
+                // Same floor 3e2c86f45 used for Arabic, applied from the locale so a still-English
+                // source string cannot take the Latin 20px floor.
+                fontFloor = cardW <= TheatreSeatGeometry.PortraitMinWidth + 8f
+                    ? TheatreSeatGeometry.PortraitCompactFontFloor
+                    : TheatreSeatGeometry.NameFontFloor;
+                if (fontFloor > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f)
+                    fontFloor = TheatreSeatGeometry.PortraitCompactFontFloor;
+                fontFloor = Mathf.Min(fontFloor, 13f);
+            }
+            else
+                fontFloor = LatinNameFloor;
             for (float size = DrawnNameCeiling; size >= fontFloor - 0.01f; size -= 1f)
             {
-                if (TryCommitPortraitName(name, card, size, wide))
+                if (TryCommitPortraitName(name, card, size, wide, farsi))
                     return size;
             }
 
-            TightenPortraitName(name, card, source, wide);
+            TightenPortraitName(name, card, source, wide, farsi);
             return name.fontSize;
         }
 
@@ -2768,9 +2893,11 @@ namespace Game.UI.Runtime
         /// Puts every zone title on this plate at <paramref name="size"/>. Returns false when the
         /// words or the name box will not hold that size.
         /// </summary>
-        private static bool TryCommitPortraitName(TMP_Text name, RectTransform card, float size, bool wide)
+        private static bool TryCommitPortraitName(TMP_Text name, RectTransform card, float size, bool wide, bool farsi)
         {
             if (name == null || card == null || size < 1f)
+                return false;
+            if (!farsi && size < LatinNameFloor - 0.1f)
                 return false;
             float cardH = card.sizeDelta.y;
             float boxWidth = PortraitNameWidth(card.sizeDelta.x);
@@ -2790,8 +2917,7 @@ namespace Game.UI.Runtime
             name.overflowMode = TextOverflowModes.Overflow;
             name.maxVisibleLines = 1;
             name.characterSpacing = 0f;
-            bool latin = !ContainsArabicLetter(source);
-            bool oneLine = FitsNameLine(name, source, size, boxWidth, latin ? -12f : 0f);
+            bool oneLine = FitsNameLine(name, source, size, boxWidth, farsi ? 0f : -12f);
             if (name.rectTransform != null)
                 name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
             if (!oneLine)
@@ -2800,7 +2926,7 @@ namespace Game.UI.Runtime
                 name.textWrappingMode = TextWrappingModes.NoWrap;
                 name.maxVisibleLines = 2;
                 bool wrapped = WrapZoneName(name, size);
-                if (!wrapped && latin)
+                if (!wrapped && !farsi)
                 {
                     name.characterSpacing = -12f;
                     wrapped = WrapZoneName(name, size);
@@ -2819,7 +2945,8 @@ namespace Game.UI.Runtime
             float needed = PortraitNameBox(name, source, size, cardH);
             if (needed < 0.5f)
                 return false;
-            if (NameBandLimit(cardH) + 1f < needed)
+            float cap = farsi ? TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide) : LatinNameCap(cardH);
+            if (cap + 1f < needed)
                 return false;
 
             ApplyPortraitNameLayout(card, name, needed, cardH, wide, oneLine);
@@ -2862,16 +2989,32 @@ namespace Game.UI.Runtime
             return false;
         }
 
-        private static void TightenPortraitName(TMP_Text name, RectTransform card, string source, bool wide)
+        private static void TightenPortraitName(TMP_Text name, RectTransform card, string source, bool wide, bool farsi)
         {
             if (name == null || card == null)
                 return;
-            bool arabic = ContainsArabicLetter(source);
-            float size = arabic ? 13f : LatinNameFloor;
+            float size;
+            float stop;
+            if (farsi)
+            {
+                size = card.sizeDelta.x <= TheatreSeatGeometry.PortraitMinWidth + 8f
+                    ? TheatreSeatGeometry.PortraitCompactFontFloor
+                    : TheatreSeatGeometry.NameFontFloor;
+                float boxProbe = PortraitNameWidth(card.sizeDelta.x);
+                if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxProbe <= 114f)
+                    size = TheatreSeatGeometry.PortraitCompactFontFloor;
+                stop = 13f;
+            }
+            else
+            {
+                size = LatinNameFloor;
+                stop = LatinNameFloor;
+            }
+
             float boxWidth = PortraitNameWidth(card.sizeDelta.x);
-            float stop = size;
+            float cap = farsi ? TheatreSeatGeometry.MaxNameBoxHeight(card.sizeDelta.y, wide) : LatinNameCap(card.sizeDelta.y);
             var binding = name.GetComponent<V3LocalizedTextBindingView>();
-            for (float candidate = Mathf.Max(size, DrawnNameTarget); candidate >= stop - 0.01f; candidate -= 1f)
+            for (float candidate = Mathf.Max(size, farsi ? DrawnNameTarget : LatinNameFloor); candidate >= stop - 0.01f; candidate -= 1f)
             {
                 if (binding != null)
                     binding.ConfigureFontBounds(candidate, candidate);
@@ -2886,10 +3029,10 @@ namespace Game.UI.Runtime
                 name.characterSpacing = 0f;
                 if (name.rectTransform != null)
                     name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
-                if (!FitsNameLine(name, source, candidate, boxWidth, arabic ? 0f : -12f))
+                if (!FitsNameLine(name, source, candidate, boxWidth, farsi ? 0f : -12f))
                     continue;
                 float needed = PortraitNameBox(name, source, candidate, card.sizeDelta.y);
-                if (NameBandLimit(card.sizeDelta.y) + 1f < needed)
+                if (cap + 1f < needed)
                     continue;
                 ApplyPortraitNameLayout(card, name, needed, card.sizeDelta.y, wide, true);
                 name.lineSpacing = 0f;
@@ -2898,8 +3041,8 @@ namespace Game.UI.Runtime
                     return;
             }
 
-            float wrapStart = arabic ? 13f : DrawnNameTarget;
-            float wrapStop = arabic ? 13f : size;
+            float wrapStart = farsi ? 13f : DrawnNameTarget;
+            float wrapStop = farsi ? 13f : size;
             for (float wrapped = wrapStart; wrapped >= wrapStop - 0.01f; wrapped -= 1f)
             {
                 if (binding != null)
@@ -2911,10 +3054,19 @@ namespace Game.UI.Runtime
                 name.maxVisibleLines = 2;
                 if (name.rectTransform != null)
                     name.rectTransform.sizeDelta = new Vector2(boxWidth, Mathf.Max(24f, name.rectTransform.sizeDelta.y));
-                if (!WrapZoneName(name, wrapped))
+                name.characterSpacing = 0f;
+                bool wrappedOk = WrapZoneName(name, wrapped);
+                if (!wrappedOk && !farsi)
+                {
+                    name.characterSpacing = -12f;
+                    wrappedOk = WrapZoneName(name, wrapped);
+                }
+
+                if (!wrappedOk)
                     continue;
+
                 float wrappedHeight = PortraitNameBox(name, source, wrapped, card.sizeDelta.y);
-                if (NameBandLimit(card.sizeDelta.y) + 1f < wrappedHeight)
+                if (cap + 1f < wrappedHeight)
                     continue;
                 ApplyPortraitNameLayout(card, name, wrappedHeight, card.sizeDelta.y, wide, false);
                 name.lineSpacing = 0f;
@@ -3033,17 +3185,24 @@ namespace Game.UI.Runtime
             if (nameX + nameW > cardW)
                 nameW = Mathf.Max(8f, cardW - nameX);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
-            DominantCardBands(cardH, wide, out float nameRoom, out float portraitH, out float statusH);
+            bool farsi = ZoneNameIsFarsi(name) || UiShellRuntimeGateway.Localization.IsRightToLeft;
+            DominantCardBands(cardH, wide, farsi, out float nameRoom, out float portraitH, out float statusH);
+            float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
+            if (farsi)
+            {
+                if (nameH > maxName)
+                    nameH = maxName;
+            }
+            else if (nameH > maxName + 1f)
+            {
+                float floor = cardH * 0.60f;
+                portraitH = Mathf.Max(floor, portraitH - (nameH - maxName));
+            }
+
             if (nameH > nameRoom)
                 nameH = nameRoom;
             if (nameH < 1f)
                 nameH = 1f;
-            float oldCap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
-            if (nameH > oldCap + 1f)
-            {
-                float floor = cardH * 0.60f;
-                portraitH = Mathf.Max(floor, portraitH - (nameH - oldCap));
-            }
 
             float stackRoom = cardH - TheatreSeatGeometry.NameStackChrome(cardH);
             if (nameH + statusH > stackRoom + 0.5f)
@@ -3132,29 +3291,50 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Portrait starts at 68% and may shrink toward 60% when a two-line title needs the room.
-        /// The name overlays the portrait and stops above the status row.
+        /// Farsi keeps the 3e2c86f45 portrait (65–70%, name room = MaxNameBoxHeight).
+        /// Latin may give the two-line title room down to a 60% portrait, and the name
+        /// stops where the replay name stack still fits.
         /// </summary>
-        private static void DominantCardBands(float cardH, bool wide, out float nameRoom, out float portraitH, out float statusH)
+        private static void DominantCardBands(float cardH, bool wide, bool farsi, out float nameRoom, out float portraitH, out float statusH)
         {
             statusH = cardH >= 190f ? 40f : 34f;
-            nameRoom = NameBandLimit(cardH);
-            float low = cardH * 0.60f;
-            float high = cardH * 0.70f;
-            portraitH = Mathf.Round(cardH * 0.68f);
-            if (portraitH < low)
-                portraitH = Mathf.Ceil(low);
-            if (portraitH > high)
-                portraitH = Mathf.Floor(high);
+            if (farsi)
+            {
+                float cap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
+                nameRoom = cap < 18f ? 18f : cap;
+                float low = cardH * 0.65f;
+                float high = cardH * 0.70f;
+                portraitH = Mathf.Round(cardH * 0.68f);
+                if (portraitH < low)
+                    portraitH = Mathf.Ceil(low);
+                if (portraitH > high)
+                    portraitH = Mathf.Floor(high);
+            }
+            else
+            {
+                nameRoom = LatinNameCap(cardH);
+                float low = cardH * 0.60f;
+                float high = cardH * 0.70f;
+                portraitH = Mathf.Round(cardH * 0.68f);
+                if (portraitH < low)
+                    portraitH = Mathf.Ceil(low);
+                if (portraitH > high)
+                    portraitH = Mathf.Floor(high);
+            }
+
             if (portraitH < 8f)
                 portraitH = 8f;
         }
 
-        /// <summary>Room for the title above the status row. The portrait may sit under part of that band.</summary>
-        private static float NameBandLimit(float cardH)
+        /// <summary>
+        /// Tallest Latin name box whose preferred height plus the status row still fits
+        /// <see cref="TheatreSeatGeometry.NameStackChrome"/>.
+        /// </summary>
+        private static float LatinNameCap(float cardH)
         {
             float statusH = cardH >= 190f ? 40f : 34f;
-            return Mathf.Max(24f, cardH - 4f - statusH - 2f);
+            float room = cardH - TheatreSeatGeometry.NameStackChrome(cardH) - statusH;
+            return Mathf.Max(24f, room);
         }
 
         /// <summary>Dark bar behind the overlaid title so a two-line name still reads on the photo.</summary>
@@ -3476,6 +3656,35 @@ namespace Game.UI.Runtime
             return true;
         }
 
+        /// <summary>
+        /// Writes the fitted size into the localization binding so a later refresh cannot
+        /// put the Latin 20px floor on a Farsi title, or the 13px library relax on a Latin one.
+        /// </summary>
+        private static void LockDrawnZoneName(TMP_Text name, float size, bool farsi)
+        {
+            if (name == null)
+                return;
+            if (!farsi && size < LatinNameFloor - 0.1f)
+                size = LatinNameFloor;
+            string drawn = name.text;
+            int lines = name.maxVisibleLines;
+            float spacing = name.characterSpacing;
+            V3LocalizedTextBindingView binding = name.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.SetFontBounds(size, size);
+            name.enableAutoSizing = true;
+            name.fontSizeMin = size;
+            name.fontSizeMax = size;
+            name.fontSize = size;
+            name.fontStyle = FontStyles.Bold;
+            name.text = drawn;
+            name.maxVisibleLines = lines > 0 ? lines : 1;
+            name.characterSpacing = spacing;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.ForceMeshUpdate();
+        }
+
         private static void RecordDrawnZoneName(TMP_Text name)
         {
             if (name == null || name.rectTransform == null)
@@ -3516,6 +3725,18 @@ namespace Game.UI.Runtime
                 measuredHeight,
                 statusHeight,
                 cardHeight);
+            bool rtl = name.isRightToLeftText;
+            bool arabic = ContainsArabicLetter(name.text);
+            bool farsi = rtl || arabic || UiShellRuntimeGateway.Localization.IsRightToLeft;
+            Debug.Log("[TheatreName] map=" + mapId
+                + " locale=" + (farsi ? "fa" : "en")
+                + " script=" + (arabic ? "ar" : "lat")
+                + " rtl=" + (rtl ? "1" : "0")
+                + " font=" + F(name.fontSize)
+                + " boxH=" + F(boxHeight)
+                + " preferredH=" + F(measuredHeight)
+                + " statusH=" + F(statusHeight)
+                + " cardH=" + F(cardHeight));
         }
 
         /// <summary>
@@ -3680,7 +3901,8 @@ namespace Game.UI.Runtime
             bool wide = false;
             if (plate != null && TryFrameSize(plate, out float plateWidth, out float plateHeight))
                 wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
-            DominantCardBands(cardH, wide, out float nameRoom, out _, out _);
+            bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            DominantCardBands(cardH, wide, farsi, out float nameRoom, out _, out _);
             return Mathf.Max(18f, nameRoom);
         }
 

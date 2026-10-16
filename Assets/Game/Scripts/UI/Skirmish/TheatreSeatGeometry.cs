@@ -3191,20 +3191,31 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Full-width tab on the selected card: same x and width as the card, sitting on the
-        /// top edge and just clear of the district outline. A side-shifted pill is not this.
+        /// The selected card's top bar. Full width, or that same bar slid off the name's
+        /// corner so it still meets the top edge and still covers the rest of it.
         /// </summary>
         private static bool CueIsCardTopTab(Box card, Box cue)
         {
             if (card.W < 48f || cue.W < 8f || cue.H < 8f)
                 return false;
-            if (Math.Abs(cue.X - card.X) > 1.5f || Math.Abs(cue.W - card.W) > 1.5f)
-                return false;
             if (cue.Y > card.Y + 2f)
                 return false;
             if (cue.YMax < card.Y - 1f)
                 return false;
-            return true;
+            bool sharesLeft = Math.Abs(cue.X - card.X) <= 1.5f;
+            bool sharesRight = Math.Abs(cue.XMax - card.XMax) <= 1.5f;
+            if (sharesLeft && sharesRight && Math.Abs(cue.W - card.W) <= 1.5f)
+                return true;
+            bool coversTop = cue.X < card.XMax - 24f && cue.XMax > card.X + 24f && cue.W >= 96f;
+            if (!coversTop || cue.W + 40f < card.W)
+                return false;
+            bool heldLeft = sharesLeft && cue.XMax <= card.XMax + 1.5f;
+            bool heldRight = sharesRight && cue.X >= card.X - 1.5f;
+            bool clearOfRightCorner = Math.Abs(cue.W - card.W) <= 1.5f
+                && cue.X >= card.X - 40f
+                && cue.XMax <= card.XMax - 6f
+                && cue.XMax > card.X + 48f;
+            return heldLeft || heldRight || clearOfRightCorner;
         }
 
         /// <summary>Lowest district-outline y that crosses the card's width. -1 when the hex misses that span.</summary>

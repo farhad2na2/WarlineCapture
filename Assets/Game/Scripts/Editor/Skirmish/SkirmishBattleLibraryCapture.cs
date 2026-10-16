@@ -2879,17 +2879,14 @@ namespace Game.Editor
             TMP_Text nameText = name.GetComponent<TMP_Text>();
             Rect ink = NameInkWorldRect(nameText, name);
             Rect cue = WorldBounds(pill);
-            bool sharesX = cue.xMin < ink.xMax && ink.xMin < cue.xMax;
-            if (!sharesX || ink.width < 1f || cue.width < 1f)
+            if (ink.width < 1f || ink.height < 1f || cue.width < 1f || cue.height < 1f)
                 return;
-            float gap;
-            if (cue.yMin >= ink.yMax)
-                gap = cue.yMin - ink.yMax;
-            else if (ink.yMin >= cue.yMax)
-                gap = ink.yMin - cue.yMax;
-            else
-                gap = 0f;
+            // 6px around the ink on every side. A pill beside the title fails even when
+            // the two rects do not share an x range.
             const float clearance = 6f;
+            float gapX = AxisSeparation(cue.xMin, cue.xMax, ink.xMin, ink.xMax);
+            float gapY = AxisSeparation(cue.yMin, cue.yMax, ink.yMin, ink.yMax);
+            float gap = Mathf.Max(gapX, gapY);
             if (gap + 0.05f >= clearance)
                 return;
             throw new InvalidOperationException(
@@ -2897,6 +2894,16 @@ namespace Game.Editor
                 " card=" + card.name +
                 " gap=" + gap.ToString("0.0") +
                 ". Expected at least 6px from the name ink.");
+        }
+
+        /// <summary>Positive when the spans are apart, zero when they overlap. The 2D gap is the greater axis.</summary>
+        private static float AxisSeparation(float a0, float a1, float b0, float b1)
+        {
+            if (a1 <= b0)
+                return b0 - a1;
+            if (b1 <= a0)
+                return a0 - b1;
+            return 0f;
         }
 
         private static void RejectZoomPillOverHexes(Transform regions, string locale, string selectedMapId)

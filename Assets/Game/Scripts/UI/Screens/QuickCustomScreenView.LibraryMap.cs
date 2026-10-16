@@ -399,6 +399,9 @@ namespace Game.UI.Runtime
                 label.overflowMode = TextOverflowModes.Overflow;
                 label.maxVisibleLines = 2;
                 SetCopy(label, UpperLatin(shortLabel), LibraryFontFloor, 28f);
+                label.enableAutoSizing = false; // larger rail labels (Game PM); fixed so the Arabic line-box fit can't shrink them
+                label.fontSize = 24f;
+                label.fontStyle = FontStyles.Bold;
                 label.color = selected ? new Color(0.98f, 0.84f, 0.42f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
                 count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 count.textWrappingMode = TextWrappingModes.NoWrap;

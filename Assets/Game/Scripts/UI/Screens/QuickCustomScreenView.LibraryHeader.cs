@@ -47,8 +47,32 @@ namespace Game.UI.Runtime
             header.Value.text = credits.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Game PM: larger zone-rail labels. FinishLibraryText (Library.cs zoneRail branch) relaxes them to 11-16 px;
+        /// this runs after it, so re-pin the rail labels at 24 px bold.
+        /// </summary>
+        private void ReassertRailLabels()
+        {
+            if (_objectiveColumn == null)
+                return;
+            for (int i = 0; i < _objectiveColumn.childCount; i++)
+            {
+                Transform tab = _objectiveColumn.GetChild(i);
+                if (!tab.name.StartsWith("ObjectiveTab_", System.StringComparison.Ordinal))
+                    continue;
+                TMP_Text label = tab.Find("Label")?.GetComponent<TMP_Text>();
+                if (label == null)
+                    continue;
+                label.enableAutoSizing = false;
+                label.fontSize = 24f;
+                label.fontStyle = FontStyles.Bold;
+                label.maxVisibleLines = 2;
+            }
+        }
+
         private void PlaceLibraryHeader()
         {
+            ReassertRailLabels();
             FitTheatreDetailHeadings();
             Transform composition = transform.Find("SkirmishSetupComposition");
             if (composition is not RectTransform compositionRect)

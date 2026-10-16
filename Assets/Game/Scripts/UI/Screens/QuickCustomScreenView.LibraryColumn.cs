@@ -463,24 +463,7 @@ namespace Game.UI.Runtime
             HoldFixed(iconRect, icon, icon, 0f);
             HoldFixed(caption, width - 4f, 26f, 0f);
             if (count != null)
-            {
-                // The ledger count stays (capture contract: one medal-count display); a small badge beside the medal.
-                count.gameObject.SetActive(true);
-                PlaceTopLeft(count, width * 0.5f + icon * 0.5f + 2f, 8f, Mathf.Max(18f, width * 0.5f - icon * 0.5f - 4f), 26f);
-                HoldFixed(count, Mathf.Max(18f, width * 0.5f - icon * 0.5f - 4f), 26f, 0f);
-                TMP_Text countText = count.GetComponent<TMP_Text>();
-                if (countText != null)
-                {
-                    countText.isRightToLeftText = false;
-                    countText.alignment = TextAlignmentOptions.MidlineLeft;
-                    countText.textWrappingMode = TextWrappingModes.NoWrap;
-                    countText.overflowMode = TextOverflowModes.Overflow;
-                    countText.enableAutoSizing = false;
-                    countText.fontSize = 18f;
-                    countText.fontStyle = FontStyles.Bold;
-                    countText.color = Color.white;
-                }
-            }
+                count.gameObject.SetActive(false); // approved-2: no duplicate count badges on the selected-battle panel
             Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;
             if (image != null)
             {
@@ -1049,9 +1032,9 @@ namespace Game.UI.Runtime
             TMP_Text heading = plate.Find("Heading")?.GetComponent<TMP_Text>();
             if (heading != null)
             {
-                PlaceSummaryLine(heading.rectTransform, 0f, 28f, fa, ornamentInset);
+                PlaceSummaryLine(heading.rectTransform, 0f, 32f, fa, ornamentInset);
                 string battles = UpperLatin(LibraryText("ui.skirmish.library.battles_won", fa));
-                SetCopy(heading, battles, 22f, 26f);
+                SetCopy(heading, battles, 22f, 30f);
                 heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 heading.isRightToLeftText = fa;
                 heading.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1059,14 +1042,14 @@ namespace Game.UI.Runtime
                 heading.color = new Color(0.93f, 0.78f, 0.38f, 1f);
                 heading.enableAutoSizing = true;
                 heading.fontSizeMin = 18f;
-                heading.fontSizeMax = 22f;
+                heading.fontSizeMax = 30f; // Game PM: larger BATTLES WON heading (was forced to 22)
                 heading.maxVisibleLines = 1;
             }
 
             TMP_Text summary = plate.Find("Summary")?.GetComponent<TMP_Text>();
             if (summary == null)
                 return;
-            PlaceSummaryLine(summary.rectTransform, 30f, 40f, fa, ornamentInset);
+            PlaceSummaryLine(summary.rectTransform, 33f, 40f, fa, ornamentInset);
             SetCopy(summary, won + " / " + published, 28f, 36f);
             summary.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             summary.isRightToLeftText = false;
@@ -1173,8 +1156,8 @@ namespace Game.UI.Runtime
                 TMP_Text tierName = tile.Find("TierName")?.GetComponent<TMP_Text>();
                 if (tierName != null)
                 {
-                    PlaceTileLine(tierName.rectTransform, 50f, 26f);
-                    SetCopy(tierName, fa ? faNames[i] : en[i], fa ? 26f : LibraryFontFloor, fa ? 28f : 22f); // FA glyphs run small: higher floor
+                    PlaceTileLine(tierName.rectTransform, 46f, 30f);
+                    SetCopy(tierName, fa ? faNames[i] : en[i], fa ? 30f : 26f, fa ? 32f : 28f); // FA glyphs run small: higher floor
                     tierName.alignment = TextAlignmentOptions.Center;
                     tierName.isRightToLeftText = fa;
                     tierName.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1185,15 +1168,15 @@ namespace Game.UI.Runtime
                         // V3LocalizedTextBindingView.FitArabicLineBox caps Arabic-script max at rect height / 1.65
                         // (26 px line -> ~16 px). Pin a fixed size after SetCopy so the floor holds.
                         tierName.enableAutoSizing = false;
-                        tierName.fontSize = 24f;
+                        tierName.fontSize = 30f; // +25%
                     }
                 }
 
                 TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();
                 if (tierCount != null)
                 {
-                    PlaceTileLine(tierCount.rectTransform, 76f, 30f);
-                    SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), fa ? 32f : 26f, fa ? 36f : 30f);
+                    PlaceTileLine(tierCount.rectTransform, 74f, 34f);
+                    SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), fa ? 36f : 32f, fa ? 40f : 38f);
                     tierCount.alignment = TextAlignmentOptions.Center;
                     tierCount.isRightToLeftText = false;
                     tierCount.fontStyle = FontStyles.Bold;
@@ -1201,7 +1184,7 @@ namespace Game.UI.Runtime
                     if (fa)
                     {
                         tierCount.enableAutoSizing = false;
-                        tierCount.fontSize = 30f;
+                        tierCount.fontSize = 38f; // +25%
                     }
                 }
             }

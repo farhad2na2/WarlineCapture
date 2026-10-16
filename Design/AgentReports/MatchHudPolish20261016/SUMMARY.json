@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-16",
+  "baselineCommit": "f3b6f74b3",
+  "integratedBaseCommit": "1485711a7",
+  "editor": {
+    "version": "6000.5.8f1",
+    "architecture": "arm64",
+    "hubVersion": "3.22.3",
+    "installation": "Complete",
+    "installedComponentsVerification": "Passed",
+    "hubLeftOpen": true
+  },
+  "changes": [
+    "Bound ARIA portrait independently of prose length; preserve aspect and clip inside header",
+    "Teal header contrast and mirrored Farsi name/progress",
+    "Consistent English/Farsi instruction alignment and compact objective/action/advice copy",
+    "Separate numeric LTR countdown from localized caption and public objective score",
+    "Preserve existing scrolling squad strip, colorful controls and ARIA Play/Stop flow",
+    "Resolve CRLF Editor version through mandatory macOS GUI wrapper"
+  ],
+  "nativePreview": {
+    "source": "current prefab with staged presentation fixture; shared Campaign UI/art",
+    "before": 6,
+    "after": 6,
+    "locales": [
+      "en",
+      "fa-IR"
+    ],
+    "sizes": [
+      [
+        1280,
+        720
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        2400,
+        1080
+      ]
+    ],
+    "normalInput": false,
+    "agentVisualReview": "Passed after spacing adjustment",
+    "humanVisualReview": "Pending",
+    "rejectedCandidate": "AfterPreviewAttempt01"
+  },
+  "automated": {
+    "wrapperExitCode": 0,
+    "log": "Validation/warline-hud-polish-checks-20261016-05.log.gz",
+    "requiredMarkers": [
+      "[M03PresentationValidation] result=Passed ariaPresentations=192 finalComicCrops=14",
+      "[AriaScrollTransitions] result=Passed languages=EN,FA widths=1920,2400 newly-scrollable-top and existing-scroll-preserved",
+      "[AriaTutorialPresentationV3Validation] result=Passed tests=4 panels=1 actions=2 skip=absent",
+      "[MatchHudPolishTests] result=Passed layoutCases=4 timerCases=4 scrollTransitions=4 campaignPresentations=192 locales=en,fa-IR"
+    ]
+  },
+  "normalInputMission": {
+    "status": "Failed before Play entry; pending",
+    "log": "Validation/warline-hud-polish-before-20261016-03.log.gz",
+    "cause": "Existing MeasuredAircraftRotorGeometry, RigidAircraftGeometryCache and CanonicalAircraftGeometry metadata guards canceled Play entry",
+    "guardsPreserved": true,
+    "completeMissionAriaResultReturn": "Pending",
+    "playerReadinessClaimed": false,
+    "deviceAcceptance": "Pending"
+  },
+  "failedEvidence": [
+    "Initial install-in-progress launch failed",
+    "First preview spacing visually rejected and preserved",
+    "After-tests attempt03 score font bounds failed; fixed",
+    "After-tests attempt04 stale scroll fixture assumed minimap controlled ARIA; corrected to actual command-dock budget"
+  ],
+  "images": [
+    {
+      "file": "AfterPreview/hud-en-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "d7dbd2653cd90a75c7c5348cde8269e8226e4c00f0187fe984feec63fc88cb0f"
+    },
+    {
+      "file": "AfterPreview/hud-en-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "47abb22ea8fd3d1e45d752b16d83d7fba9381fbea443d3b41e00497613083bca"
+    },
+    {
+      "file": "AfterPreview/hud-en-2400.png",
+      "width": 2400,
+      "height": 1080,
+      "sha256": "6f457a75fb8bfd409a291bab3f2e3ea287f9c24fc58e91d602b0fadd8c35adcc"
+    },
+    {
+      "file": "AfterPreview/hud-fa-IR-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "4db60fe916e130b8e69282a69251e1c763c8491bd3c7f71f463449101e9d4d3d"
+    },
+    {
+      "file": "AfterPreview/hud-fa-IR-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "432c5e258745c3c684dbf5404f8ae070687d0a8bf5ffaeff305213831a7c1d00"
+    },
+    {
+      "file": "AfterPreview/hud-fa-IR-2400.png",
+      "width": 2400,
+      "height": 1080,
+      "sha256": "29125ae89e565f6a7926859597ce37c1978da75bb8eeb34fb62d843562f990eb"
+    },
+    {
+      "file": "AfterPreviewAttempt01/hud-en-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "a6c0915b1821576f93a2e82666b4b9a41590e38248956f9d6067406e797b8062"
+    },
+    {
+      "file": "AfterPreviewAttempt01/hud-en-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "3e6d6fd8550360439d7775cc7aa90e3eb33b03273f19b52d4e0397b3f7649429"
+    },
+    {
+      "file": "AfterPreviewAttempt01/hud-en-2400.png",
+      "width": 2400,
+      "height": 1080,
+      "sha256": "a22e7392ec6bf693cf2e65c15d281a7c66612de0682bcb828dec3ab0b301ca86"
+    },
+    {
+      "file": "AfterPreviewAttempt01/hud-fa-IR-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "3971802923930debd1fbebf428130ae2142541c245502fb8e5ba1f4556723ca0"
+    },
+    {
+      "file": "AfterPreviewAttempt01/hud-fa-IR-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "bdf5c9bd8da7c0eae50e14a2809ecc5faa77634eefd66c3b46369311ac0e13ad"
+    },
+    {
+      "file": "AfterPreviewAttempt01/hud-fa-IR-2400.png",
+      "width": 2400,
+      "height": 1080,
+      "sha256": "d0f812bc60fa665d93d4de0ba0cdfb24b5423b926df27f4d0001f0f10d761667"
+    },
+    {
+      "file": "BeforePreview/hud-en-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "bb94841e9dc67f15d47294316cd6a2842948c652d1e71987bc89228f4de0863a"
+    },
+    {
+      "file": "BeforePreview/hud-en-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "555e2a4d36173acaceff9999c7a7dc0ad77450abc0145e4dfa6cf16d4171baa3"
+    },
+    {
+      "file": "BeforePreview/hud-en-2400.png",
+      "width": 2400,
+      "height": 1080,
+      "sha256": "e5d82036fc1a45abd675c64ef6b83ea10f7f2ef2990fbca8926849200036e141"
+    },
+    {
+      "file": "BeforePreview/hud-fa-IR-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "396c3ed918bdc8f6165eea3a514b1e0a388dd8086332f209808ce2114d0eb558"
+    },
+    {
+      "file": "BeforePreview/hud-fa-IR-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "154079a55dcdaf7f6cd248e8edd199d2c5143bf6656f1e53e02e7bda20b25ffa"
+    },
+    {
+      "file": "BeforePreview/hud-fa-IR-2400.png",
+      "width": 2400,
+      "height": 1080,
+      "sha256": "9c775c3b6f3da9fbafc29940b9623e93b78da61715656d7c10b9bba690a3e7a5"
+    }
+  ],
+  "fullLogs": [
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016-02.log.gz",
+      "uncompressedSha256": "79f31f5f750670c8aeccbc3e9c72ac2323002dc5ab9be9e5aac54e5720a62956",
+      "uncompressedBytes": 106543
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016-03.log.gz",
+      "uncompressedSha256": "17bfc7dc02bab91770c77c15ed872c159899020811e2cad6255f36864716268b",
+      "uncompressedBytes": 291856
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016-04.log.gz",
+      "uncompressedSha256": "2451c43f41f8869fefcf8eb3cdd721e4d5a25a85cd9a19ef8152a2014e7343b0",
+      "uncompressedBytes": 314445
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-after-tests-20261016.log.gz",
+      "uncompressedSha256": "bc753ced34964134dfb125f6bb568866ad0778f3a2c3932405126114afcebc02",
+      "uncompressedBytes": 116898
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-before-20261016-02.log.gz",
+      "uncompressedSha256": "cf5f8877ec711ce1c6d132bf8e39f396cf73b998a0bbb3348e18a230612499ec",
+      "uncompressedBytes": 2194
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-before-20261016-03.log.gz",
+      "uncompressedSha256": "5b656512c10934b63821fd1876c759ce3f490a97cec793d6390e411bb40f3771",
+      "uncompressedBytes": 1013690
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-before-preview-20261016.log.gz",
+      "uncompressedSha256": "d3bf7f4a4aaa71eb7b3b6ee19cf01313aacd1e57fed2475c7fed33c00b202c44",
+      "uncompressedBytes": 295739
+    },
+    {
+      "file": "Design/AgentReports/MatchHudPolish20261016/Validation/warline-hud-polish-checks-20261016-05.log.gz",
+      "uncompressedSha256": "3ceba0888a20db64d7595e2d234437e1f924d64f29efc100e6410a57a9afaebf",
+      "uncompressedBytes": 292982
+    }
+  ],
+  "nonScope": "No physical map changes, replacement portrait art, or retired squad navigation panel. Existing unrelated working-tree files excluded."
+}

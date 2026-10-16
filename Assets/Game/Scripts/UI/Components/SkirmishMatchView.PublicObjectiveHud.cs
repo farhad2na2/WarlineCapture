@@ -43,6 +43,7 @@ namespace Game.UI.Runtime
             }
             if(!model.Available||model.Goal==null)
             {
+                RestoreClockCaption();
                 UiLocalizedText.Set(player,model.UnavailableText);UiLocalizedText.Set(playerHealth,"");
                 UiLocalizedText.Set(enemy,"");UiLocalizedText.Set(enemyHealth,"");
                 PresentPublicObjectiveForAria(null);HideObjectiveMarkers();return;
@@ -50,12 +51,12 @@ namespace Game.UI.Runtime
             var goal=model.Goal;
             var main=new List<SkirmishPublicGoalNode>();
             for(int i=0;i<goal.NodeCount;i++)if(goal.Node(i).Kind!=SkirmishPublicGoalNodeKind.OwnDesignatedSubject)main.Add(goal.Node(i));
-            if(main.Count==0||main.Count>3){PresentPublicObjectiveForAria(null);return;}
+            if(main.Count==0||main.Count>3){RestoreClockCaption();PresentPublicObjectiveForAria(null);return;}
             firstPublicGoal=main[0].PublicId;secondPublicGoal=main.Count>1?main[1].PublicId:null;thirdPublicGoal=main.Count>2?main[2].PublicId:null;
             if(thirdObjective==null)
             {
                 thirdObjective=Button(hud.transform,"",()=>FocusPublicGoal(thirdPublicGoal));
-                thirdObjectiveProgress=HealthLabel(thirdObjective);thirdObjective.transform.parent.SetSiblingIndex(clock.transform.GetSiblingIndex());
+                thirdObjectiveProgress=HealthLabel(thirdObjective);thirdObjective.transform.parent.SetSiblingIndex(clock.transform.parent.GetSiblingIndex());
                 thirdObjective.transform.parent.GetComponent<LayoutElement>().preferredWidth=200;
             }
             thirdObjective.transform.parent.gameObject.SetActive(main.Count>2);
@@ -69,7 +70,7 @@ namespace Game.UI.Runtime
             string score=goal.Score.TicketsKnown?(fa?"بلیت‌ها ":"TICKETS ")+goal.Score.OwnTickets+" / "+goal.Score.OpposingTickets:
                 (fa?"تکمیل ":"COMPLETED ")+goal.Score.Completed+" / "+goal.Score.Required;
             if(goal.Score.ProgressKnown)score+="\n"+(fa?"زنده ":"ALIVE ")+(goal.Score.OriginalSubjects-goal.Score.Completed-goal.Score.SubjectsLost);
-            UiLocalizedText.Set(clock,score+"\n"+match.Clock);clock.fontSize=HudIconButtonView.LabelSize;
+            PresentObjectiveClock(score);
             RefreshPublicGoalMap(goal,fa);
             PresentPublicConvoyService(model);
             // Rendering the goal HUD alone is not an executable ARIA capability.
@@ -90,7 +91,7 @@ namespace Game.UI.Runtime
             enemy.transform.parent.gameObject.SetActive(true);if(thirdObjective!=null)thirdObjective.transform.parent.gameObject.SetActive(false);
             HudIconButtonView.Apply(PlayerFocusButton,HudButtonIcon.YourBase,HudButtonRole.Play,"YOUR BASE","پایگاه شما",player,true);
             HudIconButtonView.Apply(EnemyFocusButton,HudButtonIcon.EnemyBase,HudButtonRole.Stop,"ENEMY BASE","پایگاه دشمن",enemy,true);
-            clock.fontSize=30;player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;
+            RestoreClockCaption();player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;
         }
         private void PresentGoalControl(TMP_Text heading,TMP_Text progress,SkirmishPublicGoalNode node,int index)
         {

@@ -30,7 +30,16 @@ namespace Game.Runtime
         {
             "GameplayRuntimeUpdate.ThreatWarningPresentation",
             "GameplayRuntimeUpdate.MainMenuUi",
-            "MainMenuPlayUI.MinimapUpdate"
+            "MainMenuPlayUI.MinimapUpdate",
+            "MainMenuPlayUI.FeedbackLifetime",
+            "MainMenuPlayUI.CameraControls",
+            "MainMenuPlayUI.ResourceHeader",
+            "MainMenuPlayUI.AssistantPanelReadModel",
+            "MainMenuPlayUI.AssistantHighlight",
+            "MainMenuPlayUI.GuidedHud",
+            "MainMenuPlayUI.ThreatHud",
+            "MainMenuPlayUI.ResourceExchange",
+            "MainMenuPlayUI.AssistantAttention"
         };
         private static readonly string[] DrawCallsProfilerCounterNames = { "Draw Calls Count", "Draw Calls", "DrawCalls Count", "DrawCalls" };
         private static readonly string[] BatchesProfilerCounterNames = { "Batches Count", "Batches" };

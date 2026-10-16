@@ -26,6 +26,14 @@ namespace Game.UI.Runtime
         private const float ZoomControlRefreshIntervalSeconds = 0.1f;
         private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
         private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
+        private static readonly ProfilerMarker CameraControlsMarker = new("MainMenuPlayUI.CameraControls");
+        private static readonly ProfilerMarker ResourceHeaderMarker = new("MainMenuPlayUI.ResourceHeader");
+        private static readonly ProfilerMarker AssistantPanelReadModelMarker = new("MainMenuPlayUI.AssistantPanelReadModel");
+        private static readonly ProfilerMarker AssistantHighlightMarker = new("MainMenuPlayUI.AssistantHighlight");
+        private static readonly ProfilerMarker GuidedHudMarker = new("MainMenuPlayUI.GuidedHud");
+        private static readonly ProfilerMarker ThreatHudMarker = new("MainMenuPlayUI.ThreatHud");
+        private static readonly ProfilerMarker ResourceExchangeMarker = new("MainMenuPlayUI.ResourceExchange");
+        private static readonly ProfilerMarker AssistantAttentionMarker = new("MainMenuPlayUI.AssistantAttention");
 
         private readonly MatchHudMinimapInputUiSystemHelper _matchHudMinimapInputSystem = new();
         private readonly MatchHudMinimapInputUiSystemHelper _matchHudFullMapInputSystem = new();
@@ -158,15 +166,39 @@ namespace Game.UI.Runtime
                 BattleHudRuntimeFeedbackUiSystemHelper.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
             }
 
-            _selectionUiCameraSystem?.UpdateZoomTransition();
-            RefreshZoomControlsIfDue(now);
-            _matchHudResourceHeaderPresentation.RefreshIfDue(now);
-            ApplyMatchHudAssistantPanelReadModelIfDue(now);
-            _matchHudAssistantUiSystem.TickHighlight(now);
-            TickGuidedHudRuntime();
-            TickMatchHudThreatWarning(now);
-            RefreshResourceExchangePopup();
-            _matchHudAssistantUiSystem.RenderAttention(now);
+            using (CameraControlsMarker.Auto())
+            {
+                _selectionUiCameraSystem?.UpdateZoomTransition();
+                RefreshZoomControlsIfDue(now);
+            }
+            using (ResourceHeaderMarker.Auto())
+            {
+                _matchHudResourceHeaderPresentation.RefreshIfDue(now);
+            }
+            using (AssistantPanelReadModelMarker.Auto())
+            {
+                ApplyMatchHudAssistantPanelReadModelIfDue(now);
+            }
+            using (AssistantHighlightMarker.Auto())
+            {
+                _matchHudAssistantUiSystem.TickHighlight(now);
+            }
+            using (GuidedHudMarker.Auto())
+            {
+                TickGuidedHudRuntime();
+            }
+            using (ThreatHudMarker.Auto())
+            {
+                TickMatchHudThreatWarning(now);
+            }
+            using (ResourceExchangeMarker.Auto())
+            {
+                RefreshResourceExchangePopup();
+            }
+            using (AssistantAttentionMarker.Auto())
+            {
+                _matchHudAssistantUiSystem.RenderAttention(now);
+            }
         }
 
         public void NotifyStaticMinimapChanged()

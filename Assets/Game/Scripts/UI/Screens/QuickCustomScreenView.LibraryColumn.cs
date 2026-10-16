@@ -1143,8 +1143,8 @@ namespace Game.UI.Runtime
                 var iconRect = tile.Find("Icon") as RectTransform;
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 1f);
                 iconRect.pivot = new Vector2(0.5f, 1f);
-                iconRect.sizeDelta = new Vector2(42f, 42f);
-                iconRect.anchoredPosition = new Vector2(0f, -6f);
+                iconRect.sizeDelta = new Vector2(38f, 38f);
+                iconRect.anchoredPosition = new Vector2(0f, -3f); // clears the larger tier name below
                 Image iconImage = iconRect.GetComponent<Image>();
                 if (iconImage != null)
                 {
@@ -1156,7 +1156,7 @@ namespace Game.UI.Runtime
                 TMP_Text tierName = tile.Find("TierName")?.GetComponent<TMP_Text>();
                 if (tierName != null)
                 {
-                    PlaceTileLine(tierName.rectTransform, 46f, 30f);
+                    PlaceTileLine(tierName.rectTransform, 44f, 30f);
                     SetCopy(tierName, fa ? faNames[i] : en[i], fa ? 30f : 26f, fa ? 32f : 28f); // FA glyphs run small: higher floor
                     tierName.alignment = TextAlignmentOptions.Center;
                     tierName.isRightToLeftText = fa;

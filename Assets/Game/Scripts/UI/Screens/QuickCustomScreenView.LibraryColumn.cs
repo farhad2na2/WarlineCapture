@@ -1110,6 +1110,7 @@ namespace Game.UI.Runtime
             const float top = 106f;
             const float tileHeight = 108f;
             const float gap = 8f;
+            var tierNames = new List<TMP_Text>(4);
             for (int i = 0; i < tiers.Length; i++)
             {
                 int column = i % 2;
@@ -1175,6 +1176,7 @@ namespace Game.UI.Runtime
                     tierName.rectTransform.offsetMax = new Vector2(-8f, tierName.rectTransform.offsetMax.y);
                     if (tierName.rectTransform.rect.width > 40f)
                         FitDetailLine(tierName, 16f, fa ? 30f : 28f);
+                    tierNames.Add(tierName);
                 }
 
                 TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();
@@ -1192,6 +1194,23 @@ namespace Game.UI.Runtime
                         tierCount.fontSize = 38f; // +25%
                     }
                 }
+            }
+
+            // One shared size: the smallest per-tile fit, applied to all four, autosize off (per aspect/locale).
+            float shared = float.MaxValue;
+            for (int i = 0; i < tierNames.Count; i++)
+                shared = Mathf.Min(shared, tierNames[i].fontSize);
+            for (int i = 0; i < tierNames.Count && shared < float.MaxValue; i++)
+            {
+                TMP_Text t = tierNames[i];
+                t.enableAutoSizing = false;
+                t.fontSize = shared;
+                t.fontSizeMin = shared;
+                t.fontSizeMax = shared;
+                V3LocalizedTextBindingView binding = t.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(shared, shared);
+                t.ForceMeshUpdate();
             }
         }
 

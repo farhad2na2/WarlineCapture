@@ -2943,8 +2943,6 @@ namespace Game.Editor
             {
                 TheatreSeatGeometry.Box box = PlateBox(space, pills[p]);
                 bool contained = PlateBoxInside(box, selectedBox);
-                bool topTab = selectedBox.W > 1f && TheatreSeatGeometry.IsCardTopTab(selectedBox, box);
-                bool attached = contained || PlateBoxesOverlap(box, selectedBox) || topTab;
                 if (contained)
                     continue;
                 int selectedIndex = -1;
@@ -2962,14 +2960,31 @@ namespace Game.Editor
                     continue;
                 for (int i = 0; i < mapIds.Length; i++)
                 {
-                    if (attached && i == selectedIndex)
+                    if (shapes[i] == null || shapes[i].Length < 3)
                         continue;
-                    if (shapes[i] == null || shapes[i].Length < 3 || !WorldRectHitsPolygon(inflated, shapes[i]))
+                    bool hits = i == selectedIndex
+                        ? StrokeHitsRect(shapes[i], inflated)
+                        : WorldRectHitsPolygon(inflated, shapes[i]);
+                    if (!hits)
                         continue;
                     throw new InvalidOperationException(
                         "Theatre zoom pill overlaps a zone hex locale=" + locale + " district=" + mapIds[i] + ".");
                 }
             }
+        }
+
+        private static bool StrokeHitsRect(Vector2[] shape, Rect rect)
+        {
+            if (shape == null || shape.Length < 3)
+                return false;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                Vector2 next = shape[(i + 1) % shape.Length];
+                if (SegmentHitsRect(shape[i], next, rect))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool PlateBoxesOverlap(TheatreSeatGeometry.Box left, TheatreSeatGeometry.Box right)

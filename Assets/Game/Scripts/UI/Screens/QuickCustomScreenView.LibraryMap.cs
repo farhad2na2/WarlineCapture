@@ -140,7 +140,7 @@ namespace Game.UI.Runtime
             if (gridPreview <= 1f)
                 ResolveGridCard(740f, 4, out _, out gridPreview);
             float previewHeight = pin
-                ? Mathf.Max(48f, height - (titleHeight + subtitleHeight + 22f + 14f))
+                ? Mathf.Max(48f, height - (titleHeight + subtitleHeight + LibraryPinMedalSize + 4f + 14f))
                 : gridPreview;
             bool playable = card.Access == SkirmishCardAccess.Playable;
             TintButton(button, card.IsSelected, playable, true);
@@ -212,7 +212,7 @@ namespace Game.UI.Runtime
                 SetCopy(recommended, fa ? "پیشنهاد" : "NEXT", 11f, 13f);
             }
 
-            float medalSize = pin ? 18f : gridSlots.Medal > 1f ? gridSlots.Medal : LibraryGridMedalSize;
+            float medalSize = pin ? LibraryPinMedalSize : gridSlots.Medal > 1f ? gridSlots.Medal : LibraryGridMedalSize;
             float medalRun = 4f * (medalSize + 2f);
             float medalX = fa && pin ? width - 8f - medalRun : 4f;
             float medalGap = pin ? 2f : LibraryGridMedalGap;
@@ -494,6 +494,7 @@ namespace Game.UI.Runtime
             edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
         }
 
+        private const float LibraryPinMedalSize = 22f; // v35: approved-2 medal circles read at map scale (was 18)
         private const float PinGutter = 14f;
         private const float ObjectiveListWidth = 224f;
         private const float PinRailReserve = ObjectiveListWidth + 8f + 14f;

@@ -121,7 +121,11 @@ namespace Game.UI.Runtime
                 plate.color = new Color(0.04f, 0.05f, 0.06f, 0.94f);
 
             if (pin)
+            {
                 FillPinPortrait(card);
+                StyleMapPinCard(card, selected, playable);
+                return;
+            }
             TintNamedImage(card, "FooterScrim", new Color(0.02f, 0.03f, 0.04f, 0.90f));
             TintNamedImage(card, "ScenarioBadge", new Color(0.02f, 0.03f, 0.04f, 0.84f));
             TintNamedImage(card, "MedalBacking", new Color(0.02f, 0.02f, 0.03f, 0.55f));
@@ -133,6 +137,60 @@ namespace Game.UI.Runtime
 
             if (card.Find("Subtitle") is Transform subtitleNode && subtitleNode.TryGetComponent<TMP_Text>(out TMP_Text subtitle))
                 subtitle.color = new Color(0.78f, 0.74f, 0.64f, 1f);
+        }
+
+        /// <summary>
+        /// v35 approved-2 map card: opaque dark frame, the scenario art at full contrast (no tint, no alpha),
+        /// a solid title bar with a gold rule, a backed row of medal circles, and a heavy gold frame when selected.
+        /// Art is the existing scenario preview / zone plate only (Assets/Game/Art/SkirmishLibrary); nothing new is drawn.
+        /// </summary>
+        private static void StyleMapPinCard(Transform card, bool selected, bool playable)
+        {
+            if (card.TryGetComponent<Image>(out Image plate) && card.GetComponent<SkirmishLibraryButtonStateView>() == null)
+                plate.color = new Color(0.025f, 0.03f, 0.035f, 1f);
+            if (card.Find("Preview") is Transform previewNode && previewNode.TryGetComponent<RawImage>(out RawImage art) && art.texture != null)
+                art.color = Color.white;
+            TintNamedImage(card, "FooterScrim", new Color(0.015f, 0.02f, 0.025f, 1f));
+            TintNamedImage(card, "ScenarioBadge", new Color(0.015f, 0.02f, 0.025f, 0.96f));
+            TintNamedImage(card, "MedalBacking", new Color(0f, 0f, 0f, 0.85f));
+            if (card.Find("FooterScrim") is RectTransform scrim && scrim.Find("TitleRule") == null)
+            {
+                var rule = new GameObject("TitleRule", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                rule.transform.SetParent(scrim, false);
+                rule.raycastTarget = false;
+                rule.color = playable ? new Color(0.86f, 0.66f, 0.24f, 1f) : new Color(0.45f, 0.40f, 0.32f, 1f);
+                RectTransform r = rule.rectTransform;
+                r.anchorMin = new Vector2(0f, 1f);
+                r.anchorMax = new Vector2(1f, 1f);
+                r.pivot = new Vector2(0.5f, 1f);
+                r.sizeDelta = new Vector2(0f, 2f);
+                r.anchoredPosition = Vector2.zero;
+            }
+
+            if (card.Find("Title") is Transform titleNode && titleNode.TryGetComponent<TMP_Text>(out TMP_Text title))
+            {
+                title.fontStyle = FontStyles.Bold | FontStyles.UpperCase;
+                title.color = new Color(1f, 0.97f, 0.90f, 1f);
+            }
+
+            if (card.Find("Subtitle") is Transform subtitleNode && subtitleNode.TryGetComponent<TMP_Text>(out TMP_Text subtitle))
+                subtitle.color = new Color(0.86f, 0.80f, 0.66f, 1f);
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (card.Find("Medal" + i) is Transform medal && medal.TryGetComponent<Image>(out Image medalImage) &&
+                    medalImage.color.r < 0.99f)
+                    medalImage.color = new Color(0.62f, 0.62f, 0.62f, 1f); // unearned: still a visible circle, just greyed
+            }
+
+            Outline edge = card.GetComponent<Outline>();
+            if (edge == null)
+                edge = card.gameObject.AddComponent<Outline>();
+            edge.useGraphicAlpha = false;
+            edge.effectColor = selected
+                ? new Color(1f, 0.80f, 0.25f, 1f)
+                : playable ? new Color(0.62f, 0.48f, 0.22f, 0.9f) : new Color(0.32f, 0.29f, 0.24f, 0.9f);
+            edge.effectDistance = selected ? new Vector2(4f, -4f) : new Vector2(1.5f, -1.5f);
         }
 
         private static void FillPinPortrait(Transform card)

@@ -249,4 +249,85 @@ public sealed class AutomaticCombatFactionTargetingTests
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         return entity;
     }
+
+    // Diagnostic characterization of the observed S005 completion/acquisition seam.
+    // This isolated world does not reproduce Campaign geometry, fog, or live damage.
+    public static void RunS005RocketeerAcquisitionSeamValidation()
+    {
+        var suite = new AutomaticCombatFactionTargetingTests();
+        suite.S005RocketeerObservedArrivalAcquisitionMatrix();
+        UnityEngine.Debug.Log("[S005RocketeerAcquisitionSeam] result=Collected controls=8 nativeGeometry=0 missionReady=0");
+    }
+
+    [Test]
+    public void S005RocketeerObservedArrivalAcquisitionMatrix()
+    {
+        var config = UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.UnitGridAuthoringPrefabConfigAsset>(
+            "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Ghillie_Male_01_Config.asset");
+        Assert.IsNotNull(config);
+        Assert.AreEqual(16, config.AggroRangeCells);
+        Assert.AreEqual(new UnityEngine.Vector2Int(1, 1), config.FootprintCells);
+        Assert.IsTrue(Game.Configs.SkirmishRoleOverlayCatalog.TryGet(
+            Game.Configs.SkirmishRoleOverlayCatalog.CreateCombinedArmsSlice(),
+            Game.Skirmish.Contracts.SkirmishRoleKind.Rocketeer, out var overlay));
+        Assert.AreEqual(24f, overlay.RangeWorld);
+        Assert.AreEqual(22, overlay.Damage);
+        var origins = new[]
+        {
+            new float3(1341.5f, 0, 681.5f), // production.1002.0: observed idle
+            new float3(1344.5f, 0, 678.5f), // production.1002.1: observed idle
+            new float3(1344.5f, 0, 681.5f), // production.1002.3: observed idle
+            new float3(1347.5f, 0, 681.5f)  // production.1002.2: observed engaged
+        };
+        for (int i = 0; i < origins.Length; i++)
+            S005ExerciseArrival(config, overlay, origins[i], completeFirst: false,
+                expectedAcquire: i == 3, "observed-" + i);
+        for (int i = 0; i < 3; i++)
+            S005ExerciseArrival(config, overlay, origins[i], completeFirst: true,
+                expectedAcquire: false, "completed-outside-" + i);
+        S005ExerciseArrival(config, overlay, origins[3], completeFirst: true,
+            expectedAcquire: false, "completed-inside");
+    }
+
+    private static void S005ExerciseArrival(
+        Game.Configs.UnitGridAuthoringPrefabConfigAsset config,
+        Game.Skirmish.Contracts.SkirmishRoleOverlay overlay,
+        float3 origin, bool completeFirst, bool expectedAcquire, string label)
+    {
+        using var world = new World("S005 rocketeer seam " + label);
+        var em = world.EntityManager;
+        var grid = CreateGrid(em);
+        em.SetComponentData(grid, new GridConfig
+        { Width = 2048, Height = 1024, CellSize = 1f, Origin = float3.zero });
+        var attacker = CreateCombatUnit(em, FactionIdentity.PlayerFactionId,
+            new int2((int)math.floor(origin.x), (int)math.floor(origin.z)), overlay.RangeWorld);
+        em.SetComponentData(attacker, LocalTransform.FromPosition(origin));
+        em.SetComponentData(attacker, new UnitCombat
+        { CanAttack = 1, AutoEngage = 1, AggroRangeCells = config.AggroRangeCells,
+          ChaseBreakDistance = config.ChaseBreakDistance });
+        Game.Runtime.SkirmishSharedCombatBinding.Bind(em, attacker, overlay);
+        Assert.AreEqual(overlay.RangeWorld, em.GetComponentData<UnitAttack>(attacker).Range);
+        var target = CreateDefenseBuilding(em, FactionIdentity.EnemyFactionId,
+            new float3(1370f, 0, 679.5f));
+        em.AddComponentData(target, new CombatTargetPolicy
+        { Domain = CombatTargetDomain.Structure, Visible = 1 });
+        em.AddComponentData(attacker, new AttackMoveOrder
+        { Position = origin, Destination = new int2((int)math.floor(origin.x), (int)math.floor(origin.z)) });
+        if (completeFirst)
+        {
+            AttackMoveSystem.ResumeTravel(em, 1);
+            Assert.IsFalse(em.HasComponent<AttackMoveOrder>(attacker));
+        }
+        var end = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        var acquisition = world.CreateSystem<UnitEngagementSystem>();
+        world.SetTime(new TimeData(1, .2f));
+        acquisition.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        end.Update();
+        Assert.AreEqual(expectedAcquire, em.HasComponent<EngageTarget>(attacker), label);
+        if (expectedAcquire) Assert.AreEqual(target, em.GetComponentData<EngageTarget>(attacker).Target);
+        UnityEngine.Debug.Log("[S005RocketeerAcquisitionCase] label=" + label +
+            " distance=" + math.distance(origin.xz, new float2(1370f, 679.5f)) +
+            " completedFirst=" + completeFirst + " acquired=" + expectedAcquire);
+    }
 }

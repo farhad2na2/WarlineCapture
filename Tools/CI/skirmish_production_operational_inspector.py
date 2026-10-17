@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import math
+import os
 from pathlib import Path
 import re
 
@@ -34,17 +35,37 @@ def strict_pairs(items):
 def parse(text):
     return json.loads(text,object_pairs_hook=strict_pairs,parse_constant=lambda x: (_ for _ in ()).throw(ValueError("Nonfinite JSON")))
 
+def _io_path(path):
+    """Extended Windows spelling for IO only; public artifact identity stays canonical."""
+    p=Path(path).absolute()
+    if os.name!="nt":return p
+    value=str(p);prefix=chr(92)*2+"?"+chr(92)
+    if value.startswith(prefix):return p
+    if value.startswith(chr(92)*2):return Path(prefix+"UNC"+chr(92)+value[2:])
+    return Path(prefix+value)
+
+
+def _resolved_path(path):
+    p=_io_path(path).resolve(strict=True)
+    if os.name!="nt":return p
+    value=str(p);prefix=chr(92)*2+"?"+chr(92)
+    if value.startswith(prefix+"UNC"+chr(92)):return Path(chr(92)*2+value[len(prefix)+4:])
+    if value.startswith(prefix):return Path(value[len(prefix):])
+    return p
+
+
 def digest(path):
     h=hashlib.sha256()
-    with path.open("rb") as f:
+    with _io_path(path).open("rb") as f:
         for chunk in iter(lambda:f.read(65536),b""):h.update(chunk)
     return h.hexdigest()
 
 class Reader:
     def __init__(self, project):
-        self.root=Path(project).resolve(strict=True);self.pins={}
+        self.root=_resolved_path(project);self.pins={}
     def path(self,value):
         need(isinstance(value,(str,Path)) and str(value),"Missing artifact path")
+        need(not str(value).replace("/",chr(92)).startswith((chr(92)*2+"?"+chr(92),chr(92)*2+"."+chr(92))),"Device artifact path refused")
         p=Path(value)
         if not p.is_absolute():p=self.root/p
         p=p.absolute()
@@ -52,11 +73,11 @@ class Reader:
         need(p.is_relative_to(self.root),"Artifact escapes project")
         cursor=p
         while cursor!=self.root:
-            need(not cursor.is_symlink() and not cursor.is_junction(),"Artifact reparse path refused")
+            need(not _io_path(cursor).is_symlink() and not _io_path(cursor).is_junction(),"Artifact reparse path refused")
             cursor=cursor.parent
-        p=p.resolve(strict=True)
-        need(p.is_relative_to(self.root) and p.is_file(),"Missing/escaped artifact")
-        need(0 < p.stat().st_size <= MAX_BYTES,"Empty/oversized bounded artifact")
+        p=_resolved_path(p)
+        need(p.is_relative_to(self.root) and _io_path(p).is_file(),"Missing/escaped artifact")
+        need(0 < _io_path(p).stat().st_size <= MAX_BYTES,"Empty/oversized bounded artifact")
         return p
     def read(self,ref):
         need(isinstance(ref,dict) and set(ref)=={"path","sha256"},"Exact artifact reference required")
@@ -64,7 +85,7 @@ class Reader:
         p=self.path(ref["path"]);need(digest(p)==ref["sha256"],"Artifact SHA differs: "+str(p))
         need(p not in self.pins or self.pins[p]==ref["sha256"],"Conflicting artifact aliases")
         self.pins[p]=ref["sha256"]
-        return p,p.read_text(encoding="utf-8-sig")
+        return p,_io_path(p).read_text(encoding="utf-8-sig")
     def obj(self,ref):
         p,text=self.read(ref);v=parse(text);need(isinstance(v,dict),"JSON object required");return p,v
     def lines(self,ref):
@@ -75,7 +96,7 @@ class Reader:
     def derived(self,path):
         p=self.path(str(path));self.pins[p]=digest(p);return p
     def stable(self):
-        need(all(p.is_file() and digest(p)==h for p,h in self.pins.items()),"Artifact changed during inspection")
+        need(all(_io_path(p).is_file() and digest(p)==h for p,h in self.pins.items()),"Artifact changed during inspection")
 
 def one(events,kind):
     rows=[r["facts"] for r in events if r["kind"]==kind]
@@ -147,7 +168,7 @@ def inspect(project,spec):
         need(not re.search(r"Crash!!!|error CS\d+:|\[SkirmishProductionOperationalRun\] result=Failed",log),"Native failure retained")
         store_path=read.derived(descriptor["candidate_manifest_path"])
         need(digest(store_path)==descriptor["candidate_manifest_sha256"],"Immutable candidate store SHA differs")
-        store=parse(store_path.read_text(encoding="utf-8-sig"))
+        store=parse(_io_path(store_path).read_text(encoding="utf-8-sig"))
         need(candidate_hash(store["source_manifest"])==store["candidate_sha256"]==descriptor["candidate_sha256"] and
             fingerprint(store["build_manifest"])==store["build_sha256"]==descriptor["build_sha256"],"Candidate/build rows do not derive identity")
         for name,phase in (("source_before","before"),("source_after","after")):
@@ -276,6 +297,6 @@ def inspect(project,spec):
 if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--project",type=Path,required=True);p.add_argument("--input",type=Path,required=True)
     a=p.parse_args()
-    try: answer=inspect(a.project,parse(a.input.read_text(encoding="utf-8-sig")))
+    try: answer=inspect(a.project,parse(_io_path(a.input).read_text(encoding="utf-8-sig")))
     except (OSError,ValueError) as e:answer={"result":"Incomplete","errors":[str(e)],"wins":0,"queue_success_enabled":False,"qualified":False}
     print(json.dumps(answer,indent=2));raise SystemExit(0 if answer["result"]=="NormalCompletedUnqualified" else 1)

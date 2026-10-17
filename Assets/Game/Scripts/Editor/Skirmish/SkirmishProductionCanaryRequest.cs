@@ -59,15 +59,18 @@ namespace Game.Editor
             var manifest = job["source_manifest"] as JArray;
             Require(manifest != null && manifest.Count > 0, "Source manifest absent.");
             var paths = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+            var checkedDirectories = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+            using var sourceDigest = verifySourceBytes ? new SkirmishCandidateSourceHash.FileDigestSession() : null;
             foreach (var token in manifest)
             {
                 var entry = token as JObject; Require(entry != null, "Malformed source manifest row.");
                 Exact(entry, "path sha256"); var relative = Text(entry, "path");
                 Require(paths.Add(relative) && IsHash(Text(entry, "sha256")), "Duplicate source path/hash invalid.");
-                var resolved = Relative(root, relative);
+                var resolved = Relative(root, relative, checkedDirectories);
                 if (verifySourceBytes)
-                    Require(FileHash(resolved) == (string)entry["sha256"], "Source file missing/changed: " + relative);
+                    Require(sourceDigest.ComputeFile(resolved) == (string)entry["sha256"], "Source file missing/changed: " + relative);
             }
+            ValidateSourceManifestTopology(root, manifest);
             var packet = Text(job, "packet_path");
             Require(matrix != null || packet == "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md", "Canary must use governing DB_BA packet without an explicit matrix plan.");
             Require(FileHash(Relative(root, packet)) == Text(job, "packet_sha256"), "Packet changed.");
@@ -91,8 +94,9 @@ namespace Game.Editor
         {
             Require(actualCandidateHash() == Text(Job, "candidate_sha256"), "Actual complete native candidate differs.");
             var folder = Path.Combine(ProjectRoot, "Library", "ScriptAssemblies");
+            using var buildDigest = new SkirmishCandidateSourceHash.FileDigestSession();
             var rows = new JArray(Directory.GetFiles(folder, "*.dll").OrderBy(p => p, StringComparer.Ordinal).Select(path =>
-                new JObject { ["path"] = path.Substring(ProjectRoot.Length + 1).Replace('\\', '/'), ["sha256"] = FileHash(path) }));
+                new JObject { ["path"] = path.Substring(ProjectRoot.Length + 1).Replace('\\', '/'), ["sha256"] = buildDigest.ComputeFile(path) }));
             Require(rows.Count > 0 && Hash(Encoding.UTF8.GetBytes(Canonical(rows))) == Text(Job, "build_sha256"), "Actual compiled DLL manifest differs; compile/load canary first.");
         }
 
@@ -198,20 +202,44 @@ namespace Game.Editor
             return JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii });
         }
         public static string Hash(byte[] bytes) { using (var sha = SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant(); }
-        public static string FileHash(string path) { using (var sha = SHA256.Create()) using (var stream = File.OpenRead(path)) return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "").ToLowerInvariant(); }
+        public static string FileHash(string path) { using var digest = new SkirmishCandidateSourceHash.FileDigestSession(); return digest.ComputeFile(path); }
         private static string Text(JObject obj, string key) { Require(obj[key] != null && obj[key].Type == JTokenType.String && !string.IsNullOrEmpty((string)obj[key]), "Required text: " + key); return (string)obj[key]; }
         private static void Integer(JObject obj, string key, int min, int max) { Require(obj[key] != null && obj[key].Type == JTokenType.Integer && (long)obj[key] >= min && (long)obj[key] <= max, "Required integer/range: " + key); }
         private static void Exact(JObject obj, string names) { Require(obj.Properties().Select(p => p.Name).OrderBy(s => s, StringComparer.Ordinal).SequenceEqual(names.Split(' ').OrderBy(s => s, StringComparer.Ordinal)), "Missing/unknown fields."); }
         private static bool IsHash(string value) { return Regex.IsMatch(value, "^[a-f0-9]{64}$"); }
         private static bool Same(string a, string b) { return string.Equals(Path.GetFullPath(a), Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase); }
         private static bool Within(string path, string root) { return Same(path, root) || Path.GetFullPath(path).StartsWith(Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase); }
-        private static string Relative(string root, string relative)
+        // Recheck the same complete manifest after the potentially long byte
+        // verification pass. The set is fresh and never accepted from a caller.
+        private static void ValidateSourceManifestTopology(string root, JArray manifest)
+        {
+            var checkedDirectories = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+            foreach (var token in manifest)
+            {
+                var entry = token as JObject;
+                Require(entry != null, "Malformed source manifest row.");
+                Relative(root, Text(entry, "path"), checkedDirectories);
+            }
+        }
+
+        private static string Relative(string root, string relative, System.Collections.Generic.HashSet<string> checkedDirectories = null, Action<string> observedAttributeRead = null)
         {
             Require(!Path.IsPathRooted(relative) && !relative.Contains(":") && !relative.Contains("\\") && !relative.Split('/').Contains(".."), "Unsafe relative source path.");
             var path = Path.GetFullPath(Path.Combine(root, relative)); Require(Within(path, root), "Source escapes project.");
             var current = new FileInfo(path) as FileSystemInfo;
             while (current != null && !Same(current.FullName, root))
-            { Require((current.Attributes & FileAttributes.ReparsePoint) == 0, "Reparse/symlink source rejected."); current = current is FileInfo ? ((FileInfo)current).Directory : ((DirectoryInfo)current).Parent; }
+            {
+                // Scope is one synchronous Read only: never reuse across jobs/dispatches.
+                // The leaf file remains fresh even when an ancestor was checked already.
+                if (current is DirectoryInfo && checkedDirectories != null &&
+                    checkedDirectories.Contains(current.FullName)) break;
+                var attributes = current.Attributes;
+                observedAttributeRead?.Invoke(current.FullName);
+                Require((attributes & FileAttributes.ReparsePoint) == 0, "Reparse/symlink source rejected.");
+                if (current is DirectoryInfo && checkedDirectories != null)
+                    checkedDirectories.Add(current.FullName);
+                current = current is FileInfo ? ((FileInfo)current).Directory : ((DirectoryInfo)current).Parent;
+            }
             return path;
         }
         private static void Require(bool condition, string reason) { if (!condition) throw new InvalidDataException(reason); }

@@ -38,6 +38,7 @@ namespace Game.Editor
         private static void RecordProductionLegacySnapshot(EntityManager em,Entity session,in SkirmishMatchState match,bool simulationActive,float elapsed,string kind)
         {
             var request=productionCanary.Request;
+            var observerBefore=BeginProductionObserverWindow(em,in match);
             var identity=SkirmishLegacyProductionIdentity.CaptureLive(em,session,in match,request.CatalogId);
             request.VerifyNativeSetupIdentity(identity);
             string configHash=SkirmishProductionCanaryRequest.Hash(System.Text.Encoding.UTF8.GetBytes(SkirmishProductionCanaryRequest.Canonical((JObject)identity["native_configuration"])));
@@ -56,6 +57,7 @@ namespace Game.Editor
                 ["requested_sampling_size"]=request.Job["size"].DeepClone(),["requested_sampling_difficulty"]=request.Job["difficulty"].DeepClone(),
                 ["native_rules_scope"]="Unmodified legacy preset Normal/default/full-vision configuration. No expanded definition/version/setup hash or expanded-difficulty certification",["actual_save_root"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")};
             productionCanary.Record(kind,facts);
+            EndProductionObserverWindow(em,in match,observerBefore,"ProtectedLegacyActualCaptureLiveAndSavedResult");
         }
         // Pure native metadata preparation; actual launch/ARIA/result/return remain mandatory later.
         public static void PrepareLegacyProductionIdentitiesFromSamplingPlan()

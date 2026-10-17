@@ -8,6 +8,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Game.Configs;
+using Game.Composition;
 using Unity.Entities;
 using Unity.Scenes;
 using UnityEditor;
@@ -55,6 +56,38 @@ namespace Game.Editor
             // Never reconstruct lost live World/input leases or erase a quit request.
             // The missing completion marker makes the checked wrapper fail closed.
         }
+        // Warmup follows the existing coded runtime binding; it never authors a source.
+        internal static OperationMapDefinition ResolveProductionBatchWarmupSource(SkirmishScenarioDefinitionConfig definition)
+        {
+            if (definition == null) throw new InvalidDataException("Actual packaged canary definition missing");
+            if (definition.CampaignMap != null) return definition.CampaignMap;
+            string id = definition.CatalogId;
+            if ((id != "S002" && id != "S003" && id != "S004") ||
+                definition.OperationMapId != SkirmishLaunchProjection.OperationMapId ||
+                !SkirmishMissionDispatch.TryGetLegacyIndex(id, out int index))
+                throw new InvalidDataException("Explicit packaged canary source definition missing: " + id);
+            // S004 has an existing runtime environment override before the preset
+            // fallback (SkirmishS004Environment.LoadMapForSession). Resolve that same
+            // resource; a shared preset is not proof of a shared physical map.
+            if (id == "S004")
+            {
+                var environment = Resources.Load<OperationMapDefinition>("SkirmishS004OperationMap");
+                if (environment == null || environment.OperationMapId != definition.OperationMapId)
+                    throw new InvalidDataException("Actual S004 environment source missing or changed");
+                return environment;
+            }
+            // S002/S003 coded dispatches load the very same existing Desert Base preset.
+            // Its omitted operationMap is resolved through the serialized normal
+            // MatchSceneView catalog by the existing production identity authority.
+            var baseline = SkirmishLegacyProductionIdentity.RequireBinding("S001");
+            if (SkirmishPresetConfig.Load(index) != baseline)
+                throw new InvalidDataException("Coded warmup preset differs from normal Desert Base binding: " + id);
+            var source = SkirmishLegacyProductionIdentity.ResolveSource("S001", out _);
+            if (source == null || source.OperationMapId != definition.OperationMapId)
+                throw new InvalidDataException("Coded warmup source differs from actual normal map: " + id);
+            return source;
+        }
+
         public static void RunProductionBatchCanariesFromEnvironment()
         {
             if(productionBatch!=null||productionCanary!=null||SessionState.GetBool(Key,false)||
@@ -196,8 +229,7 @@ namespace Game.Editor
                 if(Matrix==null&&(catalogs.Count!=2||!catalogs.Contains("S004")||!catalogs.Contains("S005")))
                     throw new InvalidDataException("Exactly one S004 and one S005 real development canary required");
                 Matrix?.ValidateBatch(jobs.OfType<JObject>().Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text(v,"job_path"))));
-                for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
-                    if(UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty)throw new InvalidOperationException("Preserve dirty Editor scene.");
+                var restorableBaseline=PrepareProductionRestorableSceneBaseline();
                 // One atomic start sentinel. A crashed or partial batch is never resumed
                 // by overwriting it; original evidence remains available for a new claim.
                 using(var output=new FileStream(Path.Combine(OutputDirectory,"batch-started.json"),FileMode.CreateNew,FileAccess.Write))
@@ -207,6 +239,7 @@ namespace Game.Editor
                 manifestPath=sourceManifest;
                 events=Path.Combine(OutputDirectory,"batch-events.jsonl");
                 using(File.Open(events,FileMode.CreateNew,FileAccess.Write,FileShare.Read)){}
+                Write("RestorableSceneBaselinePrepared",restorableBaseline);
                 Write("BeforeNativeScenePreparation",new JObject {
                     ["census"]=SkirmishProductionBatchOwnershipCensus.Capture(),
                     ["entry_process_age_seconds"]=(enteredAt.UtcDateTime-Process.GetCurrentProcess().StartTime.ToUniversalTime()).TotalSeconds });
@@ -216,6 +249,7 @@ namespace Game.Editor
                 var preparationTimer=Stopwatch.StartNew();
                 PrepareNativeSceneBaseline(jobs.Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text((JObject)v,"job_path"))));
                 preparationTimer.Stop();
+                RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
                 var ownership=SkirmishProductionBatchOwnershipCensus.Capture();
                 baselineOwnership=SkirmishProductionBatchOwnershipCensus.CleanupSignature(ownership);
                 contract=new SkirmishProductionBatchContract((string)descriptor["candidate_sha256"],(string)descriptor["build_sha256"],
@@ -426,9 +460,9 @@ namespace Game.Editor
                             else guids.Add(SkirmishLegacyProductionIdentity.ResolveSource(id,out _).NavigationMetadata.AuthoredSubSceneGuid);
                             continue;
                         }
-                        if(catalog==null||!catalog.TryGetDefinition(id,out var definition)||definition.CampaignMap==null)
+                        if(catalog==null||!catalog.TryGetDefinition(id,out var definition)||definition==null)
                             throw new InvalidDataException("Actual packaged canary source definition missing");
-                        guids.Add(definition.CampaignMap.NavigationMetadata.AuthoredSubSceneGuid);
+                        guids.Add(ResolveProductionBatchWarmupSource(definition).NavigationMetadata.AuthoredSubSceneGuid);
                     }
                     guids.Add(AssetDatabase.AssetPathToGUID("Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity"));
                     foreach(string guid in guids.OrderBy(x=>x,StringComparer.Ordinal))

@@ -1377,7 +1377,23 @@ namespace Game.UI.Shell.Ecs
                     p.Intent=AriaSkirmishIntent.ObserveBattle;
                     return true; // Never issue another group's order in the acknowledgement frame.
                 }
-                if(v.Time<p.PrecisionDeadline)return true;
+                if(v.Time<p.PrecisionDeadline)
+                {
+                    // Publishing a target starts normal DecisionSystem aiming; it is not a tap.
+                    // Keep only the SAME current public target available until the owned gesture completes.
+                    bool current=v.Active&&v.ExpandedSession&&v.ExpandedBaseAssault&&v.EnemyDesignatedAlive&&
+                        v.Frame>=p.PrecisionIssueFrame&&v.ExpandedRosterRevision==p.PrecisionRoster&&
+                        v.ExpandedPageIndex==p.PrecisionPage&&v.ExpandedGroup(p.PrecisionSlot)==p.PrecisionGroup&&
+                        (v.ExpandedStructureMask&v.ExpandedAssaultMask&~v.ExpandedAirMask&(1<<p.PrecisionSlot))!=0&&
+                        v.ExpandedSelectedGroups==1&&v.ExpandedSelectedOffPage==0&&
+                        v.ExpandedSelectedMask==(1<<p.PrecisionSlot)&&v.SelectionVisible&&v.AttackMode&&
+                        v.EnemyBase.Available&&v.EnemyBase.Id==-20001&&!v.EnemyBase.Drag&&
+                        p.AssaultIssued!=0&&p.StructureOrdered!=0&&!v.DrawerOpen&&!v.MapOpen&&!v.PlacementOpen&&
+                        !v.PresentedHomeThreat&&p.HomeDefenseStage==0;
+                    if(current&&touch.Actions==p.PrecisionActions)
+                        Target(v.EnemyBase,true,ref output);
+                    return true;
+                }
                 if(p.PrecisionAttempts>=2||!v.EnemyBase.Available||v.AttackMode)
                 {
                     if(p.PrecisionExhaustedGroups.Length<p.PrecisionExhaustedGroups.Capacity)

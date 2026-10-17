@@ -4,12 +4,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Game.Configs;
 using Game.Components;
 using Game.Composition;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Unity.Collections;
+using Unity.Transforms;
 using Game.UI.Runtime;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -22,6 +27,116 @@ namespace Game.Editor
 {
     public static partial class SkirmishS002AriaRunHarness
     {
+
+        private const string ProductionBaselineMenuPath="Assets/Game/Scenes/Menu.unity";
+        private static JArray ProductionSceneSetupFacts(SceneSetup[] setup)
+            =>new JArray(setup.Select(s=>new JObject{["path"]=s.path,["loaded"]=s.isLoaded,["active"]=s.isActive}));
+        private static void RequireProductionRestorableSetup(SceneSetup[] setup)
+        {
+            if(setup==null||setup.Length==0||setup.Count(s=>s.isActive&&s.isLoaded)!=1||
+                setup.Any(s=>string.IsNullOrWhiteSpace(s.path)||AssetDatabase.LoadAssetAtPath<SceneAsset>(s.path)==null)||
+                setup.Select(s=>s.path).Distinct(StringComparer.Ordinal).Count()!=setup.Length)
+                throw new InvalidOperationException("Actual nonempty path-backed active-loaded scene baseline required before reservation");
+            var active=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if(!active.IsValid()||!active.isLoaded||active.path!=setup.Single(s=>s.isActive).path)
+                throw new InvalidOperationException("Actual active scene differs from captured restorable baseline");
+            for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+            {
+                var scene=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                if(scene.isDirty)throw new InvalidOperationException("Preserve dirty Editor scene");
+                if(!EditorSceneManager.IsPreviewScene(scene)&&!setup.Any(s=>s.isLoaded&&s.path==scene.path))
+                    throw new InvalidOperationException("Unrepresented Editor scene cannot be discarded");
+            }
+        }
+        private static JObject PrepareProductionRestorableSceneBaseline()
+        {
+            if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)
+                throw new InvalidOperationException("Idle Editor required for actual scene baseline");
+            if(SessionState.GetBool("Warline.MissionValidation.ResumeRefresh",false))
+                throw new InvalidOperationException("Another validation owns refresh suspension before scene capture");
+            var before=EditorSceneManager.GetSceneManagerSetup();
+            for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+                if(UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty)
+                    throw new InvalidOperationException("Preserve dirty Editor scene before baseline capture");
+            string transition="PreservedExisting";
+            int emptyBootstrapScenes=0;
+            if(before.Length==0)
+            {
+                if(EditorSceneManager.previewSceneCount!=0)
+                    throw new InvalidOperationException("Unowned preview scenes prevent empty-scene baseline establishment");
+                for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+                {
+                    var scene=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                    if(!scene.IsValid()||!string.IsNullOrEmpty(scene.path)||scene.rootCount!=0)
+                        throw new InvalidOperationException("Unowned/content-bearing scene prevents Menu baseline establishment");
+                    emptyBootstrapScenes++;
+                }
+                if(emptyBootstrapScenes>1||AssetDatabase.LoadAssetAtPath<SceneAsset>(ProductionBaselineMenuPath)==null)
+                    throw new InvalidOperationException("Existing Menu asset and at most one clean rootless bootstrap scene required");
+                Debug.Log("[ProductionRestorableSceneBaseline] transition=OpeningExistingMenu beforeSetupCount=0 emptyBootstrapScenes="+emptyBootstrapScenes);
+                EditorSceneManager.OpenScene(ProductionBaselineMenuPath,OpenSceneMode.Single);
+                transition="OpenedExistingMenu";
+            }
+            var after=EditorSceneManager.GetSceneManagerSetup();
+            RequireProductionRestorableSetup(after);
+            if(transition=="PreservedExisting"&&!JToken.DeepEquals(ProductionSceneSetupFacts(before),ProductionSceneSetupFacts(after)))
+                throw new InvalidOperationException("Nonempty existing restorable scene setup changed");
+            if(transition=="OpenedExistingMenu"&&(after.Length!=1||after[0].path!=ProductionBaselineMenuPath))
+                throw new InvalidOperationException("Fresh Menu baseline was not captured exactly");
+            var facts=new JObject{["transition"]=transition,["before_setup"]=ProductionSceneSetupFacts(before),
+                ["after_setup"]=ProductionSceneSetupFacts(after),["empty_bootstrap_scenes"]=emptyBootstrapScenes,
+                ["utc_before_context_capture"]=DateTimeOffset.UtcNow.ToString("O"),
+                ["gameplay_dispatched"]=false,["job_reserved"]=false};
+            Debug.Log("[ProductionRestorableSceneBaseline] result=Prepared transition="+transition+
+                " sceneCount="+after.Length+" beforeContextCapture=1");
+            return facts;
+        }
+        public static void RunProductionRestorableSceneBaselineControls()
+        {
+            if(productionCanary!=null||productionBatch!=null||SessionState.GetBool(Key,false)||
+                EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
+                EditorSceneManager.GetSceneManagerSetup().Length!=0)
+                throw new InvalidOperationException("Native empty-setup baseline control requires fresh idle unowned Editor; do not fake empty input");
+            int controls=0;
+            var first=PrepareProductionRestorableSceneBaseline();
+            if((string)first["transition"]!="OpenedExistingMenu")throw new InvalidOperationException("Actual empty-to-Menu transition missing");
+            var baseline=EditorSceneManager.GetSceneManagerSetup();RequireProductionRestorableSetup(baseline);controls++;
+            var repeated=PrepareProductionRestorableSceneBaseline();
+            if((string)repeated["transition"]!="PreservedExisting"||
+                !JToken.DeepEquals(ProductionSceneSetupFacts(baseline),ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup())))
+                throw new InvalidOperationException("Existing scene baseline was not a true no-op");
+            controls++;
+            UnityEngine.SceneManagement.Scene owned=default;
+            try
+            {
+                owned=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
+                if(!owned.IsValid()||owned.rootCount!=0||owned.isDirty)throw new InvalidOperationException("Fresh owned empty fixture required");
+                EditorSceneManager.RestoreSceneManagerSetup(baseline);
+                owned=default;
+                RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
+                if(!JToken.DeepEquals(ProductionSceneSetupFacts(baseline),ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup())))
+                    throw new InvalidOperationException("Real Menu restore differs from captured setup");
+                controls++;
+                owned=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);
+                EditorSceneManager.MarkSceneDirty(owned);
+                bool refused=false;
+                try{PrepareProductionRestorableSceneBaseline();}catch(InvalidOperationException){refused=true;}
+                if(!refused||!owned.IsValid()||!owned.isDirty)
+                    throw new InvalidOperationException("Actual dirty owned scene must be preserved/refused");
+                controls++;
+            }
+            finally
+            {
+                // Only this exact native fixture scene may be discarded.
+                if(owned.IsValid()&&!EditorSceneManager.CloseScene(owned,true))
+                    throw new InvalidOperationException("Owned temporary baseline fixture cleanup failed");
+                EditorSceneManager.RestoreSceneManagerSetup(baseline);
+                RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
+            }
+            Debug.Log("[ProductionRestorableSceneBaselineControls] result=Passed controls="+controls+
+                " actualEmptyToMenu=1 actualRestore=1 dirtyRefusal=1 jobReservations=0 gameplayCertified=0");
+        }
+
         private static ProductionCanaryContext productionCanary;
         private static IDisposable productionCounterpartScope;
 
@@ -115,8 +230,26 @@ namespace Game.Editor
         {
             if (productionCanary == null) return;
             if (productionCanary.Request.IsLegacyPreset) { RecordProductionLegacySnapshot(em,session,in match,simulationActive,elapsed,kind); return; }
+            var observerBefore = BeginProductionObserverWindow(em, in match);
             var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            var facts = CaptureProductionExpandedSnapshot(em, session, in match, simulationActive, elapsed, in state, setup);
+            var identity = (JObject)facts["native_setup_identity"];
+            productionCanary.Record(kind, facts);
+            var request = productionCanary.Request;
+            request.VerifyNativeSetupIdentity(identity);
+            if (state.CatalogId.ToString() != request.CatalogId || setup.CatalogId != request.CatalogId ||
+                setup.DefinitionId != (string)request.Job["definition_id"] || setup.ContentVersion != (int)request.Job["definition_version"] ||
+                setup.Seed != request.Seed || setup.SizeId != SkirmishSizeId.Standard || setup.DifficultyId != SkirmishDifficultyId.Regular)
+                throw new InvalidDataException("Actual resolved canary identity/setup differs from owned request.");
+            productionCanary.CaptureVerifiedIdentity(identity,(string)facts["native_config_sha256"]);
+            EndProductionObserverWindow(em, in match, observerBefore, "ExpandedResolvedSnapshot");
+        }
+
+        private static JObject CaptureProductionExpandedSnapshot(EntityManager em, Entity session,
+            in SkirmishMatchState match, bool simulationActive, float elapsed,
+            in SkirmishExpandedSessionComponent state, SkirmishResolvedSetup setup)
+        {
             // Read actual resolved native values/current localization. Never derive
             // the census from requested job fields, environment or padded uint hashes.
             var identity = SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,
@@ -149,14 +282,197 @@ namespace Game.Editor
                 facts["result_session_id"] = result.SessionId.ToString(); facts["result_frozen"] = result.Frozen;
                 facts["result_outcome"] = result.Outcome.ToString();
             }
-            productionCanary.Record(kind, facts);
-            var request = productionCanary.Request;
-            request.VerifyNativeSetupIdentity(identity);
-            if (state.CatalogId.ToString() != request.CatalogId || setup.CatalogId != request.CatalogId ||
-                setup.DefinitionId != (string)request.Job["definition_id"] || setup.ContentVersion != (int)request.Job["definition_version"] ||
-                setup.Seed != request.Seed || setup.SizeId != SkirmishSizeId.Standard || setup.DifficultyId != SkirmishDifficultyId.Regular)
-                throw new InvalidDataException("Actual resolved canary identity/setup differs from owned request.");
-            productionCanary.CaptureVerifiedIdentity(identity,(string)facts["native_config_sha256"]);
+            return facts;
+        }
+
+        private static Newtonsoft.Json.Linq.JToken ObserverValue(object value)
+        {
+            if (value == null) return Newtonsoft.Json.Linq.JValue.CreateNull();
+            Type type = value.GetType();
+            if (type.IsEnum) return new Newtonsoft.Json.Linq.JValue(value.ToString());
+            if (type.IsPrimitive || value is string || value is decimal)
+                return new Newtonsoft.Json.Linq.JValue(value);
+            if (type.FullName.StartsWith("Unity.Collections.FixedString", StringComparison.Ordinal))
+                return new Newtonsoft.Json.Linq.JValue(value.ToString());
+            if (value is FixedList512Bytes<uint> groups)
+            {
+                var items = new JArray();
+                for (int i = 0; i < groups.Length; i++) items.Add(groups[i]);
+                return items;
+            }
+            if (type.FullName.StartsWith("Unity.Collections.FixedList", StringComparison.Ordinal))
+                throw new InvalidDataException("Unsupported observer fixed-list payload; admission remains pending.");
+            var result = new Newtonsoft.Json.Linq.JObject();
+            var fields = type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            Array.Sort(fields, (a,b) => string.CompareOrdinal(a.Name,b.Name));
+            foreach (var field in fields) result[field.Name] = ObserverValue(field.GetValue(value));
+            return result;
+        }
+        private static void ObserverComponent<T>(EntityManager em, Entity entity, Newtonsoft.Json.Linq.JObject values)
+            where T : unmanaged, IComponentData
+        {
+            values[typeof(T).FullName] = em.HasComponent<T>(entity)
+                ? ObserverValue(em.GetComponentData<T>(entity)) : Newtonsoft.Json.Linq.JValue.CreateNull();
+        }
+        private static void ObserverBuffer<T>(EntityManager em, Entity entity, Newtonsoft.Json.Linq.JObject values)
+            where T : unmanaged, IBufferElementData
+        {
+            if (!em.HasBuffer<T>(entity)) { values[typeof(T).FullName] = Newtonsoft.Json.Linq.JValue.CreateNull(); return; }
+            var result = new Newtonsoft.Json.Linq.JArray();
+            var buffer = em.GetBuffer<T>(entity, true);
+            for (int i=0;i<buffer.Length;i++) result.Add(ObserverValue(buffer[i]));
+            values[typeof(T).FullName] = result;
+        }
+        private static Newtonsoft.Json.Linq.JObject CaptureProductionObserverState(EntityManager em)
+        {
+            using var allEntities = em.CreateEntityQuery(new EntityQueryDesc {
+                Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IncludePrefab });
+            using var query = em.CreateEntityQuery(new EntityQueryDesc {
+                Any = new ComponentType[] { ComponentType.ReadOnly<SkirmishMainBase>(), ComponentType.ReadOnly<AriaPlayObservationComponent>(), ComponentType.ReadOnly<AriaPlaySessionComponent>(), ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishObservationOwner>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>(), ComponentType.ReadOnly<AttackMoveOrder>(), ComponentType.ReadOnly<EngageTarget>(), ComponentType.ReadOnly<SkirmishActionRequest>(), ComponentType.ReadOnly<SkirmishArmySelectionComponent>(), ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(), ComponentType.ReadOnly<SkirmishCapacityComponent>(), ComponentType.ReadOnly<SkirmishContactKnowledgeElement>(), ComponentType.ReadOnly<SkirmishContactLedgerElement>(), ComponentType.ReadOnly<SkirmishContactSightComponent>(), ComponentType.ReadOnly<SkirmishEconomyStockComponent>(), ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(), ComponentType.ReadOnly<SkirmishFogStateComponent>(), ComponentType.ReadOnly<SkirmishMatchState>(), ComponentType.ReadOnly<SkirmishMoveIntentComponent>(), ComponentType.ReadOnly<SkirmishObjectiveClockComponent>(), ComponentType.ReadOnly<SkirmishObjectiveStateComponent>(), ComponentType.ReadOnly<SkirmishProductionReservation>(), ComponentType.ReadOnly<SkirmishResultComponent>(), ComponentType.ReadOnly<SkirmishRoleOverlayComponent>(), ComponentType.ReadOnly<SkirmishVehicleFuelRemainderComponent>(), ComponentType.ReadOnly<UiShellStateComponent>(), ComponentType.ReadOnly<UnitAirMovement>(), ComponentType.ReadOnly<UnitAttack>(), ComponentType.ReadOnly<UnitAttackOrderQueueComponent>(), ComponentType.ReadOnly<UnitAttackOrderRequestElement>(), ComponentType.ReadOnly<UnitAttackOrderResultElement>(), ComponentType.ReadOnly<UnitCombat>(), ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitLongDistanceMove>(), ComponentType.ReadOnly<UnitMove>(), ComponentType.ReadOnly<UnitPathFollow>(), ComponentType.ReadOnly<UnitPathRange>(), ComponentType.ReadOnly<UnitPathRequest>(), ComponentType.ReadOnly<UnitPathRetryCooldown>(), ComponentType.ReadOnly<UnitResourceHaulOrder>(), ComponentType.ReadOnly<UnitResourceHaulStatus>(), ComponentType.ReadOnly<UnitResourceHauler>(), ComponentType.ReadOnly<UnitTarget>() },
+                Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IncludePrefab });
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            // Complete actual relevant set; no mission-size cap or sample truncation.
+            var ordered = entities.ToArray();
+            Array.Sort(ordered,(a,b)=>a.Index!=b.Index?a.Index.CompareTo(b.Index):a.Version.CompareTo(b.Version));
+            var result = new Newtonsoft.Json.Linq.JObject();
+            foreach (var entity in ordered)
+            {
+                var values = new Newtonsoft.Json.Linq.JObject();
+                using var types = em.GetComponentTypes(entity, Allocator.Temp);
+                var names = new List<string>();
+                for(int i=0;i<types.Length;i++) names.Add(types[i].GetManagedType().FullName);
+                names.Sort(StringComparer.Ordinal);
+                values["componentMembership"] = new Newtonsoft.Json.Linq.JArray(names);
+                if (em.HasComponent<SkirmishResolvedSetupRecord>(entity))
+                    values["resolvedSetupManaged"] = JsonUtility.ToJson(em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup);
+                if (em.HasComponent<SkirmishLaunchSnapshot>(entity))
+                    values["legacyLaunchConfiguration"] = JsonUtility.ToJson(em.GetComponentObject<SkirmishLaunchSnapshot>(entity).Configuration);
+                ObserverComponent<SkirmishExpandedSessionComponent>(em,entity,values);
+                ObserverComponent<SkirmishMatchState>(em,entity,values);
+                ObserverComponent<SkirmishMainBase>(em,entity,values);
+                ObserverComponent<SkirmishObjectiveStateComponent>(em,entity,values);
+                ObserverComponent<SkirmishObjectiveClockComponent>(em,entity,values);
+                ObserverComponent<SkirmishResultComponent>(em,entity,values);
+                ObserverComponent<SkirmishEconomyStockComponent>(em,entity,values);
+                ObserverComponent<SkirmishCapacityComponent>(em,entity,values);
+                ObserverComponent<SkirmishVehicleFuelRemainderComponent>(em,entity,values);
+                ObserverComponent<LocalTransform>(em,entity,values);
+                ObserverComponent<UnitHealth>(em,entity,values);
+                ObserverComponent<Faction>(em,entity,values);
+                ObserverComponent<CombatTargetPolicy>(em,entity,values);
+                ObserverComponent<SkirmishAttemptOwnedComponent>(em,entity,values);
+                ObserverComponent<SkirmishRoleOverlayComponent>(em,entity,values);
+                ObserverComponent<SkirmishMoveIntentComponent>(em,entity,values);
+                ObserverComponent<AttackMoveOrder>(em,entity,values);
+                ObserverComponent<EngageTarget>(em,entity,values);
+                ObserverComponent<UnitAttack>(em,entity,values);
+                ObserverComponent<UnitCombat>(em,entity,values);
+                ObserverComponent<UnitMove>(em,entity,values);
+                ObserverComponent<UnitGrid>(em,entity,values);
+                ObserverComponent<UnitTarget>(em,entity,values);
+                ObserverComponent<UnitPathRequest>(em,entity,values);
+                ObserverComponent<UnitPathFollow>(em,entity,values);
+                ObserverComponent<UnitPathRange>(em,entity,values);
+                ObserverComponent<UnitPathRetryCooldown>(em,entity,values);
+                ObserverComponent<UnitLongDistanceMove>(em,entity,values);
+                ObserverComponent<UnitAirMovement>(em,entity,values);
+                ObserverComponent<UnitResourceHaulOrder>(em,entity,values);
+                ObserverComponent<UnitResourceHaulStatus>(em,entity,values);
+                ObserverComponent<UnitResourceHauler>(em,entity,values);
+                ObserverComponent<UnitAttackOrderQueueComponent>(em,entity,values);
+                ObserverComponent<SkirmishArmySelectionComponent>(em,entity,values);
+                ObserverComponent<SkirmishFogStateComponent>(em,entity,values);
+                ObserverComponent<SkirmishContactSightComponent>(em,entity,values);
+                ObserverComponent<AriaPlaySessionComponent>(em,entity,values);
+                ObserverComponent<AriaPlayObservationComponent>(em,entity,values);
+                ObserverComponent<AriaSkirmishObservationComponent>(em,entity,values);
+                ObserverComponent<AriaSkirmishObservationOwner>(em,entity,values);
+                ObserverComponent<AriaSkirmishPlanComponent>(em,entity,values);
+                ObserverComponent<UiShellStateComponent>(em,entity,values);
+                ObserverBuffer<SkirmishProductionReservation>(em,entity,values);
+                ObserverBuffer<SkirmishContactKnowledgeElement>(em,entity,values);
+                ObserverBuffer<SkirmishContactLedgerElement>(em,entity,values);
+                ObserverBuffer<UnitAttackOrderRequestElement>(em,entity,values);
+                ObserverBuffer<UnitAttackOrderResultElement>(em,entity,values);
+                ObserverBuffer<SkirmishActionRequest>(em,entity,values);
+                result[entity.Index+":"+entity.Version] = SkirmishProductionCanaryRequest.Hash(Encoding.UTF8.GetBytes(values.ToString(Formatting.None)));
+            }
+            string root = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+            var profile = new JObject { ["root"] = root, ["changeVersion"] = JsonSaveRepository.ChangeVersion };
+            if (!string.IsNullOrEmpty(root))
+            {
+                if (!Path.IsPathRooted(root)) throw new InvalidDataException("Absolute owned observer profile root required.");
+                string fullRoot = Path.GetFullPath(root);
+                if (Directory.Exists(fullRoot) && (File.GetAttributes(fullRoot) & FileAttributes.ReparsePoint) != 0)
+                    throw new InvalidDataException("Observer profile root is a reparse point.");
+                string quickGame = Path.Combine(fullRoot, SaveService.QuickGameFileName);
+                bool exists = File.Exists(quickGame); profile["quickGameExists"] = exists;
+                if (exists)
+                {
+                    if ((File.GetAttributes(quickGame) & FileAttributes.ReparsePoint) != 0)
+                        throw new InvalidDataException("Observer quickgame file is a reparse point.");
+                    profile["quickGameSha256"] = SkirmishProductionCanaryRequest.FileHash(quickGame);
+                    profile["quickGameLength"] = new FileInfo(quickGame).Length;
+                }
+            }
+            return new JObject { ["capturedFrame"] = Time.frameCount, ["worldSequence"] = em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                ["worldEntityCount"] = allEntities.CalculateEntityCount(), ["queriedRelevantEntityCount"] = ordered.Length, ["entities"] = result, ["profile"] = profile };
+        }
+
+        // Explicit QA flag; at most one Playing and one Finished window per owned attempt.
+        private static readonly bool ProductionObserverProofEnabled =
+            Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_READ_ONLY_OBSERVER_PROOF") == "1";
+        private static JObject BeginProductionObserverWindow(EntityManager em, in SkirmishMatchState match)
+        {
+            if (productionCanary == null ||
+                !ProductionObserverProofEnabled ||
+                (match.Phase != SkirmishPhase.Playing && match.Phase != SkirmishPhase.Finished)) return null;
+            bool terminal = match.Phase == SkirmishPhase.Finished;
+            if (terminal ? productionCanary.ObserverTerminalProofCaptured : productionCanary.ObserverLiveProofCaptured) return null;
+            if (terminal) productionCanary.ObserverTerminalProofCaptured = true;
+            else productionCanary.ObserverLiveProofCaptured = true;
+            productionCanary.ObserverProofStartedTimestamp = System.Diagnostics.Stopwatch.GetTimestamp();
+            try { return CaptureProductionObserverState(em); }
+            catch (OutOfMemoryException) { throw; }
+            catch (Exception error)
+            {
+                productionCanary.Record("NativeReadOnlyObserverProofUnsupported",new JObject {
+                    ["native_session_id"]=match.SessionId.ToString(),["phase"]=match.Phase.ToString(),
+                    ["reason"]=error.ToString(),["read_only_observers"]=false });
+                return null;
+            }
+        }
+        private static void EndProductionObserverWindow(EntityManager em, in SkirmishMatchState match,
+            JObject before, string scope)
+        {
+            if (before == null) return;
+            try
+            {
+                var after=CaptureProductionObserverState(em);
+                bool equal=JToken.DeepEquals(before,after);
+                productionCanary.Record("NativeReadOnlyObserverProof",new JObject {
+                    ["schema"]="NativeReadOnlyObserverWindow-v1",["scope"]=scope,
+                    ["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["native_session_id"]=match.SessionId.ToString(),["catalog_id"]=productionCanary.Request.CatalogId,
+                    ["phase"]=match.Phase.ToString(),["status"]=equal?"ComparedEqual":"MutationObserved",
+                    ["beforeSha256"]=SkirmishProductionCanaryRequest.Hash(System.Text.Encoding.UTF8.GetBytes(before.ToString(Formatting.None))),
+                    ["afterSha256"]=SkirmishProductionCanaryRequest.Hash(System.Text.Encoding.UTF8.GetBytes(after.ToString(Formatting.None))),
+                    ["capturedEntityCount"]=((JObject)before["entities"]).Count,
+                    ["queriedRelevantEntityCount"]=before["queriedRelevantEntityCount"].DeepClone(),
+                    ["coverageComplete"]=((JObject)before["entities"]).Count==(int)before["queriedRelevantEntityCount"],
+                    ["capturedFrameBefore"]=before["capturedFrame"].DeepClone(), ["capturedFrameAfter"]=after["capturedFrame"].DeepClone(),
+                    ["worldEntityCount"]=before["worldEntityCount"].DeepClone(),
+                    ["observerElapsedMilliseconds"]=(System.Diagnostics.Stopwatch.GetTimestamp()-productionCanary.ObserverProofStartedTimestamp)*1000.0/System.Diagnostics.Stopwatch.Frequency,
+                    ["captureQueriesReadOnly"]=true,["worldUpdateBetweenSnapshots"]=false,
+                    ["diagnosticFactsFedToAria"]=false,["missionReady"]=false });
+            }
+            catch (OutOfMemoryException) { throw; }
+            catch (Exception error)
+            {
+                productionCanary.Record("NativeReadOnlyObserverProofUnsupported",new JObject {
+                    ["native_session_id"]=match.SessionId.ToString(),["phase"]=match.Phase.ToString(),
+                    ["reason"]=error.ToString(),["read_only_observers"]=false });
+            }
         }
 
         private static void RecordProductionTerminalReturn(bool passed, string reason)
@@ -202,6 +518,8 @@ namespace Game.Editor
         {
             internal readonly SkirmishProductionCanaryRequest Request;
             internal bool LegacySavedResultVerified;
+            internal bool ObserverLiveProofCaptured, ObserverTerminalProofCaptured;
+            internal long ObserverProofStartedTimestamp;
             private JObject verifiedNativeIdentity;
             private string verifiedNativeConfigHash;
             internal void CaptureVerifiedIdentity(JObject identity,string configHash)
@@ -234,7 +552,9 @@ namespace Game.Editor
             {
                 Request = request;
                 EnsureScenesClean();
+                var restorableBaseline=PrepareProductionRestorableSceneBaseline();
                 sceneSetup = EditorSceneManager.GetSceneManagerSetup();
+                RequireProductionRestorableSetup(sceneSetup);
                 optionsEnabled = EditorSettings.enterPlayModeOptionsEnabled;
                 options = EditorSettings.enterPlayModeOptions;
                 refreshAlreadyOwned = SessionState.GetBool("Warline.MissionValidation.ResumeRefresh", false);
@@ -249,7 +569,8 @@ namespace Game.Editor
                 request.ReserveAdapterStart();
                 using (File.Open(events, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
                 Record("ContextCaptured", new JObject { ["source_sha256"] = (string)request.Job["candidate_sha256"],
-                    ["compiled_dll_manifest_sha256"] = (string)request.Job["build_sha256"], ["scene_count"] = sceneSetup.Length });
+                    ["compiled_dll_manifest_sha256"] = (string)request.Job["build_sha256"], ["scene_count"] = sceneSetup.Length,
+                    ["restorable_scene_baseline"] = restorableBaseline });
                 RecordProfileStage("ProfileBeforeDispatch");
             }
 
@@ -307,12 +628,15 @@ namespace Game.Editor
                     string value = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
                     return Path.GetFullPath(string.IsNullOrWhiteSpace(value) ? Application.persistentDataPath : value);
                 }
-                internal JObject Capture() => new JObject { ["journal_version"] = 1,
+                internal JObject Capture() => new JObject { ["journal_version"] = 2,
                     ["catalog_id"] = catalog, ["original_environment"] = originalEnvironment,
                     ["actual_environment"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
                     ["actual_effective_root"] = EffectiveRoot(),
-                    ["original"] = Snapshot(originalRoot, catalog, buffer), ["owned"] = Snapshot(ownedRoot, catalog, buffer) };
-                private static JObject Snapshot(string root, string catalog, byte[] buffer)
+                    ["original"] = SnapshotScoped(originalRoot, catalog, buffer, true), ["owned"] = SnapshotScoped(ownedRoot, catalog, buffer, false) };
+                // Preserve the strict v1 private fixture seam and its exact schema.
+                private static JObject Snapshot(string root, string catalog, byte[] buffer) => SnapshotCore(root,catalog,buffer,false,false);
+                private static JObject SnapshotScoped(string root,string catalog,byte[] buffer,bool original) => SnapshotCore(root,catalog,buffer,original,true);
+                private static JObject SnapshotCore(string root, string catalog, byte[] buffer,bool allowEngineEntries,bool emitNamespace)
                 {
                     RejectReparse(root);
                     if (File.Exists(root)) throw new InvalidDataException("Profile root is a file");
@@ -321,7 +645,7 @@ namespace Game.Editor
                         SaveService.QuickGameFileName, "skirmish-" + catalog.ToLowerInvariant() + "-native.json" })
                     foreach (string suffix in new[] { "", ".tmp", ".bak", ".lock" }) names.Add(name + suffix);
                     bool directoryExists = Directory.Exists(root);
-                    var entries = EnumerateKnownEntries(root, names);
+                    var entries = EnumerateScopedEntries(root,names,allowEngineEntries,out var excluded,out var allEntries);
                     var rows = new JArray(); long total = 0;
                     foreach (string relative in names)
                     {
@@ -354,32 +678,48 @@ namespace Game.Editor
                         rows.Add(new JObject { ["name"] = relative, ["exists"] = exists,
                             ["length"] = length, ["sha256"] = digest });
                     }
-                    var finalEntries = EnumerateKnownEntries(root, names);
+                    var finalEntries = EnumerateScopedEntries(root,names,allowEngineEntries,out var finalExcluded,out var finalAllEntries);
                     RejectReparse(root);
                     if (File.Exists(root) || directoryExists != Directory.Exists(root) ||
-                        !JToken.DeepEquals(new JArray(entries), new JArray(finalEntries)))
+                        !JToken.DeepEquals(new JArray(entries), new JArray(finalEntries))||
+                        !JToken.DeepEquals(new JArray(allEntries),new JArray(finalAllEntries))||!JToken.DeepEquals(excluded,finalExcluded))
                         throw new InvalidDataException("Profile directory changed during observation");
-                    return new JObject { ["root"] = root, ["directory_exists"] = directoryExists,
+                    var result=new JObject { ["root"] = root, ["directory_exists"] = directoryExists,
                         ["directory_entries"] = new JArray(entries), ["enumeration_limit"] = 32,
                         ["files"] = rows, ["observed_bytes"] = total };
-                }
-                private static List<string> EnumerateKnownEntries(string root, List<string> names)
-                {
-                    RejectReparse(root);
-                    var entries = new List<string>();
-                    if (Directory.Exists(root))
-                    foreach (string path in Directory.EnumerateFileSystemEntries(root))
+                    if(emitNamespace)
                     {
-                        if (entries.Count >= 32) throw new InvalidDataException("Profile entry bound exceeded");
-                        RejectReparse(path);
-                        string name = Path.GetFileName(path);
-                        if (!names.Contains(name) || Directory.Exists(path) || !File.Exists(path))
+                        result["namespace_scope"]=allowEngineEntries?"OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded":"OwnedCurrentCatalogSaveFiles_Exclusive";
+                        result["excluded_non_save_entries"]=excluded;result["total_directory_entries"]=new JArray(allEntries);
+                    }
+                    return result;
+                }
+                private static List<string> EnumerateKnownEntries(string root,List<string> names) =>
+                    EnumerateScopedEntries(root,names,false,out _,out _);
+                private static List<string> EnumerateScopedEntries(string root,List<string> names,bool allowEngineEntries,out JArray excluded,out List<string> allEntries)
+                {
+                    RejectReparse(root);var entries=new List<string>();allEntries=new List<string>();var nonSave=new List<JObject>();
+                    if(Directory.Exists(root))
+                    foreach(string path in Directory.EnumerateFileSystemEntries(root))
+                    {
+                        if(allEntries.Count>=32)throw new InvalidDataException("Profile entry bound exceeded");
+                        RejectReparse(path);string name=Path.GetFileName(path);
+                        if(allEntries.Contains(name))throw new InvalidDataException("Duplicate profile entry");
+                        allEntries.Add(name);
+                        if(allowEngineEntries&&(name=="TestResults.xml"||name=="Unity"))
+                        {
+                            bool directory=Directory.Exists(path),file=File.Exists(path);
+                            if((name=="Unity"&&(!directory||file))||(name=="TestResults.xml"&&(directory||!file)))
+                                throw new InvalidDataException("Known non-save sibling has wrong type");
+                            nonSave.Add(new JObject{["name"]=name,["kind"]=directory?"Directory":"File"});
+                            continue; // Never recurse, read, hash or mutate engine/test content.
+                        }
+                        if(!names.Contains(name)||Directory.Exists(path)||!File.Exists(path))
                             throw new InvalidDataException("Unknown profile file or directory");
-                        if (entries.Contains(name)) throw new InvalidDataException("Duplicate profile entry");
                         entries.Add(name);
                     }
-                    entries.Sort(StringComparer.Ordinal);
-                    return entries;
+                    entries.Sort(StringComparer.Ordinal);allEntries.Sort(StringComparer.Ordinal);
+                    excluded=new JArray(nonSave.OrderBy(v=>(string)v["name"],StringComparer.Ordinal));return entries;
                 }
                 private static void RejectReparse(string path)
                 {
@@ -403,6 +743,9 @@ namespace Game.Editor
                 // Preserve any unexpected dirty scene for investigation; never discard.
                 EnsureScenesClean();
                 EditorSceneManager.RestoreSceneManagerSetup(sceneSetup);
+                RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
+                if(!JToken.DeepEquals(ProductionSceneSetupFacts(sceneSetup),ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup())))
+                    throw new InvalidOperationException("Actual scene restore differs from captured nonempty baseline");
                 EditorSettings.enterPlayModeOptions = options;
                 EditorSettings.enterPlayModeOptionsEnabled = optionsEnabled;
                 var currentKeys = new List<string>();

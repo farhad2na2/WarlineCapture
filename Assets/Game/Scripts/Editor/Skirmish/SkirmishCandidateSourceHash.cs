@@ -49,6 +49,33 @@ namespace Game.Editor
             return BitConverter.ToString(hash.ComputeHash(manifest)).Replace("-", "").ToLowerInvariant();
         }
 
+        // Same per-file bytes as Compute(); one bounded buffer/provider per
+        // validation loop, with no cache of paths, digests or source decisions.
+        internal sealed class FileDigestSession : IDisposable
+        {
+            private byte[] buffer;
+            private StreamingFileDigest digest;
+            private bool disposed;
+
+            internal string ComputeFile(string path)
+            {
+                if (disposed) throw new ObjectDisposedException(nameof(FileDigestSession));
+                // Open first, preserving normal missing/directory/share-denied IO
+                // failures before creating any platform hashing state.
+                using var stream = File.OpenRead(path);
+                buffer ??= new byte[65536];
+                digest ??= new StreamingFileDigest();
+                return BitConverter.ToString(digest.Compute(stream, buffer)).Replace("-", "").ToLowerInvariant();
+            }
+
+            public void Dispose()
+            {
+                if (disposed) return;
+                digest?.Dispose();
+                disposed = true;
+            }
+        }
+
         private static bool IsSource(string extension) => extension.ToLowerInvariant() is
             ".cs" or ".asmdef" or ".asmref" or ".rsp" or ".json" or ".asset" or
             ".prefab" or ".unity" or ".shader" or ".hlsl" or ".cginc" or ".compute" or ".meta";

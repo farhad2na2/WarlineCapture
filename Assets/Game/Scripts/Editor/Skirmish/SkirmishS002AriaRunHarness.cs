@@ -1023,8 +1023,15 @@ namespace Game.Editor
             bool simulationActive,
             float elapsed)
         {
+            var traceTiming=EditorTraceTimings.Begin(elapsed);
+            long traceTimingStart=traceTiming!=null?EditorTraceTimings.Now():0, traceTimingTick=traceTimingStart;
+            bool traceTimingCompleted=false;
+            try
+            {
             RecordProductionResolvedSnapshot(em, session, in match, simulationActive, elapsed, "NativeResolvedSnapshot");
+            if(traceTiming!=null)traceTiming.nativeSnapshotMs=EditorTraceTimings.Since(ref traceTimingTick);
             Directory.CreateDirectory(EvidenceDirectory());
+            if(traceTiming!=null)traceTiming.directoryMs=EditorTraceTimings.Since(ref traceTimingTick);
             float clockElapsed = elapsed;
             byte clockPaused = 0;
             if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
@@ -1036,6 +1043,7 @@ namespace Game.Editor
 
             int playerBaseHp = DesignatedBaseHp(em, session, 1);
             int enemyBaseHp = DesignatedBaseHp(em, session, 2);
+            if(traceTiming!=null)traceTiming.baseQueriesMs=EditorTraceTimings.Since(ref traceTimingTick);
             int requests = 0;
             int following = 0;
             int playerUnits = 0;
@@ -1060,6 +1068,8 @@ namespace Game.Editor
                     }
                 }
             }
+
+            if(traceTiming!=null)traceTiming.unitQueryMs=EditorTraceTimings.Since(ref traceTimingTick);
             string line = string.Format(
                 CultureInfo.InvariantCulture,
                 "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6},\"playerBaseHp\":{7},\"enemyBaseHp\":{8},\"playerUnits\":{9},\"pathRequests\":{10},\"pathFollowing\":{11},\"leadX\":{12},\"leadZ\":{13}}}\n",
@@ -1077,9 +1087,16 @@ namespace Game.Editor
                 following,
                 leadX.ToString("0.###", CultureInfo.InvariantCulture),
                 leadZ.ToString("0.###", CultureInfo.InvariantCulture));
+
+            if(traceTiming!=null)traceTiming.traceSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
             File.AppendAllText(LiveTracePath(), line);
+
+            if(traceTiming!=null)traceTiming.traceWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
             AppendActorDiagnostic(em, elapsed, match.EnemyMainBase);
             AppendInputDiagnostic(em, elapsed);
+            traceTimingCompleted=true;
+            }
+            finally{EditorTraceTimings.Complete(traceTiming,traceTimingStart,traceTimingCompleted);}
         }
 
         [Serializable]
@@ -1132,6 +1149,13 @@ namespace Game.Editor
 
         private static void AppendInputDiagnostic(EntityManager em, float elapsed)
         {
+            AppendInputDiagnosticToPath(em, elapsed, null);
+        }
+
+        private static void AppendInputDiagnosticToPath(EntityManager em, float elapsed, string ownedOutputPath)
+        {
+            var traceTiming=ownedOutputPath==null?EditorTraceTimings.Current:null;
+            long traceTimingTick=traceTiming!=null?EditorTraceTimings.Now():0;
             using var query = em.CreateEntityQuery(typeof(AriaSkirmishObservationComponent),
                 typeof(AriaSkirmishObservationOwner), typeof(AriaSkirmishPlanComponent));
             if (query.CalculateEntityCount() != 1) return;
@@ -1218,9 +1242,103 @@ namespace Game.Editor
                 truckCommitted = view.LogisticsTruckCommitted, readiness = view.ReadinessEligible,
                 pad = view.PadPresent, recruit = view.Recruit
             };
-            File.AppendAllText(LiveTracePath() + ".input.jsonl", JsonUtility.ToJson(sample) + "\n");
+
+            if(traceTiming!=null)traceTiming.inputCollectMs=EditorTraceTimings.Since(ref traceTimingTick);
+            string inputOutput=ownedOutputPath ?? (LiveTracePath() + ".input.jsonl");
+            string serializedInput=JsonUtility.ToJson(sample)+"\n";
+            if(traceTiming!=null)traceTiming.inputSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+            File.AppendAllText(inputOutput, serializedInput);
+            if(traceTiming!=null)traceTiming.inputWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
         }
 
+
+
+        // Explicit, bounded editor-only attribution. Default evidence and gameplay are unchanged.
+        [Serializable] private sealed class EditorTraceTimingRow
+        {
+            public int frame;
+            public float simulationElapsed;
+            public double observationTime, overallMs, nativeSnapshotMs, directoryMs, baseQueriesMs,
+                unitQueryMs, traceSerializeMs, traceWriteMs, actorQueryMs, actorCollectSerializeMs,
+                actorWriteMs, combatCollectMs, combatSerializeMs, combatWriteMs,
+                inputCollectMs, inputSerializeMs, inputWriteMs;
+            public bool completed;
+        }
+        [Serializable] private sealed class EditorTraceTimingEnvelope
+        {
+            public int schema=1, maximumSamples=1024, omittedSamples;
+            public string scope="EditorAppendTraceSubstepAttributionOnly", tracePath, closeReason;
+            public bool gameplayChanged=false, qualificationClaim=false;
+            public EditorTraceTimingRow[] samples;
+        }
+        private static class EditorTraceTimings
+        {
+            internal const int MaximumSamples=1024;
+            internal static EditorTraceTimingRow Current;
+            // Cached once per editor domain; fresh owned diagnostic runs use fresh Editors.
+            static readonly bool enabled=string.Equals(Environment.GetEnvironmentVariable("WARLINE_EDITOR_TRACE_TIMINGS"),"1",StringComparison.Ordinal);
+            static readonly System.Collections.Generic.List<EditorTraceTimingRow> rows=new System.Collections.Generic.List<EditorTraceTimingRow>();
+            static string trace;
+            static int omitted;
+            static bool armed, closed;
+            internal static long Now()=>System.Diagnostics.Stopwatch.GetTimestamp();
+            internal static double Since(ref long start)
+            {
+                long end=Now();double milliseconds=(end-start)*1000d/System.Diagnostics.Stopwatch.Frequency;
+                start=end;return milliseconds;
+            }
+            internal static EditorTraceTimingRow Begin(float elapsed)
+            {
+                if(!enabled||closed)return null;
+                if(!armed)
+                {
+                    trace=Path.GetFullPath(LiveTracePath());
+                    string allowed=Path.GetFullPath(EvidenceDirectory()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+                    if(!trace.StartsWith(allowed,StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidOperationException("Trace timing requires existing owned evidence path");
+                    armed=true;
+                    EditorApplication.playModeStateChanged+=OnPlayMode;
+                    EditorApplication.quitting+=OnQuit;
+                }
+                if(rows.Count>=MaximumSamples){omitted++;return null;}
+                return Current=new EditorTraceTimingRow{frame=Time.frameCount,simulationElapsed=elapsed,observationTime=Time.realtimeSinceStartupAsDouble};
+            }
+            internal static void Complete(EditorTraceTimingRow row,long start,bool completed)
+            {
+                Current=null;
+                if(row==null)return;
+                row.overallMs=Since(ref start);row.completed=completed;rows.Add(row);
+            }
+            static void OnPlayMode(PlayModeStateChange state)
+            {
+                if(state==PlayModeStateChange.ExitingPlayMode)Flush("ExitingPlayMode");
+            }
+            static void OnQuit()=>Flush("EditorQuitting");
+            internal static void Flush(string reason)
+            {
+                if(!enabled||!armed||closed)return;
+                closed=true;
+                EditorApplication.playModeStateChanged-=OnPlayMode;
+                EditorApplication.quitting-=OnQuit;
+                try
+                {
+                    var envelope=new EditorTraceTimingEnvelope{tracePath=trace,closeReason=reason,
+                        omittedSamples=omitted,samples=rows.ToArray()};
+                    byte[] bytes=new System.Text.UTF8Encoding(false).GetBytes(JsonUtility.ToJson(envelope));
+                    if(bytes.Length>2*1024*1024)throw new InvalidDataException("Bounded trace timing output exceeds2MiB");
+                    using(var stream=new FileStream(trace+".editor-timings.json",FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+                        stream.Write(bytes,0,bytes.Length);
+                    Debug.Log("[EditorAppendTraceTimings] result=Captured samples="+rows.Count+" omitted="+omitted+
+                        " scope=DiagnosticOnly nativeEvidenceUnchanged=1");
+                }
+                catch(Exception failure) when(!(failure is OutOfMemoryException))
+                {
+                    Debug.LogWarning("[EditorAppendTraceTimings] result=Unavailable reason="+failure.GetType().Name+
+                        " scope=DiagnosticOnly nativeEvidenceUnchanged=1");
+                }
+                finally{rows.Clear();}
+            }
+        }
 
         [Serializable] private sealed class CombatTargetDiagnostic
         {
@@ -1371,9 +1489,17 @@ namespace Game.Editor
 
         private static void AppendActorDiagnostic(EntityManager em, float elapsed, Entity enemyBase = default)
         {
+            AppendActorDiagnosticToPath(em, elapsed, enemyBase, null);
+        }
+
+        private static void AppendActorDiagnosticToPath(EntityManager em, float elapsed, Entity enemyBase, string ownedTracePath)
+        {
+            var traceTiming=ownedTracePath==null?EditorTraceTimings.Current:null;
+            long traceTimingTick=traceTiming!=null?EditorTraceTimings.Now():0;
             using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
                 typeof(SkirmishUnitRoleComponent), typeof(LocalTransform));
             using var entities = query.ToEntityArray(Allocator.Temp);
+            if(traceTiming!=null)traceTiming.actorQueryMs=EditorTraceTimings.Since(ref traceTimingTick);
             var lines = new System.Text.StringBuilder();
             var combatSamples = Game.UI.Runtime.SkirmishMatchView.NativeCombatEvidenceEnabled
                 ? new System.Collections.Generic.List<ActorCombatDiagnostic>(16) : null;
@@ -1432,18 +1558,29 @@ namespace Game.Editor
                     if (overlay.Damage > 0 && (overlay.TargetDomains & SkirmishTargetDomain.Structure) != 0)
                     {
                         if (combatSamples.Count < 16)
+                        {
+                            long combatStart=traceTiming!=null?EditorTraceTimings.Now():0;
                             combatSamples.Add(ReadActorCombatDiagnostic(em, unit, owned, sample, enemyBase));
+                            if(traceTiming!=null)traceTiming.combatCollectMs+=EditorTraceTimings.Since(ref combatStart);
+                        }
                         else combatSamples[15].capReached = true;
                     }
                 }
             }
-            File.AppendAllText(LiveTracePath() + ".actors.jsonl", lines.ToString());
+
+            if(traceTiming!=null)traceTiming.actorCollectSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+            if(traceTiming!=null)traceTiming.actorCollectSerializeMs-=traceTiming.combatCollectMs;
+            File.AppendAllText((ownedTracePath ?? LiveTracePath()) + ".actors.jsonl", lines.ToString());
+            if(traceTiming!=null)traceTiming.actorWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
             if (combatSamples != null && combatSamples.Count > 0)
             {
                 var combatLines = new System.Text.StringBuilder();
                 foreach (var combatSample in combatSamples)
                     combatLines.AppendLine(JsonUtility.ToJson(combatSample));
-                File.AppendAllText(LiveTracePath() + ".combat.jsonl", combatLines.ToString());
+
+            if(traceTiming!=null)traceTiming.combatSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+                File.AppendAllText((ownedTracePath ?? LiveTracePath()) + ".combat.jsonl", combatLines.ToString());
+            if(traceTiming!=null)traceTiming.combatWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
             }
         }
 
@@ -1552,6 +1689,7 @@ namespace Game.Editor
 
         private static void FinishEvidence(bool abort, string abortReason, string currentSourceHash)
         {
+            EditorTraceTimings.Flush("FinishEvidence");
             try { RecordProductionBatchFingerprint("End",currentSourceHash,productionBatchFinishHashMilliseconds); }
             catch(Exception fingerprintError) { abort=true;abortReason="productionBatchFingerprint:"+fingerprintError.GetType().Name;Debug.LogError(fingerprintError); }
             if (currentSourceHash != SessionState.GetString(CandidateHashKey, ""))

@@ -19,6 +19,140 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishExpandedAriaTests
     {
+
+        static void PrecisionPublicationFixture(out AriaSkirmishObservation v,out AriaSkirmishPlanComponent p,out AriaPlaySessionComponent t)
+        {
+            v=new AriaSkirmishObservation {Active=true,ExpandedSession=true,ExpandedBaseAssault=true,
+                Frame=100,Time=100,Infantry=20,PlayerHealth=800,EnemyHealth=800,EnemyDesignatedAlive=true,
+                CombinedArmsField=true,OwnStructureAttackUnits=8,ExpandedAssaultMask=4,ExpandedStructureMask=4,
+                ExpandedAttackOrderMask=4,ExpandedGroup2=77,ExpandedPageCount=1,ExpandedTotalGroups=3,
+                ExpandedRosterRevision=10,ExpandedSelectedMask=4,ExpandedSelectedGroups=1,
+                SelectionVisible=true,SelectionMode=true,AttackMode=true,
+                EnemyBase=new AriaTouchTarget{Available=true,Id=-20001,Position=new Vector2(30,40)},
+                Squad2=new AriaTouchTarget{Available=true,Id=12},Attack=new AriaTouchTarget{Available=true,Id=14}};
+            p=new AriaSkirmishPlanComponent {AssaultStarted=1,AssaultIssued=1,StructureOrdered=1,
+                LastProgressAt=100,Infantry=20,PlayerHealth=800,EnemyHealth=800,SweepRosterRevision=10,
+                PrecisionStage=1,PrecisionGroup=77,PrecisionSlot=2,PrecisionPage=0,PrecisionRoster=10,
+                PrecisionReadyAt=100,PrecisionDeadline=118};
+            t=new AriaPlaySessionComponent {Phase=AriaPlayPhase.Verifying,Actions=89,TargetId=14,
+                LastCompletedTargetId=14,LastCompletedFrame=99,DueAt=99,
+                GoalId=10000,ObjectiveWatchdogInitialized=1,VisitedGoalMask=1UL<<(10000&63),
+                LastProgressAt=100,LastObjectiveProgressAt=100};
+        }
+        static AriaPlayObservationComponent PrecisionPublicationStep(in AriaSkirmishObservation v,
+            ref AriaSkirmishPlanComponent p,ref AriaPlaySessionComponent t)
+        {
+            var o=new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(v,ref p,ref t,ref o);
+            AriaPlayDecisionSystem.Step(o,ref t);
+            return o;
+        }
+        [TestCase(.1f)]
+        [TestCase(2.1f)]
+        public void PrecisionPublicationSurvivesNormalDecisionAimDelay(float cadence)
+        {
+            PrecisionPublicationFixture(out var v,out var p,out var t);
+            var o=PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreEqual(AriaPlayPhase.Aiming,t.Phase);Assert.AreEqual(0,t.GestureRequested);
+            Assert.AreEqual(1,p.PrecisionAttempts);float deadline=p.PrecisionDeadline;
+            float progress=p.LastProgressAt,objective=t.LastObjectiveProgressAt;
+            for(int i=1;i<=12&&t.GestureRequested==0;i++)
+            {
+                v.Time=100+i*cadence;v.Frame=100+i;o=PrecisionPublicationStep(v,ref p,ref t);
+                Assert.AreEqual(AriaPlayObservationKind.WorldTarget,o.Kind);
+                Assert.AreEqual(-20001,o.TargetId);
+            }
+            Assert.AreEqual(AriaPlayPhase.Touching,t.Phase);Assert.AreEqual(1,t.GestureRequested);
+            Assert.AreEqual(1,t.Attempts);Assert.AreEqual(89,t.Actions,"Requesting is not completing a physical gesture.");
+            Assert.AreEqual(1,p.PrecisionAttempts);Assert.AreEqual(deadline,p.PrecisionDeadline);
+            Assert.AreEqual(progress,p.LastProgressAt);Assert.AreEqual(objective,t.LastObjectiveProgressAt);
+            Assert.AreEqual(0,p.PrecisionAcceptedGroups.Length,"No native acknowledgement fabricated.");
+        }
+        [TestCase("hidden")]
+        [TestCase("target")]
+        [TestCase("roster")]
+        [TestCase("page")]
+        [TestCase("group")]
+        [TestCase("selection")]
+        [TestCase("offpage")]
+        [TestCase("drawer")]
+        [TestCase("map")]
+        [TestCase("placement")]
+        [TestCase("drag")]
+        [TestCase("stale")]
+        public void PrecisionPublicationRejectsChangedPublicPresentation(string kind)
+        {
+            PrecisionPublicationFixture(out var v,out var p,out var t);PrecisionPublicationStep(v,ref p,ref t);
+            v.Time=102;v.Frame=102;
+            switch(kind)
+            {
+                case "hidden":v.EnemyBase=default;break;
+                case "target":v.EnemyBase.Id=-20002;break;
+                case "roster":v.ExpandedRosterRevision++;break;
+                case "page":v.ExpandedPageIndex=1;break;
+                case "group":v.ExpandedGroup2=88;break;
+                case "selection":v.ExpandedSelectedGroups=2;break;
+                case "offpage":v.ExpandedSelectedOffPage=1;break;
+                case "drawer":v.DrawerOpen=true;break;
+                case "map":v.MapOpen=true;break;
+                case "placement":v.PlacementOpen=true;break;
+                case "drag":v.EnemyBase.Drag=true;break;
+                case "stale":v.Frame=99;break;
+            }
+            var o=PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreNotEqual(AriaPlayObservationKind.WorldTarget,o.Kind);
+            Assert.AreEqual(0,t.GestureRequested);Assert.AreEqual(1,p.PrecisionAttempts);
+            Assert.AreEqual(108,p.PrecisionDeadline);Assert.AreEqual(0,p.PrecisionAcceptedGroups.Length);
+        }
+        [Test]
+        public void PrecisionPublicationStopsAfterActualCompletionSignalWithoutInventingAck()
+        {
+            PrecisionPublicationFixture(out var v,out var p,out var t);PrecisionPublicationStep(v,ref p,ref t);
+            // Explicit model of the existing public completion fields; no device/command acceptance claim.
+            t.Actions=90;t.LastCompletedTargetId=-20001;t.LastCompletedFrame=101;
+            t.LastCompletedPosition=v.EnemyBase.Position;t.Phase=AriaPlayPhase.Verifying;
+            v.Frame=102;v.Time=102;v.AttackMode=false;
+            var o=PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreNotEqual(AriaPlayObservationKind.WorldTarget,o.Kind);
+            Assert.AreEqual(4,p.PrecisionStage);Assert.AreEqual(0,p.PrecisionAcceptedGroups.Length);
+            Assert.AreEqual(1,p.PrecisionAttempts);Assert.AreEqual(108,p.PrecisionDeadline);
+        }
+        [Test]
+        public void PrecisionPublicationCannotRequestSecondGestureWhileTouching()
+        {
+            PrecisionPublicationFixture(out var v,out var p,out var t);PrecisionPublicationStep(v,ref p,ref t);
+            v.Time=102;v.Frame=102;PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreEqual(1,t.GestureRequested);Assert.AreEqual(AriaPlayPhase.Touching,t.Phase);
+            t.GestureRequested=0; // Model InputSystem consuming the one request, not completed input.
+            v.Time=103;v.Frame=103;PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreEqual(0,t.GestureRequested);Assert.AreEqual(1,t.Attempts);
+            Assert.AreEqual(89,t.Actions);Assert.AreEqual(1,p.PrecisionAttempts);
+        }
+        [Test]
+        public void PrecisionPublicationKeepsOriginalTimeoutAndBattleWatchdog()
+        {
+            PrecisionPublicationFixture(out var v,out var p,out var t);PrecisionPublicationStep(v,ref p,ref t);
+            v.Time=109;v.Frame=109;var o=PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreEqual(5,p.PrecisionStage);Assert.AreEqual(108,p.PrecisionDeadline);
+            Assert.AreEqual(0,t.GestureRequested);Assert.AreEqual(1,p.PrecisionAttempts);
+            Assert.AreNotEqual(AriaPlayObservationKind.WorldTarget,o.Kind);
+            v.Time=281;v.Frame=281;PrecisionPublicationStep(v,ref p,ref t);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);Assert.AreEqual(100,p.LastProgressAt);
+            Assert.AreEqual(100,t.LastObjectiveProgressAt);
+        }
+        public static void RunPrecisionPublicationValidation()
+        {
+            var suite=new SkirmishExpandedAriaTests();
+            suite.PrecisionPublicationSurvivesNormalDecisionAimDelay(.1f);
+            suite.PrecisionPublicationSurvivesNormalDecisionAimDelay(2.1f);
+            foreach(var kind in new[]{"hidden","target","roster","page","group","selection","offpage","drawer","map","placement","drag","stale"})
+                suite.PrecisionPublicationRejectsChangedPublicPresentation(kind);
+            suite.PrecisionPublicationStopsAfterActualCompletionSignalWithoutInventingAck();
+            suite.PrecisionPublicationCannotRequestSecondGestureWhileTouching();
+            suite.PrecisionPublicationKeepsOriginalTimeoutAndBattleWatchdog();
+            Debug.Log("[PrecisionPublicationControls] result=Passed controls=17 actualPlanDecision=1 normalCadence=1 slowCadence=1 deviceCommandAcceptance=Pending missionReady=0");
+        }
+
         [Test]
         public void CombinedArmsPreservesStructureForceBeforeBuyingRifles()
         {

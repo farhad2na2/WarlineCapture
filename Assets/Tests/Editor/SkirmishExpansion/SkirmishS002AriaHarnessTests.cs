@@ -22,6 +22,654 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishS002AriaHarnessTests
     {
+
+        private static string ActualRequestRelative(string root,string path,HashSet<string> directories,Action<string> observed=null)
+        {
+            var method=typeof(SkirmishProductionCanaryRequest).GetMethod("Relative",
+                System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(method);
+            try { return (string)method.Invoke(null,new object[]{root,path,directories,observed}); }
+            catch(System.Reflection.TargetInvocationException error) when(error.InnerException!=null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error.InnerException).Throw();
+                throw;
+            }
+        }
+        private static void ActualRequestPostTopology(string root, Newtonsoft.Json.Linq.JArray manifest)
+        {
+            var method = typeof(SkirmishProductionCanaryRequest).GetMethod("ValidateSourceManifestTopology",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(method);
+            try { method.Invoke(null, new object[] { root, manifest }); }
+            catch (System.Reflection.TargetInvocationException error) when (error.InnerException != null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error.InnerException).Throw();
+                throw;
+            }
+        }
+
+        [TestCase("countedSharedParents")]
+        [TestCase("replacementBetweenPasses")]
+        [TestCase("freshLeafReparse")]
+        [TestCase("caseDistinctAncestor")]
+        [TestCase("midPassAncestorReplacement")]
+        [TestCase("foreignAbsolute")]
+        [TestCase("colon")]
+        [TestCase("traversal")]
+        [TestCase("backslash")]
+        [TestCase("duplicateManifest")]
+        [TestCase("missingLeaf")]
+        public void RequestPathValidation_ActualFilesystem(string kind)
+        {
+            string root=FreshProfileFixtureRoot();
+            bool cleanupSafe=true;
+            string link=null,socketPath=null;
+            OwnedProfileSocket socket=null;
+            string sentinelPath=null;
+            try
+            {
+                string shared=Path.Combine(root,"Assets","shared");
+                Directory.CreateDirectory(shared);
+                File.WriteAllText(Path.Combine(shared,"a.json"),"a");
+                File.WriteAllText(Path.Combine(shared,"b.json"),"b");
+                var checkedDirectories=new HashSet<string>(StringComparer.Ordinal);
+                if(kind=="countedSharedParents")
+                {
+                    var reads=new List<string>();
+                    Action<string> counted=path=>reads.Add(path);
+                    ActualRequestRelative(root,"Assets/shared/a.json",checkedDirectories,counted);
+                    ActualRequestRelative(root,"Assets/shared/b.json",checkedDirectories,counted);
+                    Assert.AreEqual(4,reads.Count,"Two real leaf reads plus two unique ancestors.");
+                    Assert.AreEqual(1,reads.FindAll(p=>p==Path.Combine(shared,"a.json")).Count);
+                    Assert.AreEqual(1,reads.FindAll(p=>p==Path.Combine(shared,"b.json")).Count);
+                    Assert.AreEqual(1,reads.FindAll(p=>p==shared).Count);
+                    Assert.AreEqual(1,reads.FindAll(p=>p==Path.Combine(root,"Assets")).Count);
+                    var second=new List<string>();
+                    ActualRequestRelative(root,"Assets/shared/a.json",new HashSet<string>(StringComparer.Ordinal),p=>second.Add(p));
+                    Assert.AreEqual(3,second.Count,"A separate pass checks the full path afresh.");
+                }
+                else if(kind=="replacementBetweenPasses")
+                {
+                    Assert.AreEqual(RuntimePlatform.WindowsEditor,Application.platform);
+                    ActualRequestRelative(root,"Assets/shared/a.json",checkedDirectories);
+                    string target=Path.Combine(root,"target");Directory.CreateDirectory(target);
+                    sentinelPath=Path.Combine(target,"sentinel");File.WriteAllText(sentinelPath,"unchanged");
+                    File.WriteAllText(Path.Combine(target,"a.json"),"a");
+                    File.Delete(Path.Combine(shared,"a.json"));File.Delete(Path.Combine(shared,"b.json"));
+                    Directory.Delete(shared,false);link=shared;
+                    CreateOwnedProfileJunction(link,target,ref cleanupSafe);
+                    Assert.Throws<InvalidDataException>(()=>ActualRequestRelative(root,"Assets/shared/a.json",
+                        new HashSet<string>(StringComparer.Ordinal)));
+                    Assert.AreEqual("unchanged",File.ReadAllText(sentinelPath));
+                }
+                else if(kind=="caseDistinctAncestor")
+                {
+                    ActualRequestRelative(root,"Assets/shared/a.json",checkedDirectories);
+                    string upper=Path.Combine(root,"Assets","SHARED");
+                    Assert.IsFalse(checkedDirectories.Contains(upper),"Ordinal validation must not conflate case-distinct paths.");
+                    Directory.CreateDirectory(upper);
+                    string probe=Path.Combine(upper,"namespace-probe");File.WriteAllText(probe,"probe");
+                    bool sameDirectory=File.Exists(Path.Combine(shared,"namespace-probe"));
+                    File.Delete(probe);
+                    if(sameDirectory)
+                        Debug.Log("[RequestPathCaseDistinct] status=FilesystemCaseInsensitive distinctReparseNegative=Pending ordinalPolicyChecked=1");
+                    else
+                    {
+                        Assert.AreEqual(RuntimePlatform.WindowsEditor,Application.platform);
+                        Directory.Delete(upper,false);
+                        string target=Path.Combine(root,"target");Directory.CreateDirectory(target);
+                        sentinelPath=Path.Combine(target,"sentinel");File.WriteAllText(sentinelPath,"unchanged");
+                        File.WriteAllText(Path.Combine(target,"a.json"),"a");
+                        link=upper;CreateOwnedProfileJunction(link,target,ref cleanupSafe);
+                        Assert.Throws<InvalidDataException>(()=>ActualRequestRelative(root,"Assets/SHARED/a.json",checkedDirectories));
+                        Debug.Log("[RequestPathCaseDistinct] status=Passed distinctReparseNegative=Proved");
+                    }
+                }
+                else if(kind=="midPassAncestorReplacement")
+                {
+                    Assert.AreEqual(RuntimePlatform.WindowsEditor,Application.platform);
+                    var manifest=new Newtonsoft.Json.Linq.JArray(
+                        new Newtonsoft.Json.Linq.JObject{["path"]="Assets/shared/a.json",["sha256"]=SkirmishProductionCanaryRequest.FileHash(Path.Combine(shared,"a.json"))},
+                        new Newtonsoft.Json.Linq.JObject{["path"]="Assets/shared/b.json",["sha256"]=SkirmishProductionCanaryRequest.FileHash(Path.Combine(shared,"b.json"))});
+                    foreach(var row in manifest)
+                        ActualRequestRelative(root,(string)row["path"],checkedDirectories);
+                    ActualRequestPostTopology(root,manifest); // Actual positive before the replacement.
+                    string target=Path.Combine(root,"target");Directory.CreateDirectory(target);
+                    sentinelPath=Path.Combine(target,"sentinel");File.WriteAllText(sentinelPath,"unchanged");
+                    File.WriteAllText(Path.Combine(target,"a.json"),"a");
+                    File.WriteAllText(Path.Combine(target,"b.json"),"b");
+                    File.Delete(Path.Combine(shared,"a.json"));File.Delete(Path.Combine(shared,"b.json"));
+                    Directory.Delete(shared,false);link=shared;
+                    CreateOwnedProfileJunction(link,target,ref cleanupSafe);
+                    foreach(var row in manifest)
+                        Assert.AreEqual((string)row["sha256"],SkirmishProductionCanaryRequest.FileHash(
+                            Path.Combine(root,((string)row["path"]).Replace('/',Path.DirectorySeparatorChar))),
+                            "Same bytes do not establish physical path topology.");
+                    Assert.Throws<InvalidDataException>(()=>ActualRequestPostTopology(root,manifest));
+                    Assert.AreEqual("unchanged",File.ReadAllText(sentinelPath));
+                }
+                else if(kind=="freshLeafReparse")
+                {
+                    Assert.AreEqual(RuntimePlatform.WindowsEditor,Application.platform);
+                    ActualRequestRelative(root,"Assets/shared/a.json",checkedDirectories);
+                    socketPath=Path.Combine(root,"Assets","shared","s");
+                    socket=new OwnedProfileSocket(socketPath);
+                    Assert.Throws<InvalidDataException>(()=>ActualRequestRelative(root,"Assets/shared/s",checkedDirectories));
+                }
+                else if(kind=="duplicateManifest")
+                {
+                    var job=new Newtonsoft.Json.Linq.JObject{
+                        ["schema_version"]=1,["job_id"]="path-control",["catalog_id"]="S005",
+                        ["definition_id"]="skirmish.s005",["definition_version"]=1,
+                        ["candidate_sha256"]=new string('a',64),["build_sha256"]=new string('b',64),
+                        ["setup_sha256"]=new string('c',64),["content_sha256"]=new string('d',64),
+                        ["source_manifest"]=new Newtonsoft.Json.Linq.JArray(
+                            new Newtonsoft.Json.Linq.JObject{["path"]="Assets/shared/a.json",["sha256"]=new string('a',64)},
+                            new Newtonsoft.Json.Linq.JObject{["path"]="Assets/shared/a.json",["sha256"]=new string('a',64)}),
+                        ["packet_path"]="Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+                        ["packet_sha256"]=new string('e',64),["seed"]=155926,["locale"]="FA",
+                        ["size"]="Standard",["difficulty"]="Regular",["control_mode"]="aria",
+                        ["required_stages"]=new Newtonsoft.Json.Linq.JArray("compile","live_api","source_fit","normal_input","terminal","return"),
+                        ["timeout_seconds"]=900};
+                    var claim=new Newtonsoft.Json.Linq.JObject{
+                        ["attempt_id"]="attempt-"+new string('a',32),["token"]=new string('b',32),
+                        ["worker"]="path-control",["started_utc"]=DateTime.UtcNow.ToString("O"),
+                        ["job_sha256"]=new string('c',64),["artifact_directory"]=Path.Combine(root,"attempt")};
+                    string jp=Path.Combine(root,"job.json"),cp=Path.Combine(root,"claim.json");
+                    File.WriteAllText(jp,job.ToString());File.WriteAllText(cp,claim.ToString());
+                    var error=Assert.Throws<InvalidDataException>(()=>SkirmishProductionCanaryRequest.Read(root,jp,cp,false));
+                    StringAssert.Contains("Duplicate source path",error.Message);
+                }
+                else
+                {
+                    string path=kind=="foreignAbsolute"?Path.Combine(Path.GetTempPath(),"foreign.json"):
+                        kind=="colon"?"C:foreign.json":kind=="traversal"?"Assets/../foreign.json":
+                        kind=="backslash"?"Assets\\shared\\a.json":"Assets/shared/missing.json";
+                    if(kind=="missingLeaf")
+                    {
+                        var error=Assert.Throws<InvalidDataException>(()=>ActualRequestRelative(root,path,checkedDirectories));
+                        StringAssert.Contains("Reparse/symlink source rejected.",error.Message);
+                    }
+                    else Assert.Throws<InvalidDataException>(()=>ActualRequestRelative(root,path,checkedDirectories));
+                }
+            }
+            finally
+            {
+                try { socket?.Dispose(); }
+                finally
+                {
+                    if(socketPath!=null&&File.Exists(socketPath))File.Delete(socketPath);
+                    if(cleanupSafe && link!=null&&Directory.Exists(link))
+                    {
+                        Assert.AreNotEqual(0,(int)(File.GetAttributes(link)&FileAttributes.ReparsePoint));
+                        Directory.Delete(link,false);
+                    }
+                    if(cleanupSafe && sentinelPath!=null)Assert.AreEqual("unchanged",File.ReadAllText(sentinelPath));
+                    if(cleanupSafe)DeleteProfileFixtureRoot(root);
+                }
+            }
+        }
+        public static void RunRequestPathValidationControls()
+        {
+            var tests=new SkirmishS002AriaHarnessTests();
+            foreach(string kind in new[]{"countedSharedParents","replacementBetweenPasses","freshLeafReparse",
+                "foreignAbsolute","colon","traversal","backslash","duplicateManifest","missingLeaf","caseDistinctAncestor","midPassAncestorReplacement"})
+                tests.RequestPathValidation_ActualFilesystem(kind);
+            Debug.Log("[RequestPathValidationControls] result=Passed cases=11 caseDistinctReparse=CapabilityGated postPassTopology=Fresh freshPerRead=1 persistentCache=0 nativeMissionAcceptance=Pending");
+        }
+
+        private static SkirmishScenarioDefinitionConfig ActualBatchDefinition(string id)
+        {
+            var catalog = SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(catalog);
+            Assert.IsTrue(catalog.TryGetDefinition(id, out var definition), id);
+            Assert.IsNotNull(definition, id);
+            return definition;
+        }
+
+        [TestCase("S002", SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex)]
+        [TestCase("S003", SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)]
+        public void BatchWarmup_ActualCodedNullSourcePreservesNormalBinding(string id, int index)
+        {
+            var definition = ActualBatchDefinition(id);
+            Assert.IsNull(definition.CampaignMap, "Fixture covers the actual intentionally omitted coded source.");
+            var normalPreset = SkirmishLegacyProductionIdentity.RequireBinding("S001");
+            Assert.AreSame(normalPreset, SkirmishPresetConfig.Load(index));
+            var ordinary = SkirmishLegacyProductionIdentity.ResolveSource("S001", out _);
+            var actual = SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition);
+            Assert.AreSame(ordinary, actual);
+            Assert.AreEqual(definition.OperationMapId, actual.OperationMapId);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(actual.NavigationMetadata.AuthoredSubSceneGuid));
+            Assert.IsNull(definition.CampaignMap, "Warmup must not assign the persistent definition.");
+        }
+
+        [Test]
+        public void BatchWarmup_ActualS004UsesRuntimeEnvironmentSource()
+        {
+            var definition = ActualBatchDefinition("S004");
+            Assert.IsNull(definition.CampaignMap);
+            var source = Resources.Load<OperationMapDefinition>("SkirmishS004OperationMap");
+            Assert.IsNotNull(source);
+            var defaultWorld = World.DefaultGameObjectInjectionWorld;
+            using (var world = new World("BatchWarmupS004SourceControl"))
+            {
+                var em = world.EntityManager;
+                var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
+                em.SetComponentData(session, new SkirmishExpandedSessionComponent { IsLegacy = 0 });
+                em.AddComponentObject(session, new SkirmishResolvedSetupRecord {
+                    Setup = new SkirmishResolvedSetup { CatalogId = "S004" }
+                });
+                Assert.IsTrue(SkirmishS004Environment.IsActive(em));
+                Assert.AreSame(source, SkirmishS004Environment.LoadMapForSession(em));
+                Assert.AreSame(source, SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition));
+                Assert.AreEqual(definition.OperationMapId, source.OperationMapId);
+                Assert.IsFalse(string.IsNullOrWhiteSpace(source.NavigationMetadata.AuthoredSubSceneGuid));
+            }
+            Assert.AreSame(defaultWorld, World.DefaultGameObjectInjectionWorld);
+            Assert.IsNull(definition.CampaignMap);
+        }
+
+        [Test]
+        public void BatchWarmup_ActualS004MustNotUseS001Source()
+        {
+            var source = SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(ActualBatchDefinition("S004"));
+            var s001 = SkirmishLegacyProductionIdentity.ResolveSource("S001", out _);
+            Assert.AreNotSame(s001, source, "Same coded preset does not identify the S004 physical source.");
+            Assert.AreNotEqual(s001.SourceIdentityHash, source.SourceIdentityHash);
+            Assert.AreNotEqual(s001.ContentHash, source.ContentHash);
+            Assert.AreSame(Resources.Load<OperationMapDefinition>("SkirmishS004OperationMap"), source);
+        }
+
+        [Test]
+        public void BatchWarmup_ExplicitSourcePrecedesS004Resource()
+        {
+            WithBatchDefinitionClone("S004", definition => {
+                var explicitSource = ActualBatchDefinition("S005").CampaignMap;
+                Assert.IsNotNull(explicitSource);
+                definition.BindCampaignMap(explicitSource);
+                Assert.AreSame(explicitSource, SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition));
+            });
+        }
+
+        [Test]
+        public void BatchWarmup_ActualExplicitS005SourceUnchanged()
+        {
+            var definition = ActualBatchDefinition("S005");
+            Assert.IsNotNull(definition.CampaignMap);
+            Assert.AreSame(definition.CampaignMap, SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition));
+        }
+
+        private static void WithBatchDefinitionClone(string id, Action<SkirmishScenarioDefinitionConfig> action)
+        {
+            var clone = UnityEngine.Object.Instantiate(ActualBatchDefinition(id));
+            try { action(clone); }
+            finally { UnityEngine.Object.DestroyImmediate(clone); }
+        }
+
+        [Test]
+        public void BatchWarmup_GenericMissingExplicitSourceRefused()
+        {
+            WithBatchDefinitionClone("S002", definition => {
+                var serialized = new UnityEditor.SerializedObject(definition);
+                serialized.FindProperty("catalogId").stringValue = "S049";
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                Assert.Throws<InvalidDataException>(() => SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition));
+            });
+        }
+
+        [Test]
+        public void BatchWarmup_S005MissingExplicitSourceRefused()
+        {
+            WithBatchDefinitionClone("S005", definition => {
+                definition.BindCampaignMap(null);
+                Assert.Throws<InvalidDataException>(() => SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition));
+            });
+        }
+
+        [Test]
+        public void BatchWarmup_CodedForeignMapRefused()
+        {
+            WithBatchDefinitionClone("S002", definition => {
+                var serialized = new UnityEditor.SerializedObject(definition);
+                serialized.FindProperty("operationMapId").stringValue = "opmap.foreign";
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                Assert.Throws<InvalidDataException>(() => SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition));
+            });
+        }
+
+        [Test]
+        public void BatchWarmup_NullDefinitionRefused()
+        {
+            Assert.Throws<InvalidDataException>(() => SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(null));
+        }
+
+        [Test]
+        public void BatchWarmup_SourceResolutionLeavesWorldAndAssetBytesUnchanged()
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            var definition = ActualBatchDefinition("S002");
+            var preset = SkirmishLegacyProductionIdentity.RequireBinding("S001");
+            string definitionPath = UnityEditor.AssetDatabase.GetAssetPath(definition);
+            string presetPath = UnityEditor.AssetDatabase.GetAssetPath(preset);
+            var definitionBytes = File.ReadAllBytes(definitionPath);
+            var presetBytes = File.ReadAllBytes(presetPath);
+            SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition);
+            CollectionAssert.AreEqual(definitionBytes, File.ReadAllBytes(definitionPath));
+            CollectionAssert.AreEqual(presetBytes, File.ReadAllBytes(presetPath));
+            Assert.AreSame(world, World.DefaultGameObjectInjectionWorld);
+        }
+
+        public static void RunBatchWarmupSourceValidation()
+        {
+            var tests = new SkirmishS002AriaHarnessTests();
+            tests.BatchWarmup_ActualCodedNullSourcePreservesNormalBinding("S002", SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex);
+            tests.BatchWarmup_ActualCodedNullSourcePreservesNormalBinding("S003", SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex);
+            tests.BatchWarmup_ActualS004UsesRuntimeEnvironmentSource();
+            tests.BatchWarmup_ActualS004MustNotUseS001Source();
+            tests.BatchWarmup_ExplicitSourcePrecedesS004Resource();
+            tests.BatchWarmup_ActualExplicitS005SourceUnchanged();
+            tests.BatchWarmup_GenericMissingExplicitSourceRefused();
+            tests.BatchWarmup_S005MissingExplicitSourceRefused();
+            tests.BatchWarmup_CodedForeignMapRefused();
+            tests.BatchWarmup_NullDefinitionRefused();
+            tests.BatchWarmup_SourceResolutionLeavesWorldAndAssetBytesUnchanged();
+            Debug.Log("[ProductionBatchWarmupSourceControls] result=Passed cases=11 actualCodedBindings=3 actualS004Environment=1 explicitS005=1 streaming=0 sourceFitCertified=0 missionReady=0");
+        }
+
+
+
+
+
+        // Synchronous observer characterization. This does not certify live legacy launch/HUD publication.
+        private static Newtonsoft.Json.Linq.JObject ObserverWorldState(EntityManager em)
+        {
+            return (Newtonsoft.Json.Linq.JObject)ObserverMethod("CaptureProductionObserverState").Invoke(null,new object[]{em});
+        }
+        private static string ObserverHash(Newtonsoft.Json.Linq.JToken value)
+        {
+            return SkirmishProductionCanaryRequest.Hash(System.Text.Encoding.UTF8.GetBytes(
+                value.ToString(Newtonsoft.Json.Formatting.None)));
+        }
+        private static System.Reflection.MethodInfo ObserverMethod(string name)
+        {
+            var method=typeof(SkirmishS002AriaRunHarness).GetMethod(name,
+                System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            Assert.IsNotNull(method,name); return method;
+        }
+        private static Newtonsoft.Json.Linq.JObject ObserverCase(string name, EntityManager em, Action read)
+        {
+            var before=ObserverWorldState(em);
+            read();
+            var after=ObserverWorldState(em);
+            Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(before,after),name+" changed ECS/public state");
+            return new Newtonsoft.Json.Linq.JObject { ["name"]=name, ["before"]=before,
+                ["after"]=after, ["beforeSha256"]=ObserverHash(before), ["afterSha256"]=ObserverHash(after),
+                ["assertionsPassed"]=true };
+        }
+        public static void RunReadOnlyObserverCharacterization()
+        {
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,"Observer fixture requires the idle focused boundary.");
+            foreach(string name in new[]{"productionCanary","productionBatch"})
+            {
+                var active=typeof(SkirmishS002AriaRunHarness).GetField(name,
+                    System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(active);Assert.IsNull(active.GetValue(null),"Never run the fixture inside an owned normal job.");
+            }
+            string output=Environment.GetEnvironmentVariable("WARLINE_OBSERVER_PROOF_OUTPUT");
+            Assert.IsTrue(!string.IsNullOrEmpty(output)&&Path.IsPathRooted(output));
+            Assert.IsFalse(File.Exists(output)||Directory.Exists(output),"Never overwrite observer evidence.");
+            Assert.IsTrue(Directory.Exists(Path.GetDirectoryName(output)),"Owned host must prepare output parent.");
+            var cases=new Newtonsoft.Json.Linq.JArray();
+            using (var world=new World("ReadOnlyObserverCharacterization"))
+            {
+                var em=world.EntityManager;
+                CompileAndSpawn(em,out var session);
+                var actor=FirstFactionUnit(em,1,SkirmishRoleKind.Tank);
+                var enemy=DesignatedBase(em,2);
+                Assert.AreNotEqual(Entity.Null,actor);
+                var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                // Explicit nonempty command-buffer sentinels and public boundary are outside read windows.
+                var boundary=em.CreateEntity(typeof(AriaPlaySessionComponent),typeof(AriaPlayObservationComponent),
+                    typeof(AriaSkirmishObservationOwner),typeof(AriaSkirmishObservationComponent),
+                    typeof(AriaSkirmishPlanComponent),typeof(UiShellStateComponent),typeof(UnitAttackOrderQueueComponent),typeof(UiShellRootComponent));
+                em.SetComponentData(boundary,new UiShellStateComponent{ActiveRoute=UIRoute.Match});
+                em.SetComponentData(boundary,new AriaSkirmishObservationOwner{Boundary=boundary,TransitionSequence=0});
+                em.SetComponentData(boundary,new AriaSkirmishObservationComponent{Value=new AriaSkirmishObservation{Active=true}});
+                var planSentinel=new AriaSkirmishPlanComponent();
+                planSentinel.PrecisionAcceptedGroups.Add(17);
+                em.SetComponentData(boundary,planSentinel);
+                var groups=(Newtonsoft.Json.Linq.JArray)ObserverMethod("ObserverValue").Invoke(null,new object[]{planSentinel.PrecisionAcceptedGroups});
+                Assert.AreEqual(1,groups.Count);Assert.AreEqual(17,(uint)groups[0]);
+                var actorPolicy=new CombatTargetPolicy{AllowedTargets=CombatTargetDomain.Structure,Domain=CombatTargetDomain.Ground,Visible=1};
+                var targetPolicy=new CombatTargetPolicy{AllowedTargets=CombatTargetDomain.None,Domain=CombatTargetDomain.Structure,Visible=0};
+                if(em.HasComponent<CombatTargetPolicy>(actor))em.SetComponentData(actor,actorPolicy);
+                else em.AddComponentData(actor,actorPolicy);
+                if(em.HasComponent<CombatTargetPolicy>(enemy))em.SetComponentData(enemy,targetPolicy);
+                else em.AddComponentData(enemy,targetPolicy);
+                em.AddBuffer<UnitAttackOrderRequestElement>(boundary).Add(default);
+                em.AddBuffer<UnitAttackOrderResultElement>(boundary).Add(default);
+                var targetReader=ObserverMethod("ReadCombatTargetDiagnostic");
+                Func<Entity,Newtonsoft.Json.Linq.JObject> target=t=>Newtonsoft.Json.Linq.JObject.Parse(JsonUtility.ToJson(
+                    targetReader.Invoke(null,new object[]{em,actor,owner,t})));
+                SkirmishFogService.Reveal(em,enemy);
+                cases.Add(ObserverCase("expanded_visible",em,()=>{
+                    var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    var match=new SkirmishMatchState{SessionId=state.SessionId,Phase=SkirmishPhase.Playing};
+                    var facts=(Newtonsoft.Json.Linq.JObject)ObserverMethod("CaptureProductionExpandedSnapshot").Invoke(
+                        null,new object[]{em,session,match,true,0f,state,setup});
+                    Assert.AreEqual(setup.CatalogId,(string)facts["catalog_id"]);
+                    Assert.AreEqual(state.SessionId.ToString(),(string)facts["native_session_id"]);
+                    Assert.IsTrue((bool)target(enemy)["fogVisible"]);
+                    Assert.IsTrue((bool)target(enemy)["policyAllows"]);
+                    var observedType=typeof(SkirmishS002AriaRunHarness).GetNestedType("ActorDiagnostic",System.Reflection.BindingFlags.NonPublic);
+                    Assert.IsNotNull(observedType);
+                    var observed=Activator.CreateInstance(observedType,true);
+                    var actorFacts=Newtonsoft.Json.Linq.JObject.Parse(JsonUtility.ToJson(ObserverMethod("ReadActorCombatDiagnostic").Invoke(
+                        null,new object[]{em,actor,owner,observed,enemy})));
+                    Assert.AreEqual(owner.SessionId.ToString(),(string)actorFacts["sessionId"]);
+                    Assert.AreEqual(enemy.Index,(int)actorFacts["designatedEnemyBase"]["index"]);
+                }));
+                SkirmishFogService.Hide(em,enemy);
+                cases.Add(ObserverCase("expanded_hidden",em,()=>{
+                    var facts=target(enemy);
+                    Assert.IsFalse((bool)facts["fogVisible"]); Assert.IsFalse((bool)facts["policyAllows"]);
+                    Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em,enemy,1));
+                }));
+                var enemyOwner=em.GetComponentData<SkirmishAttemptOwnedComponent>(enemy);
+                var foreign=enemyOwner;foreign.SessionId=new FixedString64Bytes("foreign-observer-session");
+                em.SetComponentData(enemy,foreign);
+                cases.Add(ObserverCase("foreign_session",em,()=>{
+                    var facts=target(enemy);Assert.IsFalse((bool)facts["sessionMatches"]);
+                    Assert.IsFalse((bool)facts["policyAllows"]);
+                }));
+                em.SetComponentData(enemy,enemyOwner);
+                cases.Add(ObserverCase("foreign_faction",em,()=>{
+                    Assert.IsTrue(SkirmishFogService.IsVisibleToFaction(em,enemy,enemyOwner.FactionId));
+                    Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em,enemy,1));
+                }));
+                cases.Add(ObserverCase("missing_target",em,()=>{
+                    Assert.IsFalse((bool)target(Entity.Null)["exists"]);
+                }));
+                cases.Add(ObserverCase("legacy_wrong_world_refused",em,()=>{
+                    var match=new SkirmishMatchState{SessionId=owner.SessionId,ScenarioIndex=0};
+                    Assert.Throws<InvalidDataException>(()=>SkirmishLegacyProductionIdentity.CaptureLive(em,session,in match,"S001"));
+                }));
+                cases.Add(ObserverCase("public_storage_read",em,()=>{
+                    Assert.IsTrue(AriaSkirmishObservationStorage.TryGet(em,boundary,out var storage));
+                    Assert.AreEqual(boundary,storage);
+                    Assert.IsFalse(em.GetComponentData<AriaSkirmishObservationComponent>(storage).Value.EnemyBase.Available);
+                }));
+
+                string writerRoot=FreshProfileFixtureRoot();
+                try
+                {
+                    Assert.IsTrue(Game.UI.Runtime.SkirmishMatchView.NativeCombatEvidenceEnabled,
+                        "Set WARLINE_S005_COMBAT_EVIDENCE=1 before Editor startup; never change the readonly flag.");
+                    string trace=Path.Combine(writerRoot,"actual-writer");
+                    cases.Add(ObserverCase("actual_actor_writer",em,()=>{
+                        ObserverMethod("AppendActorDiagnosticToPath").Invoke(null,new object[]{em,0f,enemy,trace});
+                    }));
+                    string[] actorRows=File.ReadAllLines(trace+".actors.jsonl");
+                    using(var actors=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
+                        typeof(SkirmishUnitRoleComponent),typeof(LocalTransform)))
+                        Assert.AreEqual(actors.CalculateEntityCount(),actorRows.Length);
+                    int eligible=0;
+                    using(var actors=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
+                        typeof(SkirmishUnitRoleComponent),typeof(LocalTransform)))
+                    using(var actorsArray=actors.ToEntityArray(Allocator.Temp))
+                    foreach(var unit in actorsArray)
+                    {
+                        var unitOwner=em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                        if(unitOwner.FactionId!=1||unitOwner.IsStructure!=0||
+                            !em.HasComponent<SkirmishRoleOverlayComponent>(unit))continue;
+                        var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(unit);
+                        if(overlay.Damage>0&&(overlay.TargetDomains&SkirmishTargetDomain.Structure)!=0)eligible++;
+                    }
+                    var combatRows=File.Exists(trace+".combat.jsonl")?File.ReadAllLines(trace+".combat.jsonl"):Array.Empty<string>();
+                    Assert.AreEqual(Math.Min(eligible,16),combatRows.Length);
+                    if(combatRows.Length>0)
+                        Assert.AreEqual(eligible>16,(bool)Newtonsoft.Json.Linq.JObject.Parse(combatRows[combatRows.Length-1])["capReached"]);
+                    var actorCase=(Newtonsoft.Json.Linq.JObject)cases[cases.Count-1];
+                    actorCase["coverage"]=new Newtonsoft.Json.Linq.JObject{
+                        ["eligible"]=eligible,["recorded"]=combatRows.Length,["capped"]=eligible>16,
+                        ["actorRows"]=actorRows.Length,["actorFileSha256"]=SkirmishProductionCanaryRequest.FileHash(trace+".actors.jsonl")};
+                    if(combatRows.Length>0)actorCase["combatFileSha256"]=SkirmishProductionCanaryRequest.FileHash(trace+".combat.jsonl");
+
+                    var previousMirror=Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchSnapshot;
+                    var helperType=typeof(Game.UI.Runtime.SkirmishMatchView).Assembly.GetType("Game.UI.Runtime.MatchHudAssistantUiSystemHelper");
+                    var mirror=helperType.GetMethod("RecordEnemyBaseDiagnostic",
+                        System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+                    Assert.IsNotNull(mirror);
+                    Game.UI.Runtime.SkirmishMatchView hudView=null;
+                    var fontField=typeof(Game.UI.Runtime.SkirmishMatchView).GetField("interfaceFont",
+                        System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+                    object previousFont=fontField.GetValue(null);
+                    try
+                    {
+                        hudView=Game.UI.Runtime.SkirmishMatchView.Create();
+                        var hudField=typeof(Game.UI.Runtime.SkirmishMatchView).GetField("hud",
+                            System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                        if(hudField.GetValue(hudView)==null)
+                            typeof(Game.UI.Runtime.SkirmishMatchView).GetMethod("Awake",
+                                System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(hudView,null);
+                        Assert.Greater(Screen.width,2);Assert.Greater(Screen.height,2);
+                        var publicView=em.GetComponentData<AriaSkirmishObservationComponent>(boundary).Value;
+                        publicView.Frame=Time.frameCount;
+                        em.SetComponentData(boundary,new AriaSkirmishObservationComponent{Value=publicView});
+                        var point=new Vector3(Screen.width*.5f,Screen.height*.5f,1);
+                        hudView.PresentEnemyBaseMarker(point,true,new Vector3(100,0,100),Vector3.zero,false);
+                        Assert.IsTrue(hudView.EnemyBaseMarkerVisible);Assert.IsFalse(hudView.EnemyBaseTargetVisible);
+                        cases.Add(ObserverCase("actual_hidden_hud_diagnostic_mirror",em,()=>{
+                            mirror.Invoke(null,new object[]{publicView,hudView});
+                            var recorded=Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchSnapshot;
+                            Assert.IsTrue(recorded.collected&&recorded.viewPresent&&recorded.markerVisible);
+                            Assert.IsFalse(recorded.targetVisible||recorded.reachabilityEvaluated||recorded.reachable);
+                            Assert.IsFalse(em.GetComponentData<AriaSkirmishObservationComponent>(boundary).Value.EnemyBase.Available);
+                        }));
+                        hudView.PresentEnemyBaseMarker(point,true,new Vector3(100,0,100),Vector3.zero,true);
+                        publicView.EnemyBase=new AriaTouchTarget{Id=-20001,Position=hudView.VisibleEnemyBasePoint,Available=false};
+                        em.SetComponentData(boundary,new AriaSkirmishObservationComponent{Value=publicView});
+                        cases.Add(ObserverCase("actual_visible_hud_diagnostic_mirror",em,()=>{
+                            mirror.Invoke(null,new object[]{publicView,hudView});
+                            var recorded=Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchSnapshot;
+                            Assert.IsTrue(recorded.markerVisible&&recorded.targetVisible&&recorded.reachabilityEvaluated);
+                            Assert.AreEqual(publicView.EnemyBase.Available,recorded.reachable);
+                        }));
+                        cases.Add(ObserverCase("actual_input_writer",em,()=>{
+                            ObserverMethod("AppendInputDiagnosticToPath").Invoke(null,new object[]{em,0f,trace+".input.jsonl"});
+                        }));
+                        var rows=File.ReadAllLines(trace+".input.jsonl");
+                        Assert.AreEqual(1,rows.Length);
+                        var inputRow=Newtonsoft.Json.Linq.JObject.Parse(rows[0]);
+                        Assert.AreEqual(publicView.Frame,(int)inputRow["frame"]);
+                        Assert.IsTrue((bool)inputRow["enemyBaseEvidenceFrameMatches"]);
+                        Assert.IsTrue((bool)inputRow["enemyBaseEvidenceTargetMatches"]);
+                        Assert.IsFalse((bool)inputRow["enemyBase"]["Available"]);
+                        ((Newtonsoft.Json.Linq.JObject)cases[cases.Count-1])["fileSha256"]=SkirmishProductionCanaryRequest.FileHash(trace+".input.jsonl");
+                    }
+                    finally
+                    {
+                        if(hudView!=null)UnityEngine.Object.DestroyImmediate(hudView.gameObject);
+                        fontField.SetValue(null,previousFont);
+                        Game.UI.Runtime.SkirmishMatchView.RecordNativeEnemyBaseTouchEvidence(previousMirror);
+                    }
+                    var duplicate=em.CreateEntity(typeof(AriaSkirmishObservationComponent),
+                        typeof(AriaSkirmishObservationOwner),typeof(AriaSkirmishPlanComponent));
+                    try
+                    {
+                        cases.Add(ObserverCase("ambiguous_input_storage_refused",em,()=>{
+                            ObserverMethod("AppendInputDiagnosticToPath").Invoke(null,new object[]{em,0f,trace+".duplicate.input.jsonl"});
+                            Assert.IsFalse(File.Exists(trace+".duplicate.input.jsonl"));
+                        }));
+                    }
+                    finally { em.DestroyEntity(duplicate); }
+                    using(var empty=new World("ObserverZeroEligible"))
+                    {
+                        cases.Add(ObserverCase("zero_eligible_actual_writer",empty.EntityManager,()=>{
+                            ObserverMethod("AppendActorDiagnosticToPath").Invoke(null,new object[]{empty.EntityManager,0f,Entity.Null,trace+".zero"});
+                            Assert.AreEqual(0,new FileInfo(trace+".zero.actors.jsonl").Length);
+                            Assert.IsFalse(File.Exists(trace+".zero.combat.jsonl"));
+                            ObserverMethod("AppendInputDiagnosticToPath").Invoke(null,new object[]{empty.EntityManager,0f,trace+".zero.input.jsonl"});
+                            Assert.IsFalse(File.Exists(trace+".zero.input.jsonl"));
+                        }));
+                        ((Newtonsoft.Json.Linq.JObject)cases[cases.Count-1])["coverage"]=new Newtonsoft.Json.Linq.JObject{
+                            ["eligible"]=0,["recorded"]=0,["capped"]=false,["status"]="NoEligibleActors"};
+                    }
+                }
+                finally { DeleteProfileFixtureRoot(writerRoot); }
+            }
+            string profile=FreshProfileFixtureRoot(), previous=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+            try
+            {
+                Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",profile);
+                var match=new SkirmishMatchState{SessionId=new FixedString64Bytes("observer-legacy-result"),
+                    Phase=SkirmishPhase.Finished,ResultSaved=1,Outcome=SkirmishOutcome.Defeat,
+                    Reason=SkirmishEndReason.MainBaseDestroyed,Seed=104731,ScenarioIndex=0};
+                var data=new QuickGameSaveData{lastResult=new SkirmishResultSaveData{
+                    sessionId=match.SessionId.ToString(),seed=match.Seed,scenarioIndex=match.ScenarioIndex,
+                    outcome=match.Outcome.ToString(),reason=match.Reason.ToString()}};
+                string path=Path.Combine(profile,SaveService.QuickGameFileName);
+                File.WriteAllText(path,JsonUtility.ToJson(data));
+                byte[] before=File.ReadAllBytes(path);long version=JsonSaveRepository.ChangeVersion;
+                string[] entries=Directory.GetFileSystemEntries(profile);
+                Assert.IsTrue(SkirmishLegacyProductionIdentity.ReadSavedResultMatches(in match,out var facts));
+                CollectionAssert.AreEqual(before,File.ReadAllBytes(path));
+                CollectionAssert.AreEqual(entries,Directory.GetFileSystemEntries(profile));
+                Assert.AreEqual(version,JsonSaveRepository.ChangeVersion);
+                cases.Add(new Newtonsoft.Json.Linq.JObject{["name"]="legacy_saved_result",
+                    ["fileBeforeSha256"]=SkirmishProductionCanaryRequest.Hash(before),
+                    ["fileAfterSha256"]=SkirmishProductionCanaryRequest.FileHash(path),
+                    ["changeVersionBefore"]=version,["changeVersionAfter"]=JsonSaveRepository.ChangeVersion,
+                    ["matches"]=(bool)facts["matches"],["assertionsPassed"]=true});
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",previous);
+                DeleteProfileFixtureRoot(profile);
+            }
+            var assemblies=new Newtonsoft.Json.Linq.JObject();
+            foreach(var type in new[]{typeof(SkirmishS002AriaHarnessTests),typeof(SkirmishS002AriaRunHarness),
+                typeof(SkirmishFogService),typeof(AriaSkirmishObservationStorage),typeof(Game.UI.Runtime.SkirmishMatchView),
+                typeof(MatchSceneView),typeof(AriaSkirmishObservation)})
+            {
+                string location=type.Assembly.Location;
+                Assert.IsTrue(File.Exists(location),"Actual loaded observer assembly file required.");
+                assemblies[type.Assembly.GetName().Name]=new Newtonsoft.Json.Linq.JObject{
+                    ["path"]=location,["sha256"]=SkirmishProductionCanaryRequest.FileHash(location)};
+            }
+            var receipt=new Newtonsoft.Json.Linq.JObject{
+                ["schema"]="ObserverPurityCharacterization-v1",["status"]="PassedExpandedObserverFixture_LegacyLivePending",
+                ["execution"]="UnityCheckedExecuteMethod",["method"]="Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunReadOnlyObserverCharacterization",
+                ["createdUtc"]=DateTime.UtcNow.ToString("O"),["loadedAssemblies"]=assemblies,["cases"]=cases,
+                ["missingForAll120Admission"]=new Newtonsoft.Json.Linq.JArray("legacy_live_positive","per_attempt_candidate_and_scope_join"),
+                ["expandedSharedFixturePassed"]=true,
+                ["worldUpdateBetweenSnapshots"]=false,["driverOrCommandDispatchBetweenSnapshots"]=false,
+                ["missionReady"]=false,["read_only_observers"]=false};
+            File.WriteAllText(output,receipt.ToString(Newtonsoft.Json.Formatting.Indented));
+            Debug.Log("[ReadOnlyObserverCharacterization] result=Collected cases=14 expandedSharedFixture=Passed legacyLive=Pending all120Admission=Pending missionReady=0");
+        }
+
         private static System.Type ProfileContextType => typeof(Game.Editor.SkirmishS002AriaRunHarness)
             .GetNestedType("ProductionCanaryContext",System.Reflection.BindingFlags.NonPublic);
         private static System.Reflection.MethodInfo ProfileObservationMethod => ProfileContextType.GetMethod(

@@ -82,6 +82,23 @@ namespace Game.UI.Runtime
                 ScrollTargetId = logicalItemId,
                 ScrollDistanceViewports = distanceViewports };
         }
+#if UNITY_EDITOR
+        private static void RecordEnemyBaseDiagnostic(in AriaSkirmishObservation view, SkirmishMatchView watchSkirmish)
+        {
+                bool present = watchSkirmish != null;
+                bool markerVisible = present && watchSkirmish.EnemyBaseMarkerVisible;
+                bool targetVisible = present && watchSkirmish.EnemyBaseTargetVisible;
+                SkirmishMatchView.RecordNativeEnemyBaseTouchEvidence(new SkirmishMatchView.NativeEnemyBaseTouchEvidence
+                {
+                    collected = true, frame = view.Frame, viewPresent = present,
+                    viewIdentity = present ? watchSkirmish.GetEntityId().GetHashCode() : 0,
+                    markerVisible = markerVisible, targetVisible = targetVisible,
+                    reachabilityEvaluated = markerVisible && targetVisible,
+                    reachable = view.EnemyBase.Available, target = view.EnemyBase
+                });
+        }
+#endif
+
         private void ObserveSkirmishWatch(UiSkirmishModel model)
         {
             AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
@@ -244,17 +261,7 @@ namespace Game.UI.Runtime
 #if UNITY_EDITOR
             if (SkirmishMatchView.NativeCombatEvidenceEnabled)
             {
-                bool present = watchSkirmish != null;
-                bool markerVisible = present && watchSkirmish.EnemyBaseMarkerVisible;
-                bool targetVisible = present && watchSkirmish.EnemyBaseTargetVisible;
-                SkirmishMatchView.RecordNativeEnemyBaseTouchEvidence(new SkirmishMatchView.NativeEnemyBaseTouchEvidence
-                {
-                    collected = true, frame = view.Frame, viewPresent = present,
-                    viewIdentity = present ? watchSkirmish.GetEntityId().GetHashCode() : 0,
-                    markerVisible = markerVisible, targetVisible = targetVisible,
-                    reachabilityEvaluated = markerVisible && targetVisible,
-                    reachable = view.EnemyBase.Available, target = view.EnemyBase
-                });
+                RecordEnemyBaseDiagnostic(in view, watchSkirmish);
             }
 #endif
 

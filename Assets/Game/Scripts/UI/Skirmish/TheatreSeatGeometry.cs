@@ -2619,21 +2619,24 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// How far the name may drop below the cue. Sixteen pixels is the aim. The drop
-        /// stops once the wrapped title, at the existing floor, would no longer fit the band.
-        /// The capture still rejects a gap under <see cref="MedalGapMinimum"/>.
+        /// How far the name sits below the cue. The title overlays the photo, so the gap is
+        /// not limited by the leftover name-band height. Eight drawn pixels is the minimum
+        /// that keeps a 17px cue from reading as the next line of the name. The capture
+        /// still rejects a gap under <see cref="MedalGapMinimum"/>.
         /// </summary>
         public static float NameClearanceBelowCue(string title, float cardWidth, float cardHeight, bool wide)
         {
-            const float wanted = 16f;
-            float room = MaxNameBoxHeight(cardHeight, wide);
+            float local = 8f / SectionDrawScale();
+            if (local < 10f)
+                local = 10f;
             float needed = WrappedFloorNameHeight(title, cardWidth);
-            float spare = room - needed;
-            if (spare >= wanted)
-                return wanted;
-            if (spare >= MedalGapMinimum)
-                return spare;
-            return spare > 0f ? spare : 0f;
+            float status = cardHeight >= 190f ? 40f : 34f;
+            float limit = cardHeight - 2f - status - 4f - needed;
+            if (limit < local)
+                local = limit;
+            if (local < MedalGapMinimum)
+                local = MedalGapMinimum;
+            return local;
         }
 
         /// <summary>
@@ -2693,10 +2696,74 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Painted halo reaches 18px past the fill, and the 16px neon reaches 8px.
-        /// Each district scales about its card centre, toward 82%, and stops where
-        /// the 40000 area floor, the 6px pin clearance, or the 8px card inset would
-        /// break. Centres then walk apart while those same rules still hold.
+        /// Grows a compact portrait toward the full 124×156 seat when some place
+        /// inside its hex still clears the other districts. The capture logs that
+        /// size, and the name box is the card width minus 12.
+        /// </summary>
+        private static void GrowSeatedPortrait(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (hexes == null || cards == null)
+                return;
+            Box[] savedCards = (Box[])cards.Clone();
+            Box savedCue = cue;
+            Box quiet = default;
+            for (int i = 0; i < cards.Length; i++)
+            {
+                Box card = cards[i];
+                if (card.W < 1f || card.W + 0.5f >= FullPortraitMinWidth && card.H + 0.5f >= FullPortraitMinHeight)
+                    continue;
+                float wantW = card.W < FullPortraitMinWidth ? FullPortraitMinWidth : card.W;
+                float wantH = card.H < FullPortraitMinHeight ? FullPortraitMinHeight : card.H;
+                if (wantW > PortraitMaxWidth)
+                    wantW = PortraitMaxWidth;
+                if (wantH > PortraitMaxHeight)
+                    wantH = PortraitMaxHeight;
+                bool grown = false;
+                float[] shift = { 0f, 8f, -8f, 16f, -16f, 24f, -24f };
+                for (int yStep = 0; yStep < shift.Length && !grown; yStep++)
+                {
+                    for (int xStep = 0; xStep < shift.Length; xStep++)
+                    {
+                        var trial = new Box(card.X + shift[xStep], card.Y + shift[yStep], wantW, wantH);
+                        if (!SeatHolds(trial, hexes[i], hexes))
+                            continue;
+                        cards[i] = trial;
+                        if (!DistrictsStayLegal(hexes, pins, cards, quiet, detail, plateWidth, plateHeight, selected))
+                            continue;
+                        grown = true;
+                        break;
+                    }
+                }
+
+                if (!grown)
+                    cards[i] = card;
+            }
+
+            if (selected >= 0 && selected < cards.Length
+                && TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box attached)
+                && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected))
+            {
+                cue = attached;
+                return;
+            }
+
+            for (int i = 0; i < cards.Length; i++)
+                cards[i] = savedCards[i];
+            cue = savedCue;
+        }
+
+        /// <summary>
+        /// Painted halo reaches 18px past the fill. Centres walk into the open pairs
+        /// until every drawn glow-to-glow gap is at least 12px. Hexes stay at or above
+        /// the 40000 area floor; the spare pairs give up room down to that same gap.
         /// </summary>
         private static void OpenDistrictCentres(
             Vec2[][] hexes,
@@ -2713,17 +2780,39 @@ namespace Game.UI.Runtime
             Vec2[][] source = CloneDistricts(hexes);
             FitDistrictScales(source, hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
 
+            float need = GlowEdgeNeed();
             var blocked = new bool[hexes.Length, hexes.Length];
-            const float glowGap = 8f;
-            float need = PaintedHaloReach * 2f + glowGap;
-            for (int pass = 0; pass < 36; pass++)
+            bool progressed = false;
+            for (int pass = 0; pass < 64; pass++)
             {
                 if (!ClosestDistrictPair(hexes, blocked, out int left, out int right, out float gap))
-                    break;
-                if (gap >= need - 0.25f)
-                    break;
-                if (WalkPairApart(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, left, right))
+                {
+                    if (!progressed)
+                        break;
+                    progressed = false;
+                    blocked = new bool[hexes.Length, hexes.Length];
                     continue;
+                }
+
+                if (!ClosestDistrictPair(hexes, null, out _, out _, out float tightest))
+                    break;
+                if (tightest >= need - 0.02f)
+                    break;
+                if (gap >= need - 0.02f)
+                {
+                    blocked[left, right] = true;
+                    blocked[right, left] = true;
+                    continue;
+                }
+
+                if (SlidePairApart(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, left, right, need)
+                    || TryDonateRoom(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, left, right, need))
+                {
+                    progressed = true;
+                    blocked = new bool[hexes.Length, hexes.Length];
+                    continue;
+                }
+
                 blocked[left, right] = true;
                 blocked[right, left] = true;
             }
@@ -2859,6 +2948,595 @@ namespace Game.UI.Runtime
             if (inNumber && value < 0)
                 value = current;
             return value;
+        }
+
+        /// <summary>
+        /// Local fill-edge gap whose drawn glow-to-glow distance is 12px.
+        /// Drawn pixels are the plate gap times the section scale.
+        /// </summary>
+        private static float GlowEdgeNeed()
+        {
+            return PaintedHaloReach * 2f + 12f / SectionDrawScale();
+        }
+
+        /// <summary>Section scale that turns a plate pixel into a drawn pixel. 4:3 is the stricter fallback.</summary>
+        public static float SectionDrawScale()
+        {
+            if (ShotCanvasWidth > 200f && ShotCanvasHeight > 200f)
+            {
+                float fit = Math.Min(ShotCanvasWidth / 1672f, ShotCanvasHeight / 941f);
+                if (fit > 0.5f)
+                    return fit;
+            }
+
+            return Math.Min(1440f / 1672f, 1080f / 941f);
+        }
+
+        /// <summary>
+        /// Drawn gap between outer halos. Negative when the 18px halos overlap.
+        /// Matches <c>[DistrictGap]</c>: fill edge, minus two halos, times the section scale.
+        /// </summary>
+        public static float DrawnDistrictGap(Vec2[] left, Vec2[] right)
+        {
+            return (DistrictEdgeGap(left, right) - PaintedHaloReach * 2f) * SectionDrawScale();
+        }
+
+        /// <summary>True when every pair's drawn halo gap is at least 12px.</summary>
+        public static bool DrawnGlowGapsHold(Vec2[][] hexes)
+        {
+            if (hexes == null)
+                return false;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                for (int j = i + 1; j < hexes.Length; j++)
+                {
+                    if (DrawnDistrictGap(hexes[i], hexes[j]) + 0.05f < 12f)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Slides one district of a tight pair into the open side. A solved pair may
+        /// shrink until it is still 12px; an unsolved pair may not get tighter.
+        /// </summary>
+        private static bool SlidePairApart(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int left,
+            int right,
+            float need)
+        {
+            Vec2 from = DistrictCentroid(hexes[left]);
+            Vec2 to = DistrictCentroid(hexes[right]);
+            float dx = to.X - from.X;
+            float dy = to.Y - from.Y;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (length < 1f)
+                return false;
+            dx /= length;
+            dy /= length;
+            float[] steps = { 8f, 4f, 2f, 1f };
+            int[] which = { right, left };
+            bool moved = false;
+            for (int round = 0; round < 28; round++)
+            {
+                if (DistrictEdgeGap(hexes[left], hexes[right]) >= need - 0.02f)
+                    return true;
+                bool stepped = false;
+                for (int side = 0; side < which.Length && !stepped; side++)
+                {
+                    int index = which[side];
+                    float sign = index == right ? 1f : -1f;
+                    for (int step = 0; step < steps.Length; step++)
+                    {
+                        if (!TryShiftDistrict(
+                            hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                            index, dx * sign, dy * sign, steps[step], left, right, need))
+                            continue;
+                        stepped = true;
+                        moved = true;
+                        break;
+                    }
+                }
+
+                if (stepped)
+                    continue;
+                float[] headings = { 0f, 90f, 180f, 270f, 45f, 135f, 225f, 315f };
+                for (int side = 0; side < which.Length && !stepped; side++)
+                {
+                    int index = which[side];
+                    for (int heading = 0; heading < headings.Length && !stepped; heading++)
+                    {
+                        float rad = headings[heading] * (float)Math.PI / 180f;
+                        float hx = (float)Math.Cos(rad);
+                        float hy = (float)Math.Sin(rad);
+                        if (!TryShiftDistrict(
+                                hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                                index, hx, hy, 6f, left, right, need)
+                            && !TryShiftDistrict(
+                                hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                                index, hx, hy, 3f, left, right, need))
+                            continue;
+                        stepped = true;
+                        moved = true;
+                    }
+                }
+
+                if (stepped)
+                    continue;
+                float[] leaps = { 36f, 24f, 16f, 10f };
+                for (int side = 0; side < which.Length && !stepped; side++)
+                {
+                    int index = which[side];
+                    int avoid = index == left ? right : left;
+                    int spare = WidestNeighbor(hexes, index, avoid);
+                    if (spare < 0)
+                        continue;
+                    Vec2 origin = DistrictCentroid(hexes[index]);
+                    Vec2 pocket = DistrictCentroid(hexes[spare]);
+                    float lx = pocket.X - origin.X;
+                    float ly = pocket.Y - origin.Y;
+                    float span = (float)Math.Sqrt(lx * lx + ly * ly);
+                    if (span < 1f)
+                        continue;
+                    lx /= span;
+                    ly /= span;
+                    for (int step = 0; step < leaps.Length && !stepped; step++)
+                    {
+                        if (!TryShiftDistrict(
+                            hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                            index, lx, ly, leaps[step], left, right, need))
+                            continue;
+                        stepped = true;
+                        moved = true;
+                    }
+                }
+
+                if (stepped)
+                    continue;
+                float[] pull = { 16f, 12f, 8f, 6f, 4f, 2f };
+                for (int side = 0; side < which.Length && !stepped; side++)
+                {
+                    int index = which[side];
+                    int other = index == left ? right : left;
+                    for (int step = 0; step < pull.Length && !stepped; step++)
+                    {
+                        if (!TryRetractFacing(
+                                hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                                index, other, pull[step], left, right, need)
+                            && !TryPullContact(
+                                hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                                index, other, pull[step], left, right, need))
+                            continue;
+                        stepped = true;
+                        moved = true;
+                    }
+                }
+
+                if (stepped)
+                    continue;
+                float[] beforeChain = PairGapList(hexes);
+                Vec2[][] savedHex = CloneDistricts(hexes);
+                Box[] savedCards = (Box[])cards.Clone();
+                Box savedCue = cue;
+                if (WalkPairApart(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, left, right)
+                    && OtherGapsHold(hexes, beforeChain, left, right, need))
+                {
+                    moved = true;
+                    continue;
+                }
+
+                CopyDistricts(savedHex, hexes);
+                for (int i = 0; i < cards.Length; i++)
+                    cards[i] = savedCards[i];
+                cue = savedCue;
+                break;
+            }
+
+            return moved;
+        }
+
+        /// <summary>
+        /// Asks the district beyond a tight pair to give back a few pixels, then
+        /// steps the crowded district into that room. Aspect stays put because the
+        /// crowded district translates instead of changing shape.
+        /// </summary>
+        private static bool TryDonateRoom(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int left,
+            int right,
+            float need)
+        {
+            float[] give = { 8f, 6f, 4f, 2f };
+            int[] ends = { left, right };
+            for (int end = 0; end < ends.Length; end++)
+            {
+                int index = ends[end];
+                int partner = index == left ? right : left;
+                Vec2 from = DistrictCentroid(hexes[index]);
+                Vec2 other = DistrictCentroid(hexes[partner]);
+                float ox = from.X - other.X;
+                float oy = from.Y - other.Y;
+                float span = (float)Math.Sqrt(ox * ox + oy * oy);
+                if (span < 1f)
+                    continue;
+                ox /= span;
+                oy /= span;
+                int donor = -1;
+                float best = 0.5f;
+                for (int j = 0; j < hexes.Length; j++)
+                {
+                    if (j == index || j == partner || hexes[j] == null)
+                        continue;
+                    Vec2 place = DistrictCentroid(hexes[j]);
+                    float along = (place.X - from.X) * ox + (place.Y - from.Y) * oy;
+                    if (along <= best)
+                        continue;
+                    best = along;
+                    donor = j;
+                }
+
+                if (donor < 0)
+                    continue;
+                for (int step = 0; step < give.Length; step++)
+                {
+                    Vec2[][] savedHex = CloneDistricts(hexes);
+                    Box[] savedCards = (Box[])cards.Clone();
+                    Box savedCue = cue;
+                    if (TryRetractFacing(
+                            hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                            donor, index, give[step], donor, index, need)
+                        && TryShiftDistrict(
+                            hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected,
+                            index, ox, oy, give[step], left, right, need))
+                        return true;
+                    CopyDistricts(savedHex, hexes);
+                    for (int i = 0; i < cards.Length; i++)
+                        cards[i] = savedCards[i];
+                    cue = savedCue;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Pulls the facing edge back and spends spare width on the open sides so the
+        /// district stays above the 40000 area floor and its card still sits inside.
+        /// </summary>
+        private static bool TryRetractFacing(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int index,
+            int other,
+            float distance,
+            int left,
+            int right,
+            float need)
+        {
+            if (hexes[index] == null || hexes[other] == null || hexes[index].Length < 3)
+                return false;
+            Vec2 from = DistrictCentroid(hexes[index]);
+            Vec2 toward = DistrictCentroid(hexes[other]);
+            float dx = from.X - toward.X;
+            float dy = from.Y - toward.Y;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (length < 1f)
+                return false;
+            dx /= length;
+            dy /= length;
+            float px = -dy;
+            float py = dx;
+            Vec2[] shape = hexes[index];
+            int edgeA = 0;
+            int edgeB = 1;
+            float closest = float.MaxValue;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                int j = (i + 1) % shape.Length;
+                var mid = new Vec2((shape[i].X + shape[j].X) * 0.5f, (shape[i].Y + shape[j].Y) * 0.5f);
+                float dist = DistanceToEdge(mid, hexes[other]);
+                if (dist >= closest)
+                    continue;
+                closest = dist;
+                edgeA = i;
+                edgeB = j;
+            }
+
+            float pairBefore = DistrictEdgeGap(hexes[left], hexes[right]);
+            float[] before = PairGapList(hexes);
+            Vec2[][] savedHex = CloneDistricts(hexes);
+            Box[] savedCards = (Box[])cards.Clone();
+            Box savedCue = cue;
+            float originX = from.X;
+            float originY = from.Y;
+            shape[edgeA] = new Vec2(shape[edgeA].X + dx * distance, shape[edgeA].Y + dy * distance);
+            shape[edgeB] = new Vec2(shape[edgeB].X + dx * distance, shape[edgeB].Y + dy * distance);
+            for (int widen = 0; widen <= 8; widen++)
+            {
+                if (widen > 0)
+                {
+                    for (int p = 0; p < shape.Length; p++)
+                    {
+                        if (p == edgeA || p == edgeB)
+                            continue;
+                        float side = (shape[p].X - originX) * px + (shape[p].Y - originY) * py;
+                        float sign = side >= 0f ? 1f : -1f;
+                        var grown = new Vec2(shape[p].X + px * sign * 2f, shape[p].Y + py * sign * 2f);
+                        Vec2 kept = shape[p];
+                        shape[p] = grown;
+                        bool glow = GlowInside(shape, plateWidth, plateHeight, out _, out _);
+                        if (!glow)
+                            shape[p] = kept;
+                    }
+                }
+
+                if (PolygonArea(shape) < 40000f)
+                    continue;
+
+                if (DistrictEdgeGap(hexes[left], hexes[right]) < pairBefore + 0.35f)
+                    break;
+
+                if (!GlowInside(shape, plateWidth, plateHeight, out _, out _))
+                    break;
+
+                if (!AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight))
+                    break;
+
+                Box home = savedCards[index];
+                for (float sy = -16f; sy <= 16f; sy += 2f)
+                {
+                    for (float sx = -16f; sx <= 16f; sx += 2f)
+                    {
+                        var nudged = new Box(home.X + sx, home.Y + sy, home.W, home.H);
+                        if (!SeatHolds(nudged, shape, hexes))
+                            continue;
+                        cards[index] = nudged;
+                        if (index == selected)
+                            cue = ShiftBox(savedCue, sx, sy);
+                        if (!DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                            continue;
+
+                        if (!OtherGapsHold(hexes, before, left, right, need))
+                            continue;
+
+                        return true;
+                    }
+                }
+            }
+
+            CopyDistricts(savedHex, hexes);
+            for (int i = 0; i < cards.Length; i++)
+                cards[i] = savedCards[i];
+            cue = savedCue;
+            return false;
+        }
+
+        /// <summary>
+        /// Draws the facing edge back into its own district. Area stays above 40000.
+        /// The far edge stays put, so a district already against the plate can still open.
+        /// </summary>
+        private static bool TryPullContact(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int index,
+            int other,
+            float distance,
+            int left,
+            int right,
+            float need)
+        {
+            if (hexes[index] == null || hexes[other] == null)
+                return false;
+            Vec2 from = DistrictCentroid(hexes[index]);
+            Vec2 toward = DistrictCentroid(hexes[other]);
+            float dx = from.X - toward.X;
+            float dy = from.Y - toward.Y;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (length < 1f)
+                return false;
+            dx /= length;
+            dy /= length;
+            float pairBefore = DistrictEdgeGap(hexes[index], hexes[other]);
+            float[] before = PairGapList(hexes);
+            Vec2[][] savedHex = CloneDistricts(hexes);
+            Box[] savedCards = (Box[])cards.Clone();
+            Box savedCue = cue;
+            Vec2[] shape = hexes[index];
+            int near = -1;
+            int next = -1;
+            float nearDist = float.MaxValue;
+            float nextDist = float.MaxValue;
+            for (int p = 0; p < shape.Length; p++)
+            {
+                float dist = DistanceToEdge(shape[p], hexes[other]);
+                if (PointInPolygon(shape[p], hexes[other]))
+                    dist = -dist;
+                if (dist < nearDist)
+                {
+                    next = near;
+                    nextDist = nearDist;
+                    near = p;
+                    nearDist = dist;
+                }
+                else if (dist < nextDist)
+                {
+                    next = p;
+                    nextDist = dist;
+                }
+            }
+
+            int pulled = 0;
+            if (near >= 0)
+            {
+                shape[near] = new Vec2(shape[near].X + dx * distance, shape[near].Y + dy * distance);
+                pulled++;
+            }
+
+            if (next >= 0)
+            {
+                shape[next] = new Vec2(shape[next].X + dx * distance, shape[next].Y + dy * distance);
+                pulled++;
+            }
+
+            if (cards != null && index >= 0 && index < cards.Length && cards[index].W > 1f)
+            {
+                Box seated = cards[index];
+                var nudged = new Box(seated.X + dx * distance, seated.Y + dy * distance, seated.W, seated.H);
+                if (SeatHolds(nudged, shape, hexes))
+                {
+                    cards[index] = nudged;
+                    if (index == selected)
+                        cue = ShiftBox(cue, dx * distance, dy * distance);
+                }
+            }
+
+            float pairAfter = DistrictEdgeGap(hexes[left], hexes[right]);
+            bool opened = pulled > 0 && pairAfter > pairBefore + 0.35f;
+            bool stay = opened && DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
+            bool others = stay && OtherGapsHold(hexes, before, left, right, need);
+            if (others)
+                return true;
+            CopyDistricts(savedHex, hexes);
+            for (int i = 0; i < cards.Length; i++)
+                cards[i] = savedCards[i];
+            cue = savedCue;
+            return false;
+        }
+
+        private static bool TryShiftDistrict(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int index,
+            float ux,
+            float uy,
+            float distance,
+            int left,
+            int right,
+            float need)
+        {
+            float pairBefore = DistrictEdgeGap(hexes[left], hexes[right]);
+            float apartBefore = CentroidSpan(hexes[left], hexes[right]);
+            float[] before = PairGapList(hexes);
+            Vec2[][] savedHex = CloneDistricts(hexes);
+            Box[] savedCards = (Box[])cards.Clone();
+            Box savedCue = cue;
+            ShiftDistrict(hexes[index], cards, ref cue, index, selected, ux * distance, uy * distance);
+            float pairAfter = DistrictEdgeGap(hexes[left], hexes[right]);
+            float apartAfter = CentroidSpan(hexes[left], hexes[right]);
+            bool opened = pairAfter > pairBefore + 0.35f
+                || (pairBefore < 0.5f && apartAfter > apartBefore + 0.35f);
+            bool stay = DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
+            bool others = stay && OtherGapsHold(hexes, before, left, right, need);
+            if (opened && stay && others)
+                return true;
+            CopyDistricts(savedHex, hexes);
+            for (int i = 0; i < cards.Length; i++)
+                cards[i] = savedCards[i];
+            cue = savedCue;
+            return false;
+        }
+
+        private static int WidestNeighbor(Vec2[][] hexes, int index, int avoid)
+        {
+            int best = -1;
+            float gap = -1f;
+            if (hexes == null)
+                return best;
+            for (int j = 0; j < hexes.Length; j++)
+            {
+                if (j == index || j == avoid)
+                    continue;
+                float pair = DistrictEdgeGap(hexes[index], hexes[j]);
+                if (pair <= gap)
+                    continue;
+                gap = pair;
+                best = j;
+            }
+
+            return best;
+        }
+
+        private static float CentroidSpan(Vec2[] left, Vec2[] right)
+        {
+            Vec2 from = DistrictCentroid(left);
+            Vec2 to = DistrictCentroid(right);
+            float dx = to.X - from.X;
+            float dy = to.Y - from.Y;
+            return (float)Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        private static float[] PairGapList(Vec2[][] hexes)
+        {
+            int count = hexes == null ? 0 : hexes.Length;
+            int pairs = count * (count - 1) / 2;
+            var gaps = new float[pairs];
+            int n = 0;
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                    gaps[n++] = DistrictEdgeGap(hexes[i], hexes[j]);
+            }
+
+            return gaps;
+        }
+
+        private static bool OtherGapsHold(Vec2[][] hexes, float[] before, int left, int right, float need)
+        {
+            if (before == null)
+                return true;
+            int n = 0;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                for (int j = i + 1; j < hexes.Length; j++)
+                {
+                    float was = n < before.Length ? before[n] : 0f;
+                    n++;
+                    if (i == left && j == right)
+                        continue;
+                    float after = DistrictEdgeGap(hexes[i], hexes[j]);
+                    if (was + 0.02f >= need && after + 0.02f < need)
+                        return false;
+                    if (was + 0.25f < need && after + 0.35f < was)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private static bool WalkPairApart(
@@ -3313,7 +3991,10 @@ namespace Game.UI.Runtime
                 TrySlideReserveRow(hexes, pins, placed, ref cue, plateWidth, plateHeight, fa);
 
             if (portraitSeated && placed != null)
+            {
                 OpenDistrictCentres(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
+                GrowSeatedPortrait(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
+            }
 
             bool cardsLegal = placed != null;
             if (placed == null)

@@ -451,18 +451,44 @@ internal static class Program
     }
 
     /// <summary>
-    /// 4:3 fa IB, the plate Programmer 1's capture failed. The authored restore of a
-    /// layout-shrunk portrait to 124x172 straddles, and the name check then reports
-    /// preferred 42 by width 112. The clamped restore has to clear both.
+    /// 4:3 fa IB from the Unity seat dump. The dump records the card Unity drew
+    /// (124×156), the name box (112) and the wrapped floor (42), plus the glow gaps
+    /// that were negative. Reseating that plate has to open every drawn gap to 12px,
+    /// keep the card inside its hex, fit the name, and leave 8px under the cue.
     /// </summary>
     private static bool ReplayFourByThreeFaIb()
     {
-        const string straddle = "Theatre zone card straddles a district edge locale=fa card=ZoneCard_IB.";
-        const string namePast = "preferred=42.0 width=112.0 text=حوضه صنعتی.";
-        TheatreSeatGeometry.CaptureMapSize(1440f, 1080f, out float plateW, out float plateH);
-        bool applied = TheatreSeatGeometry.DetailReserveOn(plateW, plateH, true, true, true, "IB");
+        const string dumpName = "seat-4x3-section-fa-reserve-off-plate-1111.0x705.0-sel-IB.json";
+        string path = Path.Combine(ReplayRoot, dumpName);
+        if (!File.Exists(path))
+        {
+            Console.WriteLine("FAIL replay 4:3 fa IB missing " + dumpName);
+            return false;
+        }
+
+        string json = File.ReadAllText(path);
+        bool read = TheatreSeatGeometry.TryReadDump(
+            json, out float storedW, out float storedH, out bool reserve, out string ratio, out string notch, out string locale, out string selected);
+        bool canvas = TheatreSeatGeometry.TryReadCanvas(
+            json, out float canvasW, out float canvasH, out float left, out float top, out float right, out float bottom);
+        bool unityCard = json.IndexOf("\"cardW\": 124.0", StringComparison.Ordinal) >= 0
+            && json.IndexOf("\"cardH\": 156.0", StringComparison.Ordinal) >= 0
+            && json.IndexOf("\"boxW\": 112.0", StringComparison.Ordinal) >= 0
+            && json.IndexOf("\"preferredH\": 42.0", StringComparison.Ordinal) >= 0
+            && json.IndexOf("\"DB-MP\"", StringComparison.Ordinal) >= 0
+            && json.IndexOf("-27.0", StringComparison.Ordinal) >= 0
+            && json.IndexOf("-31.0", StringComparison.Ordinal) >= 0;
+        if (!read || !canvas || !unityCard || ratio != "4:3" || locale != "fa" || selected != "IB")
+        {
+            Console.WriteLine("FAIL replay 4:3 fa IB dump");
+            return false;
+        }
+
+        TheatreSeatGeometry.ResolveReplayPlate(
+            storedW, storedH, canvasW, canvasH, notch, left, top, right, bottom, out float plateW, out float plateH);
+        bool applied = TheatreSeatGeometry.DetailReserveOn(plateW, plateH, true, reserve, true, "IB");
         TheatreSeatGeometry.NoteDetailReserve(applied);
-        TheatreSeatGeometry.SetShot("4:3", "none", "fa", applied, 1440f, 1080f, 0f, 0f, 0f, 0f);
+        TheatreSeatGeometry.SetShot(ratio, notch, locale, applied, canvasW, canvasH, left, top, right, bottom);
         TheatreSeatGeometry.ShotSelected = "IB";
         TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateW, plateH, true, applied, "IB");
         if (layout.Seats == null)
@@ -491,66 +517,44 @@ internal static class Program
         }
 
         TheatreSeatGeometry.Box seated = cards[ib];
-        var live = new TheatreSeatGeometry.Box(seated.X, seated.Y, 108f, 140f);
-        var authored = new TheatreSeatGeometry.Box(seated.X, seated.Y, 124f, 172f);
-        var beforeCards = (TheatreSeatGeometry.Box[])cards.Clone();
-        beforeCards[ib] = authored;
-        var before = new System.Collections.Generic.List<string>();
-        TheatreSeatGeometry.Box detail = TheatreSeatGeometry.DetailRect(plateW, plateH, true, applied);
-        TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateW, plateH);
-        TheatreSeatGeometry.CollectViolations(
-            "fa", plateW, plateH, "IB", hexes, beforeCards, pins, layout.Cue, layout.Cue.W > 1f, detail, hint, true, before);
-        bool sawStraddle = false;
-        bool sawName = false;
-        Console.WriteLine("REPLAY 4:3 fa IB before restore");
-        for (int i = 0; i < before.Count; i++)
-        {
-            if (before[i].IndexOf(straddle, StringComparison.Ordinal) >= 0)
-                sawStraddle = true;
-            if (before[i].IndexOf(namePast, StringComparison.Ordinal) >= 0)
-                sawName = true;
-            if (before[i].IndexOf("ZoneCard_IB", StringComparison.Ordinal) >= 0
-                || before[i].IndexOf("حوضه", StringComparison.Ordinal) >= 0)
-                Console.WriteLine(before[i]);
-        }
-
-        TheatreSeatGeometry.Box restored = TheatreSeatGeometry.RestoreAuthoredCard(
-            live, authored.W, authored.H, hexes[ib], hexes);
+        var restored = TheatreSeatGeometry.RestoreAuthoredCard(seated, 124f, 156f, hexes[ib], hexes);
         bool holds = TheatreSeatGeometry.SeatHolds(restored, hexes[ib], hexes);
+        bool gaps = TheatreSeatGeometry.DrawnGlowGapsHold(hexes);
         string title = "حوضه صنعتی";
-        float needed = TheatreSeatGeometry.WrappedFloorNameHeight(title, restored.W);
-        float room = TheatreSeatGeometry.MaxNameBoxHeight(restored.H, false);
         float clearance = TheatreSeatGeometry.NameClearanceBelowCue(title, restored.W, restored.H, false);
+        float drawnClearance = clearance * TheatreSeatGeometry.SectionDrawScale();
         bool nameFits = TheatreSeatGeometry.TryFitZoneName(
             title, restored.W, restored.H, restored.H, false, out _, out _, out _);
-        bool bandHolds = room - clearance + 1f >= needed;
         var afterCards = (TheatreSeatGeometry.Box[])cards.Clone();
         afterCards[ib] = restored;
         var after = new System.Collections.Generic.List<string>();
+        TheatreSeatGeometry.Box detail = TheatreSeatGeometry.DetailRect(plateW, plateH, true, applied);
+        TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateW, plateH);
         TheatreSeatGeometry.CollectViolations(
             "fa", plateW, plateH, "IB", hexes, afterCards, pins, layout.Cue, layout.Cue.W > 1f, detail, hint, true, after);
         bool stillStraddle = false;
         bool stillName = false;
         for (int i = 0; i < after.Count; i++)
         {
-            if (after[i].IndexOf(straddle, StringComparison.Ordinal) >= 0)
+            if (after[i].IndexOf("ZoneCard_IB", StringComparison.Ordinal) >= 0
+                && after[i].IndexOf("straddles", StringComparison.Ordinal) >= 0)
                 stillStraddle = true;
-            if (after[i].IndexOf(namePast, StringComparison.Ordinal) >= 0)
+            if (after[i].IndexOf("حوضه صنعتی", StringComparison.Ordinal) >= 0
+                && after[i].IndexOf("draws past its box", StringComparison.Ordinal) >= 0)
                 stillName = true;
         }
 
-        bool ok = sawStraddle && sawName && holds && nameFits && bandHolds && !stillStraddle && !stillName
-            && live.W + 8f < authored.W
-            && Math.Abs(plateW - 1039.6f) < 0.2f
-            && plateH > 800f;
-        Console.WriteLine((ok ? "PASS" : "FAIL") + " replay 4:3 fa IB"
-            + " before=" + (sawStraddle && sawName ? "both" : "missing")
-            + " restored=" + restored.W.ToString("0.0", CultureInfo.InvariantCulture)
+        bool ok = holds && gaps && nameFits && drawnClearance + 0.05f >= 8f && !stillStraddle && !stillName
+            && layout.CardsLegal && layout.HexAspectLegal;
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " replay 4:3 fa IB dump"
+            + " plate=" + plateW.ToString("0.0", CultureInfo.InvariantCulture)
+            + "x" + plateH.ToString("0.0", CultureInfo.InvariantCulture)
+            + " card=" + restored.W.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + restored.H.ToString("0.0", CultureInfo.InvariantCulture)
             + " holds=" + holds
+            + " gaps=" + (gaps ? "12" : "short")
             + " name=" + (nameFits ? "fits" : "past")
-            + " clearance=" + clearance.ToString("0.0", CultureInfo.InvariantCulture)
-            + " needed=" + needed.ToString("0.0", CultureInfo.InvariantCulture));
+            + " cueGap=" + drawnClearance.ToString("0.0", CultureInfo.InvariantCulture));
         return ok;
     }
 

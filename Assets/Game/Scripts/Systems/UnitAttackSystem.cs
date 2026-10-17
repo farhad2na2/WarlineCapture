@@ -791,7 +791,8 @@ namespace Game.Runtime
                     return;
                 }
 
-                if (baseAnimationState.TimeRemaining <= 0f && candidate.HasAnimationOrder != 0)
+                if (baseAnimationState.TimeRemaining <= 0f && candidate.HasAnimationOrder != 0 &&
+                    candidate.AttackState.CooldownRemaining <= 0f)
                 {
                     plan.Kind = StandardAttackPlanKind.Windup;
                     plan.AttackAnimationState.TimeRemaining = math.max(0.01f, candidate.AttackAnimationSeconds);

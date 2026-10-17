@@ -1,0 +1,11 @@
+{
+  "readOnly": true,
+  "gameplayMutations": false,
+  "toolResult": {
+    "chunk_id": "c312d1",
+    "wall_time_seconds": 1.810373708,
+    "exit_code": 0,
+    "original_token_count": 173,
+    "output": "{\n  \"success\": true,\n  \"command\": \"command eval\",\n  \"data\": {\n    \"command\": \"eval\",\n    \"parameters\": {\n      \"code\": \"if (!Game.UI.Runtime.UiShellRuntimeGateway.TryReadSkirmish(out var m)) return \\\"not ready\\\"; return new { playerHp=m.PlayerHealth, enemyHp=m.EnemyHealth, finished=m.Finished };\"\n    },\n    \"result\": {\n      \"output\": null,\n      \"diagnostics\": [],\n      \"success\": true,\n      \"result\": {\n        \"playerHp\": 800,\n        \"enemyHp\": 800,\n        \"finished\": false\n      }\n    },\n    \"target\": {\n      \"host\": \"127.0.0.1\",\n      \"port\": 7801,\n      \"projectPath\": \"/Users/farhad/Projects/WarlineCapture\"\n    },\n    \"success\": true\n  },\n  \"errors\": [],\n  \"warnings\": []\n}\n"
+  }
+}

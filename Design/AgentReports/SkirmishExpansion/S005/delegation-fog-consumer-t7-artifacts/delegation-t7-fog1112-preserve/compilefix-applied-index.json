@@ -1,0 +1,13 @@
+{
+  "status": "PreparedForRootReview",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "baseSha256": "5c504ee933c5bc2f27b7ed807a974045498df7bda46aba21db38360868e39cae",
+      "stagedSha256": "c1342d9e355c4d8e903a4d9381425b2b34b73e363bfc36289a5e9e6ff3e081d9",
+      "stagedPath": "/private/tmp/fogfix1091-consumers-compilefix/Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
+    }
+  ],
+  "patchSha256": "3daacca94be8fe6c09852de81720e1ac0a30c3af4d3225c70f1709b476a1d960",
+  "purpose": "Correct nonexistent EntityManager lookup methods using actual readonly chunk-native type handles/accessors; unchanged player observer visibility semantics"
+}

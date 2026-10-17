@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "if(UnityEditor.EditorApplication.isPlaying || UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorApplication.isUpdating || Game.Editor.ExistingEditorValidation.IsRunning)throw new System.InvalidOperationException(\"Idle required\");if(UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()]!=\"Mobile\")throw new System.InvalidOperationException(\"Mobile required\");UnityEngine.QualitySettings.antiAliasing=0;return new {ActualAA=UnityEngine.QualitySettings.antiAliasing, SavedAssetUntouched=true};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "ActualAA": 0,
+        "SavedAssetUntouched": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

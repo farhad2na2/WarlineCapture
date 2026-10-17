@@ -1,0 +1,159 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public static class S005GuidancePlayLifecycle1116
+{
+    private static readonly string Evidence = "/private/tmp/delegation-t7-guidance1116-native-scene-census.json";
+    private static TaskCompletionSource<int> completion;
+    private static readonly Stack<IEnumerator> frames = new Stack<IEnumerator>();
+    private static SceneSetup[] originalSetup;
+    private static string originalCensus;
+    private static double started, cleanupStarted;
+    private static Exception failure;
+    private static bool cleaning, restoreAttempted;
+    private static int? waitForNextPlayFrame;
+    private static Scene temporary;
+    public static string Run() { return "Prepared source-neutral1116; RunValidation through checked wrapper only."; }
+    public static Task<int> RunValidation()
+    {
+        if (completion != null) throw new InvalidOperationException("Unique1116 cannot be reused.");
+        if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating || EditorUtility.scriptCompilationFailed)
+            throw new InvalidOperationException("1116 requires a clean, idle compiled Editor.");
+        if (!EditorSettings.enterPlayModeOptionsEnabled || (EditorSettings.enterPlayModeOptions & EnterPlayModeOptions.DisableDomainReload) == 0)
+            throw new InvalidOperationException("Native existing settings must already disable domain reload; driver does not change settings.");
+        originalSetup = EditorSceneManager.GetSceneManagerSetup();
+        if (originalSetup.Length == 0 || originalSetup.Any(s => string.IsNullOrEmpty(s.path)))
+            throw new InvalidOperationException("All original scene setup paths must be saved; no untitled owner scene can be replaced.");
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+            if (SceneManager.GetSceneAt(i).isDirty)
+                throw new InvalidOperationException("Dirty owner scene retained: " + SceneManager.GetSceneAt(i).path);
+        if (System.IO.File.Exists(Evidence)) throw new InvalidOperationException("Preserve unique1116 native census evidence.");
+        originalCensus = Census();
+        System.IO.File.WriteAllText(Evidence, "{\"pre\":" + originalCensus + "}");
+        var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("Game.Tests.Editor.AssistantGuidanceLifecycleTests", false)).FirstOrDefault(t => t != null);
+        if (type == null) throw new MissingMemberException("Actual compiled approved lifecycle test not found.");
+        var method = type.GetMethod("PlayOwnerOnDestroyAndRebindPreserveOverlayLifecycle", BindingFlags.Public | BindingFlags.Instance);
+        if (method == null) throw new MissingMethodException(type.FullName, "PlayOwnerOnDestroyAndRebindPreserveOverlayLifecycle");
+        completion = new TaskCompletionSource<int>(); started = EditorApplication.timeSinceStartup;
+        try
+        {
+            temporary = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            if (temporary.rootCount != 0 || SceneManager.sceneCount != 1) throw new InvalidOperationException("Native temporary scene must be empty and the only loaded scene.");
+            frames.Push((IEnumerator)method.Invoke(Activator.CreateInstance(type), null));
+            EditorApplication.update += Tick;
+        }
+        catch (Exception exception) { BeginCleanup(exception); EditorApplication.update += Tick; }
+        return completion.Task;
+    }
+    private static void Tick()
+    {
+        if (cleaning) { CleanupTick(); return; }
+        try
+        {
+            if (EditorApplication.timeSinceStartup - started > 90) throw new TimeoutException("Bounded1116 small Play coroutine exceeded90s.");
+            // Advance nested IEnumerator and native Enter/ExitPlayMode.Perform fully;
+            // In Play, a null yield waits for Time.frameCount advancement.
+            // The previous real Unity frame then completed deferred Destroy.
+            if (waitForNextPlayFrame.HasValue)
+            {
+                if (Application.isPlaying && Time.frameCount <= waitForNextPlayFrame.Value) return;
+                waitForNextPlayFrame = null;
+            }
+            while (frames.Count > 0)
+            {
+                var frame = frames.Peek();
+                if (!frame.MoveNext()) { (frame as IDisposable)?.Dispose(); frames.Pop(); continue; }
+                var current = frame.Current;
+                if (current == null) { if (Application.isPlaying) waitForNextPlayFrame = Time.frameCount; return; }
+                if (current is IEnumerator nested) { frames.Push(nested); continue; }
+                var isEditModeInstruction = current.GetType().GetInterfaces().Any(i => i.FullName == "UnityEngine.TestTools.IEditModeTestYieldInstruction");
+                if (!isEditModeInstruction) throw new InvalidOperationException("Unexpected yield type: " + current.GetType().FullName);
+                var perform = current.GetType().GetMethod("Perform", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
+                if (perform == null) throw new MissingMethodException(current.GetType().FullName, "Perform");
+                var operation = perform.Invoke(current, null) as IEnumerator;
+                if (operation == null) throw new InvalidOperationException("Installed native Perform did not return IEnumerator.");
+                Debug.Log("[GuidancePlay1116Yield] native=" + current.GetType().FullName + " nestedPerform=1");
+                frames.Push(operation);
+            }
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Actual test did not leave Play mode.");
+            BeginCleanup(null);
+        }
+        catch (Exception exception) { BeginCleanup(exception); }
+    }
+    private static void BeginCleanup(Exception exception)
+    {
+        failure = exception is TargetInvocationException invocation && invocation.InnerException != null ? invocation.InnerException : exception;
+        cleaning = true; cleanupStarted = EditorApplication.timeSinceStartup;
+        if (failure != null) Debug.LogException(failure);
+        while (frames.Count > 0) { try { (frames.Pop() as IDisposable)?.Dispose(); } catch (Exception e) { if (failure == null) failure = e; } }
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+        {
+            try
+            {
+                var exitType = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("UnityEngine.TestTools.ExitPlayMode", false)).FirstOrDefault(t => t != null);
+                if (exitType == null) throw new MissingMemberException("Installed native ExitPlayMode not found during failed-test cleanup.");
+                frames.Push((IEnumerator)exitType.GetMethod("Perform", BindingFlags.Public | BindingFlags.Instance).Invoke(Activator.CreateInstance(exitType), null));
+                Debug.Log("[GuidancePlay1116Yield] native=UnityEngine.TestTools.ExitPlayMode cleanup=1 nestedPerform=1");
+            }
+            catch (Exception exitException) { Debug.LogException(exitException); if (failure == null) failure = exitException; }
+        }
+    }
+    private static void CleanupTick()
+    {
+        if (frames.Count > 0)
+        {
+            try
+            {
+                var nativeExit = frames.Peek();
+                if (nativeExit.MoveNext()) { if (nativeExit.Current != null) throw new InvalidOperationException("Unexpected native ExitPlayMode cleanup yield."); }
+                else { (nativeExit as IDisposable)?.Dispose(); frames.Pop(); }
+            }
+            catch (Exception exception) { Debug.LogException(exception); if (failure == null) failure = exception; frames.Clear(); }
+        }
+        if (EditorApplication.isPlayingOrWillChangePlaymode || frames.Count > 0)
+        {
+            if (EditorApplication.timeSinceStartup - cleanupStarted <= 30) return;
+            Debug.LogError("[GuidancePlay1116] result=Failed reason=native-Play-exit-pending ownerSceneRestoreDeferred=1");
+            EditorApplication.update -= Tick; completion.TrySetResult(1); return;
+        }
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating) return;
+        try
+        {
+            if (!restoreAttempted)
+            {
+                restoreAttempted = true;
+                // Only the disclosed temporary empty test scene may be discarded.
+                // Original owner scenes were all clean and remain on disk unchanged.
+                if (temporary.IsValid() && temporary.isLoaded && SceneManager.sceneCount != 1)
+                    throw new InvalidOperationException("Unexpected extra loaded scene; preserve it instead of restoring over owner work.");
+                EditorSceneManager.RestoreSceneManagerSetup(originalSetup);
+            }
+            string restored = Census();
+            bool exact = originalCensus == restored;
+            System.IO.File.WriteAllText(Evidence, "{\"pre\":" + originalCensus + ",\"post\":" + restored + ",\"exactSceneCensus\":" + (exact ? "true" : "false") + "}");
+            if (!exact) throw new InvalidOperationException("Native scene paths/order/load/active/dirty/roots/settings did not restore exactly.");
+            int count = Resources.FindObjectsOfTypeAll<Canvas>().Count(c => c != null && c.gameObject.scene.IsValid() && c.name == "AriaGuidanceOverlay");
+            if (count != 0) throw new InvalidOperationException("Persistent guidance overlay after actual Play exit: " + count);
+            Debug.Log("[GuidancePlay1116] result=" + (failure == null ? "Passed" : "Failed") + " actualNativePlay=1 unchangedCompiledTest=1 nestedEnumeratorComplete=1 sceneSetupExact=1 ownerDirtyPreserved=1 configWrites=0 remainingOverlay=0");
+        }
+        catch (Exception exception) { Debug.LogException(exception); if (failure == null) failure = exception; }
+        finally { EditorApplication.update -= Tick; completion.TrySetResult(failure == null ? 0 : 1); }
+    }
+    [Serializable] private sealed class SceneRow { public string path, name; public bool loaded, active, dirty; public int roots; }
+    [Serializable] private sealed class SetupRow { public string path; public bool loaded, active; }
+    [Serializable] private sealed class SceneCensus { public SceneRow[] scenes; public SetupRow[] setup; public bool optionsEnabled; public int options; }
+    private static string Census()
+    {
+        var rows = new SceneRow[SceneManager.sceneCount]; var active = SceneManager.GetActiveScene();
+        for (int i = 0; i < rows.Length; i++) { var s = SceneManager.GetSceneAt(i); rows[i] = new SceneRow { path=s.path,name=s.name,loaded=s.isLoaded,active=s==active,dirty=s.isDirty,roots=s.rootCount }; }
+        return JsonUtility.ToJson(new SceneCensus { scenes=rows, setup=EditorSceneManager.GetSceneManagerSetup().Select(s => new SetupRow { path=s.path,loaded=s.isLoaded,active=s.isActive }).ToArray(),optionsEnabled=EditorSettings.enterPlayModeOptionsEnabled,options=(int)EditorSettings.enterPlayModeOptions });
+    }
+}

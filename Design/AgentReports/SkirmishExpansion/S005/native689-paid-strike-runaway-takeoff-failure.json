@@ -1,0 +1,54 @@
+{
+  "run": "native689",
+  "result": "Failed",
+  "sourceHash": "8a76d72d08cef9a3f88b2ac02ea9cd399cf82cd2c71c9ed7ac58561677883423",
+  "wrapperExit": 2,
+  "sourceUnchanged": true,
+  "preManifest": "final-689-two-factory-four-oil-two-fuel-air-pre-source-manifest.json",
+  "postManifest": "final-689-off-map-takeoff-failure-post-source-manifest.json",
+  "log": "native-689-two-factory-four-oil-two-fuel-strike-cycle-en.log",
+  "trace": "s005-aria-live-155926-en-54de94484ca1459bb69433f11c4f79ac.jsonl",
+  "contactAudit": "native689-touch-contact-audit.json",
+  "readOnlyCliAttempts": 2,
+  "readOnlyCliSuccessfulObservations": 1,
+  "diagnosticSerializationFailures": 1,
+  "observed": {
+    "paidAircraft": "Strike",
+    "cost": 520,
+    "health": 300,
+    "Airborne": 0,
+    "TakeoffRolling": 1,
+    "HomeInitialized": 1,
+    "UsesRunway": 1,
+    "takeoff": [
+      832.3225708,
+      0.79416418,
+      774.6749878
+    ],
+    "landing": [
+      832.3573608,
+      0.79416418,
+      564.5650024
+    ],
+    "positionAtDiagnostic": [
+      835.5973511,
+      0.79416418,
+      -2259.5581055
+    ],
+    "visibleOrderGoalCell": [
+      1402,
+      635
+    ],
+    "nativeFire": false
+  },
+  "classification": "Native runway roll misses liftoff arrival and continues off map; regression and shared flight fix required",
+  "completeMatchCertified": false,
+  "countedWin": false,
+  "playerReady": false,
+  "markers": [
+    "[S005AirportPlacement] result=Passed input=Touch nativeProducer=1 nativeActor=1 originalObjective=0 normalBudget=1 campaignSourceModified=0 gestures=92 commands=14 receiptViolations=0 fixedWingLifecycle=Pending bilateralCapacity=Pending completeMatch=NotClaimed",
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 receipt=1005",
+    "[S004ManualNative] result=Failed outcome=Draw seconds=1080.043 reason=playerSaveResume=Player Save/Resume timed out at step=0 input=Touch ariaStarted=0 actions=0 attackReceipts=0",
+    "[SkirmishValidationExit] result=Requested code=2"
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "scenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+  "before": "77-89-9A-39-86-FE-CB-F8-37-EC-3E-3D-A7-66-18-15-60-4B-CD-70-8A-5D-C9-38-F3-FA-C5-89-10-29-BE-40",
+  "physicalSourceModified": false,
+  "roots": [
+    {
+      "name": "Grid",
+      "branches": []
+    },
+    {
+      "name": "InitialUnitsSpawnerAuthoring",
+      "branches": []
+    },
+    {
+      "name": "AuthoredOperationMapEntityPresentation",
+      "branches": [
+        {
+          "path": "AuthoredOperationMapEntityPresentation/RenderOnly",
+          "renderers": 10658,
+          "materialRows": 10842
+        },
+        {
+          "path": "AuthoredOperationMapEntityPresentation/GameplayBuildings",
+          "renderers": 1488,
+          "materialRows": 1584
+        },
+        {
+          "path": "AuthoredOperationMapEntityPresentation/GameplayVehicles",
+          "renderers": 340,
+          "materialRows": 340
+        }
+      ]
+    },
+    {
+      "name": "OperationMapRenderVirtualization",
+      "branches": []
+    },
+    {
+      "name": "Generated_GiantDenseMiddleEasternCity_EntityPresentation",
+      "branches": [
+        {
+          "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly",
+          "renderers": 98597,
+          "materialRows": 98597
+        },
+        {
+          "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/GameplayBuildings",
+          "renderers": 12622,
+          "materialRows": 12781
+        }
+      ]
+    },
+    {
+      "name": "CityCrossroads_NorthCourtyard",
+      "branches": [
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_01",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_02",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_03",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_04",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_05",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_06",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_07",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_08",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_09",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Palm_10",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Rock_11",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Rock_12",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Rock_13",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Rock_14",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Rock_15",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/Rock_16",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_17",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_18",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_19",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_20",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_21",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_22",
+          "renderers": 1,
+          "materialRows": 1
+        },
+        {
+          "path": "CityCrossroads_NorthCourtyard/LowRuinedWall_23",
+          "renderers": 1,
+          "materialRows": 1
+        }
+      ]
+    }
+  ]
+}

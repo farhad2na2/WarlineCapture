@@ -1,0 +1,12 @@
+{
+    "map": "AshLinePort",
+    "beforeHash": "56c926cb5e1d180ca199c2c814c6f5e7968bfd55f6003b998981830aecd3296b",
+    "afterHash": "72d07da2877a3c942c9b4df62a1f23e54b537be17351623d9f7c3e7ec935f5bf",
+    "protectedHash": "ddef250773e6d93c2f2492e5b69fbfe6eeee5976b9f97176cb5c9a1e2fb91c70",
+    "bridges": 2,
+    "addedMaterialRows": 8,
+    "measurements": [
+        "bridge=0 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Crate_Stack_01",
+        "bridge=1 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Crate_Wood_01"
+    ]
+}

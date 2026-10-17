@@ -1,0 +1,208 @@
+{
+  "result": "Failed",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1258-ground-carrier-post-source-manifest.json",
+  "preflightManifest": "final-1274-passive-performance-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1274-passive-performance-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1274-passive-performance-post-source-manifest.json",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "log": "native-1274-passive-pressure-performance-fa-seed104734.log",
+  "logSha256": "11d92d449cbe6d8c68c270f9ab57e4bc449ccab692833511b645db7d050c944c",
+  "fixtureSha256": "d0ca4430483eb7011fa409a392b8b351db5315ca182fe2824c462c1feb39849a",
+  "runnerSha256": "a7d652f13966ed1bc2caefa0a5f4a5c14c228bd14f053fad8325bff855276a37",
+  "dryCompileProof": "compile1274-passive-v2-reviewed-dry-run.json",
+  "dryCompileProofSha256": "455206f5aebdf3389f37c18d8baff9ea729c6be04e86a1281114cb0815b3d347",
+  "tracePath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-a22e9e77c3d7444f86091a411446051c.jsonl",
+  "observation": "native1274-passive-pressure-observation.jsonl",
+  "observationSha256": "2f7990b7add459d2e02ee309993c5dbeac7950e826d83b9dac600d0e9dac810e",
+  "performanceRaw": "native1274-passive-performance.jsonl",
+  "performanceRawSha256": "01fc580900a949093e13c18e0a1d3021290c6b746d3069ee9f8270c17810a9ad",
+  "pressureEvidence": {
+    "features": {
+      "nativeInitialEnemyActorsMoved": true,
+      "paidEnemyReservationsObserved": [
+        1001,
+        1002,
+        1003,
+        1004,
+        1005
+      ],
+      "nativePaidEnemyDeliveredReservationsObserved": [
+        1001,
+        1002,
+        1003,
+        1004,
+        1005
+      ],
+      "paidIntentStatesObserved": [
+        "AcceptedWaiting",
+        "Delivered",
+        "RequestPending"
+      ],
+      "enemyDutiesObserved": [
+        "Escort",
+        "HomeReserve",
+        "MainAssault",
+        "Recover",
+        "Scout"
+      ],
+      "lastObservedPlayerUnitsLost": 12,
+      "lastObservedEnemyUnitsLost": 14,
+      "playerBaseMinimumObservedHp": 0,
+      "nativeElapsedAtDefeat": 568.171630859375,
+      "paidReplacementScoutDefenseRecoveryQualified": false
+    },
+    "contactAudits": {
+      "externalPassive": {
+        "recordedContacts": 1,
+        "completedContacts": 1,
+        "phases": {
+          "PassivePressure": 1
+        },
+        "terminalCancellations": [],
+        "errors": [],
+        "strictRecordedContacts": true,
+        "strictAllContactsEnded": true,
+        "nativeMenuContactsRecorded": false,
+        "terminalContactsRecorded": false,
+        "completeMatchCertified": false,
+        "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+      },
+      "inheritedPublicNormal": {
+        "recordedContacts": 12,
+        "completedContacts": 12,
+        "phases": {
+          "Menu": 11,
+          "Manual": 1
+        },
+        "terminalCancellations": [],
+        "errors": [],
+        "strictRecordedContacts": true,
+        "strictAllContactsEnded": true,
+        "nativeMenuContactsRecorded": true,
+        "terminalContactsRecorded": false,
+        "completeMatchCertified": false,
+        "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+      }
+    },
+    "attempt": "expanded-s005-104734-744c591c66cf4b339957960c09ea9949",
+    "tracePath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-a22e9e77c3d7444f86091a411446051c.jsonl"
+  },
+  "naturalPaidEscortEvidence": {
+    "scope": "Same-attempt natural paid enemy delivery and original Car/APC Escort Move/body trajectories; sampled native net-goal progress reset guard",
+    "paidDeliveredReservations": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005
+    ],
+    "escortActors": [
+      {
+        "role": "Car",
+        "groups": [
+          9
+        ],
+        "samples": 535,
+        "maximumDisplacement": 239.89315795898438,
+        "acceptedEscortRows": 248
+      },
+      {
+        "role": "ApcArmored",
+        "groups": [
+          10
+        ],
+        "samples": 535,
+        "maximumDisplacement": 451.0128479003906,
+        "acceptedEscortRows": 39
+      }
+    ],
+    "sameGoalChecks": 1346,
+    "netGoalResetChecks": 127,
+    "allEnemyPlanStepsCertified": false,
+    "combatEffectAttributed": false
+  },
+  "editorPerformanceEvidence": {
+    "measurementQualified": true,
+    "scope": "InstrumentedEditorRenderedCallbackIntervalsNotDeviceCertification",
+    "deviceCertified": false,
+    "androidCertified": false,
+    "performanceBudgetPassed": false,
+    "renderGpuTimeMeasured": false,
+    "expectedScale": "Actual passive Standard/Regular; no injected population saturation",
+    "sampleCount": 5742,
+    "measuredActiveFrames": 5458,
+    "retainedFrameGaps": 0,
+    "missingFramesNeverImputed": true,
+    "measuredFrameIntervalMs": {
+      "available": true,
+      "count": 5458,
+      "average": 102.01917407838317,
+      "p95": 202.11133360862732,
+      "p99": 295.85251212120056,
+      "max": 2008.9058876037598,
+      "percentileMethod": "NearestRank"
+    },
+    "measuredWallIntervalMs": {
+      "available": true,
+      "count": 5458,
+      "average": 102.00999198424336,
+      "p95": 203.2542500001,
+      "p99": 299.62075000003097,
+      "max": 1976.2570839993714,
+      "percentileMethod": "NearestRank"
+    },
+    "nativeFrameGcAllocatedBytesInclusive": {
+      "available": true,
+      "count": 5458,
+      "average": 405494.79223158665,
+      "p95": 1839530,
+      "p99": 2015677,
+      "max": 4952337,
+      "percentileMethod": "NearestRank"
+    },
+    "ecsSimulationMilliseconds": {
+      "available": true,
+      "count": 5458,
+      "average": 40.05164781879818,
+      "p95": 79.196,
+      "p99": 95.664958,
+      "max": 379.772917,
+      "percentileMethod": "NearestRank"
+    },
+    "unavailableGcMeasuredFrames": 0,
+    "unavailableEcsMeasuredFrames": 0,
+    "memoryPeaks": {
+      "managedBytes": 3932332032,
+      "nativeAllocatedBytes": 7496184564,
+      "nativeReservedBytes": 8875212800,
+      "graphicsBytes": 2906164320
+    },
+    "hardware": {
+      "unityVersion": "6000.5.2f1",
+      "operatingSystem": "Mac OS X 26.6.2",
+      "gpu": "Apple M5",
+      "width": 1885,
+      "height": 932,
+      "quality": 0,
+      "msaa": 0
+    },
+    "recorderAlignment": "Last completed profiler sample; observation frame retained; no exact event-frame/GPU attribution",
+    "observerOverheadIncluded": true
+  },
+  "errors": [
+    "Missing native marker [SkirmishValidationExit] result=Requested code=0"
+  ],
+  "normalResourcesPosesDamageVisibilityClocksOutcomeInjected": false,
+  "enemyAIOrNativeDefensiveCombatDisabled": false,
+  "qaOneWinWatcherAndManualAutoCombatCoordinated": true,
+  "nativePassiveDefeatCertified": false,
+  "countedPlayerWins": 0,
+  "allEnemyPlanStepsCertified": false,
+  "normalMissionWinCertified": false,
+  "deviceCertified": false,
+  "performanceBudgetPassed": false,
+  "playerReady": false
+}

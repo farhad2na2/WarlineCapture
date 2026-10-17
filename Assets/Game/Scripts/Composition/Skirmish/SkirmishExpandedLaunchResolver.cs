@@ -64,7 +64,7 @@ namespace Game.Composition
                 IsCustom = false,
                 IsLegacy = false
             };
-            return SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup, registry);
+            return SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup, registry, definition);
         }
     }
 }

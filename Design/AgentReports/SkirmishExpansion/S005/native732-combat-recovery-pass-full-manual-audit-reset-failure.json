@@ -1,0 +1,19 @@
+{
+  "result": "NotAcceptedFullMission",
+  "sourceHash": "b3d184967db510b1e821713b4850ed46d321419dbe301e082320a8e970ca5ffb",
+  "wrapperExit": 2,
+  "wrapperExitArtifact": "native-732-current-manual-en-seed155926.log.exit",
+  "log": "native-732-current-manual-en-seed155926.log",
+  "combatRecoveryScopedResult": "Passed",
+  "savedElapsed": 226.7849,
+  "sameAttempt": true,
+  "paidApcReceiptPreserved": true,
+  "oldPhysicalGone": 4971,
+  "preSaveNativeAttackReceipts": 12,
+  "recoveryReceiptViolations": 0,
+  "nativeResumedOutcome": "Victory235.8595",
+  "frozenResultMainMenu": "Passed",
+  "failure": "Fresh post-Continue manual audit was reset; preserved pre-save attack orders won before another native attack receipt. Full manual verdict rejected (measured=0, commands=0, attackReceipts=0).",
+  "sourceUnchanged": true,
+  "playerReady": false
+}

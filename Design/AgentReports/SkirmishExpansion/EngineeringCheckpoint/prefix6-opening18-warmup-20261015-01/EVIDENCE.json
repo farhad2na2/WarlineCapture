@@ -1,0 +1,86 @@
+{
+  "scope": "EngineeringControlsOnly",
+  "actualWrapperExit": 0,
+  "requiredMarkers": [
+    "[PilotStaticPlacementPrefixControls] result=Passed controls=6 rectangleComparisons=900 nativeSearchParity=1 sourceFitCertified=0",
+    "[S005OpeningPlacementWitnessPreparation] result=Passed original=11 measured=3 witness=4 warmup=1 gameplayCertified=0",
+    "[PilotStaticPrefixAndOpeningWitnessPreparation] result=Passed prefix=6 opening=18 warmup=1 gameplayCertified=0",
+    "[S005SceneArtifactWarmup] result=Passed scenes=2 keySource=NativeEditorSceneSystem defaultWorldPreserved=1 playStarted=0 missionCertified=0 snapshotAfterWrapperExit=1",
+    "[UnityInvoke] ExitCode: 0"
+  ],
+  "prefixControls": 6,
+  "rectangleComparisons": 900,
+  "openingControls": 18,
+  "scenesWarmed": 2,
+  "missionQualified": false,
+  "cameraAccepted": false,
+  "wholeCollectorSpeedupMeasured": false,
+  "archiveSha256": "03502f0323792018f668a244e7a3db691ce634b0b0dab0808dd4f4b23965eda9",
+  "members": [
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/checked-child-exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/IMPORT_RECEIPT.json",
+      "sha256": "22b6e94460e7df2c31c461cd49d04795fee547e9dbd6a980953b08d4f699188b",
+      "bytes": 956
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/post-wrapper-source-and-dll.json",
+      "sha256": "8a156d41d79d3507458293e5ac8a8bf8027b7bccb7e20080e4c2ecc42515bf1d",
+      "bytes": 9149182
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/resolver.log",
+      "sha256": "e77d2d247cbe2970785c2307542d9f9f7d28a050af58bfa62b06abe191cd59a2",
+      "bytes": 665
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/run-checked.ps1",
+      "sha256": "5b3bb8ae22061cfaa224dac57c0aed7d099f9eddc7acdab8a9dff7efacca3175",
+      "bytes": 1714
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/scene-warmup.json",
+      "sha256": "1f93389c7283bac871240434388a53ef726eca5891c92e138eeea7772d31f83d",
+      "bytes": 1691
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/unity.log",
+      "sha256": "b0b0e82c925ed845a37c9e3ec4c35400162b1362bc2a92939194175ad7eccf93",
+      "bytes": 246262
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/OpeningPlacementWitness/20261015-01-preparation/unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/manifest.json",
+      "sha256": "1bf99e683326f610e9e58dd16a3265e7380f02187c6784a00e4dd738ef11cfbf",
+      "bytes": 1685
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/READY.json",
+      "sha256": "c6928ca835bd8c07cde059827abf44973e84d20afdb459c820e4f94aa0456bcc",
+      "bytes": 1289
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/pilot-prefix-oorcs3bu/result.json",
+      "sha256": "7b3921270bd488d6fe31711416b72c1321640a43b1bcc988ad0084cd4aad60d8",
+      "bytes": 293069
+    }
+  ]
+}

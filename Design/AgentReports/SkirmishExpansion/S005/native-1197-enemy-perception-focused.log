@@ -1,0 +1,38 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=EnemyPerceptionFocused1197.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_d79b3ce1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishEnemyDecisionRulesTests] result=Passed checks=16
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishEnemyDecisionRulesTests:RunFocusedValidation () (at /private/tmp/s005-enemy-commander-v1/EnemyPerceptionFocused1197.cs:300)
+EnemyPerceptionFocused1197:Run () (at /private/tmp/s005-enemy-commander-v1/EnemyPerceptionFocused1197.cs:399)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_d79b3ce1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishEnemyPerceptionTests] result=Passed cases=4
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishEnemyPerceptionTests:RunFocusedValidation () (at /private/tmp/s005-enemy-commander-v1/EnemyPerceptionFocused1197.cs:393)
+EnemyPerceptionFocused1197:Run () (at /private/tmp/s005-enemy-commander-v1/EnemyPerceptionFocused1197.cs:399)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_d79b3ce1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[EnemyPerceptionFocused1197] result=Passed scope=IsolatedDecisionPerceptionAllocation
+UnityEngine.Debug:Log (object)
+EnemyPerceptionFocused1197:Run () (at /private/tmp/s005-enemy-commander-v1/EnemyPerceptionFocused1197.cs:399)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_d79b3ce1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=EnemyPerceptionFocused1197.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_d79b3ce1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

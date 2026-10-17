@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "Game.UI.Runtime.UiShellRuntimeGateway.TryReadExpandedSquadPage(out var p); Game.UI.Runtime.UiShellRuntimeGateway.TryReadSkirmish(out var m); return new {clock=m.Clock,page=p};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "clock": "TIME LEFT  7:41",
+        "page": {
+          "Expanded": true,
+          "PageIndex": 1,
+          "PageCount": 2,
+          "TotalGroups": 7,
+          "SelectedGroups": 0,
+          "SelectedOffPage": 0,
+          "RosterRevision": 78070249,
+          "PreviousPage": true,
+          "AssaultMask": 2,
+          "SelectedMask": 0,
+          "StructureMask": 2,
+          "AttackOrderMask": 0,
+          "AirMask": 0,
+          "NextPage": false
+        }
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

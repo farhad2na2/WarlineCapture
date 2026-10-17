@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "status": "frozen external test-only compile correction, native validation pending",
+  "sources": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs",
+      "baseSha256": "7a9ff529b768a24e0cc2bd0299579e426d54fd668c6d778528f82d8cf59106be",
+      "stagedSha256": "70cbdde7f4911eb427b9542e0aacfba5103d8feb601fc82be69ddb568b0521ad",
+      "stagedPath": "/private/tmp/s005-enemy-capabilities-test-compile-v2/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs"
+    }
+  ],
+  "patchSha256": "ddabb12cea4163cbaf6c1d34198d67d5d2a2d5d2df664e642520b9aa1d6f4c05",
+  "constructorSourceSha256": "4ba9d3280d1397af32e3aeeb269a874c177f5806e360f57db91a84787b24159e",
+  "requiredMarker": "[SkirmishEnemyCapabilityTests] result=Passed cases=23",
+  "testEntry": "Game.Tests.Editor.SkirmishEnemyCapabilityTests.RunFocusedValidation",
+  "scope": "Same original isolated policy values and23 gates; reflected exact internal14-parameter constructor; four assigned DynamicBuffer locals, no buffer use after structural mutation; no production changes",
+  "nativeExecuted": false
+}

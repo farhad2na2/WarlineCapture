@@ -268,7 +268,10 @@ namespace Game.Editor
                 image.Apply();
                 RenderTexture.active = previous;
                 if (string.Equals(state, "theater", StringComparison.OrdinalIgnoreCase))
+                {
                     GuardTheatre(() => RejectDistrictPainting(image, canvasRect, instance));
+                    GuardTheatre(() => RejectZoneNameContrast(image, canvasRect, instance));
+                }
                 File.WriteAllBytes(path, image.EncodeToPNG());
                 UnityEngine.Object.DestroyImmediate(image);
             }
@@ -963,6 +966,7 @@ namespace Game.Editor
             }
 
             GuardTheatre(() => RejectDistrictHalo(regions, mapIds, locale));
+            GuardTheatre(() => RejectDistrictHexAspect(regions, mapIds, locale));
             GuardTheatre(() => RejectZoneProgressMatchesCard(root, view, locale));
             GuardTheatre(() => RejectStripMatchesZoneTotals(root, view, locale));
             GuardTheatre(() => RejectMirroredTheatreChrome(root, locale));
@@ -995,6 +999,7 @@ namespace Game.Editor
             GuardTheatre(() => AppendMeasuredTheatreViolations(view, regions, locale, mapIds));
             GuardTheatre(() => RejectZoomPillOverCards(regions, locale, selectedMapId));
             GuardTheatre(() => RejectZoomPillOverHexes(regions, locale, selectedMapId));
+            GuardTheatre(() => RejectZoomCueOverSelectedName(regions, locale, selectedMapId));
             GuardTheatre(() => RejectLatinNameInsideCard(regions, locale));
             GuardTheatre(() => RejectStripMedalOverlap(root, locale));
         }
@@ -1057,8 +1062,8 @@ namespace Game.Editor
             Transform panel = FindNamed(regions, "TheatreDetailPanel");
             if (panel is RectTransform panelRect && panelRect.gameObject.activeInHierarchy)
                 detail = PlateBox(space, panelRect);
-            else
-                detail = TheatreSeatGeometry.DetailRect(space.rect.width, space.rect.height, fa, space.rect.width >= 600f);
+            else if (TheatreSeatGeometry.TheatreDetailReserved)
+                detail = TheatreSeatGeometry.DetailRect(space.rect.width, space.rect.height, fa, true);
 
             var violations = new List<string>();
             TheatreSeatGeometry.CollectViolations(
@@ -1348,27 +1353,31 @@ namespace Game.Editor
 
         private static void RejectCueNearSelectedPin(QuickCustomScreenView view, Transform regions, RectTransform cue, string locale)
         {
-            if (view == null || regions == null || cue == null || view.LibraryViewModel == null)
+            if (view == null || regions is not RectTransform space || cue == null || view.LibraryViewModel == null)
                 return;
             string mapId = view.LibraryViewModel.Theater.SelectedMapId;
             if (string.IsNullOrEmpty(mapId))
                 return;
-            Transform pinNode = FindNamed(regions, "ZonePin_" + mapId);
-            Transform outlineNode = FindNamed(regions, "ZoneOutline_" + mapId);
-            if (pinNode is not RectTransform pin)
+            if (FindNamed(regions, "ZonePin_" + mapId) is not RectTransform pin)
                 return;
-            Vector2 cueCentre = WorldBounds(cue).center;
-            Vector2 pinCentre = WorldBounds(pin).center;
-            const float near = 160f;
-            if (Vector2.Distance(cueCentre, pinCentre) <= near)
-                return;
-            Vector2[] shape = outlineNode is RectTransform outline ? OutlineWorldPoints(outline) : Array.Empty<Vector2>();
-            if (shape.Length >= 3 && PointInPolygon(cueCentre, shape))
+            TheatreSeatGeometry.Box cueBox = PlateBox(space, cue);
+            TheatreSeatGeometry.Box pinBox = PlateBox(space, pin);
+            TheatreSeatGeometry.Box cardBox = default;
+            if (FindNamed(regions, "ZoneCard_" + mapId) is RectTransform card)
+                cardBox = PlateBox(space, card);
+            float distance = TheatreSeatGeometry.CueAnchorDistance(cueBox, cardBox, pinBox);
+            Vector2[] shape = FindNamed(regions, "ZoneOutline_" + mapId) is RectTransform outline
+                ? PlateVectors(PlateShape(space, outline))
+                : Array.Empty<Vector2>();
+            var hex = new TheatreSeatGeometry.Vec2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+                hex[i] = new TheatreSeatGeometry.Vec2(shape[i].x, shape[i].y);
+            if (TheatreSeatGeometry.CueCountsAsNear(cueBox, cardBox, pinBox, hex))
                 return;
             throw new InvalidOperationException(
                 "Theatre zoom hint is far from the selected pin locale=" + locale +
                 " map=" + mapId +
-                " distance=" + Vector2.Distance(cueCentre, pinCentre).ToString("0") + ".");
+                " distance=" + distance.ToString("0") + ".");
         }
 
         private static void RejectZoomHintOffDistrictEdges(GameObject root, Transform regions, string[] mapIds, string locale)
@@ -1460,11 +1469,18 @@ namespace Game.Editor
                     " area=" + polygon.FilledArea.ToString("0") + ". Expected a large district region.");
             }
 
-            if (polygon.color.a < 0.35f || polygon.color.a > 0.45f)
+            Color tint = polygon.color;
+            float maxChannel = Mathf.Max(tint.r, Mathf.Max(tint.g, tint.b));
+            float minChannel = Mathf.Min(tint.r, Mathf.Min(tint.g, tint.b));
+            float saturation = maxChannel <= 0.001f ? 0f : (maxChannel - minChannel) / maxChannel;
+            float luminance = tint.r * 0.299f + tint.g * 0.587f + tint.b * 0.114f;
+            if (saturation < 0.45f || luminance < 0.42f || luminance > 0.86f)
             {
                 throw new InvalidOperationException(
-                    "Theatre polygon fill for " + mapId + " is " + polygon.color.a.ToString("0.00") +
-                    " locale=" + locale + ". Expected about 0.40.");
+                    "Theatre polygon tint for " + mapId + " is flat locale=" + locale +
+                    " sat=" + saturation.ToString("0.00") +
+                    " lum=" + luminance.ToString("0.00") +
+                    ". Expected a deep saturated tint.");
             }
 
             bool stroke = false;
@@ -2216,19 +2232,26 @@ namespace Game.Editor
 
                 float height = Mathf.Max(1f, maxY - minY);
                 float measured = (maxX - minX) / height;
-                RectTransform frame = outline.parent as RectTransform;
+                // Hexes are authored on the map clip. The side column does not enter the ratio.
+                RectTransform plate = regions != null ? regions.parent as RectTransform : null;
+                if (plate == null || plate.name != "MapPreviewClip")
+                    plate = FindNamed(regions != null ? regions.root : null, "MapPreviewClip") as RectTransform;
                 float frameW = 0f;
                 float frameH = 0f;
-                if (frame != null)
-                {
-                    frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
-                    frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
-                }
-
-                if ((frameW < 2f || frameH < 2f) && regions is RectTransform plate)
+                if (plate != null)
                 {
                     frameW = plate.rect.width > 2f ? plate.rect.width : plate.sizeDelta.x;
                     frameH = plate.rect.height > 2f ? plate.rect.height : plate.sizeDelta.y;
+                }
+
+                if (frameW < 2f || frameH < 2f)
+                {
+                    RectTransform frame = outline.parent as RectTransform;
+                    if (frame != null)
+                    {
+                        frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
+                        frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
+                    }
                 }
 
                 float expected = V35HexAspect(mapIds[i], frameW, frameH);
@@ -2366,6 +2389,142 @@ namespace Game.Editor
                     "Theatre district " + worstId + " hides the painted map locale=" + locale +
                     " variance=" + worst.ToString("0.0") + ". Expected the painting to stay visible inside the tint.");
             }
+        }
+
+        private static void RejectZoneNameContrast(Texture2D image, RectTransform canvas, GameObject root)
+        {
+            if (image == null || canvas == null || root == null)
+                return;
+            Transform regions = FindNamed(root.transform, "LibraryRegions");
+            if (regions == null || !regions.gameObject.activeInHierarchy)
+                return;
+            Color32[] pixels = image.GetPixels32();
+            int width = image.width;
+            int height = image.height;
+            if (pixels == null || pixels.Length < width * height)
+                return;
+            string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
+            const float minimum = 4.5f;
+            string[] mapIds = SkirmishBattleLibraryArt.MapIds;
+            for (int i = 0; i < mapIds.Length; i++)
+            {
+                if (FindNamed(regions, "ZoneCard_" + mapIds[i]) is not RectTransform card || !card.gameObject.activeInHierarchy)
+                    continue;
+                if (card.Find("ZoneName") is not RectTransform nameRect || !nameRect.gameObject.activeInHierarchy)
+                    continue;
+                TMP_Text name = nameRect.GetComponent<TMP_Text>();
+                if (name == null)
+                    continue;
+                Rect ink = NameInkWorldRect(name, nameRect);
+                var ground = new List<float>();
+                var inkLuma = new List<float>();
+                SampleNameContrast(pixels, width, height, canvas, ink, ground, inkLuma);
+                if (ground.Count < 8 || inkLuma.Count < 4)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre zone name contrast could not be sampled locale=" + locale +
+                        " card=" + card.name + ".");
+                }
+
+                ground.Sort();
+                inkLuma.Sort();
+                float background = ground[ground.Count / 2];
+                float glyph = inkLuma[inkLuma.Count / 2];
+                float lighter = Mathf.Max(glyph, background);
+                float darker = Mathf.Min(glyph, background);
+                float ratio = (lighter + 0.05f) / (darker + 0.05f);
+                if (ratio + 0.01f < minimum)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre zone name contrast is low locale=" + locale +
+                        " card=" + card.name +
+                        " ratio=" + ratio.ToString("0.00") +
+                        ". Expected at least 4.5.");
+                }
+            }
+        }
+
+        private static void SampleNameContrast(
+            Color32[] pixels,
+            int width,
+            int height,
+            RectTransform canvas,
+            Rect ink,
+            List<float> ground,
+            List<float> inkLuma)
+        {
+            Vector3 minLocal = canvas.InverseTransformPoint(new Vector3(ink.xMin, ink.yMin, canvas.position.z));
+            Vector3 maxLocal = canvas.InverseTransformPoint(new Vector3(ink.xMax, ink.yMax, canvas.position.z));
+            int x0 = Mathf.FloorToInt(Mathf.Min(minLocal.x, maxLocal.x) + width * 0.5f);
+            int x1 = Mathf.CeilToInt(Mathf.Max(minLocal.x, maxLocal.x) + width * 0.5f);
+            int y0 = Mathf.FloorToInt(Mathf.Min(minLocal.y, maxLocal.y) + height * 0.5f);
+            int y1 = Mathf.CeilToInt(Mathf.Max(minLocal.y, maxLocal.y) + height * 0.5f);
+            x0 = Mathf.Clamp(x0, 0, width - 1);
+            x1 = Mathf.Clamp(x1, 0, width - 1);
+            y0 = Mathf.Clamp(y0, 0, height - 1);
+            y1 = Mathf.Clamp(y1, 0, height - 1);
+            for (int y = y0; y <= y1; y += 2)
+            {
+                int row = y * width;
+                for (int x = x0; x <= x1; x += 2)
+                {
+                    float luma = RelativeLuminance(pixels[row + x]);
+                    if (luma >= 0.82f)
+                        inkLuma.Add(luma);
+                    else
+                        ground.Add(luma);
+                }
+            }
+        }
+
+        private static float RelativeLuminance(Color32 pixel)
+        {
+            float r = SrgbChannel(pixel.r / 255f);
+            float g = SrgbChannel(pixel.g / 255f);
+            float b = SrgbChannel(pixel.b / 255f);
+            return 0.2126f * r + 0.7152f * g + 0.0722f * b;
+        }
+
+        private static float SrgbChannel(float channel)
+        {
+            return channel <= 0.04045f
+                ? channel / 12.92f
+                : Mathf.Pow((channel + 0.055f) / 1.055f, 2.4f);
+        }
+
+        private static Rect NameInkWorldRect(TMP_Text name, RectTransform fallback)
+        {
+            if (name != null)
+            {
+                name.ForceMeshUpdate();
+                if (name.textInfo != null && name.textInfo.characterCount > 0)
+                {
+                    float minX = float.PositiveInfinity;
+                    float minY = float.PositiveInfinity;
+                    float maxX = float.NegativeInfinity;
+                    float maxY = float.NegativeInfinity;
+                    bool any = false;
+                    int count = name.textInfo.characterCount;
+                    for (int i = 0; i < count; i++)
+                    {
+                        TMP_CharacterInfo info = name.textInfo.characterInfo[i];
+                        if (!info.isVisible)
+                            continue;
+                        any = true;
+                        Vector3 bottomLeft = name.transform.TransformPoint(info.bottomLeft);
+                        Vector3 topRight = name.transform.TransformPoint(info.topRight);
+                        minX = Mathf.Min(minX, bottomLeft.x, topRight.x);
+                        maxX = Mathf.Max(maxX, bottomLeft.x, topRight.x);
+                        minY = Mathf.Min(minY, bottomLeft.y, topRight.y);
+                        maxY = Mathf.Max(maxY, bottomLeft.y, topRight.y);
+                    }
+
+                    if (any)
+                        return Rect.MinMaxRect(minX, minY, maxX, maxY);
+                }
+            }
+
+            return fallback != null ? WorldBounds(fallback) : default;
         }
 
         private static void CollectBlockers(Transform regions, string prefix, List<Rect> blockers)
@@ -2831,6 +2990,49 @@ namespace Game.Editor
             }
         }
 
+        private static void RejectZoomCueOverSelectedName(Transform regions, string locale, string selectedMapId)
+        {
+            if (regions == null || string.IsNullOrEmpty(selectedMapId))
+                return;
+            RectTransform pill = FindNamed(regions, "CuePlate") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                pill = FindNamed(regions, "ZoomCue") as RectTransform;
+            if (pill == null || !pill.gameObject.activeInHierarchy)
+                return;
+            if (FindNamed(regions, "ZoneCard_" + selectedMapId) is not RectTransform card || !card.gameObject.activeInHierarchy)
+                return;
+            if (card.Find("ZoneName") is not RectTransform name || !name.gameObject.activeInHierarchy)
+                return;
+            TMP_Text nameText = name.GetComponent<TMP_Text>();
+            Rect ink = NameInkWorldRect(nameText, name);
+            Rect cue = WorldBounds(pill);
+            if (ink.width < 1f || ink.height < 1f || cue.width < 1f || cue.height < 1f)
+                return;
+            // 6px around the ink on every side. A pill beside the title fails even when
+            // the two rects do not share an x range.
+            const float clearance = 6f;
+            float gapX = AxisSeparation(cue.xMin, cue.xMax, ink.xMin, ink.xMax);
+            float gapY = AxisSeparation(cue.yMin, cue.yMax, ink.yMin, ink.yMax);
+            float gap = Mathf.Max(gapX, gapY);
+            if (gap + 0.05f >= clearance)
+                return;
+            throw new InvalidOperationException(
+                "Theatre zoom hint crowds the zone name locale=" + locale +
+                " card=" + card.name +
+                " gap=" + gap.ToString("0.0") +
+                ". Expected at least 6px from the name ink.");
+        }
+
+        /// <summary>Positive when the spans are apart, zero when they overlap. The 2D gap is the greater axis.</summary>
+        private static float AxisSeparation(float a0, float a1, float b0, float b1)
+        {
+            if (a1 <= b0)
+                return b0 - a1;
+            if (b1 <= a0)
+                return a0 - b1;
+            return 0f;
+        }
+
         private static void RejectZoomPillOverHexes(Transform regions, string locale, string selectedMapId)
         {
             if (regions is not RectTransform space)
@@ -2864,7 +3066,6 @@ namespace Game.Editor
             {
                 TheatreSeatGeometry.Box box = PlateBox(space, pills[p]);
                 bool contained = PlateBoxInside(box, selectedBox);
-                bool attached = contained || PlateBoxesOverlap(box, selectedBox);
                 if (contained)
                     continue;
                 int selectedIndex = -1;
@@ -2882,14 +3083,31 @@ namespace Game.Editor
                     continue;
                 for (int i = 0; i < mapIds.Length; i++)
                 {
-                    if (attached && i == selectedIndex)
+                    if (shapes[i] == null || shapes[i].Length < 3)
                         continue;
-                    if (shapes[i] == null || shapes[i].Length < 3 || !WorldRectHitsPolygon(inflated, shapes[i]))
+                    bool hits = i == selectedIndex
+                        ? StrokeHitsRect(shapes[i], inflated)
+                        : WorldRectHitsPolygon(inflated, shapes[i]);
+                    if (!hits)
                         continue;
                     throw new InvalidOperationException(
                         "Theatre zoom pill overlaps a zone hex locale=" + locale + " district=" + mapIds[i] + ".");
                 }
             }
+        }
+
+        private static bool StrokeHitsRect(Vector2[] shape, Rect rect)
+        {
+            if (shape == null || shape.Length < 3)
+                return false;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                Vector2 next = shape[(i + 1) % shape.Length];
+                if (SegmentHitsRect(shape[i], next, rect))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool PlateBoxesOverlap(TheatreSeatGeometry.Box left, TheatreSeatGeometry.Box right)

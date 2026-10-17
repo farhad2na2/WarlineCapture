@@ -1,0 +1,142 @@
+using System;
+using Game.Components;
+using Game.Rendering;
+using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+
+public sealed class OperationMapRenderOverflowGuardRecoveryTests
+{
+    public static void RunFocusedValidation()
+    {
+        var tests = new OperationMapRenderOverflowGuardRecoveryTests();
+        tests.RealOverflowThenSmallerCamera_RebuildsAndClearsOnlyThroughAssignment();
+        tests.UnchangedOverflowCamera_DoesNotRetryEveryPublication();
+        tests.HealthyGuardStillCachesSmallerCamera();
+        tests.InvalidEqualAndNoncontainedEnvelopesDoNotRequestRecovery();
+        Debug.Log("[OperationMapRenderOverflowGuardRecovery] result=Passed tests=4 syntheticNativeFixture=1 missionCertified=0");
+    }
+    [Test] public void RealOverflowThenSmallerCamera_RebuildsAndClearsOnlyThroughAssignment()
+    {
+        using var fixture = new Fixture(2);
+        fixture.Update(300, 1);
+        Assert.That(fixture.State.OverflowCount, Is.EqualTo(1), "Three real rows must overflow an unchanged two-slot bucket");
+        Assert.That(fixture.CommandVersion, Is.EqualTo(1));
+        var old = fixture.State;
+        fixture.Update(5, 2);
+        Assert.That(fixture.CommandVersion, Is.EqualTo(2), "Contained smaller camera must replace the overflowed wide guard");
+        Assert.That(fixture.State.RebuildCount, Is.EqualTo(2));
+        Assert.That(fixture.State.OverflowCount, Is.Zero, "Only the actual successful assignment may clear overflow");
+        Assert.That(fixture.State.ActiveSlotCount, Is.EqualTo(1));
+        Assert.That(fixture.Metrics.EnabledSlotCount, Is.EqualTo(1));
+        Assert.That(fixture.Metrics.HighestDeficit, Is.EqualTo(1), "Historical deficit must remain visible");
+        Assert.That(fixture.State.ActiveEnvelopeMax.x, Is.LessThan(old.ActiveEnvelopeMax.x));
+        Assert.That(fixture.Capacity, Is.EqualTo(2), "No pool budget changed");
+        for (uint version = 3; version <= 50; version++) fixture.Update(5, version);
+        Assert.That(fixture.CommandVersion, Is.EqualTo(2));
+        Assert.That(fixture.State.RebuildCount, Is.EqualTo(2), "Recovered identical envelope must remain cached");
+    }
+    [Test] public void UnchangedOverflowCamera_DoesNotRetryEveryPublication()
+    {
+        using var fixture = new Fixture(2);
+        fixture.Update(300, 1);
+        for (uint version = 2; version <= 100; version++) fixture.Update(300, version);
+        Assert.That(fixture.State.OverflowCount, Is.EqualTo(1));
+        Assert.That(fixture.CommandVersion, Is.EqualTo(1));
+        Assert.That(fixture.State.RebuildCount, Is.EqualTo(1), "An unfit identical view must fail without a retry hot loop");
+    }
+    [Test] public void HealthyGuardStillCachesSmallerCamera()
+    {
+        using var fixture = new Fixture(4);
+        fixture.Update(300, 1);
+        Assert.That(fixture.State.OverflowCount, Is.Zero);
+        fixture.Update(5, 2);
+        Assert.That(fixture.CommandVersion, Is.EqualTo(1));
+        Assert.That(fixture.State.RebuildCount, Is.EqualTo(1));
+        Assert.That(fixture.Capacity, Is.EqualTo(4));
+    }
+    [Test] public void InvalidEqualAndNoncontainedEnvelopesDoNotRequestRecovery()
+    {
+        var old = new OperationMapRenderCellEnvelope { Min = new int2(4, 6), Max = new int2(39, 24) };
+        var smaller = new OperationMapRenderCellEnvelope { Min = new int2(10, 10), Max = new int2(15, 15) };
+        Assert.IsTrue(OperationMapRenderOverflowGuardRecovery.ShouldReplace(136, old, smaller));
+        Assert.IsFalse(OperationMapRenderOverflowGuardRecovery.ShouldReplace(0, old, smaller));
+        Assert.IsFalse(OperationMapRenderOverflowGuardRecovery.ShouldReplace(136, old, old));
+        smaller.Max = new int2(40, 15);
+        Assert.IsFalse(OperationMapRenderOverflowGuardRecovery.ShouldReplace(136, old, smaller));
+        smaller.Min = new int2(50, 10);
+        Assert.IsFalse(OperationMapRenderOverflowGuardRecovery.ShouldReplace(136, old, smaller));
+    }
+
+    sealed class Fixture : IDisposable
+    {
+        readonly World world;
+        readonly SystemHandle system;
+        readonly Entity database, camera;
+        BlobAssetReference<OperationMapRenderDatabaseBlob> blob;
+        public Fixture(int capacity)
+        {
+            world = new World("Synthetic actual packed overflow/shrink fixture");
+            system = world.CreateSystem<OperationMapRenderVirtualizationInitializationSystem>();
+            var em = world.EntityManager;
+            var active = em.CreateEntity(typeof(ActiveOperationMapComponent));
+            em.SetComponentData(active, new ActiveOperationMapComponent { OperationMapId = new FixedString64Bytes("overflow-test"), Generation = 1 });
+            using (var builder = new BlobBuilder(Allocator.Temp))
+            {
+                ref var root = ref builder.ConstructRoot<OperationMapRenderDatabaseBlob>();
+                root.OperationMapId = new FixedString64Bytes("overflow-test"); root.ContentHash = new FixedString128Bytes("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+                root.SchemaVersion = 1; root.CellSize = 32; root.GridDimensions = new int2(12, 12);
+                var prototypes = builder.Allocate(ref root.Prototypes, 1); prototypes[0] = new OperationMapRenderPrototypeBlob { FirstPart = 0, PartCount = 1, EligibilityFlags = OperationMapRenderEligibilityFlags.Eligible };
+                var parts = builder.Allocate(ref root.Parts, 1); parts[0] = new OperationMapRenderPrototypePartBlob { PoolBucketIndex = 0 };
+                var placements = builder.Allocate(ref root.Placements, 3); var cells = builder.Allocate(ref root.Cells, 3); var indices = builder.Allocate(ref root.CellPlacementIndices, 3);
+                for (int i = 0; i < 3; i++)
+                {
+                    placements[i] = new OperationMapRenderPlacementBlob { PrototypeIndex = 0, CellIndex = i, StateOwnerIndex = -1, WorldMatrix = float4x4.identity };
+                    cells[i] = new OperationMapRenderCellBlob { Coordinate = new int2(i * 5, i * 5), FirstPlacementIndex = i, PlacementIndexCount = 1,
+                        WorldBounds = new OperationMapRenderBoundsBlob { Center = new float3(16 + i * 160, 0, 16 + i * 160), Extents = new float3(16, 0, 16) } };
+                    indices[i] = i;
+                }
+                var buckets = builder.Allocate(ref root.PoolBuckets, 1); buckets[0] = new OperationMapRenderPoolBucketBlob { FirstSlot = 0, Capacity = capacity,
+                    PeakRequiredCount = capacity, HeadroomCount = 0, PolicyBucket = OperationMapRenderPolicyBucket.OpaqueShadowsOff };
+                blob = builder.CreateBlobAssetReference<OperationMapRenderDatabaseBlob>(Allocator.Persistent);
+            }
+            database = em.CreateEntity(typeof(OperationMapRenderDatabaseComponent), typeof(OperationMapRenderPackedReadinessComponent),
+                typeof(OperationMapRenderVirtualizationStateComponent), typeof(OperationMapRenderVirtualizationMetricsComponent),
+                typeof(OperationMapRenderStateChangeSequenceComponent), typeof(OperationMapRenderStateSyncStateComponent), typeof(OperationMapRenderSlotCommandStateComponent));
+            em.SetComponentData(database, new OperationMapRenderDatabaseComponent { Blob = blob, ContentHash = blob.Value.ContentHash, SchemaVersion = 1 });
+            em.SetComponentData(database, new OperationMapRenderPackedReadinessComponent { ResidencyMode = (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool, ProxySlotCount = capacity });
+            em.SetComponentData(database, new OperationMapRenderStateSyncStateComponent { Initialized = 1, Revision = 1, StateOwnerCount = 0 });
+            em.AddBuffer<OperationMapRenderStateChangeComponent>(database); em.AddBuffer<OperationMapRenderCanonicalStateComponent>(database);
+            var commands = em.AddBuffer<OperationMapRenderSlotCommandComponent>(database);
+            for (int i = 0; i < capacity; i++)
+            {
+                commands.Add(new OperationMapRenderSlotCommandComponent { SlotIndex = i, LogicalRowIndex = -1, PlacementIndex = -1, PartIndex = -1, PoolBucketIndex = -1 });
+                var slot = em.CreateEntity(typeof(OperationMapRenderProxySlotComponent));
+                em.SetComponentData(slot, new OperationMapRenderProxySlotComponent { SlotIndex = i, PoolBucketIndex = 0, PlacementIndex = -1, PartIndex = -1 });
+            }
+            camera = em.CreateEntity(typeof(RuntimeCameraSnapshotComponent));
+        }
+        public OperationMapRenderVirtualizationStateComponent State => world.EntityManager.GetComponentData<OperationMapRenderVirtualizationStateComponent>(database);
+        public OperationMapRenderVirtualizationMetricsComponent Metrics => world.EntityManager.GetComponentData<OperationMapRenderVirtualizationMetricsComponent>(database);
+        public uint CommandVersion => world.EntityManager.GetComponentData<OperationMapRenderSlotCommandStateComponent>(database).Version;
+        public int Capacity => blob.Value.PoolBuckets[0].Capacity;
+        public void Update(float size, uint version)
+        {
+            var obj = new GameObject("Synthetic envelope projection camera");
+            try
+            {
+                var view = obj.AddComponent<Camera>(); view.transform.SetPositionAndRotation(new Vector3(16, 200, 16), Quaternion.Euler(90, 0, 0));
+                view.orthographic = true; view.orthographicSize = size; view.aspect = 1; view.nearClipPlane = .1f; view.farClipPlane = 1000;
+                world.EntityManager.SetComponentData(camera, new RuntimeCameraSnapshotComponent { IsValid = 1, PublicationVersion = version,
+                    Position = view.transform.position, Rotation = view.transform.rotation, Projection = Matrix(view.projectionMatrix),
+                    WorldToCamera = Matrix(view.worldToCameraMatrix), ViewProjection = Matrix(view.projectionMatrix * view.worldToCameraMatrix) });
+                system.Update(world.Unmanaged); world.EntityManager.CompleteAllTrackedJobs();
+            }
+            finally { UnityEngine.Object.DestroyImmediate(obj); }
+        }
+        static float4x4 Matrix(Matrix4x4 m) => new float4x4(new float4(m.m00, m.m10, m.m20, m.m30), new float4(m.m01, m.m11, m.m21, m.m31), new float4(m.m02, m.m12, m.m22, m.m32), new float4(m.m03, m.m13, m.m23, m.m33));
+        public void Dispose() { if (world.IsCreated) { world.DestroySystem(system); world.Dispose(); } if (blob.IsCreated) blob.Dispose(); }
+    }
+}

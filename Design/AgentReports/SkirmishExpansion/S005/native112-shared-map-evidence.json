@@ -1,0 +1,23 @@
+{
+  "sourceHash": "bacbeead51933e2ef7e2e5f23d2a7cd45806312e5c3e07dcf0c0838b45a818c9",
+  "log": "native-112-shared-charm.log",
+  "logSha256": "ce9e80644686d4a9e087ce92ec5bb6916ef146171b282e83360941b4b4765eee",
+  "wrapperExit": 0,
+  "completionReceipt": 0,
+  "nativeMapReview": true,
+  "nativeRoster": 28,
+  "checkpointActors": 42,
+  "sourceStructures": 344,
+  "factionBanks": 2,
+  "runtimePrefabs": 22,
+  "normalInputMission": false,
+  "nativeRecoveryComplete": false,
+  "playerReady": false,
+  "ownerVisualAcceptance": "Pending",
+  "realPlayerDeviceAcceptance": "Pending",
+  "opening": "native-112-opening.png",
+  "observedPresentationIssues": [
+    "Base frontage still more open than mockup",
+    "Striped compact minimap raster"
+  ]
+}

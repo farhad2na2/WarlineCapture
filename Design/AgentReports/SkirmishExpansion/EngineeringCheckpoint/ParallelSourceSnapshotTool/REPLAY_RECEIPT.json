@@ -1,0 +1,11 @@
+{
+  "actual_exit": 0,
+  "methods": 7,
+  "result": "PassedHistoricalOldVsNewSmallFixtureReplay",
+  "old_sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+  "new_sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+  "test_sha256": "5238557e9b1acdcb9c33c04bd06de981dd410a18a9f8c3f0af68258b2d37df1e",
+  "log_sha256": "54a6bf0f0015e97e80e75ae15fc2f2f928684787d08d6c244e8d221378691641",
+  "full_tree_replayed": false,
+  "native_executed": false
+}

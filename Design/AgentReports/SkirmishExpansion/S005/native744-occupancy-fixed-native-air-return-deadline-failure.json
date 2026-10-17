@@ -1,0 +1,29 @@
+{
+  "result": "Failed",
+  "failure": "Draw during native Return; home touchdown and second sortie not reached",
+  "sourceHash": "fc2043066afb43cfd364259f378d664816bc947afd58514ca3e288e73eb6be86",
+  "sourceUnchanged": true,
+  "preSourceManifest": "tests-743-occupancy-fix-service-logistics-post-source-manifest.json",
+  "postSourceManifest": "final-744-occupancy-fixed-air-deadline-post-source-manifest.json",
+  "log": "native-744-current-manual-en-seed155926.log",
+  "logSha256": "def42e25dc2144dc2d676589d6a2930311a5f831e59c729bf721a250f51dd651",
+  "trace": "s005-aria-live-155926-en-54464e15ee4247bba9e1681e41995d01.jsonl",
+  "inputAudit": "native744-touch-contact-audit.json",
+  "actualWrapperExit": 2,
+  "actualWrapperExitArtifact": "native-744-current-manual-en-seed155926.log.exit",
+  "paidStrike": true,
+  "nativeParkingComplete": true,
+  "nativeTakeoffAndFire": true,
+  "returnInput": true,
+  "nativeTouchdownAtHome": false,
+  "secondSortie": false,
+  "normalSpending": 2320,
+  "lastUsableFuel": 547.7,
+  "lastEconomySeconds": 1072.55,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "sharedOccupancyReadOnlyConfirmation": [
+    "native744-readonly-occupancy-query-alias-observation.json",
+    "native744-readonly-occupancy-tracking-observation.json"
+  ]
+}

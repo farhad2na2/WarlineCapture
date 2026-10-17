@@ -1,0 +1,22 @@
+{
+  "result": "Failed",
+  "errors": [
+    "Wrapper/native exits 1/1",
+    "ValueError: Missing exact marker: [S005BilateralMixedAir] result=Passed paidActors=4 playerAirCap=2 playerAirLive=2 playerAirReserved=0 enemyAirCap=2 enemyAirLive=2 enemyAirReserved=0 mixedFighterPlaneEachFaction=1 nativeTaxiTakeoffHomeReturn=1 airCombatCertified=0 planeCargoCertified=0 normalMission=0"
+  ],
+  "scope": "Isolated current-source, independently paid bilateral Airports and four paid mixed aircraft; normal mission and air combat/cargo remain separate",
+  "sourceHash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "sourceUnchanged": true,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1542-bilateral-paid-four-air.log",
+  "logSha256": "9a43c7aa53c3af2f984ab8c8e3bd00a874a7c92eb817ef7706f18b3d1a683e8a",
+  "fixtureSha256": "c0d7d1c84624d7aa720b8f16beda4d1e4336a9989eb96757367f863c716ebec6",
+  "preflightManifest": "final-1542-bilateral-four-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1542-bilateral-four-air-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1542-bilateral-four-air-post-source-manifest.json",
+  "proof": null,
+  "normalMissionCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

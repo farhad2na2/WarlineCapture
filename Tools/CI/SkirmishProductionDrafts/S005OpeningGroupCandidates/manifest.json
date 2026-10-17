@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/SkirmishS002AriaRunHarness.cs.txt",
+      "before_sha256": "2196509ffa2aa19b2fd12e724ef0dd4f4aa7f201ee61f93fca53f9a92198bca6",
+      "sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005OpeningGroupCandidates/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "before_sha256": null,
+      "sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "native_execution": false,
+  "scope": "QA measured group-center/opposite-heading candidates only; no profile asset mutation or automatic shipping selection",
+  "controls_entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005OpeningGroupCandidateControls",
+  "candidate_entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005OpeningGroupViewCandidates",
+  "output_environment": "WARLINE_S005_OPENING_GROUP_OUTPUT",
+  "owning_proof": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/current-editor-tests-rmxmdc8x",
+  "controls": 11,
+  "required_controls_marker": "[S005OpeningGroupCandidateControls] result=Passed controls=11 nativeCandidateViewsPending=1 readinessClaim=0",
+  "required_capture_marker": "[S005OpeningGroupCandidates] result=CapturedUnqualified views=4 profileChanged=0 commandsIssued=0 selectionChanged=0 wrapperExitStillRequired=1"
+}

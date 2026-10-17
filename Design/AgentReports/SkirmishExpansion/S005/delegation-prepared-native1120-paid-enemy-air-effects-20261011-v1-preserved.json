@@ -1,0 +1,40 @@
+{
+  "status": "PreparedExternalOnlyNeverCompiledLoadedExecutedByPlacementAgent",
+  "fixture": "/private/tmp/S005PaidEnemyAirEffects1120.cs",
+  "fixtureSha256": "08f74894154a5120f5d7566ce4212ec76dfc410bd963a9ff167dacb9930958f0",
+  "runner": "/private/tmp/s005-run-paid-enemy-air-effects-1120.py",
+  "runnerSha256": "46d2c0c87a060fae67880d2bc3ece5ed1b34deeed36392043d4a70571458cc17",
+  "scope": "Two exact paid-source air combat effects: native AntiAir autofire AirMissile and selected paid Fighter actual public native Attack DirectFire. Two fresh actual paid faction2 Planes from real native paid faction2 Airport; actual native taxi/takeoff/public Move, native fog visible Air eligibility, no fake target state.",
+  "actualExposedConfig": "SkirmishRoleOverlayCatalog.cs32/42/46: AntiAir cost220 damage20 range28 GroundStaging; Fighter480 damage22 range32 Airport; Plane440 HP340 unarmed Air Native prefab. Actual runtime values/payment required.",
+  "nativeEligibilitySources": [
+    "CombatTargetPolicyUtility.cs Allows actual native target Visible/domain and actual source allowed mask.",
+    "AirMissileLauncherSystems.cs native target acquisition96+ scans UnitAirMovement, actual faction/health/policy/range, independent of UnitCombat.AutoEngage.",
+    "UnitAttackSystem.cs emits actual DirectFire source/entity HP observations; Jet02 prefab airMissileLauncherConfig0.",
+    "CombatDamageObservationComponents.cs actual SourceEntity TargetEntity SourceKind DamageApplied/HealthAfter/Frame."
+  ],
+  "sourceFitProtocol": "Retains frozen1104 actual separate paid player Touch Airport and native faction2 AIBuildPlanner receipt/previews/paid300 construction/current legality/settlement. No relabel, new geometry, forced footprint or capacity.",
+  "disclosures": [
+    "Both native materials banks funded to real clamp per purchase; owned native fuel/oil stores filled only to existing capacities; FullArsenal readiness.",
+    "Opening actors HealthZero retired; enemy strategy disabled; actual BuildingDefenseAttackSystem temporarily disabled and restored for exclusive damage attribution.",
+    "Own Fighter AutoEngage0 before actual paid enemy exists to prevent auto damage before genuine selected public Attack. AA native autonomous launcher not disabled/forced.",
+    "Own actors selected via native Touch, producer queue APIs/enemy Move/Fighter Attack explicitly outside Touch audit.",
+    "Each case actual own actor and own fresh paid target HealthZero retired only AFTER actual qualified native damage; true native capacity/idempotency/projectile cleanup required before next case. No target HP reset, visibility, pose, Airborne/domain writes."
+  ],
+  "strictChecks": [
+    "Four exact accepted native request IDs9201-9204, distinct actual receipts/entity index+version and native costs/spend/producer owner.",
+    "Genuine native grounded enemy Plane before actual public Move, native takeoff roll then actual Airborne and real visibility/domain policy; positive taxi only if real home-to-threshold gap requires it.",
+    "AA real native lock/projectile observed, actual AirMissile event exact paid source/target/positive HP loss; Fighter actual public Attack1/true ownAirborne/increased native shot counter and exact DirectFire event.",
+    "All actual new raw damage rows preserved; foreign positive actual target damage fails attribution.",
+    "Each role death cleanup all native both-faction counters0, no in-flight old missile contamination. Every raw Touch row0 violations/unexpected/interventions across audit resets.",
+    "Full source preflight/load/pre-dispatch/post compare, explicit root idle+main1120 ownership, unique evidence no overwrite."
+  ],
+  "nativeInvocation": "rtk proxy python3 /private/tmp/s005-run-paid-enemy-air-effects-1120.py <CURRENT_FULL_SOURCE_MANIFEST_BASENAME> --heavy-lane-owner main1120",
+  "limitations": [
+    "No normal funding/strategy growth/full mission win or human Touch Attack claim; selected genuine public Attack only for Fighter, native autofire for AA.",
+    "Native actual source-fit/target visibility/launcher/flight failure remains unqualified gate, not fabricated readiness or source impossible.",
+    "No unnecessary mixed four aircraft full returns repeated;1106 separate bilateral clearance/lifecycle scope retained.",
+    "No Plane cargo, Scan/fog saved populated ledger, loaded transport recovery or device/visual certification."
+  ],
+  "technicallyReady": false,
+  "playerReady": false
+}

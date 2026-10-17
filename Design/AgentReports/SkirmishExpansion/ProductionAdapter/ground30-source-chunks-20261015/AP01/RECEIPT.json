@@ -1,0 +1,17 @@
+{
+  "archive": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\ground30-source-chunks-20261015\\AP01\\collected-unqualified-AP18.zip",
+  "sha256": "0ef391ec48fa7c00b6c3c19abd01ceb2840f37b46dc8648950f2a92417bbd17e",
+  "summary": {
+    "group": "AP",
+    "missions": 6,
+    "sizeRows": 18,
+    "normalCompiledRows": 0,
+    "completeFacilityRows": 0,
+    "canonicalBudgetsExactRows": 6,
+    "sourceFitCertified": false,
+    "missionReady": false
+  },
+  "checkedWrapperExit": 0,
+  "sourceDllEqual": true,
+  "candidateSha256": "d23c0206a541301aac31ed8c1478844eb06282048ed15446c7f040feff83b5d7"
+}

@@ -282,6 +282,9 @@ namespace Game.UI.Runtime
                     _refittingGrid = false;
                 }
             }
+
+            if (!battlefield)
+                FitZoomCue();
         }
 
 

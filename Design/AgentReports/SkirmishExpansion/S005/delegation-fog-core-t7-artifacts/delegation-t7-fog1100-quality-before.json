@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command get_quality_settings",
+  "data": {
+    "command": "get_quality_settings",
+    "parameters": {},
+    "result": {
+      "success": true,
+      "group": "quality",
+      "applied": false,
+      "dryRun": false,
+      "requiresDomainReload": false,
+      "requiresReimport": false,
+      "values": {
+        "level": 1,
+        "levelName": "Mobile",
+        "levelNames": [
+          "Low",
+          "Mobile",
+          "PC",
+          "Ultra"
+        ],
+        "vSyncCount": 0,
+        "antiAliasing": 4
+      },
+      "message": "Read quality settings."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,49 @@
+Explicit G30 + Unity 6000.5.8 engineering subset (not mission acceptance)
+
+Baseline: 27881d4ee700dde9a046fc36b23d3d73d24fa36b.
+Historical baseline: 09467291560212bedecb4d9da987a3e2135e7ce0.
+Read-only git comparison confirmed no Assets/Packages/ProjectSettings differences
+between those two baselines. The newer baseline includes intervening records.
+
+Source map manifest.json pins eleven G30 source overrides and the one NEW
+standalone test entry. Each source is frozen outside Assets under Sources/.
+All other selected owning Assets sources come from immutable HEAD278 blobs.
+Current camera, profile, Guard, Batch, warm, and UI sources are excluded.
+Current exact 5.8 package/generated sources and external binaries are explicitly
+recorded by the isolated owning proof. It is a type proof, not native execution.
+
+The existing61 and pending2 path proposal remains in
+Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/.
+This package adds explicit source map/workflow/proof metadata; root must review
+those records too before staging. Original979d collector, original V2 workflow,
+and the earlier profile-free successor remain unchanged.
+
+Workflow/workflow.json describes two explicit root-owned tool replacements.
+The copied qualifier binds THIS map's SHA; it never silently rewrites979d.
+The launcher retains full source/DLL/tool endpoints, checked wrapper, marker,
+timeout, process-ownership and no-publication behavior. It accepts exactly one
+checked broad OR profile-free preparation marker; mixed/duplicate/failure rows
+reject. The standalone marker is the reproducible camera-free route.
+
+ProjectVersion.txt is independently pinned in manifest.artifacts. Native source
+snapshot intentionally excludes .txt, so native source_manifest alone does not
+establish Editor version. Root must independently record before/after version
+bytes plus resolved Editor/Core binary identities. packages-lock.json is also
+pinned (Burst1.8.30 and Searcher4.9.5); do not attribute comparisons to version
+alone without matching historical package endpoints.
+
+No native subset run is authorized while root's main source freeze is active.
+After release, root alone may create the projected committed subset, import the
+new standalone entry/meta, apply reviewed workflow replacements, restore missing
+survey11 exclusively through restore_skirmish_ground30_authority.py --restore,
+and run the existing checked Windows executeMethod wrapper with explicit log,
+timeout, GUI licensing and this method:
+Game.Tests.Editor.SkirmishGroundObjective30PreparationValidation.Run
+Required exact marker:
+[SkirmishGroundObjective30Preparation] result=Passed candidates=30 negativeControls=60 budget=5 collector=3 sourceFitCertified=0 normalMissionReadiness=Pending
+Actual checked exit0, exact endpoints and every required marker are mandatory.
+
+Existing full-current-candidate 5.8 preparation and future WarmNone successes
+remain attributed to their complete candidates, not this projected subset.
+No four-source collection or source-fit/readiness success follows from controls.
+Historical failed native and offline evidence must remain untouched.

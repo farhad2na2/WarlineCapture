@@ -1,0 +1,10 @@
+{
+  "mission": "S005",
+  "physicalSourceChanged": false,
+  "candidateSource": "CityEdgeAirfield",
+  "oldDenseCityDatabaseRepair": "Not applied; the mission selects another existing Campaign source per reuse policy",
+  "inheritedValidationFailure": "Legacy placeholder-hash deployment identification rejects actual source hashes",
+  "correction": "Explicit measured deployment coordinates and bind-all-configurations flag on S005 logical layout",
+  "configurationCount": 12,
+  "newValidation": "Pending"
+}

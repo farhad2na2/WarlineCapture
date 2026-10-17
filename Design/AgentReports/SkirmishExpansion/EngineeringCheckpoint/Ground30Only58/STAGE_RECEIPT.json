@@ -1,0 +1,92 @@
+{
+  "result": "CompleteProposedEngineeringStageList_NoStagingPerformed",
+  "paths": 100,
+  "source_targets": 63,
+  "pending_root_copies": [
+    "Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+    "Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs"
+  ],
+  "source_overrides": {
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs.txt",
+      "sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0"
+    },
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs.txt",
+      "sha256": "97ce4618264011098b465c95da5fe88ea307fc403dd9d2c03fb6603ffbc11c2d"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs.txt",
+      "sha256": "50646833c3a33fa760ee70329c31038471223b995c46bdfb4b66d58e39a2433b"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs.txt",
+      "sha256": "6c589e26e359423e728f8f11fa7aaa09f5068f157e70854ec2b67dcbadfcb971"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.txt",
+      "sha256": "40c62d7cb0ea1027dde806ae3cd5d4a065e401fb699817e53c159ea6b0232618"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.txt",
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "sha256": "d957e25d59ceed0f8f258d62e8bcedb4576a7b5cd61653158a464012838276d7"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs.txt",
+      "sha256": "9cf3916bca26e3951293e23e425c8267c69076e65a8b93e26b82033078ca5b3f"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs.txt",
+      "sha256": "f9569468528cc9fb9dce4d7385854e959b6fb3b505419c59ed1405056079adad"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs.txt",
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs.txt",
+      "sha256": "1bca175f71fd74a5511477249970e2c3e2b8829221b52d8ef602cf0a3d11c2fa"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.txt",
+      "sha256": "1e1d8d673fadae3e0a1954d2ad006eae81297eb7815456a9ccff2df7fb72fa85"
+    },
+    "Tools/CI/invoke_skirmish_ground_objective30_collection.py": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Workflow/Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+      "sha256": "90771567f42e221c4958b6bfe5003a1fbc5b5169b3cbdfcb440c4a784870518f"
+    },
+    "Tools/CI/qualify_skirmish_ground_objective30_collection.py": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Workflow/Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+      "sha256": "af0fbc3e9d30f2eed5c4188d149d60063812c06dfa4d3ff793ea8b4607480606"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.meta": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.meta.txt",
+      "sha256": "cf2823ad99481361e57ba65de86cbb451bd14de3d62870066b503c37b5423b35"
+    },
+    ".gitattributes": {
+      "source": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Attributes/projected.gitattributes",
+      "sha256": "cac0cd5d72b5814dc146a00424b799c7726c5e355a04bca096c2fb9dfb9f5df1"
+    }
+  },
+  "stage_list_sha256": "531a1250ca6c4cf07fa73440575c1d5bf7dd6698ef52a82dcb89b73027fe30e2",
+  "git_filter_receipt_sha256": "133d1847798c2f4e8f49b9a8428306778cf70b12d531f9643529c62af064c89e",
+  "attribution": "Native30/60+5+3 same functions passed on mixed full candidate; isolated eight-owner subset type proof passed. No native isolated-subset or mission readiness claim.",
+  "warm_outcome": "Root reported frozen WarmNone outer1/Unity2 menuTimeout, endpoints equal, no ASIO crash marker; preserve separate failed evidence. Not a success claim.",
+  "pending": [
+    "Root applies projected narrow attributes and exact source/tool copies after freeze",
+    "Root verifies actual staged blobs against these bytes",
+    "Root adds concise actual WarmNone outcome receipt if desired; never relabel failure"
+  ],
+  "excluded": [
+    "Camera/profile/Guard/Batch/rigid Transport/runtime UI additions",
+    "Unconsumed launcher/joint/pilot/source-chunk future packages",
+    "Full offline DLL/RSP/source proof trees",
+    "Historical failed log modifications and ignored Logs"
+  ],
+  "readiness": 0
+}

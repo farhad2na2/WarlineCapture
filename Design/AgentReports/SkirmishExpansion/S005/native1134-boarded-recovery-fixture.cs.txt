@@ -1,0 +1,511 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// Isolated native pipeline fixture. Never counted as normal-input mission acceptance.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005BoardedRecovery1134
+{
+    static readonly List<Entity> oldBattlefield=new();
+    static readonly List<string> passengerStableIds=new();
+    static string carrierStableId;
+    static float savedElapsed;static uint passengerReceiptId;
+    static double continueStableAt,continueAttemptAt;
+    static Vector2 continuePoint;
+    static SkirmishRoleKind[] requestedCarriers;
+    static string saveRoot;
+    public static Task<int> RunFastApcValidation(){requestedCarriers=new[]{SkirmishRoleKind.ApcFast};return RunValidation();}
+    // External disposable assembly bridge to unchanged internal projection read methods.
+    // No queue/launch/resume methods are invoked; all state-changing Save/Continue uses native Touch UI.
+    static Type NativeProjection=>typeof(SkirmishExpandedLaunchProjection).Assembly.GetType("Game.Composition.SkirmishLaunchProjection",true);
+    static MethodInfo NativeProjectionMethod(string name)=>NativeProjection.GetMethod(name,BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)??throw new MissingMethodException("Native projection method unavailable: "+name);
+    static bool NativeTryGetMatch(EntityManager em,out Entity liveSession,out SkirmishMatchState match)
+    {
+        object[] args={em,default(Entity),default(SkirmishMatchState)};bool found=(bool)NativeProjectionMethod("TryGet").Invoke(null,args);liveSession=(Entity)args[1];match=(SkirmishMatchState)args[2];return found;
+    }
+    static float NativeReadElapsed(EntityManager em,Entity liveSession,in SkirmishMatchState match)=>(float)NativeProjectionMethod("ReadMatchElapsedSeconds").Invoke(null,new object[]{em,liveSession,match});
+    static bool NativeSimulationActive(EntityManager em)=>(bool)NativeProjectionMethod("IsSimulationActive").Invoke(null,new object[]{em});
+    static object ReadManagedComponent(EntityManager em,Entity entity,Type type)
+    {
+        foreach(var method in typeof(EntityManager).GetMethods(BindingFlags.Public|BindingFlags.Instance))if(method.Name=="GetComponentObject"&&method.IsGenericMethodDefinition&&method.GetParameters().Length==1)return method.MakeGenericMethod(type).Invoke(em,new object[]{entity});
+        throw new MissingMethodException("Native managed recovery component reader unavailable.");
+    }
+    static object ReadField(object value,string name)=>value.GetType().GetField(name,BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance).GetValue(value);
+    static bool NativeSavedAttemptMatches()
+    {
+        object[] args={"S005",null,null};
+        var method=typeof(SkirmishNativePlayerSaveService).GetMethod("TryRead",BindingFlags.Static|BindingFlags.NonPublic);
+        return (bool)method.Invoke(null,args)&&args[1]!=null&&(string)ReadField(args[1],"SessionId")==attempt.ToString();
+    }
+    static void CaptureBeforeSave(EntityManager em)
+    {
+        passengerReceiptId=em.GetComponentData<SkirmishAttemptOwnedComponent>(passengers[0]).ReservationId;
+        carrierStableId=em.GetComponentData<SkirmishAttemptOwnedComponent>(paidCarrier).StableObjectId.ToString();passengerStableIds.Clear();
+        foreach(var actor in passengers)passengerStableIds.Add(em.GetComponentData<SkirmishAttemptOwnedComponent>(actor).StableObjectId.ToString());
+        oldBattlefield.Clear();using var q=em.CreateEntityQuery(new EntityQueryDesc{Any=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),ComponentType.ReadOnly<OperationMapBuildingComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities});using var entities=q.ToEntityArray(Allocator.Temp);foreach(var actor in entities)oldBattlefield.Add(actor);
+        if(!NativeTryGetMatch(em,out var liveSession,out var match)||liveSession!=session||match.Phase!=SkirmishPhase.Playing||!NativeSimulationActive(em)||NativeReadElapsed(em,session,in match)<4||touch==null||touch.IsBusy||!ReferenceEquals(Get("playerResumeTouch"),touch)||(int)Get("stage")!=2)throw new InvalidOperationException("Startup-to-recovery ownership handoff requires actual positive simulation and idle owned Touch.");
+        var startupTick=harness.GetMethod("Tick",privateStatic)??throw new MissingMethodException("Inherited startup Tick");
+        EditorApplication.update-=(EditorApplication.CallbackFunction)Delegate.CreateDelegate(typeof(EditorApplication.CallbackFunction),startupTick);
+        Debug.Log("[S005TransportRecoveryOwnership] inheritedStartupTickDetached=1 ownedFixtureWatchdogRetained=1 actualPositiveSimulation=1 gameplayFlagsOrClockWritten=0 beforeNativePause=1");
+        continueStableAt=continueAttemptAt=0;phase=30;caseDeadline=EditorApplication.timeSinceStartup+180;
+    }
+    static void RequireOwnedSavePath()
+    {
+        var path=(string)(typeof(SkirmishNativePlayerSaveService).GetProperty("SavePath",BindingFlags.Static|BindingFlags.NonPublic)??throw new MissingMemberException("Native SavePath")).GetValue(null);
+        if(path!=Path.Combine(saveRoot,"skirmish-s005-native.json"))throw new InvalidOperationException("Native player save root ownership changed: "+path);
+    }
+    static void RecoveryFrame(EntityManager em,double now)
+    {
+        RequireOwnedSavePath();
+        bool hasSession=NativeTryGetMatch(em,out Entity liveSession,out var match);
+        if(now>caseDeadline)throw new TimeoutException("Native boarded Pause/Save/Continue exceeded180seconds.");
+        if(phase==30)
+        {
+            var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);if(drawer!=null&&drawer.IsOpen){Tap(drawer.CloseButton);return;}
+            var popup=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);if(popup!=null&&popup.IsOpen){Tap(popup.CloseAction);return;}
+            if(!hasSession||!UiShellRuntimeGateway.TryReadSkirmish(out var model)||model.Finished)throw new InvalidOperationException("Owned transport match ended before Pause/Save.");
+            if(model.Paused)
+            {
+                foreach(var actor in passengers)VerifyBoarded(em,actor);
+                if(em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length!=passengers.Count)throw new InvalidOperationException("Whole paid cohort absent from paused native snapshot.");
+                RequireSameCapacity(em,"PausedSnapshot");savedElapsed=NativeReadElapsed(em,liveSession,in match);phase=31;
+                Debug.Log("[S005TransportNativeSave] phase=PausedSnapshot role="+CarrierRole+" passengers="+passengers.Count+" sameAttempt="+attempt+" elapsed="+savedElapsed+" input=Touch");return;
+            }
+            foreach(var button in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))if(button.name=="PauseButton"&&Tap(button)){Debug.Log("[S005TransportNativePauseControl] accepted=1 button="+button.name+" active="+button.IsActive()+" interactable="+button.IsInteractable()+" input=Touch disabledCandidatesSkipped=1");return;}return;
+        }
+        if(phase==31)
+        {
+            if(!hasSession||!UiShellRuntimeGateway.TryReadSkirmish(out var model)||!model.Paused||!model.CanSaveMatch||model.SaveFailed)throw new InvalidOperationException("Native paused Save & Exit unavailable or failed.");
+            if(Mathf.Abs(NativeReadElapsed(em,liveSession,in match)-savedElapsed)>.05f)throw new InvalidOperationException("Paused native clock advanced.");
+            var pause=UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>();if(pause==null)return;
+            if(Tap(pause.RestartButton)){phase=32;Debug.Log("[S005TransportNativeSave] phase=SaveAndExitTouch role="+CarrierRole+" checkpointFieldsInjected=0");}return;
+        }
+        if(phase==32||phase==33)
+        {
+            if(hasSession&&continueAttemptAt>0){phase=34;return;}
+            if(hasSession){if(SkirmishNativePlayerSaveService.HasSaveFailed(em,liveSession))throw new InvalidOperationException("Actual native Save & Exit failed.");return;}
+            if(!NativeSavedAttemptMatches())throw new InvalidOperationException("Persisted native checkpoint lost owned attempt identity.");
+            string archive=Path.Combine(Path.GetDirectoryName(touchPath),"native1134-boarded-"+CarrierRole.ToLowerInvariant()+"-native-checkpoint.json");if(!File.Exists(archive))File.Copy(Path.Combine(saveRoot,"skirmish-s005-native.json"),archive);
+            foreach(var old in oldBattlefield)if(em.Exists(old)&&(em.HasComponent<SkirmishAttemptOwnedComponent>(old)||em.HasComponent<RuntimeBuildingCombatInfo>(old)||em.HasComponent<OperationMapBuildingComponent>(old)||em.HasComponent<LocalTransform>(old)||em.HasComponent<UnitHealth>(old)))return;
+            if(phase==33&&now-continueAttemptAt<2)return;
+            foreach(var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+            {
+                if(!setup.IsBaseAssaultSetup||setup.SelectedScenarioId!="S005")continue;
+                foreach(var button in setup.GetComponentsInChildren<UnityEngine.UI.Button>())
+                {
+                    var label=button.GetComponentInChildren<TMPro.TMP_Text>();if(button.name!="LaunchMissionButton"||label==null||string.IsNullOrWhiteSpace(label.text))continue;
+                    object[] pointArgs={button,Vector2.zero};bool shown=(bool)harness.GetMethod("TryPresentedButtonPoint",privateStatic).Invoke(null,pointArgs);var point=(Vector2)pointArgs[1];
+                    if(!shown){continueStableAt=0;return;}
+                    if(continueStableAt==0||Vector2.Distance(point,continuePoint)>1){continuePoint=point;continueStableAt=now;return;}
+                    if(now-continueStableAt<.5)return;
+                    if(Tap(button)){continueAttemptAt=now;continueStableAt=0;phase=33;Debug.Log("[S005TransportNativeContinue] phase=PresentedSetupTouch role="+CarrierRole+" input=Touch directResumeCalled=0");}return;
+                }
+            }return;
+        }
+        if(!hasSession||match.Phase!=SkirmishPhase.Playing||!NativeSimulationActive(em))return;
+        Type recoveryType=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointRecoveryRecord",true);
+        if(!em.HasComponent(liveSession,ComponentType.ReadOnly(recoveryType)))throw new InvalidOperationException("Continue launched fresh match instead of native checkpoint.");
+        var recovery=ReadManagedComponent(em,liveSession,recoveryType);if(!(bool)ReadField(recovery,"Complete"))return;
+        if(!em.GetComponentData<SkirmishExpandedSessionComponent>(liveSession).SessionId.Equals(attempt)||NativeReadElapsed(em,liveSession,in match)<savedElapsed||!Mathf.Approximately(Time.timeScale,1))throw new InvalidOperationException("Native recovered attempt/clock/speed differ.");
+        foreach(var old in oldBattlefield)if(em.Exists(old))throw new InvalidOperationException("Old battlefield entity survived completed native recovery.");
+        session=liveSession;paidCarrier=Entity.Null;passengers.Clear();members.Clear();hiddenSnapshots.Clear();
+        using(var q=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),ComponentType.ReadOnly<SkirmishUnitRoleComponent>(),ComponentType.ReadOnly<UnitHealth>()},Options=EntityQueryOptions.IncludeDisabledEntities}))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors)
+        {
+            var owned=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owned.FactionId!=1||!owned.SessionId.Equals(attempt)||owned.CapacityReleased!=0||em.GetComponentData<UnitHealth>(actor).Current<=0)continue;
+            string stable=owned.StableObjectId.ToString();
+            if(stable==carrierStableId){if(paidCarrier!=Entity.Null||owned.ReservationId!=receiptId||em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role!=roles[index].RoleKind)throw new InvalidOperationException("Restored paid carrier identity/role/reservation mismatch.");paidCarrier=actor;}
+            if(passengerStableIds.Contains(stable)){if(owned.ReservationId!=passengerReceiptId||em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role!=SkirmishRoleKind.Rifle)throw new InvalidOperationException("Restored passenger role changed.");passengers.Add(actor);}
+        }
+        if(paidCarrier==Entity.Null||passengers.Count!=passengerStableIds.Count||em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length!=passengers.Count)throw new InvalidOperationException("Native recovery lost exact paid carrier/passenger cohort.");
+        foreach(var actor in passengers){VerifyBoarded(em,actor);hiddenSnapshots.Add(actor,new List<UnitTransportHiddenVisualScale>());foreach(var hidden in em.GetBuffer<UnitTransportHiddenVisualScale>(actor))hiddenSnapshots[actor].Add(hidden);}
+        foreach(var entry in em.GetBuffer<UnitTransportPassengerElement>(paidCarrier))if(!passengers.Contains(entry.Passenger))throw new InvalidOperationException("Restored buffer contains unrelated passenger.");
+        int receiptMatches=0;foreach(var receipt in em.GetBuffer<SkirmishProductionReservation>(session))if(receipt.ReservationId==receiptId&&receipt.Role==roles[index].RoleKind&&receipt.MaterialsPaid==roles[index].MaterialsCost&&receipt.Phase==SkirmishReservationPhase.Live)receiptMatches++;
+        if(receiptMatches!=1)throw new InvalidOperationException("Native recovered paid carrier receipt missing/duplicated.");
+        int passengerReceipts=0;foreach(var receipt in em.GetBuffer<SkirmishProductionReservation>(session))if(receipt.ReservationId==passengerReceiptId&&receipt.Role==SkirmishRoleKind.Rifle&&receipt.Phase==SkirmishReservationPhase.Live&&receipt.DeliveredMembers==passengerStableIds.Count)passengerReceipts++;if(passengerReceipts!=1)throw new InvalidOperationException("Native recovered paid passenger receipt missing/duplicated.");
+        RequireSameCapacity(em,"RecoveredBoarded");
+        using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+        enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();if(enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;
+        members.Add(paidCarrier);selectionMembers.Clear();selectionMembers.Add(paidCarrier);phase=23;caseDeadline=now+100;
+        Debug.Log("[S005TransportNativeRecovery] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" sameAttempt=1 nativeCheckpoint=1 paidReceiptPreserved=1 oldPhysicalGone="+oldBattlefield.Count+" linksHiddenRestored=1 input=Touch checkpointFieldsOrPassengerLinksInjected=0");
+    }
+    static void RestoreSaveRoot(){ /* The inherited startup/Finish owns and restores this initialized profile environment. */ }
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session,boundary,paidCarrier;
+    static readonly List<Entity> passengers=new();
+    static readonly List<Entity> selectionMembers=new();
+    static SkirmishCapacityComponent combinedCapacity;
+    static float3 loadedOrigin;static Vector3 loadedDestination;
+    static readonly Dictionary<Entity,List<UnitTransportHiddenVisualScale>> hiddenSnapshots=new();static bool loadedMoveAcknowledged;
+    static string CarrierRole => roles[index].RoleKind.ToString();
+    
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next;
+    static int phase, index, requestId;
+    static uint receiptId, precedingReceipt;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1134-boarded-recovery.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public Vector2 position;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1, commandBaseline;static bool nativeMoveAcknowledged;
+    static Vector3 destination;
+    static readonly Dictionary<Entity,float3> origins=new();
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    [Serializable] struct NativeSavePathRow { public string profileRoot,nativeSavePath; }
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists(touchPath))throw new InvalidOperationException("Preserve existing native Touch evidence");File.WriteAllText(touchPath,"");
+        // The inherited startup owns a unique initialized profile; reuse its actual root.
+        // Switching to an empty profile before queued Play would trigger first launch.
+        if(requestedCarriers==null)requestedCarriers=new[]{SkirmishRoleKind.ApcFast};
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=false;results.Clear();world=null;
+        deadline=EditorApplication.timeSinceStartup+900;next=0; paidCarrier=Entity.Null;passengers.Clear();selectionMembers.Clear();loadedMoveAcknowledged=false;
+        try{
+            Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+            saveRoot=(string)(harness.GetMethod("ValidationProfileRoot",privateStatic)??throw new MissingMethodException("ValidationProfileRoot")).Invoke(null,null);
+            if(string.IsNullOrWhiteSpace(saveRoot)||Path.GetFullPath(saveRoot)!=saveRoot||Path.GetDirectoryName(saveRoot)!=Path.Combine(Path.GetTempPath(),"aria-play-validation-profile")||!Guid.TryParseExact(Path.GetFileName(saveRoot),"N",out _)||Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")!=saveRoot)throw new InvalidOperationException("Inherited isolated profile identity mismatch");
+            RequireOwnedSavePath();
+            if(File.Exists(Path.Combine(saveRoot,"skirmish-s005-native.json")))throw new InvalidOperationException("Preserve pre-existing native save; fixture profile must be unique");
+            Debug.Log("[S005TransportNativeSaveOwnership] initializedInheritedUniqueProfile=1 environmentSwitched=0 nativeSavePathExact=1 personalProfileTouched=0");
+            Debug.Log("[S005TransportNativeSavePath] "+JsonUtility.ToJson(new NativeSavePathRow{profileRoot=saveRoot,nativeSavePath=Path.Combine(saveRoot,"skirmish-s005-native.json")}));
+        }catch{RestoreSaveRoot();throw;}
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch;AriaCommandEvidence.Recorded+=ObserveMoveReceipt; touch=null; inputFrame=-1;
+        Debug.Log("[S005TransportSupport] scope=IsolatedPaidBoardedSaveContinueTransportEffects normalMission=0 fundingInjected=1 readinessGranted=FullArsenal deathStimulus=HealthZero openingActorsRetired=1 nativeQueueApi=1 nativeBoardMoveUnloadTouch=1 actorPositionsInjected=0 shotsDamageResultsInjected=0 isolatedNativePlayerSaveRoot=1 checkpointFieldsOrPassengerLinksInjected=0 pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005TransportSupportCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick; Canvas.willRenderCanvases-=InputFrame;
+                RestoreSaveRoot();completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Paid transport fixture exceeded900seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null||!world.IsCreated||world!=World.DefaultGameObjectInjectionWorld)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase>=30&&phase<=34)return;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                var paired=new List<SkirmishRoleKind>();foreach(var carrierRole in requestedCarriers){paired.Add(SkirmishRoleKind.Rifle);paired.Add(carrierRole);}
+                foreach(var wanted in paired)
+                    foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId) && r.RoleKind==wanted)selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=requestedCarriers.Length*2)throw new InvalidOperationException("Expected requested enabled Rifle/transport pairs, found "+roles.Length);
+                attempt=state.SessionId;
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp))foreach(var actor in actors)Kill(em,actor);
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                // Native API queue requests are explicitly disclosed isolated QA, outside the Touch order audit.
+                AriaCommandEvidence.End();
+                if(index==roles.Length){Finish(false,"threePaidNativeBoardMoveUnloadCases");return;}
+                var role=roles[index];
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))throw new InvalidOperationException("Functional producer missing: "+role.RoleKind);
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005TransportPaidQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                foreach(var member in members)if(em.HasComponent<UnitSpawnTransitTag>(member))return;
+                selectionMembers.Clear();selectionMembers.AddRange(members);origins.Clear(); float3 center=float3.zero;nativeMoveAcknowledged=false;
+                foreach(var member in members){var pos=em.GetComponentData<LocalTransform>(member).Position;origins.Add(member,pos);center+=pos;}
+                center/=members.Count; destination=(Vector3)(center+new float3(16,0,0));
+                if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                AriaCommandEvidence.Begin(); commandBaseline=AriaCommandEvidence.AcceptedCommands;phase=10;caseDeadline=now+65;return;
+            }
+            if(phase==12)
+            {
+                if(touch.IsBusy||!nativeMoveAcknowledged)return;
+                bool moved=true;float minimum=float.MaxValue;
+                foreach(var member in members){if(!em.Exists(member)||em.GetComponentData<UnitHealth>(member).Current<=0)throw new InvalidOperationException("Role died before movement observation");float distance=math.distance(origins[member],em.GetComponentData<LocalTransform>(member).Position);minimum=math.min(minimum,distance);moved &= distance>=5;}
+                if(!moved)return;
+                if(AriaCommandEvidence.AcceptedCommands<=commandBaseline||AriaCommandEvidence.Violations!=0)throw new InvalidOperationException("Native Move receipt missing or input violation");
+                Debug.Log("[S005TransportNativeMovement] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" minimumDisplacement="+minimum+" input=Touch actorPositionsSelectionOrdersInjected=0");
+                if(index%2==0)
+                {
+                    passengers.Clear();passengers.AddRange(members);hiddenSnapshots.Clear();
+                    if(passengers.Count!=Math.Max(1,roles[index].SquadMembers))throw new InvalidOperationException("Paid complete passenger squad delivery mismatch.");
+                    index++;phase=2;return;
+                }
+                if(members.Count!=1)throw new InvalidOperationException("Expected one paid native carrier.");
+                paidCarrier=members[0];combinedCapacity=em.GetComponentData<SkirmishCapacityComponent>(session);
+                LogCapacity("BeforeBoard",combinedCapacity);
+                selectionMembers.Clear();selectionMembers.AddRange(passengers);phase=20;caseDeadline=now+90;return;
+            }
+            if(phase==22)
+            {
+                if(!em.HasBuffer<UnitTransportPassengerElement>(paidCarrier))throw new InvalidOperationException("Actual carrier has no native passenger buffer.");
+                var boarded=em.GetBuffer<UnitTransportPassengerElement>(paidCarrier);
+                if(boarded.Length!=passengers.Count)return;
+                foreach(var entry in boarded)if(!passengers.Contains(entry.Passenger))throw new InvalidOperationException("Carrier boarded unrelated passenger.");
+                foreach(var passenger in passengers){VerifyBoarded(em,passenger);hiddenSnapshots.Add(passenger,new List<UnitTransportHiddenVisualScale>());foreach(var hidden in em.GetBuffer<UnitTransportHiddenVisualScale>(passenger))hiddenSnapshots[passenger].Add(hidden);}
+                RequireSameCapacity(em,"AfterBoard");
+                Debug.Log("[S005TransportNativeBoard] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" links=1 hidden=1 input=Touch passengerLinksInjected=0");
+                Debug.Log("[S005TransportCheckpointHandoff] role="+CarrierRole+" paidCarrier="+paidCarrier+" paidPassengers="+passengers.Count+" nativeLinksHiddenVerified=1 checkpointPerformed=Pending");
+                CaptureBeforeSave(em);return;
+            }
+            if(phase==25)
+            {
+                if(touch.IsBusy||!loadedMoveAcknowledged)return;
+                if(!em.Exists(paidCarrier)||em.GetComponentData<UnitHealth>(paidCarrier).Current<=0)throw new InvalidOperationException("Paid carrier died before payload transport.");
+                float moved=math.distance(loadedOrigin.xz,em.GetComponentData<LocalTransform>(paidCarrier).Position.xz);
+                if(moved<5||math.distance(em.GetComponentData<LocalTransform>(paidCarrier).Position.xz,((float3)loadedDestination).xz)>8)return;
+                if(em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length!=passengers.Count)throw new InvalidOperationException("Paid cohort lost during native carrier Move.");
+                foreach(var passenger in passengers)VerifyBoarded(em,passenger);
+                RequireSameCapacity(em,"AfterLoadedMove");
+                Debug.Log("[S005TransportNativeLoadedMove] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" horizontalDisplacement="+moved+" verifiedReceipt=1 input=Touch linksHiddenPreserved=1");
+                phase=26;caseDeadline=now+80;return;
+            }
+            if(phase==29)
+            {
+                if(touch.IsBusy)return;
+                if(em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length!=0)return;
+                foreach(var passenger in passengers)
+                {
+                    if(!em.Exists(passenger)||em.GetComponentData<UnitHealth>(passenger).Current<=0||em.HasComponent<Disabled>(passenger)||em.HasComponent<UnitTransportPassenger>(passenger)||em.HasBuffer<UnitTransportHiddenVisualScale>(passenger)&&em.GetBuffer<UnitTransportHiddenVisualScale>(passenger).Length!=0)throw new InvalidOperationException("Native unloaded passenger remains dead/hidden/linked.");
+                    foreach(var hidden in hiddenSnapshots[passenger])VerifyUnloadedVisual(em,passenger,hidden);
+                }
+                RequireSameCapacity(em,"AfterUnload");
+                Debug.Log("[S005TransportNativeUnload] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" input=Touch linksCleared=1 visualRestored=1 capacityPreserved=1");
+                foreach(var passenger in passengers)Kill(em,passenger);Kill(em,paidCarrier);phase=5;caseDeadline=now+15;return;
+            }
+            if(phase==5)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(!CountersZero(cap))return;
+                foreach(var actor in passengers)VerifyReleased(em,actor);VerifyReleased(em,paidCarrier);
+                LogCapacity("AfterPairDeath",cap);
+                Debug.Log("[S005TransportNativeDeathCapacity] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" allLiveReservedCounters=0 idempotent=1 stimulus=HealthZero");
+                results.Add(CarrierRole);index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;RestoreSaveRoot();Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static bool CountersZero(SkirmishCapacityComponent a)=>a.InfantryLive==0&&a.GroundLive==0&&a.AirLive==0&&a.SupplyLive==0&&a.InfantryReserved==0&&a.GroundReserved==0&&a.AirReserved==0&&a.SupplyReserved==0;
+    static void RequireSameCapacity(EntityManager em,string stage)
+    {
+        var c=em.GetComponentData<SkirmishCapacityComponent>(session);var b=combinedCapacity;
+        if(c.FactionId!=b.FactionId||c.InfantryCap!=b.InfantryCap||c.GroundCap!=b.GroundCap||c.AirCap!=b.AirCap||c.SupplyCap!=b.SupplyCap||c.InfantryLive!=b.InfantryLive||c.GroundLive!=b.GroundLive||c.AirLive!=b.AirLive||c.SupplyLive!=b.SupplyLive||c.InfantryReserved!=b.InfantryReserved||c.GroundReserved!=b.GroundReserved||c.AirReserved!=b.AirReserved||c.SupplyReserved!=b.SupplyReserved||c.NextReservationId!=b.NextReservationId)throw new InvalidOperationException("Board/Move/Unload changed actual paid pair capacity ledger.");
+        LogCapacity(stage,c);
+    }
+    static void LogCapacity(string stage,SkirmishCapacityComponent c)=>Debug.Log("[S005TransportCapacity] role="+CarrierRole+" stage="+stage+" infantryLive="+c.InfantryLive+" groundLive="+c.GroundLive+" airLive="+c.AirLive+" supplyLive="+c.SupplyLive+" infantryReserved="+c.InfantryReserved+" groundReserved="+c.GroundReserved+" airReserved="+c.AirReserved+" supplyReserved="+c.SupplyReserved+" nextReservationId="+c.NextReservationId);
+    static void VerifyReleased(EntityManager em,Entity actor){if(!em.Exists(actor))return;if(em.HasComponent<SkirmishAttemptOwnedComponent>(actor)&&em.GetComponentData<SkirmishAttemptOwnedComponent>(actor).CapacityReleased==0)throw new InvalidOperationException("Paid actor native capacity release flag missing.");if(SkirmishProductionService.TryReleaseDeath(em,session,actor))throw new InvalidOperationException("Native death released capacity twice.");}
+    [Serializable] struct VisualRestoreRow
+    {
+        public string role,check;public int passengerIndex,passengerVersion,visualIndex,visualVersion,markerIndex,markerVersion,typedChildIndex,typedChildVersion;
+        public float snapshotScale,currentScale,expectedScale;public bool visualExists,hasTransform,passengerSelected,nativeVisible,typedReferenceMatched,postMatrixMatches,passed;
+    }
+    static void VerifyUnloadedVisual(EntityManager em,Entity passenger,UnitTransportHiddenVisualScale hidden)
+    {
+        bool ve=em.Exists(hidden.Visual),ht=ve&&em.HasComponent<LocalTransform>(hidden.Visual);
+        var row=new VisualRestoreRow{role=CarrierRole,check="ExactSnapshotNonSelectionVisual",passengerIndex=passenger.Index,passengerVersion=passenger.Version,visualIndex=hidden.Visual.Index,visualVersion=hidden.Visual.Version,snapshotScale=hidden.PreviousScale,currentScale=ht?em.GetComponentData<LocalTransform>(hidden.Visual).Scale:0f,expectedScale=hidden.PreviousScale,visualExists=ve,hasTransform=ht,passengerSelected=em.HasComponent<SelectedUnitTag>(passenger),postMatrixMatches=true};
+        Entity marker=ve&&em.HasComponent<Parent>(hidden.Visual)?em.GetComponentData<Parent>(hidden.Visual).Value:Entity.Null;
+        if(marker!=Entity.Null&&em.Exists(marker)&&em.HasComponent<SelectionMarkerTag>(marker)&&em.HasComponent<SelectionMarkerVisualChild>(marker))
+        {
+            var reference=em.GetComponentData<SelectionMarkerVisualChild>(marker);
+            // Exact native render child identity only; no descendant or generic marker subtree exemptions.
+            if(reference.Value==hidden.Visual)
+            {
+                if(!em.HasComponent<Parent>(marker)||em.GetComponentData<Parent>(marker).Value!=passenger)throw new InvalidOperationException("Native selection marker has unexpected passenger owner.");
+                row.check="ExactTypedNativeCurrentSelectionSurface";row.markerIndex=marker.Index;row.markerVersion=marker.Version;row.typedChildIndex=reference.Value.Index;row.typedChildVersion=reference.Value.Version;row.typedReferenceMatched=true;
+                row.nativeVisible=row.passengerSelected&&em.HasComponent<UnitHealth>(passenger)&&em.GetComponentData<UnitHealth>(passenger).Current>0&&!em.HasComponent<UnitTransportPassenger>(passenger)&&!em.HasComponent<UnitAirMovement>(passenger);
+                float x=reference.VisibleScaleX>0f?reference.VisibleScaleX:reference.VisibleScale;float z=reference.VisibleScaleZ>0f?reference.VisibleScaleZ:reference.VisibleScale;
+                if(em.HasComponent<PostTransformMatrix>(hidden.Visual))
+                {
+                    row.expectedScale=row.nativeVisible?1f:0f;
+                    var actual=em.GetComponentData<PostTransformMatrix>(hidden.Visual).Value;var expected=float4x4.Scale(new float3(row.nativeVisible?math.max(0f,x):0f,1f,row.nativeVisible?math.max(0f,z):0f));
+                    row.postMatrixMatches=math.csum(math.abs(actual.c0-expected.c0))+math.csum(math.abs(actual.c1-expected.c1))+math.csum(math.abs(actual.c2-expected.c2))+math.csum(math.abs(actual.c3-expected.c3))<=.001f;
+                }
+                else row.expectedScale=row.nativeVisible?math.max(x,z):0f;
+            }
+        }
+        row.passed=ve&&(!ht||Mathf.Abs(row.currentScale-row.expectedScale)<=.001f)&&row.postMatrixMatches;
+        Debug.Log("[S005TransportVisualRestore] "+JsonUtility.ToJson(row));
+        if(!row.passed)throw new InvalidOperationException("Native unload visual restoration failed: "+JsonUtility.ToJson(row));
+    }
+    static void VerifyBoarded(EntityManager em,Entity passenger)
+    {
+        if(!em.Exists(passenger)||em.GetComponentData<UnitHealth>(passenger).Current<=0||!em.HasComponent<UnitTransportPassenger>(passenger)||em.GetComponentData<UnitTransportPassenger>(passenger).Transport!=paidCarrier||!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))throw new InvalidOperationException("Native paid passenger link/health/hidden buffer missing.");
+        foreach(var hidden in em.GetBuffer<UnitTransportHiddenVisualScale>(passenger))if(!em.Exists(hidden.Visual)||em.HasComponent<LocalTransform>(hidden.Visual)&&em.GetComponentData<LocalTransform>(hidden.Visual).Scale!=0)throw new InvalidOperationException("Native boarded passenger visual not hidden.");
+    }
+    static bool SelectExact(EntityManager em,MatchHudSquadTrayView tray,MatchOverlayCommandControlsView controls)
+    {
+        if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return false;
+        using var q=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=q.ToEntityArray(Allocator.Temp);bool exact=selected.Length==selectionMembers.Count;foreach(var actor in selected)exact &= selectionMembers.Contains(actor);if(exact)return true;
+        if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return false;}
+        if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return false;}
+        for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&selectionMembers.Contains(member)){Tap(tray.VisibleCardButton(slot));return false;}
+        if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);return false;
+    }
+    static void ObserveMoveReceipt(string operation,uint receipt,bool verified)
+    {
+        if(phase==25&&operation=="Move"&&verified&&receipt!=0&&world!=null&&world.IsCreated){loadedMoveAcknowledged=true;loadedOrigin=world.EntityManager.GetComponentData<LocalTransform>(paidCarrier).Position;Debug.Log("[S005TransportLoadedMoveReceipt] role="+CarrierRole+" receipt="+receipt+" verified=1");return;}
+        if(phase!=12||nativeMoveAcknowledged||operation!="Move"||!verified||receipt==0||world==null||!world.IsCreated)return;
+        var em=world.EntityManager;origins.Clear();
+        foreach(var member in members){if(!em.Exists(member)||!em.HasComponent<SelectedUnitTag>(member))return;origins.Add(member,em.GetComponentData<LocalTransform>(member).Position);}
+        nativeMoveAcknowledged=true;
+        Debug.Log("[S005TransportNativeMoveReceipt] role="+roles[index].RoleKind+" receipt="+receipt+" verified=1 displacementOrigin=AfterAcceptedMove");
+    }
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=point,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        if(phase>=30&&phase<=34)
+        {
+            if(Time.frameCount==inputFrame)return;inputFrame=Time.frameCount;
+            try{touch.Tick(Time.unscaledTime);if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native recovery Touch interrupted.");if(touch.IsBusy||EditorApplication.timeSinceStartup<(double)Get("playerResumeDue"))return;world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;RecoveryFrame(world.EntityManager,EditorApplication.timeSinceStartup);}catch(Exception exception){Finish(true,exception.ToString());}return;
+        }
+        var visibleTray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var canvas=visibleTray?.GetComponentInParent<Canvas>()?.rootCanvas;
+        if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1)return;
+        inputFrame=Time.frameCount;
+        try
+        {
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (10 or 11 or 20 or 21 or 23 or 24 or 26 or 27 or 28))return;
+            var em=world.EntityManager;
+            if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;
+            var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if(tray==null||controls==null)return;
+            if(phase==10||phase==20||phase==23||phase==26)
+            {
+                if(phase==26&&command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                if(!SelectExact(em,tray,controls))return;
+                if(phase==10){Debug.Log("[S005TransportNativeSelection] result=Passed role="+roles[index].RoleKind+" members="+selectionMembers.Count+" input=Touch selectionInjected=0");phase=11;}
+                else if(phase==20)phase=21;else if(phase==23)phase=24;else phase=27;
+            }
+            if(phase==11)
+            {
+                if(command.ActiveCommandMode!=TacticalCommandMode.Move){Tap(controls.MoveButton);return;}
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{destination,now})){phase=12;Debug.Log("[S005TransportNativeMovement] phase=Order role="+roles[index].RoleKind+" input=Touch");}return;
+            }
+            if(phase==21)
+            {
+                if(command.ActiveCommandMode!=TacticalCommandMode.Board){Tap(controls.CommandWheelPanel?.NextBoardButton);return;}
+                var point=(Vector3)em.GetComponentData<LocalTransform>(paidCarrier).Position+Vector3.up;
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{point,now})){phase=22;Debug.Log("[S005TransportBoardOrder] role="+CarrierRole+" input=Touch completePaidPassengerSquad=1");}return;
+            }
+            if(phase==24)
+            {
+                if(command.ActiveCommandMode!=TacticalCommandMode.Move){Tap(controls.MoveButton);return;}
+                var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();if(hud==null)return;
+                var forward=hud.EnemyBaseObjectivePosition-hud.PlayerBaseObjectivePosition;forward.y=0;if(forward.sqrMagnitude<1)throw new InvalidOperationException("Public base frontage direction unavailable.");forward.Normalize();
+                var site=hud.PlayerBaseObjectivePosition+forward*(75+12*(index/2))-Vector3.Cross(Vector3.up,forward)*30;
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{site,now})){loadedMoveAcknowledged=false;loadedDestination=site;phase=25;Debug.Log("[S005TransportLoadedMoveOrder] role="+CarrierRole+" input=Touch publicFrontage=1 destination="+site);}return;
+            }
+            string targetButton=phase==27?"PassengerChip":"ExitAllButton";
+            foreach(var button in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))if(button.name==targetButton){if(Tap(button)){phase++;Debug.Log("[S005TransportUnloadControl] role="+CarrierRole+" button="+targetButton+" input=Touch");}return;}
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;AriaCommandEvidence.Recorded-=ObserveMoveReceipt;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005TransportSupportInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005TransportSupport] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending nativeTouchBoardMoveUnload=Measured checkpoint=NativeSaveContinueMeasured reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedPaidTransport:"+reason});
+    }
+}

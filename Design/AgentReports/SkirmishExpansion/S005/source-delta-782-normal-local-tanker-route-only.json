@@ -1,0 +1,15 @@
+{
+  "sourceHash": "c3e491210ef01a4f4d591d2f60212274fe6cbe79454a154e340dcab89ffcc36f",
+  "previousSourceHash": "d1781e9588c3f9aadb0331f070946890f1ef0548bcc903e47733116ad4eae7df",
+  "preSourceManifest": "final-782-normal-local-tanker-route-pre-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "allMaterialsIdentical": true,
+  "shippingRuntimeConfigurationsPhysicalMapsUnchanged": true,
+  "scope": "Editor-only normal-input strategy: select an empty paid/starting Tanker, tap the paid local receiving store, require actual newest-refinery order, loaded8 Fuel cargo and native received8 delivery. Repeat before first flight and after home landing. No source/cargo/order/resource/clock overrides.",
+  "validation": "Pending native782",
+  "staticDiffCheck": "Passed"
+}

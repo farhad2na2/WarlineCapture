@@ -1,0 +1,8 @@
+{
+  "status": "ReviewedPendingNativeDryCompilationReplay",
+  "fixtureSha256": "21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26",
+  "runnerSha256": "98b996afca735237f27f9f3b8f6080056148bc94b38a739501c013dbec0331dc",
+  "review": "Exact1138 successor diff; retains body snapshot and paid save/continue/capacity checks; adds normal visible Rifle selection and carrier deselection, independent exact typed marker owner/child/Parent census, nativeScale/PostMatrix state, same marker identities, restored visible body scale, bounded positive rendered frames. No production edits or selection/marker/system outcome injection.",
+  "historicalFailureRetained": "native1138-isolated-paid-boarded-recovery-failure.json",
+  "playerReady": false
+}

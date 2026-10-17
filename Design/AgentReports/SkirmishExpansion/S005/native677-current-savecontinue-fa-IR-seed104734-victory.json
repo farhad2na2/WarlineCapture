@@ -1,0 +1,71 @@
+{
+  "result": "Passed",
+  "playerReady": false,
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "wrapperExit": 0,
+  "seed": 104734,
+  "locale": "fa-IR",
+  "size": "Standard",
+  "difficulty": "Regular",
+  "mode": "SaveContinue",
+  "outcome": {
+    "elapsed": 218.492,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 218.492,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "playerUnits": 12,
+    "pathRequests": 5,
+    "pathFollowing": 4,
+    "leadX": 906.497,
+    "leadZ": 602.614
+  },
+  "normalInput": true,
+  "normalSpeed": true,
+  "forcedVictory": false,
+  "frozenResult": true,
+  "returnTarget": "ADJUST SETUP",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-676-current-savecontinue-en-seed104734-post-source-manifest.json",
+  "postManifest": "final-677-current-savecontinue-fa-seed104734-post-source-manifest.json",
+  "inputAudit": {
+    "recordedContacts": 73,
+    "completedContacts": 72,
+    "phases": {
+      "Menu": 7,
+      "PlayerResume": 6,
+      "Runtime": 59,
+      "Terminal": 1
+    },
+    "terminalCancellations": [
+      {
+        "contact": [
+          7,
+          9,
+          59
+        ],
+        "frame": 3818,
+        "acceptedCommands": 47,
+        "reason": "Native Finished disposal; no command accepted during contact"
+      }
+    ],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": false,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-fa-72ceb5ec645f43369824eeb49a0422e0.jsonl.touch.jsonl",
+    "sha256": "0802fc17f2cd47f0a954134f4e40b5274846bafcd71e2f60acfe9c66858239df"
+  },
+  "nativeFinishedCancellationAccepted": true,
+  "trace": "s005-aria-live-104734-fa-72ceb5ec645f43369824eeb49a0422e0.jsonl",
+  "log": "native-677-current-savecontinue-fa-seed104734.log",
+  "realPlayerDeviceAcceptance": false,
+  "saveContinueMarker": "[S005PlayerSaveResume] result=Passed input=Touch gestures=6 oldPhysicalGone=4977 paidReceiptPreserved=1 sameAttempt=1 savedElapsed=10.02854 paidRole=AntiAir paidCost=220 combatGestures=0 combatSave=0 boardedSave=0 passengers=0 commands=1 receiptViolations=0 resumedMissionAcceptance=Pending"
+}

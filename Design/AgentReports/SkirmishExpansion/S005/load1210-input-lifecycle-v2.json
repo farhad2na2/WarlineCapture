@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-input-settings-lifecycle-fixture-v2/ValidationInputSettingsLifecycle1210.cs",
+      "entry": "ValidationInputSettingsLifecycle1210.LoadOnly",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 54,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_ValidationInputSettingsLifecycle1210_9cce22f6497b42cea19c17eff880b7fa",
+      "success": true,
+      "result": "Loaded only"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

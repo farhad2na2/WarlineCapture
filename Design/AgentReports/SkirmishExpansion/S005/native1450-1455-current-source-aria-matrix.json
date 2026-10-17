@@ -1,0 +1,70 @@
+{
+  "result": "PassedCurrentSourceSixCaseAriaMatrix",
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "configuration": "S005 Standard/Regular CombinedArms FieldBase Field readiness sharedFog; normal-input ARIA",
+  "cases": [
+    {
+      "runId": 1450,
+      "locale": "en",
+      "seed": 104734,
+      "attempt": "expanded-s005-104734-8350b97cc8b44f97ad3511cff2ad3f13",
+      "victorySeconds": 258.311,
+      "touchContacts": 62,
+      "proof": "native1450-normal-aria-pass.json",
+      "proofSha256": "e0797caec527936df67b442f64992adb5a1656dcc07d10de633dd91850ab654f"
+    },
+    {
+      "runId": 1451,
+      "locale": "en",
+      "seed": 130368,
+      "attempt": "expanded-s005-130368-c873c35ce09b4037a0dfa158401dd120",
+      "victorySeconds": 261.077,
+      "touchContacts": 63,
+      "proof": "native1451-normal-aria-pass.json",
+      "proofSha256": "cb2e76987ce5c5877d2310251533a464433493dc00ae1d0298f295bad78f8228"
+    },
+    {
+      "runId": 1452,
+      "locale": "en",
+      "seed": 155926,
+      "attempt": "expanded-s005-155926-3d33b68ce0af42e38f4e58ba2feeecd2",
+      "victorySeconds": 221.767,
+      "touchContacts": 56,
+      "proof": "native1452-normal-aria-pass.json",
+      "proofSha256": "526fc89673c3f562ffe7040c056507d105b2a130f5fdea1c8f51ff36b80b0c4c"
+    },
+    {
+      "runId": 1453,
+      "locale": "fa-IR",
+      "seed": 104734,
+      "attempt": "expanded-s005-104734-9727fa6a81a84368a6783eebfe811278",
+      "victorySeconds": 260.777,
+      "touchContacts": 81,
+      "proof": "native1453-normal-aria-pass.json",
+      "proofSha256": "96d77e9136650abc84f5144af942703f48b5549f4ed693088d9439eb86e33df3"
+    },
+    {
+      "runId": 1454,
+      "locale": "fa-IR",
+      "seed": 130368,
+      "attempt": "expanded-s005-130368-07c99cc42f074153b09479606326b75f",
+      "victorySeconds": 259.512,
+      "touchContacts": 71,
+      "proof": "native1454-normal-aria-pass.json",
+      "proofSha256": "e110fd443b2be3cd3a096cf766d8f4e987379aa33c610935c1ba210b6d394104"
+    },
+    {
+      "runId": 1455,
+      "locale": "fa-IR",
+      "seed": 155926,
+      "attempt": "expanded-s005-155926-a448af2f8d6a46dda7867e9d34daf9b6",
+      "victorySeconds": 258.556,
+      "touchContacts": 56,
+      "proof": "native1455-normal-aria-pass.json",
+      "proofSha256": "1103d029098fffa1153f9e57a18958056b0f1d8750ef205c462b1064cf905653"
+    }
+  ],
+  "count": 6,
+  "scope": "Six distinct exact-source automated ARIA seed/locale wins, rendered result and AdjustSetup return as checked in individual frozen proofs; no manual, device, performance or human acceptance",
+  "playerReady": false
+}

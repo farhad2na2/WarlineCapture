@@ -1,0 +1,17 @@
+{
+  "result": "Passed",
+  "scope": "Native map focus with selected squad and armed attack mode; no troop order dispatched",
+  "sourceHash": "080fabd62e1f9def14cd31070d0b11ca1a44819787ec9f2f0c7da0b5feabdc92",
+  "configHash": "128f61e981d234a4fe000ef66bced489b14c8875bd07f3ed1224baddd2747b48",
+  "setupHash": "AB417F8E",
+  "log": "native-196-camera-touch.log",
+  "logSha256": "2c0e75ba343ceb2206307202dad77458e9ce6b97faa270e81c004d48ab5f6dc7",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "controlMethod": "NativeTouchDriver",
+  "samples": 12,
+  "countsForCurrentSource": false,
+  "fullMissionAcceptance": false,
+  "realHumanDeviceAcceptance": false,
+  "historicalReason": "Current frozen candidate source is 3986ae0d0abf89331a6eb6c464cf4897c5fdffa1f2ea82e47a16905f1a242030; original source/outcome/log evidence retained"
+}

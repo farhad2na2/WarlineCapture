@@ -1,0 +1,26 @@
+{
+  "sourceHash": "a93be1cd029d445ad31005510a186b9ef099877762339930fa2edb942c10e4a2",
+  "sourceUnchanged": true,
+  "log": "native-467-full-batch-fuel-strike-cycle.log",
+  "logSha256": "8f841b2282d70a19985c8d96ffbddd07815273288d073226bdd4b254d27e9fe3",
+  "wrapperExit": 1,
+  "outcome": "Draw",
+  "matchSeconds": 1080.028,
+  "failure": "No safe round-trip Fuel reserve before the match ended; paid Strike remained at stage4 with nativeFire=0.",
+  "contactAudit": {
+    "trace": "s005-aria-live-155926-en-9f538f1f9294484f860a92b2cb163bc8.jsonl.touch.jsonl",
+    "sha256": "528e04037c68f9a0be1a7b1eb07685d3939fa900cf4a2bb2b258b231ffc3400d",
+    "recordedContacts": 90,
+    "completed": 90,
+    "unexpectedSamples": 0,
+    "physicalInterventions": 0,
+    "contactErrors": [],
+    "strictRecordedContacts": true,
+    "nativeMenuContactsReconciled": false,
+    "fullStreamCertification": false
+  },
+  "airportConstructionScopedPassed": true,
+  "flightCertified": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

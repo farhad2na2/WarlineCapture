@@ -1,0 +1,15 @@
+{
+  "result": "MetaSupplementReviewClear_ProofAcknowledged",
+  "parent_manifest_sha256": "5c54f24413331dab552c5f2add662cea628dac3cb8fce1d05ba2352f5227e26c",
+  "meta_supplement_sha256": "7b63d4a1ab00cd85e91f9acb974e1b0340e9f07662f0afb61c7610505af71b56",
+  "meta_sha256": "36c6a2f9282dd865a26c46b3dea417f9bc850c0cd6aa15fba036635ceef7dd34",
+  "review": "Standard MonoImporter meta, empty defaults/no asset references, executionOrder0. New target absent. Independent actual Assets meta GUID search found zero existing occurrences. No CSharp or runtime configuration changed.",
+  "guid": "b6f70e79754a417599dd8dfd418343bd",
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/late-ecs-5ea4p5ng/result.json",
+    "sha256": "478326206245b3a26fc421806fbefba268d79be7c3e42d07554600096e6d276b",
+    "scope": "Exact835/e67 plus1NEWEditor=836/353uniqueRefs, producerPassed/noFallback/zero mismatches; no reviewer compiler/native execution"
+  },
+  "native_execution": false,
+  "cause_established": false
+}

@@ -1,0 +1,54 @@
+{
+  "status": "Passed",
+  "results": [
+    {
+      "suite": "ground-pause",
+      "method": "Game.Tests.Editor.UnitGroundMovementPauseTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[UnitGroundMovementPauseTests] result=Passed actualSystems=2 cases=18",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1229-ground-pause.log",
+      "logSha256": "93b8a724e87a1bbb2376213236f8f306a6739662f19e23a77b906fc982d9c8ee"
+    },
+    {
+      "suite": "enemy-commander",
+      "method": "Game.Tests.Editor.SkirmishEnemyCommanderTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyCommanderTests] result=Passed cases=8",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1229-enemy-commander.log",
+      "logSha256": "3e5f783b1b30af8b0c78e11454504b7f900e7f7afc86e1aa90190cc6c86d4b8c"
+    },
+    {
+      "suite": "shared-move",
+      "method": "UnitMoveOrderSystemTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[UnitMoveOrderFocusedValidation] result=Passed tests=26",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1229-shared-move.log",
+      "logSha256": "189e21feeab71af0790e9cf74a2c94cb929222b4c5dee3056e2ba450ff315ca5"
+    },
+    {
+      "suite": "ground-rollout",
+      "method": "Game.Tests.Editor.SkirmishEnemyGroundRolloutTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyGroundRolloutTests] result=Passed tests=12",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1229-ground-rollout.log",
+      "logSha256": "553090917ae8a23b2953436838aeb484df389cea34ad1285e41794906b59edf0"
+    }
+  ],
+  "sourceHash": "5e94ef34185750a5ef87068726815bda22899d0bb08c8685b292fc3bfbda8932",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1228-shared-ground-pre-source-manifest.json",
+  "postManifest": "final-1229-focused-post-source-manifest.json",
+  "normalMissionWins": 0
+}

@@ -1,0 +1,15 @@
+{"stage":"BeforeTouchSelection","role":"Rifle","frame":2053,"phase":4,"targetIndex":965,"lastObservationEvent":0}
+{"stage":"AfterAcceptedPublicAttack","role":"Rifle","frame":2195,"phase":12,"targetIndex":965,"lastObservationEvent":1}
+{"stage":"WaitingForNativeEffect","role":"Rifle","frame":2212,"phase":12,"targetIndex":965,"lastObservationEvent":1}
+{"stage":"WaitingForNativeEffect","role":"Rifle","frame":2290,"phase":12,"targetIndex":965,"lastObservationEvent":2}
+{"stage":"QualifiedNativeEffect","role":"Rifle","frame":2290,"phase":12,"targetIndex":965,"lastObservationEvent":2}
+{"stage":"BeforeTouchSelection","role":"Gunner","frame":3693,"phase":4,"targetIndex":965,"lastObservationEvent":2}
+{"stage":"AfterAcceptedPublicAttack","role":"Gunner","frame":3771,"phase":12,"targetIndex":965,"lastObservationEvent":2}
+{"stage":"WaitingForNativeEffect","role":"Gunner","frame":3789,"phase":12,"targetIndex":965,"lastObservationEvent":2}
+{"stage":"QualifiedNativeEffect","role":"Gunner","frame":3808,"phase":12,"targetIndex":965,"lastObservationEvent":3}
+{"stage":"BeforeTouchSelection","role":"Marksman","frame":5170,"phase":4,"targetIndex":943,"lastObservationEvent":3}
+{"stage":"AfterAcceptedPublicAttack","role":"Marksman","frame":5233,"phase":12,"targetIndex":943,"lastObservationEvent":4}
+{"stage":"WaitingForNativeEffect","role":"Marksman","frame":5248,"phase":12,"targetIndex":943,"lastObservationEvent":4}
+{"stage":"WaitingForNativeEffect","role":"Marksman","frame":5310,"phase":12,"targetIndex":943,"lastObservationEvent":5}
+{"stage":"QualifiedNativeEffect","role":"Marksman","frame":5310,"phase":12,"targetIndex":943,"lastObservationEvent":5}
+{"stage":"FinishBeforeCleanup","role":"Breacher","frame":6395,"phase":4,"targetIndex":943,"lastObservationEvent":5}

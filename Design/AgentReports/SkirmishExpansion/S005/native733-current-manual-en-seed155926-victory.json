@@ -1,0 +1,73 @@
+{
+  "mission": "S005",
+  "result": "Passed",
+  "sourceHash": "2a81b1c316f92e1d431bfb0e85ba577bd9be4373cda2a614622c7411aa136cbb",
+  "wrapperExit": 0,
+  "locale": "en",
+  "seed": 155926,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "mode": "ManualControlsDriver",
+  "realHumanDeviceAcceptance": false,
+  "ariaStarted": false,
+  "normalInput": true,
+  "normalSpeedGuard": "Native TickManualControls rejects any active timeScale other than 1; passed native manual verdict required",
+  "outcome": {
+    "elapsed": 235.298,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 235.298,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "playerUnits": 15,
+    "pathRequests": 4,
+    "pathFollowing": 5,
+    "leadX": 905.066,
+    "leadZ": 597.282
+  },
+  "frozenResult": true,
+  "returnTarget": "MAIN MENU",
+  "inputAudit": {
+    "recordedContacts": 173,
+    "completedContacts": 173,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 162,
+      "Manual": 5,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-b5334f543b17457590dec2b0cc021f7e.jsonl.touch.jsonl",
+    "sha256": "855e81bdfa6881af6e4dfd9a840d40003f79cd99b4b463aebce3d69f5d729c17"
+  },
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-733-combat-input-carry-three-oil-three-tankers-pre-source-manifest.json",
+  "postManifest": "final-733-current-manual-en-seed155926-post-source-manifest.json",
+  "log": "native-733-current-manual-en-seed155926.log",
+  "trace": "s005-aria-live-155926-en-b5334f543b17457590dec2b0cc021f7e.jsonl",
+  "nativeMarkers": [
+    "[S004ManualReceiptAudit] result=Passed measured=1 touches=167 commands=30 violations=0 unexpected=0 interventions=0",
+    "[S004ManualNative] result=Passed outcome=Victory seconds=235.2981 reason= input=Touch ariaStarted=0 actions=167 attackReceipts=12"
+  ],
+  "playerReady": false,
+  "wrapperExitArtifact": "native-733-current-manual-en-seed155926.log.exit",
+  "logSha256": "e0012592fa6df6e3de15574ad7eff10070a027fb7f4dc08a19bf24e57b827836",
+  "terminalClockChecks": "Native delayed terminal probe requires Playing=0, Paused=1 and unchanged elapsed/HP/simulation inactivity before normal result return.",
+  "combatSaveContinue": true,
+  "sameAttemptVerifiedInputHistory": true,
+  "recoveryMarkers": [
+    "[S005CombatSave] phase=BattleObserved input=Touch attacks=12 enemyBaseHp=778 elapsed=226.0325",
+    "[S005PlayerSaveResume] result=Passed input=Touch gestures=3 oldPhysicalGone=4971 paidReceiptPreserved=1 sameAttempt=1 savedElapsed=226.9867 paidRole=ApcHeavy paidCost=280 combatGestures=159 combatSave=1 boardedSave=0 passengers=0 commands=30 receiptViolations=0 resumedMissionAcceptance=Pending",
+    "[S005CombatSave] phase=VerifiedInputCarry sameAttempt=1 touches=162 attacks=12 commands=30"
+  ]
+}

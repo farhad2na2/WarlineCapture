@@ -1,0 +1,21 @@
+{
+  "result": "Passed",
+  "physicalSourceSceneAndDefinitionUnchanged": true,
+  "sourceSceneSha256": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+  "log": "source-fit-525-dense-paving-current-render-parity.log",
+  "logSha256": "da0f26874ecc298a9b33c560e448670219ab2139786557f2d59785e283e6ef67",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "requiredMarkersVerified": true,
+  "renderDatabaseHash": "ba6cdad01244f225bb7804f66a945f7bd94e204275b6ccc0065ddb7c002a0f09",
+  "renderRows": 124167,
+  "eligibleRows": 59503,
+  "residentRows": 64664,
+  "sourceRowsRemoved": 0,
+  "poolSlots": 7291,
+  "poolLimit": 8000,
+  "deterministicBytes": true,
+  "sourceFitCertified": false,
+  "playerReady": false,
+  "scope": "Current existing Campaign render packaging only; native map startup, gameplay, capacity and performance remain pending."
+}

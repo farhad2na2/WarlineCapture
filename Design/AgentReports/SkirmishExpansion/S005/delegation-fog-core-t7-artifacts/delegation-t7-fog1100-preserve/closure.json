@@ -1,0 +1,27 @@
+{
+  "scope": "T7 isolated 19 actual-system Worlds; not whole current main/native normal mission readiness",
+  "result": "Passed",
+  "sourceSha256": "716a82778047d254ad3b2fbe0cfe6c6dcb13325ee6cc4f307e48f746b4da0e0f",
+  "fileCount": 47511,
+  "sourceDeltaCount": 0,
+  "compiler": "completed failed=false errors=[]",
+  "nativeReceipt": 0,
+  "preserved1099": "Failed; no source freeze claimed",
+  "ownerMobileAA": 0,
+  "unattributedHudInteractable": 0,
+  "artifacts": [
+    "/private/tmp/delegation-t7-fog1100-core19.log",
+    "/private/tmp/delegation-t7-fog1100-core19.log.exit",
+    "/private/tmp/delegation-t7-fog1100-core19.log.dispatch.json",
+    "/private/tmp/delegation-t7-fog1100-recompile-request.json",
+    "/private/tmp/delegation-t7-fog1100-recompile-status01.json",
+    "/private/tmp/delegation-t7-fog1100-idle-preproof.json",
+    "/private/tmp/delegation-t7-fog1100-idle-postproof.json",
+    "/private/tmp/delegation-t7-fog1100-preserve/pre-source.json",
+    "/private/tmp/delegation-t7-fog1100-preserve/post-source.json",
+    "/private/tmp/delegation-t7-fog1100-preserve/source-delta.json",
+    "/private/tmp/delegation-t7-fog1100-quality-before.json",
+    "/private/tmp/delegation-t7-fog1100-quality-owner-disabled.json",
+    "/private/tmp/delegation-t7-fog1100-preserve/applied-index.json"
+  ]
+}

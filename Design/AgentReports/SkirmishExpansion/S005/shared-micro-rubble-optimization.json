@@ -1,0 +1,14 @@
+{
+    "meshPath": "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_SmallRubble.asset",
+    "assetGuid": "f5fc9e3f1f3f9439d98050ef307a4890",
+    "originalAssetSha256": "c085a9c1746c8fedeff9a870cce8cda17a647289650479b3133f706167f68573",
+    "optimizedAssetSha256": "5188bf5043e5985fe0b23826bae719332f32edbd2e96150c8f5c9a88ee4b86c1",
+    "originalBackupPath": "/var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/warline-micro-rubble-original-c085a9c1746c8fedeff9a870cce8cda17a647289650479b3133f706167f68573.asset",
+    "scatterCenterSha256": "34ecbfecf0ca3250a173e7104972bea1caa1d7817e239942a6864aaf8f190c5d",
+    "nativeVisualReview": "Pending",
+    "blobCount": 489820,
+    "trianglesBefore": 5877840,
+    "trianglesAfter": 1959280,
+    "scatterCentersPreserved": true,
+    "physicalSceneEdited": false
+}

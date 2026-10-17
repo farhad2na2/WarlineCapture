@@ -1,0 +1,103 @@
+{
+  "success": true,
+  "command": "editors verify",
+  "data": {
+    "version": "6000.5.8f1",
+    "architecture": "arm64",
+    "ok": true,
+    "components": [
+      {
+        "component": "editor",
+        "kind": "editor",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity"
+      },
+      {
+        "component": "visualstudiocode",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications"
+      },
+      {
+        "component": "android",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer"
+      },
+      {
+        "component": "android-open-jdk-17.0.18+8",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK"
+      },
+      {
+        "component": "android-sdk-ndk-tools",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK"
+      },
+      {
+        "component": "android-ndk-r27c",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK"
+      },
+      {
+        "component": "cmake-3.22.1",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/cmake/3.22.1"
+      },
+      {
+        "component": "android-sdk-build-tools-36.0.0",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0"
+      },
+      {
+        "component": "android-sdk-platform-tools-36.0.0",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK"
+      },
+      {
+        "component": "android-sdk-platforms-34",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms"
+      },
+      {
+        "component": "android-sdk-platforms-36",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms"
+      },
+      {
+        "component": "android-sdk-platforms-37.0",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms"
+      },
+      {
+        "component": "android-sdk-command-line-tools-16.0",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/cmdline-tools/16.0"
+      },
+      {
+        "component": "ios",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines"
+      },
+      {
+        "component": "mac-il2cpp",
+        "kind": "module",
+        "status": "ok",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/MacStandaloneSupport"
+      }
+    ]
+  },
+  "errors": [],
+  "warnings": []
+}

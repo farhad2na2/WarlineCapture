@@ -1,0 +1,16 @@
+{
+  "sourceHash": "fa5e571e1801ea37be09d23589af03c1070335eef5b60040dff19817dc94816f",
+  "sourcePrePostMatch": true,
+  "allMaterialsMatch": true,
+  "wrapperExit": 0,
+  "nativeStartupPassed": true,
+  "mapCaptured": true,
+  "checkpointCaptureAvailable": true,
+  "checkpointActors": 46,
+  "checkpointMapReferences": 4931,
+  "checkpointPersisted": false,
+  "nativeRecoveryComplete": false,
+  "visualAccepted": false,
+  "cameraIssue": "Battle camera selector read source camera ID before serialized logical camera data was applied; old west-facing camera persisted",
+  "playerReady": false
+}

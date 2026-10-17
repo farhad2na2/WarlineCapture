@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1219",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1220-checkpoint-pre-source-manifest.json",
+  "preflightManifest": "final-1219-passive-pressure-preflight-source-manifest.json",
+  "fixtureSha256": "f59f157b44e4d0eb3cc461560da4f24506e31fbbfebac7078dace4ffd53f5315",
+  "executedRunnerSha256": "66e4660e3157b97a3d9464de8a5e2e2744bc54d9e2db6955ef8448e050c69864",
+  "method": "S005PassivePressure1219.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

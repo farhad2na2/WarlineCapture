@@ -1,0 +1,33 @@
+{
+  "attempts": [
+    {
+      "id": 447,
+      "result": "Failed",
+      "reason": "Sandbox process inventory unavailable caused wrapper Hub check to fail",
+      "editorValidationStarted": false
+    },
+    {
+      "id": 449,
+      "result": "Failed",
+      "reason": "Sandbox process inventory unavailable caused wrapper Hub check to fail",
+      "editorValidationStarted": false
+    },
+    {
+      "id": 450,
+      "result": "Failed",
+      "reason": "Regression fixture lacked a living group member; public mask assertions passed but actual selection returned false"
+    },
+    {
+      "id": 452,
+      "result": "Failed",
+      "wrapperExit": 124,
+      "reason": "Editor domain reload lost scheduled callback; no completion receipt; existing Editor preserved"
+    },
+    {
+      "id": 453,
+      "result": "Passed",
+      "reason": "Complete fixture passed public aircraft mask, paging and living Strike selection"
+    }
+  ],
+  "playerReady": false
+}

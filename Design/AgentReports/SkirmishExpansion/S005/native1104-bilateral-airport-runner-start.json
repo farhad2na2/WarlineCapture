@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1104",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1101-paid-transport-post-source-manifest.json",
+  "preflightManifest": "final-1104-bilateral-airport-preflight-source-manifest.json",
+  "fixtureSha256": "4e07e87605b4b3f89412e78dd38cf9ab5c3d5e5b454b778d3d904afe625db15f",
+  "validationMethod": "S005BilateralAirportPrerequisite1104.RunValidation"
+}

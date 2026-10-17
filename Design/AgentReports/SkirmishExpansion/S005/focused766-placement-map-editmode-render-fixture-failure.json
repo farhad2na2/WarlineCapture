@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "actualWrapperExit": 0,
+  "requiredPassMarkerFound": false,
+  "fullSourceUnchanged": true,
+  "sourceHash": "813711a8dc760a511bccac41ab9f38ecb9bb49f8cf84349e0b73486531acc6a7",
+  "preManifest": "final-766-placement-map-preview-preservation-pre-source-manifest.json",
+  "postManifest": "final-766-placement-map-fixture-render-failed-post-source-manifest.json",
+  "log": "tests-766-placement-full-map-controls.log",
+  "reason": "New synchronous Edit Mode fixture had no rendered raycast hits even before suppression; existing four placement tests passed; native Play Mode remains authoritative for pointer routing",
+  "playerReady": false
+}

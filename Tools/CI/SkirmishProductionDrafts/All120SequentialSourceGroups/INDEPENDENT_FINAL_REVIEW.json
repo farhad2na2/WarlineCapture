@@ -1,0 +1,21 @@
+{
+  "result": "IndependentFinalReviewClear",
+  "sourceReview": "INDEPENDENT_REVIEW.json",
+  "sourceReviewSha256": "1addc70ea589da606cd8f72f833bd926165a123dcc9f5f6b070c579999365cae",
+  "manifestSha256": "bfa14999bb1a132a695a1e1c67c28f42e8f279d385e4f6c398dfbf60af70476c",
+  "parentSha256": "e6b84964a937328db6a9ee343a395d90424cc599bf73fbdac494a1df812c758f",
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/All120SequentialSourceGroups/editor-ila2uq_z/result.json",
+    "sha256": "fac0663f34358d0635f0ea94db8058c79398501fcfc2097c3564a140030f95f0",
+    "result": "Passed",
+    "EditorSources": 825,
+    "references": 353,
+    "exactOverridesConsumed": 8,
+    "finalMismatches": [],
+    "noFallback": true,
+    "analyzersOmitted": 18
+  },
+  "nativeExecution": false,
+  "readiness": "Engineering authoring only; actual collection/memory/source fit/camera/normal mission acceptance pending",
+  "assetsNativeGitWrites": false
+}

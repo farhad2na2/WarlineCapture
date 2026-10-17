@@ -1,0 +1,24 @@
+{
+  "result": "StaticCatalogInvestigationAndPreparedFixtureRevision",
+  "native1040Scope": "Failed before native IntelStation build and before Drone request. No Drone delivery defect reproduced.",
+  "sourceFacts": [
+    "ResolveCatalogTarget returnsnull immediately when its OWN serialized BuildDrawerView is absent/notopen; it compares exact prefab.name aftercategory selection.",
+    "Original1040 fixture independently chose arbitrary IncludeInactive catalog and drawer; no guarantee they own samepopup or represent currentactiveview.",
+    "SCN09 popup building source references Game_BuildingPlacement_Config (GUIDb201...0004). Source spawnables include SatelliteGUID77550b2e24f244cdfac66cc7bacec90a.",
+    "Actual Satelliteprefab variant rootname Building_Satelite_Dish matches fixturekey.",
+    "Expanded production catalog adds Intel producer; readiness gates selectionavailability, not item inclusion.",
+    "MissionCatalogPrefabSource can filteralloweditems if missionBuildCatalog erroneouslyremainsactive; actualruntime restriction needs capture beforejudging."
+  ],
+  "rootCauseStatus": "Unresolved originalnativeframe aftercleanup. Stale/wrongowner catalog is plausible fixture error; missingliveentry/runtimecatalogrestriction notproved.",
+  "preparedUniqueFixture": "/private/tmp/S005DroneProducerSmoke1045.cs",
+  "compiled": false,
+  "executed": false,
+  "correctedOwnership": "Selectonlyactive-enabledcatalogwithownBuildDrawerView.IsOpen; failambiguousmultipleowners.",
+  "diagnostics": [
+    "Actualcatalog/drawerinstance IDs, active/category/source, boundedexactprefabkeys",
+    "MissionCatalog restricted flag and allowedbuildingconfig IDs",
+    "MissingSatellitecontrolaftersettle marks producerUIgateunresolved; noDronequeueattempted"
+  ],
+  "noSourceAssetsEdited": true,
+  "noForcedUiRefresh": true
+}

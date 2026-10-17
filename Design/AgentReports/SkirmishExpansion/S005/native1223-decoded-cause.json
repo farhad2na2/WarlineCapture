@@ -1,0 +1,156 @@
+{
+  "scope": "ReadOnlyDecodedImmutableNativeCheckpointNotNativeReplay",
+  "checkpoint": "Design/AgentReports/SkirmishExpansion/S005/native1223-normal-manual-r2-native-checkpoint.json",
+  "checkpointSha256": "185fd7aaf2ed9a1b401b5a4007c44a1a4461606e7d5dd75600eda19ddb176916",
+  "schema": 7,
+  "savedSessionId": "expanded-s005-155926-b90bcac0cceb47c5b14827f02a498a22",
+  "savedFrame": 3529,
+  "structureRuntimeIds": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    4,
+    2,
+    14,
+    13,
+    1
+  ],
+  "productionReceiptLayout": "C# byte enums + native alignment,40byte stride, Count5 and exact raw bytes retained",
+  "receipts": [
+    {
+      "ReservationId": 1001,
+      "Role": 1,
+      "Category": 1,
+      "MemberCount": 4,
+      "RemainingMembers": 4,
+      "DeliveredMembers": 4,
+      "ProductionGroupId": 15,
+      "ProducerRuntimeId": 2,
+      "MaterialsPaid": 80,
+      "SupplyCost": 4,
+      "Phase": 3,
+      "FactionId": 2,
+      "Producer": 1,
+      "rawHex": "e9030000010100000400000004000000040000000f00000002000000500000000400000003020100"
+    },
+    {
+      "ReservationId": 1002,
+      "Role": 1,
+      "Category": 1,
+      "MemberCount": 4,
+      "RemainingMembers": 2,
+      "DeliveredMembers": 4,
+      "ProductionGroupId": 16,
+      "ProducerRuntimeId": 2,
+      "MaterialsPaid": 80,
+      "SupplyCost": 4,
+      "Phase": 3,
+      "FactionId": 2,
+      "Producer": 1,
+      "rawHex": "ea030000010100000400000002000000040000001000000002000000500000000400000003020100"
+    },
+    {
+      "ReservationId": 1003,
+      "Role": 9,
+      "Category": 2,
+      "MemberCount": 1,
+      "RemainingMembers": 1,
+      "DeliveredMembers": 1,
+      "ProductionGroupId": 17,
+      "ProducerRuntimeId": 3,
+      "MaterialsPaid": 280,
+      "SupplyCost": 6,
+      "Phase": 3,
+      "FactionId": 1,
+      "Producer": 2,
+      "rawHex": "eb030000090200000100000001000000010000001100000003000000180100000600000003010200"
+    },
+    {
+      "ReservationId": 1004,
+      "Role": 1,
+      "Category": 1,
+      "MemberCount": 4,
+      "RemainingMembers": 4,
+      "DeliveredMembers": 4,
+      "ProductionGroupId": 18,
+      "ProducerRuntimeId": 2,
+      "MaterialsPaid": 80,
+      "SupplyCost": 4,
+      "Phase": 3,
+      "FactionId": 2,
+      "Producer": 1,
+      "rawHex": "ec030000010100000400000004000000040000001200000002000000500000000400000003020100"
+    },
+    {
+      "ReservationId": 1005,
+      "Role": 5,
+      "Category": 1,
+      "MemberCount": 4,
+      "RemainingMembers": 4,
+      "DeliveredMembers": 2,
+      "ProductionGroupId": 19,
+      "ProducerRuntimeId": 2,
+      "MaterialsPaid": 120,
+      "SupplyCost": 4,
+      "Phase": 2,
+      "FactionId": 2,
+      "Producer": 1,
+      "rawHex": "ed030000050100000400000004000000020000001300000002000000780000000400000002020100"
+    }
+  ],
+  "haulingRefs": [
+    {
+      "actor": "role.logistics_truck.2.11.0",
+      "type": "Game.Components.UnitResourceHaulOrder",
+      "source": 6,
+      "destination": 12
+    },
+    {
+      "actor": "role.logistics_truck.2.11.0",
+      "type": "Game.Components.UnitResourceHaulReservation",
+      "source": 6,
+      "destination": 12
+    },
+    {
+      "actor": "role.logistics_truck.1.9.0",
+      "type": "Game.Components.UnitResourceHaulOrder",
+      "source": 5,
+      "destination": 7
+    },
+    {
+      "actor": "role.logistics_truck.1.9.0",
+      "type": "Game.Components.UnitResourceHaulReservation",
+      "source": 5,
+      "destination": 7
+    },
+    {
+      "actor": "role.tanker.1.8.0",
+      "type": "Game.Components.UnitResourceHaulOrder",
+      "source": 7,
+      "destination": 9
+    },
+    {
+      "actor": "role.tanker.1.8.0",
+      "type": "Game.Components.UnitResourceHaulReservation",
+      "source": 7,
+      "destination": 9
+    }
+  ],
+  "deliveredHeavyApc": {
+    "id": "production.1003.0",
+    "prefab": "Unit_Veh_APC_Heavy",
+    "health": 360,
+    "max": 360
+  },
+  "log": "Design/AgentReports/SkirmishExpansion/S005/native-1223-normal-manual-r2-recovery-en-seed155926.log",
+  "logSha256": "8e24f7597bffc25c5a58e95e229c834f5fd2bd20bf2c28d137a563e1112eacf7",
+  "nativeFailures": [
+    "[SkirmishNativeRecovery] result=Failed reason=NativeRecoveryPreflight:Native runtime building was not reconstructed: 3"
+  ],
+  "conclusion": "Producer3 absent only from fully delivered Live ApcHeavy1003 receipt; current Producing receipt1005 and all hauling references point to saved structures. No missing live producer or active haul was normalized."
+}

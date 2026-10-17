@@ -110,6 +110,11 @@ namespace Game.Configs
         public string ResultVictoryKey = string.Empty;
         public string ResultDefeatKey = string.Empty;
         public bool MeasuredLayoutBound;
+        // Empty for exact reviewed legacy bindings; generic logical provenance only.
+        public string LayoutBindingFingerprint = string.Empty;
+        public string MissionLogicalBindingFingerprint = string.Empty;
+        public string ObjectiveActorDefinitionFingerprint = string.Empty;
+        public SkirmishResolvedConvoyBay[] ObjectiveTruckBays = Array.Empty<SkirmishResolvedConvoyBay>();
         public float WorldWidthMetres;
         public float WorldDepthMetres;
         public float GridOriginX;

@@ -1,0 +1,20 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=RunwayDeliveryTaxiCleanupTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-runway-delivery-focused-reuse-20261012.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RunwayDeliveryTaxiCleanupTests] result=Passed cases=8 scope=IsolatedActualSystemNotNormalMission
+UnityEngine.Debug:Log (object)
+RunwayDeliveryTaxiCleanupTests:RunFocusedValidation () (at Assets/Tests/Editor/RunwayDeliveryTaxiCleanupTests.cs:67)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-runway-delivery-focused-reuse-20261012.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=RunwayDeliveryTaxiCleanupTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-runway-delivery-focused-reuse-20261012.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

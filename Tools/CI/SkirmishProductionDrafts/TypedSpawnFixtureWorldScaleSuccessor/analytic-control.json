@@ -1,0 +1,35 @@
+{
+  "scope": "Independent numeric algebra control, not Unity execution",
+  "actualSourceFrame": [
+    409.6,
+    204.8
+  ],
+  "actualTemplateEnvelope": [
+    600,
+    850
+  ],
+  "priorRaw4_5WorldExtent": [
+    3.0720000000000005,
+    1.0842352941176472
+  ],
+  "cases": [
+    {
+      "rotated": false,
+      "targetWorldExtent": 4.5,
+      "localWidth": 6.591796874999999,
+      "localDepth": 18.6767578125,
+      "centerCellAllowed": true,
+      "crossingCellDenied": true,
+      "threeByThreeFullCellCornersInside": true
+    },
+    {
+      "rotated": true,
+      "targetWorldExtent": 6.5,
+      "localWidth": 9.521484374999998,
+      "localDepth": 26.9775390625,
+      "centerCellAllowed": true,
+      "crossingCellDenied": true,
+      "threeByThreeFullCellCornersInside": true
+    }
+  ]
+}

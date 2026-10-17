@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command editor_status",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Pipeline command 'editor_status' timed out after 30000ms"
+    }
+  ],
+  "warnings": []
+}

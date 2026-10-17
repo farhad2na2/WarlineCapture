@@ -1,0 +1,936 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var asset=UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.MapSurfaceDataAsset>(UnityEditor.AssetDatabase.GUIDToAssetPath(\"fe018ff5c0c344309bdd39bf67ac4e44\"));\nvar grid=UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.GridAuthoringConfig>(UnityEditor.AssetDatabase.GUIDToAssetPath(\"03f9142d229da40d5b8bd1f51d2a5dac\"));\nif(!asset.TryCreateRuntimeBlobAsset(Unity.Collections.Allocator.Persistent,out var blob))throw new System.Exception(\"Missing source surface\");\ntry {\nvar surface=new Game.Components.MapSurfaceComponent {SurfaceBlob=blob,HasSurfaceData=1,GridOrigin=blob.Value.GridOrigin,CellSize=blob.Value.CellSize,Dimensions=blob.Value.Dimensions};\nint stride=grid.Width+1;var mask=new bool[grid.Width*grid.Height];foreach(var c in grid.BlockedCells ?? System.Array.Empty<UnityEngine.Vector2Int>())mask[c.y*grid.Width+c.x]=true;\nfor(int z=0;z<grid.Height;z++)for(int x=0;x<grid.Width;x++)if(Game.Components.MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new Unity.Mathematics.int2(x,z),out var sample) && (sample.Flags&(Game.Components.MapSurfaceFlags.Road|Game.Components.MapSurfaceFlags.Bridge|Game.Components.MapSurfaceFlags.Highway))!=0)mask[z*grid.Width+x]=true;\nvar prefix=new int[stride*(grid.Height+1)];for(int z=0;z<grid.Height;z++){int row=0;for(int x=0;x<grid.Width;x++){row+=mask[z*grid.Width+x]?1:0;prefix[(z+1)*stride+x+1]=prefix[z*stride+x+1]+row;}}\nvar method=typeof(Game.Runtime.OperationMapRunwayReadModelUtility).Assembly.GetType(\"Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper\").GetMethod(\"IsSkirmishFootprintLevel\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);\nvar sites=new System.Collections.Generic.List<object>();int tested=0,clear=0,level=0;\nforeach(bool rotated in new[]{false,true}) {int w=rotated?55:210,h=rotated?210:55;\nfor(int z=8;z+h<=grid.Height-8;z+=64)for(int x=8;x+w<=grid.Width-8;x+=64){tested++;int hits=prefix[(z+h)*stride+x+w]-prefix[z*stride+x+w]-prefix[(z+h)*stride+x]+prefix[z*stride+x];if(hits!=0)continue;clear++;if(!(bool)method.Invoke(null,new object[]{surface,new UnityEngine.RectInt(x,z,w,h)}))continue;level++;if(sites.Count<100)sites.Add(new {x,z,w,h,rotated,worldX=grid.Origin.x+x*grid.CellSize,worldZ=grid.Origin.z+z*grid.CellSize});}}\nreturn new {definition=\"Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset\",dimensionsX=grid.Width,dimensionsZ=grid.Height,cellSize=grid.CellSize,tested,staticAndBakedRoadClear=clear,level,candidates=sites,scope=\"Read-only coarse64m existing RefineryDistrict Campaign grid pre-screen: native foundation rule, serialized blockers and primary baked road flags. Full live native placement and aircraft clearance remain untested.\",physicalSourceModified=false};\n} finally {blob.Dispose();}"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "definition": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+        "dimensionsX": 2048,
+        "dimensionsZ": 1024,
+        "cellSize": 1,
+        "tested": 838,
+        "staticAndBakedRoadClear": 659,
+        "level": 659,
+        "candidates": [
+          {
+            "x": 8,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 8,
+            "worldZ": 8
+          },
+          {
+            "x": 72,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 72,
+            "worldZ": 8
+          },
+          {
+            "x": 136,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 136,
+            "worldZ": 8
+          },
+          {
+            "x": 200,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 200,
+            "worldZ": 8
+          },
+          {
+            "x": 264,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 264,
+            "worldZ": 8
+          },
+          {
+            "x": 328,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 328,
+            "worldZ": 8
+          },
+          {
+            "x": 392,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 392,
+            "worldZ": 8
+          },
+          {
+            "x": 456,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 456,
+            "worldZ": 8
+          },
+          {
+            "x": 520,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 520,
+            "worldZ": 8
+          },
+          {
+            "x": 584,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 584,
+            "worldZ": 8
+          },
+          {
+            "x": 648,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 648,
+            "worldZ": 8
+          },
+          {
+            "x": 712,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 712,
+            "worldZ": 8
+          },
+          {
+            "x": 776,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 776,
+            "worldZ": 8
+          },
+          {
+            "x": 840,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 840,
+            "worldZ": 8
+          },
+          {
+            "x": 904,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 904,
+            "worldZ": 8
+          },
+          {
+            "x": 968,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 968,
+            "worldZ": 8
+          },
+          {
+            "x": 1032,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1032,
+            "worldZ": 8
+          },
+          {
+            "x": 1096,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1096,
+            "worldZ": 8
+          },
+          {
+            "x": 1160,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1160,
+            "worldZ": 8
+          },
+          {
+            "x": 1224,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1224,
+            "worldZ": 8
+          },
+          {
+            "x": 1288,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1288,
+            "worldZ": 8
+          },
+          {
+            "x": 1352,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1352,
+            "worldZ": 8
+          },
+          {
+            "x": 1416,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1416,
+            "worldZ": 8
+          },
+          {
+            "x": 1480,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1480,
+            "worldZ": 8
+          },
+          {
+            "x": 1544,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1544,
+            "worldZ": 8
+          },
+          {
+            "x": 1608,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1608,
+            "worldZ": 8
+          },
+          {
+            "x": 1672,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1672,
+            "worldZ": 8
+          },
+          {
+            "x": 1736,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1736,
+            "worldZ": 8
+          },
+          {
+            "x": 1800,
+            "z": 8,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1800,
+            "worldZ": 8
+          },
+          {
+            "x": 8,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 8,
+            "worldZ": 72
+          },
+          {
+            "x": 72,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 72,
+            "worldZ": 72
+          },
+          {
+            "x": 136,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 136,
+            "worldZ": 72
+          },
+          {
+            "x": 200,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 200,
+            "worldZ": 72
+          },
+          {
+            "x": 264,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 264,
+            "worldZ": 72
+          },
+          {
+            "x": 328,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 328,
+            "worldZ": 72
+          },
+          {
+            "x": 392,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 392,
+            "worldZ": 72
+          },
+          {
+            "x": 456,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 456,
+            "worldZ": 72
+          },
+          {
+            "x": 520,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 520,
+            "worldZ": 72
+          },
+          {
+            "x": 584,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 584,
+            "worldZ": 72
+          },
+          {
+            "x": 648,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 648,
+            "worldZ": 72
+          },
+          {
+            "x": 712,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 712,
+            "worldZ": 72
+          },
+          {
+            "x": 776,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 776,
+            "worldZ": 72
+          },
+          {
+            "x": 840,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 840,
+            "worldZ": 72
+          },
+          {
+            "x": 904,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 904,
+            "worldZ": 72
+          },
+          {
+            "x": 968,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 968,
+            "worldZ": 72
+          },
+          {
+            "x": 1032,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1032,
+            "worldZ": 72
+          },
+          {
+            "x": 1096,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1096,
+            "worldZ": 72
+          },
+          {
+            "x": 1160,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1160,
+            "worldZ": 72
+          },
+          {
+            "x": 1224,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1224,
+            "worldZ": 72
+          },
+          {
+            "x": 1288,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1288,
+            "worldZ": 72
+          },
+          {
+            "x": 1352,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1352,
+            "worldZ": 72
+          },
+          {
+            "x": 1416,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1416,
+            "worldZ": 72
+          },
+          {
+            "x": 1480,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1480,
+            "worldZ": 72
+          },
+          {
+            "x": 1544,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1544,
+            "worldZ": 72
+          },
+          {
+            "x": 1608,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1608,
+            "worldZ": 72
+          },
+          {
+            "x": 1672,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1672,
+            "worldZ": 72
+          },
+          {
+            "x": 1736,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1736,
+            "worldZ": 72
+          },
+          {
+            "x": 1800,
+            "z": 72,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1800,
+            "worldZ": 72
+          },
+          {
+            "x": 8,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 8,
+            "worldZ": 136
+          },
+          {
+            "x": 72,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 72,
+            "worldZ": 136
+          },
+          {
+            "x": 136,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 136,
+            "worldZ": 136
+          },
+          {
+            "x": 200,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 200,
+            "worldZ": 136
+          },
+          {
+            "x": 264,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 264,
+            "worldZ": 136
+          },
+          {
+            "x": 328,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 328,
+            "worldZ": 136
+          },
+          {
+            "x": 392,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 392,
+            "worldZ": 136
+          },
+          {
+            "x": 456,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 456,
+            "worldZ": 136
+          },
+          {
+            "x": 520,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 520,
+            "worldZ": 136
+          },
+          {
+            "x": 584,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 584,
+            "worldZ": 136
+          },
+          {
+            "x": 648,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 648,
+            "worldZ": 136
+          },
+          {
+            "x": 712,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 712,
+            "worldZ": 136
+          },
+          {
+            "x": 776,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 776,
+            "worldZ": 136
+          },
+          {
+            "x": 840,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 840,
+            "worldZ": 136
+          },
+          {
+            "x": 904,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 904,
+            "worldZ": 136
+          },
+          {
+            "x": 968,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 968,
+            "worldZ": 136
+          },
+          {
+            "x": 1032,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1032,
+            "worldZ": 136
+          },
+          {
+            "x": 1096,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1096,
+            "worldZ": 136
+          },
+          {
+            "x": 1160,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1160,
+            "worldZ": 136
+          },
+          {
+            "x": 1224,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1224,
+            "worldZ": 136
+          },
+          {
+            "x": 1288,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1288,
+            "worldZ": 136
+          },
+          {
+            "x": 1352,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1352,
+            "worldZ": 136
+          },
+          {
+            "x": 1416,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1416,
+            "worldZ": 136
+          },
+          {
+            "x": 1480,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1480,
+            "worldZ": 136
+          },
+          {
+            "x": 1544,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1544,
+            "worldZ": 136
+          },
+          {
+            "x": 1608,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1608,
+            "worldZ": 136
+          },
+          {
+            "x": 1672,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1672,
+            "worldZ": 136
+          },
+          {
+            "x": 1736,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1736,
+            "worldZ": 136
+          },
+          {
+            "x": 1800,
+            "z": 136,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 1800,
+            "worldZ": 136
+          },
+          {
+            "x": 8,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 8,
+            "worldZ": 200
+          },
+          {
+            "x": 72,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 72,
+            "worldZ": 200
+          },
+          {
+            "x": 136,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 136,
+            "worldZ": 200
+          },
+          {
+            "x": 200,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 200,
+            "worldZ": 200
+          },
+          {
+            "x": 264,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 264,
+            "worldZ": 200
+          },
+          {
+            "x": 328,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 328,
+            "worldZ": 200
+          },
+          {
+            "x": 392,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 392,
+            "worldZ": 200
+          },
+          {
+            "x": 456,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 456,
+            "worldZ": 200
+          },
+          {
+            "x": 520,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 520,
+            "worldZ": 200
+          },
+          {
+            "x": 584,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 584,
+            "worldZ": 200
+          },
+          {
+            "x": 648,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 648,
+            "worldZ": 200
+          },
+          {
+            "x": 712,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 712,
+            "worldZ": 200
+          },
+          {
+            "x": 776,
+            "z": 200,
+            "w": 210,
+            "h": 55,
+            "rotated": false,
+            "worldX": 776,
+            "worldZ": 200
+          }
+        ],
+        "scope": "Read-only coarse64m existing RefineryDistrict Campaign grid pre-screen: native foundation rule, serialized blockers and primary baked road flags. Full live native placement and aircraft clearance remain untested.",
+        "physicalSourceModified": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

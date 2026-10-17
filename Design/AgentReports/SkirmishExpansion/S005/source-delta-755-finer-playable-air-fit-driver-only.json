@@ -1,0 +1,9 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "allMaterialHashesUnchanged": true,
+  "countsForExactCurrentFullSource": false
+}

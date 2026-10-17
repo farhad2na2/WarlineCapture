@@ -1,0 +1,33 @@
+{
+  "entry": "Game.Tests.Editor.AriaUiOwnedStorageTests.RunVerifySharedUiStorageAndWarmup",
+  "required_markers": [
+    "[SkirmishSharedNativeProductionPreparation] result=Passed metadataAdditionalRoles=6 rotorRoles=4 framingControls=55 terminalMethods=6 enemy=5 approach=3 view=6 typedSpawn=5 aria=70 cameraAndMissionAcceptance=Pending",
+    "[MeasuredRotorAircraftFramingTests] result=Passed controls=55 roleNativePoseAndPixelAcceptance=Pending",
+    "[SkirmishTerminalPresentationObservationTests] result=Passed methods=6 nativeTerminalAndReturnJourney=Pending",
+    "[SkirmishRefinementEngineeringViewTests] result=Passed controls=6 nativeCameraAccepted=0 highLowCameraBehavior=Pending",
+    "[SkirmishLogicalRefinementPreparation] result=Passed enemy=5 approach=3 view=6 typedSpawn=5 canonicalSizeVectors=180 nativeMissionAcceptance=Pending",
+    "[SkirmishEnemyAirCombined13Tests] result=Passed controls=5 genericTuples=13 sizes=39 protectedIdentities=9 sourceFitCertified=0 nativePlayerWins=0",
+    "[SkirmishObjectiveApproachTowerTests] result=Passed controls=3 objectiveTuples=60 sizeVectors=180 protectedIdentities=9 sourceFitCertified=0",
+    "[SkirmishTypedSpawnConstraintTests] result=Passed controls=5 nativeMissionAcceptance=Pending",
+    "[AriaExtendedObjectiveSupport] result=Passed controls=70 normalMissionAcceptance=Pending",
+    "[AriaCompleteObjectiveSupport] result=Passed controls=44 normalMissionAcceptance=Pending",
+    "[AriaObjectiveSupportValidation] result=Passed controls=32 board=Pending normalMissionAcceptance=Pending",
+    "[InstalledAircraftMetadataVerification] result=Passed transportSources=3 transportDraws=57 additionalRoles=6 rotorRoles=4 freshNativeProvenance=1 metadataGenerated=0 cameraAcceptance=Pending",
+    "[SkirmishInstalledAircraftSharedPreparation] result=Passed sharedControls=150 installedMetadataVerified=1 metadataGenerated=0 geometryChanged=0 cameraAndMissionAcceptance=Pending",
+    "[RigidAircraftGeometryCache] result=Passed sources=3 draws=57 currentDependencyAndVertexHashes=1 pixelAcceptance=0",
+    "[CanonicalAircraftGeometry] result=Passed roles=6 transportUnchanged=1 nativeCameraAcceptance=Pending",
+    "[AriaUiOwnedStorageTests] result=Passed controls=7 actualUiShellBootstrap=1 originalTouchOwner=1 normalMissionAcceptance=Pending",
+    "[S005SceneArtifactWarmup] result=Passed scenes=2 keySource=NativeEditorSceneSystem defaultWorldPreserved=1 playStarted=0 missionCertified=0 snapshotAfterWrapperExit=1",
+    "[AriaUiOwnedStoragePreparation] result=Passed sharedControls=150 uiStorageControls=7 warmupScenes=2 snapshotAfterWrapperExit=1 normalMissionAcceptance=Pending"
+  ],
+  "required_environment": [
+    "WARLINE_AIRCRAFT_ROOT_PROVENANCE_REPORT",
+    "WARLINE_AIRCRAFT_ROOT_PROVENANCE_SHA256",
+    "WARLINE_S005_SCENE_WARMUP_OUTPUT"
+  ],
+  "actual_wrapper_zero_required": true,
+  "metadata_creation": false,
+  "old_dependency_refresh": false,
+  "unchanged_All12083_replayed": false,
+  "snapshot_after_wrapper_exit": true
+}

@@ -1,0 +1,6 @@
+{
+  "result": "Failed",
+  "reason": "Regression fixture dereferenced absent expanded legacy preset; production fallback is valid and retained",
+  "fix": "Match runtime fallback when legacy preset is absent",
+  "playerReady": false
+}

@@ -1,0 +1,36 @@
+"""Actual native UI/raycast diagnosis only; never converts a failed lifecycle into a pass."""
+import math
+
+def qualify(rows):
+ def need(v,m):
+  if not v:raise ValueError(m)
+ need(rows and rows[0].get('stage')=='Protocol','Diagnostic protocol absent')
+ need(len([r for r in rows if r.get('stage')=='Protocol'])==1,'Duplicate diagnostic protocol')
+ need(rows[-1].get('stage')=='ClosedDiagnostic' and len([r for r in rows if r.get('stage')=='ClosedDiagnostic'])==1,'Exact diagnostic closure absent')
+ need(not any(r.get('stage')=='DiagnosticFailure' for r in rows),'Diagnostic observation failure')
+ for a,b in zip(rows,rows[1:]):need(b['wall']>=a['wall'],'Diagnostic wall time out of order')
+ for r in rows:
+  need(r.get('scope')=='ReadOnlyNativeConfirmationUiRaycastNotGameplayFix','Diagnostic scope drift')
+  need(type(r.get('frame')) is int and type(r.get('sample')) is int and math.isfinite(r.get('wall',float('nan'))),'Diagnostic native metadata absent')
+ states=[r for r in rows if r['stage']=='ConfirmationState'];need(states and len(states)<=1000,'Actual phase6 observations absent or unbounded')
+ need([r['sample'] for r in states]==list(range(1,len(states)+1)),'Diagnostic samples duplicated/missing')
+ for a,b in zip(states,states[1:]):need(b['wall']-a['wall']>=.99,'Diagnostic samples exceed1Hz bound')
+ samples=[]
+ for state in states:
+  rs=[r for r in rows if r.get('sample')==state['sample'] and r['stage'] not in ('Protocol','ClosedDiagnostic')]
+  need(state['phase']==6 and state.get('attempt'),'Not actual confirmation phase6')
+  need(all(r['frame']==state['frame'] and r['cycle']==state['cycle'] and r['attempt']==state['attempt'] for r in rs),'Within-snapshot native identity/frame mismatch')
+  buttons=[r for r in rs if r['stage']=='ConfirmButton'];need(len(buttons)==1,'Exactly one actual confirmbutton record per snapshot')
+  b=buttons[0];hits=[r for r in rs if r['stage']=='RaycastHit'];need(not hits or [r['hitRank'] for r in hits]==list(range(len(hits))),'Native raycast stack rank/order invalid')
+  need(not hits or all(r['hitCount']==len(hits) for r in hits),'Native raycast count invalid')
+  cc=[r for r in rs if r['stage']=='ConfirmCanvas' and r.get('activeHierarchy')]
+  pp=[r for r in rs if r['stage']=='PausePanel' and r.get('activeHierarchy')]
+  front=hits[0] if hits else None
+  blocker=bool(state.get('confirmingFieldKnown') and state.get('confirming') and state.get('pendingAction')=='Surrender' and state.get('paused') and state.get('simulationActive') is False and state.get('timeScale')==0 and b.get('exists') and b.get('activeHierarchy') and b.get('interactable') and b.get('rendered') and b.get('safeArea') and b.get('actualPointAccepted') is False and front and front.get('isPauseHit') and front.get('isConfirmHit') is False and cc and pp and front['sortingOrder']>max(r['rootSortingOrder'] for r in cc))
+  samples.append({'sample':state['sample'],'frame':state['frame'],'attempt':state['attempt'],'cycle':state['cycle'],'paused':state['paused'],'simulationActive':state['simulationActive'],'timeScale':state['timeScale'],'confirmationRequested':state['confirming'],'pendingAction':state['pendingAction'],'buttonExists':b['exists'],'buttonNativePointAccepted':b['actualPointAccepted'],'buttonCaption':b['caption'],'buttonRendered':b['rendered'],'frontHit':front,'confirmCanvasOrders':[{'path':r['path'],'sortingOrder':r['sortingOrder'],'rootSortingOrder':r['rootSortingOrder'],'overrideSorting':r['overrideSorting']} for r in cc],'actualPauseLayerBlockerProven':blocker})
+ repeated=[r for r in rows if r['stage']=='RepeatedConfirmedLayerBlocker']
+ if repeated:
+  need(len(repeated)==1 and repeated[0].get('confirmedBlockedProbeCount')==3,'Bounded-close repeated proof invalid')
+  need(len(samples)>=3 and all(r['actualPauseLayerBlockerProven'] for r in samples[-3:]),'Bounded close without three independently confirmed UI blockers')
+  need(rows[-1]['reason']=='DiagnosticConfirmedPauseRaycastOverConfirmation_NoGameplayFix_LifecycleNotPassed','Owned diagnostic close reason mismatch')
+ return {'ownedRunClosedEarlyForConfirmedDiagnostic':bool(repeated),'result':'RecordedDiagnostic','scope':'ActualNativePhase6ConfirmationUiReadOnlyNotLifecycleAcceptance','snapshots':samples,'observedPauseLayerBlocker':any(r['actualPauseLayerBlockerProven'] for r in samples),'blockedSamples':sum(r['actualPauseLayerBlockerProven'] for r in samples),'originalLifecycleClosureReason':rows[-1]['reason'],'gameplayFixApplied':False,'confirmationInvokedByDiagnostic':False,'lifecyclePassInferred':False,'playerReady':False}

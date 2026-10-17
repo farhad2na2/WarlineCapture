@@ -1,0 +1,234 @@
+{
+  "result": "Failed",
+  "scope": "Actual paid native Airport, Fighter+Plane live Standard Air2. Native Touch selected/Move/airborne paid pair and replacement; disclosed actual Materials replenishment before third-attempt baseline with actual bank>=price; real eligibility Capacity refusal and actual failed request/no spend/no receipt/cap conservation; native death release/idempotency and paid Fighter replacement. No normal mission or full aircraft lifecycle certificate.",
+  "offlineOnly": true,
+  "noUnityRerun": true,
+  "originalFailure": "native1092-fixedwing-capacity-failure.json",
+  "originalFailureSha256": "b924395b2e63c846287659740d4a39c4aac0712f29a78b116224831abb0b3205",
+  "originalRunnerSha256": "ae5aedb92392d278355c603f2655d54e55584ec21001b127556754dece7e1a4c",
+  "executedFixtureSha256": "6465db04bd7178992e30be48082ea9edba0018a166f8af978c96bfeded55a85f",
+  "sourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "fullSourceUnchanged": true,
+  "sourceManifests": [
+    "final-1081-vehicle-combat-post-source-manifest.json",
+    "final-1092-fixedwing-capacity-preflight-source-manifest.json",
+    "final-1092-fixedwing-capacity-pre-dispatch-source-manifest.json",
+    "final-1092-fixedwing-capacity-post-source-manifest.json"
+  ],
+  "wrapperExit": 0,
+  "nativeCompletionExit": 0,
+  "evidenceHashes": {
+    "log": "fad7043d068b6a857c628b7efb023029b4c53ee1d51a2500d2fc431ca6752681",
+    "touchEvidence": "9d02bec46f9e183265ea33c7f68e910b8ccc0ade63a284db95625a279a8da29a",
+    "placementEvidence": "99b832b2964a843ce83a5db407916d295f9a24960150e4bf1c066ef068766ed8"
+  },
+  "cases": [
+    {
+      "role": "Fighter",
+      "requestId": 9001,
+      "receiptId": 1001,
+      "actualRuntimeMaterialsPrice": 480,
+      "actualProducerRuntimeId": 15,
+      "identicalLivePollingObservations": 12,
+      "canonicalPaidDeliveryObservation": {
+        "role": "Fighter",
+        "paid": "480",
+        "producer": "15",
+        "delivered": "1",
+        "targets": "Air",
+        "nativeQueue": "1",
+        "syntheticSpawn": "0"
+      },
+      "receiptProgress": [
+        {
+          "role": "Fighter",
+          "receipt": "1001",
+          "phase": "Producing",
+          "paid": "480",
+          "producer": "15",
+          "delivered": "0",
+          "required": "1",
+          "airportPresent": "True"
+        },
+        {
+          "role": "Fighter",
+          "receipt": "1001",
+          "phase": "Live",
+          "paid": "480",
+          "producer": "15",
+          "delivered": "1",
+          "required": "1",
+          "airportPresent": "True"
+        }
+      ],
+      "selection": [
+        {
+          "result": "Passed",
+          "role": "Fighter",
+          "members": "1",
+          "input": "Touch",
+          "selectionInjected": "0"
+        }
+      ],
+      "movement": [
+        {
+          "result": "Passed",
+          "role": "Fighter",
+          "members": "1",
+          "minimumDisplacement": "79.9938",
+          "input": "Touch",
+          "airborneObserved": "1",
+          "actorPositionsSelectionOrdersInjected": "0"
+        }
+      ]
+    },
+    {
+      "role": "TransportPlane",
+      "requestId": 9002,
+      "receiptId": 1002,
+      "actualRuntimeMaterialsPrice": 440,
+      "actualProducerRuntimeId": 15,
+      "identicalLivePollingObservations": 9,
+      "canonicalPaidDeliveryObservation": {
+        "role": "TransportPlane",
+        "paid": "440",
+        "producer": "15",
+        "delivered": "1",
+        "targets": "None",
+        "nativeQueue": "1",
+        "syntheticSpawn": "0"
+      },
+      "receiptProgress": [
+        {
+          "role": "TransportPlane",
+          "receipt": "1002",
+          "phase": "Producing",
+          "paid": "440",
+          "producer": "15",
+          "delivered": "0",
+          "required": "1",
+          "airportPresent": "True"
+        },
+        {
+          "role": "TransportPlane",
+          "receipt": "1002",
+          "phase": "Live",
+          "paid": "440",
+          "producer": "15",
+          "delivered": "1",
+          "required": "1",
+          "airportPresent": "True"
+        }
+      ],
+      "selection": [
+        {
+          "result": "Passed",
+          "role": "TransportPlane",
+          "members": "1",
+          "input": "Touch",
+          "selectionInjected": "0"
+        }
+      ],
+      "movement": [
+        {
+          "result": "Passed",
+          "role": "TransportPlane",
+          "members": "1",
+          "minimumDisplacement": "59.03514",
+          "input": "Touch",
+          "airborneObserved": "1",
+          "actorPositionsSelectionOrdersInjected": "0"
+        }
+      ]
+    },
+    {
+      "role": "Fighter",
+      "requestId": 9004,
+      "receiptId": 1003,
+      "actualRuntimeMaterialsPrice": 480,
+      "actualProducerRuntimeId": 15,
+      "identicalLivePollingObservations": 11,
+      "canonicalPaidDeliveryObservation": {
+        "role": "Fighter",
+        "paid": "480",
+        "producer": "15",
+        "delivered": "1",
+        "targets": "Air",
+        "nativeQueue": "1",
+        "syntheticSpawn": "0"
+      },
+      "receiptProgress": [
+        {
+          "role": "Fighter",
+          "receipt": "1003",
+          "phase": "Producing",
+          "paid": "480",
+          "producer": "15",
+          "delivered": "0",
+          "required": "1",
+          "airportPresent": "True"
+        },
+        {
+          "role": "Fighter",
+          "receipt": "1003",
+          "phase": "Live",
+          "paid": "480",
+          "producer": "15",
+          "delivered": "1",
+          "required": "1",
+          "airportPresent": "True"
+        }
+      ],
+      "selection": [
+        {
+          "result": "Passed",
+          "role": "Fighter",
+          "members": "1",
+          "input": "Touch",
+          "selectionInjected": "0"
+        }
+      ],
+      "movement": [
+        {
+          "result": "Passed",
+          "role": "Fighter",
+          "members": "1",
+          "minimumDisplacement": "78.78093",
+          "input": "Touch",
+          "airborneObserved": "1",
+          "actorPositionsSelectionOrdersInjected": "0"
+        }
+      ]
+    }
+  ],
+  "actualThirdAttemptFunds": [
+    {
+      "result": "Observed",
+      "before": "410",
+      "funded": "800",
+      "required": "480",
+      "nativeBankCapacity": "800",
+      "fundingInjectedBeforeBaseline": "1",
+      "nativeCapacityOrPriceChanged": "0"
+    }
+  ],
+  "actualExcessRequest": {
+    "status": "Failed",
+    "nativeCode": "3",
+    "independentlyObservedEligibility": "InsufficientCapacity"
+  },
+  "touchContacts": 27,
+  "pollingCorrection": "Only identical PaidQueueCase fields within each actual accepted request lifecycle are collapsed; no receipt ID is invented in the PaidQueueCase schema. Distinct actual native receipt IDs come from NativeQueueProgress and frozen runtime ownership assertions. FighterReplacement is a lifecycle position, not a native role name.",
+  "limits": [
+    "Actual paid receipt-to-live actor ownership checks are native fixture assertions; individual delivered entity IDs are not serialized in these logs.",
+    "Funding/readiness/opening death/enemy strategy/fuel storage setup remains disclosed.",
+    "No air combat, Plane cargo/boarding/checkpoint, return/refuel, bilateral airports, normal mission or device acceptance certificate."
+  ],
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "playerReady": false,
+  "originalFailurePreserved": true,
+  "errors": [
+    "Frozen runtime assertion missing: if(cap.AirLive!=0 || cap.AirReserved!=0"
+  ]
+}

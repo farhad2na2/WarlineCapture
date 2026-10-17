@@ -1,0 +1,12 @@
+{
+  "playerReady": false,
+  "sourceHash": "49fb6cc91c6b60f70f2775743e8c198dd89724b89b22f10f79ec9f6c4a89c247",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "logExit": 0,
+  "nativeStartup": "Passed initial32 expected32 functional14",
+  "visual": "Brighter buildings and ground; frontage density still below mockup; not accepted",
+  "capture": "native591-fixed-daylight-opening.png",
+  "log": "native-591-fixed-shared-daylight-map-review.log",
+  "checkpointStaging": "46 actors 4931 map references schema7 persisted decoded prepared; diagnostic staging only"
+}

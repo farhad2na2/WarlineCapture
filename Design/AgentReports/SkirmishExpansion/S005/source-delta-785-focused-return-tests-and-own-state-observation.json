@@ -1,0 +1,10 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Tests/Editor/SelectionCommandRequestResultContractTests.cs"
+  ],
+  "shippingRuntimeMapConfigUnchanged": true,
+  "materialsIdentical": true,
+  "scope": "Focused long-runway runtime tests and read-only own-air native diagnostics only",
+  "sourceHash": "4c26481e6d737a52e3f46297f4cd42640c040581985c4bb70c10700496259f07"
+}

@@ -1,0 +1,8 @@
+{
+  "result": "Unclosed",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "reason": "Native CLI outer/nested failure: native1196-after-close-native-idle.json",
+  "ownershipPreserved": true,
+  "playerReady": false
+}

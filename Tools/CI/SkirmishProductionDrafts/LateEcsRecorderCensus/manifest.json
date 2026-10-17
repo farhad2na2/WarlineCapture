@@ -1,0 +1,27 @@
+{
+  "scope": "ExplicitOptInLateEcsRecorderDiagnostic_NoSettingsGameplayChanges",
+  "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005OpeningWitnessWithLateEcsCensus",
+  "required_argument": "-warlineProfilerMarkers",
+  "output": "Existing WARLINE_S005_OPENING_GROUP_OUTPUT plus .ecs-recorders.jsonl",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.txt",
+      "before_sha256": null,
+      "sha256": "e18922373e16078d0b3f48618823dc4e2a75ac12962cd3fd813bfbd910f6ba03",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "maximum_recorders": 512,
+  "maximum_handle_facts": 1024,
+  "maximum_samples": 12,
+  "discovery_opportunities": [
+    "FirstPlayWorld",
+    "Playing",
+    "PlayingPlus15",
+    "PlayingPlus45"
+  ],
+  "runtime_or_profiler_settings_changed": false,
+  "cause_established": false,
+  "native_executed": false
+}

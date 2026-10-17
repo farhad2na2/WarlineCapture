@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1341",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1338-baker-version-repair-source-manifest.json",
+  "preflightManifest": "final-1341-normal-paid-south-flank-preflight-source-manifest.json",
+  "fixtureSha256": "d78052111580b549185371e557bfc0727a3277fee3ecd0f4dd500f9eff50390e",
+  "executedRunnerSha256": "dcd83c74044d86701f77e02fd8bba47738cd461e758cec2df178bfc3b87dc92f",
+  "method": "S005NormalSouthFlank1341Observer.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

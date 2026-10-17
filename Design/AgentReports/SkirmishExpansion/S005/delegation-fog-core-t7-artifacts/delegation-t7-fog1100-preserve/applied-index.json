@@ -1,0 +1,25 @@
+{
+  "status": "FrozenRootReviewedForNative1100",
+  "scope": "Followup1099 native Scan regression failed before reveal; fixture UnitMove omitted plus native API faction2 player-only gate",
+  "frozenCoreUnchanged": true,
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "stagedPath": "/private/tmp/fogfix1091-followup/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "basePath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "baseSha256": "3e17d0fbdab1c071328298530131c510151ea7a6259050af2d785aa949cb9e0e",
+      "stagedSha256": "51d5ecc7d686da660b00e2d6b156f2c733548a939f10edd315d048754bbcf354"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "stagedPath": "/private/tmp/fogfix1091-followup/Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "basePath": "/private/tmp/fogfix1091/Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "baseSha256": "0a98107b87d9dfa2d939845dc9b4fea2202a3dd80128ec6e952baa7d507cbd6b",
+      "stagedSha256": "37447dbbafa7a2865876e6d980f599680bc02a8e738a37e572fea9d51dae6561"
+    }
+  ],
+  "cases": 19,
+  "productionChange": "Current active owned expanded opposing faction source can use native API Scan; player-selected source remains explicitly player controlled; legacy/source anatomy/death/disabled/passenger validation preserved.",
+  "fixtureChange": "Actual minimum UnitMove added to actor fixture; native accepted/reason/source/revealed diagnostics asserted before visibility; faction2 API case independently proves player UI cannot use foreign selected source.",
+  "patchSha256": "47b78562a29b98ba451bb8c7c5466a2514d1c5be4dd78a1a785fe51a05e698e7"
+}

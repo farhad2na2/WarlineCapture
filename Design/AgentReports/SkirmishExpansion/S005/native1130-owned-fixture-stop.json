@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var t=System.AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType(\"S005BoardedRecovery1130\",false)).FirstOrDefault(v=>v!=null); var flags=System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic; var bridge=typeof(Game.Editor.ExistingEditorValidation); var capture=bridge.GetField(\"active\",flags)?.GetValue(null); if(!bridge.GetProperty(\"IsRunning\").GetValue(null).Equals(true)||capture==null||((string)capture.GetType().GetField(\"Method\").GetValue(capture))!=\"S005BoardedRecovery1130.RunFastApcValidation\"||t==null||!t.GetField(\"phase\",flags).GetValue(null).Equals(0)) throw new System.InvalidOperationException(\"Owned1130 startup identity mismatch; no stop\"); t.GetMethod(\"Finish\",flags).Invoke(null,new object[]{true,\"StartupProfileAwaitingLanguageConfirmed_EarlyEmptySaveRootFixtureIssue\"}); return \"Owned1130 fixture failure cleanup requested; native existing wrapper still captures failure and completion; Editor process remains open\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "Owned1130 fixture failure cleanup requested; native existing wrapper still captures failure and completion; Editor process remains open"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

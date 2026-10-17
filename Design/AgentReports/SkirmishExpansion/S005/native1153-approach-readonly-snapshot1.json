@@ -1,0 +1,367 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005AriaApproachReadOnly1153.cs",
+      "entry": "S005AriaApproachReadOnly1153.Run",
+      "dry_run": "false",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 402,
+      "executeMs": 38,
+      "assemblyName": "PipelineRunScript_S005AriaApproachReadOnly1153_5516a52c425b456d89792ab42edda62d",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyActualPublicProjection",
+        "available": true,
+        "worldFrame": 7364,
+        "capturedTime": 0,
+        "observationFrame": 0,
+        "attempt": "expanded-s005-104734-2444648eccc24c088e4520da3348d076",
+        "seed": 104734,
+        "sessionPhase": "Playing",
+        "active": false,
+        "expanded": false,
+        "nativeCommandInputCount": 1,
+        "nativeGameplayCount": 1,
+        "nativeCommandMode": "Attack",
+        "nativeSelectionMode": false,
+        "publishedAttackMode": false,
+        "publishedSelectionMode": false,
+        "publishedSelectionVisible": false,
+        "publishedSelectedCount": 0,
+        "page": 0,
+        "pageCount": 0,
+        "totalGroups": 0,
+        "selectedGroups": 0,
+        "selectedOffPage": 0,
+        "rosterRevision": 0,
+        "assaultMask": 0,
+        "structureMask": 0,
+        "selectedMask": 0,
+        "attackOrderMask": 0,
+        "selectionPresent": true,
+        "nativePage": 0,
+        "nativePageSize": 5,
+        "nativeSelectedGroupCount": 5,
+        "advanceGroundAvailable": false,
+        "advanceGroundId": 0,
+        "advanceScreenX": 0,
+        "advanceScreenY": 0,
+        "advancePreferred": false,
+        "enemyBaseTargetAvailable": false,
+        "focusEnemyAvailable": false,
+        "assaultDistanceVisible": false,
+        "nearestFriendlyObjectiveDistance": 0,
+        "planIntent": "Advance",
+        "assaultIssued": 0,
+        "structureOrdered": 0,
+        "assaultSelecting": 1,
+        "pagedToAssault": 1,
+        "pagesOrdered": 0,
+        "assaultPageSeen": 0,
+        "lastProgressAt": 109.146484,
+        "assaultDistanceObserved": 0,
+        "bestAssaultDistance": 0,
+        "objectiveProgressAt": 109.146484,
+        "touchPhase": "Blocked",
+        "actions": 70,
+        "attempts": 3,
+        "touchTargetId": -20006,
+        "touchGoalId": 10000,
+        "gestureRequested": 0,
+        "observedKind": "Waiting",
+        "observedTargetId": 0,
+        "observedGoalId": 0,
+        "observedFrame": 7364,
+        "drawerPresent": true,
+        "groupsPresent": true,
+        "drawer": [
+          {
+            "slot": 0,
+            "groupId": 1,
+            "role": "Rifle",
+            "alive": 4,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "slot": 1,
+            "groupId": 2,
+            "role": "Rifle",
+            "alive": 4,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "slot": 2,
+            "groupId": 3,
+            "role": "Rocketeer",
+            "alive": 4,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "slot": 3,
+            "groupId": 4,
+            "role": "Car",
+            "alive": 1,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "slot": 4,
+            "groupId": 5,
+            "role": "ApcArmored",
+            "alive": 1,
+            "selected": 1,
+            "lastOrder": "None"
+          }
+        ],
+        "groups": [
+          {
+            "groupId": 1,
+            "role": "Rifle",
+            "alive": 4,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 2,
+            "role": "Rifle",
+            "alive": 4,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 3,
+            "role": "Rocketeer",
+            "alive": 4,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 4,
+            "role": "Car",
+            "alive": 1,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 5,
+            "role": "ApcArmored",
+            "alive": 1,
+            "selected": 1,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 11,
+            "role": "Tanker",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 12,
+            "role": "LogisticsTruck",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 15,
+            "role": "Rocketeer",
+            "alive": 4,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 16,
+            "role": "Tanker",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 17,
+            "role": "Rifle",
+            "alive": 4,
+            "selected": 0,
+            "lastOrder": "None"
+          }
+        ],
+        "selectedCohort": [
+          {
+            "stableId": "role.rifle.1.0.4",
+            "groupId": 2,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.5",
+            "groupId": 2,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.2",
+            "groupId": 1,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.1",
+            "groupId": 1,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.6",
+            "groupId": 2,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.0",
+            "groupId": 1,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.3",
+            "groupId": 1,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rifle.1.0.7",
+            "groupId": 2,
+            "role": "Rifle",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.apc_armored.1.3.0",
+            "groupId": 5,
+            "role": "ApcArmored",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rocketeer.1.1.1",
+            "groupId": 3,
+            "role": "Rocketeer",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rocketeer.1.1.2",
+            "groupId": 3,
+            "role": "Rocketeer",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rocketeer.1.1.3",
+            "groupId": 3,
+            "role": "Rocketeer",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.rocketeer.1.1.0",
+            "groupId": 3,
+            "role": "Rocketeer",
+            "attackMove": true,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": true
+          },
+          {
+            "stableId": "role.car.1.2.0",
+            "groupId": 4,
+            "role": "Car",
+            "attackMove": false,
+            "engaged": false,
+            "baseBreach": false,
+            "held": false,
+            "pathRequest": false,
+            "pathFollow": false
+          }
+        ],
+        "gameplayOrPresentationWrites": false,
+        "callbacksRegistered": false,
+        "hiddenActorReads": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

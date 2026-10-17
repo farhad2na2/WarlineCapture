@@ -1,0 +1,96 @@
+{
+  "acceptedCommandCount": 7,
+  "completeSourceUnchanged": true,
+  "contactAudit": {
+    "completeMatchCertified": false,
+    "completedContacts": 70,
+    "errors": [],
+    "nativeMenuContactsRecorded": true,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "phases": {
+      "Menu": 9,
+      "Runtime": 61,
+      "Terminal": 1
+    },
+    "recordedContacts": 71,
+    "strictAllContactsEnded": false,
+    "strictRecordedContacts": true,
+    "terminalCancellations": [
+      {
+        "acceptedCommands": 7,
+        "contact": [
+          98,
+          2,
+          61
+        ],
+        "frame": 10855,
+        "reason": "Native Finished disposal; no command accepted during contact"
+      }
+    ],
+    "terminalContactsRecorded": true
+  },
+  "countedRow": [
+    "S005-aria-rs-130368-en-1",
+    "S005",
+    "2",
+    "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+    "bcfc13f18365c24c39e9d250c16120720ef9982a615e84df420b240ad1e1411b",
+    "Standard",
+    "Regular",
+    "130368",
+    "en",
+    "Editor",
+    "aria",
+    "1",
+    "2026-10-14T02:55:37Z",
+    "Victory",
+    "MainBaseDestroyed",
+    "267.113",
+    "0",
+    "0",
+    "Design/AgentReports/SkirmishExpansion/S005//candidates/2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc/s005-aria-rs-130368-en-1.jsonl",
+    "Design/AgentReports/SkirmishExpansion/S005//candidates/2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc/s005-aria-rs-130368-en-1-log.txt"
+  ],
+  "errors": [],
+  "expectedSource": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "independentSourceHashes": [
+    "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+    "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc"
+  ],
+  "locale": "en",
+  "log": "native1550-aria-en130368.log",
+  "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed2",
+  "missingMarkers": [],
+  "nativeExit": 0,
+  "nativeInputCounts": [
+    61,
+    60,
+    436,
+    0,
+    0,
+    7,
+    0
+  ],
+  "result": "Passed",
+  "run": 1550,
+  "scope": "One normal-input S005 Standard/Regular ARIA Editor journey; not full mission/player readiness",
+  "seed": 130368,
+  "terminal": {
+    "clockElapsed": 267.113,
+    "clockPaused": 1,
+    "elapsed": 267.113,
+    "enemyBaseHp": -1,
+    "leadX": 920.893,
+    "leadZ": 603.604,
+    "outcome": "Victory",
+    "pathFollowing": 1,
+    "pathRequests": 1,
+    "phase": "Finished",
+    "playerBaseHp": 800,
+    "playerUnits": 21,
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0
+  },
+  "terminalHealthQualification": "destroyed-role-sentinel-supported-by-health-descent",
+  "wrapperExit": 0
+}

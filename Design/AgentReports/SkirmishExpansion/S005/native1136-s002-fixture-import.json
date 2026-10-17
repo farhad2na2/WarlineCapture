@@ -1,0 +1,15 @@
+{
+  "manifest": "/private/tmp/aria-fog1132-missing-base-fixture-fix/manifest.json",
+  "manifestSha256": "b8995972218b3ccd126c78426dbdac116c2cf67829fb3ea73bc85af99cdf8aba",
+  "files": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs",
+      "baseSha256": "50deb7b44126cb0df7cdb7b9ae086f7ccd6ac9c64876bb0d135ad11700a9c7f7",
+      "stagedPath": "/private/tmp/aria-fog1132-missing-base-fixture-fix/Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs",
+      "stagedSha256": "e3ef584d262ee76324562be1a60f4f0c592fe92469e83430e99915dbdf12af6a"
+    }
+  ],
+  "backup": "/private/tmp/s005-s002-fixture-before1136.cs",
+  "nativeCompile": "Pending",
+  "productionChanged": false
+}

@@ -1,0 +1,15 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] Existing executeMethod: Game.Tests.Editor.SkirmishEnemyEconomyTests.RunFocusedValidation; LogFile: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1241-economy.log; TimeoutSeconds: 180
+{
+  "success": false,
+  "command": "unity command run_script",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Pipeline server returned 400 Bad Request: Internal Server Error. Main thread operation timed out after 30000ms"
+    }
+  ],
+  "warnings": []
+}
+[UnityInvokeMac] Pipeline acknowledgement failed (status 6); exact validation log confirms ownership. Completion receipt remains required.

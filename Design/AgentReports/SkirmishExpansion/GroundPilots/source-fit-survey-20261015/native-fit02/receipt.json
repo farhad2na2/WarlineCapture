@@ -1,0 +1,10 @@
+{
+  "result": "Collected",
+  "wrapperExit": 0,
+  "requiredPassMarker": "[SkirmishGroundSourceFitSurvey] result=Collected sources=4",
+  "nativeFitCertified": false,
+  "playerReady": false,
+  "rawSha256": "c8bfa82f6f76dfe35344fc6e00c00ce460baa700e395b150ac53c64644f36a84",
+  "physicalGeometryChanged": false,
+  "note": "Actual decoded surface, all facility prefabs and bounded endpoint proposals measured. Native source-fit collection is not legal full-army placement or mission acceptance."
+}

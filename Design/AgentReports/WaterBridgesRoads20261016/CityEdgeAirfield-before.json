@@ -1,0 +1,19 @@
+{
+    "map": "CityEdgeAirfield",
+    "sourceHash": "6ca53b30fe1df22f744e433a96ed1425aeb2e1b5a26565d9cceded68da0b4161",
+    "result": "Census",
+    "waterRenderers": 0,
+    "bankMeshes": 0,
+    "channelMeshes": 0,
+    "waterMaterials": 0,
+    "joins": 2,
+    "pavedMaterials": 6,
+    "earthMaterials": 3,
+    "joinRows": [
+        "Map_CityEdgeAirfield/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_CityEdgeAirfield/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 441.25) dir=(0.00, 1.00) halfWidth=2.68",
+        "Map_CityEdgeAirfield/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_CityEdgeAirfield/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 448.60) dir=(0.00, -1.00) halfWidth=2.68"
+    ],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/DestinationPads/CityEdgeAirfield_2dff99c4cf98d42888a5d0d94f7925b3.mat roles=excluded,earth"
+    ]
+}

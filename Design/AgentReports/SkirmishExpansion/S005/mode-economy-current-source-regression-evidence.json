@@ -1,0 +1,36 @@
+{
+  "sourceHash": "3f7c2914408eaa45227b75542666e01c5c63a2879f4ffbd2d231a7e8181ead91",
+  "preFingerprint": "final-440-mode-economy-source-independent-fingerprint.json",
+  "postFingerprint": "final-444-mode-economy-post-independent-fingerprint.json",
+  "result": "Passed",
+  "checks": [
+    {
+      "run": 441,
+      "log": "tests-441-mode-economy-profile.log",
+      "logSha256": "d8f63b2b4e4b3ce7fc22dc599f16ee94b9e83d9f38882a773e4b51932b53ab62",
+      "requiredPassMarker": "[SkirmishFacilityEconomyProfileTests] result=Passed tests=6",
+      "tests": 6,
+      "wrapperExit": 0
+    },
+    {
+      "run": 442,
+      "log": "tests-442-expanded-economy-regression.log",
+      "logSha256": "baeed037c185aa6b7b763b633eb1f44dc9abd5a638ee61b27bbd25b8c26dfb6c",
+      "requiredPassMarker": "[SkirmishExpandedEconomyTests] result=Passed",
+      "tests": null,
+      "wrapperExit": 0
+    },
+    {
+      "run": 443,
+      "log": "tests-443-mode-economy-recovery-regression.log",
+      "logSha256": "46bd22562f032f85be018b3639c7958e2a2821bf8834dc07c15ed206c26b89d1",
+      "requiredPassMarker": "[SkirmishNativeRecoveryStagingValidation] result=Passed tests=51",
+      "tests": 51,
+      "wrapperExit": 0
+    }
+  ],
+  "normalInputMissionCertified": false,
+  "nativeRecoveredPlayerSessionCertified": false,
+  "aircraftLifecycleCertified": false,
+  "playerReady": false
+}

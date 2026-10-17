@@ -1,0 +1,16 @@
+{
+  "result": "Failed",
+  "nativeTestsExecuted": false,
+  "reason": "Licensing initialization failed after74.84s; restricted-token wrapper taskkill failed",
+  "shell_exit": 1,
+  "wrapper_exit_marker_present": false,
+  "wrapper_owned_cleanup": {
+    "pid": 10332,
+    "parent_pid": 28680,
+    "verified_exact_executable_and_log_and_entry": true,
+    "completed_with_normal_desktop_token": true
+  },
+  "recovery": "No remaining Editor verified; same GUI wrapper retry05 with normal desktop token",
+  "cameraAccepted": false,
+  "playerReady": false
+}

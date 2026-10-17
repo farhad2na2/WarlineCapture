@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var c=UnityEngine.Camera.main;return new {playing=UnityEditor.EditorApplication.isPlaying,position=c==null?UnityEngine.Vector3.zero:c.transform.position,angles=c==null?UnityEngine.Vector3.zero:c.transform.eulerAngles,fov=c==null?0:c.fieldOfView,profiler=UnityEditorInternal.ProfilerDriver.enabled};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "{ playing = True, position = (485.78, 75.00, 525.78), angles = (50.00, 270.00, 0.00), fov = 50, profiler = False }"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

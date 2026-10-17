@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs",
+      "entry": "PlaneDoorIncrementalRegressionV5.Run",
+      "timeout_ms": "120000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 927,
+      "executeMs": 5,
+      "assemblyName": "PipelineRunScript_PlaneDoorIncrementalRegression_e52fea111c394bb887cbf92308a182c9",
+      "success": true,
+      "result": "{\"stage\":\"LoadOnly\",\"worldName\":\"\",\"changedComponent\":\"TransformOnly\",\"reason\":\"\",\"fresh\":false,\"incremental\":false,\"sameWorld\":false,\"sameEntity\":false,\"uniqueMetadata\":false,\"ownedOriginMatched\":false,\"doorExists\":false,\"passed\":true,\"queriedMetadataCount\":0,\"ownedPrimaryMatchCount\":0,\"primaryGuidSerial\":0,\"entityIndex\":0,\"entityVersion\":0,\"doorIndex\":0,\"doorVersion\":0,\"expectedX\":0.0,\"expectedY\":0.0,\"expectedZ\":0.0,\"actualX\":0.0,\"actualY\":0.0,\"actualZ\":0.0,\"maxOffsetError\":0.0,\"openRotationError\":0.0,\"closedRotationError\":0.0}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,20 @@
+{
+  "result": "PassedDependencyDiff",
+  "beforeSource": "b43ed97ef0694b7607e258abd9a81f2925ac94016647d6fc57c9f68203c6de93",
+  "afterSource": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "beforeManifest": "current-attack-continue-candidate-source-manifest.json",
+  "afterManifest": "current-manual-handoff-repair-source-manifest.json",
+  "beforeManifestSha256": "d076b0038c15480adc650daa3e2b5d40ac72e42763d4b042dd07529ba9811a35",
+  "afterManifestSha256": "292949fc5894e13bc05684a7e46d9c0f2b3e5b1a5f9d7ce1d646c66eb990049b",
+  "fileCount": 43296,
+  "materialCount": 1076,
+  "changedFiles": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+      "before": "0d36ee2fd287d285bf0fc4352935848b2b24d34418c3b784985c40ff6c327d5d",
+      "after": "24e498e08f847a5c2911e6da958b7b4814b81dc062956926165d302c5426aee5"
+    }
+  ],
+  "changedMaterials": [],
+  "scope": "Only shared Editor validation-driver file changed; runtime mission/map/visual source bytes unchanged. Historical whole-source results retain their own source identity."
+}

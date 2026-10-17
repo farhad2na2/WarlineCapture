@@ -1,0 +1,28 @@
+{
+  "result": "FailedMissingRequiredPassMarker",
+  "wrapperExit": 0,
+  "sourceHash": "673bb90fc2893ccf53adb658a6edc2213940b1fcffa409ce2c8799d92c8f6c58",
+  "independentSourceAndAllMaterialsUnchanged": true,
+  "lastEconomyElapsed": 445.2471923828125,
+  "observed": "Extra refinery160 committed, native producing/receiving oil; first240-material readiness upgrade paid. No aircraft delivery/flight completed.",
+  "exit": "Orderly Editor shutdown without harness completion marker. Cause not established; no crash/fatal marker in log.",
+  "inputAudit": {
+    "recordedContacts": 85,
+    "completedContacts": 85,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 80
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-d66c956a53a54821b444e9e2fd988bfc.jsonl.touch.jsonl",
+    "sha256": "ff31862fb00ff72741eac2f1c58c6363336fc1f8f24e144fedade08506688870"
+  },
+  "playerReady": false
+}

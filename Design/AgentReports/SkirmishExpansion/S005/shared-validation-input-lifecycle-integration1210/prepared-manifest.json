@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "status": "PreparedExternalOnly_NotNativeCompiledOrExecuted",
+  "reason": "Native1203 destroyed-current-reference MissingReferenceException after1198 closure",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "baseSha256": "e41423a1f8c286f9c9a15db3993ec94ff879454524d83932461443f6802efb21",
+      "stagedSha256": "98f3e8be8cb31b415a85e7bd6ef5b4970552cad8807474bbd768c6dd397ad4f2",
+      "bytes": 87136
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/ValidationBackgroundInputScope.cs",
+      "baseSha256": null,
+      "stagedSha256": "635271256848c5b67901543a42465ce169f9ce0042fa5c31b7d57b42267311f9",
+      "bytes": 6823
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/ValidationBackgroundInputScope.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "68dc43259f2ebbd477bafca14aa5eb8c24385675055fffaa4a37badd9d50ef16",
+      "bytes": 60
+    }
+  ],
+  "patchSha256": "c981cd991c6d5e25c53c53ca0989b384486ac0f2651cb288c1ba037d9eddee6e",
+  "fixture": {
+    "path": "/private/tmp/s005-input-settings-lifecycle-v1/ValidationInputSettingsLifecycle1210.cs",
+    "sha256": "2159a6ad73975601ebcddeef1bd68e52290bcf1b3ba2d64c926a7277f86c5e70",
+    "focusedEntry": "ValidationInputSettingsLifecycle1210.RunFocusedValidation",
+    "actualPlayEntry": "ValidationInputSettingsLifecycle1210.RunPlayTransitions",
+    "playTransitions": 2
+  },
+  "scope": "Shared Editor validation input clone lifecycle, not runtime gameplay/default input configuration",
+  "qualification": "No actual native regression yet; main source not modified by preparation",
+  "limits": [
+    "No new default InputSettings is created; exact remembered/config source or genuinely unambiguous already-live source only.",
+    "Current public harness disables domain reload; bounded Play regression matches and restores those Editor options.",
+    "No broad Campaign probe migration, no new scenes, no player outcome/evidence injection.",
+    "Original InputSettings is never destroyed; only detached explicit owned clone is destroyed after EnteredEditMode package callbacks."
+  ],
+  "existingProof": "Design/AgentReports/SkirmishExpansion/S005/native1203-input-settings-inspection.json",
+  "packageSources": [
+    "InputSystem.cs3604-3648 JSON Play restore",
+    "InputManager.cs4271,4292-4295 saved-reference domain restore",
+    "InputManager.cs1873-1874 package-owned HideAndDontSave destruction",
+    "InputSettings.cs770-773 public property getter assertion path"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "result": "Failed",
+  "failure": "Qualification deadline at step0 before first-sortie fuel reserve",
+  "simulationSecondsAtLastEconomySample": 1068.11,
+  "sourceHash": "75af0bc560e1ea1d5a3a8f3a235b1e76888dc90dcc4b50b9ad48f8ded171b809",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-706-three-factories-two-oil-two-refineries-air-pre-source-manifest.json",
+  "postSourceManifest": "final-707-long-haul-industry-failure-post-source-manifest.json",
+  "log": "native-707-three-factories-two-oil-two-refineries-strike-cycle-en.log",
+  "logSha256": "c299252099739b57108ea26431be31ba3fec263a7cef925c9ec794c3df269ea4",
+  "trace": "s005-aria-live-155926-en-12e121bbd9f944b393a1544699aa7cd3.jsonl",
+  "inputAudit": "native707-touch-contact-audit.json",
+  "wrapperExitCode": 2,
+  "paidCost": 2480,
+  "nativeParkingComplete": true,
+  "nativeTakeoff": false,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "diagnostics": {
+    "successfulReadOnlyQueries": [
+      "native707-tanker-path-state-readonly.json",
+      "native707-oil-truck-path-state-readonly.json"
+    ],
+    "failedReadOnlyQuery": "native707-hauler-routes-readonly-compile-failure.json",
+    "gameplayMutations": 0,
+    "observedRoutes": "Oil trucks retained original source5 to new refinery18; tankers used refinery18 to original fuel store9. New Oil Pump17 held full stock.",
+    "inference": "Build local industry/storage before buying fleet to reduce initial haul routes; no permanent movement fault established."
+  },
+  "termination": "Harness requested exit2 automatically at timeout. Later owned abort found no Pipeline instance."
+}

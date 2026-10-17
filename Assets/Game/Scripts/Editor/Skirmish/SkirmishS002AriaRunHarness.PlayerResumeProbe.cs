@@ -151,6 +151,7 @@ namespace Game.Editor
             playerResumeGuardReady = !playerResumePaidNeedsDelivery;
             airProbeDefenseSlot = airProbeDefenseStep = airProbeDefenseMapStep = airProbeDefenseMapAttempts = 0;
             airProbeDefensePage = airProbeDefenseOrders = 0;
+            airProbeDefensePaging.Reset();ResetS005GuardObservation();
             playerResumeLoggedStep = -1;
             playerResumeDiagnosticDue = 0;
             playerResumeContinueStableAt = playerResumeContinueAttemptAt = 0;
@@ -202,6 +203,7 @@ namespace Game.Editor
                 // silently behind a Defeat screen until their wall watchdog.
                 if (playerResumeStep == 0 && hasSession && match.Phase == SkirmishPhase.Finished)
                     throw new InvalidOperationException("Mission ended during qualification setup: " + match.Outcome);
+                if (TickS005OpeningCameraCalibration(em, hasSession, session)) return;
                 if (playerResumeStep == -2)
                 {
                     TickBoardedPlayerSave(em, now);

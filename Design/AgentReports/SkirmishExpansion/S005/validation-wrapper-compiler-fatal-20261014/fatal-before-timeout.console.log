@@ -1,0 +1,14 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs\fatal-before-timeout.log
+[UnityInvoke] TimeoutSeconds: 1
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs\fatal-before-timeout.log --exit 0 --sleep 15000 --fatal 1
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs\fatal-before-timeout.log --exit 0 --sleep 15000 --fatal 1
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs\fatal-before-timeout.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-l3b8k2rs\fatal-before-timeout.stderr.log
+[UnityInvoke] ERROR: Unity reported a fatal log marker while running: Crash!!!
+[UnityInvoke] taskkill: SUCCESS: The process with PID 32836 (child process of PID 3388) has been terminated.
+[UnityInvoke] taskkill: SUCCESS: The process with PID 3388 (child process of PID 33688) has been terminated.
+[UnityInvoke] ERROR: Unity reported a fatal log marker: Crash!!!
+[UnityInvoke] ExitCode: 1

@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "timeout_ms": "30000",
+      "file": "/private/tmp/s005-stop-diagnostic1602-source-b989/loaded-assembly-witness1602.cs",
+      "entry": "S005LoadedAssembly1602.Run"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 54,
+      "executeMs": 8,
+      "assemblyName": "PipelineRunScript_loaded-assembly-witness1602_6dfb0081988c4a5a932f1e581c6da520",
+      "success": true,
+      "result": "{\"authoringAssembly\":\"Game.Authoring\",\"authoringLocation\":\"/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Authoring.dll\",\"authoringMvid\":\"711c1380-7f2f-45d3-9ffc-7952979c0c29\",\"authoringType\":\"Game.Authoring.UnitGridAuthoring\",\"bakerType\":\"Game.Authoring.UnitGridAuthoring+UnitGridBaker\",\"bakingVersionAttribute\":\"Unity.Entities.BakingVersionAttribute\",\"bakingVersionProject\":\"WarlineCapture\",\"bakingVersionNumber\":\"2\",\"compositionAssembly\":\"Game.Composition\",\"compositionLocation\":\"/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Composition.dll\",\"compositionMvid\":\"e7c233b9-a9ea-489e-8965-a37207d197b2\",\"matchSceneViewType\":\"Game.Composition.MatchSceneView\",\"uiAssembly\":\"Game.UI.Runtime\",\"uiLocation\":\"/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.UI.Runtime.dll\",\"uiMvid\":\"c8815255-e9be-47e5-8afb-5ac21b0f49b4\"}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

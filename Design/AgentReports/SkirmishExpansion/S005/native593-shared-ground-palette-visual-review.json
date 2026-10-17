@@ -1,0 +1,14 @@
+{
+  "playerReady": false,
+  "sourceHash": "5d3ab5e2564d215f068b28984c0c1833f674cef8d626752f8fa70e88998a2249",
+  "sourceUnchanged": true,
+  "materialsUnchangedDuringRun": true,
+  "materialCount": 562,
+  "sharedMaterialsIntentionallyChanged": 4,
+  "wrapperExit": 0,
+  "logExit": 0,
+  "startup": "Passed 32 initial units and 14 native functional facilities",
+  "visual": "Paler sand, worn-earth and muted scrub fields, reduced small-pattern contrast; frontage density still pending",
+  "capture": "native593-shared-sand-scrub-opening.png",
+  "log": "native-593-shared-sand-scrub-palette-map-review.log"
+}

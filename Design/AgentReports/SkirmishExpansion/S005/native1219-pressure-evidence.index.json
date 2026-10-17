@@ -1,0 +1,123 @@
+{
+  "scope": "Scoped1219natural passiveplayer Defeat pressure proof, not playerVictory/readiness",
+  "archive": "native1219-pressure-evidence.zip",
+  "sha256": "070cce92004c17cd0d1b5c5833bcf4480e178b4c1bae1cf92e9814967fa7b367",
+  "files": [
+    {
+      "path": "compile1219-passive-pressure-dry-run.json",
+      "bytes": 4685,
+      "sha256": "b0ba3c53d11e6a108e29dbb9f8b4af35a8ea62f7d2253f3a4025c6879f708892"
+    },
+    {
+      "path": "final-1219-passive-pressure-post-independent-fingerprint.json",
+      "bytes": 370,
+      "sha256": "7201eed43ec674ad06d0c3da09fefdc1be01fbce795da1617c595d1deec594e5"
+    },
+    {
+      "path": "final-1219-passive-pressure-post-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "path": "final-1219-passive-pressure-pre-dispatch-independent-fingerprint.json",
+      "bytes": 366,
+      "sha256": "10a85d44dfd44bb02a829c50f52c39764de93f812d183eac47f004e08760d243"
+    },
+    {
+      "path": "final-1219-passive-pressure-pre-dispatch-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "path": "final-1219-passive-pressure-preflight-independent-fingerprint.json",
+      "bytes": 366,
+      "sha256": "5a16308be92ccb0ce5d4463a98d08eabd8effd8a479bbc4fbebca4ddd13fee5d"
+    },
+    {
+      "path": "final-1219-passive-pressure-preflight-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "path": "load1219-passive-pressure-observer.json",
+      "bytes": 4678,
+      "sha256": "b39416c4f0a44414e33eccc67416025d3270bb56ebe16bee5a82b0bc421b8980"
+    },
+    {
+      "path": "native-1219-passive-pressure-fa-seed104734.log",
+      "bytes": 804077,
+      "sha256": "6d159f972703698ee8078c2f761e63d401a6ef9a336a000fb5d06d633070c919"
+    },
+    {
+      "path": "native-1219-passive-pressure-fa-seed104734.log.dispatch.json",
+      "bytes": 995,
+      "sha256": "00bc279720b40575a4d5c461a8b0fbd3c0f20acfbb0384191127eab7516d65ff"
+    },
+    {
+      "path": "native-1219-passive-pressure-fa-seed104734.log.exit",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "native-1219-passive-pressure-fa-seed104734.log.wrapper-exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "native1219-after-close-native-idle.json",
+      "bytes": 771,
+      "sha256": "0a5235a7e9db638ceece16042018e124884c0ea236fc2b35d73d4429f4ed1fae"
+    },
+    {
+      "path": "native1219-before-dispatch-native-idle.json",
+      "bytes": 769,
+      "sha256": "70becc4f761ad278d3a917066ae88e412d2e4e197f35451a250acf888c4f7ff8"
+    },
+    {
+      "path": "native1219-before-load-native-idle.json",
+      "bytes": 770,
+      "sha256": "42566ab5cfea50da10112ac921904d0ce8a00a74f049254d344a7c94cedef93d"
+    },
+    {
+      "path": "native1219-executed-runner.py.txt",
+      "bytes": 19196,
+      "sha256": "66e4660e3157b97a3d9464de8a5e2e2744bc54d9e2db6955ef8448e050c69864"
+    },
+    {
+      "path": "native1219-externalPassive-contact-audit.json",
+      "bytes": 510,
+      "sha256": "7e26093463c50d79b2dc5a1331b65c17bbae990ddd9c035d91461909bf713752"
+    },
+    {
+      "path": "native1219-inheritedPublicNormal-contact-audit.json",
+      "bytes": 517,
+      "sha256": "7de54964d4aa86f887fd2ec3b4c43acfe338d7b830bcaaeb751c6ace1632a45a"
+    },
+    {
+      "path": "native1219-passive-pressure-observation.jsonl",
+      "bytes": 162132928,
+      "sha256": "efcf0d7e7f3cbf502c161b56ddde8974cf904c1cb29e24085a6350b398ed4d9e"
+    },
+    {
+      "path": "native1219-passive-pressure-observer.cs.txt",
+      "bytes": 56850,
+      "sha256": "f59f157b44e4d0eb3cc461560da4f24506e31fbbfebac7078dace4ffd53f5315"
+    },
+    {
+      "path": "native1219-passive-pressure-pass.json",
+      "bytes": 2223,
+      "sha256": "2d5cd0751d2226d5cc060b9bc9fe851625a912d33d2a82ace34b3e9b9088a2a1"
+    },
+    {
+      "path": "native1219-passive-pressure-touch.jsonl",
+      "bytes": 925,
+      "sha256": "ab2e3279374bf5a6435c3985fb0f1048fe7dbe8abc4da81ca741bfa2afa230eb"
+    },
+    {
+      "path": "native1219-runner-start.json",
+      "bytes": 633,
+      "sha256": "66c9adf82a51909a83f9c923cb24b1c3ff63f08b7a14c22be29494c2c29d312a"
+    }
+  ],
+  "originalFilesRemoved": false
+}

@@ -1,0 +1,5856 @@
+{
+  "schema_version": 1,
+  "kind": "Baseline720",
+  "source_pins": [
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+      "sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+      "sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+      "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BT.md",
+      "sha256": "266dadd1b80c13dad1ed640c9a34cf2aa68721f8cf514ce57c01cca0a482706b"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_CE.md",
+      "sha256": "56e5af7a83ef9e63a1723733f7462bf9fff57c3c7ccdffdf4a30021e2e02f378"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_FC.md",
+      "sha256": "bca718e725c0fa9b7e34172742882db2b202d62116a228a1443820683732e5da"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BT.md",
+      "sha256": "74a674a06b2be733795f73d6ae586745c2e6b1aa3680c9675bd86d40348938d3"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_CE.md",
+      "sha256": "d0390d46e133159f857f7c768766eca177fc8b860dd9e92a0e174b6335199f2c"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_FC.md",
+      "sha256": "d58000a4e6df306f15c6100c5f313b964128de1a92be38a4bc704112fc373864"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+      "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BT.md",
+      "sha256": "4826ac5e0df2e1f9d3143980f22ca50fe6906b09185cd1c8438da940ede43283"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_CE.md",
+      "sha256": "1c8fe561d7f12bdfa679f646cec76db762b8efacd6f9fdea058ec4eee8d9d598"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_FC.md",
+      "sha256": "360daeb60270b2a2eaac6f0150169dd638df412fe3457af49bea43bdae9ad857"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BA.md",
+      "sha256": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BT.md",
+      "sha256": "37c4339d8dc04f37fad29ecf77ed42db4183fa6c32494475c7bd634052f97b08"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_CE.md",
+      "sha256": "b2271c088c5aba6ad99b97e23b7aad9885b61696ace3620d39e732123b7751f6"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_FC.md",
+      "sha256": "26c191bb0fe880a26c3d5bd0cfaef4b5c22892e539b7cf8ee1cbde3c56a9741e"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md",
+      "sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BT.md",
+      "sha256": "2a213f44779fb125e29f8d9de74644a553c68fd001ae2879a68a64591b473ee8"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_CE.md",
+      "sha256": "e06743489475be561348c1eeea8f9360a0bfb2b31a4f31ba1fb37d5bfc0f5324"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_FC.md",
+      "sha256": "4a6b5a80eac93485fd6d8e58723ebc4eea18831ef0ada635b70aba4114e30678"
+    }
+  ],
+  "slots": [
+    {
+      "catalog_id": "S001",
+      "seed": 104730,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 104730,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 130364,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 130364,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 155922,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 155922,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S002",
+      "seed": 104731,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S002",
+      "seed": 104731,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S002",
+      "seed": 130365,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S002",
+      "seed": 130365,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S002",
+      "seed": 155923,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S002",
+      "seed": 155923,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S003",
+      "seed": 104732,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S003",
+      "seed": 104732,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S003",
+      "seed": 130366,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S003",
+      "seed": 130366,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S003",
+      "seed": 155924,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S003",
+      "seed": 155924,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S004",
+      "seed": 104733,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S004",
+      "seed": 104733,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S004",
+      "seed": 130367,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S004",
+      "seed": 130367,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S004",
+      "seed": 155925,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S004",
+      "seed": 155925,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S005",
+      "seed": 104734,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S005",
+      "seed": 104734,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S005",
+      "seed": 130368,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S005",
+      "seed": 130368,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S005",
+      "seed": 155926,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S005",
+      "seed": 155926,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S006",
+      "seed": 104735,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S006",
+      "seed": 104735,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S006",
+      "seed": 130369,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S006",
+      "seed": 130369,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S006",
+      "seed": 155927,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S006",
+      "seed": 155927,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S007",
+      "seed": 104736,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S007",
+      "seed": 104736,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S007",
+      "seed": 130370,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S007",
+      "seed": 130370,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S007",
+      "seed": 155928,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S007",
+      "seed": 155928,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S008",
+      "seed": 104737,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S008",
+      "seed": 104737,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S008",
+      "seed": 130371,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S008",
+      "seed": 130371,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S008",
+      "seed": 155929,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S008",
+      "seed": 155929,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S009",
+      "seed": 104738,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S009",
+      "seed": 104738,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S009",
+      "seed": 130372,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S009",
+      "seed": 130372,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S009",
+      "seed": 155930,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S009",
+      "seed": 155930,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S010",
+      "seed": 104739,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S010",
+      "seed": 104739,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S010",
+      "seed": 130373,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S010",
+      "seed": 130373,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S010",
+      "seed": 155931,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S010",
+      "seed": 155931,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S011",
+      "seed": 104740,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S011",
+      "seed": 104740,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S011",
+      "seed": 130374,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S011",
+      "seed": 130374,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S011",
+      "seed": 155932,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S011",
+      "seed": 155932,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S012",
+      "seed": 104741,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S012",
+      "seed": 104741,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S012",
+      "seed": 130375,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S012",
+      "seed": 130375,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S012",
+      "seed": 155933,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S012",
+      "seed": 155933,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S013",
+      "seed": 104742,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S013",
+      "seed": 104742,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S013",
+      "seed": 130376,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S013",
+      "seed": 130376,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S013",
+      "seed": 155934,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S013",
+      "seed": 155934,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S014",
+      "seed": 104743,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S014",
+      "seed": 104743,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S014",
+      "seed": 130377,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S014",
+      "seed": 130377,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S014",
+      "seed": 155935,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S014",
+      "seed": 155935,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S015",
+      "seed": 104744,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S015",
+      "seed": 104744,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S015",
+      "seed": 130378,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S015",
+      "seed": 130378,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S015",
+      "seed": 155936,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S015",
+      "seed": 155936,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S016",
+      "seed": 104745,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S016",
+      "seed": 104745,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S016",
+      "seed": 130379,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S016",
+      "seed": 130379,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S016",
+      "seed": 155937,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S016",
+      "seed": 155937,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S017",
+      "seed": 104746,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S017",
+      "seed": 104746,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S017",
+      "seed": 130380,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S017",
+      "seed": 130380,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S017",
+      "seed": 155938,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S017",
+      "seed": 155938,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S018",
+      "seed": 104747,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S018",
+      "seed": 104747,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S018",
+      "seed": 130381,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S018",
+      "seed": 130381,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S018",
+      "seed": 155939,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S018",
+      "seed": 155939,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S019",
+      "seed": 104748,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S019",
+      "seed": 104748,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S019",
+      "seed": 130382,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S019",
+      "seed": 130382,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S019",
+      "seed": 155940,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S019",
+      "seed": 155940,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S020",
+      "seed": 104749,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S020",
+      "seed": 104749,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S020",
+      "seed": 130383,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S020",
+      "seed": 130383,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S020",
+      "seed": 155941,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S020",
+      "seed": 155941,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S021",
+      "seed": 104750,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S021",
+      "seed": 104750,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S021",
+      "seed": 130384,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S021",
+      "seed": 130384,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S021",
+      "seed": 155942,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S021",
+      "seed": 155942,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S022",
+      "seed": 104751,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S022",
+      "seed": 104751,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S022",
+      "seed": 130385,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S022",
+      "seed": 130385,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S022",
+      "seed": 155943,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S022",
+      "seed": 155943,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S023",
+      "seed": 104752,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S023",
+      "seed": 104752,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S023",
+      "seed": 130386,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S023",
+      "seed": 130386,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S023",
+      "seed": 155944,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S023",
+      "seed": 155944,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S024",
+      "seed": 104753,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S024",
+      "seed": 104753,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S024",
+      "seed": 130387,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S024",
+      "seed": 130387,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S024",
+      "seed": 155945,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S024",
+      "seed": 155945,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 104754,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 104754,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 130388,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 130388,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 155946,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 155946,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S026",
+      "seed": 104755,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S026",
+      "seed": 104755,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S026",
+      "seed": 130389,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S026",
+      "seed": 130389,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S026",
+      "seed": 155947,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S026",
+      "seed": 155947,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S027",
+      "seed": 104756,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S027",
+      "seed": 104756,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S027",
+      "seed": 130390,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S027",
+      "seed": 130390,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S027",
+      "seed": 155948,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S027",
+      "seed": 155948,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S028",
+      "seed": 104757,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S028",
+      "seed": 104757,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S028",
+      "seed": 130391,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S028",
+      "seed": 130391,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S028",
+      "seed": 155949,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S028",
+      "seed": 155949,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S029",
+      "seed": 104758,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S029",
+      "seed": 104758,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S029",
+      "seed": 130392,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S029",
+      "seed": 130392,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S029",
+      "seed": 155950,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S029",
+      "seed": 155950,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S030",
+      "seed": 104759,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S030",
+      "seed": 104759,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S030",
+      "seed": 130393,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S030",
+      "seed": 130393,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S030",
+      "seed": 155951,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S030",
+      "seed": 155951,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S031",
+      "seed": 104760,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S031",
+      "seed": 104760,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S031",
+      "seed": 130394,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S031",
+      "seed": 130394,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S031",
+      "seed": 155952,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S031",
+      "seed": 155952,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S032",
+      "seed": 104761,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S032",
+      "seed": 104761,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S032",
+      "seed": 130395,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S032",
+      "seed": 130395,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S032",
+      "seed": 155953,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S032",
+      "seed": 155953,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S033",
+      "seed": 104762,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S033",
+      "seed": 104762,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S033",
+      "seed": 130396,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S033",
+      "seed": 130396,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S033",
+      "seed": 155954,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S033",
+      "seed": 155954,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S034",
+      "seed": 104763,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S034",
+      "seed": 104763,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S034",
+      "seed": 130397,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S034",
+      "seed": 130397,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S034",
+      "seed": 155955,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S034",
+      "seed": 155955,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S035",
+      "seed": 104764,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S035",
+      "seed": 104764,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S035",
+      "seed": 130398,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S035",
+      "seed": 130398,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S035",
+      "seed": 155956,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S035",
+      "seed": 155956,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S036",
+      "seed": 104765,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S036",
+      "seed": 104765,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S036",
+      "seed": 130399,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S036",
+      "seed": 130399,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S036",
+      "seed": 155957,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S036",
+      "seed": 155957,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S037",
+      "seed": 104766,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S037",
+      "seed": 104766,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S037",
+      "seed": 130400,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S037",
+      "seed": 130400,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S037",
+      "seed": 155958,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S037",
+      "seed": 155958,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S038",
+      "seed": 104767,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S038",
+      "seed": 104767,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S038",
+      "seed": 130401,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S038",
+      "seed": 130401,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S038",
+      "seed": 155959,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S038",
+      "seed": 155959,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S039",
+      "seed": 104768,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S039",
+      "seed": 104768,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S039",
+      "seed": 130402,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S039",
+      "seed": 130402,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S039",
+      "seed": 155960,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S039",
+      "seed": 155960,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S040",
+      "seed": 104769,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S040",
+      "seed": 104769,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S040",
+      "seed": 130403,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S040",
+      "seed": 130403,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S040",
+      "seed": 155961,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S040",
+      "seed": 155961,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S041",
+      "seed": 104770,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S041",
+      "seed": 104770,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S041",
+      "seed": 130404,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S041",
+      "seed": 130404,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S041",
+      "seed": 155962,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S041",
+      "seed": 155962,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S042",
+      "seed": 104771,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S042",
+      "seed": 104771,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S042",
+      "seed": 130405,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S042",
+      "seed": 130405,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S042",
+      "seed": 155963,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S042",
+      "seed": 155963,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S043",
+      "seed": 104772,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S043",
+      "seed": 104772,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S043",
+      "seed": 130406,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S043",
+      "seed": 130406,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S043",
+      "seed": 155964,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S043",
+      "seed": 155964,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S044",
+      "seed": 104773,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S044",
+      "seed": 104773,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S044",
+      "seed": 130407,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S044",
+      "seed": 130407,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S044",
+      "seed": 155965,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S044",
+      "seed": 155965,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S045",
+      "seed": 104774,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S045",
+      "seed": 104774,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S045",
+      "seed": 130408,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S045",
+      "seed": 130408,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S045",
+      "seed": 155966,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S045",
+      "seed": 155966,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S046",
+      "seed": 104775,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S046",
+      "seed": 104775,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S046",
+      "seed": 130409,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S046",
+      "seed": 130409,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S046",
+      "seed": 155967,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S046",
+      "seed": 155967,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S047",
+      "seed": 104776,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S047",
+      "seed": 104776,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S047",
+      "seed": 130410,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S047",
+      "seed": 130410,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S047",
+      "seed": 155968,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S047",
+      "seed": 155968,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S048",
+      "seed": 104777,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S048",
+      "seed": 104777,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S048",
+      "seed": 130411,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S048",
+      "seed": 130411,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S048",
+      "seed": 155969,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S048",
+      "seed": 155969,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S049",
+      "seed": 104778,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S049",
+      "seed": 104778,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S049",
+      "seed": 130412,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S049",
+      "seed": 130412,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S049",
+      "seed": 155970,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S049",
+      "seed": 155970,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S050",
+      "seed": 104779,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S050",
+      "seed": 104779,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S050",
+      "seed": 130413,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S050",
+      "seed": 130413,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S050",
+      "seed": 155971,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S050",
+      "seed": 155971,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S051",
+      "seed": 104780,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S051",
+      "seed": 104780,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S051",
+      "seed": 130414,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S051",
+      "seed": 130414,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S051",
+      "seed": 155972,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S051",
+      "seed": 155972,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S052",
+      "seed": 104781,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S052",
+      "seed": 104781,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S052",
+      "seed": 130415,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S052",
+      "seed": 130415,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S052",
+      "seed": 155973,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S052",
+      "seed": 155973,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S053",
+      "seed": 104782,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S053",
+      "seed": 104782,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S053",
+      "seed": 130416,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S053",
+      "seed": 130416,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S053",
+      "seed": 155974,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S053",
+      "seed": 155974,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S054",
+      "seed": 104783,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S054",
+      "seed": 104783,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S054",
+      "seed": 130417,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S054",
+      "seed": 130417,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S054",
+      "seed": 155975,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S054",
+      "seed": 155975,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S055",
+      "seed": 104784,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S055",
+      "seed": 104784,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S055",
+      "seed": 130418,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S055",
+      "seed": 130418,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S055",
+      "seed": 155976,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S055",
+      "seed": 155976,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S056",
+      "seed": 104785,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S056",
+      "seed": 104785,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S056",
+      "seed": 130419,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S056",
+      "seed": 130419,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S056",
+      "seed": 155977,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S056",
+      "seed": 155977,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S057",
+      "seed": 104786,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S057",
+      "seed": 104786,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S057",
+      "seed": 130420,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S057",
+      "seed": 130420,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S057",
+      "seed": 155978,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S057",
+      "seed": 155978,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S058",
+      "seed": 104787,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S058",
+      "seed": 104787,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S058",
+      "seed": 130421,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S058",
+      "seed": 130421,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S058",
+      "seed": 155979,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S058",
+      "seed": 155979,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S059",
+      "seed": 104788,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S059",
+      "seed": 104788,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S059",
+      "seed": 130422,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S059",
+      "seed": 130422,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S059",
+      "seed": 155980,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S059",
+      "seed": 155980,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S060",
+      "seed": 104789,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S060",
+      "seed": 104789,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S060",
+      "seed": 130423,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S060",
+      "seed": 130423,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S060",
+      "seed": 155981,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S060",
+      "seed": 155981,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S061",
+      "seed": 104790,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S061",
+      "seed": 104790,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S061",
+      "seed": 130424,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S061",
+      "seed": 130424,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S061",
+      "seed": 155982,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S061",
+      "seed": 155982,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S062",
+      "seed": 104791,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S062",
+      "seed": 104791,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S062",
+      "seed": 130425,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S062",
+      "seed": 130425,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S062",
+      "seed": 155983,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S062",
+      "seed": 155983,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S063",
+      "seed": 104792,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S063",
+      "seed": 104792,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S063",
+      "seed": 130426,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S063",
+      "seed": 130426,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S063",
+      "seed": 155984,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S063",
+      "seed": 155984,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S064",
+      "seed": 104793,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S064",
+      "seed": 104793,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S064",
+      "seed": 130427,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S064",
+      "seed": 130427,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S064",
+      "seed": 155985,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S064",
+      "seed": 155985,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S065",
+      "seed": 104794,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S065",
+      "seed": 104794,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S065",
+      "seed": 130428,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S065",
+      "seed": 130428,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S065",
+      "seed": 155986,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S065",
+      "seed": 155986,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S066",
+      "seed": 104795,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S066",
+      "seed": 104795,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S066",
+      "seed": 130429,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S066",
+      "seed": 130429,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S066",
+      "seed": 155987,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S066",
+      "seed": 155987,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S067",
+      "seed": 104796,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S067",
+      "seed": 104796,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S067",
+      "seed": 130430,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S067",
+      "seed": 130430,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S067",
+      "seed": 155988,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S067",
+      "seed": 155988,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S068",
+      "seed": 104797,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S068",
+      "seed": 104797,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S068",
+      "seed": 130431,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S068",
+      "seed": 130431,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S068",
+      "seed": 155989,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S068",
+      "seed": 155989,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S069",
+      "seed": 104798,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S069",
+      "seed": 104798,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S069",
+      "seed": 130432,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S069",
+      "seed": 130432,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S069",
+      "seed": 155990,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S069",
+      "seed": 155990,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S070",
+      "seed": 104799,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S070",
+      "seed": 104799,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S070",
+      "seed": 130433,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S070",
+      "seed": 130433,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S070",
+      "seed": 155991,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S070",
+      "seed": 155991,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S071",
+      "seed": 104800,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S071",
+      "seed": 104800,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S071",
+      "seed": 130434,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S071",
+      "seed": 130434,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S071",
+      "seed": 155992,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S071",
+      "seed": 155992,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S072",
+      "seed": 104801,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S072",
+      "seed": 104801,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S072",
+      "seed": 130435,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S072",
+      "seed": 130435,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S072",
+      "seed": 155993,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S072",
+      "seed": 155993,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 104802,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 104802,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 130436,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 130436,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 155994,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 155994,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S074",
+      "seed": 104803,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S074",
+      "seed": 104803,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S074",
+      "seed": 130437,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S074",
+      "seed": 130437,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S074",
+      "seed": 155995,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S074",
+      "seed": 155995,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S075",
+      "seed": 104804,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S075",
+      "seed": 104804,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S075",
+      "seed": 130438,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S075",
+      "seed": 130438,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S075",
+      "seed": 155996,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S075",
+      "seed": 155996,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S076",
+      "seed": 104805,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S076",
+      "seed": 104805,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S076",
+      "seed": 130439,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S076",
+      "seed": 130439,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S076",
+      "seed": 155997,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S076",
+      "seed": 155997,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S077",
+      "seed": 104806,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S077",
+      "seed": 104806,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S077",
+      "seed": 130440,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S077",
+      "seed": 130440,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S077",
+      "seed": 155998,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S077",
+      "seed": 155998,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S078",
+      "seed": 104807,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S078",
+      "seed": 104807,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S078",
+      "seed": 130441,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S078",
+      "seed": 130441,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S078",
+      "seed": 155999,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S078",
+      "seed": 155999,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S079",
+      "seed": 104808,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S079",
+      "seed": 104808,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S079",
+      "seed": 130442,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S079",
+      "seed": 130442,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S079",
+      "seed": 156000,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S079",
+      "seed": 156000,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S080",
+      "seed": 104809,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S080",
+      "seed": 104809,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S080",
+      "seed": 130443,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S080",
+      "seed": 130443,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S080",
+      "seed": 156001,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S080",
+      "seed": 156001,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S081",
+      "seed": 104810,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S081",
+      "seed": 104810,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S081",
+      "seed": 130444,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S081",
+      "seed": 130444,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S081",
+      "seed": 156002,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S081",
+      "seed": 156002,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S082",
+      "seed": 104811,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S082",
+      "seed": 104811,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S082",
+      "seed": 130445,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S082",
+      "seed": 130445,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S082",
+      "seed": 156003,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S082",
+      "seed": 156003,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S083",
+      "seed": 104812,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S083",
+      "seed": 104812,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S083",
+      "seed": 130446,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S083",
+      "seed": 130446,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S083",
+      "seed": 156004,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S083",
+      "seed": 156004,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S084",
+      "seed": 104813,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S084",
+      "seed": 104813,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S084",
+      "seed": 130447,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S084",
+      "seed": 130447,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S084",
+      "seed": 156005,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S084",
+      "seed": 156005,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S085",
+      "seed": 104814,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S085",
+      "seed": 104814,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S085",
+      "seed": 130448,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S085",
+      "seed": 130448,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S085",
+      "seed": 156006,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S085",
+      "seed": 156006,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S086",
+      "seed": 104815,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S086",
+      "seed": 104815,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S086",
+      "seed": 130449,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S086",
+      "seed": 130449,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S086",
+      "seed": 156007,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S086",
+      "seed": 156007,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S087",
+      "seed": 104816,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S087",
+      "seed": 104816,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S087",
+      "seed": 130450,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S087",
+      "seed": 130450,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S087",
+      "seed": 156008,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S087",
+      "seed": 156008,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S088",
+      "seed": 104817,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S088",
+      "seed": 104817,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S088",
+      "seed": 130451,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S088",
+      "seed": 130451,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S088",
+      "seed": 156009,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S088",
+      "seed": 156009,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S089",
+      "seed": 104818,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S089",
+      "seed": 104818,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S089",
+      "seed": 130452,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S089",
+      "seed": 130452,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S089",
+      "seed": 156010,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S089",
+      "seed": 156010,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S090",
+      "seed": 104819,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S090",
+      "seed": 104819,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S090",
+      "seed": 130453,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S090",
+      "seed": 130453,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S090",
+      "seed": 156011,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S090",
+      "seed": 156011,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S091",
+      "seed": 104820,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S091",
+      "seed": 104820,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S091",
+      "seed": 130454,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S091",
+      "seed": 130454,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S091",
+      "seed": 156012,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S091",
+      "seed": 156012,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S092",
+      "seed": 104821,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S092",
+      "seed": 104821,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S092",
+      "seed": 130455,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S092",
+      "seed": 130455,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S092",
+      "seed": 156013,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S092",
+      "seed": 156013,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S093",
+      "seed": 104822,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S093",
+      "seed": 104822,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S093",
+      "seed": 130456,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S093",
+      "seed": 130456,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S093",
+      "seed": 156014,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S093",
+      "seed": 156014,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S094",
+      "seed": 104823,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S094",
+      "seed": 104823,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S094",
+      "seed": 130457,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S094",
+      "seed": 130457,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S094",
+      "seed": 156015,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S094",
+      "seed": 156015,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S095",
+      "seed": 104824,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S095",
+      "seed": 104824,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S095",
+      "seed": 130458,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S095",
+      "seed": 130458,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S095",
+      "seed": 156016,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S095",
+      "seed": 156016,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S096",
+      "seed": 104825,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S096",
+      "seed": 104825,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S096",
+      "seed": 130459,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S096",
+      "seed": 130459,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S096",
+      "seed": 156017,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S096",
+      "seed": 156017,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S097",
+      "seed": 104826,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S097",
+      "seed": 104826,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S097",
+      "seed": 130460,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S097",
+      "seed": 130460,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S097",
+      "seed": 156018,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S097",
+      "seed": 156018,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S098",
+      "seed": 104827,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S098",
+      "seed": 104827,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S098",
+      "seed": 130461,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S098",
+      "seed": 130461,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S098",
+      "seed": 156019,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S098",
+      "seed": 156019,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S099",
+      "seed": 104828,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S099",
+      "seed": 104828,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S099",
+      "seed": 130462,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S099",
+      "seed": 130462,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S099",
+      "seed": 156020,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S099",
+      "seed": 156020,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S100",
+      "seed": 104829,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S100",
+      "seed": 104829,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S100",
+      "seed": 130463,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S100",
+      "seed": 130463,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S100",
+      "seed": 156021,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S100",
+      "seed": 156021,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S101",
+      "seed": 104830,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S101",
+      "seed": 104830,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S101",
+      "seed": 130464,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S101",
+      "seed": 130464,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S101",
+      "seed": 156022,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S101",
+      "seed": 156022,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S102",
+      "seed": 104831,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S102",
+      "seed": 104831,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S102",
+      "seed": 130465,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S102",
+      "seed": 130465,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S102",
+      "seed": 156023,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S102",
+      "seed": 156023,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S103",
+      "seed": 104832,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S103",
+      "seed": 104832,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S103",
+      "seed": 130466,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S103",
+      "seed": 130466,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S103",
+      "seed": 156024,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S103",
+      "seed": 156024,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S104",
+      "seed": 104833,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S104",
+      "seed": 104833,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S104",
+      "seed": 130467,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S104",
+      "seed": 130467,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S104",
+      "seed": 156025,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S104",
+      "seed": 156025,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S105",
+      "seed": 104834,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S105",
+      "seed": 104834,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S105",
+      "seed": 130468,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S105",
+      "seed": 130468,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S105",
+      "seed": 156026,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S105",
+      "seed": 156026,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S106",
+      "seed": 104835,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S106",
+      "seed": 104835,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S106",
+      "seed": 130469,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S106",
+      "seed": 130469,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S106",
+      "seed": 156027,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S106",
+      "seed": 156027,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S107",
+      "seed": 104836,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S107",
+      "seed": 104836,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S107",
+      "seed": 130470,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S107",
+      "seed": 130470,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S107",
+      "seed": 156028,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S107",
+      "seed": 156028,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S108",
+      "seed": 104837,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S108",
+      "seed": 104837,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S108",
+      "seed": 130471,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S108",
+      "seed": 130471,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S108",
+      "seed": 156029,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S108",
+      "seed": 156029,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S109",
+      "seed": 104838,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S109",
+      "seed": 104838,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S109",
+      "seed": 130472,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S109",
+      "seed": 130472,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S109",
+      "seed": 156030,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S109",
+      "seed": 156030,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S110",
+      "seed": 104839,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S110",
+      "seed": 104839,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S110",
+      "seed": 130473,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S110",
+      "seed": 130473,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S110",
+      "seed": 156031,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S110",
+      "seed": 156031,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S111",
+      "seed": 104840,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S111",
+      "seed": 104840,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S111",
+      "seed": 130474,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S111",
+      "seed": 130474,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S111",
+      "seed": 156032,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S111",
+      "seed": 156032,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S112",
+      "seed": 104841,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S112",
+      "seed": 104841,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S112",
+      "seed": 130475,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S112",
+      "seed": 130475,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S112",
+      "seed": 156033,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S112",
+      "seed": 156033,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S113",
+      "seed": 104842,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S113",
+      "seed": 104842,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S113",
+      "seed": 130476,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S113",
+      "seed": 130476,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S113",
+      "seed": 156034,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S113",
+      "seed": 156034,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S114",
+      "seed": 104843,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S114",
+      "seed": 104843,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S114",
+      "seed": 130477,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S114",
+      "seed": 130477,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S114",
+      "seed": 156035,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S114",
+      "seed": 156035,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S115",
+      "seed": 104844,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S115",
+      "seed": 104844,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S115",
+      "seed": 130478,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S115",
+      "seed": 130478,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S115",
+      "seed": 156036,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S115",
+      "seed": 156036,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S116",
+      "seed": 104845,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S116",
+      "seed": 104845,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S116",
+      "seed": 130479,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S116",
+      "seed": 130479,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S116",
+      "seed": 156037,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S116",
+      "seed": 156037,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S117",
+      "seed": 104846,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S117",
+      "seed": 104846,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S117",
+      "seed": 130480,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S117",
+      "seed": 130480,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S117",
+      "seed": 156038,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S117",
+      "seed": 156038,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S118",
+      "seed": 104847,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S118",
+      "seed": 104847,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S118",
+      "seed": 130481,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S118",
+      "seed": 130481,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S118",
+      "seed": 156039,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S118",
+      "seed": 156039,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S119",
+      "seed": 104848,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S119",
+      "seed": 104848,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S119",
+      "seed": 130482,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S119",
+      "seed": 130482,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S119",
+      "seed": 156040,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S119",
+      "seed": 156040,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S120",
+      "seed": 104849,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S120",
+      "seed": 104849,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S120",
+      "seed": 130483,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S120",
+      "seed": 130483,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S120",
+      "seed": 156041,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S120",
+      "seed": 156041,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    }
+  ]
+}

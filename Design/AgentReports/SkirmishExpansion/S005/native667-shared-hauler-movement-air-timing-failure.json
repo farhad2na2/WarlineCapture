@@ -1,0 +1,22 @@
+{
+  "result": "FailedTimingDiagnosticAbort",
+  "wrapperExit": 2,
+  "nativeDrawClaimed": false,
+  "latestSimulationElapsed": 787.5853881835938,
+  "sourceHash": "8b484f38d22d527f00574291bf3e60d5ba533265571d23261f0d1effdf15174a",
+  "allSourceAndMaterialsUnchanged": true,
+  "preManifest": "final-666-shared-hauler-alternate-path-pre-source-manifest.json",
+  "postManifest": "final-667-shared-hauler-alternate-path-strike-cycle-post-source-manifest.json",
+  "log": "native-667-shared-hauler-alternate-path-strike-cycle.log",
+  "contacts": {
+    "recorded": 117,
+    "ended": 117,
+    "errors": 0
+  },
+  "diagnosticInterventions": [],
+  "nativeHaulerMovementObserved": true,
+  "nativeObservation": "All3tankers moved69\u2013101metres at503.7s; both readiness upgrades paid by503.7s",
+  "unresolved": "Advanced-air8\u201312min target missed; no paid Strike delivery/flight cycle yet",
+  "placementSequenceIssue": "Third factory887.5,670 occupies closer refinery plot used in prior native attempts; refinery selected918.5,709.5/localStore889,707",
+  "playerReady": false
+}

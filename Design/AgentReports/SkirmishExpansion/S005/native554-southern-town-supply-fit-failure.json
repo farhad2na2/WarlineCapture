@@ -1,0 +1,19 @@
+{
+  "validation": "native554",
+  "passed": false,
+  "sourceHash": "4f264ef0c7e7d3857f137780ea3117b19c42232e9c3e71b87c9df69a0ed1419e",
+  "prePostSourceHashMatched": true,
+  "failedStructures": [
+    {
+      "building": "Building_Refinery",
+      "sourceBuildings": 38030,
+      "roadOrWater": 2371
+    },
+    {
+      "building": "Building_Ammunition_Depot",
+      "sourceBuildings": 24371,
+      "roadOrWater": 1550
+    }
+  ],
+  "playerReady": false
+}

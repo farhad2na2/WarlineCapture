@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "reason": "Native menu controlsTimeout step1; mission and camera probe never started",
+  "actualWrapperExit": 2,
+  "fullSourceUnchanged": true,
+  "sourceHash": "7fecf45e8da8250b03a73993e4616effc7b9d384ccd575e2b6719edf9940aa4d",
+  "preManifest": "final-760-shared-full-map-edge-fit-green-post-source-manifest.json",
+  "postManifest": "final-761-southern-camera-menu-launch-failure-post-source-manifest.json",
+  "log": "native-761-current-manual-en-seed104734.log",
+  "countsForNativeCameraAcceptance": false,
+  "playerReady": false
+}

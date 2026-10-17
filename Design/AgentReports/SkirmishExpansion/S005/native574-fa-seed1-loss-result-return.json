@@ -1,0 +1,18 @@
+{
+  "playerReady": false,
+  "result": "Failed",
+  "outcome": "Defeat",
+  "reason": "MainBaseDestroyed",
+  "clockElapsed": 144.803,
+  "sourceHash": "be4e45b96c468826de1b7ccb745d9900c68e4c42570e4f2d7298be586e583deb",
+  "matchesPre573": true,
+  "seed": 104734,
+  "locale": "fa-IR",
+  "nativeRecruitmentAndDelivery": true,
+  "normalFrozenResultAndAdjustSetupReturn": true,
+  "recordedContacts": 56,
+  "completedContacts": 56,
+  "contactErrors": [],
+  "countedWin": false,
+  "evidence": "Retained loss; no hidden intervention or resource/outcome injection"
+}

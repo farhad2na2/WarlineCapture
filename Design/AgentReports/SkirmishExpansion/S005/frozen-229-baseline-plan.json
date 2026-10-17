@@ -1,0 +1,46 @@
+{
+  "sourceHash": "051c4d23cc425480855420dcd71fc80768906172ede6ac74e7fb0ceae3417d69",
+  "status": "Completed 6/6 frozen baseline",
+  "prerequisite": "Native229 strict boarded/manual pass and Focused230; no source edits during fresh runs",
+  "runs": [
+    {
+      "run": 231,
+      "locale": "en",
+      "seed": 104734,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEn"
+    },
+    {
+      "run": 232,
+      "locale": "fa-IR",
+      "seed": 104734,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFa"
+    },
+    {
+      "run": 233,
+      "locale": "en",
+      "seed": 130368,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed2"
+    },
+    {
+      "run": 234,
+      "locale": "fa-IR",
+      "seed": 130368,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed2"
+    },
+    {
+      "run": 235,
+      "locale": "en",
+      "seed": 155926,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3"
+    },
+    {
+      "run": 236,
+      "locale": "fa-IR",
+      "seed": 155926,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed3"
+    }
+  ],
+  "playerReady": false,
+  "active": null,
+  "failure": "Native native Victory/result/return and zero receipt violations; 98 started vs97 completed; terminal cancellation diagnosis pending"
+}

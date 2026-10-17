@@ -1,0 +1,35 @@
+{
+  "result": "Failed",
+  "failure": "Deadline Draw before first-sortie reserve",
+  "seconds": 1080.013,
+  "sourceHash": "34ad8f0c263fbc483e65765908ce2ef8f3d0bb878776cc37ccabfd1df6771d9e",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-708-local-industry-before-four-oil-two-fuel-fleet-pre-source-manifest.json",
+  "postSourceManifest": "final-708-local-store-long-haul-failure-post-source-manifest.json",
+  "log": "native-708-local-industry-before-four-oil-two-fuel-fleet-strike-cycle-en.log",
+  "logSha256": "c44b208b144c41d36beaf9ac6529448e56b6dcb34657acd8a9498f337a749c2c",
+  "trace": "s005-aria-live-155926-en-64bf3a29e70042be8abc227da28be986.jsonl",
+  "inputAudit": "native708-touch-contact-audit.json",
+  "wrapperExitCode": 2,
+  "nativePaidParkingComplete": true,
+  "takeoff": false,
+  "firstSortie": false,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "normalIndustrySpending": 500,
+  "normalTotalSpending": 2480,
+  "observations": {
+    "successfulReadOnlyQueries": [
+      "native708-building-origins-observation-v2-readonly.json"
+    ],
+    "failedReadOnlyQueries": [
+      "native708-building-origins-readonly.json",
+      "native708-building-origins-reflection-readonly.json",
+      "native708-building-origins-observation-readonly.json"
+    ],
+    "gameplayMutations": 0,
+    "verifiedPositions": "Original pump913.5,598; refinery918.5,617.5; fuel store928,603. Added pump941.5,680; refinery930.5,697.5; store928,718. All native owner flags valid.",
+    "newOilTruckInitialRoutes": "Source17 to old refinery7, then source5; automatic demands precede distance.",
+    "sourceFitConclusion": "This purchase layout did not establish affordable native air timing. Not a global physical-map impossibility or permanent hauler defect."
+  }
+}

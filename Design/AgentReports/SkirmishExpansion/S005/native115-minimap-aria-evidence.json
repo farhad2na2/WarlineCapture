@@ -1,0 +1,22 @@
+{
+  "log": "native-115-minimap-aria.log",
+  "logSha256": "e8ca948b09aff026cef44d311bacb24ac4b30cdf53cc63c74c89e149eb925b26",
+  "sourceHash": "5f6fc877a8a3162a50128a7bf9b846713590a21fcceb8be3cc5559d047b7ca94",
+  "trace": "s005-aria-live-104734-en-b197f2bfb2684a9f84c18f5987cf6439.jsonl",
+  "wrapperExit": 0,
+  "completionReceipt": 0,
+  "countedWin": 1,
+  "normalSpeed": true,
+  "input": "ARIA Touch",
+  "outcome": "Victory",
+  "elapsed": 233.873,
+  "playerBaseHp": 800,
+  "frozenResult": true,
+  "return": "MAIN MENU",
+  "normalInputRecovery": false,
+  "realPlayerDeviceAcceptance": false,
+  "countsForCurrentSource": false,
+  "historicalReason": "Immutable minimap surface cache/rectangle merging follows observed redraw cost",
+  "playerReady": false,
+  "performanceIssue": "Median logged slow UI samples rose from 42.4ms to 84.7ms; these selected slow samples are not a benchmark of all frames."
+}

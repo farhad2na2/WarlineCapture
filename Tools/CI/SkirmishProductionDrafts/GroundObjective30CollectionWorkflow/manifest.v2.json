@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "scope": "OutsideAssetsGround30CheckedCollectionWorkflow",
+  "import_map_sha256": "979dafe907b0d5d1a0f7a683796b27cae4693a4a10697aeb3340ad943e10c2f7",
+  "tool_pins": [
+    {
+      "path": "Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+      "sha256": "82b01eae7347f464cc9a634e0d6765ee69d76fe45976709409717e8c6d9c8321"
+    },
+    {
+      "path": "Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+      "sha256": "82d6cd73b86a09f3d05a645c651f8bd0a77ae2f3117b71dfda31de0b20b25bc2"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_collection_test.py",
+      "sha256": "504507e19dc3b7c4a3b5c832ac1bcb403e40fff2f08a6624442625165e2d666f"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_contract.py",
+      "sha256": "b856645605ea00ec7d4be2b2d33224063f0e1f2a46a244ddabd4f5ac7cff72ae"
+    },
+    {
+      "path": "Tools/CI/s005_windows_source_snapshot.py",
+      "sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81"
+    },
+    {
+      "path": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+      "sha256": "79205bc9d9660c15627a254d8834cc5feef1513dfa4e12b389caa91d2f2abc1d"
+    },
+    {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "sha256": "2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add"
+    },
+    {
+      "path": "Tools/CI/ResolveUnityEditor.ps1",
+      "sha256": "0667bed34fd9956ee3b22869979a25f19023733fc05ea7ff156b1f41f9d27f10"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/COLLECTION_WORKFLOW.txt",
+      "sha256": "9953aecdcac95cc39ba7e3751be3fc1c774cbfdd3576b46d0d6e669c0d298793"
+    },
+    {
+      "path": "Tools/CI/build_skirmish_authoring_batches.py",
+      "sha256": "b4188169f083fd71f849893691cdf69e873e6569ee008e00da81cc0dd172b5c1"
+    }
+  ],
+  "offline_controls": {
+    "methods": 8,
+    "result": "Passed",
+    "full_log": "Design/AgentReports/SkirmishExpansion/GroundPilots/ground-objective30-workflow-controls-20261015-02.txt"
+  },
+  "native_executed": false,
+  "qualified": false,
+  "source_fit_certified": false,
+  "mission_readiness": 0,
+  "predecessor_manifest_sha256": "b5607cbafb7196b6a53181b41f63a6d0892bbcb0d9f2737041967a9075dfb5d2",
+  "reason": "Pin imported canonical budget helper and reject its omission; preserve prior tool bytes"
+}

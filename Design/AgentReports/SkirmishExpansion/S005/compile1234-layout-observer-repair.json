@@ -1,0 +1,7 @@
+{
+  "status": "CompileFailedAndRepairedPendingRecompile",
+  "failedSourceHash": "015fafaa73439e5f3438410d42e65305e050a1734d48262b4e59da6cc82e3441",
+  "failedCompile": "compile1234-economy-status-2.json",
+  "reason": "Validation layout observer used obsolete GetInstanceID API (CS0619). Replaced with direct view reference; no gameplay change.",
+  "nextCompile": "compile1234-economy-repair-request.json"
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "MeasuredOpeningQaCanvasSuccessorReady",
+  "manifest_sha256": "2ff7100e69b2bacae3947c6fdee6d7dbbad386a137a3b07a7997d33766144175",
+  "proof": "Logs/SkirmishProduction/Offline/AriaUiOwnedStorage/measured-opening-iouetnte/result.json",
+  "proof_sha256": "fa55748cb63ba1f1b60d495332a1886e19b1a7cf1d60459999ecf13ced434e9d",
+  "source_review": "Clear",
+  "native_execution": "Pending root",
+  "profile_promotion": false,
+  "required_markers": [
+    "[S005MeasuredOpeningCandidates] result=CapturedUnqualified views=4 profileChanged=0 commandsIssued=0 selectionChanged=0 runtimeGateAtQuitRequired=1",
+    "[S005MeasuredOpeningRuntimeGate] result=Passed errors=0 viewsCompleted=4 wrapperExitStillRequired=1"
+  ],
+  "control_entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005MeasuredOpeningCandidateControls",
+  "control_marker": "[S005MeasuredOpeningCandidateControls] result=Passed controls=3 preservedOriginalControls=11 readinessClaim=0",
+  "runtime_height_path": "UseExplicitPerspective1 -> RuntimeCameraFocusRequestUtility.Queue -> SetSmoothPerspectiveTarget -> UpdatePerspectiveCameraMode; no profile zoom min/max clamp. Existing actual ground-boundary fit remains, target must settle or fail.",
+  "camera_claim": "Analytic posed-AABB candidate only; exact new drawn-vertex readability, actualHUD containment, roof occlusion and player review pending",
+  "root_run_requirements": [
+    "Normal existing startup/output env and explicit persistent fresh paths",
+    "Actual wrapper0, full source/DLL endpoint equality and complete exit/ownership receipts",
+    "Require both new markers and original startup/cleanup markers; reject native errors including those after capture"
+  ],
+  "preserved_parent_manifest_sha256": "017020d36a8b64e288101e541338b4f4f455c296f345955cef41798f7699233f",
+  "source_review_path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/INDEPENDENT_SOURCE_REVIEW.json",
+  "source_review_sha256": "ed89d0e4a2307d53b76598f114e0e725ba1dfbdc64decc730a1fbded0afcfbfc"
+}

@@ -1,0 +1,50 @@
+using System;
+using System.Linq;
+using Game.Tests.Editor;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+public static class S005IntegratedTechnical1118
+{
+    public static string Run() => "Load only; actual validation requires repository wrapper.";
+    public static void RunValidation()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorUtility.scriptCompilationFailed)
+            throw new InvalidOperationException("Integrated focused validation requires idle compiled Editor.");
+        Quality();
+        Check(SkirmishExpandedDefinitionTests.RunFocusedValidation);
+        Check(SkirmishCombinedArmsTests.RunFocusedValidation);
+        Check(SkirmishExpandedAcceptanceTests.RunFocusedValidation);
+        Check(SkirmishExpandedCatalogTests.RunFocusedValidation);
+        Check(SkirmishExpandedEconomyTests.RunFocusedValidation);
+        Check(SkirmishFacilityEconomyProfileTests.RunFocusedValidation);
+        Check(SkirmishExpandedObjectiveTests.RunFocusedValidation);
+        Check(SkirmishExpandedArmyTests.RunFocusedValidation);
+        Check(SkirmishExpandedAriaTests.RunFocusedValidation);
+        Check(SkirmishSharedFogTests.RunFocusedValidation);
+        Check(SkirmishFogLedgerTests.RunFocusedValidation);
+        Check(SkirmishFogConsumerTests.RunFocusedValidation);
+        Check(SkirmishFogVfxTests.RunFocusedValidation);
+        Check(AssistantGuidanceLifecycleTests.RunFocusedValidation);
+        Quality();
+        Debug.Log("[S005IntegratedTechnical1118] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0");
+    }
+    private static void Check(Action run)
+    {
+        var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("ValidationExit", false)).FirstOrDefault(t => t != null)
+            ?? throw new MissingMemberException("ValidationExit");
+        type.GetMethod("ClearLastExitCode").Invoke(null, null);
+        run();
+        if (type.GetProperty("LastExitCode").GetValue(null) is int code && code != 0)
+            throw new InvalidOperationException("Failed integrated suite: " + run.Method.DeclaringType.FullName);
+    }
+    private static void Quality()
+    {
+        var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+        if (QualitySettings.names[QualitySettings.GetQualityLevel()] != "Mobile" || QualitySettings.antiAliasing != 0 ||
+            pipeline == null || pipeline.msaaSampleCount != 1 || AssetDatabase.GetAssetPath(pipeline) != "Assets/Settings/Mobile_RPAsset.asset")
+            throw new InvalidOperationException("Owner disabled Mobile MSAA contract not honored by actual active pipeline.");
+    }
+}

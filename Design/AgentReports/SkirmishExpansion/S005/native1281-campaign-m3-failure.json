@@ -1,0 +1,45 @@
+{
+  "result": "Failed",
+  "scope": "fa-IR",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "fullSourceUnchanged": true,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "preManifest": "final-1280-paid-air-post-source-manifest.json",
+  "postManifest": "final-1281-campaign-m3-post-source-manifest.json",
+  "log": "native-1281-campaign-m3-current.log",
+  "logSha256": "075df4c37b1eb7d4df2a2bc5a910460caf8194886cc502d23ac3a2b500e56a81",
+  "fixtureSha256": "411ab682dcc9901ad59b24e1d157853441042e4041bd1e6d9799dd66781840c7",
+  "runnerSha256": "7bf613c34cff70f91a1d453de2d5cef457f4c76d595ce8aef4d70467342a9258",
+  "rawEvidence": [
+    {
+      "file": "native1281-defense-7.jsonl",
+      "sha256": "f1320cb6e3dd796e869044b73fd597c8003333237e2c28d5a3a888a4acb8cf83"
+    },
+    {
+      "file": "native1281-input-route.jsonl",
+      "sha256": "c89cbc7623a2ba3b1a750fd0a163dbb71ca26941f85f3b0bcfeeee0b6ab66df5"
+    },
+    {
+      "file": "native1281-journey.jsonl",
+      "sha256": "6a2cd95592ae96433edf4f5dc72b13a1d2c0de0b12530370cd4b27ebfc1847ad"
+    },
+    {
+      "file": "native1281-threat-7.jsonl",
+      "sha256": "9bfe2dae6c1cdcf7e201b9db40b30fd2d7aaf608e6742c7515d8b7c2cf069945"
+    }
+  ],
+  "errors": [
+    "Missing complete native M3 witness marker",
+    "Missing paired native companion input gate",
+    "Generic M3 native journey did not pass",
+    "Native Campaign journey failure",
+    "Native witness explicitly failed",
+    "Missing actual CampaignReturnRendered entry=7",
+    "Actual native read-only witness failed",
+    "Actual wrapper/native exits not both0"
+  ],
+  "fullJourneyStrictTouchAudit": false,
+  "disclosedQA": "Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.",
+  "playerReady": false
+}

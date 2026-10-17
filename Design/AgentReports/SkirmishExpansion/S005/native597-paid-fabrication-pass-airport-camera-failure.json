@@ -1,0 +1,15 @@
+{
+  "run": "native597",
+  "result": "Failed",
+  "sourceHash": "773d39c651ef354528240794a4f94db332a6035a3f5aa265753de198e8b5b8b4",
+  "independentPrePostMatched": true,
+  "wrapperExit": 1,
+  "paidFabricationAdded": 2,
+  "fabricationNormalCostEach": 100,
+  "nativeAirportCandidates": 8,
+  "cameraGesturesForFirstAirportSite": 3,
+  "reason": "Airport site remained outside usable camera area after three normal map gestures.",
+  "airportCommitted": false,
+  "fullMatchCertified": false,
+  "nextRepair": "Continue to other validator candidates after per-site visibility limit; preserve required preview orientation."
+}

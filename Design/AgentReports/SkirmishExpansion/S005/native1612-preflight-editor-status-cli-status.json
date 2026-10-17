@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "command": "status",
+  "data": {
+    "count": 1,
+    "instances": [
+      {
+        "port": 7801,
+        "project": "/Users/farhad/Projects/WarlineCapture",
+        "version": "6000.5.2f1",
+        "pid": 12938,
+        "state": "ready"
+      }
+    ]
+  },
+  "errors": [],
+  "warnings": []
+}

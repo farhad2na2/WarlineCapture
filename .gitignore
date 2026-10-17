@@ -93,3 +93,6 @@ Assets/Game/Art/SkirmishLibrary/Blurs.meta
 Design/AgentReports/M03RadarWarning/**/*.png
 Design/AgentReports/M04Airlift/**/*.png
 Design/NarrativeVision/M3StyleAlignment/**/*.png
+
+# Unity crash memory may contain process data; keep it local.
+mono_crash.mem.*.blob

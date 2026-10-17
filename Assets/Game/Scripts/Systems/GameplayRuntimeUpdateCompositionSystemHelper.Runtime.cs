@@ -28,6 +28,8 @@ namespace Game.Runtime
         private static readonly ProfilerMarker DayNightMarker = new("GameplayRuntimeUpdate.DayNight");
         private static readonly ProfilerMarker CitizenPopulationMarker = new("GameplayRuntimeUpdate.CitizenPopulation");
         private static readonly ProfilerMarker MainMenuMarker = new("GameplayRuntimeUpdate.MainMenu");
+        private static readonly ProfilerMarker ThreatWarningPresentationMarker = new("GameplayRuntimeUpdate.ThreatWarningPresentation");
+        private static readonly ProfilerMarker MainMenuUiMarker = new("GameplayRuntimeUpdate.MainMenuUi");
         private static readonly ProfilerMarker LoadingGateMarker = new("GameplayRuntimeUpdate.LoadingGate");
         private static readonly ProfilerMarker EndUpdateMarker = new("GameplayRuntimeUpdate.EndUpdate");
         private static readonly ProfilerMarker UnitAttackTraceLateUpdateMarker = new("GameplayRuntimeLateUpdate.UnitAttackTrace");
@@ -192,8 +194,14 @@ namespace Game.Runtime
 #endif
             using (MainMenuMarker.Auto())
             {
-                _threatWarningPresentation.Present(runtimeWorld, mainMenu, Time.unscaledTime, simulationActive);
-                mainMenu?.Update();
+                using (ThreatWarningPresentationMarker.Auto())
+                {
+                    _threatWarningPresentation.Present(runtimeWorld, mainMenu, Time.unscaledTime, simulationActive);
+                }
+                using (MainMenuUiMarker.Auto())
+                {
+                    mainMenu?.Update();
+                }
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
 

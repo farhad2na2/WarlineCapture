@@ -110,6 +110,7 @@ namespace Game.Tests.Editor
         {
             setup = new SkirmishResolvedSetup
             {
+                ObjectiveKind = SkirmishObjectiveKind.BaseAssault,
                 CatalogId = "S005", DefinitionId = "skirmish.s005", ContentVersion = 2,
                 ContentHash = "source-fixture", OperationMapId = "campaign-existing-map", LayoutId = "logical-sector",
                 SetupHash = 123, Seed = 104734, SizeId = SkirmishSizeId.Standard, DifficultyId = SkirmishDifficultyId.Regular
@@ -117,6 +118,7 @@ namespace Game.Tests.Editor
             Entity session = em.CreateEntity();
             em.AddComponentData(session, new SkirmishExpandedSessionComponent
             {
+                ObjectiveKind = setup.ObjectiveKind,
                 SessionId = new FixedString64Bytes("native-codec-fixture"), CatalogId = new FixedString64Bytes(setup.CatalogId),
                 DefinitionId = new FixedString64Bytes(setup.DefinitionId), ContentVersion = setup.ContentVersion,
                 SetupHash = setup.SetupHash, Seed = setup.Seed, SizeId = setup.SizeId, DifficultyId = setup.DifficultyId
@@ -135,6 +137,8 @@ namespace Game.Tests.Editor
             using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
             Assert.IsTrue(SkirmishNativeCheckpointSnapshotService.TryCapture(em, sessions.GetSingletonEntity(),
                 _ => "prefab", out var snapshot, out var failure), failure);
+            Assert.AreEqual(7, snapshot.Version, "The minimal codec fixture explicitly exercises legacy BA7.");
+            Assert.IsNull(snapshot.Objective);
             return snapshot;
         }
 

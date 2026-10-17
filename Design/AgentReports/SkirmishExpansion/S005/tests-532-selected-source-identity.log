@@ -1,0 +1,23 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=SkirmishScenarioSourceBindingTests.RunSelectedSourceValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_e0bb82c5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+NullReferenceException: Object reference not set to an instance of an object
+SkirmishScenarioSourceBindingTests.ValidateSelectedSource (System.Boolean staleContent, System.Boolean wrongScenario, System.Boolean expected, System.Boolean expanded) (at Assets/Tests/Editor/SkirmishScenarioSourceBindingTests.cs:84)
+SkirmishScenarioSourceBindingTests.ExpandedSessionReusesSelectedMapInsteadOfLegacyPreset (System.Boolean staleContent, System.Boolean wrongScenario, System.Boolean expected) (at Assets/Tests/Editor/SkirmishScenarioSourceBindingTests.cs:73)
+SkirmishScenarioSourceBindingTests.RunFocusedValidation () (at Assets/Tests/Editor/SkirmishScenarioSourceBindingTests.cs:22)
+SkirmishScenarioSourceBindingTests.RunSelectedSourceValidation () (at Assets/Tests/Editor/SkirmishScenarioSourceBindingTests.cs:28)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=SkirmishScenarioSourceBindingTests.RunSelectedSourceValidation
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_e0bb82c5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,78 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/GroundPilots/bounded-original-six-20261015/six-original-pilots-collected-unqualified.tar.xz",
+  "sha256": "c997ac0b9c70ef81115d0c92e0921bb54631caa253c645c5080030b382d68144",
+  "mergedReportSha256": "4c476759f6c2bc3abbaefd89afe27b4afae0720cfdb836467b629081cc077490",
+  "missions": 6,
+  "sizeRows": 18,
+  "summaries": [
+    {
+      "catalogId": "S026",
+      "sizes": [
+        "Standard",
+        "War",
+        "LargeWar"
+      ],
+      "completeFacilityConfigurations": 0,
+      "checkedWrapperExit": 0,
+      "sourceDllEqual": true
+    },
+    {
+      "catalogId": "S049",
+      "sizes": [
+        "Standard",
+        "War",
+        "LargeWar"
+      ],
+      "completeFacilityConfigurations": 0,
+      "checkedWrapperExit": 0,
+      "sourceDllEqual": true
+    },
+    {
+      "catalogId": "S050",
+      "sizes": [
+        "Standard",
+        "War",
+        "LargeWar"
+      ],
+      "completeFacilityConfigurations": 0,
+      "checkedWrapperExit": 0,
+      "sourceDllEqual": true
+    },
+    {
+      "catalogId": "S074",
+      "sizes": [
+        "Standard",
+        "War",
+        "LargeWar"
+      ],
+      "completeFacilityConfigurations": 0,
+      "checkedWrapperExit": 0,
+      "sourceDllEqual": true
+    },
+    {
+      "catalogId": "S097",
+      "sizes": [
+        "Standard",
+        "War",
+        "LargeWar"
+      ],
+      "completeFacilityConfigurations": 0,
+      "checkedWrapperExit": 0,
+      "sourceDllEqual": true
+    },
+    {
+      "catalogId": "S098",
+      "sizes": [
+        "Standard",
+        "War",
+        "LargeWar"
+      ],
+      "completeFacilityConfigurations": 0,
+      "checkedWrapperExit": 0,
+      "sourceDllEqual": true
+    }
+  ],
+  "sourceFitCertified": false,
+  "normalMissionReady": false,
+  "qualification": "CollectedUnqualified; complete facility and army fit unresolved"
+}

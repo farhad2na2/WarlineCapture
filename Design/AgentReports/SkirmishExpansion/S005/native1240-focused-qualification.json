@@ -1,0 +1,99 @@
+{
+  "status": "SixSuitesPassedTwoFailedTests",
+  "sourceHash": "6a9e83273e80dd7f3a2dc699834b07f26abccf196f152fa930572c4c0ede3fc6",
+  "fullSourceUnchanged": true,
+  "results": [
+    {
+      "suite": "economy",
+      "method": "Game.Tests.Editor.SkirmishEnemyEconomyTests.RunFocusedValidation",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "marker": "[SkirmishEnemyEconomyTests] result=Passed tests=11",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1240-economy.log",
+      "logSha256": "e7967661bb048f95ffac2c2ab4823cea0f33f8505def56995e8f9e763cf0870e"
+    },
+    {
+      "suite": "construction",
+      "method": "Game.Tests.Editor.SkirmishEnemyConstructionAdapterTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyConstructionAdapterTests] result=Passed tests=18 scope=IsolatedNativeBoundaryNotNormalMission",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1240-construction.log",
+      "logSha256": "169b5bc910abcda0f553826d938a913edac8104873536c3a3341d279bc388d9d"
+    },
+    {
+      "suite": "coordinator",
+      "method": "Game.Tests.Editor.SkirmishEnemyEconomicCoordinatorTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyEconomicCoordinatorTests] result=Passed tests=11 scope=IsolatedActualCoordinatorNotNormalMission",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1240-coordinator.log",
+      "logSha256": "8512ab50ee3af81d6a9f36ac45370cdc21b43029e0ee45dff51c58e600fd0696"
+    },
+    {
+      "suite": "capability",
+      "method": "Game.Tests.Editor.SkirmishEnemyCapabilityTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyCapabilityTests] result=Passed cases=23",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1240-capability.log",
+      "logSha256": "372ca0a2d0675ea38dd127f4c6673d29e1bc5be6aaa1ee2950784a47cf389f97"
+    },
+    {
+      "suite": "policy",
+      "method": "Game.Tests.Editor.SkirmishEnemyPolicyV1Tests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyPolicyV1Tests] result=Passed tests=6 scope=policy-native-codec-foundation nativePlayerWins=0",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1240-policy.log",
+      "logSha256": "e98a7f54c79f3b6ba93c48a3f5e3a6e09f2a396519978c2dfa22ad1e41bc777c"
+    },
+    {
+      "suite": "commander",
+      "method": "Game.Tests.Editor.SkirmishEnemyCommanderTests.RunFocusedValidation",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "marker": "[SkirmishEnemyCommanderTests] result=Passed cases=8 configSeedPairs=4 scope=isolated-shared-orders",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1240-commander.log",
+      "logSha256": "875a54b0e40b00184a0106770d21d9a8cd142bb1b3a7e244c46f4da8849170e9"
+    },
+    {
+      "suite": "checkpoint-parts",
+      "method": "Game.Tests.Editor.SkirmishNativeCheckpointPartsTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishNativeCheckpointPartsTests] result=Passed tests=12 nativeRecoveryComplete=0",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1240-checkpoint-parts.log",
+      "logSha256": "0f3f4d06667cff1fd1679cbb2826c3b2f0f61532265ded537dfe196620ea3514"
+    },
+    {
+      "suite": "expanded-checkpoint",
+      "method": "Game.Tests.Editor.SkirmishExpandedCheckpointTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishExpandedCheckpointTests] result=Passed",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1240-expanded-checkpoint.log",
+      "logSha256": "4bb2c3fd184cc7dadf36f5048d20b3afb59519d07f83dd20c9735d141ea27a26"
+    }
+  ],
+  "normalWins": 0,
+  "playerReady": false,
+  "scope": "Isolated native focused suites; actual mission recovery/wins still pending",
+  "idleProof": "native1240-after-focused-idle.json"
+}

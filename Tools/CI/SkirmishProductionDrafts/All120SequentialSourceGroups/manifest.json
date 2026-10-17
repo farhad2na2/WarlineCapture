@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "scope": "SequentialExistingAll120SourceFacade_EngineeringOnly",
+  "parent": {
+    "path": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/manifest.after-coherent25.json",
+    "sha256": "e6b84964a937328db6a9ee343a395d90424cc599bf73fbdac494a1df812c758f"
+  },
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120AllSourceGroups.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120SequentialSourceGroups/SkirmishGroundSourceFitSurvey.All120AllSourceGroups.cs.txt",
+      "before_sha256": null,
+      "sha256": "ccb334aa6188e82d2f117db09b3aa18948a899be2c66d6ba1f7bf533b9c37866"
+    }
+  ],
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120SequentialSourceGroups",
+  "marker": "[All120SequentialSourceGroups] result=Collected groups=4 missions=113 distinctSizeRows=339 sourceWorldsSequential=4 maxConcurrentSourceWorlds=1 sourceFitCertified=0 cameraAccepted=0",
+  "native_execution": false,
+  "mission_ready": false
+}

@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; var a=new System.Collections.Generic.List<object>(); using var q=em.CreateEntityQuery(typeof(Game.Components.BuildingResourceStorageComponent),typeof(Game.Components.BuildingResourceProductionProfileComponent));using var es=q.ToEntityArray(Unity.Collections.Allocator.Temp);foreach(var e in es){var s=em.GetComponentData<Game.Components.BuildingResourceStorageComponent>(e);var p=em.GetComponentData<Game.Components.BuildingResourceProductionProfileComponent>(e);if(p.FuelPerBatch>0)a.Add(new {faction=s.OwnerFactionId,oilCapacity=s.OilStorageCapacity,fuelCapacity=s.FuelStorageCapacity,oil=s.StoredOilBarrels,fuel=s.StoredFuelBarrels,progress=p.FuelBatchProgressSeconds,inboundFuel=s.ReservedFuelInboundBarrels,outboundOil=s.ReservedOilOutboundBarrels});}return a;"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "faction": 1,
+          "oilCapacity": 5000,
+          "fuelCapacity": 5000,
+          "oil": 18,
+          "fuel": 60,
+          "progress": 0.9120579,
+          "inboundFuel": 0,
+          "outboundOil": 0
+        },
+        {
+          "faction": 2,
+          "oilCapacity": 5000,
+          "fuelCapacity": 5000,
+          "oil": 0,
+          "fuel": 0,
+          "progress": 0,
+          "inboundFuel": 0,
+          "outboundOil": 0
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,446 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=StartThroughM02LocalizationTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=EveryConfiguredStringResolvesThroughSourceAndKeyInEveryPublishedLocale
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] fail=FirstLaunchStaticIdentityAndGuidanceHaveExplicitBindings NUnit.Framework.AssertionException:   Do not silently lose identity/guidance binding coverage.
+  Expected: greater than or equal to 40
+  But was:  23
+
+  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at StartThroughM02LocalizationTests.FirstLaunchStaticIdentityAndGuidanceHaveExplicitBindings () [0x000fe] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:73 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:LogError (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:239)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=FarsiLoadingTipStaysAgainstItsLabel
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LoadingProgressRendersEveryPhaseAndHidesTechnicalFailureDetails
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=DirectWritersReplaceAuthoredBindingsAndSurviveLanguageSwitch
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=BuildingAndRecruitmentMessagesTranslateMetadataAndAllResourceFailures
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=ProductionQueueReplacesItsAuthoredPlaceholderWithTheLocalizedUnitName
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=TutorialHeaderUsesSharedLocaleBeforeAndAfterItsFirstReadModel
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=FutureLocaleUsesSameRuntimePathsAndIncompleteTablesFailValidation
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianNavigation_MirrorsForwardGlyphsWithoutChangingRichText
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LocaleLookup_UsesStableKeyAndEnglishFallback
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeSourceLookup_CoversDynamicallyCreatedUi
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=GameTextTryGet_ResolvesKeysOwnedOnlyBySharedCatalog
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeSourceLookup_LocalizesConfiguredDynamicTemplates
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeSourceLookup_DoesNotTreatPlaceholderOnlyTemplateAsArbitraryCopy
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeBinder_SkipsViewsWithDedicatedNarrativeLocalization
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LocalizedRuntimeValue_CanRecoverItsEnglishTemplateForLocaleSwitching
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianLocale_PreservesIntentionalLatinAcronymsInLeftToRightOrder
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianLocale_EnablesSafeAutoSizingAndRestoresEnglishTypography
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFB58 was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFEE8 was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFEDE was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFB58 was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFEEE was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFBFE was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+The character with Unicode value \uFE8E was not found in the [LiberationSans SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Label].
+UnityEngine.Debug:LogWarning (object,UnityEngine.Object)
+TMPro.TextMeshProUGUI:SetArraySizes (TMPro.TMP_Text/TextProcessingElement[]) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2012)
+TMPro.TMP_Text:ParseInputText () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TMP_Text.cs:2063)
+TMPro.TextMeshProUGUI:OnPreRenderCanvas () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:2496)
+TMPro.TextMeshProUGUI:ForceMeshUpdate (bool,bool) (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/TMP/TextMeshProUGUI.cs:565)
+GameLocalizationCatalogTests:RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling () (at Assets/Tests/Editor/GameLocalizationCatalogTests.cs:315)
+System.Reflection.MethodBase:Invoke (object,object[])
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=InactiveLanguageSegmentKeepsRuntimeLabelWhenItsTabOpens
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=LocaleMetadata_DrivesSettingsWithoutScreenSpecificLanguageLists
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=MissingTranslation_FallsBackToEnglishSource
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=PersianSeeder_PreservesReviewedValuesAndRejectsUnknownProse
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=SettingsLocaleModel_CarriesFutureLocaleCodeWithoutANewScreenEnum
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] fail=EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage System.InvalidOperationException: V3 localization validation failed with 457 issue(s).
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[8] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[9] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[10] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[11] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[12] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[13] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[38] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[39] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[40] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[41] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[42] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[43] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[44] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[45] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[46] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[47] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[48] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[49] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[50] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[51] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[52] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[53] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[54] has no TMP target
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/Header/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetLabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetNameText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetFooter/DistrictText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetFooter/ThreatText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/IntelConfidenceCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/ThreatLevelCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/ThreatLevelCard/ValueText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CollateralRiskCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CollateralRiskCard/ValueText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianDensityCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianDensityCard/ValueText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_HOSTILECELLS missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_LIGHTVEHICLES missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_MORTARTEAMS missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_SNIPERS missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/SquadReadinessCard/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/SquadReadinessCard/SquadNameText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianWarningCard/WarningText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianWarningCard/CautionText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/ButtonRow/CancelButton/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/ButtonRow/ConfirmButton/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/TitlePanel/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/TitlePanel/DayText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/CreditsResource/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/CommandResource/LabelText missing binding
+  at Game.Editor.V3UiLocalizationCatalogBuilder.ValidateBindingsAndCoverage () [0x00336] in /Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:390 
+  at GameLocalizationCatalogTests.EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage () [0x00000] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/GameLocalizationCatalogTests.cs:419 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:LogError (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:239)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[StartM02Localization] pass=DisabledUi_KeepsTextMeshProFontMaterialAndReadableGlyphColor
+UnityEngine.Debug:Log (object)
+StartThroughM02LocalizationTests:RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+InvalidOperationException: V3 localization validation failed with 457 issue(s).
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[8] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[9] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[10] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[11] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[12] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[13] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[38] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[39] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[40] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[41] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[42] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[43] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[44] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[45] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[46] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[47] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[48] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[49] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[50] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[51] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[52] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[53] has no TMP target
+Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab:localizedTextTargets[54] has no TMP target
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/Header/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetLabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetNameText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetFooter/DistrictText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/TargetInfoCard/TargetFooter/ThreatText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/IntelConfidenceCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/ThreatLevelCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/ThreatLevelCard/ValueText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CollateralRiskCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CollateralRiskCard/ValueText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianDensityCard/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianDensityCard/ValueText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_HOSTILECELLS missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_LIGHTVEHICLES missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_MORTARTEAMS missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/EnemyCompositionCard/Label_SNIPERS missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/SquadReadinessCard/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/SquadReadinessCard/SquadNameText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianWarningCard/WarningText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/BodyRoot/CivilianWarningCard/CautionText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/ButtonRow/CancelButton/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab:ConfirmRaidPopup/V3Composition/Frame/ButtonRow/ConfirmButton/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/TitlePanel/TitleText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/TitlePanel/DayText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/CreditsResource/LabelText missing binding
+Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/CommandResource/LabelText missing binding
+Game.Editor.V3UiLocalizationCatalogBuilder.ValidateBindingsAndCoverage () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:390)
+StartThroughM02LocalizationTests.RunFocusedValidation () (at Assets/Tests/Editor/StartThroughM02LocalizationTests.cs:246)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=StartThroughM02LocalizationTests.RunFocusedValidation
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_fbf2dbc4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,40 @@
+{
+  "status": "PassedScopedIsolatedActualSystems",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "prePostEntireSourceAndMaterialManifestsEqual": true,
+  "compileCompletedErrors": [],
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "cases": 9,
+  "nativeMarker": "[SkirmishGroundCarrierDeathTests] result=Passed cases=9 scope=IsolatedActualSystemNotNormalMission",
+  "idlePrePost": "five false flags, exact project, zero dirty scenes",
+  "sourceFiles": {
+    "Assets/Game/Scripts/Systems/UnitDeathSystem.cs": "599099b1bfc80fb0c905b6032fe516922630a39e8e3aa05f17e86cd871cd89a3",
+    "Assets/Game/Scripts/Systems/TransportBoardingCommandDisembarkApplication.cs": "4a467fb60e6e645d8b67b92dc9ea0917e9a7cec81f08a1037f4bfb81a37fa239",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs": "55ee27565bd5be631f965cfa44c0b935dfa37312ddf6a1ad12900b14b7ac57dd",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs.meta": "420a406e3fc7ceddef63f06b36a6c57ca122a5dc1b5e5ed4ef553d24c1918123"
+  },
+  "evidence": {
+    "compile1258-ground-carrier-request.json": "8648d66b56b933c80fa8fde782ff52e624a89c2b61859883966a40ee9a78d573",
+    "compile1258-ground-carrier-status1.json": "9760fe39846da46c1c97fb1d9d2e346bd08ca300abac893ffe4362b66530df3f",
+    "final-1258-ground-carrier-post-independent-fingerprint.json": "05bad39e5a035645760b6c8b9d409bf015aa24f6e1c4b441ac5efcf4167a7c79",
+    "final-1258-ground-carrier-post-source-manifest.json": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+    "final-1258-ground-carrier-pre-independent-fingerprint.json": "30f0c29c59c3dfd0a1a25f5d60d4e705b67212c450a85e33af1bc3f807d2b39e",
+    "final-1258-ground-carrier-pre-source-manifest.json": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+    "native-1258-ground-carrier-death.log": "241f23b61e556fc9d1e35e66693ee0414136107db710bf5c2626fdf1b984d66a",
+    "native-1258-ground-carrier-death.log.dispatch.cs": "f41be438080838c9c8d05f6e9c22c3ced306c78eb9d587da3d71219210ceadb2",
+    "native-1258-ground-carrier-death.log.dispatch.json": "f2e38bb2080d159982d509dce1148d8958921eaacaa166a57458590ea9fe2dba",
+    "native-1258-ground-carrier-death.log.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "native1258-post-idle.json": "dd4abd6cc68990e2b78f764f76ca627a250b3c28461af4083bc58ebac145df5e",
+    "native1258-pre-idle.json": "0043e9ae79774cbe79603ab4f103cdc9edf5083e5ec7f9ed5cf4ef1cddb79940",
+    "native1258-wrapper-exit.json": "6885a82ef45bec304ade9f70cc3a5beb58f3c2960f946113dd916df8b32996f8",
+    "native1258-wrapper-output.txt": "d1b03f6d3b023889dbb4cfcd45c348d275bb4100d50cf93f18e0c9538f0606c4"
+  },
+  "retainedFailure": "native1257 wrapper1/native1; partial-unload test only selected inside-clearance cell; original failed test archived",
+  "limitations": [
+    "Not a normal mission journey or full player readiness proof",
+    "Capacity control preserves passenger capacity and identity; dead carrier was seeded released in focused fixtures",
+    "Full normal SaveContinue repair qualification pending native1262",
+    "Legacy Campaign/air control tests guard scope only, not complete Campaign journeys"
+  ]
+}

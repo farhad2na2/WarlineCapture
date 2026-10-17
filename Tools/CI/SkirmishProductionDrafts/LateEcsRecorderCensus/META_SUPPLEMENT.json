@@ -1,0 +1,17 @@
+{
+  "scope": "AdditiveNewScriptMetaOnly_NoCSharpChanges",
+  "parent_manifest": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/manifest.json",
+  "parent_manifest_sha256": "5c54f24413331dab552c5f2add662cea628dac3cb8fce1d05ba2352f5227e26c",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.meta",
+      "source": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.meta.txt",
+      "before_sha256": null,
+      "sha256": "36c6a2f9282dd865a26c46b3dea417f9bc850c0cd6aa15fba036635ceef7dd34"
+    }
+  ],
+  "guid": "b6f70e79754a417599dd8dfd418343bd",
+  "guid_collision_scan": "All actual Assets meta files; zero prior occurrence",
+  "script_references": [],
+  "csharp_proof_replayed": false
+}

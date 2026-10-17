@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "fc2043066afb43cfd364259f378d664816bc947afd58514ca3e288e73eb6be86",
+  "actualWrapperExit": 0,
+  "requiredPassMarkers": [
+    "[ServiceApproachValidation] result=Passed cases=9 nativeMissionAcceptance=Pending",
+    "[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=55"
+  ],
+  "sourceUnchanged": true,
+  "pre": "tests-742-shared-occupancy-membership-green-post-source-manifest.json",
+  "post": "tests-743-occupancy-fix-service-logistics-post-source-manifest.json",
+  "log": "tests-743-occupancy-fix-service-logistics-regression.log",
+  "logSha256": "eeffbe384df7359e83419491ed04d208db550feba943b10f7bb3eadaf587111e",
+  "nativeMissionAcceptance": "Pending"
+}

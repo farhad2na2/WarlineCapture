@@ -1,0 +1,14 @@
+{
+  "head": "eaeb9ff694cc72f44c84920c54f7e824af94eb13",
+  "parents": [
+    "04227d9490cafd35ea194d199f63b12701a0b0d6",
+    "7b18e564ca8bab45a1edb747e396dea24d849bfc"
+  ],
+  "upstream_only_commits": [
+    "7b18e564c Archive main menu UI/UX review mockups and native captures",
+    "96761660b Polish main menu layout and mirror it for Persian"
+  ],
+  "merge_vs_upstream": "16paths exactly previouslyapproved ParallelSourceSnapshotTool checkpoint plus installedsnapshothelper and.gitattributes; noC#/WIP adoption",
+  "staged_paths": [],
+  "read_only_git_checks": true
+}

@@ -1,0 +1,17 @@
+{
+  "initialRecorderResult": "Failed started/completed equality",
+  "sourceUnchanged": true,
+  "started": 98,
+  "completed": 97,
+  "terminalCanceled": 1,
+  "nativeStopReason": 5,
+  "cancellationFrame": 11034,
+  "device": 49,
+  "commandsAfterCancellation": 0,
+  "postEditorAriaDevices": 0,
+  "postEditorPlaying": false,
+  "nativeVictoryResultReturn": "Passed",
+  "measuredReceiptViolations": 0,
+  "resolution": "Separate strict terminal cancellation accounting; original raw log and recorder assertion retained in wrapper output",
+  "playerReady": false
+}

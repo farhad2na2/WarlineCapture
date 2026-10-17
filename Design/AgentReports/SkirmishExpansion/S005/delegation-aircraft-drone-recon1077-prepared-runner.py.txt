@@ -1,0 +1,30 @@
+import hashlib,json,pathlib,re,shutil,subprocess,sys
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture');p=root/'Design/AgentReports/SkirmishExpansion/S005'
+assert len(sys.argv)==2, 'Usage: rtk proxy python3 /private/tmp/s005-run-drone-recon-1077.py <current-pre-source-manifest.json>'
+pre=sys.argv[1];assert pathlib.Path(pre).name==pre and (p/pre).is_file()
+f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text());assert s['activeRun'] is None
+script=pathlib.Path('/private/tmp/S005DroneReconEffects1077.cs')
+assert hashlib.sha256(script.read_bytes()).hexdigest()=='bc49f487a5fa4a91e546c976e67a7058631c8aa2a212de869fcd7a8d1347f6b8', 'Prepared1077 fixture changed; review a fresh SHA before load'
+archived=p/'native1077-drone-recon-producer-fixture.cs.txt';assert not archived.exists() and not(p/'load1077-drone-recon-producer-fixture.json').exists(), "Unique native class/evidence already used; choose a fresh run number";shutil.copy2(script,archived)
+r=subprocess.run(['rtk','proxy','unity','command','run_script','--file',str(script),'--entry','S005DroneReconEffects1077.Run','--timeout_ms','30000','--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True)
+(p/'load1077-drone-recon-producer-fixture.json').write_text(r.stdout);d=json.loads(r.stdout);assert r.returncode==0 and d['success'] and d['data']['result']['success'];print('Paid Drone native Scan fixture loaded',flush=True)
+log='native-1077-drone-recon-intel-scan-auto-return-smoke.log';assert not(p/log).exists()
+s.update(activeRun='native1077',activeLog=log,activeScope='S005DroneReconEffects1077.RunValidation',activePreManifest=pre);f.write_text(json.dumps(s,indent=2)+'\n')
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','1120','--log',str(p/log),'--','-executeMethod','S005DroneReconEffects1077.RunValidation'],cwd=root).returncode
+(p/(log+'.wrapper-exit')).write_text(str(wrapper)+'\n')
+bridge=int((p/(log+'.exit')).read_text()) if (p/(log+'.exit')).exists() else None
+if bridge is None:print('No native completion; preserve active owned run and investigate',flush=True);sys.exit(4)
+post='final-1077-drone-recon-producer-post';subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],cwd=root,check=True);post+='-source-manifest.json'
+same=json.loads((p/pre).read_text())==json.loads((p/post).read_text());sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash'];t=(p/log).read_text(errors='replace')
+errors=[]
+if wrapper!=0 or bridge!=0:errors.append('Wrapper/native bridge failure')
+if not same:errors.append('Full source changed')
+for marker in ['[S005DroneReconProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0','[S005DroneReconPaidQueueCase] role=Drone paid=140','[S005DroneReconNativeSelection] result=Passed role=Drone','[S005DroneReconNativeScanOrder] result=Passed role=Drone','[S005DroneReconNativeScanResult] result=Passed role=Drone','[S005DroneReconNativeScanFeed] result=Passed role=Drone','[S005DroneReconNativeLastSeen] result=Passed role=Drone','[S005DroneReconNativeAutomaticReturn] result=Observed role=Drone','[S005DroneReconNativeHomeLanding] result=Passed role=Drone','[S005DroneReconPaidQueueDeath] result=Passed role=Drone','[S005DroneReconMovement] result=Passed cases=1','[S005DroneReconMovementCleanup] result=Passed']:
+ if marker not in t:errors.append('Missing '+marker)
+audit=re.search(r'\[S005DroneReconMovementInput\] dispatched=(\d+) completed=(\d+) acceptedCommands=(\d+) violations=(\d+)',t)
+if not audit or int(audit[1])<=0 or audit[1]!=audit[2] or int(audit[4])!=0:errors.append('Missing paired native Touch audit with zero receipt violations')
+proof=dict(result='Failed' if errors else 'PassedScopedIsolatedPaidDroneNativeRecon',scope='Funded Established-readiness paid IntelStation Drone140; native Touch selection/Scan/world target; actual UnitScanOrder and accepted native Scan result; exact paid-source ScanIntelFeed, retained actual enemy LastSeen, positive-time airborne flight, native automatic return and home landing; authored fog preserved. No concealed-to-visible claim or whole mission certificate.',sourceHash=sha,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest(),fixture=archived.name,fixtureSha256=hashlib.sha256(archived.read_bytes()).hexdigest(),touchEvidence='delegation-aircraft-drone-recon1077.touch.jsonl',placementEvidence='delegation-aircraft-drone-recon1077.placement.jsonl',placementSampleExhaustive=False,reconEvidence='native1077-drone-recon-events.jsonl',targetSource='ActualOpeningEnemyArmoredApc',targetPoseHealthVisibilityInjected=False,enemyRetaliationDisabled=True,fogFlagsInjected=False,authoredFullVisionPreserved=True,scanOrderResultFeedLastSeenInjected=False,selectionScanInput='NativeTouch',automaticReturnInput='NativeScanCompletion',fundingInjected=True,readinessGranted='Established',enemyStrategyDisabled=True,deathStimulus='HealthZero',actorPositionsSelectionOrdersInjected=False,normalMissionCertified=False,fullLifecycleCertified=False,technicallyReady=False,playerReady=False,errors=errors,nativeMarkers=[x for x in t.splitlines() if x.startswith('[S005DroneRecon')])
+name='native1077-drone-recon-intel-scan-auto-return-'+('failure' if errors else 'pass')+'.json';(p/name).write_text(json.dumps(proof,indent=2)+'\n')
+s=json.loads(f.read_text());assert s['activeRun']=='native1077';s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,currentDroneReconEffects=name);f.write_text(json.dumps(s,indent=2)+'\n')
+with(p/'CURRENT_ACCEPTANCE.md').open('a') as m:m.write('\nNative1077: isolated paid Drone native Scan/feed/last-seen/automatic return effects '+proof['result']+'; funding/readiness/death disclosed, no whole mission or full lifecycle certificate. Proof `'+name+'`.\n')
+print(json.dumps(dict(proof=name,result=proof['result'],errors=errors)),flush=True);sys.exit(3 if errors else 0)

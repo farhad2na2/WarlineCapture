@@ -1,0 +1,13 @@
+{
+  "sourceHash": "588d279fce9cce68cd30b896d41c37b2037716798d55c13b2ceede9fdba7f704",
+  "previousFullSourceHash": "31eab475b92bb49c3fa2d6b94d49dccf476cb527b060be91083cd53f046f10d2",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs"
+  ],
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "materialsIdentical": true,
+  "scope": "Editor native-touch driver: require button position stable .5 seconds; retry entry, scenario and launch only when prior public screen remains visible; menu PASS waits for native session observation. Preserve90-second menu watchdog and fixed seed fixture.",
+  "normalNativeConfirmation": "Pending",
+  "retainedFailure": "native799-normal-menu-launch-failure.json",
+  "unexecutedDraftManifest": "final-800-stable-native-menu-touch-and-transition-retry-pre-source-manifest.json"
+}

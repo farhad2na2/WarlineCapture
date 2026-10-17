@@ -1,0 +1,31 @@
+{
+  "result": "Failed",
+  "playerReady": false,
+  "wrapperExit": 2,
+  "sourceHash": "8ad5ba9dad5ecd9403cd3734bc403f1de8191ffd9e98e322987752cfd868d0df",
+  "sourceManifestUnchanged": true,
+  "normalMatchOutcome": "Draw",
+  "paidRefinery": true,
+  "paidAirport": true,
+  "paidStrikeReceipt": 1006,
+  "launch": false,
+  "normalReturnRefuelSecondSortie": false,
+  "reason": "Paid jet waited below conservative runway reserve; fuel plateaued near900. Extra refinery stored384 fuel at983s. Fleet consumes0.05 fuel/cell, payload8; long transport route can consume much of delivery.",
+  "inputAudit": {
+    "recordedContacts": 129,
+    "completedContacts": 129,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 124
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "scope": "Failed qualification, no readiness claim"
+}

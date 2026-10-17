@@ -1,0 +1,41 @@
+{
+  "status": "FrozenExternalOnly_NativeDryCompileSerializationAndJourneyPending",
+  "runId": 1286,
+  "bundle": "/private/tmp/campaign-m3-current1286",
+  "manifestSha256": "304be749b2ffdeba31fc359ac9fdc01a3e26b31d1e4e426ccd83c8d9b4e4f05f",
+  "fixtureSha256": "afcfbb50821805d5fd371593f6d1f1e24703356ba426822728eef0297cd06374",
+  "runnerSha256": "cf9d5b1ece8827f190e93da272a49a2acced34c8ec1bd6c097d97a6f6a57d1e0",
+  "controls": 43,
+  "contracts": 134,
+  "currentCandidateSourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "noNativeCallsOrSourceEdits": true,
+  "postmortem": {
+    "result": "ReadOnlyDiagnostic_NoProductionDefectEstablished",
+    "predecessorRun": 1281,
+    "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+    "failure": "Timeout entry7stage4; missing CampaignReturnRendered",
+    "observedVictory": {
+      "frame": 3555,
+      "phase": "ResultAfterDebrief",
+      "outcome": "Victory",
+      "origin": "CampaignOperations",
+      "returnDestination": "CampaignOperations",
+      "hostileTotal": 7,
+      "hostileDefeated": 7,
+      "convoyElements": 2,
+      "convoyResolved": 1
+    },
+    "actualMenuReturn": "Not established by1281; last input censusframe3561, no post-result menu census.",
+    "observerDefect": "Return witness is below exact live M3 runtime query and mission filter; that dependency is inappropriate for a post-unload menu witness. Actual cause of live query mismatch is not yet recorded.",
+    "remainingStrictGate": "Both native convoy elements resolved atVictory remains required; no waiver.",
+    "preservedLog": "native-1281-campaign-m3-current.log",
+    "preservedLogSha256": "075df4c37b1eb7d4df2a2bc5a910460caf8194886cc502d23ac3a2b500e56a81",
+    "sourceEdits": false,
+    "nativeCallsByAgent": false
+  },
+  "nativePending": [
+    "Actual unique1286 native drycompile",
+    "Actual primitive serialization load-only selfcheck including new provenance fields",
+    "Full native M3 Victory/tworesolvedconvoys/renderedCampaign return/nativeandwrapper0/currentfullsourceidleclosure"
+  ]
+}

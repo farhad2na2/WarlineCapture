@@ -1,0 +1,58 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.OperationMapRenderDatabaseBuilder.RunSourceParityValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapRenderEligibilityInventoryProbe] result=Passed rows=124167 eligible=59503 excluded=64664 joined=72889 prototypes=9492 parts=15036 report=Design/AgentReports/2026-07-28_dense_city_render_virtualization_eligibility_inventory.json sourceRows=Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz prototypeRecipes=Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json logicalPlacements=Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json spatialCells=Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json capacityBudget=Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json capacitySlots=7291
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationMapRenderEligibilityInventoryProbe:Run () (at Assets/Game/Scripts/Editor/OperationMapRenderEligibilityInventoryProbe.cs:189)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:40)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapRenderDatabaseBuilder] result=Passed config=Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset contentHash=ba6cdad01244f225bb7804f66a945f7bd94e204275b6ccc0065ddb7c002a0f09 placements=38839 slots=7291 isolation=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationMapRenderDatabaseBuilder:BuildCandidate () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:207)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunDeterminismValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:64)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:41)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapRenderDatabaseBuilder] result=Passed config=Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset contentHash=ba6cdad01244f225bb7804f66a945f7bd94e204275b6ccc0065ddb7c002a0f09 placements=38839 slots=7291 isolation=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationMapRenderDatabaseBuilder:BuildCandidate () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:207)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunDeterminismValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:70)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:41)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapRenderDatabaseBuilder] determinism=Passed contentHash=ba6cdad01244f225bb7804f66a945f7bd94e204275b6ccc0065ddb7c002a0f09 orderingHash=d94e07d98f47b267bf7739c566458766161fbaae6f6fd4f6ace0865631a009d3 configBytes=38040568 reportBytes=1102
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunDeterminismValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:96)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:41)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapRenderDatabaseBuilder] sourceParity=Passed sourceRows=124167 eligibleRows=59503 residentRows=64664 removedRows=0
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:54)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.OperationMapRenderDatabaseBuilder.RunSourceParityValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_1323f7e6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

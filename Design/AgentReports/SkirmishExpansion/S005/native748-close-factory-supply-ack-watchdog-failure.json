@@ -1,0 +1,24 @@
+{
+  "result": "Failed",
+  "failure": "Normal factory order acknowledgment watchdog: step2, truckSelected=False, expectedFactory15, observedDestination16. Native route failure count1; no aircraft cycle reached.",
+  "actualWrapperExit": 2,
+  "actualWrapperExitArtifact": "native-748-current-manual-en-seed155926.log.exit",
+  "sourceHash": "37b5f29022ec241a93bf6bbbfa51f675bf9d74ccbb1d51e47b7dba9ae576dec4",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-748-close-factory-card-supply-pre-source-manifest.json",
+  "postSourceManifest": "final-748-close-factory-supply-ack-failure-post-source-manifest.json",
+  "log": "native-748-current-manual-en-seed155926.log",
+  "logSha256": "18b51cb62eb31567765b3aabf69044fd428305801e68b1542f6155994d548071",
+  "trace": "s005-aria-live-155926-en-b9d1cd2fcd654892be80005bb4ca901e.jsonl",
+  "inputAudit": "native748-touch-contact-audit.json",
+  "normalSupplyAssignmentsObserved": 15,
+  "bothFactoriesReceivedNormalAssignment": true,
+  "paidFactorySite": [
+    911.5,
+    578
+  ],
+  "paidFactoryCost": 100,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "nextStrategy": "Recheck own factory demand before order; retry unacknowledged normal selection and building tap with bounded attempts, preserving evidence and route failure observations."
+}

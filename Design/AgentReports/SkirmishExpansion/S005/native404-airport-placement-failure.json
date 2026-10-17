@@ -1,0 +1,43 @@
+{
+  "mission": "S005",
+  "sourceHash": "3110dc84d59a8e04f6fa9a5a79fc38b296ba2577a5c7f0c4ed25e5dd803528a9",
+  "result": "Failed",
+  "countsForCurrentSource": false,
+  "playerReady": false,
+  "runKind": "NormalInputPaidAirportPlacement",
+  "scope": "Visible sampled player-base yard, both orientations; no global source-fit conclusion",
+  "normalInput": true,
+  "normalBudget": true,
+  "paidReadinessStages": [
+    2,
+    3
+  ],
+  "extraFabricationDepots": 2,
+  "airportCommitted": false,
+  "sitesTouched": 21,
+  "rejections": {
+    "NativePlacementValidator": 21,
+    "UiOcclusion": 9,
+    "Offscreen": 18
+  },
+  "attemptedSamples": 48,
+  "fullMapFitCertified": false,
+  "fixedWingLifecycleCertified": false,
+  "bilateralCapacityCertified": false,
+  "sourceUnchanged": true,
+  "preFingerprint": "final-400-airport-qualification-source-independent-fingerprint.json",
+  "postFingerprint": "final-405-post-airport-qualification-source-independent-fingerprint.json",
+  "log": "native-404-paid-airport-placement.log",
+  "logSha256": "e7b7540b324f47fd5b2574bae7d1f66f471b8165d840e62ce445fcad070e9cd5",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "supersededBySourceHash": "d52b134a53b23c5554f116bfdabe2fab0ec8a1e79cc4bcfbf2bc5189bc6287f7",
+  "independentContactAudit": {
+    "result": "Passed",
+    "completedContacts": 68,
+    "unexpectedSamples": 0,
+    "physicalInterventions": 0,
+    "trace": "s005-aria-live-155926-en-abc067ab173042d3841b891b4e0c1fec.jsonl.touch.jsonl",
+    "scope": "All recorded contacts paired; construction failure remains failed; no complete match claim"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "sourceHash": "be4089f3dce21a33af9a8ead4488ee8cf75efbedbdf48603ffe4edadf08bd020",
+  "result": "Failed",
+  "log": "native-378-paid-tank-combat-save.log",
+  "logSha256": "93429058babea6e056b842b8fdb859dc34a198132ba15c4f905aceb92317c5bd",
+  "wrapperExit": 1,
+  "countsForCurrentSource": false,
+  "playerReady": false,
+  "paidTankDelivered": false,
+  "reason": "Recruitment wall-clock watchdog expired while material bank was still progressing; oversized logistics purchases delayed affordability."
+}

@@ -1,0 +1,17 @@
+{
+  "run": 211,
+  "sourceHash": "b7d04e0d19ef59abae643cf9388ffa9a3d3e3668483fa96dc24af10436e23d06",
+  "scope": "Read-only native drawer observation",
+  "stateMutation": false,
+  "observations": {
+    "matchRead": true,
+    "pageRead": true,
+    "tray": false,
+    "hud": true,
+    "commands": false,
+    "materials": 290
+  },
+  "diagnosis": "Build hides squad tray and command controls. Manual fixture returned before processing replacement recruitment because it required those hidden controls.",
+  "passengerSubgate": "Passed",
+  "fullMission": "Pending failure"
+}

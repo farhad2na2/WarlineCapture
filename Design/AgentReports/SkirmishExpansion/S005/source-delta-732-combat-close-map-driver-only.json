@@ -1,0 +1,10 @@
+{
+  "fromSourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+  "toSourceHash": "b3d184967db510b1e821713b4850ed46d321419dbe301e082320a8e970ca5ffb",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeConfigsPhysicalSourcesAndAllMaterialHashesUnchanged": true,
+  "change": "Editor recovery driver closes an open full-map panel using normal touch before Pause; rejects Finished before treating Paused as a save state.",
+  "nativeCombatRecovery": "Pending"
+}

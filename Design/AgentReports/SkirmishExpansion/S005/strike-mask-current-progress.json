@@ -1,0 +1,13 @@
+{
+  "sourceHash": "a9209d2d910c54b432651abecd97c63ecea92bbc8f590231b7f53333e0d5513c",
+  "playerReady": false,
+  "publicAircraftMaskRegression": "Passed",
+  "requiredMarkersVerified": true,
+  "exitReceipt": 0,
+  "log": "tests-453-strike-public-aircraft-mask.log",
+  "sha256": "c518ff7991371c50c76d9b2e40c1ba8a5cd026462a222bcc211a2f6069985abd",
+  "nativeCycle": "native-454-strike-public-mask-cycle.log",
+  "nativeCycleStatus": "running",
+  "historicalFailure": "native445-strike-selection-failure.json",
+  "scheduledAttempt452": "Timed out without completion receipt after Editor reload; not a pass"
+}

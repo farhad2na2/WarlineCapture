@@ -1,0 +1,12 @@
+{
+  "priorSource": "f052e3e0abd5cb8267bce27872df5d952f5f3ad8488bf4b3a0c73ef4c859eea1",
+  "currentSource": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "productionAndHudTestsUnchanged": true,
+  "changes": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs",
+      "before": "3919a8a340142eed703c9260c6e9a8604cac8c605317ec7bd1a01bd01488231c",
+      "after": "d6fe1246ac1564d5bb0d78bdd3a4bf5a3e6b806725ac6507709516ac1e1627fd"
+    }
+  ]
+}

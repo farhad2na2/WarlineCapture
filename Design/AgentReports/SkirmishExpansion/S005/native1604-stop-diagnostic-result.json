@@ -1,0 +1,40 @@
+{
+  "scope": "Bounded external normal-input Stop diagnosis only; not full S005 readiness",
+  "result": "StopSatisfied",
+  "firstFrame": 1,
+  "lastFrame": 5,
+  "frameCount": 5,
+  "actorFrameCount": 20,
+  "originalActorBinding": [
+    [
+      "role.rocketeer.1.1.2",
+      842,
+      7
+    ],
+    [
+      "role.rocketeer.1.1.1",
+      835,
+      7
+    ],
+    [
+      "role.rocketeer.1.1.0",
+      827,
+      7
+    ],
+    [
+      "role.rocketeer.1.1.3",
+      848,
+      7
+    ]
+  ],
+  "complete": true,
+  "firstFreshAccepted": 3,
+  "firstWheelClosed": 3,
+  "firstPairedTouch": 3,
+  "firstFourNativeStopped": 3,
+  "firstAllGates": 3,
+  "finalFailedBitMask": 0,
+  "finalFailedBits": [],
+  "errors": [],
+  "wrapperExpectedNonzero": true
+}

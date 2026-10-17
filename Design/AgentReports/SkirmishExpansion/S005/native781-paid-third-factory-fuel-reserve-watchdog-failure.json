@@ -1,0 +1,31 @@
+{
+  "result": "Failed",
+  "sourceHash": "d1781e9588c3f9aadb0331f070946890f1ef0548bcc903e47733116ad4eae7df",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-781-three-factory-paid-strike-reviewed-pre-source-manifest.json",
+  "postSourceManifest": "final-781-three-factory-fuel-watchdog-failure-post-source-manifest.json",
+  "wrapperExitCode": 2,
+  "wrapperExitArtifact": "native-781-current-manual-en-seed155926.log.exit",
+  "log": "native-781-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-cf637cff4b2c42c791653ff8f7a93aa6.jsonl",
+  "inputAudit": "native781-touch-contact-audit.json",
+  "reason": "QualificationWallWatchdogBeforeFirstLaunch",
+  "paidStrike": true,
+  "paidStrikeDelivery": [
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 parkingTransitComplete=1 atHome=1 receipt=1005"
+  ],
+  "lastNativeProgress": "[S005FixedWingCycle] phase=Progress stage=4 materials=80 fuel=859 actor=1 nativeFire=0 elapsed=1070.756 selectedRoundTripReserve=960",
+  "normalPaidFactories": 3,
+  "factoryProductionPausedThroughTouch": true,
+  "nativeFiring": false,
+  "firstSortie": false,
+  "repeatSortie": false,
+  "fuelRouteObservation": "native781-own-fuel-routes-prelaunch-readonly.json",
+  "routeFinding": "All three observed Tankers use refinery7 to depot9; paid refinery17 and depot18 not served at observation. This is route-strategy evidence, not a certified shipping defect.",
+  "physicalMapChanged": false,
+  "normalBudget": true,
+  "playerReady": false,
+  "technicallyReady": false
+}

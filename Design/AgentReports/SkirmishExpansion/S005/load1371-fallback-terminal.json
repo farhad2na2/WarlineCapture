@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-fallback-terminal-lifecycle1371/S005FallbackTerminalLifecycle1371.cs",
+      "entry": "S005FallbackTerminalLifecycle1371.LoadOnly",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 120,
+      "executeMs": 4,
+      "assemblyName": "PipelineRunScript_S005FallbackTerminalLifecycle1371_e236a28f1f0d4c11b046939355b18dab",
+      "success": true,
+      "result": "Loaded only"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,15 @@
+{
+  "sourceHash": "e06c9db08ca51539bdfd6204a25cde068b477e198570fe2b5af17f108d1a060a",
+  "compileFailure": "CS0234: Game.Skirmish.Contracts.SkirmishResolvedSetup in new Strike fixture",
+  "correction": "Import Game.Configs and use SkirmishResolvedSetup",
+  "recompile": "Pending",
+  "focusedTestsExecuted": 0,
+  "editorPid": 5476,
+  "port": 7800,
+  "otherEditorPid": 19046,
+  "nativeActions": "Refresh and native Play toggle; current assemblies still old; no executeMethod validation dispatched",
+  "approvalPending": "Warline-only Editor close/reopen; Hub/Fig preserved",
+  "nativeConfigurationRepair": "Temporary InitializeOnLoad helper creates the package settings asset using Editor APIs, sets port7801 and invokes normal authenticated server restart; awaits successful compilation. It runs no validation.",
+  "fullEditorLog": "/private/tmp/warline-s005-player-editor-220.log",
+  "playerReady": false
+}

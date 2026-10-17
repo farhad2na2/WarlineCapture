@@ -39,6 +39,7 @@
         "RTLTMPro",
         "Unity.Transforms",
         "UnityEngine.UI",
+        "Unity.InputSystem",
         "sniveler-code.gpu-animation.Editor",
         "Game.UI.ScenarioLab.Runtime",
         "Game.Operations.Strategic"

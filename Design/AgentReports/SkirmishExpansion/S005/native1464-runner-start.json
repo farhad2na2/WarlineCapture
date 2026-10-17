@@ -1,0 +1,12 @@
+{
+  "explicitHeavyLaneOwner": "main1464",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "current-lifecycle1464-pre-source-source-manifest.json",
+  "preflightManifest": "final-1464-lifecycle-preflight-source-manifest.json",
+  "fixtureSha256": "f1b909195ff6e5b0164737ee5372a5f19cbe5285fd531b0bc64b206a0d2a7a51",
+  "executedRunnerSha256": "73f1911c1722228baf3c78c4cc7e36a7f0670cab7f71aac5d69de074b69624c3",
+  "method": "S005Lifecycle1464.RunValidation",
+  "normalInput": true,
+  "qaOneWinWatcherAndManualAutoCombatCoordinated": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

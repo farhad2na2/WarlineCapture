@@ -87,7 +87,8 @@ namespace Game.Configs
                 ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ||
                 ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ||
                 ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex ||
-                ScenarioIndex == SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex
+                ScenarioIndex == SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex ||
+                SkirmishMissionDispatch.TryGetGenericByIndex(SkirmishBattleCatalogConfig.Load(), ScenarioIndex, out _)
                     ? ScenarioIndex
                     : SkirmishPresetConfig.DesertBaseScenarioIndex;
             return normalized;

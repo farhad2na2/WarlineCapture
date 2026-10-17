@@ -1,0 +1,13 @@
+{
+  "sourceHash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "sourceManifest": "post-aria-unselected-hold-candidate-source-manifest.json",
+  "preflightManifest": "final-1582-bilateral-excess-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1582-bilateral-excess-air-pre-dispatch-source-manifest.json",
+  "fixtureSha256": "19a3d03e8aabb6fe2411e1d12fc2dd0fa8fc848128fa4e557d0d9d961bce7655",
+  "runnerSha256": "363614a2d79e3d749918e46274b2082c1218a193abc914c6c3cd94c5b04de268",
+  "dryCompileProof": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1582-bilateral-excess-air-dry-run.json",
+  "loadOnlyProof": "/private/tmp/s005-bilateral-excess1582-2fab-prepared/load-only1582-bilateral-excess-air.json",
+  "heavyLaneOwner": "main1582",
+  "normalMissionCertified": false,
+  "playerReady": false
+}

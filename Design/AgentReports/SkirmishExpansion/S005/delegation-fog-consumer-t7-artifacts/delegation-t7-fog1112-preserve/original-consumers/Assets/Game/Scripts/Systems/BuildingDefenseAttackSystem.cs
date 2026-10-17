@@ -1,0 +1,553 @@
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Profiling;
+using Unity.Transforms;
+using Game.Components;
+
+namespace Game.Runtime
+{
+    [UpdateAfter(typeof(UnitAttackSystem))]
+    [UpdateBefore(typeof(UnitDeathSystem))]
+    public partial struct BuildingDefenseAttackSystem : ISystem
+    {
+        private const float DamageHealthBarVisibleSeconds = 2f;
+        private const double TargetAcquisitionIntervalSeconds = 0.12d;
+        private const int InitialTargetScratchCapacity = 1024;
+        private static readonly ProfilerMarker TargetCollectionMarker =
+            new("BuildingDefenseAttackSystem.TargetCollection");
+        private static readonly ProfilerMarker TargetSelectionMarker =
+            new("BuildingDefenseAttackSystem.TargetSelection");
+        private static readonly ProfilerMarker EffectApplicationMarker =
+            new("BuildingDefenseAttackSystem.EffectApplication");
+        private NativeList<TargetCandidate> _targetCandidates;
+        private EntityQuery _damageQueueQuery;
+        private double _nextTargetAcquisitionTime;
+
+        private struct TargetCandidate
+        {
+            public Entity Entity;
+            public UnitHealth Health;
+            public Faction Faction;
+            public LocalTransform Transform;
+        }
+
+        private struct DirectComponentAccess
+        {
+            public EntityStorageInfoLookup Entities;
+            public ComponentLookup<UnitHealth> Health;
+            public ComponentLookup<Faction> Factions;
+            public ComponentLookup<LocalTransform> Transforms;
+            public ComponentLookup<UnitAirMovement> AirMovement;
+            public ComponentLookup<CombatTargetPolicy> TargetPolicies;
+            public ComponentLookup<RuntimeBuildingCombatInfo> Buildings;
+            public ComponentLookup<StaticGridBlocker> StaticBlockers;
+            public ComponentLookup<UnitMovementBehavior> MovementBehaviors;
+            public ComponentLookup<DebugFireTargetTag> DebugFireTargets;
+            public ComponentLookup<EngageTarget> EngageTargets;
+            public ComponentLookup<RecentAttacker> RecentAttackers;
+            public ComponentLookup<RecentDamageHealthBarVisibility> DamageHealthBars;
+        }
+
+        public void OnCreate(ref SystemState state)
+        {
+            _targetCandidates = new NativeList<TargetCandidate>(InitialTargetScratchCapacity, Allocator.Persistent);
+            _damageQueueQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
+            state.RequireForUpdate<BuildingDefenseWeapon>();
+        }
+
+        public void OnDestroy(ref SystemState state)
+        {
+            if (_targetCandidates.IsCreated)
+                _targetCandidates.Dispose();
+        }
+
+        public void OnUpdate(ref SystemState state)
+        {
+            // Same-frame effect helpers inspect optional component sets through EntityManager,
+            // and ECB playback must observe their writes. Keep this completion explicit until
+            // those helper contracts become lookup-based.
+            state.Dependency.Complete();
+            EntityManager em = state.EntityManager;
+            Entity damageQueue = Combat.CombatDamageObservationUtility.TryGetQueue(_damageQueueQuery);
+            AudioEventRequestSystem.EnsureAudioEntity(em);
+            DirectComponentAccess directAccess = new()
+            {
+                Entities = SystemAPI.GetEntityStorageInfoLookup(),
+                Health = SystemAPI.GetComponentLookup<UnitHealth>(),
+                Factions = SystemAPI.GetComponentLookup<Faction>(true),
+                Transforms = SystemAPI.GetComponentLookup<LocalTransform>(true),
+                AirMovement = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
+                TargetPolicies = SystemAPI.GetComponentLookup<CombatTargetPolicy>(true),
+                Buildings = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
+                StaticBlockers = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
+                MovementBehaviors = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true),
+                DebugFireTargets = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true),
+                EngageTargets = SystemAPI.GetComponentLookup<EngageTarget>(),
+                RecentAttackers = SystemAPI.GetComponentLookup<RecentAttacker>(),
+                DamageHealthBars = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>()
+            };
+
+            float deltaTime = SystemAPI.Time.DeltaTime;
+            float now = (float)SystemAPI.Time.ElapsedTime;
+            bool refreshTargets = SystemAPI.Time.ElapsedTime >= _nextTargetAcquisitionTime;
+            NativeArray<TargetCandidate> targetCandidates = default;
+            if (refreshTargets)
+            {
+                using (TargetCollectionMarker.Auto())
+                {
+                    _nextTargetAcquisitionTime = SystemAPI.Time.ElapsedTime + TargetAcquisitionIntervalSeconds;
+                    _targetCandidates.Clear();
+                    foreach (var (healthRef, factionRef, transformRef, entity) in
+                             SystemAPI.Query<RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>>()
+                                 .WithNone<UnitAirMovement, DebugFireTargetTag>()
+                                 .WithEntityAccess())
+                    {
+                        _targetCandidates.Add(new TargetCandidate
+                        {
+                            Entity = entity,
+                            Health = healthRef.ValueRO,
+                            Faction = factionRef.ValueRO,
+                            Transform = transformRef.ValueRO
+                        });
+                    }
+
+                    targetCandidates = _targetCandidates.AsArray();
+                }
+            }
+
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            var pendingTraceTargetAdds = new NativeParallelHashSet<Entity>(32, Allocator.Temp);
+            var pendingRecentAttackerAdds = new NativeParallelHashSet<Entity>(64, Allocator.Temp);
+            var pendingHealthBarVisibilityAdds = new NativeParallelHashSet<Entity>(64, Allocator.Temp);
+
+            foreach (var (weaponRef, healthRef, factionRef, transformRef, traceRef, slots, entity) in
+                     SystemAPI.Query<RefRO<BuildingDefenseWeapon>, RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>, RefRW<UnitAttackTraceComponent>, DynamicBuffer<BuildingDefenseAttackSlot>>()
+                         .WithNone<CampaignMissionDormantMapDefenseTag>()
+                         .WithAll<RuntimeBuildingCombatTag>()
+                         .WithEntityAccess())
+            {
+                if (healthRef.ValueRO.Current <= 0)
+                    continue;
+
+                DynamicBuffer<BuildingDefenseAttackSlot> slotBuffer = slots;
+                BuildingDefenseWeapon weapon = weaponRef.ValueRO;
+                int slotCount = math.min(math.max((int)weapon.MaxConcurrentAttacks, 1), 4);
+                EnsureSlotCount(slotBuffer, slotCount);
+
+                if (refreshTargets)
+                {
+                    using (TargetSelectionMarker.Auto())
+                    {
+                        FindBestTargets(
+                            ref directAccess,
+                            targetCandidates,
+                            entity,
+                            factionRef.ValueRO.Id,
+                            transformRef.ValueRO.Position,
+                            weapon.Range,
+                            out Entity target0,
+                            out Entity target1,
+                            out Entity target2,
+                            out Entity target3);
+                        AssignTargets(slotBuffer, slotCount, target0, target1, target2, target3);
+                    }
+                }
+
+                for (int i = 0; i < slotCount; i++)
+                {
+                    BuildingDefenseAttackSlot slot = slotBuffer[i];
+                    slot.CooldownRemaining = math.max(0f, slot.CooldownRemaining - deltaTime);
+                    Entity target = slot.Target;
+                    if (target == Entity.Null)
+                    {
+                        slotBuffer[i] = slot;
+                        continue;
+                    }
+
+                    if (!IsLiveEnemyTarget(ref directAccess, entity, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
+                    {
+                        slot.Target = Entity.Null;
+                        slotBuffer[i] = slot;
+                        continue;
+                    }
+
+                    if (slot.CooldownRemaining > 0f)
+                    {
+                        slotBuffer[i] = slot;
+                        continue;
+                    }
+
+                    slot.CooldownRemaining = math.max(0.01f, weapon.CooldownSeconds);
+                    slot.ShotCounter++;
+                    slotBuffer[i] = slot;
+
+                    using (EffectApplicationMarker.Auto())
+                    {
+                        FireShot(
+                            em,
+                            ecb,
+                            entity,
+                            target,
+                            transformRef.ValueRO.Position,
+                            weapon,
+                            slot.ShotCounter,
+                            ref traceRef.ValueRW,
+                            now,
+                            damageQueue,
+                            ref pendingTraceTargetAdds,
+                            ref pendingRecentAttackerAdds,
+                            ref pendingHealthBarVisibilityAdds,
+                            ref directAccess);
+                    }
+                }
+            }
+
+            using (EffectApplicationMarker.Auto())
+                ecb.Playback(em);
+            ecb.Dispose();
+            pendingTraceTargetAdds.Dispose();
+            pendingRecentAttackerAdds.Dispose();
+            pendingHealthBarVisibilityAdds.Dispose();
+        }
+
+        private static void EnsureSlotCount(DynamicBuffer<BuildingDefenseAttackSlot> slots, int slotCount)
+        {
+            while (slots.Length < slotCount)
+            {
+                slots.Add(new BuildingDefenseAttackSlot
+                {
+                    Target = Entity.Null,
+                    CooldownRemaining = 0f,
+                    ShotCounter = 0
+                });
+            }
+        }
+
+        private static void AssignTargets(
+            DynamicBuffer<BuildingDefenseAttackSlot> slots,
+            int slotCount,
+            Entity target0,
+            Entity target1,
+            Entity target2,
+            Entity target3)
+        {
+            for (int i = 0; i < slotCount; i++)
+            {
+                BuildingDefenseAttackSlot slot = slots[i];
+                slot.Target = ResolveTargetForSlot(i, target0, target1, target2, target3);
+                slots[i] = slot;
+            }
+        }
+
+        private static void FireShot(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity source,
+            Entity target,
+            float3 sourcePosition,
+            BuildingDefenseWeapon weapon,
+            int shotCounter,
+            ref UnitAttackTraceComponent trace,
+            float now,
+            Entity damageQueue,
+            ref NativeParallelHashSet<Entity> pendingTraceTargetAdds,
+            ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds,
+            ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds,
+            ref DirectComponentAccess directAccess)
+        {
+            if (!directAccess.Entities.Exists(target) || !directAccess.Health.HasComponent(target))
+                return;
+
+            UnitHealth targetHealth = directAccess.Health[target];
+            if (targetHealth.Current <= 0)
+                return;
+
+            float3 targetPosition = directAccess.Transforms.HasComponent(target)
+                ? directAccess.Transforms[target].Position
+                : sourcePosition;
+
+            int tracerInterval = math.max(1, weapon.TracerEveryNthShot);
+            bool showTracer = shotCounter % tracerInterval == 0;
+            if (showTracer)
+            {
+                trace.TimeRemaining = math.max(0.01f, weapon.TraceVisibleSeconds);
+                trace.Phase = math.frac(trace.Phase + 0.371f);
+                SetTraceTarget(ecb, source, target, targetPosition, ref pendingTraceTargetAdds, ref directAccess);
+                EnqueueAttackVfxRequest(ecb, em, UnitAttackVfxRequestKind.MuzzleFlash, source, target, sourcePosition, targetPosition);
+            }
+
+            int damage = SupportDamageUtilitySystemHelper.ApplyToTarget(em, target, math.max(0, weapon.Damage));
+            if (damage > 0)
+                GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em, source, now, sourcePosition);
+
+            int previousHealth = targetHealth.Current;
+            targetHealth.Current = math.max(0, targetHealth.Current - damage);
+            directAccess.Health[target] = targetHealth;
+            Combat.CombatDamageObservationUtility.Append(
+                em,
+                damageQueue,
+                source,
+                target,
+                CombatDamageSourceKind.BuildingDefense,
+                previousHealth,
+                targetHealth.Current,
+                targetHealth.Max,
+                now,
+                sourcePosition,
+                targetPosition);
+
+            UnitAttackSystem.TryEmitUnitUnderAttackAudio(
+                em,
+                target,
+                now,
+                source,
+                damage,
+                nameof(BuildingDefenseAttackSystem));
+            SetRecentAttacker(ecb, target, source, sourcePosition, ref pendingRecentAttackerAdds, ref directAccess);
+            SetDamageHealthBarVisibility(ecb, target, ref pendingHealthBarVisibilityAdds, ref directAccess);
+
+            if (showTracer)
+                EnqueueAttackVfxRequest(ecb, em, UnitAttackVfxRequestKind.Impact, source, target, sourcePosition, targetPosition);
+        }
+
+        private static void SetTraceTarget(
+            EntityCommandBuffer ecb,
+            Entity source,
+            Entity target,
+            float3 targetPosition,
+            ref NativeParallelHashSet<Entity> pendingTraceTargetAdds,
+            ref DirectComponentAccess directAccess)
+        {
+            int2 targetCell = new((int)math.round(targetPosition.x), (int)math.round(targetPosition.z));
+            var engage = new EngageTarget
+            {
+                Target = target,
+                Cell = targetCell,
+                Position = targetPosition,
+                IsCommanded = 0
+            };
+
+            if (directAccess.EngageTargets.HasComponent(source))
+                directAccess.EngageTargets[source] = engage;
+            else if (pendingTraceTargetAdds.Add(source))
+                ecb.AddComponent(source, engage);
+        }
+
+        private static void SetRecentAttacker(
+            EntityCommandBuffer ecb,
+            Entity target,
+            Entity attacker,
+            float3 attackerPosition,
+            ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds,
+            ref DirectComponentAccess directAccess)
+        {
+            var recent = new RecentAttacker
+            {
+                Attacker = attacker,
+                Cell = new int2((int)math.round(attackerPosition.x), (int)math.round(attackerPosition.z)),
+                Position = attackerPosition
+            };
+
+            if (directAccess.RecentAttackers.HasComponent(target))
+                directAccess.RecentAttackers[target] = recent;
+            else if (pendingRecentAttackerAdds.Add(target))
+                ecb.AddComponent(target, recent);
+        }
+
+        private static void SetDamageHealthBarVisibility(
+            EntityCommandBuffer ecb,
+            Entity target,
+            ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds,
+            ref DirectComponentAccess directAccess)
+        {
+            var visibility = new RecentDamageHealthBarVisibility
+            {
+                TimeRemaining = DamageHealthBarVisibleSeconds
+            };
+
+            if (directAccess.DamageHealthBars.HasComponent(target))
+                directAccess.DamageHealthBars[target] = visibility;
+            else if (pendingHealthBarVisibilityAdds.Add(target))
+                ecb.AddComponent(target, visibility);
+        }
+
+        private static void EnqueueAttackVfxRequest(
+            EntityCommandBuffer ecb,
+            EntityManager em,
+            UnitAttackVfxRequestKind kind,
+            Entity source,
+            Entity target,
+            float3 sourcePosition,
+            float3 targetPosition)
+        {
+            if (!UnitAttackSystem.TryBuildAttackVfxRequest(em, kind, source, target, sourcePosition, targetPosition, out UnitAttackVfxRequest request))
+                return;
+
+            Entity requestEntity = ecb.CreateEntity();
+            ecb.AddComponent(requestEntity, request);
+        }
+
+        private static void FindBestTargets(
+            ref DirectComponentAccess directAccess,
+            NativeArray<TargetCandidate> targets,
+            Entity source,
+            byte sourceFaction,
+            float3 sourcePosition,
+            float range,
+            out Entity target0,
+            out Entity target1,
+            out Entity target2,
+            out Entity target3)
+        {
+            target0 = Entity.Null;
+            target1 = Entity.Null;
+            target2 = Entity.Null;
+            target3 = Entity.Null;
+            float dist0 = float.MaxValue;
+            float dist1 = float.MaxValue;
+            float dist2 = float.MaxValue;
+            float dist3 = float.MaxValue;
+
+            float rangeSq = math.max(0f, range) * math.max(0f, range);
+            for (int i = 0; i < targets.Length; i++)
+            {
+                TargetCandidate target = targets[i];
+                Entity candidate = target.Entity;
+                if (candidate == source ||
+                    target.Health.Current <= 0 ||
+                    !AllowsTarget(ref directAccess, source, candidate) ||
+                    !FactionIdentity.CanAutoTargetForCombat(sourceFaction, target.Faction.Id))
+                    continue;
+
+                float3 candidatePosition = target.Transform.Position;
+                float3 delta = candidatePosition - sourcePosition;
+                delta.y = 0f;
+                float distSq = math.lengthsq(delta);
+                if (distSq > rangeSq)
+                    continue;
+
+                InsertCandidate(
+                    candidate,
+                    distSq,
+                    ref target0,
+                    ref target1,
+                    ref target2,
+                    ref target3,
+                    ref dist0,
+                    ref dist1,
+                    ref dist2,
+                    ref dist3);
+            }
+        }
+
+        private static bool IsLiveEnemyTarget(ref DirectComponentAccess directAccess, Entity source, Entity target, byte sourceFaction, float3 sourcePosition, float range)
+        {
+            if (!TryGetLiveEnemyPosition(ref directAccess, target, sourceFaction, out float3 targetPosition) ||
+                !AllowsTarget(ref directAccess, source, target))
+                return false;
+
+            float3 delta = targetPosition - sourcePosition;
+            delta.y = 0f;
+            float rangeSq = math.max(0f, range) * math.max(0f, range);
+            return math.lengthsq(delta) <= rangeSq;
+        }
+
+        private static bool AllowsTarget(ref DirectComponentAccess access, Entity source, Entity target)
+        {
+            bool hasSource = access.TargetPolicies.HasComponent(source);
+            bool hasTarget = access.TargetPolicies.HasComponent(target);
+            var sourcePolicy = hasSource ? access.TargetPolicies[source] : default;
+            var targetPolicy = hasTarget ? access.TargetPolicies[target] : new CombatTargetPolicy
+            {
+                Visible = 1,
+                Domain = CombatTargetPolicyUtility.InferDomain(
+                    access.Buildings.HasComponent(target) || access.StaticBlockers.HasComponent(target),
+                    access.AirMovement.HasComponent(target),
+                    access.MovementBehaviors.HasComponent(target) && access.MovementBehaviors[target].UsesVehicleMotion != 0)
+            };
+            return CombatTargetPolicyUtility.Allows(hasSource, sourcePolicy, true, targetPolicy);
+        }
+
+        private static bool TryGetLiveEnemyPosition(ref DirectComponentAccess directAccess, Entity candidate, byte sourceFaction, out float3 position)
+        {
+            position = default;
+            if (candidate == Entity.Null ||
+                !directAccess.Entities.Exists(candidate) ||
+                !directAccess.Factions.HasComponent(candidate) ||
+                !directAccess.Health.HasComponent(candidate) ||
+                !directAccess.Transforms.HasComponent(candidate) ||
+                directAccess.AirMovement.HasComponent(candidate) ||
+                directAccess.DebugFireTargets.HasComponent(candidate))
+            {
+                return false;
+            }
+
+            if (!FactionIdentity.CanAutoTargetForCombat(sourceFaction, directAccess.Factions[candidate].Id))
+                return false;
+
+            UnitHealth health = directAccess.Health[candidate];
+            if (health.Current <= 0)
+                return false;
+
+            position = directAccess.Transforms[candidate].Position;
+            return true;
+        }
+
+        private static void InsertCandidate(
+            Entity candidate,
+            float distSq,
+            ref Entity target0,
+            ref Entity target1,
+            ref Entity target2,
+            ref Entity target3,
+            ref float dist0,
+            ref float dist1,
+            ref float dist2,
+            ref float dist3)
+        {
+            if (distSq < dist0)
+            {
+                target3 = target2;
+                dist3 = dist2;
+                target2 = target1;
+                dist2 = dist1;
+                target1 = target0;
+                dist1 = dist0;
+                target0 = candidate;
+                dist0 = distSq;
+            }
+            else if (distSq < dist1)
+            {
+                target3 = target2;
+                dist3 = dist2;
+                target2 = target1;
+                dist2 = dist1;
+                target1 = candidate;
+                dist1 = distSq;
+            }
+            else if (distSq < dist2)
+            {
+                target3 = target2;
+                dist3 = dist2;
+                target2 = candidate;
+                dist2 = distSq;
+            }
+            else if (distSq < dist3)
+            {
+                target3 = candidate;
+                dist3 = distSq;
+            }
+        }
+
+        private static Entity ResolveTargetForSlot(int slotIndex, Entity target0, Entity target1, Entity target2, Entity target3) => slotIndex switch
+        {
+            1 when target1 != Entity.Null => target1,
+            2 when target2 != Entity.Null => target2,
+            3 when target3 != Entity.Null => target3,
+            _ => target0
+        };
+
+    }
+}

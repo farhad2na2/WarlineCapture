@@ -1,0 +1,50 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/campaign-m3-current1281/CampaignSelectionJourney1281.cs",
+      "entry": "CampaignSelectionJourney1281.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 280,
+          "column": 89,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 280,
+          "column": 31,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'CampaignSelectionJourney1281.ProofRow.screen' is never assigned to, and will always have its default value null",
+          "line": 312,
+          "column": 112,
+          "id": "CS0649"
+        }
+      ],
+      "compileMs": 1268,
+      "executeMs": 9,
+      "assemblyName": "PipelineRunScript_CampaignSelectionJourney1281_8c130a92d2154f8ea3b9dec76a8179d5",
+      "success": true,
+      "result": "{\"stage\":\"SelfCheck\",\"locale\":\"\",\"mission\":\"\",\"session\":\"\",\"phase\":\"\",\"outcome\":\"\",\"group\":\"native-group\",\"expectedGroup\":\"\",\"selectionKind\":\"\",\"title\":\"\",\"source\":\"\",\"screen\":\"\",\"launchOrigin\":\"\",\"returnDestination\":\"\",\"frame\":0,\"entry\":7,\"lesson\":0,\"selected\":4,\"held\":4,\"elapsedMs\":0,\"attempt\":1281,\"convoyElements\":0,\"convoyResolved\":0,\"hostileTotal\":0,\"hostileDefeated\":0,\"wall\":0.0,\"readOnly\":true,\"actualRendered\":true,\"publicNeedsSelection\":false}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

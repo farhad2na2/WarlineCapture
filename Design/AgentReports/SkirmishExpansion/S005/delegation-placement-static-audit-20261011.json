@@ -1,0 +1,267 @@
+{
+  "result": "CompletedStaticPlacementCoverageAudit",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "currentManifest": "final-1024-ground-native-touch-movement-post-source-manifest.json",
+  "physicalMapModified": false,
+  "runtimeSourceModified": false,
+  "unityControlled": false,
+  "newNativeRunClaimed": false,
+  "ownerDefects": [
+    "military or refuel buildings on roads",
+    "military buildings on sidewalks",
+    "trees inside military buildings"
+  ],
+  "confirmedCurrentDefects": [],
+  "confirmationLimit": "No current-source native placement snapshot after native860 was found. Static coverage and unchanged geometry do not certify every runtime placement, aircraft facility, profile, seed, or Campaign mission.",
+  "sharedCoverage": [
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs",
+      "line": 19,
+      "coverage": "Authored surface roads; GridRoadSidewalk; packed OperationMapSidewalkFootprint; live MeshRenderer sidewalks; rotated whole-cell intersection."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs",
+      "line": 21,
+      "coverage": "Packed intact buildings, vegetation/props/attachments at least0.5m high; authored ECS scenery through RenderBoundsGateway; 1m conservative clearance."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs",
+      "line": 36,
+      "coverage": "Actual paid-placement cache initializes every frame, without relying on a previous starting grant."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.RoadValidation.cs",
+      "line": 38,
+      "coverage": "Native final placement rejects scenery, water, roads/sidewalks, dynamic blockers and runtime buildings; identity-specific functional road gates intentionally require roads."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "line": 387,
+      "coverage": "Starting grants initialize shared road/scenery caches and check every relocated candidate; S005 waits for scenery readiness."
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/SkirmishBuildingPlacementProbe.cs",
+      "line": 21,
+      "coverage": "Read-only native audit measures actual live/combined model bounds for all living non-city runtime buildings across both factions, then intersects road cells, authored sidewalks and packed solid scenery."
+    }
+  ],
+  "existingNativeEvidence": [
+    {
+      "proof": "native832-integrated-native-starting-paid-clearance-pass.json",
+      "originalSourceHash": "6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869",
+      "startingBuildings": 14,
+      "afterPaidConstruction": 20,
+      "result": "Passed",
+      "scope": "Starting plus3fabrication depots/oil pump/refinery/fuel bladder, 2factions; not Airport or full mission."
+    },
+    {
+      "proof": "native860-compact-paid-building-clearance-pass.json",
+      "originalSourceHash": "39fe2e886a5198768dd439e9443107f8a30911a65f4294fae61b6d33d6270c60",
+      "startingBuildings": 14,
+      "afterPaidConstruction": 19,
+      "result": "Passed",
+      "scope": "Actual paid industrial buildings and starting buildings; strict108native touch contacts; not Airport or full mission."
+    }
+  ],
+  "focusedEvidence": {
+    "log": "native-845-call-local-scenery-clearance-focused.log",
+    "marker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0 nativePlacementAcceptance=Pending",
+    "currentSelectedCoreDependenciesIdentical": true,
+    "scope": "Isolated tests; does not substitute for native source geometry."
+  },
+  "native860Applicability": {
+    "selectedCoreDependenciesIdentical": true,
+    "s005ConfigFilesIdentical": true,
+    "all966MaterialsIdentical": true,
+    "wholeSourceIdentical": false,
+    "limitations": "27 source file deltas remain between native860 and current. The input tick gained diagnostic log calls (94c760798) and startup gained current gameplay-world binding (976c3515a). Placement geometry/core algorithm is byte-identical, but native860 is not a fresh current execution.",
+    "dependencies": [
+      {
+        "path": "Assets/Game/Scripts/Editor/SkirmishBuildingPlacementProbe.cs",
+        "currentSha256": "f1e3a356979dc9d06b6d4dd0438cfba9cfb8cc2c02c84bffee8380dcde2f807e",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Rendering/Contracts/IRenderBoundsPresentation.cs",
+        "currentSha256": "2642b83d55de9cc7d7828593862d231f53ae40edb62997c80c035f3c7e3e3c81",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs",
+        "currentSha256": "696dfa4b7264d5f7ccfa151837251dd66086a0e0c56f9de076c51979f8fdd761",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs",
+        "currentSha256": "4f27a8008616f5817592710eefbac93cb115149458fb40906edd0d4f544f79ad",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingModelBounds.cs",
+        "currentSha256": "3da87cf48bdf077401415b0f19c2098916ea65ed50f28ba17601394bf04451df",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs",
+        "currentSha256": "879e07078701f2ab0c7f0ffd461b59c18c1791957b49672a772c15394f7dc8f9",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs",
+        "currentSha256": "706092eea13e0be6a5085e531c3693aa64fad8a211a501144e2a921ed498bc6b",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.RoadValidation.cs",
+        "currentSha256": "a9b71b7ccd19f229e29639da4479cf02e9b6440845a6fd7639744cf4349cf7b2",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs",
+        "currentSha256": "006a6ae7e1720ea40e53f8fef67b1f8e5ab9524bcb8b442fc9d942645f8bf4c4",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.RoadValidation.cs",
+        "currentSha256": "be354fd2f39f1446c4acbdc3c39f532079726aadee74e821bb2761d6faafad22",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.cs",
+        "currentSha256": "b2dbd69269a9bbd34e025885b8869ca0ae50a92800fb5c77ac7af33f4056f4d5",
+        "native860Identical": true,
+        "native845Identical": true
+      },
+      {
+        "path": "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+        "currentSha256": "604e3daf3753885ce64d00efb60eb2feca434e415c8376d9dce6239041a4d1f7",
+        "native860Identical": true,
+        "native845Identical": true
+      }
+    ]
+  },
+  "coverageGaps": [
+    "Fresh current-source actual native building geometry report including the paid Airport, separately from takeoff/flight acceptance.",
+    "Other six air-role functional facilities and both factions aircraft capacity/clearance.",
+    "Every exposed profile/size and source-fit gate, rather than only minimum starting grants and one paid industrial group.",
+    "Native visual inspection and owner feedback remain deferred; no human/device acceptance claimed.",
+    "The native geometry auditor checks packed scenery and authored sidewalks, while the shared placement cache also reserves legacy authored ECS scenery. Other physical Campaign sources need source-specific native coverage."
+  ],
+  "recommendedNextCheck": {
+    "preparedFixture": "/private/tmp/S005DelegatedPlacementAudit20261011.cs",
+    "mode": "Read-only sideband audit in an owned live S005 run after actual paid Airport construction, via existing permitted Pipeline run_script/eval route; no nested wrapper or gameplay mutations. Main controls scheduling.",
+    "requiredResult": "PassedScopedNativeAirportPlacementClearance, plus both native faction counts from the raw report. Correlate with the source manifest and actual paid receipt externally: the fixture cannot certify payment from a building name.",
+    "fallback": "If flight run already closed, include the read-only audit in the next already-needed normal paid aircraft/facility journey; do not add a long duplicate full match just to collect this report."
+  },
+  "technicallyReady": false,
+  "playerReady": false,
+  "preparedFixtureCompiled": false,
+  "preparedFixtureExecuted": false,
+  "actualSelectedSourceReadsMatchManifest": true,
+  "selectedSourceReadVerification": [
+    {
+      "path": "Assets/Game/Scripts/Editor/SkirmishBuildingPlacementProbe.cs",
+      "sha256": "f1e3a356979dc9d06b6d4dd0438cfba9cfb8cc2c02c84bffee8380dcde2f807e",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Contracts/IRenderBoundsPresentation.cs",
+      "sha256": "2642b83d55de9cc7d7828593862d231f53ae40edb62997c80c035f3c7e3e3c81",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs",
+      "sha256": "696dfa4b7264d5f7ccfa151837251dd66086a0e0c56f9de076c51979f8fdd761",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs",
+      "sha256": "4f27a8008616f5817592710eefbac93cb115149458fb40906edd0d4f544f79ad",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingModelBounds.cs",
+      "sha256": "3da87cf48bdf077401415b0f19c2098916ea65ed50f28ba17601394bf04451df",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs",
+      "sha256": "879e07078701f2ab0c7f0ffd461b59c18c1791957b49672a772c15394f7dc8f9",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs",
+      "sha256": "706092eea13e0be6a5085e531c3693aa64fad8a211a501144e2a921ed498bc6b",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.RoadValidation.cs",
+      "sha256": "a9b71b7ccd19f229e29639da4479cf02e9b6440845a6fd7639744cf4349cf7b2",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs",
+      "sha256": "006a6ae7e1720ea40e53f8fef67b1f8e5ab9524bcb8b442fc9d942645f8bf4c4",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.RoadValidation.cs",
+      "sha256": "be354fd2f39f1446c4acbdc3c39f532079726aadee74e821bb2761d6faafad22",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.cs",
+      "sha256": "b2dbd69269a9bbd34e025885b8869ca0ae50a92800fb5c77ac7af33f4056f4d5",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+      "sha256": "604e3daf3753885ce64d00efb60eb2feca434e415c8376d9dce6239041a4d1f7",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset",
+      "sha256": "5b907fd62ea397e6a02eaea15aef0461a66400fe07b89ec77b8e729d0d895458",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "sha256": "470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c",
+      "matchesCurrentManifest": true
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+      "sha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+      "matchesCurrentManifest": true
+    }
+  ],
+  "followupNativeAirportObservation": {
+    "observerExecutedBy": "Main agent in owned native1018",
+    "proof": "native1018-airport-placement-sideband.json",
+    "rawGeometry": "native1018-airport-placement-sideband.geometry.json",
+    "result": "PassedScopedNativeAirportPlacementClearance",
+    "buildings": 20,
+    "factions": 2,
+    "actualAirportObserved": true,
+    "paidReceiptCertifiedByObserver": false,
+    "flightRecoveryCertified": false,
+    "wholeMissionCertified": false,
+    "wrapperFailurePreserved": "native1018 original monitor wrapper failed128; observation does not upgrade the flight wrapper result.",
+    "airPauseRuntimePatchAffectsPlacementDependencies": false
+  }
+}

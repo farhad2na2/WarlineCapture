@@ -1,0 +1,11 @@
+﻿[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\OwnedRefreshProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\per-queue.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\per-queue.log -quit -buildTarget StandaloneWindows64 -refreshImportMode OutOfProcessPerQueue -executeMethod Probe.Pass
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\per-queue.log -quit -buildTarget StandaloneWindows64 -refreshImportMode OutOfProcessPerQueue -executeMethod Probe.Pass
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\per-queue.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\per-queue.stderr.log
+[OwnedRefreshProbe] result=Passed
+[UnityInvoke] ExitCode: 0

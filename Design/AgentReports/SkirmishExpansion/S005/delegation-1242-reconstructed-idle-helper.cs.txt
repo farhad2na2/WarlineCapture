@@ -1,0 +1,39 @@
+using System;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+// Host-restart reconstruction. This is read-only and deliberately has a NEW
+// identity; it is not advertised as the missing S005MainIdle1201 source.
+public static class S005MainIdle1242
+{
+    [Serializable]
+    public struct Observation
+    {
+        public bool applicationIsPlaying;
+        public bool editorIsCompiling;
+        public bool editorIsUpdating;
+        public bool editorIsPlayingOrWillChangePlaymode;
+        public string assemblyCompilationState;
+        public string assemblyCompilationStateOwner;
+        public string activeScenePath;
+        public string dataPath;
+    }
+    public static string Run()
+    {
+        bool compiling = EditorApplication.isCompiling;
+        // EditorApplication.isCompiling is the existing Editor's script-assembly
+        // compilation authority. State is an explicit projection of that owner,
+        // not a separate guessed Pipeline or cached compilation flag.
+        return JsonUtility.ToJson(new Observation {
+            applicationIsPlaying = Application.isPlaying,
+            editorIsCompiling = compiling,
+            editorIsUpdating = EditorApplication.isUpdating,
+            editorIsPlayingOrWillChangePlaymode = EditorApplication.isPlayingOrWillChangePlaymode,
+            assemblyCompilationState = compiling ? "Compiling" : "Idle",
+            assemblyCompilationStateOwner = "UnityEditor.EditorApplication.isCompiling",
+            activeScenePath = SceneManager.GetActiveScene().path,
+            dataPath = Application.dataPath
+        });
+    }
+}

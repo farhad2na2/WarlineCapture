@@ -1,0 +1,69 @@
+"""Passive observed baseline only. No enemy duty/decision/CPU or challenge certificate inference."""
+import math,collections
+
+def finite(v):return type(v) in (int,float) and math.isfinite(v)
+def need(v,message):
+ if not v:raise ValueError(message)
+
+def qualify_serialization(proof):
+ need(proof.get('result')=='Passed' and proof.get('scope')=='LoadOnlySerializationSelfCheckSyntheticNotGameplay','Native serialization result/scope missing')
+ rows=proof.get('rows');need(isinstance(rows,list) and len(rows)==3,'Nested native rows not preserved')
+ a,b,c=rows
+ need(a.get('stage')=='Census' and a.get('materials')==450 and a.get('bankPresent') is True and a.get('playing') is True and a.get('elapsed')==12.5,'Native census nested fields lost')
+ need(b.get('stage')=='OwnActor' and b.get('id')=='actor-only' and b.get('groupId')==1002 and b.get('x')==17.25 and b.get('hp')==100,'Native actor nested fields lost')
+ need(c.get('stage')=='OwnReservation' and c.get('reservation')==9 and c.get('materialsPaid')==120 and c.get('deliveredMembers')==4,'Native reservation nested fields lost')
+ return {'result':'Passed','scope':'NativeLoadOnlyNestedJsonRoundTripNotGameplay','nestedRows':3}
+
+def qualify(rows,attempt,terminal):
+ need(isinstance(rows,list) and rows,'Actual telemetry absent')
+ need(len([r for r in rows if r.get('stage')=='Protocol'])==1 and rows[0].get('stage')=='Protocol','Exact protocol start required')
+ need(len([r for r in rows if r.get('stage')=='Closed'])==1 and rows[-1].get('stage')=='Closed' and rows[-1].get('reason')=='NativeClosed','Exact normal telemetry closure required')
+ need(not any(r.get('stage')=='Failure' for r in rows),'Actual telemetry failed')
+ for i,r in enumerate(rows):
+  need(r.get('scope')=='PassiveOmniscientQaNeverPlayerPlanning' and r.get('faction')==2,'Faction/scope drift')
+  need(r.get('attempt') in ('',attempt) and (r['stage'] in ('Protocol','Closed') or r.get('attempt')==attempt),'Attempt mismatch')
+  need(type(r.get('frame')) is int and finite(r.get('wall')) and finite(r.get('elapsed')) and finite(r.get('timeScale')),'Nonfinite native sample metadata')
+  if i:
+   need(r['wall']>=rows[i-1]['wall'],'Native telemetry wall rows out of order')
+   if r['stage'] not in ('Protocol','Closed') and rows[i-1]['stage'] not in ('Protocol','Closed'):need(r['frame']>=rows[i-1]['frame'],'Native playing telemetry frames out of order')
+ census=[r for r in rows if r['stage']=='Census'];need(census and len(census)<=1800,'Bounded actual census absent')
+ need([r['sample'] for r in census]==list(range(1,len(census)+1)),'Duplicate/missing census sequence')
+ for a,b in zip(census,census[1:]):need(b['wall']-a['wall']>=.99,'Full census exceeded1Hz bound')
+ playing=[r for r in census if r.get('phase')=='Playing' and r.get('clockPresent') is True and r.get('playing') is True]
+ need(len(playing)>=20 and playing[-1]['elapsed']-playing[0]['elapsed']>=20,'Not enough actual Playing observations for one bounded diagnostic baseline')
+ need(all(r.get('paused') is False and r['timeScale']==1 and r.get('strategyPresent') is True and r.get('capacityPresent') is True for r in playing),'Normal baseline clock/strategy/cap missing')
+ need(all(b['elapsed']>=a['elapsed'] for a,b in zip(playing,playing[1:])),'Native simulation clock went backwards')
+ need(all(0<=r['elapsed']<=terminal['elapsed'] for r in playing),'Telemetry clocks outside actual normal journey')
+ need(all(r.get('knowsHostileMaterials') is False for r in census),'Enemy legal perception unexpectedly reports hostile stocks known')
+ need(all(r.get('bankCount',0)<=1 for r in census),'Enemy bank source ambiguous')
+ for r in census:
+  for k in ('materials','fuelAuthority','infantryLive','groundLive','airLive','supplyLive','infantryReserved','groundReserved','airReserved','supplyReserved','visibleHostileInfantry','visibleHostileGround','visibleHostileTanks','visibleHostileAir'):
+   need(type(r.get(k)) is int and r[k]>=0,'Invalid actual own capacity/stock/perception '+k)
+ groups=collections.defaultdict(list);actors=collections.defaultdict(list);reservations=collections.defaultdict(list);sample_ids=set();group_ids=set()
+ for r in rows:
+  if r['stage'] not in ('OwnGroup','OwnActor','OwnReservation','ObservedReservationTransition'):continue
+  need(1<=r.get('sample',0)<=len(census),'Record missing exact census')
+  parent=census[r['sample']-1];need(r['frame']==parent['frame'] and r['elapsed']==parent['elapsed'],'Record frame/clock differs from its census')
+  if r['stage']=='OwnGroup':
+   key=(r['sample'],r['groupId']);need(key not in group_ids,'Duplicate same-snapshot group');group_ids.add(key);groups[r['groupId']].append(r)
+   need(r['members']>=0 and r['aliveMembers']>=0 and r['aliveMembers']<=r['members'],'Invalid native group cohort counts')
+  elif r['stage']=='OwnActor':
+   key=(r['sample'],r['id']);need(r.get('ownActor') is True and r.get('id') and key not in sample_ids,'Invalid/duplicate own stable actor');sample_ids.add(key);actors[r['id']].append(r)
+   need(r.get('healthPresent') is False or (type(r['hp']) is int and type(r['maxHp']) is int and r['maxHp']>=0),'Native health fields invalid')
+   if r.get('posePresent'):
+    need(all(finite(r[k]) for k in ('x','y','z','originX','originZ','displacement','speed','distanceToPublicPlayerObjective')),'Own pose/progress nonfinite')
+    need(r['displacement']>=0 and r['speed']>=0,'Own progress/speed invalid')
+   need(r.get('engageTargetVisibleToFaction2') is not True or r.get('engageTargetExists') is True,'Engagement legal visibility impossible')
+  elif r['stage']=='OwnReservation':
+   need(r['reservation']>0 and r['materialsPaid']>=0 and r['members']>=0 and 0<=r['deliveredMembers']<=r['members'] and 0<=r['remainingMembers']<=r['members'],'Reservation observation invalid')
+   reservations[r['reservation']].append(r)
+ need(groups and actors,'Actual enemy groups/actors absent')
+ actor_summary=[]
+ for key,rs in actors.items():
+  live=[r for r in rs if r.get('alive') and not r.get('structure') and r.get('posePresent')]
+  if not live:continue
+  actor_summary.append({'id':key,'role':live[0]['role'],'groupId':live[0]['groupId'],'observedAliveSnapshots':len(live),'firstElapsed':live[0]['elapsed'],'lastElapsed':live[-1]['elapsed'],'maxDisplacementFromFirstObservedPose':max(r['displacement'] for r in live),'minDistanceToPublicPlayerObjective':min((r['distanceToPublicPlayerObjective'] for r in live if r.get('layoutPublicBound')),default=None),'pathFollowingSnapshots':sum(r['pathFollowing'] for r in live),'holdSnapshots':sum(r['hold'] for r in live),'engagedSnapshots':sum(r['engaged'] for r in live),'legallyVisibleEngagementSnapshots':sum(r['engageTargetVisibleToFaction2'] for r in live)})
+ group_summary=[{'groupId':key,'role':rs[0]['role'],'observedOrders':sorted({r['lastOrder'] for r in rs}),'maxAlive':max(r['aliveMembers'] for r in rs),'finalObservedAlive':rs[-1]['aliveMembers'],'orderSnapshots':dict(collections.Counter(r['lastOrder'] for r in rs))} for key,rs in groups.items()]
+ reservation_summary=[{'reservation':key,'role':rs[0]['role'],'observedPhases':sorted({r['reservationPhase'] for r in rs}),'actualRecordedCost':sorted({r['materialsPaid'] for r in rs}),'maxObservedDelivered':max(r['deliveredMembers'] for r in rs),'lastObservedRemaining':rs[-1]['remainingMembers']} for key,rs in reservations.items()]
+ gaps=[{'fromSample':a['sample'],'toSample':b['sample'],'wallGap':b['wall']-a['wall'],'simulationGap':b['elapsed']-a['elapsed']} for a,b in zip(census,census[1:]) if b['wall']-a['wall']>1.5]
+ return {'result':'Passed','scope':'OnePassiveCurrentSourceEnemyBaselineNotChallengeOrPerformanceCertification','attempt':attempt,'censusSnapshots':len(census),'playingSnapshots':len(playing),'observedStateChanges':len([r for r in rows if r['stage']=='ObservedStateTransition']),'observedReservationChanges':len([r for r in rows if r['stage']=='ObservedReservationTransition']),'firstObservedPlayingElapsed':playing[0]['elapsed'],'lastObservedPlayingElapsed':playing[-1]['elapsed'],'unobservedTailSimulationSeconds':terminal['elapsed']-playing[-1]['elapsed'],'wallSamplingGapsAbove1_5Seconds':gaps,'observedPriorities':dict(collections.Counter(r['priority'] for r in playing)),'observedLastGroupIds':sorted({r['lastGroupId'] for r in playing}),'maxObservedFailedAttempts':max(r['failedAttempts'] for r in playing),'counterCommittedObserved':any(r['counterCommitted'] for r in playing),'firstOwnMaterials':playing[0]['materials'],'lastOwnMaterials':playing[-1]['materials'],'maxVisibleHostileInfantry':max(r['visibleHostileInfantry'] for r in playing),'maxVisibleHostileGround':max(r['visibleHostileGround'] for r in playing),'maxVisibleHostileAir':max(r['visibleHostileAir'] for r in playing),'groups':group_summary,'ownActors':actor_summary,'ownPaidReservations':reservation_summary,'pressureAttribution':{'terminalPlayerBaseHp':terminal['playerBaseHp'],'terminalPlayerBaseBelowStartingHealth':terminal['playerBaseHp']<800,'observedGroupOrderAndMovementFacts':group_summary,'productionFacts':reservation_summary,'unknowns':['No native per-decision or per-command enemy event stream; snapshot state changes are not counts of actions','No native duty assignment field; order None/Hold/Attack/Move is not a certified strategic duty','Transitions and queued/cancelled reservations between snapshots may be missed','No exact enemy per-shot/damage-source event capture; effectiveness and reasons for any weak pressure remain partially unknown','No enemy-specific CPU measurement, human/device balance or difficulty certification']},'playerPlanningReadTelemetry':False,'gameplayWrites':False,'enemyBehaviorChanged':False,'playerReady':False}

@@ -1,0 +1,18 @@
+{
+  "run": "native602",
+  "result": "Failed",
+  "elapsedSeconds": 943.5074,
+  "reason": "Player Save/Resume timed out at step=0",
+  "sourceHash": "9560906d31b50a9be5d0c402d527800daa45c15b4c8eada4bb158b460923865e",
+  "independentPrePostMatched": true,
+  "wrapperExit": 1,
+  "paidLogisticsOilCount": 3,
+  "paidTankerGoal": 3,
+  "paidExtraOilPump": true,
+  "paidFabricationAdded": 3,
+  "finalReadinessReached": false,
+  "airportReached": false,
+  "fixedWingLifecycle": "NotObserved",
+  "playerReady": false,
+  "nextRepair": "Observe periodic real bank/fabrication/storage/hauling state before changing any economic code or strategy."
+}

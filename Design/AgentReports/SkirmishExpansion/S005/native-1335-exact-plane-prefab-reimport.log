@@ -1,0 +1,37 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=S005PlanePrefabReimport1335.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1335-exact-plane-prefab-reimport.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005PlanePrefabReimport1335Row] {"stage":"Before","assetPath":"Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab","guid":"c0213638ba0c6466fadcd5bbe8fe0149","assetSha256":"f34839afd74861494c74018bae40b934dd9e06c0de5ecc4ec20496c13c2d4c17","metaSha256":"04dce9141f6b56999706c1f4d60fad21b6611bb4d0eb579f4ef6f6dac53f418c","dependencyHash":"9542b88a1dd7d9c2197bba5dc0a80548","dependencyVersion":"39","error":"","sourceUnchanged":false,"importCalled":false,"observedDependencyChange":false,"playing":false,"changingPlay":false,"compiling":false,"updating":false}
+UnityEngine.Debug:Log (object)
+S005PlanePrefabReimport1335:Log (S005PlanePrefabReimport1335/Row) (at /private/tmp/s005-plane-prefab-reimport1335/S005PlanePrefabReimport1335.cs:25)
+S005PlanePrefabReimport1335:RunValidation () (at /private/tmp/s005-plane-prefab-reimport1335/S005PlanePrefabReimport1335.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1335-exact-plane-prefab-reimport.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005PlanePrefabReimport1335Row] {"stage":"After","assetPath":"Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab","guid":"c0213638ba0c6466fadcd5bbe8fe0149","assetSha256":"f34839afd74861494c74018bae40b934dd9e06c0de5ecc4ec20496c13c2d4c17","metaSha256":"04dce9141f6b56999706c1f4d60fad21b6611bb4d0eb579f4ef6f6dac53f418c","dependencyHash":"9542b88a1dd7d9c2197bba5dc0a80548","dependencyVersion":"41","error":"","sourceUnchanged":true,"importCalled":true,"observedDependencyChange":true,"playing":false,"changingPlay":false,"compiling":false,"updating":false}
+UnityEngine.Debug:Log (object)
+S005PlanePrefabReimport1335:Log (S005PlanePrefabReimport1335/Row) (at /private/tmp/s005-plane-prefab-reimport1335/S005PlanePrefabReimport1335.cs:25)
+S005PlanePrefabReimport1335:RunValidation () (at /private/tmp/s005-plane-prefab-reimport1335/S005PlanePrefabReimport1335.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1335-exact-plane-prefab-reimport.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005PlanePrefabReimport1335] result=PassedExactImportObservation exactAsset=1 importCalls=1 sourceUnchanged=1 observedDependencyChange=1 ecsFreshnessCertified=0 paidCensusRequired=1
+UnityEngine.Debug:Log (object)
+S005PlanePrefabReimport1335:RunValidation () (at /private/tmp/s005-plane-prefab-reimport1335/S005PlanePrefabReimport1335.cs:47)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1335-exact-plane-prefab-reimport.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=S005PlanePrefabReimport1335.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

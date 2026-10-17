@@ -1,0 +1,24 @@
+{
+  "result": "PassedIsolatedSharedFixes",
+  "sourceHash": "0dcba894b8008ee17990190eec50f9414678edd8ef330f2324a078f03661a83b",
+  "fullSourceUnchanged": true,
+  "checks": [
+    {
+      "kind": "aircraft",
+      "log": "native-1330-held-fixedwing-return-after.log",
+      "sha256": "b9405f4335409619a332ecc62164fda6c0c51727f6a0c31841403639fc9c6244",
+      "nativeExit": 0,
+      "requiredMarker": "[S005HeldFixedWingReturn1328] result=Passed mode=AfterFixConserved cases=2 zeroDeltaControl=1 positiveMotionControls=2 unheldBoundedLanding=1 actualSystem=1 isolatedWorld=1 normalMission=0 exact1320CausalityClaim=0"
+    },
+    {
+      "kind": "door",
+      "log": "native-1330-plane-door-incremental-after.log",
+      "sha256": "e0259dc7d459ccc02d2b78419e458149fda658609fa1491c04518fe47fd14091",
+      "nativeExit": 0,
+      "requiredMarker": "[PlaneDoorIncrementalRegressionV5] result=Passed cases=7 scope=DisposableActualPrefabFreshVsSameWorldIncremental transformsOnly=1 forceHierarchyBake=0 assetEdits=0 reason=RecordedActualComparisons"
+    }
+  ],
+  "normalMission": false,
+  "paidPlaneDoorCensus": false,
+  "playerReady": false
+}

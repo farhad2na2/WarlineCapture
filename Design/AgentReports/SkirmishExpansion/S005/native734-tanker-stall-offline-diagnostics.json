@@ -1,0 +1,128 @@
+{
+  "run": 734,
+  "trace": "s005-aria-live-155926-en-c846a329fa854183be781a485d2c13bc.jsonl",
+  "observations": [
+    {
+      "actor": "role.tanker.1.8.0",
+      "stationaryIntervals": [
+        {
+          "from": 7.448862075805664,
+          "until": 69.40312194824219,
+          "phase": 1,
+          "source": 7,
+          "destination": 9,
+          "pathIndex": 1,
+          "pathLength": 2,
+          "cargoFuel": 0.0,
+          "position": {
+            "x": 909.5,
+            "y": 0.00917959213256836,
+            "z": 650.5
+          }
+        },
+        {
+          "from": 84.39341735839844,
+          "until": 174.38912963867188,
+          "phase": 4,
+          "source": 7,
+          "destination": 9,
+          "pathIndex": -1,
+          "pathLength": 0,
+          "cargoFuel": 8.0,
+          "position": {
+            "x": 918.1629028320312,
+            "y": 0.00917959213256836,
+            "z": 608.5256958007812
+          }
+        },
+        {
+          "from": 741.0985717773438,
+          "until": 1071.617431640625,
+          "phase": 0,
+          "source": 0,
+          "destination": 0,
+          "pathIndex": -1,
+          "pathLength": 0,
+          "cargoFuel": 0.0,
+          "position": {
+            "x": 918.8521118164062,
+            "y": 0.00917959213256836,
+            "z": 607.967529296875
+          }
+        }
+      ]
+    },
+    {
+      "actor": "production.1003.0",
+      "stationaryIntervals": [
+        {
+          "from": 609.590576171875,
+          "until": 680.967529296875,
+          "phase": 4,
+          "source": 7,
+          "destination": 9,
+          "pathIndex": -1,
+          "pathLength": 0,
+          "cargoFuel": 8.0,
+          "position": {
+            "x": 918.5148315429688,
+            "y": 0.00917959213256836,
+            "z": 607.4926147460938
+          }
+        },
+        {
+          "from": 756.1704711914062,
+          "until": 1071.617431640625,
+          "phase": 3,
+          "source": 7,
+          "destination": 9,
+          "pathIndex": -1,
+          "pathLength": 0,
+          "cargoFuel": 8.0,
+          "position": {
+            "x": 915.3816528320312,
+            "y": 0.00917959213256836,
+            "z": 602.8905029296875
+          }
+        }
+      ]
+    },
+    {
+      "actor": "production.1004.0",
+      "stationaryIntervals": [
+        {
+          "from": 279.4704284667969,
+          "until": 399.80584716796875,
+          "phase": 2,
+          "source": 7,
+          "destination": 9,
+          "pathIndex": -1,
+          "pathLength": 0,
+          "cargoFuel": 0.0,
+          "position": {
+            "x": 918.3960571289062,
+            "y": 0.00917959213256836,
+            "z": 607.5171508789062
+          }
+        },
+        {
+          "from": 786.2298583984375,
+          "until": 1071.617431640625,
+          "phase": 1,
+          "source": 7,
+          "destination": 9,
+          "pathIndex": -1,
+          "pathLength": 0,
+          "cargoFuel": 0.0,
+          "position": {
+            "x": 918.2811279296875,
+            "y": 0.00917959213256836,
+            "z": 603.8700561523438
+          }
+        }
+      ]
+    }
+  ],
+  "rootCauseEstablished": false,
+  "nextDiagnostic": "Own-unit grid, path request/target/cooldown and real building approach rect are needed to distinguish inaccessible bays from stale movement state."
+}

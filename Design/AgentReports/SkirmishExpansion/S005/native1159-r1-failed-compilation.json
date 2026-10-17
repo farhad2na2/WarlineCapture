@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Tests/Editor/UnitMoveOrderSystemTests.cs(600,9): error CS1612: Cannot modify the return value of 'EntityManager.GetBuffer<SkirmishArmyGroupRecord>(Entity, bool)' because it is not a variable\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

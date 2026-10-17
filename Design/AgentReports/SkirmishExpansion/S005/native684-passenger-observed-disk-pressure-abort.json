@@ -1,0 +1,43 @@
+{
+  "run": "native684",
+  "result": "FailedInfrastructureAbort",
+  "wrapperExit": 2,
+  "sourceHash": "d92b32ae09f286f7eaaab6bb469f97fb2d208a1ca05c3f9cac7b636aaf6bf777",
+  "log": "native-684-boarded-resume-manual-native-attack-retry-en.log",
+  "trace": "s005-aria-live-155926-en-991c89f7b2fa4552a10c896d9d2e9921.jsonl",
+  "sourceUnchanged": true,
+  "reason": "Owner-authorized evidence-preserving abort when disk fell to 1.5 GiB; no process kill or forced outcome",
+  "nativeFinishReason": "incompleteNativeInputFlow",
+  "finalElapsed": 414.2824,
+  "passengerRecoveryObservation": {
+    "passengers": 4,
+    "restoredAndUnloaded": true,
+    "sameAttempt": true,
+    "paidReceiptPreserved": true,
+    "oldPhysicalGone": 4978,
+    "input": "Touch",
+    "gestures": 49,
+    "receiptViolations": 0
+  },
+  "fullMatchCertified": false,
+  "countsForReadiness": false,
+  "strictRecordedContacts": 87,
+  "strictEndedContacts": 87,
+  "contactErrors": 0,
+  "readOnlyCliDiagnostics": 1,
+  "manualTouchActions": 33,
+  "manualAttackReceipts": 3,
+  "physicalInputInterventions": 0,
+  "groundTouchDiagnosis": {
+    "step": 3,
+    "slot": 1,
+    "markerVisible": true,
+    "screenPoint": [
+      650.36,
+      272.08,
+      71.05
+    ],
+    "firstHit": "V3GradientLayer"
+  },
+  "subsequentFix": "Qualification driver pans via public full-map controls before retrying obscured touch; native validation pending"
+}

@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var counts=new System.Collections.Generic.Dictionary<string,int>();var roots=new System.Collections.Generic.List<string>();for(int n=0;n<UnityEngine.SceneManagement.SceneManager.sceneCount;n++){var s=UnityEngine.SceneManagement.SceneManager.GetSceneAt(n);roots.Add(s.path);foreach(var r in s.GetRootGameObjects())if(r.name.Contains(\"Landscape\"))roots.Add(r.name+\":\"+r.GetComponentsInChildren<UnityEngine.MeshRenderer>(true).Length);}foreach(var r in UnityEngine.Object.FindObjectsByType<UnityEngine.MeshRenderer>(UnityEngine.FindObjectsInactive.Include,UnityEngine.FindObjectsSortMode.None)){var m=r.GetComponent<UnityEngine.MeshFilter>()?.sharedMesh;if(m!=null&&m.name.Contains(\"Tree\")){string key=m.name+\":enabled=\"+r.enabled+\":active=\"+r.gameObject.activeInHierarchy;counts.TryGetValue(key,out int c);counts[key]=c+1;}}return new {playing=UnityEditor.EditorApplication.isPlaying,scenes=roots,treeRenderers=counts};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "playing": true,
+        "scenes": [
+          "Assets/Game/Scenes/Menu.unity",
+          "Assets/Game/Scenes/Match.unity",
+          "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity"
+        ],
+        "treeRenderers": {}
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

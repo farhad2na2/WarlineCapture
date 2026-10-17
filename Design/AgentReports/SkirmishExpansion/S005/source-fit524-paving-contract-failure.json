@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+      "sha256": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+      "bytes": 374700599,
+      "unchangedAfter524": true
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "bytes": 5519,
+      "unchangedAfter524": true
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset",
+      "sha256": "aa9d1583259f5b23af3ef1648b8dfbfa70bc8b812c673f08933c4e81649bd8b2",
+      "bytes": 36654877,
+      "unchangedAfter524": true
+    }
+  ],
+  "scope": "Existing shared Campaign dense-city render packaging evaluation; no mission rebind or geometry authoring",
+  "physicalSceneMayChange": false,
+  "playerReady": false,
+  "validation": "source-fit-524-dense-current-render-parity.log",
+  "result": "Failed",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "inventoryPassed": true,
+  "sourceRenderRows": 124167,
+  "eligibleRenderRows": 59503,
+  "residentRenderRows": 64664,
+  "activePoolSlots": 7291,
+  "poolLimit": 8000,
+  "reason": "Rebuild retained a stale18 logical Dirt-part expectation; the authored shared source already disables those renderers and uses FlatPaving/KerbPaving. Scene and prior database remained unchanged."
+}

@@ -1,0 +1,15 @@
+{
+  "run": "native599",
+  "result": "Failed",
+  "sourceHash": "6ee2bae95102e2cd6387b0a6fe98c86fafab5012d621fd4a237f1cbdb0447d55",
+  "independentPrePostMatched": true,
+  "wrapperExit": 1,
+  "elapsedSeconds": 495.4976,
+  "paidIndustryAndResearch": "Passed",
+  "airportNativeCandidates": 8,
+  "cameraSiteExhaustions": 8,
+  "reason": "All sampled native-validator Airport candidates remained unusable through current map camera gestures.",
+  "airportCommitted": false,
+  "diagnosis": "Viewport drag clamps its whole footprint inside map; actual candidate screen projections confirm ground under HUD/outside usable view.",
+  "nextRepair": "Shared map drag focuses edge centers and clips outline while retaining logical drag footprint."
+}

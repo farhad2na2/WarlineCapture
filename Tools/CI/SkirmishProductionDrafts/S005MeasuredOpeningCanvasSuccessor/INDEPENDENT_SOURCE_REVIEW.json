@@ -1,0 +1,18 @@
+{
+  "result": "ClearBoundedReadOnlySourceReview",
+  "manifest_sha256": "2ff7100e69b2bacae3947c6fdee6d7dbbad386a137a3b07a7997d33766144175",
+  "source_sha256": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+  "before_sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+  "parent_review": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCandidates/INDEPENDENT_SOURCE_REVIEW.json",
+  "parent_review_sha256": "8051327ff199b80ca7f21212774629dd5f6d2f8cf3e0d34e33469c49e0e00421",
+  "delta_review": [
+    "Nearest Canvas resolves actual effective root before choosing overlay versus its real active camera",
+    "Non-overlay missing/inactive camera refuses rather than project through screen overlay",
+    "Unique sibling-index paths and sorted unique RectTransforms avoid ambiguous traversal attribution",
+    "Actual camera pixelRect and Screen dimensions accompany screen corners; rectangles remain measured geometry and not visibility/safe-area acceptance"
+  ],
+  "unchanged_parent_camera_identity_and_runtime_error_gates": true,
+  "required_runtime_gate_marker": "[S005MeasuredOpeningRuntimeGate] result=Passed errors=0 viewsCompleted=4 wrapperExitStillRequired=1",
+  "native_executed": false,
+  "assets_edited": false
+}

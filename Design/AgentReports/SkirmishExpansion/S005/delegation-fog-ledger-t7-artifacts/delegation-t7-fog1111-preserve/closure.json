@@ -1,0 +1,10 @@
+{
+  "result": "ScopedPassed",
+  "cases": 19,
+  "nativeReceipt": 0,
+  "sourceSha256": "390091c5e9b977162ed156b0cb74da86dd8d8fc68a58b9c5b8677ffb4e0c71d9",
+  "runSourceDelta": [],
+  "scope": "T7 core+ledger actual isolated Worlds; not whole currentmain/native mission readiness",
+  "ownerMobileAAActualAndDisk": 0,
+  "idleNativeProof": "/private/tmp/delegation-t7-fog1111-idle-native-quality-post.json"
+}

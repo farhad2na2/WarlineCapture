@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var rows=new System.Collections.Generic.List<object>(); foreach(var view in UnityEngine.Object.FindObjectsByType<Game.UI.Runtime.AriaTutorialBriefingView>(UnityEngine.FindObjectsInactive.Exclude)) { foreach(var t in new[]{view.TitleText,view.BodyText}) { if(t==null)continue;var c=t.GetComponentInParent<UnityEngine.Canvas>();var camera=c!=null && c.renderMode!=UnityEngine.RenderMode.ScreenSpaceOverlay?c.worldCamera:null;var corners=new UnityEngine.Vector3[4];t.rectTransform.GetWorldCorners(corners);var a=UnityEngine.RectTransformUtility.WorldToScreenPoint(camera,corners[0]);var b=UnityEngine.RectTransformUtility.WorldToScreenPoint(camera,corners[2]);var rect=new UnityEngine.Rect(UnityEngine.Mathf.Min(a.x,b.x),UnityEngine.Mathf.Min(a.y,b.y),UnityEngine.Mathf.Abs(b.x-a.x),UnityEngine.Mathf.Abs(b.y-a.y)); rows.Add(new { boundField=t==view.TitleText?\"TitleText\":\"BodyText\",text=t.text,viewVisible=view.IsPresentationVisible,active=t.isActiveAndEnabled,culled=t.canvasRenderer.cull,alpha=t.color.a,chars=t.textInfo.characterCount,visibleGlyphs=t.textInfo.characterInfo.Count(x=>x.isVisible),ancestorAlphas=t.GetComponentsInParent<UnityEngine.CanvasGroup>().Select(g=>g.alpha).ToArray(),screenWidth=UnityEngine.Screen.width,screenHeight=UnityEngine.Screen.height,safeArea=UnityEngine.Screen.safeArea.ToString(),canvas=c.name,canvasPixelRect=c.pixelRect.ToString(),labelScreenRect=rect.ToString(),intersectsScreenSafeArea=rect.Overlaps(UnityEngine.Screen.safeArea),intersectsCanvasViewport=rect.Overlaps(c.pixelRect) }); } } return rows;"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": []
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

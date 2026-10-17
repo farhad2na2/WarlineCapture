@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "sourceHash": "05d3de5694a0d1cec8ef2193fe22aaf570d928bb47adbbcee7e5d64aa7cf7ec7",
+  "actualWrapperExit": 2,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-764-normal-preview-camera-observation-pre-source-manifest.json",
+  "postManifest": "final-764-normal-preview-camera-observation-post-source-manifest.json",
+  "log": "native-764-current-manual-en-seed104734.log",
+  "reason": "Normal southern full-map touch intercepted by PlacementBarPanel while building preview active; no camera focus event emitted",
+  "firstHit": "PlacementBarPanel",
+  "pendingPreview": true,
+  "playerReady": false
+}

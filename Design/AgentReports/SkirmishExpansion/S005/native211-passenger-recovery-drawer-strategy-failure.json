@@ -1,0 +1,25 @@
+{
+  "result": "Failed",
+  "sourceHash": "b7d04e0d19ef59abae643cf9388ffa9a3d3e3668483fa96dc24af10436e23d06",
+  "scope": "Native logistics, APC boarding/recovery/unload passed; full manual test stalled at replacement drawer",
+  "log": "native-211-structure-logistics-boarded-apc-save-resume-en.log",
+  "logSha256": "def76ff55ed5bca8b97079010b1bdea1a4b687957e3123b343e957ac898a6b29",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "passengerRecovery": {
+    "result": "Passed",
+    "pausedPassengers": 2,
+    "restoredAndUnloaded": 2,
+    "nativeGestures": 46,
+    "oldPhysicalGone": 386,
+    "paidReceiptPreservedOnce": true,
+    "sameAttempt": true,
+    "savedElapsed": 293.9493,
+    "receiptViolations": 0
+  },
+  "fullMissionFailure": "Build hides squad tray/command bar; fixture required those controls before continuing native replacement recruitment",
+  "observation": "native211-build-drawer-stall-observation.json",
+  "earlyCutoff": "Only failed fixture deadline shortened; no game clock/stock/health/outcome changes",
+  "countedWin": 0,
+  "playerReady": false
+}

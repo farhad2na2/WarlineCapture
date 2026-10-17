@@ -1,0 +1,19 @@
+{
+  "sourceHash": "a93be1cd029d445ad31005510a186b9ef099877762339930fa2edb942c10e4a2",
+  "nativeRun": 467,
+  "trace": "s005-aria-live-155926-en-9f538f1f9294484f860a92b2cb163bc8.jsonl",
+  "observations": {
+    "timeLeft": "4:37",
+    "stage": 4,
+    "usableFuel": 102,
+    "refineryStoredFuelEarlier": 424,
+    "depotReceivedFuelEarlier": 168,
+    "livingOilTrucks": 2,
+    "livingTankers": 1,
+    "haulerGroundFuelPerCell": 0.05
+  },
+  "interpretation": "Fuel is physically produced and delivered, but one late Tanker does not build the safe flight reserve while ground/logistics consume Fuel. Complete outcome remains pending.",
+  "flightCertified": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

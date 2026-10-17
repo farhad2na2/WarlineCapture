@@ -1,0 +1,30 @@
+{
+  "scope": "ExplicitMeasuredTransportDependencyStampsOnly_Existing3Sources57Draws",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishTransportMeasuredDependencyRefresh.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TransportMeasuredDependencyRefresh/SkirmishTransportMeasuredDependencyRefresh.cs.txt",
+      "before_sha256": null,
+      "sha256": "846c45242d6429c2f9c6cff3b4662eac16c1bff43b3e2a120892fb71371d3471",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTransportMeasuredDependencyRefreshTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TransportMeasuredDependencyRefresh/SkirmishTransportMeasuredDependencyRefreshTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "7fdd00174ebd86f5e9a27e014c9d657d43a2d124347d73f2824c68df230ba020",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "entry": "Game.Tests.Editor.SkirmishTransportMeasuredDependencyRefreshTests.RunRefreshAndSharedPreparation",
+  "focused_entry": "Game.Tests.Editor.SkirmishTransportMeasuredDependencyRefreshTests.RunFocusedValidation",
+  "refresh_entry": "Game.Editor.SkirmishTransportMeasuredDependencyRefresh.Run",
+  "required_refresh_marker": "[TransportMeasuredDependencyRefresh] result=Passed sources=3 draws=57 geometryChanged=0 guidPreserved=1 nativeCameraAcceptance=Pending",
+  "required_controls_marker": "[TransportMeasuredDependencyRefreshTests] result=Passed controls=2 actualIndexedDraws=57 nativeCameraAcceptance=Pending",
+  "required_final_marker": "[TransportRefreshAndSharedPreparation] result=Passed refreshControls=2 sharedControls=150 cameraAndMissionAcceptance=Pending",
+  "existing_shared150_markers_still_required": true,
+  "native_executed": false,
+  "type_compile_pending": true,
+  "existing_verifier_unchanged": true,
+  "runtime_code_unchanged": true
+}

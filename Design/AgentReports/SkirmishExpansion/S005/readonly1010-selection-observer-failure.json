@@ -1,0 +1,10 @@
+{
+  "result": "FailedReadOnlyObserver",
+  "observedRun": "native1006",
+  "error": "InvalidCastException: AriaTouchInputUiSystemHelper.CompletedGestures is uint, not int",
+  "sourceChanged": false,
+  "gameplayMutations": false,
+  "observationRows": 0,
+  "correctedPreparedDriver": "prepared-ReadOnlyCampaignSelection1011.cs.txt",
+  "campaignJourneyCertified": false
+}

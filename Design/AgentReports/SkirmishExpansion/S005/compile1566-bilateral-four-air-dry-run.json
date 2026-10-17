@@ -1,0 +1,66 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-bilateral-four-air1566-2fab-prepared/S005BilateralMixedAir1566.cs",
+      "entry": "S005BilateralMixedAir1566.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1566.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 128,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1566.AirRow.syntheticSpawn' is never assigned to, and will always have its default value false",
+          "line": 468,
+          "column": 587,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1566.AirRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 468,
+          "column": 602,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1566.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1566.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 390,
+          "id": "CS0649"
+        }
+      ],
+      "compileMs": 232,
+      "executeMs": 0,
+      "assemblyName": null,
+      "success": true,
+      "result": null,
+      "message": "Compiled successfully (dry run; nothing was loaded or executed)."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

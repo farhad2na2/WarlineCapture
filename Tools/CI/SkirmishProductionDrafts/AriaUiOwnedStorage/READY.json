@@ -1,0 +1,21 @@
+{
+  "result": "ReadyForRootImportAndNativeValidation",
+  "manifest": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json",
+  "manifest_sha256": "c98531ea647895ba48439d2b67123be416c6e975f087e47990d287dc897f5d98",
+  "four_owner_proof": "Logs\\SkirmishProduction\\Offline\\AriaUiOwnedStorage\\owning-142sui8j\\result.json",
+  "four_owner_proof_sha256": "aa4175bd18278194117ae1cfb394b1626f597b44715ad5586ba322c478c2b8d6",
+  "tests_only_successor_proof": "Logs\\SkirmishProduction\\Offline\\AriaUiOwnedStorage\\tests-terminal-uuhyr_ch\\result.json",
+  "tests_only_successor_proof_sha256": "b4220f30df00c0d62d07717407678514962d51f072667049bb0a7d4c836acf09",
+  "native_markers": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/NATIVE_MARKERS.json",
+  "native_markers_sha256": "477e935fe2e74860f488b9d3be069cd9be170f538f89f22683445a7f132f635f",
+  "source_reviews": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/INDEPENDENT_SOURCE_REVIEW.f27d1a28.json",
+      "scope": "Production bytes unchanged; terminal test expectation successor pending tiny review"
+    }
+  ],
+  "native_controls_pending": 7,
+  "assets_edited": false,
+  "main_harness_conflict": "Batch successor must compose its payload/Menu seams atop4a73c542 without overwriting AppendInputDiagnostic",
+  "readiness": false
+}

@@ -1,0 +1,18 @@
+{
+  "validation": "native551",
+  "passed": false,
+  "sourceHash": "3c3b6709f49127be8e260fe631b73732e58da2dc0bfa253e37fb3aa8fc59bb5d",
+  "prePostSourceHashMatched": true,
+  "refineryFootprint": [
+    25,
+    15
+  ],
+  "searchRadius": 100,
+  "rejections": {
+    "sourceBuildings": 36097,
+    "roadOrWater": 4296,
+    "sidewalkOrBounds": 0,
+    "originalContext": 8
+  },
+  "playerReady": false
+}

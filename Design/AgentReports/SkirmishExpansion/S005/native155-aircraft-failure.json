@@ -1,0 +1,14 @@
+{
+  "mission": "S005",
+  "sourceHash": "23ee330de45459b3dd3c553e9ba9bdae49596e23e69be7b4ac93a9895800e62d",
+  "result": "Failed",
+  "reason": "baseGuardCameraFocusNotObserved",
+  "failureStage": "native full-map camera input before aircraft construction",
+  "touchSamples": 26,
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "log": "native-155-final-aircraft-cycle.log",
+  "logSha256": "35f44c8063fde8529a9ffe53b43adaededae106f54aa81a1cef6fa95b452c686",
+  "aircraftLifecycleAccepted": false,
+  "playerReady": false
+}

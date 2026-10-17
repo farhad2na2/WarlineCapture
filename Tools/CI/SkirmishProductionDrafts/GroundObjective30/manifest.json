@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "bbaa7a50a4b884ef6f82ac3311718671c82a4c2edc3da8d93987279f3f076ea6",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "native_execution": false,
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundObjective30AuthoringControls",
+  "required_pass_marker": "[SkirmishGroundObjective30Authoring] result=Passed candidates=30 negativeControls=60 streamingWorldsCreated=0 sourceFitCertified=0",
+  "authoring_inputs": {
+    "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+    "sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc"
+  },
+  "offline_proof": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/current-editor-tests-j9r_zlwc",
+  "python_controls": {
+    "command": "rtk proxy python -m unittest discover -s Tools/CI -p build_skirmish_ground_objective30_test.py -v",
+    "actual_result": "8 tests passed",
+    "native_execution": false
+  }
+}

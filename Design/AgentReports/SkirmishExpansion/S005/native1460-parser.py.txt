@@ -1,0 +1,88 @@
+"""Strict offline native ten-cycle conservation interpretation; no Unity calls."""
+import json, pathlib, importlib.util, math
+
+def load_rows(path):
+    rows=[json.loads(line) for line in pathlib.Path(path).read_text().splitlines() if line.strip()]
+    if not rows: raise ValueError('Empty actual native evidence: '+str(path))
+    return rows
+
+def require(ok, message):
+    if not ok: raise ValueError(message)
+
+def qualify(report, observation, touch, current_parts=True):
+    report=pathlib.Path(report); rows=load_rows(report/observation)
+    require(not any(r.get('stage') in ('LifecycleFailure','PublicHarnessFailedAfterPlayStopped') for r in rows), 'Native lifecycle failure recorded')
+    def staged(stage):return [r for r in rows if r.get('stage')==stage]
+    fresh=staged('FreshNativeAttempt')
+    require(len(fresh)==11 and [r['freshOrdinal'] for r in fresh]==list(range(1,12)), 'Exactly eleven chronological fresh attempts required')
+    attempts=[r['attempt'] for r in fresh]
+    require(len(set(attempts))==11 and all(attempts), 'Eleven distinct genuine native attempts required')
+    stable=('owned','markers','groupCount','initialActors','deliveredActors','readiness','playerMaterials','enemyMaterials','playerOil','enemyOil','playerFuel','enemyFuel','snapshot')
+    for i,r in enumerate(fresh):
+        require(r['passed'] is True and r['sameBudget'] is True and r['sameRoster'] is True and r['oldRemoved'] is True, 'Fresh native conservation assertion failed')
+        require(r['seed']==104734 and r['sharedFog'] is True and r['developmentFullVision'] is False, 'Wrong normal setup/fog')
+        require(0<=r['elapsed']<=r['baselineElapsed'] and r['baselineElapsed']>0, 'Fresh actual first-frame clock not qualified')
+        require(r['oldPhysical']==r['selected']==r['hold']==r['productionRows']==r['researchRows']==r['deliveredActors']==0, 'Old player intent/physical actor/queue carried over')
+        require(r['owned']>0 and r['markers']>=0 and r['groupCount']>0 and r['initialActors']>0, 'Fresh package missing')
+        require((r['playerMaterials'],r['enemyMaterials'],r['playerOil'],r['enemyOil'],r['playerFuel'],r['enemyFuel'],r['readiness'])==(450,450,120,120,350,350,1), 'Exact authored starting grant changed')
+        require(all(r[k]==fresh[0][k] for k in stable), 'Fresh roles/caps/owned markers/bank package accumulated or changed')
+        require(i==0 or r['priorAttempt']==attempts[i-1], 'Fresh attempt ancestry mismatch')
+    for i,attempt in enumerate(attempts):
+        def own(stage):return [r for r in staged(stage) if r.get('attempt')==attempt]
+        selected=own('NativeSelectedActor'); markers=own('NativeSelectedMarker')
+        require(len(selected)==4 and len({r['actorId'] for r in selected})==4 and all(r['passed'] is True and r['selected']==1 and r['role']=='Rifle' for r in selected), 'Exact owned four-Rifle selection missing')
+        ids={r['actorId'] for r in selected}
+        require({r['actorId'] for r in markers}==ids and all(r['passed'] is True and r['markerParentMatches'] is True and r['markerTagged'] is True and r['markerExists'] is True and r['markerChildExists'] is True and math.isfinite(r['markerScale']) and math.isfinite(r['markerChildScale']) and r['markerScale']>0 and r['markerChildScale']>0 for r in markers), 'Typed live selection markers not restored')
+        before=own('NativePausedBaseline'); after=own('NativePauseComparison'); conserved=own('NativePauseConservation')
+        require(len(before)==len(after)==len(conserved)==1, 'One strict pause comparison per attempt required')
+        b,a,c=before[0],after[0],conserved[0]
+        require(b['passed'] is True and a['passed'] is True and c['passed'] is True and b['paused'] is True and a['paused'] is True and a['simulationActive'] is False, 'Native pause state not conserved')
+        require(b['snapshot']==a['snapshot']==c['snapshot'] and b['elapsed']==a['elapsed']==c['elapsed']==a['baselineElapsed'], 'Exact actors/resources/queue/clock changed during pause')
+        held=[line for line in b['snapshot'].splitlines() if '|1|' in line and '|selected=True|hold=True' in line]
+        require(len(held)==4 and all(any('|'+actor+'|' in line for line in held) for actor in ids), 'Actual whole selected cohort Hold not established')
+        health=[json.loads(piece) for line in held for piece in line.split('|') if piece.startswith('{"Current":')]
+        require(len(health)==4 and all(h['Current']>0 and h['Max']>0 for h in health), 'Held selected cohort must actually be living')
+        require(b['frame']<a['frame'], 'Pause comparison lacks later native frame')
+        renders=own('NativeFrozenRenderedDefeat'); settlements=own('NativeDefeatSettlementState')
+        require(renders, 'Actual native rendered Defeat absent')
+        # Multiple real render callbacks are valid observations of one same-attempt outcome.
+        for r in renders:
+            require(r['resultSession']==attempt and r['outcome']=='Defeat' and r['reason']=='Surrender' and r['frozen'] is True and r['saveAcknowledged']==1 and r['rendered'] is True and r['captionMatches'] is True and r['visibleGlyphs']>0 and r['viewportMatches'] is True and r['samplingPhase']=='CanvasWillRenderCanvases' and r['sourceCopy']=='شکست', 'Frozen localized rendered settled Defeat invalid')
+            require(any(s['frame']<=r['frame'] and s['resultSession']==attempt and s['passed'] is True and s['saveAcknowledged']==1 and s['paused'] is True and s['playing'] is False and s['simulationActive'] is False and s['outcome']=='Defeat' for s in settlements), 'Rendered result preceded real native settlement')
+        controls=own('NativeControlTouch')
+        expected=['SelectStartingSquad','HoldSelectedSquad','Pause','Surrender','ConfirmSurrender', 'Replay' if i<10 else 'Leave']
+        require([r['action'] for r in controls]==expected, 'Actual control sequence differs for attempt '+str(i))
+        result_frame=min(r['frame'] for r in renders)
+        require(controls[-1]['frame']>=result_frame, 'Result action preceded rendered same-attempt Defeat')
+        ready=own('NativeIntroInputReady')
+        require({r['action'] for r in ready}=={'SelectStartingSquad','HoldSelectedSquad'} and all(r['passed'] is True for r in ready), 'Authoritative intro readiness absent')
+        if current_parts:
+            parts=own('FreshCurrentEnemyState')
+            require(len(parts)==1, 'Current typed AI fresh-state observation absent')
+            p=parts[0]
+            require(p['passed'] is True and p['plannerVersion']>0 and p['policyHash']>0 and p['title']==p['sourceCopy'] and p['title'] and p['capabilityVersion']==1 and p['nextOperation']==1 and p['nextProductionRequest']==1 and p['productionIntentState']==0 and p['operationRows']==p['transportRows']==0 and (not p['constructionPresent'] or p['constructionPhase']==0), 'Current shared AI first-frame reset invalid')
+            require(all(prefix in b['snapshot'] for prefix in ('planner:','productionIntent:','capabilityState:')), 'Current shared AI parts omitted from exact pause snapshot')
+    replay=staged('NativeReplayDestination')
+    require(len(replay)==10 and all(r['passed'] is True and r['priorAttempt']==attempts[i] and r['attempt']==attempts[i+1] for i,r in enumerate(replay)), 'Ten actual Replay transitions not proven')
+    adjust=staged('NativeAdjustSetupDestination'); relaunch=staged('NativeSetupRelaunchDestination'); menu=staged('NativeMainMenuDestination')
+    require(len(adjust)==len(relaunch)==0 and len(menu)==1, 'Unexpected setup relaunch or missing MainMenu transition')
+    m=menu[0]
+    require(m['attempt']==attempts[10] and all(m[k] is True for k in ('passed','sessionAbsent','rendered','captionMatches','viewportMatches','exactMainMenuOwner','exactMainMenuTitle')) and m['visibleGlyphs']>0 and m['samplingPhase']=='CanvasWillRenderCanvases' and m['shellRoute']=='MainMenu' and m['mainMenuIntent']=='OpenMenuRoute' and m['mainMenuRoute']=='QuickCustomSetup' and m['controlPath'].endswith('/Card_Skirmish/Hotspot') and m['mainMenuTitlePath'].endswith('/Card_Skirmish/Title'), 'Real typed rendered MainMenu not established')
+    summary=staged('NativeLifecycleSummary'); closed=staged('ClosedLifecycle')
+    require(len(summary)==len(closed)==1 and summary[0]['passed'] is True and closed[0]['passed'] is True and summary[0]['cycle']==closed[0]['cycle']==11 and summary[0]['completed']==summary[0]['dispatched']==66 and all(summary[0][k]==0 for k in ('unexpected','interventions','violations')), 'Closed eleven-attempt ten-Replay native lifecycle incomplete')
+    raw=load_rows(report/touch)
+    require(all(r.get('unexpected')==r.get('interventions')==r.get('receiptViolations')==0 and r.get('kind')!='PhysicalTakeover' for r in raw), 'Earlier raw input violation cannot be hidden by final summary')
+    spec=importlib.util.spec_from_file_location('lifecycle_contacts',report.parents[3]/'Tools/CI/audit_skirmish_native_contacts.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    external=module.audit(raw)
+    require(external['strictAllContactsEnded'] is True and external['recordedContacts']==66 and not external['errors'], 'Exact external lifecycle Touch pairing failed')
+    coord=staged('QaLifecycleCoordination');require(len(coord)==1 and coord[0]['qaOnlyCoordination'] is True, 'QA coordination provenance absent')
+    trace=pathlib.Path(coord[0]['tracePath']);require(trace.parent==report and trace.name.startswith('s005-aria-live-104734-fa-'), 'Owned native normal trace path mismatch')
+    inherited_rows=load_rows(str(trace)+'.touch.jsonl')
+    require(all(r.get('unexpected')==r.get('interventions')==r.get('receiptViolations')==0 and r.get('kind')!='PhysicalTakeover' for r in inherited_rows), 'Inherited raw Touch intervention')
+    inherited=module.audit(inherited_rows);require(inherited['strictAllContactsEnded'] is True and inherited['nativeMenuContactsRecorded'] is True and not inherited['errors'], 'Inherited public Menu plus runtime pairing failed')
+    receipts=staged('NativeCommandReceipt');require(all(r['verified'] is True and r['receipt']>0 for r in receipts), 'Observed native command receipt invalid')
+    # Hold is native ImmediateHold; it does not emit an ARIA SelectionOrder receipt.
+    memory=staged('NativeSettledMemory');require(len(memory)==11, 'Eleven settled desktop memory samples required')
+    trends={k:[r[k] for r in memory] for k in ('managedBytes','nativeAllocatedBytes','nativeReservedBytes','graphicsBytes','residentBytes','peakResidentBytes')}
+    require(all(r['hud']==memory[0]['hud']==1 for r in memory), 'HUD roots accumulated')
+    return dict(result='PassedScopedNormalNativeElevenAttemptTenReplayConservation',genuineDefeats=11,countedWins=0,attempts=attempts,externalContactAudit=external,inheritedContactAudit=inherited,trace=trace.name,memoryTrends=trends,memoryReviewRequired=True,fullX17MemoryQualified=False,currentTypedStateCertified=current_parts,englishDefeatCertified=False,realHumanDeviceAcceptance=False,playerReady=False)

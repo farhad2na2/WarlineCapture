@@ -1,0 +1,93 @@
+using System;
+using Game.Components;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+namespace Game.Editor
+{
+    public static partial class SkirmishS002AriaRunHarness
+    {
+        [Serializable] private sealed class NativeRenderingDiagnostic
+        {
+            public string stage = "OpeningPackedRenderingFailure";
+            public int frame, databaseCount, activeMapCount, cameraSnapshotCount;
+            public bool openingPreviouslyAccepted;
+            public NativeRenderingDatabaseDiagnostic[] databases;
+            public RuntimeCameraSnapshotComponent[] cameraSnapshots;
+        }
+
+        [Serializable] private sealed class NativeRenderingDatabaseDiagnostic
+        {
+            public int entityIndex, entityVersion, schemaVersion, mapGeneration;
+            public string contentHash;
+            public bool blobCreated, hasReadiness, hasState, hasMetrics, hasSync;
+            public bool initialized, firstViewApplied, rebuilt, positiveActiveSlots;
+            public bool stateNoOverflow, metricsNoOverflow, enabledMatchesActive, sufficientCapacity;
+            public int commandsLength = -1, canonicalStatesLength = -1;
+            public uint publishedCommandVersion;
+            public OperationMapRenderPackedReadinessComponent readiness;
+            public OperationMapRenderVirtualizationStateComponent state;
+            public OperationMapRenderVirtualizationMetricsComponent metrics;
+            public OperationMapRenderStateSyncStateComponent sync;
+        }
+
+        // Read-only diagnostic. No readiness predicate, ordering or retry policy changes.
+        private static string CaptureNativeRenderingFailureDiagnostic(EntityManager em)
+        {
+            using var databases = em.CreateEntityQuery(typeof(OperationMapRenderDatabaseComponent));
+            using var activeMaps = em.CreateEntityQuery(typeof(ActiveOperationMapComponent));
+            using var cameras = em.CreateEntityQuery(typeof(RuntimeCameraSnapshotComponent));
+            using var entities = databases.ToEntityArray(Allocator.Temp);
+            using var cameraStates = cameras.ToComponentDataArray<RuntimeCameraSnapshotComponent>(Allocator.Temp);
+            var report = new NativeRenderingDiagnostic
+            {
+                frame = Time.frameCount,
+                databaseCount = entities.Length,
+                activeMapCount = activeMaps.CalculateEntityCount(),
+                cameraSnapshotCount = cameraStates.Length,
+                openingPreviouslyAccepted = nativeOpeningRenderViewAccepted,
+                databases = new NativeRenderingDatabaseDiagnostic[entities.Length],
+                cameraSnapshots = cameraStates.ToArray()
+            };
+            for (int i = 0; i < entities.Length; i++)
+            {
+                var entity = entities[i];
+                var database = em.GetComponentData<OperationMapRenderDatabaseComponent>(entity);
+                var row = new NativeRenderingDatabaseDiagnostic
+                {
+                    entityIndex = entity.Index, entityVersion = entity.Version,
+                    schemaVersion = database.SchemaVersion, mapGeneration = database.MapGeneration,
+                    contentHash = database.ContentHash.ToString(), blobCreated = database.Blob.IsCreated,
+                    hasReadiness = em.HasComponent<OperationMapRenderPackedReadinessComponent>(entity),
+                    hasState = em.HasComponent<OperationMapRenderVirtualizationStateComponent>(entity),
+                    hasMetrics = em.HasComponent<OperationMapRenderVirtualizationMetricsComponent>(entity),
+                    hasSync = em.HasComponent<OperationMapRenderStateSyncStateComponent>(entity)
+                };
+                if (row.hasReadiness) row.readiness = em.GetComponentData<OperationMapRenderPackedReadinessComponent>(entity);
+                if (row.hasState)
+                {
+                    row.state = em.GetComponentData<OperationMapRenderVirtualizationStateComponent>(entity);
+                    row.initialized = row.state.Initialized != 0;
+                    row.firstViewApplied = row.state.InitialViewApplied != 0;
+                    row.rebuilt = row.state.RebuildCount > 0;
+                    row.positiveActiveSlots = row.state.ActiveSlotCount > 0;
+                    row.stateNoOverflow = row.state.OverflowCount == 0;
+                }
+                if (row.hasMetrics)
+                {
+                    row.metrics = em.GetComponentData<OperationMapRenderVirtualizationMetricsComponent>(entity);
+                    row.metricsNoOverflow = row.metrics.OverflowCount == 0;
+                    row.enabledMatchesActive = row.hasState && row.metrics.EnabledSlotCount == row.state.ActiveSlotCount;
+                    row.sufficientCapacity = row.hasState && row.metrics.Capacity >= row.state.ActiveSlotCount;
+                }
+                if (row.hasSync) row.sync = em.GetComponentData<OperationMapRenderStateSyncStateComponent>(entity);
+                if (em.HasBuffer<OperationMapRenderSlotCommandComponent>(entity)) row.commandsLength = em.GetBuffer<OperationMapRenderSlotCommandComponent>(entity, true).Length;
+                if (em.HasBuffer<OperationMapRenderCanonicalStateComponent>(entity)) row.canonicalStatesLength = em.GetBuffer<OperationMapRenderCanonicalStateComponent>(entity, true).Length;
+                if (em.HasComponent<OperationMapRenderSlotCommandStateComponent>(entity)) row.publishedCommandVersion = em.GetComponentData<OperationMapRenderSlotCommandStateComponent>(entity).Version;
+                report.databases[i] = row;
+            }
+            return JsonUtility.ToJson(report);
+        }
+    }
+}

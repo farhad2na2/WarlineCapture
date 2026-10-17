@@ -1,0 +1,23 @@
+{
+  "mission": "S005",
+  "sourceHash": "23ee330de45459b3dd3c553e9ba9bdae49596e23e69be7b4ac93a9895800e62d",
+  "countsForCurrentSource": false,
+  "result": "Passed",
+  "acceptance": "Automated native aircraft lifecycle touch probe, not a complete mission or human/device playtest",
+  "paidDelivery": true,
+  "firstSortie": true,
+  "returnAndTouchdown": true,
+  "realTankerRefuelAdded": 6,
+  "requiredRoundTripReserve": 259,
+  "secondSortie": true,
+  "touchSamples": 421,
+  "normalSpeed": true,
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "log": "native-156-aircraft-camera-diagnostic.log",
+  "logSha256": "95f7c1e52c0bcfa4b151dd287d71879d30a99d9498e73e808738c1bc12b0f2b5",
+  "priorFailure": "native155-aircraft-failure.json",
+  "readOnlyCameraObserver": "native156-camera-observation.txt",
+  "playerReady": false,
+  "historicalReason": "Source revised for confirmed shared minimap stationary-touch correction and subsequent native recovery work."
+}

@@ -73,6 +73,14 @@ namespace Game.Runtime.Combat
             float3 targetWorldPosition)
         {
             int damageApplied = math.max(0, previousHealth - currentHealth);
+            // Passive cancellation fact in the shared Components boundary;
+            // Combat must not depend on the higher-level Runtime repair service.
+            if(damageApplied>0&&entityManager.Exists(targetEntity)&&entityManager.HasComponent<VehicleRepairStateComponent>(targetEntity))
+            {
+                var repair=entityManager.GetComponentData<VehicleRepairStateComponent>(targetEntity);
+                if(repair.Phase==VehicleRepairPhase.Working)
+                {repair.IncomingDamage=1;entityManager.SetComponentData(targetEntity,repair);}
+            }
             if (damageApplied == 0 ||
                 queueEntity == Entity.Null ||
                 !entityManager.Exists(queueEntity) ||

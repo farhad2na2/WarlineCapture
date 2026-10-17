@@ -1,0 +1,318 @@
+{
+  "oldRows": 74876,
+  "currentRows": 124167,
+  "duplicateKeys": 51276,
+  "unresolvedRows": 51278,
+  "addedRows": 2465,
+  "removedRows": 4450,
+  "addedRendererNames": [
+    [
+      "BeautifyStallStock0",
+      404
+    ],
+    [
+      "BeautifyStallStock1",
+      404
+    ],
+    [
+      "BeautifyStallStock2",
+      404
+    ],
+    [
+      "BeautifyRoofShade",
+      339
+    ],
+    [
+      "SM_Bld_Village_ClothCover_Cloth_03",
+      85
+    ],
+    [
+      "SM_Bld_Village_ClothCover_Cloth_04",
+      84
+    ],
+    [
+      "LowRuinedWall_23",
+      1
+    ],
+    [
+      "Destroyed",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_0",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_1",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_2",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_3",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_4",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_5",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_6",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_7",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_8",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_9",
+      1
+    ],
+    [
+      "DenseCity_MarketAwning_10",
+      1
+    ],
+    [
+      "DenseCity_RoofLaundry_densecity.df60bb7a163775917cbb3a2fa57ff9f57ac7cc1e8f07cb2997edef9f794af32d",
+      1
+    ]
+  ],
+  "addedOwnerNames": [
+    [
+      "SM_Prop_Cart_Stall_01",
+      1572
+    ],
+    [
+      "DenseCityBuilding",
+      847
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (8)",
+      12
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (7)",
+      8
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (6)",
+      8
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (2)",
+      4
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (4)",
+      4
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (1)",
+      4
+    ],
+    [
+      "SM_Prop_Cart_Stall_01 (3)",
+      4
+    ],
+    [
+      "LowRuinedWall_23",
+      1
+    ],
+    [
+      "Destroyed",
+      1
+    ]
+  ],
+  "addedBranches": {
+    "CityCrossroads_NorthCourtyard/LowRuinedWall_23": 1,
+    "AuthoredOperationMapEntityPresentation/GameplayBuildings": 1,
+    "AuthoredOperationMapEntityPresentation/RenderOnly": 44,
+    "Generated_GiantDenseMiddleEasternCity_EntityPresentation/GameplayBuildings": 847,
+    "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly": 1572
+  },
+  "removedOwners": {
+    "Generated_GiantDenseMiddleEasternCity_EntityPresentation": 4116,
+    "AuthoredOperationMapEntityPresentation": 311,
+    "CityCrossroads_NorthCourtyard": 23
+  },
+  "addedExamples": [
+    {
+      "ownerKind": "Unresolved",
+      "ownerStableId": "",
+      "rendererPath": "<owner>",
+      "subMeshIndex": 0,
+      "rendererName": "LowRuinedWall_23",
+      "ownerName": "LowRuinedWall_23",
+      "branch": "CityCrossroads_NorthCourtyard/LowRuinedWall_23"
+    },
+    {
+      "ownerKind": "Unresolved",
+      "ownerStableId": "",
+      "rendererPath": "<owner>",
+      "subMeshIndex": 1,
+      "rendererName": "Destroyed",
+      "ownerName": "Destroyed",
+      "branch": "AuthoredOperationMapEntityPresentation/GameplayBuildings"
+    },
+    {
+      "ownerKind": "AcceptedMap",
+      "ownerStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1178823656422394-1397257436495442903",
+      "rendererPath": "DenseCity_MarketAwning_0[2]",
+      "subMeshIndex": 0,
+      "rendererName": "DenseCity_MarketAwning_0",
+      "ownerName": "SM_Prop_Cart_Stall_01 (8)",
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly"
+    },
+    {
+      "ownerKind": "AcceptedMap",
+      "ownerStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1178823656422394-1397257436495442903",
+      "rendererPath": "BeautifyStallStock0[3]",
+      "subMeshIndex": 0,
+      "rendererName": "BeautifyStallStock0",
+      "ownerName": "SM_Prop_Cart_Stall_01 (8)",
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly"
+    },
+    {
+      "ownerKind": "AcceptedMap",
+      "ownerStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1178823656422394-1397257436495442903",
+      "rendererPath": "BeautifyStallStock1[4]",
+      "subMeshIndex": 0,
+      "rendererName": "BeautifyStallStock1",
+      "ownerName": "SM_Prop_Cart_Stall_01 (8)",
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly"
+    },
+    {
+      "ownerKind": "AcceptedMap",
+      "ownerStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1178823656422394-1397257436495442903",
+      "rendererPath": "BeautifyStallStock2[5]",
+      "subMeshIndex": 0,
+      "rendererName": "BeautifyStallStock2",
+      "ownerName": "SM_Prop_Cart_Stall_01 (8)",
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly"
+    },
+    {
+      "ownerKind": "AcceptedMap",
+      "ownerStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1178823656422394-1751341836261915001",
+      "rendererPath": "DenseCity_MarketAwning_1[2]",
+      "subMeshIndex": 0,
+      "rendererName": "DenseCity_MarketAwning_1",
+      "ownerName": "SM_Prop_Cart_Stall_01 (2)",
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly"
+    },
+    {
+      "ownerKind": "AcceptedMap",
+      "ownerStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1178823656422394-1751341836261915001",
+      "rendererPath": "BeautifyStallStock0[3]",
+      "subMeshIndex": 0,
+      "rendererName": "BeautifyStallStock0",
+      "ownerName": "SM_Prop_Cart_Stall_01 (2)",
+      "branch": "AuthoredOperationMapEntityPresentation/RenderOnly"
+    }
+  ],
+  "removedExamples": [
+    {
+      "sourceRowIndex": 12426,
+      "ownerKind": "DenseGenerated",
+      "stableOwnerJoined": true,
+      "ownerStableId": "densecity.000ebd8ce694fbb630807c31b11145c39d317ac3ce4f943dfb7f130a3ffb93ee",
+      "ownerRole": "RenderOnly",
+      "ownerSourcePath": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Dirt_With_Sidewalk_Straight",
+      "ownerIdentitySource": "densegenerated|densecity.000ebd8ce694fbb630807c31b11145c39d317ac3ce4f943dfb7f130a3ffb93ee",
+      "ownerIdentityLow": 9066400694176076311,
+      "ownerIdentityHigh": 1787420999329612675,
+      "semanticCategory": "Infrastructure",
+      "buildingFamily": "",
+      "buildingVisualState": "Any",
+      "rendererPath": "Dirt[4]",
+      "rendererPathIdentitySource": "renderer-path|Dirt[4]",
+      "rendererPathIdentityLow": 16973877045725792342,
+      "rendererPathIdentityHigh": 6488570829598978914,
+      "logicalRowIdentitySource": "densegenerated|densecity.000ebd8ce694fbb630807c31b11145c39d317ac3ce4f943dfb7f130a3ffb93ee|renderer-path|Dirt[4]|submesh=0",
+      "logicalRowIdentityLow": 5544594032800042954,
+      "logicalRowIdentityHigh": 14868568287756796862,
+      "rendererType": "UnityEngine.MeshRenderer",
+      "subMeshIndex": 0,
+      "meshAssetGuid": "c79f18f98ef15d94d9da27dc21f33692",
+      "meshLocalId": 4300000,
+      "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+      "materialLocalId": 2100000,
+      "prototypeSignature": "Infrastructure|prefab|0edeb5415af72ab418de56420349e4fe:6752715572181065886|0edeb5415af72ab418de56420349e4fe:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+      "policy": "OpaqueShadowsOn|0|1|Object|3",
+      "eligible": true,
+      "reasonCode": "eligible"
+    },
+    {
+      "sourceRowIndex": 12448,
+      "ownerKind": "DenseGenerated",
+      "stableOwnerJoined": true,
+      "ownerStableId": "densecity.001ed65290d1126116ac4abedf6f0496ffa3f836384784a2768ea165e729c97d",
+      "ownerRole": "RenderOnly",
+      "ownerSourcePath": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Dirt_With_Sidewalk_Straight",
+      "ownerIdentitySource": "densegenerated|densecity.001ed65290d1126116ac4abedf6f0496ffa3f836384784a2768ea165e729c97d",
+      "ownerIdentityLow": 18364615120073132051,
+      "ownerIdentityHigh": 14882092607389106034,
+      "semanticCategory": "Infrastructure",
+      "buildingFamily": "",
+      "buildingVisualState": "Any",
+      "rendererPath": "Dirt[4]",
+      "rendererPathIdentitySource": "renderer-path|Dirt[4]",
+      "rendererPathIdentityLow": 16973877045725792342,
+      "rendererPathIdentityHigh": 6488570829598978914,
+      "logicalRowIdentitySource": "densegenerated|densecity.001ed65290d1126116ac4abedf6f0496ffa3f836384784a2768ea165e729c97d|renderer-path|Dirt[4]|submesh=0",
+      "logicalRowIdentityLow": 9376125842085581740,
+      "logicalRowIdentityHigh": 16278476268379701908,
+      "rendererType": "UnityEngine.MeshRenderer",
+      "subMeshIndex": 0,
+      "meshAssetGuid": "c79f18f98ef15d94d9da27dc21f33692",
+      "meshLocalId": 4300000,
+      "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+      "materialLocalId": 2100000,
+      "prototypeSignature": "Infrastructure|prefab|0edeb5415af72ab418de56420349e4fe:6752715572181065886|0edeb5415af72ab418de56420349e4fe:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+      "policy": "OpaqueShadowsOn|0|1|Object|3",
+      "eligible": true,
+      "reasonCode": "eligible"
+    },
+    {
+      "sourceRowIndex": 12480,
+      "ownerKind": "DenseGenerated",
+      "stableOwnerJoined": true,
+      "ownerStableId": "densecity.004d70a28e410c9b3529de22dbd1e890ccdcddaed365b7ba900bab46a3a67174",
+      "ownerRole": "RenderOnly",
+      "ownerSourcePath": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Dirt_With_Sidewalk_Straight",
+      "ownerIdentitySource": "densegenerated|densecity.004d70a28e410c9b3529de22dbd1e890ccdcddaed365b7ba900bab46a3a67174",
+      "ownerIdentityLow": 245543979156133924,
+      "ownerIdentityHigh": 7248930904992900489,
+      "semanticCategory": "Infrastructure",
+      "buildingFamily": "",
+      "buildingVisualState": "Any",
+      "rendererPath": "Dirt[4]",
+      "rendererPathIdentitySource": "renderer-path|Dirt[4]",
+      "rendererPathIdentityLow": 16973877045725792342,
+      "rendererPathIdentityHigh": 6488570829598978914,
+      "logicalRowIdentitySource": "densegenerated|densecity.004d70a28e410c9b3529de22dbd1e890ccdcddaed365b7ba900bab46a3a67174|renderer-path|Dirt[4]|submesh=0",
+      "logicalRowIdentityLow": 17247619964911374098,
+      "logicalRowIdentityHigh": 7921902829079570558,
+      "rendererType": "UnityEngine.MeshRenderer",
+      "subMeshIndex": 0,
+      "meshAssetGuid": "c79f18f98ef15d94d9da27dc21f33692",
+      "meshLocalId": 4300000,
+      "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+      "materialLocalId": 2100000,
+      "prototypeSignature": "Infrastructure|prefab|0edeb5415af72ab418de56420349e4fe:6752715572181065886|0edeb5415af72ab418de56420349e4fe:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+      "policy": "OpaqueShadowsOn|0|1|Object|3",
+      "eligible": true,
+      "reasonCode": "eligible"
+    }
+  ],
+  "duplicateKeyInterpretation": "Diagnostic fallback used empty IDs for unresolved owners; 51276 collapsed keys do not establish duplicate physical rows. Active unresolved owner rows51278 are a real packaging gate."
+}

@@ -1,0 +1,71 @@
+{
+  "scope": "Read-only diagnosis of closed1156 sourceca845 FA104734 genuine gameplay Victory with screen observer failure; external revised1167 and neverloaded1165/1166 prepared, no agent production edits or Unity calls.",
+  "historicalSource": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+  "nextCandidateSource": "f788e01e25897c16ae470e4e4d9d687a574c35eca934aea9aa25ed9f72254893",
+  "historicalNativeVictoryElapsed": 232.584,
+  "historicalWrapperNativeExit": [
+    0,
+    0
+  ],
+  "historicalStrictQualification": "Failed; no complete current-screen/seed certification claimed",
+  "screensReviewed": [
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-23900f25d3144de29a1a30c23c99acb5.jsonl.setup.png",
+      "sha256": "433a6d1e66c95e647318e306c1d5b63afaef425018c0857729f1b1e02781b12b",
+      "viewed": true
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-23900f25d3144de29a1a30c23c99acb5.jsonl.opening.png",
+      "sha256": "26cc5dd03984b727e4d756db9722ad38c249930e8bf3a3a42d9e09a2d276922f",
+      "viewed": true
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-23900f25d3144de29a1a30c23c99acb5.jsonl.terminal-destination.png",
+      "sha256": "8bb95a4f0716f398f9b7c94c14aa591acf7d61e990a9f1045222ad7c7dbeec2f",
+      "viewed": true
+    }
+  ],
+  "rawObservation": {
+    "path": "native1156-normal-aria-observation.jsonl",
+    "sha256": "786921778071ca6b85304174be4b4672a5a29f17bde51413d7de5a5486fd0b89",
+    "objectiveStripRows": 295,
+    "actualRenderedCounts": {
+      "renderedPlayerBase": 0,
+      "renderedEnemyBase": 251,
+      "renderedClock": 222
+    },
+    "setupAndReturnTitleRows": 6,
+    "titleEveryRowZeroGlyphs": true
+  },
+  "findings": [
+    {
+      "kind": "ActualProductionScreenFailure",
+      "description": "Both saved setup and terminal-destination screenshots have blank S005 OperationName; actual nonempty shaped text has zero characterCount/glyphs at exact same native bound component. No evidence of separate visible RTL sibling replacing this title. Generic BaseAssaultRules Title is visible but cannot establish mission identity.",
+      "source": [
+        "QuickCustomScreenView.cs160-166: sets Ellipsis",
+        "QuickCustomScreenView.cs193-202: configured bounds12/22 fixed784x54",
+        "QuickCustomScreenView.cs209-217: S004 Overflow, previous S005 no override",
+        "V3LocalizedTextBindingView.cs223-229: configured max bounds returns before generic Arabic linefit/Overflow240-254"
+      ],
+      "repair": "Root applied exact S005 Overflow branch; fresh native title glyph proof pending."
+    },
+    {
+      "kind": "ActualObserverCaptionMismatch",
+      "description": "SkirmishMatchView61-62 and HudIconButtonView149-155 own actual Persian caption پایگاه شما. Model heading is پایگاه خودت. Original observer225 compared visible caption to model heading, producing own0 and preventing combined objective gate. Native screenshots and rawglyph9 text prove actual heading meaning/render. No hidden RTL sibling needed.",
+      "repair": "Read-only exact native player/enemy field identity + public focusButton ownership + actual authored caption expected. Actual health unknown0/0 remains native fog state, not modified."
+    },
+    {
+      "kind": "ClockAndEnemyNoDefectEstablished",
+      "description": "Enemy actual expected heading matches251/295 rows and clock existing full model localized/shaped expectation matches222/295. Nativeclock rendered17:53 screenshot and model/raw95:71 at logical17:59 demonstrate usual RTL presentation. No broad clock relaxation; revised exact native field additionally records V3 SourceValue and requires matching mm:ss with current model plus full localized/shaped equality."
+    },
+    {
+      "kind": "DependentSixFailures",
+      "description": "MissingSetupTitle/AdjustSetupTitle drives setup rule and return/closure failures despite actual objective rendered. Owncaption mismatch drives objective composite failure. Actual purpose, activeStop, Victory rendered and native result return retained separately."
+    }
+  ],
+  "preparedIndex": "delegation-fa-caption-title1167-revision-index.json",
+  "original1156FixtureAndRunnerPreserved": true,
+  "neverLoaded1165And1166OriginalRevisionSuffix": ".before-fa-caption1167-review",
+  "newNativeGate": "Root review, new core1168 closure, revised unique compile, genuine freshFA normalrun. No glyph0 waiver or title substitution.",
+  "playerReady": false
+}

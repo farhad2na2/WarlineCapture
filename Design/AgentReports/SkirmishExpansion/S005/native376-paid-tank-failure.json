@@ -1,0 +1,13 @@
+{
+  "sourceHash": "2d7116db5cbe430d2d65a7c3f5403becddd9809a22ff1a1b80b98a8ba1da688e",
+  "result": "Failed",
+  "log": "native-376-paid-tank-save.log",
+  "logSha256": "84f125b166db227b20cb7612e6e3e81101fea76f52d394754e938c751131a490",
+  "wrapperExit": 1,
+  "countsForCurrentSource": false,
+  "playerReady": false,
+  "paidTankDelivered": true,
+  "commandedMovement": false,
+  "nativeFire": false,
+  "reason": "Recruitment/research consumed shared watchdog; combat started immediately before timeout. Combat now has a bounded separate watchdog within unchanged match clock."
+}

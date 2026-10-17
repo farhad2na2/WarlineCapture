@@ -1,0 +1,12 @@
+{
+  "sourceHash": "34ad8f0c263fbc483e65765908ce2ef8f3d0bb878776cc37ccabfd1df6771d9e",
+  "changed": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "runtimeAndConfigsUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "focusedRuntimeProof": "focused703-shared-production-parking-flight-checkpoint-pass.json"
+}

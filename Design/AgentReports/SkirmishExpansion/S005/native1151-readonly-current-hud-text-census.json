@@ -1,0 +1,85 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return UnityEngine.Object.FindObjectsByType<TMPro.TMP_Text>(UnityEngine.FindObjectsInactive.Exclude).Where(t => t.text.Contains(\"BASE ASSAULT\") || t.text.Contains(\"YOUR BASE\") || t.text.Contains(\"ENEMY BASE\") || t.text.Contains(\"TIME LEFT\") || t.text.Contains(\"Barracks\") || t.text.Contains(\"troops\")).Select(t => new { name=t.name, text=t.text, active=t.isActiveAndEnabled, culled=t.canvasRenderer.cull, colorAlpha=t.color.a, chars=t.textInfo.characterCount, visible=t.textInfo.characterInfo.Count(c=>c.isVisible), rect=t.rectTransform.rect.ToString(), root=t.transform.root.name, parent=t.transform.parent.name, canvas=t.canvas.name, width=t.canvas.pixelRect.width, screenWidth=UnityEngine.Screen.width }).ToArray();"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "name": "Label",
+          "text": "TIME LEFT  16:32",
+          "active": true,
+          "culled": false,
+          "colorAlpha": 1,
+          "chars": 16,
+          "visible": 13,
+          "rect": "(x:-153.33, y:-49.50, width:306.67, height:99.00)",
+          "root": "SkirmishMatchCanvas",
+          "parent": "BaseObjectives",
+          "canvas": "SkirmishMatchCanvas",
+          "width": 2400,
+          "screenWidth": 1281
+        },
+        {
+          "name": "TutorialTitle",
+          "text": "BASE ASSAULT",
+          "active": true,
+          "culled": false,
+          "colorAlpha": 1,
+          "chars": 12,
+          "visible": 11,
+          "rect": "(x:0.00, y:-31.00, width:360.00, height:31.00)",
+          "root": "GameUIRoot",
+          "parent": "TutorialGuidance",
+          "canvas": "AriaAssistantButton",
+          "width": 2400,
+          "screenWidth": 1281
+        },
+        {
+          "name": "Label",
+          "text": "ENEMY BASE",
+          "active": true,
+          "culled": false,
+          "colorAlpha": 1,
+          "chars": 10,
+          "visible": 9,
+          "rect": "(x:-129.33, y:-20.75, width:258.67, height:41.50)",
+          "root": "SkirmishMatchCanvas",
+          "parent": "ENEMY MAIN BASE",
+          "canvas": "SkirmishMatchCanvas",
+          "width": 2400,
+          "screenWidth": 1281
+        },
+        {
+          "name": "Label",
+          "text": "YOUR BASE",
+          "active": true,
+          "culled": false,
+          "colorAlpha": 1,
+          "chars": 9,
+          "visible": 8,
+          "rect": "(x:-129.33, y:-20.75, width:258.67, height:41.50)",
+          "root": "SkirmishMatchCanvas",
+          "parent": "YOUR MAIN BASE",
+          "canvas": "SkirmishMatchCanvas",
+          "width": 2400,
+          "screenWidth": 1281
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,101 @@
+using System;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Editor;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.Tactical.Contracts;
+using UnityEditor;
+using UnityEngine;
+
+public static class CampaignSelectionJourney996
+{
+    static AriaTouchInputUiSystemHelper touch;
+    static TaskCompletionSource<int> completion;
+    static int frame=-1, gestures;
+    static double due;
+    static bool failed;
+    static readonly Type probe=typeof(CampaignTutorialEntryEditorProbe);
+    static object Read(string name)=>probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+    public static string Run()=>"Loaded validation-only native selection companion; no journey executed";
+    public static Task<int> RunM01()=>Start(1);
+    public static Task<int> RunM02()=>Start(2);
+    public static Task<int> RunM03()=>Start(3);
+    public static Task<int> RunM04()=>Start(4);
+    public static Task<int> RunM05()=>Start(5);
+    static Task<int> Start(int mission)
+    {
+        if(completion!=null&&!completion.Task.IsCompleted) throw new InvalidOperationException("Already active");
+        failed=false; gestures=0; frame=-1; due=0; touch=null;
+        foreach(var name in new[]{"deadline","waitUntil","lastSkip","missingDefenseInstructionSince","missingDefenseStatusSince"})
+            probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,0d);
+        foreach(var name in new[]{"lastStableStep","trainingWaitEntry","gatePoseCheckedEntry","defenseStatusCapture"})
+            probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,-1);
+        completion=new TaskCompletionSource<int>();
+        Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");
+        probe.GetMethod("RunM"+mission.ToString("00")+"Journey").Invoke(null,null);
+        Canvas.willRenderCanvases+=Frame;
+        EditorApplication.update+=Finish;
+        return completion.Task;
+    }
+    static void Frame()
+    {
+        if(failed||!EditorApplication.isPlaying||Time.frameCount==frame||(int)Read("stage")!=2)return;
+        var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>(FindObjectsInactive.Include);
+        var canvas=aria?.GetComponentInParent<Canvas>()?.rootCanvas;
+        if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1)return;
+        frame=Time.frameCount;
+        try
+        {
+            touch?.Tick(Time.unscaledTime);
+            if(touch!=null&&(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0))
+                throw new InvalidOperationException("Selection native Touch audit failed");
+            if(touch?.IsBusy==true||EditorApplication.timeSinceStartup<due)return;
+            bool hasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target);
+            if(!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commands)||commands.ActiveCommandMode is not (TacticalCommandMode.None or TacticalCommandMode.Select))return;
+            var match=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            object bootstrap=match?.GetType().GetProperty("MatchBootstrap",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(match);
+            object menu=bootstrap?.GetType().GetProperty("MainMenu").GetValue(bootstrap);
+            if(menu==null)return;
+            object assistant=menu.GetType().GetField("_matchHudAssistantUiSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(menu);
+            object highlight=assistant?.GetType().GetField("_highlightPresentationSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(assistant);
+            if(highlight==null)return;
+            Vector2 start,end;
+            var args=new object[]{Vector2.zero,Vector2.zero};
+            bool visibleDrag=(bool)highlight.GetType().GetMethod("TryObserveVisibleSelectionDrag",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(highlight,args);
+            if(visibleDrag)
+            {
+                start=(Vector2)args[0];end=(Vector2)args[1];
+            }
+            else
+            {
+                if(!hasTarget||!target.NeedsSelection||target.DragSelection)return;
+                var world=match.WorldCamera.WorldToScreenPoint(target.Selection);
+                if(world.z<=0)return;
+                start=end=world;
+                if(!Screen.safeArea.Contains(start))return;
+                if(UnityEngine.EventSystems.EventSystem.current!=null)
+                {
+                    var eventData=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){position=start};
+                    var hits=new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+                    UnityEngine.EventSystems.EventSystem.current.RaycastAll(eventData,hits);
+                    if(hits.Count!=0)return;
+                }
+            }
+            if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");}
+            if(!touch.TryGesture(start,end,visibleDrag?1.2f:.3f,visibleDrag?.8f:0f,Time.unscaledTime))return;
+            gestures++;due=EditorApplication.timeSinceStartup+3;
+            probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,due);
+            Debug.Log("[CampaignNativeSelection] input=Touch drag="+target.DragSelection+" expected="+target.RequiredSelectionCount+" gesture="+gestures+" start="+start+" end="+end+" actorOrSelectionInjected=0");
+        }
+        catch(Exception ex){failed=true;probe.GetField("failure",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,"Native selection companion: "+ex);Debug.LogException(ex);}
+    }
+    static void Finish()
+    {
+        if(!(bool)Read("finished"))return;
+        Canvas.willRenderCanvases-=Frame;EditorApplication.update-=Finish;
+        bool pass=!failed&&Read("failure")==null&&gestures>0&&touch!=null&&touch.CompletedGestures==gestures&&touch.UnexpectedSamples==0&&touch.PhysicalInterventions==0;
+        Debug.Log("[CampaignNativeSelection] result="+(pass?"Passed":"Failed")+" gestures="+gestures+" completed="+(touch?.CompletedGestures??0)+" unexpected="+(touch?.UnexpectedSamples??0)+" interventions="+(touch?.PhysicalInterventions??0)+" fullJourneyStrictTouchAudit=0");
+        touch?.Dispose();touch=null;completion.TrySetResult(pass?0:1);
+    }
+}

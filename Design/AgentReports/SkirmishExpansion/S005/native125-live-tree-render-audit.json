@@ -1,0 +1,14 @@
+{
+  "renderEntities": 25218,
+  "treeMeshEntities": 481,
+  "openingSectorTrees": 12,
+  "meshes": {
+    "SM_Env_Tree_02": 56,
+    "SM_Env_Tree_Big_02": 34,
+    "SM_Env_Tree_Big_03": 31,
+    "SM_Env_Tree_Large_01": 31,
+    "SM_Env_Tree_03": 221,
+    "SM_Env_Tree_01": 66,
+    "SM_Env_Tree_Big_01": 42
+  }
+}

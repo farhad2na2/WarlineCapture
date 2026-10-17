@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "sourceHash": "7fecf45e8da8250b03a73993e4616effc7b9d384ccd575e2b6719edf9940aa4d",
+  "actualWrapperExit": 2,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-762-shared-full-map-southern-native-camera-pass-post-source-manifest.json",
+  "postManifest": "final-763-joint-placement-preview-camera-failure-post-source-manifest.json",
+  "log": "native-763-current-manual-en-seed155926.log",
+  "trace": "s005-aria-live-155926-en-09971557495145e2bc38dc5017917c3b.jsonl",
+  "firstPaidAirportCommitted": true,
+  "secondPaidAirportCommitted": false,
+  "reason": "Southern full-map tap still failed with building placement preview active; ordinary full-map camera passed separately in native762",
+  "inputAudit": "native763-touch-contact-audit.json",
+  "jointNativePlacementCertified": false,
+  "bilateralFactionCapacityCertified": false,
+  "playerReady": false
+}

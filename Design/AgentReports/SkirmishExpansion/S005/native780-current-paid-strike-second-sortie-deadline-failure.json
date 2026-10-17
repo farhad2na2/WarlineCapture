@@ -1,0 +1,30 @@
+{
+  "result": "Failed",
+  "reason": "NormalMissionDrawBeforeSecondSortieFuelReserve",
+  "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+  "preSourceManifest": "final-779-current-manual-en-seed155926-post-source-manifest.json",
+  "postSourceManifest": "final-780-current-strike-draw-failure-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 2,
+  "wrapperExitArtifact": "native-780-current-manual-en-seed155926.log.exit",
+  "log": "native-780-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-f66c032f9aa645ae9cc34e43c2e5bc93.jsonl",
+  "inputAudit": "native780-touch-contact-audit.json",
+  "progress": {
+    "paidAirport": true,
+    "paidStrike": true,
+    "strikeCost": 520,
+    "nativeFiring": true,
+    "nativeHomeLanding": true,
+    "touchdownUsableFactionFuel": 420,
+    "lastObservedUsableFactionFuel": 574,
+    "secondSortie": false
+  },
+  "scope": "Normal paid Strike cycle; incomplete. Root journey trace empty in scoped startup; native log and input/economy companions retained.",
+  "fullMissionVictory": false,
+  "playerReady": false,
+  "technicallyReady": false,
+  "physicalMapChanged": false
+}

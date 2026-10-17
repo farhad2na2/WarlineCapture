@@ -1,0 +1,15 @@
+﻿[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\timeout-stderr-root-fallback.log
+[UnityInvoke] TimeoutSeconds: 1
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\timeout-stderr-root-fallback.log --sleep 20000 --fatal 0
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\timeout-stderr-root-fallback.log --sleep 20000 --fatal 0
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\timeout-stderr-root-fallback.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityCleanupStderr\owned-q65s8ej5\timeout-stderr-root-fallback.stderr.log
+[UnityInvoke] ERROR: Unity timed out after 1 seconds. Killing process tree for PID 3420.
+[UnityInvoke] taskkill: OWNED_SYNTHETIC_TASKKILL_TARGET=3420
+[UnityInvoke] taskkill: ERROR: Owned synthetic child could not be terminated: already ended or intentional failure.
+[UnityInvoke] taskkill ExitCode: 128
+[UnityInvoke] WARN: Owned root PID 3420 survived tree cleanup; attempting its cached Process handle.
+[UnityInvoke] ExitCode: 124

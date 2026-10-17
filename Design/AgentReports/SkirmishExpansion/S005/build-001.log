@@ -1,0 +1,136 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SkirmishS005DefinitionBuilder.Build
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishArmyProfileConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:29)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishArmyProfileConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:29)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishArmyProfileConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:29)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishMapLayoutConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishMapLayoutConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishScenarioDefinitionConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:38)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.SkirmishS005DefinitionBuilder:LoadOrCreate<Game.Configs.SkirmishScenarioDefinitionConfig> (string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:82)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:38)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:65)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SkirmishLayout_DB_BA' does not match filename 'SkirmishLayout_S005'
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:65)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:65)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[SkirmishS005DefinitionBuilder] result=Passed source=2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900 physicalMapModified=0 publication=InProgress
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS005DefinitionBuilder:Build () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS005DefinitionBuilder.cs:76)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.SkirmishS005DefinitionBuilder.Build
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:110)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_7943e54d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

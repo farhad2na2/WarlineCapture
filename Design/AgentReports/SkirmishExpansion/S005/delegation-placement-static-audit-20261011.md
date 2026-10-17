@@ -1,0 +1,7 @@
+The shared placement fix already applies to starting grants and ordinary paid construction across missions. Current code reserves actual authored roads, sidewalks, buildings, trees and standing props, and measures complete model bounds. I found no concrete current-source overlap to patch.
+
+Native832 and native860 passed actual two-faction starting and paid industrial building clearance. Their original source hashes remain preserved. The selected core placement/scenery sources, S005 assets and 966 materials are byte-identical from native860 to current cc14c593; 27 other source deltas prevent claiming a fresh whole-source execution. Native845 passed 11 isolated focused cases whose selected core dependencies remain identical.
+
+The useful next check is a read-only live audit after actual paid Airport construction in an already-needed normal aircraft journey. This covers a real remaining facility gap without changing geometry or repeating a long match. The prepared sideband fixture catches failure to its own JSON instead of sending an exception into the active validator. It must be scheduled by the main agent and correlated with source manifests and the actual paid receipt.
+
+No Assets, Packages or ProjectSettings were edited. No Unity process was controlled. Visual review, bilateral aircraft capacity, additional profiles and real player/device acceptance remain separate pending gates.

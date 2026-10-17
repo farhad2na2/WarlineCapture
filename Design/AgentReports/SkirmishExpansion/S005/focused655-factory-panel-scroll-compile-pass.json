@@ -1,0 +1,8 @@
+{
+  "result": "Passed",
+  "sourceHash": "cd9b6bc8f181c8f4fffa6cc6a004d5365a58cc8c7e30c19959008f3d352ef116",
+  "wrapperExit": 0,
+  "log": "tests-655-native-factory-panel-scroll-compile.log",
+  "marker": "[SkirmishInitialPlacementTests] result=Passed seeds=3 allocationLayouts=3 checkpointSpawnTests=2 nativeMissionAcceptance=Pending",
+  "nativeFactoryControl": "Pending"
+}

@@ -1,0 +1,78 @@
+#if UNITY_EDITOR
+using System;
+using System.IO;
+using Game.Components;
+using Game.Composition;
+using Game.Configs;
+using Game.Runtime;
+using Newtonsoft.Json.Linq;
+using Unity.Entities;
+using UnityEngine;
+namespace Game.Editor
+{
+    // Synthetic native-state controls do not establish a mission outcome or coverage credit.
+    public static class SkirmishLegacyProductionControls
+    {
+        static void Need(bool value,string error){if(!value)throw new InvalidOperationException(error);}
+        static void Refuses(Action action){try{action();}catch(InvalidDataException){return;}throw new InvalidOperationException("Malformed legacy identity was accepted");}
+        public static void RunFocusedValidation()
+        {
+            string locale=GameLocalization.CurrentLocaleCode;
+            var ids=new[]{"S001","S025","S073"};var seeds=new[]{104730,104754,104802};
+            for(int i=0;i<ids.Length;i++)
+            {
+                var config=QuickGameConfig.Defaults;config.ScenarioIndex=SkirmishLegacyProductionIdentity.Index(ids[i]);config.MapSeed=seeds[i];config=config.NormalizeForBaseAssault();
+                var identity=SkirmishLegacyProductionIdentity.CaptureConfiguration(ids[i],config,locale);
+                SkirmishLegacyProductionIdentity.ValidateShape(identity);
+                var preset=SkirmishLegacyProductionIdentity.RequireBinding(ids[i]);var source=SkirmishLegacyProductionIdentity.ResolveSource(ids[i],out var sourceFacts);
+                Need(source!=null&&source.TryValidateMetadata(out _),"Actual selected native source metadata required");
+                Need(ids[i]=="S001" ? preset.operationMap==null&&(string)sourceFacts["mode"]=="CompatibilityCatalogFallback" : preset.operationMap==source&&(string)sourceFacts["mode"]=="PresetOperationMap","Preserve actual S001 fallback and explicit CC/IB source behavior");
+                Debug.Log("[SkirmishLegacyPresetSource] catalog="+ids[i]+" presetPath="+UnityEditor.AssetDatabase.GetAssetPath(preset)+" presetOperationMapPresent="+(preset.operationMap!=null?1:0)+" sourcePath="+UnityEditor.AssetDatabase.GetAssetPath(source)+" resolution="+sourceFacts.ToString(Newtonsoft.Json.Formatting.None));
+                Need(!identity.ContainsKey("definition_id")&&!identity.ContainsKey("definition_version")&&!identity.ContainsKey("native_setup_hash_uint32"),"Legacy identity manufactured expanded fields");
+                foreach(string key in new[]{"catalog_id","scenario_index","preset_asset_sha256","native_configuration"})
+                {
+                    var bad=(JObject)identity.DeepClone();bad[key]=JValue.CreateNull();Refuses(()=>SkirmishLegacyProductionIdentity.ValidateShape(bad));
+                }
+                using var world=new World("LegacyProductionOrdinaryQueueControl");var em=world.EntityManager;
+                Need(SkirmishLaunchProjection.TryQueue(em,config),"Actual ordinary protected queue refused");
+                Need(SkirmishLaunchProjection.TryGet(em,out var session,out var match),"Ordinary queue omitted native MatchState");
+                Need(match.ScenarioIndex==config.ScenarioIndex&&match.Seed==config.MapSeed&&match.Phase==SkirmishPhase.Queued&&!match.SessionId.IsEmpty,"Native queued preset readback differs");
+                var actual=SkirmishLegacyProductionIdentity.CaptureLive(em,session,in match,ids[i]);
+                Need(JToken.DeepEquals(identity,actual),"Ordinary queued snapshot differs from exact native preset configuration");
+                Need(!SkirmishLaunchProjection.TryQueue(em,config),"Second native session admitted");
+                var changed=em.GetComponentObject<SkirmishLaunchSnapshot>(session);changed.Configuration.MapSeed++;
+                Refuses(()=>SkirmishLegacyProductionIdentity.CaptureLive(em,session,in match,ids[i]));
+            }
+            VerifySavedResult();
+            Debug.Log("[SkirmishLegacySourceResolutionControls] result=Passed explicitPresets=2 compatibilityFallbacks=1 ordinarySelections=3 nativeJobs=0");
+            Debug.Log("[SkirmishLegacyProductionControls] result=Passed presets=3 ordinaryQueues=3 identityMutations=15 savedResultMutations=7 nativeJobs=0 samplingCoverageCredit=0");
+        }
+        public static void RunLegacyAndOpeningWitnessPreparation()
+        {
+            RunFocusedValidation();
+            SkirmishGroundSourceFitSurvey.RunBoundedLogicalFrameControls();
+            SkirmishGroundSourceFitSurvey.RunPilotStaticPrefixAndOpeningWitnessPreparation();
+            Debug.Log("[LegacyAndOpeningWitnessPreparation] result=Passed legacyPresets=3 logicalFrameControls=6 prefixControls=6 openingControls=18 warmup=1 nativeJobs=0 samplingCoverageCredit=0");
+        }
+        public static void RunLegacyRegressionAndOpeningWitnessDiagnostic()
+        {
+            RunFocusedValidation();
+            Debug.Log("[LegacyRegressionAndOpeningWitnessDiagnostic] phase=Dispatch legacyControlsPassed=1 nativeJobs=0 samplingCoverageCredit=0 completeMissionCertified=0 actualExitStillRequired=1");
+            SkirmishS002AriaRunHarness.RunS005OpeningWitnessWithLateEcsCensus();
+        }
+        static void VerifySavedResult()
+        {
+            var match=new SkirmishMatchState{SessionId=new Unity.Collections.FixedString64Bytes("synthetic-legacy-save-control"),Seed=104730,ScenarioIndex=0,Phase=SkirmishPhase.Finished,Outcome=SkirmishOutcome.Draw,Reason=SkirmishEndReason.TimeLimit,ElapsedSeconds=900,ResultSaved=1,PlayerUnitsLost=2,EnemyUnitsLost=3,PlayerBuildingsLost=4,EnemyBuildingsLost=5};
+            var saved=new SkirmishResultSaveData{sessionId=match.SessionId.ToString(),seed=match.Seed,scenarioIndex=match.ScenarioIndex,outcome=match.Outcome.ToString(),reason=match.Reason.ToString(),elapsedSeconds=match.ElapsedSeconds,playerUnitsLost=2,enemyUnitsLost=3,playerBuildingsLost=4,enemyBuildingsLost=5};
+            Need(SkirmishLegacyProductionIdentity.SavedResultMatches(in match,saved),"Exact actual save shape rejected");
+            for(int i=0;i<7;i++)
+            {
+                var bad=JsonUtility.FromJson<SkirmishResultSaveData>(JsonUtility.ToJson(saved));
+                if(i==0)bad.sessionId="foreign";if(i==1)bad.seed++;if(i==2)bad.scenarioIndex++;if(i==3)bad.outcome="Victory";if(i==4)bad.reason="Surrender";if(i==5)bad.elapsedSeconds++;if(i==6)bad.playerBuildingsLost++;
+                Need(!SkirmishLegacyProductionIdentity.SavedResultMatches(in match,bad),"Foreign/mutated saved terminal accepted");
+            }
+            match.ResultSaved=0;Need(!SkirmishLegacyProductionIdentity.SavedResultMatches(in match,saved),"Unacknowledged save accepted");
+        }
+    }
+}
+#endif

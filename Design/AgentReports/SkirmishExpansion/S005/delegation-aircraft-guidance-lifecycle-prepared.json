@@ -1,0 +1,114 @@
+{
+  "status": "PreparedForBeforeFixReproductionAndReviewNotCompiledNotExecuted",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "stagedPath": "/private/tmp/guidance-lifecycle-fix/Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "baseSha256": "728ede114a68a447834a11deba703706b764bb503ba60c9c17d6e0fd72e815f7",
+      "stagedSha256": "c58710c100bab6217ce3302caf260c473da964d67f8533158c885374df02ca77"
+    },
+    {
+      "path": "Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "stagedPath": "/private/tmp/guidance-lifecycle-fix/Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "edb70fc99627391fb311712a07d3e25206e062c517611698224410be7ec9dcc3"
+    }
+  ],
+  "patchSha256": "e35f7e542335f8c1b1886e216d8591d1f1d02aa001c64fc5de0a0e5983ad2850",
+  "sourceCauseChain": [
+    "MatchSceneView.OnDisable/OnDestroy calls ShutdownMatchRuntimeBound",
+    "MatchBootstrapCompositionSystemHelper.OnDestroy\u2192ShutdownRuntime:651 invokes MainMenu.Dispose",
+    "MainMenuPlayUI.Dispose:97 guided cleanup BEFORE assistant Unbind:100",
+    "DisposeGuidedHudRuntime:33 invokes assistant.BindResourceStrip(null)",
+    "Highlight.UiSurfaceGuidance.BindResourceStrip:41 calls ApplyVisual",
+    "Highlight.Guidance.ApplyVisual calls ApplyScreenTargetIndicator",
+    "Highlight.TargetVisuals.EnsureScreenTargetIndicator creates root when prior indicator destroyed while panelPulse still bound"
+  ],
+  "correction": "Move existing assistant.Unbind before guided cleanup, revoking panelPulse creation authority before resource detach redraw",
+  "productionFiles": 1,
+  "GuidanceUnbindOwnCalls": "ClearDirectTutorialCue and detach helpers do not invoke ApplyVisual; original hypothesis of direct Unbind redraw not supported",
+  "nativeWarning": "Observed native1101 teardown warning; post-closure overlay census empty. No permanent Editor leak claimed. Precise Unity destruction order requires native reproduction.",
+  "focusedEditModeMethod": "Game.Tests.Editor.AssistantGuidanceLifecycleTests.RunFocusedValidation",
+  "editModeMarker": "[AssistantGuidanceLifecycleTests] result=Passed cases=2 scope=ActualHelperEditModePlayTeardownPending",
+  "beforeFixExpected": "Public ownerDispose creates replacement overlay from missing prior overlay before real assistant-unbind callback; first test asserts0 and should fail1. Failure cleanup clears callback and real owner/HUD safely.",
+  "playTest": "Game.Tests.Editor.AssistantGuidanceLifecycleTests.PlayOwnerOnDestroyAndRebindPreserveOverlayLifecycle",
+  "playMarker": "[AssistantGuidancePlayLifecycle] result=Passed ownerOnDestroy=1 overlayRecreated=0 rebindVisible=1 M3OverlayRootPreserved=1",
+  "playPrecondition": "Native Editor temporary empty scene, no dense mission; UnityTest enters/exits actual Play, native Object.Destroy\u2192MonoBehaviour.OnDestroy invokes actual MainMenu.Dispose, delayed destruction then freshBind/render positive control",
+  "scope": "Isolated real helper lifecycle, not wholemission qualification",
+  "M3OverlayHierarchyFixPreserved": true,
+  "sourceEditsPerformed": false,
+  "UnityCallsPerformed": true,
+  "frozenFogBundleUnchanged": true,
+  "manifestPath": "/private/tmp/guidance-lifecycle-fix/manifest.json",
+  "manifestSha256": "25725bfbab7867df56d725e316ff913396ec2b843b7ae416293bd3adf17b7682",
+  "beforeFixExternalFixture": "/private/tmp/S005GuidanceLifecycleRepro20261011.cs",
+  "beforeFixExternalFixtureSha256": "f58e5c9e504fe9219cfda675cc180c04a85d03240b2746e57c134af253eb885d",
+  "beforeFixExternalMethod": "S005GuidanceLifecycleRepro20261011.RunValidation",
+  "beforeFixExternalMarker": "[GuidanceLifecycleRepro] result=ReproducedTransientRecreation count=1",
+  "beforeFixExternalDisclosure": "Idle EditMode isolated preceding overlay destruction and observation callback; actual helper/public owner disposal, not actual Unity Play-stop order.",
+  "smallPlayDriver": {
+    "path": "/private/tmp/S005GuidancePlayLifecycle1116.cs",
+    "sha256": "179165d4daa85ff745c1407955ebf676e04697f0c19237e08ac799a010f81a61",
+    "reviewApproved": true,
+    "compiled": true,
+    "loaded": true,
+    "executed": true,
+    "laneReleasePending": false,
+    "policyConfigWrites": false,
+    "onlyEmptyTemporaryScene": true,
+    "allOriginalScenesMustBeCleanSaved": true,
+    "actualFrameAdvanceForNullYield": true,
+    "normalFailureCleanupNativePerform": true,
+    "exactRestoredCensusRequired": true,
+    "wrapperTaskIntSupportSource": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/ExistingEditorValidation.cs",
+    "wrapperTaskIntSupport": "Run recognizes Task<int>; PollCompletion checks completed task then writes actual native completion receipt. Domain reload fails closed; driver requires existing DisableDomainReload and never modifies settings.",
+    "installedNativeInstructions": [
+      {
+        "source": "/Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRunner/Messages/EnterPlayMode.cs",
+        "sha256": "cb5cdbabaf102720a8d64049cbbd268db1c651dcecb2fbe20a6a3e61d59b383a",
+        "performStartLine": 35,
+        "calls": "Enter: Editor idle/compile guards, null yield, ExpectedPlaymodeState, UnlockReloadAssemblies, EditorApplication.isPlaying=true then nulls until nativePlay; Exit: activePlay guard, EditorApplication.isPlaying=false then nulls until nativeEdit",
+        "testRunnerInternalContextDependency": false
+      },
+      {
+        "source": "/Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRunner/Messages/ExitPlayMode.cs",
+        "sha256": "779915952340ace08f6c00964d511f0f68683eeb48f8c02fdcf052aed04b7b75",
+        "performStartLine": 34,
+        "calls": "Enter: Editor idle/compile guards, null yield, ExpectedPlaymodeState, UnlockReloadAssemblies, EditorApplication.isPlaying=true then nulls until nativePlay; Exit: activePlay guard, EditorApplication.isPlaying=false then nulls until nativeEdit",
+        "testRunnerInternalContextDependency": false
+      }
+    ],
+    "actualT7InstalledNativeInstructions": [
+      {
+        "source": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRunner/Messages/EnterPlayMode.cs",
+        "sha256": "cb5cdbabaf102720a8d64049cbbd268db1c651dcecb2fbe20a6a3e61d59b383a",
+        "sameInstalledNativePerformAsReviewed": true
+      },
+      {
+        "source": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRunner/Messages/ExitPlayMode.cs",
+        "sha256": "779915952340ace08f6c00964d511f0f68683eeb48f8c02fdcf052aed04b7b75",
+        "sameInstalledNativePerformAsReviewed": true
+      }
+    ],
+    "driverInternalSceneSerializationPartial": true,
+    "independentNativeSceneCensusAndCachedOriginalSetupProofComplete": true
+  },
+  "approvedUniqueNativeRuns": {
+    "beforeFix": "1114 exact source-neutral Repro20261011",
+    "afterFix": "1115 actual focused2",
+    "smallPlay": "1116 exact source-neutral unchanged-test native coroutine driver",
+    "rootApproval": "Conditional on explicit campaign13+VFX8 source release and independent receipt/full-source/idle closure at each stage",
+    "sourceWritesDuring1116": false
+  },
+  "nativeSequenceCompleted": {
+    "1114": "delegation-aircraft-guidance1114-native-reproduction.json",
+    "1115": "delegation-aircraft-guidance1115-native-focused2.json",
+    "1116": "delegation-aircraft-guidance1116-native-play.json"
+  },
+  "T7SourceEditedExactCandidate2": true,
+  "mainAssetsEditedByThisAgent": false,
+  "finalT7WholeSourceSha256": "7a8820a19a70fde24d7b6b29659a3540df978332f8d22a6f1bf9ddaa88f6ddc7",
+  "T7LaneReleased": true,
+  "frozenPreparedManifestHistoricalUnchanged": true,
+  "persistentArtifactIndex": "delegation-aircraft-guidance-t7-artifacts/evidence-index.json"
+}

@@ -1,0 +1,6 @@
+{
+  "result": "UnqualifiedRunnerOrderingFailure",
+  "cause": "Root orchestration did not stop after premanifest check reported missing still-running hash output; tests launched before full premanifest completion. No Assets changes were made.",
+  "action": "Retain evidence, allow owned short suite to finish safely, verify native idle and source, then rerun with guarded completed precheck",
+  "playerReady": false
+}

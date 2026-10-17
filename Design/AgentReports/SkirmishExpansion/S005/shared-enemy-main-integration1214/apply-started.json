@@ -1,0 +1,14 @@
+{
+  "finalFiles": 47,
+  "gitCalledByScript": false,
+  "layerOrder": [
+    "foundation",
+    "compile-followup",
+    "production-v4",
+    "commander-v2",
+    "ground-rollout-v1"
+  ],
+  "orderedEntries": 50,
+  "unityCalledByScript": false,
+  "utc": "2026-10-11T19:05:00.476762+00:00"
+}

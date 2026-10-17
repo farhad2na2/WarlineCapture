@@ -1,0 +1,27 @@
+{
+  "scope": "ExplicitBoundedLogicalCompoundAuthoringSearch_ExistingPhysicalSourceOnly",
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120BoundedCompoundRefinement",
+  "controls": "Game.Editor.SkirmishGroundSourceFitSurvey.RunBoundedCompoundSearchControls",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "before_sha256": "50806d3a297ba205c6bc012ac6c2e5861c2706c7717187ed1cc1099f2efddd76",
+      "sha256": "bc5fadae3b11908b86493b2723cde2c6a577335c9efcb096ca6d5f057c6011cf",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs.txt",
+      "before_sha256": null,
+      "sha256": "fb92f8feaa7b086506750e3a447a9296da78f1f5ce542ed76b9446ccda3a4c6c",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "existing_entries_policy_unchanged": true,
+  "maximum_discovery_envelopes": 4,
+  "maximum_strict_passes": 2,
+  "source_fit_certified": false,
+  "assets_edited": false,
+  "native_executed": false
+}

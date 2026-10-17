@@ -1,0 +1,24 @@
+{
+  "sourceHash": "1c8b301b2d268fb97ba1a1b5ab61c25f2aaae8cd040143f4e5cbbd28c509316a",
+  "run": "native-414-paid-strike-flight-cycle.log",
+  "observationOnly": true,
+  "startingLogisticsLosses": 2,
+  "paidNativeLivingHaulers": [
+    {
+      "role": "LogisticsTruck",
+      "reservation": 1001,
+      "health": 160
+    },
+    {
+      "role": "Tanker",
+      "reservation": 1002,
+      "health": 160
+    }
+  ],
+  "tankerConfiguredMaterialsCost": 140,
+  "strikeConfiguredMaterialsCost": 520,
+  "sourceModified": false,
+  "intervention": false,
+  "diagnosis": "Four live depots cannot sustain their nominal production with one remaining oil truck; two depots observed blocked NoOilInput and one had inbound oil reservation. Materials advancing slowly, flight qualification still pending.",
+  "proposedNextStrategy": "Purchase two normal-price oil trucks before research; preserve all starting budgets, depot prices, match timer and source geometry."
+}

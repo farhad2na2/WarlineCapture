@@ -1,0 +1,25 @@
+{
+  "result": "Passed",
+  "sourceUnchanged": true,
+  "sourceHash": "93e8d14c9143a3bf6e451ce4a08730255d5ecd270dc22182443a3a31a38d4d96",
+  "runs": [
+    {
+      "scope": "focused",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "passed": true,
+      "log": "native-1210-input-focused.log",
+      "marker": "[ValidationInputSettingsLifecycle1210] result=Passed repeatCycles=2 deadOwnedRecovery=1 scope=actual-settings-disposable-clones nativePlayTransitions=0"
+    },
+    {
+      "scope": "play",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "passed": true,
+      "log": "native-1210-input-play.log",
+      "marker": "[ValidationInputSettingsLifecycle1210] result=Passed nativePlayTransitions=2 sameNativeOriginal=1 sameJSON=1 sameBackground=1 sameProjectRegistration=1 sameCleanScenes=1"
+    }
+  ],
+  "scope": "Shared Editor validation settings cleanup only; no mission journey acceptance",
+  "playerReady": false
+}

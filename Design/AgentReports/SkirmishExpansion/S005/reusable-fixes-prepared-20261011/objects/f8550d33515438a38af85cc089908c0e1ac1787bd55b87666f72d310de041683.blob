@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "status": "PreparedExternalOnly_NativeCompileAndFocusedTestsPending",
+  "foundationManifestSha256": "43f49d6ff0a9f52f5c81efea7075e35b60a24b42682b4c1c662ef99055424379",
+  "baselineWholeSourceSha256": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "stagedPath": "/private/tmp/s005-enemy-ground-rollout-v1/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "baseDependency": "foundation-v1-staged",
+      "baseSha256": "3bfa56c432519f66cd67757e93238b98bb4b741e27a8763aa9d1d7c56ed4b911",
+      "stagedSha256": "9b26993acfe2251f42d313316bfbf4c06fbdb611b147d9aac8be2eb67b28ee3c",
+      "bytes": 34094
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs",
+      "stagedPath": "/private/tmp/s005-enemy-ground-rollout-v1/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs",
+      "baseDependency": "absent",
+      "baseSha256": null,
+      "stagedSha256": "98b71a99ece7f147256500883b53252b29bb58fcdc9c3e3699a012198b108e38",
+      "bytes": 12200
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs.meta",
+      "stagedPath": "/private/tmp/s005-enemy-ground-rollout-v1/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs.meta",
+      "baseDependency": "absent",
+      "baseSha256": null,
+      "stagedSha256": "541252dce5d98977a2edab7ed406c5c3d7f823e8ffdcb2da89b284ac60346c13",
+      "bytes": 243
+    }
+  ],
+  "patchPath": "/private/tmp/s005-enemy-ground-rollout-v1/ground-rollout.patch",
+  "patchSha256": "302c2dbee750e2ce19c3d0ef4454eb67c62471896b602a955651fa6a09cb6ed3",
+  "goldenIdentitySha256": "69e578a4a448aecdb8de53d52933f866c6b1c2cc42ef7f035d57a68602c81c93",
+  "focusedEntry": "Game.Tests.Editor.SkirmishEnemyGroundRolloutTests.RunFocusedValidation",
+  "focusedCases": 12,
+  "scope": "Current capability rollout: BA + CombinedArms + FieldBase + initial Field readiness + both initialAir zero. Not a permanent mission-specific design; no catalog/seed switch, role/budget/config removal, no live research-triggered change. Unsupported compiled setups retain policyless strategy/save identity. Advanced orchestration and affected-profile regressions must pass before typed rollout widens.",
+  "preservedFoundation": "all original foundation files/manifests untouched",
+  "limits": [
+    "Offline goldens derive exact original compiler canonical FNV input; native compilation/test confirmation pending.",
+    "Codec fixture proves serialized identity and no new state, not genuine player checkpoint recovery.",
+    "No main/T7 writes, Unity or Git."
+  ],
+  "compatibilityDependencies": [
+    "Apply foundation first, plus existing namespace compile-followup and commander-v2 checkpoint bound followup separately.",
+    "New rollout test is independent of existing policy foundation tests; their direct compiler tests remain generic capability tests."
+  ]
+}

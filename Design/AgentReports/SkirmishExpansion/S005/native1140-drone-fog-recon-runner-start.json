@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1140",
+  "coordination": "Explicit root acknowledgement required after heavy-lane release; token is not an inferred release",
+  "preManifest": "final-1140-drone-fog-recon-producer-pre-source-manifest.json",
+  "preflightManifest": "final-1140-drone-fog-recon-producer-preflight-source-manifest.json",
+  "fixtureSha256": "ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c",
+  "validationMethod": "S005DroneFogReconEffects1140.RunValidation"
+}

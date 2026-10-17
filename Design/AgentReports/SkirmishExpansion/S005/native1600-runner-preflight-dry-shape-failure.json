@@ -1,0 +1,36 @@
+{
+  "result": "FailedBeforeUnityDispatch",
+  "runId": 1600,
+  "sourceHash": "b9895c56ad4e30da8111f68df138b8c139db27d625eba8ff8d675eeab2601b6b",
+  "reportedExitCode": 1,
+  "reportedBy": "root invocation of sealed runner",
+  "error": "RuntimeError: Exact new native fixture drycompile success/parameters/target not proven",
+  "errorLocation": "/private/tmp/s005-normal-south-flank1600-source-pending/runner.py:121",
+  "cause": "Sealed runner requires data.success=true although this Unity CLI dry-run response omits data.success; outer success=true, nested result.success=true, exact file/entry/dry_run/project and zero error diagnostics.",
+  "actualDryProof": "compile1600-normal-south-flank-reviewed-dry-run.json",
+  "actualDryProofSha256": "c413bd358f24297bce57e190cebe4b09158b719c7ff249e217df71bd6ca03a17",
+  "actualDryProofShape": {
+    "outerSuccess": true,
+    "dataSuccessPresent": false,
+    "nestedSuccess": true,
+    "exactTarget": true,
+    "exactFixture": true,
+    "dryRun": true,
+    "errorDiagnostics": 0
+  },
+  "sealedRunnerSha256": "e9e326a9c5f803a917b15ad220effb3f68195db447373052216577b0d63e262c",
+  "sealedReleaseReceiptSha256": "7aee409b1b8c056f7ea415dfcd30fd0803ab4f299e6341d7c41848bb3a8ba217",
+  "native1600MissionOutputCreated": false,
+  "native1600ActiveOwnerCreated": false,
+  "stateOwnerFields": {
+    "activeRun": null,
+    "activeLog": null,
+    "activeScope": null,
+    "activePreManifest": null
+  },
+  "existingNative1600Files": [
+    "native1600-loaded-assembly-witness.json",
+    "native1600-loaded-assembly-witness.cs.txt"
+  ],
+  "assessment": "Preflight failure only. No checked wrapper, native match, route, win or result evidence from run1600. Preserve released package and receipt unchanged."
+}

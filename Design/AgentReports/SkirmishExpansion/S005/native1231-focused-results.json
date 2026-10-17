@@ -1,0 +1,16 @@
+{
+  "status": "IncompleteOrFailed",
+  "results": [
+    {
+      "suite": "checkpoint-parts",
+      "method": "Game.Tests.Editor.SkirmishNativeCheckpointPartsTests.RunFocusedValidation",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "marker": "[SkirmishNativeCheckpointPartsTests] result=Passed tests=12 nativeRecoveryComplete=0",
+      "markerPresent": false,
+      "passed": false,
+      "log": "native-1231-checkpoint-parts.log",
+      "logSha256": "b832019e7c283b80f766442c364b231d94020f17f0f4dcb245daa9a7ea65f5da"
+    }
+  ]
+}

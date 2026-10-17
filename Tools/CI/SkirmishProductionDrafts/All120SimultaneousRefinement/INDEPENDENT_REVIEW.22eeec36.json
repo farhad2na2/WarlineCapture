@@ -1,0 +1,11 @@
+{
+  "result": "SourceReviewExtendedClear",
+  "parentReview": "INDEPENDENT_REVIEW.a1a441ef.json",
+  "manifestSha256": "22eeec36e523fdebb7c3a19892cf1aa47f13d2f2a00cf8bd8a7d8a47b5578724",
+  "onlyChangedSource": "Tools\\CI\\SkirmishProductionDrafts\\All120SimultaneousRefinement\\SkirmishGroundSourceFitSurvey.All120Refinement.cs.txt",
+  "sourceSha256": "58a1dab63b51e04b6a9c732e12d8979f544956208a3f69ed4248f603305363f3",
+  "exactPreviousSourceReconstructedFromOnlyLocalTemplateIdExtraction": true,
+  "semantics": "Capture local scalar template ID before LINQ rather than forbidden out-parameter capture; predicate value unchanged",
+  "owningProofReported": "0buj49zl six owners;3319 source/reference stable; native pending",
+  "noAssetUnityGitWrites": true
+}

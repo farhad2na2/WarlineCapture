@@ -1,0 +1,20 @@
+{
+  "mission": "M4",
+  "run": "1042",
+  "result": "Failed",
+  "actualOutcome": "Defeat",
+  "latestLesson": 5,
+  "normalGesturesDispatched": 39,
+  "completed": 38,
+  "unexpected": 0,
+  "interventions": 0,
+  "sourceHash": "4a4cb922ddb9e83e218f1d37f8d3cfd398b794726efd9a08e48b2b5aac6ed60c",
+  "wholeMainSourcePass": false,
+  "selectionDragsActualPositiveArea": true,
+  "readOnlyDiagnostic": "Touch Began frame11839 while IgnoreWorldCommandsUntilFrame11839 skipped BeginPointerPress, DragStart stayed previous endpoint. Rect shrank toward previous endpoint on movement. QA timing fix requires waiting beyond suppression frame, without altering flags.",
+  "logSha256": "d6c17828078692470482a5749720ac7df62a79e61c5eab5bf386468de4f88b09",
+  "sourceHashLastVerifiedBeforeM4M3": "4a4cb922ddb9e83e218f1d37f8d3cfd398b794726efd9a08e48b2b5aac6ed60c",
+  "sourceHashAfterM4M3": "f57a863e89493889d2db2df496ba2ed3b296891304d1ab658bec4742f4517287",
+  "sourceStable": false,
+  "sourceDrift": "Only SCN08 BuildCommand.m_Interactable1\u21920 and recreated SceneDependencyCache meta; exact timing within M4/M3 not independently sampled. No runtime-script delta."
+}

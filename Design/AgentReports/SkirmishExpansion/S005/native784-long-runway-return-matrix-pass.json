@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "wrapperExit": 0,
+  "sourceHash": "ea04ecb617b699cc1bab65b4eec46095440fd0d1bdd2a5b2ba3164f99ec72196",
+  "prePostIdentical": true,
+  "log": "native-784-long-runway-return.log",
+  "cases": 64,
+  "legacyRegressions": 2,
+  "scope": "Isolated native UnitAirMovementSystem long-runway returns; no normal-input mission certification",
+  "normalInputMissionCertified": false,
+  "diagnostics": [
+    "Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again."
+  ]
+}

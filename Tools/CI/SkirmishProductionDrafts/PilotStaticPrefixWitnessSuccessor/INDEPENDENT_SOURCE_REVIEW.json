@@ -1,0 +1,9 @@
+{
+  "result": "IndependentSourceReviewClear",
+  "manifest_sha256": "1bf99e683326f610e9e58dd16a3265e7380f02187c6784a00e4dd738ef11cfbf",
+  "source_sha256": "c349413d5b540ab159f7676539a16ff7c58e97b190d60b74be12208f87f59b0a",
+  "scope": "Sole additive public facade calls prefix6 then existing opening witness preparation18 including warmup, and logs combined marker only after both return. No catches/skips/generator or normal entry changes.",
+  "extends_review": "b7a3 source prefix clear; native24 root-reported actual0 separately, no independent native run",
+  "native_executed_by_reviewer": false,
+  "source_fit_certified": false
+}

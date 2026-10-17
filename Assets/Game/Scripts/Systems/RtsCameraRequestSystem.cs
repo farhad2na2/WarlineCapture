@@ -238,13 +238,20 @@ namespace Game.Runtime
             return removed;
         }
 
+        public bool QueuePlacementPreviewPose(EntityManager em,int token,Vector3 position,Quaternion rotation,float fov)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.ApplyPlacementPreviewPose,PlacementToken=token,WorldPosition=ToFloat3(position),Rotation=ToFloat4(rotation),Value=fov});
+        public bool QueueReleasePlacementPreview(EntityManager em,int token)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.ReleasePlacementPreviewPose,PlacementToken=token});
+        public bool QueueFocusAircraft(EntityManager em,Entity actor)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.FocusAircraft,TargetEntity=actor,Flag=1});
+        public bool QueueFocusOwnAircraft(EntityManager em,Entity actor)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.FocusAircraft,TargetEntity=actor,Flag=0});
+        public bool QueueZoomAircraft(EntityManager em,int level)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.ZoomAircraft,Value=level});
+        public bool QueueClearAircraftFocus(EntityManager em)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.ClearAircraftFocus});
         public void ProcessPendingRequests(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested = null)
         {
             if (cameraSystem == null)
                 return;
 
             bool tacticalFollowPoseValid = HasValidTacticalFollowPose(entityManager);
-            SyncGroundBoundary(entityManager, cameraSystem, worldCamera, skipClamp: tacticalFollowPoseValid);
+            bool aircraftFocus=cameraSystem.TickAircraftFocus(entityManager,worldCamera,tacticalFollowPoseValid);
+            SyncGroundBoundary(entityManager, cameraSystem, worldCamera, skipClamp: tacticalFollowPoseValid||aircraftFocus||cameraSystem.HasPlacementPreviewPose);
 
             Entity entity = EnsureCameraEntity(entityManager);
             DynamicBuffer<RtsCameraRequestElement> requests = entityManager.GetBuffer<RtsCameraRequestElement>(entity);
@@ -256,11 +263,43 @@ namespace Game.Runtime
                 else if (tacticalFollowPoseValid && IsSuppressedByTacticalFollow(requests[i].Kind))
                     continue;
 
-                ProcessRequest(requests[i], cameraSystem, worldCamera, orderMarkersHideRequested);
+                var request=requests[i];
+                if(request.Kind==RtsCameraRequestKind.ReleasePlacementPreviewPose)
+                {cameraSystem.ReleasePlacementPreviewPose(worldCamera,request.PlacementToken,!tacticalFollowPoseValid);continue;}
+                if(request.Kind==RtsCameraRequestKind.ApplyPlacementPreviewPose)
+                {
+                    if(!tacticalFollowPoseValid)
+                    {
+                        cameraSystem.ClearAircraftFocus(worldCamera,"BuildingPlacementPreview",true);
+                        cameraSystem.ApplyPlacementPreviewPose(worldCamera,request.PlacementToken,(Vector3)request.WorldPosition,new Quaternion(request.Rotation.x,request.Rotation.y,request.Rotation.z,request.Rotation.w),request.Value);
+                    }
+                    continue;
+                }
+                if(request.Kind==RtsCameraRequestKind.ResetSession||request.Kind==RtsCameraRequestKind.ResetCameraModeSession)
+                    cameraSystem.ClearPlacementPreviewPose(worldCamera,!tacticalFollowPoseValid);
+                if(cameraSystem.HasPlacementPreviewPose&&(request.Kind==RtsCameraRequestKind.PerspectiveZoom||request.Kind==RtsCameraRequestKind.UpdatePerspectiveMode||request.Kind==RtsCameraRequestKind.UpdateFullscreenIsoMode))continue;
+                if(request.Kind==RtsCameraRequestKind.FocusAircraft)
+                {
+                    if(!tacticalFollowPoseValid)cameraSystem.TryRequestAircraftFocus(entityManager,request.TargetEntity,worldCamera,request.RequestId,request.Flag!=0);
+                    cameraSystem.TickAircraftFocus(entityManager,worldCamera,tacticalFollowPoseValid);continue;
+                }
+                if(request.Kind==RtsCameraRequestKind.ZoomAircraft)
+                {if(!tacticalFollowPoseValid)cameraSystem.ZoomAircraftFocus(entityManager,worldCamera,(int)request.Value);continue;}
+                if(cameraSystem.HasAircraftFocusContext&&request.Kind==RtsCameraRequestKind.PerspectiveZoom)
+                {if(!tacticalFollowPoseValid)cameraSystem.ZoomAircraftFocus(entityManager,worldCamera,cameraSystem.AircraftFocusZoomLevel+(request.Value>0?-1:1));continue;}
+                if(request.Kind==RtsCameraRequestKind.ClearAircraftFocus||request.Kind==RtsCameraRequestKind.Pan||request.Kind==RtsCameraRequestKind.MoveGroundCenterTo||request.Kind==RtsCameraRequestKind.SetSmoothFocusTarget||
+                    request.Kind==RtsCameraRequestKind.ResetSession||request.Kind==RtsCameraRequestKind.ResetCameraModeSession||
+                    request.Kind==RtsCameraRequestKind.ApplyFullscreenIsoModeInstant||request.Kind==RtsCameraRequestKind.ApplyPerspectiveModeInstant||
+                    request.Kind==RtsCameraRequestKind.SetWasBuildModeActive&&request.Flag!=0)
+                    cameraSystem.ClearAircraftFocus(worldCamera,"NormalGroundCameraOwnership",!tacticalFollowPoseValid);
+                var previewPanBefore=worldCamera!=null?worldCamera.transform.position:default;
+                ProcessRequest(request, cameraSystem, worldCamera, orderMarkersHideRequested);
+                if(request.Kind==RtsCameraRequestKind.Pan)cameraSystem.ObservePlacementPreviewPan(worldCamera,previewPanBefore);
+                if(request.Kind==RtsCameraRequestKind.MoveGroundCenterTo)cameraSystem.ObservePlacementPreviewGroundCenter(worldCamera);
             }
 
             requests.Clear();
-            if (!processedTacticalFollowPose && !tacticalFollowPoseValid)
+            if (!cameraSystem.HasPlacementPreviewPose && !processedTacticalFollowPose && !tacticalFollowPoseValid && !cameraSystem.TickAircraftFocus(entityManager,worldCamera,false))
                 cameraSystem.ClampCameraToGroundBoundary(worldCamera);
             MirrorState(entityManager, entity, cameraSystem);
         }

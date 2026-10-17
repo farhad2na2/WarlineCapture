@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "actualWrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "failure": "Entire tactical map must remain inside its clip; EnvelopeParent cropped legal edge sites",
+  "sourceHash": "b3942ad6d679a7f525329217eef02314d753f505859a968898be9620f8413249",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-759-full-map-edge-clip-regression-red-pre-source-manifest.json",
+  "postManifest": "final-759-full-map-edge-clip-regression-red-post-source-manifest.json",
+  "log": "tests-759-full-map-edge-clip-red.log",
+  "nativeReadiness": false
+}

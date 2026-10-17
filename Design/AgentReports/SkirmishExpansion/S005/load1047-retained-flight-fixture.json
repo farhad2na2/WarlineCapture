@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005RetainedFlightPauseSaveContinue1047.cs",
+      "entry": "S005RetainedFlightPauseSaveContinue1047.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "'SkirmishLaunchProjection' is inaccessible due to its protection level",
+          "line": 175,
+          "column": 19,
+          "id": "CS0122"
+        }
+      ],
+      "compileMs": 265,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005RetainedFlightPauseSaveContinue1047_c2f76ff3c9ec47dca45ae271216f030f",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

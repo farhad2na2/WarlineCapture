@@ -1,0 +1,17 @@
+{
+  "run": 287,
+  "result": "Failed",
+  "wrapperExit": 124,
+  "completionReceipt": false,
+  "requiredPassMarker": false,
+  "scheduledBeforeObservedDomainReload": true,
+  "editorPreserved": true,
+  "log": "focused-287-native-support-recovery.log",
+  "logExists": false,
+  "primaryEditorLog": "/private/tmp/warline-s005-player-editor-220.log",
+  "replacementPassedRuns": [
+    288,
+    290
+  ],
+  "playerReady": false
+}

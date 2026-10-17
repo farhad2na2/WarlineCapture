@@ -1,0 +1,23 @@
+{
+  "result": "FailedDiagnosticAbort",
+  "wrapperExit": 2,
+  "nativeDrawClaimed": false,
+  "latestSimulationElapsed": 518.8560180664062,
+  "sourceHash": "25c87d32bc68ed35e9aef564ce54126f84c7a4723ed002e840777b493a5b00ec",
+  "allSourceAndMaterialsUnchanged": true,
+  "preManifest": "final-662-shared-hauler-pending-job-pre-source-manifest.json",
+  "postManifest": "final-663-shared-hauler-strike-cycle-post-source-manifest.json",
+  "log": "native-663-shared-hauler-strike-cycle.log",
+  "contacts": {
+    "recorded": 98,
+    "ended": 98,
+    "errors": 0
+  },
+  "diagnostics": [
+    "Read-only bounded3x3static cardinal connectivity with occupancy ignored; no native path certification",
+    "Existing EditorMoveCommandTraceEnabled toggled on/off for diagnostics only; no gameplay command or actor/resource mutation"
+  ],
+  "reason": "Native alternate endpoint915,603/915,605 differs from haul requested919,602/919,606; repeated path replacement every haul tick prevents travel",
+  "authorizedAbortMethod": "Game.Editor.SkirmishS002AriaRunHarness.AbortFailedValidationAndExit",
+  "playerReady": false
+}

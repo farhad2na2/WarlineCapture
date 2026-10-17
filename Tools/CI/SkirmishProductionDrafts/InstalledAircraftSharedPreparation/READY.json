@@ -1,0 +1,23 @@
+{
+  "scope": "VerifiedInstalledShared150ThenAll120AuthoringAndSceneWarmup",
+  "pins": {
+    "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/manifest.json": "cea523ebad51b682051225f66704a8396b673f8cc36d1892e87024b9a85a2d5e",
+    "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/composition.manifest.json": "bc9fa8e9fb1acd84d0d2bd9e9dc2e4c2655d3056b2c23c5aadc147f0eb4ea1b8",
+    "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/ADOPTION12.json": "1a36f7ab4506d59546b9222bb3e7f1446908712d039a89c9e2acdf8cebfad26a",
+    "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/NATIVE_MARKERS.json": "53c7c660c0b9c7acba24a8d696bf71f23f939488e00eaf0f9cdf0e4c8ba02e47",
+    "Tools/CI/SkirmishProductionDrafts/InstalledAircraftSharedPreparation/INDEPENDENT_FINAL_REVIEW.json": "1521f79c69af4fe5459522a66049d17b7349f1cf19ca6fd3ecf871e714e91ce4"
+  },
+  "owning_proof": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/installed-resume-owning-nrt4blbn/result.json",
+  "owning_proof_sha256": "daa1c1d107884e694171af47bd4dbd68bd585ca5d6c47369be97c7026e4c1aee",
+  "result": "SourceReviewedAndOwningTypeCompilePassed",
+  "entry": "Game.Tests.Editor.SkirmishInstalledAircraftSharedPreparation.RunVerifySharedAndAuthoringWarmup",
+  "plain_entry": "Game.Tests.Editor.SkirmishInstalledAircraftSharedPreparation.Run",
+  "native_executed": false,
+  "pending_native_gates": [
+    "Actualcheckedwrapper0",
+    "All19combinedmarkers",
+    "Newfullsource/DLLsnapshotAFTERwrapperexit",
+    "ActualfourviewPNGs/readability/occlusion",
+    "FullnormalARIAmission/result/return/device"
+  ]
+}

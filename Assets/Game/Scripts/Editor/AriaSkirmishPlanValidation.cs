@@ -9,6 +9,109 @@ namespace Game.Editor
     {
         public static void RunFocusedValidation() => UnityEngine.Debug.Log(Run());
 
+        private static int RunPublicApproachProgressControls()
+        {
+            int checks = 0;
+            void Check(bool condition, string name)
+            { if (!condition) throw new InvalidOperationException(name); checks++; }
+            var view = new AriaSkirmishObservation();
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent();
+            var output = new AriaPlayObservationComponent();
+            void Reset(int acceptedMask = 4, bool fullSweep = false)
+            {
+                view = new AriaSkirmishObservation
+                {
+                    Active = true, ExpandedSession = true, Time = 100, Infantry = 20,
+                    PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                    CombinedArmsField = true, OwnStructureAttackUnits = 8,
+                    ExpandedPageIndex = 1, ExpandedPageCount = 2, ExpandedTotalGroups = 10,
+                    ExpandedAssaultMask = fullSweep ? 0 : 20,
+                    ExpandedAttackOrderMask = acceptedMask, ExpandedStructureMask = 4,
+                    ExpandedSelectedMask = 4, ExpandedSelectedGroups = 1, ExpandedRosterRevision = 10,
+                    SelectionVisible = true, SelectedCount = 4,
+                    Attack = new AriaTouchTarget { Available = true, Id = 14 },
+                    AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 130.3f
+                };
+                plan = new AriaSkirmishPlanComponent
+                {
+                    AssaultStarted = 1, AssaultIssued = (byte)(fullSweep ? 1 : 0),
+                    LastProgressAt = 100, Infantry = 20, PlayerHealth = 800, EnemyHealth = 800,
+                    PagedToAssault = 1, AssaultSelecting = 1, StructureOrdered = 1,
+                    PagesOrdered = 1, AssaultPageSeen = 1, SweepRosterRevision = 10
+                };
+                touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing,
+                    LastProgressAt = 100, LastObjectiveProgressAt = 100 };
+                output = default;
+            }
+            void Step(float time, float distance)
+            {
+                view.Time = time; view.Frame++; view.NearestFriendlyObjectiveDistance = distance;
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            }
+            void NoProgress(string label) => Check(plan.LastProgressAt == 100 &&
+                touch.LastProgressAt == 100 && touch.LastObjectiveProgressAt == 100, label);
+
+            Reset(); Step(100, 130.3f);
+            Check(plan.AssaultDistanceObserved == 1 && plan.BestAssaultDistance == 130.3f,
+                "actual accepted partial assault establishes public approach baseline");
+            NoProgress("the first public sample is not progress");
+            Step(110, 129.3f); NoProgress("one metre closer is below the existing threshold");
+            Step(120, 127.9f);
+            Check(plan.LastProgressAt == 120 && touch.LastProgressAt == 120 &&
+                touch.LastObjectiveProgressAt == 120 && plan.BestAssaultDistance == 127.9f,
+                "new closest public approach beyond2m counts before complete sweep");
+            Step(130, 127.9f); Step(140, 140f); Step(150, 127.9f);
+            Check(plan.LastProgressAt == 120 && touch.LastObjectiveProgressAt == 120 &&
+                plan.BestAssaultDistance == 127.9f,
+                "repeat,retreat and re-advance to the same best distance earn none");
+            Check(plan.AssaultIssued == 0 && plan.PagesOrdered == 1 && plan.AssaultPageSeen == 1 &&
+                plan.PagedToAssault == 1 && plan.StructureOrdered == 1,
+                "public travel progress never claims the whole sweep completed");
+            Check(touch.Actions == 0 && touch.GestureRequested == 0 && output.TargetId == 14 &&
+                output.Kind == AriaPlayObservationKind.Control,
+                "progress observation adds no gesture or order beyond the existing pending control");
+
+            Reset(); Step(100, 130.3f);
+            touch.Actions = 50; view.ExpandedPageIndex = 0;
+            Step(110, 130.3f); view.ExpandedPageIndex = 1; Step(120, 130.3f);
+            NoProgress("tap,reissue and page changes alone do not renew progress");
+
+            foreach (int rejectedMask in new[] { 0, 2 })
+            {
+                Reset(rejectedMask); Step(100, 130.3f); Step(110, 100f);
+                Check(plan.AssaultDistanceObserved == 0,
+                    "absent or disjoint accepted mask establishes no assault baseline");
+                NoProgress("mask outside the presented assault cohort earns no credit");
+            }
+            Reset(0); Step(100, 130.3f);
+            view.ExpandedAttackOrderMask = 4; Step(110, 130.3f);
+            NoProgress("new accepted mask alone earns no progress");
+
+            Reset(); view.AssaultDistanceVisible = false;
+            Step(100, 130.3f); Step(110, 100f);
+            Check(plan.AssaultDistanceObserved == 0, "hidden public approach has no baseline");
+            NoProgress("unpresented distance cannot renew progress");
+            foreach (float invalid in new[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, -1f })
+            {
+                Reset(); Step(110, invalid);
+                Check(plan.AssaultDistanceObserved == 0, "nonfinite or negative approach refused");
+                NoProgress("invalid public distance earns none");
+            }
+
+            Reset(); Step(100, 130.3f); touch.Actions = 100;
+            Step(281, 130.3f);
+            Check(touch.Phase == AriaPlayPhase.Blocked && touch.GestureRequested == 0 &&
+                plan.LastProgressAt == 100 && touch.LastObjectiveProgressAt == 100,
+                "accepted masks and repeated actions cannot bypass180second no-progress stop");
+
+            Reset(0, fullSweep: true); Step(100, 130.3f); NoProgress("complete sweep retains first-sample rule");
+            Step(110, 127.9f);
+            Check(touch.LastObjectiveProgressAt == 110 && plan.AssaultIssued == 1,
+                "existing completed-sweep eligibility works even on a page with no current assault mask");
+            return checks;
+        }
+
         public static string Run()
         {
             int checks = 0;
@@ -497,6 +600,7 @@ namespace Game.Editor
                     touch.Phase != AriaPlayPhase.Blocked,
                     "unselected in-flight assault observes battle instead of exhausting Hold retries");
             }
+            checks += RunPublicApproachProgressControls();
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 
             void Step() => AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);

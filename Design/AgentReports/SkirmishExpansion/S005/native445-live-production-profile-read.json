@@ -1,0 +1,120 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; var result=new System.Collections.Generic.List<object>(); using(var q=em.CreateEntityQuery(typeof(Game.Components.BuildingResourceStorageComponent),typeof(Game.Components.BuildingResourceProductionProfileComponent))){using(var es=q.ToEntityArray(Unity.Collections.Allocator.Temp)){foreach(var e in es){var s=em.GetComponentData<Game.Components.BuildingResourceStorageComponent>(e); var p=em.GetComponentData<Game.Components.BuildingResourceProductionProfileComponent>(e);result.Add(new {kind=\"ResourceProfile\",faction=s.OwnerFactionId,period=p.PeriodSeconds,oil=p.OilPerPeriod,fuel=p.FuelPerPeriod,inputBatch=p.OilPerFuelBatch,outputBatch=p.FuelPerBatch,batchSeconds=p.FuelBatchSeconds,storedOil=s.StoredOilBarrels,storedFuel=s.StoredFuelBarrels});}}} using(var q=em.CreateEntityQuery(typeof(Game.Components.MaterialFabricationComponent))){using(var a=q.ToComponentDataArray<Game.Components.MaterialFabricationComponent>(Unity.Collections.Allocator.Temp)){foreach(var v in a)result.Add(new {kind=\"Fabrication\",faction=v.OwnerFactionId,input=v.OilConsumedPerCycle,output=v.MaterialsOutputPerCycle,seconds=v.CycleDurationSeconds});}}return result;"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "kind": "ResourceProfile",
+          "faction": 1,
+          "period": 60,
+          "oil": 120,
+          "fuel": 0,
+          "inputBatch": 0,
+          "outputBatch": 0,
+          "batchSeconds": 30,
+          "storedOil": 188.254471,
+          "storedFuel": 0
+        },
+        {
+          "kind": "ResourceProfile",
+          "faction": 2,
+          "period": 60,
+          "oil": 120,
+          "fuel": 0,
+          "inputBatch": 0,
+          "outputBatch": 0,
+          "batchSeconds": 30,
+          "storedOil": 200,
+          "storedFuel": 0
+        },
+        {
+          "kind": "ResourceProfile",
+          "faction": 1,
+          "period": 60,
+          "oil": 0,
+          "fuel": 120,
+          "inputBatch": 30,
+          "outputBatch": 60,
+          "batchSeconds": 30,
+          "storedOil": 40,
+          "storedFuel": 0
+        },
+        {
+          "kind": "ResourceProfile",
+          "faction": 2,
+          "period": 60,
+          "oil": 0,
+          "fuel": 120,
+          "inputBatch": 30,
+          "outputBatch": 60,
+          "batchSeconds": 30,
+          "storedOil": 0,
+          "storedFuel": 0
+        },
+        {
+          "kind": "ResourceProfile",
+          "faction": 1,
+          "period": 60,
+          "oil": 120,
+          "fuel": 0,
+          "inputBatch": 0,
+          "outputBatch": 0,
+          "batchSeconds": 30,
+          "storedOil": 147.0396,
+          "storedFuel": 0
+        },
+        {
+          "kind": "Fabrication",
+          "faction": 1,
+          "input": 10,
+          "output": 50,
+          "seconds": 30
+        },
+        {
+          "kind": "Fabrication",
+          "faction": 2,
+          "input": 10,
+          "output": 50,
+          "seconds": 30
+        },
+        {
+          "kind": "Fabrication",
+          "faction": 1,
+          "input": 10,
+          "output": 50,
+          "seconds": 30
+        },
+        {
+          "kind": "Fabrication",
+          "faction": 1,
+          "input": 10,
+          "output": 50,
+          "seconds": 30
+        },
+        {
+          "kind": "Fabrication",
+          "faction": 1,
+          "input": 10,
+          "output": 50,
+          "seconds": 30
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

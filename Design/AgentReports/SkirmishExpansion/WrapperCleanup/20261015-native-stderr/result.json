@@ -1,0 +1,30 @@
+{
+  "result": "PassedOwnedWrapperCleanup18Controls",
+  "unity_launched": false,
+  "assets_changed": false,
+  "scope": "Windows PowerShell5.1 actual checked wrappers and owned synthetic child processes only",
+  "sources": [
+    {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "sha256": "2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add"
+    },
+    {
+      "path": "Tools/CI/invoke_unity_process_exit_test.py",
+      "sha256": "451af69cc3984ec786c388ff51df1ddce880a6aba6768d8540a189666ae86173"
+    },
+    {
+      "path": "Tools/CI/invoke_unity_cleanup_stderr_test.py",
+      "sha256": "cfa9456205f02c41f1572fedf161eed6fb6a4662da69c56f9a6fa5977193ea3e"
+    }
+  ],
+  "suites": [
+    {
+      "path": "baseline14/result.json",
+      "cases": 14
+    },
+    {
+      "path": "cleanup4/result.json",
+      "cases": 4
+    }
+  ]
+}

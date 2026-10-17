@@ -1,0 +1,35 @@
+{
+  "result": "Passed",
+  "sourceHash": "e0a413507b7151078bc7e86d519a2d5e77fa1b67c18b0bbe3e838daf8835faa7",
+  "scope": "Shared runway liftoff and existing fixed-wing maneuver/return regressions",
+  "preManifest": "tests-693-runway-liftoff-corridor-pre-source-manifest.json",
+  "postManifest": "tests-694-shared-runway-fix-regressions-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "cases": 27,
+  "checks": [
+    {
+      "log": "tests-693-runway-liftoff-corridor-regressions.log",
+      "marker": "[RunwayTakeoffArrivalValidation] result=Passed cases=18 regressions=3",
+      "cases": 21,
+      "wrapperExit": 0,
+      "sha256": "01da06ce999f470ca8c37533c6a1f8e2f1f7e5268721855eef369439596eb964"
+    },
+    {
+      "log": "tests-694-shared-fixed-wing-maneuver-return-regressions.log",
+      "marker": "[FixedWingManeuverValidation] result=Passed tests=6",
+      "cases": 6,
+      "wrapperExit": 0,
+      "sha256": "78a8bd924a3f2f7adbfceee1a0c1a5bda04c785e1061f65d33b56a6b81a83001"
+    }
+  ],
+  "reproduction": {
+    "log": "tests-692-offset-runway-roll-reproduction.log",
+    "sourceFingerprint": "tests-692-offset-roll-failure-post-independent-fingerprint.json",
+    "wrapperExit": 0,
+    "requiredPassMarkerMissing": true,
+    "failureMarkerPresent": true,
+    "result": "Failed as expected before runtime fix"
+  },
+  "nativePaidCycle": "Pending",
+  "playerReady": false
+}

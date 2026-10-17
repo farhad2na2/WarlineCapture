@@ -1,0 +1,32 @@
+{
+  "result": "PassedEngineeringPreparation",
+  "actualCheckedWrapperExit": 0,
+  "requiredMarker": "[SkirmishProductionAuthoringPreparation] result=Passed preview=21 pilotSchema=6 pilotNegativeControls=12 groundAuthoring=30 groundNegativeControls=60 budget=5 collector=3 sourceFitCertified=0 normalMissionReadiness=Pending",
+  "archiveSha256": "2d62d285bd36ba9ceb41fd565239abc92e81544befda095d9802096b1df87983",
+  "files": [
+    {
+      "path": "airport-metadata.json",
+      "sha256": "be483597efaf61be34ed821e5e6d0c4906d512c2a344b9d73da583d4834e2948"
+    },
+    {
+      "path": "unity.log",
+      "sha256": "cbd79a97fe77eb023eb873e854e4ff9baeb6f230a04fb30cf19b24cf025d5275"
+    },
+    {
+      "path": "unity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unity.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "wrapper-receipt.json",
+      "sha256": "69f952b880e3b8fbb73aaafcd74a0db9e2b0426bdc11604a54453cb3827d3742"
+    }
+  ],
+  "firstFailedRunPreserved": true,
+  "sourceFitCertified": false,
+  "normalMissionReadiness": "Pending",
+  "recordedEditor": "6000.5.8f1"
+}

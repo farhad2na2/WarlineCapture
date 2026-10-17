@@ -1,0 +1,112 @@
+{
+  "result": "DurablePortableScopedNative1359Evidence",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "files": {
+    "relocation-verification.json": {
+      "sha256": "4cfb266ee7567d0a8950bc4a89ad5059446d5d8c0bb82e8da01004ea590aa7bd",
+      "bytes": 279
+    },
+    "verify_portable.py": {
+      "sha256": "91e9deb846dd2a14a63c7e119ae74a4b5d1f0bf1f6961dbc120e5c47a71da4e9",
+      "bytes": 5537
+    },
+    "README.md": {
+      "sha256": "52129bcde4fb1d8a7d09f664b2104ef8f408da57f504386e51c968f751db0e95",
+      "bytes": 1907
+    },
+    "portable-verification.json": {
+      "sha256": "34e26e56af8c45538d41ecd29c481949065a915e75af7936a33d5b4ebaff0d77",
+      "bytes": 907
+    },
+    "independent-peer-review.json": {
+      "sha256": "84ef3387f561ea1ab3d7e28e0f89b68e5490a586b5e2b748650026cac744e7a0",
+      "bytes": 1036
+    },
+    "portable-index.json": {
+      "sha256": "e1b2b1eda42c1bcd7a695e6391f712e8809c7f74fa2162e3edbc1d4a513f9901",
+      "bytes": 14056
+    },
+    "objects/a6ab0a914c9da5e8c4a9a4ce7c63114e9301851eee6a857ae8c8f0c503dda2ad": {
+      "sha256": "a6ab0a914c9da5e8c4a9a4ce7c63114e9301851eee6a857ae8c8f0c503dda2ad",
+      "bytes": 27029
+    },
+    "objects/9d54795b299b2a9c426ae27c10d0ac371d4e57471b1a59ab61b202457d829335": {
+      "sha256": "9d54795b299b2a9c426ae27c10d0ac371d4e57471b1a59ab61b202457d829335",
+      "bytes": 4106
+    },
+    "objects/273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92": {
+      "sha256": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+      "bytes": 4201
+    },
+    "frozen/controls.py": {
+      "sha256": "3c64aaf34d99a26064ab32060ab02e4dbd973a69145d145d264c8f36afa96b1d",
+      "bytes": 4364
+    },
+    "frozen/executed-runner.py": {
+      "sha256": "9786be5b51c72c752d706f30aa2ad42750588c98c2e5b78684712a5b26a267ad",
+      "bytes": 13122
+    },
+    "frozen/executed-S005NormalStopManual1359Observer.cs": {
+      "sha256": "02a69b982954e49a1b6231e10dffeac5e6da445ec71a5e0345d3b50319869901",
+      "bytes": 119315
+    },
+    "frozen/audit.py": {
+      "sha256": "df245a70e0387b53652d92506f84691e77cbc714d985f3ce6c201af286964c7d",
+      "bytes": 10793
+    },
+    "frozen/executed-S005NormalStopIdle1359.cs": {
+      "sha256": "d86678e585b0c14862faddc31ccc595b5a792887fd9207d32e2aadcc1e3d8458",
+      "bytes": 376
+    },
+    "frozen/executed-qualifier.py": {
+      "sha256": "96dab260764f8ac96847848ab1fe6e0b31aa166b898cdc3d8695d5c78abfd874",
+      "bytes": 12982
+    },
+    "frozen/README.md": {
+      "sha256": "57957758735c9589e09cacebb39dcd438de72b34f96fb7ccbb101a81f1638b37",
+      "bytes": 2489
+    },
+    "frozen/manifest.json": {
+      "sha256": "cfe842fa763fdfab767cfcf5a31d197c020b8a7192a331ffbcc52166e5ede8a2",
+      "bytes": 2290
+    },
+    "frozen/offline-controls.json": {
+      "sha256": "f5b67cfdfe7b6a60f53730d7ebbcb7f73d57d7479fcf8cc5492a84316338f2a2",
+      "bytes": 3349
+    },
+    "frozen/executed-fog-qualifier.py": {
+      "sha256": "a7f1acecdda9a930e40d8485cdadd77dd76005a636c0502136822c453d398705",
+      "bytes": 9421
+    },
+    "frozen/executed-handoff_qualifier.py": {
+      "sha256": "37b3c9ca391a649c0e5ae1c1bed2aca4c7a8275199faa28bae2d6ec8ddcfb20a",
+      "bytes": 2469
+    },
+    "frozen/evidence-pins.json": {
+      "sha256": "6fdbe17657e1399602a2a7b59696ec535e594b70765881160a4eaff9370ebc74",
+      "bytes": 9535
+    },
+    "frozen/executed-home-defense-qualifier.py": {
+      "sha256": "8f61b8629cf75ca7a301fa0b0416c4fdb8b2ef4c97f132740997c89090621fb3",
+      "bytes": 8247
+    },
+    "frozen/qualified-scoped-native1359-proof.json": {
+      "sha256": "8892dd0e07352f503afdbe3f53d0d38997b9ea708dddf6ed2162e7ff0e2dd49a",
+      "bytes": 12221
+    }
+  },
+  "referenceCount": 37,
+  "frozenExternalManifestSha256": "cfe842fa763fdfab767cfcf5a31d197c020b8a7192a331ffbcc52166e5ede8a2",
+  "scopedProofSha256": "8892dd0e07352f503afdbe3f53d0d38997b9ea708dddf6ed2162e7ff0e2dd49a",
+  "originalFailureSha256": "e4025719a24267f021f3f72d878d2716e86f29a12088acccb522f19a154b3872",
+  "independentPeerReviewSha256": "84ef3387f561ea1ab3d7e28e0f89b68e5490a586b5e2b748650026cac744e7a0",
+  "readOnlyReplayPassed": true,
+  "relocationCheckPassed": true,
+  "originalRunRemainsFailed": true,
+  "controlsQualified": true,
+  "laterVictoryResultMainMenuWitness": true,
+  "fogFallbackQualified": false,
+  "fullOriginalFixtureQualified": false,
+  "playerReady": false,
+  "unityCalled": false
+}

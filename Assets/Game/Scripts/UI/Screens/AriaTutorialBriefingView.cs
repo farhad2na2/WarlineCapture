@@ -120,7 +120,7 @@ namespace Game.UI.Runtime
             _tutorialStepCount = model.TutorialStepCount;
             groundedSignalTutorial = UiShellRuntimeGateway.IsGroundedSignalGuideContext();
             _defenseTutorial = _tutorialStepCount==12 && UiShellRuntimeGateway.TryReadMissionDefense(out _);
-            usesExpandedBriefingLayout = groundedSignalTutorial || _tutorialStepCount is 4 or 8 or 9 or 10 or 12 || UiShellRuntimeGateway.TryReadSkirmish(out _);
+            usesExpandedBriefingLayout = groundedSignalTutorial || _tutorialStepCount is 4 or 8 or 9 or 10 or 12 || UiShellRuntimeGateway.TryReadSkirmishContext(out _);
             ApplyMissionLayout(usesExpandedBriefingLayout,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;

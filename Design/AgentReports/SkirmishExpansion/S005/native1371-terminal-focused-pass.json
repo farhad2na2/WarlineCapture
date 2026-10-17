@@ -1,0 +1,19 @@
+{
+  "result": "PassedFocusedTerminalHelperOnly",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1371-terminal-pre-source-manifest.json",
+  "postManifest": "final-1371-terminal-post-source-manifest.json",
+  "fixtureSha256": "de39e550c8be2c0f06b65b641d5da7aaf85617fcf1766cb3009ed188dd8e09f6",
+  "manifest": "/private/tmp/s005-fallback-terminal-lifecycle1371/manifest.json",
+  "log": "native-1371-fallback-terminal-lifecycle.log",
+  "logSha256": "4dd4cf6bc64d8c4382491792061494c76ae1e840600d9d8df71e3c956ad1cd2f",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "requiredMarker": "[S005FallbackTerminalLifecycle1371] result=Passed cases=35 beforeFixReproduced=1 disposableWorldOnly=1 gameplayQualification=0",
+  "scope": "Disposable-World terminal helper contract only; original helper false failure reproduced and narrow verified closure checked.",
+  "fogApproachQualified": false,
+  "homeDefenseQualified": false,
+  "fullMissionQualified": false,
+  "playerReady": false
+}

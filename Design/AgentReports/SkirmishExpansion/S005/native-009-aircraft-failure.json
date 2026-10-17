@@ -1,0 +1,20 @@
+{
+  "result": "Failed",
+  "candidateHash": "fbd4a7f8650ab08d46a04140c6057ab668509e3ec0563f50610912d49a066e56",
+  "reason": "committedVisualMissingOrMoved",
+  "visualExists": true,
+  "confirmedCell": [
+    406,
+    498
+  ],
+  "committedCentre": [
+    414,
+    505.5
+  ],
+  "requestedTouchWorld": [
+    452.97,
+    541.03
+  ],
+  "analysis": "Committed model matches the confirmed placement footprint; the requested point may have been covered by Build UI. Rerun with normal touches restricted to visible unoccluded ground. Retain the strict touched-site assertion.",
+  "playerReady": false
+}

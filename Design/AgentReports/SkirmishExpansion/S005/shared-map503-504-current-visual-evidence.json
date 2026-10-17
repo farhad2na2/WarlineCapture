@@ -1,0 +1,23 @@
+{
+  "sourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+  "sharedConsumers": "All missions using CityEdgeAirfield",
+  "geometryAssetsUnchanged": {
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7"
+  },
+  "terrainRoadsRunwaysAdded": false,
+  "visualAuthoringLog": "map-503-shared-campaign-field-frontage.log",
+  "editorCaptureLog": "map-504-shared-desktop-shadow-review.log",
+  "visualAuthoringWrapperExit": 0,
+  "editorCaptureWrapperExit": 0,
+  "roofAccents": 90,
+  "palms": 238,
+  "details": 1588,
+  "courtyards": 9,
+  "wallSegments": 121,
+  "desktopShadowDistance": 260,
+  "mobileShadowDistance": 160,
+  "nativeVisualReviewPending": true,
+  "ownerImplementedVisualReviewPending": true,
+  "playerReady": false
+}

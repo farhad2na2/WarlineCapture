@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005PhysicalInputState1246.cs",
+      "entry": "S005PhysicalInputState1246.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 102,
+      "executeMs": 9,
+      "assemblyName": "PipelineRunScript_S005PhysicalInputState1246_a47ddba4e98141d1a98cab9dd461d363",
+      "success": true,
+      "result": "Keyboard:True:anyKey=False;Mouse:True:left=False,right=False;Pen:True"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

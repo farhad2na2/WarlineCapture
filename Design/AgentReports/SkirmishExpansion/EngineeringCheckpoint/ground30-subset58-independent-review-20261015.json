@@ -1,0 +1,28 @@
+{
+  "result": "ClearForBoundedEngineeringCheckpoint",
+  "source_map_sha256": "e16d04d462d9a4785cfe3b8e653b8f7ee2e845069381baeea12482f741f8cf3e",
+  "workflow_sha256": "365e92e3df31636f523f2483c27af532a02002a1910404e68cd1231e7a9c12c9",
+  "proof_ready_sha256": "254c68c05e50564964643ec64a9b92b3a1fb9bd4d855cbf84dd0d49dbdfbd9fc",
+  "pins_verified": 63,
+  "owning_typeproof": "head278-g30-58-compile-zyxol3v4",
+  "owning_assemblies": 8,
+  "exact_overrides": 11,
+  "current_only_assets_excluded": 32,
+  "workflow_methods_independently_passed": 3,
+  "historical094_to278_assets_packages_projectsettings_delta": false,
+  "scope": "61 existing paths plus standalone entry/meta; engineering only",
+  "native_attribution": "Root reports preparation02 actual0 on mixed full candidate, invoking identical30/60+5+3 functions. This is not native execution of isolated subset.",
+  "typeproof_attribution": "Eight owning assemblies compiled immutable HEAD278 Assets plus exact11 overrides and standalone entry; source/reference pins independently stable. Seven analyzers omitted for UI.Contracts and eighteen for each other owner; ILPP/native still separate.",
+  "behavior_review": [
+    "Standalone entry retains all three independent delegates, collects exceptions and throws before marker on any failure",
+    "Source/type/API closure is explicit; camera/profile-only additions are excluded",
+    "Direct source-bound generic fixture and logical binder match current native-tested implementations; definition/layout source differences are line-ending-only",
+    "Workflow successor retains original V2 and profile-free history, changes explicit map path/SHA, and does not promote source fit"
+  ],
+  "remaining": [
+    "Native standalone facade execution on isolated candidate not yet observed",
+    "Original-system bounded source loading/OneSize and actual placements remain pending",
+    "No whole committed candidate normal mission, camera/readability, source-fit or readiness claim"
+  ],
+  "blocking_static_defects": []
+}

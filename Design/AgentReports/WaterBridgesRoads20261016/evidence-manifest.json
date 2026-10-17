@@ -1,0 +1,4793 @@
+{
+  "description": "All retained task evidence; committed=false files remain locally in the requested checkout. Raw logs also have committed lossless gzip copies.",
+  "files": [
+    {
+      "path": "AshLinePort-after.json",
+      "bytes": 1452,
+      "sha256": "ad3e623d54e2f3049d51ca250d2477e39690b063a4ac11ecc8d8ef30ff7af08d",
+      "committed": true
+    },
+    {
+      "path": "AshLinePort-before.json",
+      "bytes": 1424,
+      "sha256": "cf0fea015051d65ffb146f9e4e412d9815203b73c0d919582bcc7933314c122f",
+      "committed": true
+    },
+    {
+      "path": "CH04M04GroundedSignal-after.json",
+      "bytes": 615,
+      "sha256": "71bb23028fda3b3235db9864c53dcca55501f12273e85e191d7a078e639add68",
+      "committed": true
+    },
+    {
+      "path": "CH04M04GroundedSignal-before.json",
+      "bytes": 590,
+      "sha256": "ed9e11914995b769449b062346e820696fdc6aa5944e959b4cebc965260d5f23",
+      "committed": true
+    },
+    {
+      "path": "CH04M05ArmorBreak-after.json",
+      "bytes": 542,
+      "sha256": "85361442fb16a3a73c7d9d77d3b5b8c1d541e6df43f7e4a4ea7dd4df44c11ffc",
+      "committed": true
+    },
+    {
+      "path": "CH04M05ArmorBreak-before.json",
+      "bytes": 517,
+      "sha256": "df5ad2430aac8717a1881138a2d2c38d1cc23cbb5e180379bc58b2f93bf55d75",
+      "committed": true
+    },
+    {
+      "path": "CH05M01CitywideAlert-after.json",
+      "bytes": 717,
+      "sha256": "159cadfd683db71712d43b338df04606edaccd1209893a3aad094faa73d06f42",
+      "committed": true
+    },
+    {
+      "path": "CH05M01CitywideAlert-before.json",
+      "bytes": 693,
+      "sha256": "32d44fe9d2558cdd9c46838e4ce599bdc88326206f2f0ac683b7b4ae415c6ce5",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-after.json",
+      "bytes": 1290,
+      "sha256": "1e117338d6bf1112ac2c1a41ac738f2e8d45345717e265c746da31f1ac35a79c",
+      "committed": true
+    },
+    {
+      "path": "CH05M02TrustUnderFire-before.json",
+      "bytes": 1263,
+      "sha256": "d077baeb6ab97cdfd992cf75911b4e8da19875cb32c3ca6e446418a970077aee",
+      "committed": true
+    },
+    {
+      "path": "CH05M03NetworkCollapse-after.json",
+      "bytes": 549,
+      "sha256": "e4ccc01e2456ef716d70777308864a92c2079e95bc2aa30cf097293b65000866",
+      "committed": true
+    },
+    {
+      "path": "CH05M03NetworkCollapse-before.json",
+      "bytes": 525,
+      "sha256": "5bdc94da0d1da7dfff587d56994f4d53b3088ad213c1e61b4313a3ad2f045a6a",
+      "committed": true
+    },
+    {
+      "path": "CH05M04LastCorridor-after.json",
+      "bytes": 543,
+      "sha256": "d279dabd73d19cdcea46e720e57423b373d09ef72d2ef4a1841e91bf2555c5ff",
+      "committed": true
+    },
+    {
+      "path": "CH05M04LastCorridor-before.json",
+      "bytes": 519,
+      "sha256": "11de9d88771ee857f52a595a6799f40e1e5da631f5f9b0bbc29392d81afba485",
+      "committed": true
+    },
+    {
+      "path": "CH05M05CommandNode-after.json",
+      "bytes": 541,
+      "sha256": "9fe7c47263764109088deb010245b6ec8859210a13de393a63e1ff04709d6271",
+      "committed": true
+    },
+    {
+      "path": "CH05M05CommandNode-before.json",
+      "bytes": 517,
+      "sha256": "41d534f01fb3740c1bfb4b86932f715ec86d462ed1f24df2f698a1a28560bfcd",
+      "committed": true
+    },
+    {
+      "path": "COMPLETION.md",
+      "bytes": 6448,
+      "sha256": "9a5f65a7b021308a1bd234fbe5edefee6a57fae35b52ec0211606f0910098ae0",
+      "committed": true
+    },
+    {
+      "path": "CityEdgeAirfield-after.json",
+      "bytes": 1023,
+      "sha256": "8d94f442079993207c80f39a4fcc71dbb64f090a538cc04849ab58d2404a6783",
+      "committed": true
+    },
+    {
+      "path": "CityEdgeAirfield-before.json",
+      "bytes": 998,
+      "sha256": "540fca4d7c8ba351ed8879d59e3a756c517f3901dc364b3de52241f614b951d6",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-after.json",
+      "bytes": 3616,
+      "sha256": "a3e8e66dab77d3a38de5bd0abc941aee8ebb8c6ae192a31afae8c1aa139d65f0",
+      "committed": true
+    },
+    {
+      "path": "DenseCity-before.json",
+      "bytes": 3591,
+      "sha256": "7344bfd9a591ae3260ed1b5b50314bf2f0da00f8c7ccaec5afae59c635c25172",
+      "committed": true
+    },
+    {
+      "path": "HANDOFF.md",
+      "bytes": 11413,
+      "sha256": "d126377b1c34f0d6006c42352120e7bb3c28d08daa98e4548b37047ea9930495",
+      "committed": true
+    },
+    {
+      "path": "RefineryDistrict-after.json",
+      "bytes": 787,
+      "sha256": "c3bbed038e0a09262b1473fedfe8b46b10343265c36e3ce0ab32ea545c1102ad",
+      "committed": true
+    },
+    {
+      "path": "RefineryDistrict-before.json",
+      "bytes": 762,
+      "sha256": "2885c3c066aee0076486f706bba2aa8ba8a4d71e2a21dd10fcc96746d83659a6",
+      "committed": true
+    },
+    {
+      "path": "captures/AshLinePort-after-bridge-oblique.png",
+      "bytes": 1777768,
+      "sha256": "7b0474acd5fa5c506ec51fe560e457e949e03c5b63491e28594bdacbb0d0d92b",
+      "committed": true
+    },
+    {
+      "path": "captures/AshLinePort-after-detail.png",
+      "bytes": 2038154,
+      "sha256": "a1a99a17aa1a60afe4c907902ddc52db45edc1bcd6c45f05b8342ded407e20d4",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-after-overview.png",
+      "bytes": 2574748,
+      "sha256": "f8583662f2362cd97fbb323b5d93654e25dde6d10f580e01e3d26349e248c00e",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-after-road-join-0.png",
+      "bytes": 1692543,
+      "sha256": "f23056796677a3b9ad2fb260a41575d448a3637fddf21c53e1af113ec8e66de1",
+      "committed": true
+    },
+    {
+      "path": "captures/AshLinePort-after-road-join-1.png",
+      "bytes": 1733557,
+      "sha256": "9180c06f7a228811e895dfdb75dae12e490095f4249229023b5183da01d31503",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-after-road-join-2.png",
+      "bytes": 1604076,
+      "sha256": "673c9093df6f1fe7106f08a6d7c1e673ff014dab7b53025e957783851dd2f556",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-after-road-join-3.png",
+      "bytes": 1647309,
+      "sha256": "196019240e93406311f89a8a9b3a3858c99d59772378a5fdbed1f917c8367892",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-after-water-0.png",
+      "bytes": 997339,
+      "sha256": "f4ae9fc6bcba8a563d03a362b55fea31de7e1a17f919e46ee457c1a1cdc8b4e5",
+      "committed": true
+    },
+    {
+      "path": "captures/AshLinePort-after-water-1.png",
+      "bytes": 1477438,
+      "sha256": "979b03ffc5f12ae7aedac913512f41375006802ba8443eddfe5058e86a622156",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-before-detail.png",
+      "bytes": 2032489,
+      "sha256": "5e30378c072b29490f88fd94dc124582623907906814e08b43159282c848e7de",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-before-overview.png",
+      "bytes": 2516870,
+      "sha256": "fee8d899fb0676e64e522bef465eba8e522296e896e381c3eb7133b877544188",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-before-road-join-0.png",
+      "bytes": 1670535,
+      "sha256": "69c1413456485c84410dbec909aa24dfa37a6ebff843034a75cf3c8c6a545f9d",
+      "committed": true
+    },
+    {
+      "path": "captures/AshLinePort-before-road-join-1.png",
+      "bytes": 1705359,
+      "sha256": "1523c3f70921ce2fe951618fb91d809a001a936dfd31fa90237de4f8c38358a9",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-before-road-join-2.png",
+      "bytes": 1583677,
+      "sha256": "7ad4368c656d01f336cde5042b3570e4b6a39b8e6fb3a0acb6810beca27a2fdc",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-before-road-join-3.png",
+      "bytes": 1618683,
+      "sha256": "fbe8da57d6540dd2c47328d288c7a8baf6360297a0f80f449900ed58f352f1ee",
+      "committed": false
+    },
+    {
+      "path": "captures/AshLinePort-before-water-0.png",
+      "bytes": 581936,
+      "sha256": "b47bef5152a9c75b5cc3db4fff392829fd9b820712df17a6706f3471cedf95da",
+      "committed": true
+    },
+    {
+      "path": "captures/AshLinePort-before-water-1.png",
+      "bytes": 1241132,
+      "sha256": "01c3aa5758f5f4f5155dd21511a69303d1405871db3a752f5df0b153d7921658",
+      "committed": false
+    },
+    {
+      "path": "captures/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134208,
+      "sha256": "b64315977e48a96667dda324452feb4248bcd8c71d434a429584fe0233ca77ff",
+      "committed": false
+    },
+    {
+      "path": "captures/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1508996,
+      "sha256": "faadd564e2c23937d01dfdc49912f65fe1cfbc027234731d411383aefbbe98be",
+      "committed": true
+    },
+    {
+      "path": "captures/CH04M04GroundedSignal-before-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/CH04M04GroundedSignal-before-overview.png",
+      "bytes": 2134228,
+      "sha256": "aeac3c6ad3755411bb39dccc78b6dac2e4c34febd5cfb0ce05b1a29e4f493a00",
+      "committed": false
+    },
+    {
+      "path": "captures/CH04M04GroundedSignal-before-road-join-0.png",
+      "bytes": 1488652,
+      "sha256": "2438e9e784292517bc617e9046975b79379f87d64bbb84c70416a7d5378f0230",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1781698,
+      "sha256": "3156e5fefbad1ba7da60f9fcfd7fd005c7dd4bfbc997bef676f958d6addbdcd4",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1925705,
+      "sha256": "a2c78d3b5a54214a6709f464b82e3b93a69a7947c9565e46e0f6e83ed70e929a",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1338696,
+      "sha256": "c04321822bb5553089bf611d430c4bc54151710db1b13921a421547ae3de6a3b",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1383444,
+      "sha256": "0d7b6bc8c82f72e3667d4326ed4fa2245cb79cbb50e6466085f28ce24b68d16f",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-before-detail.png",
+      "bytes": 1811588,
+      "sha256": "5053dcdaab43c2327f2e4b4a257d91a965f0818d452c21c5e5549cefaed7af1a",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-before-overview.png",
+      "bytes": 1918092,
+      "sha256": "fe415673619b47d4319e0641c47f5627caad091511b36e4cf3a26df8129a2c61",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-before-water-0.png",
+      "bytes": 1250210,
+      "sha256": "1febb79b16a25e94947302d41408751fe3486949735136e3cb811df9d09f090b",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M01CitywideAlert-before-water-1.png",
+      "bytes": 1289798,
+      "sha256": "d4f42420b5551cddd52467bcbfbe340b2be98b1bc547bb586871799f49a5f36a",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-bridge-oblique.png",
+      "bytes": 1735510,
+      "sha256": "fbe411b538d60d446417f819bd1681f37e0298f82e8c62d7fe8a633dd808e953",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1859622,
+      "sha256": "e4c47e9570bc4dfc8e88324e6e681a90db183c2f09da1cefafb9c4f227e11725",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2230689,
+      "sha256": "a2e45fbcd22dd8efb2ccfee2c557d94c85540e62e977ad0597df75c084644fdd",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1386371,
+      "sha256": "2f820b4519bd4b80fb997b5b1a3270a3a9c750dba9ceb935140fe21cbe2487fe",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1440726,
+      "sha256": "b743c953c0280dedf78232644604f633cc98223faac5f09c610b080b0985cf3a",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1413144,
+      "sha256": "d96b088ce737a1944d7b784b896813193aa910608513857b8dbd98ddf48c6281",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1444971,
+      "sha256": "baf81d69ee5e812123da462da2ec22304207c410c660cbb9262715eb3c3cedb7",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1517848,
+      "sha256": "4f3e42b1c69155bab35db3dfca47bbbcdbbfffb6228744c24a2fa349d65fd516",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-detail.png",
+      "bytes": 1854108,
+      "sha256": "6940c50e85226260e1bfbc79c1ce4cf564c02713db880b910c5acfb54ae5ea43",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-overview.png",
+      "bytes": 2192279,
+      "sha256": "cd2a2027fee43f184e1c4becaf0e844c3856e529ade41cec67daee6e35aca553",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-road-join-0.png",
+      "bytes": 1364531,
+      "sha256": "eb71f11f17dcdc8ba8bab57a56591118739eb171b004fcd4336a129c18566049",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-road-join-1.png",
+      "bytes": 1414704,
+      "sha256": "9ef4a97855aa7cb14c9039274f0e59f6f32b9e8e0446177b95bed960f9271c40",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-road-join-2.png",
+      "bytes": 1390565,
+      "sha256": "eb94a43b0bd96ce953a888a90020e63aceafa79ed9d72e6e5a6f9a37cba06002",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-road-join-3.png",
+      "bytes": 1414494,
+      "sha256": "5b0afd24bd9e1871c9e7ed27023784107cc1c6e18cbb8b51a3441fa6cacacc31",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M02TrustUnderFire-before-water-0.png",
+      "bytes": 1216694,
+      "sha256": "b3131337ccae8555b650d9617e4194aec45dd05da3de7e1b3b1511a6ecdfd309",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1836019,
+      "sha256": "175e1b8dd35347472f769e0493c956ce9468634bffe6552a2dbf1070a931e5cd",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1908562,
+      "sha256": "e20e37800d9ee2cd0b9e0dd206392fc5ee26f31d339251d56b438ecc45dc4102",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1337552,
+      "sha256": "abd6bc8018b8d59c8f7fedd9fdd392c58cae6a89ad0384be6af14b4f7fac26b1",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1376283,
+      "sha256": "cef498b3c3dfbc88395654c026743f05438bd5a87d68820ca0fb99d82f0fbb96",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-before-detail.png",
+      "bytes": 1835973,
+      "sha256": "c06e23e427f301ee234de000d10c2438de03bff9e7c4998c4aa4350f152cf743",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-before-overview.png",
+      "bytes": 1901119,
+      "sha256": "b8848bbf9141845e2fb22f1b6463327c4098d34bf11a834458ad7cc9b3e4e366",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-before-water-0.png",
+      "bytes": 1249964,
+      "sha256": "12d94b0ffd882035db7b0fda30d99bacb918b6161e5fee92fc7702cb5324f2dd",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M03NetworkCollapse-before-water-1.png",
+      "bytes": 1283535,
+      "sha256": "22fb53d2dd63851d74c61379d5320d194997b6c2d1b3aa865c811fe82d0550c0",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811588,
+      "sha256": "f960e7694bca4b109f512f498852b1e01d4a964c0a811d73f9e5d8c1f0a754db",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1910732,
+      "sha256": "412f805f8ab91afd1372018948e6ebdb1344a4272ae44610ef5684117b7b3105",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1338458,
+      "sha256": "3eb804b06d07a4ea532c06f5f9a1f828423cfd5ec8028c7ff51e50545e355a38",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1375127,
+      "sha256": "00cf926cb65940c11e1c134ee567d8501d79351089ef52c0eec4365b28de04ab",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-before-detail.png",
+      "bytes": 1811546,
+      "sha256": "5385629574193ebe85d925057dfd6488309393918e75512b3976f9d3d6b274f2",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-before-overview.png",
+      "bytes": 1902894,
+      "sha256": "b148af1719f62e6a7205ee51284b16103921a9cee16b96a78cf3fc2c80c1880c",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-before-water-0.png",
+      "bytes": 1249478,
+      "sha256": "0929454aa2e8ac92dbef2e26908a880f00517863ae73094b642cba789c402de8",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M04LastCorridor-before-water-1.png",
+      "bytes": 1283793,
+      "sha256": "e9a7d1dac3fd91347aab069ae2a91ac7726ca6dcb488d40fc9f5854eff6fa930",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695524,
+      "sha256": "f22422c8f1752ff23b5902f41114437eb5789c7d5edc2862ee9630038d7766b5",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897590,
+      "sha256": "f21d58aad99ef3f771d83c4a39eb517e9e60d9379febfaf047cfd527b840cf68",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1337473,
+      "sha256": "27db95b3b865823c3b207796b39687c76307ecebc9e252d8574687499aa27be4",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1375357,
+      "sha256": "4e652279b58ddd600d31abfa380aa764feabb5504ee8a0fd13ba9fca0845ce75",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M05CommandNode-before-detail.png",
+      "bytes": 1695510,
+      "sha256": "4128f5d1231f8571c1ba756e8587e1f310ff43db60bef0669b967ddc462599d1",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M05CommandNode-before-overview.png",
+      "bytes": 1889894,
+      "sha256": "556cf51787f58a99c521811bc9c4efd024b2fd31b71280efed6de8063cc38672",
+      "committed": false
+    },
+    {
+      "path": "captures/CH05M05CommandNode-before-water-0.png",
+      "bytes": 1249712,
+      "sha256": "695ba31901c6f4deb4f8111b9d078820c61126529558969d1686b9ef42d6d05c",
+      "committed": true
+    },
+    {
+      "path": "captures/CH05M05CommandNode-before-water-1.png",
+      "bytes": 1283932,
+      "sha256": "531a4210afca7cc7fcf5f53fe7a14501b8eab535fc240fb2d98a3578348bbf9f",
+      "committed": false
+    },
+    {
+      "path": "captures/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/CityEdgeAirfield-after-overview.png",
+      "bytes": 1881617,
+      "sha256": "93b6981988934a72cccef86aeb1dd9556ff3b1b59eb5cadaf00eb643e80f5f7b",
+      "committed": false
+    },
+    {
+      "path": "captures/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1582634,
+      "sha256": "61d289fb26829a3bc2431626a4e4cdedab0f18dc75ce27e007040655efe703e7",
+      "committed": true
+    },
+    {
+      "path": "captures/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1559729,
+      "sha256": "cae0e1e955335a5f8a5f8e22183361f611173e33ded3e1390872ec042995192e",
+      "committed": false
+    },
+    {
+      "path": "captures/CityEdgeAirfield-before-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/CityEdgeAirfield-before-overview.png",
+      "bytes": 2374502,
+      "sha256": "d887344097212801ec0ebfe2f69c4ec5fc8bfb746616e8a411e11fe3fcc6e93f",
+      "committed": false
+    },
+    {
+      "path": "captures/CityEdgeAirfield-before-road-join-0.png",
+      "bytes": 1564833,
+      "sha256": "d515bf5d1d7e15f078bc66113d58c205ea1608b527b29bb63cd1731bec608179",
+      "committed": true
+    },
+    {
+      "path": "captures/CityEdgeAirfield-before-road-join-1.png",
+      "bytes": 1535024,
+      "sha256": "88f9fcb17539f22c4899b5f01e3c7f4514bf9bc4fc90a044a91fc91457a71da4",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-after-bridge-oblique.png",
+      "bytes": 1635649,
+      "sha256": "e31866b70dea5ee61a188ec218ffc88d9ee7c3dd04e1123223ad8d3cc744366a",
+      "committed": true
+    },
+    {
+      "path": "captures/DenseCity-after-detail.png",
+      "bytes": 2051142,
+      "sha256": "95d9ac6701e9bd4ed721d9706b804ef5f6ad725135d589fd933964cc187bb586",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-after-overview.png",
+      "bytes": 2331163,
+      "sha256": "03118618b42da2c350a0dacefd0f6f6420061839c24fc9187f59d404ca5208a2",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-after-road-join-0.png",
+      "bytes": 1757859,
+      "sha256": "b7dcc832da8324dabf021dc0fc02feeb7a598dd865e1e5e8423a9184e32e5ebb",
+      "committed": true
+    },
+    {
+      "path": "captures/DenseCity-after-road-join-1.png",
+      "bytes": 1733001,
+      "sha256": "2db2e752efdec0c337eddf8871c68a52d96ee8c6e02bc2ed64776ae48994470a",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-after-road-join-2.png",
+      "bytes": 1776573,
+      "sha256": "fc4652f147d5437b127c857e8abc277c57c3a71040adc24690f6937138583dfd",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-after-road-join-3.png",
+      "bytes": 1835550,
+      "sha256": "39970b492cb766ab4ee441584666a6dd6d1af05023ac9996f3cd3f6d57118110",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-after-water-0.png",
+      "bytes": 1507206,
+      "sha256": "6917752ad1b6fbcd1882feb4333958d32f7be3f30632552d3f612fcb9cc6e302",
+      "committed": true
+    },
+    {
+      "path": "captures/DenseCity-after-water-1.png",
+      "bytes": 1506750,
+      "sha256": "f703b816c32a235bd67e9d6dbdb08a4b577aa8466bffdd290a9a3933a0dd4d44",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-before-detail.png",
+      "bytes": 2051140,
+      "sha256": "f012072198896c6d6eea67f81f49d96ee33d1e477596c3fd85ce2b7ac723c8d1",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-before-overview.png",
+      "bytes": 2329021,
+      "sha256": "e52fa6d86d8e7d28348c5fd5c41181a0148873dcaeb4414b0001929ad72c0321",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-before-road-join-0.png",
+      "bytes": 1704066,
+      "sha256": "1901882ee5d5cd1c1b060c13370aea65780a6bf7e58a3752d95817aabd386569",
+      "committed": true
+    },
+    {
+      "path": "captures/DenseCity-before-road-join-1.png",
+      "bytes": 1678456,
+      "sha256": "0f566aa7b1f7c1ef84f292cac778487b35cf7a6fe48545936bde72acdbafc356",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-before-road-join-2.png",
+      "bytes": 1754233,
+      "sha256": "c5449c770b14fd8ce832fdf3bd7fc4403d7852673d6743d986ae87c7a36c60bd",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-before-road-join-3.png",
+      "bytes": 1815047,
+      "sha256": "78d78a4b9a44535a3991222342edbe73bd638b1518c6f83bac832b5cb17d0853",
+      "committed": false
+    },
+    {
+      "path": "captures/DenseCity-before-water-0.png",
+      "bytes": 1442814,
+      "sha256": "9568f0fb4d9d7d0c1da2613bf1f83095537a9f2c9a5a400ea9f1938e064bfe49",
+      "committed": true
+    },
+    {
+      "path": "captures/DenseCity-before-water-1.png",
+      "bytes": 1438190,
+      "sha256": "55dbcae0031513dc7fd01184eb32a120c05ae38017b6513cfe586b11df653cbe",
+      "committed": false
+    },
+    {
+      "path": "captures/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/RefineryDistrict-after-overview.png",
+      "bytes": 2345607,
+      "sha256": "9d535cd09489ba893d90b8ed84131838da4de7ff01a13be3e7c82dfbcee8ccac",
+      "committed": false
+    },
+    {
+      "path": "captures/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1589330,
+      "sha256": "eda751aa91d5545d4c5c5ea12eedb50c54d61d2c5f5bc56f8b4855e2ed1b1dee",
+      "committed": true
+    },
+    {
+      "path": "captures/RefineryDistrict-before-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/RefineryDistrict-before-overview.png",
+      "bytes": 2345621,
+      "sha256": "a9f8f9e1f088bfb9b85a6bdb0506704cba0604eba3bbd3c21b9188e36a186f87",
+      "committed": false
+    },
+    {
+      "path": "captures/RefineryDistrict-before-road-join-0.png",
+      "bytes": 1580680,
+      "sha256": "e413affe4d62dfe59f78aefc0258ad1d57b00e291f129bcabaf13edf384ef9ac",
+      "committed": true
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-detail.png",
+      "bytes": 2033197,
+      "sha256": "5df573f5f6a631770c4db6d08d6d504d1605524e63a5eece70115cc7e2a8cd67",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-overview.png",
+      "bytes": 2531815,
+      "sha256": "cbd72395577aa38d04929b92e84b69e89fc0aa0f52c946cc10dcdc28620136c7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-road-join-0.png",
+      "bytes": 1670622,
+      "sha256": "26620748238cbfdb29b54a11b8e801787bef4e8ac549bb8509b6e8a2c7eebd7b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-road-join-1.png",
+      "bytes": 1705405,
+      "sha256": "7a61fb3a59082290e99c78d3f95c6c4a4badb9d7c7922cbfede761a40899da73",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-road-join-2.png",
+      "bytes": 1583889,
+      "sha256": "cdc472822e9161b72931a9a4a45c68cd1332467b752fb2bf4dfd0512212aaa03",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-road-join-3.png",
+      "bytes": 1618893,
+      "sha256": "18bdda27a9231b6cbeb2989d3e62ddab8647135a4dea4402d067627d3e0b6bad",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-water-0.png",
+      "bytes": 559164,
+      "sha256": "45747797ca8be2d64d7e64fc89e0340ef7f6ff3fb93a431dc8f7dfc52b674fa0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after-water-1.png",
+      "bytes": 1255364,
+      "sha256": "e509afb3ebb0ea613d6ae39ced8db539a901100313fbe71153a4e54446be5c88",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/AshLinePort-after.json",
+      "bytes": 1425,
+      "sha256": "6b07ed4c958b2cfd01fc1b037a0e5719c4faef156542052d0fe4b5c37375360d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070119,
+      "sha256": "9f048196766bb4f42d38fbd1ea1c6d5bad53be791441c69dca33c79ef1be4191",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134821,
+      "sha256": "0c2bf3c2a7a1625ee68f4facec9fcc3abc1ba33451e6e475ae60fc02b8405182",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1488929,
+      "sha256": "debeeed4f724d091c902ceb51b74e0757cbf0ce65c1b95c9240e07a3f8ec8ebc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH04M04GroundedSignal-after.json",
+      "bytes": 591,
+      "sha256": "af6ac3d5297e6baec61bcf5a39d6840e0fc2a0444b1cf779698a1a5a938ccd25",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH04M05ArmorBreak-after.json",
+      "bytes": 518,
+      "sha256": "f3bd19c2b621e151b8d55ba8ab265fb9ed0c53383ee52a1fc44a58a1275596de",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1782635,
+      "sha256": "f661e7329edb4ded1b976c04e7845fbe73feae0cd4f071df36cf8d963f4f51c2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1918737,
+      "sha256": "bede32ba0f8c3a92463f06ad96fc25661564ebbdf79af0439d2252d4defa2f30",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1248574,
+      "sha256": "4f44fd255cabb4d89ebbf193858402640f2148f46e5d0902b11d692610a0bfe9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1289788,
+      "sha256": "44a4c33a9b36964a4c76270bd8035d30a4028a6e81bb0c381f1aa99e0a06be86",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M01CitywideAlert-after.json",
+      "bytes": 694,
+      "sha256": "d9e9b11c36a23ef8f154c57bd53c31176f6c2ff46f71458ba7c2dc96ec370b36",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1854578,
+      "sha256": "92832b1573ca3b257b6e28863bd65aa09cff8b547418009381b4e9b931a3c46c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2195253,
+      "sha256": "d4848148c7af29e3360665fa68aa8a1b7dba02393af431cfbcc338b2ad8b4606",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1364849,
+      "sha256": "6903ee363ab043dbf85afecf3bbeb044b4d10d1e5f76d24133161af104bf82b8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1414863,
+      "sha256": "1f3522cc1227718b0aa781e1f7886406dd35bc350357f1cd91942f44f3dbdbdd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1390879,
+      "sha256": "3aaa2af05d76152e326c9f1d83180a586fc1ef455d225afe814deaae4672fef2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1415014,
+      "sha256": "266d5c7569901dc9a997ac38b983ab5dbf47d3d2fe5c0e996a6a9fbc0afe0640",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1220251,
+      "sha256": "2c3e08ee61afdb53acf10782ffade0d5b8813b43065bf1a478f1965719fbd8c5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M02TrustUnderFire-after.json",
+      "bytes": 1264,
+      "sha256": "db6e22305a69a256d93f15e6b733b858d4f10da019e9ab138e5fdf620ce9e4f3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1836981,
+      "sha256": "b5111eb1638e0517c30b968ed306912726957487eb878e98da7b89390d9bf4a8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1901507,
+      "sha256": "685f761d6d2f28e6a90ad72bd90cfd7d4d386ec6f74c5bde57e90daec713b8f1",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1247156,
+      "sha256": "4bb41faca4c229f936530dfb3cc18589ce1a97658259dfaceb8223ff50f8f96b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1283252,
+      "sha256": "e58334183f02d1c81ffb7946eeafcc94141d5025d8a9e431fac022ae33c99777",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M03NetworkCollapse-after.json",
+      "bytes": 526,
+      "sha256": "ecdb54bb502afa475a9e2a9e53d7948803cbba582a0a06672bd28cb9ef1c0641",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1812443,
+      "sha256": "33083a24c9a8f7b4050f612e89bb452adcb4ee883c85663ffb3c3137b56fdff5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1903052,
+      "sha256": "3f9f4241269bd9112cd3d8867be2e2ea2b9269f8fa23c48a9b0c77120ed0f7f4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1243220,
+      "sha256": "78ff2ed50e67f69adafb771d2e9e3a99f2ead0fd82a036db5429098c86444a1f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1280086,
+      "sha256": "6a35814594bf8f79f4aab4263debfe37d739803e7214eecff9bec1eec7588c0c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M04LastCorridor-after.json",
+      "bytes": 520,
+      "sha256": "96de18d214d0cc6c94b3edb2264feb752b3b67fd40a94e592218a33b565542c3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M05CommandNode-after-detail.png",
+      "bytes": 1696338,
+      "sha256": "b5c85068f33ac4ce86a2cfda19ef1c56ae67e83e0a74eb9b5b972fb5fd8acfdc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M05CommandNode-after-overview.png",
+      "bytes": 1890026,
+      "sha256": "178e63cf4894f8e178a8c93700d04b3bbaea059e0aa8c5739d37fc5220420ca9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1245413,
+      "sha256": "dee5c7baba72c7bdc945e03ff9c11d11cad95265d3cc3117130492c84443ab4f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1282794,
+      "sha256": "4377773285f1877337815a1cb1dd52059fa41b1875dfba03c1f01002a9c88bf4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CH05M05CommandNode-after.json",
+      "bytes": 518,
+      "sha256": "6c723c12220e35c57ca02e775893c2603796c65b1a4990bdfb9a473cca20443c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CityEdgeAirfield-after-detail.png",
+      "bytes": 2168067,
+      "sha256": "36cebadeadf054e85223e3cee62f1a6a7a941bd36685f14e907e2cb4479ce6f3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CityEdgeAirfield-after-overview.png",
+      "bytes": 2451945,
+      "sha256": "8c570e01bc713bde49fd05f9df3813b0883e93b3dbb90a2f2e364a197c76056b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1564941,
+      "sha256": "ddd0cf269611242dcae10238bd4e4d42f231bb3483ad142e5e7eba8305b970a4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1535236,
+      "sha256": "c69e8ed5a2243a163e7e5736cc2dcd34dea5b9c4b14f25abcee307cabf6ae06a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/CityEdgeAirfield-after.json",
+      "bytes": 999,
+      "sha256": "86e20a92175b2d6d8c624d83c701ed7e13699b530e48c1793b66b3eb49860079",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-detail.png",
+      "bytes": 2051342,
+      "sha256": "1134e230924f25baaa2ffdeb598a330c0fec4e64bcce4b66156f78bbbcec0da5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-overview.png",
+      "bytes": 2329553,
+      "sha256": "a016a3c5ee01bc1e559bd0b51dd8125263342eee3366e3283df0e788cfc4acf5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-road-join-0.png",
+      "bytes": 1704129,
+      "sha256": "81346124f5455d1b24c63db5c5987602587ab25845ce1bce4aeb261deeed9c30",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-road-join-1.png",
+      "bytes": 1678544,
+      "sha256": "59dfd6d54af41e94ebe87e588dae609da8f6bdfea2ecf7ca9ddf37e4858aaeb9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-road-join-2.png",
+      "bytes": 1754210,
+      "sha256": "146f3281d05c26bac48a3a575445cb56f3daa27b2867b489b12d088bcc12ba9b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-road-join-3.png",
+      "bytes": 1815074,
+      "sha256": "5cda4e4cd93028129d5613ce7ea00ded3092927374acac15267a5c9da9e38c20",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-water-0.png",
+      "bytes": 1441546,
+      "sha256": "318a4d59a574a1c3832e81967279e1d646bd960ec1a5ad80e7268298ab728799",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after-water-1.png",
+      "bytes": 1435014,
+      "sha256": "48617a888fbc50bf9b90444ab29356cb5a1c0adbc2710b8f6f8ff49adf17216f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/DenseCity-after.json",
+      "bytes": 3593,
+      "sha256": "752f2a8409be05816ebb0976298a2155c2ab85a4ab20bd594bdfc65dc665ca22",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/RefineryDistrict-after-detail.png",
+      "bytes": 1843485,
+      "sha256": "eeff7f9ff237c57f79680e5734c72aaf7e13b57431abf7e0eaa25c5ffaee24c0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/RefineryDistrict-after-overview.png",
+      "bytes": 2345999,
+      "sha256": "2651329cff4779911f3525971336306594a484250c6a76b776a9920ed7280a05",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1580728,
+      "sha256": "3700182a04171ca464c32e7a556fa5493210f217d5d79a9f14e33372e7a5b991",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-01-failed/RefineryDistrict-after.json",
+      "bytes": 763,
+      "sha256": "5dd5765dd7782f1d9f6e84130abbcc0deaeb69ef17650f54a9f6c96d2f3abf33",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-detail.png",
+      "bytes": 2034673,
+      "sha256": "c2bfb45c23b3e4942c39618eb24c449f20b79e829b2bfa524c67020761033c26",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-overview.png",
+      "bytes": 2548811,
+      "sha256": "66fb073e8bc09bd29afdf896a2307bda7f82aa98cc09f153c2cfc8aace932327",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-road-join-0.png",
+      "bytes": 1719055,
+      "sha256": "33acfd23f2505abffb2e53cca8d1e1885d665b32361a36c1cb3596490261b406",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-road-join-1.png",
+      "bytes": 1769681,
+      "sha256": "ddb5caf7e33fadcb753f2feb7e4cfa586335945c00ea14f668b91e1e49c70e91",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-road-join-2.png",
+      "bytes": 1626499,
+      "sha256": "b4f101369f2d7be10a31ede41d62d6b28e914950797b9562ba6b1f44f74bbb3c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-road-join-3.png",
+      "bytes": 1678454,
+      "sha256": "0ade428744e2b29977c283341a11974fcd6f1d84d31baea79f226cb6b652ef41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-water-0.png",
+      "bytes": 626246,
+      "sha256": "aac5f941aecfc1d4dfad53a129fd73d202ab59a5a1a3c48602f52b8ef96207af",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after-water-1.png",
+      "bytes": 1290368,
+      "sha256": "11597ffea5299073d9aba66d86cd79642874167a90a7fbbe0d2b9fed11e05464",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/AshLinePort-after.json",
+      "bytes": 1425,
+      "sha256": "6b07ed4c958b2cfd01fc1b037a0e5719c4faef156542052d0fe4b5c37375360d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070119,
+      "sha256": "9f048196766bb4f42d38fbd1ea1c6d5bad53be791441c69dca33c79ef1be4191",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134830,
+      "sha256": "571a051e09d3de230b543641717c5bac9edb0c1a22a25d93d6fa8f793ca7c746",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1639479,
+      "sha256": "218cac64f5f6500034ab286de6d144efea6a44e2494686edbbd41480a73df9bd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH04M04GroundedSignal-after.json",
+      "bytes": 591,
+      "sha256": "af6ac3d5297e6baec61bcf5a39d6840e0fc2a0444b1cf779698a1a5a938ccd25",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH04M05ArmorBreak-after.json",
+      "bytes": 518,
+      "sha256": "f3bd19c2b621e151b8d55ba8ab265fb9ed0c53383ee52a1fc44a58a1275596de",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1812435,
+      "sha256": "bf6b9344c4f49cd38198d2205e4c0e22cac7855a5a88bd0f9f42f62976dc5ff0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1922939,
+      "sha256": "2d225df05d542408462683c08bfc129b6a9f2d4e8138ca4f737a4b854461854b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1272927,
+      "sha256": "7f747d50e894a9ed704fa43bfb9ed095f86f88b0d8c9dacacf5b938b37e142ff",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1313329,
+      "sha256": "a65f0291378ff073015cf34c6aaaf4598dc00fd1d5e1ac5841954c07d1695ba5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M01CitywideAlert-after.json",
+      "bytes": 694,
+      "sha256": "d9e9b11c36a23ef8f154c57bd53c31176f6c2ff46f71458ba7c2dc96ec370b36",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856906,
+      "sha256": "caeb8bfed9ed4c5483376e155d23faa38f12e604a7d13ba68edb31280a4ab112",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2205003,
+      "sha256": "ca45f941272f061eca9a09b51c6581832c1808cb0178c6404923cabbd94e4f81",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1417955,
+      "sha256": "19ddd029379468e9cd11a1aecf51298e31ba061035409c2234849148d9daa2ed",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1482939,
+      "sha256": "d402ba1b916d8ffa7011f8060edcb8032cc585645d600535f31e82ab3472bc5e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1439868,
+      "sha256": "9ae113cc00771fc2b61dd834aa7f8e0ee637cf20a0a7e7fa234ae1027eaf40a9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1478681,
+      "sha256": "7aaf6eae393119cb2ad1b29bacece303928f9386b31437e9c8919b4fa4f16f4b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1268772,
+      "sha256": "eb0b73dbbf46ca631417bed167e0211fc0483c7412073e6f7d279fde0d020ff1",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M02TrustUnderFire-after.json",
+      "bytes": 1264,
+      "sha256": "db6e22305a69a256d93f15e6b733b858d4f10da019e9ab138e5fdf620ce9e4f3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1836963,
+      "sha256": "f539cb21c5f365f98e7b1d59fd566ac8b23e9158c91111165234a0ef137811d5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1905838,
+      "sha256": "24f8f529c01227118d700032e6fec0b3ea3ff49d563eb7f6a51ae7213a8d3f3f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1270936,
+      "sha256": "d1ed3b81d0dc8b694e61ff307edfc5c81cbe56d922bbcf2288590a59590f0c0e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1303071,
+      "sha256": "9ba3a3dff6d4e588e85299a980b3f2c42fc89ea534f7c612de90a3b13846d7a3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M03NetworkCollapse-after.json",
+      "bytes": 526,
+      "sha256": "ecdb54bb502afa475a9e2a9e53d7948803cbba582a0a06672bd28cb9ef1c0641",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1812434,
+      "sha256": "06ec995a8936a85386e9bc75a0f441b8a1dad9f2313c71781310dc280f8b13fb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1907628,
+      "sha256": "68b5fb26815bb9cf7b8746907023f792847843658a60ab69031186df3778d500",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1274402,
+      "sha256": "196d664602318543887a524714ee6e30c4ae4a9f25e265a3d1b38a8fd41b93e4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1306671,
+      "sha256": "5e0f4a6730dfc74286f1e04702b4faacb0ae082352e72c9cf35471d26cac368e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M04LastCorridor-after.json",
+      "bytes": 520,
+      "sha256": "96de18d214d0cc6c94b3edb2264feb752b3b67fd40a94e592218a33b565542c3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M05CommandNode-after-detail.png",
+      "bytes": 1696327,
+      "sha256": "0a0ce89d093b594107bfce376e11fb57923c9b5aedad7843711f316b85da73d9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M05CommandNode-after-overview.png",
+      "bytes": 1894797,
+      "sha256": "55e11fee1a7a9e5fcf709c737d95005f729de3a0f2a1dcd78d336274ee41d665",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1276483,
+      "sha256": "8954838f6b819e3cf407d1ca3f732238d43eb98d0d3d4618f423906f8f65d1ce",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1307307,
+      "sha256": "73db7ff42185f1a48f7c75b4b1020f577b37c8527b3d2bc780e763a0d868bce9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CH05M05CommandNode-after.json",
+      "bytes": 518,
+      "sha256": "6c723c12220e35c57ca02e775893c2603796c65b1a4990bdfb9a473cca20443c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CityEdgeAirfield-after-detail.png",
+      "bytes": 2168067,
+      "sha256": "36cebadeadf054e85223e3cee62f1a6a7a941bd36685f14e907e2cb4479ce6f3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178564,
+      "sha256": "d2dfd06dea6aa2df85d0de98cc67816e70851fba4148826a1cf8a077232a0ea9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1602484,
+      "sha256": "8bf6a51b6a0266f34f29d35ea14608946f23b32221d750860d14c87a3875a1e3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1588700,
+      "sha256": "98a63aea9a31a4397cd77609cf916c278d542f739db54c3824faa137f3d0f44e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/CityEdgeAirfield-after.json",
+      "bytes": 999,
+      "sha256": "86e20a92175b2d6d8c624d83c701ed7e13699b530e48c1793b66b3eb49860079",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-detail.png",
+      "bytes": 2051356,
+      "sha256": "25ae251f54b08da1a5591691afb586db9fc660c3d5b0b5c9de9b0feaa5c5e057",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-overview.png",
+      "bytes": 2331540,
+      "sha256": "512f5a6c9c07554fc3b1cab7b396c5d23426da3cd52a989f71a5dd3d543c9ced",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-road-join-0.png",
+      "bytes": 1822996,
+      "sha256": "c19541603943f8acfaae3c84b8b63c08836add2a44bcc2fbe9c15100a72229bb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-road-join-1.png",
+      "bytes": 1795981,
+      "sha256": "5124e49eda25bbdd55e01545e7086b291107168f4927de89ee6b1cb4efb7abfc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-road-join-2.png",
+      "bytes": 1810727,
+      "sha256": "f60ce81a496c7b0c47e935df72f05a730f0f6822610d99ae23c350742cfddd6e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-road-join-3.png",
+      "bytes": 1862872,
+      "sha256": "ddca21ebb92ba0e1fa06acd2d186c0c532da49aa7b547add48f637db28afa9ed",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-water-0.png",
+      "bytes": 1450827,
+      "sha256": "e69567f7127f9eb9aaca19224aef70323445f4964f681047c9e4832a07d8aa97",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after-water-1.png",
+      "bytes": 1447199,
+      "sha256": "5b4da84b711ac78db42434ac2081d888fc3ffd0f4ead6112573ebfb5f1032aea",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/DenseCity-after.json",
+      "bytes": 3593,
+      "sha256": "752f2a8409be05816ebb0976298a2155c2ab85a4ab20bd594bdfc65dc665ca22",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/RefineryDistrict-after-detail.png",
+      "bytes": 1843485,
+      "sha256": "eeff7f9ff237c57f79680e5734c72aaf7e13b57431abf7e0eaa25c5ffaee24c0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/RefineryDistrict-after-overview.png",
+      "bytes": 2345963,
+      "sha256": "4944a53003586d5e67fb2df26b924dfe9f5a70478ce159502ce3818e5f2a5f56",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1606816,
+      "sha256": "d928730220d2a843eb0bc7839b664f4fa5a097cb7bc62817b794d58de58b8ea7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-02-superseded/RefineryDistrict-after.json",
+      "bytes": 763,
+      "sha256": "5dd5765dd7782f1d9f6e84130abbcc0deaeb69ef17650f54a9f6c96d2f3abf33",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-detail.png",
+      "bytes": 2036232,
+      "sha256": "abddba34732335cd443d649b4b4deab26c640dacdc2fd1f0401ecaadf000b433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-overview.png",
+      "bytes": 2529235,
+      "sha256": "acb3a8eaa8d9f9b8d9de3fe1ab31426eb17e48726076251a55c6451ed8e3ff92",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-road-join-0.png",
+      "bytes": 1706378,
+      "sha256": "f482b6a32f8409e142a551e63aa9394d24230bd2f5d5c8c0bedab52c43d3498d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-road-join-1.png",
+      "bytes": 1753368,
+      "sha256": "a559ee0df2d698186db55e83b2400735c9f60cbd80bf078391e153dcfd5a39f8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-road-join-2.png",
+      "bytes": 1612751,
+      "sha256": "c73029aabb0d80817bc92211bf21f2cce53add289284e61ba560281d99f30796",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-road-join-3.png",
+      "bytes": 1661431,
+      "sha256": "dbae6c2ac7563aaf113e8ccee7340cda9d65682657109889ef645e62fb3c2a25",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-water-0.png",
+      "bytes": 649116,
+      "sha256": "1aa46fd9a1d10d31fb6235309a33bceaa39978103051e00b821c5612e1a2a8e0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after-water-1.png",
+      "bytes": 1272864,
+      "sha256": "1551d6cd88feb2a693ca6b05f64b71a40749787e77a4ec4535c5b19e5a523c4c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/AshLinePort-after.json",
+      "bytes": 1425,
+      "sha256": "ec39f54bff9ddba48cfdbd1ef37941ad3a874ca9dcf961354fb3b980a3688827",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070088,
+      "sha256": "477c3555a18745fcd8ca1a1ea8486887c1484cc469d7c401cc91f3d64f32b903",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134379,
+      "sha256": "1cad491fb81e95ecd3b9dd66a1e06360ff3efbb5d3bec5d5164e1d4c3a1101ce",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1536312,
+      "sha256": "36f4f482a1ab8c70f79eff31bfa999f18bdd3f8a1473ed1d8b54b95bd380e8eb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH04M04GroundedSignal-after.json",
+      "bytes": 591,
+      "sha256": "144bfda266fcffed25da141bceeac8f9b833a2e02ffd72e921fc6ee09c306174",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH04M05ArmorBreak-after.json",
+      "bytes": 518,
+      "sha256": "5b7df3192cf65295dd6988edd7d502761064cb24aeaedeac50d808e227b6faa2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1812008,
+      "sha256": "03c3693a79d82d09f6614be4f03d4a59705230cb5dab31833ee95e0f0cce2dfa",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1925728,
+      "sha256": "912273565e6e11ef7d2bb225d2fdefbb6a06ebb2ccc31401e63e0c0d68770aeb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1295223,
+      "sha256": "ee85aeb2e274712d45304484bc113e77837614a854ccee3c001a94b0f8ef7f49",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1334161,
+      "sha256": "9da6ba0da04ae08eb8d14b9680f67112998066b93b56f29d38129cee667390c4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M01CitywideAlert-after.json",
+      "bytes": 693,
+      "sha256": "7c2c5d1ab886f2885ee811b756ffc8a8615a1e6b9abd78b55dc6808257d51fec",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1857261,
+      "sha256": "136845e0133b3aad350ded340a09cfc541221c1a7220cd623771ce1ea404ff03",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198978,
+      "sha256": "b8548b15e57d924a438267de4bcc3f65552a18efebc4a1b0d39ca205ab1424b3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1401177,
+      "sha256": "4c56c52cb292e6354c161eb35fa172f9c06685a1a3752bbcf2c4ffcb3436a78b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1460308,
+      "sha256": "066eec71215929994f4767be937bf8374c86eef81aeec43106ebbe917c8a6e36",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1420340,
+      "sha256": "8f1aa48cb6e0e74522a3b7062babe5e2ebef222e4cef85c678f4e234713add75",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1453923,
+      "sha256": "af00f2ee582e0efdbf4fb0b58f10e4a180824aab523c9409c06e4bed3d2cba56",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1271901,
+      "sha256": "da44ffaa389cbef74fcce42240dbf8dbe4b25096b3360138c3e7a3bb739186f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M02TrustUnderFire-after.json",
+      "bytes": 1264,
+      "sha256": "b2e3cf3229a3be3771f7e88021d82172f55aca6ddbe548d89a6cd979b063fde3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1836483,
+      "sha256": "0d3eb9b627632d3030d7629a59499e2899f8d7ae9aff7b047a57d686134a0677",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1909225,
+      "sha256": "9d4fde71043393bdff814805b6c2591b547ea1cb9cf3272f064f87387c596408",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1295575,
+      "sha256": "c43264809c55329edf03d9e80d63f13cedccb01bd2c3c10520b648f942abbfab",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1327419,
+      "sha256": "e0e3f995f561d7fcc09400d499644b7659076c3c32f6e76ad1bf5b032430a66d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M03NetworkCollapse-after.json",
+      "bytes": 525,
+      "sha256": "23b50653c5adfd9f687e734d6d612aecea7311d5b1d7e7bbb59104241405e2e6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1812021,
+      "sha256": "8a47e67f7e1f4f06461369a3a5537e77902090e4c0e6df8814d84f70aa19937e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1911031,
+      "sha256": "83e025e3be3104ebc92cd1732b04d9861a7609cf55586fc86f50cea6ef40fde8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1291424,
+      "sha256": "093c75d852754ca49eae8b8a06f507920ef8828b412935ee0d5b3d7c340f988d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1323548,
+      "sha256": "e4bae5278573c34c0a9934ed3942a3cf17dfcabc68047e0f5865270b55384a43",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M04LastCorridor-after.json",
+      "bytes": 519,
+      "sha256": "185a046495635ef7e5f1cb3a0eb6beee7f11b911ee4ccca086da2f2e06e506c4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M05CommandNode-after-detail.png",
+      "bytes": 1696149,
+      "sha256": "b97ae447d43bfe4f5d0a1c2b984e5586f95c890eeaa27781677c91afd059df61",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M05CommandNode-after-overview.png",
+      "bytes": 1898020,
+      "sha256": "322f38790784374045261723727ef282cdbd210fddb89a00e1de5fe95358eda8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1291515,
+      "sha256": "01217c37e48c6ba89de17d431ff527d203d21f35637e8ba96a9cb00fa7a7182f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1324092,
+      "sha256": "d0e9fbf6c216913e90b08258df448804d797516ada1cebcd1eaac5ac87023f10",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CH05M05CommandNode-after.json",
+      "bytes": 517,
+      "sha256": "58b014015f50874a899318395c6bfac1dca3d2601609b7f42ae32907e842cc4e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167912,
+      "sha256": "7cae5d49791d84a80ed2d672f413d5df1c92e8541a938fe36e31f2e3c65b1a20",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178448,
+      "sha256": "e9594ddbed201367ce8ae3eb0b7ba1c1cd4f9ef9eb182f94ab0ef39b9300ae0c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1591975,
+      "sha256": "06efdb167f6cd9fa98669c300430918a7d4a4aa5a543e9ad5948988f3f2b88bd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1572206,
+      "sha256": "e5f888b8e1044db8543ff63fce3890d1cbc83c3623854c76966e005c37cd6704",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/CityEdgeAirfield-after.json",
+      "bytes": 999,
+      "sha256": "65f2edaa8e7da0a8a45876bd38efda03fbd1b0c1010b5fee08df11b9bb95c345",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-detail.png",
+      "bytes": 2051185,
+      "sha256": "de79e5081dd925e47053a19bb9867ebca9551b45637eadb9d3ac11ef2fb980ef",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-overview.png",
+      "bytes": 2330937,
+      "sha256": "cfc925448559722663b470e8e14db27c68aa1d8f85d0c8e4f39ccf7ecb6d87d3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-road-join-0.png",
+      "bytes": 1780610,
+      "sha256": "f988b9d5ddd6ec2d87d351f150c4101c68197d3361bc62c8163c2f5f1c121680",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-road-join-1.png",
+      "bytes": 1756484,
+      "sha256": "130ce1510a15dd23cf5e6f47066ff32eb36aba2fb7491640701f0a0695bdae4f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-road-join-2.png",
+      "bytes": 1778322,
+      "sha256": "ffd64c9a15cb16935a69b5e9d2c3c1b79b08c4bacb9ad726a80095ff6b1e9ebc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-road-join-3.png",
+      "bytes": 1835427,
+      "sha256": "32f696eee7d3c0a695922fb418ef453e41054e67e1f6197758d80db8c3aecb94",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-water-0.png",
+      "bytes": 1475958,
+      "sha256": "d4470362a5dfc5390d1703d2759bc726e4e81ad2857cf82c1956e5c7e9ac7ecf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after-water-1.png",
+      "bytes": 1469089,
+      "sha256": "a306f89c66256e01e88d82a1b6cde8c9639a04190874df2ae9c253b93184a984",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/DenseCity-after.json",
+      "bytes": 3592,
+      "sha256": "b84cde5ac521820c6f5f80b77b9b06757ef7a54c964e45b11bed18f5fbaaf1b8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/RefineryDistrict-after-detail.png",
+      "bytes": 1843547,
+      "sha256": "6bab6a1bc331ddc953e672438ae389759bcdc4fd0a8a0a690e25400cd4e8807b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/RefineryDistrict-after-overview.png",
+      "bytes": 2345873,
+      "sha256": "5a56c49285b66012a9a6a84db03ee2db222fc4ec1778d2d5422d22c49b834515",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1599535,
+      "sha256": "6841fbfcce6b85db9783064302fbab183f1bdceaf316110fa94104f6e18d306b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-03-superseded/RefineryDistrict-after.json",
+      "bytes": 763,
+      "sha256": "995225ac806a0edfa4e98626d5885547c804dad1dc964dfe0171781b26d361ea",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-detail.png",
+      "bytes": 2036121,
+      "sha256": "5d4b0ebbb79c6b3f08a310d64f838907739a8d1a1971cbbc7e1cf032746d9cf4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-overview.png",
+      "bytes": 2527287,
+      "sha256": "695d3c43fea5fea02060740b366af844b0c9854961989403f0af785220ad2177",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-road-join-0.png",
+      "bytes": 1703081,
+      "sha256": "7eb40d90b98f7bad7b292986dabb666be73a5e7df76e81af1715db267e60aa6d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-road-join-1.png",
+      "bytes": 1747456,
+      "sha256": "df7402ba5d913d33a07a2b50ba8ba75f82673bfdd38813d60b93ebd1fba48ef1",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-road-join-2.png",
+      "bytes": 1611419,
+      "sha256": "d8db9afb8ee1f1802eb53c8f43a94a477b4963573e3c4e10944decb1b255a4bb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-road-join-3.png",
+      "bytes": 1658076,
+      "sha256": "dd8de510cb7278cffec07976ce368dbc1d440165b38778bd5579e5d924533ff9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-water-0.png",
+      "bytes": 630868,
+      "sha256": "f424c75dd00522a59054c289642f189bd783113d8f3033105d097e6c452e5a65",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after-water-1.png",
+      "bytes": 1261332,
+      "sha256": "bdaa36f2f41681ec66eb2210c289e067d7a391a2592ceb5323c21b4531128c7a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/AshLinePort-after.json",
+      "bytes": 1425,
+      "sha256": "ec39f54bff9ddba48cfdbd1ef37941ad3a874ca9dcf961354fb3b980a3688827",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134212,
+      "sha256": "5ac83a3aa7e86d07affc924f865423ac59022cbd236b17767471f866b2a061c8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1576662,
+      "sha256": "0dcd508a4ee3015951b7b581bdf12435dd3c76e0e420ff2731cceb32e3de61ed",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH04M04GroundedSignal-after.json",
+      "bytes": 591,
+      "sha256": "144bfda266fcffed25da141bceeac8f9b833a2e02ffd72e921fc6ee09c306174",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH04M05ArmorBreak-after.json",
+      "bytes": 518,
+      "sha256": "5b7df3192cf65295dd6988edd7d502761064cb24aeaedeac50d808e227b6faa2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811575,
+      "sha256": "6f33d302186d1361e4e9d48cfe3d8527c2907bde1604c3e36d0af0e3dc00fde9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1924636,
+      "sha256": "af4ca52060965c75deb78410ba6801e7324e86181bda39ab618ac24fde639352",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1288251,
+      "sha256": "73a41480aa39101f9bec1a11ec908973829ff88cc7723ae5a10b4f17ab0201b3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1325474,
+      "sha256": "38f61bedbc1e80ddf1f3d6d10dd4e1562491aaf54c9a49f03314296c60706f0b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M01CitywideAlert-after.json",
+      "bytes": 693,
+      "sha256": "7c2c5d1ab886f2885ee811b756ffc8a8615a1e6b9abd78b55dc6808257d51fec",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856865,
+      "sha256": "0fc2018ad91b3b7fb98e9bbfc828062bfff651b041dbd694f04db3e3f1908ca6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198382,
+      "sha256": "999fa554bc7ad890ed63c03d4417cfeefb50e876f7caf7d0f0c6d6b6693d3e38",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1398375,
+      "sha256": "829e33da9098cd77d19cdf70eccbc097bad58ca98fe1376c56f0dc11485f9d0d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1455520,
+      "sha256": "55e8723cf75943d38995d63d0b2c0efa25514dfd6a92651a78b0f6abe07b93ec",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1418606,
+      "sha256": "2161f00ce1bb63ecf6ee78cc6cbbad162ca811690b3d4fb620f3a2d0091d0310",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1450851,
+      "sha256": "24dd1171df7fe8450e527b6440ee17121058e12caf412cd31a7c66d28d647f37",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1258943,
+      "sha256": "a9c5d4f438e09e218713e6e26c5470684cf1bb25e74f527c0d3869bf78444e02",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M02TrustUnderFire-after.json",
+      "bytes": 1264,
+      "sha256": "b2e3cf3229a3be3771f7e88021d82172f55aca6ddbe548d89a6cd979b063fde3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835982,
+      "sha256": "af00da17dd1feed3f146482f96ab11299fffae3112b5906eaf369b44a7ad35f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907626,
+      "sha256": "ab05d2ae042b7acb517cc900bd06c393ff58d213dab4854b47c02a831f10db07",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1287170,
+      "sha256": "ce47671e7feb549a18519c52a2e129735efb2eadb8c266b07403400539177876",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1318342,
+      "sha256": "3a6e9bfc437799008dadc1dfb46bd14757523657131566809bc4e373c89399e1",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M03NetworkCollapse-after.json",
+      "bytes": 525,
+      "sha256": "23b50653c5adfd9f687e734d6d612aecea7311d5b1d7e7bbb59104241405e2e6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811572,
+      "sha256": "87ff5fa87db22e22ce086ac436fa9ed551c20aa2febfd7c29a3c8e7c93778c41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909829,
+      "sha256": "62b668fdb272bbf380b6dea8274c4bb5add56d4ef97fe935c356c49b3083181b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1286999,
+      "sha256": "3eee7e12a20ed057ce40f6e46f3c10a175b357663b84b939263cae661cfc6e5f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1318665,
+      "sha256": "542de4297bd195f9d4f6cbb0db9c917f347bf5c79f10a9a5860130299cb32a26",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M04LastCorridor-after.json",
+      "bytes": 519,
+      "sha256": "185a046495635ef7e5f1cb3a0eb6beee7f11b911ee4ccca086da2f2e06e506c4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695521,
+      "sha256": "e05bdafc5420a4b2eebc2cb9862f2f0ff755543ad60f15ae0e10f51bf72a60af",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897126,
+      "sha256": "29af58f069e304ba9d9630abb97dd8d28d1f865f337c698e58aed29719a9ceb3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1287488,
+      "sha256": "d079ca6b6259dee523abbeb1572aba7c32f70978da12c06d8b5328345a57d7fc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1318386,
+      "sha256": "4acb761928e11f33977be2a40e7715d7fc3793e79a0a1777dd9498d5ebab2b86",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CH05M05CommandNode-after.json",
+      "bytes": 517,
+      "sha256": "58b014015f50874a899318395c6bfac1dca3d2601609b7f42ae32907e842cc4e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178564,
+      "sha256": "d2dfd06dea6aa2df85d0de98cc67816e70851fba4148826a1cf8a077232a0ea9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1588244,
+      "sha256": "811741d225014f70e591fa8cc56a94c71b48922836a51b0d2b1c0079b69d6fd0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1565906,
+      "sha256": "434fe9ae75de573ecd5ae0231584023dbff6efad2c69fbb422480c2a995283bd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/CityEdgeAirfield-after.json",
+      "bytes": 999,
+      "sha256": "65f2edaa8e7da0a8a45876bd38efda03fbd1b0c1010b5fee08df11b9bb95c345",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-detail.png",
+      "bytes": 2051130,
+      "sha256": "84b053b4a11e9f8817e4393f12b031177607d989f1d56f520ebe86eae4b93433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-overview.png",
+      "bytes": 2330857,
+      "sha256": "5014eaab464981077e5e5f76de8fff701a3378867bfc898ba31421d5d7a7f301",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-road-join-0.png",
+      "bytes": 1758933,
+      "sha256": "acd78d44b8ad51647703e2ebbbb9d99d7594dc573187e41fe2d04e4171b3c6f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-road-join-1.png",
+      "bytes": 1729182,
+      "sha256": "7a3f935304222c0305f0b4866b2946c24c4f5bedb5ef2d12c14047ff62388cdf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-road-join-2.png",
+      "bytes": 1768670,
+      "sha256": "3e2763175116d5760e98223226751cd872a56262d760f5299a8e5702a4c22341",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-road-join-3.png",
+      "bytes": 1827587,
+      "sha256": "488589e5d881ae4922e594d19dba7eadeb8a92e57e7bd29f1dc6e041bc8426bc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-water-0.png",
+      "bytes": 1473127,
+      "sha256": "47a3752a7a12d0078f77859766c690433c32d4c1f7d7652383427386f4d448e0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after-water-1.png",
+      "bytes": 1470297,
+      "sha256": "19072081f0bde5409bb1d4fffbc8f145c52c335356f39d45dbaa735858b196a7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/DenseCity-after.json",
+      "bytes": 3592,
+      "sha256": "b84cde5ac521820c6f5f80b77b9b06757ef7a54c964e45b11bed18f5fbaaf1b8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/RefineryDistrict-after-overview.png",
+      "bytes": 2345666,
+      "sha256": "79269648177dacba7e6421cf981864828774717b7cc6411121f6369d1630f1fd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1602118,
+      "sha256": "00e92d5120d786ec59383e718b9e4d23fa9ae07192ec0d876e7969b3366c202d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-04-superseded/RefineryDistrict-after.json",
+      "bytes": 763,
+      "sha256": "995225ac806a0edfa4e98626d5885547c804dad1dc964dfe0171781b26d361ea",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-detail.png",
+      "bytes": 2036004,
+      "sha256": "6f5271f50b7bff7ee188d122524f9fdecc47c3876eaff83e7a50c47595a33409",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-overview.png",
+      "bytes": 2522421,
+      "sha256": "71b0175a3ec00c7691ee587ada0ed5622b06d71d847c1dc6b1b4cb187235df1c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-road-join-0.png",
+      "bytes": 1716354,
+      "sha256": "63983ce80cb3e9e8e9d4d1c05ba63514c0ebca5b97a7346c7f5300dcc2efe6d0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-road-join-1.png",
+      "bytes": 1769547,
+      "sha256": "fe4f18fcd0959322b2cc0e7d5be9a98216086a4fdb90f3fde3ff32b447b78825",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-road-join-2.png",
+      "bytes": 1626023,
+      "sha256": "697d7cac371d26d4c9b3187920575f0379a7cc42d5b23fb2113260111012e787",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-road-join-3.png",
+      "bytes": 1681013,
+      "sha256": "9b9d038539e759b2ff36d57cec23542aebdbdd78b5d90b9cd51f3ffb2eb04c04",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-water-0.png",
+      "bytes": 634151,
+      "sha256": "238a1ccb18f3ea7a4bdc2ef75a01a5f1ab0c90a7d97c18987e0019cde5ca1958",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after-water-1.png",
+      "bytes": 1271079,
+      "sha256": "83890f430a50f8141829ce83403e4423bdc99be209877c6e5b29115630778a00",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/AshLinePort-after.json",
+      "bytes": 1425,
+      "sha256": "ec39f54bff9ddba48cfdbd1ef37941ad3a874ca9dcf961354fb3b980a3688827",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134211,
+      "sha256": "4b1850b581a766acdc6a9f7d11a3cdeee4efcad4f47797c5ef7a9cc1492d066d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1605994,
+      "sha256": "252d03e1c61ee29b9ef6ccf9d4dae14fe47f7b53da94c084a339de5461d558b2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH04M04GroundedSignal-after.json",
+      "bytes": 591,
+      "sha256": "144bfda266fcffed25da141bceeac8f9b833a2e02ffd72e921fc6ee09c306174",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH04M05ArmorBreak-after.json",
+      "bytes": 518,
+      "sha256": "5b7df3192cf65295dd6988edd7d502761064cb24aeaedeac50d808e227b6faa2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811575,
+      "sha256": "6f33d302186d1361e4e9d48cfe3d8527c2907bde1604c3e36d0af0e3dc00fde9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1925045,
+      "sha256": "f15ea1da7dd486ca7979aaaf911ee40616e521311ceedf84a0a614c4967f3a5a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1287487,
+      "sha256": "5144b948bfd51d3ba1650d260d8b1f12256b272c59fbff13a2acc2629218b47d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1325433,
+      "sha256": "51d75e7bd2a1ac9cb2310d4f62b93f545a8f4f7cab939806286465166cd212f3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M01CitywideAlert-after.json",
+      "bytes": 693,
+      "sha256": "7c2c5d1ab886f2885ee811b756ffc8a8615a1e6b9abd78b55dc6808257d51fec",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856747,
+      "sha256": "94accd4baafa68dab9e130024889f4e969f579d27f0bb177683dbd1f449c1710",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198379,
+      "sha256": "d865e60771ee649be783cc4618a1c8591ec38015fa701751f83715464c1eba7e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1424350,
+      "sha256": "244a61b5fd24e111e0134eaefcfc6aee5002d9e31bbfa232d706fe8323c28d2c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1495113,
+      "sha256": "31080a8a6b5c7ab94a784440897ffb98ac0a428c72de5d3fa2690da3456a4a28",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1445339,
+      "sha256": "3da27ce99bb8cf414b35e2bbeaba9cbd689e2246f794eb8f057e4d35cad0fec3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1491763,
+      "sha256": "59fd3d88de3489c85dc02e25ef56575a0c6b38f6552c36fd305fef7644215c3f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1269069,
+      "sha256": "0f16445901fbcc8a868eaed5d3955527fe73660f9e69e028f9fad7a0d2d47db5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M02TrustUnderFire-after.json",
+      "bytes": 1264,
+      "sha256": "b2e3cf3229a3be3771f7e88021d82172f55aca6ddbe548d89a6cd979b063fde3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835982,
+      "sha256": "af00da17dd1feed3f146482f96ab11299fffae3112b5906eaf369b44a7ad35f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907835,
+      "sha256": "9f3d73a27156c80eb7278f4bf122174a1ceff45af0278de89456e832f76c8852",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1287322,
+      "sha256": "8bac3d4327366a66936621ce06cc4245b7a59e3adeb38cd69713e4b85572d4b5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1316900,
+      "sha256": "12da03996cb14812426fa5d8cdcb5e2be243ad9c9e3293404dfadc34ecc4d643",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M03NetworkCollapse-after.json",
+      "bytes": 525,
+      "sha256": "23b50653c5adfd9f687e734d6d612aecea7311d5b1d7e7bbb59104241405e2e6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811572,
+      "sha256": "87ff5fa87db22e22ce086ac436fa9ed551c20aa2febfd7c29a3c8e7c93778c41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909986,
+      "sha256": "b25eba7dff997168643d23202c7ae457c2e0072595cb0a0c56218f13beb9cd29",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1288305,
+      "sha256": "274e9733b6bc8b84b5f6bfc7c8538cb42e8e90c111368a7064321e75ce83c6a3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1316700,
+      "sha256": "d0ae672dd187463992aa652147c5d20bcc41ec00124a82984f3e1b23be85571f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M04LastCorridor-after.json",
+      "bytes": 519,
+      "sha256": "185a046495635ef7e5f1cb3a0eb6beee7f11b911ee4ccca086da2f2e06e506c4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695521,
+      "sha256": "e05bdafc5420a4b2eebc2cb9862f2f0ff755543ad60f15ae0e10f51bf72a60af",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M05CommandNode-after-overview.png",
+      "bytes": 1896992,
+      "sha256": "fc890a5c598c9b7a77ccef59ba68951aea0224ebf531d1aa23c48414663d8993",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1287714,
+      "sha256": "2ab0d27af22b7967ba3ac1178b0b258e49995dcd29537767b79b19a9f8b72e48",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1316465,
+      "sha256": "9bf23f2bca11ed4dd8c144ce86a84d15febfa06bba4994452ed006699d1d21e9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CH05M05CommandNode-after.json",
+      "bytes": 517,
+      "sha256": "58b014015f50874a899318395c6bfac1dca3d2601609b7f42ae32907e842cc4e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178564,
+      "sha256": "d2dfd06dea6aa2df85d0de98cc67816e70851fba4148826a1cf8a077232a0ea9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1606752,
+      "sha256": "68e245c8c597e40ebb746a9ced08956aa7c1825b916d251c46fa997685797bce",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1592664,
+      "sha256": "e84d1fde25dcb0bad0a98e7a4b7a8528c44763990d429d7a1d8456075bd95c23",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/CityEdgeAirfield-after.json",
+      "bytes": 999,
+      "sha256": "65f2edaa8e7da0a8a45876bd38efda03fbd1b0c1010b5fee08df11b9bb95c345",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-detail.png",
+      "bytes": 2051130,
+      "sha256": "84b053b4a11e9f8817e4393f12b031177607d989f1d56f520ebe86eae4b93433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-overview.png",
+      "bytes": 2331119,
+      "sha256": "672d1c2de0cbcbc79101b6aff603bf5f34ced0f6ee35191e3e6055975b8c964d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-road-join-0.png",
+      "bytes": 1823961,
+      "sha256": "ab9da631bf608b6373c66a643832202084e5d2831f9cc2204d1d867c6445bdee",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-road-join-1.png",
+      "bytes": 1796666,
+      "sha256": "ef643f2a4d22387a08ed29af049c6c383b367d225ff40e27b834c2725545bcd4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-road-join-2.png",
+      "bytes": 1812778,
+      "sha256": "3e87d627555c3e0b1d14698c4b6171433a59a72b1c8e7a1dcdd997898cd44e22",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-road-join-3.png",
+      "bytes": 1863325,
+      "sha256": "7a20aabf5bf197a2a0fc72b53b17581229124297f83f7ef824362ba0e2b92b1a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-water-0.png",
+      "bytes": 1471612,
+      "sha256": "9f8b98069ee5d535a6294b68d91ec5d6af7dedbaf1c1f1826d6853624d34d8fb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after-water-1.png",
+      "bytes": 1465660,
+      "sha256": "0f51f670133aab3192a6727e1b92476db6e0cb0f83742fab0601fca15b2eb04b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/DenseCity-after.json",
+      "bytes": 3592,
+      "sha256": "b84cde5ac521820c6f5f80b77b9b06757ef7a54c964e45b11bed18f5fbaaf1b8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/RefineryDistrict-after-overview.png",
+      "bytes": 2345663,
+      "sha256": "5e7e10f822da3d6b21793d7c93a3da33bbb24c816bb2e548bdc8af92246a3a0e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1607937,
+      "sha256": "ca33ef8b40d115f011046ee230e31f5a90088c1b484ee3c24e8990830be69051",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-05-failed-dirt-darkened/RefineryDistrict-after.json",
+      "bytes": 763,
+      "sha256": "995225ac806a0edfa4e98626d5885547c804dad1dc964dfe0171781b26d361ea",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-detail.png",
+      "bytes": 2036027,
+      "sha256": "a1f15361b2d95fb2dc5377ea47c5679a2374f8d3045ab06873ebce59395d020a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-overview.png",
+      "bytes": 2522388,
+      "sha256": "a6c15114dc81c2e1b7eb19c650fe3c66177903a5590fc85b7e69ee9cd73a64f4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-road-join-0.png",
+      "bytes": 1694291,
+      "sha256": "38b19d4e659029dd6b40cb3192907067a6d2155e176868049e427da7ba718188",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-road-join-1.png",
+      "bytes": 1736245,
+      "sha256": "d7e7d7221b1839f044fd91031bc443bbf6d712f3d52a0c1e61ef6b656af5a0e7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-road-join-2.png",
+      "bytes": 1604916,
+      "sha256": "e5c42196c56861cb327edcb5700bfc2726bf16ef4b3c666522d0d99685e68bb8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-road-join-3.png",
+      "bytes": 1648069,
+      "sha256": "5aa8e6a4d5b6b56cf4a9f1408d8a4ab08ec7563852c14daeb8942d895fb773bf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-water-0.png",
+      "bytes": 634251,
+      "sha256": "02d9e5a9718535d877877e4e5e495989ecec9ea17f70ca263ddf43308940ef17",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/AshLinePort-after-water-1.png",
+      "bytes": 1270614,
+      "sha256": "abec18a6595e21b6986c8f912a3a7fce10cb8ee12f178cd0023d0b9fbebfe201",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134211,
+      "sha256": "4b1850b581a766acdc6a9f7d11a3cdeee4efcad4f47797c5ef7a9cc1492d066d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1554590,
+      "sha256": "0572216a1ea95aad89dcf9a4b51804f1ec47ba9e41478decb04801757c298621",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811575,
+      "sha256": "6f33d302186d1361e4e9d48cfe3d8527c2907bde1604c3e36d0af0e3dc00fde9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1925027,
+      "sha256": "0a52ee453fe7c62079ee09b7e7f528eb14a9ab171a6996df93f54ec7ba38adca",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1287835,
+      "sha256": "9336b6b7c97b5d9e460bf048a4e9845306e3fc8280f96b49d9d143e76fbcd879",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1325063,
+      "sha256": "2324c61f87d760b7b81f463fef59cfc18853eabdd64bc799447bad2669df1ac9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856708,
+      "sha256": "6a5abb7735bd6dc6409f97e95ab9288bb178055f7039d6a61263f7c55f5ed048",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198578,
+      "sha256": "2d58edcadc444024b330143e88547d822e34a08c28a0ba38691b5d290d74676b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1389466,
+      "sha256": "c15d860909168a405472fd1d4c0c08f27e69352cfadda7b293304b5c7dfd3933",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1444321,
+      "sha256": "dcdb0d028f33136c69c20aba5f2991ec47c79ab2be4a51eed73ac867a0b10cab",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1411062,
+      "sha256": "2440587a58aaa6f3d832486f9f87217c4ff57b82c1730f4e9cbdd13a52ff6540",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1442433,
+      "sha256": "40543c1e0e0ead42159e32a2f319d9b002ff10fa271f87fe664486fd0bf9f93d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1267675,
+      "sha256": "88ee9908cc545c9f1bb8192ead787d6d51ba00fbb665ceba6247d5fbf352ed5a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835982,
+      "sha256": "af00da17dd1feed3f146482f96ab11299fffae3112b5906eaf369b44a7ad35f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907982,
+      "sha256": "0c44bb1bd22994309f16bc3fd36d9672c9ebd57c38a907e38153e4c19b558d49",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1287759,
+      "sha256": "3f8dbd88646da592917f8d9ffc30827426769eae262678b43f57a6fbef9f7025",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1317214,
+      "sha256": "9d4c038ef36f43e857275d847fa96cf1a23aa8411b4371e8156fa009a9f01aaf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811572,
+      "sha256": "87ff5fa87db22e22ce086ac436fa9ed551c20aa2febfd7c29a3c8e7c93778c41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909939,
+      "sha256": "397ec645c58ec5a29c93a5ffe13dda4c4150880c1bbf9cf944f9182cc012ea58",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1288100,
+      "sha256": "db644656b02d25abf589badbd89b8eeeae8bbce12d6456e8541faf76e51e96a6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1316476,
+      "sha256": "246a986f782703e651a70f78b82d18dc5e0a0ce49cff2fe6b28eefbd6eee409f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695530,
+      "sha256": "c325a02a3539cf73ae69c13f13521b85dc9c07509100a3be286aa41c67892536",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897149,
+      "sha256": "b83d6ef0f9fea6c5cb7104dbf8065d85acf1b8a112ddc6e21dd5247e2e22aea3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1288018,
+      "sha256": "7c4fcefba6e1b37937b6ac9b1419d36bb94dbd8c87ca8e83f014b0cba45762dd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1316776,
+      "sha256": "b5073f54f149613cc4ab6ee23eaaad209f78c2aadd5e7bb8acb6aaa2d370fbe6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CityEdgeAirfield-after-overview.png",
+      "bytes": 2186986,
+      "sha256": "17a351242881684db0ba8f35288aa1b65a11e2cddfcad7f61296bde5b23193cf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1583311,
+      "sha256": "a83f40ae87a11b8936f1af97ec9f65ac9521796a04c4ddc4043629ca954e21f4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1558168,
+      "sha256": "4352260f01dfddb13f9be31a7b99c51948cd0ef6cf7363b619853ee00358092b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-detail.png",
+      "bytes": 2051130,
+      "sha256": "84b053b4a11e9f8817e4393f12b031177607d989f1d56f520ebe86eae4b93433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-overview.png",
+      "bytes": 2330693,
+      "sha256": "216dd0e35ad4af570ec471c25148871423e7ddf353be499869f6c7ee4823f809",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-road-join-0.png",
+      "bytes": 1767934,
+      "sha256": "77443001509c9a45ab2bcd05e73a93d941cfe87754313e1f92cfd1c91967a3a7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-road-join-1.png",
+      "bytes": 1734725,
+      "sha256": "8e6d10a233da640e474738d3ea59d6f5d6404e5b2f50abc973cf9d4880829cc8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-road-join-2.png",
+      "bytes": 1773499,
+      "sha256": "140d415c888ce2ed4d00587f174e502b747a03b80b19c11b23ed23a68f075939",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-road-join-3.png",
+      "bytes": 1832580,
+      "sha256": "07ae4a8dbba55565162ff097bd57f488c268738096e1dcc6d33ec1c8d4261c84",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-water-0.png",
+      "bytes": 1472766,
+      "sha256": "431db7400dc5b58757bdd718b3477c65eeea43e8413d9daf422473b30ce89740",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/DenseCity-after-water-1.png",
+      "bytes": 1467753,
+      "sha256": "9f23ccd2a4b37d4ba1b4f72fa33920ef64665bb4360ee209cb5edd4aba2bde08",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/RefineryDistrict-after-overview.png",
+      "bytes": 2345663,
+      "sha256": "5e7e10f822da3d6b21793d7c93a3da33bbb24c816bb2e548bdc8af92246a3a0e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-06-superseded-stained/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1594030,
+      "sha256": "7591ba524c964963fe794472b3444b98f9bc18f9deab61fce0ac838e1e759337",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-detail.png",
+      "bytes": 2036005,
+      "sha256": "6db1f89969b933164ad15f65a32539f8b11a5596895a96681f9ec8773cbe0e89",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-overview.png",
+      "bytes": 2522626,
+      "sha256": "349236a0964deeed0f1357c77b69e99b98f88e21ca093bb48022c02e9f05dae4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-road-join-0.png",
+      "bytes": 1707885,
+      "sha256": "bfe7f5a121955a879a0e829cce1ed2705dc73940fa0e462e84a9725468ecea3c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-road-join-1.png",
+      "bytes": 1754139,
+      "sha256": "d4ebc227087bf59c41300d55dc14a8a389eb00c5c6019f6871520b36fabbe415",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-road-join-2.png",
+      "bytes": 1613307,
+      "sha256": "bf9067d631f12c8733b904389cde2e14393925a3d01f514108ba2b221d560a70",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-road-join-3.png",
+      "bytes": 1660166,
+      "sha256": "8e5b7615e80948c455877ba42712110fdf6d30b6354d8ee1e6b2e25adf90ccf8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-water-0.png",
+      "bytes": 633990,
+      "sha256": "7645e548bfa36be6d66aafd431f18b2c7b3cc33140dc582355faac97b4468d27",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/AshLinePort-after-water-1.png",
+      "bytes": 1270097,
+      "sha256": "042aa667370bc6db9f83913207c3e93104b3e17b3bdcddf794cb25f6bb1d647a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134211,
+      "sha256": "4b1850b581a766acdc6a9f7d11a3cdeee4efcad4f47797c5ef7a9cc1492d066d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1538940,
+      "sha256": "20642e6261392e575134631123bf866fb8d5b694ac4ccd60619d08597df6413e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811575,
+      "sha256": "6f33d302186d1361e4e9d48cfe3d8527c2907bde1604c3e36d0af0e3dc00fde9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1924608,
+      "sha256": "6aca0454c339b742acba8e5bd387cf1a75a47fd2aa015847bc120ea1bd2487a1",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1288144,
+      "sha256": "e30a19f0a316428d402db14c1ea6cbf4c7793671ebf8c34332f3974779f6b25e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1325453,
+      "sha256": "a094fb776e5463c3dd5d379c7ae253dca564833c28dc0f9714eb3ac497a2c981",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856788,
+      "sha256": "360e21c71dbd6abbb5caed04d56bd96fd21d84a140b6f4117181f0c582571c11",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198808,
+      "sha256": "cb403e7f5b0273072d1132ff4db41f44d1af84f59676aa4e152bf989ad19407e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1403095,
+      "sha256": "6b0fc2c644f93d76bf08c23279993cafb59b40cc460eef0c73b0f056a0eed607",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1461109,
+      "sha256": "1ed005b6897e0662b6b9cd3b2c007d4188fd5a5ad198ee2d3a3107b966425e1a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1422669,
+      "sha256": "e5514b5952e722a797c07695acb3ffffe0de1c3bc8a84ee93aa375ac115dccb9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1456174,
+      "sha256": "0309b026f08f40eb7693e088b92cb339dcc6606ee9493ab17c952e309959ad22",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1267779,
+      "sha256": "2ffb6d07a4a575885ab8a246115415e49f1f140bed57d62acfdec9a8ce847616",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835982,
+      "sha256": "af00da17dd1feed3f146482f96ab11299fffae3112b5906eaf369b44a7ad35f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907304,
+      "sha256": "c5d71698e40d37429ee72ca02364f30a613489f2fe7e920c9ff546dbb88210f4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1289434,
+      "sha256": "6ffa9ca8ebabb12ac6ae69ca73f0a3fc5588e9e4fc3589dde8a34b4befbf753b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1318634,
+      "sha256": "31041df9dd9fe83e65bdebe2b512cfd5305eb1776cb80ab114cf5ce1966bca9b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811572,
+      "sha256": "87ff5fa87db22e22ce086ac436fa9ed551c20aa2febfd7c29a3c8e7c93778c41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909684,
+      "sha256": "1e5c1be49ce8a567ddb59cd666300f2be634cdd1c509097bea6467d04f722c86",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1289386,
+      "sha256": "c2becd03894043d4909f13adad193837c4e1a15ea786f84795990a688bdcb9cf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1319420,
+      "sha256": "2c154dfe6e25922dd798da36b6078455422b4c912428e052d34147be155cf478",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695521,
+      "sha256": "e05bdafc5420a4b2eebc2cb9862f2f0ff755543ad60f15ae0e10f51bf72a60af",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M05CommandNode-after-overview.png",
+      "bytes": 1896484,
+      "sha256": "a34de7ac3c1fb6558e1c5532339cd4c660d864ee672bb27f700813df30d65bda",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1289975,
+      "sha256": "8f1c940ed8a07a14a39c71b8d09fdb29c059fcaa7add935a5304657ecf8e4bf2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1320191,
+      "sha256": "f5e3f6b691d48a0d5bbd521e5509a84f5b58c008a144f544eeb7baf75f10b80c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CityEdgeAirfield-after-overview.png",
+      "bytes": 2186969,
+      "sha256": "da67f71fee429dc301adba2bc190952d9fe4bea90fd06d58d51a9c8ba0bdf46f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1590504,
+      "sha256": "697e0574d5192be7ffbdf4fd87e6465e1a1fa5b0e6c37e1dda9c454f1aa6d1f3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1572083,
+      "sha256": "c7d2b0095259d60442825d91bec048a0a3e9c108610d6fcf096833e5c150d950",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-detail.png",
+      "bytes": 2051130,
+      "sha256": "84b053b4a11e9f8817e4393f12b031177607d989f1d56f520ebe86eae4b93433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-overview.png",
+      "bytes": 2330759,
+      "sha256": "d381f3e79f10efe7ab8aad46e05c04bd668bd46a338c452670482f6f5884cdee",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-road-join-0.png",
+      "bytes": 1750925,
+      "sha256": "b98a85955e4bba6d436508e7c905474604e585f6ed56fa008f1166178095a83a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-road-join-1.png",
+      "bytes": 1728478,
+      "sha256": "ec281839d5c726a8bb27c16887e0d18cd2956292624f1840b122a0404aed4522",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-road-join-2.png",
+      "bytes": 1775394,
+      "sha256": "49f0b38b51aab73fc13e446b95cddbb0d5cb0bffbca3280247964824640d89fd",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-road-join-3.png",
+      "bytes": 1834348,
+      "sha256": "33e6160d17778450243374754aef77bbd25f641541ab9d5047d608246bef78eb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-water-0.png",
+      "bytes": 1474233,
+      "sha256": "39de97b1551e68f11298dbf3a56ac12db01f73c110693efe6b57781c67316178",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/DenseCity-after-water-1.png",
+      "bytes": 1467448,
+      "sha256": "473f4f01a5d6678f9e79b05769ef28eb0309fc88f50fcb17dd919f0c16be0f56",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/RefineryDistrict-after-overview.png",
+      "bytes": 2345607,
+      "sha256": "9d535cd09489ba893d90b8ed84131838da4de7ff01a13be3e7c82dfbcee8ccac",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-07-superseded-camouflage/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1598465,
+      "sha256": "fbc3e12475172a8359c12c5b539f0270c12449287ee6e122d96585001953ee48",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-detail.png",
+      "bytes": 2035762,
+      "sha256": "e94859a510330df3040eb856efe104f72678b304dcd4abafe08b5000a3b5a78c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-overview.png",
+      "bytes": 2522542,
+      "sha256": "22b9a05f66d5c9560e4e6f3f57462163088478fb7522849c3fb5f892dc4d6bd8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-road-join-0.png",
+      "bytes": 1692130,
+      "sha256": "c1a6cb9b44f48671043ea025f6261d0e396e1fcfd88a1af90086078e3a49a02c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-road-join-1.png",
+      "bytes": 1732550,
+      "sha256": "c8a2bcc8c0c3cbc9040a4729b627f339ca4bc79910f051e04e5b3388bb52dd26",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-road-join-2.png",
+      "bytes": 1603851,
+      "sha256": "c11841f29fb099af37f59aa271d9ac9c8394c267e4937e6a5ef42cde9a5953f5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-road-join-3.png",
+      "bytes": 1646616,
+      "sha256": "c96ce076dd5a88df4affab7a5ea785ae6add3f7293fe8f7a8d56399cc5a47b62",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-water-0.png",
+      "bytes": 631181,
+      "sha256": "09ed9055719d19ba1f1870ab421f199e52909c9126f2cdeb5732ae51f2f6c328",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/AshLinePort-after-water-1.png",
+      "bytes": 1271117,
+      "sha256": "7fbcd7c7b76aaa1bd8bf32deeb5c5f300758e728ce912cd5fba84fc15fa27a5a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134146,
+      "sha256": "61b0bff795ebf151fe09b10551efdba70a793993af923929c285f689aac46d16",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1513503,
+      "sha256": "62e91521c90035bbae37d1bba0cec6906c9e630a95bd85579d6c51f7cb4198d3",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811575,
+      "sha256": "6f33d302186d1361e4e9d48cfe3d8527c2907bde1604c3e36d0af0e3dc00fde9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1924341,
+      "sha256": "8b92bf736ba69a804ead2be5eee28a5ff3db5f278ae05350a07b647229be95cb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1291213,
+      "sha256": "eb21bf20f6dd25ed413593c664bce157ea93c7fe46aa7639dcfd81066d4e3b02",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1328493,
+      "sha256": "62767330088dcfdacd6b0b173ff5c3fb2c96d97e2a2981345a571d5cb4a075ac",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856774,
+      "sha256": "f9496f71b6f2896a1fc63b877c1c0c24969d41b2b3042917d7beb8ddb78f0bad",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198592,
+      "sha256": "a56ffa7918bed364b5b5f03a2ff9deb95350753d29a09bcaa3bac32a84b34027",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1385945,
+      "sha256": "45ea75bcb8f5c9e11ba5d87316c803a81a0d85c8b4607613afdba76e1aa50554",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1440645,
+      "sha256": "cd65b3a0932d8843d87c4e419edf872254d7a9d024259750122de0cefa8b4c56",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1411641,
+      "sha256": "d9956503b31fad919075e9a847bd22f564fb8d69bb6a81efdf56e8e9c551e78d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1443855,
+      "sha256": "ca318a25a53e2e1c9410818cc6f9f6b859c4af90a6c7cec14b7d94db04b99552",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1268222,
+      "sha256": "8505a46fcc1221c243c36eb0888f126597340ed06a84475b47d8c28f8b89c72b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835982,
+      "sha256": "af00da17dd1feed3f146482f96ab11299fffae3112b5906eaf369b44a7ad35f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907219,
+      "sha256": "2cc86da93a7f1b27d081771d6e6090caf7bb4cd24a6e3f838abfaf2c4af8e515",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1290134,
+      "sha256": "2aae06b7aff2bcc30d62b70118efbbd4ed69a33ad8cab3f8c87f570974117b50",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1320044,
+      "sha256": "24edf1f204cb954d92597cd43df82591498e64ac3ddc9c41247cd5a902c6e3e5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811572,
+      "sha256": "87ff5fa87db22e22ce086ac436fa9ed551c20aa2febfd7c29a3c8e7c93778c41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909588,
+      "sha256": "12a6881271ddeb2432d3df21ab4253effa12c51bc11ed83d31716a55cec4344d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1289139,
+      "sha256": "df300b228434ab823411f43c2dff615e2425cc6e71d0582be4a2b4bb4431453a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1319521,
+      "sha256": "2ac602acdbb176b33f5ee16f49d2586575a0701cd087279e51ef8cf0044a79b7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695530,
+      "sha256": "c325a02a3539cf73ae69c13f13521b85dc9c07509100a3be286aa41c67892536",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897106,
+      "sha256": "6ac7e5d8b00bbb7931b24daac8577b71945f34e709678276237ac470dd6dd12f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1287198,
+      "sha256": "ce898d629bd718e949761f40de8c5b3078a4a03b61955fe0db7729f60bdd5df7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1317603,
+      "sha256": "c77be7454d7d40cb3ee8d3f5259267c44ac9c161add296b296f8cfd8469a34b7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178564,
+      "sha256": "d2dfd06dea6aa2df85d0de98cc67816e70851fba4148826a1cf8a077232a0ea9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1582324,
+      "sha256": "b6b51790720795c0e85593f5cf47d705c663498105cf74dd1e49a2441c996ac9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1558051,
+      "sha256": "8885357e9cccb21eb2dd23ec4365a506657e0fea91b255a42cdc9452b29eac59",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-detail.png",
+      "bytes": 2051130,
+      "sha256": "84b053b4a11e9f8817e4393f12b031177607d989f1d56f520ebe86eae4b93433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-overview.png",
+      "bytes": 2330923,
+      "sha256": "12c916065e85fd4a731b0e1a59cbbee1006f3f95879591ef72bc1c774c7d9a2a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-road-join-0.png",
+      "bytes": 1756693,
+      "sha256": "9a3bd5f19042005a267aceba3b6c51027dd0fe8a4b7b6b1012eb64b7751872a8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-road-join-1.png",
+      "bytes": 1731668,
+      "sha256": "16e5651f98fb402f6c3f69e486153d49ca4eb8781f2a95a12f686841563ce139",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-road-join-2.png",
+      "bytes": 1775983,
+      "sha256": "01426b14bfd0d155ec8842290b5be2ecfd9fb97f91f71bdc36200fffe9fc2996",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-road-join-3.png",
+      "bytes": 1834988,
+      "sha256": "0accba4dac74055e96aba543ff58e6a4fc2f8f2a8969fc836f442bf7003b1f6c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-water-0.png",
+      "bytes": 1475122,
+      "sha256": "298c03b88c128d9df4dc75597f9b60da1c761e13462a4978f597f08d4e1b0774",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/DenseCity-after-water-1.png",
+      "bytes": 1468888,
+      "sha256": "abdddd3b16cf3cfb13683a745ee355451e398caae2487c77395672ffe6e6fc95",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/RefineryDistrict-after-overview.png",
+      "bytes": 2345607,
+      "sha256": "9d535cd09489ba893d90b8ed84131838da4de7ff01a13be3e7c82dfbcee8ccac",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-08-superseded-lattice-densecity-strip/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1589385,
+      "sha256": "25ecb9af2519a5efc2640cd4f79362a8ba70516a990e9393a2cd5cb6fbc87d09",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-detail.png",
+      "bytes": 2035915,
+      "sha256": "3e3888277e2639f703900325d61aefa0f3e694b0b79f5e13dc9cdac63236c121",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-overview.png",
+      "bytes": 2522817,
+      "sha256": "42fe9250a6e948dabe3184933b5d1c95ef17130b5556c2c38ff5e09a845d695f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-road-join-0.png",
+      "bytes": 1692559,
+      "sha256": "4564b196458a08eda263aaa5ffedcf312fa80c1ea86d3e7c4a3d86bf8beacc22",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-road-join-1.png",
+      "bytes": 1733564,
+      "sha256": "5d19b97af650dff6680e1a911c7cd46713dacdb85a838463e7a250f450e0c702",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-road-join-2.png",
+      "bytes": 1604070,
+      "sha256": "c61e2752dd75bac52cbb35b8576e62d4bcae2ab5b36c01dcb3264850a72a7a20",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-road-join-3.png",
+      "bytes": 1647309,
+      "sha256": "196019240e93406311f89a8a9b3a3858c99d59772378a5fdbed1f917c8367892",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-water-0.png",
+      "bytes": 632615,
+      "sha256": "6dfa49e28494b58450ef8c9c2b7198fd31ce764a897a5ad6c6cb64eaadaa0638",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/AshLinePort-after-water-1.png",
+      "bytes": 1271739,
+      "sha256": "227a69a4c63b5f4c5d3958e02e94390cf7e2f1581c7fe068552f7db0ba88e352",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134211,
+      "sha256": "4b1850b581a766acdc6a9f7d11a3cdeee4efcad4f47797c5ef7a9cc1492d066d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1508996,
+      "sha256": "faadd564e2c23937d01dfdc49912f65fe1cfbc027234731d411383aefbbe98be",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811575,
+      "sha256": "6f33d302186d1361e4e9d48cfe3d8527c2907bde1604c3e36d0af0e3dc00fde9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1924382,
+      "sha256": "65f40c7e5d8d7e552d06b1855e5a5f9d1f781123e8a10f5e05786225ebd0b83c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1291281,
+      "sha256": "4745ac165ed35922f6f381fc9914afffa8cdd3221d975aef66733406b8b79378",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1327588,
+      "sha256": "26dd102d77f99c34339d33a1403538b4613cef90599cca2d31ef50638e4d7b10",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856753,
+      "sha256": "c3d3e364eee53d11d977a0433bf433264bff07b0e984debd7c819537808ec659",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198767,
+      "sha256": "02fd59a25bae25405c0ee877135ee18806a035eb40668554ff2f6de224fe37e0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1386377,
+      "sha256": "092631a2f5f6c22e514a498e5bfc1c8a28f0cb8a22554f51f7b26a0036ca21f2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1440726,
+      "sha256": "b743c953c0280dedf78232644604f633cc98223faac5f09c610b080b0985cf3a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1413160,
+      "sha256": "7f133267a18fa48b96085ca7377cfff766e012f3e0ee0408360ddf61e77fbc6e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1444972,
+      "sha256": "1491614431d9134bb23d7b5c8621d9ccb5656f02fd2e22c041c076a0c9c47282",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1268330,
+      "sha256": "5a4fac033a676f7975d35917c6ba7b31f21da4cd8c73e7aa6cb68b04f7648f10",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835982,
+      "sha256": "af00da17dd1feed3f146482f96ab11299fffae3112b5906eaf369b44a7ad35f9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907498,
+      "sha256": "9bc6161e1c8e2167e42847b9deadbcb35d03a7f1df6ebe9480cc2ea76ccdc136",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1289223,
+      "sha256": "93757664a20f7166567d5e23cff7547a96554d3fb4b9ebb30ab1e0624481eafa",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1319104,
+      "sha256": "227cc45f3b53a89a90a5e6028f2d746437cd3f0c9b29431e385f6fee895bd1d0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811572,
+      "sha256": "87ff5fa87db22e22ce086ac436fa9ed551c20aa2febfd7c29a3c8e7c93778c41",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909786,
+      "sha256": "ad4e052f631ffadd50792d03b515ac32bc67fbddf628d48c88a66289710879a6",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1287427,
+      "sha256": "ccff3ba738ee3b56b05f33bd7f6c82d411e3878bb02004b41c861aacdc210f66",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1317586,
+      "sha256": "c2c8580bed293168a0eb46a539806727a634ca4d991650126416aeb65d82d675",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695521,
+      "sha256": "e05bdafc5420a4b2eebc2cb9862f2f0ff755543ad60f15ae0e10f51bf72a60af",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M05CommandNode-after-overview.png",
+      "bytes": 1896974,
+      "sha256": "16dc22fbb295d4057c2d2f0a97db63e04431009820357b563d51b5094f4674ba",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1287050,
+      "sha256": "3088ffd0e649ee3292f544c4ce26dc5e997e1038ac5bbb5c5b766851027ca300",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1317549,
+      "sha256": "0001270e84b433370a968f0a486492c00235c2f2d35843c511f29db6e3cba1bb",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178564,
+      "sha256": "d2dfd06dea6aa2df85d0de98cc67816e70851fba4148826a1cf8a077232a0ea9",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1582634,
+      "sha256": "61d289fb26829a3bc2431626a4e4cdedab0f18dc75ce27e007040655efe703e7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1559725,
+      "sha256": "56e5768f02c8ea861a1c9edb9ab6d3095bb5ab0f3ffa787a0facbded1ae0a0d7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-detail.png",
+      "bytes": 2051130,
+      "sha256": "84b053b4a11e9f8817e4393f12b031177607d989f1d56f520ebe86eae4b93433",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-overview.png",
+      "bytes": 2330646,
+      "sha256": "70c8b155ba704c30ed62498f4334702f9a3200ff4e69fd2e07e4c2d6afc33f1c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-road-join-0.png",
+      "bytes": 1704066,
+      "sha256": "1901882ee5d5cd1c1b060c13370aea65780a6bf7e58a3752d95817aabd386569",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-road-join-1.png",
+      "bytes": 1678456,
+      "sha256": "0f566aa7b1f7c1ef84f292cac778487b35cf7a6fe48545936bde72acdbafc356",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-road-join-2.png",
+      "bytes": 1754239,
+      "sha256": "adbe8a4a7cb639826ea47ab5de493450349ec48309775d7abe3790788d587953",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-road-join-3.png",
+      "bytes": 1815041,
+      "sha256": "987dd70d81e49151ee42b997d2dda4ae7ca20f797598b670545dedd17d654896",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-water-0.png",
+      "bytes": 1473322,
+      "sha256": "92f647965f395babe5157905123f91dd318216b9ff40854e8a79f807b6251bb2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/DenseCity-after-water-1.png",
+      "bytes": 1467589,
+      "sha256": "90b37b1bd140d8dba8cc5228f5598465d081f4bbebc26f32442a65043b4ffcf5",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/RefineryDistrict-after-overview.png",
+      "bytes": 2345663,
+      "sha256": "5e7e10f822da3d6b21793d7c93a3da33bbb24c816bb2e548bdc8af92246a3a0e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-09-reviewed/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1589349,
+      "sha256": "8131e299676906cf2f237b93a324d3608a08a95bac12323b9bbd2bb822b44ca0",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-detail.png",
+      "bytes": 2036399,
+      "sha256": "3d91fe0762a96051fa59a1f1389f56c63dfb99a113390c9edf759b0ba8cc2eb4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-overview.png",
+      "bytes": 2527224,
+      "sha256": "b9a7dda1344680af5e8541c4206c50c030203a224242ef27e33199fa72830670",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-road-join-0.png",
+      "bytes": 1692559,
+      "sha256": "4564b196458a08eda263aaa5ffedcf312fa80c1ea86d3e7c4a3d86bf8beacc22",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-road-join-1.png",
+      "bytes": 1733564,
+      "sha256": "5d19b97af650dff6680e1a911c7cd46713dacdb85a838463e7a250f450e0c702",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-road-join-2.png",
+      "bytes": 1604070,
+      "sha256": "c61e2752dd75bac52cbb35b8576e62d4bcae2ab5b36c01dcb3264850a72a7a20",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-road-join-3.png",
+      "bytes": 1647309,
+      "sha256": "196019240e93406311f89a8a9b3a3858c99d59772378a5fdbed1f917c8367892",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-water-0.png",
+      "bytes": 680150,
+      "sha256": "fffd04f17ebbba2ecbdb66e25fc5a12f940960e2496ad2eb6f205bf983bc0442",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/AshLinePort-after-water-1.png",
+      "bytes": 1302342,
+      "sha256": "fd2799246fa34039d3ced9e1e6f6c2f54f6c2c45751556dbf4d8d5eaf7cd4353",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH04M04GroundedSignal-after-detail.png",
+      "bytes": 2070067,
+      "sha256": "6b42ea07470c2a094d4a7e0fcf047b9b959157a7b74b765e373f71e2d92546db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH04M04GroundedSignal-after-overview.png",
+      "bytes": 2134225,
+      "sha256": "4b211048d0204e7a34c57149a7f2b63a886f0184ee8530756468e3bba38dfe5c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH04M04GroundedSignal-after-road-join-0.png",
+      "bytes": 1508996,
+      "sha256": "faadd564e2c23937d01dfdc49912f65fe1cfbc027234731d411383aefbbe98be",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811554,
+      "sha256": "c4c5231326f8e6d507ea1c24c32a13132c54c792f9aa5c30bbc02cd3719fc08f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1924928,
+      "sha256": "e0d14187b1f4b4344089951f794bf432dac5362c2945400f3a3ddccb1c2b1a91",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M01CitywideAlert-after-water-0.png",
+      "bytes": 1287597,
+      "sha256": "e436ab236c8642441aee55358da625a04346a476342185efcfec7b79365472c8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M01CitywideAlert-after-water-1.png",
+      "bytes": 1325012,
+      "sha256": "f340dd414fedf781673d559c9366b012a51dc7c5e6697babbbfd0278af16086a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1856700,
+      "sha256": "3a9989eb65eaf5ec0c983eb6f02828fc31691f3f10bd5bb9c9d935d50358f540",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2198771,
+      "sha256": "4cb4306bc9a40069f13f85c62f054f592c88bfcb82bd9e8884204157026fffb1",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-road-join-0.png",
+      "bytes": 1386377,
+      "sha256": "092631a2f5f6c22e514a498e5bfc1c8a28f0cb8a22554f51f7b26a0036ca21f2",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-road-join-1.png",
+      "bytes": 1440726,
+      "sha256": "b743c953c0280dedf78232644604f633cc98223faac5f09c610b080b0985cf3a",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-road-join-2.png",
+      "bytes": 1413160,
+      "sha256": "7f133267a18fa48b96085ca7377cfff766e012f3e0ee0408360ddf61e77fbc6e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-road-join-3.png",
+      "bytes": 1444972,
+      "sha256": "1491614431d9134bb23d7b5c8621d9ccb5656f02fd2e22c041c076a0c9c47282",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M02TrustUnderFire-after-water-0.png",
+      "bytes": 1267645,
+      "sha256": "cd353365a3641bf9db9f19d01933fe662c44ecb006457e23c83d9cd79cc3740c",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1836019,
+      "sha256": "dcec9e3c972ede21270cd2103d053523c2a6a97b5bc0f52ac307dfaea2916962",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1907786,
+      "sha256": "19aee4da85374cd3dd82c02de08a05f3cde9e48d9d338a53a5e17aabb90f5719",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M03NetworkCollapse-after-water-0.png",
+      "bytes": 1287876,
+      "sha256": "195fbb5f683b438a107f058a02018996cf7eab93c04190b0a893ca5e7fa389c8",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M03NetworkCollapse-after-water-1.png",
+      "bytes": 1316848,
+      "sha256": "0b3cebbdc070a409b69d28864e1788c640eadd710167cf8b40b5757b0d7afabf",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811600,
+      "sha256": "a91986421ae4efb9bddde357c80e96b4eaf5aa486b3764a4112cf561a841dfda",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1909903,
+      "sha256": "a29741e0105d1c176b81a5371718a3f1be98cf7cae31b1bcca8228e623db32de",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M04LastCorridor-after-water-0.png",
+      "bytes": 1288263,
+      "sha256": "efe796b78e38365afeb01847d3b41b60355679bf8fed15c86e4fc4f7f6d7a956",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M04LastCorridor-after-water-1.png",
+      "bytes": 1317006,
+      "sha256": "af2d56e0ef0cae99b1d87b4c73bf1275547e78262929f309e9523a465b13225b",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695543,
+      "sha256": "b69166ce932b29ae0253a226c743b8d83be7632f4ab50b5a78c57f0d15463a88",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897298,
+      "sha256": "77dd5a4968543f6df84282daf2f7dd990997ed3386f62adb989de071293bb7db",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M05CommandNode-after-water-0.png",
+      "bytes": 1288392,
+      "sha256": "977ee9fa22b3c7be83159bed9d1296316bf373405cc7d3c6cf1dc59103c3a543",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CH05M05CommandNode-after-water-1.png",
+      "bytes": 1317131,
+      "sha256": "a14709db84a357090b8dbbda459b3b96e9ac718106f204942474e3b56c03fbf4",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CityEdgeAirfield-after-detail.png",
+      "bytes": 2167821,
+      "sha256": "f607bf0ee69c7a6dbf20866257613960ea8050d29d43dc8afaa34cb4f164132e",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CityEdgeAirfield-after-overview.png",
+      "bytes": 2178362,
+      "sha256": "fcf0919c8b60473cf054d67c69c2a2646470f4103d301c15cea7b54e623393df",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CityEdgeAirfield-after-road-join-0.png",
+      "bytes": 1582634,
+      "sha256": "61d289fb26829a3bc2431626a4e4cdedab0f18dc75ce27e007040655efe703e7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/CityEdgeAirfield-after-road-join-1.png",
+      "bytes": 1559725,
+      "sha256": "56e5768f02c8ea861a1c9edb9ab6d3095bb5ab0f3ffa787a0facbded1ae0a0d7",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-detail.png",
+      "bytes": 2051145,
+      "sha256": "0262d19e5cffe07ecf3ebbe4ca34f0f063c072d3b20570d311461147b3e77c85",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-overview.png",
+      "bytes": 2330825,
+      "sha256": "a92185c1062d6bc6f8e85c18b9b0995715a85e36bda3b13a2e32185a73ae986d",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-road-join-0.png",
+      "bytes": 1704066,
+      "sha256": "1901882ee5d5cd1c1b060c13370aea65780a6bf7e58a3752d95817aabd386569",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-road-join-1.png",
+      "bytes": 1678456,
+      "sha256": "0f566aa7b1f7c1ef84f292cac778487b35cf7a6fe48545936bde72acdbafc356",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-road-join-2.png",
+      "bytes": 1754239,
+      "sha256": "adbe8a4a7cb639826ea47ab5de493450349ec48309775d7abe3790788d587953",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-road-join-3.png",
+      "bytes": 1815047,
+      "sha256": "78d78a4b9a44535a3991222342edbe73bd638b1518c6f83bac832b5cb17d0853",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-water-0.png",
+      "bytes": 1471466,
+      "sha256": "111ae63b7ccd6d1f95a7046f0b8890217660bc2de332b2a0912b9f30ff843943",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/DenseCity-after-water-1.png",
+      "bytes": 1466007,
+      "sha256": "f8c740d0832e79e5ba5c3191accc0f407a7235ed3b854c4d39e9d45ecbddcdbc",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/RefineryDistrict-after-detail.png",
+      "bytes": 1843448,
+      "sha256": "eb508c80ce4f4cc129ae015da9527a10b1b9e20ac2950bdf20cdd1223d8e924f",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/RefineryDistrict-after-overview.png",
+      "bytes": 2345679,
+      "sha256": "5aa8e3d9846b6a47080012e880afd85b8e58905b059ffff1991941ef6e7a19ca",
+      "committed": false
+    },
+    {
+      "path": "captures/apply-10-shore-reviewed/RefineryDistrict-after-road-join-0.png",
+      "bytes": 1589349,
+      "sha256": "8131e299676906cf2f237b93a324d3608a08a95bac12323b9bbd2bb822b44ca0",
+      "committed": false
+    },
+    {
+      "path": "dressing/AshLinePort-after-bridge-0.png",
+      "bytes": 1398610,
+      "sha256": "cc92f8bb152a56098422115c9f05a73b38f58dc7601c9ef2396fa7fd7c4e2253",
+      "committed": false
+    },
+    {
+      "path": "dressing/AshLinePort-after-bridge-1.png",
+      "bytes": 1485911,
+      "sha256": "93e480f90855d7e1c839e5fa4b915a6c48fe90c4f87dd0c7b3a8e168735c8089",
+      "committed": false
+    },
+    {
+      "path": "dressing/AshLinePort-after-detail.png",
+      "bytes": 2038292,
+      "sha256": "560743b9bd2b5fa3318c41e49292a62b5be0b0551bc5b59e1ecb4a4f6ef4656e",
+      "committed": false
+    },
+    {
+      "path": "dressing/AshLinePort-after-overview.png",
+      "bytes": 2023698,
+      "sha256": "2d2bcbf7bd73f18036e2ca6dd590099f7d90f2c34a4567f4a2b26386fee904da",
+      "committed": false
+    },
+    {
+      "path": "dressing/AshLinePort-ledger.txt",
+      "bytes": 25,
+      "sha256": "0feb18a4355e721d6067a36a8711949729623fb2749cb0cb21428537721013f8",
+      "committed": true
+    },
+    {
+      "path": "dressing/AshLinePort.json",
+      "bytes": 1275,
+      "sha256": "4bcfca146e89084ec8790dea9d4eefe86ad1c219bb36b6ded4f9b3f422391158",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M01CitywideAlert-after-canal-end-1.png",
+      "bytes": 1153644,
+      "sha256": "d8decb893c3e3bd164c90b951c10cdbf5490e59a876f60cf9c3e8cc21a7ab336",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M01CitywideAlert-after-canal-end-2.png",
+      "bytes": 1099737,
+      "sha256": "d5923fc31e0735ef3731614b820a29a8e7a28b27862502b4594d980583ad8d0c",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811584,
+      "sha256": "15a965ac1d3c38aced90fb518c5088f16629137b8e6691b2a418dd5191bf98f6",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1925502,
+      "sha256": "e09c40fcbaf856125fec3300e231f7933980d231a6d73d02e4b59dd5f43dcda1",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M01CitywideAlert-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M01CitywideAlert.json",
+      "bytes": 4299,
+      "sha256": "2c35904ad8d4a0f85388e5fb6ad61d596351ea8a2124a343066c734acf91c65a",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M02TrustUnderFire-after-bridge-0.png",
+      "bytes": 1452513,
+      "sha256": "abf4b0414103db9e45f358dee006e013891f9822788db60208328f39379e968d",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M02TrustUnderFire-after-bridge-1.png",
+      "bytes": 1458703,
+      "sha256": "21de55803f8c85cef0372f121b678092747d18b4591202305c134bff19c43588",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1858837,
+      "sha256": "e0563380ecf3b70ad99e67c772d8a9251cb8145f71048266e12653c92d51178e",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2228522,
+      "sha256": "cfca51488fc0ab6789c5beda67cea8a079b658f49d3b183693cdb9c356fafdbb",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M02TrustUnderFire-ledger.txt",
+      "bytes": 25,
+      "sha256": "0feb18a4355e721d6067a36a8711949729623fb2749cb0cb21428537721013f8",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M02TrustUnderFire.json",
+      "bytes": 1162,
+      "sha256": "e4890ea42771c063453716f7f2e1fda3e337584f693aa99e1afb9934c2d116e7",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M03NetworkCollapse-after-canal-end-1.png",
+      "bytes": 1154184,
+      "sha256": "6e65098cac5b100d8966a84a2c4e583f1f52f8fbee0bf07a1b2e4284c3768bb8",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M03NetworkCollapse-after-canal-end-2.png",
+      "bytes": 1091627,
+      "sha256": "05242647ccbe6e72c1214dfa4eed2cd46350ae8456125adec97807f8b22b6497",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835995,
+      "sha256": "7973144a14c76edb7b5fb7161527238468a71e0e4b05bdb56dbad880890d19c8",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1908325,
+      "sha256": "2531a442df17b3e3d183cdc8cd7baec1ee45ee892e08a46adf21e28df50839ad",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M03NetworkCollapse-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M03NetworkCollapse.json",
+      "bytes": 4301,
+      "sha256": "5f110d32ed44570160bb13a15d089c533dc85860ce94ff69efecdf15bba36563",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M04LastCorridor-after-canal-end-1.png",
+      "bytes": 1154286,
+      "sha256": "a1e7b3ab6e985462fb51d1013b490722f4d151ff171bfab6b1e2570b2f5a02e4",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M04LastCorridor-after-canal-end-2.png",
+      "bytes": 1091530,
+      "sha256": "18f9a4de9ee9882e5371e71c77b4318bbb6b8cc20e79106589eccfaa51bbde18",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811588,
+      "sha256": "5d9fc7ec31fd2fd2d8465db1273aea46b2fe84d8bd6dde9918ddd9f45025fc0a",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1910809,
+      "sha256": "bd84bad0b8a8ce7a78168bc120ce94e9473784ec97d54a53395e30dcc6170270",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M04LastCorridor-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M04LastCorridor.json",
+      "bytes": 4298,
+      "sha256": "0ee2b2879827eff7fbd87b600470a02c13d825f7053b07fc33ad228c2d379736",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M05CommandNode-after-canal-end-1.png",
+      "bytes": 1154320,
+      "sha256": "5d1c0a58793c2c329ffa176a597baa4d2a4a79f775f36a02cd8b998d509cd745",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M05CommandNode-after-canal-end-2.png",
+      "bytes": 1091238,
+      "sha256": "05ada8f943a5946241c2f56d960175c9c761c60b953bb6faf924a613ff36ce86",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695519,
+      "sha256": "c83dd79e4f938a18485ddd2292172611c6eb17146c25371a46159cabfdec62f2",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897460,
+      "sha256": "3c4cbcf59d1db28d6c88708bb9bb1fde6911f40b69ecc1d2d767119ec741a8dc",
+      "committed": false
+    },
+    {
+      "path": "dressing/CH05M05CommandNode-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/CH05M05CommandNode.json",
+      "bytes": 4297,
+      "sha256": "85489ea6f2ee80280d33e8390ded4715db62236d496d4ec8ab92f85c01a3ff81",
+      "committed": true
+    },
+    {
+      "path": "dressing/DenseCity-after-bridge-0.png",
+      "bytes": 1448134,
+      "sha256": "54994b7afdae38b3f0856b87f7d77371098730ff556913198019abca870cb463",
+      "committed": false
+    },
+    {
+      "path": "dressing/DenseCity-after-bridge-1.png",
+      "bytes": 1434037,
+      "sha256": "a2c0ea6f18c315455dbbe8e4c28b7e11cc1564a1dce4fb5b6bb626291ffee3fc",
+      "committed": false
+    },
+    {
+      "path": "dressing/DenseCity-after-bridge-2.png",
+      "bytes": 1544577,
+      "sha256": "121fc3cabb3fbde2bc3d5e2f12a613283df676f96eab9d938300e479825e8369",
+      "committed": false
+    },
+    {
+      "path": "dressing/DenseCity-after-bridge-3.png",
+      "bytes": 1586907,
+      "sha256": "d74462652f299f7c7feed3ea1dbbded3fedfb2b3b096a494b517a0bdf185dd9d",
+      "committed": false
+    },
+    {
+      "path": "dressing/DenseCity-after-detail.png",
+      "bytes": 2051135,
+      "sha256": "63b28e253176dc4cd4d8817d03c3f668b0be4caf6e4fd8c8699f8ef668f3e7b8",
+      "committed": false
+    },
+    {
+      "path": "dressing/DenseCity-after-overview.png",
+      "bytes": 2331150,
+      "sha256": "1de71e32a19132335c27659aa39224bb6d4673134ea2a1b8c45847b130d83662",
+      "committed": false
+    },
+    {
+      "path": "dressing/DenseCity-ledger.txt",
+      "bytes": 72,
+      "sha256": "d150ac765c69991c24a1636e7df6c05e0ec03aa6d242dddf46e874e312e654d2",
+      "committed": true
+    },
+    {
+      "path": "dressing/DenseCity.json",
+      "bytes": 6468,
+      "sha256": "81f9a1ef2145089419f78e50ddb2092ba20f24c9df502face8dc3a0d8c439501",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/AshLinePort-after-bridge-0.png",
+      "bytes": 1381179,
+      "sha256": "94b30d70c463c73a495df85d753638857cd47d0a8cda557ec36ae5235bb9f682",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/AshLinePort-after-bridge-1.png",
+      "bytes": 1473225,
+      "sha256": "da93adf6dbf14500e73d36dd87378bc73acdace9ee101c8fc96327eb291cac0f",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/AshLinePort-after-detail.png",
+      "bytes": 2038165,
+      "sha256": "bd5333f3e7062bf66be7947b842c8b603135d732dbf20451648e1b37692acbb4",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/AshLinePort-after-overview.png",
+      "bytes": 2024503,
+      "sha256": "8aa8ec704702a5095951f87c495ed402c70dea171ba281ba3ecd81aa0f6fb1fc",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/AshLinePort-ledger.txt",
+      "bytes": 25,
+      "sha256": "dc296b0e4cee78b6c655d2036bd5b309ec72162c8ba0631140cf2713d70fcb0f",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/AshLinePort.json",
+      "bytes": 1275,
+      "sha256": "a66df0621621c0cc63c5317ef9b5694881087f6a7123c4f6fa3bf8c373a32b36",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M01CitywideAlert-after-canal-end-1.png",
+      "bytes": 1153351,
+      "sha256": "7b46c829ecd5ce565f5407c731558b7e9b2b2f6f11e9bd2d79c7b1554562f5e7",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M01CitywideAlert-after-canal-end-2.png",
+      "bytes": 1098453,
+      "sha256": "337fa235b1af6aa956d457e14a88279454179615da90b990dae8a83425c381ea",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M01CitywideAlert-after-detail.png",
+      "bytes": 1811556,
+      "sha256": "bfea104dfbe00baa031f0f3f0827b454c2d9015e85081ab984a401184560edf1",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M01CitywideAlert-after-overview.png",
+      "bytes": 1925701,
+      "sha256": "37e7c9769e45b4923d815a036d5f9e5d32aedc854e93ea82d4fe264cb7ce9196",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M01CitywideAlert-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M01CitywideAlert.json",
+      "bytes": 4299,
+      "sha256": "55c1f38de63bac94ffbe66dd6c38aa726a8e6b0fabe529b5b9bf46e352d2a451",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M02TrustUnderFire-after-bridge-0.png",
+      "bytes": 1435947,
+      "sha256": "09ecc219f5dc1271f0e989bcd2733282258955f5c61c36e1db5f757246b9da18",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M02TrustUnderFire-after-bridge-1.png",
+      "bytes": 1448525,
+      "sha256": "c3f93963a000919dfdada55ee0c8be2b894438f5319c3437eed2a57e7f48acdf",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M02TrustUnderFire-after-detail.png",
+      "bytes": 1858829,
+      "sha256": "d267b0427fff0113ec427b67a386f3c3fd0e6e57c6bdb83e6a4197be6c420e5a",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M02TrustUnderFire-after-overview.png",
+      "bytes": 2229694,
+      "sha256": "020decbd4222dd8e2609fe65c06a3bd7e4bc6600e87e14d21bd7f54665a9e71f",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M02TrustUnderFire-ledger.txt",
+      "bytes": 25,
+      "sha256": "dc296b0e4cee78b6c655d2036bd5b309ec72162c8ba0631140cf2713d70fcb0f",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M02TrustUnderFire.json",
+      "bytes": 1162,
+      "sha256": "0c58ba06c5c5781f5c6253da89744911a66d5357e4cfa26513b51d8656485020",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M03NetworkCollapse-after-canal-end-1.png",
+      "bytes": 1153821,
+      "sha256": "8bada9f5364c5ef8846666f92f805152695c0ca8450c8ab7441fe2acf04c5d56",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M03NetworkCollapse-after-canal-end-2.png",
+      "bytes": 1090781,
+      "sha256": "2ce45a5456c610683d408bffab501f27d078ebeccea4da4cbd2e2262ca7ba103",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M03NetworkCollapse-after-detail.png",
+      "bytes": 1835987,
+      "sha256": "dbdec5bd4183ac65ce3c143d36b3b9540a6150a2d184ae302227a0e5ccfe64a5",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M03NetworkCollapse-after-overview.png",
+      "bytes": 1908518,
+      "sha256": "55fa6ee53ff0e2a97ca1329cff0c35fb54beb8288a744de8033c4ca023fcc368",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M03NetworkCollapse-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M03NetworkCollapse.json",
+      "bytes": 4301,
+      "sha256": "e65e3a29ecce83dc9459e5d8f105c61f0bbcdfd68abeb1c2e8f35a7f4ae042cb",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M04LastCorridor-after-canal-end-1.png",
+      "bytes": 1153739,
+      "sha256": "cbfc1cec37705b21b79eba85a8f7c768d95e97e48193de3c3095a6dc9385bd25",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M04LastCorridor-after-canal-end-2.png",
+      "bytes": 1090717,
+      "sha256": "aaaffc83454dc17884bdf2156d255c6ca0fd28101f97420ae729e2b71ddfa71d",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M04LastCorridor-after-detail.png",
+      "bytes": 1811560,
+      "sha256": "f804b71424a0a693330798e995426efa1841766686f021ced434fa87533787c4",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M04LastCorridor-after-overview.png",
+      "bytes": 1910554,
+      "sha256": "a8de4eddb33671184a5701a47808b7dda8285626747805c976b5f473fc7271d5",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M04LastCorridor-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M04LastCorridor.json",
+      "bytes": 4298,
+      "sha256": "6eb2db0a6cbb9167d2717277cb9179ce6b3f056035d15e9b028d5c9ecd8dd0e9",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M05CommandNode-after-canal-end-1.png",
+      "bytes": 1153728,
+      "sha256": "31233e4f241100c4d4032d5379f7c3fc6b231711568d4ee70714b36f1ec67083",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M05CommandNode-after-canal-end-2.png",
+      "bytes": 1090585,
+      "sha256": "97353b1a084babc63efbf2fc97fd180994dc933aa9d5deb7ab35f3f93322f11c",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M05CommandNode-after-detail.png",
+      "bytes": 1695518,
+      "sha256": "c86ae941516f1167f7d6eba185652afed5257416f497055f86cb1466388ea13e",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M05CommandNode-after-overview.png",
+      "bytes": 1897775,
+      "sha256": "3b03a59b5f6522a53368dce69f90c54fbde0563f91e8074fcef28df182a41b5c",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M05CommandNode-ledger.txt",
+      "bytes": 71,
+      "sha256": "f045c2ba459c42850b8371667e7c74e869181e92a1c811517a700f456a00de1b",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/CH05M05CommandNode.json",
+      "bytes": 4297,
+      "sha256": "456458c7ae127c2c705c7c889112a6d371aff5c5f3248a801256086836b4ae6f",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-after-bridge-0.png",
+      "bytes": 1436701,
+      "sha256": "a72d0f42bba8dc7bcd7c07414d1e29306608db2d3f3d8d7aa616358b2f846d96",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-after-bridge-1.png",
+      "bytes": 1426531,
+      "sha256": "1cc24421fc0d259e2c799e4851a564d30e577a373e1a6120783738362691967b",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-after-bridge-2.png",
+      "bytes": 1530441,
+      "sha256": "d7f463c8089adc1f0e1ec84a82116668d1597259e4a8a9f30d60b8c43bf7dcd2",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-after-bridge-3.png",
+      "bytes": 1565830,
+      "sha256": "f735f56a9e664cea2b6d706d663a8d9c8a3a17087300d27f8a8751c54d33275a",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-after-detail.png",
+      "bytes": 2051147,
+      "sha256": "7f03e90b5316eee9b60008f3e4b230430f53d1418febf6f2adf77529661fc77d",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-after-overview.png",
+      "bytes": 2331965,
+      "sha256": "a788008b93a642e46efda1e1c3c1978dff32a4274ac0a9c8bf4ad977feebbd25",
+      "committed": false
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity-ledger.txt",
+      "bytes": 72,
+      "sha256": "d8f4ee38fee0d21ce0f987756797bb46898cd7000572f9b079f57dfa7b54c733",
+      "committed": true
+    },
+    {
+      "path": "dressing/attempt-02-rejected-lamp-scale/DenseCity.json",
+      "bytes": 6468,
+      "sha256": "5528ce7bd1db29b272a1fe589cbe68fafcba6f6c2d99e77a15cadbef76bef414",
+      "committed": true
+    },
+    {
+      "path": "dressing/final-scene-pins.json",
+      "bytes": 224,
+      "sha256": "ce62babb470fbd66db50793ab47077674a90cf90d4157f62018daa40d8a95b22",
+      "committed": true
+    },
+    {
+      "path": "dressing/summary.json",
+      "bytes": 1081,
+      "sha256": "34e8c299687ab842188325b13af91d9037974434793b23b4de0d899a4795b273",
+      "committed": true
+    },
+    {
+      "path": "references/approved-canal-end.jpg",
+      "bytes": 266222,
+      "sha256": "b7f7e1553f25eedff6184d308acbd6cb95c251f00952c756c3cce426699f0145",
+      "committed": true
+    },
+    {
+      "path": "references/approved-player-view.jpg",
+      "bytes": 382937,
+      "sha256": "0d2b3b02409dad70a9483959b9bd112f1b56c92caeba0c7729b3f12b2e36160b",
+      "committed": true
+    },
+    {
+      "path": "references/approved-port.jpg",
+      "bytes": 355233,
+      "sha256": "b32fcc5ffa7b0e65b06b0f34dc962aaf4b36703aea658e00c01369e13e803e30",
+      "committed": true
+    },
+    {
+      "path": "render-reconciliation.txt",
+      "bytes": 671,
+      "sha256": "386533f69c049ed0d450105fe0f13b72990b9ce2f973e76a7cfc37254a1016ef",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-01.log",
+      "bytes": 550883,
+      "sha256": "995409a9cc9afb5e487d69eda96412a8c4bc5caade6e3fb0299c74b61ee07248",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-01.log.gz",
+      "bytes": 84071,
+      "sha256": "ac3d1b3697a2f05ef8191eee474c90d75d3ab8e92affb71af1283888d100db88",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-02.log",
+      "bytes": 890801,
+      "sha256": "c85a3c9f116e210318ca9a33cfa41dce61837ddc7ca76674f8897068fbf3cb7f",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-02.log.gz",
+      "bytes": 89049,
+      "sha256": "04c7a909cac846698050fbedefcaf6efbc069480d99e40662a16fd121a5504b2",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-03.log",
+      "bytes": 804033,
+      "sha256": "116ecec4ce1e462735ffff4f86338a68bc67918fedab3c4a4134729e49211975",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-03.log.gz",
+      "bytes": 79803,
+      "sha256": "885053fb4af82f48e3cda48e9af04bbfb66601a12790b923274b8926c06c851e",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-04.log",
+      "bytes": 774661,
+      "sha256": "ee871a4b4302e95f5146fa0c5996160b74093e7145fde8acb51fd6e6ae467183",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-04.log.gz",
+      "bytes": 75804,
+      "sha256": "3101caee9475fc492f4e450005fbc5e0cab13fbdb69282e0ddf00f3a63b28533",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-05.log",
+      "bytes": 683526,
+      "sha256": "5be057c34cc1af22606422452d8da846e578a48ffdc5d2a0ca543cf38040b3a5",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-05.log.gz",
+      "bytes": 65443,
+      "sha256": "55bcb3ce2820fed2cc0966f5a7e3b0d7d5be301a7f826fea2b6513d1b400ff43",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-06.log",
+      "bytes": 489199,
+      "sha256": "e90f14ab81b9b08dda26b66c551253e4882ec7ce2a74e12279a658e9cd1477ef",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-06.log.gz",
+      "bytes": 55515,
+      "sha256": "e736b4b85ec3c4983a174bfdd2c41a65b0477313693b0ddf82638ee433cbe26f",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-07.log",
+      "bytes": 858901,
+      "sha256": "2f061d6e89c607129019009fd00ce88ecd1cd7298d2734ef313ad2774728cfd3",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-07.log.gz",
+      "bytes": 85209,
+      "sha256": "15e9c058f8f787bfced5fdf015bab7e59892e49ad73eb37c10d1d02ae550c188",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-08.log",
+      "bytes": 751616,
+      "sha256": "31b84bebe4f5033e85109bda00a663bbb0c22c642592ef2d5c472af67eb8f63a",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-08.log.gz",
+      "bytes": 85213,
+      "sha256": "2f3c3cbbb0968898bcde5ffa5aef7bfc2fe1c386110a4441d5ea38565c1acef7",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-09.log",
+      "bytes": 909050,
+      "sha256": "c557e3012e32f8206c756a27c06a7113ccc524790d1ceb5928cbdf6a064c8795",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-09.log.gz",
+      "bytes": 89358,
+      "sha256": "654007f7f828b63f55c4b7cd0b385e541c76bcb08c055c519249386d17e84d13",
+      "committed": true
+    },
+    {
+      "path": "validation/apply-10.log",
+      "bytes": 683285,
+      "sha256": "0b95bf497cf43c9e3cf950e4ce51fa0c15701ad9eff71f60a7c876fdc7d41027",
+      "committed": false
+    },
+    {
+      "path": "validation/apply-10.log.gz",
+      "bytes": 65305,
+      "sha256": "d8eb308718fa4c96b910da99929cee844e94462f88ce05b04dd3237c583104f5",
+      "committed": true
+    },
+    {
+      "path": "validation/census-03.log",
+      "bytes": 1450119,
+      "sha256": "1b15235b9222272d354ee22954bb3a764e67f1e6c344f30219cf3194f004d584",
+      "committed": false
+    },
+    {
+      "path": "validation/census-03.log.gz",
+      "bytes": 117313,
+      "sha256": "524585d9b587f12da1a9518c86cdf267f9dcbbf8aad631fde2f4d74be34aed01",
+      "committed": true
+    },
+    {
+      "path": "validation/dressing-01.log",
+      "bytes": 242572,
+      "sha256": "5f47624a3190357ae232bd6a60c4079e02b438ae5c26e45e046b3fc718b57ca6",
+      "committed": false
+    },
+    {
+      "path": "validation/dressing-01.log.gz",
+      "bytes": 19543,
+      "sha256": "4a52dab92594bd43d54f43c3918659624fbbbeed55bb055ce4ef7f7d9b4e533b",
+      "committed": true
+    },
+    {
+      "path": "validation/dressing-02.log",
+      "bytes": 269609,
+      "sha256": "34d68fe7a394eadfdcbf8bdba884f9586fff0a875f9c36975f87fbd57664e9b3",
+      "committed": false
+    },
+    {
+      "path": "validation/dressing-02.log.gz",
+      "bytes": 23912,
+      "sha256": "820eaa21da70d0c294c652d03f8939a7d8dda650fa7c8520e0a52de93e86e1f6",
+      "committed": true
+    },
+    {
+      "path": "validation/dressing-03.log",
+      "bytes": 264625,
+      "sha256": "9afb4a077fbea45ee9eb6c5ad6a005067ded2c793b31e32808c4e9e13839ad09",
+      "committed": false
+    },
+    {
+      "path": "validation/dressing-03.log.gz",
+      "bytes": 22762,
+      "sha256": "0fc52246ae5d5aeb6a4b6c6cd86854b35aa39de3bfcff1967273ad39f3eaed73",
+      "committed": true
+    },
+    {
+      "path": "validation/integration-01.log",
+      "bytes": 754368,
+      "sha256": "3091936bbbd59c672493f57942070b1e1c9871a8035808800734893f5b6ae0ed",
+      "committed": false
+    },
+    {
+      "path": "validation/integration-01.log.gz",
+      "bytes": 70637,
+      "sha256": "ea418b28822042c092fc07d6405cf5d23949fd3bf774b5864db84534203d534d",
+      "committed": true
+    },
+    {
+      "path": "validation/main-integration-compile.log",
+      "bytes": 241172,
+      "sha256": "910e17e6f1ae53850d07aca61a1064d7f7dfce07994d95f2ff4ea979c69b0364",
+      "committed": false
+    },
+    {
+      "path": "validation/main-integration-compile.log.gz",
+      "bytes": 19262,
+      "sha256": "1af09870b5625193bed593691e0849e24bb88067431886d6f8206c38b875c044",
+      "committed": true
+    },
+    {
+      "path": "validation/parity-before-dressing.log",
+      "bytes": 297229,
+      "sha256": "674781868df233c0282a6c3c73f6bc922e95e19d1de5cb1e2d83255a55d9f737",
+      "committed": false
+    },
+    {
+      "path": "validation/parity-before-dressing.log.gz",
+      "bytes": 23090,
+      "sha256": "0a101dcdb8b9e6ae63f033a2a1845f88b10543fbbb26cd6f72364f0365377b5b",
+      "committed": true
+    }
+  ]
+}

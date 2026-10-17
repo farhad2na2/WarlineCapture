@@ -1,0 +1,22 @@
+{
+  "result": "IndependentReviewClear",
+  "READYsha256": "50eef3b03d7083ca845c6167430f43240687872889716d82fc70f9089c6b8f80",
+  "manifestSha256": "6131d34f66627507816beb48dd6d81d4d4bcb8d69d3eb4f84d6bf5e368e0b59c",
+  "composedNineSha256": "04e54bb6f2832f89be64f139b5b783e4e1faf5c138dd1ddd341976a36349eda6",
+  "sourceAndCurrentBeforePinsChecked": 9,
+  "sourceDelta": "One synchronous public controls call then unchanged existing scene warmup call; marker after both; failure propagates",
+  "parentEightUnchanged": true,
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/All120AuthoringSceneWarmup/editor-3ik0dbb4/result.json",
+    "sha256": "55b1262369b4546240aeaf4c6e114f42e140e956354c36112331273efaf152a6",
+    "result": "Passed",
+    "sources": 826,
+    "references": 353,
+    "mismatches": [],
+    "no_fallback": true
+  },
+  "snapshotMarkerAttribution": "snapshotAfterWrapperExit is a required subsequent root workflow timing policy, not a snapshot this facade took or actual wrapper exit observed here",
+  "nativeExecution": false,
+  "sourceFitCameraMissionAcceptance": "Pending",
+  "assetsNativeGitWrites": false
+}

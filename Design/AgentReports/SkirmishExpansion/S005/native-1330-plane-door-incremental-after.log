@@ -1,0 +1,98 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=PlaneDoorIncrementalRegressionV5.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Scene] {"stage":"BeforeOwnedInstantiation","activeSceneMatchesPrevious":false,"ownedSceneValid":true,"ownedSceneLoaded":true,"cloneOwned":false,"playing":false,"changingPlay":false}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:136)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Scene] {"stage":"OwnedCloneCreated","activeSceneMatchesPrevious":false,"ownedSceneValid":true,"ownedSceneLoaded":true,"cloneOwned":true,"playing":false,"changingPlay":false}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:141)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"InitialFresh","worldName":"PlaneDoorIncrementalSameWorld","changedComponent":"None","reason":"Native same-context metadata matches actual root/animation frames","fresh":true,"incremental":false,"sameWorld":false,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":11,"entityVersion":1,"doorIndex":16,"doorVersion":1,"expectedX":0.0,"expectedY":2.405647039413452,"expectedZ":-0.2557525634765625,"actualX":0.0,"actualY":2.405647039413452,"actualZ":-0.2557525634765625,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:151)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"ModelOnlyIncremental","worldName":"PlaneDoorIncrementalSameWorld","changedComponent":"Model.Transform","reason":"Native same-context metadata matches actual root/animation frames","fresh":false,"incremental":true,"sameWorld":true,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":11,"entityVersion":1,"doorIndex":16,"doorVersion":1,"expectedX":0.0,"expectedY":7.446223258972168,"expectedZ":3.1106767654418947,"actualX":0.0,"actualY":7.446223258972168,"actualZ":3.1106767654418947,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:154)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"FreshModelControl","worldName":"PlaneDoorFreshModelControl","changedComponent":"None","reason":"Native same-context metadata matches actual root/animation frames","fresh":true,"incremental":false,"sameWorld":false,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":107,"entityVersion":1,"doorIndex":112,"doorVersion":1,"expectedX":0.0,"expectedY":7.446223258972168,"expectedZ":3.1106767654418947,"actualX":0.0,"actualY":7.446223258972168,"actualZ":3.1106767654418947,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:155)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"DoorOnlyIncremental","worldName":"PlaneDoorIncrementalSameWorld","changedComponent":"Door_X.Transform","reason":"Native same-context metadata matches actual root/animation frames","fresh":false,"incremental":true,"sameWorld":true,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":11,"entityVersion":1,"doorIndex":16,"doorVersion":1,"expectedX":0.0,"expectedY":8.909798622131348,"expectedZ":0.44016456604003909,"actualX":0.0,"actualY":8.909798622131348,"actualZ":0.44016456604003909,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:157)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"FreshDoorControl","worldName":"PlaneDoorFreshDoorControl","changedComponent":"None","reason":"Native same-context metadata matches actual root/animation frames","fresh":true,"incremental":false,"sameWorld":false,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":107,"entityVersion":3,"doorIndex":112,"doorVersion":3,"expectedX":0.0,"expectedY":8.909798622131348,"expectedZ":0.44016456604003909,"actualX":0.0,"actualY":8.909798622131348,"actualZ":0.44016456604003909,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:158)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"RestoredIncremental","worldName":"PlaneDoorIncrementalSameWorld","changedComponent":"Door_X.TransformAfterModelRestore","reason":"Native same-context metadata matches actual root/animation frames","fresh":false,"incremental":true,"sameWorld":true,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":11,"entityVersion":1,"doorIndex":16,"doorVersion":1,"expectedX":0.0,"expectedY":2.405647039413452,"expectedZ":-0.2557525634765625,"actualX":0.0,"actualY":2.405647039413452,"actualZ":-0.2557525634765625,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:160)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5Row] {"stage":"RootOnlyIncremental","worldName":"PlaneDoorIncrementalSameWorld","changedComponent":"UnitRoot.Transform","reason":"Native same-context metadata matches actual root/animation frames","fresh":false,"incremental":true,"sameWorld":true,"sameEntity":true,"uniqueMetadata":true,"ownedOriginMatched":true,"doorExists":true,"passed":true,"queriedMetadataCount":1,"ownedPrimaryMatchCount":1,"primaryGuidSerial":0,"entityIndex":11,"entityVersion":1,"doorIndex":16,"doorVersion":1,"expectedX":0.0,"expectedY":2.405647039413452,"expectedZ":-0.2557523250579834,"actualX":0.0,"actualY":2.405647039413452,"actualZ":-0.2557523250579834,"maxOffsetError":0.0,"openRotationError":0.0,"closedRotationError":0.0}
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:Emit (PlaneDoorIncrementalRegressionV5/Row) (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:119)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:162)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegressionV5] result=Passed cases=7 scope=DisposableActualPrefabFreshVsSameWorldIncremental transformsOnly=1 forceHierarchyBake=0 assetEdits=0 reason=RecordedActualComparisons
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegressionV5:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v5/PlaneDoorIncrementalRegression.cs:173)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-plane-door-incremental-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=PlaneDoorIncrementalRegressionV5.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

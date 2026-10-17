@@ -1,0 +1,51 @@
+{
+  "result": "VerifiedHistoricalReferences_NormalObserverMissing",
+  "dispatchEnabled": false,
+  "sourceRecoveryOnly": true,
+  "normalObserverPrepared": false,
+  "playerReady": false,
+  "head": "fad9d422b4703a7a071dff9c82278e32cd5a7ccb",
+  "references": [
+    {
+      "git_path": "Design/AgentReports/SkirmishExpansion/S005/native1548-fixture.cs.txt",
+      "git_blob": "e8698bf24b38e0451461cb69b6c0a1510347a4d0",
+      "sha256": "b4a068665200a81262937a0346abb88158d57e4d0cddb881214e8d301fdfc906",
+      "result_path": "Design/AgentReports/SkirmishExpansion/S005/native1548-paid-air-effects-pass.json",
+      "result_sha256": "25e732b1c563c34eae19e181ee2b3ff804edf6fd9feba65cfb6fc8cab9ca81df",
+      "historical_source_hash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+      "historical_result": "PassedScopedIsolatedActualPaidAntiAirFighterAirborneEffects",
+      "original_scope": "Historical isolated exact paid AntiAir/Fighter native airborne effects; temporary setup disclosed",
+      "normalMissionCertified": false,
+      "source_copied": false,
+      "wrapperExit": 0,
+      "nativeExit": 0
+    },
+    {
+      "git_path": "Design/AgentReports/SkirmishExpansion/S005/native1564-fixture.cs.txt",
+      "git_blob": "a52e8782940a211d7c88521f784676a5a9eb90d3",
+      "sha256": "76f695478614f5032da43f0d82b5d5798d80fc4c982cea65b398db8869698b37",
+      "result_path": "Design/AgentReports/SkirmishExpansion/S005/native1564-paid-plane-cargo-pass.json",
+      "result_sha256": "c3cf6faaccac8f709b33faf2dad7b5289722899fff36796888332056948a96eb",
+      "historical_source_hash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+      "historical_result": "PassedScopedIsolatedPaidPlaneCargoFlightReturnUnload",
+      "original_scope": "Historical isolated exact paid Plane cargo/flight/Return/unload; temporary funding/readiness/fuel/enemy setup disclosed",
+      "normalMissionCertified": false,
+      "source_copied": false,
+      "wrapperExit": 0,
+      "nativeExit": 0
+    }
+  ],
+  "tracked_normal_observer_search_matches": [],
+  "search_scope": "Tracked S005 *.cs.txt/*.py.txt and Tools/CI; excludes opaque compressed evidence blobs",
+  "missing": [
+    "Normal paid-air1630 observer and its normal-budget public input strategy",
+    "Normal paid-air1630 strict raw qualifier and 28 original negative controls",
+    "Normal1630 package source/build/setup pins and dependency list",
+    "Portable source-reviewed Windows successor with fresh compile/load and raw capture proof"
+  ],
+  "historical_only": [
+    "Mac PID37475/assembly/MVID no-reload state",
+    "sealed /private/tmp1630 packages and permits"
+  ],
+  "next_action": "Recover exact normal package if accessible, otherwise design a new normal public-input observer; do not rename isolated fixtures"
+}

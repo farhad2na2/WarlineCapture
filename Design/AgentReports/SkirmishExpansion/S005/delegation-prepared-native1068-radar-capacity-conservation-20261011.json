@@ -1,0 +1,54 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005RadarSupport1068.cs",
+  "fixtureSha256": "243116be0eec1785f3c3a0977673528f47e40ab009b5aeecf19dd6b21234436b",
+  "runner": "Unique1068 names/hash, current preflight/pre-dispatch/post source equality, explicit main1068 ownership, checked macOS GUI reuse wrapper600s and unchanged360s fixture deadline, both roles actual Touch Move/receipt markers, Radar native support/provider death/conservation markers, parse five snapshots and repeat counter/cap/reservation audit. Missing receipt preserves ownership, no alternate route.",
+  "runnerSha256": "56af285b9cb8a60c2c6e2765ee391e69c583cee9fe1638eb9711f774608afd36",
+  "pythonSyntax": "Passed",
+  "sourceOrEditorMutationsByReviewer": false,
+  "derivedFromActuallyLoadedFixture": "native1055-radar-support-fixture.cs.txt",
+  "sourceFixtureSha256": "e204893e0a8147e06c9d962f226f49681ed03335f11793f17007fdb765c9cddb",
+  "preservedEvidence": "Native1055 support effect actually passed exact provider/radius and lock0.35 to0.175 after both paid roles actual Touch Move; full1055 QA failed invalid summed capacity expectation. Original1055 fixture/log/receipt/proof are preserved. This new fixture is not a rerun claim.",
+  "correction": "Capture actual capacity when retained paid AntiAir is sole living player actor. After actual Radar death compare every live and reserved counter plus faction/fixed caps against this exact baseline. NextReservationId must not regress, but correctly remains advanced after paid Radar. Never sum unit count and supply usage to expect one.",
+  "nativeCapacityEvidenceStages": [
+    "OpeningReleased",
+    "RetainedAntiAirBaseline",
+    "RadarLive",
+    "AfterRadarDeath",
+    "AllReleased"
+  ],
+  "exactCounterChecks": [
+    "InfantryLive",
+    "GroundLive",
+    "AirLive",
+    "SupplyLive",
+    "InfantryReserved",
+    "GroundReserved",
+    "AirReserved",
+    "SupplyReserved"
+  ],
+  "fixedComparisons": [
+    "FactionId",
+    "InfantryCap",
+    "GroundCap",
+    "AirCap",
+    "SupplyCap"
+  ],
+  "additionalRetentionChecks": [
+    "Baseline exact AntiAir remains sole live paid player actor",
+    "Baseline supply count equals actual native AntiAir role SupplyCost",
+    "Paid Radar actually dead/disposed and native capacity released",
+    "Provider link cleared; range/lock/bonus restored to before Radar baseline",
+    "Radar capacity release idempotent",
+    "Final AntiAir death restores opening all-zero counters and fixed caps; release flag/idempotency checked"
+  ],
+  "dryRunCompileInstruction": "Parent only when main is idle: rtk proxy unity command run_script --file /private/tmp/S005RadarSupport1068.cs --entry S005RadarSupport1068.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "launchInstruction": "Root only after lane release and compile review: rtk proxy python3 /private/tmp/s005-run-radar-1068.py <CURRENT-PRE-source-manifest.json> --heavy-lane-owner main1068",
+  "limitations": [
+    "No reviewer Unity call; parent compile pending",
+    "Same isolated funding/readiness/HealthZero/opening retirement disclosure as1055",
+    "No AntiAir air hit, Radar visibility intel, complete normal mission/device acceptance or player-ready claim"
+  ],
+  "technicallyReady": false,
+  "playerReady": false
+}

@@ -1,0 +1,9 @@
+# M4 native 1042 failed selection diagnosis
+
+The run is failed evidence: native Defeat at lesson 5, wrapper status 1, 39 Touch gestures dispatched/38 completed at closure, zero unexpected samples and physical interventions. Positive-area group drags used actual presented guide corners; no zero-length group fallback was allowed.
+
+The read-only 1047 input observer captured a new Touch Began at frame 11839 while IgnoreWorldCommandsUntilFrame was also 11839. RtsSelectionRuntimeInputCompositionSystemHelper.UpdateNormalPointerInput legitimately returns when current frame <= this field. Therefore HandlePointerPressed/BeginPointerPress did not capture the new drag origin. At frame 11840 the held contact's position was1025,342 but DragStart still1191,736, the previous contact endpoint. Another recorded last live rectangle was only5.85x5.60 even though the visible guide drag traversed1025,577→1191,736. Starting from the old endpoint makes successive moved rectangles shrink toward that endpoint and drop prior live selection.
+
+This identifies a QA scheduling hazard after normal HUD Select input, not a proven production selection defect. The external1046 companion reads the existing input facade and waits until Time.frameCount>IgnoreWorldCommandsUntilFrame+1 and IgnoreUiClickUntilRelease=false before creating a new native world-selection contact. It never clears these fields or changes ECS/orders/actors. The normal Begin/Move/End sequence must perform the selection. Native M3 subsequently selected four soldiers with one positive-area drag using this guard; M4 with the refined guard remains unvalidated.
+
+All failed raw logs, native screenshots, input observer/JSONL and result are preserved alongside this report. Production source remains the three narrow M1 guidance files; no M4 runtime correction or balance change is justified by this failed run.

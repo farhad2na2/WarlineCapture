@@ -1,0 +1,14 @@
+{
+  "sourceHash": "8e76d0663f634280e2bf3f31dfd08e6b58c7d3837c820d2e207d5ab412310710",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeEquivalentTo793": true,
+  "materialsIdentical": true,
+  "physicalMapConfigBudgetsRatesDeadlinesUnchanged": true,
+  "scope": "Editor normal-input strategy: four totalFactories, secondOilPump paid100, fourOil/twoTankers during fabrication; reserve280 before Strike520, retire two empty paidOil trucks through normalDestroy, buy twoTankers140 each to reach twoOil/fourTankers inside support cap6. Preserve funded oldFactory batch when redispatching empty pickup truck through Touch. Southern existingAirport chosen against public objective using unchanged native validator.",
+  "nativeOutcome": "Pending"
+}

@@ -1,0 +1,17 @@
+{
+  "result": "PassedExactPreparedSourceBackup",
+  "scope": "Offline exact bytes/manifest/source/patch/overlay verification only; no native test or gameplay integration",
+  "indexSha256": "a5b48a28315ed4f03cd39ae370985098b1a3936f52ac389b600094e9096a7a30",
+  "objects": 63,
+  "objectBytes": 765319,
+  "sourceEntries": 50,
+  "finalOverlayFiles": 47,
+  "unityCalls": 0,
+  "assetsApplied": 0,
+  "verifierSha256": "070ecf0a739708de6072feff3a8c00113b17f819f564a31ecfbef0cd73af886d",
+  "verifierExit": 0,
+  "allWrittenObjectsRoundtripMatched": true,
+  "sourceIntegrationByAgent": false,
+  "gitOperationsByAgent": false,
+  "boundedCredentialScanPassed": true
+}

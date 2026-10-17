@@ -1,0 +1,44 @@
+{
+  "status": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005DroneReconEffects1077.cs",
+  "fixtureSha256": "bc49f487a5fa4a91e546c976e67a7058631c8aa2a212de869fcd7a8d1347f6b8",
+  "runner": "/private/tmp/s005-run-drone-recon-1077.py",
+  "runnerSha256": "10cb427d110da9ba82307b10f7ef813995dd52a84aa5621c2958d9cc1d1769c4",
+  "scope": "Funded Established-readiness real legal native IntelStation build and paid Drone140 without Airport; actual Touch selection, Scan button and visible actual hostile APC world target; actual paid-source scan order/result/feed/target last-seen, positive-time flight, automatic native scan-completion Return and home landing; death cap cleanup.",
+  "sourceContracts": [
+    "ScanIntelCommandSystem.TryIssueScan uses selected actual source, creates native UnitScanOrder and accepted Scan result.",
+    "Drone is specialist Scan radius12; this is a shared specialist capability, not a Drone-exclusive sensor claim.",
+    "UnitScanOrderExecutionSystem starts inside Chebyshev scan radius, creates native periodic ScanIntelFeed and completes after8seconds with automatic air ReturningHome1.",
+    "ScanIntelCommandSystem.RevealEntity writes actual ScanIntelRevealedTag and ScanIntelLastSeen.",
+    "S005 references authored SharedFog config sharedFog1/developmentFullVision1; flags read and compared unchanged throughout proof."
+  ],
+  "isolatedSetup": {
+    "funding": true,
+    "readiness": "Established",
+    "ownFuelOilStorageFill": true,
+    "enemyStrategyDisabled": true,
+    "otherOpeningRoleActorsDeath": "HealthZero",
+    "retainedTarget": "ActualOpeningEnemyArmoredApc",
+    "retainedTargetHoldIntentSetup": true,
+    "retainedTargetRetaliationDisabled": true,
+    "targetPoseInjected": false,
+    "targetHealthInjected": false,
+    "targetVisibilityInjected": false
+  },
+  "forbiddenMutationsAbsent": [
+    "ScanIntel order/result/feed/last-seen injection",
+    "FogVisibility/globalFullVision/contact reveal writes",
+    "Own pose/Air home/Return writes",
+    "Synthetic actor spawn",
+    "SelectedUnitTag injection",
+    "map/intel config edits"
+  ],
+  "touchAudit": "Paired native Touch plus zero physical intervention/unexpected sample/receipt violations; no nonexistent Aria Accepted Scan marker required.",
+  "evidence": "Native scan order and result RequestId greater than actual precommand baseline, exact paid source, radius12, own frame; exact feed source/request; retained hostile last-seen matching actual grid/position; actual native ReturningHome followed by grounded home<=3m. Native progress recorded every5seconds.",
+  "concealedFogGate": "No concealed-to-visible claim. Authored fullVision preserved and disclosed; no additional S005 mandatory gate invented.",
+  "editorWatchdogSeconds": 1000,
+  "scanFlightReturnTimeoutSeconds": 500,
+  "missionBudgetUnchanged": 1080,
+  "normalMissionCertified": false,
+  "playerReady": false
+}

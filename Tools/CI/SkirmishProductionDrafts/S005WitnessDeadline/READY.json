@@ -1,0 +1,12 @@
+{
+  "manifest_sha256": "d0ed6823fc72b67fd16dd8faaa69355f642ffc8cf26533eaef23b3a167c9e2f9",
+  "proof": "Logs/SkirmishProduction/Offline/witness-deadline-ecd8o_re/result.json",
+  "proof_sha256": "800bee0293bf4292641098e499ff310517c394ff867d0001ed88a0459a9105bd",
+  "source_count": 831,
+  "no_fallback": true,
+  "mismatches": [],
+  "native_executed": false,
+  "ordinary_startup_and_gameplay_timeouts_changed": false,
+  "total_witness_budget_seconds": 480,
+  "candidate_budget_seconds": 180
+}

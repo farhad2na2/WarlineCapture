@@ -1,0 +1,22 @@
+{
+  "log": "native110-runtime-prefab-recovery.log",
+  "sourceHash": "f71a68332be81a2e083f38652f4ba037e1938318cfc76dfbb70f35e83341f82f",
+  "wrapperExit": 0,
+  "completionReceipt": 0,
+  "logSha256": "557ff2e006cda77097210bbcd6d73723bbbb9b702d3921202aa8023d81aa9ad7",
+  "freshNativeScene": true,
+  "actors": 42,
+  "sourceStructures": 344,
+  "banks": 2,
+  "functionalBuildings": 14,
+  "units": 28,
+  "readySessions": 1,
+  "runtimePrefabs": 22,
+  "editorPrefabResolver": false,
+  "normalInputRecovery": false,
+  "playerReady": false,
+  "nativeRecoveryComplete": false,
+  "countsForCurrentSource": false,
+  "opening": "native-110-recovered-opening.png",
+  "historicalReason": "Shared tree height, rooftop accents, ground detail, logical camera and compatible fingerprint acceleration changed after this run."
+}

@@ -403,7 +403,7 @@ namespace Game.Runtime
             em.SetComponentData(entity, state);
         }
 
-        private static Vector3 OffsetOnPad(float centerX, float centerZ, byte factionId, int memberIndex)
+        public static Vector3 OffsetOnPad(float centerX, float centerZ, byte factionId, int memberIndex)
         {
             int column = memberIndex % 4;
             int row = memberIndex / 4;

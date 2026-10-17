@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005PlacementAssemblyFreshness1375.cs",
+      "entry": "S005PlacementAssemblyFreshness1375.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 1422,
+      "executeMs": 32,
+      "assemblyName": "PipelineRunScript_S005PlacementAssemblyFreshness1375_180b77df2a1a4ede8b89faea0bf9e039",
+      "success": true,
+      "result": "{\"project\":\"/Users/farhad/Projects/WarlineCapture/Assets\",\"assembly\":\"Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null\",\"location\":\"/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Runtime.dll\",\"loadedMvid\":\"195aba66-f75c-43de-b53b-4a3d7e76da5e\",\"diskSha256\":\"d48621ade05a2feeaa8a6e8863b46d150959fb72b24251c827a3eb87ac42861a\",\"dllLastWriteUtc\":\"2026-10-13T05:51:21.1950110Z\",\"buildingSourceLastWriteUtc\":\"2026-10-12T20:43:44.4419846Z\",\"roadSourceLastWriteUtc\":\"2026-10-12T20:43:44.4660147Z\",\"buildingOwnedField\":true,\"roadOwnedArray\":true,\"stopped\":true,\"compiling\":false,\"updating\":false,\"changing\":false}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

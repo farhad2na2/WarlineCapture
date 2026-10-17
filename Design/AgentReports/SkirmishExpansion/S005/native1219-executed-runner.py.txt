@@ -1,0 +1,144 @@
+"""Prepared normal native passive-player S005 enemy pressure FA104734 with natural Defeat and rendered return. Root must review/compile and explicitly release heavy lane before execution."""
+import argparse,math,hashlib,importlib.util,json,pathlib,re,subprocess,sys
+
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+STATE=REPORT/'TECHNICAL_READINESS_CURRENT.json'
+FIXTURE=pathlib.Path('/private/tmp/s005-passive-pressure1219/S005PassivePressure1219.cs')
+PREP=pathlib.Path('/private/tmp/s005-passive-pressure1219/manifest.json')
+IDLE=pathlib.Path('/private/tmp/s005-passive-pressure1219/S005PassiveIdle1219.cs')
+HELPER=pathlib.Path('/private/tmp/warline-s005-source-manifest.py')
+LOG='native-1219-passive-pressure-fa-seed104734.log'
+OBS='native1219-passive-pressure-observation.jsonl'
+ARCHIVE='native1219-passive-pressure-observer.cs.txt'
+METHOD='S005PassivePressure1219.RunValidation'
+
+def read(p):return json.loads(p.read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def new_json(p,d):
+ with p.open('x') as f:f.write(json.dumps(d,indent=2)+'\n')
+def idle_state():
+ s=read(STATE)
+ if s.get('activeRun') is not None:raise RuntimeError('Main heavy lane already owned: '+str(s.get('activeRun')))
+ return s
+def manifest(prefix):
+ for suffix in ('-source-manifest.json','-independent-fingerprint.json'):
+  if (REPORT/(prefix+suffix)).exists():raise RuntimeError('Preserve existing manifest '+prefix)
+ subprocess.run(['rtk','proxy','python3',str(HELPER),prefix],cwd=ROOT,check=True)
+ return prefix+'-source-manifest.json'
+def cli_json(arguments,path):
+ result=subprocess.run(['rtk','proxy','unity','command',*arguments,'--project-path',str(ROOT),'--format','json'],cwd=ROOT,capture_output=True,text=True)
+ with path.open('x') as f:f.write(result.stdout)
+ if result.stderr:new_json(path.with_name(path.name+'.stderr.json'),{'stderr':result.stderr,'exit':result.returncode})
+ value=json.loads(result.stdout)
+ if result.returncode!=0 or not value.get('success') or not value.get('data',{}).get('result',{}).get('success'):raise RuntimeError('Native CLI outer/nested failure: '+path.name)
+ return value['data']['result'].get('result')
+def native_idle(tag):
+ path=REPORT/('native1219-'+tag+'-native-idle.json')
+ value=cli_json(['run_script','--file',str(IDLE),'--entry','S005PassiveIdle1219.Run','--timeout_ms','30000'],path)
+ evidence=read(path);data=evidence.get('data',{});nested=data.get('result',{});params=data.get('parameters',{})
+ if data.get('success') is not True or nested.get('success') is not True or data.get('target',{}).get('projectPath')!=str(ROOT) or params.get('file')!=str(IDLE) or params.get('entry')!='S005PassiveIdle1219.Run' or str(params.get('timeout_ms'))!='30000' or value!='False|False|False|False|False|'+str(ROOT/'Assets'):raise RuntimeError('Correct main Editor/validation is not idle: '+tag)
+
+ap=argparse.ArgumentParser(description=__doc__)
+ap.add_argument('pre_manifest',help='Root-selected current complete source-manifest basename, required to match fresh source before native calls')
+ap.add_argument('--dry-compile-proof',required=True)
+ap.add_argument('--heavy-lane-owner',required=True,choices=['main1219'])
+args=ap.parse_args()
+idle_state();prep=read(PREP)
+dry_path=pathlib.Path(args.dry_compile_proof)
+if dry_path.parent!=REPORT:raise RuntimeError('Native drycompile evidence must be archived in exact report directory')
+dry=read(dry_path);data=dry.get('data',{});native_compile=data.get('result',{});params=data.get('parameters',{})
+if dry.get('success') is not True or data.get('success') is not True or native_compile.get('success') is not True or any(str(d.get('severity','')).lower()=='error' for d in native_compile.get('diagnostics',[])) or params.get('file')!=str(FIXTURE) or params.get('entry')!='S005PassivePressure1219.Run' or params.get('dry_run') not in ('true',True) or data.get('target',{}).get('projectPath')!=str(ROOT):raise RuntimeError('Exact new native drycompile success/parameters/target not proven')
+
+if pathlib.Path(args.pre_manifest).name!=args.pre_manifest or not (REPORT/args.pre_manifest).is_file():raise RuntimeError('Existing pre-manifest basename required')
+for p,expected in ((FIXTURE,prep['fixtureSha256']),(HELPER,prep['sourceManifestHelperSha256']),(IDLE,prep['idleFixtureSha256'])):
+ if sha(p.read_bytes())!=expected:raise RuntimeError('Frozen fixture/helper changed; review required')
+for name,expected in prep['sourceContracts'].items():
+ if sha((ROOT/name).read_bytes())!=expected:raise RuntimeError('Reviewed source contract changed: '+name)
+if sha(pathlib.Path(__file__).read_bytes())!=prep['runnerSha256']:raise RuntimeError('Runner bytes changed from reviewed preparation')
+for name in (LOG,LOG+'.exit',LOG+'.wrapper-exit',LOG+'.dispatch.json',OBS,ARCHIVE,'native1219-passive-pressure-pass.json','native1219-passive-pressure-failure.json','native1219-passive-pressure-touch.jsonl','native1219-externalPassive-contact-audit.json','native1219-inheritedPublicNormal-contact-audit.json','native1219-runner-start.json','load1219-passive-pressure-observer.json','native1219-executed-runner.py.txt','native1219-before-load-native-idle.json','native1219-before-dispatch-native-idle.json','native1219-after-close-native-idle.json','native1219-unclosed-ownership.json','load1219-passive-pressure-observer.json.stderr.json','native1219-before-load-native-idle.json.stderr.json','native1219-before-dispatch-native-idle.json.stderr.json','native1219-after-close-native-idle.json.stderr.json'):
+ if (REPORT/name).exists():raise RuntimeError('Preserve existing1219 artifact '+name)
+preflight=manifest('final-1219-passive-pressure-preflight')
+if read(REPORT/args.pre_manifest)!=read(REPORT/preflight):raise RuntimeError('Supplied source differs from current source; no Unity call started')
+if read(REPORT/preflight.replace('-source-manifest.json','-independent-fingerprint.json'))['sourceHash']!=prep['currentCandidateSourceHash']:raise RuntimeError('Whole source differs from reviewed compiled shared-HUD/approved-ground-policy candidate1220; no Unity call started')
+native_idle('before-load');idle_state()
+new_json(REPORT/'native1219-runner-start.json',{'explicitHeavyLaneOwner':args.heavy_lane_owner,'coordination':'Root supplied token only after explicit T7 release; no implicit ownership takeover','preManifest':args.pre_manifest,'preflightManifest':preflight,'fixtureSha256':prep['fixtureSha256'],'executedRunnerSha256':sha(pathlib.Path(__file__).read_bytes()),'method':METHOD,'normalInput':True,'matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter':False})
+with (REPORT/ARCHIVE).open('xb') as f:f.write(FIXTURE.read_bytes())
+with (REPORT/'native1219-executed-runner.py.txt').open('xb') as f:f.write(pathlib.Path(__file__).read_bytes())
+cli_json(['run_script','--file',str(FIXTURE),'--entry','S005PassivePressure1219.Run','--timeout_ms','30000'],REPORT/'load1219-passive-pressure-observer.json')
+predispatch=manifest('final-1219-passive-pressure-pre-dispatch')
+if read(REPORT/args.pre_manifest)!=read(REPORT/predispatch):raise RuntimeError('Source changed before native dispatch')
+native_idle('before-dispatch');s=idle_state();s.update(activeRun='native1219',activeLog=LOG,activeScope=METHOD,activePreManifest=args.pre_manifest);STATE.write_text(json.dumps(s,indent=2)+'\n')
+print('native1219 normal native passive enemy pressure FA104734; explicit root heavy-lane ownership; checked macOS reuse wrapper',flush=True)
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','2100','--log',str(REPORT/LOG),'--','-executeMethod',METHOD],cwd=ROOT).returncode
+with (REPORT/(LOG+'.wrapper-exit')).open('x') as f:f.write(str(wrapper)+'\n')
+receipt=REPORT/(LOG+'.exit')
+if not receipt.is_file() or not re.fullmatch(r'-?\d+\s*',receipt.read_text()):
+ print('Missing/malformed actual native receipt. Keep ownership/evidence; no fallback launch or termination.',flush=True);sys.exit(4)
+native=int(receipt.read_text().strip())
+try:native_idle('after-close')
+except Exception as e:
+ new_json(REPORT/'native1219-unclosed-ownership.json',{'result':'Unclosed','wrapperExit':wrapper,'nativeExit':native,'reason':str(e),'ownershipPreserved':True,'playerReady':False});raise
+post=manifest('final-1219-passive-pressure-post')
+same=read(REPORT/args.pre_manifest)==read(REPORT/preflight)==read(REPORT/predispatch)==read(REPORT/post)
+fp=read(REPORT/post.replace('-source-manifest.json','-independent-fingerprint.json'));h=fp['sourceHash']
+
+text=(REPORT/LOG).read_text(errors='replace');errors=[]
+if wrapper!=0 or native!=0:errors.append('Actual wrapper/native exit must both be0')
+if not same:errors.append('Full source/material manifests changed')
+markers=['[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0','[S004MenuProfileFixture] chapter1Completed=5 progressionGate=Preserved isolatedProfile=1','[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S005,Launch seedFixture=104734 nativeSessionObserved=1','[S004ManualNative] started=1 input=Touch ariaStarted=0','[S005PassivePressure1219] result=Passed scope=NormalNativePassiveEnemyPressure wins=0 playerReady=0','[ExistingEditorValidation] result=Passed executeMethod=S005PassivePressure1219.RunValidation']
+for marker in markers:
+ if marker not in text:errors.append('Missing exact native pressure marker '+marker)
+for bad in ('[S004AriaConsent] result=Passed','[S004ManualNative] result=Passed outcome=Victory','reason=ariaStopped:','[S005PassivePressure1219] result=Failed'):
+ if bad in text:errors.append('Unexpected ARIA/manual-win/failure marker '+bad)
+if re.search(r'error CS\d+|Compilation failed',text):errors.append('Native compiler failure')
+obs=[];trace=None;features={}
+try:
+ obs=[json.loads(x) for x in (REPORT/OBS).read_text().splitlines() if x.strip()]
+ def rows(stage):return [r for r in obs if r['stage']==stage]
+ def one(stage):
+  values=rows(stage)
+  if len(values)!=1:raise ValueError('Exactly one actual '+stage+' required')
+  return values[0]
+ if rows('PassivePressureFailure'):raise ValueError('Native pressure fixture failure')
+ fresh=one('FreshNativeAttempt');coord=one('QaPassiveCoordination');defeat=one('NativeFrozenRenderedDefeat');menu=one('NativeMainMenuDestination');summary=one('NativePassivePressureSummary');closed=one('ClosedPassivePressure')
+ attempt=fresh['attempt'];trace=pathlib.Path(coord['tracePath'])
+ if not attempt or fresh['seed']!=104734 or not all(fresh[k] for k in ('passed','sameBudget','sameRoster','oldRemoved','sharedFog')) or fresh['developmentFullVision'] or fresh['oldPhysical']!=0 or fresh['selected']!=0 or fresh['hold']!=0 or fresh['readiness']!=1 or fresh['deliveredActors']!=0 or fresh['initialActors']<=0 or fresh['owned']<=0 or fresh['markers']<0 or not 0<=fresh['elapsed']<=fresh['baselineElapsed']:raise ValueError('Native exact fresh authored budget/roster/R1/fog/first clock gate missing')
+ if coord['attempt']!=attempt or not coord['qaOnlyCoordination'] or not coord['passed'] or coord['manualActions']!=0 or coord['manualAttackReceipts']!=0 or trace.parent!=REPORT or not re.fullmatch(r's005-aria-live-104734-fa-[0-9a-f]{32}\.jsonl',trace.name):raise ValueError('Owned zero-command native manual QA handoff/trace invalid')
+ passive=rows('NativePlayerPassivity')
+ if len(passive)<2 or any(r['attempt']!=attempt or not r['passed'] or not r['playerPassive'] or any(r[k]!=0 for k in ('manualActions','manualAttackReceipts','selected','hold','receipt','violations')) for r in passive):raise ValueError('Actual full native passive zero-player-command/ARIA stream missing/violated')
+ if rows('NativeCommandReceipt'):raise ValueError('Actual accepted player command in passive run')
+ runtime=rows('NativePressureRuntime')
+ if len(runtime)<2 or any(r['attempt']!=attempt or not math.isfinite(r['elapsed']) or r['elapsed']<0 or r['simulationActive'] and (abs(r['timeScale']-1)>.0001 or r['paused'] or not r['playing']) for r in runtime):raise ValueError('Actual normal-clock enemy pressure stream invalid')
+ if any(b['elapsed']<a['elapsed'] for a,b in zip(runtime,runtime[1:])):raise ValueError('Actual native elapsed clock regressed')
+ hp=[r['hp'] for r in runtime if r['hp']>=0]
+ if not hp or hp[0]!=800 or min(hp)>=800:raise ValueError('Actual original playerbase800 and real HP decline missing')
+ planners=rows('NativeEnemyPlanner');groups=rows('NativeArmyGroup');assignments=rows('NativeEnemyAssignment');actors=rows('NativeEnemyActor')
+ if len(planners)!=len(runtime) or any(r['attempt']!=attempt or not r['passed'] for r in planners) or not groups or not assignments or not actors:raise ValueError('Actual planner/group/assignment/actor observation coverage missing')
+ if any(r['attempt']!=attempt for r in groups+assignments+actors):raise ValueError('Foreign-attempt pressure data')
+ if not any(r['faction']==2 and r['groupOrder'] in ('Move','Attack') for r in groups) or not any(r['orderAccepted']==1 and r['groupOrder'] in ('Move','Attack') for r in assignments):raise ValueError('Actual accepted native enemy movement/attack pressure missing')
+ if not any(r['initialActor'] and r['bodyPresent'] and r['displacement']>=2 for r in actors):raise ValueError('Actual original enemy actor displacement missing')
+ if defeat['attempt']!=attempt or defeat['resultSession']!=attempt or defeat['outcome']!='Defeat' or defeat['reason']!='MainBaseDestroyed' or defeat['saveAcknowledged']!=1 or not 0<defeat['elapsed']<1080 or not all(defeat[k] for k in ('passed','frozen','rendered','captionMatches','viewportMatches')) or defeat['visibleGlyphs']<=0 or not defeat['title'] or not defeat['sourceCopy'] or defeat['samplingPhase']!='CanvasWillRenderCanvases':raise ValueError('Genuine natural same-attempt frozen/rendered localized Defeat before native deadline missing')
+ settlement=rows('NativeDefeatSettlementState')
+ if not settlement or any(r['attempt']!=attempt or r['resultSession']!=attempt or r['outcome']!='Defeat' or r['reason']!='MainBaseDestroyed' or not r['frozen'] or not r['paused'] or r['playing'] or r['simulationActive'] or r['saveAcknowledged'] not in (0,1) for r in settlement) or not any(r['saveAcknowledged']==1 for r in settlement):raise ValueError('Actual frozen terminal clock/settlement state missing')
+ if menu['attempt']!=attempt or menu['shellRoute']!='MainMenu' or not all(menu[k] for k in ('passed','sessionAbsent','rendered','captionMatches','viewportMatches','exactMainMenuOwner','exactMainMenuTitle')) or menu['visibleGlyphs']<=0 or menu['mainMenuIntent']!='OpenMenuRoute' or menu['mainMenuRoute']!='QuickCustomSetup' or not menu['controlPath'].endswith('/Card_Skirmish/Hotspot') or not menu['mainMenuTitlePath'].endswith('/Card_Skirmish/Title') or not menu['actualMainMenuCaption'] or not menu['expectedMainMenuCaption'] or menu['samplingPhase']!='CanvasWillRenderCanvases':raise ValueError('Actual rendered typed native MainMenu destination missing')
+ controls=rows('NativeControlTouch')
+ if len(controls)!=1 or controls[0]['action']!='Leave' or controls[0]['attempt']!=attempt or obs.index(defeat)>=obs.index(controls[0]) or obs.index(controls[0])>=obs.index(menu):raise ValueError('Exactly one genuine Leave touch after rendered Defeat then MainMenu required')
+ if not summary['passed'] or not closed['passed'] or summary['completed']!=1 or summary['completed']!=summary['dispatched'] or any(summary[k]!=0 for k in ('unexpected','interventions','violations')) or obs.index(menu)>=obs.index(summary) or obs.index(summary)>=obs.index(closed):raise ValueError('Actual completed native return/closed Play and QA restoration missing')
+ touchrows=[json.loads(x) for x in (REPORT/'native1219-passive-pressure-touch.jsonl').read_text().splitlines() if x.strip()]
+ native_touch=[json.loads(x) for x in pathlib.Path(str(trace)+'.touch.jsonl').read_text().splitlines() if x.strip()]
+ spec=importlib.util.spec_from_file_location('native1219_contacts',ROOT/'Tools/CI/audit_skirmish_native_contacts.py');mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+ for name,data in (('externalPassive',touchrows),('inheritedPublicNormal',native_touch)):
+  if not data or any(r['unexpected']!=0 or r['interventions']!=0 or r['receiptViolations']!=0 for r in data):raise ValueError('Any raw native Touch stream missing/violated '+name)
+  audit=mod.audit(data);new_json(REPORT/('native1219-'+name+'-contact-audit.json'),audit)
+  if audit.get('errors') or audit.get('strictAllContactsEnded') is not True:raise ValueError('Actual paired contacts fail '+name+' '+str(audit.get('errors')))
+  if name=='inheritedPublicNormal' and audit.get('nativeMenuContactsRecorded') is not True:raise ValueError('Real public Menu launch Touch contacts missing')
+ reservations=rows('NativePaidReservation');intents=rows('NativeEnemyPaidIntent')
+ features={'nativeInitialEnemyActorsMoved':any(r['initialActor'] and r['displacement']>=2 for r in actors),'paidEnemyReservationsObserved':sorted({r['reservationId'] for r in reservations if r['faction']==2 and r['materialsPaid']>0}),'nativePaidEnemyDeliveredReservationsObserved':sorted({r['reservationId'] for r in reservations if r['faction']==2 and r['materialsPaid']>0 and r['deliveredMembers']>0}),'paidIntentStatesObserved':sorted({r['intentState'] for r in intents}),'enemyDutiesObserved':sorted({r['duty'] for r in assignments}),'lastObservedPlayerUnitsLost':runtime[-1]['playerLost'],'lastObservedEnemyUnitsLost':runtime[-1]['enemyLost'],'playerBaseMinimumObservedHp':min(hp),'nativeElapsedAtDefeat':defeat['elapsed'],'paidReplacementScoutDefenseRecoveryQualified':False}
+except Exception as e:errors.append('Strict native passive pressure parser failed: '+str(e))
+proof={'result':'Failed' if errors else 'PassedScopedNormalPassiveEnemyPressure','scope':'FA104734 unchanged Standard Regular R1 native public Menu launch; no player orders, ordinary defender auto-engagement; natural playerbase destruction Defeat<1080, localized bound rendered result and real typed MainMenu return','sourceHash':h,'fullSourceUnchanged':same,'preManifest':args.pre_manifest,'postManifest':post,'actualWrapperExit':wrapper,'nativeExit':native,'fixtureSha256':prep['fixtureSha256'],'executedRunnerSha256':sha(pathlib.Path(__file__).read_bytes()),'log':LOG,'logSha256':sha((REPORT/LOG).read_bytes()),'observation':OBS,'observationSha256':sha((REPORT/OBS).read_bytes()) if (REPORT/OBS).exists() else None,'normalResourcesPosesDamageVisibilityClocksOutcomeInjected':False,'enemyAIOrNativeDefensiveCombatDisabled':False,'qaOneWinWatcherAndManualAutoCombatCoordinated':True,'observedFeatures':features,'countedPlayerWins':0,'englishDefeatCertified':False,'allEnemyPlanStepsCertified':False,'realPlayerDeviceAcceptance':False,'playerReady':False,'errors':errors}
+new_json(REPORT/('native1219-passive-pressure-failure.json' if errors else 'native1219-passive-pressure-pass.json'),proof)
+s=read(STATE)
+if s.get('activeRun')!='native1219':raise RuntimeError('Main ownership changed; preserve unrelated lane')
+s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None);STATE.write_text(json.dumps(s,indent=2)+'\n')
+print(json.dumps(proof,indent=2),flush=True);sys.exit(1 if errors else 0)

@@ -61,6 +61,27 @@ namespace Game.Configs
             return roles.ToArray();
         }
 
+        // Generic G uses the existing Combined Arms values filtered by the authoritative
+        // Ground profile. No new prices, combat numbers or native certification.
+        public static SkirmishRoleOverlay[] CreateGroundManeuverSlice()
+        {
+            var ground = SkirmishArmyProfileConfig.ResolveCached(SkirmishArmyProfileId.GroundManeuver);
+            var result = new System.Collections.Generic.List<SkirmishRoleOverlay>();
+            foreach (var role in CreateCombinedArmsSlice())
+                if (ground.Allows(role.RoleId)) result.Add(role);
+            return result.ToArray();
+        }
+
+        public static SkirmishRoleOverlay[] CreateForArmy(SkirmishArmyProfileConfig army, bool preserveLegacyGround)
+        {
+            if (army != null && army.Kind == SkirmishArmyProfileId.CombinedArms)
+                return CreateCombinedArmsSlice();
+            if (army != null && army.AllowsOffensiveAir) return CreateAirMobileSlice();
+            if (army != null && army.Kind == SkirmishArmyProfileId.GroundManeuver && !preserveLegacyGround)
+                return CreateGroundManeuverSlice();
+            return CreateS002GroundSlice();
+        }
+
         public static SkirmishRoleOverlay[] CreateS002GroundSlice()
         {
             return new[]

@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "result": "IndependentReviewClear",
+  "scope": "Explicit160 source/adoption closure; no native mission or camera acceptance",
+  "composition": {
+    "path": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/composition.manifest.json",
+    "sha256": "9aae455bcd4ad2c215a05cfcb4d029a16158645be81342268ed4f9e561e267ec"
+  },
+  "sourceAndCurrentBeforePins": 160,
+  "inputManifestPins": 14,
+  "approvedInitialTargetsUnchanged": 129,
+  "approvedBaselineAdditionsOnly": 31,
+  "originAuthorityJoins": "All160 selected hashes match reviewed package rows; Batch uses after_sha256",
+  "compilerOverride": "Explicit Enemy13 ccadd to tower-composed cee4, installed from d7 actual before pin",
+  "sourceSelection": "Immutable f733 blobs for nonoverride Assets, exact158 declared C# overrides;13 current-only sources excluded; actual package/generated/external scope explicit",
+  "owningProof": {
+    "path": "Design/AgentReports/SkirmishExpansion/S005/shared-native-main-closure/owning-uesn01hn/result.json",
+    "sha256": "c63aabd75fb0fa6fb9f2f76d311c48da23fcac85038c417b9a12ff1a7ab503a2",
+    "owners": 14,
+    "result": "PassedMainExactSharedClosure",
+    "noFallback": true
+  },
+  "independentFinalRehash": {
+    "path": "Design/AgentReports/SkirmishExpansion/S005/shared-native-main-closure/owning-uesn01hn/independent-source-reference-recheck.json",
+    "sha256": "c918081817ad1412f7b328a5a96ee287c80b5a957195264706c87d9029eb9390",
+    "sourceRecords": 3736,
+    "referenceRecords": 4291,
+    "mismatches": 0
+  },
+  "priorFailedClosuresPreserved": [
+    "Design/AgentReports/SkirmishExpansion/S005/shared-native-main-closure/owning-5faf6xxq/result.json",
+    "Design/AgentReports/SkirmishExpansion/S005/shared-native-main-closure/owning-f1o35vjj/result.json",
+    "Design/AgentReports/SkirmishExpansion/S005/shared-native-main-closure/owning-qk2i_ryl/result.json"
+  ],
+  "sourceReview": "No unintended overwrite, added WIP behavior or concrete source blocker found; selected package behaviors retain earlier bounded reviews",
+  "pending": [
+    "Exact import/native ILPP and focused controls",
+    "Actual native source fit and per-seed normal gameplay",
+    "Native camera readability/comfort evidence",
+    "Device/player acceptance"
+  ],
+  "reviewerAssetsUnityGitWrites": false
+}

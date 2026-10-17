@@ -1,0 +1,11 @@
+--- 1402-id-normalized
++++ 1403
+@@ -29,7 +29,7 @@
+   require(axis is None or actualAxis==axis,'Public route axis changed');axis=actualAxis
+   require(abs(math.hypot(r['forwardX'],r['forwardZ'])-1)<1e-4 and abs(r['forwardDot']-(r['forwardX']*r['axisX']+r['forwardZ']*r['axisZ']))<1e-4,'Heading must be actual normalized native forward vector')
+   require(r['aligned']==(r['forwardDot']>=.88) and r['nearCommandGoal']==(0<=r['commandDistance']<=16) and r['nearAlertGoal']==(0<=r['alertDistance']<=32),'Native heading/proximity flags contradict primitive measurements')
+-  offset=(-240,-120,120)[r['leg']];expected=(r['alertGoalX']+r['axisX']*offset,r['alertGoalZ']+r['axisZ']*offset)
++  offset=(-240,-120,60)[r['leg']];expected=(r['alertGoalX']+r['axisX']*offset,r['alertGoalZ']+r['axisZ']*offset)
+   require(abs(r['commandGoalX']-expected[0])<1e-4 and abs(r['commandGoalZ']-expected[1])<1e-4,'Actual public command goal differs from bounded three-leg recipe')
+   if r['stage'] not in ('PublicApproachPrepared','PublicIntermediateLegPrepared','PublicAlignedLegPrepared'):
+    require(r['cameraPreframed'] is True,'Public camera framing lost before native input or flight')

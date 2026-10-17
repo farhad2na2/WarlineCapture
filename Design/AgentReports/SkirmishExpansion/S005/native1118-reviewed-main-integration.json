@@ -1,0 +1,360 @@
+{
+  "result": "Reviewed58FilesPresentNativeImportCompiling",
+  "manifestSha256": "20619358ffc29e41168683ac169d24240d0eb0089eda32eb250c5fae8d50e046",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs",
+      "stagedSha256": "d7e496aac47e910810c3f83993ef000abfac5b30062a3746332e5d295e5b3e36"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs",
+      "mainBaseSha256": "f16754231d6eda98f2b2f28fd7750656bb01a4b7fc6a798c672f9e1e6b8219b8",
+      "stagedPath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs",
+      "stagedSha256": "762c6cf2d7b1a035b337045af3c12e6b16b25b43d20e3d8071b1ed23c3ba3535"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "mainBaseSha256": "6844b7c855f8946204e7ca45e924952b850956d15a5a977a979e49f60559910a",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "stagedSha256": "0e46b36edaba43ebcde4310df1787c52c3452f68dc58c65627b50659d8935e3f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "mainBaseSha256": "167a4b03d02fa2afc8b73a41b0c59395e82cc79ea7fe388a8b9f2426aa0752bb",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "stagedSha256": "23d24da07a6f842c5f7ab30067dc4b1ffbf2046b2a163e59430e99d83de10e8b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "mainBaseSha256": "a821bac4c57aea8eb2f2ad917833a7d6b5cf89800ba6f5982273b9528393189c",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "stagedSha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs",
+      "stagedSha256": "d40c735192b172233eb7915b24c4bdfd702f9de496f18b52f40ae9c4f8bf038e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "mainBaseSha256": "66cb59bc46cdb3e27b70cd2b7a20b43a73cdaf1b05b9dad939e19e3698f3d051",
+      "stagedPath": "/private/tmp/fogfix1091-followup/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "stagedSha256": "51d5ecc7d686da660b00e2d6b156f2c733548a939f10edd315d048754bbcf354"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+      "mainBaseSha256": "d0c88104345eb046ed97826f55d7742a1f4ad3ec43ca8872fc25bd6c7076b647",
+      "stagedPath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+      "stagedSha256": "662ad652fbd101344afb5104f4fcf16c043eb3b99231a85d7903c844980d3d82"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs",
+      "mainBaseSha256": "e6d6f63d98d744c8b0d6b871d5fc14ea8fdedeafca2b2791c7bbc8dfb29a5c45",
+      "stagedPath": "/private/tmp/fogfix1091/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs",
+      "stagedSha256": "b0b6fb9a8b19e3d5136412d39e4f407b168e5b9a0de645963b7c178ddcf1e942"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs",
+      "mainBaseSha256": "edbfb845f3eead46fe15ffe15ba4fcf93a25e9df68e92909675073ca41fa1bed",
+      "stagedPath": "/private/tmp/fogfix1091/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs",
+      "stagedSha256": "3d1938ef7cdef4e4140661e98420714c97fb06a06943dc9f3dfb17c9d94db2ba"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-followup/Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "stagedSha256": "37447dbbafa7a2865876e6d980f599680bc02a8e738a37e572fea9d51dae6561"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "stagedSha256": "b98cf29313e0ac49b748368aba7b1dc27f97a976e10cd46f24d78e04c9f353db"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "stagedSha256": "517fbf215cd8bc6d3aa07884c4e5def1d6813d2ea4b50bebba922dbef339238b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "mainBaseSha256": "e031ad24b5b5ab8959305db91af7a0b2ec90ffa111869e6a6e7b3b5358ff9fde",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "stagedSha256": "5c0f21dbd43b10b291bd4cececc41c44db08d2a517ac8b6b4cd143fbe41a8849"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "mainBaseSha256": "ba2f0223933b8f6966b97bc8f14499b347a5297c2050bb0c265ce983d866640e",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "stagedSha256": "92f46c6e3e6934bd42352e76591d7f093945f43b91e1587c0f447104d5060ef6"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "stagedSha256": "ea2e94763ea736ddde953748256549c2300912eef8128fdf8d55824b58854d65"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs",
+      "mainBaseSha256": "e3319438b0e4bddad973e84c74b0307fa20ac60b4160fefdbf642622f6019bc4",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs",
+      "stagedSha256": "82c5a3e509116bfec21f0405788bf0b7d808889e3ad852dd96b39ea36f753c45"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+      "mainBaseSha256": "a22147d3f380dd770ba10d17580bd0cb970845bee2cd477eadc3ffdd70b67ad2",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+      "stagedSha256": "e6a2d87d119a4cb03bac58f302a431f186f4db3213db61b67a9fc5ae81438f1e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs",
+      "mainBaseSha256": "4cf2f4ea1d1a41e1e18560f78bd2228836b0c0508cd8faa3c32c12c3c5562277",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs",
+      "stagedSha256": "10152a2a44568b5a131ae4f9f25b3e474094f1e5270ea2965ed5a2caad2450a0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/SkirmishFogRenderVisibility.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Rendering/SkirmishFogRenderVisibility.cs",
+      "stagedSha256": "77cebbe9efd1954859e1d6f3c8fd5cccb3d302da0597b5b9374eb00f6f959c41"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/SkirmishFogRenderMaskSystem.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Rendering/Systems/SkirmishFogRenderMaskSystem.cs",
+      "stagedSha256": "06641f69743933f4afa7e564f498dbeb50cdbd5ad5f84cef5260d5c2dc19a852"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs",
+      "mainBaseSha256": "b6763fdb484a035291569e2b780c8965df802e7009b33bbc5842ca014911ade2",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs",
+      "stagedSha256": "5cd4d8ae303cc64983b6f654a3bb85de55b74e1cc658da2059a95fd1dd5e88c8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "mainBaseSha256": "4259bf973d6c928b9d0df0f2cf23bc90f471f5543b0d29ffb728f621ddcebbb7",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "stagedSha256": "0d0b0f7e940677ce7e3360a302bba2e6ff36be43ff93302424c38798454ae759"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "mainBaseSha256": "330b5494f0f393a9aeb67a15ba63d0213e44ffc1e40861d2183640f0553e7703",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "stagedSha256": "68554955326328f72cb05d5324aafb8fcfe79ec36e68934932be76753bef7554"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "mainBaseSha256": "7755dfbcf0d9b29f5218379c20236833daf9587956642e2d836f22a5e3f490fd",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "stagedSha256": "b9829bc5aeaef8daee8c98d1fce4d5ebd3b85c704d40843281bce6a5bc9217ab"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultHudProjection.cs",
+      "mainBaseSha256": "c7e86865730e9186bbd8ace9cc8d5782bef4a8ea21c76c1ad681842c159f3295",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultHudProjection.cs",
+      "stagedSha256": "7d090957cf853326797b783ce275c187d9fe60958306cdde48e13edab07b3b21"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "mainBaseSha256": "4a2c26b230b848b9f3fb26723999ae2e1340232ed8f333faf74c873adc08f45e",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "stagedSha256": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs",
+      "mainBaseSha256": "beebc73fda43d3d79a6e557c50c68e4ba385465804e90ccd7cef822eedf74791",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs",
+      "stagedSha256": "12a9992dbb0d4287d017dae304e4a549228f94f25bdcc17cbb85cffb4ed36b45"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs",
+      "stagedSha256": "960eaaff64eff932bd2f05e7dea97bce69b750819e6f862f4380a8dda25a6fa4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedPresentationSystem.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedPresentationSystem.cs",
+      "stagedSha256": "7a4644205ad344a5e00af75c3dea75aa8f7121e609caead83593f9f643b570d2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedVisualMask.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedVisualMask.cs",
+      "stagedSha256": "33f20a20b3206a580492ec2431608d889147086ad8b5deb994bcdcb07023c535"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs",
+      "mainBaseSha256": "bd28a73a7d561fc992294cdc23f132f3715f9db836d595f186e2cc3de493f90b",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs",
+      "stagedSha256": "f43c767909f8d120aa49e9963faad78a5f159892ad8b2fd7c4fa832b8701cb9a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "mainBaseSha256": "65a6689ae84fe751522cfbd1eb26aad9efd70db60031dda0510d7bdd0913545e",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "stagedSha256": "fd1e39966c3af35812c85eae224a37ddddd47e4ec4b28dcae242a85fdbfc1a1b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs",
+      "mainBaseSha256": "ec5baf3e9466b907b6a6f7b5046eef82b1833ccae2b361bec0b1cf074804db8f",
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs",
+      "stagedSha256": "8b8d90a54131b6b9fdecc518b5f9414b3db0859375465f09fad14410fc985691"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AssistantPreviewAttackTargetUtility.cs",
+      "mainBaseSha256": "faeb608785b2ac2de626d1f8fe644943dc71e7563731af1f6c5b15fb8f82d84e",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/AssistantPreviewAttackTargetUtility.cs",
+      "stagedSha256": "07df1fc650e93f1bea4d364327b33af9337fe205daaebbed1ed8d138a24dc637"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "mainBaseSha256": "1a5bd688978ba41a866a6177c2beabf1f9c71a1b7bae2e1b6dc2208c119e4347",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "stagedSha256": "63f5fd9da93ff67b5aa7cdb78a7f1ec67d86e2043012a451da6154ae9fdbde68"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
+      "mainBaseSha256": "58a0530db9ee0018ac97d60bc6cd51dd961205d1bac69cd9add572e86267dbd9",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
+      "stagedSha256": "21acb659bcce78acaaf406320e88f818bbad7135fd4ca48c3ec3f705a1636f20"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CombatTargetPolicyUtility.cs",
+      "mainBaseSha256": "8714efea2ac23e2fd31265d264796f2515113fd8de0b6da1c20ef71df514801e",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/CombatTargetPolicyUtility.cs",
+      "stagedSha256": "2ecc2c1e5d2df95bb706aa80a0524d7bbb06bb2e7f8d8bed16ec1c6367e501c2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
+      "mainBaseSha256": "9bb3d12ac8623cdf5fa59f90e7183a3cde4a4a8933ef213d6a6ce89b591731fe",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
+      "stagedSha256": "aa7312147affe4557bf2c4e37160cb343c108bf6c214e9654f2a0f4e8617107f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "mainBaseSha256": "2f70f0cd9514b3019b22a64b6d07b429b2146d82bb509334abfe6040ff41b29a",
+      "stagedPath": "/private/tmp/fogfix1091-consumers-compilefix/Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "stagedSha256": "c1342d9e355c4d8e903a4d9381425b2b34b73e363bfc36289a5e9e6ff3e081d9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "mainBaseSha256": "6cd13dbbac7e4b1d7b9b0c49fe200ff1a56970f7771d1051e2950f003d4a05d7",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "stagedSha256": "bfd1f1eb8a9d03ebf1d63539b258be028fd73cff53f8293484d149e1384985c6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "mainBaseSha256": "e0c66de89a053b7030c2568aaae277d445134b67d8bf41668eb09a01e79fd2f5",
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "stagedSha256": "6ea5676b0d7fcec34483209a21d36336c147dbfd3a4681c65b45618dbc06314b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+      "mainBaseSha256": "947ba28af9b954fc741990da937c79e260320a0ee1612ec0167df9cebcbe8e64",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+      "stagedSha256": "b96b9e385d8b385f20cc32efff9c9be593dd8e69d1833709a7fb2df3c5026135"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+      "mainBaseSha256": "ff0801fceb45044e73184bec57de8ad0b6191b7fc13c5bdad173f67fa0902fbb",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+      "stagedSha256": "d07e6b34ae800d2da9d321a4fe6233c176ccfe6c6814497d56611c7d783c267d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs",
+      "mainBaseSha256": "179e5deb03a9874dde4861122f021d0525d3c317c195e54a6ccfb5d373c6d049",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs",
+      "stagedSha256": "ec7a4a91d37934cefcc145bd30b6c3e60b2bb12fa7957c15323089bcfeb0fabc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+      "mainBaseSha256": "d86767734e478d9a37eb2d79187f5873b175b5badf1eba344530283e5f8e61cd",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+      "stagedSha256": "e5563345167ff8bc8e352cd4437b0b1a7ff1e8c3c00a7a735b760c4830a5e4ce"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs",
+      "mainBaseSha256": "912f251de1d0c3f8fa8053f9ea10af136dce532123ce8195e0186a92af7ca835",
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs",
+      "stagedSha256": "bf6a1fe3b3b54d69f326e2d77d5052b08fb9555a58d276ca0ce2b791aedbd4f7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitEngagementSystem.cs",
+      "mainBaseSha256": "3a032e175c06be30a747390b5c933ca4f765a9c53f7d32988e1d269be7db80e1",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/UnitEngagementSystem.cs",
+      "stagedSha256": "265d75666daf50a05863f418f703105c736e70b28a811c1615ec02d3092785e7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
+      "mainBaseSha256": "9f312f64c13e1f0d6ca424f1e4b33fc38478b81a8ff57f64203a94c87409b683",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
+      "stagedSha256": "fcc7bd38f484dacb0c9e2d922479a19521a1bc4503cd3be2fc186361ebec3294"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.Observation.cs",
+      "mainBaseSha256": "6184e1c1771604bc921148e7bc47d56ab612ee2a6e46da837af7dcc1108f012e",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/UI/Components/SkirmishMatchView.Observation.cs",
+      "stagedSha256": "bdfb1bab0e8ec6e8ae536e4162c513e59f3f9b83711dfbfe5b32daa470ccf8b8"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
+      "mainBaseSha256": "b00868a14b405c2cf9b2dcfc666f0f9475588421dfb312670088ccce229b4a39",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
+      "stagedSha256": "837e0be08841b0ce19bfddaaaee54adc808306b6d0c668d7244a52505d151bd2"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "mainBaseSha256": "ef70ce7ddce0a8cadee96d0485f195af5386a3ff661a28f346846c7c01092783",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "stagedSha256": "11c8d92321a1a73045afa445edd92778b4d7fbfb1b43af47e8abe1a8f616927f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "mainBaseSha256": "2666a6c9dbc62e391dab035a36072903058de8a39e27d2c57312e150d045cb65",
+      "stagedPath": "/private/tmp/fogfix1091-consumers/Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "stagedSha256": "db1904cfead6c525299b2e1b735203c12557a2b51636b2459c91f46815a7472c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs",
+      "stagedSha256": "549052f42d35bae067cd17c87ef0e6c7fab93d53d8ed2cfd7a01792ad09010b4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishFogObservedPointUtility.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-followup/Assets/Game/Scripts/Components/Skirmish/SkirmishFogObservedPointUtility.cs",
+      "stagedSha256": "3e13a9992243f417bf0e2e433b24cd4972e8590fbe1f1fd8e60cdfc3fafa62df"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-testfix/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs",
+      "stagedSha256": "c34f71f9d3409424b423ba8e4f9b401945258fb15dc315b80c12641615351a31"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "mainBaseSha256": "728ede114a68a447834a11deba703706b764bb503ba60c9c17d6e0fd72e815f7",
+      "stagedPath": "/private/tmp/guidance-lifecycle-fix/Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "stagedSha256": "c58710c100bab6217ce3302caf260c473da964d67f8533158c885374df02ca77"
+    },
+    {
+      "path": "Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "mainBaseSha256": null,
+      "stagedPath": "/private/tmp/guidance-lifecycle-fix/Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "stagedSha256": "edb70fc99627391fb311712a07d3e25206e062c517611698224410be7ec9dcc3"
+    }
+  ],
+  "nativeGeneratedMetasCopied": 15,
+  "backup": "/private/tmp/s005-main-integration1118-backup",
+  "physicalMapsChanged": false,
+  "qualitySettingsChanged": false,
+  "sharedFogConfigPending": true,
+  "refreshResponse": "CLI main-thread timeout after5000ms; actual native recompile_status compiling/failedfalse observed. Do not treat response as completed compilation."
+}

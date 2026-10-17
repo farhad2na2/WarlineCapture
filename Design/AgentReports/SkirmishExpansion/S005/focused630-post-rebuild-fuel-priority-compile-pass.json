@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "tests": 3,
+  "wrapperExit": 0,
+  "requiredMarker": "[SkirmishProducerMessageTests] result=Passed tests=3",
+  "log": "tests-630-post-rebuild-fuel-priority-compile.log",
+  "currentSourceHash": "0a1cf531aac6e0e3dc868a5b7c42eb3289f8ff777b9c2a952fe1f0f4e9e18d38",
+  "changedFromNative627": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "allMaterialsUnchanged": true,
+  "scope": "Compilation and producer regressions only; native flight remains pending"
+}

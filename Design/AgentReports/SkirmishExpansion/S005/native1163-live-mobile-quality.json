@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || UnityEditor.EditorApplication.isCompiling || Game.Editor.ExistingEditorValidation.IsRunning) throw new System.InvalidOperationException(\"Editor busy\"); var mobile=System.Array.IndexOf(UnityEngine.QualitySettings.names,\"Mobile\"); if(mobile<0)throw new System.InvalidOperationException(\"Mobile tier missing\"); UnityEngine.QualitySettings.SetQualityLevel(mobile,true); return new {quality=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()],msaa=UnityEngine.QualitySettings.antiAliasing};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "quality": "Mobile",
+        "msaa": 0
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

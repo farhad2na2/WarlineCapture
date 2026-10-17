@@ -1,0 +1,168 @@
+{
+  "measurementQualified": false,
+  "deviceCertified": false,
+  "androidCertified": false,
+  "performanceBudgetPassed": false,
+  "frameMetricsRecoverable": false,
+  "missingFrameSampleRows": 11691,
+  "censusRows": 278,
+  "reason": "Actual JsonUtility omitted all nested PerfRaw.sample fields; no per-frame timing/phase/GC/thread/warmup/gap recovery permitted",
+  "actualCensusMaximumCounts": {
+    "units": 41,
+    "structures": 15,
+    "projectiles": 0,
+    "pathFollowing": 25,
+    "engagements": 8,
+    "knowledgeEntries": 112,
+    "ledgerEntries": 18,
+    "selectedEntities": 14
+  },
+  "actualCensusPeakAllocatedMB": 6711.429028511047,
+  "actualCensusPeakMonoMB": 4978.2890625,
+  "recorderArrayAvailabilityWithoutFrameAttribution": [
+    {
+      "name": "MainMenuPlayUI.MinimapUpdate",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "BuildingDefenseAttackSystem.TargetCollection",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "BuildingDefenseAttackSystem.TargetSelection",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "BuildingDefenseAttackSystem.EffectApplication",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.CommandFlush",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.Input",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.FocusedReadModel",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.Panel",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.TacticalCamera",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.MarkerPreview",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "GameplayRuntimeUpdate.Selection.Camera",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.UnitPathfindingSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.AttackMoveSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.UnitEngagementSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.UnitAttackSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.UnitAirMovementSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.SkirmishEnemyStrategySystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.SkirmishSharedFogUpdateSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Runtime.SkirmishFogManagedPresentationSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Rendering.SkirmishFogRenderMaskSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Game.Rendering.UnitRenderBudgetSystem",
+      "present": 11690,
+      "missing": 1
+    },
+    {
+      "name": "Unity.Entities.SimulationSystemGroup",
+      "present": 11690,
+      "missing": 1
+    }
+  ],
+  "limits": [
+    "Census only, one-second snapshots; short phases can be missed",
+    "No timing/GC/frame metrics reconstructed from counts or wall duration",
+    "Recorder values include loading/menu/return; active-frame alignment unavailable",
+    "Inclusive Editor/QA memory peaks are not gameplay allocations or device budgets",
+    "Original failed performance proof preserved; normal victory remains independently recorded"
+  ],
+  "parser": "/private/tmp/s005-performance1183-missing-sample-offline-v2.py",
+  "parserSha256": "c4fb15d21e6304b56f323bd8a305ec5803f2641aa3d9a526e60d449d3c4c2c1f",
+  "raw": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1183-performance-raw.jsonl",
+  "rawSha256": "061b6ad2a4893adb1795c0481368d8da81b060edfdfceaff8ef77b216e804826",
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "originalFailureProof": "native1183-normal-aria-failure.json",
+  "normalJourneyErrors": [],
+  "negativeControls": [
+    {
+      "case": "ForeignAttempt",
+      "result": "Rejected"
+    },
+    {
+      "case": "MalformedMarker",
+      "result": "Rejected"
+    },
+    {
+      "case": "ClosureCount",
+      "result": "Rejected"
+    },
+    {
+      "case": "StageOrder",
+      "result": "Rejected"
+    }
+  ],
+  "fixtureAndOriginalRunnerParserModified": false,
+  "enemyAIChanged": false
+}

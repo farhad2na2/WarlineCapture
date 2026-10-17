@@ -1,0 +1,15 @@
+{
+  "manifest": "/private/tmp/aria-fog1128-s002-fixture-fix-r1/manifest-r1.json",
+  "manifestSha256": "33cd370f0c1c621d65939b02d49a7ecd3749cf9154f913d35589268e45767edd",
+  "files": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs",
+      "baseSha256": "98e5117ec7e0030c1bea30447bf69bedf5fcdf034f491397899b45017c92ba54",
+      "stagedPath": "/private/tmp/aria-fog1128-s002-fixture-fix-r1/Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs",
+      "stagedSha256": "50deb7b44126cb0df7cdb7b9ae086f7ccd6ac9c64876bb0d135ad11700a9c7f7"
+    }
+  ],
+  "backup": "/private/tmp/s005-s002-fixture-before1132.cs",
+  "nativeCompile": "Pending",
+  "productionChanged": false
+}

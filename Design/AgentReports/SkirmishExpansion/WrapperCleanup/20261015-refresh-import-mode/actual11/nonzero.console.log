@@ -1,0 +1,17 @@
+[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\OwnedRefreshProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\nonzero.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\nonzero.log -quit -buildTarget StandaloneWindows64 -refreshImportMode InProcess -executeMethod Probe.Nonzero
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0 -logFile D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\nonzero.log -quit -buildTarget StandaloneWindows64 -refreshImportMode InProcess -executeMethod Probe.Nonzero
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\nonzero.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\RefreshImportModeControls\controls-k364wzd0\nonzero.stderr.log
+[UnityInvoke] ExitCode: 37
+[ArchitectureValidation] 'Probe.Nonzero' failed with Unity exit code 37.
+At D:\Projects\WarlineCapture\Tools\CI\InvokeUnityExecuteMethodValidation.ps1:57 char:5
++     throw "[ArchitectureValidation] '$ExecuteMethod' failed with Unit ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: ([ArchitectureVa...y exit code 37.:String) [], RuntimeException
+    + FullyQualifiedErrorId : [ArchitectureValidation] 'Probe.Nonzero' failed with Unity exit code 37.
+ 

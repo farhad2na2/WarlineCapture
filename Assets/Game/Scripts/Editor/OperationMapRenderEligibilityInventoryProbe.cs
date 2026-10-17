@@ -60,6 +60,8 @@ namespace Game.Editor
         internal const int ExpectedReviewedRunwayMaterialRowAddition = 1;
         // CampaignVisualAudit20261011/fixes/render-reconciliation.txt explains every new row.
         internal const int ExpectedCampaignVisualRenderRowAddition = 52 + 85;
+        // WaterBridgesRoads20261016/dressing/DenseCity-ledger.txt plus bridge-refinement/DenseCity-receipt.json: visual-only children of existing owners.
+        internal const int ExpectedWaterBridgeDressingRenderRowAddition = 168 + 32;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -
@@ -67,7 +69,8 @@ namespace Game.Editor
             ExpectedRetainedRooftopSupportRenderRowAddition +
             ExpectedExistingBeautifyRenderRowAddition +
             ExpectedReviewedRunwayMaterialRowAddition +
-            ExpectedCampaignVisualRenderRowAddition;
+            ExpectedCampaignVisualRenderRowAddition +
+            ExpectedWaterBridgeDressingRenderRowAddition;
         internal const float RenderCellSize = 32f;
         // VRP-067 device evidence (House, stationary interior route) materialized
         // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
@@ -223,7 +226,7 @@ namespace Game.Editor
                 ["AuthoredOperationMapEntityPresentation/RenderOnly"] = 10843 + 85,
                 ["AuthoredOperationMapEntityPresentation/GameplayBuildings"] = 1584,
                 ["AuthoredOperationMapEntityPresentation/GameplayVehicles"] = 340,
-                ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly"] = 98597 + 52,
+                ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly"] = 98597 + 52 + ExpectedWaterBridgeDressingRenderRowAddition,
                 ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/GameplayBuildings"] = 12781,
                 ["CityCrossroads_NorthCourtyard"] = 23
             };
@@ -244,13 +247,13 @@ namespace Game.Editor
         {
             // Pin the reviewed visual revision; see MapVisualRefinement20261010/
             // dense-render-cache-source-reconciliation.json and native phase receipts.
-            // CampaignVisualAudit20261011/fixes/render-reconciliation.txt records this revision. A later
+            // WaterBridgesRoads20261016/bridge-refinement/render-reconciliation.txt records this revision. A later
             // scene change requires its own reconciliation, even if row totals
             // happen to remain equal.
             using (var stream = File.OpenRead(scene.path))
             using (var hash = System.Security.Cryptography.SHA256.Create())
                 if (BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() !=
-                    "bc250a60f2fb3050c691265273df13a7bea3fa2420fe4bef1a58debad75d2ace")
+                    "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975")
                     throw new InvalidOperationException("Dense source revision changed; reconcile it before rebuilding render packaging.");
             Renderer[] renderers = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
@@ -410,7 +413,8 @@ namespace Game.Editor
                     ExpectedRetainedRooftopSupportRenderRowAddition -
                     ExpectedExistingBeautifyRenderRowAddition -
                     ExpectedReviewedRunwayMaterialRowAddition -
-                    ExpectedCampaignVisualRenderRowAddition)
+                    ExpectedCampaignVisualRenderRowAddition -
+                    ExpectedWaterBridgeDressingRenderRowAddition)
             {
                 throw new InvalidOperationException(
                     "Normalized authoring render rows did not reconcile to the historical " +

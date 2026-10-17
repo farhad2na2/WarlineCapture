@@ -1,0 +1,14 @@
+{
+  "explicitHeavyLaneOwner": "main1562",
+  "sourceHash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "preManifest": "en1562-prepared-current-source-manifest.json",
+  "preflightManifest": "final-1562-normal-stop-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1562-normal-stop-pre-dispatch-source-manifest.json",
+  "method": "S005NormalStopManual1562Observer.RunValidation",
+  "fixtureSha256": "787d66b99a286c95f9c6d2f64c06916668275adb5772bb38960f42eccfd253c1",
+  "runnerSha256": "ef6a2b2110a4a298310246244a1c72fb1c2bb3ebe9b8b21d7b123f76c87c4dbe",
+  "normalInput": true,
+  "plannedStop": true,
+  "unattendedAriaSeedWin": false,
+  "gameplayStateInjected": false
+}

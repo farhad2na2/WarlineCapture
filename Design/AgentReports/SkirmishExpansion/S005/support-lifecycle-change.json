@@ -1,0 +1,67 @@
+{
+  "sourceHash": "fab34f288dc39cc6aaff038172119a5705e8aaa7b03e4177c33cf746dab808b4",
+  "status": "Passed Focused256\u2013263",
+  "changes": [
+    {
+      "path": "Assets/Tests/Editor/Support/SupportUiAriaValidation.cs",
+      "beforeSha256": "f2a2c18fbabec175da2fc87cd2d34923e5fbad2cc69127e867e372053696ad65",
+      "afterSha256": "f911ab4fc79082e9891c94b633e1e15d416c2ef9b7a825f2a3b7611d73e8e3eb"
+    },
+    {
+      "path": "Assets/Tests/Editor/Support/SupportSupplyValidation.cs",
+      "beforeSha256": "3205e8f603048a4302f2c62706a6fb1ed96e4afe0d532fdc338692972ce6fb27",
+      "afterSha256": "91ee7ae55cdb3be690fdd3c76f29f61512f102b281ebcd852d1818572baadec7"
+    },
+    {
+      "path": "Assets/Tests/Editor/Support/SupportSmokeValidation.cs",
+      "beforeSha256": "bb74c3646662e6784aafdd833a3183cc5dfe600054192aeb43ce270f88c0bac9",
+      "afterSha256": "4773e9e14df82603e64ab1999766c8d8f8f220ac890b6e7f3f6204359ba86872"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSupportIntentSystem.cs",
+      "beforeSha256": "6284a03c4482d1e647c8baae322d64c535d8d45c026ed2b8c35eb903be07adf6",
+      "afterSha256": "71fefecb8e37826b79ce89ca25cfc53d4ece13c8d1020fc6e55a18cafbf336dd"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Support.cs",
+      "beforeSha256": "e1a9da77affc01bb39c8a4d096943bea25bdc40f6d38539458b470222b3125e2",
+      "afterSha256": "cbdf86badd51aa65e2b56af8230ae94bd6851040e5b97811ae28a9c2530b8f60"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/SupportEffectComponents.cs",
+      "beforeSha256": "7a8c278db747bb4fa37e9edc1aa62bba09bfb4da95ebdb87192046ff0d194585",
+      "afterSha256": "e3b2d4a26c58861f5398715ddf476e6aa673c8de436967b3c2124e63dbbb992e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAbilityRequestSystem.cs",
+      "beforeSha256": "180184ba01b6716dd3fa92ca6c4078a4e3c07a6b9feba3d8b19b904e030b4dbc",
+      "afterSha256": "7c0b391cebcd7287396d1b718164f89db55d989a7d7db02b033acf5dffc82ca1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportSmokeSystem.cs",
+      "beforeSha256": "230df4b75533f7cacb6d1b97f5cdbadb76ad4fceec764c61d1d256c23f04bc3f",
+      "afterSha256": "8420006c53215e66960a949aa0cf15a4bf18b8381a232a7804299005a523102a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportSupplySystem.cs",
+      "beforeSha256": "4401c5158a3abb4f6696d587b4c75b4837d6f50e686643c35a9214b571f6ade2",
+      "afterSha256": "e8be92d168dc2ee186468c10785e5af6874cae1f7c6bc86fcfbbdbd04f6279f4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAttemptCleanupSystem.cs",
+      "beforeSha256": "ce1db026a97891cc241b1359609cc4330f90fc24b6d14abb02a010d1e6896077",
+      "afterSha256": "a71959e853d8a03fb0c5c30f0db5827ae1ab5ef24a170603612dc4a9ecc6d688"
+    }
+  ],
+  "behavior": [
+    "Smoke effects carry an explicit owning root and use its attempt/clock",
+    "Unowned legacy smoke requires a unique matching attempt",
+    "Cleanup handles every session and does not exit on a paused root",
+    "Terminal cleanup removes only the owning roots effects",
+    "Supply collection processes every session queue",
+    "UI and ARIA share unique-player-session selection; Stop remains queued for the ordinary control owner"
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "physicalMapChanged": false,
+  "playerReady": false
+}

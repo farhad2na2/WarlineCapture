@@ -1,0 +1,163 @@
+{
+  "result": "MeasuredReviewRequired",
+  "scope": "Desktop native/process measurements; no forcedGC; preserves raw trend including QA overhead; game allocation and accepted device budgets remain separate",
+  "trends": {
+    "managedBytes": {
+      "values": [
+        4860166144,
+        4755095552,
+        4715687936,
+        5154684928,
+        5070147584,
+        4780412928,
+        4724826112,
+        5178793984,
+        5095907328,
+        5018456064
+      ],
+      "strictlyIncreasingEveryCycle": false,
+      "measurementUnavailable": false
+    },
+    "nativeAllocatedBytes": {
+      "values": [
+        7354633119,
+        7946359041,
+        8526095591,
+        9098599590,
+        9663781609,
+        10257541796,
+        10977423476,
+        10999900179,
+        11030811790,
+        11090679507
+      ],
+      "strictlyIncreasingEveryCycle": true,
+      "measurementUnavailable": false
+    },
+    "nativeReservedBytes": {
+      "values": [
+        8754774016,
+        9385771008,
+        9965125632,
+        10504339456,
+        11064672256,
+        11703877632,
+        12413632512,
+        12527140864,
+        12509282304,
+        12491800576
+      ],
+      "strictlyIncreasingEveryCycle": false,
+      "measurementUnavailable": false
+    },
+    "graphicsBytes": {
+      "values": [
+        2790327976,
+        2753870996,
+        2699307276,
+        2654636488,
+        2601872756,
+        2564536084,
+        2588511524,
+        2593531964,
+        2588103204,
+        2589631152
+      ],
+      "strictlyIncreasingEveryCycle": false,
+      "measurementUnavailable": false
+    },
+    "residentBytes": {
+      "values": [
+        1332428800,
+        1745879040,
+        1763819520,
+        1259618304,
+        1255620608,
+        1274642432,
+        1075494912,
+        1311670272,
+        1359577088,
+        1313505280
+      ],
+      "strictlyIncreasingEveryCycle": false,
+      "measurementUnavailable": false
+    },
+    "peakResidentBytes": {
+      "values": [
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216,
+        6576521216
+      ],
+      "strictlyIncreasingEveryCycle": false,
+      "measurementUnavailable": false
+    }
+  },
+  "freshPhysicalCounts": [
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46
+  ],
+  "freshNativeMarkers": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "allEntityCounts": [
+    99512,
+    99515,
+    99515,
+    99515,
+    99515,
+    99515,
+    99515,
+    99515,
+    99515,
+    99515
+  ],
+  "physicalEntityCounts": [
+    99447,
+    99447,
+    99447,
+    99447,
+    99447,
+    99447,
+    99447,
+    99447,
+    99447,
+    99447
+  ],
+  "cleanupOnlyShellCounts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "fullX17MemoryQualified": false
+}

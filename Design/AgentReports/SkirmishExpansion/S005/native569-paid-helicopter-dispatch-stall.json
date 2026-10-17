@@ -1,0 +1,23 @@
+{
+  "playerReady": false,
+  "result": "Failed",
+  "sourceHash": "8ba1b4f16775369c5fce191c4fb24905d5bc602552dd035dcc4047852679213c",
+  "prePostIndependentMatched": true,
+  "startingStructures": 14,
+  "paidQueue": {
+    "producerRuntimeId": 1,
+    "origin": [
+      919,
+      641
+    ],
+    "role": "Rocketeer",
+    "quantity": 4,
+    "receiptId": 1001,
+    "transport": "Unit_Veh_Helicopter_Transport",
+    "transportActive": false,
+    "observedUnityTime": 45.29048,
+    "readyAt": 43.01416
+  },
+  "failure": "Pending reinforcement helicopter; aborted owned validation, no counted win",
+  "investigation": "Landing search radius and incomplete perimeter continuation"
+}

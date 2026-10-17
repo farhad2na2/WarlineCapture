@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-en1623-graceful-exit.cs",
+      "entry": "S005En1623GracefulExit.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 113,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_s005-en1623-graceful-exit_98a9908c7d524128a1830424424ccd15",
+      "success": true,
+      "result": "GracefulEditorExitScheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

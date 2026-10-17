@@ -1,0 +1,38 @@
+{
+  "result": "Failed",
+  "sourceHash": "272dd4776bf71ebdbaeb2732737d3e0530b33069502d90976758832b35a75de6",
+  "log": "native-228-strict-boarded-escort-save-resume-en.log",
+  "logSha256": "ce3c5939dcdbe979a42da2a4e1b00e95ecfc363486692881016879a1b0f9939e",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "playerReady": false,
+  "scope": "Paid logistics/R2/APC, native boarding and passenger reconstruction passed observations; full unload/resumed mission failed",
+  "pausedRestoredPassengers": 1,
+  "restoredLinksAndHiddenVisualsVerified": true,
+  "readOnlyObservation": {
+    "paidHeavySelected": true,
+    "carrierEntity": "Entity(593:13)",
+    "passengersRemaining": 1,
+    "carrierPosition": [
+      506.5,
+      0,
+      536.5
+    ],
+    "footprint": [
+      3,
+      3
+    ],
+    "gridCell": [
+      506,
+      536
+    ],
+    "drawerClosedAfterExitAll": true,
+    "focusedModelMatchesCarrier": true,
+    "exitActionBound": true,
+    "receiptViolations": 0
+  },
+  "failure": "Timed out at step4 waiting for ExitAll to empty carrier",
+  "unloadRejectionCause": "Unconfirmed; no teleport or forced unload used",
+  "next": "Normal Move to public open frontage and native Exit All retry; preserve fixed costs/geometry/clock"
+}

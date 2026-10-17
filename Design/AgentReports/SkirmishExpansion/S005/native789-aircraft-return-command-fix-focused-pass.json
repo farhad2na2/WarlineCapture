@@ -1,0 +1,12 @@
+{
+  "result": "Passed",
+  "wrapperExit": 0,
+  "prePostIdentical": true,
+  "sourceHash": "8ab55d8032a70ea4a63ccf0f89f30d523195df16a5939fe8734bdebe2e7e6ef6",
+  "log": "native-789-corrected-aircraft-return-fix.log",
+  "recordedStateFlightCases": 2,
+  "commandRegressions": 7,
+  "oldRuntimeControlFailure": "native788-corrected-return-old-runtime-control-failure.json",
+  "scope": "Actual Return command processor starts native landing on first movement frame, finishes runway roll and parking at both frame timings; existing command rejection/ground/source/receipt checks pass",
+  "normalInputMissionCertified": false
+}

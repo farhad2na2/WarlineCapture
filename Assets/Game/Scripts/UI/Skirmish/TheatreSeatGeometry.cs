@@ -93,7 +93,11 @@ namespace Game.UI.Runtime
         private const float SafeLeft = 28f;
         private const float SafeTop = 28f;
         private const float SafeRight = 28f;
-        private const float SafeBottom = 40f;
+        /// <summary>
+        /// Pins stay this far above the plate bottom. 44px keeps a bottom-row portrait's
+        /// top edge inside the 160px rule when the zoom hint occupies the last 46px.
+        /// </summary>
+        private const float SafeBottom = 44f;
         /// <summary>ZoneHexPad. The outline rect is the hex bounds plus this pad. Capture measures that rect.</summary>
         public const float OutlinePad = 6f;
         /// <summary>
@@ -110,6 +114,8 @@ namespace Game.UI.Runtime
         private const float V35AuthorHeight = 620f;
         private const float PinSize = 34f;
         private const float Edge = 12f;
+        /// <summary>Room above every card for the 36px top tab. The tab stays on the plate.</summary>
+        private const float CueTabRoom = 36f;
         private const float CardGap = 14f;
         private const float PinGap = 12f;
         private const float InsideMargin = 8f;
@@ -176,8 +182,8 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Theatre map clip on a capture canvas after the search bar and the floating title
         /// are removed. Matches <c>SkirmishLibraryFrame</c> plus the theatre clip insets
-        /// (top 8, bottom 128) inside the header and footer bands. The strip widget is
-        /// inactive; the inset stays so district glow still clears the plate.
+        /// in <c>PlaceLibraryChrome</c> (top 8, bottom 8). The old 128px strip band is
+        /// part of the plate; a replay that still stores that short plate is reseated here.
         /// </summary>
         public static void CaptureMapSize(float canvasWidth, float canvasHeight, out float mapWidth, out float mapHeight)
         {
@@ -188,7 +194,7 @@ namespace Game.UI.Runtime
             const float narrowAspect = 1.55f;
             const float seam = 2f;
             const float clipTop = 8f;
-            const float clipBottom = 128f;
+            const float clipBottom = 8f;
             if (canvasWidth < 200f)
                 canvasWidth = 1672f;
             if (canvasHeight < 200f)
@@ -208,6 +214,108 @@ namespace Game.UI.Runtime
 
             mapWidth += gap + seam;
             mapHeight = panelHeight - clipTop - clipBottom;
+        }
+
+        /// <summary>
+        /// Plate a dumped shot is checked on. A 4:3 file that stored the old 724px clip
+        /// (or any other plate) is reseated on the capture clip of its canvas. Section
+        /// dumps keep the stored plate; their frame is not <see cref="CaptureMapSize"/>.
+        /// The 20:9 notch is applied after the theatre checks, so those files use the plain clip.
+        /// </summary>
+        public static void ResolveReplayPlate(
+            float storedWidth,
+            float storedHeight,
+            float canvasWidth,
+            float canvasHeight,
+            string notch,
+            float insetLeft,
+            float insetTop,
+            float insetRight,
+            float insetBottom,
+            out float plateWidth,
+            out float plateHeight)
+        {
+            bool haveCanvas = canvasWidth > 2f && canvasHeight > 2f;
+            bool section = string.Equals(notch, "section", StringComparison.Ordinal);
+            if (!haveCanvas || section)
+            {
+                plateWidth = storedWidth;
+                plateHeight = storedHeight;
+                return;
+            }
+
+            if (string.Equals(notch, "safe", StringComparison.Ordinal))
+            {
+                if (insetBottom > 0.5f || insetRight > 0.5f)
+                {
+                    CaptureMapSize(
+                        Math.Max(2f, canvasWidth - insetLeft - insetRight),
+                        Math.Max(2f, canvasHeight - insetTop - insetBottom),
+                        out plateWidth,
+                        out plateHeight);
+                    return;
+                }
+
+                ApplySafeFrame(
+                    canvasWidth, canvasHeight, insetLeft, insetTop, insetRight, insetBottom,
+                    out float usableWidth, out float usableHeight);
+                CaptureMapSize(usableWidth, usableHeight, out plateWidth, out plateHeight);
+                return;
+            }
+
+            CaptureMapSize(canvasWidth, canvasHeight, out plateWidth, out plateHeight);
+        }
+
+        public static bool TryReadCanvas(
+            string json,
+            out float canvasWidth,
+            out float canvasHeight,
+            out float insetLeft,
+            out float insetTop,
+            out float insetRight,
+            out float insetBottom)
+        {
+            canvasWidth = 0f;
+            canvasHeight = 0f;
+            insetLeft = 0f;
+            insetTop = 0f;
+            insetRight = 0f;
+            insetBottom = 0f;
+            if (string.IsNullOrEmpty(json))
+                return false;
+            int canvas = json.IndexOf("\"canvas\"", StringComparison.Ordinal);
+            if (canvas < 0)
+                return false;
+            int open = json.IndexOf('[', canvas);
+            if (open < 0)
+                return false;
+            canvasWidth = ReadArrayNumber(json, open + 1, out int next);
+            canvasHeight = ReadArrayNumber(json, next, out _);
+            int insets = json.IndexOf("\"insets\"", StringComparison.Ordinal);
+            if (insets >= 0)
+            {
+                insetLeft = ReadNumber(json, "\"left\"", insets);
+                insetTop = ReadNumber(json, "\"top\"", insets);
+                insetRight = ReadNumber(json, "\"right\"", insets);
+                insetBottom = ReadNumber(json, "\"bottom\"", insets);
+            }
+
+            return canvasWidth > 2f && canvasHeight > 2f;
+        }
+
+        private static float ReadArrayNumber(string json, int start, out int next)
+        {
+            next = start;
+            while (next < json.Length && (json[next] == ' ' || json[next] == '\n' || json[next] == ','))
+                next++;
+            int end = next;
+            while (end < json.Length && (char.IsDigit(json[end]) || json[end] == '.' || json[end] == '-'))
+                end++;
+            float value = 0f;
+            if (end > next)
+                float.TryParse(json.Substring(next, end - next), NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+            next = end;
+            return value;
         }
 
         /// <summary>
@@ -407,6 +515,9 @@ namespace Game.UI.Runtime
         /// </summary>
         public static bool TheatreDetailReserved { get; private set; }
 
+        /// <summary>Horizontal slide applied so the row clears the side column. The painting uses the same slide.</summary>
+        public static float ReserveSlideX { get; private set; }
+
         /// <summary>
         /// Capture sets this false until the canvas has been forced to the shot size.
         /// Theatre seats and writes its JSON only while this is true, so one settled pass is the dump.
@@ -564,6 +675,7 @@ namespace Game.UI.Runtime
                     return false;
                 if (i == selectedIndex
                     && cue.W > 1f
+                    && !CueIsCardTopTab(card, cue)
                     && SegmentHitsRect(layout.Seats[i].Pin.Center, NearestOn(card, layout.Seats[i].Pin.Center), cue))
                     return false;
             }
@@ -1178,20 +1290,8 @@ namespace Game.UI.Runtime
                     }
                 }
 
-                float aspectWidth = plateWidth;
-                float aspectHeight = plateHeight;
-                if (detail.W > 1f)
-                {
-                    bool panelOnLeft = detail.Center.X < plateWidth * 0.5f;
-                    Box view = OpenViewport(plateWidth, plateHeight, panelOnLeft, true);
-                    if (view.W > 2f && view.H > 2f)
-                    {
-                        aspectWidth = view.W;
-                        aspectHeight = view.H;
-                    }
-                }
-
-                float expected = HexAspect(mapId, aspectWidth, aspectHeight);
+                // The detail reserve does not enter. Hexes are authored on the plate.
+                float expected = HexAspect(mapId, plateWidth, plateHeight);
                 float measured = MeasuredHexAspect(hexes[i]);
                 if (expected >= 0.2f && measured > 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
                 {
@@ -1266,9 +1366,12 @@ namespace Game.UI.Runtime
 
                 if (selected >= 0 && pins[selected].W > 1f)
                 {
-                    float distance = Distance(cue.Center, pins[selected].Center);
-                    bool insideHex = hexes[selected] != null && PointInPolygon(cue.Center, hexes[selected]);
-                    if (distance > CueNearLimit && !insideHex)
+                    Box selectedCard = selected < cards.Length ? cards[selected] : default;
+                    float distance = selectedCard.W > 1f
+                        ? CueAnchorDistance(cue, selectedCard, pins[selected])
+                        : Distance(cue.Center, pins[selected].Center);
+                    Vec2[] selectedHex = hexes[selected];
+                    if (!CueCountsAsNear(cue, selectedCard, pins[selected], selectedHex))
                     {
                         violations.Add(
                             "Theatre zoom hint is far from the selected pin locale=" + locale +
@@ -1858,6 +1961,10 @@ namespace Game.UI.Runtime
         {
             if (pin.W < 1f || card.W < 1f || cue.W < 1f)
                 return;
+            // The selected card's own top tab is where the leader arrives. A pill the line
+            // crosses before it reaches that tab still fails.
+            if (CueIsCardTopTab(card, cue))
+                return;
             if (!SegmentHitsRect(pin.Center, NearestOn(card, pin.Center), cue))
                 return;
             violations.Add(
@@ -2081,6 +2188,8 @@ namespace Game.UI.Runtime
             {
                 if (pins[i].W < 1f || cards[i].W < 1f)
                     continue;
+                if (CueIsCardTopTab(cards[i], rect))
+                    continue;
                 if (SegmentHitsRect(pins[i].Center, NearestOn(cards[i], pins[i].Center), rect))
                     return true;
             }
@@ -2132,6 +2241,103 @@ namespace Game.UI.Runtime
                 violations.Add(
                     "Theatre leader intersects the detail panel locale=" + locale +
                     " map=" + mapId + ".");
+            }
+        }
+
+        /// <summary>
+        /// Slides a plate-space row off the side column. English and Farsi share one delta,
+        /// and Farsi then adds the open-viewport origin, so the cue stays put inside that viewport.
+        /// </summary>
+        private static bool TrySlideReserveRow(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            float plateWidth,
+            float plateHeight,
+            bool fa)
+        {
+            Box enDetail = DetailRect(plateWidth, plateHeight, false, true);
+            Box faDetail = DetailRect(plateWidth, plateHeight, true, true);
+            float faViewX = OpenViewport(plateWidth, plateHeight, true, true).X;
+            if (!TrySharedReserveDelta(hexes, pins, cards, cue, plateWidth, enDetail, faDetail, faViewX, out float delta))
+                delta = 0f;
+            float dx = fa ? delta + faViewX : delta;
+            ReserveSlideX = dx;
+            ShiftSeats(hexes, pins, cards, ref cue, dx, 0f);
+            return true;
+        }
+
+        private static bool TrySharedReserveDelta(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            float plateWidth,
+            Box enDetail,
+            Box faDetail,
+            float faViewX,
+            out float delta)
+        {
+            delta = 0f;
+            float lo = -plateWidth;
+            float hi = plateWidth;
+            float enGlow = enDetail.X - HaloReach;
+            float faGlow = faDetail.XMax + HaloReach;
+            if (hexes != null)
+            {
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    if (hexes[i] == null)
+                        continue;
+                    for (int p = 0; p < hexes[i].Length; p++)
+                    {
+                        float x = hexes[i][p].X;
+                        lo = Math.Max(lo, 1f + HaloReach - x);
+                        hi = Math.Min(hi, plateWidth - 1f - HaloReach - x);
+                        hi = Math.Min(hi, enGlow - 0.75f - x);
+                        lo = Math.Max(lo, 1f + HaloReach - faViewX - x);
+                        hi = Math.Min(hi, plateWidth - 1f - HaloReach - faViewX - x);
+                        lo = Math.Max(lo, faGlow + 0.75f - faViewX - x);
+                    }
+                }
+            }
+
+            NoteReserveBox(pins, plateWidth, enDetail.X, faDetail.XMax, faViewX, ref lo, ref hi);
+            NoteReserveBox(cards, plateWidth, enDetail.X, faDetail.XMax, faViewX, ref lo, ref hi);
+            if (cue.W > 1f)
+                NoteReserveBox(new[] { cue }, plateWidth, enDetail.X, faDetail.XMax, faViewX, ref lo, ref hi);
+            if (lo > hi + 0.05f)
+                return false;
+            if (lo <= 0f && hi >= 0f)
+                delta = 0f;
+            else if (hi < 0f)
+                delta = hi;
+            else
+                delta = lo;
+            return true;
+        }
+
+        private static void NoteReserveBox(
+            Box[] boxes,
+            float plateWidth,
+            float enDetailX,
+            float faDetailMax,
+            float faViewX,
+            ref float lo,
+            ref float hi)
+        {
+            if (boxes == null)
+                return;
+            for (int i = 0; i < boxes.Length; i++)
+            {
+                Box box = boxes[i];
+                if (box.W < 1f && box.H < 1f)
+                    continue;
+                lo = Math.Max(lo, Edge - box.X);
+                hi = Math.Min(hi, plateWidth - Edge - box.XMax);
+                hi = Math.Min(hi, enDetailX - 0.75f - box.XMax);
+                lo = Math.Max(lo, faDetailMax + 0.75f - faViewX - box.X);
             }
         }
 
@@ -2222,35 +2428,42 @@ namespace Game.UI.Runtime
         {
             if (string.IsNullOrEmpty(selectedMapId))
                 selectedMapId = "DB";
+            ReserveSlideX = 0f;
             var layout = new Layout
             {
                 SelectedMapId = selectedMapId,
                 Seats = new Seat[MapIds.Length]
             };
-            Box view = OpenViewport(plateWidth, plateHeight, fa, reserveOn);
-            bool reframed = view.X > 0.5f || view.W < plateWidth - 0.5f;
-            float frameWidth = Math.Max(2f, view.W);
-            float frameHeight = Math.Max(2f, view.H);
-            Vec2[][] hexes = BuildAll(frameWidth, frameHeight, reframed);
+            // Hexes are authored on the plate. The side column overlays the trailing
+            // edge and the row slides clear of it; the ratio does not change.
+            RatioPlateWidth = plateWidth;
+            RatioPlateHeight = plateHeight;
+            float frameWidth = plateWidth;
+            float frameHeight = plateHeight;
+            Vec2[][] hexes = BuildAll(frameWidth, frameHeight, false);
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
-                pins[i] = PinBox(i, frameWidth, frameHeight, reframed);
+                pins[i] = PinBox(i, frameWidth, frameHeight, false);
                 layout.Seats[i].MapId = MapIds[i];
                 layout.Seats[i].Hex = hexes[i];
                 layout.Seats[i].Pin = pins[i];
             }
 
             Box detail = DetailRect(plateWidth, plateHeight, fa, reserveOn);
-            Box packDetail = reframed ? default : detail;
+            Box packDetail = default;
             int selected = IndexOf(selectedMapId);
             if (selected < 0)
                 selected = 0;
             Box[] placed = null;
             Box seatedCue = default;
-            TryPack(frameWidth, frameHeight, hexes, pins, packDetail, selected, out placed, out seatedCue);
-            if (reframed)
-                ShiftSeats(hexes, pins, placed, ref seatedCue, view.X, view.Y);
+            if (PortraitCards != null)
+            {
+                placed = PortraitCards;
+                PortraitCards = null;
+            }
+            else
+                TryPack(frameWidth, frameHeight, hexes, pins, packDetail, selected, out placed, out seatedCue);
             if (placed != null)
             {
                 bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
@@ -2266,6 +2479,17 @@ namespace Game.UI.Runtime
                     wide);
                 LiftCardsOffHint(placed, hexes, detail, plateWidth, plateHeight);
             }
+
+            Box cue = default;
+            bool cueNear = false;
+            if (placed != null)
+            {
+                cueNear = TryAttachCueToCard(
+                    plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue);
+            }
+
+            if (reserveOn && detail.W > 1f && placed != null)
+                TrySlideReserveRow(hexes, pins, placed, ref cue, plateWidth, plateHeight, fa);
 
             bool cardsLegal = placed != null;
             if (placed == null)
@@ -2283,8 +2507,12 @@ namespace Game.UI.Runtime
             {
                 for (int i = 0; i < MapIds.Length; i++)
                 {
+                    Box glowZone = detail.W > 1f
+                        ? new Box(detail.X - HaloReach, detail.Y - HaloReach, detail.W + HaloReach * 2f, detail.H + HaloReach * 2f)
+                        : default;
                     if (!layout.Seats[i].Legal || Leader(pins[i], placed[i]) < LeaderMin
-                        || SegmentHitsRect(pins[i].Center, NearestOn(placed[i], pins[i].Center), detail))
+                        || SegmentHitsRect(pins[i].Center, NearestOn(placed[i], pins[i].Center), detail)
+                        || (glowZone.W > 1f && (PolygonHitsRect(hexes[i], detail) || PolygonHitsRect(hexes[i], glowZone))))
                     {
                         cardsLegal = false;
                         break;
@@ -2301,12 +2529,10 @@ namespace Game.UI.Runtime
                 }
             }
 
+            if (cardsLegal && detail.W > 1f && cue.W > 1f && Overlaps(cue, detail, 0f))
+                cardsLegal = false;
+
             layout.CardsLegal = cardsLegal;
-            Box cue;
-            bool cueNear = TryAttachCueToCard(
-                plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue);
-            if (!cueNear)
-                cue = seatedCue;
             layout.Cue = cue;
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
@@ -2335,8 +2561,14 @@ namespace Game.UI.Runtime
                 lines[i] = FormatSeat(locale, seat.MapId, seat.Card, seat.Legal);
             }
 
-            Vec2 pin = layout.Seats[IndexOf(layout.SelectedMapId) < 0 ? 0 : IndexOf(layout.SelectedMapId)].Pin.Center;
-            float reach = Distance(layout.Cue.Center, pin);
+            int selectedSeat = IndexOf(layout.SelectedMapId);
+            if (selectedSeat < 0)
+                selectedSeat = 0;
+            Box selectedPin = layout.Seats[selectedSeat].Pin;
+            Box selectedCard = layout.Seats[selectedSeat].Card;
+            float reach = selectedCard.W > 1f
+                ? CueAnchorDistance(layout.Cue, selectedCard, selectedPin)
+                : Distance(layout.Cue.Center, selectedPin.Center);
             lines[lines.Length - 1] = "[TheatreSeat] locale=" + locale
                 + " cue=" + layout.SelectedMapId
                 + " x=" + layout.Cue.X.ToString("0.0", CultureInfo.InvariantCulture)
@@ -2377,16 +2609,722 @@ namespace Game.UI.Runtime
 
         private static Vec2[][] BuildAll(float frameWidth, float frameHeight)
         {
+            RatioPlateWidth = frameWidth;
+            RatioPlateHeight = frameHeight;
             return BuildAll(frameWidth, frameHeight, false);
         }
 
-        private static Vec2[][] BuildAll(float frameWidth, float frameHeight, bool plainCover)
+        /// <summary>Cards seated inside the hexes from the last <see cref="BuildAll"/> call.</summary>
+        private static Box[] PortraitCards;
+
+        /// <summary>Plate whose aspect the hex is authored against. Placement may use a narrower viewport.</summary>
+        private static float RatioPlateWidth;
+
+        private static float RatioPlateHeight;
+
+        /// <summary>Portrait size for the current seating attempt. Full seats are tried before the compact minimum.</summary>
+        private static float SeatCardWidth = PortraitMinWidth;
+
+        private static float SeatCardHeight = PortraitMinHeight;
+
+        /// <summary>
+        /// Sizes every district around a portrait that sits inside it, beside the pin, with the
+        /// top tab inside 160px and clear of the district stroke.
+        /// </summary>
+        private static bool TrySeatPortraits(
+            float frameWidth,
+            float frameHeight,
+            bool plainCover,
+            out Vec2[][] hexes,
+            out Box[] cards)
         {
-            var placed = new Placement[MapIds.Length];
-            var hexes = new Vec2[MapIds.Length][];
+            hexes = null;
+            cards = null;
+            if (frameWidth < 64f || frameHeight < 64f)
+                return false;
+            var pins = new Box[MapIds.Length];
+            for (int i = 0; i < MapIds.Length; i++)
+                pins[i] = PinBox(i, frameWidth, frameHeight, plainCover);
+            float[] widths = { FullPortraitMinWidth, PortraitMinWidth };
+            float[] heights = { FullPortraitMinHeight, PortraitMinHeight };
+            float[] squeezes = { 1f, 0.94f };
+            for (int size = 0; size < widths.Length; size++)
+            {
+                SeatCardWidth = widths[size];
+                SeatCardHeight = heights[size];
+                for (int s = 0; s < squeezes.Length; s++)
+                {
+                    if (TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
+                        return true;
+                    if (TrySeatPackedRows(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
+                        return true;
+                }
+            }
+
+            hexes = null;
+            cards = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Short plates cannot spare a 92px header. Pack each row outward: the top row sits
+        /// high, the bottom row sits on the hint, and the middle row uses the gap. Card size
+        /// and the 160px / 26px / 8px rules stay the same.
+        /// </summary>
+        private static bool TrySeatPackedRows(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            out Vec2[][] hexes,
+            out Box[] cards)
+        {
+            hexes = new Vec2[MapIds.Length][];
+            cards = new Box[MapIds.Length];
+            int count = MapIds.Length;
+            var order = new int[count];
+            for (int i = 0; i < count; i++)
+                order[i] = i;
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    float dy = pins[order[j]].Center.Y - pins[order[i]].Center.Y;
+                    bool swap = dy < -0.5f || (Math.Abs(dy) <= 0.5f && pins[order[j]].Center.X < pins[order[i]].Center.X);
+                    if (!swap)
+                        continue;
+                    int hold = order[i];
+                    order[i] = order[j];
+                    order[j] = hold;
+                }
+            }
+
+            var rowOf = new int[count];
+            int rowCount = 0;
+            float rowAnchor = -1000f;
+            for (int n = 0; n < count; n++)
+            {
+                int index = order[n];
+                if (n == 0 || pins[index].Center.Y - rowAnchor > 80f)
+                {
+                    rowCount++;
+                    rowAnchor = pins[index].Center.Y;
+                }
+
+                rowOf[index] = rowCount - 1;
+            }
+
+            var place = new int[count];
+            int placedCount = 0;
+            for (int row = 0; row < rowCount; row++)
+            {
+                int target = row == 0 || rowCount < 3 ? row : row == 1 ? rowCount - 1 : row - 1;
+                for (int n = 0; n < count; n++)
+                {
+                    if (rowOf[order[n]] == target)
+                        place[placedCount++] = order[n];
+                }
+            }
+
+            float cardW = SeatCardWidth > 48f ? SeatCardWidth : PortraitMinWidth;
+            float cardH = SeatCardHeight > 48f ? SeatCardHeight : PortraitMinHeight;
+            float yFloor = Edge + CueTabRoom;
+            float limit = frameHeight - 47f - InsideMargin - cardH;
+            for (int n = 0; n < count; n++)
+            {
+                int index = place[n];
+                if (!TryPackDistrictRow(
+                    index, rowOf[index], rowCount, frameWidth, frameHeight, pins, squeeze, cardW, cardH, yFloor, limit, hexes, cards))
+                {
+                    hexes = null;
+                    cards = null;
+                    return false;
+                }
+            }
+
+            if (!PortraitSeatClosed(pins, hexes, cards))
+            {
+                hexes = null;
+                cards = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool TryPackDistrictRow(
+            int index,
+            int row,
+            int rowCount,
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            float cardW,
+            float cardH,
+            float yFloor,
+            float limit,
+            Vec2[][] hexes,
+            Box[] cards)
+        {
+            Box pin = pins[index];
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            AuthoredHalf(MapIds[index], ratioW, ratioH, out float halfW, out float halfH);
+            float authored = halfH > 1f ? halfW / halfH * squeeze : 1.6f;
+            bool packDown = rowCount >= 3 && row == rowCount - 1;
+            bool leftSide = pin.Center.X <= frameWidth * 0.5f;
+            // Half a pixel past the gap so float error cannot report 11.999 as under 12.
+            float gap = PinGap + 0.5f;
+            float outside = leftSide ? pin.X - gap - cardW : pin.XMax + gap;
+            float inside = leftSide ? pin.XMax + gap : pin.X - gap - cardW;
+            float[] sides = { outside, inside };
+            int slide = leftSide ? 1 : 2;
+            float bestScore = float.MaxValue;
+            Box bestCard = default;
+            Vec2[] bestHex = null;
+            // Coarse authored ratio, then a 1px search, then a slightly wider hex still
+            // inside the 10% aspect band. The wider hex is shorter, which is what lets a
+            // middle district sit in the gap on a short plate.
+            float[] ratioScales = { 1f, 1f, 1.099f };
+            float[] steps = { 4f, 1f, 1f };
+            for (int scaleIndex = 0; scaleIndex < ratioScales.Length && bestHex == null; scaleIndex++)
+            {
+                float ratio = authored * ratioScales[scaleIndex];
+                float step = steps[scaleIndex];
+                for (int pass = 0; pass < sides.Length; pass++)
+                {
+                    float x0 = Clamp(sides[pass], Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+                    float horiz = Math.Abs(x0 + cardW * 0.5f - pin.Center.X);
+                    if (horiz >= CueNearLimit - 1f)
+                        continue;
+                    float vMax = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                    float yLo = Math.Max(yFloor, pin.Center.Y - vMax);
+                    float yHi = Math.Min(limit, pin.Center.Y + vMax);
+                    if (yLo > yHi + 0.01f)
+                        continue;
+                    float yStep = step < 2f ? 1f : 6f;
+                    for (float y = yLo; y <= yHi + 0.01f; y += yStep)
+                    {
+                        float x = x0;
+                        if (!ShiftTabClearOfPins(ref x, y, cardW, pins, frameWidth))
+                            continue;
+                        horiz = Math.Abs(x + cardW * 0.5f - pin.Center.X);
+                        if (horiz >= CueNearLimit - 1f)
+                            continue;
+                        float reach = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                        if (Math.Abs(y - pin.Center.Y) > reach)
+                            continue;
+                        var trial = new Box(x, y, cardW, cardH);
+                        var tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                        if (Separation(trial, pin) < PinGap || Leader(pin, trial) < LeaderMin)
+                            continue;
+                        if (!TabClearsPins(tab, pins) || !ClearsPlacedCards(trial, cards))
+                            continue;
+                        if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
+                            continue;
+                        if (!TrySolvePortraitHex(
+                            trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slide, out Vec2[] hex, step))
+                            continue;
+                        BoundsOf(hex, out _, out float minY, out _, out float maxY);
+                        float score = packDown ? -minY : maxY;
+                        if (score >= bestScore)
+                            continue;
+                        bestScore = score;
+                        bestCard = trial;
+                        bestHex = hex;
+                        if (step < 2f)
+                            break;
+                    }
+
+                    if (step < 2f && bestHex != null)
+                        break;
+                }
+            }
+
+            if (bestHex == null)
+                return false;
+            cards[index] = bestCard;
+            hexes[index] = bestHex;
+            return true;
+        }
+
+        private static bool TrySeatPortraitsAt(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            out Vec2[][] hexes,
+            out Box[] cards)
+        {
+            hexes = new Vec2[MapIds.Length][];
+            cards = new Box[MapIds.Length];
+            var order = new int[MapIds.Length];
+            for (int i = 0; i < order.Length; i++)
+                order[i] = i;
+            if (SeatPortraitOrders(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, false))
+                return true;
+            return SeatPortraitOrders(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, true);
+        }
+
+        private static bool SeatPortraitOrders(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            int[] order,
+            Vec2[][] hexes,
+            Box[] cards,
+            bool slide)
+        {
+            for (int i = 0; i < order.Length; i++)
+                order[i] = i;
+            var budget = new int[1];
+            if (SeatPortraitOrder(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, budget, slide))
+                return true;
+            OrderBottomFirst(pins, order);
+            ClearPortraitSeats(hexes, cards);
+            budget[0] = 0;
+            return SeatPortraitOrder(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, budget, slide);
+        }
+
+        private static void ClearPortraitSeats(Vec2[][] hexes, Box[] cards)
+        {
+            for (int i = 0; i < cards.Length; i++)
+            {
+                cards[i] = default;
+                if (hexes != null && i < hexes.Length)
+                    hexes[i] = null;
+            }
+        }
+
+        private static void OrderBottomFirst(Box[] pins, int[] order)
+        {
+            for (int i = 0; i < order.Length; i++)
+                order[i] = i;
+            for (int i = 0; i < order.Length; i++)
+            {
+                for (int j = i + 1; j < order.Length; j++)
+                {
+                    if (pins[order[j]].Center.Y <= pins[order[i]].Center.Y)
+                        continue;
+                    int swap = order[i];
+                    order[i] = order[j];
+                    order[j] = swap;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Places every portrait, backtracking when a later district has no stroke-clear hex.
+        /// The first candidates sit the card beside its pin. Later ones lift it so a neighbour
+        /// can keep the bottom of the plate.
+        /// </summary>
+        private static bool SeatPortraitOrder(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            int[] order,
+            Vec2[][] hexes,
+            Box[] cards,
+            int[] budget,
+            bool slide)
+        {
+            return SeatPortraitStep(0, frameWidth, frameHeight, pins, squeeze, order, hexes, cards, budget, slide);
+        }
+
+        private static bool SeatPortraitStep(
+            int step,
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            int[] order,
+            Vec2[][] hexes,
+            Box[] cards,
+            int[] budget,
+            bool slide)
+        {
+            if (budget[0] > 360)
+                return false;
+            if (step >= order.Length)
+                return PortraitSeatClosed(pins, hexes, cards);
+            int index = order[step];
+            Box pin = pins[index];
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            AuthoredHalf(MapIds[index], ratioW, ratioH, out float halfW, out float halfH);
+            float ratio = halfH > 1f ? halfW / halfH * squeeze : 1.6f;
+            float cardW = SeatCardWidth > 48f ? SeatCardWidth : PortraitMinWidth;
+            float cardH = SeatCardHeight > 48f ? SeatCardHeight : PortraitMinHeight;
+            float right = pin.XMax + PinGap;
+            float left = pin.X - PinGap - cardW;
+            bool preferRight = frameWidth - (pin.XMax + PinGap + cardW) >= left;
+            float[] sides = { preferRight ? right : left, preferRight ? left : right };
+            float limit = frameHeight - 47f - InsideMargin - cardH;
+            for (int pass = 0; pass < sides.Length; pass++)
+            {
+                float x0 = Clamp(sides[pass], Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+                float horiz = Math.Abs(x0 + cardW * 0.5f - pin.Center.X);
+                if (horiz >= CueNearLimit - 1f)
+                    continue;
+                float vMax = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                float prefer = Clamp(pin.Center.Y - 40f, 92f, pin.Center.Y + vMax);
+                if (prefer > limit)
+                    prefer = limit;
+                float yMin = Math.Max(92f, pin.Center.Y - vMax);
+                float yMax = Math.Min(limit, pin.Center.Y + vMax);
+                if (yMin > yMax + 0.01f)
+                    continue;
+                float[] lifts = { 0f, -24f, 24f, -48f, 48f, -72f, 72f, -96f };
+                for (int n = 0; n < lifts.Length + 2; n++)
+                {
+                    float y = n < lifts.Length ? prefer + lifts[n] : n == lifts.Length ? yMin : yMax;
+                    if (y < yMin - 0.01f || y > yMax + 0.01f)
+                        continue;
+                    float x = x0;
+                    var tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                    if (Separation(tab, pin) < 1f)
+                    {
+                        float shared = pin.Y + 1f;
+                        bool lifted = n < lifts.Length && lifts[n] < 0f;
+                        if (lifted || shared <= y || shared > yMax)
+                            continue;
+                        y = shared;
+                        tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                    }
+
+                    if (!ShiftTabClearOfPins(ref x, y, cardW, pins, frameWidth))
+                        continue;
+                    horiz = Math.Abs(x + cardW * 0.5f - pin.Center.X);
+                    if (horiz >= CueNearLimit - 1f)
+                        continue;
+                    float reach = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                    if (Math.Abs(y - pin.Center.Y) > reach)
+                        continue;
+                    var trial = new Box(x, y, cardW, cardH);
+                    tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                    if (Separation(trial, pin) < PinGap || Leader(pin, trial) < LeaderMin)
+                        continue;
+                    if (!TabClearsPins(tab, pins) || !ClearsPlacedCards(trial, cards))
+                        continue;
+                    if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
+                        continue;
+                    int slides = slide ? 3 : 1;
+                    for (int slideIndex = 0; slideIndex < slides; slideIndex++)
+                    {
+                        budget[0]++;
+                        if (budget[0] > 360)
+                            return false;
+                        if (!TrySolvePortraitHex(
+                            trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slideIndex, out Vec2[] hex))
+                            continue;
+                        cards[index] = trial;
+                        hexes[index] = hex;
+                        if (SeatPortraitStep(
+                            step + 1, frameWidth, frameHeight, pins, squeeze, order, hexes, cards, budget, slide))
+                            return true;
+                        cards[index] = default;
+                        hexes[index] = null;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool ClearsPlacedCards(Box trial, Box[] seated)
+        {
+            if (seated == null)
+                return true;
+            for (int i = 0; i < seated.Length; i++)
+            {
+                if (seated[i].W > 1f && (Overlaps(trial, seated[i], 2f) || Separation(trial, seated[i]) < CardGap))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool PortraitSeatClosed(Box[] pins, Vec2[][] hexes, Box[] cards)
+        {
             for (int i = 0; i < MapIds.Length; i++)
             {
-                AuthoredHalf(MapIds[i], frameWidth, frameHeight, out float halfW, out float halfH);
+                if (cards[i].W < 1f || hexes[i] == null)
+                    return false;
+                var tab = new Box(cards[i].X, cards[i].Y - CueTabRoom, cards[i].W, CueTabRoom);
+                if (CueAnchorDistance(tab, cards[i], pins[i]) > CueNearLimit)
+                    return false;
+                if (!CueReadsAsSelected(cards[i].Center, pins[i].Center, hexes, pins, i))
+                    return false;
+                if (LeaderHitsOtherHex(pins[i].Center, NearestOn(cards[i], pins[i].Center), hexes, i))
+                    return false;
+                Box stroke = InflateBox(tab, CueHexStroke);
+                for (int j = 0; j < MapIds.Length; j++)
+                {
+                    if (j == i || hexes[j] == null)
+                        continue;
+                    if (PolygonsOverlap(hexes[i], hexes[j], 0.75f))
+                        return false;
+                    if (PolygonHitsRect(hexes[j], stroke))
+                        return false;
+                }
+
+                if (HexEdgeHits(hexes[i], stroke))
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Smallest flat hex of the authored ratio that holds the card and the pin and keeps
+        /// the 26px district stroke off the top tab. The centre slides along the legal span
+        /// so a neighbour already on the plate can keep its own hex.
+        /// </summary>
+        private static bool TrySolvePortraitHex(
+            Box card,
+            Box pin,
+            float ratio,
+            float frameWidth,
+            float frameHeight,
+            Vec2[][] placed,
+            Box[] cards,
+            int index,
+            int slide,
+            out Vec2[] hex,
+            float hhStep = 4f)
+        {
+            hex = null;
+            float hint = frameHeight - 47f;
+            var tab = new Box(card.X, card.Y - CueTabRoom, card.W, CueTabRoom);
+            Box stroke = InflateBox(tab, CueHexStroke);
+            var px = new float[9];
+            var py = new float[9];
+            var pm = new float[9];
+            Vec2[] corners = Corners(card);
+            for (int i = 0; i < 4; i++)
+            {
+                px[i] = corners[i].X;
+                py[i] = corners[i].Y;
+                pm[i] = InsideMargin;
+            }
+
+            px[4] = pin.Center.X;
+            py[4] = pin.Center.Y;
+            pm[4] = 8f;
+            Vec2[] strokeCorners = Corners(stroke);
+            for (int i = 0; i < 4; i++)
+            {
+                px[5 + i] = strokeCorners[i].X;
+                py[5 + i] = strokeCorners[i].Y;
+                pm[5 + i] = 1f;
+            }
+
+            const float sqrt3 = 1.7320508f;
+            float hhMax = (hint - 23f) * 0.5f;
+            float hhStart = MinPortraitHexHeight(ratio);
+            if (hhStart > hhMax)
+                return false;
+            float hhLimit = Math.Min(hhMax, hhStart + 42f);
+            if (hhStep < 1f)
+                hhStep = 1f;
+            for (float hh = hhStart; hh <= hhLimit + 0.01f; hh += hhStep)
+            {
+                float cyLo = 23f + hh;
+                float cyHi = hint - hh;
+                for (int i = 0; i < px.Length; i++)
+                {
+                    cyLo = Math.Max(cyLo, py[i] - (hh - pm[i]));
+                    cyHi = Math.Min(cyHi, py[i] + (hh - pm[i]));
+                }
+
+                if (cyLo > cyHi + 0.05f)
+                    continue;
+                float hw = hh * ratio;
+                float[] cys;
+                if (hhStep < 2f && cyHi > cyLo + 0.5f)
+                {
+                    int steps = (int)Math.Ceiling((cyHi - cyLo) / 1.5f);
+                    if (steps < 2)
+                        steps = 2;
+                    if (steps > 16)
+                        steps = 16;
+                    cys = new float[steps + 1];
+                    for (int sample = 0; sample <= steps; sample++)
+                        cys[sample] = cyLo + (cyHi - cyLo) * sample / steps;
+                }
+                else
+                    cys = new[] { (cyLo + cyHi) * 0.5f, cyLo, cyHi };
+                for (int c = 0; c < cys.Length; c++)
+                {
+                    float cy = cys[c];
+                    float cxLo = 23f + hw;
+                    float cxHi = frameWidth - 23f - hw;
+                    bool open = true;
+                    for (int i = 0; i < px.Length; i++)
+                    {
+                        float yRel = Math.Abs(py[i] - cy);
+                        if (yRel > hh - pm[i] + 0.08f)
+                        {
+                            open = false;
+                            break;
+                        }
+
+                        float inset = yRel / sqrt3 + 2f * pm[i] / sqrt3;
+                        cxLo = Math.Max(cxLo, px[i] - hw + inset);
+                        cxHi = Math.Min(cxHi, px[i] + hw - inset);
+                    }
+
+                    if (!open || cxLo > cxHi + 0.05f)
+                        continue;
+                    float span = Math.Max(0f, cxHi - cxLo);
+                    float slack = Math.Min(6f, span * 0.5f);
+                    float midCx = (cxLo + cxHi) * 0.5f;
+                    float loCx = cxLo + slack * 0.35f;
+                    float hiCx = cxHi - slack * 0.35f;
+                    float[] cxs = slide == 1
+                        ? new[] { loCx, midCx, hiCx }
+                        : slide == 2
+                            ? new[] { hiCx, midCx, loCx }
+                            : new[] { midCx, loCx, hiCx };
+                    for (int k = 0; k < cxs.Length; k++)
+                    {
+                        Vec2[] shape = FlatHex(cxs[k], cy, hw, hh);
+                        if (!PortraitHexAccepts(
+                            shape, card, pin.Center, stroke, frameWidth, frameHeight, placed, cards, index))
+                            continue;
+
+                        hex = shape;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static float MinPortraitHexHeight(float ratio)
+        {
+            float denom = 2f * (2f * ratio - 1f / 1.7320508f);
+            if (denom < 0.05f)
+                return 160f;
+            return (float)Math.Sqrt(40000.0 / denom);
+        }
+
+        private static bool PortraitHexAccepts(
+            Vec2[] shape,
+            Box card,
+            Vec2 pinPoint,
+            Box stroke,
+            float frameWidth,
+            float frameHeight,
+            Vec2[][] placed,
+            Box[] cards,
+            int index)
+        {
+            if (!GlowInside(shape, frameWidth, frameHeight, out _, out _))
+                return false;
+            if (!PointInPolygon(pinPoint, shape) || DistanceToEdge(pinPoint, shape) < 8f)
+                return false;
+            if (!RestsInside(card, shape, InsideMargin))
+                return false;
+            if (HexEdgeHits(shape, stroke))
+                return false;
+            if (PolygonArea(shape) < 40000f)
+                return false;
+            if (OnPlateInterior(shape, frameWidth, frameHeight) < 8)
+                return false;
+            if (LeaderHitsOtherHex(pinPoint, NearestOn(card, pinPoint), placed, index))
+                return false;
+            if (placed == null)
+                return true;
+            for (int j = 0; j < placed.Length; j++)
+            {
+                if (j == index || placed[j] == null)
+                    continue;
+                if (PolygonsOverlap(shape, placed[j], 0.75f))
+                    return false;
+                if (PolygonHitsRect(placed[j], stroke))
+                    return false;
+                if (cards != null && j < cards.Length && cards[j].W > 1f)
+                {
+                    var other = new Box(cards[j].X, cards[j].Y - CueTabRoom, cards[j].W, CueTabRoom);
+                    if (HexEdgeHits(shape, InflateBox(other, CueHexStroke)))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TabClearsPins(Box tab, Box[] pins)
+        {
+            if (pins == null)
+                return true;
+            for (int i = 0; i < pins.Length; i++)
+            {
+                if (pins[i].W > 1f && Separation(tab, pins[i]) < 1f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// A tab that misses a pin on both axes is measured by the smaller gap. Slide it until
+        /// that horizontal gap is at least 1px.
+        /// </summary>
+        private static bool ShiftTabClearOfPins(ref float x, float y, float cardW, Box[] pins, float frameWidth)
+        {
+            if (pins == null)
+                return true;
+            for (int n = 0; n < 8; n++)
+            {
+                var tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                if (TabClearsPins(tab, pins))
+                    return true;
+                bool moved = false;
+                for (int i = 0; i < pins.Length; i++)
+                {
+                    if (pins[i].W < 1f)
+                        continue;
+                    float dx = AxisGap(tab.XMin, tab.XMax, pins[i].XMin, pins[i].XMax);
+                    float dy = AxisGap(tab.YMin, tab.YMax, pins[i].YMin, pins[i].YMax);
+                    if (dx < 0f || dy < 0f || dx >= 1f)
+                        continue;
+                    float dir = tab.Center.X <= pins[i].Center.X ? -1f : 1f;
+                    x += dir * (1.25f - dx);
+                    x = Clamp(x, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+                    moved = true;
+                    break;
+                }
+
+                if (!moved)
+                    return false;
+            }
+
+            return TabClearsPins(new Box(x, y - CueTabRoom, cardW, CueTabRoom), pins);
+        }
+
+
+        private static Vec2[][] BuildAll(float frameWidth, float frameHeight, bool plainCover)
+        {
+            PortraitCards = null;
+            if (TrySeatPortraits(frameWidth, frameHeight, plainCover, out Vec2[][] seated, out Box[] seatedCards))
+            {
+                PortraitCards = seatedCards;
+                return seated;
+            }
+
+            var placed = new Placement[MapIds.Length];
+            var hexes = new Vec2[MapIds.Length][];
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                AuthoredHalf(MapIds[i], ratioW, ratioH, out float halfW, out float halfH);
                 float fullArea = HexArea(halfW, halfH);
                 float areaScale = fullArea > 40800f ? (float)Math.Sqrt(40800.0 / fullArea) : 1f;
                 float scale = FitInteriorScale(halfW, halfH, areaScale);
@@ -2458,6 +3396,7 @@ namespace Game.UI.Runtime
             return hexes;
         }
 
+
         /// <summary>
         /// A district under the 40000 capture floor is grown uniformly, keeping its aspect,
         /// until it clears the floor or the outline, the pin, or a neighbour blocks another step.
@@ -2484,6 +3423,7 @@ namespace Game.UI.Runtime
                 }
             }
         }
+
 
         private static bool DistrictFits(Placement[] placed, int index, Placement candidate, float frameWidth, float frameHeight)
         {
@@ -2741,6 +3681,7 @@ namespace Game.UI.Runtime
             return TryPackBesideSelection(plateWidth, plateHeight, hexes, pins, detail, selected, out cards, out cue);
         }
 
+
         private static bool TryPackKeep(
             float plateWidth,
             float plateHeight,
@@ -2875,8 +3816,8 @@ namespace Game.UI.Runtime
                     ConsiderCard(found, index, new Box(minX - gap - cardWidth, pinY - cardHeight * 0.5f + slide, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                     ConsiderCard(found, index, new Box(pinX - cardWidth * 0.5f + slide, maxY + gap, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                     ConsiderCard(found, index, new Box(pinX - cardWidth * 0.5f + slide, minY - gap - cardHeight, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
-                    ConsiderCard(found, index, new Box(maxX + gap, Edge, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
-                    ConsiderCard(found, index, new Box(minX - gap - cardWidth, Edge, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(maxX + gap, Edge + CueTabRoom, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
+                    ConsiderCard(found, index, new Box(minX - gap - cardWidth, Edge + CueTabRoom, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                     ConsiderCard(found, index, new Box(Edge, maxY + gap, cardWidth, cardHeight), plateWidth, plateHeight, hexes, pins, detail, cue);
                 }
             }
@@ -2903,9 +3844,11 @@ namespace Game.UI.Runtime
         {
             if (!OnPlate(card, plateWidth, plateHeight) || !Clears(card, detail) || !ClearsPins(card, pins))
                 return;
+            if (card.Y < Edge + CueTabRoom - 0.01f)
+                return;
             if (cue.W > 1f && (Separation(card, cue) < 12f || SegmentHitsRect(pins[index].Center, NearestOn(card, pins[index].Center), cue)))
                 return;
-            if (!SeatHolds(card, hexes[index], hexes) || !CentreOwns(card, hexes[index]))
+            if (!RestsInside(card, hexes[index], InsideMargin) || !SeatHolds(card, hexes[index], hexes) || !CentreOwns(card, hexes[index]))
                 return;
             if (Leader(pins[index], card) < LeaderMin)
                 return;
@@ -3184,10 +4127,203 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Full-width strip inside the selected card, 36–52px tall, sitting on the bottom of the
-        /// portrait and above the count row. It never hangs off the card and never sits on the
-        /// name band. The centre still has to be within <see cref="CueNearLimit"/> of the pin
-        /// or inside the selected hex.
+        /// Distance the near-pin rule uses. A tab attached above the selected card is measured
+        /// from the midpoint of that card's top edge. Every other cue is measured from its centre.
+        /// </summary>
+
+        public static bool IsCardTopTab(Box card, Box cue)
+        {
+            return CueIsCardTopTab(card, cue);
+        }
+
+        public static float CueAnchorDistance(Box cue, Box card, Box pin)
+        {
+            Vec2 anchor = card.W > 1f && CueIsCardTopTab(card, cue)
+                ? new Vec2(card.X + card.W * 0.5f, card.Y)
+                : cue.Center;
+            return Distance(anchor, pin.Center);
+        }
+
+        /// <summary>
+        /// Near the selected district. An exact tab is measured from the midpoint of the selected
+        /// card's top edge. Every other cue is measured from its centre. 160px still applies, and
+        /// a cue whose centre lies inside the selected hex also counts. Capture uses this same predicate.
+        /// </summary>
+        public static bool CueCountsAsNear(Box cue, Box card, Box pin, Vec2[] hex)
+        {
+            if (card.W > 1f && CueAnchorDistance(cue, card, pin) <= CueNearLimit)
+                return true;
+            return hex != null && hex.Length >= 3 && PointInPolygon(cue.Center, hex);
+        }
+
+        /// <summary>
+        /// The one zoom cue: a tab above the selected card, outside it, exact card x and width,
+        /// 36–52px tall, bottom flush with the card's top edge.
+        /// </summary>
+        private static bool CueIsCardTopTab(Box card, Box cue)
+        {
+            if (card.W < 48f || cue.W < 8f)
+                return false;
+            if (cue.H < 36f - 0.5f || cue.H > 52f + 0.5f)
+                return false;
+            if (Math.Abs(cue.X - card.X) > 1.5f || Math.Abs(cue.W - card.W) > 1.5f)
+                return false;
+            if (Math.Abs(cue.YMax - card.Y) > 1.5f)
+                return false;
+            return cue.YMax <= card.Y + 1.5f && cue.Y < card.Y - 1f;
+        }
+
+        /// <summary>Lowest district-outline y that crosses the card's width. -1 when the hex misses that span.</summary>
+        private static float HexLip(Vec2[] hex, float x0, float x1)
+        {
+            if (hex == null || hex.Length < 3)
+                return -1f;
+            float bottom = -1f;
+            for (int i = 0; i < hex.Length; i++)
+            {
+                Vec2 a = hex[i];
+                Vec2 b = hex[(i + 1) % hex.Length];
+                float minX = Math.Min(a.X, b.X);
+                float maxX = Math.Max(a.X, b.X);
+                if (maxX < x0 || minX > x1)
+                    continue;
+                bottom = Math.Max(bottom, Math.Max(a.Y, b.Y));
+            }
+
+            return bottom;
+        }
+
+        private static bool HexEdgeHits(Vec2[] hex, Box spot)
+        {
+            if (hex == null || hex.Length < 3 || spot.W < 1f)
+                return false;
+            for (int i = 0; i < hex.Length; i++)
+            {
+                if (SegmentHitsRect(hex[i], hex[(i + 1) % hex.Length], spot))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Full-width tab above the card. Taller tabs are tried first. The tab never enters the card.
+        /// </summary>
+        private static bool TrySeatAlignedTop(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            for (int h = 0; h < heights.Length; h++)
+            {
+                if (!TrySeatTabHeight(
+                    heights[h], card, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out cue))
+                    continue;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TrySeatTabHeight(
+            float stripH,
+            Box card,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight,
+            out Box cue)
+        {
+            cue = default;
+            var spot = new Box(card.X, card.Y - stripH, card.W, stripH);
+            if (!AlignedTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
+                return false;
+            cue = spot;
+            return true;
+        }
+
+        private static bool AlignedTabLegal(
+            Box spot,
+            Box card,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (Math.Abs(spot.X - card.X) > 0.5f || Math.Abs(spot.W - card.W) > 0.5f)
+                return false;
+            if (!CueIsCardTopTab(card, spot))
+                return false;
+            if (!OnPlate(spot, plateWidth, plateHeight))
+                return false;
+            if (!Clears(spot, detail))
+                return false;
+            if (pins == null || selected < 0 || selected >= pins.Length)
+                return false;
+            for (int i = 0; i < pins.Length; i++)
+            {
+                if (pins[i].W > 1f && Separation(spot, pins[i]) < 1f)
+                    return false;
+            }
+
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == selected || cards[i].W < 1f)
+                        continue;
+                    if (Overlaps(spot, cards[i], 2f))
+                        return false;
+                }
+            }
+
+            bool insideHex = hexes != null && selected < hexes.Length && hexes[selected] != null
+                && PointInPolygon(spot.Center, hexes[selected]);
+            if (CueAnchorDistance(spot, card, pins[selected]) > CueNearLimit && !insideHex)
+                return false;
+            if (hexes != null && !CueReadsAsSelected(card.Center, pins[selected].Center, hexes, pins, selected))
+                return false;
+            if (LeaderHitsRect(pins, cards, spot))
+                return false;
+            if (hexes == null)
+                return true;
+            Box stroke = InflateBox(spot, CueHexStroke);
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (hexes[i] == null)
+                    continue;
+                if (i == selected)
+                {
+                    if (HexEdgeHits(hexes[i], stroke))
+                        return false;
+                    continue;
+                }
+
+                if (PolygonHitsRect(hexes[i], stroke))
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Seats the one cue: a tab above the selected card. When the plate edge or a hex
+        /// leaves no room, the selected card moves down until that same tab fits. No other
+        /// cue shape is tried. <paramref name="cards"/> may be updated at <paramref name="selected"/>.
         /// </summary>
         public static bool TryAttachCueToCard(
             float plateWidth,
@@ -3207,38 +4343,145 @@ namespace Game.UI.Runtime
             Box card = cards[selected];
             if (card.W < 48f || card.H < 48f)
                 return false;
-            const float insetX = 2f;
-            float stripWidth = card.W - insetX * 2f;
-            if (stripWidth < 32f)
-                return false;
-            float left = card.X + insetX;
-            float statusH = card.H >= 190f ? 40f : 34f;
-            float[] stripHeights = { 52f, 48f, 44f, 40f, 36f };
-            for (int h = 0; h < stripHeights.Length; h++)
+            if (TrySeatAlignedTop(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                return true;
+            float floor = plateHeight - Edge - card.H;
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float[] slides = { 0f, 4f, -4f, 8f, -8f, 12f, -12f, 16f, -16f, 20f, -20f, 28f, -28f, 36f, -36f };
+            for (int h = 0; h < heights.Length; h++)
             {
-                float stripHeight = stripHeights[h];
-                float lowest = card.YMax - statusH - 2f - stripHeight;
-                float highest = card.Y + 4f;
-                if (lowest + stripHeight > card.YMax - 1f)
-                    continue;
-                if (lowest < highest)
-                    lowest = highest;
-                for (float y = lowest; y >= highest - 0.1f; y -= 4f)
+                float stripH = heights[h];
+                float minY = Math.Max(card.Y, Edge + stripH);
+                for (float y = minY; y <= floor + 0.1f; y += 4f)
                 {
-                    var spot = new Box(left, y, stripWidth, stripHeight);
-                    if (spot.YMax > card.YMax - statusH + 1f)
-                        continue;
-                    if (!CueTabLegal(spot, card, pins, cards, hexes, detail, selected, plateWidth, plateHeight))
-                        continue;
-                    cue = spot;
-                    return true;
+                    for (int s = 0; s < slides.Length; s++)
+                    {
+                        var dropped = new Box(card.X + slides[s], y, card.W, card.H);
+                        if (hexes != null && selected < hexes.Length && !CentreOwns(dropped, hexes[selected]))
+                            continue;
+                        if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
+                            continue;
+                        Box held = cards[selected];
+                        cards[selected] = dropped;
+                        bool tabOk = TrySeatTabHeight(
+                            stripH, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out cue);
+                        if (!tabOk)
+                        {
+                            cards[selected] = held;
+                            continue;
+                        }
+
+                        return true;
+                    }
                 }
             }
 
-            if (TrySeatWideStrip(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+            if (TryShiftCardForTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
                 return true;
-            return TryHangCueOffCard(
-                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue);
+            cue = default;
+            return false;
+        }
+
+        /// <summary>
+        /// The packed card has no room for its tab. Slide that card, keeping the same size,
+        /// until the tab above it is on the plate and the card is still a legal seat.
+        /// </summary>
+        private static bool TryShiftCardForTab(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float best = float.MaxValue;
+            Box bestCard = default;
+            Box bestCue = default;
+            bool found = false;
+            for (int h = 0; h < heights.Length; h++)
+            {
+                float stripH = heights[h];
+                bool taller = false;
+                for (float dy = -240f; dy <= 240.1f; dy += 2f)
+                {
+                    for (float dx = -280f; dx <= 280.1f; dx += 2f)
+                    {
+                        var dropped = new Box(card.X + dx, card.Y + dy, card.W, card.H);
+                        if (hexes != null && selected < hexes.Length && !CentreOwns(dropped, hexes[selected]))
+                            continue;
+                        if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
+                            continue;
+                        Box held = cards[selected];
+                        cards[selected] = dropped;
+                        bool tabOk = TrySeatTabHeight(
+                            stripH, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out Box spot);
+                        cards[selected] = held;
+                        if (!tabOk)
+                            continue;
+                        float score = dx * dx + dy * dy;
+                        if (score >= best)
+                            continue;
+                        best = score;
+                        bestCard = dropped;
+                        bestCue = spot;
+                        found = true;
+                        taller = true;
+                    }
+                }
+
+                if (taller)
+                    break;
+            }
+
+            if (!found)
+                return false;
+            cards[selected] = bestCard;
+            cue = bestCue;
+            return true;
+        }
+
+        /// <summary>The selected card may move down to free its top tab. The seat rules stay the same.</summary>
+        private static bool SelectedCardCanDrop(
+            Box card,
+            int index,
+            Box[] cards,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (!OnPlate(card, plateWidth, plateHeight))
+                return false;
+            if (hexes != null && index < hexes.Length && !SeatHolds(card, hexes[index], hexes))
+                return false;
+            if (detail.W > 1f && Overlaps(card, detail, 0f))
+                return false;
+            if (cards != null)
+            {
+                for (int j = 0; j < cards.Length; j++)
+                {
+                    if (j == index || cards[j].W < 1f)
+                        continue;
+                    if (Separation(card, cards[j]) < CardGap)
+                        return false;
+                }
+            }
+            if (pins == null || index < 0 || index >= pins.Length || !ClearsPins(card, pins))
+                return false;
+            if (Leader(pins[index], card) < LeaderMin)
+                return false;
+            if (SegmentHitsRect(pins[index].Center, NearestOn(card, pins[index].Center), detail))
+                return false;
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            if (hint.W > 1f && Overlaps(card, hint, 2f))
+                return false;
+            return true;
         }
 
         /// <summary>

@@ -1,0 +1,20 @@
+{
+  "manifest": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/manifest.json",
+  "manifest_sha256": "5c54f24413331dab552c5f2add662cea628dac3cb8fce1d05ba2352f5227e26c",
+  "proof": "Logs/SkirmishProduction/Offline/late-ecs-5ea4p5ng/result.json",
+  "proof_sha256": "478326206245b3a26fc421806fbefba268d79be7c3e42d07554600096e6d276b",
+  "source_review": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/INDEPENDENT_SOURCE_REVIEW.json",
+  "source_review_sha256": "9ca0644864e2f5e2c0dc0557b6e14eb484209017f4d5e8892883a1798b688b7b",
+  "result": "PassedFocusedEditorLateEcsRecorderCensus",
+  "sources": 836,
+  "references": 353,
+  "mismatches": 0,
+  "no_fallback": true,
+  "parent_scope": "Exact immutable835source e67/c609 LegacyWitnessLogicalFrame plus ONE explicit new Editor source; no ambient source fallback",
+  "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005OpeningWitnessWithLateEcsCensus",
+  "native_executed": false,
+  "settings_changed": false,
+  "cause_established": false,
+  "runtime_gameplay_changed": false,
+  "new_meta": "Root owned Unity import"
+}

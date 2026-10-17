@@ -1,0 +1,85 @@
+{
+  "run": 639,
+  "observationOnly": true,
+  "sourceModified": false,
+  "liveActorsModified": false,
+  "nativeSpawnSearch": true,
+  "vehiclesPerSample": 6,
+  "footprintCells": "3x3",
+  "radiusCells": 12,
+  "scope": "Live snapshot legality only; no starting/replay/path/capacity certificate",
+  "results": [
+    {
+      "center": "int2(914, 650)",
+      "nativeSpawnCells": 6,
+      "cells": [
+        "int2(914, 650)",
+        "int2(903, 639)",
+        "int2(911, 652)",
+        "int2(925, 660)",
+        "int2(913, 662)",
+        "int2(915, 656)"
+      ]
+    },
+    {
+      "center": "int2(914, 622)",
+      "nativeSpawnCells": 6,
+      "cells": [
+        "int2(902, 633)",
+        "int2(903, 611)",
+        "int2(921, 633)",
+        "int2(925, 632)",
+        "int2(913, 634)",
+        "int2(915, 628)"
+      ]
+    },
+    {
+      "center": "int2(894, 650)",
+      "nativeSpawnCells": 6,
+      "cells": [
+        "int2(894, 650)",
+        "int2(883, 639)",
+        "int2(891, 652)",
+        "int2(905, 660)",
+        "int2(893, 662)",
+        "int2(896, 645)"
+      ]
+    },
+    {
+      "center": "int2(894, 622)",
+      "nativeSpawnCells": 6,
+      "cells": [
+        "int2(894, 622)",
+        "int2(883, 611)",
+        "int2(891, 624)",
+        "int2(905, 632)",
+        "int2(893, 634)",
+        "int2(896, 617)"
+      ]
+    },
+    {
+      "center": "int2(874, 650)",
+      "nativeSpawnCells": 6,
+      "cells": [
+        "int2(874, 650)",
+        "int2(863, 639)",
+        "int2(871, 652)",
+        "int2(885, 660)",
+        "int2(873, 662)",
+        "int2(876, 645)"
+      ]
+    },
+    {
+      "center": "int2(934, 622)",
+      "nativeSpawnCells": 6,
+      "cells": [
+        "int2(922, 633)",
+        "int2(929, 631)",
+        "int2(941, 633)",
+        "int2(945, 632)",
+        "int2(933, 634)",
+        "int2(935, 628)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "run": "native687",
+  "mission": "S005",
+  "result": "Failed",
+  "wrapperExit": 2,
+  "sourceHash": "9d6b00b06834664f54784f70246eda56bf569a30d2b890b1d051721523f074a1",
+  "preManifest": "final-687-boarded-resumed-manual-pre-source-manifest.json",
+  "postManifest": "final-687-manual-popup-stall-closed-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "log": "native-687-boarded-resumed-manual-en.log",
+  "trace": "s005-aria-live-155926-en-0723ebabbf524f93bde1d18a0e0264a8.jsonl",
+  "audit": "native687-touch-contact-audit.json",
+  "diagnostic": "native687-manual-popup-stall-diagnostic.json",
+  "readOnlyCliObservations": 1,
+  "partialRecoveryObserved": true,
+  "wholeMatchCertified": false,
+  "countedWin": false,
+  "markers": [
+    "[S005PassengerSave] result=Passed restoredAndUnloaded=4 input=Touch",
+    "[S005PlayerSaveResume] result=Passed input=Touch gestures=49 oldPhysicalGone=4978 paidReceiptPreserved=1 sameAttempt=1 savedElapsed=156.3237 paidRole=ApcHeavy paidCost=280 combatGestures=0 combatSave=0 boardedSave=1 passengers=4 commands=6 receiptViolations=0 resumedMissionAcceptance=Pending",
+    "[S004ManualNative] result=Failed outcome=None seconds=303.9112 reason=incompleteNativeInputFlow input=Touch ariaStarted=0 actions=9 attackReceipts=1",
+    "[SkirmishValidationExit] result=Requested code=2"
+  ]
+}

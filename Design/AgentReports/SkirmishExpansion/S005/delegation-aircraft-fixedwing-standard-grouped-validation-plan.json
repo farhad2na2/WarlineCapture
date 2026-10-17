@@ -1,0 +1,242 @@
+{
+  "result": "PreparedStaticGroupedPlanNotExecuted",
+  "mission": "S005",
+  "sourceAtRead": {
+    "shippingCommit": "818054c154cf2dd1e1af246c6491812b708b8f8d",
+    "sourceHash": "2de5dafe83cb8b8226a562562cdbe40300d284f9113cc696d90865ce656318b2",
+    "note": "Parent owns current candidate and source applicability; this report does not certify newer source"
+  },
+  "scope": {
+    "size": "Standard",
+    "airCapPerFaction": 2,
+    "army": "Combined",
+    "objective": "BaseAssault",
+    "readiness": "FullArsenal required for Airport/Fighter/TransportPlane",
+    "notRequiredForCurrentExposure": [
+      "War Air4",
+      "LargeWar Air6",
+      "22 separate complete roster matches",
+      "FC/BT/CE-specific objective acceptance",
+      "four objective anchor sets/new map construction",
+      "all360 scenario-size vectors re-executed per S005 aircraft fixture",
+      "unsupported custom starts/difficulties"
+    ],
+    "preserveOpenAsConditional": [
+      "Every additional exposed difficulty/size needs its own X38/X19 evidence",
+      "Existing supported custom start or setup behavior still requires X01/X21/X23 checks; do not assume those controls are absent without native UI inventory",
+      "Global catalog/environment/performance gates remain global; trimming S005 execution scope does not erase them"
+    ]
+  },
+  "authorities": [
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+      "gates": "X02/X03/X04/X13/X14/X17/X18/X21/X23/X36/X37/X38/X39",
+      "required": "Enabled role has real paid producer, role behavior, final disposition, cap/failure cleanup, checkpoint and normal-input evidence; extras only for exposed combinations"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+      "required": "Queue\u2192delivery\u2192selection\u2192allowed command\u2192combat/transport result\u2192death/cap\u2192checkpoint; real launch/pass/return; fuel restrictions; tactical carriers distinct from delivery carriers"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+      "fact": "Configure sets AllowedCertifiedSizeIds=[Standard], FirstVisitSize=Standard; recommended War is guidance, not certification"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishPublicationValidator.cs",
+      "fact": "IsFirstVisitAllowed requires Regular Standard"
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "required": "Existing Campaign geometry and legal pads; no new runway/map/budget alterations to fit cap"
+    }
+  ],
+  "roleContracts": [
+    {
+      "role": "Fighter",
+      "key": "Unit_Veh_Jet_02",
+      "producer": "Airport",
+      "readiness": "FullArsenal",
+      "materials": 480,
+      "members": 1,
+      "overlayHealth": 280,
+      "overlayDamage": 22,
+      "overlayRange": 32,
+      "domain": "Air",
+      "sourceSpeed": 36,
+      "sourceTaxiSpeed": 15,
+      "sourceMissileLauncher": null,
+      "minimumRoleEffect": "Native selected paid Fighter intercepts actually visible opposing aircraft; actual native fire and attributed target damage; rejects non-Air/hidden targets; native Return and grounded home; fuel spending/replenishment where same shared physical model applies",
+      "notProof": "Static CanAttack/domain binding or attacking enemy base does not demonstrate Fighter interception"
+    },
+    {
+      "role": "TransportPlane",
+      "key": "Unit_Veh_Plane_Transport",
+      "producer": "Airport",
+      "readiness": "FullArsenal",
+      "materials": 440,
+      "members": 1,
+      "overlayHealth": 340,
+      "overlayDamage": 0,
+      "domain": "None",
+      "sourceSoldierSeats": 24,
+      "sourceVehicleSlots": 2,
+      "vehicleEligibility": "Non-air ground vehicle <=3 per footprint axis and <=9 footprint cells, real authoring capacity observed at runtime",
+      "sourceSpeed": 30,
+      "sourceTaxiSpeed": 12,
+      "sourceCruiseHeight": 55,
+      "sourceParachuteAndVehicleEmergencyDropVisualsPresent": true,
+      "minimumRoleEffect": "Paid tactical actor enters roster and Air cap, not just automatic delivery visual; actual group boarding when landed, hidden passenger links/count, native flight with retained cargo, legal airdrop or ramp unload with visible survivors/orderability; returning/landing; carrier/passenger death cleanup; loaded native checkpoint restore",
+      "notProof": "Generic source canAttack1 is superseded by mission None/0 overlay; no attack/rearm gate should be fabricated for this role"
+    }
+  ],
+  "minimumGroupedExecution": [
+    {
+      "phase": "A shared paid Airport normal setup, once",
+      "scope": "Normal-input progression evidence",
+      "actions": [
+        "Launch actual Regular Standard S005 with original fixed resources and1080s clock",
+        "Use native industry/research/build inputs to reach FullArsenal and legally paid Airport on existing Campaign geometry",
+        "Observe native actual producer, runway, parking pads, costs and faction identity; record building footprint/tree/road/sidewalk clearance",
+        "Make actual Pause\u2192SaveExit at readiness+Airport before first tactical air purchase, if budget and remaining clock can support branches. Retain byte-identical real checkpoint and normal-input provenance"
+      ],
+      "why": "Reusable real checkpoint avoids repeating the same R2/R3/industry runway setup; every branch preserves saved attempt/config/resources and remaining deadline",
+      "doNot": [
+        "Reuse1018 as a free empty Airport start: it already contains paid Strike and only~208s remaining",
+        "Edit checkpoint funding/actor/capacity or extend deadline",
+        "Pretend split branches are one fresh uninterrupted complete match"
+      ]
+    },
+    {
+      "phase": "B grouped fixed-wing basic native test",
+      "scope": "One isolated technical scene/test session for new role smoke; normal paid production if branchA affordable, otherwise disclosed funding/readiness like1024",
+      "actions": [
+        "Paid queue Fighter then TransportPlane through shared building native request boundary; no spawned substitutes",
+        "Observe reservation cost, producer binding, member receipt, AirReserved\u2192AirLive and physical arrival/taxi\u2192unique parking/home",
+        "Use real visible squad cards+Move inputs, positive-time runway takeoff and displacement; verify tactical plane selection and capacity ownership",
+        "Keep both alive at StandardAir2, submit third and require explicit rejection/no payment/reservation; test one cancellation, one death/idempotent release and one paid replacement in same session",
+        "Cleanup owned attempt and prove no old pending request/entity/card remains"
+      ],
+      "bounds": "Role queue\u2264production duration+native delivery/taxi allowance; per role60\u201390s useful starting bound, final exact bound must account current public duration/queue order. Fail boundedly; no rerun until diagnosed",
+      "distinction": "Basic movement/domain/cap smoke does not certify actual Fighter combat or Plane passenger capability"
+    },
+    {
+      "phase": "C one paired behavior/capacity continuation",
+      "scope": "Grouped technical bilateral capacity plus role-specific normal Touch actions, with exact disclosed environment setup; not a normal enemy-growth proof unless facility development is native paid",
+      "actions": [
+        "Actual legal same-faction Airport on each side, independently validated on existing geometry; record both faction capacity snapshots with AirCap2",
+        "Queue two paid air actors per side, one visible legal airborne opposing role available for Fighter interception; each reservation and delivery tracked by stable paid receipt",
+        "While queues/delivery and one-live-one-reserved states coexist, reject excess independently for each faction and preserve other side stocks/reservations",
+        "Observe actual parking separation, taxi clearance, native launch and return/home at two simultaneous roles per side. Footprint legality alone is not taxi/parking capacity",
+        "Fighter actual Air target/effect plus forbidden-domain rejection; observe fuel and native Return without replacing orders via components",
+        "On player Plane, board one existing paid4-member infantry group and one compatible already-validated ground vehicle when landed; preserve cap/group ownership hidden, native takeoff and cargo movement",
+        "Pause\u2192actualSave\u2192nativeContinue with loaded plane (and other air alive or queued); verify all stable links, Air state, transform, fuel, queues/receipts/cap/groups and no physical old world; then legal native airdrop/ramp unload with visible/orderable passengers",
+        "Carrier failure/death and no-landing-space/cancel/producer-loss cases can be focused technical negative branches from retained real save where applicable; label injected death and retain explicit recovery reasons"
+      ],
+      "minimumNotExpansion": "A transport cycle and interception can share the same paid infrastructure and existing infantry/vehicle; no recertification of their ground basics or24soldier full load mandated merely by source24seats. Seat-limit math remains shared technical tests; advertised mixed cargo categories need actual capability coverage"
+    },
+    {
+      "phase": "D remaining mission-wide acceptance",
+      "scope": "Parent owns required complete normal-input manual/ARIA journey, result-return/replay and exposed profile acceptance",
+      "actions": [
+        "Apply only verified source dependency relevance to historical890 and current1049/1046; refresh current affected normal journeys where source changes require it",
+        "Observe EN/FA role identity/reason/UI cleanup during group phases; retain native screenshots and Touch pairing",
+        "Do not count role fixture as a win, ARIA seed matrix, phone performance or independent player acceptance"
+      ]
+    }
+  ],
+  "bilateralSetupReality": {
+    "native769": "Two normally paid existing-map Airports, both faction1; bilateral=false, parkingTaxi=false",
+    "native1018": "20 functional building clearance observations across both factions; only observed Airport faction1. This is not enemy Airport or bilateral air proof",
+    "nativePlacementRegistration": "BuildingPlacementCommandCompositionSystemHelper hardcodes newly confirmed UI buildings to PlayerFactionId",
+    "nativeStartingGrant": "SkirmishStartingBuildingsService creates authored starting grants, not paid enemy development; Airport is unbuilt in S005 Field/default and every proposed catalog start",
+    "genericSpawn": "BuildingRuntimeSpawnRequest carries FactionId and validates existing geometry; AIBuildPlanner pays/rolls back shared economy. Bare spawn request alone is not paid enemy construction and does not automatically prove expanded canonical Materials accounting",
+    "nextConcretePrerequisite": "Root should select existing legal faction2 construction/economy path and certify its cost/adoption, or keep bilateral native facility-development gate open. Do not relabel two player Airports as bilateral or silently change paid Airport ownership. An isolated legally spawned faction2 fixture is allowed only as disclosed technical setup, never normal paid-growth evidence."
+  },
+  "proofApplicability": {
+    "890": {
+      "proof": "native890-normal-paid-strike-cycle-scoped-pass.json",
+      "actualCovered": [
+        "Paid Strike520 native arrival/taxi/home",
+        "Touch first attack native fire",
+        "Accepted native Return266",
+        "Home touchdown",
+        "Physical tanker Fuel deliveries/refuel+199",
+        "Second airborne sortie",
+        "277gestures/24commands/0receipt violations",
+        "Within1080s fixedclock"
+      ],
+      "source": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+      "positiveTimeMovementBodyUnchanged": true,
+      "verification": "git241b41786^ UnitAirMovementSystem fileSHA72a95c2ce6ee9ff02a000e0dac81b2a7e757e5c1158eefaedc7e84d06bb40fb4 equals890 manifest. Removing only newly added dt<=0 guard and moving dt declaration back reproduces old file exactly. No algorithm adjustment for dt>0.",
+      "notCovered": [
+        "Whole current source/runtime equivalence",
+        "Pause conservation before fix",
+        "Second return",
+        "Fighter interception",
+        "Plane/Heli passengers",
+        "Bilateral or Air2full capacity",
+        "Allroles/fullmatch/ARIA/device"
+      ],
+      "deltas890to1049": [
+        "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+        "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset",
+        "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+        "Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs",
+        "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+        "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+        "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+        "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+        "Assets/Tests/Editor/AirPauseConservationTests.cs",
+        "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+        "Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs",
+        "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs",
+        "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+        "ProjectSettings/QualitySettings.asset"
+      ]
+    },
+    "1049": {
+      "proof": "native1049-retained-flight-pause-save-continue-pass.json",
+      "source": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+      "actualCovered": [
+        "Byte-identical original1018 actual paidStrike checkpoint",
+        "Native MenuContinue\u2192positiveflight displacement163.2455 over5.007019s",
+        "43Editor observations/1.522s paused exact quaternion/Air/Movement/transform/clock",
+        "Actual fresh nativeSave parts exact",
+        "NativeContinue\u2192second positiveflight",
+        "Original retained paidReceipt1005, attempt/config and real profile isolation"
+      ],
+      "notCovered": [
+        "Fresh complete uninterrupted match",
+        "NewNormalpaid production on newcandidate",
+        "LoadedPlane links/vehicles/parachute states",
+        "Fighter fight/transport/landing/secondStrikecycle",
+        "CompleteX36 allstates atomic/incompatible/replay"
+      ]
+    },
+    "1046": {
+      "proof": "native1046-focused-current-proof.json",
+      "actualCovered": "5zero-delta nativeState cases\u00d7120paused updates pluspositive controls: bankedMove/Return, VTOLMove, DeliveryTransitAtHome andQueuedTargetWhilePaused",
+      "notCovered": "No normal mission production/interception/transport/device proof"
+    },
+    "composeScopes": "890 actual positive-time normal cycle +1046 guard tests +1049 actual normal paused recovery support only those shared paths with verified unchanged dependencies. Do not turn their union into a new complete-match or every-air-role lifecycle certificate."
+  },
+  "dependenciesToPinBeforeRun": [
+    "Existing Campaign map definition/scene/layout/stat/source hashes",
+    "Native producer queue/slot/presentation/managed delivery/adoption",
+    "UnitAirMovement and fixed-wing runway home/faction runway model",
+    "UnitFuelConsumption/shared storage/tanker/fuel-safety code",
+    "Role catalog+overlay+eligibility+profile",
+    "Boarding/cargo/airdrop/plane-door code+visual GUIDs+checkpoint codec",
+    "Visible input catalog/HUD/FullMap contact route and1052/1057 actual assigned-view/current-canvas fixes"
+  ],
+  "notPerformed": [
+    "No Unity Editor launch/control/load/test",
+    "No Assets/Packages/ProjectSettings modifications",
+    "No actors/resources/orders/outcomes/checkpoints altered",
+    "No assertion that pending air behaviors or bilateral source-fit passed"
+  ]
+}

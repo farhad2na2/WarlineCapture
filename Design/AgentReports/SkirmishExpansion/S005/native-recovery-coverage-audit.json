@@ -1,0 +1,33 @@
+{
+  "mission": "S005",
+  "playerReady": false,
+  "sourceHash": "23ee330de45459b3dd3c553e9ba9bdae49596e23e69be7b4ac93a9895800e62d",
+  "nativeSchema": 4,
+  "audit": {
+    "ownedActorsAndFunctionalStructures": "captured with stable identities and native production owners",
+    "paidProduction": "captured and rebuilt by native owner; current-source diagnostic rerun pending",
+    "persistentBanks": "captured; fresh Replay reset passed native148",
+    "sourceRubble": "health-based resident/virtualized presentation test passed; existing source entities remain in census",
+    "removedSourceEntities": "not supported; fail closed on changed census",
+    "sourceAliases": "include current faction and footprint; ownership changes require verification",
+    "missiles": "global GroundMissileProjectileComponent and AirMissileProjectileComponent are outside owned actor capture; flying visual hierarchy also needs reconstruction",
+    "support": "Native153 read-only observation: one shared Campaign support root, empty token, active0/test0/allowedMask0. S005 Support is not active under current rules. Snapshot still needs fail-closed rejection of unexpected active effects; global Support recovery is not a current S005 capability claim.",
+    "playerSaveResume": "not wired: current Skirmish pause copy correctly says leaving ends match",
+    "humanDeviceAcceptance": "pending, distinct from automated native touch journeys"
+  },
+  "nextRequiredWork": [
+    "Complete transient identity/visual reconstruction and remapping without loss or duplicate payment.",
+    "Verify actual S005 support availability and avoid inheriting Campaign effects.",
+    "Wire saved attempt launch through full scene unload/reload after compatibility preflight.",
+    "Validate native pause/save/exit/resume/win/result/return using normal controls."
+  ],
+  "nativeSupportObservation": {
+    "run": 153,
+    "sessionToken": "",
+    "active": 0,
+    "testEncounter": 0,
+    "campaignRoot": true,
+    "allowedMask": 0,
+    "readOnly": true
+  }
+}

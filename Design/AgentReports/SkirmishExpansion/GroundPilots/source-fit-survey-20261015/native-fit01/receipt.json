@@ -1,0 +1,54 @@
+{
+  "actual_checked_wrapper_exit": 0,
+  "required_pass_marker": "[SkirmishGroundSourceFitSurvey] result=Collected sources=4",
+  "source": "Logs\\SkirmishProduction\\ground-source-fit-20261015-01.json",
+  "source_sha256": "cd42028f24ccdf22b8ce85f128bd550b17dc32b76d9bc69be879020892e95fe5",
+  "summary": [
+    {
+      "group": "CC",
+      "layoutStatus": "UnmeasuredReuseCandidate",
+      "nativeQueryStatus": "UnavailableBakedGridOrSurface_NotSubstitutedWithClearRuntimeState",
+      "collectionCompleted": true,
+      "allSizeForcePacking": "PendingBakedGridUnavailable",
+      "allSizeFacilities": "PendingBakedGridUnavailable",
+      "heavyRouteQueries": "PendingBakedGridUnavailable"
+    },
+    {
+      "group": "AP",
+      "layoutStatus": "UnmeasuredReuseCandidate",
+      "nativeQueryStatus": "BakedGridSurfaceQueries_NoRuntimeOccupancyCertificate",
+      "collectionCompleted": true,
+      "allSizeForcePacking": {
+        "ProposedPackingFound_RuntimeFitPending": 88
+      },
+      "allSizeFacilities": {
+        "PreferredFootprintMeasured_ActualPlacementMayRelocate": 94,
+        "ExactBuildingPrefabMissingOrAmbiguous": 12
+      },
+      "heavyRouteQueries": {
+        "NativeQueryFoundExactGoal": 24,
+        "NativeQueryFailed": 21
+      }
+    },
+    {
+      "group": "MP",
+      "layoutStatus": "UnresolvedNoTwoCompoundLayout",
+      "nativeQueryStatus": null,
+      "collectionCompleted": true,
+      "allSizeForcePacking": null,
+      "allSizeFacilities": null,
+      "heavyRouteQueries": null
+    },
+    {
+      "group": "IB",
+      "layoutStatus": "UnresolvedNoTwoCompoundLayout",
+      "nativeQueryStatus": null,
+      "collectionCompleted": true,
+      "allSizeForcePacking": null,
+      "allSizeFacilities": null,
+      "heavyRouteQueries": null
+    }
+  ],
+  "runtimeFitCertified": false,
+  "playerReady": false
+}

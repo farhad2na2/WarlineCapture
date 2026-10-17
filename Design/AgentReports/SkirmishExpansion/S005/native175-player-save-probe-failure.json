@@ -1,0 +1,7 @@
+{
+  "run": 175,
+  "result": "Failed",
+  "countsForReadiness": false,
+  "reason": "Save & Exit passed. Transparent loading layer intercepted Continue input after return to setup.",
+  "evidencePreserved": true
+}

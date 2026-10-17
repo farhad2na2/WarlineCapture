@@ -1,0 +1,73 @@
+--- 1345
++++ 1357
+@@ -44,7 +44,7 @@
+     static TaskCompletionSource<int> completion;
+     static int frame=-1, gestures,defenseObserverEntry=-1;
+     static double due; static int cameraStep; static Vector3 cameraDestination; static double cameraSince; static int cameraRecoveryCount;
+-    static bool failed,faOnly;static int activeMission,cardGestures,cardCaptureEntry; static double runDeadline;
++    static bool failed,faOnly,enOnly;static int activeMission,cardGestures,cardCaptureEntry; static double runDeadline;
+     static string originalSelectionDiagnostics;
+     static double staleSince; static int staleLesson=-1;
+     static double maxStale;static int staleDeferrals;
+@@ -54,13 +54,14 @@
+     public static Task<int> RunM01()=>Start(1);
+     public static Task<int> RunM02()=>Start(2);
+     public static Task<int> RunM03FA()=>Start(3,true);
++    public static Task<int> RunM03EN()=>Start(3,false,true);
+     public static Task<int> RunM03()=>Start(3);
+     public static Task<int> RunM04()=>Start(4);
+     public static Task<int> RunM05()=>Start(5);
+-    static Task<int> Start(int mission,bool farsiOnly=false)
++    static Task<int> Start(int mission,bool farsiOnly=false,bool englishOnly=false)
+     {
+         if(completion!=null&&!completion.Task.IsCompleted) throw new InvalidOperationException("Already active");
+-        failed=false;faOnly=farsiOnly;runDeadline=EditorApplication.timeSinceStartup+420;defenseObserverEntry=-1;activeMission=mission;cardGestures=0;cardCaptureEntry=-1; gestures=0; frame=-1; due=0; touch=null;cameraStep=0;staleSince=0;staleLesson=-1;maxStale=0;staleDeferrals=0;cameraSince=0;cameraRecoveryCount=0;
++        failed=false;faOnly=farsiOnly;enOnly=englishOnly;runDeadline=EditorApplication.timeSinceStartup+420;defenseObserverEntry=-1;activeMission=mission;cardGestures=0;cardCaptureEntry=-1; gestures=0; frame=-1; due=0; touch=null;cameraStep=0;staleSince=0;staleLesson=-1;maxStale=0;staleDeferrals=0;cameraSince=0;cameraRecoveryCount=0;
+         foreach(var name in new[]{"deadline","waitUntil","lastSkip","missingDefenseInstructionSince","missingDefenseStatusSince"})
+             probe.GetField(name,BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,0d);
+         foreach(var name in new[]{"lastStableStep","trainingWaitEntry","gatePoseCheckedEntry","defenseStatusCapture"})
+@@ -77,7 +78,7 @@
+         // QA entry choice only, before first menu tick. Production locale setup/deploy is unchanged.
+         if(faOnly) probe.GetField("entry",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,7);
+         File.WriteAllText("/private/tmp/campaign-m3-current1345/native1345-input-route.jsonl","{\"observer\":\"actual native device route\",\"writesGameplay\":false}\n");
+-        Debug.Log("[CampaignScopedJourney] mission="+mission+" scope="+(faOnly?"fa-IR-only":"en-and-fa-IR")+" boundedWallSeconds=420 gameplayInjected=0 genericBilingualMarkerIsScopeAuthority=0");
++        Debug.Log("[CampaignScopedJourney] mission="+mission+" scope="+(enOnly?"en-only":faOnly?"fa-IR-only":"en-and-fa-IR")+" boundedWallSeconds=420 gameplayInjected=0 genericBilingualMarkerIsScopeAuthority=0");
+         // The companion owns native contact completion before the generic replay acts.
+         // Reorder only the two owned QA callbacks; no gameplay callbacks are changed.
+         var generic=(Canvas.WillRenderCanvases)Delegate.CreateDelegate(typeof(Canvas.WillRenderCanvases),
+@@ -466,6 +467,17 @@
+     {
+         if(!EditorApplication.isPlaying||failed||(bool)Read("finished"))return;
+         int entry=(int)Read("entry");
++        // End only the QA locale schedule after English Victory and rendered
++        // Campaign return, at the same MenuReady boundary used by the public probe.
++        // Existing Complete tears down the probe; no outcome is assigned.
++        if(enOnly&&entry==2&&(int)Read("stage")==4&&victorySeen.Contains(entry)&&returnSeen.Contains(entry)&&
++            UiShellRuntimeGateway.TryReadShellState(out var shell)&&!shell.IsTransitionRunning&&
++            shell.CurrentMode==Game.UI.Contracts.UiShellMode.MainMenu&&shell.Phase==Game.UI.Contracts.UiShellTransitionPhase.MenuReady)
++        {
++            probe.GetMethod("Complete",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,
++                new object[]{true,"English scoped player-action journey; native Victory and rendered Campaign return observed"});
++            return;
++        }
+         if((int)Read("stage")==4&&victorySeen.Contains(entry)&&!returnSeen.Contains(entry))
+             probe.GetField("waitUntil",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,EditorApplication.timeSinceStartup+.1);
+     }
+@@ -484,14 +496,14 @@
+         if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isPlaying)return;
+         if(backgroundScope!=null&&!backgroundScope.TryCompleteRetirement())return;
+         Canvas.willRenderCanvases-=Frame;Canvas.willRenderCanvases-=ProofFrame;EditorApplication.update-=ReturnGuard;EditorApplication.update-=Finish;
+-        bool pass=!failed&&Read("failure")==null&&gestures>0&&touch!=null&&touch.CompletedGestures==gestures&&touch.UnexpectedSamples==0&&touch.PhysicalInterventions==0&&(activeMission!=3||CampaignNativeContinuousStatus1345.EligibleSamples>0)&&initialSeen.Contains(faOnly?7:2)&&holdSeen.Contains(faOnly?7:2)&&victorySeen.Contains(faOnly?7:2)&&returnSeen.Contains(faOnly?7:2)&&(faOnly||(initialSeen.Contains(7)&&holdSeen.Contains(7)&&victorySeen.Contains(7)&&returnSeen.Contains(7)));
++        bool pass=!failed&&Read("failure")==null&&gestures>0&&touch!=null&&touch.CompletedGestures==gestures&&touch.UnexpectedSamples==0&&touch.PhysicalInterventions==0&&(activeMission!=3||CampaignNativeContinuousStatus1345.EligibleSamples>0)&&initialSeen.Contains(faOnly?7:2)&&holdSeen.Contains(faOnly?7:2)&&victorySeen.Contains(faOnly?7:2)&&returnSeen.Contains(faOnly?7:2)&&(faOnly||enOnly||(initialSeen.Contains(7)&&holdSeen.Contains(7)&&victorySeen.Contains(7)&&returnSeen.Contains(7)));
+         Debug.Log("[CampaignNativeSelection] result="+(pass?"Passed":"Failed")+" gestures="+gestures+" completed="+(touch?.CompletedGestures??0)+" unexpected="+(touch?.UnexpectedSamples??0)+" interventions="+(touch?.PhysicalInterventions??0)+" staleCueDeferrals="+staleDeferrals+" maximumStaleSeconds="+maxStale.ToString("F3")+" staleCueBoundSeconds=3 fullJourneyStrictTouchAudit=0");
+-        Debug.Log("[CampaignScopedJourney] result="+(pass?"Passed":"Failed")+" mission="+activeMission+" scope="+(faOnly?"fa-IR-only":"en-and-fa-IR")+" retainedNativeVictoryResultReturnGates=1 strategyRebalance=0 countdownMissingBoundSeconds=1.5");
++        Debug.Log("[CampaignScopedJourney] result="+(pass?"Passed":"Failed")+" mission="+activeMission+" scope="+(enOnly?"en-only":faOnly?"fa-IR-only":"en-and-fa-IR")+" retainedNativeVictoryResultReturnGates=1 strategyRebalance=0 countdownMissingBoundSeconds=1.5");
+         CampaignNativeContinuousStatus1345.Stop();CampaignDefenseEvidence1345.Stop();
+         touch?.Dispose();touch=null;RestoreBackgroundInput();
+         Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS",originalSelectionDiagnostics);
+         WriteProof(pass?"CompletePassed":"CompleteFailed",null,0,0);
+-        Debug.Log("[CampaignM3Journey1345] result="+(pass?"Passed":"Failed")+" initialFourRifleDrag="+initialSeen.Count+" heldFourRifle="+holdSeen.Count+" nativeRenderedVictories="+victorySeen.Count+" renderedCampaignReturns="+returnSeen.Count+" scope="+(faOnly?"fa-IR-only":"en-and-fa-IR")+" fullJourneyStrictTouchAudit=0 gameplayOutcomeInjected=0");
++        Debug.Log("[CampaignM3Journey1345] result="+(pass?"Passed":"Failed")+" initialFourRifleDrag="+initialSeen.Count+" heldFourRifle="+holdSeen.Count+" nativeRenderedVictories="+victorySeen.Count+" renderedCampaignReturns="+returnSeen.Count+" scope="+(enOnly?"en-only":faOnly?"fa-IR-only":"en-and-fa-IR")+" fullJourneyStrictTouchAudit=0 gameplayOutcomeInjected=0");
+         backgroundScope=null;
+         completion.TrySetResult(pass?0:1);
+     }

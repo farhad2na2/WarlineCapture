@@ -1,0 +1,36 @@
+{
+  "result": "FailedTimingDiagnosticAbort",
+  "wrapperExit": 2,
+  "nativeDrawClaimed": false,
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "allSourceAndMaterialsUnchanged": true,
+  "preManifest": "final-669-supply-plots-before-factory-expansion-pre-source-manifest.json",
+  "postManifest": "final-669-supply-plots-before-factory-expansion-post-source-manifest.json",
+  "log": "native-669-supply-plots-before-factory-expansion-strike-cycle.log",
+  "latestEconomySimulationSeconds": 1006.70849609375,
+  "contacts": {
+    "recorded": 160,
+    "ended": 160,
+    "errors": 0
+  },
+  "nativeObservations": [
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 receipt=1005",
+    "[S005FixedWingCycle] phase=PauseFabrication id=11 input=Touch",
+    "[S005FixedWingCycle] phase=PauseFabrication id=16 input=Touch",
+    "[S005FixedWingCycle] phase=PauseFabrication id=19 input=Touch",
+    "[S005FixedWingCycle] phase=PauseFabrication id=20 input=Touch",
+    "[S005FixedWingCycle] phase=FuelPriority allLivingFabricationPaused=1 input=Touch productionFlagsObserved=1"
+  ],
+  "normalInput": true,
+  "campaignGeometryChanged": false,
+  "refinerySite": [
+    930.5,
+    685.5
+  ],
+  "fuelStoreSite": [
+    929,
+    707
+  ],
+  "flightCycle": "Pending; no launch/fire/return claimed",
+  "playerReady": false
+}

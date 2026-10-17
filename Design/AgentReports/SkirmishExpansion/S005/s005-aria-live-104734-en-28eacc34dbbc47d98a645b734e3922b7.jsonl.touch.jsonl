@@ -1,0 +1,9 @@
+{"frame":314,"device":66,"time":137.36093139648438,"kind":"Dispatched","generation":2,"dispatched":1,"completed":0,"samples":0,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":315,"device":66,"time":137.55010986328126,"kind":"Began","generation":2,"dispatched":1,"completed":0,"samples":1,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":316,"device":66,"time":137.76129150390626,"kind":"Ended","generation":2,"dispatched":1,"completed":1,"samples":2,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":325,"device":66,"time":139.8221893310547,"kind":"Dispatched","generation":2,"dispatched":2,"completed":1,"samples":2,"unexpected":0,"interventions":0,"position":{"x":263.5230712890625,"y":393.34368896484377}}
+{"frame":326,"device":66,"time":139.9945526123047,"kind":"Began","generation":2,"dispatched":2,"completed":1,"samples":3,"unexpected":0,"interventions":0,"position":{"x":263.5230712890625,"y":393.34368896484377}}
+{"frame":327,"device":66,"time":140.1803741455078,"kind":"Ended","generation":2,"dispatched":2,"completed":2,"samples":4,"unexpected":0,"interventions":0,"position":{"x":263.5230712890625,"y":393.34368896484377}}
+{"frame":365,"device":67,"time":145.84010314941407,"kind":"Dispatched","generation":1,"dispatched":1,"completed":0,"samples":0,"unexpected":0,"interventions":0,"position":{"x":1869.0,"y":153.5}}
+{"frame":366,"device":67,"time":146.14976501464845,"kind":"Began","generation":1,"dispatched":1,"completed":0,"samples":1,"unexpected":0,"interventions":0,"position":{"x":1869.0,"y":153.5}}
+{"frame":367,"device":67,"time":146.29147338867188,"kind":"Ended","generation":1,"dispatched":1,"completed":1,"samples":2,"unexpected":0,"interventions":0,"position":{"x":1869.0,"y":153.5}}

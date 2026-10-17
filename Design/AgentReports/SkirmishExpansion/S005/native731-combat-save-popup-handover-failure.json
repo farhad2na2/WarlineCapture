@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "sourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+  "wrapperExit": 2,
+  "log": "native-731-current-manual-en-seed155926.log",
+  "wrapperExitArtifact": "native-731-current-manual-en-seed155926.log.exit",
+  "combatObserved": {
+    "elapsed": 225.8572,
+    "enemyBaseHp": 756,
+    "attackReceipts": 13
+  },
+  "failure": "PauseButton touch blocked by SCN08_FullMapPopup during manual-to-save driver handover; mission finished at235.0441 before save. Terminal Paused must not be mistaken for user Pause.",
+  "recoveryCertified": false,
+  "sourceUnchanged": true,
+  "postManifest": "final-731-combat-save-control-failure-post-source-manifest.json",
+  "playerReady": false
+}

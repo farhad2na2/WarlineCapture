@@ -1,0 +1,170 @@
+{
+  "status": "PreparedExternalOnly_NotCompiled_NotLoaded_NotExecuted",
+  "run": "native1124",
+  "class": "S005PopulatedFogRecovery1124",
+  "method": "S005PopulatedFogRecovery1124.RunValidation",
+  "fixture": "/private/tmp/S005PopulatedFogRecovery1124.cs",
+  "fixtureSha256": "44395a4984624e5566bd296b3097659e81146becc476e4bd22cee0270750995c",
+  "runner": "/private/tmp/s005-run-populated-fog-recovery-1124.py",
+  "runnerSha256": "7ba18665eacea5b0fb6885cc53047c4aebbfc18200be2d108b88aa70cca4a0f1",
+  "requiredLaneToken": "--heavy-lane-owner main1124",
+  "unityCallsPerformed": false,
+  "productionAssetsModified": false,
+  "pythonSyntax": "Passed compile(source, path, exec); runner not executed",
+  "csharpCompile": "Pending root-reviewed native load-only",
+  "lineage": {
+    "scanFixture": "/private/tmp/S005DroneFogRecon1098.cs",
+    "scanFixtureSha256": "d083d12bc772a6bb0c67d5eea21fb1565979a78904715ff34c3a0d8ee2c28817",
+    "recoveryProtocol": "/private/tmp/S005BoardedRecovery1102.cs public Pause/SaveExit/Continue contacts; 1102 did not reach shipping SaveExit due inherited QA ownership failure",
+    "preservedPreparedVersions": [
+      "/private/tmp/S005PopulatedFogRecovery1124.pre-save-root-order.cs",
+      "/private/tmp/s005-run-populated-fog-recovery-1124.pre-save-root-order.py"
+    ],
+    "preservedFrozenV1": {
+      "fixture": "/private/tmp/S005PopulatedFogRecovery1124.frozen-empty-profile-v1.cs",
+      "sha256": "f2ebba78f8bfe8898b75a6ad760cf4e2f7071acf6059b4894940d8eb7ae559fd",
+      "runner": "/private/tmp/s005-run-populated-fog-recovery-1124.frozen-empty-profile-v1.py",
+      "runnerSha256": "4f3ffb31243bbb7ad49efdd8c7032e2eaef10f5e10af7238608a5e3ca267ca23",
+      "report": "delegation-aircraft-populated-fog1124-prepared-empty-profile-v1.json",
+      "reportSha256": "add47245d636f84638a30b266e6f307219e22efd6920cb3ace0c7e3b6f258116",
+      "status": "Frozen but never compiled/loaded/executed; independent review found empty profile disrupts startup (root1130 observed AwaitingLanguage)"
+    },
+    "preservedFrozenV2": {
+      "fixture": "/private/tmp/S005PopulatedFogRecovery1124.frozen-inherited-profile-v2.cs",
+      "sha256": "e244e3c4b988ef00aae2c52c39c0206210b0a30b460153dc3a7a0c7f03b6d4d7",
+      "runner": "/private/tmp/s005-run-populated-fog-recovery-1124.frozen-inherited-profile-v2.py",
+      "runnerSha256": "abc8dc178c9e4d70bb7641229acb7120d26d0626207dee72dabc58a720fc7d39",
+      "report": "delegation-aircraft-populated-fog1124-prepared-inherited-profile-v2.json",
+      "reportSha256": "2a5403555a4ca4af2a00a840287079b55b3e4f6d423dfdd97fe7b340157e0dd8",
+      "manifest": "/private/tmp/populated-fog1124-inherited-profile-v2-manifest.json",
+      "manifestSha256": "16e8ab66e10cc9aa822431e7a27caff38cae370bb4600c37c1d6129845ddc85c",
+      "status": "Root-reviewed but never native compiled/loaded/executed. Root1134 confirmed shipping SaveExit succeeded; public Continue blocked by unpublished shipping catalog."
+    }
+  },
+  "scope": "Isolated actual legal paid IntelStation/Drone140 plus public Touch Scan at public enemy-objective approach, genuine Unknown->ScanVisible->frozen LastSeen, public Pause/SaveExit/Continue, actual native optional knowledge+ledger recovery with stable source remap and remaining expiry age, positive-time natural expiry and paid actor cleanup. Separate from a normal complete match.",
+  "isolatedSetup": {
+    "materialsGrant": 1800,
+    "readiness": "Established",
+    "storageFill": "Existing faction1 fuel/oil stores to their current capacity",
+    "queue": "Native production request API, paid real producer/capacity/receipt",
+    "openingActors": "Retire opening friendly/other hostile actors with HealthZero; retain actual opening enemy ArmoredAPC",
+    "enemyStrategyDisabled": true,
+    "targetRetaliationDisabled": true,
+    "targetMovement": "Clear retained target intent and HoldPosition in disposable session",
+    "targetPoseInjected": false,
+    "targetHealthInjected": false,
+    "selectionScanPauseSaveContinue": "Actual Touch of presented controls",
+    "knowledgeVisibilityOrFeedInjected": false,
+    "missionOutcomeInjected": false
+  },
+  "corrections": [
+    "Exact inherited startup Tick delegate removed only after actual Playing, positive elapsed and matching live presented HUD surface, before public Pause; fixture watchdog remains active; gameplay clocks/flags untouched.",
+    "Retain startup harness initialized GUID ValidationProfileRoot and unchanged current save-root environment; reflect helper + native SavePath; verify expected native temporary aria-play-validation-profile parent, GUID N child, current env equality, existing root and no pre-existing native checkpoint. Freeze observed profile/save paths and recheck before handoff and every recovery/read. Inherited harness Finish restores original pre-startup env. No fixture environment/profile override.",
+    "Unrelated automatic Return/landing qualification trimmed; native return remains ordinary gameplay and may be telemetry only.",
+    "Actual actor/ledger frozen cell/pose/health/max/provenance/frame/time must agree; restoration waits for real anonymous native presentation.",
+    "Use existing public Editor-only UseEditorValidationCatalog with a disposable HideAndDontSave clone before startup through actual Continue. Copy every row/all fields, changing only S005 StatusPlayable, CombinedArmsField index constant and DefinitionId from current typed authored S005 config. Shipping S005 must remain Planned/nonplayable. No SaveAsset/SetDirty/catalog asset writes. Dispose scope and DestroyImmediate clone after owned Play closure or startup/error; verify shipping loaded source and serialized bytes unchanged.",
+    "Old ECS handles may remain as pure cleanup shells; public recovery requires absence of actual ownership/building/map/transform/health physical actor components, while separately recording remaining pure-shell count. No old physical actor survives; Exists alone no longer misclassifies stripped cleanup shells."
+  ],
+  "saveRoot": "Dynamic exact initialized inherited ValidationProfileRoot under native Path.GetTempPath()/aria-play-validation-profile/<GUID N>; actual path recorded in native1124-inherited-profile-path.json",
+  "checkpointArchive": "Design/AgentReports/SkirmishExpansion/S005/native1124-populated-fog-native-checkpoint.json",
+  "checkpointHandling": "Copy exact actual native SavePath bytes to explicit report archive from touchPath parent (never profile parent). No editing/payload printing. Read TryRead descriptor and real optional buffer bytes. Runner reads measured profile-path JSON and compares retained actual bytes byte-for-byte with archive.",
+  "factsRequired": [
+    "Actual native paid source Scan order/result/feed/ScanIntelLastSeen/ScanVisible attribution",
+    "Anonymous genuinely frozen LastSeen marker without live Entity",
+    "Natural contact age>=4s and authored remaining lifetime>=8s at actual public Pause",
+    "Actual unchanged native saved actor knowledge and session ledger with source stable reference",
+    "Public Continue completes native recovery in same attempt, old battlefield gone, paid receipt and capacity exact",
+    "Frozen pose/cell/HP/provenance/source Entity remapped to real recovered paid Drone",
+    "Actor and ledger clocks/frame rebase agree; restored contact age minus saved age tracks ordinary resumed match elapsed within bounded0.75s observation latency",
+    "Natural positive-time expiry clears knowledge and anonymous marker/ledger; native paid death capacity release idempotent",
+    "All Touch JSONL receipts zero violations/unexpected/interventions and paired stream, full source four-way unchanged",
+    "Editor-only candidate catalog scope restored/destroyed; shipping catalog serialized bytes unchanged and S005 remains Planned/nonplayable. Old physical actor components absent; pure cleanup-shell count disclosed separately."
+  ],
+  "timingSuitability": {
+    "survey": "Public enemy-base approach24m, actual coverage unproved; no hidden-position retargeting fallback",
+    "lastSeenWindow": "Authored current20s lifetime. Wait ordinary simulation until>=4s age and require>=8s remaining. No timer reset, timestamp injection, or expiry extension if natural window unsuitable.",
+    "recoveryTimeoutSeconds": 180,
+    "postRecoveryExpiryTimeoutSeconds": 45,
+    "totalFixtureWatchdogSeconds": 1000,
+    "wholeMatchExpanded": false
+  },
+  "sourceContracts": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "line": 605,
+      "purpose": "Inherited static startup Tick removal; its advance watchdog aborts legitimate paused frames if retained"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs",
+      "line": 36,
+      "purpose": "Actual SavePath resolves validation root; TrySaveAndExit requires legitimate paused gameplay, captures and atomically writes actual native descriptor"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs",
+      "line": 79,
+      "purpose": "Read-only TryRead descriptor validation; no fixture direct capture/restore invocation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs",
+      "line": 136,
+      "purpose": "Actual recovery derives world/time/frame offsets and rebases native parts"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "line": 114,
+      "purpose": "Optional knowledge LastObservedTime and Scan frame rebase"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "line": 130,
+      "purpose": "Stable-only session contact ledger clocks/frame rebase"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "line": 174,
+      "purpose": "Actual positive-time remembered contact expiry; direct acquisition may supersede Scan provenance, so preserve real frozen observation kind rather than forcing Scan kind after departure"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "line": 540,
+      "purpose": "Unique inherited validation profile root is initialized with firstLaunch Completed and used by queued startup; helper line599 and harness restoration line1261"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/SkirmishBattleCatalogConfig.cs",
+      "line": 67,
+      "purpose": "Existing Editor-only scoped candidate exposure for native input tests; disposable scope restores shipped resource authority without asset publication"
+    }
+  ],
+  "evidenceNames": {
+    "log": "native-1124-populated-fog-public-save-continue-smoke.log",
+    "touch": "delegation-aircraft-drone-fog-recon1124.touch.jsonl",
+    "placement": "delegation-aircraft-drone-fog-recon1124.placement.jsonl",
+    "events": "native1124-drone-fog-recon-events.jsonl",
+    "pass": "native1124-populated-fog-public-save-continue-pass.json",
+    "failure": "native1124-populated-fog-public-save-continue-failure.json",
+    "profilePath": "native1124-inherited-profile-path.json"
+  },
+  "readinessClaim": {
+    "completeNormalMission": false,
+    "automaticReturnCertified": false,
+    "homeLandingCertified": false,
+    "technicalPass": false,
+    "playerReady": false
+  },
+  "nextAction": "Root review exact hashes; dry compile/load-only only on current frozen candidate after native lane release. If approved, execute guarded runner once using a fresh complete source manifest and explicit main1124 token. Preserve every failure; do not reuse this run/class after execution.",
+  "revision": "v3_InheritedInitializedProfile_ScopedEditorCandidate_PhysicalCleanup",
+  "nativeIdleObservations": "No additional Unity call performed: current task external-only; root owns native lane. Native lane/source idle must be verified by root before eventual load.",
+  "editorCatalogScope": {
+    "mechanism": "SkirmishBattleCatalogConfig.UseEditorValidationCatalog",
+    "ShippingAsset": "Assets/Game/Resources/SkirmishBattleCatalog.asset",
+    "shippingS005": "Planned/index-1/DefinitionId empty preserved",
+    "candidateOnlyChanges": [
+      "S005.Status=Playable",
+      "S005.PlayableScenarioIndex=SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex",
+      "S005.DefinitionId=current authored typed scenario definitionId skirmish.s005"
+    ],
+    "otherRowsFields": "Copied exactly and verified",
+    "lifetime": "Before native startup through public Continue; cleanup on owned Play closure and startup/error",
+    "shippingReadyClaim": false
+  }
+}

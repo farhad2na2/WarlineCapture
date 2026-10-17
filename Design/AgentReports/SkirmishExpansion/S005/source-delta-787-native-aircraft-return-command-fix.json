@@ -1,0 +1,13 @@
+{
+  "sourceHash": "4501a4ca112a4c3ccbd26ac90fcf4759e17e4f8e71289ca0a08e77d1853f57ed",
+  "changedFiles": [
+    "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+    "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs"
+  ],
+  "shippingRuntimeChanged": true,
+  "physicalMapConfigBudgetsRatesDeadlinesUnchanged": true,
+  "materialsIdentical": true,
+  "confirmedDefectProof": "native786-return-parking-flyover-regression-failure.json",
+  "scope": "Initialized aircraft Return now clears movement instead of adding a cruise-height parking pass; native approach/landing/taxi remain authoritative",
+  "normalInputVerification": "Pending"
+}

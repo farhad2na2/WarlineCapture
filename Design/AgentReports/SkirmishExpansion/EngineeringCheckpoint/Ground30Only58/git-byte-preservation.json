@@ -1,0 +1,651 @@
+{
+  "result": "ProjectedGitBlobAndCheckoutBytesEqualPinnedInput",
+  "isolated_repository": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\Ground30GitFilters\\isolated-6la052u4",
+  "actual_repository_staged": false,
+  "actual_repository_attributes_changed": false,
+  "checked_paths": 98,
+  "projected_attributes_sha256": "cac0cd5d72b5814dc146a00424b799c7726c5e355a04bca096c2fb9dfb9f5df1",
+  "preserved_crlf_paths": [
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs.meta",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs.meta",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs.meta",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.meta",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.meta",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs.meta",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.meta",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs.meta",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/candidate-existing.paths",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/pending-import.paths",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/receipt.json",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ground30-subset58-independent-review-20261015.json",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/head278-g30-58-compile-zyxol3v4/FINAL_SOURCE_RECHECK.json",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/head278-g30-58-compile-zyxol3v4/checked-owning-proof.zip",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_BA.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_BT.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_CE.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_FC.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_BA.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_BT.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_CE.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_FC.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_BA.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_BT.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_CE.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_FC.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_BA.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_BT.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_CE.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_FC.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_BA.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_BT.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_CE.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_FC.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/manifest.json",
+    "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+    "Design/AgentReports/SkirmishExpansion/GroundPilots/measured-pad-bounds-proposals-survey11-v2.json",
+    "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+    "Design/AgentReports/SkirmishExpansion/ProductionAdapter/production-authoring-native-20261015/Unity5-8-run02/RECEIPT.json",
+    "ProjectSettings/ProjectVersion.txt",
+    "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/PROOF_READY.json",
+    "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.meta.txt",
+    "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/manifest.json",
+    "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/workflow.json",
+    "Tools/CI/SkirmishProductionDrafts/GroundObjective30/manifest.json",
+    "Tools/CI/SkirmishProductionDrafts/GroundObjective30CollectionWorkflow/manifest.v2.json",
+    "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/manifest.json",
+    "Tools/CI/SkirmishProductionDrafts/GroundObjective30SceneGuidSuccessor/manifest.json",
+    "Tools/CI/build_skirmish_authoring_batches.py"
+  ],
+  "records": [
+    {
+      "path": ".gitattributes",
+      "sha256": "cac0cd5d72b5814dc146a00424b799c7726c5e355a04bca096c2fb9dfb9f5df1",
+      "bytes": 7064,
+      "git_blob": "06077c3a77ee443c47b635023b6a59be3b9d7481"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0",
+      "bytes": 45109,
+      "git_blob": "5c4332da9a740013e12737cd62efbce874edb247"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs",
+      "sha256": "97ce4618264011098b465c95da5fe88ea307fc403dd9d2c03fb6603ffbc11c2d",
+      "bytes": 1386,
+      "git_blob": "51d875d087c56a11c3a6f6cd73fcabe38bba5b0a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs.meta",
+      "sha256": "b4a171f3418e9ce3a22ce177454e291cc8314e934ab8dc4d3e4105e617f308af",
+      "bytes": 62,
+      "git_blob": "80a718fa251574f5157956f1a417d7bcd739b5e4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs",
+      "sha256": "50646833c3a33fa760ee70329c31038471223b995c46bdfb4b66d58e39a2433b",
+      "bytes": 3112,
+      "git_blob": "60866c5b269b207ea4b0faa8ecc27e71e3d4c3d5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs.meta",
+      "sha256": "3d09eaeed24845732c00f7cf9c5988c122496055856a10e3baa10c2636e2fce8",
+      "bytes": 62,
+      "git_blob": "b699915289013cb9c831719f267504de315c5895"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs",
+      "sha256": "6c589e26e359423e728f8f11fa7aaa09f5068f157e70854ec2b67dcbadfcb971",
+      "bytes": 27122,
+      "git_blob": "0018c2372f60c1b4ca8c5c1e5758dd8379b95ac9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs.meta",
+      "sha256": "2809e478e497e5ef36223c7e28b4ccea2bf576f38836116307d0bd4fdc1371ce",
+      "bytes": 62,
+      "git_blob": "9220d10b0a57c7b6406c8d99c985dc39193b1f16"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "sha256": "40c62d7cb0ea1027dde806ae3cd5d4a065e401fb699817e53c159ea6b0232618",
+      "bytes": 31026,
+      "git_blob": "b548414ed9a7e19d3933f9640499147e77c61fb7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.meta",
+      "sha256": "96e297e535e0268b5da20d823f296eb7373d3b0976247a91e9d242370487ff4c",
+      "bytes": 62,
+      "git_blob": "7bffd4e6e9cc0c022f4c2f9eeca2acab2fee469e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+      "bytes": 14730,
+      "git_blob": "da0970972453cf54a63c82c35ea2d1e80fc3ad93"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.meta",
+      "sha256": "4342e19db99d404d687a15414e095d2eef738d3c43d61370b6267132da3df8b0",
+      "bytes": 62,
+      "git_blob": "56d906851c31034f6932977eebdc43f071d5e4ec"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "sha256": "d957e25d59ceed0f8f258d62e8bcedb4576a7b5cd61653158a464012838276d7",
+      "bytes": 27053,
+      "git_blob": "2cf85e6ef2b34a39619b9acbbc1e814b0c03ab3e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "sha256": "9cf3916bca26e3951293e23e425c8267c69076e65a8b93e26b82033078ca5b3f",
+      "bytes": 18754,
+      "git_blob": "35e21195024f41e59bfd6ed876979012473172b6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs",
+      "sha256": "f9569468528cc9fb9dce4d7385854e959b6fb3b505419c59ed1405056079adad",
+      "bytes": 39776,
+      "git_blob": "7c9d2f1aa6ad9edfa15bd1e38e3c618e4742d507"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs.meta",
+      "sha256": "0c8365082938a86834c8f46c462fb48aa9d115afc4840f23370db7310bede2b2",
+      "bytes": 62,
+      "git_blob": "b53a6ff46fd9b38d67a4902c83b53222c8e8b9c6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c",
+      "bytes": 44342,
+      "git_blob": "5be73dbf9bea4a85cc2b30f41c514540a215112a"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs",
+      "sha256": "1e1d8d673fadae3e0a1954d2ad006eae81297eb7815456a9ccff2df7fb72fa85",
+      "bytes": 1323,
+      "git_blob": "e6f1726b60362dfd2aa44f5c2362ac1b688b09b9"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.meta",
+      "sha256": "cf2823ad99481361e57ba65de86cbb451bd14de3d62870066b503c37b5423b35",
+      "bytes": 62,
+      "git_blob": "41ecdca2cb7bc982b85a18e4bcef7d8ddc966b3f"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs",
+      "sha256": "1bca175f71fd74a5511477249970e2c3e2b8829221b52d8ef602cf0a3d11c2fa",
+      "bytes": 4949,
+      "git_blob": "bd97c4548f36b810f174881414781298f967e289"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs.meta",
+      "sha256": "04989e3738243d8071deb7913b176b282858ccb9ba34cd9423dd7f8551876b94",
+      "bytes": 62,
+      "git_blob": "cf41d57e3374dfa0e7a0045ec8dcd29cc35e1e88"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/CHECKPOINT.md",
+      "sha256": "08e9011691c32abd51403230f7f60cb82fd1b76fbdbfab6805360a0e7f427fb5",
+      "bytes": 3038,
+      "git_blob": "67f22f78179cc75d95cb0d660c2eece23fc011a8"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/candidate-existing.paths",
+      "sha256": "aecb55b4c9c1f6014c189cc807740dbfd0c656da3a5510a26502d4c6bf9e2bbf",
+      "bytes": 4831,
+      "git_blob": "22ee849ff1485f223a5d764a18ba18a5718e63a0"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/complete-stage.paths",
+      "sha256": "531a1250ca6c4cf07fa73440575c1d5bf7dd6698ef52a82dcb89b73027fe30e2",
+      "bytes": 9017,
+      "git_blob": "8ebf869f3c6e700584c3118188fb679fa0542a3b"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/pending-import.paths",
+      "sha256": "2f4cf8efa07080e95f3b8d2c31ec05b6f36fab86c3a97e28f222633dee40713b",
+      "bytes": 183,
+      "git_blob": "5a79fba1917d603ddc3e33ed69f4c119f1ce4789"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/Ground30Only58/receipt.json",
+      "sha256": "225ecfeb144fd260195aeb930d7c30fd9d3858f36f475c1032763fee93e84a9d",
+      "bytes": 14116,
+      "git_blob": "b36e854be864062d5a4fc19464aa8f8780ec1f75"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/ground30-subset58-independent-review-20261015.json",
+      "sha256": "654e7d6130d06d2cc13897183d8b9c1fe5742e74aed1dfc8161da14549ffc40c",
+      "bytes": 2040,
+      "git_blob": "2c79ea3f655bfb660537439c902ce0f9e0ad1615"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/head278-g30-58-compile-zyxol3v4/FINAL_SOURCE_RECHECK.json",
+      "sha256": "43eded6d13fee04ce9585a27f14dfef284042dbe21b53f1b87caf1645831731d",
+      "bytes": 405,
+      "git_blob": "1079b10a4d0dd826e44dbdbae8f2574f8bbed996"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/head278-g30-58-compile-zyxol3v4/checked-owning-proof.zip",
+      "sha256": "423a167b7594f73973d0a5e7259f6c705ef5c80a09405a9d4404771fac6e7ffb",
+      "bytes": 350079,
+      "git_blob": "dd0c68c4276d12d032c66ab9e4ed79eed6c56362"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_BA.json",
+      "sha256": "12337a140dbee582ef112aaacaf7afb95f2d46aca50980e383c263623b8fe1c8",
+      "bytes": 134906,
+      "git_blob": "e65aaca620ab835ee2c4b0899924e1be913dcb14"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_BT.json",
+      "sha256": "ecb3e56a1c1fe0ba41809b51166986f74bf6064fde685a23285412daf73c8ad9",
+      "bytes": 54782,
+      "git_blob": "d3eb9d238a2a3105057a5fb8ef7d0c7b65164d80"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_CE.json",
+      "sha256": "c1ce5999fd3ab8f21946664f0a15c1094859006921e94cb9cec900b0a82448d4",
+      "bytes": 54923,
+      "git_blob": "f72cb5d0ec6baa76563c17ff61ab4ec3cd5eedb3"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/AP_FC.json",
+      "sha256": "a44ee7e774fa446614848c5677cf65ed8cf1cd264bab951c7c59ccce93e56b20",
+      "bytes": 54761,
+      "git_blob": "347e8d7c998bec50364843c860d6c5792a4c4929"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_BA.json",
+      "sha256": "4b763edd9b0c93b7cf97add40c94af19ad43ef411339f1cf25dddd35561c636d",
+      "bytes": 96083,
+      "git_blob": "63ad7d7d630aa3af0b9521c9b73e1efaddf62a9f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_BT.json",
+      "sha256": "782a189830793167c2b7fe8b61622e3308b23c1bb5f450dcd4ff95ac375eb24b",
+      "bytes": 54766,
+      "git_blob": "3f2bd990ee408d935a6fcae7bc8634d4239a082c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_CE.json",
+      "sha256": "89d78f32d66e329f65966c858d2fe9dbb7563aeedcdbc8e7e6862403ea0a7457",
+      "bytes": 54907,
+      "git_blob": "099d5fa9a9c6111df41e31b1fe06a5d0da8af47c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/CC_FC.json",
+      "sha256": "9387b394d2ddbe45f109206cdba9c6f704c3459d67ee9f3f9d08548bdebf5cdf",
+      "bytes": 54745,
+      "git_blob": "ff8caaf4d8cd097d95d437f5811a088489bbee0f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_BA.json",
+      "sha256": "105d2db3bebae7d2ced0dd5de31a12641c13756f3c51d8d04de770cda9ae3ebf",
+      "bytes": 57860,
+      "git_blob": "7a17b7c44140ae7ccbaae70f61c4c0cff9c7326e"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_BT.json",
+      "sha256": "3ba1ac05498a3dbcc5fed18e5cda7287f9ca748eba759731f20291760dc26718",
+      "bytes": 54865,
+      "git_blob": "6b91e54a9677ace6b29be4f8aeae2d352a291957"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_CE.json",
+      "sha256": "5b443c7f051459d44a754474a22ef916905f556c588a5dcf2468bea54d746c2e",
+      "bytes": 55006,
+      "git_blob": "665c4338f4947e6b450e29191085dcb990fca5bf"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_FC.json",
+      "sha256": "7dc53345e89a9218d32445fe219a90f2dc07d7e3f0b2fd2b435f1cb53383feaa",
+      "bytes": 54844,
+      "git_blob": "6e5580a9834ea5beff9a98cedf8390e2f45a656f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_BA.json",
+      "sha256": "eed30835aa75ebde7bb3b8531e9a07992e1d7b21d4390a7626af767ad87c5f0f",
+      "bytes": 86020,
+      "git_blob": "9887c7ac93011be571add5488ad8a7ed5dfe89b0"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_BT.json",
+      "sha256": "e92f3d68b574e3c0a14367c69aae38f35166f43c12d34999b6da11263007203b",
+      "bytes": 54782,
+      "git_blob": "03b6397101f6541133b8b662a71ca063bebb7b1c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_CE.json",
+      "sha256": "e6e2b43e3900e2376aa76425f8c1a17a684dd3597920379fb69dcd1c45e4e781",
+      "bytes": 54923,
+      "git_blob": "5b744914b113a11467ed46c39f6e9553e4b13f06"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/IB_FC.json",
+      "sha256": "8f0e5ed24cc3cb5f833a60be5b38c9d77d5ba98dd53d497f0ebb62aa6fbf97ba",
+      "bytes": 54761,
+      "git_blob": "efcfdc2941c1e5d3cfd5b071ec965eef99df302d"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_BA.json",
+      "sha256": "aa3008442c9dae2f040bac465a3d36d7be7d2d14e941271eb189ac8bd85dbbc7",
+      "bytes": 115261,
+      "git_blob": "74c6481cc43bcd2e7fcdef4e88efaaf206dd6d21"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_BT.json",
+      "sha256": "c22ac4d3dfd273553746b80c063997fd9c839019c3e06c91feda91c90202133c",
+      "bytes": 54710,
+      "git_blob": "93f13e80be817867fa5689a9b1aef358348ea1cd"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_CE.json",
+      "sha256": "9d33b6af044c56367c581de822cb9e786aeb15870a0a44de6f1da9934de20a95",
+      "bytes": 54851,
+      "git_blob": "85ece0cdcc900e4c295ebca755c92877826b8199"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/MP_FC.json",
+      "sha256": "db128ef8f389c06f6f614d8464b1572a291114cc2cc2e9a00a2d765ada63c434",
+      "bytes": 54689,
+      "git_blob": "6f2c31e08398c72b3a0d8a36f994ebabe3ce1df5"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/manifest.json",
+      "sha256": "ffcb26db314df6cc47df9c30fcc85b7262c4a88cb058338f8db110dc851a2c2f",
+      "bytes": 5166,
+      "git_blob": "382eabe2745f433a7f69b892709a5b9db1c4b94f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+      "sha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+      "bytes": 1302003,
+      "git_blob": "65134408ad281cf193be52fead9f91f3fd01454f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/measured-pad-bounds-proposals-survey11-v2.json",
+      "sha256": "9303662a122caaa1256f67fc21eeb8bd684364958ecd5f42ae8753d626ef7634",
+      "bytes": 200546,
+      "git_blob": "3c368d36fcbb83c7daf3d6df2a5a0e6ee29b904a"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+      "sha256": "854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b",
+      "bytes": 110006,
+      "git_blob": "0c5c92400ad9a206a88925522b5f7cc8804337d6"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/production-authoring-native-20261015/Unity5-8-run02/RECEIPT.json",
+      "sha256": "f6b147861a3e59b3e50f54ca82a65ee1e2f61213e5d321668ee637ac29474e0b",
+      "bytes": 1253,
+      "git_blob": "abf2fba2d3fdd8ef39637f5afb1fc8a21bdc3888"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/production-authoring-native-20261015/Unity5-8-run02/passed-corrected-production-authoring-preparation.zip",
+      "sha256": "2d62d285bd36ba9ceb41fd565239abc92e81544befda095d9802096b1df87983",
+      "bytes": 15771,
+      "git_blob": "29e08aed707b065ed234e4124e90d218afe83a5a"
+    },
+    {
+      "path": "Packages/packages-lock.json",
+      "sha256": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51",
+      "bytes": 17132,
+      "git_blob": "7f1e84f920054870d3f66d65e7e0fab55cdbb988"
+    },
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "sha256": "09292e3f32140b54a6f8b5b377812ef2a19fd855ee0a3cb30d2a5fa5f421b10a",
+      "bytes": 85,
+      "git_blob": "b532e7ef39b6aba3f90cc7108ea2bb95c026dbfb"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Attributes/fragment.gitattributes",
+      "sha256": "dc84178edf8f78f86764abf362a1a66dd8112e86c066c87cb2b0b5faca46a2e4",
+      "bytes": 4922,
+      "git_blob": "fef83ec2a5d55eee8d2a280da5a7c1d5d35f07a5"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Attributes/projected.gitattributes",
+      "sha256": "cac0cd5d72b5814dc146a00424b799c7726c5e355a04bca096c2fb9dfb9f5df1",
+      "bytes": 7064,
+      "git_blob": "06077c3a77ee443c47b635023b6a59be3b9d7481"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/OPERATIONS.txt",
+      "sha256": "9699aa5113be1351a3f0f4c1b9fb6482b401d459f69114d8edf89856e2778aea",
+      "bytes": 3139,
+      "git_blob": "7c3702615a26fb7aa83df64411b959f4e7abf2f1"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/PROOF_READY.json",
+      "sha256": "254c68c05e50564964643ec64a9b92b3a1fb9bd4d855cbf84dd0d49dbdfbd9fc",
+      "bytes": 1387,
+      "git_blob": "69946f49890ff3254714cf8e537da2b94b9959a8"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs.txt",
+      "sha256": "d7f644e59c8575b425a6a681c2ab52d50c993d797d3b648690f701239979bfd0",
+      "bytes": 45109,
+      "git_blob": "5c4332da9a740013e12737cd62efbce874edb247"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs.txt",
+      "sha256": "97ce4618264011098b465c95da5fe88ea307fc403dd9d2c03fb6603ffbc11c2d",
+      "bytes": 1386,
+      "git_blob": "51d875d087c56a11c3a6f6cd73fcabe38bba5b0a"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs.txt",
+      "sha256": "50646833c3a33fa760ee70329c31038471223b995c46bdfb4b66d58e39a2433b",
+      "bytes": 3112,
+      "git_blob": "60866c5b269b207ea4b0faa8ecc27e71e3d4c3d5"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs.txt",
+      "sha256": "6c589e26e359423e728f8f11fa7aaa09f5068f157e70854ec2b67dcbadfcb971",
+      "bytes": 27122,
+      "git_blob": "0018c2372f60c1b4ca8c5c1e5758dd8379b95ac9"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs.txt",
+      "sha256": "40c62d7cb0ea1027dde806ae3cd5d4a065e401fb699817e53c159ea6b0232618",
+      "bytes": 31026,
+      "git_blob": "b548414ed9a7e19d3933f9640499147e77c61fb7"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.txt",
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+      "bytes": 14730,
+      "git_blob": "da0970972453cf54a63c82c35ea2d1e80fc3ad93"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "sha256": "d957e25d59ceed0f8f258d62e8bcedb4576a7b5cd61653158a464012838276d7",
+      "bytes": 27053,
+      "git_blob": "2cf85e6ef2b34a39619b9acbbc1e814b0c03ab3e"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs.txt",
+      "sha256": "9cf3916bca26e3951293e23e425c8267c69076e65a8b93e26b82033078ca5b3f",
+      "bytes": 18754,
+      "git_blob": "35e21195024f41e59bfd6ed876979012473172b6"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs.txt",
+      "sha256": "f9569468528cc9fb9dce4d7385854e959b6fb3b505419c59ed1405056079adad",
+      "bytes": 39776,
+      "git_blob": "7c9d2f1aa6ad9edfa15bd1e38e3c618e4742d507"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs.txt",
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c",
+      "bytes": 44342,
+      "git_blob": "5be73dbf9bea4a85cc2b30f41c514540a215112a"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.meta.txt",
+      "sha256": "cf2823ad99481361e57ba65de86cbb451bd14de3d62870066b503c37b5423b35",
+      "bytes": 62,
+      "git_blob": "41ecdca2cb7bc982b85a18e4bcef7d8ddc966b3f"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundObjective30PreparationValidation.cs.txt",
+      "sha256": "1e1d8d673fadae3e0a1954d2ad006eae81297eb7815456a9ccff2df7fb72fa85",
+      "bytes": 1323,
+      "git_blob": "e6f1726b60362dfd2aa44f5c2362ac1b688b09b9"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Sources/Assets/Tests/Editor/SkirmishExpansion/SkirmishStaticAuthoringBudgetTests.cs.txt",
+      "sha256": "1bca175f71fd74a5511477249970e2c3e2b8829221b52d8ef602cf0a3d11c2fa",
+      "bytes": 4949,
+      "git_blob": "bd97c4548f36b810f174881414781298f967e289"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Workflow/Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+      "sha256": "90771567f42e221c4958b6bfe5003a1fbc5b5169b3cbdfcb440c4a784870518f",
+      "bytes": 8318,
+      "git_blob": "9f4c1cd9e4bad859e0e79e01ab4a3a4336c6da9c"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/Workflow/Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+      "sha256": "af0fbc3e9d30f2eed5c4188d149d60063812c06dfa4d3ff793ea8b4607480606",
+      "bytes": 14305,
+      "git_blob": "4cd3ddd744342a8bf23e35b07e7d9118db97a4ae"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/manifest.json",
+      "sha256": "e16d04d462d9a4785cfe3b8e653b8f7ee2e845069381baeea12482f741f8cf3e",
+      "bytes": 15905,
+      "git_blob": "2e13513c408d612de73dff78a1d45e6a7cb5ed92"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/Ground30Subset58/workflow.json",
+      "sha256": "365e92e3df31636f523f2483c27af532a02002a1910404e68cd1231e7a9c12c9",
+      "bytes": 1554,
+      "git_blob": "a51b5762cd84f0b994f58082cd8fb60e2dc395ed"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+      "sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc",
+      "bytes": 1569861,
+      "git_blob": "1ca13f92297dbc26b009eb625b5a50b5f0bd714e"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/manifest.json",
+      "sha256": "423354bad816bc6b9d703dc0b25f762f244946aacc99b1fdbc383b6eda594677",
+      "bytes": 1272,
+      "git_blob": "6cea1aa1d1a0339c82e068f0e93835884c09a422"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30CollectionWorkflow/manifest.v2.json",
+      "sha256": "c19e4a80e4aed7e8e575f2000a2c219fab280de9eb403490ff9378d4d0b0fbe3",
+      "bytes": 2391,
+      "git_blob": "a6de49343ecfb2feabf728713ed8af23eb5f653b"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/COLLECTION_WORKFLOW.txt",
+      "sha256": "9953aecdcac95cc39ba7e3751be3fc1c774cbfdd3576b46d0d6e669c0d298793",
+      "bytes": 2745,
+      "git_blob": "3a7f0912a94513d147a18bc6d0198fb68ea1f652"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/OPERATIONS.txt",
+      "sha256": "8a4722320e7113aee70c381ef2888990bf9bed00957d73912ea336e39e65c684",
+      "bytes": 3637,
+      "git_blob": "c52bdd4aad82cb8d1ac5ccdf7a3be72ff26f4a3c"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30Collector/manifest.json",
+      "sha256": "979dafe907b0d5d1a0f7a683796b27cae4693a4a10697aeb3340ad943e10c2f7",
+      "bytes": 5603,
+      "git_blob": "d21a057bd95b8362cae8fb6cc4830dbc26583a75"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30SceneGuidSuccessor/manifest.json",
+      "sha256": "50b615a33ef85604dbf84742d116b25459566024de3fe532ee665cec914b1eda",
+      "bytes": 732,
+      "git_blob": "189d715c086e0abaa0f5e26571a2fa5aa891775e"
+    },
+    {
+      "path": "Tools/CI/build_skirmish_authoring_batches.py",
+      "sha256": "b4188169f083fd71f849893691cdf69e873e6569ee008e00da81cc0dd172b5c1",
+      "bytes": 12956,
+      "git_blob": "d865ec3f38e967dbbe59de0f62dcbb04588dfa1c"
+    },
+    {
+      "path": "Tools/CI/build_skirmish_ground_objective30.py",
+      "sha256": "cdc1934fbc87bb04cf0f9612de3ccef3229278cb9d587b6f5d3659b3aebd7c1c",
+      "bytes": 7897,
+      "git_blob": "975281a3298378b26dda59fe2e915c52b115e99f"
+    },
+    {
+      "path": "Tools/CI/build_skirmish_ground_objective30_test.py",
+      "sha256": "bd14643578e3623d823fbed4a5d8c36cf64ec2dbc5761805da52314d3389d8b7",
+      "bytes": 2894,
+      "git_blob": "ecda09d82e87c562c62fffc446418f59b7a55a03"
+    },
+    {
+      "path": "Tools/CI/ground30_subset58_workflow_test.py",
+      "sha256": "e9f088aa91841e10bda5b7c87162e577d65c302dc0b2c26ea2848f820d146d47",
+      "bytes": 2454,
+      "git_blob": "56d44a3a9b98712ed93d0c2efec5ba57d4e53d7e"
+    },
+    {
+      "path": "Tools/CI/invoke_skirmish_ground_objective30_collection.py",
+      "sha256": "90771567f42e221c4958b6bfe5003a1fbc5b5169b3cbdfcb440c4a784870518f",
+      "bytes": 8318,
+      "git_blob": "9f4c1cd9e4bad859e0e79e01ab4a3a4336c6da9c"
+    },
+    {
+      "path": "Tools/CI/prepare_ground30_subset58_stage_list.py",
+      "sha256": "930e7cab9ec1291cf3f1ec77594fdb6c33da70e83e66e2a7468e5ee0b3d96286",
+      "bytes": 6949,
+      "git_blob": "3d090e1c663c3a0fc868498d36e270aae9b65190"
+    },
+    {
+      "path": "Tools/CI/qualify_skirmish_ground_objective30_collection.py",
+      "sha256": "af0fbc3e9d30f2eed5c4188d149d60063812c06dfa4d3ff793ea8b4607480606",
+      "bytes": 14305,
+      "git_blob": "4cd3ddd744342a8bf23e35b07e7d9118db97a4ae"
+    },
+    {
+      "path": "Tools/CI/restore_skirmish_ground30_authority.py",
+      "sha256": "df6af32822a7a8bd22181b12d4afd8d9669531c1a81b2358acf6990cb187c780",
+      "bytes": 2232,
+      "git_blob": "4d219bb766fb0ba694d60cb9f8d3c1aed23ebcc3"
+    },
+    {
+      "path": "Tools/CI/restore_skirmish_ground30_authority_test.py",
+      "sha256": "69f1bee26b1d774fba044a6d6941f809d556a3972377aa3d815b781ac770ee52",
+      "bytes": 1994,
+      "git_blob": "92880dc1a4c42616589ebb1acacc497135b82c24"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_collection_test.py",
+      "sha256": "504507e19dc3b7c4a3b5c832ac1bcb403e40fff2f08a6624442625165e2d666f",
+      "bytes": 14278,
+      "git_blob": "09623510d0ca5cd52a8326659035ac225e25884f"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_contract.py",
+      "sha256": "b856645605ea00ec7d4be2b2d33224063f0e1f2a46a244ddabd4f5ac7cff72ae",
+      "bytes": 8859,
+      "git_blob": "b06b366da9e2949bf26868d1d49515a98eaec503"
+    },
+    {
+      "path": "Tools/CI/skirmish_ground_objective30_contract_test.py",
+      "sha256": "0327934cd189f18014397fbd67c4df103eaa1948505ad40827c94cea5ad67b80",
+      "bytes": 4458,
+      "git_blob": "4d1ae388b71b64c81a725f60398277c3022e1d2a"
+    },
+    {
+      "path": "Tools/CI/skirmish_head278_ground30_58_offline_compile.py",
+      "sha256": "5650be66bc9baa68f3e6ce8ad994312091eb251a4b310fa82cbc9fa0e64b3411",
+      "bytes": 8723,
+      "git_blob": "17a5b2076eca20447c862e9dd96da388ee83581e"
+    }
+  ]
+}

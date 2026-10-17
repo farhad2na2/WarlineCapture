@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1126",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1102-boarded-recovery-post-source-manifest.json",
+  "preflightManifest": "final-1126-boarded-recovery-preflight-source-manifest.json",
+  "fixtureSha256": "ae6088efeaf9887a1ea76f383a10bd88c39c92eeea88d1c26696f4776570b439",
+  "validationMethod": "S005BoardedRecovery1126.RunFastApcValidation"
+}

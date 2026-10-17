@@ -1,0 +1,16 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "sourceHash": "9f44bb18e6f02031fcc63272eadf8abb865afa7e0e310228ed4a395cffce747e",
+    "result": "Census",
+    "waterRenderers": 0,
+    "bankMeshes": 0,
+    "channelMeshes": 0,
+    "waterMaterials": 0,
+    "joins": 1,
+    "pavedMaterials": 4,
+    "earthMaterials": 4,
+    "joinRows": [
+        "Map_CityEdgeAirfield/Roads/RoadChunk_6_2/Road_Dirt_With_Sidewalk_Straight/Dirt -> Map_CityEdgeAirfield/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Intersection/Asphalt seam=(1054.86, 448.60) dir=(0.00, -1.00) halfWidth=2.68"
+    ],
+    "skipped": []
+}

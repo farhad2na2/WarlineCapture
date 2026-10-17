@@ -1,0 +1,24 @@
+{
+  "result": "Failed",
+  "wrapper_exit": 1,
+  "required_marker_present": false,
+  "reported_reason": "candidateSourceChangedDuringRun",
+  "native_screenshots": [],
+  "archive_sha256": "4fec0aafb0843f9c822784a7871cba4092c1bda63fd8a99fe8d3965efcebd895",
+  "logs": [
+    {
+      "name": "s005-native-review-20261014-01.log",
+      "sha256": "21a8f693a8dbad3ff78cc26a882c493fa6e3b5a577b700297703acb19be8aa0b"
+    },
+    {
+      "name": "s005-native-review-20261014-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "s005-native-review-20261014-01.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Startup screenshot diagnostic only; no gameplay qualification",
+  "suspected_cause": "Ignored SceneDependencyCache .meta imports occurred after initial fingerprint; exact before/after manifests unavailable, so cause remains provisional"
+}

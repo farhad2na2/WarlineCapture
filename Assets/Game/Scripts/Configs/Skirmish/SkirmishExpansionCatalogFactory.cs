@@ -4,6 +4,10 @@ namespace Game.Configs
 {
     public sealed class SkirmishExpansionAuthoredSet
     {
+        // Preserve the full packaged catalog as new definitions are authored.
+        // The concrete fields below remain compatibility adapters for existing callers.
+        public System.Collections.Generic.IReadOnlyList<SkirmishScenarioDefinitionConfig> Definitions =
+            System.Array.Empty<SkirmishScenarioDefinitionConfig>();
         public SkirmishObjectiveConfig ObjectiveBa;
         public SkirmishArmyProfileConfig ArmyGround;
         public SkirmishArmyProfileConfig ArmyAir;
@@ -179,6 +183,10 @@ namespace Game.Configs
             string catalogId,
             out SkirmishScenarioDefinitionConfig definition)
         {
+            definition = null;
+            if (string.IsNullOrEmpty(catalogId))
+                return false;
+
             if (set != null && set.DefinitionS005 != null && set.DefinitionS005.CatalogId == catalogId)
             {
                 definition = set.DefinitionS005;
@@ -203,8 +211,27 @@ namespace Game.Configs
                 return true;
             }
 
-            definition = null;
-            return false;
+            if (set != null && set.Definitions != null)
+            {
+                for (int i = 0; i < set.Definitions.Count; i++)
+                {
+                    SkirmishScenarioDefinitionConfig candidate = set.Definitions[i];
+                    if (candidate != null &&
+                        string.Equals(candidate.CatalogId, catalogId, System.StringComparison.Ordinal))
+                    {
+                        // A malformed generic catalog must not silently choose an
+                        // arbitrary definition. Packaged validation also reports duplicates.
+                        if (definition != null)
+                        {
+                            definition = null;
+                            return false;
+                        }
+                        definition = candidate;
+                    }
+                }
+            }
+
+            return definition != null;
         }
 
         public static SkirmishSizeConfig Size(SkirmishExpansionAuthoredSet set, SkirmishSizeId size)

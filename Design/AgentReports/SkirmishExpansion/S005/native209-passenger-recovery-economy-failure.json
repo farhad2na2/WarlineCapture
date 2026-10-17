@@ -1,0 +1,25 @@
+{
+  "result": "Failed",
+  "sourceHash": "005c7ab72a705ea453e90858882dfb8fd00dd35bafcf2aeb404ba104b9e1709e",
+  "scope": "Native APC passenger recovery passed; resumed manual mission failed after spending without logistics",
+  "log": "native-209-reinforced-boarded-apc-save-resume-en.log",
+  "logSha256": "938e7542706308b48cf6d2a27044f9f8c3a52bec7b6d3bc87e73fd74c51e6e20",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "passengerRecovery": {
+    "result": "Passed",
+    "pausedPassengers": 2,
+    "restoredAndUnloaded": 2,
+    "nativeGestures": 42,
+    "oldPhysicalGone": 385,
+    "paidReceiptPreservedOnce": true,
+    "sameAttempt": true,
+    "savedElapsed": 140.553,
+    "receiptViolations": 0,
+    "visibilityObservation": "native209-unloaded-visibility-observation.json"
+  },
+  "economyFailure": "native209-economy-failure-observation.json",
+  "earlyCutoff": "Only failed test fixture deadline shortened; game state/clock/resources/outcome unchanged",
+  "countedWin": 0,
+  "playerReady": false
+}

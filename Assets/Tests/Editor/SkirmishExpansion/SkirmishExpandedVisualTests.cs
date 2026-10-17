@@ -424,6 +424,10 @@ namespace Game.Tests.Editor
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var packaged = SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(packaged, "Visual compile fixture requires actual packaged binding.");
+            Assert.IsTrue(packaged.TryGetDefinition("S002", out var packagedDefinition));
+            authored.DefinitionS002 = packagedDefinition; // Keep visual stand-in registry/production fixtures independent.
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,
@@ -460,6 +464,10 @@ namespace Game.Tests.Editor
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var packaged = SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(packaged, "Visual compile fixture requires actual packaged binding.");
+            Assert.IsTrue(packaged.TryGetDefinition("S003", out var packagedDefinition));
+            authored.DefinitionS003 = packagedDefinition; // Keep visual stand-in registry/production fixtures independent.
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,
@@ -496,6 +504,10 @@ namespace Game.Tests.Editor
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var packaged = SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(packaged);
+            Assert.IsTrue(packaged.TryGetDefinition("S004", out var packagedS004));
+            authored.DefinitionS004 = packagedS004; // Actual physical binding; keep factory-only lookup/publication fixtures.
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS004.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,

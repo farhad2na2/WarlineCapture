@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-enemy-commander-v1/EnemyPerceptionFocused1197.cs",
+      "entry": "EnemyPerceptionFocused1197.LoadOnly"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 515,
+      "executeMs": 13,
+      "assemblyName": "PipelineRunScript_EnemyPerceptionFocused1197_2b7a5e7d073e4c0ca2a111c5aa09e6f0",
+      "success": true,
+      "result": null
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

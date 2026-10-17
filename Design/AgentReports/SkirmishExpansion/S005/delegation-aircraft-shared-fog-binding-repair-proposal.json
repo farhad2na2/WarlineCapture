@@ -1,0 +1,157 @@
+{
+  "status": "ExternalReadOnlyRepairProposalNotImplemented",
+  "scope": "Extend the existing SkirmishFogService/SkirmishContactSight and native ScanIntel authority; no parallel invented fog. Preserve Campaign, physical maps, costs/caps/deadlines and explicit development FullVision support.",
+  "existingAuthority": "No FogVisibility component/system exists in current Assets or Packages C# sources. Existing actual state is SkirmishContactSightComponent, SkirmishFogStateComponent, native ScanIntelLastSeen/UnitScanOrder/feed. Use these owners rather than assuming a nonexistent FogVisibility adapter.",
+  "sourceHashes": {
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset": "3f43681524158159de5c03838de6c603289743edbcd8431538b97be5b0cb08b6",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs": "f16754231d6eda98f2b2f28fd7750656bb01a4b7fc6a798c672f9e1e6b8219b8",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs": "6844b7c855f8946204e7ca45e924952b850956d15a5a977a979e49f60559910a",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyGroupSystem.cs": "b9cba24531a4e5c9617bbb5878c6b1d548f9507943e8f24976b613d2b8264b4b",
+    "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs": "66cb59bc46cdb3e27b70cd2b7a20b43a73cdaf1b05b9dad939e19e3698f3d051",
+    "Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs": "e83d08346be0c88d89681284102ba8bc91e2ad2f78b45a3caa8f1b77fbf15990",
+    "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs": "947ba28af9b954fc741990da937c79e260320a0ee1612ec0167df9cebcbe8e64",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs": "4a2c26b230b848b9f3fb26723999ae2e1340232ed8f333faf74c873adc08f45e",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs": "330b5494f0f393a9aeb67a15ba63d0213e44ffc1e40861d2183640f0553e7703",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs": "beebc73fda43d3d79a6e557c50c68e4ba385465804e90ccd7cef822eedf74791",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs": "7755dfbcf0d9b29f5218379c20236833daf9587956642e2d836f22a5e3f490fd",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs": "bd28a73a7d561fc992294cdc23f132f3715f9db836d595f186e2cc3de493f90b",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultHudProjection.cs": "c7e86865730e9186bbd8ace9cc8d5782bef4a8ea21c76c1ad681842c159f3295",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs": "a821bac4c57aea8eb2f2ad917833a7d6b5cf89800ba6f5982273b9528393189c",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs": "167a4b03d02fa2afc8b73a41b0c59395e82cc79ea7fe388a8b9f2426aa0752bb",
+    "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs": "c0089f6e5910833519b3b736fab74f4679bd9958fed04d582a57c61eb5e21d72",
+    "Assets/Game/Scripts/Rendering/Systems/UnitModelSpawnSystem.cs": "a517aef14b074c0a2c732b627c598c6b34c500dfa04293d7c3a956bf254484b0",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualInstanceRecord.cs": "d6f161b4613e99d1c4131fc32d38c2037b31c5a953e01fc76b2bdb291ca57e26"
+  },
+  "sharedConfigConsumers": [
+    "S002",
+    "S003",
+    "S004",
+    "S005"
+  ],
+  "consumerProof": "Each typed SkirmishScenario asset line30 references SharedFog GUID04b7de727d214decb18d44a0a1156838. S001 uses legacy/fallback; do not assume it consumes this asset.",
+  "provedMissingBindings": [
+    {
+      "finding": "Projection only spawn/adoption, no live observer writer",
+      "locations": [
+        "SkirmishScenarioSpawnSystem.cs345",
+        "SkirmishProductionService.cs123",
+        "SkirmishFogService.cs44\u201353"
+      ],
+      "effect": "WithFullVision0 unknown enemies never acquire visibility through movement/Scan. Visible\u2192LastSeen\u2192Unknown occurs per Project call, not frame; repeated paid adoption can erase prior sight irrespective of elapsed time."
+    },
+    {
+      "finding": "Expiry configured but unused",
+      "locations": [
+        "SkirmishArmyGroupSystem.cs54",
+        "SkirmishFogStateComponent.LastSeenExpireSeconds",
+        "SkirmishSetupCompiler.cs288"
+      ],
+      "effect": "No runtime expiry consumer found. Native ScanIntelLastSeen frame retains original scan-start frame; recurring Scan reveal cannot treat it as elapsed-time update."
+    },
+    {
+      "finding": "NativeScan metadata disconnected from targeting visibility",
+      "locations": [
+        "ScanIntelCommandSystem.cs953\u2013969",
+        "ScanIntelCommandSystem.cs985\u2013996"
+      ],
+      "effect": "Scan writes ScanIntelRevealedTag and LastSeen/feed; does not callFog authority orupdateCombatTargetPolicy.Visible."
+    },
+    {
+      "finding": "Player-perspective visibility reused by enemy planner",
+      "locations": [
+        "SkirmishFogService.cs49",
+        "SkirmishEnemyStrategySystem.cs134"
+      ],
+      "effect": "Faction1 is always visible in global player projection, so enemy planner always counts player troops even without legal enemy observation. Observer faction must be explicit, not alter enemy resources or autonomous gameplay."
+    },
+    {
+      "finding": "Minimap publishes live enemy transforms outside Campaign defense",
+      "locations": [
+        "MatchHudMinimapMarkerSystem.cs74",
+        "MatchHudMinimapMarkerSystem.cs173\u2013186"
+      ],
+      "effect": "RequireObservedIntel is defense-only; Skirmish Unknown/LastSeen actors still leak live transform/Entity handle."
+    },
+    {
+      "finding": "Render/picking has no Skirmish sight bridge",
+      "locations": [
+        "NoSkirmishContactSight consumer in Rendering systems",
+        "SkirmishArmyCommandService.cs104",
+        "UnitRenderBudgetDecisionSystem.cs265\u2013285"
+      ],
+      "effect": "Hidden-target command rejection exists, but unseen actor visuals and marker/picking discovery do not share it. Rendering must combine fog with existing LOD/transport/death visibility without deactivating gameplay GameObjects."
+    }
+  ],
+  "minimalRepairSteps": [
+    {
+      "step": 1,
+      "owner": "ExistingSkirmishFogService",
+      "change": "Own explicit IsVisibleToFaction/ObserveContact/Expire operations scoped to matching expanded session/attempt. Own faction always visible to itself; FullVision ruleset symmetric and explicit. Keep current IsVisible as player-facing compatibility wrapper.",
+      "state": "Preserve existing byte-layout of SkirmishContactSightComponent and FogState to avoid rejecting prior raw native checkpoints. Add a supplemental registered per-contact knowledge buffer/component under this same authority with observer faction, last observed cell/position/time and current-source provenance; player Sight remains derived projection, not another writer.",
+      "warning": "Extending existing serialized component fields changes UnsafeUtility.SizeOf and rejects old native saves (CheckpointParts370/400). New optional registered state with explicit old-save initialization/migration is safer; no fixture edits old Payload."
+    },
+    {
+      "step": 2,
+      "owner": "SharedSimulationFogUpdate",
+      "change": "Refresh from actual living own observer actors and native Scan observations, then expire when positive simulation time passes existing LastSeenExpireSeconds. Pause freezes observation age. Direct acquisition should use existing source UnitCombat.AggroRangeCells/ThreatDetector radius with explicitly documented semantics, not invent a free longrange observer or modify weapon/rate budgets.",
+      "unresolvedDesignChoice": "No authored sight radius/line-of-sight field exists. Existing AggroRangeCells is actual source-acquisition radius, not independently certified vision. Root must record/review the narrow reuse policy; no arbitrary worldSightRadius constant or new line-of-sight geometry system."
+    },
+    {
+      "step": 3,
+      "owner": "NativeScanIntelCommandSystem.RevealEntity",
+      "change": "For actual source+target matching expanded attempt, route the native revealed target to Fog ObserveContact with source faction, actual target position, actual simulation time and request/source attribution. Preserve Campaign native scan tags/LastSeen/feed behavior when expanded identity absent. Do not infer observer faction from target.FactionId; source supplies it.",
+      "warning": "Native feed/LastSeen Frame uses scanStartedFrame repeatedly; expiry uses actual observation simulation time. Keep source request/frame for audit, not as freshness clock."
+    },
+    {
+      "step": 4,
+      "owner": "Attack/autoacquisition/playerARIA/enemyperception",
+      "change": "Use correct attacker/observer faction in shared target eligibility and expanded predicates; Update enemy strategy visible-force queries and own-site discovery. Keep target domain/protection/friendlyfire restrictions. GenericCampaign nonexpanded behavior unchanged.",
+      "exactConsumers": [
+        "SkirmishArmyCommandService.cs25/104/153",
+        "SkirmishExpandedEngagementService.cs123/193/224",
+        "SkirmishSharedCombatBinding.cs20",
+        "SkirmishAriaPublicProjection.cs251/283",
+        "SkirmishEnemyStrategySystem.cs134/261/296",
+        "UnitEngagementSystem.cs candidate target policy",
+        "UnitAttackSystem.cs target eligibility"
+      ],
+      "warning": "CombatTargetPolicy.Visible is one global byte. A player-perspective invisible hostile must not hide enemy own units from its planner or deny legal enemy attacks. Use local per-observer eligibility or read-only knowledge lookup in generic jobs when matching expanded actors, not global faction1 visibility for both."
+    },
+    {
+      "step": 5,
+      "owner": "Minimap/world visuals/picking/HUD",
+      "change": "Player Unknown no enemy live marker/model/health/pickable target; LastSeen uses frozen saved position/age and no live Entity handle. Visible uses live observed state. Existing enemy base public location remains objective knowledge, but live health remains last-observed. Combine fog visibility with actual renderer LOD/death/transport owner, avoid root SetActive/Disabled on simulation actors.",
+      "exactConsumers": [
+        "MatchHudMinimapMarkerSystem.cs CollectMarkersJob",
+        "SkirmishBaseAssaultHudProjection.cs38\u201352 and118\u2013125",
+        "UnitRenderBudgetDecisionSystem.cs265\u2013285",
+        "UnitModelSpawnSystem.cs642\u2013651",
+        "RtsSelectionPointerTargetCommandCompositionSystemHelper.cs target candidate discovery",
+        "SkirmishVisualInstanceRecord.cs managed instances/building render owner"
+      ],
+      "warning": "Multiple render visibility writers can resurrect hidden actors; place mask at existing final rendering owner, including managed building/selection/healthbar/VFX surfaces. No Campaign scenery hiding."
+    },
+    {
+      "step": 6,
+      "owner": "Checkpoint/config/builders/tests",
+      "change": "Register new optional knowledge state and rebase its simulation timestamps; retain exact faction/source/saved frozen pose and expiry on Continue. Old accepted fullVision snapshots preserve authored snapshot rule or fail with explicit supported migration/version reason. After native repair passes, root maySerializedObject edit accepted shared config developmentFullVision0 while idle; no YAML handedit. ConfigureSharedFog currently resets developmentFullVision=true (IntelConfig24\u201325), so fix builder policy deliberately, keep debugFullVision explicit separate API.",
+      "testsAffected": [
+        "SkirmishExpandedArmyTests.cs27 assertsfullVisiontrue",
+        "SkirmishExpandedDefinitionTests.cs51 assertsfullVisiontrue",
+        "SkirmishNativeCheckpointParts/Clocks tests newoptionalstate",
+        "S002/S003/S004/S005 native visibility/ARIA regressions after shared config change"
+      ]
+    }
+  ],
+  "focusedTestsBeforeNative": [
+    "Actual World with live source and hostile actor: farUnknown attack rejected, no live minimap/render target; approach within existing acquired range Visible; leave range LastSeen frozen cell/pose, expires at configured20s not next Project/adoption; pause120zero-delta frames noagechange.",
+    "Native ScanIntelCommandSystem update creates own actual accepted Scan/UnitScanOrder/feed and routes revealed target into same Fog authority; wrong source-faction/attempt never shares intel. No tests call Reveal directly to claim Scan binding.",
+    "Faction symmetry: own actor visible toown observer; enemy seesplayeronlywithenemy actual observation. Player Scan doesnotgrant enemy knowledge; FullVision explicit bothfactions; Campaign without expanded components unchanged.",
+    "Minimap/render/picking/HUD use sameUnknown/LastSeen/Visible; LastSeen markerposition frozen withno liveEntity handle; unknownhealth preservesagedlastobservation, nohealthleak. LOD/transport/death changes do notoverridefog.",
+    "Native checkpoints roundtrip knowledge/source/time, atomicrestore andexpiry rebasing; old rawSightcomponent checkpointsize retained; legacydebugFullVision savedpolicy explicit.",
+    "S002\u2013S005 sharedtypedconfig andaffectednativeARIA/manual journeys; do notclaimnew sourceequivalent toolderFullVision passes."
+  ],
+  "next1091": "Unique frozen external paidDrone scan reproduction after actual sharedrepair/configFullVision0. Inputs derive known public EnemyBase location and predetermined survey offset, never hidden hostile Transform. Retain actual opening faraway hostile and original position; funding/readiness/enemyfreeze disclosed. InitialUnknown+no live marker; native sourceAttributedScan metadata/feed +Visible; actualautomaticReturn\u2192LastSeen frozen\u219220s expiry+no live marker, preservingallfog/config fields.",
+  "actions": "NoAssets/Packages/ProjectSettings changes, noEditor config/Unity calls, no actor/checkpoint mutation. Proposal only; implementation remains root-owned."
+}

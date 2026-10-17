@@ -1,0 +1,24 @@
+{
+  "run": 209,
+  "sourceHash": "005c7ab72a705ea453e90858882dfb8fd00dd35bafcf2aeb404ba104b9e1709e",
+  "scope": "Read-only economy failure observation",
+  "stateMutation": false,
+  "observations": {
+    "materials": 50,
+    "playerBase": 800,
+    "enemyBase": 800,
+    "livingFriendlyRoles": [
+      "ApcHeavy"
+    ]
+  },
+  "workshop": {
+    "productionEnabled": true,
+    "status": "Blocked",
+    "reason": "NoOilInput",
+    "oilPerCycle": 4,
+    "materialsPerCycle": 20,
+    "cycleSeconds": 30
+  },
+  "interpretation": "This native strategy spent on R2 and heavy APC without buying logistics, then lost all base-damaging infantry. The 50 remaining Materials cannot fund a 120-Materials replacement or 100-Materials logistics truck.",
+  "countedWin": 0
+}

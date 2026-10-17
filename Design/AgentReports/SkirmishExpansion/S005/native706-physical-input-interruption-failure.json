@@ -1,0 +1,16 @@
+{
+  "result": "Failed",
+  "failure": "Physical input interrupted qualification at 60.67996 simulation seconds",
+  "sourceHash": "75af0bc560e1ea1d5a3a8f3a235b1e76888dc90dcc4b50b9ad48f8ded171b809",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-706-three-factories-two-oil-two-refineries-air-pre-source-manifest.json",
+  "postSourceManifest": "final-706-interrupted-post-source-manifest.json",
+  "log": "native-706-three-factories-two-oil-two-refineries-strike-cycle-en.log",
+  "logSha256": "c8beb0d4570626eb097973a01525ab3948977a65932fd0bedb9684750c588c10",
+  "trace": "s005-aria-live-155926-en-709d1b7fc12646708b31ea1d43b654fd.jsonl",
+  "inputAudit": "native706-touch-contact-audit.json",
+  "wrapperExitCode": null,
+  "wrapperExitUnavailable": "Process session no longer available after pause; no exit artifact. Editor shutdown logged and no active validation process remains.",
+  "completeMatchCertified": false,
+  "playerReady": false
+}

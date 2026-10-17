@@ -1,0 +1,176 @@
+{
+  "result": "StaticApiProtocolPreparedNotExecuted",
+  "scope": "Smallest legitimate bilateral Standard Air2 native preparation on unchanged existing Campaign geometry. Diagnostic-first because enemy paid-building controls/receipt observation plus independently legal second runway are unexecuted prerequisites.",
+  "sourceApplicability": "Current source reference hashes recorded individually below. Historical candidate coordinates are hints only; no bilateral source-fit or native runtime pass claimed.",
+  "noUnityCalls": true,
+  "noProductionEdits": true,
+  "noNewPhysicalMap": true,
+  "noOwnershipRelabel": true,
+  "noNativeBudgetsPricesCapsChanged": true,
+  "findings": [
+    {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+      "lines": "114-120,246-274,366-454",
+      "finding": "Native AIBuildPlannerSystem requires AIControlled, evaluates configured plan, spends actual faction economy/materials, enqueues owned BuildingRuntimeSpawnRequest, and rolls back failed placement. A disposable faction2 Airport plan therefore uses real existing paid native production rather than a fake spawn/charge."
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/FactionAIComponents.cs",
+      "lines": "35-50",
+      "finding": "AIBuildPlan contains FactionId/Enabled/NextBuildIndex/BaseCenterCell/BuildIntervalSeconds; one AIBuildPlanEntry native configured Airport ID is sufficient isolated logical configuration."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIFactionControlStartupSystem.cs",
+      "lines": "142-159",
+      "finding": "S005 ExternalFactionStrategy forces corresponding generic AIControlled0; simply adding a plan will not build. Any temporary faction2 control grant must be disclosed and bounded, other generic AI orders disabled/restored, and external strategy binding preserved."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs",
+      "lines": "169-186",
+      "finding": "Player Build UI commits ownership to PlayerFactionId. Two native player Airports followed by enemy ownership relabel is not a legitimate bilateral test."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs",
+      "lines": "22-95",
+      "finding": "Regular native runtime spawn requires EffectivePlacementRect and IsPlacementValid, rejects cached invalid footprint and applies full current validator at each candidate. Default AI Airport request allows search radius up to160 and no rotation; actual final origin must be independently revalidated inside S005 logical bounds, not assumed equal to plan preferred origin."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs",
+      "lines": "97",
+      "finding": "Native spawn Context IsPlacementValid delegates to the same BuildingPlacementAdapterCompositionSystemHelper validator; no bypass should be introduced."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProductionSystem.cs",
+      "lines": "14-38",
+      "finding": "New living native owner1/2 runtime buildings are adopted into current session, with constructed.<RuntimeBuildingId> stable identity and actual OwnerFactionId."
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+      "lines": "560-695",
+      "finding": "Existing harness samples current native Airport full validator on current Campaign grid/roads/blockers and logical bounds; first3 candidate list is not an exhaustive bilateral fit proof. Re-run after first Airport occupies native geometry. Historical southern coordinates require fresh full validation; do not reuse stale valid result."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "lines": "624-651,739-750",
+      "finding": "Production stocks/capacity and readiness are faction indexed. Faction2 paid Fighter/Plane use SkirmishEnemyCapacityComponent and enemy research state, not player counters. Readiness/funding setup may be disclosed but never relabel producers or alter caps."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
+      "lines": "44-92,138-159",
+      "finding": "Initializer selects nearest native runway with exact actor Faction.Id and sets native home/runway thresholds. UnitAirComponent carries threshold/home coordinates rather than Airport runtime ID; record matching owning runway readmodel plus producer receipt ID, not a nonexistent serialized home Airport field."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "lines": "116-142",
+      "finding": "Public TryIssueGroupOrder permits exact actingFaction2 owned group; use actual delivered group and supported native Move path. This is technical native API, not enemy Touch selection or normal AI growth proof."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+      "lines": "523-545",
+      "finding": "Completing the real fixed-wing manual Move pass sets ReturningHome1 when no active Scan. Native enemy Move can therefore exercise automatic return without writing UnitAirComponent flags; observe current same-faction runway landing/taxi/home. Explicit presented Return handler is player-filtered, so enemy explicit Return is not certified by this path."
+    }
+  ],
+  "minimalNativeProtocol": [
+    "Start isolated S005 on exact current source. Retire opening tactical shooters by disclosed HealthZero and wait real capacity release; disable/restore enemy strategy. Keep physical geometry, native producers/costs/caps/prices unchanged.",
+    "Grant disclosed FullArsenal/funding independently to factions1/2. Build actual faction1 Airport with existing valid native Touch pipeline. Preserve native construction debit and resulting runtime ID/faction/functionality/runway readmodel.",
+    "Open actual native Airport preview to obtain authoritative full validator; find a distinct second legal current candidate using unchanged geometry after Airport1 commit. Capture full effective rectangle/road/sidewalk/blocker/tree/building clearance and logical bounds. Require current unrotated candidate if using default native AI plan.",
+    "Temporarily allow bounded faction2 native AIBuildPlanner; add one disposable faction2 Airport plan. Capture real pending/completed BuildingRuntimeSpawnRequest every native frame before planner consumes it; record request ID, actualfaction2, cost/materials, actual origin, runtime building ID, status and real spend/debit or rollback. Restore generic control immediately. Do not write owner/functional/readmodel/receipt fields.",
+    "Require independently owned live functional Airports with disjoint native footprint/effective runway rectangles, actual samefaction runway readmodels and actual native producer IDs. If final search relocation leaves logical bounds or fails full current clearance, reject source-fit; no scenery clearing/new runway.",
+    "Queue actual Fighter/TransportPlane independently for each faction through BuildingFactionUnitProductionRequest; capture request acceptance, faction-specific real Materials price/debit, native reservation IDs, producer runtime IDs, own AttemptOwned/GroupMembership/prefab/role/AirTargetDomain ownership, delivered1. Preserve actual Standard AirCap2/live2/reserved0 for each; no capacity writes.",
+    "Player two aircraft: actual Touch selection/Move receipts. Enemy two aircraft: public native group Move with actingFaction2 and actual movement receipt/result, explicitly outside Touch audit. No actor pose/airborne/runway/order component injection. Observe native taxi\u2192takeoff\u2192Airborne and current owning runway home thresholds for all4.",
+    "Allow each actual completed fixed-wing Move to return via native automatic return; capture landing/taxi/Airborne0/home position inside owning Airport, never other faction runway. Player explicit Return may additionally use presented Touch. Do not claim enemy explicit Return or refuel until those effects observed."
+  ],
+  "hostilePaidAirTargetProtocol": [
+    "Actual faction2 paid Plane/Fighter retains native Air components/role/domain/prefab/receipt; public native Move from its owned Airport launches it. This supplies legitimate enemy Air actor without Ground\u2192Air mutation or teleported target.",
+    "Use actual paid player AntiAir or existing paid Fighter and real public/native orders against actual visible enemy airborne target within actual runtime weapon envelope. Disclosed target AutoEngage0 may suppress retaliation; preserve target native CanAttack and domain.",
+    "Record ALL new raw CombatDamageObservationElement events and exact real paid source/reservation and native hostile target entity, damage kind, DamageApplied and target HP decrease. Actual AirMissile/projectile/launch observations must come from runtime. No shots/damage/events/results injected.",
+    "Keep aircombat setup separate from bilateral capacity/return source-fit proof if attack destroys an aircraft before homecycle. Reuse actual hostile receipt/delivery proof; no normal mission/ARIA/AI growth certificate inferred."
+  ],
+  "unresolvedNativePrerequisites": [
+    "No actual independently owned faction2 paid Airport construction receipt captured yet.",
+    "No current simultaneous bilateral runway clearance/source-fit proof.",
+    "Native AI planner regular search may relocate outside S005 logical bounds unless current final origin checked; rotated candidate support absent from default plan request.",
+    "Per-frame planner completion receipt capture must precede removal; polling Editor update alone can miss it.",
+    "No current four-aircraft bilateral taxi/launch/return observations or genuine hostile Air combat effect."
+  ],
+  "references": {
+    "nativePaidEnemyAirport": {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+      "sha256": "eda456b1a09ea0e82462ef28de7e2c1d708e3a6a14ca08c11a217cb3f9233ad4"
+    },
+    "aiDecisionAndMaterialsPrice": {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
+      "sha256": "ba66ddaea721f11fee4c051ca3718d060edf7e0063e8e504a0c2ca8746a2558e"
+    },
+    "aiControlRequired": {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
+      "sha256": "2d677c3a69d5703d77875a9cf6e4507f8444f3d83b83cf011794f8b4ee1b7ade"
+    },
+    "s005ExternalStrategyControls": {
+      "path": "Assets/Game/Scripts/Systems/AIFactionControlStartupSystem.cs",
+      "sha256": "23bb98a2a22b166574d403c8206eea9a40c612e31e3b3bfe0bdbfdd67a86d1a3"
+    },
+    "aiPlanConfig": {
+      "path": "Assets/Game/Scripts/Components/FactionAIComponents.cs",
+      "sha256": "7ceb43eca68cbed12dcb7bf5409dc84810b04863f91c6472bc7213e36108bb34"
+    },
+    "functionalSpawn": {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "sha256": "74e767e6b557dc06724c3b83e1cfc8f87e00eaed239a186fc66026af3775afb5"
+    },
+    "spawnFullValidator": {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs",
+      "sha256": "731015a4126399f6f6a8378558a589d0286234e17cf27eb0c6927544f4379f4c"
+    },
+    "authoritativeValidatorBinding": {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs",
+      "sha256": "51461d0d499d89fec7425b63a6dfdc8379fb3db473824ca7ab8febcb43d80861"
+    },
+    "playerUiOwnerHardcoded": {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs",
+      "sha256": "15424d063d8d95f0f4a0823eee51f806255422c1717898ce6585efcd7ac05467"
+    },
+    "nativeAdoption": {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProductionSystem.cs",
+      "sha256": "92d11cae248a593f81af78f87f11fa730c5dea3344611e6fc5ece97c9334ec3c"
+    },
+    "unitRequestReceipt": {
+      "path": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+      "sha256": "8c0fa1f9265edb7b27ffb3d5ee4bac191d9c17bfb51e2d8c358e641ef21f24ef"
+    },
+    "factionCapacityAndReadiness": {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "sha256": "30b093f0fb36db788ccb4db6ba9d22d1016b401b5307cb1f9fd2100947b7dc7a"
+    },
+    "researchRead": {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
+      "sha256": "ccb766cd303eebedb4fddb3d7512d78e3d74897752f55f46e5ed96d686eedc30"
+    },
+    "currentSourceCandidateScan": {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+      "sha256": "a771bc87e3f9a96963828808dcc6025436bb6fe1f20d9b6b62ec66723f3cb19a"
+    },
+    "nativeEnemyGroupMove": {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "sha256": "7755dfbcf0d9b29f5218379c20236833daf9587956642e2d836f22a5e3f490fd"
+    },
+    "nativeMovementBridge": {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "sha256": "65a6689ae84fe751522cfbd1eb26aad9efd70db60031dda0510d7bdd0913545e"
+    },
+    "runwayFactionOwnership": {
+      "path": "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
+      "sha256": "b07bdf4f2e9ef9790ce6c2a959d37806000c118eb3368eb99724b6ba74c734f8"
+    },
+    "nativeTaxiAirborneAndAutomaticReturn": {
+      "path": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+      "sha256": "60a5095e7ce3cdcdca268e72789b60a2d1d6c761de154365b5dd60b662346d8c"
+    },
+    "playerExplicitReturn": {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "sha256": "03c5299df33735f65d96bcd01bc0c37d80dcbb3eed52019423c403e4dcd53480"
+    }
+  },
+  "normalEnemyAiGrowthCertified": false,
+  "bilateralCapacityCertified": false,
+  "playerReady": false
+}

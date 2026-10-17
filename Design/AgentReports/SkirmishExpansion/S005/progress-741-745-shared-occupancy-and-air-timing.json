@@ -1,0 +1,25 @@
+{
+  "mission": "S005",
+  "technicalReadiness": false,
+  "playerReadiness": false,
+  "confirmedDefect": "SystemState reused identical query descriptions; the movement change filter hid stationary members from occupancy reconciliation.",
+  "nativeReproduction": "native740-readonly-occupancy-query-alias-observation.json",
+  "focusedRed": "focused741-shared-occupancy-membership-red.json",
+  "focusedGreen": "focused741-742-shared-occupancy-membership-pass.json",
+  "logisticsRegression": "focused743-occupancy-fix-service-logistics-regressions-pass.json",
+  "liveCorrectionObservations": [
+    "native744-readonly-occupancy-query-alias-observation.json",
+    "native744-readonly-occupancy-tracking-observation.json"
+  ],
+  "latestFailure": "native744-occupancy-fixed-native-air-return-deadline-failure.json",
+  "currentStrategyChange": "source-delta-745-forward-airport-driver-only.json",
+  "currentRun": "native745",
+  "remainingGate": "Normal paid aircraft home landing, positive refuel and second sortie within the unchanged1080-second match; forward Airport source fit not yet observed.",
+  "separatePending": [
+    "Full enabled-role lifecycles and bilateral capacity",
+    "Final-source normal manual/ARIA/recovery and family stress coverage",
+    "Real device/player acceptance",
+    "Owner visual review deferred"
+  ],
+  "physicalMapAndGameplayBudgetsChanged": false
+}

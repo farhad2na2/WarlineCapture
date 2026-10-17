@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1324",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1322-runway-delivery-repair-source-manifest.json",
+  "preflightManifest": "final-1324-normal-paid-south-flank-preflight-source-manifest.json",
+  "fixtureSha256": "e253546e6976e05d3fd10b5f3e3244ba74a8eaa8ef090d23c9f23ce3365c4c20",
+  "executedRunnerSha256": "c84cbcd033b4170e2456053eed5656b5a40ccc09afa98c3a8a5ac1e0be96ba8e",
+  "method": "S005NormalSouthFlank1324Observer.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

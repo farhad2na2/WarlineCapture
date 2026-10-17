@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "sourceHash": "3986ae0d0abf89331a6eb6c464cf4897c5fdffa1f2ea82e47a16905f1a242030",
+  "log": "native-214-frozen-aria-en-seed104734.log",
+  "logSha256": "937058be355bdf9924614f56a3e04a15cad422da087dcf99a42c9e68d3880f3f",
+  "reason": "Editor process 72625 exited with signal9/launcher137 after native Victory/result/return, before completion receipt; cause unconfirmed",
+  "nativeResultReturnPassed": true,
+  "completionReceiptMissing": true,
+  "countedWin": 0,
+  "playerReady": false,
+  "recovery": "Only stale --reuse shell waiter stopped; reopen through same required GUI wrapper. No Unity/Hub/licensing process terminated by agent."
+}

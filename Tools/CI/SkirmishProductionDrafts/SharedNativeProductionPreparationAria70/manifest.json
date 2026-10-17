@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "scope": "Exactly three explicit native preparation suites, preserving every independent failure before sole aggregate pass",
+  "files": [
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedNativeProductionPreparation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparationAria70/SkirmishSharedNativeProductionPreparation.cs.txt",
+      "before_sha256": null,
+      "sha256": "cd3669233b2a192d9473987d26f2e66446b8e0baf082a731e89e46fbb2da7e94",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "native_execution": false,
+  "predecessor_manifest": {
+    "path": "Tools/CI/SkirmishProductionDrafts/SharedNativeProductionPreparation/manifest.json",
+    "sha256": "d7f8583bb61a55192f7110ee3ad712409f5f8f44be3efaa1dd8b099d22160954"
+  }
+}

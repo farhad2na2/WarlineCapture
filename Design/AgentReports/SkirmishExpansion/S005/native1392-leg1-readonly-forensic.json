@@ -1,0 +1,47 @@
+{
+  "result": "ReadOnlyForensicExplainsNative1392Failure",
+  "playerReady": false,
+  "sourceHash": "ffe5f5829bcc158fa035ed6840c8fcda726e64a3e485900c776b1bf345b7ea90",
+  "originalNativeResult": "Failed",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "failureScope": "Fixture phase75 timed out before Fighter combat/closure; original failure unchanged",
+  "nativeTrace": "native1392-fighter-leg1-diagnostic.jsonl",
+  "nativeTraceSha256": "ce34707b0153440190b1a42e8f037b53c206e6b1d6a6c17f447640a58467d446",
+  "failureProof": "native1392-paid-air-effects-failure.json",
+  "failureProofSha256": "65839b1efbacc185b0df87cfbae385e8f05c8f60c816312cdb7550fb566a0c79",
+  "nativeLog": "native-1392-paid-anti-air-fighter-effects.log",
+  "nativeLogSha256": "62b47df09c47718ee6058a8155ef327dc5caf1494beb75fecbab0bacd086c3e5",
+  "leg1": {
+    "acceptedMoveReceiptObserved": true,
+    "commandCell": [
+      850,
+      780
+    ],
+    "nearGoalThresholdMeters": 16,
+    "headingAdmissionThreshold": 0.88,
+    "closestManualSampleMeters": 4.113572597503662,
+    "nearGoalSamples": [
+      {
+        "frame": 4665,
+        "distanceMeters": 4.113572597503662,
+        "headingDot": 0.6346125602722168,
+        "returningHome": 0,
+        "usableFuel": 4753.0
+      }
+    ],
+    "goalCompletionTransition": {
+      "frame": 4669,
+      "x": 850.6831665039062,
+      "z": 780.9785766601562,
+      "commandDistance": 0.8304774761199951,
+      "headingDot": 0.6347746849060059,
+      "returningHome": 1,
+      "manualMove": false,
+      "goalPresent": false,
+      "usableFuel": 4751.75
+    },
+    "interpretation": "The public Move reached its exact cell, then the normal aircraft controller cleared the manual goal and entered ReturnHome. The fixture required headingDot>=0.88 at the intermediate waypoint; observed ~0.635. It never issued the distinct fly-through Move. Fuel was ample. This run does not prove a movement or AI defect."
+  },
+  "nextGate": "Separate flight lane to validate route/fixture correction while retaining final alert-band, heading, actual Hold, visible airborne target, native damage and closure requirements."
+}

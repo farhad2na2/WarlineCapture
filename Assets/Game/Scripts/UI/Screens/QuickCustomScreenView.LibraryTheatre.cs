@@ -92,30 +92,30 @@ namespace Game.UI.Runtime
             TheatreSeatGeometry.ShotReserve = reserve;
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
             TheatreSeatGeometry.Box reserveRect = TheatreSeatGeometry.DetailRect(plateWidth, plateHeight, fa, reserve);
-            bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
             RawImage theatrePaint = null;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 raw.transform.SetParent(fit, false);
-                if (reframed)
-                    PlaceTopLeft(raw.rectTransform, viewport.X, viewport.Y, viewport.W, viewport.H);
-                else
-                    Stretch(raw.rectTransform);
+                Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = TheatrePaintDim();
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                if (reframed)
-                    ApplyPlainTheatreCover(raw, viewport.W, viewport.H);
-                else
-                    ApplyTheatreCover(raw, plateWidth, plateHeight);
+                ApplyTheatreCover(raw, plateWidth, plateHeight);
                 theatrePaint = raw;
+                var wash = new GameObject("TheatreWash", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                wash.transform.SetParent(fit, false);
+                Stretch(wash.rectTransform);
+                wash.sprite = ZoneSolidSprite();
+                wash.color = new Color(0.04f, 0.05f, 0.06f, 0.08f);
+                wash.raycastTarget = false;
+                wash.rectTransform.localScale = Vector3.one;
                 var shade = new GameObject("TheatreShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 shade.transform.SetParent(fit, false);
                 Stretch(shade.rectTransform);
                 shade.sprite = ZoneVignetteSprite();
-                shade.color = new Color(0.02f, 0.03f, 0.04f, 0.35f);
+                shade.color = new Color(0.02f, 0.03f, 0.04f, 0.78f);
                 shade.raycastTarget = false;
                 shade.rectTransform.localScale = Vector3.one;
             }
@@ -181,7 +181,18 @@ namespace Game.UI.Runtime
             }
 
             PlaceZoneSlots(slots, safe, plateWidth, plateHeight, fa);
+            if (theatrePaint != null && Mathf.Abs(TheatreSeatGeometry.ReserveSlideX) > 0.5f)
+            {
+                RectTransform paintRect = theatrePaint.rectTransform;
+                PlaceTopLeft(
+                    paintRect,
+                    TheatreSeatGeometry.ReserveSlideX,
+                    0f,
+                    plateWidth,
+                    plateHeight);
+            }
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            PlaceTheatreSurround(fit, slots, plateWidth, plateHeight);
             for (int i = 0; i < slots.Count; i++)
                 DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
             for (int i = 0; i < slots.Count; i++)
@@ -228,7 +239,119 @@ namespace Game.UI.Runtime
 
         private static Color TheatrePaintDim()
         {
-            return new Color(1f, 0.96f, 0.90f, 1f);
+            // A light cool multiply. The district tint does the darkening, so the painting's grain survives.
+            return new Color(0.96f, 0.93f, 0.90f, 1f);
+        }
+
+        /// <summary>
+        /// Dark, desaturated veil over the plate with holes at the districts. The hex fills
+        /// multiply the bright painting through those holes; the surround stays dull.
+        /// </summary>
+        private static void PlaceTheatreSurround(Transform parent, List<TheatreZoneSlot> slots, float plateWidth, float plateHeight)
+        {
+            if (parent == null || slots == null || plateWidth < 32f || plateHeight < 32f)
+                return;
+            var polys = new List<Vector2[]>(slots.Count);
+            for (int i = 0; i < slots.Count; i++)
+            {
+                Vector2[] hex = slots[i].Hex;
+                if (hex != null && hex.Length >= 3)
+                    polys.Add(hex);
+            }
+
+            if (polys.Count == 0)
+                return;
+            const int maxDim = 480;
+            float scale = Mathf.Min(1f, maxDim / Mathf.Max(plateWidth, plateHeight));
+            int texW = Mathf.Max(8, Mathf.RoundToInt(plateWidth * scale));
+            int texH = Mathf.Max(8, Mathf.RoundToInt(plateHeight * scale));
+            var texture = new Texture2D(texW, texH, TextureFormat.RGBA32, false);
+            var pixels = new Color32[texW * texH];
+            var dark = new Color32(12, 12, 11, 214);
+            var clear = new Color32(0, 0, 0, 0);
+            const float hole = 6f;
+            for (int py = 0; py < texH; py++)
+            {
+                float plateY = plateHeight - (py + 0.5f) / scale;
+                int row = py * texW;
+                for (int px = 0; px < texW; px++)
+                {
+                    float plateX = (px + 0.5f) / scale;
+                    var point = new Vector2(plateX, plateY);
+                    bool open = false;
+                    for (int h = 0; h < polys.Count; h++)
+                    {
+                        Vector2[] poly = polys[h];
+                        if (PointInsidePolygon(point, poly) || DistanceToPolygonEdge(point, poly) <= hole)
+                        {
+                            open = true;
+                            break;
+                        }
+                    }
+
+                    pixels[row + px] = open ? clear : dark;
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            var image = new GameObject("TheatreSurround", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            image.transform.SetParent(parent, false);
+            Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, texW, texH), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            image.sprite = sprite;
+            image.type = Image.Type.Simple;
+            image.color = Color.white;
+            image.raycastTarget = false;
+            Stretch(image.rectTransform);
+            image.rectTransform.localScale = Vector3.one;
+        }
+
+        /// <summary>
+        /// Saturated multiply factor. Light enough that the painting's local contrast stays above the
+        /// capture variance floor, dark enough that the hex is not a pale wash.
+        /// </summary>
+        private static Color DistrictMultiplyTint(Color zone)
+        {
+            float peak = Mathf.Max(zone.r, Mathf.Max(zone.g, zone.b));
+            Color hue = peak > 0.01f ? zone / peak : zone;
+            Color tint = Color.Lerp(hue, new Color(0.72f, 0.68f, 0.62f, 1f), 0.34f);
+            float lum = tint.r * 0.299f + tint.g * 0.587f + tint.b * 0.114f;
+            if (lum < 0.62f && lum > 0.01f)
+                tint *= 0.62f / lum;
+            tint.r = Mathf.Clamp01(tint.r);
+            tint.g = Mathf.Clamp01(tint.g);
+            tint.b = Mathf.Clamp01(tint.b);
+            tint.a = 1f;
+            return tint;
+        }
+
+        /// <summary>The district hue at full strength, with a small hot lift. Not a white-gold mix.</summary>
+        private static Color DistrictNeon(Color zone, float whiteLift)
+        {
+            float peak = Mathf.Max(zone.r, Mathf.Max(zone.g, zone.b));
+            Color hue = peak > 0.01f ? zone / peak : zone;
+            Color neon = Color.Lerp(hue, Color.white, Mathf.Clamp01(whiteLift));
+            neon.a = 1f;
+            return neon;
+        }
+
+        private static void ApplyDistrictMultiply(GameObject host)
+        {
+            Graphic polygon = host != null ? host.GetComponent<Graphic>() : null;
+            if (polygon == null)
+                return;
+            Shader shader = Shader.Find("Game/UI/DistrictMultiply");
+            if (shader == null)
+            {
+                Debug.LogWarning("District multiply shader is missing. Theatre tints will not blend.");
+                return;
+            }
+
+            Material mat = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            mat.SetTexture("_MainTex", Texture2D.whiteTexture);
+            polygon.material = mat;
         }
 
         private static Texture2D LoadTheatreBase()
@@ -1537,20 +1660,22 @@ namespace Game.UI.Runtime
             var local = new Vector2[screenPoints.Length];
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
-            Color fill = color;
-            fill.a = 0.40f;
-            root.GetComponent<V3PolygonGraphic>().Configure(local, fill);
+            V3PolygonGraphic polygon = root.GetComponent<V3PolygonGraphic>();
+            Color fill = DistrictMultiplyTint(color);
+            polygon.Configure(local, fill);
+            ApplyDistrictMultiply(root.gameObject);
             PlaceDistrictHalo(root, local, color);
-            Color outer = color;
-            outer.a = 0.96f;
-            Color glow = Color.Lerp(color, Color.white, 0.18f);
+            Color neon = DistrictNeon(color, 0.08f);
+            Color outer = DistrictNeon(color, 0f);
+            outer.a = 0.82f;
+            Color glow = neon;
             glow.a = 1f;
-            Color ink = Color.Lerp(color, Color.white, selected ? 0.74f : 0.62f);
+            Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
             ink.a = 1f;
-            // Vivid core inside the 3–4.5 capture band. The bright edge is the outer glow.
+            // 4px core stays inside the 3–4.5 capture band. The neon edge is thinner than the old 26px white rim.
             const float stroke = 4f;
-            DrawHexEdges(root, local, outer, 26f, ZoneStrokeSprite());
-            DrawHexEdges(root, local, glow, 14f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, outer, 16f, ZoneStrokeSprite());
+            DrawHexEdges(root, local, glow, 10f, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             DrawHexLattice(root, local, color);
             for (int i = 0; i < local.Length; i++)
@@ -1575,8 +1700,8 @@ namespace Game.UI.Runtime
             image.transform.SetParent(root, false);
             image.sprite = halo;
             image.type = Image.Type.Simple;
-            Color glow = Color.Lerp(color, Color.white, 0.35f);
-            glow.a = 1f;
+            Color glow = DistrictNeon(color, 0.05f);
+            glow.a = 0.9f;
             image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
@@ -1669,8 +1794,8 @@ namespace Game.UI.Runtime
                 return;
             BoundsOf(local, 0f, out float minX, out float minY, out float maxX, out float maxY);
             const float radius = 36f;
-            Color ink = Color.Lerp(color, Color.white, 0.45f);
-            ink.a = 0.42f;
+            Color ink = Color.Lerp(color, new Color(0.02f, 0.02f, 0.03f, 1f), 0.72f);
+            ink.a = 0.14f;
             float originX = (minX + maxX) * 0.5f;
             float originY = (minY + maxY) * 0.5f;
             int drawn = 0;
@@ -1758,6 +1883,48 @@ namespace Game.UI.Runtime
             rect.anchoredPosition = new Vector2(origin.x, -origin.y);
             rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-dy, dx) * Mathf.Rad2Deg);
             rect.localScale = Vector3.one;
+        }
+
+        /// <summary>The leader follows the selected card when that card drops to free the top tab.</summary>
+        private static void RefreshZoneLeader(RectTransform parent, string mapId)
+        {
+            if (parent == null || string.IsNullOrEmpty(mapId))
+                return;
+            if (parent.Find("ZoneLeader_" + mapId) is not RectTransform line)
+                return;
+            if (parent.Find("ZonePin_" + mapId) is not RectTransform pin)
+                return;
+            if (parent.Find("ZoneCard_" + mapId) is not RectTransform card)
+                return;
+            float pinW = pin.sizeDelta.x > 2f ? pin.sizeDelta.x : ZonePinSize;
+            float pinH = pin.sizeDelta.y > 2f ? pin.sizeDelta.y : ZonePinSize;
+            var pinRect = new Rect(pin.anchoredPosition.x, -pin.anchoredPosition.y, pinW, pinH);
+            var cardRect = new Rect(
+                card.anchoredPosition.x,
+                -card.anchoredPosition.y,
+                card.sizeDelta.x,
+                card.sizeDelta.y);
+            Vector2 from = pinRect.center;
+            Vector2 to = NearestPointOnRect(cardRect, from);
+            float dx = to.x - from.x;
+            float dy = to.y - from.y;
+            float length = Mathf.Sqrt(dx * dx + dy * dy);
+            float start = ZonePinSize * 0.5f + 2f;
+            float draw = length - start - TheatreSeatGeometry.ForeignLeaderClearance;
+            if (draw < 4f || length < 1f)
+            {
+                line.gameObject.SetActive(false);
+                return;
+            }
+
+            line.gameObject.SetActive(true);
+            line.anchorMin = line.anchorMax = new Vector2(0f, 1f);
+            line.pivot = new Vector2(0f, 0.5f);
+            Vector2 origin = from + (to - from) * (start / length);
+            line.sizeDelta = new Vector2(draw, 6f);
+            line.anchoredPosition = new Vector2(origin.x, -origin.y);
+            line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-dy, dx) * Mathf.Rad2Deg);
+            line.localScale = Vector3.one;
         }
 
         private static Vector2 NearestPointOnRect(Rect rect, Vector2 point)
@@ -1967,9 +2134,77 @@ namespace Game.UI.Runtime
             // The closed seam only hides the briefing edge when the opaque map is painted above it.
             if (briefing != null && map.parent == briefing.parent && map.GetSiblingIndex() < briefing.GetSiblingIndex())
                 map.SetSiblingIndex(briefing.GetSiblingIndex());
-            // The frame pass runs after the seat stack. Refit from the card's final rect so a
-            // layout group, an early size, or a parent scale cannot leave a ~38px tile.
+            // The frame pass runs after the first seat. Rebuild on the clip it just sized,
+            // then keep a reserved detail column on the trailing edge.
+            ReseatTheatreOnFinalPlate(map);
+            SeatTheatreDetailPanel();
             RefitTheatreCardArt();
+        }
+
+        /// <summary>
+        /// The first theatre pass can run before <c>ApplyLibraryFrame</c> has the capture clip.
+        /// Hexes authored on that earlier plate read as stretched once the clip is final.
+        /// </summary>
+        private void ReseatTheatreOnFinalPlate(RectTransform map)
+        {
+            if (!TheatreSeatGeometry.SeatingReady || _libraryViewModel == null || map == null)
+                return;
+            Transform clip = map.Find("MapPreviewClip");
+            if (clip is not RectTransform plate)
+                return;
+            Canvas.ForceUpdateCanvases();
+            if (!TryFrameSize(plate, out float width, out float height) || width < 64f || height < 64f)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            PresentRegions(_libraryViewModel.Theater, fa);
+        }
+
+        /// <summary>
+        /// The detail column stays on the trailing edge while the reserve is on.
+        /// A reserve-off shot must not leave that panel on the leading edge or across the plate.
+        /// </summary>
+        private void SeatTheatreDetailPanel()
+        {
+            Transform panel = FindTheatreDetailPanel(transform);
+            if (panel is not RectTransform rect)
+                return;
+            Transform clip = transform.Find("SkirmishSetupComposition/OperationPreview/MapPreviewClip");
+            if (clip is not RectTransform plate || !TryFrameSize(plate, out float plateWidth, out float plateHeight))
+            {
+                rect.gameObject.SetActive(false);
+                return;
+            }
+
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            bool reserve = TheatreSeatGeometry.TheatreDetailReserved && plateWidth >= 600f;
+            TheatreSeatGeometry.Box detail = TheatreSeatGeometry.DetailRect(plateWidth, plateHeight, fa, reserve);
+            if (!reserve || detail.W < 1f)
+            {
+                rect.gameObject.SetActive(false);
+                return;
+            }
+
+            rect.gameObject.SetActive(true);
+            rect.SetParent(plate, false);
+            PlaceTopLeft(rect, detail.X, detail.Y, detail.W, detail.H);
+            rect.localScale = Vector3.one;
+            KeepAuthoredSize(rect);
+        }
+
+        private static Transform FindTheatreDetailPanel(Transform root)
+        {
+            if (root == null)
+                return null;
+            if (root.name == "TheatreDetailPanel")
+                return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindTheatreDetailPanel(root.GetChild(i));
+                if (found != null)
+                    return found;
+            }
+
+            return null;
         }
 
         private static void HideEdgeShadow(Transform shadow)
@@ -2161,8 +2396,19 @@ namespace Game.UI.Runtime
 
             Rect detailRect = SeatingDetailRect(frameW, frameH, fa);
             var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            float cardXBefore = cards[selected].X;
+            float cardYBefore = cards[selected].Y;
             if (!TheatreSeatGeometry.TryAttachCueToCard(frameW, frameH, pins, cards, hexes, detail, selected, out TheatreSeatGeometry.Box seated))
                 return false;
+            if ((Mathf.Abs(cards[selected].X - cardXBefore) > 0.5f
+                    || Mathf.Abs(cards[selected].Y - cardYBefore) > 0.5f)
+                && parent.Find("ZoneCard_" + ids[selected]) is RectTransform movedCard)
+            {
+                PlaceTopLeft(movedCard, cards[selected].X, cards[selected].Y, cards[selected].W, cards[selected].H);
+                KeepAuthoredSize(movedCard);
+                RefreshZoneLeader(parent, ids[selected]);
+            }
+
             var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
             KeepAuthoredSize(cue.rectTransform);
@@ -2259,6 +2505,170 @@ namespace Game.UI.Runtime
                 + " w=" + F(w)
                 + " h=" + F(h)
                 + " font=" + F(cue.fontSize));
+        }
+
+        /// <summary>
+        /// Keep 6px between the cue and the name ink on every side. The cue stays at the
+        /// card's x and width; only the name moves when the ink is still inside that margin.
+        /// </summary>
+        private static void DropNameBelowCue(TMP_Text cue, string selectedId)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return;
+            if (string.IsNullOrEmpty(selectedId))
+                return;
+            if (parent.Find("ZoneCard_" + selectedId) is not RectTransform card)
+                return;
+            if (card.Find("ZoneName") is not RectTransform name)
+                return;
+            float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+            float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+            TMP_Text nameText = name.GetComponent<TMP_Text>();
+            if (!TryPlateInk(nameText, card, out Rect ink))
+                return;
+            Rect cueRect = PlateRect(cue.rectTransform);
+            const float nameClearance = 6f;
+            float nameX = name.anchoredPosition.x;
+            float nameY = -name.anchoredPosition.y;
+            float nameW = name.sizeDelta.x;
+            float nameH = name.sizeDelta.y;
+            float statusH = cardH >= 190f ? 40f : 34f;
+            float limit = cardH - 2f - statusH - 4f - nameH;
+            if (AxisGap(cueRect.xMin, cueRect.xMax, ink.xMin, ink.xMax) < nameClearance)
+            {
+                float cueMidY = cueRect.y + cueRect.height * 0.5f;
+                float inkMidY = ink.y + ink.height * 0.5f;
+                if (cueMidY <= inkMidY)
+                {
+                    float push = cueRect.yMax + nameClearance - ink.yMin;
+                    if (push > 0.5f)
+                    {
+                        float next = Mathf.Min(limit, nameY + push);
+                        if (next > nameY + 0.5f)
+                        {
+                            PlaceTopLeft(name, nameX, next, nameW, nameH);
+                            nameY = next;
+                        }
+                    }
+                }
+            }
+
+            if (!TryPlateInk(nameText, card, out ink))
+                return;
+            cueRect = PlateRect(cue.rectTransform);
+            if (AxisGap(cueRect.yMin, cueRect.yMax, ink.yMin, ink.yMax) < nameClearance
+                && AxisGap(cueRect.xMin, cueRect.xMax, ink.xMin, ink.xMax) < nameClearance)
+            {
+                float cueMidX = cueRect.x + cueRect.width * 0.5f;
+                float inkMidX = ink.x + ink.width * 0.5f;
+                float push = cueMidX >= inkMidX
+                    ? ink.xMax - (cueRect.xMin - nameClearance)
+                    : (cueRect.xMax + nameClearance) - ink.xMin;
+                if (push > 0.5f)
+                {
+                    float nextX = cueMidX >= inkMidX ? nameX - push : nameX + push;
+                    float minX = 1f;
+                    float maxX = Mathf.Max(minX, cardW - nameW - 1f);
+                    if (nextX < minX)
+                        nextX = minX;
+                    if (nextX > maxX)
+                        nextX = maxX;
+                    if (Mathf.Abs(nextX - nameX) > 0.5f)
+                    {
+                        PlaceTopLeft(name, nextX, nameY, nameW, nameH);
+                        nameX = nextX;
+                    }
+                }
+            }
+
+            PlaceNameBand(card, nameX, nameY, nameW, nameH, cardW, cardH);
+        }
+
+        private static bool ForeignHexHits(RectTransform parent, Rect spot, string selectedId)
+        {
+            if (parent == null)
+                return false;
+            Rect grown = InflateRect(spot, TheatreSeatGeometry.CueHexStroke);
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneOutline_", StringComparison.Ordinal) || child is not RectTransform outline)
+                    continue;
+                if (!outline.gameObject.activeInHierarchy)
+                    continue;
+                if (child.name.EndsWith("_" + selectedId, StringComparison.Ordinal))
+                    continue;
+                Vector2[] shape = OutlinePlatePoints(outline);
+                if (shape.Length >= 3 && RectHitsPolygon(grown, shape))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static Rect PlateRect(RectTransform rect)
+        {
+            float y = -rect.anchoredPosition.y;
+            return new Rect(rect.anchoredPosition.x, y, rect.sizeDelta.x, rect.sizeDelta.y);
+        }
+
+        /// <summary>Glyph bounds in the card's parent, y down. Falls back to the name rect.</summary>
+        private static bool TryPlateInk(TMP_Text name, RectTransform card, out Rect ink)
+        {
+            ink = default;
+            if (name == null || card == null || name.rectTransform == null)
+                return false;
+            float cardX = card.anchoredPosition.x;
+            float cardY = -card.anchoredPosition.y;
+            float nameX = name.rectTransform.anchoredPosition.x;
+            float nameY = -name.rectTransform.anchoredPosition.y;
+            float nameW = name.rectTransform.sizeDelta.x;
+            float nameH = name.rectTransform.sizeDelta.y;
+            name.ForceMeshUpdate();
+            float minX = float.PositiveInfinity;
+            float minY = float.PositiveInfinity;
+            float maxX = float.NegativeInfinity;
+            float maxY = float.NegativeInfinity;
+            bool any = false;
+            TMP_TextInfo info = name.textInfo;
+            if (info != null && info.characterCount > 0)
+            {
+                int count = info.characterCount;
+                for (int i = 0; i < count; i++)
+                {
+                    TMP_CharacterInfo glyph = info.characterInfo[i];
+                    if (!glyph.isVisible)
+                        continue;
+                    any = true;
+                    IncludeInkCorner(glyph.bottomLeft, nameX, nameY, ref minX, ref minY, ref maxX, ref maxY);
+                    IncludeInkCorner(glyph.topLeft, nameX, nameY, ref minX, ref minY, ref maxX, ref maxY);
+                    IncludeInkCorner(glyph.topRight, nameX, nameY, ref minX, ref minY, ref maxX, ref maxY);
+                    IncludeInkCorner(glyph.bottomRight, nameX, nameY, ref minX, ref minY, ref maxX, ref maxY);
+                }
+            }
+
+            if (!any || maxX <= minX || maxY <= minY)
+            {
+                ink = new Rect(cardX + nameX, cardY + nameY, nameW, nameH);
+                return ink.width > 1f && ink.height > 1f;
+            }
+
+            ink = Rect.MinMaxRect(cardX + minX, cardY + minY, cardX + maxX, cardY + maxY);
+            return ink.width > 0.5f && ink.height > 0.5f;
+        }
+
+        private static void IncludeInkCorner(Vector3 local, float nameX, float nameY, ref float minX, ref float minY, ref float maxX, ref float maxY)
+        {
+            float x = nameX + local.x;
+            float y = nameY - local.y;
+            if (x < minX)
+                minX = x;
+            if (x > maxX)
+                maxX = x;
+            if (y < minY)
+                minY = y;
+            if (y > maxY)
+                maxY = y;
         }
 
         private static void SyncCuePlate(RectTransform parent, Rect spot)
@@ -2379,160 +2789,22 @@ namespace Game.UI.Runtime
             string heldSelection = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
             if (string.IsNullOrEmpty(heldSelection))
                 heldSelection = "DB";
-            if (SeatZoomCueClearOfHexes(cue, fa, heldSelection) || PlaceBottomCueStrip(cue, heldSelection))
+            if (SeatZoomCueClearOfHexes(cue, fa, heldSelection))
             {
                 RaiseTheatreReadability(_libraryRegions);
                 FitCueInsidePackedRect(cue);
                 LockCueFont(cue);
+                DropNameBelowCue(cue, heldSelection);
+                InkZoneNames(_libraryRegions);
                 LogTheatreCue(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
             }
 
-            cue.alignment = TextAlignmentOptions.Center;
-            cue.isRightToLeftText = fa;
-            cue.textWrappingMode = TextWrappingModes.NoWrap;
-            cue.overflowMode = TextOverflowModes.Overflow;
-            cue.enableAutoSizing = true;
-            cue.fontSizeMin = 22f;
-            cue.fontSizeMax = 32f;
-            cue.maxVisibleLines = 1;
-            cue.ForceMeshUpdate();
-            Vector2 preferred = cue.GetPreferredValues();
-            const float padX = 28f;
-            const float padY = 14f;
-            float width = Mathf.Max(220f, Mathf.Ceil(preferred.x + padX));
-            float height = Mathf.Max(44f, Mathf.Ceil(preferred.y + padY));
-            RectTransform rect = cue.rectTransform;
-            RectTransform parent = rect.parent as RectTransform;
-            string selectedId = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
-            if (string.IsNullOrEmpty(selectedId))
-                selectedId = "DB";
-            RectTransform pin = parent != null ? parent.Find("ZonePin_" + selectedId) as RectTransform : null;
-
-            float frameW = parent != null ? parent.rect.width : 0f;
-            float frameH = parent != null ? parent.rect.height : 0f;
-            if (frameW < 2f && parent != null)
-                frameW = parent.sizeDelta.x;
-            if (frameH < 2f && parent != null)
-                frameH = parent.sizeDelta.y;
-            const float inset = 12f;
-            const float pinGap = 8f;
-            float left = rect.anchoredPosition.x;
-            float top = -rect.anchoredPosition.y;
-            if (pin != null)
-                PlaceCueClearOfPin(pin, width, height, frameW, frameH, inset, pinGap, ref left, ref top);
-            if (frameW > width + inset * 2f)
-                left = Mathf.Clamp(left, inset, frameW - inset - width);
-            if (frameH > height + inset * 2f)
-                top = Mathf.Clamp(top, inset, frameH - inset - height);
-            PlaceTopLeft(rect, left, top, width, height);
-            if (parent == null)
-            {
-                RaiseTheatreReadability(_libraryRegions);
-                LogTheatreSeats(_libraryRegions, fa);
-                return;
-            }
-            Rect cueRect = new Rect(left, top, width, height);
-            for (int pass = 0; pass < 8; pass++)
-            {
-                bool hit = false;
-                for (int i = 0; i < parent.childCount; i++)
-                {
-                    Transform child = parent.GetChild(i);
-                    if (child == null)
-                        continue;
-                    bool card = child.name.StartsWith("ZoneCard_", StringComparison.Ordinal);
-                    bool pinHit = child.name.StartsWith("ZonePin_", StringComparison.Ordinal);
-                    if (!card && !pinHit)
-                        continue;
-                    var block = child as RectTransform;
-                    if (block == null)
-                        continue;
-                    Rect blockRect = new Rect(block.anchoredPosition.x, -block.anchoredPosition.y, block.sizeDelta.x, block.sizeDelta.y);
-                    if (!Overlaps(cueRect, blockRect, 0f))
-                        continue;
-                    hit = true;
-                    if (pinHit)
-                    {
-                        float below = blockRect.yMax + pinGap;
-                        float beside = blockRect.xMax + pinGap;
-                        if (below + cueRect.height <= frameH - inset)
-                            cueRect.y = below;
-                        else
-                            cueRect.x = beside;
-                    }
-                    else
-                    {
-                        cueRect.y = cueRect.center.y <= blockRect.center.y
-                            ? blockRect.yMin - cueRect.height - pinGap
-                            : blockRect.yMax + pinGap;
-                    }
-                }
-
-                if (frameW > cueRect.width + inset * 2f)
-                    cueRect.x = Mathf.Clamp(cueRect.x, inset, frameW - inset - cueRect.width);
-                if (frameH > cueRect.height + inset * 2f)
-                    cueRect.y = Mathf.Clamp(cueRect.y, inset, frameH - inset - cueRect.height);
-                if (!hit)
-                    break;
-            }
-
-            ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-            ShiftCueOffCards(parent, frameW, frameH, inset, ref cueRect);
-            ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-            PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-            cue.ForceMeshUpdate();
-            float natural = Mathf.Max(cue.preferredWidth, cue.GetPreferredValues().x);
-            if (natural + padX > cueRect.width + 1f)
-            {
-                float fitted = Mathf.Ceil(natural + padX);
-                float center = cueRect.x + cueRect.width * 0.5f;
-                cueRect.width = fitted;
-                cueRect.x = center - fitted * 0.5f;
-                if (frameW > cueRect.width + inset * 2f)
-                    cueRect.x = Mathf.Clamp(cueRect.x, inset, frameW - inset - cueRect.width);
-                ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-                ShiftCueOffCards(parent, frameW, frameH, inset, ref cueRect);
-                ClearCueFromPins(parent, frameW, frameH, inset, pinGap, ref cueRect);
-                PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-                cue.ForceMeshUpdate();
-            }
-
-            Rect detail = SeatingDetailRect(frameW, frameH, fa);
-            float worldScaleX = Mathf.Max(0.05f, Mathf.Abs(parent.lossyScale.x));
-            float worldScaleY = Mathf.Max(0.05f, Mathf.Abs(parent.lossyScale.y));
-            const float nearLimit = 160f;
-            Rect fullCue = cueRect;
-            bool cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
-            if (!cueSeated)
-            {
-                float naturalWidth = fullCue.width;
-                for (float candidateWidth = naturalWidth - 20f; candidateWidth >= 96f; candidateWidth -= 12f)
-                {
-                    cueRect.width = candidateWidth;
-                    if (!SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect))
-                        continue;
-                    cueSeated = true;
-                    break;
-                }
-            }
-
-            if (!cueSeated)
-            {
-                cueRect.width = 96f;
-                cueSeated = SeatCueNearPin(parent, pin, selectedId, frameW, frameH, inset, detail, nearLimit, worldScaleX, worldScaleY, ref cueRect);
-            }
-
-            if (!cueSeated)
-                cueRect = fullCue;
-            PlaceTopLeft(rect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-
-            Transform plate = parent.Find("CuePlate");
-            if (plate is RectTransform plateRect)
-                PlaceTopLeft(plateRect, cueRect.x, cueRect.y, cueRect.width, cueRect.height);
-            RaiseTheatreReadability(parent);
-            LogTheatreSeats(parent, fa);
+            RaiseTheatreReadability(_libraryRegions);
+            LockCueFont(cue);
+            LogTheatreCue(cue);
+            LogTheatreSeats(cue.transform.parent, fa);
         }
 
         private static bool TryApplyArrangedSeats(List<TheatreZoneSlot> slots, float plateWidth, float plateHeight, bool fa)
@@ -3162,9 +3434,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Full-width portrait at about 68% of the card, name overlaid on its top so two lines
-        /// stay legal, progress ring on the portrait's bottom corner, status line across the bottom.
-        /// The seat rect is left alone.
+        /// Full-width portrait from the top pad down to the status row. The name overlays the
+        /// photo, so a one-line title costs no portrait height. The seat rect is left alone.
         /// </summary>
         private static void LayoutZoneCardStack(RectTransform card, TMP_Text name, float nameH, float cardH, bool wide)
         {
@@ -3188,19 +3459,10 @@ namespace Game.UI.Runtime
                 nameW = Mathf.Max(8f, cardW - nameX);
             float innerW = Mathf.Max(48f, cardW - pad * 2f);
             bool farsi = ZoneNameIsFarsi(name) || UiShellRuntimeGateway.Localization.IsRightToLeft;
-            DominantCardBands(cardH, wide, farsi, out float nameRoom, out float portraitH, out float statusH);
+            DominantCardBands(cardH, wide, farsi, out float nameRoom, out float _, out float statusH);
             float maxName = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
-            if (farsi)
-            {
-                if (nameH > maxName)
-                    nameH = maxName;
-            }
-            else if (nameH > maxName + 1f)
-            {
-                float floor = cardH * 0.60f;
-                portraitH = Mathf.Max(floor, portraitH - (nameH - maxName));
-            }
-
+            if (farsi && nameH > maxName)
+                nameH = maxName;
             if (nameH > nameRoom)
                 nameH = nameRoom;
             if (nameH < 1f)
@@ -3214,11 +3476,14 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(name.rectTransform, nameX, pad, nameW, nameH);
 
             float statusY = cardH - pad - statusH;
-            float portraitTop = statusY - gap - portraitH;
-            if (portraitTop < pad)
-                portraitTop = pad;
-            if (portraitTop + portraitH > cardH)
-                portraitH = Mathf.Max(8f, cardH - portraitTop);
+            // The portrait fills from the top pad down to the status row. A one-line name
+            // overlays that photo, so it does not take any portrait height.
+            float portraitTop = pad;
+            float portraitH = statusY - gap - portraitTop;
+            if (portraitH < cardH * 0.65f)
+                portraitH = cardH * 0.65f;
+            if (portraitTop + portraitH > statusY - gap)
+                portraitH = Mathf.Max(8f, statusY - gap - portraitTop);
             float portraitW = innerW;
 
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
@@ -3243,7 +3508,7 @@ namespace Game.UI.Runtime
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.46f, 52f, 76f);
+                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.70f, 68f, 104f);
                 if (ringSide > portraitH - 4f)
                     ringSide = Mathf.Max(28f, portraitH - 4f);
                 float ringX = fa ? pad + 4f : pad + portraitW - 4f - ringSide;
@@ -3263,10 +3528,9 @@ namespace Game.UI.Runtime
             RectTransform shade = null;
             if (name != null)
             {
-                shade = EnsureNameShade(card);
-                PlaceTopLeft(shade, nameX, pad, nameW, nameH);
-                shade.localScale = Vector3.one;
-                KeepAuthoredSize(shade);
+                float nameXPlaced = name != null && name.rectTransform != null ? name.rectTransform.anchoredPosition.x : nameX;
+                float nameYPlaced = name != null && name.rectTransform != null ? -name.rectTransform.anchoredPosition.y : pad;
+                shade = PlaceNameBand(card, nameXPlaced, nameYPlaced, nameW, nameH, cardW, cardH);
             }
 
             Transform countNode = card.Find("ZoneCount");
@@ -3284,6 +3548,8 @@ namespace Game.UI.Runtime
                 ring.SetSiblingIndex(disc != null ? disc.GetSiblingIndex() + 1 : (thumb != null ? thumb.GetSiblingIndex() + 1 : 0));
             if (shade != null)
                 shade.SetSiblingIndex(ring != null ? ring.GetSiblingIndex() + 1 : (disc != null ? disc.GetSiblingIndex() + 1 : 0));
+            if (card.Find("NameFade") is RectTransform fade && shade != null)
+                fade.SetSiblingIndex(shade.GetSiblingIndex() + 1);
             if (name != null)
                 name.transform.SetAsLastSibling();
             if (countNode != null)
@@ -3293,9 +3559,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Farsi keeps the 3e2c86f45 portrait (65–70%, name room = MaxNameBoxHeight).
-        /// Latin may give the two-line title room down to a 60% portrait, and the name
-        /// stops where the replay name stack still fits.
+        /// Name-box room. The portrait itself fills the card down to the status row; this
+        /// only caps the overlaid title so the replay name stack still fits.
         /// </summary>
         private static void DominantCardBands(float cardH, bool wide, bool farsi, out float nameRoom, out float portraitH, out float statusH)
         {
@@ -3339,19 +3604,83 @@ namespace Game.UI.Runtime
             return Mathf.Max(24f, room);
         }
 
-        /// <summary>Dark bar behind the overlaid title so a two-line name still reads on the photo.</summary>
+        /// <summary>
+        /// Solid dark band behind the title, plus a short fade under it. The ink rows stay
+        /// on the opaque band so a pale sky cannot pull the contrast under 4.5.
+        /// </summary>
+        private static RectTransform PlaceNameBand(
+            RectTransform card,
+            float nameX,
+            float nameY,
+            float nameW,
+            float nameH,
+            float cardW,
+            float cardH)
+        {
+            if (card == null)
+                return null;
+            float statusH = cardH >= 190f ? 40f : 34f;
+            float limit = cardH - 2f - statusH - 4f;
+            float bandX = Mathf.Max(0f, nameX - 4f);
+            float bandY = Mathf.Max(0f, nameY - 2f);
+            float bandW = Mathf.Min(Mathf.Max(8f, cardW - bandX), nameW + 8f);
+            float bandBottom = nameY + nameH + 4f;
+            if (bandBottom > limit)
+                bandBottom = Mathf.Max(nameY + nameH, limit);
+            float bandH = Mathf.Max(nameH, bandBottom - bandY);
+            RectTransform shade = EnsureNameShade(card);
+            PlaceTopLeft(shade, bandX, bandY, bandW, bandH);
+            shade.localScale = Vector3.one;
+            KeepAuthoredSize(shade);
+            RectTransform fade = EnsureNameFade(card);
+            float fadeY = bandY + bandH - 1f;
+            float fadeH = 28f;
+            if (fadeY + fadeH > limit)
+                fadeH = Mathf.Max(8f, limit - fadeY);
+            PlaceTopLeft(fade, 2f, fadeY, Mathf.Max(8f, cardW - 4f), fadeH);
+            fade.localScale = Vector3.one;
+            KeepAuthoredSize(fade);
+            return shade;
+        }
+
+        /// <summary>Opaque dark plate behind the overlaid title.</summary>
         private static RectTransform EnsureNameShade(RectTransform card)
         {
             RectTransform shade = card.Find("NameShade") as RectTransform;
-            if (shade != null)
-                return shade;
-            var image = new GameObject("NameShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            image.transform.SetParent(card, false);
+            Image image;
+            if (shade == null)
+            {
+                image = new GameObject("NameShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                image.transform.SetParent(card, false);
+                shade = image.rectTransform;
+            }
+            else if (!shade.TryGetComponent(out image))
+                image = shade.gameObject.AddComponent<Image>();
             image.sprite = ZoneSolidSprite();
             image.type = Image.Type.Simple;
             image.raycastTarget = false;
-            image.color = new Color(0.03f, 0.04f, 0.05f, 0.72f);
-            return image.rectTransform;
+            image.color = new Color(0.012f, 0.014f, 0.018f, 1f);
+            return shade;
+        }
+
+        /// <summary>Fade under the solid title band. It starts below the ink.</summary>
+        private static RectTransform EnsureNameFade(RectTransform card)
+        {
+            RectTransform fade = card.Find("NameFade") as RectTransform;
+            Image image;
+            if (fade == null)
+            {
+                image = new GameObject("NameFade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                image.transform.SetParent(card, false);
+                fade = image.rectTransform;
+            }
+            else if (!fade.TryGetComponent(out image))
+                image = fade.gameObject.AddComponent<Image>();
+            image.sprite = NameVeilSprite();
+            image.type = Image.Type.Simple;
+            image.raycastTarget = false;
+            image.color = Color.white;
+            return fade;
         }
 
         /// <summary>Dark circle drawn behind the progress ring so the arc reads on the photo.</summary>
@@ -3439,6 +3768,22 @@ namespace Game.UI.Runtime
                 LayoutZoneCardStack(card, name, nameH, cardH, wide);
                 LogTheatreCardArt(card);
             }
+
+            TMP_Text zoom = null;
+            for (int i = 0; i < texts.Length; i++)
+            {
+                if (texts[i] != null && texts[i].name == "ZoomCue" && texts[i].gameObject.activeInHierarchy)
+                {
+                    zoom = texts[i];
+                    break;
+                }
+            }
+
+            string selected = _libraryViewModel != null ? _libraryViewModel.Theater.SelectedMapId : "DB";
+            if (string.IsNullOrEmpty(selected))
+                selected = "DB";
+            if (zoom != null)
+                FitZoomCue();
         }
 
         /// <summary>One line per zone card: authored size, live rect, lossy scale, and world-corner span.</summary>
@@ -3684,7 +4029,62 @@ namespace Game.UI.Runtime
             name.characterSpacing = spacing;
             name.textWrappingMode = TextWrappingModes.NoWrap;
             name.overflowMode = TextOverflowModes.Overflow;
+            InkZoneName(name);
             name.ForceMeshUpdate();
+        }
+
+        private static void InkZoneNames(Transform regions)
+        {
+            if (regions == null)
+                return;
+            TMP_Text[] texts = regions.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text name = texts[i];
+                if (name != null && name.name == "ZoneName" && name.gameObject.activeInHierarchy)
+                    InkZoneName(name);
+            }
+        }
+
+        /// <summary>How far the first glyph sits below the label's top edge, in y-down pixels.</summary>
+        private static float NameInkTopInset(TMP_Text name)
+        {
+            if (name == null)
+                return 0f;
+            name.ForceMeshUpdate();
+            if (name.textInfo == null || name.textInfo.characterCount <= 0)
+                return 0f;
+            float top = float.NegativeInfinity;
+            int count = name.textInfo.characterCount;
+            for (int i = 0; i < count; i++)
+            {
+                TMP_CharacterInfo info = name.textInfo.characterInfo[i];
+                if (!info.isVisible)
+                    continue;
+                if (info.topLeft.y > top)
+                    top = info.topLeft.y;
+            }
+
+            if (top == float.NegativeInfinity)
+                return 0f;
+            float inset = -top;
+            return inset < 0f ? 0f : inset;
+        }
+
+        /// <summary>White title, dark outline and drop shadow, so the glyphs read on a pale photo.</summary>
+        private static void InkZoneName(TMP_Text name)
+        {
+            if (name == null)
+                return;
+            name.color = Color.white;
+            name.outlineWidth = 0.22f;
+            name.outlineColor = new Color(0.01f, 0.01f, 0.02f, 1f);
+            Shadow shadow = name.GetComponent<Shadow>();
+            if (shadow == null)
+                shadow = name.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.95f);
+            shadow.effectDistance = new Vector2(0f, -1.6f);
+            shadow.useGraphicAlpha = true;
         }
 
         private static void RecordDrawnZoneName(TMP_Text name)
@@ -4840,6 +5240,7 @@ namespace Game.UI.Runtime
 
         private static Sprite _zonePill;
         private static Sprite _zoneVignette;
+        private static Sprite _nameVeil;
 
         private static Sprite ZonePillSprite()
         {
@@ -4876,6 +5277,33 @@ namespace Game.UI.Runtime
                 false);
             _zonePill.hideFlags = HideFlags.HideAndDontSave;
             return _zonePill;
+        }
+
+        private static Sprite NameVeilSprite()
+        {
+            if (_nameVeil != null)
+                return _nameVeil;
+            const int width = 8;
+            const int height = 64;
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            var pixels = new Color32[width * height];
+            for (int y = 0; y < height; y++)
+            {
+                // Texture y 0 is the bottom. The fade sits under the title, so its top is opaque.
+                float fromTop = 1f - y / (float)(height - 1);
+                float fade = Mathf.Clamp01(fromTop / 0.92f);
+                fade = fade * fade * (3f - 2f * fade);
+                byte a = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(1f, 0f, fade) * 255f), 0, 255);
+                for (int x = 0; x < width; x++)
+                    pixels[y * width + x] = new Color32(3, 4, 6, a);
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _nameVeil = Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f), 100f);
+            _nameVeil.hideFlags = HideFlags.HideAndDontSave;
+            return _nameVeil;
         }
 
         private static Sprite ZoneVignetteSprite()

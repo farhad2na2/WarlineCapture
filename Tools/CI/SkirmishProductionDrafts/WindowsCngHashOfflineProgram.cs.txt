@@ -1,0 +1,76 @@
+// Offline Windows CNG/managed equivalence and resource-lifecycle controls. No Unity.
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using Game.Editor;
+
+public static class WindowsCngHashOfflineProgram
+{
+    private static readonly Type DigestType = typeof(SkirmishCandidateSourceHash).GetNestedType("StreamingFileDigest", BindingFlags.NonPublic);
+    private static object Create() { return Activator.CreateInstance(DigestType, true); }
+    private static byte[] Compute(object owner, Stream stream, int length)
+    {
+        try { return (byte[])DigestType.GetMethod("Compute").Invoke(owner, new object[] { stream, new byte[length] }); }
+        catch (TargetInvocationException error) { throw error.InnerException; }
+    }
+    private static string Hex(byte[] value) { return BitConverter.ToString(value).Replace("-", "").ToLowerInvariant(); }
+    private static void Require(bool condition, string reason) { if (!condition) throw new Exception(reason); }
+    private static byte[] Oracle(byte[] bytes) { using (var sha = new SHA256Managed()) return sha.ComputeHash(bytes); }
+    private static void Vector(object owner, byte[] bytes, string expected, int buffer)
+    {
+        using (var stream = new MemoryStream(bytes)) Require(Hex(Compute(owner, stream, buffer)) == expected, "Native standard vector differs.");
+        Require(Hex(Oracle(bytes)) == expected, "Independent managed standard vector differs.");
+    }
+    private sealed class ShortReadStream : MemoryStream
+    {
+        public ShortReadStream(byte[] bytes) : base(bytes) { }
+        public override int Read(byte[] buffer, int offset, int count) { return base.Read(buffer, offset, Math.Min(count, 7)); }
+    }
+    private sealed class FailingStream : MemoryStream
+    {
+        public override int Read(byte[] buffer, int offset, int count) { throw new IOException("Intentional read failure"); }
+    }
+
+    public static int Main(string[] args)
+    {
+        try
+        {
+            if (args.Length == 2 && args[0] == "manifest")
+            {
+                Console.WriteLine(SkirmishCandidateSourceHash.Compute(args[1])); return 0;
+            }
+            var owner = Create();
+            try
+            {
+                Vector(owner, new byte[0], "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 1);
+                Vector(owner, Encoding.ASCII.GetBytes("abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", 2);
+                var million = new byte[1000000]; for (int i = 0; i < million.Length; i++) million[i] = (byte)'a';
+                Vector(owner, million, "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0", 1048576);
+                var binary = new byte[3 * 1048576 + 19]; for (int i = 0; i < binary.Length; i++) binary[i] = (byte)((i * 197 + i / 257) & 255);
+                using (var stream = new MemoryStream(binary)) Require(Hex(Compute(owner, stream, 1048576)) == Hex(Oracle(binary)), "Multi-buffer binary mismatch.");
+                using (var stream = new ShortReadStream(binary)) Require(Hex(Compute(owner, stream, 65536)) == Hex(Oracle(binary)), "Short read/tail mismatch.");
+                try { Compute(owner, new FailingStream(), 17); throw new Exception("Read failure swallowed."); }
+                catch (IOException error) { Require(error.Message == "Intentional read failure", "Read error changed."); }
+                Vector(owner, Encoding.ASCII.GetBytes("abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", 8);
+                var check = DigestType.GetMethod("CheckNtStatus", BindingFlags.NonPublic | BindingFlags.Static);
+                Require(check != null, "Windows native branch not compiled.");
+                try { check.Invoke(null, new object[] { unchecked((int)0xC0000008), "InjectedInvalidHandle" }); throw new Exception("NTSTATUS failure swallowed."); }
+                catch (TargetInvocationException error) { Require(error.InnerException is CryptographicException && error.InnerException.Message.Contains("0xC0000008"), "Native status/code not preserved."); }
+                var timer = Stopwatch.StartNew(); using (var stream = new MemoryStream(binary)) Compute(owner, stream, 1048576); timer.Stop();
+                long nativeTicks = timer.ElapsedTicks;
+                timer.Restart(); Oracle(binary); timer.Stop();
+                Console.WriteLine("[WindowsCngOffline] result=Passed vectors=3 binaryBytes=" + binary.Length + " shortReads=1 failureRecovery=1 nativeTicks=" + nativeTicks + " managedTicks=" + timer.ElapsedTicks + " timerFrequency=" + Stopwatch.Frequency);
+            }
+            finally { ((IDisposable)owner).Dispose(); }
+            ((IDisposable)owner).Dispose();
+            try { Compute(owner, new MemoryStream(new byte[0]), 1); throw new Exception("Disposed native provider reused."); }
+            catch (ObjectDisposedException) { }
+            Console.WriteLine("[WindowsCngLifecycle] result=Passed doubleDispose=1 disposedReject=1");
+            return 0;
+        }
+        catch (Exception error) { Console.WriteLine(error); return 2; }
+    }
+}

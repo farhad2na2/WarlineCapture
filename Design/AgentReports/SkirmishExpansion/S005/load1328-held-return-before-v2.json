@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command run_script",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Pipeline command 'run_script' timed out after 30000ms"
+    }
+  ],
+  "warnings": []
+}

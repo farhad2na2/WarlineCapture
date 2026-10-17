@@ -1,0 +1,21 @@
+{
+  "files": [
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset",
+      "backup": "source-fit527-before-SkirmishOperationMap_S005.asset.snapshot",
+      "sha256": "c19aeba8af43593d91f508f0fd1446cf1195a0062e16749e79f04e5d86556998"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "backup": "source-fit527-before-SkirmishLayout_S005.asset.snapshot",
+      "sha256": "abd116db00f30fa965b329e1abb6f143f43404dada34ae1d12daa6e73c4dcc79"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "backup": "source-fit527-before-SkirmishScenario_S005.asset.snapshot",
+      "sha256": "470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c"
+    }
+  ],
+  "budgetsMayChange": false,
+  "physicalSourcesMayChange": false
+}

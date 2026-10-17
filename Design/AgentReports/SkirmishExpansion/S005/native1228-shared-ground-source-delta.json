@@ -1,0 +1,42 @@
+{
+  "beforeHash": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "afterHash": "5e94ef34185750a5ef87068726815bda22899d0bb08c8685b292fc3bfbda8932",
+  "materialsUnchanged": true,
+  "changes": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "before": "554dc9ce59498f24643714467e433c7fadf32964a9ab87d1dc492c7f7fe7c2db",
+      "after": "dc18a4beac9789461ca74326c83baba40297d739b0a58eb03f3174299584f607"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs",
+      "before": "af4e63071af6f0ef01d018b3927981f488b2ae16d5ab0e52eedf0c3a8650a9b8",
+      "after": "9325d7caf555be2455593513891eace7678a08174ee873e4456d8592b948a556"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitEngagedMovementSystem.cs",
+      "before": "231c1770ac516c9f1ab3cbecb076b900612dc827a6b816e8bc3453197167e002",
+      "after": "0151d9e44c5bf52d356c4c850ef1a4d33a57bd3b9d6333b2c81d45ac65c210a2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs",
+      "before": "7b67282b1fcfc3b52cc36b70e5506e8fea1ddc3ba69a6286426abb66f030f638",
+      "after": "cfd49d0e66820fc50aaf21aee4b2a2c60e95382a6cbea13671cae509c2393ede"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs",
+      "before": "a79f5b486cc14cd2bda7134c7ee991105ad2ef17cfafbea8368a17ad411e229d",
+      "after": "8c66f7be16e2aae6240643e543a7ee643f5a3cac169f1a4d633984a32d88faac"
+    },
+    {
+      "path": "Assets/Tests/Editor/UnitGroundMovementPauseTests.cs",
+      "before": null,
+      "after": "c851938780361ab3b0b2ed088650d0a2afe8d3bae081a9b3bacf0d1d73c2da0b"
+    },
+    {
+      "path": "Assets/Tests/Editor/UnitGroundMovementPauseTests.cs.meta",
+      "before": null,
+      "after": "c75251d1e05249f2323f382059c9c6153ebd3ece8d5d3cd548a6007e3066be05"
+    }
+  ]
+}

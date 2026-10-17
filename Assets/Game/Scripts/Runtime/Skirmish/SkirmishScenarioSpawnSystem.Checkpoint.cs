@@ -17,7 +17,7 @@ namespace Game.Runtime
         // Called by the native reconstruction owner after document compatibility
         // passes. Never create a bare ledger as a substitute for a baked prefab.
         internal static bool TryInstantiateCheckpointUnit(EntityManager em,
-            SkirmishNativeCheckpointSnapshotService.Actor saved, out Entity actor)
+            SkirmishNativeCheckpointSnapshotService.Actor saved, out Entity actor, Game.Configs.SkirmishResolvedSetup setup = null)
         {
             actor = Entity.Null;
             if (em == default || saved == null || saved.IsStructure != 0 || string.IsNullOrEmpty(saved.PrefabKey) ||
@@ -26,6 +26,8 @@ namespace Game.Runtime
                 !SkirmishNativeCheckpointParts.TryReadComponent(saved.Parts, out LocalTransform transform) ||
                 owner.IsStructure != 0 || owner.StableObjectId.ToString() != saved.Id)
                 return false;
+            bool objectiveTruck = role.Role == Game.Skirmish.Contracts.SkirmishRoleKind.ConvoyLogic;
+            if (!SkirmishNativeConvoyCheckpoint.TryValidateClassification(setup,saved,out _)) return false;
             var prefabs = BuildPrefabEntityLookup(em);
             if (!TryResolvePrefabEntity(prefabs, saved.PrefabKey, out Entity prefab) || !em.Exists(prefab)) return false;
             using var ownedQuery = em.CreateEntityQuery(new EntityQueryDesc
@@ -49,6 +51,8 @@ namespace Game.Runtime
             if (!em.HasComponent<CampaignMissionCombatSuppressedTag>(created)) em.AddComponent<CampaignMissionCombatSuppressedTag>(created);
             // Keep rebuilt actors inert until every owner/reference is prepared.
             if (!em.HasComponent<Disabled>(created)) em.AddComponent<Disabled>(created);
+            if (objectiveTruck && !SkirmishNativeConvoyCheckpoint.TrySpecializeFresh(em,created,setup,saved,out _))
+            { em.DestroyEntity(created); return false; }
             actor = created;
             return true;
         }

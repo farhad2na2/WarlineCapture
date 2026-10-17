@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "actual_checked_wrapper_exit": 2,
+  "rtk_shell_exit": 1,
+  "reason": "incompletePackedRenderInitialization",
+  "candidate_sha256": "9a58bfc0d2fa7a7d160ca50c90eb2a6dd9a058e2384df6b138dbc15e1d673f57",
+  "source_files": 41050,
+  "complete_source_and_build_unchanged": true,
+  "native_launch_and_finish_hash_match": true,
+  "png_count": 0,
+  "mission_seconds": 14.66666,
+  "aria_started": false,
+  "observed_attempt": false,
+  "cameraAccepted": false,
+  "fullMissionCertified": false,
+  "playerReady": false
+}

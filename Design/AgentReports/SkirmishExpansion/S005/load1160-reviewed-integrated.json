@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005IntegratedTechnical1160.cs",
+      "entry": "S005IntegratedTechnical1160.Run",
+      "dry_run": "false",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 44,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005IntegratedTechnical1160_987596d8de214ae6a3878a335d23c3c9",
+      "success": true,
+      "result": "Load only; actual validation requires repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

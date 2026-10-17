@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1252",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "delegation-1242-recovered-current-source-manifest.json",
+  "preflightManifest": "final-1252-normal-aria-preflight-source-manifest.json",
+  "fixtureSha256": "9da93ea43f7a3e47dddeb9510378ef31dbd9de04145aa888da6c444884f6017e",
+  "executedRunnerSha256": "830082d570c23c0f45182434d51e52eb090d138a6e150a4a8cf8e85ee0d0addc",
+  "method": "S005NormalAria1252Observer.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

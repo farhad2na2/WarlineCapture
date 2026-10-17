@@ -1,0 +1,21 @@
+{
+  "status": "Passed",
+  "results": [
+    {
+      "suite": "economy",
+      "method": "Game.Tests.Editor.SkirmishEnemyEconomyTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyEconomyTests] result=Passed tests=9",
+      "markerPresent": true,
+      "passed": true,
+      "log": "native-1234-economy.log",
+      "logSha256": "71ee3a73dc4c453511d929e6a01b298f628f8ef63ef2545c49930cb042fc8bd6"
+    }
+  ],
+  "sourceHash": "526db88f0c4e9deb4a9da38914410f7786e06b94e66e0a5be96c22169d0f893c",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1234-economy-repaired-pre-source-manifest.json",
+  "postManifest": "final-1234-economy-post-source-manifest.json",
+  "normalWins": 0
+}

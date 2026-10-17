@@ -1,0 +1,11 @@
+{
+  "review": "Root reviewed source-pinned Campaign M03 English fixture, 164 contracts, exact dry compile and load-only SelfCheck; native dispatch enabled",
+  "sourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "fixtureSha256": "31459950178e9ea2b3243bed0a78d2db2916cf6c22b37e8f767436ccf15d286b",
+  "runnerSha256": "3945de1036698bfd24ea0b3bcd05ac8b391142cadb0fbe90b9c38cc924e18eda",
+  "dryCompileSha256": "4e09e82e8d805ea45f0781270bf4d71b35ddb45c2c63c5159939a018ad367f42",
+  "loadOnlySha256": "b459563ed6765cf24df6cee819ed857457e58b0186ea0dbb79cf7e8e2c2597cc",
+  "previousNativeIdle": "Design/AgentReports/SkirmishExpansion/S005/native1416-after-close-idle.json",
+  "disabledManifestSha256": "4e5aabc32ccba129119704133449d042dc07abec630bdffc97b577c1fe4ed08b",
+  "nativeRunPending": true
+}

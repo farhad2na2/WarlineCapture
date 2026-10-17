@@ -1,0 +1,86 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Runtime;
+using Unity.Core;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+
+// Prepared isolated native-system regression, not a normal mission acceptance run.
+// Reads the compact real1018 field observation, never the checkpoint Payload.
+public static class S005AirPauseRegression1043
+{
+    const string Source = "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/readonly1042-flight-checkpoint-field-diff.json";
+    [Serializable] sealed class Sample
+    {
+        public UnitAirComponent pausedAir;
+        public UnitAirMovement pausedMovement;
+        public LocalTransform pausedTransform;
+    }
+    public static object Run() => "Prepared only; execute RunValidation through repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        var sample=JsonUtility.FromJson<Sample>(File.ReadAllText(Source));
+        if(sample==null || sample.pausedAir.Airborne==0 || sample.pausedAir.UsesRunway==0)
+            throw new InvalidOperationException("Real1018 paused banked fixed-wing sample missing.");
+        for(int variant=0;variant<5;variant++)Case(sample,variant);
+        Debug.Log("[S005AirPauseRegression] result=Passed zeroDeltaCases=5 pausedFramesEach=120 positiveDeltaControls=5 realPausedQuaternion=1 scope=IsolatedNativeSystem wholeMissionCertified=0");
+        return Task.FromResult(0);
+    }
+    static void Case(Sample sample,int variant)
+    {
+        string name=new[]{"BankedFixedWingMove","BankedFixedWingReturn","VtolMove","DeliveryTransitAtHome","QueuedNewTargetWhilePaused"}[variant];
+        using var world=new World("S005AirPause1043-"+name);
+        var em=world.EntityManager;
+        var gridEntity=em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity,new GridConfig {Width=2048,Height=1024,CellSize=1,Origin=float3.zero});
+        var actor=em.CreateEntity(typeof(LocalTransform),typeof(UnitGrid),typeof(UnitMove),typeof(UnitAirMovement),typeof(UnitAirComponent));
+        var transform=sample.pausedTransform;
+        var air=sample.pausedAir;
+        if(variant==1){air.ReturningHome=1;air.AttackRunActive=0;air.ReturnApproachInitialized=0;}
+        if(variant==2){air.UsesRunway=0;air.AttackRunActive=0;air.ReturningHome=0;}
+        if(variant==3)
+        {
+            air.Airborne=0;air.AttackRunActive=0;air.ReturningHome=0;
+            transform.Position=air.HomePosition;
+            em.AddComponent<UnitSpawnTransitTag>(actor);
+        }
+        em.SetComponentData(actor,transform);
+        em.SetComponentData(actor,new UnitGrid {Cell=GridUtils.WorldToCell(em.GetComponentData<GridConfig>(gridEntity),transform.Position)});
+        em.SetComponentData(actor,new UnitMove {Speed=36,WalkSpeed=36,ArriveDistance=.05f});
+        em.SetComponentData(actor,sample.pausedMovement);
+        em.SetComponentData(actor,air);
+        if(variant==0 || variant==2 || variant==4)em.AddComponentData(actor,new UnitTarget {Cell=variant==4?new int2(1600,687):new int2(1362,687)});
+        var originalTransform=em.GetComponentData<LocalTransform>(actor);
+        var originalAir=JsonUtility.ToJson(em.GetComponentData<UnitAirComponent>(actor));
+        var originalGrid=em.GetComponentData<UnitGrid>(actor);
+        bool originalTransit=em.HasComponent<UnitSpawnTransitTag>(actor),originalTarget=em.HasComponent<UnitTarget>(actor);
+        var originalGoal=originalTarget?em.GetComponentData<UnitTarget>(actor).Cell:default;
+        var system=world.CreateSystem<UnitAirMovementSystem>();
+        for(int frame=0;frame<120;frame++)
+        {
+            world.SetTime(new TimeData(100d,0f));system.Update(world.Unmanaged);em.CompleteAllTrackedJobs();
+            var current=em.GetComponentData<LocalTransform>(actor);
+            bool stable=math.all(current.Position==originalTransform.Position) && current.Scale==originalTransform.Scale &&
+                math.all(current.Rotation.value==originalTransform.Rotation.value) &&
+                JsonUtility.ToJson(em.GetComponentData<UnitAirComponent>(actor))==originalAir &&
+                math.all(em.GetComponentData<UnitGrid>(actor).Cell==originalGrid.Cell) &&
+                em.HasComponent<UnitSpawnTransitTag>(actor)==originalTransit && em.HasComponent<UnitTarget>(actor)==originalTarget &&
+                (!originalTarget || math.all(em.GetComponentData<UnitTarget>(actor).Cell==originalGoal));
+            if(!stable)
+            {
+                Debug.LogError("[S005AirPauseRegression] result=Failed case="+name+" zeroDeltaFrame="+frame+" rotationDelta="+math.distance(current.Rotation.value,originalTransform.Rotation.value)+" positionDelta="+math.distance(current.Position,originalTransform.Position));
+                throw new InvalidOperationException("Zero-delta native air simulation changed transform/state/order/transit: "+name);
+            }
+        }
+        world.SetTime(new TimeData(100.1d,.1f));system.Update(world.Unmanaged);em.CompleteAllTrackedJobs();
+        var resumed=em.GetComponentData<LocalTransform>(actor);
+        bool progressed=variant==3?!em.HasComponent<UnitSpawnTransitTag>(actor):math.distance(resumed.Position,originalTransform.Position)>.01f;
+        if(variant==4 && math.any(em.GetComponentData<UnitAirComponent>(actor).AttackPassGoalCell!=originalGoal))throw new InvalidOperationException("Queued new target did not supersede old air intent on positive delta.");
+        if(!progressed)throw new InvalidOperationException("Positive-delta control did not resume native motion/transit: "+name);
+        Debug.Log("[S005AirPauseCase] result=Passed case="+name+" zeroDeltaFrames=120 exactTransformFlightGridOrderTransitStable=1 positiveDeltaResumed=1 worldDisposedOnReturn=1");
+    }
+}

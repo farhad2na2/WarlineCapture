@@ -1,0 +1,9 @@
+{
+  "originalMainTestRun": "9passed1failed",
+  "cause": "One-second wrapper timeout can expire before monitor entry; test incorrectly demanded only the later missing-receipt wording. Runtime still correctly returned124 and preservedEditor.",
+  "testOnlyRepair": "Assert timeout124 and Editor preservation in both missing-receipt/no-evidence tests.",
+  "finalLog": "wrapper1226-stub-tests-final.log",
+  "finalResult": "10passed",
+  "monitorUnchanged": true,
+  "nativeQualification": "Pending1226"
+}

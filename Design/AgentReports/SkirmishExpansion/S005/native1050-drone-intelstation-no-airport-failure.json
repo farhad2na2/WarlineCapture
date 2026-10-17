@@ -1,0 +1,52 @@
+{
+  "result": "Failed",
+  "scope": "Isolated funded Established-readiness Drone production from legal native IntelStation without Airport; actual paid queue API and native Touch selection/movement; no normal whole mission or full air lifecycle certificate",
+  "sourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1049-retained-flight-post-source-manifest.json",
+  "postManifest": "final-1050-drone-producer-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1050-drone-intelstation-no-airport-smoke.log",
+  "logSha256": "7ff6a31b8a2fd05745a9e720de5cd24dddeb23384f6ff27b1626084ecdfcd5a0",
+  "fixture": "native1050-drone-producer-fixture.cs.txt",
+  "fixtureSha256": "e631f546d63838d79b66a0664f6599628e6b6348ccbb9cf08e2e9b35d3f5f058",
+  "touchEvidence": "delegation-aircraft-drone1050.touch.jsonl",
+  "fundingInjected": true,
+  "readinessGranted": "Established",
+  "enemyStrategyDisabled": true,
+  "deathStimulus": "HealthZero",
+  "actorPositionsSelectionOrdersInjected": false,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing [S005DroneProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0",
+    "Missing [S005DroneNativeSelection] result=Passed",
+    "Missing [S005DroneNativeMovement] result=Passed",
+    "Missing [S005DronePaidQueueDeath] result=Passed"
+  ],
+  "nativeMarkers": [
+    "[S005DroneMovement] scope=IsolatedNativeDroneR2ProducerAndTouchMovement normalMission=0 fundingInjected=1 readinessGranted=Established deathStimulus=HealthZero pricesCapsRatesMapsUnchanged=1",
+    "[S005DroneProducer] phase=NativeLegalIntelStationBuild airportPresent=0 readiness=Established fundingInjected=1",
+    "[S005DroneMovement] result=Failed cases=0 normalInput=0 fullLifecycle=Pending nativeTouchSelectionMovement=Measured nativeAirLifecycle=Pending scanReturnCapacity=Pending reason=System.TimeoutException: Role Drone phase 21 exceeded native queue/death timeout.",
+    "[S005DroneMovementCleanup] result=Passed attemptsRemoved=1"
+  ],
+  "queueReached": false,
+  "producerDefectProven": false,
+  "diagnosis": "Read-only live observation: two completed gestures; Build drawer and catalog existed; visible squad tray disappeared while popup opened. Fixture InputFrame returned before querying popup catalog because it required active MatchHudSquadTrayView.",
+  "liveObservation": {
+    "phase": 21,
+    "busy": false,
+    "dispatched": 2,
+    "completed": 2,
+    "screenWidth": 1281,
+    "screenHeight": 932,
+    "visibleTray": null,
+    "catalogs": 1,
+    "drawers": 1,
+    "scope": "Read-only Pipeline eval during native1050"
+  }
+}

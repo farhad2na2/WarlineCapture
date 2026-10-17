@@ -1,0 +1,12 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "beforeHash": "5009b7cb821a4991235ec8457591b77fea26265831f66734847278e5f6f042b3",
+    "afterHash": "20e8d84967a63a60b8b8cec281e32d7ccaa93226da0557e9f348082c670adc99",
+    "protectedHash": "692dcac5bc2022690a929fb1da537dd8964215972eb2c74c045c3324fd0eab8b",
+    "bridges": 2,
+    "addedMaterialRows": 8,
+    "measurements": [
+        "bridge=0 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Container_01",
+        "bridge=1 length=40.000 width=11.005 roadWidth=5.000 sidewalkWidth=2.500 roadY=0.165 sidewalkY=0.315 road=Map_AshLinePort/Roads/RoadChunk_4_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt owner=Map_AshLinePort/Props/SM_Prop_Barricade_01"
+    ]
+}

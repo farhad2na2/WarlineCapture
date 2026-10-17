@@ -1,0 +1,19 @@
+{
+  "result": "PassedScopedCargoEffectsCleanupPresentationGatePending",
+  "nativeProof": "native1101-isolated-paid-paid-transport-pass.json",
+  "nativeWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "fullSourceUnchanged": true,
+  "sourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "passengerCount": 4,
+  "loadedMoveHorizontalDisplacement": 61.52624,
+  "actualPaidHelipadRuntimeId": 15,
+  "touchRowCount": 197,
+  "cleanupWarnings": [
+    "Some objects were not cleaned up when closing the scene: AriaGuidanceOverlay"
+  ],
+  "attemptActorsRemoved": true,
+  "normalMissionCertified": false,
+  "allSceneObjectsCleaned": false,
+  "next": "Investigate actual guidance overlay lifecycle before closing scene cleanup gate."
+}

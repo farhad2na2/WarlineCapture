@@ -96,6 +96,13 @@ namespace Game.Runtime
             return MainMenuPlayUi != null && MainMenuPlayUi.IsBuildDrawerOpen;
         }
 
+        internal bool TryFitPlacementPreview(int token,Vector3[] points,Quaternion rotation,bool valid,out Action release)
+        {
+            release=null;
+            return MainMenuPlayUi is IBuildingPlacementViewportQuery viewport&&SelectionUiCameraSystemHelper!=null&&
+                SelectionUiCameraSystemHelper.TryFitPlacementPreview(token,points,rotation,viewport.GetPlacementViewportRect(valid),out release);
+        }
+
         internal void FocusPlacementImmediately(Vector3 worldPosition, bool isValid)
         {
             Vector2 center = MainMenuPlayUi is IBuildingPlacementViewportQuery viewport
@@ -106,6 +113,7 @@ namespace Game.Runtime
         internal void SmoothMoveCameraGroundCenterTo(Vector3 worldPosition) =>
             SelectionUiCameraSystemHelper?.SmoothMoveCameraGroundCenterTo(worldPosition);
 
+        internal bool TryFocusProducedAircraft(Unity.Entities.Entity actor)=>SelectionUiCameraSystemHelper?.TryFocusProducedAircraft(actor)==true;
         internal void FocusProductionDelivery(Vector3 worldPosition) =>
             SelectionUiCameraSystemHelper?.FocusProductionDelivery(worldPosition);
         internal void FollowCameraGroundCenterTo(Vector3 worldPosition) =>

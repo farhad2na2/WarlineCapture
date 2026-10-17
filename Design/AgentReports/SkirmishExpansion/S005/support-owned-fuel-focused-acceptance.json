@@ -1,0 +1,82 @@
+{
+  "sourceHash": "c24ced8ef16ffc1a4022bf60a126690c1230d8812853e438ecaddf3a893cc1d1",
+  "result": "Passed",
+  "supportChecks": 65,
+  "runs": [
+    {
+      "run": 277,
+      "kind": "Runtime",
+      "log": "tests-277-owned-fuel-runtime.log",
+      "logSha256": "c6c0973ad7b2256cdafa99287b08e3e4431ee4570f61f4aa03fb60988193af85",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 11
+    },
+    {
+      "run": 278,
+      "kind": "Smoke",
+      "log": "tests-278-owned-fuel-smoke.log",
+      "logSha256": "4d383b810732915bd0a8c05352543cfa0ed94328b49ca0d193cf066ba0841341",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 279,
+      "kind": "UiAria",
+      "log": "tests-279-owned-fuel-uiaria.log",
+      "logSha256": "97ff8d7091f97cf5700c3358ef1274892684667f4eda4454a4e2df31376b4e74",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 13
+    },
+    {
+      "run": 280,
+      "kind": "Supply",
+      "log": "tests-280-owned-fuel-supply.log",
+      "logSha256": "b42bd11f35baefa503e2ace444ab202034738fd5d5c52213c96c1b2143fa9555",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 10
+    },
+    {
+      "run": 281,
+      "kind": "Campaign",
+      "log": "tests-281-owned-fuel-campaign.log",
+      "logSha256": "5cb176803d52b00988ba5e256e84a49da124328ad549a8309bc31a55df96d4fe",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 282,
+      "kind": "Strike",
+      "log": "tests-282-owned-fuel-strike.log",
+      "logSha256": "80b9d01d8635fde3f8fa7c41e60943f625e868a86470e781f4c7d7cf1d8a53da",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 10
+    },
+    {
+      "run": 283,
+      "kind": "Paratrooper",
+      "log": "tests-283-owned-fuel-paratrooper.log",
+      "logSha256": "ec115cf2505f24f34263a3c193027060674cc443d4a6eda2d974fe09c4da3642",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 9
+    },
+    {
+      "run": 284,
+      "kind": "SkirmishSharedMaterials",
+      "log": "tests-284-owned-fuel-skirmishsharedmaterials.log",
+      "logSha256": "c758aa7412282e828a31da57ef83f9ed06f275c5d9e0cb5f01dadd67fcedb3e1",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": null
+    }
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "normalInputAcceptance": false,
+  "playerReady": false
+}

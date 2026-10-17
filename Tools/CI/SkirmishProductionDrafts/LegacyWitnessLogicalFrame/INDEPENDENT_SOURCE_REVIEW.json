@@ -1,0 +1,14 @@
+{
+  "result": "IndependentSourceReviewClear_ProofPending",
+  "manifest_sha256": "c609f39608876b8f74d323e8ca7d71f7666f3e829d570ec3df381f43e85e23c7",
+  "targets_checked": 16,
+  "unique_targets": 16,
+  "all_source_and_current_before_pins_match": true,
+  "exact_parent_set": "Legacy13 + witness480one + logicalwidener2; only LegacyControls facade source intentionally replaces original controls. Other15 source hashes equal independently cleared parent bytes.",
+  "facade": "Corrected Survey receiver: original Legacy focused controls, logicalframe6, then prefix6/opening18/warmup; combined marker only after all direct calls return. No catch/skip, full fit call, allocator/source mutation, production job or coverage credit.",
+  "prior_failed_union": "6a2 preserved; incorrect Harness receiver fixed in explicit successor.",
+  "owning_proof": "Producer835Editor/760Tests composition running; no independent compiler/native execution",
+  "native_jobs": 0,
+  "sampling_coverage_credit": 0,
+  "source_fit_certified": false
+}

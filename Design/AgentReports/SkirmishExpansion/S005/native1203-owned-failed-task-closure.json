@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005CloseFailed1203.cs",
+      "entry": "S005CloseFailed1203.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 181,
+      "executeMs": 11,
+      "assemblyName": "PipelineRunScript_S005CloseFailed1203_0276a236af234e9ebf6e103ddfb24344",
+      "success": true,
+      "result": "Owned failed lifecycle closure requested; Editor retained"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

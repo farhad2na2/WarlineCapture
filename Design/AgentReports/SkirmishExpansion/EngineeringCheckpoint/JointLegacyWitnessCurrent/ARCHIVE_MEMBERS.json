@@ -1,0 +1,192 @@
+{
+  "archive": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/concise-proof-and-inprogress-inputs.zip",
+    "sha256": "3ffa32184c1940707e65539ce380457a59bbe10bce6819a25152ac92618dfeb9",
+    "bytes": 2422835
+  },
+  "captured_at_utc": "2026-10-15T17:08:42.371536+00:00",
+  "members": [
+    {
+      "member": "Logs/SkirmishProduction/Offline/legacy-source-fallback-z94qbkgx/result.json",
+      "sha256": "dbe8068a170c2230e01cd22ee427c4015e78ee98322fc3bd114313fb74a2fdf8",
+      "bytes": 489787,
+      "attribution": "Completed producer typeproof result; no DLL binaries"
+    },
+    {
+      "member": "Logs/SkirmishProduction/Offline/legacy-opening-diagnostic-9ux4rqc2/result.json",
+      "sha256": "2ea04027ebff18deeb2edc6dbbd56377fc4989b9f280e81556fa7a49787ce307",
+      "bytes": 489628,
+      "attribution": "Completed producer typeproof result; no DLL binaries"
+    },
+    {
+      "member": "Logs/SkirmishProduction/Offline/joint-logical-pads-kn7779ma/result.json",
+      "sha256": "c690b77f094fd2ec738da44b81044d4762cbc0447e51fbf3fd9b4e91a1ff9e17",
+      "bytes": 492412,
+      "attribution": "Completed producer typeproof result; no DLL binaries"
+    },
+    {
+      "member": "Logs/SkirmishProduction/Offline/late-ecs-5ea4p5ng/result.json",
+      "sha256": "478326206245b3a26fc421806fbefba268d79be7c3e42d07554600096e6d276b",
+      "bytes": 293317,
+      "attribution": "Completed producer typeproof result; no DLL binaries"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/CANDIDATE_CONTEXT.json",
+      "sha256": "f1b551cc56a9c232cbb826471444b55d639aaae442b95c1a17c4e3cd675b69fa",
+      "bytes": 3000,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/UPSTREAM_ADOPTION.json",
+      "sha256": "540fd40550370c2c027ae1fcbce04e03e0a09f9692e9fff64dfdf19436b3c222",
+      "bytes": 2575,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/required-markers.json",
+      "sha256": "36c3be4139cc10505e63a5ec57c7afd7d602113430525a58a562103898bb67e7",
+      "bytes": 1389,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/run-checked.ps1",
+      "sha256": "fd870778c21370390444d293dea8497364f54fb6aa0d4d604bcd22fa6e179815",
+      "bytes": 8210,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/source-before.json",
+      "sha256": "e766278b870ecba2936def608e94865fc0fe8aa86bd8456f524a88cde9e004bc",
+      "bytes": 9152318,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/unity-editor.txt",
+      "sha256": "5bc3486012f8247b52f52e7b84693da2898af0bbe3de26af0aae014cb80520f2",
+      "bytes": 50,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/resolver.log",
+      "sha256": "393f692bf548a0aa5f1505f2a11bbca4143faf785ae473dcc93cfdd77da6c263",
+      "bytes": 674,
+      "attribution": "Current18282 input before completion; not actual0"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/IMPORT_RECEIPT.json",
+      "sha256": "af7f71c21fe9802f9e46a9ea6f838e3a8c103ea5fa94b5576b1bb2d5cc112d65",
+      "bytes": 4152,
+      "attribution": "Root actual importer apply receipt"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "bytes": 21301,
+      "attribution": "Exact original predecessor bytes backed up before root import"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "sha256": "3966bf263453550f29dbce482dbb1081d9a1c3284470bda379a1b839fdc47f2e",
+      "bytes": 5166,
+      "attribution": "Exact original predecessor bytes backed up before root import"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2",
+      "bytes": 11801,
+      "attribution": "Exact original predecessor bytes backed up before root import"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d",
+      "bytes": 35036,
+      "attribution": "Exact original predecessor bytes backed up before root import"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/import-backup/before/Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c",
+      "bytes": 5789,
+      "attribution": "Exact original predecessor bytes backed up before root import"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass0.LargeWar.size.json",
+      "sha256": "e534e876cd0a0f7a9b44b577701b850b48cd8289dc12eb7db2a2d5e30d1974a7",
+      "bytes": 70507,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass0.Standard.size.json",
+      "sha256": "1899365c2005838325e246e4a5af8671f155a98c1a00cdf6612e2bc556c2b37f",
+      "bytes": 65191,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass0.War.size.json",
+      "sha256": "4d91ba555ae12e86fef8add2f66b663e728a2204d4c66d9c056efd40f4e62998",
+      "bytes": 70157,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass3.LargeWar.size.json",
+      "sha256": "778a69b5b06a7f1983d5fdeb0fedef642b9cd718cd6ee9b45d98347ae13ee3d8",
+      "bytes": 70423,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass3.Standard.size.json",
+      "sha256": "1532c95b545073ac5db94d2eade0481e955a9be2e47e03ce74dea3260cbcaf73",
+      "bytes": 65268,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass3.War.size.json",
+      "sha256": "38dfd2c762f5b00cbbfdfcc0713d23f39dd5b32221ca32bb79ac86bd86d6bdb1",
+      "bytes": 70073,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass6.LargeWar.size.json",
+      "sha256": "1dc60414276e808d48574d912115c4c07e128275f20e0875188a0bd161adb679",
+      "bytes": 70423,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass6.Standard.size.json",
+      "sha256": "c5dc9725abb0333b13bb5f0921e3f165448b4ce78537880c8a1ec8bb55af4fa7",
+      "bytes": 65268,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass6.War.size.json",
+      "sha256": "c21bf6be7e90f767ce85de5e7fe92ea48a96a2fd5969a43bbf7e3f094b988675",
+      "bytes": 70073,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass9.LargeWar.size.json",
+      "sha256": "27a0ef4b871a42f51cc3270a5bed7da7ecdc1dca39cdfed37ef593f514f4ce4d",
+      "bytes": 70585,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass9.Standard.size.json",
+      "sha256": "4104ad318a58324fb8b6c12866f85264427900af9cc203789a83276caaf877b4",
+      "bytes": 65429,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/S026-joint.json.authoring.S026.pass9.War.size.json",
+      "sha256": "6214de0f9aac53d71ad4ea42ba44bda701a7d0bf94ac5a8659ff995106e2d7cc",
+      "bytes": 70235,
+      "attribution": "Durable intermediate failed/unqualified size checkpoint; no final native outcome"
+    },
+    {
+      "member": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/unity.log",
+      "sha256": "f04e630b9da15f06e67e52682077e00d05196655a7335c42fbfb7c6f3e1b3859",
+      "bytes": 432913,
+      "attribution": "In-progress log prefix copied at plan construction; not final log"
+    }
+  ],
+  "no_dll_binaries": true,
+  "native18282_state": "InProgress_NotCompleted"
+}

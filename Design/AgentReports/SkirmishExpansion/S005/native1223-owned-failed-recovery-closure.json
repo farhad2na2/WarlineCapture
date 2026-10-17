@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005CloseFailedRecovery1223.cs",
+      "entry": "S005CloseFailedRecovery1223.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 977,
+      "executeMs": 111,
+      "assemblyName": "PipelineRunScript_S005CloseFailedRecovery1223_dfdceda161b54809acbc23258a9d3e53",
+      "success": true,
+      "result": "Requested existing owned harness failure-evidence closure; no Editor process termination"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

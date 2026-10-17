@@ -1,0 +1,29 @@
+{
+  "status": "PassedScopedActualVfx8NotNormalMission",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "cases": 8,
+  "sourceUnchanged": true,
+  "sourceSha256": "72c3698f8db8d836ec8ba4d92a5d8b243b5779c90d2b769ac8c2170f99360f55",
+  "fileCount": 47533,
+  "idleSceneState": {
+    "Project": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets",
+    "IsPlaying": false,
+    "IsCompiling": false,
+    "IsUpdating": false,
+    "ValidationRunning": false,
+    "ActualAA": 0,
+    "ActualPipeline": "Assets/Settings/Mobile_RPAsset.asset",
+    "Scenes": [
+      {
+        "Path": "Assets/Game/Scenes/Menu.unity",
+        "Name": "Menu",
+        "IsLoaded": true,
+        "IsDirty": false,
+        "IsActive": true
+      }
+    ]
+  },
+  "quality": "Actual and serialized MobileAA0; accepted Mobile_RPAsset MSAA1; other tiers unchanged. Actual Play/device acceptance separate.",
+  "precedingFailedEvidence": "1113 incorrect Ground native request count; retained. 1112 first compile failure retained, subsequent Consumer13 scoped pass retained."
+}

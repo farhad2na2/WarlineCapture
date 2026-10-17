@@ -1,0 +1,25 @@
+PREPARED ONLY; not applied, compiled, or executed. Prevent all UnitAirMovementSystem simulation writes at zero/nonpositive simulation delta. Native facility queues, shared production, checkpoint/menu and UI are separate systems and remain active; flight initialization/transit completion resume on positive simulation time.
+
+--- a/Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs
++++ b/Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs
+@@ -61,6 +61,12 @@
+         [BurstCompile]
+         public void OnUpdate(ref SystemState state)
+         {
++            // Pausing must preserve the simulation transform and flight state.
++            // Rebuilding bank/pitch at zero delta changes rotation without time.
++            float dt = SystemAPI.Time.DeltaTime;
++            if (dt <= 0f)
++                return;
++
+             Entity gridEntity = _gridQuery.GetSingletonEntity();
+             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
+             MapSurfaceComponent surface = default;
+@@ -71,7 +77,6 @@
+                 hasSurface = surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated;
+             }
+ 
+-            float dt = SystemAPI.Time.DeltaTime;
+             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+             var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
+             var engageLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);

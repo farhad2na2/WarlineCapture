@@ -1,0 +1,65 @@
+{
+  "result": "FailedOwnedProcessExitRegression",
+  "cases": [
+    {
+      "case": "fast-zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "log": "fast-zero.log"
+    },
+    {
+      "case": "fast-nonzero",
+      "expected": 37,
+      "actual": 0,
+      "passed": false,
+      "log": "fast-nonzero.log"
+    },
+    {
+      "case": "refresh-zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "log": "refresh-zero.log"
+    },
+    {
+      "case": "refresh-nonzero",
+      "expected": 37,
+      "actual": 0,
+      "passed": false,
+      "log": "refresh-nonzero.log"
+    },
+    {
+      "case": "no-process-exit",
+      "expected": 37,
+      "actual": 37,
+      "passed": true,
+      "log": "no-process-exit.log"
+    },
+    {
+      "case": "timeout",
+      "expected": 124,
+      "actual": 1,
+      "passed": false,
+      "log": "timeout.log"
+    },
+    {
+      "case": "fatal-before-timeout",
+      "expected": 1,
+      "actual": 1,
+      "passed": false,
+      "log": "fatal-before-timeout.log"
+    },
+    {
+      "case": "fatal-over-zero",
+      "expected": 1,
+      "actual": 0,
+      "passed": false,
+      "log": "fatal-over-zero.log"
+    }
+  ],
+  "output_directory": "D:\\Projects\\WarlineCapture\\Temp\\InvokeUnityProcessExitTests\\canary-zso2t937",
+  "unity_launched": false,
+  "assets_changed": false,
+  "scope": "Actual InvokeUnity.ps1 and Windows PowerShell5.1 with freshly compiled owned synthetic child EXE; no log-only success acceptance"
+}

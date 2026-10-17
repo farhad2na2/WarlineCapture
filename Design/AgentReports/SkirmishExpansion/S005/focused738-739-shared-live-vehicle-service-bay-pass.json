@@ -1,0 +1,16 @@
+{
+  "result": "Passed focused regressions; native mission acceptance pending",
+  "sourceHash": "bd1e220020aabf8c0097900c3caaa5c1495fc0df16be11259ef34f3788ad76ee",
+  "sourceUnchanged": true,
+  "preSourceManifest": "tests-739-live-vehicle-service-bay-green-pre-source-manifest.json",
+  "postSourceManifest": "tests-739-live-vehicle-service-bay-green-post-source-manifest.json",
+  "log": "tests-739-live-vehicle-service-bay-green.log",
+  "logSha256": "ad8944d3e2b55ae84d2edee7178d808de593bf0fa2b4481d8e70e3ce50afdd22",
+  "actualWrapperExit": 0,
+  "actualWrapperExitArtifact": "tests-739-live-vehicle-service-bay-green.log.exit",
+  "serviceApproachAndPendingPathCases": 9,
+  "existingResourceLogisticsCases": 55,
+  "redProof": "focused738-live-vehicle-service-bay-red.json",
+  "nativeAcceptance": "Pending",
+  "occupancyCacheUnderlyingCauseFixed": false
+}

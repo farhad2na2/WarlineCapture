@@ -1,0 +1,17 @@
+{
+  "result": "PassedScopedCurrentSourceBaseline",
+  "runId": 1361,
+  "sourceHash": "a8cf39d87ddccbd8596ebb2f381b3cd421b832a96edd3c4226533cdf7fc3b546",
+  "fullSourceByteIdentical": true,
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "requiredPassMarker": "[FixedWingMoveReturn1361] result=Passed mode=BeforeFixReproduced cases=16 nativeCommand=1 nativeAirSystem=1 normalMission=0",
+  "logSha256": "75a3360bb6233022774d77c7f20d811d7e929f0721ad1e3d1ce41636243076f8",
+  "fixtureSha256": "cc0c69ec7d2a691e0ed182c53b2ffcab01de703c2e7cc543a82b1f6ae063cb82",
+  "dryCompileProofSha256": "646b41750a9762c6788f3edc300a1fa0f0235ef1175dddbf2842bf931bd5471e",
+  "loadedProofSha256": "fc0f66a5234aba2d86097457942542c8217aff52a22310d93e8b4459efa8f57b",
+  "prePostSourceManifestSha256": "fe859a07237c1afa5abf64cef654db59a765eb2d089fab3b8d4819b75b579624",
+  "normalMission": false,
+  "playerReady": false,
+  "productionChanged": false
+}

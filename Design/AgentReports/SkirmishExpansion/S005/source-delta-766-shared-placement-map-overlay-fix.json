@@ -1,0 +1,15 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs",
+    "Assets/Game/Scripts/UI/Shell/UIShellContentView.MatchHudBindings.cs",
+    "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+    "Assets/Tests/Editor/BuildPlacementConfirmationBarV3PrefabTests.cs"
+  ],
+  "shippingUIChanged": true,
+  "missionConfigsAndPhysicalMapUnchanged": true,
+  "allMaterialHashesUnchanged": true,
+  "fixedBudgetDurationRulesChanged": false,
+  "fromManifest": "final-764-normal-preview-camera-observation-post-source-manifest.json",
+  "toManifest": "final-766-placement-map-preview-preservation-pre-source-manifest.json"
+}

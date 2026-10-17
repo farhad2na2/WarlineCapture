@@ -1,0 +1,428 @@
+{
+  "result": "PassedActualOwnedChildProcessRegression",
+  "passed_directory": "canary-jbdrb71c",
+  "passed_cases": 8,
+  "unity_launched": false,
+  "assets_changed": false,
+  "native_handle_fix": "Cache process.Handle immediately after Start-Process; actual native exit capture, no success marker added",
+  "independent_review": "Authoring foundation static review: no blocker; exit/timeout/fatal priorities unchanged",
+  "preserved_failures": {
+    "canary-zso2t937": "Initial test launcher swallowed nested script exit; restricted taskkill infrastructure failure; original logs retained",
+    "canary-_22j6578": "Corrected exit forwarding: actual0/37/NoProcessExit/finalfatal pass; timeout and runningfatal cleanup failclosed due restricted taskkill credentials; rerun escalated"
+  },
+  "source_hashes": {
+    "Tools/CI/InvokeUnity.ps1": "e0e6b9dfbe349305150c594c9873962e2bcf83c329610302a8db7022da00be91",
+    "Tools/CI/InvokeS005WindowsNorthTrial.ps1": "edcd522a8cd87e89b828e6fd3082d4583168f126ab8433bfb3dfba17336c281f",
+    "Tools/CI/invoke_unity_process_exit_test.py": "5ce865089e14be7ae82c228312cdb04ddf38c27a8212189628daeb3452ea4fd1"
+  },
+  "files": {
+    "canary-zso2t937/compiler.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fast-nonzero.console.log": {
+      "bytes": 1190,
+      "sha256": "8c228bf3f78e237ab89e3ab7150081ac7c558404ad075e86f5a3cefd2a41a391"
+    },
+    "canary-zso2t937/fast-nonzero.log": {
+      "bytes": 1193,
+      "sha256": "e51cfdafffed6311cedaef1d7524d4c8ed141d7f1f72af85f37f641d2f701162"
+    },
+    "canary-zso2t937/fast-nonzero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fast-nonzero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fast-zero.console.log": {
+      "bytes": 1172,
+      "sha256": "718e698432d8543a7d3fba4732dd6e8de0d350102ad8baeb03cfcacb535dd222"
+    },
+    "canary-zso2t937/fast-zero.log": {
+      "bytes": 1175,
+      "sha256": "94ac459c976712e086052fb7fcb8520dcec3656059b17d9ca41bf0673c92b5bd"
+    },
+    "canary-zso2t937/fast-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fast-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fatal-before-timeout.console.log": {
+      "bytes": 1710,
+      "sha256": "6d134344415dd08d32ac22355228cc75313cce2fce73c236ae8e8bb63fab60c3"
+    },
+    "canary-zso2t937/fatal-before-timeout.log": {
+      "bytes": 1327,
+      "sha256": "b6b6f1b228359e6ac4f9322416149cf671d0e34cd50993ce8e55fa1896b0f3a2"
+    },
+    "canary-zso2t937/fatal-before-timeout.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fatal-before-timeout.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fatal-over-zero.console.log": {
+      "bytes": 1268,
+      "sha256": "1812835a245480f1a9a803e012f36e29bf40a546072300b2fd5934048fca0d02"
+    },
+    "canary-zso2t937/fatal-over-zero.log": {
+      "bytes": 1308,
+      "sha256": "27a99b3d026502510581268df145a3b2b34b61418581bef60df26f67c2268d52"
+    },
+    "canary-zso2t937/fatal-over-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/fatal-over-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/no-process-exit.console.log": {
+      "bytes": 1211,
+      "sha256": "b50c7d4ec885d78aca7fa7ed7ab1e5169a957d639702bb03916ff028272c179a"
+    },
+    "canary-zso2t937/no-process-exit.log": {
+      "bytes": 1214,
+      "sha256": "e7de5a07784c46e0a0026a58a4e4d0462e041865150cf0e94ee29d0bc40b52e9"
+    },
+    "canary-zso2t937/no-process-exit.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/no-process-exit.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/refresh-nonzero.console.log": {
+      "bytes": 1211,
+      "sha256": "eed75b67b439e1a1bc8dad7b2e89f253292ecde5a69d5948de0135c10ce8f729"
+    },
+    "canary-zso2t937/refresh-nonzero.log": {
+      "bytes": 1214,
+      "sha256": "32956c09f0e762ac2866256f242e888f452a26b76b6380bb9a6aa27b82e94a49"
+    },
+    "canary-zso2t937/refresh-nonzero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/refresh-nonzero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/refresh-zero.console.log": {
+      "bytes": 1193,
+      "sha256": "952cccf14ac06cd1bf4f0f4a95b622a5faa474f48e6636c9306a08c4dfebee0a"
+    },
+    "canary-zso2t937/refresh-zero.log": {
+      "bytes": 1196,
+      "sha256": "f0aca9135ac3cc4714412ad04e8658d7eca3b320de728bf0f13ac56e3f7cb6ce"
+    },
+    "canary-zso2t937/refresh-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/refresh-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/result.json": {
+      "bytes": 1561,
+      "sha256": "33fb7e255711af291250c7a2a67ca11b30784a99944b0ea25f82a8224cdc7936"
+    },
+    "canary-zso2t937/timeout.console.log": {
+      "bytes": 1656,
+      "sha256": "c9aec168c6e31ec880044fddbc9fd5a39771b30c76d70ed60bbcbd5c0bd21d58"
+    },
+    "canary-zso2t937/timeout.log": {
+      "bytes": 1236,
+      "sha256": "00a10038a8d15cc587a36254c13638f602ac3253dfc274f8bec67936b5e80093"
+    },
+    "canary-zso2t937/timeout.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-zso2t937/timeout.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/compiler.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fast-nonzero.console.log": {
+      "bytes": 1190,
+      "sha256": "d41e4d7bea40bda12f0e68372bd27713b7d1a0b000e71a73cbf9de783df34339"
+    },
+    "canary-_22j6578/fast-nonzero.log": {
+      "bytes": 1193,
+      "sha256": "1a3eb52ec9385d602cb4858d7d22c8f89b99a1e94b858eb13234bd95c7411b0e"
+    },
+    "canary-_22j6578/fast-nonzero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fast-nonzero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fast-zero.console.log": {
+      "bytes": 1172,
+      "sha256": "aafa01629bd55c593ab6868affbdfdf97c5c7613a96fd98ee7119f5d088cfc88"
+    },
+    "canary-_22j6578/fast-zero.log": {
+      "bytes": 1175,
+      "sha256": "2b1771a1b603e5ca492c05908266297c420fa74f3b8d4832c6791cd90708fddf"
+    },
+    "canary-_22j6578/fast-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fast-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fatal-before-timeout.console.log": {
+      "bytes": 1710,
+      "sha256": "23e98d63300da1e71ba9020664c257ee6115e3bf29629709b1d3d280f256351f"
+    },
+    "canary-_22j6578/fatal-before-timeout.log": {
+      "bytes": 1327,
+      "sha256": "de018b8ccd4f2cfbfba7be1f3d2975b093e0fb6272b5cd0d904d7d76e1f45e01"
+    },
+    "canary-_22j6578/fatal-before-timeout.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fatal-before-timeout.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fatal-over-zero.console.log": {
+      "bytes": 1268,
+      "sha256": "a9de01be7d36291da5cec30ea3adae7379462c43bee9c9a28a89d061e2ca487d"
+    },
+    "canary-_22j6578/fatal-over-zero.log": {
+      "bytes": 1308,
+      "sha256": "555af96463c690772a8f9e5b46ab3097dae65e3b8dd2ea74be64bbc03537f924"
+    },
+    "canary-_22j6578/fatal-over-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/fatal-over-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/no-process-exit.console.log": {
+      "bytes": 1211,
+      "sha256": "a16e6ecf080d6102430b3e21f5f4e28cf32cbcbfbaf30cb86ca0c88a22b44b5c"
+    },
+    "canary-_22j6578/no-process-exit.log": {
+      "bytes": 1214,
+      "sha256": "fc7891f347f4e5f340a7bf80ef2ca1110aa5ddddf491d8fa1ee7b9420685c045"
+    },
+    "canary-_22j6578/no-process-exit.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/no-process-exit.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/refresh-nonzero.console.log": {
+      "bytes": 1211,
+      "sha256": "febcac0264598593ba3959d7856a55c74b130fbe6277ecd2202487096ad4baa4"
+    },
+    "canary-_22j6578/refresh-nonzero.log": {
+      "bytes": 1214,
+      "sha256": "0b313d5b7709eb20d9160af485fb10fd8c7693d1bee87a8035731682fc6d5774"
+    },
+    "canary-_22j6578/refresh-nonzero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/refresh-nonzero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/refresh-zero.console.log": {
+      "bytes": 1193,
+      "sha256": "2be3ae5ec27d33a58fd69341935545eee3479009293bad4bc67645375691cfd8"
+    },
+    "canary-_22j6578/refresh-zero.log": {
+      "bytes": 1196,
+      "sha256": "4699bfa3d7b3167b1e6f5d49e59561ad3ed3661305924e28b4fd9d5a85d22402"
+    },
+    "canary-_22j6578/refresh-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/refresh-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/result.json": {
+      "bytes": 1560,
+      "sha256": "c549da8e4e12924b992a012483795c34f053341e777ac01cbbd107354b60f290"
+    },
+    "canary-_22j6578/timeout.console.log": {
+      "bytes": 1656,
+      "sha256": "1c3f1bca3eb6cc060f8236bc50f9359a32783ce0211005d8c70cb22cdd01c02d"
+    },
+    "canary-_22j6578/timeout.log": {
+      "bytes": 1236,
+      "sha256": "5759c60d3ce0f5aad74ff1cd53eeaa8395f92c26abbdee5595b0d2f149e020b7"
+    },
+    "canary-_22j6578/timeout.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-_22j6578/timeout.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/compiler.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fast-nonzero.console.log": {
+      "bytes": 1190,
+      "sha256": "522efef4fea124576cfcfe08465e1f718dea96ffa6e733b5a602ec0204fcfafa"
+    },
+    "canary-jbdrb71c/fast-nonzero.log": {
+      "bytes": 1193,
+      "sha256": "707ce97b9549affba96a9abedb069dd22de636f47db484bcc81199e4dc742aac"
+    },
+    "canary-jbdrb71c/fast-nonzero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fast-nonzero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fast-zero.console.log": {
+      "bytes": 1172,
+      "sha256": "90d1eb86b5dab053d0a69a77ef6938ef799909c203057bfe8bb75fad675f9f2d"
+    },
+    "canary-jbdrb71c/fast-zero.log": {
+      "bytes": 1175,
+      "sha256": "11c122426e8bbef4d169803899760460c53e0c1f0335b79c43d3c92488465714"
+    },
+    "canary-jbdrb71c/fast-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fast-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fatal-before-timeout.console.log": {
+      "bytes": 1599,
+      "sha256": "0a721092670c52cb15f38b991be1906954203a12908d39dc2d76a6e67db981b3"
+    },
+    "canary-jbdrb71c/fatal-before-timeout.log": {
+      "bytes": 1639,
+      "sha256": "bdfdea6d492d1a49f82cd75ee1d050635651ae86216f983d173790c73896ffe4"
+    },
+    "canary-jbdrb71c/fatal-before-timeout.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fatal-before-timeout.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fatal-over-zero.console.log": {
+      "bytes": 1268,
+      "sha256": "d4832e53168e09c63042cb795410eece154e086e130074364286a2e0ee085fa9"
+    },
+    "canary-jbdrb71c/fatal-over-zero.log": {
+      "bytes": 1308,
+      "sha256": "6b461684df5a3eb95e8c2db18b4884f081daebf6e5ef7f6e3b0f0a602cdcf37d"
+    },
+    "canary-jbdrb71c/fatal-over-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/fatal-over-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/no-process-exit.console.log": {
+      "bytes": 1211,
+      "sha256": "b463fcfa943f52ccbe8624f5e2e81d7647e17568ec92f3b1ef43939ad9a5c1ad"
+    },
+    "canary-jbdrb71c/no-process-exit.log": {
+      "bytes": 1214,
+      "sha256": "e2655c28458f56c4778d19cf37798b4b8f214e438306277d6b6a324ce9c15602"
+    },
+    "canary-jbdrb71c/no-process-exit.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/no-process-exit.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/refresh-nonzero.console.log": {
+      "bytes": 1211,
+      "sha256": "e17a17821d3883b2062420498f8f097234e6d49deb6dabc310040727e772e340"
+    },
+    "canary-jbdrb71c/refresh-nonzero.log": {
+      "bytes": 1214,
+      "sha256": "e86710876bdcbcfa206eeb47813a32ea3594a3afaa8499dae71deb0ef22bc7c0"
+    },
+    "canary-jbdrb71c/refresh-nonzero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/refresh-nonzero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/refresh-zero.console.log": {
+      "bytes": 1193,
+      "sha256": "23455a5570ee3dee55074dc0d4b4c3fe2ee3e562932e520f35c2454e52cbf777"
+    },
+    "canary-jbdrb71c/refresh-zero.log": {
+      "bytes": 1196,
+      "sha256": "3784b5e74469edc44a5ee7af9d5099a5a2e93c44322cb2edb5098114c004dc37"
+    },
+    "canary-jbdrb71c/refresh-zero.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/refresh-zero.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/result.json": {
+      "bytes": 1560,
+      "sha256": "66bced0fc0036cc6fdea5ac5c0658ed845b2f3645d04838a0cc004eed31d80cb"
+    },
+    "canary-jbdrb71c/timeout.console.log": {
+      "bytes": 1483,
+      "sha256": "163165f1cf12c2729e822bd0a19f71e622dbba24e31702f562cff203c9000b70"
+    },
+    "canary-jbdrb71c/timeout.log": {
+      "bytes": 1486,
+      "sha256": "4762cd2828da2a9eb26c291c68c3dd3b87b3dde2ace2b8159eee37e0f1827608"
+    },
+    "canary-jbdrb71c/timeout.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "canary-jbdrb71c/timeout.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

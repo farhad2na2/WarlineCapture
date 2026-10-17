@@ -1,0 +1,9 @@
+{
+  "validation": "focused556",
+  "passed": false,
+  "sourceHash": "561cd995610131d99247dc73a5091c6dcb6d1c0905d44bda502ac65a8a5fd277",
+  "prePostSourceHashMatched": true,
+  "reason": "Re-expressed staging and infantry pads overlap at their actual physical centres",
+  "nativeRunAttempted": false,
+  "playerReady": false
+}

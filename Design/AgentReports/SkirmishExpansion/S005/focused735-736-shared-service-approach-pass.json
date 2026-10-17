@@ -1,0 +1,20 @@
+{
+  "result": "Passed focused regressions; native mission acceptance pending",
+  "sourceHash": "162af97548a94c4b21429212d8ee45005c3b08500f5ddf32739a2879296bfd38",
+  "sourceUnchanged": true,
+  "preSourceManifest": "tests-736-service-approach-green-pre-source-manifest.json",
+  "postSourceManifest": "tests-736-service-approach-green-post-source-manifest.json",
+  "log": "tests-736-service-approach-green.log",
+  "logSha256": "78f59bfd60723d9471fdb082d8e8767b65d397c4a246264785abadb561ae4cc2",
+  "actualWrapperExit": 0,
+  "actualWrapperExitArtifact": "tests-736-service-approach-green.log.exit",
+  "serviceApproachAndPendingPathCases": 8,
+  "existingResourceLogisticsCases": 55,
+  "requiredPassMarkers": [
+    "[ServiceApproachValidation] result=Passed cases=8",
+    "[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=55"
+  ],
+  "redProof": "focused735-service-approach-red.json",
+  "native734RootCauseConfirmed": false,
+  "nativeAcceptance": "Pending"
+}

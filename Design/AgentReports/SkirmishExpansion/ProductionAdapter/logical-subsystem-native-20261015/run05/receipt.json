@@ -1,0 +1,24 @@
+{
+  "result": "Failed",
+  "actual_checked_wrapper_exit": 1,
+  "underlying_wrapper_exit": 1,
+  "assertions_passed": [
+    "openingPolicy5",
+    "shared77",
+    "immutableLegacy12beforeAfter",
+    "managedDefaults1",
+    "publicGoals6",
+    "camera7",
+    "profile5",
+    "objective42",
+    "sourcePinsAndLoadedEntries",
+    "nativeS005FaIdentity"
+  ],
+  "failure": "Coordinator omitted required WARLINE_S005_SCENE_WARMUP_OUTPUT fresh absolute output",
+  "fix": "Rerun same aggregate with fresh explicit warmup and profile-preparation outputs",
+  "actual_local_profile_sha256": "27cc75cba150fefbd6f16441e443172e3af3a3da617e06ef873a61ec4363b25f",
+  "profile_policy": "S005FirstOpeningOwnedRifle",
+  "profile_committed": false,
+  "cameraAccepted": false,
+  "playerReady": false
+}

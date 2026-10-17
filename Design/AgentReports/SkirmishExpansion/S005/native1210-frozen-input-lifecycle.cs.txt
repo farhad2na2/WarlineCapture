@@ -1,0 +1,189 @@
+#if UNITY_EDITOR
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Game.Editor;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
+public static class ValidationInputSettingsLifecycle1210
+{
+    public static string LoadOnly() => "Loaded only";
+    static InputSettings original;
+    static string originalJson, originalScenes, originalBuildSettings;
+    static bool originalBackground, originalOptionsEnabled;
+    static EnterPlayModeOptions originalOptions;
+    static ValidationBackgroundInputScope scope;
+    static TaskCompletionSource<int> completion;
+    static int phase, cycle, firstFrame;
+    static double deadline;
+    static string failure;
+
+    static void Check(bool condition, string reason)
+    {
+        if (!condition) throw new InvalidOperationException(reason);
+    }
+
+    static string Scenes()
+    {
+        string value = SceneManager.GetActiveScene().path;
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var scene = SceneManager.GetSceneAt(i);
+            Check(!scene.isDirty, "Original scene must be clean; no scene will be saved or discarded.");
+            value += "|" + scene.path + ":" + scene.isLoaded;
+        }
+        return value;
+    }
+
+    static void Capture()
+    {
+        Check(!EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isPlaying,
+            "Requires native idle Edit mode.");
+        original = ValidationBackgroundInputScope.ReadCurrentReference();
+        Check(original != null, "Actual native original settings required before test.");
+        originalJson = JsonUtility.ToJson(original);
+        originalBackground = Application.runInBackground;
+        originalScenes = Scenes();
+        originalBuildSettings = File.ReadAllText("ProjectSettings/EditorBuildSettings.asset");
+    }
+
+    static void AssertRestored()
+    {
+        Check(ReferenceEquals(ValidationBackgroundInputScope.ReadCurrentReference(), original) && original != null,
+            "Native original InputSettings identity must remain alive and bound.");
+        Check(JsonUtility.ToJson(original) == originalJson, "Original InputSettings JSON changed.");
+        Check(Application.runInBackground == originalBackground, "Original background flag changed.");
+        Check(Scenes() == originalScenes, "Original clean scene setup changed.");
+        Check(File.ReadAllText("ProjectSettings/EditorBuildSettings.asset") == originalBuildSettings,
+            "Project input config registration changed.");
+    }
+
+    public static void RunFocusedValidation()
+    {
+        Capture();
+        try
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                scope = new ValidationBackgroundInputScope();
+                var clone = scope.OwnedSettings;
+                Check(clone != null && ReferenceEquals(ValidationBackgroundInputScope.ReadCurrentReference(), clone), "Actual owned clone not bound.");
+                Check(JsonUtility.ToJson(original) == originalJson, "Configure modified original.");
+                Check(clone.hideFlags == HideFlags.DontSave, "Owned clone lacks explicit scene-survival flags.");
+                scope.Dispose(); scope.Dispose();
+                Check(clone != null, "Dispose prematurely destroyed clone before retirement.");
+                Check(scope.TryCompleteRetirement() && scope.TryCompleteRetirement(), "Retirement is not idempotent.");
+                Check(clone == null && original != null, "Only detached owned clone must be destroyed.");
+                AssertRestored();
+                scope = null;
+            }
+            scope = new ValidationBackgroundInputScope();
+            // Reproduce the actual dead-current-reference failure using only our own clone.
+            UnityEngine.Object.DestroyImmediate(scope.OwnedSettings);
+            Check(ValidationBackgroundInputScope.ReadCurrentReference() == null, "Destroyed binding repro did not occur.");
+            scope.Dispose();
+            Check(scope.TryCompleteRetirement(), "Remembered actual original was not restored after dead clone.");
+            AssertRestored(); scope = null;
+            Debug.Log("[ValidationInputSettingsLifecycle1210] result=Passed repeatCycles=2 deadOwnedRecovery=1 scope=actual-settings-disposable-clones nativePlayTransitions=0");
+        }
+        finally { scope?.Dispose(); scope?.TryCompleteRetirement(); scope = null; }
+    }
+
+    public static Task<int> RunPlayTransitions()
+    {
+        Capture();
+        Check(SceneManager.sceneCount == 1 && SceneManager.GetActiveScene().path == "Assets/Game/Scenes/Menu.unity",
+            "Bounded transition check requires the existing clean Menu scene only.");
+        originalOptionsEnabled = EditorSettings.enterPlayModeOptionsEnabled;
+        originalOptions = EditorSettings.enterPlayModeOptions;
+        // Match the existing public validation harness; restore exact owner options on closure.
+        EditorSettings.enterPlayModeOptionsEnabled = true;
+        EditorSettings.enterPlayModeOptions |= EnterPlayModeOptions.DisableDomainReload;
+        completion = new TaskCompletionSource<int>();
+        phase = cycle = 0; failure = null;
+        deadline = EditorApplication.timeSinceStartup + 180;
+        EditorApplication.update += Tick;
+        EditorApplication.EnterPlaymode();
+        return completion.Task;
+    }
+
+    static void Tick()
+    {
+        try
+        {
+            if (phase == 90)
+            {
+                if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isPlaying) return;
+                Finish(false); return;
+            }
+            Check(EditorApplication.timeSinceStartup < deadline, "Bounded native transition timeout.");
+            if (phase == 0)
+            {
+                if (!EditorApplication.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isPlaying) return;
+                if (scope == null) scope = new ValidationBackgroundInputScope();
+                Check(scope.IsActive && scope.OwnedSettings != null, "Clone did not survive actual Play entry.");
+                firstFrame = Time.frameCount;
+                phase = 1;
+                Debug.Log("[ValidationInputSettingsLifecycle1210] stage=EnteredPlay cycle=" + cycle);
+            }
+            else if (phase == 1)
+            {
+                if (Time.frameCount - firstFrame < 2) return;
+                scope.Dispose(); scope.Dispose();
+                Check(scope.OwnedSettings != null, "Owned clone destroyed before actual Play exit.");
+                phase = 2;
+                EditorApplication.ExitPlaymode();
+            }
+            else if (phase == 2)
+            {
+                if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isPlaying) return;
+                if (!scope.TryCompleteRetirement()) return;
+                AssertRestored();
+                scope = null;
+                Debug.Log("[ValidationInputSettingsLifecycle1210] stage=RestoredEdit cycle=" + cycle + " sameNativeOriginal=1 sameJSON=1");
+                if (++cycle == 2) { Finish(true); return; }
+                // Second transition deliberately installs the clone before the package
+                // snapshots Edit settings, exercising its real saved-JSON restoration.
+                scope = new ValidationBackgroundInputScope();
+                phase = 0;
+                EditorApplication.EnterPlaymode();
+            }
+        }
+        catch (Exception error)
+        {
+            failure = error.ToString();
+            phase = 90;
+            try { scope?.Dispose(); }
+            catch (Exception cleanup) { failure += "\nCleanup: " + cleanup; }
+            if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isPlaying)
+                EditorApplication.ExitPlaymode();
+            else Finish(false);
+        }
+    }
+
+    static void Finish(bool passed)
+    {
+        EditorApplication.update -= Tick;
+        try
+        {
+            scope?.Dispose();
+            Check(scope == null || scope.TryCompleteRetirement(), "Clone cleanup remains active.");
+            AssertRestored();
+        }
+        catch (Exception error) { passed = false; failure += "\nFinal restoration: " + error; }
+        finally
+        {
+            EditorSettings.enterPlayModeOptions = originalOptions;
+            EditorSettings.enterPlayModeOptionsEnabled = originalOptionsEnabled;
+            scope = null;
+        }
+        if (passed)
+            Debug.Log("[ValidationInputSettingsLifecycle1210] result=Passed nativePlayTransitions=2 sameNativeOriginal=1 sameJSON=1 sameBackground=1 sameProjectRegistration=1 sameCleanScenes=1");
+        else Debug.LogError("[ValidationInputSettingsLifecycle1210] result=Failed reason=" + failure);
+        completion.TrySetResult(passed ? 0 : 1);
+    }
+}
+#endif

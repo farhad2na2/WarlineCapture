@@ -1,0 +1,17 @@
+COMMAND rtk proxy D:\Projects\WarlineCapture\Temp\SkirmishConvoyOfflineTests\compiled-tg9a31j8\ConvoyRules.exe
+EXIT 0
+[ConvoyOfflineRule] result=Passed test=DeathOnFifthSecondPreventsCredit
+[ConvoyOfflineRule] result=Passed test=DeliveredTombstoneSurvivesRemovedActorAndRepeatedDelivery
+[ConvoyOfflineRule] result=Passed test=DestroyedTombstoneCannotResurrectOrDeliver
+[ConvoyOfflineRule] result=Passed test=DuplicateOrMissingObservationFailsWithoutMutation
+[ConvoyOfflineRule] result=Passed test=ExactlyThreeDistinctOriginalIdsAndSizeDeadlinesAreRequired
+[ConvoyOfflineRule] result=Passed test=ExitOnFifthSecondResetsOnlyThatTruck
+[ConvoyOfflineRule] result=Passed test=FirstDeliveredIsNonterminalSecondWinsAndThirdMayDeliverSameTick
+[ConvoyOfflineRule] result=Passed test=FourPointNineSecondCheckpointPreservesFractionAndStableIds
+[ConvoyOfflineRule] result=Passed test=InvalidLifeClockDwellAndOverflowDoNotPartiallyCommitAndSurrenderFreezes
+[ConvoyOfflineRule] result=Passed test=LogisticsReplacementCannotSubstituteOriginalIdentity
+[ConvoyOfflineRule] result=Passed test=OneDeliveredOneLiveOneDeadRemainsWinnable
+[ConvoyOfflineRule] result=Passed test=PausedOrNotPlayingFreezesDwellAndDeadline
+[ConvoyOfflineRule] result=Passed test=SecondDeliveryOnDeadlineWinsOtherwiseDeadlineLoses
+[ConvoyOfflineRule] result=Passed test=TwoDeathsBeforeDepartureMakeVictoryImpossible
+[SkirmishConvoyOffline] result=Passed tests=14 passed=14 reducer=ActualDraft assertions=ActualNUnit json=Newtonsoft executedInUnity=0

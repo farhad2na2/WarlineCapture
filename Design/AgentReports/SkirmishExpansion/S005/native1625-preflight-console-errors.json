@@ -1,0 +1,622 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {},
+    "result": {
+      "total": 1000,
+      "returned": 100,
+      "logs": [
+        {
+          "type": "Log",
+          "message": "[ExistingEditorValidation] result=Failed executeMethod=S005NormalSouthFlank1621Observer.RunValidation",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGame.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:150)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T14:59:52.4500270Z"
+        },
+        {
+          "type": "Log",
+          "message": "[SkirmishValidationExit] result=Requested code=2",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGame.Editor.SkirmishS002AriaRunHarness:FinishQuitAfterPlayMode () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1516)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T14:59:52.4335140Z"
+        },
+        {
+          "type": "Log",
+          "message": "[S004ManualNative] result=Failed outcome=Defeat seconds=448.3635 reason=incompleteNativeInputFlow input=Touch ariaStarted=0 actions=43 attackReceipts=0",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGame.Editor.SkirmishS002AriaRunHarness:FinishEvidence (bool,string,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1347)\nGame.Editor.SkirmishS002AriaRunHarness:PollFinishSourceHash () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1253)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T14:59:46.5816780Z"
+        },
+        {
+          "type": "Log",
+          "message": "[S004ManualReceiptAudit] result=Passed measured=1 touches=43 commands=7 violations=0 unexpected=0 interventions=0",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGame.Editor.SkirmishS002AriaRunHarness:FinishEvidence (bool,string,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1339)\nGame.Editor.SkirmishS002AriaRunHarness:PollFinishSourceHash () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1253)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T14:59:46.5466530Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=7696 total=35.5ms gc=0/0/0 cpuFrame=31.7ms cpuMain=26.4ms cpuRender=0.6ms gpu=7.1ms steps=RoadBuild=0.0ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=34.5ms units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=4026 batches=0 setPass=342 tris=12681590 verts=21537316 memory=alloc=7450MB reserved=8299MB mono=2351MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:19.1026170Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=7688 Gap=392.8ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=25.4ms, Selection=246.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=11.9ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:18.6753290Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=18.9 avgFrame=53.0ms updateAvg=12.7ms updateMax=283.9ms cpuFrame=64.7ms cpuMain=54.9ms cpuRender=4.1ms gpu=31.2ms drawCalls=4024 batches=0 setPass=340 tris=12681582 verts=21537300 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7448MB reserved=8299MB mono=2344MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:18.5673620Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=7687 total=283.9ms gc=0/0/0 cpuFrame=64.7ms cpuMain=54.9ms cpuRender=4.1ms gpu=31.2ms steps=RoadBuild=0.0ms, BuildingPlacement=25.4ms, Selection=246.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=11.9ms units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=4024 batches=0 setPass=340 tris=12681582 verts=21537300 memory=alloc=7448MB reserved=8299MB mono=2344MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:18.5671860Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Update hitch frame=7687 Selection=246.5ms, GC=0/0/0, Total=283.9ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:18.5668590Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=7687 Gap=495.7ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.9ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:18.2825160Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=20.3 avgFrame=49.3ms updateAvg=6.9ms updateMax=15.7ms cpuFrame=27.3ms cpuMain=24.7ms cpuRender=4.2ms gpu=15.1ms drawCalls=4031 batches=0 setPass=348 tris=12681822 verts=21537780 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7410MB reserved=8304MB mono=2294MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:16.0649180Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=15.6 avgFrame=64.1ms updateAvg=10.1ms updateMax=34.4ms cpuFrame=74.7ms cpuMain=68.8ms cpuRender=0.7ms gpu=0.2ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7412MB reserved=8305MB mono=2269MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:13.9504270Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=7591 Gap=224.8ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.8ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.3ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:13.2374640Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=7588 total=32.8ms gc=0/0/0 cpuFrame=58.5ms cpuMain=55.4ms cpuRender=0.7ms gpu=0.3ms steps=RoadBuild=0.0ms, BuildingPlacement=0.4ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.1ms units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 memory=alloc=7411MB reserved=8306MB mono=2261MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:12.8167230Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=7570 source=profilerCounters drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:11.8920270Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=25.5 avgFrame=39.2ms updateAvg=6.2ms updateMax=18.9ms cpuFrame=58.9ms cpuMain=55.4ms cpuRender=0.6ms gpu=17.7ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7414MB reserved=8308MB mono=2255MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:11.8919400Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.4 avgFrame=41.0ms updateAvg=6.4ms updateMax=15.3ms cpuFrame=25.3ms cpuMain=22.2ms cpuRender=5.2ms gpu=27.8ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7419MB reserved=8312MB mono=2231MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:09.8865370Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=30.3 avgFrame=33.0ms updateAvg=5.1ms updateMax=11.3ms cpuFrame=23.9ms cpuMain=21.3ms cpuRender=3.9ms gpu=17.9ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7422MB reserved=8317MB mono=2200MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:07.8753200Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=13.8 avgFrame=72.6ms updateAvg=12.0ms updateMax=48.7ms cpuFrame=35.2ms cpuMain=30.1ms cpuRender=4.6ms gpu=34.2ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7425MB reserved=8323MB mono=2174MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:05.8629750Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=7395 Gap=155.7ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.3ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:05.0976950Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=7394 total=28.0ms gc=0/0/0 cpuFrame=120.3ms cpuMain=95.1ms cpuRender=1.2ms gpu=25.1ms steps=RoadBuild=0.1ms, BuildingPlacement=1.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.3ms units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 memory=alloc=7424MB reserved=8323MB mono=2163MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:04.9702690Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=7393 Gap=185.0ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=2.4ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=45.9ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:04.7947330Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=7389 total=33.3ms gc=0/0/0 cpuFrame=39.7ms cpuMain=30.9ms cpuRender=0.5ms gpu=0.1ms steps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.4ms units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 memory=alloc=7422MB reserved=8323MB mono=2156MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:04.3151520Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.6 avgFrame=36.3ms updateAvg=5.7ms updateMax=15.3ms cpuFrame=62.6ms cpuMain=59.2ms cpuRender=0.7ms gpu=0.2ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7423MB reserved=8326MB mono=2151MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:03.8406370Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=7326 source=profilerCounters drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:01.8347650Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=22.7 avgFrame=44.0ms updateAvg=6.8ms updateMax=15.2ms cpuFrame=24.8ms cpuMain=21.8ms cpuRender=4.2ms gpu=16.8ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7424MB reserved=8331MB mono=2126MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:59:01.8343660Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.9 avgFrame=40.2ms updateAvg=6.1ms updateMax=14.5ms cpuFrame=39.0ms cpuMain=35.3ms cpuRender=0.7ms gpu=27.0ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7424MB reserved=8335MB mono=2097MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:59.8110010Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.9 avgFrame=35.9ms updateAvg=5.4ms updateMax=12.9ms cpuFrame=22.5ms cpuMain=19.8ms cpuRender=4.1ms gpu=16.7ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7427MB reserved=8344MB mono=2071MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:57.7992550Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=25.8 avgFrame=38.8ms updateAvg=6.0ms updateMax=14.5ms cpuFrame=61.5ms cpuMain=58.3ms cpuRender=4.7ms gpu=20.9ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7431MB reserved=8351MB mono=2054MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:55.7952950Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.5 avgFrame=40.9ms updateAvg=6.1ms updateMax=14.2ms cpuFrame=89.3ms cpuMain=85.6ms cpuRender=0.5ms gpu=0.3ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7431MB reserved=8354MB mono=2035MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:53.7322670Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=7072 source=profilerCounters drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:51.7305620Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.4 avgFrame=36.5ms updateAvg=5.6ms updateMax=13.8ms cpuFrame=60.1ms cpuMain=57.0ms cpuRender=4.3ms gpu=14.6ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7434MB reserved=8357MB mono=2335MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:51.7304630Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=26.0 avgFrame=38.5ms updateAvg=6.0ms updateMax=12.9ms cpuFrame=63.8ms cpuMain=60.5ms cpuRender=4.8ms gpu=15.5ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7436MB reserved=8361MB mono=2304MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:49.7269550Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=20.7 avgFrame=48.2ms updateAvg=7.5ms updateMax=17.3ms cpuFrame=27.5ms cpuMain=23.8ms cpuRender=4.6ms gpu=50.7ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7436MB reserved=8364MB mono=2271MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:47.6790650Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=18.8 avgFrame=53.3ms updateAvg=8.4ms updateMax=20.4ms cpuFrame=39.8ms cpuMain=34.7ms cpuRender=0.8ms gpu=9.1ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7436MB reserved=8366MB mono=2237MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:45.6731440Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=23.9 avgFrame=41.9ms updateAvg=6.5ms updateMax=14.5ms cpuFrame=29.9ms cpuMain=26.8ms cpuRender=4.9ms gpu=19.3ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7435MB reserved=8369MB mono=2217MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:43.6327740Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=6836 source=profilerCounters drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:41.6198660Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=22.5 avgFrame=44.4ms updateAvg=7.0ms updateMax=22.5ms cpuFrame=29.1ms cpuMain=24.9ms cpuRender=0.6ms gpu=18.1ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7440MB reserved=8370MB mono=2201MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:41.6197300Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=21.8 avgFrame=45.8ms updateAvg=7.1ms updateMax=15.0ms cpuFrame=36.8ms cpuMain=33.3ms cpuRender=0.7ms gpu=0.2ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7441MB reserved=8372MB mono=2185MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:39.6327650Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=22.7 avgFrame=44.1ms updateAvg=6.7ms updateMax=14.8ms cpuFrame=36.9ms cpuMain=33.9ms cpuRender=4.6ms gpu=16.5ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7443MB reserved=8374MB mono=2171MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:37.6059340Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=20.7 avgFrame=48.2ms updateAvg=7.3ms updateMax=20.9ms cpuFrame=47.9ms cpuMain=43.2ms cpuRender=1.0ms gpu=0.2ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7444MB reserved=8376MB mono=2155MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:35.5779600Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=23.1 avgFrame=43.3ms updateAvg=6.6ms updateMax=20.7ms cpuFrame=70.0ms cpuMain=66.9ms cpuRender=4.6ms gpu=16.0ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7446MB reserved=8378MB mono=2145MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:33.5610390Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=6612 source=profilerCounters drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:31.5345730Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=21.4 avgFrame=46.8ms updateAvg=7.3ms updateMax=16.6ms cpuFrame=68.2ms cpuMain=62.8ms cpuRender=0.9ms gpu=19.9ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7448MB reserved=8394MB mono=2130MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:31.5265750Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.3 avgFrame=41.2ms updateAvg=6.3ms updateMax=15.6ms cpuFrame=25.3ms cpuMain=22.4ms cpuRender=0.6ms gpu=0.3ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7450MB reserved=8426MB mono=2114MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:29.4540430Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=28.0 avgFrame=35.7ms updateAvg=5.3ms updateMax=13.0ms cpuFrame=53.8ms cpuMain=50.9ms cpuRender=4.2ms gpu=16.9ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7453MB reserved=8435MB mono=2098MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:27.4368840Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=25.8 avgFrame=38.8ms updateAvg=5.8ms updateMax=13.5ms cpuFrame=59.1ms cpuMain=55.9ms cpuRender=0.5ms gpu=0.7ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7458MB reserved=8449MB mono=2087MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:25.4777810Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=28.1 avgFrame=35.6ms updateAvg=5.5ms updateMax=14.2ms cpuFrame=26.7ms cpuMain=22.8ms cpuRender=4.0ms gpu=31.4ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7462MB reserved=8500MB mono=2074MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:23.4213520Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=6355 source=profilerCounters drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:21.4211530Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.7 avgFrame=36.1ms updateAvg=5.4ms updateMax=12.5ms cpuFrame=22.0ms cpuMain=19.4ms cpuRender=3.7ms gpu=15.6ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7468MB reserved=8504MB mono=2062MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:21.4210720Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=26.3 avgFrame=38.0ms updateAvg=5.8ms updateMax=12.7ms cpuFrame=60.3ms cpuMain=55.1ms cpuRender=4.5ms gpu=28.5ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7474MB reserved=8508MB mono=2050MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:19.4096340Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.5 avgFrame=40.8ms updateAvg=6.5ms updateMax=17.4ms cpuFrame=29.5ms cpuMain=26.6ms cpuRender=4.3ms gpu=15.2ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7478MB reserved=8510MB mono=2037MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:17.3888000Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.6 avgFrame=36.2ms updateAvg=5.5ms updateMax=12.8ms cpuFrame=34.4ms cpuMain=30.9ms cpuRender=4.3ms gpu=32.4ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7483MB reserved=8514MB mono=2346MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:15.3506430Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=29.7 avgFrame=33.6ms updateAvg=5.0ms updateMax=12.5ms cpuFrame=28.7ms cpuMain=26.1ms cpuRender=4.0ms gpu=18.3ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7484MB reserved=8515MB mono=2330MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:13.3211620Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=6080 source=profilerCounters drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:11.3047520Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.9 avgFrame=40.1ms updateAvg=6.2ms updateMax=14.1ms cpuFrame=57.7ms cpuMain=55.0ms cpuRender=4.5ms gpu=15.8ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5021 models=77 sourceKeys=5021 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7488MB reserved=8518MB mono=2313MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:11.3046660Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=30.0 avgFrame=33.3ms updateAvg=5.1ms updateMax=11.5ms cpuFrame=29.7ms cpuMain=26.6ms cpuRender=0.5ms gpu=16.5ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5020 models=76 sourceKeys=5020 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7491MB reserved=8521MB mono=2297MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:09.2560840Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.1 avgFrame=36.9ms updateAvg=5.6ms updateMax=14.5ms cpuFrame=55.0ms cpuMain=51.6ms cpuRender=0.5ms gpu=17.3ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5019 models=75 sourceKeys=5019 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7492MB reserved=8527MB mono=2278MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:07.2510390Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=22.7 avgFrame=44.0ms updateAvg=6.5ms updateMax=21.5ms cpuFrame=63.7ms cpuMain=57.1ms cpuRender=0.8ms gpu=6.7ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7498MB reserved=8528MB mono=2261MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:05.2326100Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=23.9 avgFrame=41.8ms updateAvg=6.3ms updateMax=16.2ms cpuFrame=62.7ms cpuMain=57.1ms cpuRender=0.6ms gpu=0.3ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7500MB reserved=8533MB mono=2245MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:03.1646840Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=5819 source=profilerCounters drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:01.2076480Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=19.3 avgFrame=51.8ms updateAvg=8.1ms updateMax=17.9ms cpuFrame=46.5ms cpuMain=41.9ms cpuRender=6.4ms gpu=14.7ms drawCalls=4018 batches=0 setPass=334 tris=12681540 verts=21537216 units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7503MB reserved=8540MB mono=2229MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:58:01.1617040Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=18.4 avgFrame=54.4ms updateAvg=8.7ms updateMax=19.2ms cpuFrame=28.8ms cpuMain=25.2ms cpuRender=0.6ms gpu=0.2ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7503MB reserved=8542MB mono=2213MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:59.1322760Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=16.9 avgFrame=59.3ms updateAvg=9.7ms updateMax=31.3ms cpuFrame=80.5ms cpuMain=75.6ms cpuRender=0.8ms gpu=19.1ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7501MB reserved=8548MB mono=2201MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:57.1153670Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=5732 total=31.3ms gc=0/0/0 cpuFrame=54.1ms cpuMain=50.7ms cpuRender=0.7ms gpu=0.4ms steps=RoadBuild=0.0ms, BuildingPlacement=12.8ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=18.2ms units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 memory=alloc=7504MB reserved=8548MB mono=2197MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:56.3847120Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=18.3 avgFrame=54.7ms updateAvg=8.7ms updateMax=21.2ms cpuFrame=33.2ms cpuMain=27.9ms cpuRender=0.9ms gpu=22.6ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7502MB reserved=8550MB mono=2189MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:55.1089940Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=20.2 avgFrame=49.6ms updateAvg=7.6ms updateMax=16.2ms cpuFrame=32.5ms cpuMain=28.5ms cpuRender=5.4ms gpu=41.3ms drawCalls=2009 batches=0 setPass=167 tris=6340770 verts=10768608 units=5017 models=73 sourceKeys=5017 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7501MB reserved=8555MB mono=2176MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:53.0231280Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=5630 source=profilerCounters drawCalls=2013 batches=0 setPass=167 tris=6359957 verts=10801906 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:51.0044140Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=16.6 avgFrame=60.3ms updateAvg=8.9ms updateMax=19.2ms cpuFrame=45.2ms cpuMain=41.1ms cpuRender=0.7ms gpu=33.9ms drawCalls=2013 batches=0 setPass=167 tris=6359957 verts=10801906 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7502MB reserved=8558MB mono=2165MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:51.0039780Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=16.8 avgFrame=59.6ms updateAvg=9.5ms updateMax=23.2ms cpuFrame=70.6ms cpuMain=65.8ms cpuRender=0.7ms gpu=15.5ms drawCalls=2014 batches=0 setPass=168 tris=6359965 verts=10801922 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7501MB reserved=8560MB mono=2154MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:48.9850620Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=17.2 avgFrame=58.3ms updateAvg=9.0ms updateMax=25.1ms cpuFrame=69.8ms cpuMain=65.6ms cpuRender=0.7ms gpu=21.7ms drawCalls=4118 batches=0 setPass=342 tris=12863136 verts=21900144 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=24 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7500MB reserved=8563MB mono=2145MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:46.9208860Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=5546 total=25.1ms gc=0/0/0 cpuFrame=54.9ms cpuMain=47.6ms cpuRender=1.3ms gpu=18.2ms steps=RoadBuild=0.0ms, BuildingPlacement=0.5ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.2ms units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2058 batches=0 setPass=174 tris=6489356 verts=11082640 memory=alloc=7499MB reserved=8564MB mono=2141MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:46.0036380Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=16.3 avgFrame=61.2ms updateAvg=9.6ms updateMax=19.3ms cpuFrame=77.3ms cpuMain=69.4ms cpuRender=0.7ms gpu=20.7ms drawCalls=2067 batches=0 setPass=175 tris=6460461 verts=11016354 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7498MB reserved=8565MB mono=2134MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:44.8841330Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=26.7 avgFrame=37.4ms updateAvg=5.8ms updateMax=14.6ms cpuFrame=65.6ms cpuMain=62.5ms cpuRender=5.2ms gpu=22.4ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7496MB reserved=8569MB mono=2117MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:42.9572210Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=5440 source=profilerCounters drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:40.8474320Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=25.9 avgFrame=38.6ms updateAvg=6.0ms updateMax=13.7ms cpuFrame=63.0ms cpuMain=59.4ms cpuRender=0.6ms gpu=15.9ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7497MB reserved=8577MB mono=2100MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:40.8424270Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=30.5 avgFrame=32.8ms updateAvg=5.0ms updateMax=12.0ms cpuFrame=27.7ms cpuMain=25.3ms cpuRender=4.0ms gpu=14.6ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7501MB reserved=8584MB mono=2083MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:38.7915730Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=25.0 avgFrame=40.0ms updateAvg=6.1ms updateMax=14.7ms cpuFrame=22.5ms cpuMain=19.5ms cpuRender=4.0ms gpu=16.1ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7502MB reserved=8588MB mono=2059MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:36.7619930Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=19.2 avgFrame=52.1ms updateAvg=8.1ms updateMax=24.5ms cpuFrame=30.3ms cpuMain=25.8ms cpuRender=0.7ms gpu=21.1ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7503MB reserved=8593MB mono=2038MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:34.7542740Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=5268 Gap=155.1ms GC=1/1/1 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.5ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.6ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:34.3640740Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=21.4 avgFrame=46.7ms updateAvg=7.2ms updateMax=16.1ms cpuFrame=68.4ms cpuMain=62.7ms cpuRender=5.0ms gpu=16.6ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7507MB reserved=8607MB mono=2327MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:32.7308710Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=5192 source=profilerCounters drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:30.6827930Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=22.8 avgFrame=44.0ms updateAvg=6.6ms updateMax=14.0ms cpuFrame=59.8ms cpuMain=57.0ms cpuRender=4.6ms gpu=16.9ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5018 models=74 sourceKeys=5018 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7511MB reserved=8613MB mono=2300MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:30.6826510Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=28.7 avgFrame=34.9ms updateAvg=5.3ms updateMax=12.1ms cpuFrame=24.6ms cpuMain=21.7ms cpuRender=4.6ms gpu=17.8ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7514MB reserved=8630MB mono=2272MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:28.6467690Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.0 avgFrame=37.0ms updateAvg=5.6ms updateMax=13.1ms cpuFrame=34.1ms cpuMain=31.5ms cpuRender=0.5ms gpu=2.3ms drawCalls=4115 batches=0 setPass=341 tris=12863126 verts=21900124 units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7517MB reserved=8639MB mono=2253MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:26.6289210Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.9 avgFrame=35.8ms updateAvg=5.3ms updateMax=13.1ms cpuFrame=59.4ms cpuMain=52.6ms cpuRender=4.0ms gpu=31.5ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7518MB reserved=8640MB mono=2238MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:24.5981220Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=23.0 avgFrame=43.5ms updateAvg=6.6ms updateMax=14.4ms cpuFrame=27.1ms cpuMain=24.2ms cpuRender=4.8ms gpu=18.0ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7522MB reserved=8644MB mono=2215MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:22.5839390Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=4931 source=profilerCounters drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:20.5829050Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=29.3 avgFrame=34.1ms updateAvg=5.1ms updateMax=11.6ms cpuFrame=24.8ms cpuMain=21.8ms cpuRender=4.1ms gpu=16.3ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7524MB reserved=8647MB mono=2201MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:20.5828350Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=13.6 avgFrame=73.4ms updateAvg=11.4ms updateMax=26.8ms cpuFrame=53.3ms cpuMain=48.0ms cpuRender=0.9ms gpu=16.8ms drawCalls=2057 batches=0 setPass=170 tris=6431562 verts=10950060 units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7529MB reserved=8655MB mono=2186MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:18.5805550Z"
+        },
+        {
+          "type": "Log",
+          "message": "[PerfDiag] slowUpdate frame=4863 total=26.8ms gc=0/0/0 cpuFrame=57.6ms cpuMain=53.3ms cpuRender=0.9ms gpu=0.3ms steps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=25.9ms units=5014 models=70 sourceKeys=5014 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=7530MB reserved=8658MB mono=2181MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:17.8744280Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=24.9 avgFrame=40.1ms updateAvg=6.2ms updateMax=14.1ms cpuFrame=61.6ms cpuMain=57.5ms cpuRender=0.6ms gpu=17.3ms drawCalls=4146 batches=0 setPass=348 tris=12885482 verts=21958144 units=5013 models=69 sourceKeys=5013 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=21 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7529MB reserved=8659MB mono=2171MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:16.5230090Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=27.7 avgFrame=36.2ms updateAvg=5.5ms updateMax=13.5ms cpuFrame=28.3ms cpuMain=25.5ms cpuRender=4.4ms gpu=14.3ms drawCalls=2057 batches=0 setPass=171 tris=6431570 verts=10950076 units=5013 models=69 sourceKeys=5013 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7530MB reserved=8665MB mono=2153MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:14.5159050Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=23.9 avgFrame=41.9ms updateAvg=6.4ms updateMax=15.0ms cpuFrame=37.9ms cpuMain=32.7ms cpuRender=0.6ms gpu=0.2ms drawCalls=2057 batches=0 setPass=171 tris=6431574 verts=10950084 units=5012 models=68 sourceKeys=5012 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7534MB reserved=8670MB mono=2136MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:12.4844150Z"
+        },
+        {
+          "type": "Log",
+          "message": "[RenderSceneDiag] frame=4690 source=profilerCounters drawCalls=4114 batches=0 setPass=342 tris=12863152 verts=21900176 topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:10.4867780Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=29.4 avgFrame=34.1ms updateAvg=5.1ms updateMax=12.1ms cpuFrame=29.9ms cpuMain=26.9ms cpuRender=4.1ms gpu=33.4ms drawCalls=4114 batches=0 setPass=342 tris=12863152 verts=21900176 units=5011 models=67 sourceKeys=5011 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7538MB reserved=8675MB mono=2113MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:10.4822010Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=21.9 avgFrame=45.6ms updateAvg=6.7ms updateMax=18.3ms cpuFrame=52.2ms cpuMain=49.2ms cpuRender=4.1ms gpu=15.0ms drawCalls=2091 batches=0 setPass=184 tris=6470830 verts=11033885 units=5011 models=67 sourceKeys=5011 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=21 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7543MB reserved=8687MB mono=2098MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:08.4977330Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=29.2 avgFrame=34.3ms updateAvg=4.6ms updateMax=11.8ms cpuFrame=31.6ms cpuMain=27.9ms cpuRender=0.5ms gpu=15.7ms drawCalls=2075 batches=0 setPass=183 tris=6493156 verts=11091845 units=5011 models=67 sourceKeys=5011 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=19 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7545MB reserved=8762MB mono=2090MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:06.4640160Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FreezeDetect] Frame gap frame=4529 Gap=223.3ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=3.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.8ms",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:04.6557080Z"
+        },
+        {
+          "type": "Log",
+          "message": "[FrameRateDiag] fps=22.0 avgFrame=45.5ms updateAvg=5.3ms updateMax=15.8ms cpuFrame=22.6ms cpuMain=19.4ms cpuRender=4.1ms gpu=34.4ms drawCalls=2073 batches=0 setPass=183 tris=6432318 verts=10951525 units=5011 models=67 sourceKeys=5011 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Runtime Quality: Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7550MB reserved=8810MB mono=2080MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled",
+          "stackTrace": "",
+          "timestampUtc": "2026-10-14T14:57:04.4558680Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

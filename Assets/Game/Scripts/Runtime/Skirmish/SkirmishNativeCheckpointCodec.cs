@@ -43,7 +43,7 @@ namespace Game.Runtime
         {
             uint expectedHash = setup == null ? 0 : policylessCompatibility ? SkirmishSetupCompiler.ComputePolicylessHash(setup, setup.Seed) : setup.SetupHash;
             string expectedContent = policylessCompatibility ? setup?.EnemyPolicy?.SourceContentHash : setup?.ContentHash;
-            if (!BitConverter.IsLittleEndian || snapshot == null || setup == null || snapshot.Version != SkirmishNativeCheckpointSnapshotService.SchemaVersion ||
+            if (!BitConverter.IsLittleEndian || snapshot == null || !SkirmishNativeRepairCheckpointGuard.NoSerializedRepair(snapshot) || setup == null || !SkirmishNativeObjectiveCheckpoint.Schema(snapshot.Version, snapshot.Objective, setup.ObjectiveKind) ||
                 snapshot.Support == null || snapshot.Banks == null || (snapshot.Banks.Length != 0 && snapshot.Banks.Length != 2) ||
                 snapshot.Actors == null || snapshot.MapReferences == null || snapshot.DropVisuals == null || snapshot.Actors.Length == 0 ||
                 snapshot.Actors.Length > 16384 || snapshot.MapReferences.Length > 65536 ||
@@ -90,6 +90,7 @@ namespace Game.Runtime
                     !SkirmishNativeCheckpointParts.TryReadComponent(snapshot.SessionParts, out SkirmishExpandedSessionComponent state) ||
                     state.IsLegacy != 0 || state.SessionId.ToString() != snapshot.SessionId ||
                     state.CatalogId.ToString() != setup.CatalogId || state.DefinitionId.ToString() != setup.DefinitionId ||
+                    state.ObjectiveKind != setup.ObjectiveKind ||
                     state.ContentVersion != setup.ContentVersion || state.SetupHash != expectedHash ||
                     state.Seed != setup.Seed || state.SizeId != setup.SizeId || state.DifficultyId != setup.DifficultyId)
                     return false;
@@ -104,6 +105,7 @@ namespace Game.Runtime
                         !SkirmishNativeCheckpointParts.TryReadComponent(actor.Parts, out SkirmishAttemptOwnedComponent owner) ||
                         owner.StableObjectId.ToString() != actor.Id || owner.SessionId.ToString() != snapshot.SessionId ||
                         owner.IsStructure != actor.IsStructure) return false;
+                    if (!SkirmishNativeConvoyCheckpoint.TryValidateClassification(setup,actor,out _)) return false;
                     bool passenger = SkirmishNativeCheckpointParts.TryReadComponent(actor.Parts, out UnitTransportPassenger _);
                     if (!float.IsFinite(actor.HiddenPassengerScale) || actor.HiddenPassengerScale < 0 ||
                         (passenger ? actor.HiddenPassengerScale <= 0 : actor.HiddenPassengerScale != 0)) return false;
@@ -118,6 +120,9 @@ namespace Game.Runtime
                         info.RuntimeBuildingId != map.OldRuntimeBuildingId || info.OwnerFactionId != map.Faction ||
                         info.OriginCell.x != map.OriginX || info.OriginCell.y != map.OriginZ) return false;
                 }
+                if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault &&
+                    !SkirmishNativeObjectiveCheckpoint.Validate(snapshot.Objective, snapshot, setup, out _)) return false;
+                if(!SkirmishNativeRepairCheckpoint.Validate(snapshot.Repairs,snapshot,setup,out _))return false;
                 return true;
             }
             catch (Exception exception) when (exception is ArgumentException || exception is FormatException || exception is OverflowException)
@@ -135,9 +140,12 @@ namespace Game.Runtime
         internal static string Encode(SkirmishNativeCheckpointSnapshotService.Snapshot snapshot, SkirmishResolvedSetup setup)
         {
             if (!Validate(snapshot, setup)) return null;
-            string payload = JsonUtility.ToJson(snapshot);
-            string json = JsonUtility.ToJson(new Wire { Version = WireVersion, Payload = payload, Checksum = Hash(payload) });
-            return Encoding.UTF8.GetByteCount(json) <= MaximumBytes ? json : null;
+            string payload = SkirmishNativeLegacyBa7Json.EncodeInner(snapshot);
+            if(payload==null)return null;
+            string json = snapshot.Repairs==null
+                ? JsonUtility.ToJson(new Wire { Version = WireVersion, Payload = payload, Checksum = Hash(payload) })
+                : SkirmishNativeRepairWireCodec.Encode(payload,snapshot.Repairs);
+            return json!=null&&Encoding.UTF8.GetByteCount(json) <= MaximumBytes ? json : null;
         }
 
         internal static bool TryDecode(string json, SkirmishResolvedSetup setup,
@@ -147,10 +155,7 @@ namespace Game.Runtime
             if (string.IsNullOrEmpty(json) || Encoding.UTF8.GetByteCount(json) > MaximumBytes) return false;
             try
             {
-                var wire = JsonUtility.FromJson<Wire>(json);
-                if (wire == null || wire.Version != WireVersion || string.IsNullOrEmpty(wire.Payload) ||
-                    !string.Equals(wire.Checksum, Hash(wire.Payload), StringComparison.Ordinal)) return false;
-                var decoded = JsonUtility.FromJson<SkirmishNativeCheckpointSnapshotService.Snapshot>(wire.Payload);
+                if(!TryParseWire(json,out var decoded))return false;
                 if (!Validate(decoded, setup)) return false;
                 snapshot = decoded;
                 return true;
@@ -192,11 +197,8 @@ namespace Game.Runtime
             try
             {
                 if (string.IsNullOrWhiteSpace(path) || !File.Exists(path) || new FileInfo(path).Length > MaximumBytes) return false;
-                var wire = JsonUtility.FromJson<Wire>(File.ReadAllText(path, Encoding.UTF8));
-                if (wire == null || wire.Version != WireVersion || string.IsNullOrEmpty(wire.Payload) ||
-                    !string.Equals(wire.Checksum, Hash(wire.Payload), StringComparison.Ordinal)) return false;
-                var value = JsonUtility.FromJson<SkirmishNativeCheckpointSnapshotService.Snapshot>(wire.Payload);
-                if (value == null || value.Version != SkirmishNativeCheckpointSnapshotService.SchemaVersion ||
+                if(!TryParseWire(File.ReadAllText(path,Encoding.UTF8),out var value))return false;
+                if (value == null || (value.Version != 7 && value.Version != SkirmishNativeObjectiveCheckpoint.NativeVersion) ||
                     !SkirmishNativeCheckpointParts.TryReadComponent(value.SessionParts, out SkirmishExpandedSessionComponent _)) return false;
                 snapshot = value;
                 return true;
@@ -215,6 +217,26 @@ namespace Game.Runtime
             }
             catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException || exception is ArgumentException)
             { return false; }
+        }
+
+        private static bool TryParseWire(string json,out SkirmishNativeCheckpointSnapshotService.Snapshot snapshot)
+        {
+            snapshot=null;
+            var wire=JsonUtility.FromJson<Wire>(json);
+            if(wire==null||string.IsNullOrEmpty(wire.Payload))return false;
+            string payload=wire.Payload;
+            SkirmishNativeRepairCheckpoint.Payload repairs=null;
+            if(wire.Version==WireVersion)
+            {
+                if(!string.Equals(wire.Checksum,Hash(payload),StringComparison.Ordinal))return false;
+            }
+            else if(wire.Version==SkirmishNativeRepairWireCodec.Version)
+            {
+                if(!SkirmishNativeRepairWireCodec.TryDecode(json,out payload,out repairs))return false;
+            }
+            else return false;
+            if(!SkirmishNativeLegacyBa7Json.TryDecodeInner(payload,out var value))return false;
+            value.Repairs=repairs;snapshot=value;return true;
         }
 
         private static string Hash(string value)

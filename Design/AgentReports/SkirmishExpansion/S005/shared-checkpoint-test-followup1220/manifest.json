@@ -1,0 +1,9 @@
+{
+  "status": "AppliedSoleMainTest_NotNativeExecuted",
+  "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs",
+  "beforeSha256": "3919a8a340142eed703c9260c6e9a8604cac8c605317ec7bd1a01bd01488231c",
+  "afterSha256": "d6fe1246ac1564d5bb0d78bdd3a4bf5a3e6b806725ac6507709516ac1e1627fd",
+  "reason": "Ledger-only source has no projected objective fact component; restored TryApply materializes captured payload facts. Compare actual persisted fields, not absent source component or nonpersisted derived facts.",
+  "runtimeWritten": false,
+  "unityCalled": false
+}

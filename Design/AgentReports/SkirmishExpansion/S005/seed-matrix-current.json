@@ -1,0 +1,13 @@
+{
+  "mission": "S005",
+  "sourceHash": "feb01da23b2a83f1688df256aeb0cac9b32a4063413fd53b0ce66d876e2affd4",
+  "runs": [],
+  "records": [],
+  "freshCount": 0,
+  "active": null,
+  "status": "Pending final paid-ground qualification source",
+  "historicalComplete": "core-4e-complete-baseline-certification.json",
+  "playerReady": false,
+  "currentNativeCaptureRun": "tests388 native recovery51",
+  "currentCandidateCertification": "Compiles. Constructed-native-building identity repaired; regression and native rerun pending."
+}

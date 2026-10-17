@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 2,
+      "returned": 2,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[ExistingEditorValidation] result=Failed executeMethod=S005NormalManualR2Recovery1627Observer.RunValidation",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nGame.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)\nWarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1627-normal-fa_r2-seed155926.log.dispatch.cs:1)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T16:27:39.7896690Z"
+        },
+        {
+          "type": "Exception",
+          "message": "MissingMemberException: S005NormalManualR2Recovery1627Observer",
+          "stackTrace": "Game.Editor.ExistingEditorValidation.Run (System.String executeMethod, System.String logFile) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)\nUnityEngine.Debug:LogException(Exception)\nGame.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)\n<>c__DisplayClass0_0:<Run>b__0() (at Design/AgentReports/SkirmishExpansion/S005/native-1627-normal-fa_r2-seed155926.log.dispatch.cs:1)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T16:27:39.7881710Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

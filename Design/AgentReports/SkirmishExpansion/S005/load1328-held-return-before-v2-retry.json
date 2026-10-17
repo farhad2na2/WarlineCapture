@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs",
+      "entry": "S005HeldFixedWingReturn1328.Run",
+      "timeout_ms": "120000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 914,
+      "executeMs": 9,
+      "assemblyName": "PipelineRunScript_S005HeldFixedWingReturn1328_6814fa986b644522aaa9e1911ac45de5",
+      "success": true,
+      "result": "Loaded only; validation requires checked repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

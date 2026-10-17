@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "status": "Prepared_OneUsingOnly_NativeCompilePending",
+  "predecessorManifest": "/private/tmp/s005-enemy-policy-step1/manifest.json",
+  "predecessorManifestSha256": "43f49d6ff0a9f52f5c81efea7075e35b60a24b42682b4c1c662ef99055424379",
+  "reason": "Actual T7 native compiler CS0103 SkirmishObjectiveKind/SkirmishSessionPhase; add exact Contracts namespace import only",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "baseSha256": "5a83faf43365a86a98c434ebab22401446c4802e3ee62f7484822915280c169a",
+      "stagedSha256": "92bca79d4d907ca12d53475c84c70718bdb94159991b39f38abd1bc510a97fb7"
+    }
+  ],
+  "patchSha256": "24b07d1003f8687290c95b989f2c396fdd7322385bc4fafc5fa8a14a508a9111"
+}

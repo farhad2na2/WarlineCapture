@@ -1,0 +1,10 @@
+{
+  "result": "Failed",
+  "sourceHash": "54c86e64034df9c9fb19aafd76d93f95a969b042f0b2460209a91cdad1bd10d2",
+  "independentPrePostMatch": true,
+  "wrapperExit": 1,
+  "failure": "Save/Resume input interrupted; physical input recorded. Prior catalog requests remained blocked with Missing Fuel Bladder despite healthy logical identity and native storage9 continuing deliveries.",
+  "diagnosis": "Producer eligibility unresolved; do not claim destroyed Fuel Bladder.",
+  "aircraftCertified": false,
+  "playerReady": false
+}

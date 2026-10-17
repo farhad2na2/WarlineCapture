@@ -1,0 +1,143 @@
+{
+  "manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/manifest.json",
+  "manifest_sha256": "4a58b00ac386720a7ecf63464b2431b6b42ee3a0ea564b5df489dc06646fc812",
+  "parents_preserved": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/manifest.json",
+      "sha256": "193cd3d9488f9c67a10fd34303df52432bd4f5117479e899fef66ed81ac47d62"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/manifest.json",
+      "sha256": "57fe24a4ab181437fba16c95eddda0c9521479f82d2b265ff8b213a9098dd5bc"
+    }
+  ],
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/owning-iy_mpcih/result.json",
+    "sha256": "df470a8a9319a7dc77c8c8e8d9b418d171732ee6bc43d34778623b9817c5074d",
+    "owners": [
+      [
+        "Game.Editor",
+        830,
+        353
+      ],
+      [
+        "Game.Tests.Editor",
+        760,
+        332
+      ]
+    ],
+    "mismatches": 0,
+    "no_fallback": true
+  },
+  "offline": {
+    "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/offline-final/receipt.json",
+    "sha256": "25befbe608ee866dd7aa7bf5b1a078adfadf1438bc2588235b6ddb0bbf9dbce2",
+    "methods": 5,
+    "canonical_slots_checked": 1920,
+    "parent29_preserved": true
+  },
+  "planned_inputs": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/baseline720.plan.json",
+      "sha256": "ed272f92260d235459712fda21e4a233bd4f7305fd0cb659ef06e42925cde6f6"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/stress1200.plan.json",
+      "sha256": "ccacba14f1901e9109ac1bb36bbe1e5e1261e457b22f8bbb3bc34ce900d9c13a"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchCandidateAdmission/PLAN_AUTHORITY.json",
+      "sha256": "6591bebb9b198552aa9187fa466cc60b3c7eed4dcb7e2e81244f89a09767e058"
+    }
+  ],
+  "native_entry": "Game.Tests.Editor.SkirmishProductionMatrixAuthorityTests.RunFocusedValidation",
+  "native_marker": "[SkirmishProductionMatrixAuthorityTests] result=Passed methods=7 baselineSlots=720 syntheticStressSlots=1200 nativeJobs=0 queueSuccessEnabled=0",
+  "required_whole_run_marker": "[SkirmishProductionRuntimeGate] result=Passed errors=0 jobs=N actualWrapperExitStillRequired=1",
+  "candidate_exposure": "Only original S005 Editor-memory QA catalog scope restored; generic candidates still use persisted ordinary Catalog/definition/binding sources. No publication change.",
+  "runtime_gate": "Actual threaded Unity Error/Exception/Assert listener before first Dispatch, retained until process exit. Clean quitting marker/event, no late failure marker, actual checked0 and all prior independent source/native/result/menu/cleanup gates required. Raw individual results remain provisional until whole-run gate.",
+  "native_controls_executed": false,
+  "native_jobs": 0,
+  "queue_success_enabled": false,
+  "qualification": false,
+  "independent_review": "Pending",
+  "current_before_audit": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "expected": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "actual": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "expected": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "actual": "e1f84038de5ab72b0c8b81f8883ef6de6e3f5fd49b72709b7a1c6078ccf3c064",
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionBatchOwnershipCensus.cs",
+      "expected": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "actual": "92e8752120411776bef511704176e40d82639a05d91d1f837757cdf07dc12af0",
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "expected": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe",
+      "actual": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe",
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "expected": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "actual": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "expected": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "actual": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthority.cs",
+      "expected": null,
+      "actual": null,
+      "matches": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthorityValidation.cs",
+      "expected": null,
+      "actual": null,
+      "matches": true
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionMatrixAuthorityTests.cs",
+      "expected": null,
+      "actual": null,
+      "matches": true
+    },
+    {
+      "target": "Tools/CI/skirmish_production_queue.py",
+      "expected": "4fb6d6c26d6ae2974d99fb6f89a09005f8e2b097e6bdad7b075758e49c330aa1",
+      "actual": "4fb6d6c26d6ae2974d99fb6f89a09005f8e2b097e6bdad7b075758e49c330aa1",
+      "matches": true
+    },
+    {
+      "target": "Tools/CI/prepare_skirmish_production_batch.py",
+      "expected": "6c8da7d51f66d3adef83073a65fd72a2b41f03d720659fc5ce55d913f7ec4b23",
+      "actual": "6c8da7d51f66d3adef83073a65fd72a2b41f03d720659fc5ce55d913f7ec4b23",
+      "matches": true
+    },
+    {
+      "target": "Tools/CI/invoke_skirmish_production_batch.py",
+      "expected": "dc310ef1ef78fc70cf941ee8a137e6616c7807dc318f0506322326abb4a8dada",
+      "actual": "dc310ef1ef78fc70cf941ee8a137e6616c7807dc318f0506322326abb4a8dada",
+      "matches": true
+    },
+    {
+      "target": "Tools/CI/skirmish_production_matrix_authority.py",
+      "expected": null,
+      "actual": null,
+      "matches": true
+    }
+  ]
+}

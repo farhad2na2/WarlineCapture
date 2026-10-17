@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1138",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1098-drone-fog-recon-producer-post-source-manifest.json",
+  "preflightManifest": "final-1138-boarded-recovery-preflight-source-manifest.json",
+  "fixtureSha256": "79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53",
+  "validationMethod": "S005BoardedRecovery1138.RunFastApcValidation"
+}

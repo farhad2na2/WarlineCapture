@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "INVALID_COMMAND_ARGS",
+      "message": "Invalid arguments for eval:\n  eval has no parameter --timeout_ms. Did you mean --timeout?"
+    }
+  ],
+  "warnings": []
+}

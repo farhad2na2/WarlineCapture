@@ -1,0 +1,16 @@
+{
+    "map": "CH05M05CommandNode",
+    "sourceHash": "825cf2810a0b797f3efd71e61d3f24f867a64ea602c23e212b28c048d0ce7b90",
+    "result": "Census",
+    "waterRenderers": 46,
+    "bankMeshes": 6,
+    "channelMeshes": 0,
+    "waterMaterials": 2,
+    "joins": 0,
+    "pavedMaterials": 6,
+    "earthMaterials": 2,
+    "joinRows": [],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M05CommandNode_d90068bfe6ce4c78a2d95bf6fd876882.mat roles=earth,paved"
+    ]
+}

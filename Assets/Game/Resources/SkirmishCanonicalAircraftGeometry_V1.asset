@@ -1,0 +1,1840 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b9b840a21d4fd4ab18bc05ac694170, type: 3}
+  m_Name: SkirmishCanonicalAircraftGeometry_V1
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishCanonicalAircraftGeometryConfig
+  SchemaVersion: 1
+  Roles:
+  - Role: 14
+    PrefabKey: Unit_Veh_Helicopter_Transport
+    Sources:
+    - VisualKind: 1
+      Prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+      Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab
+      DependencyHash: 1044a32ea7720a8ca8d523d8e141c66a
+    - VisualKind: 2
+      Prefab: {fileID: 50045807723467530, guid: e4011cdde31b24ed5b6888430659731c, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Helicopter_Transport.prefab
+      DependencyHash: 9cd8cc25dadb6fe13542ca07f8c56b54
+    - VisualKind: 3
+      Prefab: {fileID: 8547718222916401188, guid: d39fbc9deaf8c46d2b6a2bb7aa5c2205, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Veh_Helicopter_Transport.prefab
+      DependencyHash: ee192629d498d7c1ce7f922c8bc81e8e
+    Draws:
+    - Mesh: {fileID: 4300000, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 6898
+      DrawnIndexCount: 11979
+      LocalBounds:
+        m_Center: {x: 0.010429382, y: 2.013008, z: -3.1573434}
+        m_Extent: {x: 2.235508, y: 2.032466, z: 7.843805}
+      GeometrySha256: e3d0bd3a89c25bf6112a97a5c636a238bdbd84fec65448863f836afb9a60e216
+    - Mesh: {fileID: 4300018, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 368
+      DrawnIndexCount: 624
+      LocalBounds:
+        m_Center: {x: 0.0040236935, y: -0.00000011920929, z: -0.00000023841858}
+        m_Extent: {x: 0.0632904, y: 1.7281313, z: 1.7281315}
+      GeometrySha256: dd42f76ba58333cc3db5b9a2e36c9c8be0c6b6f7d020b6b2786ff401b2f3e967
+    - Mesh: {fileID: 4300016, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 1190
+      DrawnIndexCount: 1896
+      LocalBounds:
+        m_Center: {x: 0, y: 0.21442395, z: 0}
+        m_Extent: {x: 8.210083, y: 0.5172168, z: 8.210085}
+      GeometrySha256: 3318e6644350f33e9dead24b685a3d69e5c05f3c571cf3b31f0245426f9ee969
+    - Mesh: {fileID: 4300004, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 243
+      DrawnIndexCount: 456
+      LocalBounds:
+        m_Center: {x: -1.1711707, y: 1.4382691, z: -0.016197503}
+        m_Extent: {x: 0.12278557, y: 0.77856493, z: 0.9128417}
+      GeometrySha256: 649f540f0a8906e248f9294b8783e7cd71670c74cebfc87e13da0ef5c4f0b202
+    - Mesh: {fileID: 4300006, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 56
+      DrawnIndexCount: 96
+      LocalBounds:
+        m_Center: {x: -1.2230309, y: 1.6358516, z: -0.0075671077}
+        m_Extent: {x: 0.055013776, y: 0.44901705, z: 0.7404607}
+      GeometrySha256: c3395a72f4ac261ee146afa1343338f00144b9d3200849af945792d3154df748
+    - Mesh: {fileID: 4300008, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 243
+      DrawnIndexCount: 456
+      LocalBounds:
+        m_Center: {x: 1.1711707, y: 1.4382691, z: -0.016197503}
+        m_Extent: {x: 0.12278557, y: 0.77856493, z: 0.9128417}
+      GeometrySha256: 41f2268b14a82d1390235b9a939fda9fcbb8fc7924adf34a2dbf9eeaef3b7439
+    - Mesh: {fileID: 4300010, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 56
+      DrawnIndexCount: 96
+      LocalBounds:
+        m_Center: {x: 1.2230309, y: 1.6358516, z: -0.0075671077}
+        m_Extent: {x: 0.055013776, y: 0.44901705, z: 0.7404607}
+      GeometrySha256: ab2643ad7d80f35f2efe19e71e9899d6aaada26656b29a89d590b5b1d69c1c20
+    - Mesh: {fileID: 4300002, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 216
+      DrawnIndexCount: 348
+      LocalBounds:
+        m_Center: {x: -0.00000011920929, y: 1.8099947, z: 2.609773}
+        m_Extent: {x: 1.2594004, y: 0.4751265, z: 1.2303603}
+      GeometrySha256: 7be6494430fd732e00069c316b0b77541e1deccb652542c510565e246600cbdd
+    - Mesh: {fileID: 4300012, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 308
+      DrawnIndexCount: 480
+      LocalBounds:
+        m_Center: {x: -0.00015260652, y: 0.3830601, z: 0.030006226}
+        m_Extent: {x: 0.038313486, y: 0.4144427, z: 0.08335281}
+      GeometrySha256: 3f9a29bf67f737a68bce4fa8585a503b57bae49e7b14ad7f8dba6114e81ea3c3
+    - Mesh: {fileID: 4300014, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 308
+      DrawnIndexCount: 480
+      LocalBounds:
+        m_Center: {x: 0.00015262887, y: 0.38306007, z: 0.030006226}
+        m_Extent: {x: 0.038313463, y: 0.41444266, z: 0.08335281}
+      GeometrySha256: 5366bdc3a65b4c11e5b747499636e649cee3cfc5e927f585a33151465986a7be
+    - Mesh: {fileID: 4300020, guid: f5dd6fcbaa3ff24439a83148ac6e2c05, type: 3}
+      SubMesh: 0
+      VertexCount: 1027
+      DrawnIndexCount: 1680
+      LocalBounds:
+        m_Center: {x: 0, y: 1.6633371, z: 0.63559073}
+        m_Extent: {x: 2.833227, y: 0.5750371, z: 0.6616129}
+      GeometrySha256: b01112059fd809596e1327541fbe186a12f40664fdbc09c10e9167483271a764
+    - Mesh: {fileID: 4300000, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 2750
+      DrawnIndexCount: 2994
+      LocalBounds:
+        m_Center: {x: 0.009215355, y: 2.013008, z: -3.1573434}
+        m_Extent: {x: 2.234294, y: 2.032466, z: 7.843805}
+      GeometrySha256: aa3f49f6619f92a79fce6ed07b61933a66ad68b47f1b8d8ebeea6a7509e8f2c7
+    - Mesh: {fileID: -3688477542499506285, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 156
+      DrawnIndexCount: 156
+      LocalBounds:
+        m_Center: {x: 0.0040236935, y: -0.00000011920929, z: -0.00000023841858}
+        m_Extent: {x: 0.0632904, y: 1.7281313, z: 1.7281315}
+      GeometrySha256: 97c8e86abc121036789a0153b236e86a1ba7f31388016159cc5633c43c360139
+    - Mesh: {fileID: -6933468559678675377, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 450
+      DrawnIndexCount: 474
+      LocalBounds:
+        m_Center: {x: 0, y: 0.21442395, z: 0}
+        m_Extent: {x: 8.210083, y: 0.5172168, z: 8.210085}
+      GeometrySha256: bd8da6d3e0c2dd47e69dd8b3efe7e236414278a314c64bece0a5f0b3a7993229
+    - Mesh: {fileID: 611749867230647085, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 103
+      DrawnIndexCount: 114
+      LocalBounds:
+        m_Center: {x: -1.1711707, y: 1.4382691, z: -0.016197503}
+        m_Extent: {x: 0.12278557, y: 0.77856493, z: 0.9128417}
+      GeometrySha256: 9bfdb88fd9dc1078bc16941ebc45c0bef12ccb1317ea49baf7889c379c2c313e
+    - Mesh: {fileID: -2514872472796505457, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 48
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -1.2230309, y: 1.6389786, z: -0.0075671077}
+        m_Extent: {x: 0.055013776, y: 0.44589007, z: 0.7404607}
+      GeometrySha256: 4e6def25679d60117355527fbaa6aff6f3b46f802f4f8bf29d6674f9869a22a7
+    - Mesh: {fileID: 4890753758018491721, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 103
+      DrawnIndexCount: 114
+      LocalBounds:
+        m_Center: {x: 1.1711707, y: 1.4382691, z: -0.016197503}
+        m_Extent: {x: 0.12278557, y: 0.77856493, z: 0.9128417}
+      GeometrySha256: d76f2d81ec9c10c51b532b998e617fae9396afbfaf32e7e32d14f3145b46b3ed
+    - Mesh: {fileID: 4585031555378215623, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 48
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 1.2230309, y: 1.6389786, z: -0.0075671077}
+        m_Extent: {x: 0.055013776, y: 0.44589007, z: 0.7404607}
+      GeometrySha256: ea5ac502b818a98b7b6726264c763cd5e593a719953e65f628967da9876858f1
+    - Mesh: {fileID: -1942214218539767229, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 83
+      DrawnIndexCount: 87
+      LocalBounds:
+        m_Center: {x: 0, y: 1.875235, z: 2.609773}
+        m_Extent: {x: 1.2594005, y: 0.40988624, z: 1.2303603}
+      GeometrySha256: 8cacf1de9374f7f22801d1ed0f5b63e1eafa549d764d71618c615ffc78dab6b2
+    - Mesh: {fileID: -5027988581819714941, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 114
+      DrawnIndexCount: 120
+      LocalBounds:
+        m_Center: {x: -0.00015260652, y: 0.3833847, z: 0.030123413}
+        m_Extent: {x: 0.038313486, y: 0.41411805, z: 0.08323562}
+      GeometrySha256: 59b0473121d157fa9244758b2ae548cb1e86d510d881548d9450c27a9fb7b928
+    - Mesh: {fileID: -8572752363283596714, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 117
+      DrawnIndexCount: 120
+      LocalBounds:
+        m_Center: {x: 0.00015262887, y: 0.3833847, z: 0.03007901}
+        m_Extent: {x: 0.038313463, y: 0.41411805, z: 0.08328003}
+      GeometrySha256: 2c7a04d0631993c6b608af241daf74aaf58b838a3745442d9989b10dac2a969e
+    - Mesh: {fileID: -5517582249752995385, guid: d4114639e4b0c4a68bca5f5c4baf5f39, type: 2}
+      SubMesh: 0
+      VertexCount: 383
+      DrawnIndexCount: 420
+      LocalBounds:
+        m_Center: {x: -0.00000071525574, y: 1.6633371, z: 0.63559073}
+        m_Extent: {x: 2.8332262, y: 0.5750371, z: 0.6616129}
+      GeometrySha256: b68b76adbdca821d544aa3a617294841b38c2443073c2fd898d15c36f5086fbf
+    - Mesh: {fileID: 4300000, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 944
+      DrawnIndexCount: 957
+      LocalBounds:
+        m_Center: {x: 0.010234594, y: 2.0130076, z: -3.335123}
+        m_Extent: {x: 2.233275, y: 2.0324655, z: 7.666025}
+      GeometrySha256: cbfb3134fa9f714d0073824825c1753e665362817bb3bcb5bb920eda237f2d57
+    - Mesh: {fileID: -3599782988163950699, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.0040236935, y: -0.00000011920929, z: -0.00000023841858}
+        m_Extent: {x: 0.0632904, y: 1.7281313, z: 1.7281315}
+      GeometrySha256: 6d9092c439c15692eb3f3242f958ad917bc2be489e1e36c14969f4e01d40ab50
+    - Mesh: {fileID: -2533980895466283929, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 152
+      DrawnIndexCount: 153
+      LocalBounds:
+        m_Center: {x: 0, y: 0.18994302, z: 0.06499958}
+        m_Extent: {x: 7.6218033, y: 0.49273586, z: 8.145085}
+      GeometrySha256: 897df824386bf232ecfa188d51a55560470fafe1acd5b31d0006dc68b6cc001c
+    - Mesh: {fileID: 5841384694850555189, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 67
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -1.1711707, y: 1.4382691, z: -0.016197503}
+        m_Extent: {x: 0.12278557, y: 0.77856493, z: 0.9128417}
+      GeometrySha256: 23ee4ed09c6d12018261d944d916b18cd74120c10066076ffeda1b6663c62202
+    - Mesh: {fileID: -1254097585279754479, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 48
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -1.2230309, y: 1.6389786, z: -0.0075671077}
+        m_Extent: {x: 0.055013776, y: 0.44589007, z: 0.7404607}
+      GeometrySha256: 4e6def25679d60117355527fbaa6aff6f3b46f802f4f8bf29d6674f9869a22a7
+    - Mesh: {fileID: -5739623351812679009, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 67
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 1.1711707, y: 1.4382691, z: -0.016197503}
+        m_Extent: {x: 0.12278557, y: 0.77856493, z: 0.9128417}
+      GeometrySha256: 7b4b0d7e300c9c7bbeed0b405638b8191c9e3403cf80bb3ae290ae67e673c747
+    - Mesh: {fileID: -3434681298582088507, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 48
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 1.2230309, y: 1.6389786, z: -0.0075671077}
+        m_Extent: {x: 0.055013776, y: 0.44589007, z: 0.7404607}
+      GeometrySha256: ea5ac502b818a98b7b6726264c763cd5e593a719953e65f628967da9876858f1
+    - Mesh: {fileID: 5387068634455918504, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 68
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 1.875235, z: 2.6097727}
+        m_Extent: {x: 1.2594005, y: 0.40988624, z: 1.2303605}
+      GeometrySha256: c1aa3559e1593af79be466ca04f37b147760c9815008a714560400490e895f07
+    - Mesh: {fileID: 9037198800975510127, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.00015260652, y: 0.38546267, z: 0.030386478}
+        m_Extent: {x: 0.038313486, y: 0.41204005, z: 0.082972564}
+      GeometrySha256: 910ecd51c95c2f7d7ae241ec9a257379ddb02059115ec62c425dce3cda1a818f
+    - Mesh: {fileID: -337426389563128447, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00015262887, y: 0.38546267, z: 0.030386478}
+        m_Extent: {x: 0.038313463, y: 0.41204005, z: 0.082972564}
+      GeometrySha256: 501f8a6739ec935f8e9b4afe7af7f1cad57f8f2707bc4837f4945c8fdec6773f
+    - Mesh: {fileID: -4067003773033737531, guid: 750c48cf011f8440ab05e2b020475048, type: 2}
+      SubMesh: 0
+      VertexCount: 132
+      DrawnIndexCount: 135
+      LocalBounds:
+        m_Center: {x: 0, y: 1.6664997, z: 0.6596431}
+        m_Extent: {x: 2.8332257, y: 0.5718745, z: 0.63756055}
+      GeometrySha256: 3d8b3d5776d1d8d8561856a58ff8290a046d074f001686049d2ac77a550c0dc3
+  - Role: 15
+    PrefabKey: Unit_Veh_Helicopter_Attack_Small
+    Sources:
+    - VisualKind: 1
+      Prefab: {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
+      Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab
+      DependencyHash: 4883c1d4b4446a38c3b8cb8ba63e71c2
+    - VisualKind: 2
+      Prefab: {fileID: 2090294392753675684, guid: 574f24c8b02514ebba0da146ea0b6ce4, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Helicopter_Attack_Small.prefab
+      DependencyHash: 84df99fbd0e94c268440c94686cae3ef
+    - VisualKind: 3
+      Prefab: {fileID: 3262028905881247734, guid: 75c8a5b2369ae44438a789eda7fcb821, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Veh_Helicopter_Attack_Small.prefab
+      DependencyHash: 87521739919cf59553ff31512ed02897
+    Draws:
+    - Mesh: {fileID: 4300000, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 4040
+      DrawnIndexCount: 7035
+      LocalBounds:
+        m_Center: {x: 0.1368661, y: 1.5268832, z: -1.8704853}
+        m_Extent: {x: 1.3006368, y: 1.5390445, z: 3.9881887}
+      GeometrySha256: 017e3f97fad82f74fc457219f322567e1d3adc0907ee1ec21af5dc401d355799
+    - Mesh: {fileID: 4300010, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 378
+      DrawnIndexCount: 600
+      LocalBounds:
+        m_Center: {x: 0.00014123693, y: 0.24483563, z: 0.05766312}
+        m_Extent: {x: 0.035448663, y: 0.36376604, z: 0.123479605}
+      GeometrySha256: cd38cb859232548efbe931b7bbaa098c5ef2c18b7d8436f1055f470a37bd7f81
+    - Mesh: {fileID: 4300006, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 368
+      DrawnIndexCount: 624
+      LocalBounds:
+        m_Center: {x: -0.0009929538, y: 0.00000011920929, z: 0.00000023841858}
+        m_Extent: {x: 0.033446997, y: 0.9132625, z: 0.9132627}
+      GeometrySha256: 0f113b49dda41801fbdcfe40cc00e06981d1d7d44226f64394348e22368dcb2d
+    - Mesh: {fileID: 4300002, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 1360
+      DrawnIndexCount: 2124
+      LocalBounds:
+        m_Center: {x: -0.014026165, y: 0.16276047, z: 0.38506913}
+        m_Extent: {x: 3.967988, y: 0.36529624, z: 3.7871208}
+      GeometrySha256: 32a151a57c54e3c212f9a11384dc08604f995c67aeb8d547fcbee470b238eb29
+    - Mesh: {fileID: 4300004, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 304
+      DrawnIndexCount: 468
+      LocalBounds:
+        m_Center: {x: 0, y: 1.4624369, z: 1.1856322}
+        m_Extent: {x: 0.6589736, y: 0.78178, z: 0.844594}
+      GeometrySha256: 73077294da35074eebf6493e46150410c6892d14d265b75d3231b4ed432c4b62
+    - Mesh: {fileID: 4300008, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 378
+      DrawnIndexCount: 600
+      LocalBounds:
+        m_Center: {x: 0.00014126673, y: 0.24483563, z: 0.05766312}
+        m_Extent: {x: 0.035448663, y: 0.36376604, z: 0.123479605}
+      GeometrySha256: a1a144ec53f3a5498aec621a985095120be31f8d94d0211ca88974518111e421
+    - Mesh: {fileID: 4300012, guid: 16dd6966822b39e47952164389ad67c6, type: 3}
+      SubMesh: 0
+      VertexCount: 330
+      DrawnIndexCount: 570
+      LocalBounds:
+        m_Center: {x: 0, y: 1.2402439, z: -0.1294541}
+        m_Extent: {x: 1.7346303, y: 0.4306047, z: 0.49859694}
+      GeometrySha256: ad4191992b9e5b19397d3086d00180e652f79177bfaef3dddf6c2890239f077e
+    - Mesh: {fileID: 4300000, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 1626
+      DrawnIndexCount: 1758
+      LocalBounds:
+        m_Center: {x: 0.1368661, y: 1.5268832, z: -1.8704853}
+        m_Extent: {x: 1.3006368, y: 1.5390445, z: 3.9881887}
+      GeometrySha256: dfee6a18c7141a62240517864903aad903c3d39896d0983b6f6d9ccbeb8cdb60
+    - Mesh: {fileID: -8568346306658014047, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 138
+      DrawnIndexCount: 150
+      LocalBounds:
+        m_Center: {x: 0.00014123693, y: 0.24483563, z: 0.057663135}
+        m_Extent: {x: 0.035448663, y: 0.36376604, z: 0.12347962}
+      GeometrySha256: 63d7a656cb43646ef43d7a2d56c941bb4bb9a8c8279ebc85ae1829141fc6dfc3
+    - Mesh: {fileID: 6834990472456064880, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 156
+      DrawnIndexCount: 156
+      LocalBounds:
+        m_Center: {x: -0.0009929538, y: 0.00000011920929, z: 0.00000023841858}
+        m_Extent: {x: 0.033446997, y: 0.91326237, z: 0.9132627}
+      GeometrySha256: 50960d76e0787c2ba7eafebe1d5068b948f31c70d5af8bb6b9e039a8f38f2ca2
+    - Mesh: {fileID: -5785104895305824227, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 510
+      DrawnIndexCount: 531
+      LocalBounds:
+        m_Center: {x: -0.014026165, y: 0.16276047, z: 0.38506913}
+        m_Extent: {x: 3.967988, y: 0.36529624, z: 3.7871208}
+      GeometrySha256: 0e54387edf51fedb25cae102c8a22147fc08c631530dddb0cdd4a73b315de77d
+    - Mesh: {fileID: 8986886992145062421, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 117
+      DrawnIndexCount: 117
+      LocalBounds:
+        m_Center: {x: 0, y: 1.4941882, z: 1.2652366}
+        m_Extent: {x: 0.65638924, y: 0.7500287, z: 0.72494006}
+      GeometrySha256: 111f9d54bf192f471f39daf62467c41087e396e76530f9683b9288c0c75d140b
+    - Mesh: {fileID: 3280570278497912402, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 138
+      DrawnIndexCount: 150
+      LocalBounds:
+        m_Center: {x: 0.00014126673, y: 0.24483563, z: 0.057663135}
+        m_Extent: {x: 0.035448663, y: 0.36376604, z: 0.12347962}
+      GeometrySha256: a12c941731e51dcb165e45b379698e1bae7e858d7fc12db4e4466b84e5eb80a6
+    - Mesh: {fileID: 5939741307011871605, guid: 228f7153928224d0bacb3597b85bf40d, type: 2}
+      SubMesh: 0
+      VertexCount: 138
+      DrawnIndexCount: 144
+      LocalBounds:
+        m_Center: {x: 0, y: 1.2402439, z: -0.1294541}
+        m_Extent: {x: 1.7346303, y: 0.4306047, z: 0.49859694}
+      GeometrySha256: 69da6cf4be08fa67148f1c7691ae922dbde34097de0602dc273696dc5ab1dda6
+    - Mesh: {fileID: 4300000, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 545
+      DrawnIndexCount: 564
+      LocalBounds:
+        m_Center: {x: 0.1163795, y: 1.5128405, z: -1.859832}
+        m_Extent: {x: 1.2801502, y: 1.5250018, z: 3.9775355}
+      GeometrySha256: 13f14a86e3dc63a5434dd3746138e2a820549ae0e3017f5400b0bd29143556cc
+    - Mesh: {fileID: -3857107672051568434, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.0019772314, y: 0.24483563, z: 0.05766312}
+        m_Extent: {x: 0.03361267, y: 0.36376604, z: 0.123479605}
+      GeometrySha256: 1e83550f67ff85841dee62580c0b96730f681b952a74e7bfc05a92de17357879
+    - Mesh: {fileID: 3542246398933594734, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.0009929426, y: 0.00000011920929, z: 0.00000023841858}
+        m_Extent: {x: 0.03344699, y: 0.91326237, z: 0.9132627}
+      GeometrySha256: 15b57a6bad89b1996bcb99a47b22efe915c356a6b9bf9640da9286deae8a60df
+    - Mesh: {fileID: 6862788842461428320, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 171
+      DrawnIndexCount: 171
+      LocalBounds:
+        m_Center: {x: -0.014026165, y: 0.16276047, z: 0.38506913}
+        m_Extent: {x: 3.967988, y: 0.36529624, z: 3.7871208}
+      GeometrySha256: 355bcf43ead0877db06231bbf586ff7cb8335d8f0c252f95f297e347180176e2
+    - Mesh: {fileID: 7364247835753029290, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 67
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 1.587667, z: 1.153327}
+        m_Extent: {x: 0.65638924, y: 0.6525841, z: 0.81219244}
+      GeometrySha256: 7b6de5c4a26fa21bbe09b6f3aa785468f2b507a4e859048d4afceef211cfdf16
+    - Mesh: {fileID: 5071549075088636583, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.0019772612, y: 0.24483563, z: 0.05766312}
+        m_Extent: {x: 0.03361267, y: 0.36376604, z: 0.123479605}
+      GeometrySha256: 5777c1a787f4b83c02b6ecf1344120abc258b7184fdd939b9addef36d4a06ec6
+    - Mesh: {fileID: -7450496861940142126, guid: cbb175fdcafc447a88c3ead79ae1e387, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.016377687, y: 1.2402439, z: -0.1294541}
+        m_Extent: {x: 1.7182527, y: 0.4306047, z: 0.49859694}
+      GeometrySha256: 5ac182e8af2a2efcaa377eff62c91f48f0005ca5a1834d7be13906b9d48e360d
+  - Role: 16
+    PrefabKey: Unit_Veh_Helicopter_Attack
+    Sources:
+    - VisualKind: 1
+      Prefab: {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
+      Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab
+      DependencyHash: 1cdf1ad446af2307f7b9d1307d6217b0
+    - VisualKind: 2
+      Prefab: {fileID: 1211880870138892396, guid: 8f0cd6db019664f93b9763960a3dbf78, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Helicopter_Attack.prefab
+      DependencyHash: 3d55347890bc1531ceba8040d246001b
+    - VisualKind: 3
+      Prefab: {fileID: 650540269167560651, guid: e34b989796ab84b548ba755db9d7dcbb, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Veh_Helicopter_Attack.prefab
+      DependencyHash: 6cd607de05c52c64f0a795bc7104002e
+    Draws:
+    - Mesh: {fileID: 4300000, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 5984
+      DrawnIndexCount: 10500
+      LocalBounds:
+        m_Center: {x: 0, y: 1.6276503, z: -2.2606778}
+        m_Extent: {x: 2.318448, y: 1.6276498, z: 6.821815}
+      GeometrySha256: 5ac80c4babb9567255a9dab44ca15cda576bf1e998fb83cd5bf2a4ec77332484
+    - Mesh: {fileID: 4300010, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 368
+      DrawnIndexCount: 624
+      LocalBounds:
+        m_Center: {x: 0.12601098, y: 0.00000011920929, z: 0.00000059604645}
+        m_Extent: {x: 0.051127106, y: 1.3960154, z: 1.3960149}
+      GeometrySha256: 58274106548de36544d1a37d786baf645f7012a8b25c658b8edee63ebcb7181e
+    - Mesh: {fileID: 4300012, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 1144
+      DrawnIndexCount: 1800
+      LocalBounds:
+        m_Center: {x: 0, y: 0.30346334, z: -0.00000047683716}
+        m_Extent: {x: 6.814539, y: 0.42817748, z: 6.814539}
+      GeometrySha256: 6e549e1df6e45970d911eda9e8f9a7ec160c28b93f2a0d4bd8f80c34702ff317
+    - Mesh: {fileID: 4300022, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 564
+      LocalBounds:
+        m_Center: {x: 0.000000029802322, y: -0.02389878, z: 0.009690613}
+        m_Extent: {x: 0.30018234, y: 0.26970804, z: 0.24617645}
+      GeometrySha256: 3a705d25e406a7a7c4bbb857e7be2a3d6fd9e6fe45ec69bd94086f46b01ef302
+    - Mesh: {fileID: 4300024, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 296
+      DrawnIndexCount: 516
+      LocalBounds:
+        m_Center: {x: 0, y: -0.09297812, z: 2.3359065}
+        m_Extent: {x: 0.5959078, y: 0.55103827, z: 1.3749738}
+      GeometrySha256: ace2cee04d728493a2b10f3f47c60e08a8c53b0909540d105789ff247b7e1fe1
+    - Mesh: {fileID: 4300014, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 96
+      DrawnIndexCount: 156
+      LocalBounds:
+        m_Center: {x: 0.000000059604645, y: -0.053728163, z: -0.00000062584877}
+        m_Extent: {x: 0.4142273, y: 0.24406922, z: 0.3739009}
+      GeometrySha256: b0e67a5cd52f4cceedda67e4f89aa8a7702adb98265dcf1469e2fac02198542f
+    - Mesh: {fileID: 4300016, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 83
+      DrawnIndexCount: 144
+      LocalBounds:
+        m_Center: {x: 0.000000014901161, y: -0.053728193, z: 0.01366806}
+        m_Extent: {x: 0.1399748, y: 0.24406919, z: 0.3977429}
+      GeometrySha256: adb14e0894ad09583e5d61459cc43ad287d9b6798002a1fbf506ec6a8bd0975b
+    - Mesh: {fileID: 4300018, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 660
+      DrawnIndexCount: 1170
+      LocalBounds:
+        m_Center: {x: 0, y: 0.013709545, z: 0.707944}
+        m_Extent: {x: 0.096997514, y: 0.08714329, z: 0.7083291}
+      GeometrySha256: 26bfc9ed16b918dd005647d7631b28653fe9294aa3d787da84b6edda7652bea3
+    - Mesh: {fileID: 4300002, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 260
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.00015264004, y: 0.12506174, z: 0.03252443}
+        m_Extent: {x: 0.038313486, y: 0.16076684, z: 0.057199784}
+      GeometrySha256: d8710dde5458b926a31ada4e1b422016c765baa65067c31bd75c016d48f94313
+    - Mesh: {fileID: 4300004, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 260
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: 0.00015262142, y: 0.12506174, z: 0.03252443}
+        m_Extent: {x: 0.038313463, y: 0.16076684, z: 0.057199784}
+      GeometrySha256: 65fad52d772fb49c95abdd8daa50e470bc7c3123538af2e0cb41148c1b588bb0
+    - Mesh: {fileID: 4300006, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 260
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: 0.00015262142, y: 0.12506168, z: 0.03252425}
+        m_Extent: {x: 0.038313467, y: 0.16076693, z: 0.05719971}
+      GeometrySha256: 672ceaefcf3c3d145a7431e2c3d8d01a78f15985f49316fee9dec204575acd6d
+    - Mesh: {fileID: 4300008, guid: 99598642c675b2442a796d7892dc53d6, type: 3}
+      SubMesh: 0
+      VertexCount: 260
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.00015263632, y: 0.12506168, z: 0.03252425}
+        m_Extent: {x: 0.03831345, y: 0.16076693, z: 0.05719971}
+      GeometrySha256: 607ec2360bc87748492b14a0b90c2ac5db2b4e340978d50f47a5c1960c0de132
+    - Mesh: {fileID: 4300000, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 2404
+      DrawnIndexCount: 2625
+      LocalBounds:
+        m_Center: {x: 0, y: 1.62765, z: -2.2606778}
+        m_Extent: {x: 2.318448, y: 1.6276495, z: 6.821815}
+      GeometrySha256: 8a4c88cf0cb5f1d3de048645642d5307f6e658dc60dfb53d2365c3544d8f14c9
+    - Mesh: {fileID: -1295882707657103870, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 156
+      DrawnIndexCount: 156
+      LocalBounds:
+        m_Center: {x: 0.12601098, y: 0.00000011920929, z: 0.00000059604645}
+        m_Extent: {x: 0.051127106, y: 1.3960154, z: 1.3960149}
+      GeometrySha256: 7e0e64d4e3a3494e1bd73d1b139448fc2ed0e3b944b332e79adcb7c3c76b6a93
+    - Mesh: {fileID: 437169101180952826, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 431
+      DrawnIndexCount: 450
+      LocalBounds:
+        m_Center: {x: 0, y: 0.30346334, z: -0.00000047683716}
+        m_Extent: {x: 6.814539, y: 0.42817748, z: 6.814539}
+      GeometrySha256: bbbff3a18931fdd02b1a35dd67af1f84290165be04b52155d6e28ee4fde01792
+    - Mesh: {fileID: -4796643404839760676, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 138
+      DrawnIndexCount: 141
+      LocalBounds:
+        m_Center: {x: 0.000000029802322, y: -0.016273856, z: 0.009690613}
+        m_Extent: {x: 0.30018234, y: 0.2620831, z: 0.24617645}
+      GeometrySha256: d9f3417383020f15890ae0316537fb4cc554fa9bc053ecdd77b2c2cf44bca81b
+    - Mesh: {fileID: 5979597915956542982, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 126
+      DrawnIndexCount: 129
+      LocalBounds:
+        m_Center: {x: 0, y: -0.09297812, z: 2.3359065}
+        m_Extent: {x: 0.5959078, y: 0.55103827, z: 1.3749738}
+      GeometrySha256: f11762aba335c8244dd104c86b8d596e38632f5930d9d8d20917413b6c93a013
+    - Mesh: {fileID: -5060723485946560532, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 61
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.000000059604645, y: -0.053728163, z: -0.00000062584877}
+        m_Extent: {x: 0.4142273, y: 0.24406922, z: 0.3739009}
+      GeometrySha256: 6932417f1c5df4132aef219dbad1150cd0c9cb7899c469cc5c500e7afacac22a
+    - Mesh: {fileID: 6382058241517377163, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 61
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.000000014901161, y: -0.053728193, z: 0.01366806}
+        m_Extent: {x: 0.1399748, y: 0.24406919, z: 0.3977429}
+      GeometrySha256: 18c06d26a7f5c8c2aafdf4620c8e095f54b8b9fdd7aae11622a903e8c773df30
+    - Mesh: {fileID: -4890206942595863717, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 269
+      DrawnIndexCount: 294
+      LocalBounds:
+        m_Center: {x: 0, y: 0.013634168, z: 0.707944}
+        m_Extent: {x: 0.096997514, y: 0.08706791, z: 0.7083291}
+      GeometrySha256: 91517c211c93293547616e56c1a9921a673ed86ed58442fdc477d215767672db
+    - Mesh: {fileID: 7274406866436460683, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 96
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: -0.00015264004, y: 0.12506174, z: 0.03374361}
+        m_Extent: {x: 0.038313486, y: 0.16076684, z: 0.055980608}
+      GeometrySha256: 97515d55e22f43d14e3ae21bcd1d91274edf36fed4a28640e7700629fba51395
+    - Mesh: {fileID: 4158895034356514204, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 97
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: 0.00015262142, y: 0.12506174, z: 0.03374361}
+        m_Extent: {x: 0.038313463, y: 0.16076684, z: 0.055980608}
+      GeometrySha256: 83cb7cff504a2683d21fef0558a96700a45fc8c846a801202bac16b1cc592466
+    - Mesh: {fileID: 1858132167360909703, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 95
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: 0.0001526177, y: 0.12506168, z: 0.03374343}
+        m_Extent: {x: 0.038313463, y: 0.16076693, z: 0.055980533}
+      GeometrySha256: d6524327c4e44205dabc8efc61efae9ba6cea5bb94abab164007c3eb24187022
+    - Mesh: {fileID: 804546392919407654, guid: ca93403bff26d4c17b97a313dc8a2952, type: 2}
+      SubMesh: 0
+      VertexCount: 96
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: -0.00015263632, y: 0.12506168, z: 0.03374343}
+        m_Extent: {x: 0.03831345, y: 0.16076693, z: 0.055980533}
+      GeometrySha256: f499a7fa3ff6fb673642dd79eed3c422461a74a3fa36f637612c5d0a723c336f
+    - Mesh: {fileID: 4300000, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 817
+      DrawnIndexCount: 840
+      LocalBounds:
+        m_Center: {x: -0.026231766, y: 1.6276501, z: -2.2606778}
+        m_Extent: {x: 2.2922163, y: 1.6276497, z: 6.821815}
+      GeometrySha256: ee7d4c941cdadc1f625df4f5230782dd37b923a7d690ca2b49843f338a9b1108
+    - Mesh: {fileID: -451262152448010330, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.12601098, y: 0.00000011920929, z: 0.00000059604645}
+        m_Extent: {x: 0.051127106, y: 1.3960154, z: 1.3960149}
+      GeometrySha256: bdede3fe089756ccbacfe1cc6128ca2fbc6e74b0cae9374f324256beae9b4e78
+    - Mesh: {fileID: 804102093410514856, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 143
+      DrawnIndexCount: 144
+      LocalBounds:
+        m_Center: {x: 0, y: 0.2739478, z: -0.00000047683716}
+        m_Extent: {x: 6.814539, y: 0.39866194, z: 6.814539}
+      GeometrySha256: 037ab7fdeaa4f5652822334d4d93fd515c73fa2d169dd4acf2ce59863c3c5914
+    - Mesh: {fileID: -3196821055199017223, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 71
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.000000029802322, y: -0.016273856, z: 0.026417002}
+        m_Extent: {x: 0.30018234, y: 0.2620831, z: 0.22945008}
+      GeometrySha256: 4f007885acdc42361d2f01601e3a5491eb9cd66933aeca382e1b9320adc79f22
+    - Mesh: {fileID: 5645579582220846995, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.002488792, y: -0.12668175, z: 2.3349009}
+        m_Extent: {x: 0.5853162, y: 0.51733464, z: 1.3739681}
+      GeometrySha256: 88f73a647295a7bf14729e3b4814453d98076fafa0f4aa8e5193c3807deb1463
+    - Mesh: {fileID: -8793976070584280, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 61
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.000000059604645, y: -0.053728163, z: -0.00000062584877}
+        m_Extent: {x: 0.4142273, y: 0.24406922, z: 0.3739009}
+      GeometrySha256: 6932417f1c5df4132aef219dbad1150cd0c9cb7899c469cc5c500e7afacac22a
+    - Mesh: {fileID: 3152604476890754737, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 61
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.000000014901161, y: -0.053728193, z: 0.01366806}
+        m_Extent: {x: 0.1399748, y: 0.24406919, z: 0.3977429}
+      GeometrySha256: 18c06d26a7f5c8c2aafdf4620c8e095f54b8b9fdd7aae11622a903e8c773df30
+    - Mesh: {fileID: -3999501917978264744, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 92
+      DrawnIndexCount: 93
+      LocalBounds:
+        m_Center: {x: 0.000000014901161, y: 0.010883272, z: 0.7079336}
+        m_Extent: {x: 0.09699753, y: 0.08431701, z: 0.7083187}
+      GeometrySha256: 36a81a7675a8c39b685901f23765fc86558aade15159d5c51f56eeb38d0cfd62
+    - Mesh: {fileID: 9091443911815392136, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.00015264004, y: 0.12506174, z: 0.03374361}
+        m_Extent: {x: 0.038313486, y: 0.16076684, z: 0.055980608}
+      GeometrySha256: 69ef162e143aa0924bbf83be9261d253a7d4ffc946deb08597e869bea1934061
+    - Mesh: {fileID: 7757265661255648724, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00015262142, y: 0.12506174, z: 0.03374361}
+        m_Extent: {x: 0.038313463, y: 0.16076684, z: 0.055980608}
+      GeometrySha256: e81c08271aa80a3e13380ba565091d98115eedc43f8735d066d1e63f91ffc84a
+    - Mesh: {fileID: 3217433780138147934, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00015262142, y: 0.12506165, z: 0.03374343}
+        m_Extent: {x: 0.038313467, y: 0.1607669, z: 0.055980533}
+      GeometrySha256: bf7238a876b53d4fead7c3eaa480259dc4b6490fc78d48350e27c4fd66ddeb05
+    - Mesh: {fileID: -8339273485090176024, guid: e865c2e12c53a432a89ef590c57924cd, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.00015264004, y: 0.12506165, z: 0.03374343}
+        m_Extent: {x: 0.03831345, y: 0.1607669, z: 0.055980533}
+      GeometrySha256: 113ae5bca3cab83b7b5483cc9f46444f722a40ce551c6afac037c4b10d4315c3
+  - Role: 17
+    PrefabKey: Unit_Veh_Drone
+    Sources:
+    - VisualKind: 1
+      Prefab: {fileID: 5616646512338707422, guid: 7ed73828b6ecd4cf8a690c35e7311a1d, type: 3}
+      Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Drone.prefab
+      DependencyHash: 8cdc964f25ab01f918fdee079e83b909
+    - VisualKind: 2
+      Prefab: {fileID: 7971616082418092104, guid: 845fdeeb487f341368ada70de6d10934, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Drone.prefab
+      DependencyHash: a0631d5ed72f21d550d2dd1d0271ee2c
+    - VisualKind: 3
+      Prefab: {fileID: 1696563246359853496, guid: 4080b180479fb417da8ae92711f03e49, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Veh_Drone.prefab
+      DependencyHash: f5482813e88345573c4a08f31815d26a
+    Draws:
+    - Mesh: {fileID: 4300000, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 2387
+      DrawnIndexCount: 3786
+      LocalBounds:
+        m_Center: {x: 0, y: 0.18522024, z: 0.61307096}
+        m_Extent: {x: 9.705219, y: 1.6419115, z: 5.612106}
+      GeometrySha256: e1e8c376b7538396f493fe153252942f9def91d9bb224273527383dbe53148ab
+    - Mesh: {fileID: 4300018, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 358
+      DrawnIndexCount: 528
+      LocalBounds:
+        m_Center: {x: 0, y: -0.008529723, z: 0.026852876}
+        m_Extent: {x: 0.35423118, y: 0.35423112, z: 0.36374664}
+      GeometrySha256: 7c98f1fc3ea9008a5e120b3441397fdb74a33c1fc70901726aba123b51f9c360
+    - Mesh: {fileID: 4300002, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 60
+      LocalBounds:
+        m_Center: {x: 0, y: 0.000000059604645, z: -0.19173732}
+        m_Extent: {x: 0.056548, y: 0.5227823, z: 0.18295684}
+      GeometrySha256: 04a821cbc41d07a05a52afa9072d4aef18c5634259aef0f5f85d1a01588a3adf
+    - Mesh: {fileID: 4300014, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 40
+      DrawnIndexCount: 78
+      LocalBounds:
+        m_Center: {x: 0.0013151169, y: 0.0093918, z: -0.30627277}
+        m_Extent: {x: 2.2571113, y: 0.086768046, z: 0.306273}
+      GeometrySha256: ba0870fc30d9348c08331f8395e49e497646adeef7237906c7aa165b150f3215
+    - Mesh: {fileID: 4300016, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 40
+      DrawnIndexCount: 78
+      LocalBounds:
+        m_Center: {x: -0.00037050247, y: 0.004562814, z: -0.21112475}
+        m_Extent: {x: 2.211124, y: 0.05832266, z: 0.21112531}
+      GeometrySha256: 11e270a3c54d75cf9368a0de167f4520390e09aa588a274bc527387e9619590e
+    - Mesh: {fileID: 4300012, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 44
+      DrawnIndexCount: 78
+      LocalBounds:
+        m_Center: {x: -0.0009303093, y: 0.0041850284, z: -0.3062728}
+        m_Extent: {x: 2.257175, y: 0.076404676, z: 0.30627304}
+      GeometrySha256: cabc81e30321089525de90715ad1f8443572440d393dadf35d129b5815c012c3
+    - Mesh: {fileID: 4300010, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 40
+      DrawnIndexCount: 78
+      LocalBounds:
+        m_Center: {x: 0.00039196014, y: 0.000010829419, z: -0.21112475}
+        m_Extent: {x: 2.2112393, y: 0.05720231, z: 0.21112531}
+      GeometrySha256: dbf39c8064eb04f47c66f7b799c7f50c6069813d121d628c97f43f7cbc71c099
+    - Mesh: {fileID: 4300006, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 92
+      DrawnIndexCount: 132
+      LocalBounds:
+        m_Center: {x: 0.00732255, y: -0.015385397, z: -0.16505246}
+        m_Extent: {x: 1.6967418, y: 0.05787067, z: 0.20186813}
+      GeometrySha256: cd60f69b3065194b929f1bb8a5dd9f59d0358a670b4263ed67db51dae63060e4
+    - Mesh: {fileID: 4300008, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 92
+      DrawnIndexCount: 132
+      LocalBounds:
+        m_Center: {x: -0.0073082447, y: -0.017015368, z: -0.16505246}
+        m_Extent: {x: 1.6967005, y: 0.060090154, z: 0.20186813}
+      GeometrySha256: 338812dbbe3c113e6463e5a57d2099e8d70b8056c693740262965cf8c36dda1f
+    - Mesh: {fileID: 4300004, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 1177
+      DrawnIndexCount: 1638
+      LocalBounds:
+        m_Center: {x: 0.01402545, y: 0.31073964, z: -0.16124398}
+        m_Extent: {x: 1.1400013, y: 1.0036933, z: 0.35697556}
+      GeometrySha256: 0f320f03d4f9ecdaf9d522cbbf5b6484a388d67cd71917640e422051a21d5c35
+    - Mesh: {fileID: 4300020, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 170
+      DrawnIndexCount: 312
+      LocalBounds:
+        m_Center: {x: 0, y: -0.73158723, z: 0.5325182}
+        m_Extent: {x: 0.10669681, y: 0.85588545, z: 0.66800964}
+      GeometrySha256: 43a984d9bb5ad30a3eb0ca91caaaaecde2a805c53e352402338b48b97d65757e
+    - Mesh: {fileID: 4300022, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: 0.000000007450581, y: 0.000000029802322, z: 0.000000044703484}
+        m_Extent: {x: 0.0713094, y: 0.19892058, z: 0.19892074}
+      GeometrySha256: 4a2c48b60d37a443396c80ccbdeb22aeb455facb534d03532fdb3a4e23d095f2
+    - Mesh: {fileID: 4300028, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 87
+      DrawnIndexCount: 138
+      LocalBounds:
+        m_Center: {x: -0.32992154, y: -0.55644333, z: 0.0021219552}
+        m_Extent: {x: 0.45734507, y: 0.8855158, z: 0.12775023}
+      GeometrySha256: a714d3a76905e19d4fdcc13ec2004d3afbde495876c8f803c00bad3a55b994a7
+    - Mesh: {fileID: 4300030, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: 0, y: 0.00000011920929, z: 0.000000029802322}
+        m_Extent: {x: 0.09591876, y: 0.26756957, z: 0.26756948}
+      GeometrySha256: 540b8299fdf56786d8b8a919fd020dc8839d31ba60122c6fd9a55c2592126909
+    - Mesh: {fileID: 4300024, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 87
+      DrawnIndexCount: 138
+      LocalBounds:
+        m_Center: {x: -0.32992154, y: -0.55644333, z: -0.00212197}
+        m_Extent: {x: 0.45734507, y: 0.8855158, z: 0.12775022}
+      GeometrySha256: a8a45b330762bc44a81a461a36e2e7d871bdb2622f37464021d364b7309e207e
+    - Mesh: {fileID: 4300026, guid: 5f461a12b5a64564892b32850069e302, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: 0, y: 0.00000011920929, z: 0}
+        m_Extent: {x: 0.09591876, y: 0.26756957, z: 0.26756945}
+      GeometrySha256: 31412abceb4597724e1955ebaa6110a92143256e7ccf5a69b10cd70254b0aa44
+    - Mesh: {fileID: 4300000, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 884
+      DrawnIndexCount: 948
+      LocalBounds:
+        m_Center: {x: -0.02144146, y: 0.17859173, z: 0.61307096}
+        m_Extent: {x: 9.683778, y: 1.635283, z: 5.612106}
+      GeometrySha256: 07eabd1d752df1cc1a773cf0becbfe20219c9b9e959a252e6300234e978dd57c
+    - Mesh: {fileID: 1010980324432506869, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 127
+      DrawnIndexCount: 132
+      LocalBounds:
+        m_Center: {x: 0, y: -0.008529693, z: 0.026852876}
+        m_Extent: {x: 0.35423118, y: 0.35423112, z: 0.36374664}
+      GeometrySha256: 2504f34ca89798d38694d362e40016e84a97e30da95cf2c84a65f786e6f39cb6
+    - Mesh: {fileID: -2243284112558213014, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 60
+      LocalBounds:
+        m_Center: {x: 0, y: 0.000000059604645, z: -0.19173732}
+        m_Extent: {x: 0.056548, y: 0.5227823, z: 0.18295684}
+      GeometrySha256: e995f2c9b1bc72f8fa9a49801f8e1431f1e8b92f21ee23314b02752aaed1b053
+    - Mesh: {fileID: -2959109850179290799, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.0013151169, y: 0.0093918, z: -0.30627277}
+        m_Extent: {x: 2.2571113, y: 0.086768046, z: 0.306273}
+      GeometrySha256: 4a3fd1ade7453269e174cd3f52a99d3a9ba25e581b3ab0503fabccea57968578
+    - Mesh: {fileID: -2724455076190253748, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.00037050247, y: 0.004562814, z: -0.21112475}
+        m_Extent: {x: 2.211124, y: 0.05832266, z: 0.21112531}
+      GeometrySha256: 1df5948942b53948d3521577604065d146e76f82bc236322bf08f91b155701b0
+    - Mesh: {fileID: 811724950091568719, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 43
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.0009303093, y: 0.0041850284, z: -0.3062728}
+        m_Extent: {x: 2.257175, y: 0.076404676, z: 0.30627304}
+      GeometrySha256: b56be6d0733f5c2b5f00e553f7b75ad572af564348a1d0110c29bb65fadc6260
+    - Mesh: {fileID: -410155227908505703, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00039196014, y: 0.000010829419, z: -0.21112475}
+        m_Extent: {x: 2.2112393, y: 0.05720231, z: 0.21112531}
+      GeometrySha256: d402a8eb49cfe21ff4850417dcd20796ec57077b32aa2a72f52b993fa485bcd3
+    - Mesh: {fileID: -3234708341493988090, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 66
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00732255, y: -0.015385397, z: -0.16505246}
+        m_Extent: {x: 1.6967418, y: 0.05787067, z: 0.20186813}
+      GeometrySha256: 46047f7f5fe9322b44f014954b173de504b0dd358c89609e2e0154ebbb47dfb5
+    - Mesh: {fileID: 4516674175233004243, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 66
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.0073082447, y: -0.017015368, z: -0.16505246}
+        m_Extent: {x: 1.6967005, y: 0.060090154, z: 0.20186813}
+      GeometrySha256: e259120b7974680ec5f6a41ec8fdfaffb67a7f25e0755b03903e0286208a1f42
+    - Mesh: {fileID: 4772036363822941269, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 369
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: 0.01481235, y: 0.31073964, z: -0.16124398}
+        m_Extent: {x: 1.1382439, y: 1.0036933, z: 0.35697556}
+      GeometrySha256: 80a4e2c36d6cdc2ba3776427dd48f59932667a12e02612693fbe8db14f1c9b8e
+    - Mesh: {fileID: -4103841194732412256, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 68
+      DrawnIndexCount: 78
+      LocalBounds:
+        m_Center: {x: 0, y: -0.7497967, z: 0.52910954}
+        m_Extent: {x: 0.10669681, y: 0.837676, z: 0.66460097}
+      GeometrySha256: ce9c4c0feae172e0776519e6b78eae88a1af3bdfe5bbe5c119b628e666a8c293
+    - Mesh: {fileID: -7889682024441357930, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 172
+      DrawnIndexCount: 180
+      LocalBounds:
+        m_Center: {x: 0.000000007450581, y: 0.000000029802322, z: 0.008125052}
+        m_Extent: {x: 0.0713094, y: 0.19892058, z: 0.19079573}
+      GeometrySha256: d7a2c72bc10ff3e4753eb9a0dcdab1fe54c21dd3fb9d41f3453f5327647ff37e
+    - Mesh: {fileID: -7851587195636786192, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.32992154, y: -0.55644333, z: 0.00212197}
+        m_Extent: {x: 0.45734507, y: 0.8855158, z: 0.12775025}
+      GeometrySha256: 897855dd74b77ced3d97b1c633da06a956afdccbfe6ad674aafd3f3ec25a5c34
+    - Mesh: {fileID: -4228843263887653250, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 175
+      DrawnIndexCount: 180
+      LocalBounds:
+        m_Center: {x: 0, y: 0.00000011920929, z: 0.010929078}
+        m_Extent: {x: 0.09591876, y: 0.26756957, z: 0.25664043}
+      GeometrySha256: 00291d8ee2d19e537bef1d25ea4951f6cacadc36bfd90daef289a4d7bf1578cc
+    - Mesh: {fileID: -5496695394035084063, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.32992154, y: -0.55644333, z: -0.00212197}
+        m_Extent: {x: 0.45734507, y: 0.8855158, z: 0.12775022}
+      GeometrySha256: 750e57e494e6acf001cba75c59cd05cd6dce23d524d92836347ec6ad008b9491
+    - Mesh: {fileID: -5125639612113715316, guid: d6e793efec3fb45c4bb380baf0446498, type: 2}
+      SubMesh: 0
+      VertexCount: 173
+      DrawnIndexCount: 180
+      LocalBounds:
+        m_Center: {x: 0, y: 0.00000011920929, z: -0.010929018}
+        m_Extent: {x: 0.09591876, y: 0.26756957, z: 0.25664043}
+      GeometrySha256: cf5ac637f60b2d08ad0f605df61cc07d7f8202c7af66990a0361fbc34c54e926
+    - Mesh: {fileID: 4300000, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 293
+      DrawnIndexCount: 303
+      LocalBounds:
+        m_Center: {x: 0, y: 0.17859173, z: 0.741065}
+        m_Extent: {x: 9.661378, y: 1.635283, z: 5.4330316}
+      GeometrySha256: b8d9c7ccf740493671bce1e2bee8b92387757099385ce6d9673bb12b027c3737
+    - Mesh: {fileID: 8430992788864093647, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: -0.008529693, z: 0.026852876}
+        m_Extent: {x: 0.35423118, y: 0.35423112, z: 0.36374664}
+      GeometrySha256: d7e2b7ab26381fb74b51e681953a5bd23c3d74b3bc17646718f743cd4cff848f
+    - Mesh: {fileID: 2244552054859689589, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 60
+      LocalBounds:
+        m_Center: {x: 0, y: 0.000000059604645, z: -0.19173732}
+        m_Extent: {x: 0.056548, y: 0.5227823, z: 0.18295684}
+      GeometrySha256: e995f2c9b1bc72f8fa9a49801f8e1431f1e8b92f21ee23314b02752aaed1b053
+    - Mesh: {fileID: 4534317748135277296, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.0013151169, y: 0.0093918, z: -0.30627277}
+        m_Extent: {x: 2.2571113, y: 0.086768046, z: 0.306273}
+      GeometrySha256: 4a3fd1ade7453269e174cd3f52a99d3a9ba25e581b3ab0503fabccea57968578
+    - Mesh: {fileID: 750545138399720721, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.00037050247, y: 0.004562814, z: -0.21112475}
+        m_Extent: {x: 2.211124, y: 0.05832266, z: 0.21112531}
+      GeometrySha256: 1df5948942b53948d3521577604065d146e76f82bc236322bf08f91b155701b0
+    - Mesh: {fileID: 7570168661594393349, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 43
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.0009303093, y: 0.0041850284, z: -0.3062728}
+        m_Extent: {x: 2.257175, y: 0.076404676, z: 0.30627304}
+      GeometrySha256: b56be6d0733f5c2b5f00e553f7b75ad572af564348a1d0110c29bb65fadc6260
+    - Mesh: {fileID: -5596342636085264304, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 38
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00039196014, y: 0.000010829419, z: -0.21112475}
+        m_Extent: {x: 2.2112393, y: 0.05720231, z: 0.21112531}
+      GeometrySha256: d402a8eb49cfe21ff4850417dcd20796ec57077b32aa2a72f52b993fa485bcd3
+    - Mesh: {fileID: -4090868748743558743, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 66
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.00732255, y: -0.015385397, z: -0.16505246}
+        m_Extent: {x: 1.6967418, y: 0.05787067, z: 0.20186813}
+      GeometrySha256: 46047f7f5fe9322b44f014954b173de504b0dd358c89609e2e0154ebbb47dfb5
+    - Mesh: {fileID: -1356802211637997782, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 66
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.0073082447, y: -0.017015368, z: -0.16505246}
+        m_Extent: {x: 1.6967005, y: 0.060090154, z: 0.20186813}
+      GeometrySha256: e259120b7974680ec5f6a41ec8fdfaffb67a7f25e0755b03903e0286208a1f42
+    - Mesh: {fileID: -4156858501050776507, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 129
+      DrawnIndexCount: 132
+      LocalBounds:
+        m_Center: {x: 0.16882652, y: 0.35466892, z: -0.1526191}
+        m_Extent: {x: 0.8145507, y: 0.8712284, z: 0.34835067}
+      GeometrySha256: 264f0ba8ad247b6a6a5bc4bf9a114463d705c908731fa20f59152d5bbca6a6b4
+    - Mesh: {fileID: -6093752060871979026, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 63
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: -0.7497967, z: 0.52910954}
+        m_Extent: {x: 0.10669681, y: 0.837676, z: 0.66460097}
+      GeometrySha256: a5e53f2c8938012e4be4d5e0ae29935c6b5ed9ac03513f05e3136e64e7df8e9c
+    - Mesh: {fileID: -2903317520636778310, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 71
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.000000007450581, y: 0.000000029802322, z: 0.008125052}
+        m_Extent: {x: 0.0713094, y: 0.19892058, z: 0.19079573}
+      GeometrySha256: 767e722e69fd34908a3c63782cdae3e70efca42ceb4141ddf14e3426261655d4
+    - Mesh: {fileID: -5499600817520881988, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.32992154, y: -0.55644333, z: 0.00212197}
+        m_Extent: {x: 0.45734507, y: 0.8855158, z: 0.12775025}
+      GeometrySha256: 897855dd74b77ced3d97b1c633da06a956afdccbfe6ad674aafd3f3ec25a5c34
+    - Mesh: {fileID: 1061937426306984692, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 71
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 0.00000011920929, z: 0.010929078}
+        m_Extent: {x: 0.09591876, y: 0.26756957, z: 0.25664043}
+      GeometrySha256: a68ff26202b083cafded472572a3e9f7c83746db15b64df95c514905b389e9b4
+    - Mesh: {fileID: 5750725635869518638, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.32992154, y: -0.55644333, z: -0.00212197}
+        m_Extent: {x: 0.45734507, y: 0.8855158, z: 0.12775022}
+      GeometrySha256: 750e57e494e6acf001cba75c59cd05cd6dce23d524d92836347ec6ad008b9491
+    - Mesh: {fileID: 4341143172340044771, guid: 1008a56485ddd4db38ad3eddfebcbc23, type: 2}
+      SubMesh: 0
+      VertexCount: 71
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 0.00000014901161, z: -0.010929018}
+        m_Extent: {x: 0.09591876, y: 0.2675696, z: 0.25664043}
+      GeometrySha256: f9b31cc119da1274ef8fe714a201f561de2599246e8a87f59d2c0fdbf0fb1227
+  - Role: 18
+    PrefabKey: Unit_Veh_Jet_02
+    Sources:
+    - VisualKind: 1
+      Prefab: {fileID: 5616646512338707422, guid: ec5587e89ce1a46889f0b8522b20e199, type: 3}
+      Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_02.prefab
+      DependencyHash: 22a0da798ea78575e6e2e00e84c3700f
+    Draws:
+    - Mesh: {fileID: 4300000, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 6629
+      DrawnIndexCount: 11724
+      LocalBounds:
+        m_Center: {x: 0.00000047683716, y: 0.7535722, z: -0.4843769}
+        m_Extent: {x: 7.435986, y: 2.6619053, z: 11.413206}
+      GeometrySha256: 0f1ea207541887716aa0456403afbb126c7701a80900150c711303b442825969
+    - Mesh: {fileID: 4300024, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0, y: 0.029818892, z: -0.31090084}
+        m_Extent: {x: 0.078430936, y: 1.3194047, z: 0.3865396}
+      GeometrySha256: 4e56ce31fc6e4c2bf1623c339edca4c647de63f8c6f80fa459cb9d3a011f4cc0
+    - Mesh: {fileID: 4300022, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0, y: 0.029819012, z: -0.31090084}
+        m_Extent: {x: 0.078430936, y: 1.3194048, z: 0.3865396}
+      GeometrySha256: a9ab3264a93518247092be8cda68ad7dcc73bafdcf5925812ae40fa1ff7568b7
+    - Mesh: {fileID: 4300020, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.06321919, y: -0.000000014901161, z: -0.38006324}
+        m_Extent: {x: 1.7308812, y: 0.13034758, z: 0.3986833}
+      GeometrySha256: 7f25d641c50a2a326821c406e6dbc02c29978191ac85f99985609adee4dde102
+    - Mesh: {fileID: 4300026, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 316
+      DrawnIndexCount: 564
+      LocalBounds:
+        m_Center: {x: 0.000000029802322, y: 1.6407398, z: 4.953965}
+        m_Extent: {x: 0.3821306, y: 0.3694235, z: 1.6817932}
+      GeometrySha256: 77fc0dfccacb3b434dbe364bdfc4729c5d9d1ba1ea3ae95546dcfa3e2bfb2b88
+    - Mesh: {fileID: 4300028, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 256
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.0068578795, y: 0.31992248, z: 0.011022333}
+        m_Extent: {x: 0.038313486, y: 0.32350156, z: 0.055980526}
+      GeometrySha256: 0e0997c1bc83f74d9d5cfdf02635018a0d0aa1a86f946217af102a95256404c0
+    - Mesh: {fileID: 4300014, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 50
+      DrawnIndexCount: 96
+      LocalBounds:
+        m_Center: {x: -0.27767137, y: -0.051086962, z: -0.11745596}
+        m_Extent: {x: 0.27767137, y: 0.12660041, z: 1.2988858}
+      GeometrySha256: 2e7ea3dd75a2d6838714fe5f83a4083e8995711db3d4a1e9f578354dba53b15e
+    - Mesh: {fileID: 4300016, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 52
+      DrawnIndexCount: 96
+      LocalBounds:
+        m_Center: {x: 0.11651155, y: -0.3096095, z: -0.16540623}
+        m_Extent: {x: 0.2889287, y: 0.16254559, z: 1.200686}
+      GeometrySha256: e3b8ffc8b8a4e56571b84d3ec9377f0f4fc6837c21cdd068e2ebb3eb6f24dfce
+    - Mesh: {fileID: 4300018, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 52
+      DrawnIndexCount: 96
+      LocalBounds:
+        m_Center: {x: 0.11651155, y: -0.3096095, z: 0.16540587}
+        m_Extent: {x: 0.2889287, y: 0.16254559, z: 1.2006857}
+      GeometrySha256: 6a2a89d2a0e6dd0dbcfd39695f2148605805ed63c207d895cff993e43b491690
+    - Mesh: {fileID: 4300002, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 253
+      DrawnIndexCount: 450
+      LocalBounds:
+        m_Center: {x: -0.030915052, y: -1.0143969, z: 0.4228037}
+        m_Extent: {x: 0.29492855, y: 1.1370101, z: 0.61314386}
+      GeometrySha256: 21e9b9aeb6bbe9d55b9e2bb679124ca9294196644c05b41091c0edf64555972d
+    - Mesh: {fileID: 4300004, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0.006902352, z: -0.00000017881393}
+        m_Extent: {x: 0.39236832, y: 0.14065684, z: 0.39236832}
+      GeometrySha256: 800e7bc2b11d3f327234fb4abc490961075a6e9131c433f709e875a371207209
+    - Mesh: {fileID: 4300010, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 214
+      DrawnIndexCount: 384
+      LocalBounds:
+        m_Center: {x: -0.061095074, y: -1.0231953, z: 0.41142547}
+        m_Extent: {x: 0.22176094, y: 1.0247445, z: 0.53418577}
+      GeometrySha256: 9d1f5305bf61a4b1f737a6894effccff4782178cb42ac57c10e00700170b2058
+    - Mesh: {fileID: 4300012, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: 0.000000059604645, y: -0.00000011920929, z: -0.00000074505806}
+        m_Extent: {x: 0.16169289, y: 0.49958086, z: 0.49958268}
+      GeometrySha256: 994d09c07f940da51e5e233a73a03e2c8af4365df9109f59f7c1283a763a0fca
+    - Mesh: {fileID: 4300006, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 214
+      DrawnIndexCount: 384
+      LocalBounds:
+        m_Center: {x: 0.061095074, y: -1.0231953, z: 0.41142565}
+        m_Extent: {x: 0.22176093, y: 1.0247445, z: 0.53418595}
+      GeometrySha256: 95fffd4575fc6e6cb3fbac666d09999de90cb24f7a0f5de1502c140342a759cb
+    - Mesh: {fileID: 4300008, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: -0.000000059604645, z: -0.0000011920929}
+        m_Extent: {x: 0.16169289, y: 0.49958092, z: 0.49958223}
+      GeometrySha256: cb5848e10cb3049c998fc7de4baeae82c4e276d882a478e02ec7763173ecfb42
+    - Mesh: {fileID: 4300030, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.06331396, y: -0.000000014901161, z: -0.38054466}
+        m_Extent: {x: 1.730983, y: 0.13034758, z: 0.39864635}
+      GeometrySha256: cd21fb0cf693cc88bee2e0a4b8b3f541089b8343e5a10785b2101e40a266d446
+  - Role: 19
+    PrefabKey: Unit_Veh_Jet_01
+    Sources:
+    - VisualKind: 1
+      Prefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
+      Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab
+      DependencyHash: dd5a895a3e8f437b9549f3cc541b7fea
+    - VisualKind: 2
+      Prefab: {fileID: 8201624416784725301, guid: 09e49deba4fe6401990e3da22ca87400, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Jet_01.prefab
+      DependencyHash: 7c5338226024f68f2ad4077d375c415d
+    - VisualKind: 3
+      Prefab: {fileID: 3501472868591206909, guid: 7d9467e89cc3249db80d358ef966235c, type: 3}
+      Path: Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Veh_Jet_01.prefab
+      DependencyHash: a4bf724576be40e22ce776b8d949a0fc
+    Draws:
+    - Mesh: {fileID: 4300000, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 5496
+      DrawnIndexCount: 9618
+      LocalBounds:
+        m_Center: {x: 0, y: 1.3881707, z: 0.4931879}
+        m_Extent: {x: 6.215481, y: 2.0811632, z: 9.330861}
+      GeometrySha256: 513c5dbfb79b98759517dfdcb1939247e5b0df834de424f2c48b0fb4e7feb5a8
+    - Mesh: {fileID: 4300014, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 728
+      DrawnIndexCount: 1032
+      LocalBounds:
+        m_Center: {x: 0.00000023841858, y: -0.1004042, z: -2.8686993}
+        m_Extent: {x: 3.3236184, y: 0.6375636, z: 2.948867}
+      GeometrySha256: 063a1b980d0802b44c6b756d5f1f9a93461cdc56db455259e11c582556f947f2
+    - Mesh: {fileID: 4300016, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 260
+      DrawnIndexCount: 540
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 1.2276967, z: 4.833782}
+        m_Extent: {x: 0.39253518, y: 0.31898952, z: 1.7430868}
+      GeometrySha256: 23e5f2e2bb48b0d198f2969fe21bb1062902e9b5dfd85e33551660a50a6cd560
+    - Mesh: {fileID: 4300020, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 48
+      DrawnIndexCount: 96
+      LocalBounds:
+        m_Center: {x: 0, y: 0.011172652, z: 0.48977357}
+        m_Extent: {x: 0.23283067, y: 0.08074856, z: 0.4897736}
+      GeometrySha256: 81d6f79c2f34fd9f371b0f92f7f7b310630972eba5e41e4cd19f04a0fdde914e
+    - Mesh: {fileID: 4300024, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 30
+      DrawnIndexCount: 48
+      LocalBounds:
+        m_Center: {x: -0.41966787, y: -0.035302848, z: 0.009955943}
+        m_Extent: {x: 0.41467193, y: 0.035303093, z: 0.5061002}
+      GeometrySha256: fbe2984419b251b4e19dfa541a8d7a8e2de94bac628a9f15788b06131c2fa88a
+    - Mesh: {fileID: 4300022, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 30
+      DrawnIndexCount: 48
+      LocalBounds:
+        m_Center: {x: 0.409676, y: -0.03530287, z: 0.009955943}
+        m_Extent: {x: 0.4146719, y: 0.035303116, z: 0.5061002}
+      GeometrySha256: 458390f0b4636411507ec51292d8373c20d1dafba373e9342f427beb27f82008
+    - Mesh: {fileID: 4300002, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 226
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.07940818, y: -0.8139755, z: 0.32706264}
+        m_Extent: {x: 0.16320728, y: 0.8139755, z: 0.46700808}
+      GeometrySha256: c90d5c99a368b3010cfe9abeb75fefc67bd8bbfa01d6c130eb25c982a7f2ae28
+    - Mesh: {fileID: 4300004, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: 0, y: 0, z: -0.000000029802322}
+        m_Extent: {x: 0.10516046, y: 0.29334968, z: 0.29334944}
+      GeometrySha256: 11177ba05aecf0efc5a7b92912ac0427c8a30412205ed672b94b44558ad6d661
+    - Mesh: {fileID: 4300010, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 222
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.018237308, y: -0.80330116, z: -0.27239776}
+        m_Extent: {x: 0.1716962, y: 0.8033013, z: 0.344971}
+      GeometrySha256: fc8bfd7c70ecc10692b1fda613687560ebc3b69d8db0ee8ac70b42c070cf2ae1
+    - Mesh: {fileID: 4300012, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: -0.00000008940697, y: 0.0043854713, z: 0.00000071525574}
+        m_Extent: {x: 0.4250304, y: 0.17503655, z: 0.42763746}
+      GeometrySha256: 1ac826e6cf3f8b4a713c09a24aa352c7044d83e620724731aa7e98d3c2924d0f
+    - Mesh: {fileID: 4300006, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 222
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.018237308, y: -0.80330116, z: 0.27239776}
+        m_Extent: {x: 0.1716962, y: 0.8033013, z: 0.344971}
+      GeometrySha256: 77e686c1f2a30e8aed853f5fcdc510bf8b45afcc638965e2bf3cca7ea5d2638b
+    - Mesh: {fileID: 4300008, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 410
+      DrawnIndexCount: 720
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0.007457584, z: -0.00000014901161}
+        m_Extent: {x: 0.4239267, y: 0.15196991, z: 0.42392647}
+      GeometrySha256: 92101400dbe3f237dfeedcd8a44c26dc1e9ec4b5a6d2680d394011044c7d2b62
+    - Mesh: {fileID: 4300036, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.003972225, y: 0.05618733, z: -0.3728019}
+        m_Extent: {x: 0.07789169, y: 0.7846997, z: 0.3894354}
+      GeometrySha256: 08d9c1a34fe5d7fb4807b5304f3d02c495f20e574038c6459c11e7f19d4a2fd6
+    - Mesh: {fileID: 4300038, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.00397218, y: 0.056013107, z: -0.37279013}
+        m_Extent: {x: 0.077891, y: 0.78475004, z: 0.3894464}
+      GeometrySha256: 55df627890912b2ea5e630306eb4b485fd8e24612d46829ec8b55009d8b05940
+    - Mesh: {fileID: 4300026, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.00000011920929, y: 0, z: -0.39276323}
+        m_Extent: {x: 0.9026947, y: 0.1154335, z: 0.39424732}
+      GeometrySha256: 1565e26a666c2792b7347f17ace474ff64d13e87dbe5f6af7532732e83dbe84c
+    - Mesh: {fileID: 4300032, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.08498579, y: 0, z: -0.3388622}
+        m_Extent: {x: 0.96700376, y: 0.0783166, z: 0.35890153}
+      GeometrySha256: 9b2641a841c03cdc8c2e711c4006781426aa698731c3ac5a97c320d4e6cec3cf
+    - Mesh: {fileID: 4300030, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0, z: -0.39276323}
+        m_Extent: {x: 0.9026947, y: 0.1154335, z: 0.39424732}
+      GeometrySha256: 91b325b1ef20a3f0b80de4a53fe9bbd96e0d5d3d7fc9d3dd9cd0c7c9441b216e
+    - Mesh: {fileID: 4300028, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.08320165, y: 0, z: -0.33473623}
+        m_Extent: {x: 0.96506345, y: 0.0783166, z: 0.3582936}
+      GeometrySha256: 4a47322e06312808c25702d32304720b226b3d58b303f235796adcac69cc340d
+    - Mesh: {fileID: 4300018, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 256
+      DrawnIndexCount: 408
+      LocalBounds:
+        m_Center: {x: -0.008366283, y: 0.2787718, z: 0.014394049}
+        m_Extent: {x: 0.038313486, y: 0.32350084, z: 0.055980533}
+      GeometrySha256: dadc77ad94511e5ffcd38822d0549580d71ce91e1e79301a153376b09b46b63f
+    - Mesh: {fileID: 4300040, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 113
+      DrawnIndexCount: 204
+      LocalBounds:
+        m_Center: {x: -1.2160077, y: 0.0051561, z: -0.15625143}
+        m_Extent: {x: 1.2598462, y: 0.0493215, z: 1.6236978}
+      GeometrySha256: db4e0358bb04f55c60f26de55ca93068783bb899b11049e79581322ad001137b
+    - Mesh: {fileID: 4300034, guid: ac106e021ef89fa49880a502e342aa4d, type: 3}
+      SubMesh: 0
+      VertexCount: 113
+      DrawnIndexCount: 204
+      LocalBounds:
+        m_Center: {x: 1.2160076, y: 0.0051561855, z: -0.15625143}
+        m_Extent: {x: 1.2598462, y: 0.04932151, z: 1.6236978}
+      GeometrySha256: 0df8118bd8f8d46ebdd17fed38ca002ed164cdd42875af9fa48a00bfd122bd2b
+    - Mesh: {fileID: 4300000, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 2201
+      DrawnIndexCount: 2406
+      LocalBounds:
+        m_Center: {x: 0, y: 1.3881712, z: 0.49318695}
+        m_Extent: {x: 6.215481, y: 2.0811636, z: 9.33086}
+      GeometrySha256: 50604ad5b3a7584ce388c81cf5069a7ad0a6adfa5b0df3b1dcab316fc706e07d
+    - Mesh: {fileID: 2404186837518120756, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 258
+      DrawnIndexCount: 258
+      LocalBounds:
+        m_Center: {x: 0.00000023841858, y: -0.1004042, z: -2.8686993}
+        m_Extent: {x: 3.3236184, y: 0.6375636, z: 2.948867}
+      GeometrySha256: ee8b5c5b7b2e17bea110477d70a914567f52a6d71b34a231372a020ffea7c7ed
+    - Mesh: {fileID: 6312612128421576943, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 127
+      DrawnIndexCount: 135
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 1.2276965, z: 5.0410852}
+        m_Extent: {x: 0.39253518, y: 0.31898952, z: 1.5357838}
+      GeometrySha256: 699c74576661164378ce6580e16d2f1cdaa2d73066bac8628ca085441e145a63
+    - Mesh: {fileID: 4374379974926756795, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 47
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 0.011172652, z: 0.48977357}
+        m_Extent: {x: 0.23283067, y: 0.08074856, z: 0.4897736}
+      GeometrySha256: ca746d28fad040e7d1049f8489aa8f57250d3fc4098cd666a63ebd92ff1c710d
+    - Mesh: {fileID: 8878926791468315626, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 30
+      DrawnIndexCount: 48
+      LocalBounds:
+        m_Center: {x: -0.41966787, y: -0.035302848, z: 0.009955943}
+        m_Extent: {x: 0.41467193, y: 0.035303093, z: 0.5061002}
+      GeometrySha256: 37af7fbaf75d086d30b9e5c645e8d3a16e2ae1922207e406c06b8715e8ed2416
+    - Mesh: {fileID: -3607718953874193991, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 30
+      DrawnIndexCount: 48
+      LocalBounds:
+        m_Center: {x: 0.409676, y: -0.03530287, z: 0.009955943}
+        m_Extent: {x: 0.4146719, y: 0.035303116, z: 0.5061002}
+      GeometrySha256: 3a9253d53c756752d22a28e74adc64e6fbea84554f65a946f87faa06976b6e16
+    - Mesh: {fileID: 1630918686685484617, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 97
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: -0.07940818, y: -0.8139755, z: 0.32706264}
+        m_Extent: {x: 0.16320728, y: 0.8139755, z: 0.46700808}
+      GeometrySha256: 577c968571a07d194b29ad26858015c6ceace049f33a0c83a1dde451d61e6b2e
+    - Mesh: {fileID: -2135470349361136439, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 173
+      DrawnIndexCount: 180
+      LocalBounds:
+        m_Center: {x: 0, y: 0, z: 0.011981934}
+        m_Extent: {x: 0.10516046, y: 0.29334968, z: 0.28136748}
+      GeometrySha256: 06dd2b0b48556528ee4b76b00490bdcbd42bef05c4825a2a1fc51d65de6fe6bc
+    - Mesh: {fileID: 2542685244664453526, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 98
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: -0.018237308, y: -0.80330116, z: -0.27239776}
+        m_Extent: {x: 0.1716962, y: 0.8033013, z: 0.344971}
+      GeometrySha256: 88d744fa06996988379214b5a985615e7b0ae7e6982d3665239257f25dc39b62
+    - Mesh: {fileID: 7065198011575215486, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 173
+      DrawnIndexCount: 180
+      LocalBounds:
+        m_Center: {x: -0.00000008940697, y: 0.0043854713, z: 0.00000071525574}
+        m_Extent: {x: 0.4250304, y: 0.17503655, z: 0.42763746}
+      GeometrySha256: c208cc9fd1d3feabf1980d8725a79b57d6f1506faec582c840ec103ce2e15a8c
+    - Mesh: {fileID: -8364984282240457907, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 98
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: -0.018237308, y: -0.80330116, z: 0.27239776}
+        m_Extent: {x: 0.1716962, y: 0.8033013, z: 0.344971}
+      GeometrySha256: 2625eaa999981b378a7a1fe4a049d6ad54bbdcb0e336cbf45dc23620e9468ab5
+    - Mesh: {fileID: -3077723771160803635, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 173
+      DrawnIndexCount: 180
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0.007457584, z: 0.017315298}
+        m_Extent: {x: 0.4239267, y: 0.15196991, z: 0.40661103}
+      GeometrySha256: 62bdec70dc5aad14f29edc38283774797ead91b1c37c21818d1935ad729ff99b
+    - Mesh: {fileID: -6585934347647259528, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.003972225, y: 0.05618733, z: -0.3728019}
+        m_Extent: {x: 0.07789169, y: 0.7846997, z: 0.3894354}
+      GeometrySha256: 5ca13d479f5173425d33e3ac9d716eb7bfc92e2a2202b9015ac0ccbe3c70a2d6
+    - Mesh: {fileID: 5704365983631033410, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.00397218, y: 0.056013107, z: -0.37279013}
+        m_Extent: {x: 0.077891, y: 0.78475004, z: 0.3894464}
+      GeometrySha256: d8a6fc75e358cf53dfd000a6d8954f8d21c309c7124c76b9daf0efaf6a48e250
+    - Mesh: {fileID: 2180304418934094473, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.00000011920929, y: 0, z: -0.39276323}
+        m_Extent: {x: 0.9026947, y: 0.1154335, z: 0.39424732}
+      GeometrySha256: ac3bdd30a77a34a1cfd008ce338f5322c88f155ca6cad08308985e0d2f7c0057
+    - Mesh: {fileID: 3823499711939077694, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.08498579, y: 0, z: -0.3388622}
+        m_Extent: {x: 0.96700376, y: 0.0783166, z: 0.35890153}
+      GeometrySha256: 9b2641a841c03cdc8c2e711c4006781426aa698731c3ac5a97c320d4e6cec3cf
+    - Mesh: {fileID: 3167781199705223227, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0, z: -0.39276323}
+        m_Extent: {x: 0.9026947, y: 0.1154335, z: 0.39424732}
+      GeometrySha256: 47a019fbfe5159e9bfb3a8ede96c251342cc8f303f5315edc23252265737444b
+    - Mesh: {fileID: 3387370923802011324, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.08320165, y: 0, z: -0.33473623}
+        m_Extent: {x: 0.96506345, y: 0.0783166, z: 0.3582936}
+      GeometrySha256: a35bb9c1f974a72def6b8806e829fedd46a9bf4f198e6486aa4b53bfb5f86323
+    - Mesh: {fileID: 8999513408957203484, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 97
+      DrawnIndexCount: 102
+      LocalBounds:
+        m_Center: {x: -0.008366283, y: 0.27877176, z: 0.014394049}
+        m_Extent: {x: 0.038313486, y: 0.3235008, z: 0.055980533}
+      GeometrySha256: ea929efc98e71b60476352fc8e3806b7d7da715173b6610565c7cf045fab193e
+    - Mesh: {fileID: -2287099484723815429, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -1.2160077, y: 0.0051561, z: -0.15625143}
+        m_Extent: {x: 1.2598462, y: 0.0493215, z: 1.6236978}
+      GeometrySha256: 16ee0471f6696ab001c9ef0c20fb9d15ae0a758fedd5d748cb4ea07a4c7bf17d
+    - Mesh: {fileID: -8490832593606232387, guid: 9381b7815afeb4cd2af328525c12a32e, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 1.2160076, y: 0.0051561855, z: -0.15625143}
+        m_Extent: {x: 1.2598462, y: 0.04932151, z: 1.6236978}
+      GeometrySha256: d1bf09b728466164f65c83ffd942f02230c4f7db906ca5e2d125f197f93471bb
+    - Mesh: {fileID: 4300000, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 735
+      DrawnIndexCount: 768
+      LocalBounds:
+        m_Center: {x: 0, y: 1.388171, z: 0.6435013}
+        m_Extent: {x: 6.182813, y: 2.0811634, z: 8.773059}
+      GeometrySha256: 960fe8b8bfe86d4deae2a7d2b919c723546846b2d683a95b4bcc0ef5cd954b51
+    - Mesh: {fileID: 4074793806479479542, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 84
+      DrawnIndexCount: 84
+      LocalBounds:
+        m_Center: {x: -0.00016403198, y: -0.05877447, z: -2.8532522}
+        m_Extent: {x: 3.3234541, y: 0.5959339, z: 2.93342}
+      GeometrySha256: ad82cfbc25932c5209c0960168f4fb201fc7621438f31b9929a29034ed5beb0b
+    - Mesh: {fileID: 7367769144248013090, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 1.2276967, z: 5.0410857}
+        m_Extent: {x: 0.39253518, y: 0.3189894, z: 1.5357842}
+      GeometrySha256: 75771cbadb38f76a8dd6aa100042bb80bb32822d9cc9c1545fcc1e07df6036c2
+    - Mesh: {fileID: -7950454245192702310, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 47
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 0.011172652, z: 0.48977357}
+        m_Extent: {x: 0.23283067, y: 0.08074856, z: 0.4897736}
+      GeometrySha256: ca746d28fad040e7d1049f8489aa8f57250d3fc4098cd666a63ebd92ff1c710d
+    - Mesh: {fileID: -5252916085960995225, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 30
+      DrawnIndexCount: 48
+      LocalBounds:
+        m_Center: {x: -0.41966787, y: -0.035302848, z: 0.009955943}
+        m_Extent: {x: 0.41467193, y: 0.035303093, z: 0.5061002}
+      GeometrySha256: 37af7fbaf75d086d30b9e5c645e8d3a16e2ae1922207e406c06b8715e8ed2416
+    - Mesh: {fileID: -9107352139768669204, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 30
+      DrawnIndexCount: 48
+      LocalBounds:
+        m_Center: {x: 0.409676, y: -0.03530287, z: 0.009955943}
+        m_Extent: {x: 0.4146719, y: 0.035303116, z: 0.5061002}
+      GeometrySha256: 3a9253d53c756752d22a28e74adc64e6fbea84554f65a946f87faa06976b6e16
+    - Mesh: {fileID: -2064845408481119747, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 69
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.07940818, y: -0.8139755, z: 0.32706264}
+        m_Extent: {x: 0.16320728, y: 0.8139755, z: 0.46700808}
+      GeometrySha256: 9bf56cbac1a43b95c529ff3968108318a040c788bbeab7c11f66ff7c997dbed2
+    - Mesh: {fileID: 2409976075666867986, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0, y: 0, z: -0.0000006556511}
+        m_Extent: {x: 0.10516046, y: 0.29334968, z: 0.2693849}
+      GeometrySha256: c21e54092c2b245ace4836c157f5ba658d309dce6910c2b5b262cf390cb6caf2
+    - Mesh: {fileID: -5523940333512464108, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.018237308, y: -0.80330116, z: -0.27239776}
+        m_Extent: {x: 0.1716962, y: 0.8033013, z: 0.344971}
+      GeometrySha256: 8555c86a85d354cd26838d6ed5eab6030bb353eceb486d889b7b7bc5188336bb
+    - Mesh: {fileID: -7312561597163416282, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 0.031805277, y: 0.0043854713, z: -0.0049142838}
+        m_Extent: {x: 0.39322507, y: 0.17503653, z: 0.42272246}
+      GeometrySha256: 9d3b6d0d07d3bd74258df3b8ce7d1fb0ac574ed073b6473beb404cc8a9d15b02
+    - Mesh: {fileID: 1111130019937422782, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.018237308, y: -0.80330116, z: 0.27239776}
+        m_Extent: {x: 0.1716962, y: 0.8033013, z: 0.344971}
+      GeometrySha256: 0861c86902371e6a5b054026cfd262bae49e4441670f3586cfbc41263183e15b
+    - Mesh: {fileID: -2040057048545839916, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 70
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0.007457584, z: -0.0000011622906}
+        m_Extent: {x: 0.4239267, y: 0.15196991, z: 0.38929456}
+      GeometrySha256: a49f8aacb5ec2d26a02f1492af88cd03bdf985d3c4db7c49be17ffb643eef668
+    - Mesh: {fileID: -7220657230299912611, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.003972225, y: 0.05618733, z: -0.3728019}
+        m_Extent: {x: 0.07789169, y: 0.7846997, z: 0.3894354}
+      GeometrySha256: 5ca13d479f5173425d33e3ac9d716eb7bfc92e2a2202b9015ac0ccbe3c70a2d6
+    - Mesh: {fileID: 4577889399417452947, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.00397218, y: 0.056013107, z: -0.37279013}
+        m_Extent: {x: 0.077891, y: 0.78475004, z: 0.3894464}
+      GeometrySha256: d8a6fc75e358cf53dfd000a6d8954f8d21c309c7124c76b9daf0efaf6a48e250
+    - Mesh: {fileID: -1411507135487658073, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.00000011920929, y: 0, z: -0.39276323}
+        m_Extent: {x: 0.9026947, y: 0.1154335, z: 0.39424732}
+      GeometrySha256: ac3bdd30a77a34a1cfd008ce338f5322c88f155ca6cad08308985e0d2f7c0057
+    - Mesh: {fileID: -8853112394840080979, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: 0.08498579, y: 0, z: -0.3388622}
+        m_Extent: {x: 0.96700376, y: 0.0783166, z: 0.35890153}
+      GeometrySha256: 9b2641a841c03cdc8c2e711c4006781426aa698731c3ac5a97c320d4e6cec3cf
+    - Mesh: {fileID: 1375651190472081786, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.000000059604645, y: 0, z: -0.39276323}
+        m_Extent: {x: 0.9026947, y: 0.1154335, z: 0.39424732}
+      GeometrySha256: 47a019fbfe5159e9bfb3a8ede96c251342cc8f303f5315edc23252265737444b
+    - Mesh: {fileID: -5779060115820659899, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 24
+      DrawnIndexCount: 36
+      LocalBounds:
+        m_Center: {x: -0.08320165, y: 0, z: -0.33473623}
+        m_Extent: {x: 0.96506345, y: 0.0783166, z: 0.3582936}
+      GeometrySha256: a35bb9c1f974a72def6b8806e829fedd46a9bf4f198e6486aa4b53bfb5f86323
+    - Mesh: {fileID: -7181234038651857566, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 72
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -0.008366283, y: 0.27877176, z: 0.014394049}
+        m_Extent: {x: 0.038313486, y: 0.3235008, z: 0.055980533}
+      GeometrySha256: 0e61c036d06666c8d497b96ca1e951543c7b866a64bb3c548ee69b2c584d01a2
+    - Mesh: {fileID: 8865996930846692514, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: -1.2160077, y: 0.0051561, z: -0.15625143}
+        m_Extent: {x: 1.2598462, y: 0.0493215, z: 1.6236978}
+      GeometrySha256: 16ee0471f6696ab001c9ef0c20fb9d15ae0a758fedd5d748cb4ea07a4c7bf17d
+    - Mesh: {fileID: 3963824385379315004, guid: ca71200a63714442d96f4883602f67d8, type: 2}
+      SubMesh: 0
+      VertexCount: 60
+      DrawnIndexCount: 72
+      LocalBounds:
+        m_Center: {x: 1.2160076, y: 0.0051561855, z: -0.15625143}
+        m_Extent: {x: 1.2598462, y: 0.04932151, z: 1.6236978}
+      GeometrySha256: d1bf09b728466164f65c83ffd942f02230c4f7db906ca5e2d125f197f93471bb

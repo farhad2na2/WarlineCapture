@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-06",
+  "originalUnitSources": 51,
+  "originalBuildingSources": 23,
+  "currentUnitSources": 51,
+  "currentBuildingSources": 24,
+  "added": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset",
+  "addedSha256": "0cfec908a817157285da7f6a0038c49ab570a629852462036a0a0741fab74016",
+  "removed": [],
+  "existingHashChange": {
+    "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset",
+    "sha256": "5b1074fda52a417fa1177491f5a19b03457508869e3d0be0b54075de5e466672",
+    "review": "Commit c25c1b047 changes destroyedVisualPrefab reference only"
+  },
+  "groundStagingReview": "Authored shared staging facility, base canRequest=false/productions empty; expanded production recipes supplied by shared runtime catalog; native212 validates paid logistics/heavy APC delivery only",
+  "certification": "All generated rows remain Pending",
+  "sourceAssetsEdited": false,
+  "catalogIdsAndMissionCountsChanged": false,
+  "generatorCheck": {
+    "exit": 0,
+    "log": "planning-source-reaudit-check.log",
+    "sha256": "129fbdc0bc59c7f9182de4c2d905b9014eb0f48f7a9bfd6faefdd4f748be9e83",
+    "marker": "[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=75 mode=check"
+  }
+}

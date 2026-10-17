@@ -1,0 +1,18 @@
+{
+    "map": "AshLinePort",
+    "beforeHash": "942744e8a1091b64bebadd9cb7e92e3dbb544b03794ac18e6676392342d504a5",
+    "afterHash": "3a0fe8c517321ff8d831120dcb8f2b93db53a61838093d431cdf7355ad004c4d",
+    "protectedHash": "42249b61d7ea575eaaa1ade9f9d885b3c6edd1b4641c165c80699845c2cbb808",
+    "groups": 6,
+    "renderRows": 38,
+    "materialAssignments": 0,
+    "journal": [
+        "CampaignWaterDressing20261016_Bridge_0 owner=Map_AshLinePort/Props/SM_Prop_Crate_Stack_01 position=(680.00, 0.08, 385.00)",
+        "CampaignWaterDressing20261016_Bridge_1 owner=Map_AshLinePort/Props/SM_Prop_Crate_Wood_01 position=(680.00, 0.08, 505.00)",
+        "SKIPPED CampaignWaterDressing20261016_Bank_0 no nearby canonical scenery owner position=(1186.00, 0.89, 719.35)",
+        "CampaignWaterDressing20261016_Bank_1 owner=Map_AshLinePort/Props/SM_Prop_Pallet_01 position=(657.35, 0.00, 325.48)",
+        "CampaignWaterDressing20261016_Bank_2 owner=Map_AshLinePort/Props/SM_Prop_Block_01 position=(702.65, 0.00, 325.48)",
+        "CampaignWaterDressing20261016_Bank_3 owner=Map_AshLinePort/Props/SM_Prop_Pallet_01 position=(657.35, 0.00, 629.14)",
+        "CampaignWaterDressing20261016_Bank_4 owner=Map_AshLinePort/Props/SM_Prop_Crate_Wood_01 position=(702.65, 0.00, 629.14)"
+    ]
+}

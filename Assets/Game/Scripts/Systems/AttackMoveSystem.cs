@@ -66,6 +66,7 @@ namespace Game.Runtime
                 // to distinguish this interruptible advance from a plain Move.
             }
             StampAcceptedExpandedGroups(em, accepted.AsArray(), actingFaction);
+            if(recordAcceptedCommand)AriaMoveExecutionEvidence.ObserveAttackMove(em,accepted.AsArray(),result);
             return TacticalCommandResult.Success();
         }
 

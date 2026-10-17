@@ -270,6 +270,10 @@ namespace Game.UI.Runtime
 
         private void FitArabicLineBox(ref float authoredMin, ref float authoredMax)
         {
+            // The zoom tab owns a 16–26px lock. This fitter's 12px short-rect floor
+            // was the size that reached the screen on the 4:3 Farsi cue.
+            if (target != null && target.name == "ZoomCue")
+                return;
             float height = target.rectTransform != null ? target.rectTransform.rect.height : 0f;
             if (height < 16f)
                 return;

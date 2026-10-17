@@ -22,6 +22,270 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishS002AriaHarnessTests
     {
+        public static void RunMissionDevelopmentFocusedValidation()
+        {
+            RunDiagnosticAppendIoValidation();
+            Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120MeasurementAuthorityControls();
+            SkirmishExpandedAriaTests.RunM5CloseInspectionFocusedValidation();
+            Debug.Log("[MissionDevelopmentFocusedControls] result=Passed diagnosticIo=12 measurementAuthority=5 closeControls=8 inspectionControls=26 legacyCases=141 cameraPolicyControls=9 precisionProducerCases=11 precisionPlannerChecks=22 focusChecks=27 normalMissionReady=0");
+        }
+
+
+        private static readonly System.Reflection.BindingFlags IoFlags =
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static |
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public;
+        private static readonly Type IoSessionType = typeof(SkirmishS002AriaRunHarness)
+            .GetNestedType("OwnedTraceAppendSession", System.Reflection.BindingFlags.NonPublic);
+        private static object IoInvoke(object session, string method, params object[] args)
+        {
+            try { return IoSessionType.GetMethod(method, IoFlags).Invoke(session, args); }
+            catch (System.Reflection.TargetInvocationException error) when (error.InnerException != null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error.InnerException).Throw();
+                throw;
+            }
+        }
+        private static object NewIoSession(object owner, string root, string trace)
+        {
+            try { return Activator.CreateInstance(IoSessionType, IoFlags, null,
+                new object[] { owner, root, trace }, System.Globalization.CultureInfo.InvariantCulture); }
+            catch (System.Reflection.TargetInvocationException error) when (error.InnerException != null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error.InnerException).Throw();
+                throw;
+            }
+        }
+        private static byte[] IoReadVisible(string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var copy = new MemoryStream()) { stream.CopyTo(copy); return copy.ToArray(); }
+        }
+        private static void IoAssertReleased(string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) { }
+        }
+
+        [TestCase("exactBytesAndVisibility")]
+        [TestCase("existingBomAndPrefix")]
+        [TestCase("ownerAndPathIdentity")]
+        [TestCase("foreignDirectory")]
+        [TestCase("unknownSuffixClosesAll")]
+        [TestCase("openFailureClosesAll")]
+        [TestCase("disposedCannotAppend")]
+        [TestCase("playExitClosesAll")]
+        [TestCase("reparseAncestor")]
+        [TestCase("junctionSwapBeforeOpen")]
+        [TestCase("highSurrogateByteEquivalence")]
+        [TestCase("lowSurrogateByteEquivalence")]
+        public void DiagnosticAppendIo_ActualFilesystem(string kind)
+        {
+            Assert.IsNotNull(IoSessionType);
+            var manager = typeof(SkirmishS002AriaRunHarness).GetNestedType(
+                "OwnedDiagnosticTraceIo", System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(manager);
+            var managedSession = manager.GetField("session", IoFlags);
+            Assert.IsNull(managedSession.GetValue(null), "Never interfere with an active owned attempt.");
+            string root = Path.Combine(Path.GetTempPath(), "wio-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+            string trace = Path.Combine(root, "trace.jsonl");
+            object owner = new object(), session = null;
+            bool preserve = false;
+            try
+            {
+                if (kind == "reparseAncestor")
+                {
+                    if (Application.platform != RuntimePlatform.WindowsEditor)
+                        throw new PlatformNotSupportedException("Actual junction control requires Windows.");
+                    string target = Path.Combine(root, "target"), link = Path.Combine(root, "link");
+                    Directory.CreateDirectory(target);
+                    string sentinel = Path.Combine(target, "sentinel");
+                    File.WriteAllText(sentinel, "untouched");
+                    bool cleanupSafe = true;
+                    try
+                    {
+                        CreateOwnedProfileJunction(link, target, ref cleanupSafe);
+                        Assert.IsTrue((File.GetAttributes(link) & FileAttributes.ReparsePoint) != 0);
+                        Assert.Throws<InvalidDataException>(() => NewIoSession(owner, link, Path.Combine(link, "trace.jsonl")));
+                    }
+                    finally
+                    {
+                        preserve = !cleanupSafe;
+                        if (cleanupSafe)
+                        {
+                            if (Directory.Exists(link)) Directory.Delete(link, false);
+                            Assert.AreEqual("untouched", File.ReadAllText(sentinel));
+                            File.Delete(sentinel);
+                            Directory.Delete(target, false);
+                        }
+                    }
+                    return;
+                }
+                if (kind == "foreignDirectory")
+                {
+                    Assert.Throws<InvalidDataException>(() => NewIoSession(owner, root,
+                        Path.Combine(root, "foreign", "trace.jsonl")));
+                    Assert.AreEqual(0, Directory.GetFileSystemEntries(root).Length);
+                    return;
+                }
+                if (kind == "junctionSwapBeforeOpen")
+                {
+                    if (Application.platform != RuntimePlatform.WindowsEditor)
+                        throw new PlatformNotSupportedException("Actual junction-swap control requires Windows.");
+                    string slot = Path.Combine(root, "slot"), target = Path.Combine(root, "target");
+                    Directory.CreateDirectory(slot);
+                    Directory.CreateDirectory(target);
+                    string sentinel = Path.Combine(target, "sentinel"), output = Path.Combine(slot, "trace.jsonl");
+                    File.WriteAllText(sentinel, "untouched");
+                    session = NewIoSession(owner, slot, output); // Actual initial topology was regular.
+                    Directory.Delete(slot, false);
+                    bool cleanupSafe = true;
+                    try
+                    {
+                        CreateOwnedProfileJunction(slot, target, ref cleanupSafe);
+                        Assert.IsTrue((File.GetAttributes(slot) & FileAttributes.ReparsePoint) != 0);
+                        Assert.Throws<InvalidDataException>(() => IoInvoke(session, "Append", output, "forbidden"));
+                        Assert.IsFalse(File.Exists(Path.Combine(target, "trace.jsonl")));
+                    }
+                    finally
+                    {
+                        preserve = !cleanupSafe;
+                        if (cleanupSafe)
+                        {
+                            if (Directory.Exists(slot)) Directory.Delete(slot, false);
+                            Assert.AreEqual("untouched", File.ReadAllText(sentinel));
+                            if (File.Exists(Path.Combine(target, "trace.jsonl"))) preserve = true;
+                            if (!preserve) { File.Delete(sentinel); Directory.Delete(target, false); }
+                        }
+                    }
+                    return;
+                }
+                session = NewIoSession(owner, root, trace);
+                if (kind == "highSurrogateByteEquivalence" || kind == "lowSurrogateByteEquivalence")
+                {
+                    string reference = Path.Combine(root, "installed-writer-reference");
+                    string invalid = kind == "highSurrogateByteEquivalence" ? "\uD83D" : "\uDE80";
+                    foreach (string payload in new[] { "before-invalid\n", invalid, "after-invalid\n",
+                        "\uD83D", "\uDE80", "\uD83D\uDE80\n", "tail" })
+                    {
+                        // Installed Unity is the authority: compare after EVERY old close/new flush.
+                        File.AppendAllText(reference, payload);
+                        IoInvoke(session, "Append", trace, payload);
+                        CollectionAssert.AreEqual(File.ReadAllBytes(reference), IoReadVisible(trace),
+                            "Isolated and split surrogates must match the actual installed writer bytes.");
+                    }
+                    IoInvoke(session, "Dispose");
+                    IoAssertReleased(reference);
+                    IoAssertReleased(trace);
+                    return;
+                }
+                if (kind == "ownerAndPathIdentity")
+                {
+                    Assert.IsTrue((bool)IoInvoke(session, "Matches", owner, trace));
+                    Assert.IsFalse((bool)IoInvoke(session, "Matches", new object(), trace));
+                    Assert.IsFalse((bool)IoInvoke(session, "Matches", owner, trace + ".other"));
+                }
+                else if (kind == "existingBomAndPrefix")
+                {
+                    byte[] prefix = new byte[] { 239, 187, 191, 123, 125, 10 };
+                    File.WriteAllBytes(trace, prefix);
+                    string reference = Path.Combine(root, "reference");
+                    File.WriteAllBytes(reference, prefix);
+                    File.AppendAllText(reference, "next\n");
+                    IoInvoke(session, "Append", trace, "next\n");
+                    CollectionAssert.AreEqual(File.ReadAllBytes(reference), IoReadVisible(trace));
+                }
+                else
+                {
+                    string[] suffixes = { "", ".actors.jsonl", ".combat.jsonl", ".input.jsonl" };
+                    foreach (string suffix in suffixes)
+                    {
+                        string output = trace + suffix;
+                        string reference = output + ".reference";
+                        foreach (string payload in new[] { "", "{}\n", "فارسی\r\n", "\uD83D\uDE80\n", "tail" })
+                        {
+                            File.AppendAllText(reference, payload);
+                            IoInvoke(session, "Append", output, payload);
+                            CollectionAssert.AreEqual(File.ReadAllBytes(reference), IoReadVisible(output),
+                                "Per-append byte equality with the actual previous writer, including a valid supplementary Unicode pair.");
+                        }
+                    }
+                    if (kind == "unknownSuffixClosesAll")
+                    {
+                        Assert.Throws<InvalidDataException>(() => IoInvoke(session, "Append", trace + ".unknown", "x"));
+                        foreach (string suffix in suffixes) IoAssertReleased(trace + suffix);
+                        Assert.IsFalse(File.Exists(trace + ".unknown"));
+                    }
+                    else if (kind == "openFailureClosesAll")
+                    {
+                        IoInvoke(session, "Dispose");
+                        session = NewIoSession(owner, root, trace);
+                        IoInvoke(session, "Append", trace, "before-error\n");
+                        File.Delete(trace + ".combat.jsonl");
+                        Directory.CreateDirectory(trace + ".combat.jsonl");
+                        var error = Assert.Catch<Exception>(() => IoInvoke(session, "Append", trace + ".combat.jsonl", "x"));
+                        Assert.IsTrue(error is IOException || error is UnauthorizedAccessException);
+                        IoAssertReleased(trace);
+                        Directory.Delete(trace + ".combat.jsonl", false);
+                    }
+                    else if (kind == "disposedCannotAppend")
+                    {
+                        IoInvoke(session, "Dispose");
+                        Assert.Throws<ObjectDisposedException>(() => IoInvoke(session, "Append", trace, "forbidden"));
+                        foreach (string suffix in suffixes) IoAssertReleased(trace + suffix);
+                    }
+                    else if (kind == "playExitClosesAll")
+                    {
+                        managedSession.SetValue(null, session);
+                        string closeLog = null;
+                        Application.LogCallback capture = (message, stack, type) =>
+                        {
+                            if (message.StartsWith("[OwnedDiagnosticTraceIoClose]", StringComparison.Ordinal)) closeLog = message;
+                        };
+                        Application.logMessageReceived += capture;
+                        try
+                        {
+                            manager.GetMethod("OnPlayMode", IoFlags).Invoke(null,
+                                new object[] { UnityEditor.PlayModeStateChange.ExitingPlayMode });
+                        }
+                        finally { Application.logMessageReceived -= capture; }
+                        Assert.IsNotNull(closeLog);
+                        StringAssert.Contains("openedStreams=4 reason=ExitingPlayMode failure=None", closeLog);
+                        var timing = System.Text.RegularExpressions.Regex.Match(closeLog, @"elapsedMs=([^ ]+)");
+                        Assert.IsTrue(timing.Success);
+                        Assert.GreaterOrEqual(double.Parse(timing.Groups[1].Value,
+                            System.Globalization.CultureInfo.InvariantCulture), 0d);
+                        Assert.IsNull(managedSession.GetValue(null));
+                        foreach (string suffix in suffixes) IoAssertReleased(trace + suffix);
+                    }
+                }
+                IoInvoke(session, "Dispose"); // Final hashes/default C# reads happen only after close.
+                if (File.Exists(trace)) { File.ReadAllBytes(trace); IoAssertReleased(trace); }
+            }
+            finally
+            {
+                if (ReferenceEquals(managedSession.GetValue(null), session))
+                    manager.GetMethod("Close", IoFlags).Invoke(null, null);
+                if (session != null) IoInvoke(session, "Dispose");
+                // Flat, uniquely owned fixture directory only. Never recurse over a junction.
+                if (!preserve)
+                {
+                    foreach (string file in Directory.GetFiles(root)) File.Delete(file);
+                    Directory.Delete(root, false);
+                }
+            }
+        }
+        public static void RunDiagnosticAppendIoValidation()
+        {
+            var fixture = new SkirmishS002AriaHarnessTests();
+            foreach (string kind in new[] { "exactBytesAndVisibility", "existingBomAndPrefix",
+                "ownerAndPathIdentity", "foreignDirectory", "unknownSuffixClosesAll",
+                "openFailureClosesAll", "disposedCannotAppend", "playExitClosesAll", "reparseAncestor",
+                "junctionSwapBeforeOpen", "highSurrogateByteEquivalence", "lowSurrogateByteEquivalence" })
+                fixture.DiagnosticAppendIo_ActualFilesystem(kind);
+            Debug.Log("[DiagnosticAppendIoControls] result=Passed cases=12 liveReader=ExplicitShareReadWrite defaultReader=AfterClose nativePerformanceProved=0");
+        }
+
+
 
         private static string ActualRequestRelative(string root,string path,HashSet<string> directories,Action<string> observed=null)
         {

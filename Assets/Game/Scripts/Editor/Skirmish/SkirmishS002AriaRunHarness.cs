@@ -1089,7 +1089,7 @@ namespace Game.Editor
                 leadZ.ToString("0.###", CultureInfo.InvariantCulture));
 
             if(traceTiming!=null)traceTiming.traceSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
-            File.AppendAllText(LiveTracePath(), line);
+            OwnedDiagnosticTraceIo.Append(LiveTracePath(), line, true);
 
             if(traceTiming!=null)traceTiming.traceWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
             AppendActorDiagnostic(em, elapsed, match.EnemyMainBase);
@@ -1247,11 +1247,191 @@ namespace Game.Editor
             string inputOutput=ownedOutputPath ?? (LiveTracePath() + ".input.jsonl");
             string serializedInput=JsonUtility.ToJson(sample)+"\n";
             if(traceTiming!=null)traceTiming.inputSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
-            File.AppendAllText(inputOutput, serializedInput);
+            OwnedDiagnosticTraceIo.Append(inputOutput, serializedInput, ownedOutputPath == null);
             if(traceTiming!=null)traceTiming.inputWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
         }
 
 
+
+
+        // Opt-in Editor diagnostic only. Each append is flushed before returning, just as
+        // AppendAllText closes its writer before the caller continues.
+        private static class OwnedDiagnosticTraceIo
+        {
+            static readonly bool enabled = string.Equals(Environment.GetEnvironmentVariable(
+                "WARLINE_EDITOR_PERSISTENT_TRACE_IO"), "1", StringComparison.Ordinal);
+            static OwnedTraceAppendSession session;
+            static bool subscribed;
+
+            internal static void Append(string path, string text, bool nativePath)
+            {
+                if (!enabled || !nativePath || productionCanary == null)
+                {
+                    CloseOwned("FallbackWriter"); // Preserve direct/nonowned access even if it aliases an owned file.
+                    File.AppendAllText(path, text);
+                    return;
+                }
+                try
+                {
+                    string trace = Path.GetFullPath(LiveTracePath());
+                    if (session == null || !session.Matches(productionCanary, trace))
+                    {
+                        CloseOwned("OwnerOrPathChanged");
+                        session = new OwnedTraceAppendSession(productionCanary,
+                            productionCanary.Request.ArtifactDirectory, trace);
+                        EditorApplication.playModeStateChanged += OnPlayMode;
+                        EditorApplication.quitting += OnQuit;
+                        AssemblyReloadEvents.beforeAssemblyReload += OnReload;
+                        subscribed = true;
+                    }
+                    session.Append(path, text);
+                }
+                catch (Exception failure) { CloseAfterFailure(failure); throw; }
+            }
+
+            static void OnPlayMode(PlayModeStateChange state)
+            {
+                if (state == PlayModeStateChange.ExitingPlayMode) CloseOwned("ExitingPlayMode");
+            }
+            static void OnQuit() => CloseOwned("EditorQuitting");
+            static void OnReload() => CloseOwned("BeforeAssemblyReload");
+            static void CloseAfterFailure(Exception failure)
+            {
+                try { CloseOwned("AppendFailure", failure.GetType().Name); }
+                catch (OutOfMemoryException) { throw; }
+                catch { /* Preserve the original append failure. */ }
+            }
+            internal static void Close() => CloseOwned("Explicit");
+            internal static void CloseOwned(string reason, string priorFailure = null)
+            {
+                var owned = session;
+                session = null;
+                if (subscribed)
+                {
+                    EditorApplication.playModeStateChanged -= OnPlayMode;
+                    EditorApplication.quitting -= OnQuit;
+                    AssemblyReloadEvents.beforeAssemblyReload -= OnReload;
+                    subscribed = false;
+                }
+                if (owned == null) return;
+                int opened = owned.OpenedStreamCount;
+                long started = System.Diagnostics.Stopwatch.GetTimestamp();
+                Exception closeFailure = null;
+                try { owned.Dispose(); }
+                catch (Exception failure) { closeFailure = failure; throw; }
+                finally
+                {
+                    double elapsed = (System.Diagnostics.Stopwatch.GetTimestamp() - started) *
+                        1000d / System.Diagnostics.Stopwatch.Frequency;
+                    // Stopwatch ends before logging. This is lifecycle close, not Finish/UI duration.
+                    string failure = closeFailure?.GetType().Name ?? priorFailure ?? "None";
+                    try
+                    {
+                        Debug.Log("[OwnedDiagnosticTraceIoClose] result=" + (failure == "None" ? "Closed" : "Failed") +
+                            " elapsedMs=" + elapsed.ToString("R", CultureInfo.InvariantCulture) +
+                            " openedStreams=" + opened + " reason=" + reason + " failure=" + failure);
+                    }
+                    catch (Exception loggingFailure) when (!(loggingFailure is OutOfMemoryException))
+                    {
+                        // A secondary logging failure must not replace the owned I/O failure.
+                        if (closeFailure == null && priorFailure == null) throw;
+                    }
+                }
+            }
+        }
+
+        private sealed class OwnedTraceAppendSession : IDisposable
+        {
+            static readonly string[] suffixes = { "", ".actors.jsonl", ".combat.jsonl", ".input.jsonl" };
+            static readonly StringComparison pathComparison = Path.DirectorySeparatorChar == '\\'
+                ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            readonly object owner;
+            readonly string trace;
+            readonly string root;
+            readonly Dictionary<string, StreamWriter> writers =
+                new Dictionary<string, StreamWriter>(StringComparer.Ordinal);
+            bool disposed;
+            int openedStreamCount;
+            internal int OpenedStreamCount => openedStreamCount;
+            internal OwnedTraceAppendSession(object owner, string directory, string trace)
+            {
+                if (owner == null) throw new ArgumentNullException(nameof(owner));
+                this.owner = owner;
+                root = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar);
+                this.trace = Path.GetFullPath(trace);
+                if (!string.Equals(Path.GetDirectoryName(this.trace), root, pathComparison))
+                    throw new InvalidDataException("Trace must be directly inside the owned artifact directory.");
+                // No new directories, arbitrary names, or inferred attempt ownership.
+                ValidateAncestors();
+            }
+            void ValidateAncestors()
+            {
+                // Fresh observations at each of at most four stream opens, not a cached stat proof.
+                for (var current = new DirectoryInfo(root); current != null; current = current.Parent)
+                {
+                    FileAttributes attributes = File.GetAttributes(current.FullName);
+                    if ((attributes & FileAttributes.Directory) == 0 ||
+                        (attributes & FileAttributes.ReparsePoint) != 0)
+                        throw new InvalidDataException("Reparse/non-directory diagnostic ancestor rejected.");
+                }
+            }
+            internal bool Matches(object owner, string trace) =>
+                !disposed && ReferenceEquals(this.owner, owner) &&
+                string.Equals(this.trace, Path.GetFullPath(trace), StringComparison.Ordinal);
+
+            internal void Append(string path, string text)
+            {
+                if (disposed) throw new ObjectDisposedException(nameof(OwnedTraceAppendSession));
+                try
+                {
+                    string full = Path.GetFullPath(path);
+                    // Return canonical key: aliases cannot open additional streams.
+                    string key = null;
+                    foreach (string suffix in suffixes)
+                        if (string.Equals(full, trace + suffix, pathComparison)) { key = trace + suffix; break; }
+                    if (key == null) throw new InvalidDataException("Unowned diagnostic output rejected.");
+                    if (!writers.TryGetValue(key, out var writer))
+                    {
+                        if (writers.Count >= 4) throw new InvalidOperationException("Four diagnostic streams maximum.");
+                        ValidateAncestors();
+                        try
+                        {
+                            if ((File.GetAttributes(key) & FileAttributes.ReparsePoint) != 0)
+                                throw new InvalidDataException("Reparse diagnostic output rejected.");
+                        }
+                        catch (FileNotFoundException) { } // Only absent leaf permits creation. No File.Exists suppression.
+                        FileStream stream = null;
+                        try
+                        {
+                            stream = new FileStream(key, FileMode.Append, FileAccess.Write, FileShare.Read);
+                            writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false), 1024);
+                            writers.Add(key, writer);
+                            openedStreamCount++;
+                            stream = null; // Dictionary owns the writer after successful insertion.
+                        }
+                        finally { stream?.Dispose(); }
+                    }
+                    writer.Write(text);
+                    writer.Flush(); // Same per-append visibility; no delayed evidence buffer.
+                }
+                catch
+                {
+                    try { Dispose(); } catch (OutOfMemoryException) { throw; } catch { /* Retain the original failure. */ }
+                    throw;
+                }
+            }
+            public void Dispose()
+            {
+                if (disposed) return;
+                disposed = true;
+                Exception first = null;
+                foreach (var writer in writers.Values)
+                    try { writer.Dispose(); } catch (Exception failure) { if (first == null || failure is OutOfMemoryException) first = failure; }
+                writers.Clear();
+                if (first != null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(first).Throw();
+            }
+        }
 
         // Explicit, bounded editor-only attribution. Default evidence and gameplay are unchanged.
         [Serializable] private sealed class EditorTraceTimingRow
@@ -1570,7 +1750,7 @@ namespace Game.Editor
 
             if(traceTiming!=null)traceTiming.actorCollectSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
             if(traceTiming!=null)traceTiming.actorCollectSerializeMs-=traceTiming.combatCollectMs;
-            File.AppendAllText((ownedTracePath ?? LiveTracePath()) + ".actors.jsonl", lines.ToString());
+            OwnedDiagnosticTraceIo.Append((ownedTracePath ?? LiveTracePath()) + ".actors.jsonl", lines.ToString(), ownedTracePath == null);
             if(traceTiming!=null)traceTiming.actorWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
             if (combatSamples != null && combatSamples.Count > 0)
             {
@@ -1579,7 +1759,7 @@ namespace Game.Editor
                     combatLines.AppendLine(JsonUtility.ToJson(combatSample));
 
             if(traceTiming!=null)traceTiming.combatSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
-                File.AppendAllText((ownedTracePath ?? LiveTracePath()) + ".combat.jsonl", combatLines.ToString());
+                OwnedDiagnosticTraceIo.Append((ownedTracePath ?? LiveTracePath()) + ".combat.jsonl", combatLines.ToString(), ownedTracePath == null);
             if(traceTiming!=null)traceTiming.combatWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
             }
         }
@@ -1627,6 +1807,7 @@ namespace Game.Editor
             string directory = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);
+            OwnedDiagnosticTraceIo.CloseOwned("ResetLiveTrace");
             File.WriteAllText(path, string.Empty);
         }
 
@@ -1644,6 +1825,9 @@ namespace Game.Editor
             StopS005GuardObservation();
             if (finishingEvidence) return;
             finishingEvidence = true;
+            try { OwnedDiagnosticTraceIo.CloseOwned("Finish"); }
+            catch (Exception ioError) when (!(ioError is OutOfMemoryException))
+            { abort = true; abortReason = "diagnosticAppendClose:" + ioError.GetType().Name; Debug.LogError(ioError); }
             EditorApplication.update -= Tick;
             RestoreBackgroundInput();
             StopS004ManualProbe();
@@ -1689,6 +1873,7 @@ namespace Game.Editor
 
         private static void FinishEvidence(bool abort, string abortReason, string currentSourceHash)
         {
+            OwnedDiagnosticTraceIo.CloseOwned("FinishEvidence");
             EditorTraceTimings.Flush("FinishEvidence");
             try { RecordProductionBatchFingerprint("End",currentSourceHash,productionBatchFinishHashMilliseconds); }
             catch(Exception fingerprintError) { abort=true;abortReason="productionBatchFingerprint:"+fingerprintError.GetType().Name;Debug.LogError(fingerprintError); }

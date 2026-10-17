@@ -241,6 +241,24 @@ namespace Game.Editor
             Debug.Log("[All120RequestedSourceCollectionControls] result=Passed controls="+controls+" nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 missionReady=0");
         }
 
+        public static void RunAll120MeasurementAuthorityControls()
+        {
+            int controls=0;
+            void Check(bool ok,string message){Require(ok,message);controls++;}
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(r=>(string)r["catalog_id"]=="S007");
+            ResolveAll120RefinementCandidate(authority,out var candidate,out var template);
+            string authorityBefore=authority.ToString(),candidateBefore=candidate.ToString(),templateBefore=template.ToString();
+            Check(candidate["required_capabilities"]==null&&authority["required_capabilities"] is JArray,"Actual pinned Ground30 capability omission must reproduce the failed call contract");
+            var row=All120MeasurementMission(authority,template);
+            string[] keys={"catalog_id","definition_id","scenario_setup_id","tuple","canonical_size_rows","required_capabilities"};
+            Check(keys.All(k=>authority[k]!=null&&JToken.DeepEquals(row[k],authority[k])&&!ReferenceEquals(row[k],authority[k])),"All six Full120 authority fields must be independent exact clones");
+            Check(((JArray)row["canonical_size_rows"]).Count==3&&JToken.DeepEquals(row["canonical_size_rows"],candidate["canonical_size_rows"]),"All three unchanged actual canonical budget vectors required");
+            Check(template.Properties().Where(v=>!keys.Contains(v.Name)).All(v=>JToken.DeepEquals(row[v.Name],v.Value)),"Every template source/search/placement field must remain exact");
+            ((JArray)row["required_capabilities"]).Add("control.mutation");row["tuple"]["objective_id"]="control.mutation";
+            Check(authority.ToString()==authorityBefore&&candidate.ToString()==candidateBefore&&template.ToString()==templateBefore,"Measurement mutation must not alter authority or candidate/template");
+            Debug.Log("[All120MeasurementAuthorityControls] result=Passed controls="+controls+" nativeQueries=0 sourceFitCertified=0 missionReady=0");
+        }
+
         static void ResolveAll120RefinementCandidate(JObject authority,out JObject candidate,out JObject template,bool counterpart=false)
         {
             string id=(string)authority["catalog_id"];
@@ -324,7 +342,7 @@ namespace Game.Editor
                             else if(groundBa)Require(counterpart?TryCreateProtectedExpandedBaseAssaultCandidate(candidate,source,out owner,out error):TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
                             else Require(TryCreateGroundObjective30Candidate(candidate,source,out owner,out error),error);
                             var sizeArtifacts=new JArray();row["sizeArtifacts"]=sizeArtifacts;
-                            row["measurement"]=RefineLoadedCandidate(All120MeasurementMission(candidate,candidateTemplate),owner,source,em,gridEntity,grid,surface,artifactPrefix+"."+id,checkpoint=>
+                            row["measurement"]=RefineLoadedCandidate(All120MeasurementMission(authority,candidateTemplate),owner,source,em,gridEntity,grid,surface,artifactPrefix+"."+id,checkpoint=>
                             {
                                 string sizePath=artifactPrefix+"."+id+".pass"+(int)checkpoint["pass"]+"."+(string)checkpoint["size"]+".size.json";
                                 Directory.CreateDirectory(Path.GetDirectoryName(sizePath));

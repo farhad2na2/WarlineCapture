@@ -211,20 +211,20 @@ namespace Game.Tests.Editor.SkirmishLibrary
         [Test]
         public void ZoneTabsReverseInRightToLeftAndShowProgress()
         {
-            Rect first = SkirmishZoneTabWidget.TabRect(0, 5, 1000f, 120f, 10f, false);
-            Rect firstRtl = SkirmishZoneTabWidget.TabRect(0, 5, 1000f, 120f, 10f, true);
+            Rect first = SkirmishZoneTabCardWidget.TabRect(0, 5, 1000f, 120f, 10f, false);
+            Rect firstRtl = SkirmishZoneTabCardWidget.TabRect(0, 5, 1000f, 120f, 10f, true);
             Assert.AreEqual(0f, first.x);
             Assert.AreEqual(1000f, firstRtl.xMax, 1e-3f);
             var pin = new SkirmishTheaterPinState { MapId = "DB", WonCount = 9, PublishedCount = 24, ZoneScenarioCount = 24 };
-            Assert.AreEqual("9/24", SkirmishZoneTabWidget.ProgressText(pin, Context(false)));
-            StringAssert.Contains("۹/۲۴", SkirmishZoneTabWidget.ProgressText(pin, Context(true)));
+            Assert.AreEqual("9/24", SkirmishZoneTabCardWidget.ProgressText(pin, Context(false)));
+            StringAssert.Contains("۹/۲۴", SkirmishZoneTabCardWidget.ProgressText(pin, Context(true)));
             var empty = new SkirmishTheaterPinState { MapId = "MP" };
-            Assert.AreEqual(SkirmishBattleLibraryArt.ComingSoon(false), SkirmishZoneTabWidget.ProgressText(empty, Context(false)));
-            Assert.AreEqual(SkirmishBattleLibraryArt.ComingSoon(true), SkirmishZoneTabWidget.ProgressText(empty, Context(true)));
-            RectTransform tab = SkirmishZoneTabWidget.Build(Root(), pin, true, new Vector2(190f, 120f), Context(false));
-            Assert.AreEqual(SkirmishZoneTabWidget.TabName("DB"), tab.name);
+            Assert.AreEqual(SkirmishBattleLibraryArt.ComingSoon(false), SkirmishZoneTabCardWidget.ProgressText(empty, Context(false)));
+            Assert.AreEqual(SkirmishBattleLibraryArt.ComingSoon(true), SkirmishZoneTabCardWidget.ProgressText(empty, Context(true)));
+            RectTransform tab = SkirmishZoneTabCardWidget.Build(Root(), pin, true, new Vector2(190f, 120f), Context(false));
+            Assert.AreEqual(SkirmishZoneTabCardWidget.TabName("DB"), tab.name);
             Assert.IsNotNull(tab.Find(SkirmishGlowFrameWidget.FrameName));
-            Assert.IsNull(SkirmishZoneTabWidget.Build(Root(), pin, false, new Vector2(190f, 120f), Context(false)).Find(SkirmishGlowFrameWidget.FrameName));
+            Assert.IsNull(SkirmishZoneTabCardWidget.Build(Root(), pin, false, new Vector2(190f, 120f), Context(false)).Find(SkirmishGlowFrameWidget.FrameName));
         }
 
         [Test]

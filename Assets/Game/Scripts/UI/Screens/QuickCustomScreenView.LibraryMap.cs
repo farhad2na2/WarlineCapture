@@ -217,6 +217,8 @@ namespace Game.UI.Runtime
             float medalX = fa && pin ? width - 8f - medalRun : 4f;
             float medalGap = pin ? 2f : LibraryGridMedalGap;
             AddMedalIcons(button.transform, card.Medals, medalX, textY + titleHeight + subtitleHeight + medalGap, medalSize);
+            if (!pin)
+                AddGridCornerMedal(button.transform, card.Medals, width, previewHeight, fa);
             if (card.Access == SkirmishCardAccess.NotOwned || card.Access == SkirmishCardAccess.Unavailable)
             {
                 var lockLabel = CreateLabel(button.transform, "Lock", 13f);

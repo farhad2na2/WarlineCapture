@@ -539,14 +539,14 @@ namespace Game.UI.Runtime
             HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>();
             if (row != null)
                 row.enabled = false;
-            const float icon = 40f;
+            const float icon = 50f; // approved-2/3: larger medal art in the detail panel
             RectTransform iconRect = slot.Find("Icon") as RectTransform;
             RectTransform caption = slot.Find("Caption") as RectTransform;
             RectTransform count = slot.Find("Count") as RectTransform;
             PlaceTopLeft(iconRect, (width - icon) * 0.5f, 0f, icon, icon);
-            PlaceTopLeft(caption, 2f, 44f, width - 4f, 26f);
+            PlaceTopLeft(caption, 2f, 49f, width - 4f, 23f);
             HoldFixed(iconRect, icon, icon, 0f);
-            HoldFixed(caption, width - 4f, 26f, 0f);
+            HoldFixed(caption, width - 4f, 23f, 0f);
             if (count != null)
                 count.gameObject.SetActive(false); // approved-2: no duplicate count badges on the selected-battle panel
             Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;
@@ -1134,17 +1134,20 @@ namespace Game.UI.Runtime
             TMP_Text summary = plate.Find("Summary")?.GetComponent<TMP_Text>();
             if (summary == null)
                 return;
-            PlaceSummaryLine(summary.rectTransform, 33f, 40f, fa, ornamentInset);
-            SetCopy(summary, won + " / " + published, 28f, 36f);
+            PlaceSummaryLine(summary.rectTransform, 31f, 48f, fa, ornamentInset);
+            SetCopy(summary, won + " / " + published, 46f, 46f); // approved-1: large bold count
             summary.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             summary.isRightToLeftText = false;
             summary.textWrappingMode = TextWrappingModes.NoWrap;
             summary.overflowMode = TextOverflowModes.Overflow;
-            summary.color = new Color(0.98f, 0.91f, 0.64f, 1f);
-            summary.enableAutoSizing = true;
-            summary.fontSizeMin = 28f;
-            summary.fontSizeMax = 36f;
+            summary.color = new Color(0.98f, 0.96f, 0.9f, 1f);
+            summary.fontStyle = FontStyles.Bold;
             summary.maxVisibleLines = 1;
+            LibraryFixedTextSize heldCount = summary.GetComponent<LibraryFixedTextSize>();
+            if (heldCount == null)
+                heldCount = summary.gameObject.AddComponent<LibraryFixedTextSize>();
+            heldCount.Size = 46f;
+            heldCount.Apply();
             PresentTheatreProgressBar(plate, won, published, fa, ornamentInset);
             PresentTheatreMedalTiles(plate, _libraryViewModel.Theater.OverallMedalTotals, fa);
         }

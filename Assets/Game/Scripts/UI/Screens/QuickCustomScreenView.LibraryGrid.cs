@@ -406,8 +406,30 @@ namespace Game.UI.Runtime
             PlaceTopLeft(subtitle.rectTransform, 4f, textY + titleHeight, width - 8f, subtitleHeight);
             ShowCardSubtitle(subtitle, detail, fa, false);
             AddMedalIcons(rect, SkirmishMedalMask.None, 4f, textY + titleHeight + subtitleHeight + LibraryGridMedalGap, medalSize);
+            AddGridCornerMedal(rect, SkirmishMedalMask.None, width, previewHeight, fa);
             StyleBattleCard(rect, false, false, false);
             return rect;
+        }
+
+        /// <summary>approved-3: one medal circle in the preview's bottom corner (best earned tier, else a dim Recruit).
+        /// Drawn inside the preview rect so #66 card/plate/seat geometry is unchanged.</summary>
+        private void AddGridCornerMedal(Transform parent, SkirmishMedalMask medals, float width, float previewHeight, bool fa)
+        {
+            SkirmishDifficultyId[] order = { SkirmishDifficultyId.Commander, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Recruit };
+            SkirmishDifficultyId shown = SkirmishDifficultyId.Recruit;
+            bool earned = false;
+            for (int i = 0; i < order.Length; i++)
+            {
+                if (MedalEarned(medals, order[i])) { shown = order[i]; earned = true; break; }
+            }
+            float size = Mathf.Clamp(previewHeight * 0.36f, 18f, 30f);
+            if (width < size * 3f || previewHeight < size + 6f)
+                return;
+            float x = fa ? 4f : width - size - 4f;
+            var image = new GameObject("CornerMedal", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            image.transform.SetParent(parent, false);
+            PlaceTopLeft(image.rectTransform, x, previewHeight - size - 3f, size, size);
+            PaintDifficultyMedal(image, shown, earned);
         }
 
         private void MarkPendingPreview(Transform card, bool fa, bool dimmed, float width, float previewHeight)

@@ -516,7 +516,7 @@ namespace Game.UI.Runtime
             if (tile is not RectTransform rect || !tile.gameObject.activeSelf)
                 return;
             float width = rect.sizeDelta.x > 20f ? rect.sizeDelta.x : Mathf.Max(60f, rect.rect.width);
-            const float icon = 30f;
+            const float icon = 38f; // approved-2/3: icon carries the tile
             Transform caption = tile.Find("Caption");
             if (caption != null)
                 caption.gameObject.SetActive(false);
@@ -533,7 +533,7 @@ namespace Game.UI.Runtime
                     art.transform.SetParent(tile, false);
                 }
                 art.gameObject.SetActive(true);
-                PlaceTopLeft(art.rectTransform, (width - icon) * 0.5f, 8f, icon, icon);
+                PlaceTopLeft(art.rectTransform, (width - icon) * 0.5f, 5f, icon, icon);
                 art.preserveAspect = true;
                 art.raycastTarget = false;
                 ShowIcon(art, sprite, new Color(0.96f, 0.93f, 0.84f, 1f));
@@ -549,7 +549,7 @@ namespace Game.UI.Runtime
                     raw.transform.SetParent(tile, false);
                 }
                 raw.gameObject.SetActive(true);
-                PlaceTopLeft(raw.rectTransform, (width - icon) * 0.5f, 8f, icon, icon);
+                PlaceTopLeft(raw.rectTransform, (width - icon) * 0.5f, 5f, icon, icon);
                 raw.texture = FooterGlyphTexture(glyph);
                 raw.color = new Color(0.96f, 0.93f, 0.84f, 1f);
                 raw.raycastTarget = false;
@@ -558,7 +558,7 @@ namespace Game.UI.Runtime
             TMP_Text value = tile.Find("Value")?.GetComponent<TMP_Text>();
             if (value != null)
             {
-                PlaceTopLeft(value.rectTransform, 4f, 42f, width - 8f, 38f);
+                PlaceTopLeft(value.rectTransform, 4f, 45f, width - 8f, 36f);
                 value.alignment = TextAlignmentOptions.Center;
                 value.textWrappingMode = TextWrappingModes.Normal;
                 value.overflowMode = TextOverflowModes.Overflow;

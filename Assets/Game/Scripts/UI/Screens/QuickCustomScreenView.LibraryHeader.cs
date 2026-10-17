@@ -75,6 +75,7 @@ namespace Game.UI.Runtime
             ReassertRailLabels();
             ReassertFooterLabels();
             FitTheatreDetailHeadings();
+            ReassertBriefingPanel();
             Transform composition = transform.Find("SkirmishSetupComposition");
             if (composition is not RectTransform compositionRect)
                 return;

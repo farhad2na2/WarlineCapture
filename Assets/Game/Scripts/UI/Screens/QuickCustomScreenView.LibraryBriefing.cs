@@ -182,6 +182,109 @@ namespace Game.UI.Runtime
             }
         }
 
+        /// <summary>
+        /// approved-2/3 selected panel type scale. Runs from PlaceLibraryHeader, after the late text passes and
+        /// V3LocalizedTextBindingView's FitArabicLineBox, so the sizes hold in FA too.
+        /// </summary>
+        private void ReassertBriefingPanel()
+        {
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            Transform rules = transform.Find("SkirmishSetupComposition/BaseAssaultRules");
+            Transform titleTransform = FindDeep(rules, "Title");
+            TMP_Text title = titleTransform != null ? titleTransform.GetComponent<TMP_Text>() : null;
+            if (title != null && title.gameObject.activeInHierarchy)
+            {
+                title.fontStyle = FontStyles.Bold;
+                title.color = new Color(0.96f, 0.64f, 0.2f, 1f); // approved-2 orange heading
+                FitDetailLine(title, 22f, 34f);
+            }
+
+            Transform column = title != null ? title.transform.parent : null;
+            TMP_Text subtitle = column != null ? column.Find("BriefingSubtitle")?.GetComponent<TMP_Text>() : null;
+            if (subtitle != null && subtitle.gameObject.activeInHierarchy)
+            {
+                subtitle.fontStyle = FontStyles.Bold;
+                subtitle.color = new Color(0.98f, 0.96f, 0.9f, 1f);
+                FitDetailLine(subtitle, 18f, 28f);
+            }
+
+            TMP_FontAsset latin = title != null ? title.font : null;
+            if (_medalRow != null)
+            {
+                // One shared size for the four captions: smallest fit to a quarter of the row minus an 8 px gap,
+                // so 4:3 VETERAN/COMMANDER never touch. Width is held through the slot's LayoutElement.
+                float pitch = _medalRow.rect.width / 4f - 8f;
+                Transform s0 = _medalRow.Find("Slot0"), s1 = _medalRow.Find("Slot1");
+                if (s0 != null && s1 != null)
+                {
+                    // Real centre-to-centre spacing of the presented slots (the row rect can be wider than the slots).
+                    float spacing = Mathf.Abs(_medalRow.InverseTransformPoint(s1.position).x - _medalRow.InverseTransformPoint(s0.position).x);
+                    if (spacing > 20f)
+                        pitch = Mathf.Min(pitch, spacing - 8f);
+                }
+                pitch = Mathf.Max(40f, pitch);
+                float max = fa ? 20f : 18f;
+                var captions = new List<TMP_Text>(4);
+                float shared = max;
+                for (int i = 0; i < 4; i++)
+                {
+                    TMP_Text caption = _medalRow.Find("Slot" + i)?.Find("Caption")?.GetComponent<TMP_Text>();
+                    if (caption == null)
+                        continue;
+                    ReassertPanelLabel(caption, latin, fa, max, max);
+                    RectTransform r = caption.rectTransform;
+                    float height = fa ? 34f : Mathf.Max(22f, r.rect.height); // FitArabicLineBox caps at h/1.65
+                    LayoutElement element = r.GetComponent<LayoutElement>() ?? r.gameObject.AddComponent<LayoutElement>();
+                    element.minWidth = element.preferredWidth = pitch;
+                    element.flexibleWidth = 0f;
+                    element.minHeight = element.preferredHeight = height;
+                    r.sizeDelta = new Vector2(pitch, height);
+                    caption.fontSize = max;
+                    float natural = caption.GetPreferredValues(caption.text, 9999f, 100f).x;
+                    if (natural > pitch - 2f && natural > 1f)
+                        shared = Mathf.Min(shared, Mathf.Floor(max * (pitch - 2f) / natural));
+                    captions.Add(caption);
+                }
+
+                shared = Mathf.Max(11f, shared);
+                for (int i = 0; i < captions.Count; i++)
+                {
+                    TMP_Text t = captions[i];
+                    t.enableAutoSizing = false;
+                    t.fontSize = t.fontSizeMin = t.fontSizeMax = shared;
+                    V3LocalizedTextBindingView binding = t.GetComponent<V3LocalizedTextBindingView>();
+                    if (binding != null)
+                        binding.ConfigureFontBounds(shared, shared);
+                    t.ForceMeshUpdate();
+                }
+            }
+
+            if (_difficultyRow != null)
+            {
+                for (int i = 0; i < _difficultyRow.childCount; i++)
+                {
+                    Transform slot = _difficultyRow.GetChild(i);
+                    if (!slot.name.StartsWith("DifficultyChoice_", StringComparison.Ordinal))
+                        continue;
+                    ReassertPanelLabel(slot.GetComponentInChildren<TMP_Text>(true), latin, fa, 20f, 26f);
+                }
+            }
+        }
+
+        private static void ReassertPanelLabel(TMP_Text text, TMP_FontAsset latin, bool fa, float min, float max)
+        {
+            if (text == null)
+                return;
+            // EN: same display face as the heading (no Arial fallback look); FA keeps the locale font.
+            if (!fa && latin != null && !ContainsArabicScript(text.text))
+                text.font = latin;
+            text.fontStyle = FontStyles.Bold;
+            text.alignment = TextAlignmentOptions.Center;
+            FitDetailLine(text, min, max);
+        }
+
         private void OnLibraryDifficulty(SkirmishDifficultyId difficulty)
         {
             EnsureLibraryViewModel();

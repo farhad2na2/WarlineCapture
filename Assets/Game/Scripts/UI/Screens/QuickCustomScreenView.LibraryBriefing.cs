@@ -214,6 +214,7 @@ namespace Game.UI.Runtime
             }
 
             TMP_FontAsset latin = title != null ? title.font : null;
+            var labels = new List<TMP_Text>(4);
             if (_difficultyRow != null)
             {
                 for (int i = 0; i < _difficultyRow.childCount; i++)
@@ -221,8 +222,29 @@ namespace Game.UI.Runtime
                     Transform slot = _difficultyRow.GetChild(i);
                     if (!slot.name.StartsWith("DifficultyChoice_", StringComparison.Ordinal))
                         continue;
-                    ReassertPanelLabel(slot.GetComponentInChildren<TMP_Text>(true), latin, fa, 14f, fa ? 20f : 18f);
+                    labels.Add(slot.GetComponentInChildren<TMP_Text>(true));
                 }
+            }
+
+            // Segment labels: one shared size (smallest fit), held fixed so the Grid refit text pass cannot clip them.
+            float segShared = fa ? 20f : 18f;
+            for (int i = 0; i < labels.Count; i++)
+            {
+                if (labels[i] == null)
+                    continue;
+                ReassertPanelLabel(labels[i], latin, fa, 11f, fa ? 20f : 18f);
+                segShared = Mathf.Min(segShared, labels[i].fontSize);
+            }
+
+            for (int i = 0; i < labels.Count; i++)
+            {
+                if (labels[i] == null)
+                    continue;
+                labels[i].margin = new Vector4(2f, 0f, 2f, 0f);
+                LibraryFixedTextSize hold = labels[i].GetComponent<LibraryFixedTextSize>() ?? labels[i].gameObject.AddComponent<LibraryFixedTextSize>();
+                hold.Size = segShared;
+                hold.Apply();
+                labels[i].textWrappingMode = TextWrappingModes.NoWrap;
             }
         }
 
@@ -800,6 +822,8 @@ namespace Game.UI.Runtime
             var text = GetComponent<TMP_Text>();
             if (text == null || Size <= 0f)
                 return;
+            text.textWrappingMode = TextWrappingModes.NoWrap; // refit text pass can turn wrapping back on
+            text.maxVisibleLines = 1;
             if (text.enableAutoSizing || !Mathf.Approximately(text.fontSize, Size))
             {
                 text.enableAutoSizing = false;

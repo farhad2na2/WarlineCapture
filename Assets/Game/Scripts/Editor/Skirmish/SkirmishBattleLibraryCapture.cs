@@ -2232,25 +2232,43 @@ namespace Game.Editor
 
                 float height = Mathf.Max(1f, maxY - minY);
                 float measured = (maxX - minX) / height;
-                // Hexes are authored on the map clip. The side column does not enter the ratio.
-                RectTransform plate = regions != null ? regions.parent as RectTransform : null;
-                if (plate == null || plate.name != "MapPreviewClip")
-                    plate = FindNamed(regions != null ? regions.root : null, "MapPreviewClip") as RectTransform;
+                RectTransform frame = outline.parent as RectTransform;
                 float frameW = 0f;
                 float frameH = 0f;
-                if (plate != null)
+                if (frame != null)
+                {
+                    frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
+                    frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
+                }
+
+                if ((frameW < 2f || frameH < 2f) && regions is RectTransform plate)
                 {
                     frameW = plate.rect.width > 2f ? plate.rect.width : plate.sizeDelta.x;
                     frameH = plate.rect.height > 2f ? plate.rect.height : plate.sizeDelta.y;
                 }
 
-                if (frameW < 2f || frameH < 2f)
+                // The outline parent is the full clip. The authored ratio uses the open
+                // viewport beside the reserve, matching CollectViolations.
+                bool detailOpen = TheatreSeatGeometry.TheatreDetailReserved;
+                bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+                Transform detailPanel = FindNamed(regions, "TheatreDetailPanel");
+                if (detailPanel is RectTransform detailRect && detailRect.gameObject.activeInHierarchy && frame != null)
                 {
-                    RectTransform frame = outline.parent as RectTransform;
-                    if (frame != null)
+                    TheatreSeatGeometry.Box detail = PlateBox(frame, detailRect);
+                    if (detail.W > 1f)
                     {
-                        frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
-                        frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
+                        detailOpen = true;
+                        fa = detail.Center.X < frameW * 0.5f;
+                    }
+                }
+
+                if (detailOpen && frameW > 2f && frameH > 2f)
+                {
+                    TheatreSeatGeometry.Box view = TheatreSeatGeometry.OpenViewport(frameW, frameH, fa, true);
+                    if (view.W > 2f && view.H > 2f)
+                    {
+                        frameW = view.W;
+                        frameH = view.H;
                     }
                 }
 
@@ -2267,7 +2285,10 @@ namespace Game.Editor
             }
         }
 
-        /// <summary>Width/height of the v35 flat hex at this plate. The detail reserve does not enter.</summary>
+        /// <summary>
+        /// Width/height of the v35 flat hex for the frame passed in.
+        /// That frame is the open viewport when the detail reserve is up.
+        /// </summary>
         private static float V35HexAspect(string mapId, float frameWidth, float frameHeight)
         {
             if (frameWidth < 2f || frameHeight < 2f)

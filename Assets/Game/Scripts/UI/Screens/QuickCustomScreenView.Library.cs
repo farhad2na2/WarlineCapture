@@ -1594,14 +1594,16 @@ namespace Game.UI.Runtime
                 return;
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             string descriptionName = scenarioDescription != null ? scenarioDescription.gameObject.name : "SeedHelp";
+            if (battlefield)
+                AdoptModeToggle(column);
             Transform medalKeep = ChooseMedalRow(column);
             if (medalKeep is RectTransform keptMedal)
                 _medalRow = keptMedal;
             var order = battlefield
-                ? new[] { "BriefingPreview", "Title", "BriefingSubtitle", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
+                ? new[] { "LibraryModeToggle", "Title", "BriefingSubtitle", "BriefingPreview", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
                 : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
-                ? new[] { 188f, 40f, 30f, 96f, 84f, 104f, 52f } // P2-approved: subtitle row; P1 v25: 3 tiles + segmented difficulty (52)
+                ? new[] { 48f, 40f, 30f, 188f, 96f, 84f, 104f, 52f } // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
                 : new[] { TheatreSummaryHeight, 40f, 84f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {

@@ -291,10 +291,11 @@ namespace Game.UI.Runtime
 
         private void PresentModeToggle(bool fa, bool battlefield)
         {
-            Transform toggle = transform.Find("SkirmishSetupComposition/OperationPreview/LibraryModeToggle");
+            Transform toggle = FindModeToggle();
             if (toggle == null)
                 return;
             toggle.gameObject.SetActive(battlefield);
+            LayoutModeToggleButtons(toggle);
             Button mapChoice = LayoutChoice(toggle, SkirmishLibraryControlNames.LayoutMap, "MapChoice");
             Button gridChoice = LayoutChoice(toggle, SkirmishLibraryControlNames.LayoutGrid, "GridChoice");
             SetCopy(mapChoice != null ? mapChoice.transform.Find("Label")?.GetComponent<TMP_Text>() : null, fa ? "نقشه" : "MAP");
@@ -303,6 +304,38 @@ namespace Game.UI.Runtime
             TintButton(gridChoice, LibraryLayout == SkirmishBattlefieldLayout.Grid, true);
             BindLayoutChoice(mapChoice, SkirmishBattlefieldLayout.Map);
             BindLayoutChoice(gridChoice, SkirmishBattlefieldLayout.Grid);
+        }
+
+        private Transform FindModeToggle()
+        {
+            Transform inColumn = transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn/LibraryModeToggle");
+            return inColumn != null ? inColumn : transform.Find("SkirmishSetupComposition/OperationPreview/LibraryModeToggle");
+        }
+
+        /// <summary>approved-2: the MAP/GRID toggle moves from the battlefield plate to the top row of the right panel.</summary>
+        private void AdoptModeToggle(RectTransform column)
+        {
+            Transform toggle = FindModeToggle();
+            if (toggle is not RectTransform rect || column == null)
+                return;
+            if (rect.parent != column)
+                rect.SetParent(column, false);
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(0.5f, 1f);
+            LayoutModeToggleButtons(rect);
+        }
+
+        private static void LayoutModeToggleButtons(Transform toggle)
+        {
+            if (toggle is not RectTransform rect)
+                return;
+            float width = rect.rect.width > 120f ? rect.rect.width : 360f;
+            float half = (width - 8f) * 0.5f;
+            var map = toggle.Find(SkirmishLibraryControlNames.LayoutMap) as RectTransform;
+            var grid = toggle.Find(SkirmishLibraryControlNames.LayoutGrid) as RectTransform;
+            PlaceTopLeft(map, 0f, 2f, half, 44f);
+            PlaceTopLeft(grid, half + 8f, 2f, half, 44f);
         }
 
         private Button LayoutChoice(Transform toggle, string controlName, string legacyName)
@@ -341,7 +374,7 @@ namespace Game.UI.Runtime
 
         private void EnsureModeToggle(Transform preview)
         {
-            if (preview == null || preview.Find("LibraryModeToggle") != null)
+            if (preview == null || FindModeToggle() != null)
                 return;
             var toggle = FindOrCreate(preview, "LibraryModeToggle");
             var map = CreateChromeButton(toggle, SkirmishLibraryControlNames.LayoutMap);

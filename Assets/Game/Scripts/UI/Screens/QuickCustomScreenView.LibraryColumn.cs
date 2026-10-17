@@ -1377,6 +1377,8 @@ namespace Game.UI.Runtime
                 return battlefield && child == medalKeep; // Theatre medal counts live in P2's bottom strip.
             if (child.name == "Title")
                 return true;
+            if (child.name == "LibraryModeToggle")
+                return battlefield; // approved-2: MAP/GRID toggle heads the right panel
             if (scenarioDescription != null && child == scenarioDescription.transform)
                 return true;
             if (child.name == descriptionName && scenarioDescription != null && child != scenarioDescription.transform)

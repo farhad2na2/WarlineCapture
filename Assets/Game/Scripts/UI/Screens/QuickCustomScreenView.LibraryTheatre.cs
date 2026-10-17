@@ -1724,11 +1724,11 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Solid out to the 18px reach the gap math subtracts. The 22px pad
-            // still holds the capture rect. No fade inside that reach, so the
-            // bloom stays as thick as the painted halo.
-            const float reach = 18f;
-            const float shoulder = 18f;
+            // Solid out to the reach the gap math subtracts. The 22px pad still
+            // holds the capture rect. No fade inside the reach, so the bloom
+            // stays as thick as the painted halo.
+            float reach = TheatreSeatGeometry.DistrictGlowReach;
+            float shoulder = TheatreSeatGeometry.DistrictGlowReach;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -2247,7 +2247,7 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Zoom label at 16–26px inside the 36–52px tab. One line when the card width holds it,
         /// otherwise a split at a space. Tracking stays at 0 until the line needs −12.
-        /// The size never drops under 16.
+        /// Farsi tries 22–26 on two tighter lines before that search. The size never drops under 16.
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
@@ -2260,6 +2260,9 @@ namespace Game.UI.Runtime
                 return;
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
+                return;
+            if ((cue.isRightToLeftText || source.IndexOf("بزرگنمایی", StringComparison.Ordinal) >= 0)
+                && TryFitFaCue(cue, source, boxW, boxH))
                 return;
             const float cueCeiling = 26f;
             const float cueFloor = 16f;
@@ -2284,6 +2287,34 @@ namespace Game.UI.Runtime
             // The rect cannot hold 16px without a clip. Still lock 16. Autosize used to
             // settle this cue at 12–13px once the longest Farsi word missed the box.
             ApplyCueFloor(cue, source, cueFloor, boxW);
+        }
+
+        /// <summary>
+        /// The Farsi phrase fits one line near 18 inside a 160px tab, so the ordinary
+        /// search stops there. Two lines at 22–26 fit the width. Line spacing tightens
+        /// until the pair sits in the tab, and the name under the tab does not move.
+        /// </summary>
+        private static bool TryFitFaCue(TMP_Text cue, string source, float boxW, float boxH)
+        {
+            float[] spacing = { 0f, -12f, -24f, -36f };
+            for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
+            {
+                for (int i = 0; i < spacing.Length; i++)
+                {
+                    cue.lineSpacing = spacing[i];
+                    cue.characterSpacing = 0f;
+                    if (CueLabelSplits(cue, source, size, boxW, boxH))
+                        return true;
+                    cue.characterSpacing = -12f;
+                    if (CueLabelSplits(cue, source, size, boxW, boxH))
+                        return true;
+                }
+            }
+
+            cue.lineSpacing = 0f;
+            cue.characterSpacing = 0f;
+            cue.text = source;
+            return false;
         }
 
         private static void ApplyCueFloor(TMP_Text cue, string source, float size, float boxW)
@@ -2396,6 +2427,31 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Grows a short Farsi tab upward, bottom still flush with the card, when the
+        /// district stroke still clears. The name under the card does not move.
+        /// </summary>
+        private static Rect RaiseFaCueTab(RectTransform parent, Rect spot)
+        {
+            if (parent == null || spot.height >= 51.5f || spot.height < 8f)
+                return spot;
+            float[] heights = { 52f, 48f, 44f };
+            for (int i = 0; i < heights.Length; i++)
+            {
+                if (heights[i] <= spot.height + 0.5f)
+                    continue;
+                float top = spot.y + spot.height - heights[i];
+                if (top < 1f)
+                    continue;
+                var grown = new Rect(spot.x, top, spot.width, heights[i]);
+                if (PillHitsLiveHex(parent, InflateRect(grown, TheatreSeatGeometry.CueHexStroke)))
+                    continue;
+                return grown;
+            }
+
+            return spot;
+        }
+
+        /// <summary>
         /// Puts the zoom cue on the selected card. The same attachment the seat harness uses,
         /// so a full-width strip or a tab hung off the card stays inside the near-pin rule.
         /// </summary>
@@ -2464,6 +2520,8 @@ namespace Game.UI.Runtime
             }
 
             var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
+            if (fa)
+                spot = RaiseFaCueTab(parent, spot);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
             KeepAuthoredSize(cue.rectTransform);
             SyncCuePlate(parent, spot);
@@ -2471,8 +2529,17 @@ namespace Game.UI.Runtime
                 KeepAuthoredSize(plate);
             FitCueInsidePackedRect(cue);
             LockCueFont(cue);
-            PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
-            SyncCuePlate(parent, spot);
+            Rect lived = PlateRect(cue.rectTransform);
+            float spotBottom = spot.y + spot.height;
+            float livedBottom = lived.y + lived.height;
+            bool flush = Mathf.Abs(livedBottom - spotBottom) <= 1.5f
+                && Mathf.Abs(lived.x - spot.x) <= 1.5f
+                && Mathf.Abs(lived.width - spot.width) <= 1.5f
+                && lived.height <= 52.5f
+                && lived.height + 0.5f >= spot.height;
+            Rect kept = flush ? lived : spot;
+            PlaceTopLeft(cue.rectTransform, kept.x, kept.y, kept.width, kept.height);
+            SyncCuePlate(parent, kept);
             LogTheatreCue(cue);
             return true;
         }
@@ -2966,7 +3033,8 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Drawn pixels, not the seat harness. <c>fontSize</c> is the on-screen cue size.
         /// Card <c>w h</c> are the on-screen portrait. <c>DistrictGap</c> is the dark strip
-        /// between outer halos (18px each side).
+        /// between outer halos. Capture outlines sit at lossyScale 1, so the logged gap
+        /// is the fill edge minus two <see cref="TheatreSeatGeometry.DistrictGlowReach"/> halos.
         /// </summary>
         private static void LogRenderedMeasures(TMP_Text cue)
         {
@@ -3012,7 +3080,7 @@ namespace Game.UI.Runtime
                 {
                     Vector2[] left = OutlinePlatePoints(outlines[i]);
                     Vector2[] right = OutlinePlatePoints(outlines[j]);
-                    float localGap = OutlineEdgeGap(left, right) - 36f;
+                    float localGap = OutlineEdgeGap(left, right) - TheatreSeatGeometry.DistrictGlowReach * 2f;
                     float scale = outlines[i].lossyScale.x;
                     if (scale < 0.001f)
                         scale = 1f;
@@ -3026,15 +3094,16 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// What the camera composites for the soft halo. Reach is the 18px falloff
-        /// times the section scale. Alpha is the image tint. The material is the
-        /// shader actually on the halo, not the multiply shader on the fill.
+        /// What the camera composites for the soft halo. Reach is
+        /// <see cref="TheatreSeatGeometry.DistrictGlowReach"/> times the outline scale.
+        /// Alpha is the image tint. The material is the shader actually on the halo,
+        /// not the multiply shader on the fill.
         /// </summary>
         private static void LogDistrictGlow(RectTransform outline)
         {
             if (outline == null)
                 return;
-            const float localReach = 18f;
+            float localReach = TheatreSeatGeometry.DistrictGlowReach;
             Transform haloNode = outline.Find("ZoneHalo");
             Image halo = haloNode != null ? haloNode.GetComponent<Image>() : null;
             float scale = outline.lossyScale.x;

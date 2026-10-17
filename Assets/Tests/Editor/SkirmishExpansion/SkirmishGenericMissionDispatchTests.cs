@@ -250,6 +250,516 @@ namespace Game.Tests.Editor
             Assert.AreSame(shippedLibrary,SkirmishBattleCatalogConfig.Load());Assert.AreSame(shippedAuthored,SkirmishExpansionCatalogConfig.Load());
             Assert.AreEqual(libraryBefore,JsonUtility.ToJson(shippedLibrary));Assert.AreEqual(authoredBefore,JsonUtility.ToJson(shippedAuthored));
         }
+
+        // Persistence plumbing controls only. No source-fit report is invented.
+        private static string DraftFileHash(string path)
+        {
+            using var file=System.IO.File.OpenRead(path);
+            using var digest=System.Security.Cryptography.SHA256.Create();
+            return BitConverter.ToString(digest.ComputeHash(file)).Replace("-","").ToLowerInvariant();
+        }
+        private static object DraftInvoke(string name,params object[] args)
+        {
+            var method=typeof(Game.Editor.SkirmishGroundSourceFitSurvey).GetMethod(name,
+                System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            Assert.NotNull(method,name);return method.Invoke(null,args);
+        }
+        private static void WithPersistentDraftTransaction(Action<Fixture,string,SkirmishExpansionCatalogConfig,SkirmishBattleCatalogConfig> assertion)
+        {
+            var mainAuthored=SkirmishExpansionCatalogConfig.Load();var mainBattle=SkirmishBattleCatalogConfig.Load();
+            var defaultWorld=World.DefaultGameObjectInjectionWorld;
+            string ap=AssetDatabase.GetAssetPath(mainAuthored),bp=AssetDatabase.GetAssetPath(mainBattle);
+            string ah=DraftFileHash(ap),bh=DraftFileHash(bp);
+            var publication=mainAuthored.ToAuthoredSet().Publication;
+            string pp=AssetDatabase.GetAssetPath(publication);
+            Assert.IsFalse(string.IsNullOrEmpty(pp),"Actual persistent publication config required");
+            string ph=DraftFileHash(pp);
+            Assert.IsFalse(EditorUtility.IsDirty(mainAuthored));Assert.IsFalse(EditorUtility.IsDirty(mainBattle));
+            foreach(var asset in Resources.FindObjectsOfTypeAll<ScriptableObject>())
+                if(AssetDatabase.Contains(asset))Assert.IsFalse(EditorUtility.IsDirty(asset),"Refuse SaveAssets with unrelated dirty persistent object");
+            string name="__LogicalDraftQaControls_"+Guid.NewGuid().ToString("N");
+            string root="Assets/"+name;Assert.IsTrue(!AssetDatabase.IsValidFolder(root));
+            AssetDatabase.CreateFolder("Assets",name);
+            try
+            {
+                using var f=new Fixture(published:false,activateScopes:false);
+                var binding=f.Definition.MissionLogicalBinding;var original=binding.Variants[0];
+                Assert.IsNull(original.Areas,"BA draft fixture starts without non-BA typed areas.");
+                var variants=new List<SkirmishMissionLogicalVariant>();
+                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                {
+                    var variant=JsonUtility.FromJson<SkirmishMissionLogicalVariant>(JsonUtility.ToJson(original));
+                    if(original.Areas==null)variant.Areas=null;
+                    Assert.IsNull(variant.Areas,"BA fixture JSON clone must preserve absent typed areas.");
+                    variant.View=original.View;variant.Size=size;
+                    variant.ReviewedViewFingerprint=SkirmishMissionLogicalBindingCompiler.ViewFingerprint(variant);
+                    variants.Add(variant);
+                }
+                binding.Variants=variants.ToArray();
+                var authored=UnityEngine.Object.Instantiate(f.Authored);var library=UnityEngine.Object.Instantiate(f.Library);
+                var fields=new SerializedObject(authored);fields.FindProperty("definitions").arraySize=0;fields.ApplyModifiedPropertiesWithoutUndo();
+                AssetDatabase.CreateAsset(authored,root+"/Authored.asset");AssetDatabase.CreateAsset(library,root+"/Battle.asset");
+                AssetDatabase.SaveAssets();
+                assertion(f,root,authored,library);
+            }
+            finally
+            {
+                // Restore/check globals only after all scopes have disposed, even on assertion.
+                string full=System.IO.Path.GetFullPath(root);
+                string assets=System.IO.Path.GetFullPath("Assets")+System.IO.Path.DirectorySeparatorChar;
+                Assert.IsTrue(full.StartsWith(assets,StringComparison.OrdinalIgnoreCase)&&System.IO.Path.GetFileName(full)==name);
+                var pending=new Stack<string>();pending.Push(full);
+                while(pending.Count>0)
+                {
+                    string directory=pending.Pop();
+                    foreach(string path in System.IO.Directory.EnumerateFileSystemEntries(directory))
+                    {
+                        var attributes=System.IO.File.GetAttributes(path);
+                        Assert.IsFalse((attributes&System.IO.FileAttributes.ReparsePoint)!=0,"Never traverse/delete a reparse fixture");
+                        if((attributes&System.IO.FileAttributes.Directory)!=0)pending.Push(path);
+                    }
+                }
+                Assert.IsFalse((System.IO.File.GetAttributes(full)&System.IO.FileAttributes.ReparsePoint)!=0);
+                Assert.IsTrue(AssetDatabase.DeleteAsset(root),"Delete exact owned logical fixture tree");
+                Assert.IsFalse(System.IO.Directory.Exists(root));Assert.IsFalse(System.IO.File.Exists(root+".meta"));
+                Assert.AreSame(mainAuthored,SkirmishExpansionCatalogConfig.Load());Assert.AreSame(mainBattle,SkirmishBattleCatalogConfig.Load());
+                Assert.AreSame(defaultWorld,World.DefaultGameObjectInjectionWorld);
+                Assert.AreEqual(ah,DraftFileHash(ap));Assert.AreEqual(bh,DraftFileHash(bp));
+                Assert.AreSame(publication,mainAuthored.ToAuthoredSet().Publication);Assert.AreEqual(ph,DraftFileHash(pp));
+                Assert.IsFalse(EditorUtility.IsDirty(mainAuthored));Assert.IsFalse(EditorUtility.IsDirty(mainBattle));
+            }
+        }
+        private static void PersistFixtureDraft(Fixture f,string root,SkirmishExpansionCatalogConfig authored,SkirmishBattleCatalogConfig battle,
+            Action<SkirmishScenarioDefinitionConfig,SkirmishExpansionCatalogConfig> validate)
+        {
+            DraftInvoke("PersistAll120LogicalAssets",f.Definition,f.Definition.MapLayout,authored,battle,root+"/Logical/Definition.asset",
+                root+"/",f.Index,false,new Newtonsoft.Json.Linq.JObject(),validate);
+        }
+        private static void AssertPersistedFixtureQueues(SkirmishExpansionCatalogConfig authored,SkirmishBattleCatalogConfig battle,
+            SkirmishScenarioDefinitionConfig definition,int index,bool throwInScope)
+        {
+            var normalBattle=SkirmishBattleCatalogConfig.Load();
+            Assert.AreSame(Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName),normalBattle,
+                "Caller QA scope must start from the actual normal library, without a nested override.");
+            Assert.IsTrue(battle.TryGet(definition.CatalogId,out var draft));
+            Assert.AreEqual(SkirmishBattleCatalogStatus.Planned,draft.Status);Assert.Less(draft.PlayableScenarioIndex,0);
+            using(var scope=Game.Editor.SkirmishGenericMissionAvailabilityScope.Open(authored,definition.CatalogId,index))
+            {
+                var facts=(Newtonsoft.Json.Linq.JArray)DraftInvoke("AssertAll120DefinitionBindings",definition,true);
+                Assert.AreEqual(12,facts.Count,"All three sizes by four actual compiler/queue seeds");
+                if(throwInScope)throw new InvalidOperationException("Owned caller fixture validation failure");
+            }
+            Assert.AreSame(normalBattle,SkirmishBattleCatalogConfig.Load(),"The single availability scope restores the normal library.");
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error),error);
+            using var rejected=new World("PersistedDraftOutsideQa");
+            Assert.IsFalse(SkirmishExpandedLaunchResolver.TryCompileAndQueue(rejected.EntityManager,definition.CatalogId,
+                SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,1,authored.ToAuthoredSet(),matrix,
+                new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},out _,out _,out _));
+            Assert.AreEqual(0,rejected.EntityManager.UniversalQuery.CalculateEntityCount());
+        }
+        [Test] public void ActualLogicalAssetTransactionPersistsReloadsOnlyDraftAndDuplicateRefuses()
+        {
+            WithPersistentDraftTransaction((f,root,authored,battle)=>
+            {
+                string battleBefore=DraftFileHash(AssetDatabase.GetAssetPath(battle));
+                PersistFixtureDraft(f,root,authored,battle,(definition,development)=>
+                {
+                    Assert.IsNull(development);Assert.IsTrue(AssetDatabase.Contains(definition));
+                    Assert.IsTrue(authored.TryGetDefinition("S026",out var loaded));Assert.AreSame(definition,loaded);
+                    AssertPersistedFixtureQueues(authored,battle,definition,f.Index,false);
+                });
+                AssetDatabase.ImportAsset(root+"/Logical/Definition.asset",ImportAssetOptions.ForceUpdate);
+                var reloaded=AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>(root+"/Logical/Definition.asset");
+                Assert.NotNull(reloaded);Assert.AreEqual("S026",reloaded.CatalogId);
+                Assert.AreEqual(3,reloaded.MissionLogicalBinding.Variants.Length);
+                Assert.IsTrue(battle.TryGet("S026",out var draft));Assert.AreEqual(SkirmishBattleCatalogStatus.Planned,draft.Status);
+                Assert.Less(draft.PlayableScenarioIndex,0);Assert.AreEqual(battleBefore,DraftFileHash(AssetDatabase.GetAssetPath(battle)));
+                string definitionBefore=DraftFileHash(root+"/Logical/Definition.asset");
+                var refusal=Assert.Throws<System.Reflection.TargetInvocationException>(()=>PersistFixtureDraft(f,root,authored,battle,(_,__)=>Assert.Fail("Duplicate must refuse before callback")));
+                Assert.NotNull(refusal.InnerException);Assert.AreEqual(definitionBefore,DraftFileHash(root+"/Logical/Definition.asset"));
+                Assert.AreEqual(battleBefore,DraftFileHash(AssetDatabase.GetAssetPath(battle)));
+            });
+        }
+        [Test] public void ActualLogicalAssetTransactionThrowRollsBackSavedAssetsAndScope()
+        {
+            WithPersistentDraftTransaction((f,root,authored,battle)=>
+            {
+                string authoredBefore=DraftFileHash(AssetDatabase.GetAssetPath(authored)),battleBefore=DraftFileHash(AssetDatabase.GetAssetPath(battle));
+                var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>PersistFixtureDraft(f,root,authored,battle,
+                    (definition,development)=>AssertPersistedFixtureQueues(authored,battle,definition,f.Index,true)));
+                Assert.IsInstanceOf<InvalidOperationException>(failure.InnerException);
+                Assert.AreEqual("Owned caller fixture validation failure",failure.InnerException.Message,"Rollback must reach the actual in-scope failure, not an earlier guard.");
+                Assert.AreEqual(0,authored.Definitions.Count);
+                Assert.IsNull(AssetDatabase.LoadMainAssetAtPath(root+"/Logical/Definition.asset"));
+                foreach(string path in System.IO.Directory.GetFiles(root+"/Logical","*.asset",System.IO.SearchOption.AllDirectories))
+                    Assert.Fail("Rollback left a logical asset: "+path);
+                Assert.AreEqual(authoredBefore,DraftFileHash(AssetDatabase.GetAssetPath(authored)));
+                Assert.AreEqual(battleBefore,DraftFileHash(AssetDatabase.GetAssetPath(battle)));
+                using var rejected=new World("RolledBackDraftQueue");
+                var config=QuickGameConfig.Defaults;config.ScenarioIndex=f.Index;
+                Assert.IsFalse(SkirmishLaunchProjection.TryQueue(rejected.EntityManager,config));
+                Assert.AreEqual(0,rejected.EntityManager.UniversalQuery.CalculateEntityCount());
+            });
+        }
+        [Test] public void ActualLogicalAssetTransactionPlayableRowRefusesBeforeAnyAsset()
+        {
+            WithPersistentDraftTransaction((f,root,authored,battle)=>
+            {
+                battle.Configure(new[]{Entry(f.Definition,f.Index,true)});EditorUtility.SetDirty(battle);AssetDatabase.SaveAssets();
+                string before=DraftFileHash(AssetDatabase.GetAssetPath(battle));
+                Assert.Throws<System.Reflection.TargetInvocationException>(()=>PersistFixtureDraft(f,root,authored,battle,(_,__)=>Assert.Fail("Must refuse")));
+                Assert.IsFalse(System.IO.Directory.Exists(root+"/Logical"));
+                Assert.AreEqual(0,authored.Definitions.Count);Assert.AreEqual(before,DraftFileHash(AssetDatabase.GetAssetPath(battle)));
+            });
+        }
+        [Test] public void ActualPublicMaterializationRejectsUnreviewedReportBeforePersistence()
+        {
+            string key="WARLINE_ALL120_MATERIALIZATION_REPORT";
+            string previous=Environment.GetEnvironmentVariable(key);
+            var authored=SkirmishExpansionCatalogConfig.Load();var battle=SkirmishBattleCatalogConfig.Load();
+            string ap=AssetDatabase.GetAssetPath(authored),bp=AssetDatabase.GetAssetPath(battle);
+            string ah=DraftFileHash(ap),bh=DraftFileHash(bp);
+            try
+            {
+                Environment.SetEnvironmentVariable(key,null);
+                var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>DraftInvoke("MaterializeReviewedLogicalCandidate",false));
+                Assert.NotNull(failure.InnerException);
+            }
+            finally{Environment.SetEnvironmentVariable(key,previous);}
+            Assert.AreEqual(ah,DraftFileHash(ap));Assert.AreEqual(bh,DraftFileHash(bp));
+            Assert.AreSame(authored,SkirmishExpansionCatalogConfig.Load());Assert.AreSame(battle,SkirmishBattleCatalogConfig.Load());
+        }
+        public static void RunLogicalDraftCallerTransactionControls()
+        {
+            var t=new SkirmishGenericMissionDispatchTests();
+            t.ActualLogicalAssetTransactionPersistsReloadsOnlyDraftAndDuplicateRefuses();
+            t.ActualLogicalAssetTransactionThrowRollsBackSavedAssetsAndScope();
+            t.ActualLogicalAssetTransactionPlayableRowRefusesBeforeAnyAsset();
+            t.ActualPublicMaterializationRejectsUnreviewedReportBeforePersistence();
+            Debug.Log("[LogicalDraftCallerTransactionControls] result=Passed cases=4 persistedTempOnly=1 sourceFitProved=0 publicAdoptionProved=0 publicationChanged=0");
+        }
+
+
+        // Diagnostic collection only: observe installed Unity inline-class lifecycle.
+        // No representation policy, compiler guard, publication or source-fit change.
+        private static Newtonsoft.Json.Linq.JObject ObserveBaInlineAreaStage(string stage,SkirmishScenarioDefinitionConfig definition)
+        {
+            var facts=new Newtonsoft.Json.Linq.JObject{["stage"]=stage,["variants"]=new Newtonsoft.Json.Linq.JArray()};
+            var binding=definition.MissionLogicalBinding;
+            var variants=(Newtonsoft.Json.Linq.JArray)facts["variants"];
+            foreach(var variant in binding.Variants)
+                variants.Add(new Newtonsoft.Json.Linq.JObject{
+                    ["size"]=variant.Size.ToString(),["difficulty"]=variant.Difficulty.ToString(),
+                    ["areasIsNull"]=variant.Areas==null,
+                    ["areasType"]=variant.Areas==null?Newtonsoft.Json.Linq.JValue.CreateNull():new Newtonsoft.Json.Linq.JValue(variant.Areas.GetType().FullName),
+                    ["areasFields"]=variant.Areas==null?Newtonsoft.Json.Linq.JValue.CreateNull():Newtonsoft.Json.Linq.JObject.FromObject(variant.Areas),
+                    ["reviewedAreaLogicalFingerprint"]=variant.ReviewedAreaLogicalFingerprint,
+                    ["reviewedGeometryFingerprint"]=variant.ReviewedGeometryFingerprint,
+                    ["reviewedViewFingerprint"]=variant.ReviewedViewFingerprint});
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error),error);
+            var compiler=new Newtonsoft.Json.Linq.JArray();facts["compiler"]=compiler;
+            foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+            {
+                var row=new Newtonsoft.Json.Linq.JObject{["size"]=size.ToString()};compiler.Add(row);
+                try
+                {
+                    bool accepted=SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,size,155926,
+                        new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out var setup,out var reasons);
+                    row["setupAccepted"]=accepted;row["setupReasons"]=Newtonsoft.Json.Linq.JArray.FromObject(reasons);
+                    if(accepted)
+                    {
+                        row["logicalAccepted"]=SkirmishMissionLogicalBindingProvider.TryCompileForLaunch(definition,setup,out var compiled,out string failure);
+                        row["logicalError"]=failure;row["compiledAreasNull"]=compiled==null?Newtonsoft.Json.Linq.JValue.CreateNull():new Newtonsoft.Json.Linq.JValue(compiled.Areas==null);
+                    }
+                }
+                catch(Exception failure){row["exceptionType"]=failure.GetType().FullName;row["exceptionMessage"]=failure.Message;}
+            }
+            facts["areasNullAfterCompiler"]=new Newtonsoft.Json.Linq.JArray(System.Linq.Enumerable.Select(binding.Variants,v=>v.Areas==null));
+            return facts;
+        }
+        public static void RunBaInlineAreaSerializationCharacterization()
+        {
+            const string key="WARLINE_BA_INLINE_AREAS_CHARACTERIZATION_OUTPUT";
+            string output=Environment.GetEnvironmentVariable(key);
+            Assert.IsTrue(!string.IsNullOrEmpty(output)&&System.IO.Path.IsPathRooted(output),"Fresh absolute diagnostic output required");
+            output=System.IO.Path.GetFullPath(output);
+            string logs=System.IO.Path.GetFullPath("Logs")+System.IO.Path.DirectorySeparatorChar;
+            Assert.IsTrue(output.StartsWith(logs,StringComparison.OrdinalIgnoreCase)&&!System.IO.File.Exists(output),"Fresh output beneath actual Logs required");
+            for(string ancestor=output;!string.IsNullOrEmpty(ancestor);ancestor=System.IO.Path.GetDirectoryName(ancestor))
+            {
+                System.IO.FileAttributes attributes;
+                try{attributes=System.IO.File.GetAttributes(ancestor);}
+                catch(System.IO.FileNotFoundException){continue;}
+                catch(System.IO.DirectoryNotFoundException){continue;}
+                Assert.IsFalse((attributes&System.IO.FileAttributes.ReparsePoint)!=0,"Diagnostic output reparse refused");
+            }
+            var mainAuthored=SkirmishExpansionCatalogConfig.Load();var mainBattle=SkirmishBattleCatalogConfig.Load();
+            string ap=AssetDatabase.GetAssetPath(mainAuthored),bp=AssetDatabase.GetAssetPath(mainBattle);
+            string ah=DraftFileHash(ap),bh=DraftFileHash(bp);
+            var publication=mainAuthored.ToAuthoredSet().Publication;
+            string pp=AssetDatabase.GetAssetPath(publication),ph=DraftFileHash(pp);
+            var defaultWorld=World.DefaultGameObjectInjectionWorld;
+            foreach(var asset in Resources.FindObjectsOfTypeAll<ScriptableObject>())
+                if(AssetDatabase.Contains(asset))Assert.IsFalse(EditorUtility.IsDirty(asset),"Refuse SaveAssets with unrelated dirty object");
+            string name="__BaInlineAreaCharacterization_"+Guid.NewGuid().ToString("N"),root="Assets/"+name;
+            Assert.IsFalse(AssetDatabase.IsValidFolder(root));
+            var owned=new List<UnityEngine.Object>();bool rootOwned=false;
+            var report=new Newtonsoft.Json.Linq.JObject{["schema_version"]=1,["scope"]="InstalledUnityBaInlineAreasCharacterization",
+                ["unityVersion"]=Application.unityVersion,["representationPolicyChanged"]=false,["sourceFitCertified"]=false,["missionAccepted"]=false};
+            var stages=new Newtonsoft.Json.Linq.JArray();report["stages"]=stages;
+            var fixture=new Fixture(published:false,activateScopes:false);
+            Exception lifecycleFailure=null;
+            try
+            {
+                Assert.AreEqual(SkirmishObjectiveKind.BaseAssault,fixture.Definition.ObjectiveConfig.Kind);
+                stages.Add(ObserveBaInlineAreaStage("OriginalFactory",fixture.Definition));
+                var original=fixture.Definition.MissionLogicalBinding.Variants[0];
+                var variants=new List<SkirmishMissionLogicalVariant>();
+                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                {
+                    var variant=JsonUtility.FromJson<SkirmishMissionLogicalVariant>(JsonUtility.ToJson(original));
+                    variant.View=original.View;variant.Size=size;
+                    variant.ReviewedViewFingerprint=SkirmishMissionLogicalBindingCompiler.ViewFingerprint(variant);variants.Add(variant);
+                }
+                fixture.Definition.MissionLogicalBinding.Variants=variants.ToArray();
+                stages.Add(ObserveBaInlineAreaStage("JsonCloneBeforeNullReset",fixture.Definition));
+                foreach(var variant in variants)if(original.Areas==null)variant.Areas=null;
+                stages.Add(ObserveBaInlineAreaStage("JsonCloneAfterNullReset",fixture.Definition));
+                AssetDatabase.CreateFolder("Assets",name);rootOwned=AssetDatabase.IsValidFolder(root);
+                Assert.IsTrue(rootOwned);
+                var fixtureAuthored=UnityEngine.Object.Instantiate(fixture.Authored);owned.Add(fixtureAuthored);
+                var fixtureLibrary=UnityEngine.Object.Instantiate(fixture.Library);owned.Add(fixtureLibrary);
+                var fixtureFields=new SerializedObject(fixtureAuthored);
+                fixtureFields.FindProperty("definitions").arraySize=0;fixtureFields.ApplyModifiedPropertiesWithoutUndo();
+                AssetDatabase.CreateAsset(fixtureAuthored,root+"/Authored.asset");AssetDatabase.CreateAsset(fixtureLibrary,root+"/Battle.asset");
+                AssetDatabase.SaveAssets();
+                stages.Add(ObserveBaInlineAreaStage("FixtureCatalogSaveAssets",fixture.Definition));
+                var definition=UnityEngine.Object.Instantiate(fixture.Definition);owned.Add(definition);
+                var layout=UnityEngine.Object.Instantiate(fixture.Definition.MapLayout);owned.Add(layout);
+                var objective=UnityEngine.Object.Instantiate(fixture.Definition.ObjectiveConfig);owned.Add(objective);
+                var binding=UnityEngine.Object.Instantiate(fixture.Definition.MissionLogicalBinding);owned.Add(binding);
+                definition.BindMissionLogicalBinding(binding);
+                stages.Add(ObserveBaInlineAreaStage("InstantiateBeforeNullReset",definition));
+                for(int i=0;i<binding.Variants.Length;i++)
+                    if(fixture.Definition.MissionLogicalBinding.Variants[i].Areas==null)binding.Variants[i].Areas=null;
+                stages.Add(ObserveBaInlineAreaStage("InstantiateAfterNullReset",definition));
+                var fields=new SerializedObject(definition);
+                fields.FindProperty("mapLayout").objectReferenceValue=layout;
+                fields.FindProperty("objectiveConfig").objectReferenceValue=objective;
+                fields.FindProperty("missionLogicalBinding").objectReferenceValue=binding;
+                fields.ApplyModifiedPropertiesWithoutUndo();
+                stages.Add(ObserveBaInlineAreaStage("SerializedObjectApply",definition));
+                AssetDatabase.CreateAsset(layout,root+"/Layout.asset");AssetDatabase.CreateAsset(objective,root+"/Objective.asset");
+                foreach(var variant in binding.Variants)
+                {
+                    var view=UnityEngine.Object.Instantiate(variant.View);owned.Add(view);variant.View=view;
+                    AssetDatabase.CreateAsset(view,root+"/View_"+variant.Size+".asset");
+                }
+                string bindingPath=root+"/Binding.asset",definitionPath=root+"/Definition.asset";
+                AssetDatabase.CreateAsset(binding,bindingPath);AssetDatabase.CreateAsset(definition,definitionPath);
+                stages.Add(ObserveBaInlineAreaStage("CreateAssets",definition));
+                EditorUtility.SetDirty(binding);EditorUtility.SetDirty(definition);AssetDatabase.SaveAssets();
+                stages.Add(ObserveBaInlineAreaStage("SaveAssets",definition));
+                report["savedBindingSha256"]=DraftFileHash(bindingPath);report["savedDefinitionSha256"]=DraftFileHash(definitionPath);
+                AssetDatabase.ImportAsset(bindingPath,ImportAssetOptions.ForceUpdate);
+                AssetDatabase.ImportAsset(definitionPath,ImportAssetOptions.ForceUpdate);
+                stages.Add(ObserveBaInlineAreaStage("ImportAssets",definition));
+                Resources.UnloadAsset(definition);Resources.UnloadAsset(binding);
+                var reloaded=AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>(definitionPath);
+                Assert.NotNull(reloaded);Assert.IsTrue(AssetDatabase.Contains(reloaded));
+                Assert.AreEqual(bindingPath,AssetDatabase.GetAssetPath(reloaded.MissionLogicalBinding));
+                stages.Add(ObserveBaInlineAreaStage("ForcedReload",reloaded));
+                Assert.AreEqual(11,stages.Count);
+            }
+            catch(Exception failure){lifecycleFailure=failure;report["lifecycleFailure"]=failure.ToString();}
+            finally
+            {
+                if(rootOwned)
+                {
+                    string full=System.IO.Path.GetFullPath(root),assets=System.IO.Path.GetFullPath("Assets")+System.IO.Path.DirectorySeparatorChar;
+                    Assert.IsTrue(full.StartsWith(assets,StringComparison.OrdinalIgnoreCase)&&System.IO.Path.GetFileName(full)==name);
+                    var pending=new Stack<string>();pending.Push(full);
+                    while(pending.Count>0)
+                    {
+                        string directory=pending.Pop();
+                        Assert.IsFalse((System.IO.File.GetAttributes(directory)&System.IO.FileAttributes.ReparsePoint)!=0);
+                        foreach(string path in System.IO.Directory.EnumerateFileSystemEntries(directory))
+                        {
+                            var attributes=System.IO.File.GetAttributes(path);
+                            Assert.IsFalse((attributes&System.IO.FileAttributes.ReparsePoint)!=0,"Preserve reparse fixture for investigation");
+                            if((attributes&System.IO.FileAttributes.Directory)!=0)pending.Push(path);
+                        }
+                    }
+                    Assert.IsTrue(AssetDatabase.DeleteAsset(root));Assert.IsFalse(System.IO.Directory.Exists(root));
+                    Assert.IsFalse(System.IO.File.Exists(root+".meta"));
+                }
+                foreach(var value in owned)if(value!=null&&!AssetDatabase.Contains(value))UnityEngine.Object.DestroyImmediate(value);
+                fixture.Dispose();
+                Assert.AreSame(mainAuthored,SkirmishExpansionCatalogConfig.Load());Assert.AreSame(mainBattle,SkirmishBattleCatalogConfig.Load());
+                Assert.AreSame(defaultWorld,World.DefaultGameObjectInjectionWorld);
+                Assert.AreEqual(ah,DraftFileHash(ap));Assert.AreEqual(bh,DraftFileHash(bp));Assert.AreEqual(ph,DraftFileHash(pp));
+                Assert.AreSame(publication,mainAuthored.ToAuthoredSet().Publication);
+                Assert.IsFalse(EditorUtility.IsDirty(mainAuthored));Assert.IsFalse(EditorUtility.IsDirty(mainBattle));
+            }
+            report["cleanupCompleted"]=true;report["allStagesObserved"]=stages.Count==11&&lifecycleFailure==null;
+            using(var file=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+            using(var writer=new System.IO.StreamWriter(file,new System.Text.UTF8Encoding(false)))writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented));
+            if(lifecycleFailure!=null)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(lifecycleFailure).Throw();
+            Debug.Log("[BaInlineAreaSerializationCharacterization] result=Collected stages=11 sizeChecks=33 guardUnchanged=1 sourceFitCertified=0 missionReady=0");
+        }
+
+        private static void AssertManagedAreaFixtureCompiles(SkirmishScenarioDefinitionConfig definition)
+        {
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error),error);
+            Assert.IsTrue(SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,104729,
+                new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out var setup,out var reasons),string.Join(";",reasons));
+            Assert.IsTrue(SkirmishMissionLogicalBindingProvider.TryCompileForLaunch(definition,setup,out _,out error),error);
+        }
+        private static void DeleteManagedAreaFixture(string root,string name)
+        {
+            string full=System.IO.Path.GetFullPath(root),assets=System.IO.Path.GetFullPath("Assets")+System.IO.Path.DirectorySeparatorChar;
+            Assert.IsTrue(full.StartsWith(assets,StringComparison.OrdinalIgnoreCase)&&System.IO.Path.GetFileName(full)==name);
+            var pending=new Stack<string>();pending.Push(full);
+            while(pending.Count>0)
+            {
+                string directory=pending.Pop();
+                Assert.IsFalse((System.IO.File.GetAttributes(directory)&System.IO.FileAttributes.ReparsePoint)!=0);
+                foreach(string path in System.IO.Directory.EnumerateFileSystemEntries(directory))
+                {
+                    var attributes=System.IO.File.GetAttributes(path);
+                    Assert.IsFalse((attributes&System.IO.FileAttributes.ReparsePoint)!=0);
+                    if((attributes&System.IO.FileAttributes.Directory)!=0)pending.Push(path);
+                }
+            }
+            Assert.IsTrue(AssetDatabase.DeleteAsset(root));Assert.IsFalse(System.IO.Directory.Exists(root));
+            Assert.IsFalse(System.IO.File.Exists(root+".meta"));
+        }
+        private static int RunNonBaManagedAreaRoundtripControls()
+        {
+            int controls=0;
+            SkirmishMissionLogicalBindingNativeTestFixture.WithActiveFrontline((em,session)=>
+            {
+                Assert.IsTrue(SkirmishExpansionCatalogConfig.Load().TryGetDefinition("S031",out var definition));
+                var original=definition.MissionLogicalBinding;Assert.AreEqual(1,original.Variants.Length);
+                var area=original.Variants[0].Areas;Assert.NotNull(area);
+                string expected=JsonUtility.ToJson(area),fingerprint=original.Variants[0].ReviewedAreaLogicalFingerprint;
+                string geometry=original.Variants[0].ReviewedGeometryFingerprint;
+                var decoded=(SkirmishObjectiveAreaConfig)DraftInvoke("ReadAll120LogicalAreas",Newtonsoft.Json.Linq.JObject.Parse(expected));
+                Assert.AreEqual(expected,JsonUtility.ToJson(decoded));controls++;
+                var clone=UnityEngine.Object.Instantiate(original);
+                string name="__ManagedAreaRoundtrip_"+Guid.NewGuid().ToString("N"),root="Assets/"+name;
+                SkirmishMissionViewProfile view=null;bool rootOwned=false;
+                try
+                {
+                    Assert.NotNull(clone.Variants[0].Areas);Assert.AreNotSame(area,clone.Variants[0].Areas);Assert.AreEqual(expected,JsonUtility.ToJson(clone.Variants[0].Areas));
+                    Assert.AreEqual(fingerprint,clone.Variants[0].ReviewedAreaLogicalFingerprint);Assert.AreEqual(geometry,clone.Variants[0].ReviewedGeometryFingerprint);
+                    clone.Variants[0].Areas=decoded;definition.BindMissionLogicalBinding(clone);
+                    AssertManagedAreaFixtureCompiles(definition);controls++;
+                    var fields=new SerializedObject(definition);fields.FindProperty("missionLogicalBinding").objectReferenceValue=clone;
+                    fields.ApplyModifiedPropertiesWithoutUndo();AssertManagedAreaFixtureCompiles(definition);
+                    Assert.AreEqual(expected,JsonUtility.ToJson(clone.Variants[0].Areas));controls++;
+                    foreach(var asset in Resources.FindObjectsOfTypeAll<ScriptableObject>())
+                        if(AssetDatabase.Contains(asset))Assert.IsFalse(EditorUtility.IsDirty(asset),"Refuse SaveAssets with unrelated dirty object");
+                    Assert.IsFalse(AssetDatabase.IsValidFolder(root));AssetDatabase.CreateFolder("Assets",name);rootOwned=AssetDatabase.IsValidFolder(root);Assert.IsTrue(rootOwned);
+                    view=UnityEngine.Object.Instantiate(clone.Variants[0].View);clone.Variants[0].View=view;
+                    AssetDatabase.CreateAsset(view,root+"/View.asset");string path=root+"/Binding.asset";
+                    AssetDatabase.CreateAsset(clone,path);EditorUtility.SetDirty(clone);AssetDatabase.SaveAssets();
+                    Assert.AreEqual(expected,JsonUtility.ToJson(clone.Variants[0].Areas));
+                    AssetDatabase.ImportAsset(path,ImportAssetOptions.ForceUpdate);
+                    definition.BindMissionLogicalBinding(original);Resources.UnloadAsset(clone);
+                    clone=AssetDatabase.LoadAssetAtPath<SkirmishMissionLogicalBindingConfig>(path);Assert.NotNull(clone);
+                    Assert.AreEqual(expected,JsonUtility.ToJson(clone.Variants[0].Areas));
+                    Assert.AreEqual(fingerprint,clone.Variants[0].ReviewedAreaLogicalFingerprint);Assert.AreEqual(geometry,clone.Variants[0].ReviewedGeometryFingerprint);
+                    definition.BindMissionLogicalBinding(clone);AssertManagedAreaFixtureCompiles(definition);controls++;
+                }
+                finally
+                {
+                    definition.BindMissionLogicalBinding(original);
+                    if(rootOwned)DeleteManagedAreaFixture(root,name);
+                    if(clone!=null&&!AssetDatabase.Contains(clone))UnityEngine.Object.DestroyImmediate(clone);
+                    if(view!=null&&!AssetDatabase.Contains(view))UnityEngine.Object.DestroyImmediate(view);
+                }
+            });
+            return controls;
+        }
+        private static int RunBaManagedAreaStrictRefusals()
+        {
+            using var fixture=new Fixture(published:false,activateScopes:false);
+            var definition=fixture.Definition;var variant=definition.MissionLogicalBinding.Variants[0];
+            Assert.IsNull(variant.Areas);AssertManagedAreaFixtureCompiles(definition);
+            var changes=new List<Action<SkirmishObjectiveAreaConfig>>{
+                a=>{},a=>a.SchemaVersion=2,a=>a.AreaSetId="unreviewed",a=>a.ObjectiveKind=SkirmishObjectiveKind.FrontlineControl,
+                a=>a.Binding.DefinitionId="x",a=>a.Binding.SourceConfigId="x",a=>a.Binding.SourceAssetGuid="x",
+                a=>a.Binding.SourceContentHash="x",a=>a.Binding.SourceSemanticFingerprint="x",a=>a.Binding.LayoutId="x",
+                a=>a.Binding.LayoutBindingFingerprint="x",a=>a.Binding.SourceMinX=1,a=>a.Binding.SourceMinZ=1,
+                a=>a.Binding.SourceMaxX=1,a=>a.Binding.SourceMaxZ=1,a=>a.Areas=new[]{new SkirmishObjectiveArea()},
+                a=>a.Measurement.ArtifactId="x",a=>a.Measurement.ArtifactSha256="x",a=>a.Measurement.GeometryFingerprint="x",
+                a=>a.SchemaVersion=0,a=>a.Binding.SourceMinX=float.NaN};
+            int controls=0;
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error),error);
+            void Refuses()
+            {
+                Assert.IsFalse(SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,104729,
+                    new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out _,out var reasons));
+                Assert.IsTrue(System.Linq.Enumerable.Any(reasons,r=>r.Detail=="Generic BA view binding must not invent non-BA typed areas."));
+                controls++;
+            }
+            foreach(var change in changes){variant.Areas=new SkirmishObjectiveAreaConfig();change(variant.Areas);Refuses();}
+            variant.Areas=null;variant.ReviewedAreaLogicalFingerprint=new string('a',64);Refuses();variant.ReviewedAreaLogicalFingerprint=null;
+            variant.ReviewedGeometryFingerprint=new string('b',64);Refuses();variant.ReviewedGeometryFingerprint=null;
+            Assert.IsNull(variant.Areas);AssertManagedAreaFixtureCompiles(definition);Assert.AreEqual(23,controls);return controls;
+        }
+        public static void RunBaManagedAreaSerializationValidation()
+        {
+            // No pre-existing inline binding asset may silently become a managed-reference asset.
+            Assert.AreEqual(0,AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig").Length,
+                "Existing binding assets require separately reviewed migration before this repair");
+            var authoredBefore=SkirmishExpansionCatalogConfig.Load();var battleBefore=SkirmishBattleCatalogConfig.Load();
+            var defaultBefore=World.DefaultGameObjectInjectionWorld;
+            string authoredPath=AssetDatabase.GetAssetPath(authoredBefore),battlePath=AssetDatabase.GetAssetPath(battleBefore);
+            string authoredHash=DraftFileHash(authoredPath),battleHash=DraftFileHash(battlePath);
+            RunBaInlineAreaSerializationCharacterization();
+            string output=Environment.GetEnvironmentVariable("WARLINE_BA_INLINE_AREAS_CHARACTERIZATION_OUTPUT");
+            var report=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(output));
+            Assert.IsTrue((bool)report["cleanupCompleted"]&&(bool)report["allStagesObserved"]);
+            var stages=(Newtonsoft.Json.Linq.JArray)report["stages"];Assert.AreEqual(11,stages.Count);
+            foreach(Newtonsoft.Json.Linq.JObject stage in stages)
+            {
+                string phase=(string)stage["stage"];
+                foreach(Newtonsoft.Json.Linq.JObject variant in stage["variants"])
+                    if(phase!="JsonCloneBeforeNullReset")Assert.IsTrue((bool)variant["areasIsNull"],phase);
+                foreach(Newtonsoft.Json.Linq.JObject row in stage["compiler"])
+                {
+                    if(phase=="OriginalFactory"&&(string)row["size"]!="Standard")continue;
+                    if(phase=="JsonCloneBeforeNullReset"&&System.Linq.Enumerable.Any(stage["variants"],v=>(bool)v["areasIsNull"]==false))
+                    {Assert.IsFalse((bool)row["setupAccepted"]);continue;}
+                    Assert.IsTrue((bool)row["setupAccepted"]&&(bool)row["logicalAccepted"]&&(bool)row["compiledAreasNull"],phase);
+                }
+            }
+            Assert.IsNull(DraftInvoke("ReadAll120LogicalAreas",new object[]{null}));
+            Assert.IsNull(DraftInvoke("ReadAll120LogicalAreas",Newtonsoft.Json.Linq.JValue.CreateNull()));
+            foreach(Newtonsoft.Json.Linq.JToken invalid in new Newtonsoft.Json.Linq.JToken[]{new Newtonsoft.Json.Linq.JArray(),new Newtonsoft.Json.Linq.JValue("not an area object")})
+            {
+                var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>DraftInvoke("ReadAll120LogicalAreas",invalid));
+                Assert.IsInstanceOf<InvalidOperationException>(failure.InnerException);
+            }
+            Assert.AreEqual(4,RunNonBaManagedAreaRoundtripControls());Assert.AreEqual(23,RunBaManagedAreaStrictRefusals());
+            Assert.AreEqual(0,AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig").Length);
+            Assert.AreSame(authoredBefore,SkirmishExpansionCatalogConfig.Load());Assert.AreSame(battleBefore,SkirmishBattleCatalogConfig.Load());
+            Assert.AreSame(defaultBefore,World.DefaultGameObjectInjectionWorld);
+            Assert.AreEqual(authoredHash,DraftFileHash(authoredPath));Assert.AreEqual(battleHash,DraftFileHash(battlePath));
+            Debug.Log("[BaManagedAreaSerializationControls] result=Passed baPhases=11 nonBaRoundtrips=4 strictRefusals=23 reportReaders=4 sourceFitCertified=0 missionReady=0");
+        }
+
+        public static void RunBaManagedAreaMaterializationFocusedValidation()
+        {
+            RunBaManagedAreaSerializationValidation();
+            RunLogicalDraftCallerTransactionControls();
+            Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedDurableMissionSerializationControls();
+            Game.Editor.SkirmishGroundSourceFitSurvey.RunRefinementHullRoundtripControls();
+            Debug.Log("[BaManagedAreaMaterializationFocusedControls] result=Passed baPhases=11 nonBaRoundtrips=4 strictRefusals=23 reportReaders=4 callerTransactions=4 serialization=8 hull=12 sourceFitCertified=0 missionReady=0");
+        }
+
         public static void RunFocusedValidation()
         {
             var t=new SkirmishGenericMissionDispatchTests();

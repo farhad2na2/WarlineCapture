@@ -15,7 +15,7 @@ namespace Game.Editor
     public static partial class SkirmishGroundSourceFitSurvey
     {
         const string AirCombined80Inputs="Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json";
-        const string AirCombined80InputsSha="30f34d3dcf1fc71eb3c3c366d7008187ee65c17df0baaf6b190be4f885af0e5c";
+        const string AirCombined80InputsSha="2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401";
 
         public sealed class AirCombined80CandidateOwner:IDisposable
         {
@@ -39,7 +39,7 @@ namespace Game.Editor
             foreach(JObject pin in comparable["requirement_source_pins"])
             {
                 string key=(string)pin["path"];
-                if(key=="Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs"||key=="Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs")
+                if(key=="Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs"||key=="Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs"||key=="Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs")
                     pin["sha256"]=((JArray)originalAuthority["requirement_source_pins"]).OfType<JObject>().Single(p=>(string)p["path"]==key)["sha256"].DeepClone();
             }
             Require(JToken.DeepEquals(comparable,originalAuthority),"A/C80 successor may change only declared source authority; all mission content must remain identical");
@@ -69,19 +69,22 @@ namespace Game.Editor
             return document;
         }
 
-        static JObject RequireExactAirCombined80Row(JObject mission,out JObject document)
+        static JObject RequireExactAirCombined80Row(JObject mission,Func<JObject> observeEnvelope,out JObject document)
         {
-            document=ReadAirCombined80Envelope();
+            document=observeEnvelope();
             var rows=((JArray)document["missions"]).OfType<JObject>().Where(v=>(string)v["catalog_id"]==(string)mission?["catalog_id"]).ToArray();
             Require(rows.Length==1&&JToken.DeepEquals(rows[0],mission),"Exact immutable A/C80 row required");return rows[0];
         }
 
         public static bool TryReadAirCombined80ProtectedRecord(JObject mission,out JObject record,out string error)
+            =>TryReadAirCombined80ProtectedRecordCore(mission,ReadAirCombined80Envelope,out record,out error);
+
+        static bool TryReadAirCombined80ProtectedRecordCore(JObject mission,Func<JObject> observeEnvelope,out JObject record,out string error)
         {
             record=null;error=null;
             try
             {
-                RequireExactAirCombined80Row(mission,out _);var binding=(JObject)mission["protected_binding"];
+                RequireExactAirCombined80Row(mission,observeEnvelope,out _);var binding=(JObject)mission["protected_binding"];
                 Require(binding!=null&&(string)mission["action"]=="PreserveCodedBinding_ReadOnlyNativeCensus"&&
                     mission["family_source_candidate_key"].Type==JTokenType.Null&&mission["ground_template_catalog_id"].Type==JTokenType.Null,
                     "Protected coded binding cannot be replaced by a family template");
@@ -99,11 +102,14 @@ namespace Game.Editor
         }
 
         public static bool TryCreateAirCombined80Candidate(JObject mission,OperationMapDefinition source,out AirCombined80CandidateOwner owner,out string error)
+            =>TryCreateAirCombined80CandidateCore(mission,source,ReadAirCombined80Envelope,out owner,out error);
+
+        static bool TryCreateAirCombined80CandidateCore(JObject mission,OperationMapDefinition source,Func<JObject> observeEnvelope,out AirCombined80CandidateOwner owner,out string error)
         {
             owner=null;error=null;var created=new AirCombined80CandidateOwner();
             try
             {
-                RequireExactAirCombined80Row(mission,out var envelope);
+                RequireExactAirCombined80Row(mission,observeEnvelope,out var envelope);
                 Require(mission["protected_binding"].Type==JTokenType.Null&&(string)mission["action"]=="DisposableGenericAuthoringCandidate","Coded A/C binding is read-only, not a generic candidate");
                 var ground=ReadGround30Envelope();var templateRows=((JArray)ground["missions"]).OfType<JObject>().Where(v=>(string)v["catalog_id"]==(string)mission["ground_template_catalog_id"]).ToArray();
                 Require(templateRows.Length==1,"Exact existing ground authoring template required");var template=templateRows[0];
@@ -225,19 +231,21 @@ namespace Game.Editor
             var envelope=ReadAirCombined80Envelope();var census=CaptureMaterializationWorldCensus();var oldDefault=World.DefaultGameObjectInjectionWorld;
             int scenes=UnityEngine.SceneManagement.SceneManager.sceneCount,previews=UnityEditor.SceneManagement.EditorSceneManager.previewSceneCount;
             int candidates=0,preserved=0,negative=0;
+            string immutableEnvelope=envelope.ToString(Newtonsoft.Json.Formatting.None);
+            Func<JObject> observedEnvelope=()=>envelope;
             foreach(JObject mission in envelope["missions"])
             {
                 bool protection=mission["protected_binding"].Type!=JTokenType.Null;OperationMapDefinition source=null;
                 if(protection)
                 {
-                    Require(TryReadAirCombined80ProtectedRecord(mission,out var record,out string error),error);
+                    Require(TryReadAirCombined80ProtectedRecordCore(mission,observedEnvelope,out var record,out string error),error);
                     Require((bool?)record["familySourceApplied"]==false&&(bool?)record["nativeSourceIdentityMeasured"]==false,"Protected source census cannot be invented");preserved++;
                 }
                 else
                 {
                     string group=(string)mission["family_source_candidate_key"];
                     source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)envelope["source_candidates"][group]["sourcePath"]);
-                    Require(TryCreateAirCombined80Candidate(mission,source,out var owner,out string error),error);
+                    Require(TryCreateAirCombined80CandidateCore(mission,source,observedEnvelope,out var owner,out string error),error);
                     using(owner)
                     {
                         Require(owner.Definition.CatalogId==(string)mission["catalog_id"]&&owner.Definition.CampaignMap==source&&
@@ -254,14 +262,37 @@ namespace Game.Editor
                 }
                 var corrupted=(JObject)mission.DeepClone();corrupted["canonical_size_rows"][0]["player_rifle"]="999";
                 bool accepted;string failed;
-                if(protection)accepted=TryReadAirCombined80ProtectedRecord(corrupted,out _,out failed);
-                else{accepted=TryCreateAirCombined80Candidate(corrupted,source,out var rejected,out failed);rejected?.Dispose();}
+                if(protection)accepted=TryReadAirCombined80ProtectedRecordCore(corrupted,observedEnvelope,out _,out failed);
+                else{accepted=TryCreateAirCombined80CandidateCore(corrupted,source,observedEnvelope,out var rejected,out failed);rejected?.Dispose();}
                 Require(!accepted&&failed!=null&&failed.Contains("Exact immutable A/C80 row required"),"Mutated budget must reject at exact row join, not a later unavailable source");negative++;
             }
+            Require(immutableEnvelope==envelope.ToString(Newtonsoft.Json.Formatting.None)&&JToken.DeepEquals(envelope,ReadAirCombined80Envelope()),"Control envelope unchanged and fresh complete final observation required");
+            RunAirCombined80FreshWrapperControls(envelope);
             Require(candidates==77&&preserved==3&&negative==80&&census.SequenceEqual(CaptureMaterializationWorldCensus())&&
                 ReferenceEquals(oldDefault,World.DefaultGameObjectInjectionWorld)&&scenes==UnityEngine.SceneManagement.SceneManager.sceneCount&&previews==UnityEditor.SceneManagement.EditorSceneManager.previewSceneCount,
                 "All A/C candidates/protected/negative rows and native ownership must remain exact");
             Debug.Log("[SkirmishAirCombined80Authoring] result=Passed candidates=77 protectedReadOnly=3 negativeControls=80 streamingWorldsCreated=0 sourceFitCertified=0");
+        }
+
+        // Four actual public-call observations prove this optimization is control-only.
+        static void RunAirCombined80FreshWrapperControls(JObject envelope)
+        {
+            var rows=((JArray)envelope["missions"]).OfType<JObject>().ToArray();
+            var generic=rows.First(m=>m["protected_binding"].Type==JTokenType.Null);
+            var protectedRow=rows.First(m=>m["protected_binding"].Type!=JTokenType.Null);
+            string group=(string)generic["family_source_candidate_key"];
+            var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)envelope["source_candidates"][group]["sourcePath"]);
+            Require(TryCreateAirCombined80Candidate(generic,source,out var created,out string error),error);
+            using(created)Require(created.Definition.CatalogId==(string)generic["catalog_id"],"Actual fresh public generic identity");
+            var corrupt=(JObject)generic.DeepClone();corrupt["canonical_size_rows"][0]["player_rifle"]="999";
+            bool accepted=TryCreateAirCombined80Candidate(corrupt,source,out var refused,out error);refused?.Dispose();
+            Require(!accepted&&error!=null&&error.Contains("Exact immutable A/C80 row required"),"Fresh public generic mutation refuses");
+            Require(TryReadAirCombined80ProtectedRecord(protectedRow,out var record,out error)&&
+                (bool?)record["familySourceApplied"]==false&& (bool?)record["nativeSourceIdentityMeasured"]==false,error);
+            corrupt=(JObject)protectedRow.DeepClone();corrupt["canonical_size_rows"][0]["player_rifle"]="999";
+            Require(!TryReadAirCombined80ProtectedRecord(corrupt,out _,out error)&&error!=null&&error.Contains("Exact immutable A/C80 row required"),
+                "Fresh public protected mutation refuses");
+            Debug.Log("[AirCombined80FreshWrapperControls] result=Passed controls=4 publicFreshEnvelopeReads=4 crossRunCache=0 nativeSourceFit=Pending");
         }
     }
 }

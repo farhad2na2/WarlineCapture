@@ -10,7 +10,7 @@ sys.path[:0]=[str(HERE),str(ROOT/"Tools/CI")]
 from skirmish_native_identity import sha256,content_identity
 from skirmish_production_queue import fingerprint
 import skirmish_profile_journal_admission as profile_admission
-assert Path(profile_admission.__file__).resolve()==(ROOT/"Tools/CI/skirmish_profile_journal_admission.py").resolve(), "Actual Tools consumer required"
+assert Path(profile_admission.__file__).resolve()==(HERE/"skirmish_profile_journal_admission.py").resolve(), "Adjacent production/proposed consumer required"
 from skirmish_profile_journal_admission import validate_profile_journal
 
 class ProfileControls(unittest.TestCase):
@@ -165,5 +165,69 @@ class ScopedControls(unittest.TestCase):
   value['excluded_non_save_entries']=[{'name':None,'kind':None}];value['total_directory_entries']=[None]
   with self.assertRaises(ValueError):profile_admission.snapshot(value,'S005','original')
  def test_failed_attempt_never_rehabilitated(self):self.old.events[3]['kind']='ProfileJournalFailure';self.check()
+
+class V3(unittest.TestCase):
+ def setUp(self):
+  self.fixture=ScopedControls();self.fixture.setUp()
+  for kind in ['ProfileBeforeDispatch','ProfileBeforeRestore','ProfileAfterRestore']:
+   stage=self.fixture.old.facts(kind);stage['journal_version']=3
+   stage['original']['namespace_scope']='OriginalCanonicalCatalogSaveFiles_KnownEngineSiblingsExcluded'
+ def snap(self,stage='ProfileAfterRestore',scope='original'):return self.fixture.old.facts(stage)[scope]
+ def check(self,passed=False):
+  result=profile_admission.validate_profile_journal(self.fixture.old.job,self.fixture.old.claim,self.fixture.old.events)
+  self.assertEqual(passed,result['profile_restored'],result)
+  self.assertFalse(result['qualified']);self.assertFalse(result['queue_success_enabled'])
+ def add(self,stage='ProfileAfterRestore',scope='original',id='s002',suffix='',hash='b'*64):
+  snap=self.snap(stage,scope);stem='skirmish-'+id+'-native.json'
+  snap['files'] += [dict(name=stem+s,exists=s==suffix,length=4 if s==suffix else 0,sha256=hash if s==suffix else None) for s in ('','.tmp','.bak','.lock')]
+  snap['directory_entries']=sorted(snap['directory_entries']+[stem+suffix]);snap['total_directory_entries']=sorted(snap['total_directory_entries']+[stem+suffix]);snap['observed_bytes']+=4
+ def all_foreign(self,id='s002',suffix=''):
+  for stage in ['ProfileBeforeDispatch','ProfileBeforeRestore','ProfileAfterRestore']:self.add(stage,id=id,suffix=suffix)
+ def test_v3_no_foreign(self):self.check(True)
+ def test_all_three_foreign_preserved(self):self.all_foreign();self.check(True)
+ def test_foreign_tmp_only_measures_sibling_absence(self):self.all_foreign(suffix='.tmp');self.check(True)
+ def test_same_size_foreign_mutation(self):
+  self.all_foreign();self.snap()['files'][-4]['sha256']='c'*64;self.check()
+ def test_foreign_added(self):self.add();self.check()
+ def test_foreign_removed(self):
+  self.all_foreign();self.snap()['files']=self.snap()['files'][:-4];self.check()
+ def test_missing_absence_group(self):
+  self.all_foreign();self.snap()['files'].pop();self.check()
+ def test_foreign_in_owned_is_still_refused(self):
+  self.add(scope='owned');self.check()
+ def test_noncanonical_ids_case_and_suffix(self):
+  for name in ['skirmish-s000-native.json','skirmish-s121-native.json','skirmish-S002-native.json','skirmish-s002-native.json.extra','other.json']:
+   with self.subTest(name=name):
+    self.setUp()
+    for stage in ['ProfileBeforeDispatch','ProfileBeforeRestore','ProfileAfterRestore']:
+     self.add(stage);snap=self.snap(stage);snap['files'][-4]['name']=name
+     snap['directory_entries']=sorted(['profile.json',name]);snap['total_directory_entries']=sorted(['TestResults.xml','Unity','profile.json',name])
+    self.check()
+ def test_all120_catalog_ids_are_finite_save_grammar(self):
+  for i in range(1,121):
+   if i==5:continue
+   with self.subTest(id=i):
+    self.setUp();self.all_foreign('s'+str(i).zfill(3));self.check(True)
+ def test_forged_caller_catalog_allowlist_refused(self):
+  self.all_foreign();self.snap()['allowed_catalogs']=['S999'];self.check()
+ def test_cross_namespace_scope_on_owned_refused(self):
+  self.snap(scope='owned')['namespace_scope']='OriginalCanonicalCatalogSaveFiles_KnownEngineSiblingsExcluded';self.check()
+ def test_original_scope_version_mismatch_refused(self):
+  self.fixture.old.facts('ProfileAfterRestore')['journal_version']=2;self.check()
+ def test_foreign_zero_hash_on_absence_refused(self):
+  self.all_foreign();self.snap()['files'][-1]['sha256']='a'*64;self.check()
+ def test_complete_entry_census_still_required(self):
+  self.all_foreign();self.snap()['total_directory_entries'].remove('skirmish-s002-native.json');self.check()
+ def test_byte_and_entry_quotas_unchanged(self):
+  self.all_foreign();self.snap()['files'][-4]['length']=8388609;self.snap()['observed_bytes']=8388619;self.check()
+ def test_root_existence_still_matters(self):
+  self.all_foreign();self.snap()['directory_exists']=False;self.check()
+ def test_actual_stage_catalog_cannot_be_changed(self):
+  self.all_foreign();self.fixture.old.facts('ProfileAfterRestore')['catalog_id']='S002';self.check()
+
+ def test_entry_limit_still32(self):
+  self.all_foreign()
+  self.snap()['directory_entries']=['skirmish-s'+str(i).zfill(3)+'-native.json' for i in range(1,34)]
+  self.check()
 
 if __name__=="__main__":unittest.main(verbosity=2)

@@ -62,7 +62,22 @@ namespace Game.Editor
             // Pre-save failures in a reused Editor must not report the preceding
             // manual journey's counters before StartManualProbe runs.
             manualActions = manualAttackReceipts = 0;
-            if (selectedCatalog == "S005" || codedSizeCameraActive)
+            if (SkirmishMissionDispatch.RequiresSourceBoundDefinition(selectedCatalog))
+            {
+                if(candidateCatalogScope!=null)throw new InvalidOperationException("One owned catalog scope required.");
+                var library=SkirmishBattleCatalogConfig.Load();
+                if(library==null||!library.TryGet(selectedCatalog,out var row))
+                    throw new InvalidOperationException("Exact existing generic library row required.");
+                if(!row.IsPlayable)
+                {
+                    if(row.Status!=SkirmishBattleCatalogStatus.Planned||row.PlayableScenarioIndex>=0)
+                        throw new InvalidOperationException("Unpublished generic draft row is malformed.");
+                    var authored=SkirmishExpansionCatalogConfig.Load();
+                    int index=1000+int.Parse(selectedCatalog.Substring(1),System.Globalization.CultureInfo.InvariantCulture);
+                    candidateCatalogScope=SkirmishGenericMissionAvailabilityScope.Open(authored,selectedCatalog,index);
+                }
+            }
+            else if (selectedCatalog == "S005" || codedSizeCameraActive)
             {
                 if(candidateCatalogScope!=null)throw new InvalidOperationException("One owned catalog scope required.");
                 var authored=SkirmishExpansionCatalogConfig.Load();

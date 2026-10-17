@@ -14,6 +14,7 @@ from invoke_skirmish_production_batch import verify_native_events, METHOD
 from skirmish_native_identity import verify_job, normalize_native_locale
 from audit_skirmish_native_contacts import audit
 from skirmish_production_queue import fingerprint
+from skirmish_profile_journal_admission import validate_profile_journal
 from s005_windows_source_snapshot import candidate_hash
 
 MISSING = ("compile", "live_api", "source_fit", "paid_resources", "read_only_observers", "profile_before_restore")
@@ -134,6 +135,76 @@ def validate_native_lifecycle(events):
     need(all(facts.get("simulation_active") is False for _,_,facts in snapshots
              if facts.get("phase")=="Finished"),"Finished native simulation is not frozen")
 
+def read_only_observer_receipt(job,claim,native):
+    """One owned expanded snapshot in Playing and Finished; never qualification."""
+    answer={"admission":"read_only_observers","result":"MissingAdmission","read_only_observers":False,
+            "qualified":False,"queue_success_enabled":False}
+    try:
+        job_sha=fingerprint(job)
+        need(all(isinstance(job.get(k),str) and re.fullmatch("[a-f0-9]{64}",job[k]) for k in ("candidate_sha256","build_sha256")),"Observer exact source/build hashes")
+        need(all(isinstance(claim.get(k),str) and claim[k] for k in ("attempt_id","worker")),"Observer typed attempt/worker")
+        need(claim["job_sha256"]==job_sha,"Observer canonical claim/job")
+        need(isinstance(native,list) and native,"Observer native events missing")
+        for i,row in enumerate(native,1):
+            need(type(row["schema_version"])is int and row["schema_version"]==1 and
+                 type(row["sequence"])is int and row["sequence"]==i and
+                 row["job_sha256"]==job_sha and row["attempt_id"]==claim["attempt_id"] and
+                 row["worker"]==claim["worker"],"Observer event ownership/order")
+        validate_native_lifecycle(native)
+        captured=one(native,"ContextCaptured")
+        need(captured["source_sha256"]==job["candidate_sha256"] and
+             captured["compiled_dll_manifest_sha256"]==job["build_sha256"],"Observer candidate/build")
+        menu=one(native,"NormalMenuLaunchObserved")
+        verify_job(job,menu["native_setup_identity"])
+        session=menu["native_session_id"];world=menu["native_world_sequence"];config=menu["native_config_sha256"]
+        need(isinstance(session,str) and session and isinstance(world,str) and len(world)<=20 and re.fullmatch("[0-9]+",world) and int(world)<=18446744073709551615 and
+             isinstance(config,str) and re.fullmatch("[a-f0-9]{64}",config),"Observer native session/world/config")
+        need(not any(r["kind"]=="NativeReadOnlyObserverProofUnsupported" for r in native),"Observer Unsupported evidence retained")
+        proofs=[(i,r) for i,r in enumerate(native) if r["kind"]=="NativeReadOnlyObserverProof"]
+        need(len(proofs)==2 and [r["facts"].get("phase") for _,r in proofs]==["Playing","Finished"],
+             "Exactly one Playing then Finished observer window")
+        fields=set("schema scope native_world_sequence native_session_id catalog_id phase status beforeSha256 afterSha256 capturedEntityCount queriedRelevantEntityCount coverageComplete capturedFrameBefore capturedFrameAfter worldEntityCount observerElapsedMilliseconds captureQueriesReadOnly worldUpdateBetweenSnapshots diagnosticFactsFedToAria missionReady".split())
+        windows=[]
+        for index,row in proofs:
+            facts=row["facts"];need(isinstance(facts,dict) and set(facts)==fields,"Exact observer schema")
+            need(facts["schema"]=="NativeReadOnlyObserverWindow-v1" and facts["scope"]=="ExpandedResolvedSnapshot",
+                 "Known expanded observer scope")
+            need(facts["native_session_id"]==session and facts["native_world_sequence"]==world and
+                 facts["catalog_id"]==job["catalog_id"],"Observer subject splice")
+            need(index>0,"Observer snapshot association missing")
+            previous=native[index-1];snap=previous["facts"]
+            need(previous["kind"] in ("NormalMenuLaunchObserved","NativeResolvedSnapshot","TerminalSnapshot") and
+                 snap["phase"]==facts["phase"] and snap["native_session_id"]==session and
+                 snap["native_world_sequence"]==world and snap["native_config_sha256"]==config,
+                 "Observer exact preceding native snapshot")
+            verify_job(job,snap["native_setup_identity"])
+            need(facts["status"]=="ComparedEqual" and
+                 all(isinstance(facts[k],str) and re.fullmatch("[a-f0-9]{64}",facts[k]) for k in ("beforeSha256","afterSha256")) and
+                 facts["beforeSha256"]==facts["afterSha256"],"Observer complete before/after equality")
+            need(all(type(facts[k])is int and 0<=facts[k]<=2147483647 for k in
+                 ("capturedEntityCount","queriedRelevantEntityCount","worldEntityCount","capturedFrameBefore","capturedFrameAfter")),
+                 "Observer finite typed counts/frames")
+            need(0<facts["capturedEntityCount"]==facts["queriedRelevantEntityCount"]<=facts["worldEntityCount"] and
+                 facts["coverageComplete"]is True,"Observer complete relevant entity coverage")
+            need(type(row.get("frame"))is int and type(previous.get("frame"))is int and
+                 facts["capturedFrameBefore"]==facts["capturedFrameAfter"]==row["frame"]==previous["frame"],
+                 "Observer same actual frame window")
+            cost=facts["observerElapsedMilliseconds"]
+            need(type(cost)in (int,float) and math.isfinite(cost) and cost>=0,"Observer finite nonnegative cost")
+            need(facts["captureQueriesReadOnly"]is True and facts["worldUpdateBetweenSnapshots"]is False and
+                 facts["diagnosticFactsFedToAria"]is False and facts["missionReady"]is False,
+                 "Observer isolation flags")
+            windows.append({"sequence":row["sequence"],"frame":row["frame"],"facts":copy.deepcopy(facts)})
+        answer.update(result="MeasuredLiveAndTerminalObserverWindows",read_only_observers=True,
+            job_sha256=job_sha,attempt_id=claim["attempt_id"],native_session_id=session,
+            native_world_sequence=world,native_config_sha256=config,candidate_sha256=job["candidate_sha256"],
+            build_sha256=job["build_sha256"],windows=windows,
+            scope="ExpandedResolvedSnapshot_RelevantEntitiesAndNativeProfileProjection")
+    except (ValueError,KeyError,TypeError,IndexError,AttributeError,OverflowError) as error:
+        answer["errors"]=[str(error)]
+    return answer
+
+
 def ownership(value):
     need(value["preview_census_complete"] is True and type(value["actual_preview_count"]) is int and
         value["actual_preview_count"]==value["measured_preview_count"],"Unknown preview ownership")
@@ -188,7 +259,7 @@ def inspect(project,spec):
         cleanups=[r["facts"] for r in events if r["kind"]=="CleanupOwnershipCensus"]
         measured=[r["facts"] for r in events if r["kind"]=="CleanupMeasured"]
         need(len(measured)==len(declared),"Per-job cleanup measurement absent")
-        sessions=set();worlds=set();run_ids=set()
+        sessions=set();worlds=set();run_ids=set();profile_receipts=[];profile_errors=[];observer_receipts=[];observer_errors=[]
         for i,(item,entry) in enumerate(zip(declared,descriptor["jobs"])):
             need(isinstance(item,dict) and set(item)==ATTEMPT,"Exact attempt refs required")
             jp,job=read.obj(item["job"]);cp,claim=read.obj(item["claim"]);ip,immutable=read.obj(item["immutable_claim"])
@@ -280,10 +351,43 @@ def inspect(project,spec):
                 measured[i]["job_sha256"]==job_sha and measured[i]["worlds"]==baseline["baseline_worlds"] and
                 measured[i]["scenes"]==baseline["baseline_scenes"] and measured[i]["preview_count"]==baseline["baseline_preview_count"],
                 "Actual cleanup differs from captured baseline")
+            # Pure validator consumes only the already Reader-pinned owned event stream.
+            profile=validate_profile_journal(job,claim,native)
+            expected_profile={"admission":"profile_before_restore",
+                "result":"MeasuredProfilePreservedAndRootRestored","profile_restored":True,
+                "job_sha256":job_sha,"attempt_id":claim["attempt_id"],
+                "native_session_id":session,"native_world_sequence":world,
+                "native_config_sha256":config,"candidate_sha256":job["candidate_sha256"],
+                "build_sha256":job["build_sha256"],"qualified":False,"queue_success_enabled":False}
+            profile_receipts.append(profile)
+            if not (isinstance(profile,dict) and all(type(profile.get(k))is type(v) and profile.get(k)==v for k,v in expected_profile.items())):
+                profile_errors.append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],
+                    "errors":profile.get("errors",["Profile receipt does not match inspected subject"]) if isinstance(profile,dict) else ["Malformed profile receipt"]})
+            observer=read_only_observer_receipt(job,claim,native)
+            expected_observer={"admission":"read_only_observers","result":"MeasuredLiveAndTerminalObserverWindows",
+                "read_only_observers":True,"job_sha256":job_sha,"attempt_id":claim["attempt_id"],
+                "native_session_id":session,"native_world_sequence":world,"native_config_sha256":config,
+                "candidate_sha256":job["candidate_sha256"],"build_sha256":job["build_sha256"],
+                "qualified":False,"queue_success_enabled":False}
+            if isinstance(observer,dict):observer["native_events"]=copy.deepcopy(item["native_events"])
+            observer_receipts.append(observer)
+            if not(isinstance(observer,dict) and all(type(observer.get(k))is type(v) and observer.get(k)==v for k,v in expected_observer.items())):
+                observer_errors.append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"errors":observer.get("errors",["Observer receipt differs from inspected subject"]) if isinstance(observer,dict) else ["Malformed observer receipt"]})
             result["attempts"].append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"catalog_id":job["catalog_id"],
                 "run_id":run["run_id"],"session":session,"outcome":outcome,"result":"NormalCompletedUnqualified",
                 "wins":int(outcome=="Victory"),"input_audit":contact_audit,"qualified":False})
         read.stable()
+        # Credit this one facet only after EVERY declared normal attempt and all stable reads succeed.
+        result["admission"]["profile_receipts"]=profile_receipts
+        if len(profile_receipts)==len(declared) and profile_receipts and not profile_errors:
+            result["admission"]["missing"]=[v for v in result["admission"]["missing"] if v!="profile_before_restore"]
+        else:
+            result["admission"]["profile_errors"]=profile_errors
+        result["admission"]["observer_receipts"]=observer_receipts
+        if len(observer_receipts)==len(declared) and observer_receipts and not observer_errors:
+            result["admission"]["missing"]=[v for v in result["admission"]["missing"] if v!="read_only_observers"]
+        else:
+            result["admission"]["observer_errors"]=observer_errors
         result["result"]="NormalCompletedUnqualified";result["wins"]=sum(a["wins"] for a in result["attempts"])
         result["proof_pins"]=[{"path":str(p),"sha256":h} for p,h in read.pins.items()]
     except (ValueError,OSError,KeyError,TypeError,IndexError,AttributeError) as error:

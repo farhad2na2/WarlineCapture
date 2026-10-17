@@ -140,7 +140,20 @@ namespace Game.Editor
         private static ProductionCanaryContext productionCanary;
         private static IDisposable productionCounterpartScope;
 
-        public static void RunProductionJobFromEnvironment()
+        public static void RunProductionJobFromEnvironment() => RunOwnedProductionEntry(false);
+        public static void RunProductionPaidPlaneSupplementFromEnvironment() => RunOwnedProductionEntry(true);
+        private static void RequireProductionPaidPlaneSupplement(JObject job, string artifacts,
+            bool inBatch, string output, string inputDiagnostic, string padDiagnostic)
+        {
+            string expectedOutput = Path.Combine(artifacts, "paid-plane.jsonl");
+            if (inBatch || (int)job["schema_version"] != 1 || (string)job["catalog_id"] != "S005" ||
+                (int)job["seed"] != 155926 || (string)job["control_mode"] != "manual" || (string)job["locale"] != "EN" ||
+                (string)job["size"] != "Standard" || (string)job["difficulty"] != "Regular" ||
+                inputDiagnostic == "1" || padDiagnostic == "1" || string.IsNullOrWhiteSpace(output) ||
+                !Path.IsPathRooted(output) || !string.Equals(Path.GetFullPath(output), expectedOutput, StringComparison.Ordinal))
+                throw new InvalidDataException("Exact owned manual S005 EN155926 paid-plane supplemental request/output required.");
+        }
+        private static void RunOwnedProductionEntry(bool paidPlaneSupplement)
         {
             if (productionCanary != null || SessionState.GetBool(Key, false) ||
                 EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating)
@@ -149,6 +162,10 @@ namespace Game.Editor
             var request = SkirmishProductionCanaryRequest.Read(root,
                 Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_JOB"),
                 Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM"),productionBatch==null,productionBatch?.Matrix);
+            if (paidPlaneSupplement) RequireProductionPaidPlaneSupplement(request.Job, request.ArtifactDirectory,
+                productionBatch != null, Environment.GetEnvironmentVariable("WARLINE_S005_PLANE_CANARY_OUTPUT"),
+                Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC"),
+                Environment.GetEnvironmentVariable("WARLINE_HOME_PAD_BOUNDARY_DIAGNOSTIC"));
             var packaged = !request.IsLegacyPreset&&SkirmishMissionDispatch.IsExpandedCounterpart(request.CatalogId)
                 ? SkirmishProtectedExpandedCounterpartScope.LoadDevelopmentCatalog(request.CatalogId) : SkirmishExpansionCatalogConfig.Load();
             SkirmishScenarioDefinitionConfig definition;
@@ -166,7 +183,8 @@ namespace Game.Editor
                     productionCounterpartScope=SkirmishProtectedExpandedCounterpartScope.Open(packaged,request.CatalogId);
                 // One existing normal Menu runner. No LaunchCatalog direct bootstrap.
                 bool ownedInputDiagnosticRequested = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1";
-                RunEditorJourney(request.Locale, request.Manual, false, request.CatalogId, request.Seed);
+                if (paidPlaneSupplement) RunS005NormalPaidPlaneCruiseCameraCanary();
+                else RunEditorJourney(request.Locale, request.Manual, false, request.CatalogId, request.Seed);
                 if (ownedInputDiagnosticRequested) Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC", "1");
                 // Existing method defaults ARIA to ADJUST SETUP; v1 canary requires Main Menu.
                 Environment.SetEnvironmentVariable("WARLINE_TERMINAL_ACTION", "MAIN MENU");
@@ -630,15 +648,37 @@ namespace Game.Editor
                     string value = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
                     return Path.GetFullPath(string.IsNullOrWhiteSpace(value) ? Application.persistentDataPath : value);
                 }
-                internal JObject Capture() => new JObject { ["journal_version"] = 2,
+                internal JObject Capture() => new JObject { ["journal_version"] = 3,
                     ["catalog_id"] = catalog, ["original_environment"] = originalEnvironment,
                     ["actual_environment"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
                     ["actual_effective_root"] = EffectiveRoot(),
-                    ["original"] = SnapshotScoped(originalRoot, catalog, buffer, true), ["owned"] = SnapshotScoped(ownedRoot, catalog, buffer, false) };
+                    ["original"] = SnapshotScopedV3(originalRoot, catalog, buffer, true), ["owned"] = SnapshotScoped(ownedRoot, catalog, buffer, false) };
                 // Preserve the strict v1 private fixture seam and its exact schema.
                 private static JObject Snapshot(string root, string catalog, byte[] buffer) => SnapshotCore(root,catalog,buffer,false,false);
                 private static JObject SnapshotScoped(string root,string catalog,byte[] buffer,bool original) => SnapshotCore(root,catalog,buffer,original,true);
-                private static JObject SnapshotCore(string root, string catalog, byte[] buffer,bool allowEngineEntries,bool emitNamespace)
+                private static JObject SnapshotScopedV3(string root,string catalog,byte[] buffer,bool original) =>
+                    original ? SnapshotCore(root,catalog,buffer,true,true,true) : SnapshotScoped(root,catalog,buffer,false);
+                // Only measured save rows expand. No additional non-save exclusions.
+                private static void AddOriginalCatalogGroups(string root,string catalog,List<string> names)
+                {
+                    if(!SkirmishMissionDispatch.Canonical(catalog))throw new InvalidDataException("Noncanonical profile catalog");
+                    var groups=new SortedSet<string>(StringComparer.Ordinal);int count=0;
+                    if(Directory.Exists(root))foreach(string path in Directory.EnumerateFileSystemEntries(root))
+                    {
+                        if(count++>=32)throw new InvalidDataException("Profile entry bound exceeded");
+                        RejectReparse(path);string name=Path.GetFileName(path);
+                        if(names.Contains(name)||name=="TestResults.xml"||name=="Unity")continue;
+                        var match=System.Text.RegularExpressions.Regex.Match(name,@"^skirmish-(s[0-9]{3})-native[.]json(?:[.](?:tmp|bak|lock))?$");
+                        if(!match.Success||!SkirmishMissionDispatch.Canonical(match.Groups[1].Value.ToUpperInvariant())||
+                            Directory.Exists(path)||!File.Exists(path))
+                            throw new InvalidDataException("Unknown profile file or directory");
+                        string id=match.Groups[1].Value;
+                        if(id!=catalog.ToLowerInvariant())groups.Add(id);
+                    }
+                    foreach(string id in groups)foreach(string suffix in new[]{"",".tmp",".bak",".lock"})
+                        names.Add("skirmish-"+id+"-native.json"+suffix);
+                }
+                private static JObject SnapshotCore(string root, string catalog, byte[] buffer,bool allowEngineEntries,bool emitNamespace,bool crossCatalog=false)
                 {
                     RejectReparse(root);
                     if (File.Exists(root)) throw new InvalidDataException("Profile root is a file");
@@ -646,6 +686,7 @@ namespace Game.Editor
                     foreach (string name in new[] { SaveService.ProfileFileName, SaveService.SettingsFileName,
                         SaveService.QuickGameFileName, "skirmish-" + catalog.ToLowerInvariant() + "-native.json" })
                     foreach (string suffix in new[] { "", ".tmp", ".bak", ".lock" }) names.Add(name + suffix);
+                    if(crossCatalog)AddOriginalCatalogGroups(root,catalog,names);
                     bool directoryExists = Directory.Exists(root);
                     var entries = EnumerateScopedEntries(root,names,allowEngineEntries,out var excluded,out var allEntries);
                     var rows = new JArray(); long total = 0;
@@ -691,7 +732,7 @@ namespace Game.Editor
                         ["files"] = rows, ["observed_bytes"] = total };
                     if(emitNamespace)
                     {
-                        result["namespace_scope"]=allowEngineEntries?"OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded":"OwnedCurrentCatalogSaveFiles_Exclusive";
+                        result["namespace_scope"]=crossCatalog?"OriginalCanonicalCatalogSaveFiles_KnownEngineSiblingsExcluded":allowEngineEntries?"OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded":"OwnedCurrentCatalogSaveFiles_Exclusive";
                         result["excluded_non_save_entries"]=excluded;result["total_directory_entries"]=new JArray(allEntries);
                     }
                     return result;

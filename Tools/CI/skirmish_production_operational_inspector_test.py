@@ -117,4 +117,145 @@ class OperationalJoins(unittest.TestCase):
         self.records[0].insert(6,copy.deepcopy(self.records[0][5]))
         self.renumber_native();self.check(True)
 
+
+class ObserverAdmissions(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary=owned_workspace("o");cls.work=Path(cls.temporary.name);cls.number=0;cls.plan=build_baseline(ROOT)
+    @classmethod
+    def tearDownClass(cls):cleanup_workspace(cls.temporary)
+    def setUp(self):
+        type(self).number+=1
+        self.__dict__.update(OperationalFixture(self.work/str(type(self).number),self.plan).__dict__)
+    materialize=OperationalFixture.materialize
+    ref=OperationalFixture.ref
+    def add_proofs(self):
+        for i,events in enumerate(self.records):
+            new=[]
+            for row in events:
+                new.append(row)
+                if row['kind'] not in ('NativeResolvedSnapshot','TerminalSnapshot'):continue
+                facts=row['facts']
+                if facts['phase'] not in ('Playing','Finished'):continue
+                proof=copy.deepcopy(row);proof['kind']='NativeReadOnlyObserverProof'
+                proof['facts']=dict(schema='NativeReadOnlyObserverWindow-v1',scope='ExpandedResolvedSnapshot',
+                    native_world_sequence=facts['native_world_sequence'],native_session_id=facts['native_session_id'],
+                    catalog_id='S026',phase=facts['phase'],status='ComparedEqual',beforeSha256='c'*64,afterSha256='c'*64,
+                    capturedEntityCount=5,queriedRelevantEntityCount=5,coverageComplete=True,
+                    capturedFrameBefore=row['frame'],capturedFrameAfter=row['frame'],worldEntityCount=10,
+                    observerElapsedMilliseconds=2.5,captureQueriesReadOnly=True,worldUpdateBetweenSnapshots=False,
+                    diagnosticFactsFedToAria=False,missionReady=False)
+                new.append(proof)
+            for n,row in enumerate(new,1):row['sequence']=n
+            self.records[i]=new
+    def receipt(self,index=0):
+        return inspector.read_only_observer_receipt(q.load(self.paths[index]['job']),q.load(self.paths[index]['claim']),self.records[index])
+    def proof(self,index=0,terminal=False):
+        return [r for r in self.records[index] if r['kind']=='NativeReadOnlyObserverProof'][int(terminal)]
+    def check_receipt(self,passed=False):
+        result=self.receipt();self.assertEqual(passed,result['read_only_observers'],result)
+        self.assertFalse(result['qualified']);self.assertFalse(result['queue_success_enabled']);return result
+    def test_all_attempts_observer_only_profile_pending(self):
+        self.add_proofs();result=inspector.inspect(self.root,self.materialize())
+        self.assertEqual('NormalCompletedUnqualified',result['result'],result)
+        self.assertNotIn('read_only_observers',result['admission']['missing'])
+        self.assertIn('profile_before_restore',result['admission']['missing'])
+        self.assertEqual(3,len(result['admission']['observer_receipts']))
+        self.assertEqual(3,len(result['admission']['profile_receipts']))
+        self.assertEqual(1,result['wins']);self.assertFalse(result['qualified']);self.assertFalse(result['queue_success_enabled'])
+    def test_flag_off_existing_evidence_stays_missing(self):
+        result=inspector.inspect(self.root,self.materialize())
+        self.assertEqual('NormalCompletedUnqualified',result['result'],result)
+        self.assertIn('read_only_observers',result['admission']['missing'])
+        self.assertTrue(all(r['read_only_observers'] is False for r in result['admission']['observer_receipts']))
+    def test_one_missing_among_three_attempts_blocks_whole_facet(self):
+        self.add_proofs();self.records[1]=[r for r in self.records[1] if r['kind']!='NativeReadOnlyObserverProof']
+        for n,row in enumerate(self.records[1],1):row['sequence']=n
+        result=inspector.inspect(self.root,self.materialize())
+        self.assertEqual('NormalCompletedUnqualified',result['result'],result)
+        self.assertIn('read_only_observers',result['admission']['missing']);self.assertEqual(1,len(result['admission']['observer_errors']))
+    def test_unsupported_never_hidden_by_two_positive_rows(self):
+        self.add_proofs();row=copy.deepcopy(self.proof());row['kind']='NativeReadOnlyObserverProofUnsupported'
+        row['facts']=dict(native_session_id='session-0',phase='Playing',reason='Unsupported component',read_only_observers=False)
+        self.records[0].insert(4,row)
+        for n,r in enumerate(self.records[0],1):r['sequence']=n
+        self.check_receipt()
+    def test_window_count_order_and_adjacency(self):
+        self.add_proofs();original=copy.deepcopy(self.records[0])
+        for mutation in range(4):
+            with self.subTest(mutation=mutation):
+                self.records[0]=copy.deepcopy(original)
+                if mutation==0:self.records[0].remove(self.proof())
+                if mutation==1:self.records[0].insert(4,copy.deepcopy(self.proof()))
+                if mutation==2:self.proof()['facts']['phase']='Finished'
+                if mutation==3:
+                    diagnostic=copy.deepcopy(self.proof());diagnostic.update(kind='Other',facts={});self.records[0].insert(3,diagnostic)
+                for n,row in enumerate(self.records[0],1):row['sequence']=n
+                self.check_receipt()
+    def test_numeric_flags_and_equality_refusals(self):
+        self.add_proofs();proof=self.proof();original=copy.deepcopy(proof['facts'])
+        cases=[('capturedEntityCount',True),('capturedEntityCount',0),('capturedEntityCount',6),('queriedRelevantEntityCount',-1),
+            ('worldEntityCount',4),('worldEntityCount',2147483648),('capturedFrameBefore',True),('capturedFrameAfter',999),
+            ('coverageComplete',False),('captureQueriesReadOnly',1),('worldUpdateBetweenSnapshots',True),
+            ('diagnosticFactsFedToAria',True),('missionReady',True),('observerElapsedMilliseconds',True),
+            ('observerElapsedMilliseconds',float('nan')),('observerElapsedMilliseconds',float('inf')),
+            ('observerElapsedMilliseconds',-1),('observerElapsedMilliseconds',10**400),('status','MutationObserved'),('afterSha256','d'*64),
+            ('beforeSha256','C'*64),('scope','OtherWindow'),('schema','NativeReadOnlyObserverWindow-v2')]
+        for key,value in cases:
+            with self.subTest(key=key,value=str(value)):
+                proof['facts']=copy.deepcopy(original);proof['facts'][key]=value;self.check_receipt()
+        proof['facts']=copy.deepcopy(original);proof['facts']['caller_success']=True;self.check_receipt()
+    def test_exact_subject_and_source_build(self):
+        self.add_proofs();original=copy.deepcopy(self.records[0])
+        for mutation in range(7):
+            with self.subTest(mutation=mutation):
+                self.records[0]=copy.deepcopy(original)
+                row=self.proof()
+                if mutation==0:row['worker']='foreign'
+                if mutation==1:row['attempt_id']='foreign'
+                if mutation==2:row['facts']['native_session_id']='foreign'
+                if mutation==3:row['facts']['native_world_sequence']='77'
+                if mutation==4:row['facts']['catalog_id']='S005'
+                if mutation==5:self.records[0][0]['facts']['source_sha256']='0'*64
+                if mutation==6:self.records[0][2]['facts']['native_config_sha256']='0'*64
+                self.check_receipt()
+    def test_pinned_reader_stability_failure_blocks_any_admission(self):
+        self.add_proofs();spec=self.materialize();old=inspector.Reader.stable
+        def changed(reader):raise ValueError('Synthetic pinned artifact changed at final stability barrier')
+        inspector.Reader.stable=changed
+        try:result=inspector.inspect(self.root,spec)
+        finally:inspector.Reader.stable=old
+        self.assertEqual('Incomplete',result['result']);self.assertEqual(0,result['wins'])
+        self.assertIn('read_only_observers',result['admission']['missing'])
+        self.assertNotIn('observer_receipts',result['admission'])
+    def test_later_incomplete_attempt_has_no_partial_credit(self):
+        self.add_proofs();self.csvrows[2]['result']='Abort'
+        result=inspector.inspect(self.root,self.materialize())
+        self.assertEqual('Incomplete',result['result']);self.assertEqual(0,result['wins'])
+        self.assertIn('read_only_observers',result['admission']['missing'])
+        self.assertNotIn('observer_receipts',result['admission'])
+    def test_world_sequence_uint64_refusals(self):
+        self.add_proofs()
+        for row in self.records[0]:
+            if 'native_world_sequence' in row['facts']:row['facts']['native_world_sequence']='18446744073709551616'
+        self.check_receipt()
+    def test_typed_receipt_identity_splice_refusals(self):
+        self.add_proofs();actual=inspector.read_only_observer_receipt
+        for key,value in [('job_sha256','f'*64),('attempt_id','foreign'),('native_session_id','foreign'),
+                ('native_world_sequence','77'),('native_config_sha256','f'*64),('candidate_sha256','f'*64),
+                ('build_sha256','f'*64),('read_only_observers',1),('qualified',True),('queue_success_enabled',True)]:
+            with self.subTest(key=key):
+                def splice(job,claim,native):
+                    receipt=actual(job,claim,native);receipt[key]=value;return receipt
+                inspector.read_only_observer_receipt=splice
+                try:result=inspector.inspect(self.root,self.materialize())
+                finally:inspector.read_only_observer_receipt=actual
+                self.assertEqual('NormalCompletedUnqualified',result['result'],result)
+                self.assertIn('read_only_observers',result['admission']['missing'])
+                self.assertFalse(result['qualified']);self.assertFalse(result['queue_success_enabled'])
+    def test_zero_world_is_valid_and_cost_has_no_performance_budget(self):
+        self.add_proofs();self.proof()['facts']['observerElapsedMilliseconds']=0
+        self.proof(terminal=True)['facts']['observerElapsedMilliseconds']=100000
+        result=self.check_receipt(True);self.assertEqual('0',result['native_world_sequence'])
+
 if __name__=='__main__':unittest.main(verbosity=2)

@@ -26,7 +26,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
-      "sha256": "525f8dac45b6fc0fbbdede6a5c132754bffa2d6f16f0ad35376299b146389543"
+      "sha256": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb"
     },
     {
       "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",

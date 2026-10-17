@@ -22,6 +22,234 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishS002AriaHarnessTests
     {
+
+        private static System.Reflection.MethodInfo FinishRecoveryMethod(string name)
+        {
+            var method=typeof(SkirmishS002AriaRunHarness).GetMethod(name,
+                System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            Assert.NotNull(method,name);return method;
+        }
+        private static void AssertFinishFailureBoundary(string failAt)
+        {
+            var seen=new List<string>();Exception actualIo=null,reported=null;
+            string missing=Path.Combine(Path.GetTempPath(),"missing-finish-"+Guid.NewGuid().ToString("N"),"absent","log.txt");
+            Action evidence=()=>
+            {
+                if(failAt=="success")return;
+                if(failAt=="oom")throw new OutOfMemoryException("Controlled sentinel, not memory pressure");
+                try{File.WriteAllText(missing,"real controlled IO exception");}
+                catch(IOException error){actualIo=error;throw;}
+                Assert.Fail("Missing parent unexpectedly wrote");
+            };
+            Action<string> step=name=>
+            {
+                seen.Add(name);
+                if(failAt==name)throw new InvalidOperationException("controlled:"+name);
+            };
+            var args=new object[]{evidence,new Action<Exception>(error=>{reported=error;step("report");}),
+                new Action(()=>step("end")),new Action(()=>step("stop")),new Action(()=>step("exit")),new Action(()=>step("request2"))};
+            if(failAt=="success")FinishRecoveryMethod("RunFinishEvidenceBoundary").Invoke(null,args);
+            else if(failAt=="oom")
+            {
+                var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>FinishRecoveryMethod("RunFinishEvidenceBoundary").Invoke(null,args));
+                Assert.IsInstanceOf<OutOfMemoryException>(failure.InnerException);
+            }
+            else if(failAt=="io")FinishRecoveryMethod("RunFinishEvidenceBoundary").Invoke(null,args);
+            else
+            {
+                var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>FinishRecoveryMethod("RunFinishEvidenceBoundary").Invoke(null,args));
+                Assert.IsInstanceOf<InvalidOperationException>(failure.InnerException);
+                Assert.AreEqual("controlled:"+failAt,failure.InnerException.Message);
+            }
+            if(failAt=="success"||failAt=="oom")
+            {Assert.IsNull(reported);Assert.AreEqual(0,seen.Count);}
+            else
+            {
+                Assert.IsInstanceOf<IOException>(actualIo);Assert.AreSame(actualIo,reported,"Preserve exact original IO exception");
+                CollectionAssert.AreEqual(new[]{"report","end","stop","exit","request2"},seen,
+                    "Every nested finally, including failed quit, must run exactly once");
+            }
+            Assert.IsFalse(File.Exists(missing));
+        }
+        private static void AssertOrdinaryRecoveryTree(string root,string prefix)
+        {
+            string full=Path.GetFullPath(root),temp=Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+            Assert.IsTrue(full.StartsWith(temp,StringComparison.OrdinalIgnoreCase)&&Path.GetFileName(full).StartsWith(prefix,StringComparison.Ordinal));
+            var pending=new Stack<string>();pending.Push(full);
+            while(pending.Count>0)
+            {
+                string directory=pending.Pop();
+                Assert.IsFalse((File.GetAttributes(directory)&FileAttributes.ReparsePoint)!=0);
+                foreach(string child in Directory.EnumerateFileSystemEntries(directory))
+                {
+                    var attr=File.GetAttributes(child);Assert.IsFalse((attr&FileAttributes.ReparsePoint)!=0);
+                    if((attr&FileAttributes.Directory)!=0)pending.Push(child);
+                }
+            }
+        }
+        private static int AssertOwned285RunLog()
+        {
+            Assert.AreEqual(RuntimePlatform.WindowsEditor,Application.platform);
+            string temp=Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+            string leaf="s002-aria-matrix-attempt-"+Guid.NewGuid().ToString("N")+"-log.txt";
+            int rootLength=285-(1+"candidates".Length+1+64+1+leaf.Length);
+            string name="wfr-"+Guid.NewGuid().ToString("N");
+            Assert.GreaterOrEqual(rootLength-temp.Length,name.Length);
+            string root=Path.Combine(temp,name+new string('p',rootLength-temp.Length-name.Length));
+            string candidate=new string('a',64),parent=Path.Combine(root,"candidates",candidate),output=Path.Combine(parent,leaf);
+            string target=Path.Combine(temp,"wfr-target-"+Guid.NewGuid().ToString("N"));bool cleanupSafe=true;
+            Directory.CreateDirectory(parent);Directory.CreateDirectory(target);
+            string sentinel=Path.Combine(target,"sentinel");File.WriteAllText(sentinel,"preserve target");
+            var method=FinishRecoveryMethod("WriteRunLogInOwnedAttempt");int cases=0;
+            try
+            {
+                Assert.AreEqual(285,output.Length);Assert.Less(parent.Length,260);
+                string text="Abort IO evidence only\nUnicode: \u03bb \u06cc \ud83d\ude80 malformed:\ud800 end\n";
+                string expected=Path.Combine(root,"expected.txt");File.WriteAllText(expected,text);
+                string directStatus="Succeeded";
+                try{File.WriteAllText(output,text);}
+                catch(IOException error){directStatus=error.GetType().Name;}
+                catch(UnauthorizedAccessException error){directStatus=error.GetType().Name;}
+                if(File.Exists(output))File.Delete(output);
+                method.Invoke(null,new object[]{root,candidate,output,text});
+                string readback=Path.Combine(root,"readback.txt");File.Copy(output,readback,false);
+                CollectionAssert.AreEqual(File.ReadAllBytes(expected),File.ReadAllBytes(readback));
+                Assert.AreEqual(0,Directory.GetFiles(root,".run-log-*").Length,"No short temporary files left");
+                Debug.Log("[Owned285RunLogCharacterization] length=285 directWrite="+directStatus+" ownedCopyBytesEqual=1");cases++;
+                var exists=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{root,candidate,output,"overwrite forbidden"}));
+                Assert.IsInstanceOf<IOException>(exists.InnerException);
+                string unchanged=Path.Combine(root,"unchanged.txt");File.Copy(output,unchanged,false);
+                CollectionAssert.AreEqual(File.ReadAllBytes(expected),File.ReadAllBytes(unchanged));cases++;
+                var foreign=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{root,candidate,Path.Combine(root,"foreign-log.txt"),text}));
+                Assert.IsInstanceOf<InvalidDataException>(foreign.InnerException);Assert.IsFalse(File.Exists(Path.Combine(root,"foreign-log.txt")));cases++;
+                var badCandidate=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{root,"../wrong",output,text}));
+                Assert.IsInstanceOf<InvalidDataException>(badCandidate.InnerException);cases++;
+                File.Delete(output);Directory.Delete(parent);
+                CreateOwnedProfileJunction(parent,target,ref cleanupSafe);
+                var reparse=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{root,candidate,output,text}));
+                Assert.IsInstanceOf<InvalidDataException>(reparse.InnerException);
+                Assert.AreEqual("preserve target",File.ReadAllText(sentinel));cases++;
+            }
+            finally
+            {
+                if(cleanupSafe)
+                {
+                    if(Directory.Exists(parent)&&(File.GetAttributes(parent)&FileAttributes.ReparsePoint)!=0)Directory.Delete(parent,false);
+                    Assert.AreEqual("preserve target",File.ReadAllText(sentinel));
+                    AssertOrdinaryRecoveryTree(root,"wfr-");AssertOrdinaryRecoveryTree(target,"wfr-target-");
+                    Directory.Delete(root,true);Directory.Delete(target,true);
+                    Assert.IsFalse(Directory.Exists(root));Assert.IsFalse(Directory.Exists(target));
+                }
+            }
+            return cases;
+        }
+        public static void RunOwnedFinishEvidenceRecoveryControls()
+        {
+            int cases=0;
+            foreach(string stage in new[]{"success","io","report","end","stop","exit","oom"})
+            {AssertFinishFailureBoundary(stage);cases++;}
+            cases+=AssertOwned285RunLog();
+            Assert.AreEqual(12,cases);
+            Debug.Log("[OwnedFinishEvidenceRecoveryControls] result=Passed cases=12 actual285Path=1 failureBoundary=7 ownedWriter=5 nativeCleanupProved=0 missionReady=0");
+        }
+
+
+
+        public static void RunS002IdentityAndFinishFocusedValidation()
+        {
+            global::SkirmishSessionTests.RunCodedLibraryPreferenceIdentityControls();
+            RunOwnedFinishEvidenceRecoveryControls();
+            Debug.Log("[S002IdentityAndFinishFocusedControls] result=Passed identityControls=11 finishRecoveryControls=12 nativeCleanupProved=0 fullSharedEpoch20Passed=0 missionReady=0");
+        }
+
+        public static void RunNextSharedEpoch20FocusedValidation()
+        {
+            global::UnitCombatFocusedEditModeTests.RunConfiguredRocketeerAttackCadenceRegression();
+            SkirmishProfileNamespaceTests.RunCrossCatalogOriginalProfileValidation();
+            RunPaidPlaneOwnedSupplementControls();
+            SkirmishGroundSourceFitSurvey.RunReviewedLogicalJointControls();
+            SkirmishGroundSourceFitSurvey.RunReviewedJointStagingControls();
+            SkirmishGenericMissionDispatchTests.RunFocusedValidation();
+            SkirmishGenericMissionDispatchTests.RunBaManagedAreaSerializationValidation();
+            SkirmishGenericMissionDispatchTests.RunLogicalDraftCallerTransactionControls();
+            SkirmishGroundSourceFitSurvey.RunRequestedDurableMissionSerializationControls();
+            SkirmishGroundSourceFitSurvey.RunRefinementHullRoundtripControls();
+            SkirmishGroundSourceFitSurvey.RunAirCombined80AuthoringControls();
+            Debug.Log("[NextSharedEpochFocusedControls] result=Passed oldRegression=17 profileNamespace=18 manualContext=14 airCandidates=77 protectedReadOnly=3 airNegativeControls=80 logicalJoint=11 staging=10 genericDispatch=9 callerTransactions=4 serialization=8 hull=12 missionReady=0");
+            global::SkirmishSessionTests.RunCodedLibraryPreferenceIdentityControls();
+            RunOwnedFinishEvidenceRecoveryControls();
+            Debug.Log("[NextSharedEpoch20FocusedControls] result=Passed epochMarkers=28 identityControls=11 finishRecoveryControls=12 sourceFitCertified=0 missionReady=0");
+        }
+
+
+        public static void RunPaidPlaneOwnedSupplementControls()
+        {
+            string root=Path.Combine(Path.GetTempPath(),"paid-plane-guard-"+Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+            try
+            {
+                string queue=Path.Combine(root,"Queue","paid-plane-guard");
+                string attempt="attempt-"+Guid.NewGuid().ToString("N"),artifacts=Path.Combine(queue,attempt);
+                Directory.CreateDirectory(artifacts);
+                string packet="Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md";
+                Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(root,packet)));
+                File.WriteAllText(Path.Combine(root,packet),"Owned parser fixture; no gameplay");
+                File.WriteAllText(Path.Combine(root,"source.json"),"{}");
+                var job=new Newtonsoft.Json.Linq.JObject{
+                    ["schema_version"]=1,["job_id"]="paid-plane-guard",["catalog_id"]="S005",
+                    ["definition_id"]="skirmish.s005",["definition_version"]=1,
+                    ["candidate_sha256"]=new string('a',64),["build_sha256"]=new string('b',64),
+                    ["setup_sha256"]=new string('c',64),["content_sha256"]=new string('d',64),
+                    ["source_manifest"]=new Newtonsoft.Json.Linq.JArray(new Newtonsoft.Json.Linq.JObject{
+                        ["path"]="source.json",["sha256"]=SkirmishProductionCanaryRequest.FileHash(Path.Combine(root,"source.json"))}),
+                    ["packet_path"]=packet,["packet_sha256"]=SkirmishProductionCanaryRequest.FileHash(Path.Combine(root,packet)),
+                    ["seed"]=155926,["locale"]="EN",["size"]="Standard",["difficulty"]="Regular",["control_mode"]="manual",
+                    ["required_stages"]=new Newtonsoft.Json.Linq.JArray("compile","live_api","source_fit","normal_input","terminal","return"),
+                    ["timeout_seconds"]=3000};
+                var claim=new Newtonsoft.Json.Linq.JObject{
+                    ["attempt_id"]=attempt,["token"]=Guid.NewGuid().ToString("N"),["worker"]="paid-plane-guard",
+                    ["started_utc"]=DateTime.UtcNow.ToString("O"),["artifact_directory"]=artifacts,
+                    ["job_sha256"]=SkirmishProductionCanaryRequest.Hash(System.Text.Encoding.UTF8.GetBytes(SkirmishProductionCanaryRequest.Canonical(job)))};
+                string jp=Path.Combine(queue,"job.json"),cp=Path.Combine(queue,"claim.json");
+                File.WriteAllText(jp,job.ToString());File.WriteAllText(cp,claim.ToString());
+                File.WriteAllText(Path.Combine(artifacts,"claim.json"),claim.ToString());
+                var request=SkirmishProductionCanaryRequest.Read(root,jp,cp,true);
+                Assert.IsTrue(request.Manual);Assert.AreEqual("en",request.Locale);int controls=1;
+                var method=typeof(SkirmishS002AriaRunHarness).GetMethod("RequireProductionPaidPlaneSupplement",
+                    System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+                Assert.NotNull(method);
+                string output=Path.Combine(artifacts,"paid-plane.jsonl");
+                method.Invoke(null,new object[]{request.Job,artifacts,false,output,"0","0"});controls++;
+                string[] fields={"schema_version","catalog_id","seed","control_mode","locale","size","difficulty"};
+                Newtonsoft.Json.Linq.JToken[] values={2,"S004",104734,"aria","FA","War","Recruit"};
+                for(int i=0;i<fields.Length;i++)
+                {
+                    var bad=(Newtonsoft.Json.Linq.JObject)request.Job.DeepClone();bad[fields[i]]=values[i];
+                    var error=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{bad,artifacts,false,output,"0","0"}));
+                    Assert.IsInstanceOf<InvalidDataException>(error.InnerException);controls++;
+                }
+                foreach(int mode in new[]{0,1,2,3,4})
+                {
+                    var error=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{
+                        request.Job,artifacts,mode==0,mode==3?Path.Combine(root,"foreign.json"):mode==4?null:output,
+                        mode==1?"1":"0",mode==2?"1":"0"}));
+                    Assert.IsInstanceOf<InvalidDataException>(error.InnerException);controls++;
+                }
+                Assert.AreEqual(14,controls);
+                Assert.IsFalse(File.Exists(output),"Guard cannot dispatch gameplay/create output.");
+                Assert.IsFalse(File.Exists(Path.Combine(artifacts,"adapter-started.json")),"Controls do not reserve a run.");
+                Debug.Log("[PaidPlaneOwnedSupplementControls] result=Passed controls=14 manualParser=1 gameplayDispatched=0 profileNativeProof=0");
+            }
+            finally
+            {
+                if(Directory.Exists(root))
+                {
+                    Assert.IsFalse((File.GetAttributes(root)&FileAttributes.ReparsePoint)!=0);
+                    Directory.Delete(root,true);
+                }
+            }
+        }
+
         public static void RunMissionDevelopmentFocusedValidation()
         {
             RunDiagnosticAppendIoValidation();

@@ -40,6 +40,8 @@ namespace Game.Editor
         public static JObject RefineLoadedCandidate(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
             EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null)
         {
+            if(strictLogicalCandidatesRequested)
+                return RefineStrictLogicalCandidates(mission,owner,source,em,gridEntity,grid,surface,artifactPrefix,checkpoint);
             if(!refinementJointPadSearchRequested)
                 return RefineLoadedCandidateCore(mission,owner,source,em,gridEntity,grid,surface,artifactPrefix,checkpoint);
             Require(owner!=null&&owner.Layout!=null&&!ProtectedRefinementCatalog(owner.Definition.CatalogId),"Unprotected caller-owned candidate required");

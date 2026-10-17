@@ -1926,11 +1926,110 @@ namespace Game.Editor
             if (completed.IsFaulted || completed.IsCanceled)
             {
                 Debug.LogError("[SkirmishSourceFingerprint] result=Failed error=" + completed.Exception);
-                FinishEvidence(true, "candidateSourceFingerprintFailed", string.Empty);
+                FinishEvidenceOrScheduleOwnedFailure(true, "candidateSourceFingerprintFailed", string.Empty);
                 return;
             }
-            FinishEvidence(finishAbort, finishAbortReason, completed.Result);
+            FinishEvidenceOrScheduleOwnedFailure(finishAbort, finishAbortReason, completed.Result);
         }
+
+
+        // Evidence failures must not strand the already-latched owned Finish.
+        private static void RunFinishEvidenceBoundary(Action evidence,Action<Exception> report,Action end,
+            Action stop,Action exitPlay,Action requestFailedQuit)
+        {
+            try{evidence();}
+            catch(Exception failure) when(!(failure is OutOfMemoryException))
+            {
+                try{report(failure);}
+                finally
+                {
+                    try{end();}
+                    finally
+                    {
+                        try{stop();}
+                        finally
+                        {
+                            try{exitPlay();}
+                            finally{requestFailedQuit();}
+                        }
+                    }
+                }
+            }
+        }
+        private static void FinishEvidenceOrScheduleOwnedFailure(bool abort,string reason,string source)
+            =>RunFinishEvidenceBoundary(()=>FinishEvidence(abort,reason,source),
+                error=>Debug.LogError("[SkirmishFinishEvidenceFailure] result=Failed original="+error),
+                AriaCommandEvidence.End,()=>UiShellRuntimeGateway.StopAriaPlay(),
+                ()=>EditorApplication.ExitPlaymode(),()=>RequestQuitIfAsked(2));
+
+        private static void RequireOrdinaryRunLogDirectory(string directory)
+        {
+            for(var current=new DirectoryInfo(directory);current!=null;current=current.Parent)
+            {
+                var attributes=File.GetAttributes(current.FullName);
+                if((attributes&FileAttributes.Directory)==0||(attributes&FileAttributes.ReparsePoint)!=0)
+                    throw new InvalidDataException("Owned run-log ordinary directory ancestry required.");
+            }
+        }
+        private static void RequireFreshRunLogDestination(string path)
+        {
+            try{File.GetAttributes(path);throw new IOException("Owned run-log destination already exists.");}
+            catch(FileNotFoundException){}
+            catch(DirectoryNotFoundException){}
+        }
+        // Same installed UTF8-no-BOM replacement bytes. Only short owned opens;
+        // existing File.Copy transfers to/from the long actual evidence path.
+        private static void WriteRunLogInOwnedAttempt(string attemptRoot,string candidate,string output,string text)
+        {
+            string root=Path.GetFullPath(attemptRoot).TrimEnd(Path.DirectorySeparatorChar);
+            string destination=Path.GetFullPath(output),parent=Path.GetDirectoryName(destination);
+            if(!System.Text.RegularExpressions.Regex.IsMatch(candidate??"","^[a-f0-9]{64}$")||
+                !string.Equals(parent,Path.Combine(root,"candidates",candidate),StringComparison.Ordinal)||
+                !System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileName(destination),"^[a-z0-9][a-z0-9_.-]*-log[.]txt$"))
+                throw new InvalidDataException("Exact owned candidate run-log destination required.");
+            RequireOrdinaryRunLogDirectory(parent);RequireFreshRunLogDestination(destination);
+            string token=Guid.NewGuid().ToString("N");
+            string temporary=Path.Combine(root,".run-log-"+token+".tmp");
+            string verified=Path.Combine(root,".run-log-"+token+".verified");
+            Exception originalFailure=null;
+            try
+            {
+                RequireOrdinaryRunLogDirectory(root);
+                using(var stream=new FileStream(temporary,FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+                using(var writer=new StreamWriter(stream,new System.Text.UTF8Encoding(false)))
+                {writer.Write(text);writer.Flush();stream.Flush(true);}
+                byte[] expected=File.ReadAllBytes(temporary);
+                RequireOrdinaryRunLogDirectory(parent);RequireFreshRunLogDestination(destination);
+                File.Copy(temporary,destination,false);
+                if((File.GetAttributes(destination)&(FileAttributes.Directory|FileAttributes.ReparsePoint))!=0)
+                    throw new InvalidDataException("Owned copied run-log must be an ordinary file.");
+                RequireOrdinaryRunLogDirectory(root);
+                File.Copy(destination,verified,false);
+                byte[] actual=File.ReadAllBytes(verified);
+                bool same=expected.Length==actual.Length;
+                for(int i=0;same&&i<expected.Length;i++)same=expected[i]==actual[i];
+                if(!same)throw new IOException("Owned copied run-log bytes differ.");
+            }
+            catch(Exception failure){originalFailure=failure;throw;}
+            finally
+            {
+                Exception cleanupFailure=null;
+                foreach(string path in new[]{verified,temporary})
+                    try
+                    {
+                        if(!File.Exists(path))continue;
+                        RequireOrdinaryRunLogDirectory(root);
+                        if((File.GetAttributes(path)&FileAttributes.ReparsePoint)!=0)
+                            throw new InvalidDataException("Owned temporary run-log reparse cleanup refused.");
+                        File.Delete(path);
+                    }
+                    catch(Exception cleanup) when(!(cleanup is OutOfMemoryException))
+                    {cleanupFailure=cleanupFailure??cleanup;Debug.LogError("[SkirmishRunLogTemporaryCleanup] result=Failed error="+cleanup);}
+                // Preserve the primary error; cleanup failure cannot become success.
+                if(originalFailure==null&&cleanupFailure!=null)throw cleanupFailure;
+            }
+        }
+
 
         private static void FinishEvidence(bool abort, string abortReason, string currentSourceHash)
         {
@@ -2129,7 +2228,9 @@ namespace Game.Editor
                 counted ? 1 : 0,
                 error ?? string.Empty,
                 row ?? string.Empty);
-            File.WriteAllText(logAbsolute, log);
+            if(productionCanary==null)File.WriteAllText(logAbsolute,log);
+            else WriteRunLogInOwnedAttempt(productionCanary.Request.ArtifactDirectory,
+                (string)productionCanary.Request.Job["candidate_sha256"],logAbsolute,log);
             if (appended)
                 Debug.Log(log.Trim());
             else

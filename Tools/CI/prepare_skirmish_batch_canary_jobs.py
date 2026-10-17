@@ -105,7 +105,7 @@ class _MatrixPreparationObservation:
         self._observed = None
 
 
-def prepare_matrix_jobs(args):
+def _load_reviewed_matrix_census(args):
     """Consume actual checked native census; does not launch, publish or qualify."""
     from skirmish_production_matrix_authority import SamplingAuthority, strict
     from skirmish_native_identity import normalize_native_locale
@@ -152,6 +152,12 @@ def prepare_matrix_jobs(args):
     if args.matrix_exit_file is None or args.matrix_exit_file.read_text(encoding='utf-8-sig').strip()!='0':
         raise ValueError('Owned checked wrapper terminal exit file required')
     install=queue.load(args.integration_manifest)
+    return root,worker,request,census,snapshot,authority,slots,install
+
+
+def prepare_matrix_jobs(args):
+    from skirmish_native_identity import normalize_native_locale
+    root,worker,request,census,snapshot,authority,slots,install=_load_reviewed_matrix_census(args)
     observation = _MatrixPreparationObservation(root,snapshot)
     try:
         for row in install['files']:
@@ -212,6 +218,60 @@ def prepare_matrix_jobs(args):
         observation.close()
 
 
+def _manual_paid_plane_authority(args,root,census,snapshot):
+    from skirmish_production_matrix_authority import strict
+    path=Path(args.manual_paid_plane_authority).resolve()
+    queue.require(path.is_relative_to(root/'Logs/SkirmishProduction'),'Owned supplemental authority path')
+    queue.relative_file(root,path.relative_to(root).as_posix())
+    queue.require(queue.sha(args.manual_paid_plane_authority_sha256) and queue.digest(path)==args.manual_paid_plane_authority_sha256,'Pinned supplemental authority drift')
+    a=strict(path)
+    fields={'schema_version','kind','approved','purpose','subject','native_request','native_census','snapshot','integration_manifest','preparation_log','wrapper_exit','candidate_sha256','build_sha256','queue_success_enabled','normal_mission_accepted'}
+    queue.require(set(a)==fields and type(a['schema_version'])is int and a['schema_version']==1 and a['kind']=='ScopedManualPaidPlaneSupplementAuthority-v1' and a['approved']is True and a['purpose']=='NormalPaidTransportCruiseCameraOnly' and a['queue_success_enabled']is False and a['normal_mission_accepted']is False,'Exact unqualified manual supplemental authority')
+    refs={'native_request':args.matrix_request,'native_census':args.preparation,'snapshot':args.snapshot,'integration_manifest':args.integration_manifest,'preparation_log':args.preparation_log,'wrapper_exit':args.matrix_exit_file}
+    for name,expected in refs.items():
+        ref=a[name];queue.require(isinstance(ref,dict) and set(ref)=={'path','sha256'} and queue.sha(ref['sha256']),'Exact authority reference '+name)
+        target=Path(ref['path']);target=target if target.is_absolute()else root/target
+        queue.require(target.resolve()==Path(expected).resolve() and target.resolve().is_relative_to(root),'Authority path join '+name)
+        queue.relative_file(root,target.resolve().relative_to(root).as_posix())
+        queue.require(queue.digest(target)==ref['sha256'],'Authority literal join '+name)
+    expected=dict(catalog_id='S005',seed=155926,locale='EN',size='Standard',difficulty='Regular',control_mode='manual',packet_path='Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md')
+    subject=a['subject'];queue.require(isinstance(subject,dict) and set(subject)==set(expected)|{'packet_sha256'} and all(type(subject.get(k))is type(v) and subject[k]==v for k,v in expected.items()) and queue.sha(subject['packet_sha256']),'Exact manual supplemental subject')
+    queue.require(all(a[k]==snapshot[k]==census[k]for k in ('candidate_sha256','build_sha256')),'Supplemental current candidate/build join')
+    queue.require(queue.digest(path)==args.manual_paid_plane_authority_sha256,'Authority changed during validation')
+    return a
+
+
+def prepare_manual_paid_plane(args):
+    from skirmish_native_identity import normalize_native_locale
+    root,worker,request,census,snapshot,authority,slots,install=_load_reviewed_matrix_census(args)
+    a=_manual_paid_plane_authority(args,root,census,snapshot);subject=a['subject']
+    expected_slot={**subject,'control_mode':'aria'}
+    queue.require(slots==[expected_slot],'Exact one actual ARIA configuration census; manual authority remains separate')
+    rows=census['native_compiled_setups'];queue.require(isinstance(rows,list) and len(rows)==1,'One actual compiled setup')
+    envelope=rows[0]
+    fields={'schema_version','collector_kind','slot','native_setup_identity','actual_native_locale','native_config_sha256','definition_asset_path','definition_asset_sha256'}
+    queue.require(set(envelope)==fields and type(envelope['schema_version'])is int and envelope['schema_version']==1 and envelope['collector_kind']=='SkirmishNativeCompiledSetupCensus' and envelope['slot']==expected_slot,'Exact static census envelope')
+    identity=validate_setup_identity(envelope['native_setup_identity'])
+    queue.require(all(type(identity[k])is type(subject[k]) and identity[k]==subject[k]for k in ('catalog_id','seed','locale','size','difficulty')) and normalize_native_locale(envelope['actual_native_locale'])=='EN' and queue.sha(envelope['native_config_sha256']),'Actual native EN configuration identity')
+    observation=_MatrixPreparationObservation(root,snapshot)
+    try:
+        for row in install['files']:
+            queue.require(observation.digest(root/row['target'])==row['after_sha256'],'Reviewed integration drift '+row['target'])
+        relative=envelope['definition_asset_path'];definition=queue.relative_file(root,relative)
+        queue.require(relative.startswith('Assets/') and queue.sha(envelope['definition_asset_sha256']) and observation.digest(definition)==envelope['definition_asset_sha256'],'Actual native definition drift')
+        batch_id='batch-'+uuid.uuid4().hex
+        job=dict(schema_version=1,job_id=batch_id+'-0-S005',**{k:identity[k]for k in ('catalog_id','definition_id','definition_version','difficulty','size','seed','locale')},candidate_sha256=snapshot['candidate_sha256'],build_sha256=snapshot['build_sha256'],setup_sha256=sha256(identity),content_sha256=sha256(content_identity(identity)),source_manifest=snapshot['source_manifest'],packet_path=subject['packet_path'],packet_sha256=subject['packet_sha256'],control_mode='manual',required_stages=sorted(queue.STAGES),timeout_seconds=3000)
+        queue._preflight(job,root,None,_observation=observation);observation.bind_jobs([job])
+        directory=Path(queue._enqueue_preflighted(root/'Logs/SkirmishProduction/Queue',job,root)['job_directory'])
+        validate=lambda queued,project=root,sampling=None:queue._preflight(queued,project,None,_observation=observation)
+        queue._claim_checked(directory,worker,root,lambda queued:validate(queued))
+        queue.write_new(directory/'NATIVE_PREPARATION_PROVENANCE.json',dict(supplemental_authority_path=str(args.manual_paid_plane_authority.resolve()),supplemental_authority_sha256=args.manual_paid_plane_authority_sha256,native_setup_identity=identity,native_config_sha256=envelope['native_config_sha256'],static_census_control_mode='aria',job_control_mode='manual',normal_mission_accepted=False,queue_success_enabled=False,native_canary_executed=False))
+        observation.check_order([queue.load(directory/'job.json')])
+        answer=dict(result='ManualPaidPlaneSupplementPreparedUnqualified',job_path=str(directory/'job.json'),claim_path=str(directory/'claim.json'),provenance_path=str(directory/'NATIVE_PREPARATION_PROVENANCE.json'),jobs=1,complete_source_observations=1,normal_mission_accepted=False,queue_success_enabled=False,native_canaries_executed=0)
+        print(json.dumps(answer,indent=2));return answer
+    finally:observation.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', type=Path, default=Path(__file__).resolve().parents[2])
@@ -222,7 +282,14 @@ def main():
     parser.add_argument('--integration-manifest', type=Path, required=True)
     parser.add_argument("--matrix-request", type=Path)
     parser.add_argument("--matrix-exit-file", type=Path)
+    parser.add_argument('--manual-paid-plane-authority',type=Path)
+    parser.add_argument('--manual-paid-plane-authority-sha256')
     args = parser.parse_args()
+    if (args.manual_paid_plane_authority is None)!=(args.manual_paid_plane_authority_sha256 is None):
+        raise ValueError('Both pinned manual supplemental authority arguments required')
+    if args.manual_paid_plane_authority is not None:
+        if args.matrix_request is None:raise ValueError('Actual checked static matrix census required')
+        prepare_manual_paid_plane(args);return
     if args.matrix_request is not None:
         prepare_matrix_jobs(args); return
     root = args.project.resolve(); worker = queue.identifier(args.worker)

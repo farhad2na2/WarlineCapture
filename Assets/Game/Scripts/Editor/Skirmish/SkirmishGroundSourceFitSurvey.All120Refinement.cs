@@ -90,6 +90,50 @@ namespace Game.Editor
             Debug.Log("[APGroundPairStaticCollection] result=Collected requestedMissions=2 requestedSizeVectors=6 staticAdmission=Pending sourceFitCertified=0 normalMissionReady=0");
         }
 
+        static void RequireDurableRequestedMission(JObject mission,JObject artifact,string expectedPath)
+        {
+            Require((string)artifact["path"]==expectedPath&&Hash((string)artifact["path"])==(string)artifact["sha256"]&&
+                string.Equals(mission.ToString(Newtonsoft.Json.Formatting.None),File.ReadAllText((string)artifact["path"]),StringComparison.Ordinal),
+                "Exact durable requested mission artifact required");
+        }
+
+        public static void RunRequestedDurableMissionSerializationControls()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Idle serialization controls required");
+            string root=Path.Combine(Path.GetTempPath(),"warline-durable-"+Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);int controls=0;
+            try
+            {
+                string path=Path.Combine(root,"mission.json");
+                var mission=new JObject{["catalogId"]="S097",["single"]=(float)474.4,["double"]=(double)474.4,
+                    ["rows"]=new JArray(new JObject{["x"]=(float)0.1,["z"]=(double)0.1})};
+                void Write(JObject value)=>File.WriteAllText(path,value.ToString(Newtonsoft.Json.Formatting.None),new System.Text.UTF8Encoding(false));
+                JObject Artifact()=>new JObject{["path"]=path,["sha256"]=Hash(path)};
+                void Refused(JObject wanted,JObject artifact,string expected)
+                {
+                    bool refused=false;try{RequireDurableRequestedMission(wanted,artifact,expected);}
+                    catch(InvalidOperationException){refused=true;}
+                    Require(refused,"Changed/spliced durable payload must refuse");controls++;
+                }
+                Write(mission);var original=Artifact();RequireDurableRequestedMission(mission,original,path);controls++;
+                bool inMemoryDeepEquals=JToken.DeepEquals(mission,JObject.Parse(File.ReadAllText(path)));
+                RequireDurableRequestedMission(JObject.Parse(File.ReadAllText(path)),original,path);controls++;
+                var changed=(JObject)mission.DeepClone();changed["single"]=475.4;Write(changed);Refused(mission,Artifact(),path);
+                changed=(JObject)mission.DeepClone();changed["extra"]=true;Write(changed);Refused(mission,Artifact(),path);
+                changed=(JObject)mission.DeepClone();changed["catalogId"]="S098";Write(changed);Refused(mission,Artifact(),path);
+                Write(mission);Refused(mission,original,Path.Combine(root,"foreign.json"));
+                var bad=Artifact();bad["sha256"]=new string('0',64);Refused(mission,bad,path);
+                File.AppendAllText(path," ");Refused(mission,Artifact(),path);
+                Require(controls==8,"Exact serialization controls count");
+                Debug.Log("[RequestedDurableSerializationControls] result=Passed controls=8 floatDoubleRoundtripDeepEquals="+inMemoryDeepEquals+" tolerance=0 nativePlacementProved=0");
+            }
+            finally
+            {
+                Require((File.GetAttributes(root)&FileAttributes.ReparsePoint)==0,"Owned ordinary fixture root required");
+                Directory.Delete(root,true);
+            }
+        }
+
         public static void RunAll120RequestedSourceLogicalRefinement()
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&
@@ -115,10 +159,7 @@ namespace Game.Editor
                 {
                     string id=(string)mission["catalogId"];
                     var artifact=((JArray)report["missionArtifacts"]).OfType<JObject>().Single(a=>(string)a["catalogId"]==id);
-                    Require((string)artifact["path"]==output+".authoring."+id+".mission.json"&&
-                        Hash((string)artifact["path"])==(string)artifact["sha256"]&&
-                        JToken.DeepEquals(mission,JObject.Parse(File.ReadAllText((string)artifact["path"]))),
-                        "Exact durable requested mission artifact required");
+                    RequireDurableRequestedMission(mission,artifact,output+".authoring."+id+".mission.json");
                     var sizeArtifacts=((JArray)mission["sizeArtifacts"]).OfType<JObject>().ToArray();
                     Require(sizeArtifacts.Select(s=>(string)s["size"]).Distinct().OrderBy(v=>v,StringComparer.Ordinal)
                         .SequenceEqual(new[]{"LargeWar","Standard","War"}),"Every requested mission needs all3 durable size rows");

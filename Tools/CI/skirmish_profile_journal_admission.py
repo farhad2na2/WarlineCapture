@@ -1,5 +1,8 @@
 """One measured profile-preservation admission only; never qualifies a job."""
 import ntpath
+import csv
+from itertools import islice
+from pathlib import Path
 import re
 from skirmish_native_identity import verify_job
 from skirmish_production_queue import fingerprint
@@ -13,7 +16,31 @@ def normal(path):
     need(bool(ntpath.splitdrive(path)[0]), "Fully qualified native Windows root required")
     return ntpath.normcase(ntpath.normpath(path))
 
-def snapshot(value, catalog, scope=None):
+
+def original_catalog_names(value, catalog, names):
+    # Existing complete catalog authority, not an event/caller supplied allowlist.
+    import skirmish_production_matrix_authority as authority
+    path=Path(authority.__file__).resolve().parents[2]/authority.CATALOG
+    try:
+        with path.open(encoding="utf-8-sig",newline="") as stream:rows=list(islice(csv.DictReader(stream),121))
+    except (OSError,csv.Error) as error:raise ValueError("Catalog authority unavailable") from error
+    ids=[row["scenario_id"] for row in rows]
+    expected={"S"+str(i).zfill(3) for i in range(1,121)}
+    need(len(ids)==120 and len(set(ids))==120 and set(ids)==expected,
+         "Exact existing finite catalog authority required")
+    need(catalog in expected,"Current catalog outside authority")
+    entries=value["directory_entries"]
+    need(isinstance(entries,list) and len(entries)<=32 and all(isinstance(n,str) for n in entries) and entries==sorted(set(entries)),"Bounded typed unique original save enumeration")
+    groups=set()
+    for name in entries:
+        if name in names:continue
+        match=re.fullmatch(r"skirmish-(s[0-9]{3})-native[.]json(?:[.](?:tmp|bak|lock))?",name)
+        need(match is not None and match[1].upper() in expected,"Unknown original save name")
+        groups.add(match[1])
+    return names+[f"skirmish-{ident}-native.json{suffix}"
+                  for ident in sorted(groups) for suffix in ("",".tmp",".bak",".lock")]
+
+def snapshot(value, catalog, scope=None, version=2):
     keys={"root", "directory_exists", "directory_entries", "enumeration_limit", "files", "observed_bytes"}
     if scope is not None:keys|={"namespace_scope","excluded_non_save_entries","total_directory_entries"}
     need(isinstance(value, dict) and set(value) == keys,
@@ -21,8 +48,9 @@ def snapshot(value, catalog, scope=None):
     normal(value["root"]); need(type(value["directory_exists"]) is bool, "Actual directory existence")
     names = [name + suffix for name in ("profile.json", "settings.json", "quickgame.json",
         "skirmish-" + catalog.lower() + "-native.json") for suffix in ("", ".tmp", ".bak", ".lock")]
+    if version==3 and scope=="original":names=original_catalog_names(value,catalog,names)
     rows = value["files"]
-    need(isinstance(rows, list) and len(rows) == 16 and [r.get("name") for r in rows] == names,
+    need(isinstance(rows, list) and len(rows) == len(names) and [r.get("name") for r in rows] == names,
          "Complete ordered known profile files required")
     total = 0
     for row in rows:
@@ -42,7 +70,7 @@ def snapshot(value, catalog, scope=None):
          "Actual bounded byte total")
     if scope is not None:
         need(scope in ("original","owned"),"Exact journal namespace role")
-        expected="OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded" if scope=="original" else "OwnedCurrentCatalogSaveFiles_Exclusive"
+        expected=("OriginalCanonicalCatalogSaveFiles_KnownEngineSiblingsExcluded" if version==3 else "OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded") if scope=="original" else "OwnedCurrentCatalogSaveFiles_Exclusive"
         need(value["namespace_scope"]==expected,"Native original/owned namespace scope")
         excluded=value["excluded_non_save_entries"]
         need(isinstance(excluded,list) and all(isinstance(e,dict) and set(e)=={"name","kind"} for e in excluded),"Exact typed non-save exclusions")
@@ -90,7 +118,7 @@ def validate_profile_journal(job, claim, events):
         originals = []
         owned = []
         versions=[stage.get("journal_version") for stage in (begin,pre,after)]
-        need(all(type(v) is int and v in (1,2) for v in versions) and len(set(versions))==1,"One consistent journal schema version")
+        need(all(type(v) is int and v in (1,2,3) for v in versions) and len(set(versions))==1,"One consistent journal schema version")
         version=versions[0]
         for stage in (begin, pre, after):
             need(set(stage) == {"journal_version", "catalog_id", "original_environment", "actual_environment",
@@ -101,8 +129,8 @@ def validate_profile_journal(job, claim, events):
                  "Original environment type")
             need(stage["actual_environment"] is None or isinstance(stage["actual_environment"], str),
                  "Actual environment type")
-            originals.append(snapshot(stage["original"], job["catalog_id"],"original" if version==2 else None))
-            owned.append(snapshot(stage["owned"], job["catalog_id"],"owned" if version==2 else None))
+            originals.append(snapshot(stage["original"], job["catalog_id"],"original" if version>=2 else None,version))
+            owned.append(snapshot(stage["owned"], job["catalog_id"],"owned" if version>=2 else None,version))
         expected_owned = normal(ntpath.join(claim["artifact_directory"], "save-profile"))
         need(normal(menu["actual_save_root"]) == expected_owned, "Actual launch profile root splice")
         need("actual_save_root" in restored and restored["actual_save_root"] == after["actual_environment"],

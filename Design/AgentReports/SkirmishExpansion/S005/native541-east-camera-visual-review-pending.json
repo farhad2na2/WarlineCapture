@@ -1,0 +1,13 @@
+{
+  "sourceHash": "0feaf6a985eb603013fd87c8a3c9ae33c341cc047e59677b821b47f45ac5dbc4",
+  "sourcePrePostMatched": true,
+  "allMaterialBytesMatched": true,
+  "wrapperExit": 0,
+  "startupPassed": true,
+  "mapCaptured": true,
+  "visualAccepted": false,
+  "reason": "Verified east-facing camera still frames sparse airfield; dense-town source-footprint survey required",
+  "checkpointCaptureAvailable": true,
+  "freshRecoveryComplete": false,
+  "playerReady": false
+}

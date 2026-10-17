@@ -1,0 +1,131 @@
+{
+  "result": "ReadOnlyCurrentS005CheckpointLifecycleMaterialGateAudit",
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "sourceIdentity": "Root final candidate plus exact complete recorded manifest comparison; no new native execution or whole fingerprint generated",
+  "sourceContracts": {
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs": "3181c90294fe3b5a2bfe1448e70f8b6968de8565a0a297fda96822828314110e",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSnapshotService.cs": "b1da79e7d52f17a20201faa5ec78bdd4df339969d66300d053a690d16531595e",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs": "cf8e06fab89b9e7a7859205c8577deb4cefc0985943a088bf15bcc32140c9078",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointTransientState.cs": "952b1ccac68e1ead79ca62edf65f0fd5c3cd1c70f5cde2049f2307c716188d3a",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSupportState.cs": "87af6ea0938768817b2d7581806d94e4dbf0ee36970037556ca20b5908220cc6",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResultSettlementService.cs": "f6b809bd885d2ac8a80a31a6d223418adb3ae365a83b5eb98a54164a134e279b",
+    "Assets/Game/Scripts/Systems/Support/SupportParatrooperAdapterSystemHelper.Native.cs": "b69505f61a21246d1e7f6cedebeee2d59317dbfd4237e86b4582eb3f2b3f5696",
+    "Assets/Game/Scripts/Systems/Support/SupportPassengerLifecycleSystem.cs": "42b756bef500ceff019d5cebda6072701d0e576af65e478dfd6d14331f00c52b",
+    "Assets/Game/Scripts/Systems/Support/SupportAbilityStartupSystem.cs": "f0d039d8b6bf3255f3db136563785b2c570b52890f249586a7b2e183fd2dc90a",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsView.cs": "6258ddf9eb52c97f048a8381ba4bccf03826cf37f36ac3e9ef1d3b8df5d7e34b"
+  },
+  "recordedProofs": {
+    "native1179-checkpoint-focused-proof.json": "e94e1571e2dac4ff9923d3e3be132cda70ad008c2efa5f4c9c14f340de87e7be",
+    "native1144-isolated-paid-boarded-recovery-pass.json": "dc0c0c94e48f188289adadbd088ef579482d5a5d61028b955fce7e507fdb6950",
+    "native1150-populated-fog-public-save-continue-pass.json": "9c05fbbdf982879c3e6c7f3f4b02f691f3f9c9ffd22bc7c916800a0cf091d9a6",
+    "native1177-normal-manual-r2-recovery-failure.json": "f93d965bd92d24c566e04d9700ce340e1cba1770f5b52afae360dbd49d974c95",
+    "native1106-isolated-paid-bilateral-airport-pass.json": "538f19200b100aa0f31b0183d41895b7791115ea6a1cf502ef0df3e6ca677634"
+  },
+  "checkpointApplicability": [
+    {
+      "recordedManifest": "final-1144-boarded-recovery-post-source-manifest.json",
+      "recordedManifestSha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "currentManifest": "final-1175-integrated-post-source-manifest.json",
+      "currentManifestSha256": "31476f77e313143d7d9c5e3854379b6e82f2c8acccecfb9e732775e6dd6b26c5",
+      "changedSourceFiles": [
+        "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs",
+        "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Skirmish.cs",
+        "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs"
+      ],
+      "physicalMaterialsEqual": true,
+      "allCheckpointAndCargoDependenciesIdentical": true,
+      "applicability": "Scoped unchanged capture/codec/passenger/knowledge/ledger machinery only; changed AttackMove/ARIA/UI require current normal integration qualification, never a new native run."
+    },
+    {
+      "recordedManifest": "final-1150-drone-fog-recon-producer-post-source-manifest.json",
+      "recordedManifestSha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "currentManifest": "final-1175-integrated-post-source-manifest.json",
+      "currentManifestSha256": "31476f77e313143d7d9c5e3854379b6e82f2c8acccecfb9e732775e6dd6b26c5",
+      "changedSourceFiles": [
+        "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs",
+        "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Skirmish.cs",
+        "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs"
+      ],
+      "physicalMaterialsEqual": true,
+      "allCheckpointAndCargoDependenciesIdentical": true,
+      "applicability": "Scoped unchanged capture/codec/passenger/knowledge/ledger machinery only; changed AttackMove/ARIA/UI require current normal integration qualification, never a new native run."
+    }
+  ],
+  "closedScopes": [
+    {
+      "gate": "X30/X38 StandardRegular ARIA",
+      "evidence": "Current six-case EN/FA104734/130368/155926 d5af matrix; no repeatedmatrix needed."
+    },
+    {
+      "gate": "X37 physical bilateralAir2",
+      "evidence": "Native1106 currentd5af paid two independent Airports/fourmixed aircraft taxi/takeoff/homeReturn; cargo/combat not certified."
+    },
+    {
+      "gate": "X36 isolated checkpoint machinery",
+      "evidence": "Native1179 actual74 declared cases/four suites on d5af; codec/parts/production/staging/transients/Smoke+Strike recovery; no normal player journeys."
+    },
+    {
+      "gate": "X36 real scoped public recovery",
+      "evidence": "Native1144 actual paid FastAPC/Rifle hidden links/SaveContinue/unload;1150 paidDrone natural contact ledger/frozen age/SaveContinue/expiry, on8c2cf8; exact checkpoint/cargo deps unchanged in d5af."
+    }
+  ],
+  "smallestCurrentMaterialWork": [
+    {
+      "task": "1185/1180 actual normal manual EN/FA and R2 combat recovery result/MainMenu",
+      "reason": "1177 actual nativeVictory/R2/payment/SaveContinue passed but original strict evaluator Failed wrongtitle/Button ownership; new fixed oracle has no new gameplay requirement. Parent actual1185 running,1180 drypassed; await realclosure."
+    },
+    {
+      "task": "1178v3 realStop/manualMoveHoldPauseResumeMove continuation",
+      "reason": "Current normal ARIA matrix does not prove actualStop/manual order replacement. Root actualdrypassed; preserve sameattempt/nativecontacts/intent continuity. No freshReplay claim."
+    },
+    {
+      "task": "1182v2 ten real lifecycle cycles with settled nativeDefeats",
+      "reason": "Current native1179 isolated replay/results cannot prove realproductcycle cleanup. Parent drypassed; actualSaveAcknowledged1 wait/rawflags now guards every result action. FAonly; rawmemory review separate."
+    },
+    {
+      "task": "Immutable1148v2 actualFighter+AA legal enemyair effects",
+      "reason": "Ground/heli damage and bilateralAir2 delivery cannot establish legal enemyair target hit. Parentfinaldrypassed currentcontracts /private/tmp/s005-aircraft-d5af-execution-contracts/s005-run-1148-d5af.py."
+    },
+    {
+      "task": "1122 actual paidPlane cargo flight/return/unload",
+      "reason": "Fourmixedair flight orAPC/rope cargo cannot certify distinct fixedwing passenger+vehicle path. Prepared currentcontracts /private/tmp/s005-aircraft-d5af-execution-contracts/s005-run-1122-d5af.py; actual outcome pending."
+    },
+    {
+      "task": "Distinct VTOL/drop recovery applicability and settled disposition",
+      "reason": "NativeParts registersRopeDrop/Parachute/CargoDrop and1179 transient tests roundtrip synthetic actors;1144 actualground recovery coversshared links, not nativeVTOL loaded/worldrebuild/settledrope path. Existing1101 immediateunlinks/bodyrestore doesnot itself prove completedlanding. Keep exact current gap, avoid22independent journeys."
+    }
+  ],
+  "defectOrientedFinding": {
+    "status": "SourceProvenUnsupportedSupportRecovery_ConditionalOnExposure_NoCurrentNativeReproduction",
+    "chain": [
+      "SkirmishNativeCheckpointSupportState.cs:62-68 permitsStrike only withPayloadNull; activeSupply/Para flight rejectsNativeUnsupportedSupportFlight.",
+      "SkirmishNativeCheckpointTransientState.cs:66-68 rejects anySkirmishSupportPassengerCapacity (includingdisabled).",
+      "SupportParatrooperAdapterSystemHelper.Native.cs:66 attaches capacityownership toactualsupportRifle;SupportPassengerLifecycleSystem.cs:16-17 removesonlywhenUnitHealthabsent; landingalone doesnotclearit.",
+      "Therefore future genuinelyenabledSupportPara leavesSaveExitcaptureunsupported whileanyownedpara survives; genericretry hint cannotresolve simplywaitingforlanding.",
+      "Normalproductionreferences audit found nocreation/initialization writer forSkirmishSupportOwnerComponent underAssets/Game; existingnative1177 actualcheckpointSupportRecords count0. SupportVisibility requiresTryReadSupport+Visible;Startup withoutnativeowner/campaignruntime setsActive0. This doesnot establish that currentS005playercanactivatePara."
+    ],
+    "currentScope": "Do not treat as reproducedcurrentS005bug or startnewSupportfeaturework. Retain explicitSupportroadmap/amendment acceptance gap; root may corroborate currentSupport UI exposure readonly onownednormalrun if needed.",
+    "actual1177CheckpointSupportRecordCount": 0,
+    "nextMeaningfulCheck": "If currentnativeSupport trulyadvertised/enabled, actuallegalPara landing thenPause/SaveExit must preservefailure and costs; repair nativecapacity/identity serialization andvisiblecapabilitycontract only after narrowreproduction. If notexposed, recordunimplementedSupportamendment ratherthanpretendSmoke/Strike isolated5 closesallSupport."
+  },
+  "otherAcceptanceSeparate": [
+    "CurrentfullEN/FA renderedVictory isclosed; FAdefeat/surrender remainsactual1182 scope, EnglishDefeat notclaimed byFAcycles. Actual timeout/simultaneous objectiveedge fixture evidence isseparate fromcountednormalwins.",
+    "AffectedCampaignM3 completejourney isretainedpending; M4 currentT7 scopedpass/otherCampaignapplicability requiresrecordedsourcecomparison, not wholesaleM1-M5repeatforunrelatedUItext.",
+    "Authoritativefamily20seedstrategystress/performance andmemorybudget/device evidence remainpending; no20newS005 fullwins ornewWar/LargeWar/currentadditionaldifficultyqualifiers invented.",
+    "Only StandardRegular normalpublicS005 iscurrentlyexposed. CatalogS006-S120, extraexposedfutureprofiles, newphysicalmaps andfullcatalogcertification areoutside currentmissioncompletion work.",
+    "Owner aestheticreview deferred byuser; human/unfamiliarplayer/device/audio/background/processinterruption andMPentitlementplatform acceptance remain separate; no Editorfixture certifies them."
+  ],
+  "bookkeepingOnly": "Root already correcting stale pending/global role fields (fivebaselinecases,bilateralpending,oldFogpending); no sourceorreadiness records edited bythisaudit.",
+  "productionDefectsClaimed": 0,
+  "noUnityCalls": true,
+  "noAssetsOrSourceEdits": true,
+  "noGitOperations": true,
+  "playerReady": false
+}

@@ -1,0 +1,29 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=UIShellCurrentContentLoadTests.RunCommandWheelStopFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1592-wheel-stop-dedicated-3d53-recompiled.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UIShellCurrentContentLoadValidation] passed=CommandWheelStopTracksGroupSelectionWithUnchangedFocusedVersion
+UnityEngine.Debug:Log (object)
+UIShellCurrentContentLoadTests:RunValidationStep (string,System.Action`1<UIShellCurrentContentLoadTests>,int&) (at Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs:1315)
+UIShellCurrentContentLoadTests:RunCommandWheelStopFocusedValidation () (at Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs:167)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1592-wheel-stop-dedicated-3d53-recompiled.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandWheelStopVersionValidation] result=Passed tests=1
+UnityEngine.Debug:Log (object)
+UIShellCurrentContentLoadTests:RunCommandWheelStopFocusedValidation () (at Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs:171)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1592-wheel-stop-dedicated-3d53-recompiled.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=UIShellCurrentContentLoadTests.RunCommandWheelStopFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1592-wheel-stop-dedicated-3d53-recompiled.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

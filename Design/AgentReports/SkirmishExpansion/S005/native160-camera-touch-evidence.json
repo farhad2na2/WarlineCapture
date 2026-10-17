@@ -1,0 +1,18 @@
+{
+  "mission": "S005",
+  "sourceHash": "5b85078da9e492d989d6380d26ace9a6bfda6d0f0236fe06a0b45223ea76c028",
+  "countsForCurrentSource": false,
+  "result": "Passed",
+  "nativeTouch": true,
+  "mapFocusAttempts": 1,
+  "cameraFocusObserved": true,
+  "troopCommandsAdded": 0,
+  "touchSamples": 12,
+  "acceptance": "Camera touch only; not mission/result/return acceptance",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "log": "native-160-camera-touch-fixed.log",
+  "logSha256": "05c02cfab9d7b0931f09859c637cb1bf90ce2509c3e91fa75e5e9f252eda2683",
+  "playerReady": false,
+  "historicalReason": "Current frozen candidate source is 3986ae0d0abf89331a6eb6c464cf4897c5fdffa1f2ea82e47a16905f1a242030; original source/outcome/log evidence retained"
+}

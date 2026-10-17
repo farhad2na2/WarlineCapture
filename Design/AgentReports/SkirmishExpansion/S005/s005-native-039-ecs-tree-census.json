@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var w=Unity.Entities.World.DefaultGameObjectInjectionWorld;var counts=new System.Collections.Generic.Dictionary<string,int>();if(w!=null){var em=w.EntityManager;var g=w.GetExistingSystemManaged<Unity.Rendering.EntitiesGraphicsSystem>();using var q=em.CreateEntityQuery(typeof(Unity.Transforms.LocalToWorld),typeof(Unity.Rendering.MaterialMeshInfo));using var es=q.ToEntityArray(Unity.Collections.Allocator.Temp);foreach(var e in es){var i=em.GetComponentData<Unity.Rendering.MaterialMeshInfo>(e);UnityEngine.Mesh m=null;if(!i.HasMaterialMeshIndexRange&&i.Mesh>=0&&g!=null)m=g.GetMesh(i.MeshID);else if(em.HasComponent<Unity.Rendering.RenderMeshArray>(e))m=em.GetSharedComponentManaged<Unity.Rendering.RenderMeshArray>(e).GetMesh(i);if(m!=null&&m.name.Contains(\"Tree\")){counts.TryGetValue(m.name,out int c);counts[m.name]=c+1;}}}return new {playing=UnityEditor.EditorApplication.isPlaying,treeMeshes=counts};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "playing": true,
+        "treeMeshes": {
+          "SM_Env_Tree_02": 56,
+          "SM_Env_Tree_Big_02": 34,
+          "SM_Env_Tree_Big_03": 31,
+          "SM_Env_Tree_Large_01": 31,
+          "SM_Env_Tree_03": 133,
+          "SM_Env_Tree_01": 66,
+          "SM_Env_Tree_Big_01": 42
+        }
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

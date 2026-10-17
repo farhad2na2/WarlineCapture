@@ -1,0 +1,52 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-targeted-visual1370/S005TargetedVisual1370.cs",
+      "entry": "S005TargetedVisual1370.LoadOnly",
+      "dry_run": "true",
+      "timeout_ms": "120000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "'EntityId.GetRawData()' is obsolete: 'Please use EntityId.ToULong(EntityId) instead.'",
+          "line": 123,
+          "column": 60,
+          "id": "CS0618"
+        },
+        {
+          "severity": "error",
+          "message": "The type or namespace name 'RenderFilterSettings' could not be found (are you missing a using directive or an assembly reference?)",
+          "line": 189,
+          "column": 329,
+          "id": "CS0246"
+        },
+        {
+          "severity": "error",
+          "message": "The type or namespace name 'RenderFilterSettings' could not be found (are you missing a using directive or an assembly reference?)",
+          "line": 204,
+          "column": 120,
+          "id": "CS0246"
+        }
+      ],
+      "compileMs": 415,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005TargetedVisual1370_c9043e5512934a2e819f655396b9bdb0",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

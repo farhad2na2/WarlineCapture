@@ -1,0 +1,41 @@
+{
+  "scope": "AdditiveLegacyRegressionControlsThenActualOpeningWitnessDiagnostic_NoCompletionClaim",
+  "parent_map": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/manifest.json",
+  "parent_sha256": "f9e8f33ad1745d203b6888b6dc7aec2beddb390a190bc8dcaef271f4c0cb13b6",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishLegacyProductionIdentity.cs.txt",
+      "before_sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2",
+      "sha256": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishS002AriaRunHarness.ProductionBatch.cs.txt",
+      "before_sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d",
+      "sha256": "0df084bb4443138ea9a6ea0cc2420fc9fa304860ba22d7073e747cc51f2f6842",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/SkirmishLegacyProductionControls.cs.txt",
+      "before_sha256": "3966bf263453550f29dbce482dbb1081d9a1c3284470bda379a1b839fdc47f2e",
+      "sha256": "a60ef894179f3ef9d07df558d224b1a7fb78bedf483723ce84d1ff685eaac01a",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/prepare_skirmish_legacy_production_jobs.py",
+      "before_sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c",
+      "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e"
+    }
+  ],
+  "native_executed": false,
+  "assets_edited": false,
+  "regular_standard_equivalence": false,
+  "sampling_coverage_credit": 0,
+  "execute_method": "Game.Editor.SkirmishLegacyProductionControls.RunLegacyRegressionAndOpeningWitnessDiagnostic",
+  "no_quit_wrapper": true,
+  "fresh_compiled_snapshot_required_after_wrapper_before_real_jobs": true
+}

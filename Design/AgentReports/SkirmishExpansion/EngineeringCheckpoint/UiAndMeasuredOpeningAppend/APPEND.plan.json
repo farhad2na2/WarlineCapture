@@ -1,0 +1,437 @@
+{
+  "schema": 1,
+  "scope": "Append-only UI owned storage and measured opening diagnostic engineering checkpoint; Batch excluded",
+  "parent": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/CurrentCandidateStableUnion/CURRENT_CHECKPOINT.plan.json",
+    "sha256": "ff57d8f8785432b224b8077f01152f1572e0b241be632095282fdba660daff4e",
+    "declared_stage_count": 539,
+    "root_reported_current_index_paths": 538,
+    "index_not_inspected_or_modified": true
+  },
+  "authority_maps": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json",
+      "sha256": "c98531ea647895ba48439d2b67123be416c6e975f087e47990d287dc897f5d98"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.json",
+      "sha256": "2ff7100e69b2bacae3947c6fdee6d7dbbad386a137a3b07a7997d33766144175"
+    }
+  ],
+  "target_successors": [
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishComponents.cs.txt",
+      "before_sha256": "6baaa5655936e5fbc459b620123d1a2d397a2c8b51dbef77cf513a92ef251375",
+      "sha256": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "assembly": "Game.UI.Shell.Contracts.Ecs",
+      "actual_sha256_at_plan": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "installed_at_plan": true
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/UiShellEcsGateway.AriaPlay.cs.txt",
+      "before_sha256": "8463942295169681e6f7c744d36554642fcd639eeb9dae22c5b9a8ffd2fe0943",
+      "sha256": "70c83c7f5bc0fd9613ac24b8361f822d94a200c9ced2ce666dc0ec3b8a391f63",
+      "assembly": "Game.UI.Shell.Ecs",
+      "actual_sha256_at_plan": "70c83c7f5bc0fd9613ac24b8361f822d94a200c9ced2ce666dc0ec3b8a391f63",
+      "installed_at_plan": true
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishPlanSystem.cs.txt",
+      "before_sha256": "a73a97339fe73d0b7e79bad40d50d47ee77e4a95e8b26c2df64d5881bc805428",
+      "sha256": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "assembly": "Game.UI.Shell.Ecs",
+      "actual_sha256_at_plan": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "installed_at_plan": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/SkirmishS002AriaRunHarness.cs.txt",
+      "before_sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+      "sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "assembly": "Game.Editor",
+      "actual_sha256_at_plan": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "installed_at_plan": true
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishObservationStorage.cs.txt",
+      "before_sha256": null,
+      "sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "assembly": "Game.UI.Shell.Ecs",
+      "actual_sha256_at_plan": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "installed_at_plan": true
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaUiOwnedStorageTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "6a90a17af058b7e92da90f6c024c6d5ffb38d879a848bd551901a54b517fb830",
+      "assembly": "Game.Tests.Editor",
+      "actual_sha256_at_plan": "6a90a17af058b7e92da90f6c024c6d5ffb38d879a848bd551901a54b517fb830",
+      "installed_at_plan": true
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "before_sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+      "sha256": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+      "assembly": "Game.Editor",
+      "actual_sha256_at_plan": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+      "installed_at_plan": true
+    }
+  ],
+  "changed_parent_overrides": [
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "parent_selected_sha256": "6baaa5655936e5fbc459b620123d1a2d397a2c8b51dbef77cf513a92ef251375",
+      "successor_sha256": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "authority": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "parent_selected_sha256": "a73a97339fe73d0b7e79bad40d50d47ee77e4a95e8b26c2df64d5881bc805428",
+      "successor_sha256": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "authority": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "parent_selected_sha256": "2adae13a6fc405320d2e9db086efc8139d37b46aa1c7e0f1e36681bb53d42c15",
+      "successor_sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "authority": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "parent_selected_sha256": "699f9e966224a166b8ae8c13a4d5323db3d0e15c6121ba3779141e7c3a0f0e4d",
+      "successor_sha256": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+      "authority": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.json"
+    }
+  ],
+  "payload": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "bytes": 92168,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "sha256": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+      "bytes": 30872,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs",
+      "sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "bytes": 4726,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs.meta",
+      "sha256": "c1c91b312368cf3e4555b3ddb10d5003527896036eabe6306513d9637598147a",
+      "bytes": 59,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "sha256": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "bytes": 69357,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "sha256": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "bytes": 2292,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs",
+      "sha256": "70c83c7f5bc0fd9613ac24b8361f822d94a200c9ced2ce666dc0ec3b8a391f63",
+      "bytes": 8012,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs",
+      "sha256": "6a90a17af058b7e92da90f6c024c6d5ffb38d879a848bd551901a54b517fb830",
+      "bytes": 11328,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs.meta",
+      "sha256": "7bc31d1f95d5a6efd010632826dbc1c7e29a654d84686f01331f4e3d043bc8a8",
+      "bytes": 59,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/actual-native-evidence.zip",
+      "sha256": "d8786d091d497616eaf71d21986b31a31a5f52e70cc9b13d96267e126f71af18",
+      "bytes": 15980181,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/RECEIPT.json",
+      "sha256": "635f52c7abb9ad39249285865a4ff003dc02995cf20681a9e4190dba38bcb9be",
+      "bytes": 540,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared-native-preparation-20261015-01/failed-native-two-fixtures.zip",
+      "sha256": "b74421ca0f41c74cfe4c427bd065389a8a6afd76ecf7a939a3aa5c54c0d1b290",
+      "bytes": 4024596,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared-native-preparation-20261015-01/RECEIPT.json",
+      "sha256": "4ae20385f3fd987d36a5668ab56eb2d7236a255e7f440a0e10ae21ea55314f4c",
+      "bytes": 835,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/actual-native-evidence.zip",
+      "sha256": "8a2b15db5d5cdb05ae95e5c6b0bd394ee553bd7b76074096640eadfa5f40a1b1",
+      "bytes": 2050866,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/RECEIPT.json",
+      "sha256": "14a15d903ad33f60617c1448f532a777847789c0c0df405ea7efe59237222726",
+      "bytes": 471,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/UiAndMeasuredOpeningAppend/concise-owning-proof.zip",
+      "sha256": "d2e12f218f17146f2b55c00d7cb1f5166d38fcf9fdfa6e2c4b509634e9ccfe6c",
+      "bytes": 535043,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/aircraft-root-support-20261015-03/RECEIPT.json",
+      "sha256": "0d6eead2d27297b16a82481aa7869b851db201bd436545c34f7e100980199a3c",
+      "bytes": 718,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/aircraft-root-support-20261015-03/seven-role-canonical-importer-provenance.zip",
+      "sha256": "c6f4c257d08f3db576adef6968f7f757ea4ce3fe97b9889f9512a49f5e0f62d3",
+      "bytes": 273922,
+      "already_in_parent_plan": true
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishComponents.cs.txt",
+      "sha256": "bd2a00e736d79ad343da3f82470708980a644c6676e466f6437f5ced0f7a66c3",
+      "bytes": 2292,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishObservationStorage.cs.txt",
+      "sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "bytes": 4726,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishPlanSystem.cs.txt",
+      "sha256": "5e24e859d635a104986e95df38134c0529b629e049af1023abfff73d626f1eec",
+      "bytes": 69357,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaUiOwnedStorageTests.cs.txt",
+      "sha256": "6a90a17af058b7e92da90f6c024c6d5ffb38d879a848bd551901a54b517fb830",
+      "bytes": 11328,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/compile_focused.py",
+      "sha256": "94b19739c753af3b1a4f3cd4bcd0c212baea735cb42f397b685fdaf0f2caab85",
+      "bytes": 5496,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/compile_terminal_expectation.py",
+      "sha256": "0a400ad2113b425adaf81ea31361626705b5a93df02c00f60e1527955c1f4690",
+      "bytes": 4213,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/INDEPENDENT_SOURCE_REVIEW.c98531ea.json",
+      "sha256": "aca2ce0ed9d2e489aac3ea4f4efd9ce5b409c607c915353e06051c98f5e7b595",
+      "bytes": 885,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/INDEPENDENT_SOURCE_REVIEW.f27d1a28.json",
+      "sha256": "17644402243bb10362b8a2c67f66b4ce56c88e2507d5db7cab02a48c23e2207a",
+      "bytes": 3007,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json",
+      "sha256": "c98531ea647895ba48439d2b67123be416c6e975f087e47990d287dc897f5d98",
+      "bytes": 2558,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/NATIVE_MARKERS.json",
+      "sha256": "477e935fe2e74860f488b9d3be069cd9be170f538f89f22683445a7f132f635f",
+      "bytes": 3033,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/READY.json",
+      "sha256": "5607561823847bf9ec7e1bb00e26c9fd8fe428b25c2aeb9d8b56d2676eb56409",
+      "bytes": 1348,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/SkirmishS002AriaRunHarness.cs.txt",
+      "sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "bytes": 92168,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/UiShellEcsGateway.AriaPlay.cs.txt",
+      "sha256": "70c83c7f5bc0fd9613ac24b8361f822d94a200c9ced2ce666dc0ec3b8a391f63",
+      "bytes": 8012,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCandidates/manifest.json",
+      "sha256": "017020d36a8b64e288101e541338b4f4f455c296f345955cef41798f7699233f",
+      "bytes": 936,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCandidates/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "sha256": "210a3684b5ed71049ea166c8eec1a4be6e1babeec3a5a3a4b970b83a16e3e66f",
+      "bytes": 29669,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/compile_editor.py",
+      "sha256": "a3447c019234f4d1f7ee0fcaff9f34031d9aee3e3191126d97dc47bd8eaa44e1",
+      "bytes": 3729,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "ed89d0e4a2307d53b76598f114e0e725ba1dfbdc64decc730a1fbded0afcfbfc",
+      "bytes": 1287,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.json",
+      "sha256": "2ff7100e69b2bacae3947c6fdee6d7dbbad386a137a3b07a7997d33766144175",
+      "bytes": 1048,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/READY.json",
+      "sha256": "7cea16007aac6d4b043b9dc0acb4a41f5f8ad160cdb97b867378b509deb270c0",
+      "bytes": 2048,
+      "already_in_parent_plan": false
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "sha256": "945fe3b77f1b4eaa98157c4db4e67e376c5b64f03661c1cea8eebc99cc76203b",
+      "bytes": 30872,
+      "already_in_parent_plan": false
+    }
+  ],
+  "additional_paths_not_in_parent": [
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs.meta",
+    "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/AriaUiOwnedStorageTests.cs.meta",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/UiAndMeasuredOpeningAppend/concise-owning-proof.zip",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/RECEIPT.json",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/actual-native-evidence.zip",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/RECEIPT.json",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/actual-native-evidence.zip",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishComponents.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishObservationStorage.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaSkirmishPlanSystem.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/AriaUiOwnedStorageTests.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/INDEPENDENT_SOURCE_REVIEW.c98531ea.json",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/INDEPENDENT_SOURCE_REVIEW.f27d1a28.json",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/NATIVE_MARKERS.json",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/READY.json",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/SkirmishS002AriaRunHarness.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/UiShellEcsGateway.AriaPlay.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/compile_focused.py",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/compile_terminal_expectation.py",
+    "Tools/CI/SkirmishProductionDrafts/AriaUiOwnedStorage/manifest.json",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCandidates/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCandidates/manifest.json",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/INDEPENDENT_SOURCE_REVIEW.json",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/READY.json",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/compile_editor.py",
+    "Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.json"
+  ],
+  "proof_archive": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/UiAndMeasuredOpeningAppend/concise-owning-proof.zip",
+    "sha256": "d2e12f218f17146f2b55c00d7cb1f5166d38fcf9fdfa6e2c4b509634e9ccfe6c",
+    "dlls_included": false,
+    "sources_supplied_by_exact_draft_payload": true
+  },
+  "native_archives": [
+    {
+      "receipt": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/RECEIPT.json",
+      "receipt_sha256": "14a15d903ad33f60617c1448f532a777847789c0c0df405ea7efe59237222726",
+      "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/actual-native-evidence.zip",
+      "sha256": "8a2b15db5d5cdb05ae95e5c6b0bd394ee553bd7b76074096640eadfa5f40a1b1"
+    },
+    {
+      "receipt": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/RECEIPT.json",
+      "receipt_sha256": "635f52c7abb9ad39249285865a4ff003dc02995cf20681a9e4190dba38bcb9be",
+      "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/actual-native-evidence.zip",
+      "sha256": "d8786d091d497616eaf71d21986b31a31a5f52e70cc9b13d96267e126f71af18"
+    },
+    {
+      "receipt": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared-native-preparation-20261015-01/RECEIPT.json",
+      "receipt_sha256": "4ae20385f3fd987d36a5668ab56eb2d7236a255e7f440a0e10ae21ea55314f4c",
+      "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared-native-preparation-20261015-01/failed-native-two-fixtures.zip",
+      "sha256": "b74421ca0f41c74cfe4c427bd065389a8a6afd76ecf7a939a3aa5c54c0d1b290"
+    },
+    {
+      "receipt": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/aircraft-root-support-20261015-03/RECEIPT.json",
+      "receipt_sha256": "0d6eead2d27297b16a82481aa7869b851db201bd436545c34f7e100980199a3c",
+      "archive": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/aircraft-root-support-20261015-03/seven-role-canonical-importer-provenance.zip",
+      "sha256": "c6f4c257d08f3db576adef6968f7f757ea4ce3fe97b9889f9512a49f5e0f62d3"
+    }
+  ],
+  "root_required_gates": [
+    "Actual UI7 controls and shared preparation wrapper0",
+    "Exception-free measured opening through quitting; exact four PNG/facts plus wrapper0",
+    "Rehash every selected actual target and two new metas after import/native exit",
+    "Root update exact path-specific -text rules if filtered Git bytes differ, and independently verify indexed blobs against selected SHA"
+  ],
+  "acceptance": {
+    "engineering_step_only": true,
+    "camera_accepted": false,
+    "mission_ready": false,
+    "actual_normal_wins": false
+  },
+  "exclusions": [
+    "ProductionBaselineBatch and its proof/draft",
+    "Unlisted WIP and large offline DLLs",
+    "No physical map changes or new profile promotion"
+  ],
+  "writes": {
+    "Assets": false,
+    "Git": false,
+    "old_plan": false
+  },
+  "plan_files_to_stage": [
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/UiAndMeasuredOpeningAppend/APPEND.plan.json",
+    "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/UiAndMeasuredOpeningAppend/prepare_plan.py"
+  ],
+  "generator_sha256": "5e6fdce03c821ad4282999f7e7b3955d4d2187ffced9eeb5243408c56951cf78",
+  "latest_native_update": {
+    "ui_shared_warmup": "Root reports actual0 and all18 markers; new archive pending, not included or invented",
+    "opening": "Root snapshot/native pending; remains commit gate"
+  }
+}

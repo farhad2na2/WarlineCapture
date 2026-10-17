@@ -1,0 +1,187 @@
+{
+  "result": "Failed",
+  "scope": "Current-source S005 FA104734 NORMAL public Menu, ten genuine native Surrender Defeats/eight Replay/one AdjustSetup-Launch/one MainMenu; exact first-frame authored package plus current typed AI reset and pause conservation. Desktop memory review remains separate; no complete combat win, EN Defeat/device claim.",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1363-fixedwing-player-after-source-manifest.json",
+  "preflightManifest": "final-1362-lifecycle-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1362-lifecycle-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1362-lifecycle-post-source-manifest.json",
+  "actualWrapperExit": 0,
+  "nativeExit": 0,
+  "fixture": "native1362-lifecycle-observer.cs.txt",
+  "fixtureSha256": "a153f13ce41c0df69433d9e990737a138bf243ada73b098fe88953f0be068df2",
+  "executedRunnerSha256": "287cbbbd19b88f4564aad5a9ba98ecec912b173a086a50a981c1c34dd8bc1971",
+  "parserSha256": "9738aaa2ddc1e8081b72f7e12b0656b2c2e8fdafad62d796f7ec1b64d8d917e1",
+  "log": "native-1362-lifecycle-fa-seed104734.log",
+  "logSha256": "fa5bcd354f19f45e03798c50a8dbbf0547fbded956f7fba5a8e5abdcdaac37ee",
+  "observation": "native1362-lifecycle-observation.jsonl",
+  "observationSha256": "202a29729edb86c8372af99014040843452eba195f4d0c24d27b7d51b83344e0",
+  "qualification": {
+    "result": "PassedScopedNormalNativeTenCycleConservation",
+    "genuineDefeats": 10,
+    "countedWins": 0,
+    "attempts": [
+      "expanded-s005-104734-619a62a68bf24dc5a4f9693468e0bd59",
+      "replay-S005-104734-cd38a4cb",
+      "replay-S005-104734-59bb594b",
+      "replay-S005-104734-39e1b315",
+      "replay-S005-104734-bfe8ccc8",
+      "replay-S005-104734-6103de38",
+      "replay-S005-104734-52435e41",
+      "replay-S005-104734-9f29f9a1",
+      "replay-S005-104734-c19b765e",
+      "expanded-s005-104734-2f708f6f45d94913beafdb1703f133fc"
+    ],
+    "externalContactAudit": {
+      "recordedContacts": 61,
+      "completedContacts": 61,
+      "phases": {
+        "Lifecycle": 61
+      },
+      "terminalCancellations": [],
+      "errors": [],
+      "strictRecordedContacts": true,
+      "strictAllContactsEnded": true,
+      "nativeMenuContactsRecorded": false,
+      "terminalContactsRecorded": false,
+      "completeMatchCertified": false,
+      "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+    },
+    "inheritedContactAudit": {
+      "recordedContacts": 70,
+      "completedContacts": 70,
+      "phases": {
+        "Menu": 9,
+        "Manual": 61
+      },
+      "terminalCancellations": [],
+      "errors": [],
+      "strictRecordedContacts": true,
+      "strictAllContactsEnded": true,
+      "nativeMenuContactsRecorded": true,
+      "terminalContactsRecorded": false,
+      "completeMatchCertified": false,
+      "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+    },
+    "trace": "s005-aria-live-104734-fa-aac0223047c04c23aedb77e76820ff04.jsonl",
+    "memoryTrends": {
+      "managedBytes": [
+        3440680960,
+        3502960640,
+        3599134720,
+        3679703040,
+        3757117440,
+        3818991616,
+        3874992128,
+        3921297408,
+        3966492672,
+        3662381056
+      ],
+      "nativeAllocatedBytes": [
+        7388754946,
+        7826535967,
+        8033245223,
+        8904384704,
+        8911548183,
+        9586299361,
+        10366561953,
+        10375141498,
+        11162473578,
+        11261148881
+      ],
+      "nativeReservedBytes": [
+        8887229576,
+        9277618168,
+        9548743672,
+        10281398024,
+        10380070232,
+        10989413176,
+        11756746040,
+        11810223224,
+        12551155688,
+        12666595064
+      ],
+      "graphicsBytes": [
+        2643786048,
+        2591188488,
+        2603103076,
+        2661938400,
+        2665634464,
+        2621803772,
+        2605392188,
+        2631165600,
+        2600065428,
+        2606633784
+      ],
+      "residentBytes": [
+        2616377344,
+        2398732288,
+        1396948992,
+        2111700992,
+        2309799936,
+        2153775104,
+        1252671488,
+        2133573632,
+        2187345920,
+        2187411456
+      ],
+      "peakResidentBytes": [
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784,
+        4710006784
+      ]
+    },
+    "memoryReviewRequired": true,
+    "fullX17MemoryQualified": false,
+    "currentTypedStateCertified": true,
+    "englishDefeatCertified": false,
+    "realHumanDeviceAcceptance": false,
+    "playerReady": false
+  },
+  "lifecycleErrors": [],
+  "resourceErrors": [
+    "Read-only resource evidence incomplete: Reference edge missing current object"
+  ],
+  "resourceCensus": null,
+  "resourceAdapter": null,
+  "frameBudgetQualified": false,
+  "memoryCleanupQualified": false,
+  "deviceBudgetQualified": false,
+  "freshness": {
+    "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+    "currentProductionCompile": "completed/no errors",
+    "currentLoadedCommandBehavior": "Actual native1363 after-fix18 cases/current unchanged source",
+    "historical1351RepresentativeWitness": {
+      "productionCompile": "completed/no errors",
+      "loadedBakerVersion": 2,
+      "sourceHash": "a8cf39d87ddccbd8596ebb2f381b3cd421b832a96edd3c4226533cdf7fc3b546",
+      "representativeLoadedAssemblyMvids": {
+        "authoringMvid": "711c1380-7f2f-45d3-9ffc-7952979c0c29",
+        "compositionMvid": "24e88770-8544-423f-8764-8328c794ff42",
+        "uiMvid": "18e2b58c-8297-48b0-add6-cca3f36bb053"
+      },
+      "scope": "Actual same-project compile plus representative loaded-assembly witness; not per-type coverage of every assembly."
+    },
+    "scope": "Current command assembly behavior proved by exact native regression;1351 MVID inventory remains historical, not a claim that every current assembly was reflected."
+  },
+  "normalResourcesPosesDamageVisibilityClocksOutcomeInjected": false,
+  "qaOneWinWatcherAndManualAutoCombatCoordinated": true,
+  "genuineDefeats": null,
+  "countedWins": 0,
+  "fullX17Certified": false,
+  "memoryGrowthReviewRequired": true,
+  "shippingPublicationModified": false,
+  "errors": [
+    "Read-only resource evidence incomplete: Reference edge missing current object"
+  ],
+  "playerReady": false,
+  "realHumanDeviceAcceptance": false
+}

@@ -1,0 +1,15 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] Existing executeMethod: Game.Tests.Editor.UnitGroundMovementPauseTests.RunFocusedValidation; LogFile: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1228-ground-pause.log; TimeoutSeconds: 180
+{
+  "success": false,
+  "command": "unity command run_script",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Cannot connect to Unity Editor Pipeline server at 127.0.0.1:7801. Make sure Unity Editor is running with the Pipeline package installed."
+    }
+  ],
+  "warnings": []
+}
+[UnityInvokeMac] ERROR: no matching validation ownership; existing Editor preserved.

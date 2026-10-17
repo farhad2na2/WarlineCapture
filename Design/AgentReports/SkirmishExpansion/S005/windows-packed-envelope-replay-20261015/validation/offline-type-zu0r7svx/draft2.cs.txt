@@ -1,0 +1,112 @@
+#if UNITY_EDITOR
+using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Game.Components;
+using Game.Configs;
+using Game.Rendering;
+using Newtonsoft.Json.Linq;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Scenes;
+using UnityEditor;
+using UnityEngine;
+
+namespace Game.Editor
+{
+    // Replays a captured failed camera against the exact native baked render blob.
+    // No gameplay systems, renderer updates, camera changes or source writes.
+    public static class S005PackedOverflowEnvelopeReplay
+    {
+        public static void Run()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Idle owned Editor required");
+            string log = Environment.GetEnvironmentVariable("WARLINE_PACKED_ENVELOPE_REPLAY_LOG");
+            string output = Environment.GetEnvironmentVariable("WARLINE_PACKED_ENVELOPE_REPLAY_OUTPUT");
+            string project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            string allowed = Path.Combine(project, "Logs", "SkirmishProduction") + Path.DirectorySeparatorChar;
+            if (string.IsNullOrEmpty(log) || !File.Exists(log) || string.IsNullOrEmpty(output) || !Path.IsPathRooted(output) ||
+                !Path.GetFullPath(output).StartsWith(allowed, StringComparison.OrdinalIgnoreCase) || File.Exists(output))
+                throw new InvalidOperationException("Actual failure log and fresh absolute persistent output required");
+            const string prefix = "[SkirmishNativeRenderingDiagnostic] ";
+            var diagnostics = File.ReadLines(log).Where(line => line.StartsWith(prefix, StringComparison.Ordinal)).ToArray();
+            Require(diagnostics.Length == 1, "Exactly one captured native failure diagnostic required");
+            var captured = JObject.Parse(diagnostics[0].Substring(prefix.Length));
+            var databases = (JArray)captured["databases"];
+            var cameras = (JArray)captured["cameraSnapshots"];
+            Require((int?)captured["databaseCount"] == 1 && databases.Count == 1 && cameras.Count == 1, "Unique captured database and camera required");
+            var state = Scalars(databases[0]["state"]);
+            var cameraValues = Scalars(cameras[0]["scalars"]);
+            var camera = new RuntimeCameraSnapshotComponent
+            {
+                IsValid = Byte(cameraValues, "IsValid"), PublicationVersion = UInt(cameraValues, "PublicationVersion"),
+                Position = new float3(Float(cameraValues, "Position.x"), Float(cameraValues, "Position.y"), Float(cameraValues, "Position.z")),
+                Rotation = new quaternion(Float(cameraValues, "Rotation.value.x"), Float(cameraValues, "Rotation.value.y"), Float(cameraValues, "Rotation.value.z"), Float(cameraValues, "Rotation.value.w")),
+                Projection = Matrix(cameraValues, "Projection"), WorldToCamera = Matrix(cameraValues, "WorldToCamera"), ViewProjection = Matrix(cameraValues, "ViewProjection")
+            };
+            var old = new OperationMapRenderCellEnvelope { Min = new int2(Int(state, "ActiveEnvelopeMin.x"), Int(state, "ActiveEnvelopeMin.y")),
+                Max = new int2(Int(state, "ActiveEnvelopeMax.x"), Int(state, "ActiveEnvelopeMax.y")) };
+            var catalog = SkirmishExpansionCatalogConfig.Load();
+            if (catalog == null || !catalog.TryGetDefinition("S005", out var definition) || definition.CampaignMap == null)
+                throw new InvalidOperationException("Current packaged S005 Campaign source unavailable");
+            var source = definition.CampaignMap;
+            using var world = new World("ReadOnlyCapturedPackedEnvelopeReplay", WorldFlags.Game);
+            var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Streaming, true);
+            foreach (var type in systems) Require(!TypeManager.GetSystemName(type).ToString().StartsWith("Game.", StringComparison.Ordinal), "Gameplay system in streaming filter");
+            DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, systems);
+            var scene = SceneSystem.LoadSceneAsync(world.Unmanaged, new Unity.Entities.Hash128(source.NavigationMetadata.AuthoredSubSceneGuid),
+                new SceneSystem.LoadParameters { Flags = SceneLoadFlags.BlockOnImport | SceneLoadFlags.BlockOnStreamIn });
+            world.Update();
+            Require(SceneSystem.IsSceneLoaded(world.Unmanaged, scene), "Exact baked source not fully streamed");
+            var em = world.EntityManager;
+            using var query = em.CreateEntityQuery(typeof(OperationMapRenderDatabaseComponent));
+            Require(query.CalculateEntityCount() == 1, "Exact single baked render database required");
+            var database = query.GetSingleton<OperationMapRenderDatabaseComponent>();
+            Require(database.Blob.IsCreated && database.ContentHash.ToString() == (string)databases[0]["contentHash"], "Captured and replayed native render database identity differs");
+            var method = typeof(Game.Rendering.OperationMapRenderVirtualizationInitializationSystem).GetMethod("TryBuildCameraEnvelopes", BindingFlags.Static | BindingFlags.NonPublic);
+            Require(method != null, "Actual native camera-envelope function unavailable");
+            object[] arguments = { database.Blob, camera, default(OperationMapRenderCellEnvelope), default(OperationMapRenderCellEnvelope) };
+            Require((bool)method.Invoke(null, arguments), "Actual native camera-envelope projection failed");
+            var required = (OperationMapRenderCellEnvelope)arguments[2];
+            var materialized = (OperationMapRenderCellEnvelope)arguments[3];
+            bool containsRequired = OperationMapRenderGuardEnvelopeDecision.Contains(old, required);
+            bool containsMaterialized = OperationMapRenderGuardEnvelopeDecision.Contains(old, materialized);
+            bool strictlySmaller = containsMaterialized && (!old.Min.Equals(materialized.Min) || !old.Max.Equals(materialized.Max));
+            bool overflow = Int(state, "OverflowCount") > 0;
+            var report = new JObject { ["schema"] = 1, ["scope"] = "ActualNativeEnvelopeReplayOnly", ["result"] = "Measured",
+                ["failureLog"] = Path.GetFullPath(log), ["failureLogSha256"] = Hash(log), ["sourcePath"] = AssetDatabase.GetAssetPath(source),
+                ["sourceAssetSha256"] = Hash(AssetDatabase.GetAssetPath(source)), ["sourceContentHash"] = source.ContentHash,
+                ["renderDatabaseContentHash"] = database.ContentHash.ToString(), ["sceneGuid"] = source.NavigationMetadata.AuthoredSubSceneGuid,
+                ["capturedCameraFrame"] = captured["frame"], ["cameraPublicationVersion"] = camera.PublicationVersion,
+                ["capturedSuccessfulRebuilds"] = Int(state, "RebuildCount"), ["capturedOverflow"] = Int(state, "OverflowCount"),
+                ["storedEnvelope"] = Envelope(old), ["recomputedRequiredEnvelope"] = Envelope(required), ["recomputedMaterializedEnvelope"] = Envelope(materialized),
+                ["oldGuardContainsCurrentRequired"] = containsRequired, ["oldGuardContainsCurrentMaterialized"] = containsMaterialized,
+                ["currentMaterializedStrictlySmaller"] = strictlySmaller, ["containedSmallerOverflowEnvelopeMeasured"] = overflow && containsRequired && strictlySmaller,
+                ["historicalPrivateGuardObserved"] = false, ["smallerViewBucketFitEstablished"] = false,
+                ["readinessGateChanged"] = false, ["budgetChanged"] = false, ["nativeMissionCertified"] = false };
+            Directory.CreateDirectory(Path.GetDirectoryName(output));
+            using (var stream = new FileStream(output, FileMode.CreateNew, FileAccess.Write, FileShare.Read))
+            using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false))) writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented));
+            Debug.Log("[S005PackedOverflowEnvelopeReplay] result=Measured containedSmallerOverflowEnvelopeMeasured=" + (overflow && containsRequired && strictlySmaller ? "1" : "0") + " nativeMissionCertified=0 output=" + output);
+        }
+        static JObject Scalars(JToken array)
+        {
+            if (!(array is JArray rows) || rows.Count == 0) throw new InvalidOperationException("Explicit native scalar evidence required");
+            var result = new JObject();
+            foreach (var row in rows) { string path = (string)row["path"]; Require(result[path] == null, "Duplicate captured scalar"); result[path] = row["value"]; }
+            return result;
+        }
+        static float4x4 Matrix(JObject v, string p) => new float4x4(Column(v, p + ".c0"), Column(v, p + ".c1"), Column(v, p + ".c2"), Column(v, p + ".c3"));
+        static float4 Column(JObject v, string p) => new float4(Float(v, p + ".x"), Float(v, p + ".y"), Float(v, p + ".z"), Float(v, p + ".w"));
+        static float Float(JObject v, string p) => float.Parse((string)v[p] ?? throw new InvalidOperationException("Missing native scalar " + p), CultureInfo.InvariantCulture);
+        static int Int(JObject v, string p) => int.Parse((string)v[p] ?? throw new InvalidOperationException("Missing native scalar " + p), CultureInfo.InvariantCulture);
+        static uint UInt(JObject v, string p) => uint.Parse((string)v[p] ?? throw new InvalidOperationException("Missing native scalar " + p), CultureInfo.InvariantCulture);
+        static byte Byte(JObject v, string p) => byte.Parse((string)v[p] ?? throw new InvalidOperationException("Missing native scalar " + p), CultureInfo.InvariantCulture);
+        static JObject Envelope(OperationMapRenderCellEnvelope e) => new JObject { ["minX"] = e.Min.x, ["minZ"] = e.Min.y, ["maxX"] = e.Max.x, ["maxZ"] = e.Max.y };
+        static string Hash(string path) { using var file = File.OpenRead(path); using var sha = System.Security.Cryptography.SHA256.Create(); return BitConverter.ToString(sha.ComputeHash(file)).Replace("-", "").ToLowerInvariant(); }
+        static void Require(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
+    }
+}
+#endif

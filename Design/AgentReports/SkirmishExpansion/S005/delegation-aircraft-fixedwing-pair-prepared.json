@@ -1,0 +1,79 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005FixedWingPairSmoke20261011.cs",
+  "fixtureSha256": "6f1ff47b1570b24bfa982779fdeff402d0446a674c0048cf80a98def108699d6",
+  "entryPoint": "S005FixedWingPairSmoke20261011.RunValidation",
+  "classUnique": true,
+  "scope": "One isolated technical S005 Regular Standard session; genuine paid native Airport and Fighter/Plane pipeline with actual Touch selection/Move and Standard Air2 rejection/death/replacement. No normal whole-match certification.",
+  "setupDisclosed": {
+    "materialsFunding": "Set own shared Materials to1800 before native Airport and each accepted queue; actual transactions/spend counters must charge unchanged prices. No Materials write during excess-rejection observation.",
+    "readiness": "FullArsenal granted on actual session",
+    "openingActors": "All opening role actors both factions retired via HealthZero",
+    "enemyStrategy": "Temporarily disabled and restored on cleanup",
+    "storage": "Existing own Fuel/Oil storage filled before each accepted queue",
+    "commands": "Native paid request API; building placement/rotation/Confirm and squad selection/Move through actual paired Touch",
+    "notInjected": [
+      "facilities",
+      "paid actors",
+      "actor positions",
+      "orders",
+      "selection",
+      "capacities",
+      "production prices/rates",
+      "mission deadline",
+      "Campaign environment"
+    ]
+  },
+  "assertions": [
+    "Exactly exposed Standard and real AirCap2",
+    "Current full native Airport validator scans unchanged Campaign source in bounded per-frame slices; returned rotation applied through Touch; own assigned open catalog/canvas routed correctly",
+    "Real native Airport producer functional after paid Touch Confirm",
+    "Fighter480 + TransportPlane440 genuine receipts and actual LifetimeProductionSpent deltas, same real producer IDs, shared native actor/group ownership",
+    "Real UnitAirComponent initialized with runway home; Plane soldier24/vehicle2 components observed only, not passenger-cycle proof",
+    "Each paid actor normal squad-card Touch selection plus Move with audited accepted receipt; positive-time displacement>=5m and Airborne1",
+    "Both initial paid roles live at Air2; actual third native request fails, real eligibility says InsufficientCapacity, no capacity/reservation/spend mutation",
+    "HealthZero first Fighter death frees exactly one Air slot, keeps Plane alive, idempotent release",
+    "Second paid Fighter480 replacement delivery/Touch Move with AirLive2",
+    "All retained air deaths release caps once; owned Play attempt cleanup; no incomplete input stream"
+  ],
+  "bounds": {
+    "editorWatchdogSeconds": 1020,
+    "missionDeadlineUnchanged": 1080,
+    "nativeAirportUiSeconds": 360,
+    "eachPaidQueueDeliverySeconds": 180,
+    "eachTouchSelectMoveTakeoffSeconds": 90,
+    "capacityOrDeathSeconds": 10
+  },
+  "pendingNotClaimed": [
+    "Fighter interception/native damage against visible opposing Air target",
+    "forbidden-domain and hidden-target refusal",
+    "Plane paid passenger/compatible vehicle boarding, loaded flight, legal unload/airdrop",
+    "loaded Plane actual Save/Continue with passenger/cargo links",
+    "Return/home/refuel/full lifecycle",
+    "bilateral paid Airport infrastructure/air capacity",
+    "native queue cancellation/producer loss negative branches",
+    "normal complete mission/ARIA/device/player acceptance"
+  ],
+  "whyCombatTransportNotFabricated": "Initial enemy Air producer is absent and opening actors are retired; creating opposing aircraft/producer or injecting target/flight would not be paid native behavior. A landed tactical Plane requires extra paid passengers and native Board/ramp/airdrop route; those must be deliberate followup coverage, not component presence relabeled as capability.",
+  "nextGroupedBehaviorActions": [
+    "Reuse legitimate early native paid Airport checkpoint if available with unchanged saved resources/clock; original1018 contains live Strike and~208secs so unsuitable as empty setup",
+    "For Fighter, require independently legal/disclosed enemy Airport or paid IntelStation Drone actor; observe native air motion, legitimate visibility, real Touch Attack accepted receipt and attributed actual damage, then Return/home",
+    "For Plane, pay a4-member Rifle group and compatible small ground actor through existing producers, select passengers by actual cards, Touch command wheel NextBoardButton and real visible carrier hit, observe actual hidden passenger/cargo links",
+    "Select landed Plane through cards, Touch Move/takeoff, verify retained cargo; perform native Pause->SaveExit->Continue if affordable; then native passenger drawer/wheel disembark/drop and living visible/orderable unload",
+    "Keep all scope distinctions and fixed mission budget; no new map or fake outcome"
+  ],
+  "launchExposureNote": "delegation-aircraft-fixedwing-current-exposure-note.json",
+  "runner": "/private/tmp/s005-run-fixedwing-pair-20261011.py",
+  "runnerSha256": "4f241c4b8c5345a32113726199c302451bd33a734ddd8aa4cbfae2fe1bda3f62",
+  "runnerSyntax": "Python source compile() passed; runner not executed; C# not compiled",
+  "runnerInvocation": "rtk proxy python3 /private/tmp/s005-run-fixedwing-pair-20261011.py <current-pre-source-manifest.json> <unused-native-run-number>",
+  "sourceHashesAtPreparation": {
+    "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2",
+    "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs": "af36f8734c0a0e2c1c092240087c4ce1840673401a73ff018d39e5d1517b515b",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs": "30b093f0fb36db788ccb4db6ba9d22d1016b401b5307cb1f9fd2100947b7dc7a",
+    "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs": "b07bdf4f2e9ef9790ce6c2a959d37806000c118eb3368eb99724b6ba74c734f8",
+    "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs": "60a5095e7ce3cdcdca268e72789b60a2d1d6c761de154365b5dd60b662346d8c",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs": "a771bc87e3f9a96963828808dcc6025436bb6fe1f20d9b6b62ec66723f3cb19a",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset": "96d33151129ce63b1d88be27b603bab64b03afab173eaa2d6f630e147525fb6e"
+  }
+}

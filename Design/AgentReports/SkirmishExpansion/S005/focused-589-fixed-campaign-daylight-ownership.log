@@ -1,0 +1,35 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=SharedAirfieldCameraProfileTests.RunFixedCampaignDaylightValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_2b4a6f8c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Disposal must restore the previous scene environment.
+  Expected: RGBA(0.212, 0.227, 0.259, 1.000)
+  But was:  RGBA(0.790, 0.860, 0.960, 1.000)
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+SharedAirfieldCameraProfileTests.FixedCampaignDaylight_SurvivesLateSceneEnvironmentRestore () (at Assets/Tests/Editor/SharedAirfieldCameraProfileTests.cs:37)
+SharedAirfieldCameraProfileTests.RunFixedCampaignDaylightValidation () (at Assets/Tests/Editor/SharedAirfieldCameraProfileTests.cs:46)
+UnityEngine.Debug:LogException(Exception)
+SharedAirfieldCameraProfileTests:RunFixedCampaignDaylightValidation() (at Assets/Tests/Editor/SharedAirfieldCameraProfileTests.cs:52)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FixedCampaignDaylightValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+SharedAirfieldCameraProfileTests:RunFixedCampaignDaylightValidation () (at Assets/Tests/Editor/SharedAirfieldCameraProfileTests.cs:53)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2b4a6f8c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=SharedAirfieldCameraProfileTests.RunFixedCampaignDaylightValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_2b4a6f8c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

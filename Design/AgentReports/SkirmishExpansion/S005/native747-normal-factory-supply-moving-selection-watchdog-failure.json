@@ -1,0 +1,19 @@
+{
+  "result": "Failed",
+  "failure": "Moving truck world selection watchdog: step0, truckSelected=False, expectedFactory15, observedDestination11",
+  "actualWrapperExit": 2,
+  "actualWrapperExitArtifact": "native-747-current-manual-en-seed155926.log.exit",
+  "sourceHash": "70571972ae90651b3b4b0df8c88745d8234ed047cd7f4e7f8572fac35e0566e8",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-747-normal-supply-after-fleet-import-pre-source-manifest.json",
+  "postSourceManifest": "final-747-normal-factory-supply-moving-selection-failure-post-source-manifest.json",
+  "log": "native-747-current-manual-en-seed155926.log",
+  "logSha256": "4a45b6c3afd467e0da886e01386ac62c5951be79959c1c42b0d58252b644db6c",
+  "trace": "s005-aria-live-155926-en-ec5b5a96732044cca9936edcd2b21224.jsonl",
+  "inputAudit": "native747-touch-contact-audit.json",
+  "normalSupplyAssignmentsObserved": 13,
+  "bothFactoriesReceivedNormalAssignment": true,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "nextStrategy": "Select moving truck by its existing squad card; find a legal paid factory site near Oil source instead of HQ, preserving native placement and cost."
+}

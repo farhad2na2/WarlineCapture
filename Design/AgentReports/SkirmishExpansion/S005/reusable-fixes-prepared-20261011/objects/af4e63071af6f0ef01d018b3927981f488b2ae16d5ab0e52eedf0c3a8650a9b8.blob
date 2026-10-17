@@ -1,0 +1,85 @@
+using System;
+using System.Collections.Generic;
+using Game.Configs;
+using Unity.Mathematics;
+
+namespace Game.Runtime
+{
+    // Pure decision rules are independent of Unity iteration order and mutable
+    // world state. The executor supplies only legal, currently feasible choices.
+    public static class SkirmishEnemyDecisionRules
+    {
+        public static bool ShouldSwitch(int currentScore, bool currentValid,
+            int alternativeScore, int hysteresis, bool emergency)
+            => !currentValid || emergency || alternativeScore > currentScore + hysteresis;
+
+        public static bool ObserveDue(float now, float probeAt, bool responsePending, float responseAt)
+            => now >= probeAt || (responsePending && now >= responseAt);
+
+        public static float3 InvestigationDestination(float3 patrolOrigin, float reach, float3 fallback,
+            float3 ownPosition, IReadOnlyList<float3> frozenPositions)
+        {
+            float best = float.MaxValue; var result = fallback;
+            foreach (var point in frozenPositions)
+            {
+                if (!math.all(math.isfinite(point)) || math.distancesq(point.xz,patrolOrigin.xz) > reach*reach) continue;
+                float distance = math.distancesq(point.xz,ownPosition.xz);
+                if (distance < best) { best = distance; result = point; }
+            }
+            return result;
+        }
+
+        public static bool Due(float now, float periodicAt, bool responsePending, float responseAt)
+            => responsePending ? now >= responseAt : now >= periodicAt;
+
+        public static float CoalesceResponse(bool pending, float existing, float now, float delay)
+            => pending ? existing : now + Math.Max(0f, delay);
+
+        public static int ReserveTarget(int availableSupply, int reservePercent)
+            => availableSupply <= 0 ? 0 : (availableSupply * reservePercent + 99) / 100;
+
+        public static bool Progressed(float previousX, float previousZ, float x, float z, float minimumMetres)
+        {
+            float dx = x - previousX, dz = z - previousZ;
+            return dx * dx + dz * dz >= minimumMetres * minimumMetres;
+        }
+
+        // Patrol at most one third of an existing authored polyline. A short
+        // two-waypoint route still yields a real approach, not the home endpoint.
+        public static float3 ScoutWaypoint(SkirmishEnemyRouteSnapshot route, int direction, int desiredIndex,
+            out int boundedIndex)
+        {
+            int last = route.Waypoints.Count - 1;
+            int start = direction > 0 ? 0 : last;
+            direction = direction > 0 ? 1 : -1;
+            float total = 0;
+            for (int i = 1; i <= last; i++) total += math.distance(Point(route,i-1), Point(route,i));
+            float remaining = total / 3f;
+            for (int i = start; i != (direction > 0 ? last : 0); i += direction)
+            {
+                int next = i + direction;
+                float length = math.distance(Point(route,i), Point(route,next));
+                if (length > 0 && remaining <= length)
+                {
+                    if ((direction > 0 && desiredIndex >= next) || (direction < 0 && desiredIndex <= next))
+                    {
+                        boundedIndex = next;
+                        return math.lerp(Point(route,i), Point(route,next), math.clamp(remaining/length,0f,1f));
+                    }
+                    boundedIndex = math.clamp(desiredIndex,0,last);
+                    return Point(route,boundedIndex);
+                }
+                remaining -= length;
+            }
+            boundedIndex = start; return Point(route,start);
+        }
+        private static float3 Point(SkirmishEnemyRouteSnapshot route, int index) =>
+            new(route.Waypoints[index].X,0,route.Waypoints[index].Z);
+
+        public static bool SameDestination(float ax, float az, float bx, float bz, float tolerance)
+        {
+            float dx = ax - bx, dz = az - bz;
+            return dx * dx + dz * dz <= tolerance * tolerance;
+        }
+    }
+}

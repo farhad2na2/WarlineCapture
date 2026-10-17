@@ -1,0 +1,46 @@
+{
+  "entry": "Game.Tests.Editor.SkirmishSharedNativeProductionPreparation.Run",
+  "wrapper": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+  "build_target": "Android",
+  "gui_licensing": true,
+  "timeout_seconds": 1800,
+  "required_final_marker": "[SkirmishSharedNativeProductionPreparation] result=Passed metadataAdditionalRoles=6 rotorRoles=4 framingControls=55 terminalMethods=6 enemy=5 approach=3 view=6 typedSpawn=5 aria=70 cameraAndMissionAcceptance=Pending",
+  "required_independent_markers": [
+    "[SkirmishSharedNativeProductionPreparation] result=Passed metadataAdditionalRoles=6 rotorRoles=4 framingControls=55 terminalMethods=6 enemy=5 approach=3 view=6 typedSpawn=5 aria=70 cameraAndMissionAcceptance=Pending",
+    "[SkirmishAircraftCameraTerminalPreparation] result=Passed metadataAdditionalRoles=6 rotorRoles=4 framingControls=55 terminalMethods=6 nativeCameraAndMissionReadiness=Pending",
+    "[MeasuredRotorAircraftFramingTests] result=Passed controls=55 roleNativePoseAndPixelAcceptance=Pending",
+    "[SkirmishTerminalPresentationObservationTests] result=Passed methods=6 nativeTerminalAndReturnJourney=Pending",
+    "[SkirmishRefinementEngineeringViewTests] result=Passed controls=6 nativeCameraAccepted=0 highLowCameraBehavior=Pending",
+    "[SkirmishLogicalRefinementPreparation] result=Passed enemy=5 approach=3 view=6 typedSpawn=5 canonicalSizeVectors=180 nativeMissionAcceptance=Pending",
+    "[SkirmishEnemyAirCombined13Tests] result=Passed controls=5 genericTuples=13 sizes=39 protectedIdentities=9 sourceFitCertified=0 nativePlayerWins=0",
+    "[SkirmishObjectiveApproachTowerTests] result=Passed controls=3 objectiveTuples=60 sizeVectors=180 protectedIdentities=9 sourceFitCertified=0",
+    "[SkirmishTypedSpawnConstraintTests] result=Passed controls=5 nativeMissionAcceptance=Pending",
+    "[AriaExtendedObjectiveSupport] result=Passed controls=70 normalMissionAcceptance=Pending",
+    "[AriaCompleteObjectiveSupport] result=Passed controls=44 normalMissionAcceptance=Pending",
+    "[AriaObjectiveSupportValidation] result=Passed controls=32 board=Pending normalMissionAcceptance=Pending",
+    "[MeasuredCanonicalAircraftGeometry] result=Passed additionalRoles=6 rotorRoles=4 transportUnchanged=1 nativeActorAndCameraAcceptance=Pending"
+  ],
+  "marker_source_sha256": {
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedNativeProductionPreparation.cs": "cd3669233b2a192d9473987d26f2e66446b8e0baf082a731e89e46fbb2da7e94",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftCameraTerminalPreparation.cs": "9cbb7e542175c85247c96cd96d6ab8019e9095f3cd9a17f7fc0ff400c16ac7c1",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredRotorAircraftFramingTests.cs": "b497bd6b0a940fb8c50cfaaa74cf04bb0b0f63a0872eedb5c0044c137e88ee8f",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishTerminalPresentationObservationTests.cs": "9e33cbae0cfd6e0c85898257baf82e0f7e622658d896a21c9c5bc734404fb4c7",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishRefinementEngineeringViewTests.cs": "5605749e31598c9c1706e22d0a9e2554eaadcdc7839ae5fa78e25a2e86c5d85c",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyAirCombined13Tests.cs": "6523d552f965469720362f88ce03346121604f579114cec7c54625eeb4c126a2",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveApproachTowerTests.cs": "30023f16d132905eb932c72880c69a7802ecadc9fb23f0e022228c1db61aa36c",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishTypedSpawnConstraintTests.cs": "f62d55508eea88ea630b12f80fd14104bc4ac315ad1400b09483892bd57daa6a",
+    "Assets/Tests/Editor/SkirmishExpansion/AriaExtendedObjectiveSupportValidation.cs": "cf0e0bca385b8ea24ccd1195b322eff38cd78f3179dc8035dce3554663e4ee17",
+    "Assets/Tests/Editor/SkirmishExpansion/AriaCompleteObjectiveSupportValidation.cs": "444d70ac70c78162044ffec9c96dfdb9d4c715a6524177b4c980f99bd80d93f3",
+    "Assets/Tests/Editor/SkirmishExpansion/AriaObjectiveSupportValidation.cs": "735751c00837da0eabd30856e6184939d4d67d952f612f900549bacbde485266",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRotorGeometryAuthoring.cs": "103fa980f1407772094dddbe9d0c5a078149e53401bfaec85effd5a8b6d1a3ca"
+  },
+  "required_environment": [
+    "WARLINE_AIRCRAFT_ROOT_PROVENANCE_REPORT",
+    "WARLINE_AIRCRAFT_ROOT_PROVENANCE_SHA256"
+  ],
+  "fresh_report_pending": true,
+  "expected_controls": 150,
+  "metadata_generation_is_intentional_asset_change": true,
+  "normal_mission_acceptance": "Pending",
+  "native_executed": false
+}

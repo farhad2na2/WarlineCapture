@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "scope": "Native camera UI gesture only; no normal match, paid recovery, combat or player readiness certification",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "fullSourceUnchanged": true,
+  "log": "native-1238-camera-touch.log",
+  "logSha256": "43977ba83cae77a2c10650e3e4952388e97f86f9e6e46093ce3d8c33b77793b0",
+  "markerPresent": true,
+  "normalWins": 0,
+  "playerReady": false,
+  "sourceHash": "e78a60c04e2216620f99fa25582fe09475fb75535ee13a15a844ee66a186fa63",
+  "beforeManifest": "final-1237-construction-touch-pre-source-manifest.json",
+  "afterManifest": "final-1238-camera-post-source-manifest.json",
+  "attempts": 1,
+  "acceptedTroopCommandsAdded": 0,
+  "idleProof": "native1238-camera-after-idle.json"
+}

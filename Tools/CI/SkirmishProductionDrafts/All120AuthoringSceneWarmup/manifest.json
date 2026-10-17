@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "scope": "All120AuthoringThenExistingSceneWarmupOnly",
+  "parent": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/All120FutureSeparateCheckpoint/manifest.plan.json",
+    "sha256": "293657986a5b0b9f3d57002410b4dd98a861641c3ebfc542f4dd80ec9d4463f2",
+    "targets": 8
+  },
+  "dependencies": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S005SceneArtifactWarmup.cs",
+      "sha256": "89b2e7c67026cec9f8e0df821b2345ff1dde19c38ca720cd1b1421d04825d6fb"
+    }
+  ],
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAll120AuthoringSceneWarmup.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/All120AuthoringSceneWarmup/SkirmishAll120AuthoringSceneWarmup.cs.txt",
+      "before_sha256": null,
+      "sha256": "bed0eed82d2a320b11baacc21272118a08da2cb8cacdb0be8b21f904bd6c24f3"
+    }
+  ],
+  "entry": "Game.Editor.SkirmishAll120AuthoringSceneWarmup.Run",
+  "marker": "[All120AuthoringSceneWarmup] result=Passed sourceGroupsStarted=0 warmupScenes=2 snapshotAfterWrapperExit=1 missionCertified=0",
+  "native_execution": false,
+  "snapshot_timing": "After actual checked wrapper exit0, before opening",
+  "normal_mission_ready": false
+}

@@ -1,0 +1,22 @@
+import json,pathlib,argparse
+STAGES={'FreshNativeAttempt':'FreshMatch','NativeMainMenuDestination':'PostUnloadMenu'}
+def qualify(adapter,native,census,source):
+ def require(v,msg):
+  if not v:raise ValueError(msg)
+ require(adapter and adapter[0].get('stage')=='AdapterStarted','Adapter ownership start missing')
+ require(not any(x.get('stage')=='CensusFailure' for x in adapter),'Census failed')
+ closes=[x for x in adapter if x.get('stage')=='AdapterClosed'];require(len(closes)==1 and closes[0].get('nativePassed') is True and closes[0].get('censusFailed') is False and adapter[-1] is closes[0],'Exact successful observer closure missing')
+ nativeclose=[x for x in native if x.get('stage')=='ClosedLifecycle'];require(len(nativeclose)==1 and nativeclose[0].get('passed') is True,'Existing native lifecycle cleanup failed/missing')
+ expected={(r['stage'],r['cycle'],r['attempt']) for r in native if r.get('stage') in STAGES and r.get('passed') is True}
+ actual=[]
+ for r in adapter:
+  if r.get('stage')!='CapturedActualBoundary':continue
+  key=(r.get('nativeStage'),r.get('cycle'),r.get('attempt'));require(r.get('nativePassed') is True and key in expected,'Unverified/foreign actual boundary');require(key not in actual,'Duplicate captured boundary');actual.append(key)
+ require(set(actual)==expected,'Missing actual observed boundary')
+ fresh=[x for x in actual if x[0]=='FreshNativeAttempt'];require(len(fresh)==11 and len({x[2] for x in fresh})==11 and all(x[2] for x in fresh),'Eleven genuine fresh attempts missing')
+ require(sum(x[0]=='NativeAdjustSetupDestination' for x in actual)==0 and sum(x[0]=='NativeMainMenuDestination' for x in actual)==1,'Unexpected setup or missing actual menu boundary')
+ require(census.get('result')=='CompleteReadOnlyCensus' and census.get('sourceHash')==source and census.get('freshAttempts')==11 and census.get('boundaries')==len(actual)==12,'Independent exact census/source missing')
+ require(all(census.get(k) is False for k in ('memoryCleanupQualified','frameBudgetQualified','deviceBudgetQualified','leakProven')),'Observation falsely claims readiness/budget')
+ return dict(result='CompleteAttachedReadOnlyCensus',observedActualBoundaries=len(actual),nativeLifecycleQualifiedByThisAdapter=False,memoryCleanupQualified=False,frameBudgetQualified=False,deviceBudgetQualified=False,sourceHash=source)
+if __name__=='__main__':
+ ap=argparse.ArgumentParser();ap.add_argument('adapter');ap.add_argument('native_observation');ap.add_argument('census_summary');ap.add_argument('--source',required=True);a=ap.parse_args();rows=lambda p:[json.loads(l) for l in pathlib.Path(p).read_text().splitlines() if l.strip()];print(json.dumps(qualify(rows(a.adapter),rows(a.native_observation),json.loads(pathlib.Path(a.census_summary).read_text()),a.source),indent=2))

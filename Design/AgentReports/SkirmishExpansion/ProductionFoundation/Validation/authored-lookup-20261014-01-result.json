@@ -1,0 +1,23 @@
+{
+  "result": "Failed",
+  "reason": "cold asset and shader import exceeded 900-second wrapper timeout; required test marker absent",
+  "wrapperUnityExit": 124,
+  "executeMethod": "Game.Tests.Editor.SkirmishAuthoredDefinitionLookupTests.RunFocusedValidation",
+  "requiredPassMarker": "[SkirmishAuthoredDefinitionLookupTests] result=Passed",
+  "fullLogsArchive": "authored-lookup-20261014-01-timeout.zip",
+  "archiveSha256": "c508ab5ecdedd7466d55fa257ad8863a1f0ca18c2fc3e7503aaef44985eba952",
+  "rawLogFiles": [
+    {
+      "path": "authored-lookup-20261014-01.log",
+      "sha256": "7ae391e6e57bfb572978ffb2f030ba06bf870bfe84b477849441fb4db3e6bef1"
+    },
+    {
+      "path": "authored-lookup-20261014-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "authored-lookup-20261014-01.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

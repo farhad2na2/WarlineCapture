@@ -1,0 +1,39 @@
+{
+  "result": "Passed",
+  "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+  "actualWrapperExit": 0,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-768-native-preview-map-camera-pass-post-source-manifest.json",
+  "postManifest": "final-769-joint-paid-airports-pass-post-source-manifest.json",
+  "log": "native-769-current-manual-en-seed155926.log",
+  "diagnosticTracePrefix": "s005-aria-live-155926-en-d78b513d7d61485f8e91513f40452e9f.jsonl",
+  "inputAudit": "native769-touch-contact-audit.json",
+  "normalInput": true,
+  "seed": 155926,
+  "nativeLivingAirports": 2,
+  "sameFaction": 1,
+  "sites": [
+    [
+      825.5,
+      0,
+      671
+    ],
+    [
+      1399,
+      0,
+      177.5
+    ]
+  ],
+  "normalAirportCostEach": 300,
+  "paidLogisticsTruckCost": 100,
+  "paidFabricationCostEach": 100,
+  "paidFabricationAdded": 2,
+  "readinessCostTotal": 720,
+  "jointNativePlacementCertified": true,
+  "bilateralFactionCapacityCertified": false,
+  "parkingTaxiCapacityCertified": false,
+  "physicalMapModified": false,
+  "logicalBoundsModified": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

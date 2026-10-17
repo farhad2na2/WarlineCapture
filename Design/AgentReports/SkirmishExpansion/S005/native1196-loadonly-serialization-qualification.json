@@ -1,0 +1,10 @@
+{
+  "result": "Passed",
+  "scope": "NativeLoadOnlyFullFlatJsonCaptureNotGameplay",
+  "flatRows": 3,
+  "exactPrimitiveFieldsPerRow": 112,
+  "nativeFromJsonOrNestedEnvelopeUsed": false,
+  "raw": "native1196-loadonly-serialization-selfcheck.jsonl",
+  "rawSha256": "e453c34bf7ba1fafdb57927b08db9d9dd61e13cf47cb5653219ea88bb53f2ece",
+  "parserSha256": "f5f998b3f0ada3dbf8c2411c9fe36eafc193917de6f6e11a1d64987782edbfe4"
+}

@@ -1,0 +1,30 @@
+{
+  "outcome": "BoundedSourceReviewClearNativePending",
+  "manifest_sha256": "4a58b00ac386720a7ecf63464b2431b6b42ee3a0ea564b5df489dc06646fc812",
+  "prior_review": "ProductionBaselineBatch/INDEPENDENT_REVIEW.193cd3d9.json",
+  "exact_source_and_before_rows": 13,
+  "resolved_findings": [
+    "S005 isolated candidate exposure restored exactly, mainpublicationunchanged",
+    "Runtime Error/Exception/Assert accumulator usesInterlocked andthreadedcallback firstdispatchthroughprocessquitting; scopeguardandlatequitfailure retainerrors",
+    "Counted/operationalcompletion gated, requireduniquequitting event+marker errors0; launcher rejectsmissing/duplicate/error/latefail evenwrapper0"
+  ],
+  "preserved_gates": [
+    "Exactcanonicalpacket720 andexplicit60x20distinctstress authority",
+    "FixedRegular/Standardaria andexactorderedF/E stress slice",
+    "Canonicalclaims/fullsourceDLLnativeBeginEnd andresult/normalMenu/sessionownershipcleanup",
+    "GenuineDefeat/Draw maycontinueoperationally, neverbecomecountedwin/qualifiedqueue"
+  ],
+  "independent_execution": {
+    "command": "python -m unittest discover -s Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate -p test_runtime_gate.py -v",
+    "methods": 1,
+    "result": "Passed",
+    "scope": "Realpostreader gate corruption controls; noUnity"
+  },
+  "proof_attribution": "Producerowning-iy_mpcih passedEditor830/353 Tests760/332; native7 and2canariespending",
+  "remaining_native_gates": [
+    "Native7authoritycontrols",
+    "Actualtwo normalinputcanaries andpostPlaycleanup",
+    "Realnativebenchmarkbeforethroughputclaim"
+  ],
+  "qualification_claim": false
+}

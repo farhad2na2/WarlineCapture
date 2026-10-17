@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Game.Components;
+using Game.Runtime;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+// Read-only sideband. The main agent schedules this in its owned live run.
+// No Play-mode transitions, touch events, queues, orders, counters, resources,
+// actor transforms, source assets, camera transforms or outcome writes.
+public static class S005DelegatedPlacementAudit20261011
+{
+    public static string Run() => "Read-only placement observer loaded; no audit executed.";
+    private const string Root = "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/";
+    [Serializable] private sealed class Evidence
+    {
+        public string result = "NotRun";
+        public string rawReport;
+        public string error;
+        public string utc;
+        public int livingFunctionalBuildings;
+        public bool airportObserved;
+        public bool paidReceiptCertified;
+        public bool newNativeWholeSourceAcceptanceClaimed;
+        public bool playerReady;
+        public List<string> buildingNames = new List<string>();
+    }
+    [Serializable] private sealed class NativeGeometryReport
+    {
+        public string result;
+        public int buildings;
+        public int factions;
+        public List<string> observations;
+    }
+    public static string Inspect(string evidenceStem)
+    {
+        var evidence = new Evidence { utc = DateTime.UtcNow.ToString("o") };
+        string safeStem = Path.GetFileName(evidenceStem);
+        if (safeStem != evidenceStem || string.IsNullOrWhiteSpace(safeStem))
+            return "Rejected invalid evidence stem";
+        evidence.rawReport = safeStem + ".geometry.json";
+        try
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated || !Application.isPlaying)
+                throw new InvalidOperationException("No live owned runtime world; no native audit performed.");
+            var em = world.EntityManager;
+            using (var sessions = em.CreateEntityQuery(typeof(SkirmishMatchState)))
+                if (sessions.CalculateEntityCount() != 1)
+                    throw new InvalidOperationException("Expected one live Skirmish session.");
+            Game.Editor.SkirmishBuildingPlacementProbe.InspectSharedSceneryClearance(Root + evidence.rawReport);
+            var native = JsonUtility.FromJson<NativeGeometryReport>(File.ReadAllText(Root + evidence.rawReport));
+            if (native == null || native.result != "Passed" || native.factions != 2)
+                throw new InvalidOperationException("Native report did not certify both faction building geometries.");
+            evidence.livingFunctionalBuildings = native.buildings;
+            if (native.observations != null)
+                foreach (var observation in native.observations)
+                {
+                    evidence.buildingNames.Add(observation);
+                    if (observation.IndexOf("name=Airport", StringComparison.OrdinalIgnoreCase) >= 0)
+                        evidence.airportObserved = true;
+                }
+            evidence.result = evidence.airportObserved ? "PassedScopedNativeAirportPlacementClearance" : "PassedScopedNativeClearanceAirportNotPresent";
+        }
+        catch (Exception ex)
+        {
+            // An observer failure must not abort the primary active journey.
+            evidence.result = "FailedScopedNativePlacementObservation";
+            evidence.error = ex.GetType().Name + ": " + ex.Message;
+        }
+        string json = JsonUtility.ToJson(evidence, true);
+        File.WriteAllText(Root + safeStem + ".json", json);
+        return json;
+    }
+}

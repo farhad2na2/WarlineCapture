@@ -1,0 +1,28 @@
+{
+  "run": "native734",
+  "status": "Running",
+  "sourceHash": "2a81b1c316f92e1d431bfb0e85ba577bd9be4373cda2a614622c7411aa136cbb",
+  "preManifest": "final-733-current-manual-en-seed155926-post-source-manifest.json",
+  "scope": "Paid Strike runway parking/takeoff/native fire/Return/home landing/refuel/second sortie only",
+  "method": "RunS005EditorStrikeCycleProbe",
+  "comparisonBasis": "native709-offline-refinery-fuel-backlog-analysis.json",
+  "fleet": {
+    "oilTrucks": 3,
+    "tankers": 3,
+    "cap": 6
+  },
+  "industry": "Original Oil pump; one starting plus one normally purchased fabrication facility; original plus normally purchased refinery; original plus normally purchased usable fuel store",
+  "normalExpectedSpending": {
+    "industry": 300,
+    "paidFleet": 480,
+    "readiness": 720,
+    "airport": 300,
+    "strike": 520,
+    "total": 2320
+  },
+  "unchanged": "Physical Campaign source, prices, production rates, caps, deadline, aircraft statistics and route reserve",
+  "completeMatchClaimed": false,
+  "fullRosterCertified": false,
+  "bilateralCapacity": "Pending",
+  "playerReady": false
+}

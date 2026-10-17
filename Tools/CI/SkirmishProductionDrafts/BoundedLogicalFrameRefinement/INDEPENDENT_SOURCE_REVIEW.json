@@ -1,0 +1,29 @@
+{
+  "result": "IndependentSourceReviewClear",
+  "manifest_sha256": "e3e55662b37b5e6784ce2a83b53cbb3dc9c9285068663cfb8beb57c9dfc14059",
+  "targets": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source_sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "before_sha256": "bc5fadae3b11908b86493b2723cde2c6a577335c9efcb096ca6d5f057c6011cf"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs",
+      "source_sha256": "f5a322371dbf3bab456b62d18e53752128f9606820314413461e7f4fb5ff3672",
+      "before_sha256": null
+    }
+  ],
+  "findings": [],
+  "reviewed": [
+    "Opt-in single explicit unprotected generic catalog only; exact coded seven refused and ordinary entry behavior unchanged. Both flags restored in finally.",
+    "Current/32/64/128 finite ORIGINAL frame candidates, clipped to actual Campaign playable bounds and native grid; no source geometry, source identity, budget, allocator radius or gameplay mutation. Original compounds expand by the same bounded margin and faction overlap remains refused.",
+    "Identity source-axis projection required before encoding. Every original world anchor plus normalized binder projection rechecked, all pad centres/corners and metadata retained, all route IDs/waypoints/width/timing retained, actual deployment points and source/cell identity unchanged. Scaled/rotated frames fail closed.",
+    "Only incomplete discovery facilities trigger a new frame; same maximum4discovery+2strict, same all3size callbacks, source/native/QA/reservation/fullforce/path/finalbinding checks. A wider frame or one legal module never establishes complete fit.",
+    "Six focused projection/source/bounds/protected controls are meaningful but native execution and actual all-size source-fit remain pending."
+  ],
+  "owning_proof": "Producer running strict one-Editor overlay on immutable prefix/witness parent; no reviewer compiler/native execution",
+  "physical_source_changed": false,
+  "source_fit_certified": false,
+  "normal_mission_ready": false,
+  "broad113_authorized": false
+}

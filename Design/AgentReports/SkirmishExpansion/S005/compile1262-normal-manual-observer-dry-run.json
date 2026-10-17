@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command run_script",
+  "data": null,
+  "errors": [
+    {
+      "code": "INVALID_COMMAND_ARGS",
+      "message": "Invalid arguments for run_script:\n  run_script has no parameter --dry-run. Did you mean --dry_run?"
+    }
+  ],
+  "warnings": []
+}

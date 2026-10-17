@@ -1,0 +1,36 @@
+{
+  "result": "PassedScopedNativeCampaignM3Journey",
+  "scope": "fa-IR",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "fullSourceUnchanged": true,
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "preManifest": "final-1363-fixedwing-player-after-source-manifest.json",
+  "postManifest": "final-1356-campaign-m3-post-source-manifest.json",
+  "log": "native-1356-campaign-m3-current.log",
+  "logSha256": "c29830aa3efff52f70a41194fd3875f28cfc000852bd029791c3e61f50ce0ec0",
+  "fixtureSha256": "d4b065f9edd28d9a6a18cfb680b51bbdb3d371a94793a163d179f3c49810cae2",
+  "runnerSha256": "25a2f685351d5edec8ba8deb273cd6012882f009cb742e95970f2485f630c5d2",
+  "rawEvidence": [
+    {
+      "file": "native1356-defense-7.jsonl",
+      "sha256": "860d9f09bd5082f83fa4a2f312d110397766ea1a271296043ba95122dc380661"
+    },
+    {
+      "file": "native1356-input-route.jsonl",
+      "sha256": "2c1b8298cda2023bcdd230621726a1ce5917b6f74f63c3e06c75f13513356a4a"
+    },
+    {
+      "file": "native1356-journey.jsonl",
+      "sha256": "2232c32544011a7a00f7fdba0eec1da3df90f88ee58a868ff2bc06aad318f6b9"
+    },
+    {
+      "file": "native1356-threat-7.jsonl",
+      "sha256": "4f5e48bf3b88c062f96d1c1223152f5b3d6b5c6c0a1a4d206c809d578f507dbe"
+    }
+  ],
+  "errors": [],
+  "fullJourneyStrictTouchAudit": false,
+  "disclosedQA": "Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.",
+  "playerReady": false
+}

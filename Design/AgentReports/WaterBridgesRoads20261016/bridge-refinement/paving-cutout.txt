@@ -1,0 +1,7 @@
+source=Assets/Game/Art/MapBeautify/DenseCity/DenseCity_FlatPaving.asset
+derivedVisualMesh=Assets/Game/Art/MapBeautify/CampaignVisualFixes20261016/BridgeSurfaces/DenseCity_PavingBridgeCutouts.asset
+bridgeFootprints=8
+intersectedTriangles=48
+beforeTriangles=11516
+afterTriangles=11644
+collision=unchanged

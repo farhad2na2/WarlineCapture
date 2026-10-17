@@ -1,0 +1,9 @@
+{
+  "result": "Failed",
+  "log": "/private/tmp/fighter-camera-20261013-after.log",
+  "failedAssertion": "Repeated UpdateZoomTransition center distance0.012124354m exceeded0.01m",
+  "productionSourceUnchangedAfterFailure": true,
+  "nativePassMarkerPresent": false,
+  "wrapperProcessExit": 0,
+  "qualification": "Failed because required native pass marker absent; process exit alone does not establish pass."
+}

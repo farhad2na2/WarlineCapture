@@ -1,0 +1,29 @@
+{
+  "scope": "Only two test files; production source unchanged from native1240",
+  "bundles": [
+    [
+      "/private/tmp/s005-step4-economy-v4/manifest.json",
+      "760f52652df9dc0f696af28b0c6f50f05e37c56bf1c7cf7014bd088e1258bb9e"
+    ],
+    [
+      "/private/tmp/s005-commander-checkpoint-fixture-v2/manifest.json",
+      "55324194833d0ee65c59731155b05fde0a3145814bd4ad90418e56c797391a33"
+    ]
+  ],
+  "files": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs",
+      "base_sha256": "b1c2b69ccd442c1fe58c0b8c9403ab3021fe6a930dfea5e562a3869a40913d7e",
+      "staged_sha256": "44a5757c0e0a76cf3f95aa62ffd4836c05c0b22eac808e7635bdf83275d24501",
+      "base_path": "/private/tmp/s005-step4-economy-v4/base/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs",
+      "staged_path": "/private/tmp/s005-step4-economy-v4/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs",
+      "baseSha256": "8c66f7be16e2aae6240643e543a7ee643f5a3cac169f1a4d633984a32d88faac",
+      "stagedSha256": "5500aad25c70eb4f969d77f53285c869274cd2bd67f6e8bd03c91d3bccc9e9bc",
+      "stagedPath": "/private/tmp/s005-commander-checkpoint-fixture-v2/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs"
+    }
+  ],
+  "idleProof": "native1240-after-focused-idle.json"
+}

@@ -1,0 +1,21 @@
+{
+  "result": "Failed",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "sourceUnchanged": true,
+  "idleClosure": "native1201-after-focused-idle.json",
+  "reason": "Disposable Edit-mode raycast fixture failed overlap prerequisite; not a normal mission UI verdict. Removed newly authored unsuitable fixture and retained shared production fix for actual normal lifecycle1198 qualification.",
+  "archivedRemovedFiles": [
+    {
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishModalLayeringTests.cs",
+      "archive": "native1201-rejected-editmode-SkirmishModalLayeringTests.cs.txt",
+      "sha256": "f6bca69bd9611ea2d7dab546d677d208654eaa03e14060cba883cce26277abc4"
+    },
+    {
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishModalLayeringTests.cs.meta",
+      "archive": "native1201-rejected-editmode-SkirmishModalLayeringTests.cs.meta.txt",
+      "sha256": "690c25b7169a902502e276b4677d196e6f124b529e5e273110186c10cd43889d"
+    }
+  ],
+  "playerReady": false
+}

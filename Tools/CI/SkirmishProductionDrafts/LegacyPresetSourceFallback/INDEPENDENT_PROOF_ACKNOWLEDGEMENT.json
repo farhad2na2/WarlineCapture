@@ -1,0 +1,10 @@
+{
+  "source_review_sha256": "6acc80649ab24316e61c1b65473e9e626995a539a2a10cacb9ddcabe8f0ea6e0",
+  "manifest_sha256": "f9e8f33ad1745d203b6888b6dc7aec2beddb390a190bc8dcaef271f4c0cb13b6",
+  "result": "SourceClear_ExactProducerProofAcknowledged",
+  "proof_path": "Logs/SkirmishProduction/Offline/legacy-source-fallback-z94qbkgx/result.json",
+  "proof_sha256": "dbe8068a170c2230e01cd22ee427c4015e78ee98322fc3bd114313fb74a2fdf8",
+  "attribution": "Producerexact836Editor/760Tests/noFallback/zero finalinputmismatches. Four successor offline methods reportedPASS24.993s incl12metadata negatives. No independent rerun/compiler/native execution; actualthree source EM controls remain nativepending.",
+  "native_jobs": 0,
+  "coverage_credit": 0
+}

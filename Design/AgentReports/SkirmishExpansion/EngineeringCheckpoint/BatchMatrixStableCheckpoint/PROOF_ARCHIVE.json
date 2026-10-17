@@ -1,0 +1,77 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/BatchMatrixStableCheckpoint/owning-and-offline-evidence.zip",
+  "sha256": "814f6675ad7fbfc3577dd1206950dad74dd63bfd859ab9c3144cd66f751ee499",
+  "members": [
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/owning-iy_mpcih/Game.Editor.log",
+      "sha256": "7dd01c11bfd203bf8a164a2d761d04b11927d207472288a21c00585d103a206e",
+      "bytes": 112711
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/owning-iy_mpcih/Game.Editor.rsp",
+      "sha256": "9e56a001ab09e6f2b8cc7d3422e664bc72b118aff79d9f0f24a2650cebce6bd1",
+      "bytes": 197139
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/owning-iy_mpcih/Game.Tests.Editor.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/owning-iy_mpcih/Game.Tests.Editor.rsp",
+      "sha256": "abe14d92661139e51f2ec9ccaf8d2e542a38a2539247bc08bd25b39dc2884ae4",
+      "bytes": 175879
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/owning-iy_mpcih/result.json",
+      "sha256": "df470a8a9319a7dc77c8c8e8d9b418d171732ee6bc43d34778623b9817c5074d",
+      "bytes": 1249919
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/offline-final/full.log",
+      "sha256": "eb992d5caf2abfc27f4212f849cacaf6b4d738b0a739b2fbe6817e5e80ed455a",
+      "bytes": 902
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatchRuntimeGate/offline-final/receipt.json",
+      "sha256": "25befbe608ee866dd7aa7bf5b1a078adfadf1438bc2588235b6ddb0bbf9dbce2",
+      "bytes": 206
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/after-storage-zmcrpuo6/Game.Editor.log",
+      "sha256": "ef4b01020db7510f07abea6881278d188480101edbf7c975b5a580ea33a0fe53",
+      "bytes": 112743
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/after-storage-zmcrpuo6/Game.Editor.rsp",
+      "sha256": "df4d87bb37032b602aa9e8cf5e26cc3637480e48b838bd590a8d34aff22bf6f0",
+      "bytes": 197163
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/after-storage-zmcrpuo6/Game.Tests.Editor.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/after-storage-zmcrpuo6/Game.Tests.Editor.rsp",
+      "sha256": "880bc2bbe1193010c688c07506b5c0b0931ad8c245f5675f73cf8e922b0a4493",
+      "bytes": 175871
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/after-storage-zmcrpuo6/result.json",
+      "sha256": "3f197b505eecc512a299a8814649773ccf75cedea4f1307315afcac78c81f855",
+      "bytes": 1311999
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/offline-controls-sealed/full.log",
+      "sha256": "9b25a2386383f52cf07561744a6882baf521be06d0498b4ad6d1cd57f6b7520f",
+      "bytes": 4335
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/offline-controls-sealed/receipt.json",
+      "sha256": "84884df704726f7416ac7fde3aa2aac5dd3daa2e1251a3a79cdd9b7fd06c3eb5",
+      "bytes": 976
+    }
+  ],
+  "attribution": "Final 4a58 two-owner typeproof and five successor offline methods; parent baseline proof and 29 parent methods retained separately. Parent29 were not rerun against the new runtime gate. No DLLs, no native jobs."
+}

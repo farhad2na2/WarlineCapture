@@ -1,0 +1,17 @@
+{
+  "archive": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\ground30-source-chunks-20261015\\MP01\\collected-unqualified-MP18.zip",
+  "sha256": "4320a4c83cf1a56fb9f8499755b66f3cc27dadf60d0b74edf78b5f7557a4c79c",
+  "summary": {
+    "group": "MP",
+    "missions": 6,
+    "sizeRows": 18,
+    "normalCompiledRows": 0,
+    "completeFacilityRows": 0,
+    "canonicalBudgetsExactRows": 6,
+    "sourceFitCertified": false,
+    "missionReady": false
+  },
+  "checkedWrapperExit": 0,
+  "sourceDllEqual": true,
+  "candidateSha256": "d23c0206a541301aac31ed8c1478844eb06282048ed15446c7f040feff83b5d7"
+}

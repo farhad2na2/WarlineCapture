@@ -1,0 +1,156 @@
+{
+  "result": "PassedCurrentSourceStandardRegularAriaBaseline",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "caseCount": 6,
+  "winsByLocale": {
+    "en": 3,
+    "fa-IR": 3
+  },
+  "cases": [
+    {
+      "id": 1263,
+      "locale": "en",
+      "seed": 104734,
+      "attempt": "expanded-s005-104734-8959014804a845d9b22d86634048b400",
+      "victorySeconds": 263.784,
+      "contacts": 67,
+      "paidObservations": 9,
+      "proof": "native1263-normal-aria-pass.json",
+      "proofSha256": "dd0ded303d5da8b02cbb881f3cb6abecb457bc39b77c03bedf32ea3e2fd2784b",
+      "evidenceSha256": {
+        "native1263-normal-aria-pass.json": "dd0ded303d5da8b02cbb881f3cb6abecb457bc39b77c03bedf32ea3e2fd2784b",
+        "native-1263-normal-aria-en-seed104734.log": "e7d28d197404633d35f12ba030ee39b110d01d6bc45b76df1f2116f6d8f1d731",
+        "native1263-normal-aria-observation.jsonl": "ea47466b43bdf029a4d51138bc925472f15d366ddddd763047de63065a30b470",
+        "native1263-normal-aria-observer.cs.txt": "53dfdd4ecc8149864e0c89bd7be828ac6e99b1f40d02b3233f2ea22d720de01b",
+        "native1263-executed-runner.py.txt": "2f2aac1059b55370df9a9a9133e370e524d81cceae9adc7041086f17b399f009",
+        "s005-aria-live-104734-en-cdf13fa24ec549d196cc49ce4677e10b.jsonl": "e32cfc43b49d3b9487ab1bbe0f41603b3d512d0f48bf6d5202ac71c33dbdbedd",
+        "s005-aria-live-104734-en-cdf13fa24ec549d196cc49ce4677e10b.jsonl.touch.jsonl": "e3b90ae49a048277c3a8dfb81ba6039002446bef01808f5fbbba217de7c0afff",
+        "s005-aria-live-104734-en-cdf13fa24ec549d196cc49ce4677e10b.jsonl.commands.jsonl": "f60d10329143a9cbf0e2a1f35a1a2127d810deb94f684c8ea065497b0af24a64"
+      }
+    },
+    {
+      "id": 1264,
+      "locale": "en",
+      "seed": 130368,
+      "attempt": "expanded-s005-130368-eab47e5455f54bd5a01bab739ff5a1f4",
+      "victorySeconds": 232.481,
+      "contacts": 69,
+      "paidObservations": 9,
+      "proof": "native1264-normal-aria-pass.json",
+      "proofSha256": "febbf0ce15e223ca44068c4cfc3ea3ecfa924379bb010e609c73f96de75306b4",
+      "evidenceSha256": {
+        "native1264-normal-aria-pass.json": "febbf0ce15e223ca44068c4cfc3ea3ecfa924379bb010e609c73f96de75306b4",
+        "native-1264-normal-aria-en-seed130368.log": "d4f234e6562aa2414f2976d038fad9830be4129ce3e3746887b0dff22e863767",
+        "native1264-normal-aria-observation.jsonl": "2ca2dfc642b619696af81974ae94a24f2f887aba91d3cff749c2b61642024314",
+        "native1264-normal-aria-observer.cs.txt": "3ff518d8ee0733c2358888218a7afc68c022a34765a6de3e0ec5acc2dd1fdb7e",
+        "native1264-executed-runner.py.txt": "7b49ae159686b9468b850105005e4a5929d058a3a2f4e9de837dcb1ae3041430",
+        "s005-aria-live-130368-en-c854b8df847840639c8dc308dbb7a022.jsonl": "7404779155e9b75f11028859eb09c6277cf32be863477073b7786016142ce55e",
+        "s005-aria-live-130368-en-c854b8df847840639c8dc308dbb7a022.jsonl.touch.jsonl": "83f0830b3f493748f1782329cc8d083c07c6a868edbd3a93dd174b2f07097086",
+        "s005-aria-live-130368-en-c854b8df847840639c8dc308dbb7a022.jsonl.commands.jsonl": "e1459f8058ab61b39e216af179ef6f399059c8d4066e864dc5d270f045acc998"
+      }
+    },
+    {
+      "id": 1265,
+      "locale": "en",
+      "seed": 155926,
+      "attempt": "expanded-s005-155926-030a642315a444af8f598f6498810241",
+      "victorySeconds": 236.016,
+      "contacts": 57,
+      "paidObservations": 9,
+      "proof": "native1265-normal-aria-pass.json",
+      "proofSha256": "b414100f39919acf3ef3f5509b62e3c35346a43eb38f4624acefcf9b70d167c7",
+      "evidenceSha256": {
+        "native1265-normal-aria-pass.json": "b414100f39919acf3ef3f5509b62e3c35346a43eb38f4624acefcf9b70d167c7",
+        "native-1265-normal-aria-en-seed155926.log": "d8c6ed14379b71c4087b42f02cbe7d7decf713d78485f73f69e5a9ba68b5a4d9",
+        "native1265-normal-aria-observation.jsonl": "14642d5dc0aaf40fa902e79dcaa7532e2b142d40752e29bc9f0ed147f8dccb48",
+        "native1265-normal-aria-observer.cs.txt": "902012be47d541c5ec50ad7088bbc406721236a4d94e907948ae378c585837ad",
+        "native1265-executed-runner.py.txt": "2f9efc8d8a3794acefc20dcf077bf8fc5e461e36e6beb8e2c1a42f9aeb429b03",
+        "s005-aria-live-155926-en-c710d9aab94347a991040fdfda7cc773.jsonl": "f7563a1ea1c3f2be4610d608dc1d152fabb9d3141acf7ab7d37625da570ca841",
+        "s005-aria-live-155926-en-c710d9aab94347a991040fdfda7cc773.jsonl.touch.jsonl": "3cd8ac8ca160796fd21d1fc18e1b342975271000386a64647950628b51f5d18e",
+        "s005-aria-live-155926-en-c710d9aab94347a991040fdfda7cc773.jsonl.commands.jsonl": "d8994e33bdae288748751a3e2c9a092fe90d3edc9c884a9f77aac81ffe949936"
+      }
+    },
+    {
+      "id": 1266,
+      "locale": "fa-IR",
+      "seed": 104734,
+      "attempt": "expanded-s005-104734-c10026b6cddb4ac7ae2c4ec31102029d",
+      "victorySeconds": 265.079,
+      "contacts": 74,
+      "paidObservations": 9,
+      "proof": "native1266-normal-aria-pass.json",
+      "proofSha256": "904a1f6053eba1113ddce2e2844ab32c38865dea9b32c68725ee0d9cfac57dd2",
+      "evidenceSha256": {
+        "native1266-normal-aria-pass.json": "904a1f6053eba1113ddce2e2844ab32c38865dea9b32c68725ee0d9cfac57dd2",
+        "native-1266-normal-aria-fa-seed104734.log": "7cd969048440466b88671ca100d52eb47dfd8fc068e975665ab48a9a6e32550c",
+        "native1266-normal-aria-observation.jsonl": "f3a3f7cb17fbeb22b37899e3d238946f14e999e924dd51e12bd1eed7478224fc",
+        "native1266-normal-aria-observer.cs.txt": "3b0cb7e8ec519eebee3a62bc0c502e29d3a502a9e6d80245c0e5a059817786f2",
+        "native1266-executed-runner.py.txt": "66fdcba02edb62b27a437f2d3197e6ff6fc3784271a408bccc400cce86fb6ee9",
+        "s005-aria-live-104734-fa-feef5b9f73bd4377bfe957a7b08e045d.jsonl": "e973a038558175280b2a4f5c10a177d3c50fcb92d402b08c0ea9f103f09ca7ce",
+        "s005-aria-live-104734-fa-feef5b9f73bd4377bfe957a7b08e045d.jsonl.touch.jsonl": "f99a6485f1df71a3f684ae8734b356b6da9080d1131ffb6e777b9cf58e1e5341",
+        "s005-aria-live-104734-fa-feef5b9f73bd4377bfe957a7b08e045d.jsonl.commands.jsonl": "4be77fb09bf435e0ab12f4bcf03fdb9dd6ab0e86d24196c684d406267895d9ef"
+      }
+    },
+    {
+      "id": 1276,
+      "locale": "fa-IR",
+      "seed": 130368,
+      "attempt": "expanded-s005-130368-b93a495115e040ac8fd160312ab903a6",
+      "victorySeconds": 248.133,
+      "contacts": 72,
+      "paidObservations": 9,
+      "proof": "native1276-normal-aria-pass.json",
+      "proofSha256": "b51a393ed706b996d2126fe52d729a7a98d583c7b69e4db3444d835a6277a557",
+      "evidenceSha256": {
+        "native1276-normal-aria-pass.json": "b51a393ed706b996d2126fe52d729a7a98d583c7b69e4db3444d835a6277a557",
+        "native-1276-normal-aria-fa-seed130368.log": "404742d80b2a8355411f459adb1ac4f972f6ae2631b17a82ff10b874f13b8f0c",
+        "native1276-normal-aria-observation.jsonl": "ec10c573d833592e9b3bc875f4847b2a6889c52709992c47b20837a840318cca",
+        "native1276-normal-aria-observer.cs.txt": "32088987c7d02c10771785a37077796b8915026b11d3f530ad564fe494227c09",
+        "native1276-executed-runner.py.txt": "ac44ac13f4f4f26959ecf825527a1baf5aeabc6920cdb60e1051af2188410efe",
+        "s005-aria-live-130368-fa-ca9695769fdc48799b2e22601f0b7533.jsonl": "d72360e977d852b63827c7d0ef99c615ef8318125b02f6d99a4035e5199599b6",
+        "s005-aria-live-130368-fa-ca9695769fdc48799b2e22601f0b7533.jsonl.touch.jsonl": "14fb6dff7de01a2cd6a1110fcace7aa369f0fefdf526cf66a51be59be45d4bde",
+        "s005-aria-live-130368-fa-ca9695769fdc48799b2e22601f0b7533.jsonl.commands.jsonl": "8f0b4d13ff0351c75314de8c8dfe55744dcada691a0ed2df34683c7b1df49961"
+      }
+    },
+    {
+      "id": 1268,
+      "locale": "fa-IR",
+      "seed": 155926,
+      "attempt": "expanded-s005-155926-dd8f00f3feff40e6bdaabf2a50a698b1",
+      "victorySeconds": 283.643,
+      "contacts": 73,
+      "paidObservations": 9,
+      "proof": "native1268-normal-aria-pass.json",
+      "proofSha256": "1f4525371f4810aef22d4ae2e1de36c1aa6482563319fb14457d54a9ff649fab",
+      "evidenceSha256": {
+        "native1268-normal-aria-pass.json": "1f4525371f4810aef22d4ae2e1de36c1aa6482563319fb14457d54a9ff649fab",
+        "native-1268-normal-aria-fa-seed155926.log": "a56f9ec16279d687d905de8eb03edde764885f8db570f9e1879f0a7385eb9ed7",
+        "native1268-normal-aria-observation.jsonl": "46f311e131137ff390330799502180020dbca92115452653111dd31fcdc25270",
+        "native1268-normal-aria-observer.cs.txt": "080e469a858686c3275cb006a0673be31b8d622cda2f34fdc2c7313c638bf458",
+        "native1268-executed-runner.py.txt": "a1831a483e8d3b11c1ed9015ac2d25c03619c45424a03daa209790669409c62a",
+        "s005-aria-live-155926-fa-2baddc6136184d77b7b37b5b346e9ffa.jsonl": "39d6a9339032c8b36909726b5d13afff099df240cddb58a6ca94c4f10b4d1c1d",
+        "s005-aria-live-155926-fa-2baddc6136184d77b7b37b5b346e9ffa.jsonl.touch.jsonl": "6c4420c91f52c794b6fe33d683ab8ff9224a45f861263c3d76ff66fbe5531e30",
+        "s005-aria-live-155926-fa-2baddc6136184d77b7b37b5b346e9ffa.jsonl.commands.jsonl": "acde39e043659572301a0e0dea42323a52d32bb4b63ca5869dcbfb3c9fd34306"
+      }
+    }
+  ],
+  "preparedMatrixSha256": "a676a1d62e191bcc9f38b46db7ea0ab414372e4f8d49e718a3e28dd81e32e496",
+  "retryLineage": {
+    "interruptedRun": 1267,
+    "retryRun": 1276,
+    "interruptedQualification": "Interrupted_Unqualified",
+    "originalEvidencePreserved": true,
+    "wrapperExit143": true,
+    "nativeCompletionReceiptAbsent": true,
+    "fixtureAndRunnerOnlyIdPathChanges": true
+  },
+  "offlineVerifierSha256": "92296f806987f4a0a56997aa7f3b500528df61635fbba1fdcb9d852b21b8b14d",
+  "qualification": "Six genuine native NORMAL INPUT ARIA journeys; complete source equality, native/wrapper0, all Touch, rendered localized frozenVictory thenAdjustSetup rechecked offline.",
+  "nativeCallsByVerifier": 0,
+  "readinessEdited": false,
+  "playerReady": false,
+  "limitations": [
+    "Does not certify manual/takeover, complete role/air/cargo, balance/stress, Campaign, performance, owner visual or human/device acceptance.",
+    "Originalfailed1253 and all historical proofs remain preserved."
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "sourceHash": "3fb196e891fd80aace0b7b21da1412a902f2d5e735501a5f7c79bc6521ad5ea4",
+  "result": "Passed",
+  "supportChecks": 59,
+  "runs": [
+    {
+      "run": 324,
+      "kind": "Runtime",
+      "log": "tests-324-paratrooper-population-runtime.log",
+      "logSha256": "5993c0cd8f2a1b1e73c174d09a64b63ddd607b5a3b98411e37b1c929e8df6d3e",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 11
+    },
+    {
+      "run": 325,
+      "kind": "Smoke",
+      "log": "tests-325-paratrooper-population-smoke.log",
+      "logSha256": "b72d026e82e55940878daa0dca0c70b2daf3619df24b2d8cf9c9eaa37656fe39",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 326,
+      "kind": "UiAria",
+      "log": "tests-326-paratrooper-population-uiaria.log",
+      "logSha256": "3dfd33ff0e0e98bf50999b74ba0286448c28e783443a8428b6be491ab816e9e2",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 13
+    },
+    {
+      "run": 327,
+      "kind": "Supply",
+      "log": "tests-327-paratrooper-population-supply.log",
+      "logSha256": "0001af66701b03685fbf4c439583be77b83c9e088604158b70fc670969402876",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 13
+    },
+    {
+      "run": 328,
+      "kind": "Campaign",
+      "log": "tests-328-paratrooper-population-campaign.log",
+      "logSha256": "37b68e2fa56fffd0a1c5a851eb9ec8b1483387659e477e3027b5cc31abc932db",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 329,
+      "kind": "Strike",
+      "log": "tests-329-paratrooper-population-strike.log",
+      "logSha256": "e835caf6e65a6b64c72d866aa45ffe26a4891af57dcb6fba4b7c3b484aaa7bfa",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 10
+    },
+    {
+      "run": 330,
+      "kind": "SkirmishSharedMaterials",
+      "log": "tests-330-paratrooper-population-skirmishsharedmaterials.log",
+      "logSha256": "218a880169029cc3a41bcbb6ceabb7861ceab970a5930e5fd63eb878a53280e4",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": null
+    }
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "normalInputAcceptance": false,
+  "playerReady": false
+}

@@ -1,0 +1,19 @@
+{
+  "result": "Completed",
+  "sourceHash": "3455d1276fd8f3d46715824520491e1fbb8fbf22e3f99f67f9e5e2a02efc36fb",
+  "wrapperExit": 0,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-755-finer-logical-playable-air-fit-pre-source-manifest.json",
+  "postManifest": "final-755-finer-playable-air-fit-completed-post-source-manifest.json",
+  "log": "native-755-current-manual-en-seed104734.log",
+  "logSha256": "9713acc6c98c041d830aee2ca1ec8096c1052c1bb3e49b0bb6e8f3c43aa886cb",
+  "data": "s005-aria-live-104734-en-7f25886b00094303a142d8adc6d152e5.jsonl.airport-source-fit.json",
+  "samples": 7776,
+  "nativeValidSites": 8,
+  "insidePlayableSites": 8,
+  "playableNonOverlappingPairs": 17,
+  "scope": "ReadOnlyLogicalPlayableCoarseNativeValidator",
+  "limitation": "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity. Sites sampled at different live times must be revalidated jointly at real placement; no frozen opening-grid or simultaneous occupancy claim.",
+  "capacityCertified": false,
+  "playerReady": false
+}

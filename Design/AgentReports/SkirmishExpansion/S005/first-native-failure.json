@@ -1,0 +1,10 @@
+{
+  "runId": "S005-aria-rs-104734-en-1",
+  "readinessAccepted": false,
+  "reportedOutcome": "Victory",
+  "durationSeconds": 12.637,
+  "inputViolations": -1,
+  "failure": "S005 omitted from measured-placement binding eligibility; fallback spawns placed both factions near grid origin outside authored Campaign deployment sector",
+  "fix": "The shared DB BA measured-layout path now identifies the logical map/layout family and canonical catalog identity; removed the per-mission allowlist. Added regression checks for Campaign world-space separation and future entries.",
+  "nativeRerun": "Pending"
+}

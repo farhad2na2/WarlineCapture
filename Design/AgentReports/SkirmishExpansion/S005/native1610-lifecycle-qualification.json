@@ -1,0 +1,87 @@
+{
+  "result": "PassedScopedNormalNativeFourAttemptThreeReplayDiagnostic",
+  "genuineDefeats": 4,
+  "countedWins": 0,
+  "attempts": [
+    "expanded-s005-104734-3cebd9c794714cbfbb0c2e7fe6c61074",
+    "replay-S005-104734-b5083518",
+    "replay-S005-104734-8dd63017",
+    "replay-S005-104734-94a26b10"
+  ],
+  "externalContactAudit": {
+    "recordedContacts": 24,
+    "completedContacts": 24,
+    "phases": {
+      "Lifecycle": 24
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": false,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "inheritedContactAudit": {
+    "recordedContacts": 33,
+    "completedContacts": 33,
+    "phases": {
+      "Menu": 9,
+      "Manual": 24
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "trace": "s005-aria-live-104734-fa-6d80e1857362416bb8e906a9d69459c1.jsonl",
+  "memoryTrends": {
+    "managedBytes": [
+      2215628800,
+      2241380352,
+      2262233088,
+      2268315648
+    ],
+    "nativeAllocatedBytes": [
+      6292205302,
+      6583682512,
+      7333996697,
+      7261499561
+    ],
+    "nativeReservedBytes": [
+      7686979584,
+      8014954496,
+      8405499904,
+      8509243392
+    ],
+    "graphicsBytes": [
+      2614861164,
+      2518781160,
+      2628700572,
+      2610674620
+    ],
+    "residentBytes": [
+      1484324864,
+      1731067904,
+      1904443392,
+      2097299456
+    ],
+    "peakResidentBytes": [
+      3367911424,
+      3367911424,
+      3367911424,
+      3367911424
+    ]
+  },
+  "memoryReviewRequired": true,
+  "fullX17MemoryQualified": false,
+  "currentTypedStateCertified": true,
+  "englishDefeatCertified": false,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false
+}

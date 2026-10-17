@@ -1,0 +1,87 @@
+{
+  "scope": "Offline output preservation only",
+  "actual_rule_counts": [
+    13,
+    15,
+    14
+  ],
+  "historical_receipt": "owned-historical-preserved-khnb9gk8/receipt.json",
+  "runs": [
+    {
+      "action": "CopiedEvidenceAppendOnly",
+      "source": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\ObjectiveEvidence\\frontline-sfhz9yuf",
+      "output": "D:\\Projects\\WarlineCapture\\Design\\AgentReports\\SkirmishExpansion\\OfflineReruns\\preserved-rerun-frontline-_i5xnbyj",
+      "files": [
+        {
+          "file": "actual-editor-reference-compile.log",
+          "sha256": "5457dd16fc9724762fbadbfaff9d1b846a168ce6be5a94b7e21e887851c4e45f"
+        },
+        {
+          "file": "offline-13-rules.log",
+          "sha256": "d827eca1b3792c8fe81dd3c7218eead788268c57aa0b0f466eaf36124ba3516d"
+        },
+        {
+          "file": "offline-compile.log",
+          "sha256": "e3c77bfb8f88c028c35cc4b386451a5471f06ab91c3adeaac0742ba351c60548"
+        },
+        {
+          "file": "source-and-tool-manifest.json",
+          "sha256": "892bd31abefc5f0c8fc57cf12460bae2021fa1b4628bf2b162ca7dfc649d5d4e"
+        }
+      ],
+      "nativeExecutionCertified": false,
+      "validationOutcomeInCopiedLogsOnly": true
+    },
+    {
+      "action": "CopiedEvidenceAppendOnly",
+      "source": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\ObjectiveEvidence\\breakthrough-ve0qk_6h",
+      "output": "D:\\Projects\\WarlineCapture\\Design\\AgentReports\\SkirmishExpansion\\OfflineReruns\\preserved-rerun-breakthrough-653wiljg",
+      "files": [
+        {
+          "file": "actual-editor-reference-compile.log",
+          "sha256": "c53b657255164bb9c877334cc239971d61968ce005aa25b858d90ecdea72544d"
+        },
+        {
+          "file": "offline-15-rules.log",
+          "sha256": "ca75b95e9293143111ab3ba49a700a050b40c06c87ec2a4df93acee2f010f004"
+        },
+        {
+          "file": "offline-compile.log",
+          "sha256": "3aaeb7eaff7caf70fd2e69849e177322f1cfd9b8035fe64d4b71c6accfcb4651"
+        },
+        {
+          "file": "source-and-tool-manifest.json",
+          "sha256": "667c86849124f2f95e31516516e9e74dfaf6a2c2a8d94dc11929ee277775e6c0"
+        }
+      ],
+      "nativeExecutionCertified": false,
+      "validationOutcomeInCopiedLogsOnly": true
+    },
+    {
+      "action": "CopiedEvidenceAppendOnly",
+      "source": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\ObjectiveEvidence\\convoy-_uxa5qll",
+      "output": "D:\\Projects\\WarlineCapture\\Design\\AgentReports\\SkirmishExpansion\\OfflineReruns\\preserved-rerun-convoy-cdts1j1o",
+      "files": [
+        {
+          "file": "actual-editor-reference-compile.log",
+          "sha256": "07b25a70013f39735c72111b5bb855e0ce77095a694e0c3046daf8bfd44e01b7"
+        },
+        {
+          "file": "offline-14-rules.log",
+          "sha256": "f48ae6707801a4860d58d74a688173c5345a90d0b9b641247fbf93b8bad0e990"
+        },
+        {
+          "file": "offline-compile.log",
+          "sha256": "d3e20502c4d773c46dd8e85011907ce9ce320be6c3231d8849265e6b184b085a"
+        },
+        {
+          "file": "source-and-tool-manifest.json",
+          "sha256": "0e61dd2db90e1139f2a2a1e64fd2518ac7afa115913d573227cf290178f2e41b"
+        }
+      ],
+      "nativeExecutionCertified": false,
+      "validationOutcomeInCopiedLogsOnly": true
+    }
+  ],
+  "nativeExecutionCertified": false
+}

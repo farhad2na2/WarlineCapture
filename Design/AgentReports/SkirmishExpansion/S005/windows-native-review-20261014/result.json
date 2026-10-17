@@ -1,0 +1,48 @@
+{
+  "result": "FailedWrapperCompletion",
+  "native_startup_marker": "Passed",
+  "wrapper_exit": 1,
+  "wrapper_reason": "No readable process exit code or explicit success marker; failclosed retained",
+  "native_launch_and_finish_candidate_sha256": "883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8",
+  "screenshot": "s005-native-en-1920x1080-opening.png",
+  "width": 1920,
+  "height": 1080,
+  "visual_review": "Pending asynchronous owner review; user authorized continuing without waiting",
+  "gameplay_qualification": "NotPerformed; diagnostic direct startup only",
+  "new_missions_qualified": 0,
+  "player_ready": false,
+  "archive": "native-review-03-full-evidence.zip",
+  "archive_sha256": "f1c4ccc65ad73b59550ffd17235d0d7a4b7f4e41a6e29c17ebc681893fd2ce26",
+  "artifacts": [
+    {
+      "name": "s005-native-review-20261014-03.log",
+      "bytes": 540666,
+      "sha256": "f44032e4b404f6f64bbc981f578cd59def5b0a52375994027cea73777ac5ed80"
+    },
+    {
+      "name": "s005-native-review-20261014-03.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "s005-native-review-20261014-03.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "s005-native-en-1920x1080-checkpoint-staging.json",
+      "bytes": 17106488,
+      "sha256": "265a9089fbdcf4f5babfe116aad2cc8d44cdb7f3ee4632c204484217303fb248"
+    },
+    {
+      "name": "s005-native-en-1920x1080-checkpoint-wire.json",
+      "bytes": 10347115,
+      "sha256": "d8203fa83fca6c2ada9853f9383085600aa01e49524f6cb94b2e781958f50aad"
+    },
+    {
+      "name": "s005-native-en-1920x1080-opening.png",
+      "bytes": 2925768,
+      "sha256": "733bed5c8d4f6dae7310c1d317a459f0e223687cf2093e2eba8cb6e86ac518f6"
+    }
+  ]
+}

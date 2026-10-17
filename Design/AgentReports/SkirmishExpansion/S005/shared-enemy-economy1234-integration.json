@@ -1,0 +1,63 @@
+{
+  "status": "IntegratedPendingCompile",
+  "manifestSha256": "1ca45cc7be976ed89be81d36aa4799d435bbbb3002db24554cc20e68fcf63d4a",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishEnemyEconomyService.cs",
+      "baseSha256": null,
+      "stagedSha256": "9c94c0097af121ee2ccd3c8b070c2015f137aa101c3fcc07d4aa08da53d82d57",
+      "bytes": 15085
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishEnemyCommanderService.cs",
+      "baseSha256": "dc18a4beac9789461ca74326c83baba40297d739b0a58eb03f3174299584f607",
+      "stagedSha256": "dc2852bc83377d3f18d029ccb0906b65e486883c076c3d5ba8c5647f856315fa",
+      "bytes": 29685
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishProductionService.cs",
+      "baseSha256": "30b093f0fb36db788ccb4db6ba9d22d1016b401b5307cb1f9fd2100947b7dc7a",
+      "stagedSha256": "8764e867863657cf80c2bfd4b6a8b873f172bb59e2dbdba9377fe344ffe45f33",
+      "bytes": 43393
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishProductionCatalog.cs",
+      "baseSha256": "279f09ea11660c87c863afba498d735ec4c4718f74e22a52a42df92976bcb898",
+      "stagedSha256": "6a09a7a84a05e1617c12784ceba57a9849ee4fa3add73f944583f9501ef844a3",
+      "bytes": 7765
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.Skirmish.cs",
+      "staged": "/private/tmp/s005-step4-economy-v1/MatchSceneView.Skirmish.cs",
+      "baseSha256": "b6b2c260c1cf8737e5d984aac7acac2c8ad78f3051a916aa405ea496eab30a74",
+      "stagedSha256": "8b6338c09d774eaeee339a7940085fb1fca203b433ce33c7e6794e7f6d7744ba",
+      "bytes": 3405
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishEnemyEconomyTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "77f3248e04a35c40dbc0f7da5a74c8b43bdeaf9a36620a0727d6ad5bdbae05a5",
+      "bytes": 19501
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs.meta",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishEnemyEconomyService.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "55769f5ec72fe75c45c0b6d73982cf19bedf157798b9ab12dec4185ade695bc9",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs.meta",
+      "staged": "/private/tmp/s005-step4-economy-v1/SkirmishEnemyEconomyTests.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "734b6b532c6f00f3147f75e26f8144801e9ebf47ff9cfc90b633085fde5c4fc2",
+      "bytes": 243
+    }
+  ],
+  "normalReadinessClaim": false
+}

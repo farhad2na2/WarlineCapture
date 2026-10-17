@@ -1,0 +1,3984 @@
+{
+  "schema_version": 1,
+  "kind": "UnqualifiedSourceBoundFamilyLogicalInputs",
+  "full_index_logical_sha256": "d7af0f9ba6fd36db2a484cd3ec64944cce7e8981738c8545de6c92a0a1370472",
+  "catalog_sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+  "matrix_sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+  "packet": {
+    "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+    "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+  },
+  "source_candidate": {
+    "sourcePath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+    "sourceAssetSha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+    "gridPath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset",
+    "gridAssetSha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+    "surfacePath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset",
+    "surfaceAssetSha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7",
+    "operationMapId": "opmap.skirmish.cityedgeairfield_prepared",
+    "sourceIdentityHash": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+    "contentHash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+    "sourceSceneGuid": "915718fcf0cd7422db987b388cd0d925",
+    "authoredSubSceneGuid": "cd836ff2ddd2a440e81db4a20332d266"
+  },
+  "family": "AP_BA",
+  "missions": [
+    {
+      "catalog_id": "S097",
+      "definition_id": "skirmish.s097",
+      "scenario_setup_id": "scenario.skirmish.s097",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "F"
+      },
+      "packet": {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+        "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+      },
+      "packet_section": "s097",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S097",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1080",
+          "player_rifle": "8",
+          "player_gunner": "0",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "12",
+          "player_ground": "2",
+          "player_air": "0",
+          "player_combat": "14",
+          "player_supply": "20",
+          "player_logistics_support": "2",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "8",
+          "enemy_gunner": "0",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "12",
+          "enemy_ground": "2",
+          "enemy_air": "0",
+          "enemy_combat": "14",
+          "enemy_supply": "20",
+          "enemy_logistics_support": "2",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "450",
+          "oil_each": "120",
+          "usable_fuel_each": "350",
+          "materials_capacity_each": "800",
+          "oil_capacity_each": "500",
+          "fuel_capacity_each": "800",
+          "infantry_queues_each": "1",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S097",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1500",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "32",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "32",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "675",
+          "oil_each": "180",
+          "usable_fuel_each": "525",
+          "materials_capacity_each": "1200",
+          "oil_capacity_each": "750",
+          "fuel_capacity_each": "1200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S097",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1800",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "24",
+          "player_ground": "4",
+          "player_air": "0",
+          "player_combat": "28",
+          "player_supply": "40",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "24",
+          "enemy_ground": "4",
+          "enemy_air": "0",
+          "enemy_combat": "28",
+          "enemy_supply": "40",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1600",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "canonical_size_rows_sha256": "5689b666a881b019dd438c99f2c34adc6c176392efdc6c8ecb09a780338e6455",
+      "shared_source_candidate_group": "AP",
+      "source_selection_status": "CandidateExistingCampaignSource_NotFitCertified",
+      "protected_binding": null,
+      "existing_definition_asset": null,
+      "intended_new_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S097/SkirmishScenario_S097.asset",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "capability_authority": "ExistingWorkQueue",
+      "required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "pilot_candidate": {
+        "catalog_id": "S097",
+        "group": "AP",
+        "source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+        "source_asset_sha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+        "grid_sha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+        "surface_sha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7",
+        "source_identity": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+        "content_hash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+        "canonical_budget_rows_sha256": "5689b666a881b019dd438c99f2c34adc6c176392efdc6c8ecb09a780338e6455",
+        "typed_pad_world_axis_candidates": [
+          {
+            "pad_id": "pad.skirmish.db.base_player",
+            "kind": 1,
+            "faction": 1,
+            "world_rect": [
+              435.99998999999997,
+              532.5,
+              463.99998999999997,
+              547.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.base_enemy",
+            "kind": 1,
+            "faction": 2,
+            "world_rect": [
+              888.8000099999999,
+              532.5,
+              916.8000099999999,
+              547.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.staging_player",
+            "kind": 2,
+            "faction": 1,
+            "world_rect": [
+              475.81753499999996,
+              536.5,
+              495.67718499999995,
+              543.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.staging_enemy",
+            "kind": 2,
+            "faction": 2,
+            "world_rect": [
+              857.1228149999998,
+              536.5,
+              876.9824649999999,
+              543.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_infantry_player",
+            "kind": 3,
+            "faction": 1,
+            "world_rect": [
+              459.0,
+              519.0,
+              483.0,
+              542.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_infantry_enemy",
+            "kind": 3,
+            "faction": 2,
+            "world_rect": [
+              874.9965,
+              537.0,
+              893.0,
+              561.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_vehicle_player",
+            "kind": 4,
+            "faction": 1,
+            "world_rect": [
+              538.0,
+              528.0,
+              563.0,
+              553.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_vehicle_enemy",
+            "kind": 4,
+            "faction": 2,
+            "world_rect": [
+              790.0,
+              527.0,
+              817.0,
+              554.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.rally_player",
+            "kind": 5,
+            "faction": 1,
+            "world_rect": [
+              524.4736775,
+              538.4761904761905,
+              534.4035025,
+              541.5238095238095
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.rally_enemy",
+            "kind": 5,
+            "faction": 2,
+            "world_rect": [
+              818.3964975,
+              538.4761904761905,
+              828.3263225,
+              541.5238095238095
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.service_player",
+            "kind": 8,
+            "faction": 1,
+            "world_rect": [
+              444.04209499999996,
+              566.8,
+              455.957885,
+              570.8
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  3.0,
+                  4.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  3.0,
+                  4.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  3.0,
+                  4.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.service_enemy",
+            "kind": 8,
+            "faction": 2,
+            "world_rect": [
+              896.8421149999999,
+              509.19999999999993,
+              908.7579049999999,
+              513.1999999999999
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  3.0,
+                  4.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  3.0,
+                  4.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  3.0,
+                  4.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.air_player",
+            "kind": 6,
+            "faction": 1,
+            "world_rect": [
+              412.266655,
+              581.7523809523809,
+              428.15437499999996,
+              587.847619047619
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.air_enemy",
+            "kind": 6,
+            "faction": 2,
+            "world_rect": [
+              924.645625,
+              492.15238095238095,
+              940.5333449999999,
+              498.247619047619
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_player",
+            "kind": 7,
+            "faction": 1,
+            "world_rect": [
+              425.5842,
+              474.4,
+              450.5842,
+              522.4
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_enemy",
+            "kind": 7,
+            "faction": 2,
+            "world_rect": [
+              902.2158,
+              557.6,
+              927.2158,
+              605.6
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_expansion_a",
+            "kind": 9,
+            "faction": 0,
+            "world_rect": [
+              586.0385924999999,
+              492.9142857142857,
+              599.9403475,
+              497.48571428571427
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_expansion_b",
+            "kind": 9,
+            "faction": 0,
+            "world_rect": [
+              752.8596524999999,
+              582.5142857142856,
+              766.7614075,
+              587.0857142857143
+            ],
+            "evidence": []
+          }
+        ],
+        "proposed_logical_world_rect": [
+          412.266655,
+          471.0,
+          940.5333449999999,
+          614.0
+        ],
+        "inside_existing_playable_source_bounds": true,
+        "overlap_witnesses": [
+          [
+            "pad.skirmish.db.base_player",
+            "pad.skirmish.db.spawn_infantry_player"
+          ],
+          [
+            "pad.skirmish.db.base_enemy",
+            "pad.skirmish.db.spawn_infantry_enemy"
+          ],
+          [
+            "pad.skirmish.db.staging_player",
+            "pad.skirmish.db.spawn_infantry_player"
+          ],
+          [
+            "pad.skirmish.db.staging_enemy",
+            "pad.skirmish.db.spawn_infantry_enemy"
+          ]
+        ],
+        "missing_actual_native_prefab_footprints": [],
+        "all_current_route_queries_must_be_retained_and_requeried": true,
+        "source_route_proof_references": [
+          {
+            "section": "heavyRouteQueries",
+            "row": 0,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 1,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 2,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 3,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 4,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 5,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 6,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 7,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 8,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 9,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 10,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 11,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 12,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 13,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 14,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 15,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 16,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 17,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 18,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 19,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 20,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 21,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 22,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 23,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 24,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 25,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 26,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 27,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 28,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 29,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 30,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 31,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 32,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 33,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 34,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 35,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 36,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 37,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 38,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 39,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 40,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 41,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 42,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 43,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 44,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 0,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 1,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 2,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 3,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 4,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 5,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 6,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 7,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 8,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 9,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 10,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 11,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 12,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 13,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 14,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 15,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 16,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 17,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 18,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 19,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 20,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 21,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 22,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 23,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 24,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 25,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 26,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 27,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 28,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 29,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 30,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 31,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 32,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 33,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 34,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 35,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 36,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 37,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 38,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 39,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 40,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 41,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 42,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 43,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 44,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          }
+        ],
+        "three_route_independence_certified": false,
+        "camera": {
+          "status": "PendingPerSourceNativeGroundElevationAndRoleFocusDefaultMinMaxInfantryReadability_HeliReconFit",
+          "scalars": null
+        },
+        "may_materialize_ready_asset": false,
+        "required_next": "NativeCandidateReprojectionAndNormalFacilitySearch_RemeasureAllSizePackingAndOverlaps"
+      },
+      "normal_mission_qualified": false,
+      "device_player_acceptance": "Pending"
+    },
+    {
+      "catalog_id": "S098",
+      "definition_id": "skirmish.s098",
+      "scenario_setup_id": "scenario.skirmish.s098",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "E"
+      },
+      "packet": {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+        "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+      },
+      "packet_section": "s098",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S098",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "1",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "34",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "1",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "34",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S098",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "2",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "0",
+          "player_combat": "33",
+          "player_supply": "52",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "2",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "0",
+          "enemy_combat": "33",
+          "enemy_supply": "52",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S098",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "3",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "0",
+          "player_combat": "47",
+          "player_supply": "74",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "3",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "0",
+          "enemy_combat": "47",
+          "enemy_supply": "74",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "canonical_size_rows_sha256": "27b382ac3a70eb3417884290a1ee08d749ea4116008c011e5624398d329fe8a8",
+      "shared_source_candidate_group": "AP",
+      "source_selection_status": "CandidateExistingCampaignSource_NotFitCertified",
+      "protected_binding": null,
+      "existing_definition_asset": null,
+      "intended_new_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S098/SkirmishScenario_S098.asset",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "capability_authority": "ExistingWorkQueue",
+      "required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "pilot_candidate": {
+        "catalog_id": "S098",
+        "group": "AP",
+        "source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+        "source_asset_sha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+        "grid_sha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+        "surface_sha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7",
+        "source_identity": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+        "content_hash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+        "canonical_budget_rows_sha256": "27b382ac3a70eb3417884290a1ee08d749ea4116008c011e5624398d329fe8a8",
+        "typed_pad_world_axis_candidates": [
+          {
+            "pad_id": "pad.skirmish.db.base_player",
+            "kind": 1,
+            "faction": 1,
+            "world_rect": [
+              435.99998999999997,
+              532.5,
+              463.99998999999997,
+              547.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.base_enemy",
+            "kind": 1,
+            "faction": 2,
+            "world_rect": [
+              888.8000099999999,
+              532.5,
+              916.8000099999999,
+              547.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  28.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.staging_player",
+            "kind": 2,
+            "faction": 1,
+            "world_rect": [
+              475.81753499999996,
+              536.5,
+              495.67718499999995,
+              543.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.staging_enemy",
+            "kind": 2,
+            "faction": 2,
+            "world_rect": [
+              857.1228149999998,
+              536.5,
+              876.9824649999999,
+              543.5
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  14.0,
+                  7.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_infantry_player",
+            "kind": 3,
+            "faction": 1,
+            "world_rect": [
+              459.0,
+              519.0,
+              484.0,
+              544.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_infantry_enemy",
+            "kind": 3,
+            "faction": 2,
+            "world_rect": [
+              874.9965,
+              537.0,
+              893.0,
+              561.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_vehicle_player",
+            "kind": 4,
+            "faction": 1,
+            "world_rect": [
+              537.0,
+              527.0,
+              564.0,
+              554.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.spawn_vehicle_enemy",
+            "kind": 4,
+            "faction": 2,
+            "world_rect": [
+              790.0,
+              527.0,
+              817.0,
+              554.0
+            ],
+            "evidence": [
+              "ExactAllSizeSeedOneNormalTerrainFallbackFullFootprintHull_RemeasureAfterFacilityChanges"
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.rally_player",
+            "kind": 5,
+            "faction": 1,
+            "world_rect": [
+              524.4736775,
+              538.4761904761905,
+              534.4035025,
+              541.5238095238095
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.rally_enemy",
+            "kind": 5,
+            "faction": 2,
+            "world_rect": [
+              818.3964975,
+              538.4761904761905,
+              828.3263225,
+              541.5238095238095
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.service_player",
+            "kind": 8,
+            "faction": 1,
+            "world_rect": [
+              444.04209499999996,
+              561.3,
+              455.957885,
+              576.3
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 3,
+                "engineering_shelf_metres": [
+                  10.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 3,
+                "engineering_shelf_metres": [
+                  10.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 3,
+                "engineering_shelf_metres": [
+                  10.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.service_enemy",
+            "kind": 8,
+            "faction": 2,
+            "world_rect": [
+              896.8421149999999,
+              503.69999999999993,
+              908.7579049999999,
+              518.6999999999999
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 3,
+                "engineering_shelf_metres": [
+                  10.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 3,
+                "engineering_shelf_metres": [
+                  10.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 3,
+                "engineering_shelf_metres": [
+                  10.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.air_player",
+            "kind": 6,
+            "faction": 1,
+            "world_rect": [
+              412.210515,
+              577.3,
+              428.210515,
+              592.3
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  16.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  16.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  16.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.air_enemy",
+            "kind": 6,
+            "faction": 2,
+            "world_rect": [
+              924.589485,
+              487.7,
+              940.589485,
+              502.7
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  16.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  16.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 1,
+                "engineering_shelf_metres": [
+                  16.0,
+                  15.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_player",
+            "kind": 7,
+            "faction": 1,
+            "world_rect": [
+              421.0842,
+              471.9,
+              455.0842,
+              524.9
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 5,
+                "engineering_shelf_metres": [
+                  34.0,
+                  53.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 5,
+                "engineering_shelf_metres": [
+                  34.0,
+                  53.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_enemy",
+            "kind": 7,
+            "faction": 2,
+            "world_rect": [
+              897.7158,
+              555.1,
+              931.7158,
+              608.1
+            ],
+            "evidence": [
+              {
+                "size": "Standard",
+                "actual_prefab_count": 4,
+                "engineering_shelf_metres": [
+                  25.0,
+                  48.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "War",
+                "actual_prefab_count": 5,
+                "engineering_shelf_metres": [
+                  34.0,
+                  53.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              },
+              {
+                "size": "LargeWar",
+                "actual_prefab_count": 5,
+                "engineering_shelf_metres": [
+                  34.0,
+                  53.0
+                ],
+                "engineering_gap_metres": 1.0,
+                "native_clearance": false
+              }
+            ]
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_expansion_a",
+            "kind": 9,
+            "faction": 0,
+            "world_rect": [
+              586.0385924999999,
+              492.9142857142857,
+              599.9403475,
+              497.48571428571427
+            ],
+            "evidence": []
+          },
+          {
+            "pad_id": "pad.skirmish.db.supply_expansion_b",
+            "kind": 9,
+            "faction": 0,
+            "world_rect": [
+              752.8596524999999,
+              582.5142857142856,
+              766.7614075,
+              587.0857142857143
+            ],
+            "evidence": []
+          }
+        ],
+        "proposed_logical_world_rect": [
+          412.210515,
+          471.0,
+          940.589485,
+          614.0
+        ],
+        "inside_existing_playable_source_bounds": true,
+        "overlap_witnesses": [
+          [
+            "pad.skirmish.db.base_player",
+            "pad.skirmish.db.spawn_infantry_player"
+          ],
+          [
+            "pad.skirmish.db.base_enemy",
+            "pad.skirmish.db.spawn_infantry_enemy"
+          ],
+          [
+            "pad.skirmish.db.staging_player",
+            "pad.skirmish.db.spawn_infantry_player"
+          ],
+          [
+            "pad.skirmish.db.staging_enemy",
+            "pad.skirmish.db.spawn_infantry_enemy"
+          ]
+        ],
+        "missing_actual_native_prefab_footprints": [],
+        "all_current_route_queries_must_be_retained_and_requeried": true,
+        "source_route_proof_references": [
+          {
+            "section": "heavyRouteQueries",
+            "row": 0,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 1,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 2,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 3,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 4,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 5,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 6,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 7,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 8,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 9,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 10,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 11,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 12,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 13,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 14,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 15,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 16,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 17,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 18,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 19,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 20,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 21,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 22,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 23,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 24,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 25,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 26,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 27,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 28,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 29,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 30,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 31,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 32,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 33,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 34,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 35,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 36,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 37,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 38,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 39,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 40,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 41,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 42,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 43,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "heavyRouteQueries",
+            "row": 44,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 0,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 1,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 2,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 3,
+            "route_id": "route.skirmish.db.main",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 4,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 5,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 6,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 7,
+            "route_id": "route.skirmish.db.main",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 8,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 9,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 10,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 11,
+            "route_id": "route.skirmish.db.main",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 12,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 13,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 14,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 15,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 16,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 17,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Tank",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 18,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 19,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 20,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 21,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 22,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 23,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "Siege",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 24,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 25,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 26,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 27,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 28,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 29,
+            "route_id": "route.skirmish.db.flank_a",
+            "role": "ApcHeavy",
+            "leg": 6,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 30,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 31,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 32,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 33,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 34,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Tank",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 35,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 36,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 37,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 38,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 39,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "Siege",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 40,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 1,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 41,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 2,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 42,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 3,
+            "status": "NativeQueryFailed"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 43,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 4,
+            "status": "NativeQueryFoundExactGoal"
+          },
+          {
+            "section": "endpointCandidateRouteQueries",
+            "row": 44,
+            "route_id": "route.skirmish.db.flank_b",
+            "role": "ApcHeavy",
+            "leg": 5,
+            "status": "NativeQueryFailed"
+          }
+        ],
+        "three_route_independence_certified": false,
+        "camera": {
+          "status": "PendingPerSourceNativeGroundElevationAndRoleFocusDefaultMinMaxInfantryReadability_HeliReconFit",
+          "scalars": null
+        },
+        "may_materialize_ready_asset": false,
+        "required_next": "NativeCandidateReprojectionAndNormalFacilitySearch_RemeasureAllSizePackingAndOverlaps"
+      },
+      "normal_mission_qualified": false,
+      "device_player_acceptance": "Pending"
+    },
+    {
+      "catalog_id": "S099",
+      "definition_id": "skirmish.s099",
+      "scenario_setup_id": "scenario.skirmish.s099",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "A",
+        "start_profile": "F"
+      },
+      "packet": {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+        "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+      },
+      "packet_section": "s099",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S099",
+          "size_id": "Standard",
+          "army_profile": "A",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1080",
+          "player_rifle": "8",
+          "player_gunner": "0",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "12",
+          "player_ground": "2",
+          "player_air": "0",
+          "player_combat": "14",
+          "player_supply": "20",
+          "player_logistics_support": "2",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "8",
+          "enemy_gunner": "0",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "12",
+          "enemy_ground": "2",
+          "enemy_air": "0",
+          "enemy_combat": "14",
+          "enemy_supply": "20",
+          "enemy_logistics_support": "2",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "450",
+          "oil_each": "120",
+          "usable_fuel_each": "350",
+          "materials_capacity_each": "800",
+          "oil_capacity_each": "500",
+          "fuel_capacity_each": "800",
+          "infantry_queues_each": "1",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S099",
+          "size_id": "War",
+          "army_profile": "A",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1500",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "32",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "32",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "675",
+          "oil_each": "180",
+          "usable_fuel_each": "525",
+          "materials_capacity_each": "1200",
+          "oil_capacity_each": "750",
+          "fuel_capacity_each": "1200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S099",
+          "size_id": "LargeWar",
+          "army_profile": "A",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1800",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "24",
+          "player_ground": "4",
+          "player_air": "0",
+          "player_combat": "28",
+          "player_supply": "40",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "24",
+          "enemy_ground": "4",
+          "enemy_air": "0",
+          "enemy_combat": "28",
+          "enemy_supply": "40",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1600",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "canonical_size_rows_sha256": "c2d7810c24b3a39d6aba1b60a58765a1098fdfb745adcb2075f58cddd2c5f7b8",
+      "shared_source_candidate_group": "AP",
+      "source_selection_status": "CandidateExistingCampaignSource_NotFitCertified",
+      "protected_binding": null,
+      "existing_definition_asset": null,
+      "intended_new_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S099/SkirmishScenario_S099.asset",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "offensive_air",
+        "advanced_air",
+        "objective_ba"
+      ],
+      "capability_authority": "ExistingWorkQueue",
+      "required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "pilot_candidate": null,
+      "normal_mission_qualified": false,
+      "device_player_acceptance": "Pending"
+    },
+    {
+      "catalog_id": "S100",
+      "definition_id": "skirmish.s100",
+      "scenario_setup_id": "scenario.skirmish.s100",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "A",
+        "start_profile": "E"
+      },
+      "packet": {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+        "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+      },
+      "packet_section": "s100",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S100",
+          "size_id": "Standard",
+          "army_profile": "A",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "0",
+          "player_aa": "1",
+          "player_transport_heli": "1",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "1",
+          "player_combat": "24",
+          "player_supply": "42",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "0",
+          "enemy_aa": "1",
+          "enemy_transport_heli": "1",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "1",
+          "enemy_combat": "24",
+          "enemy_supply": "42",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S100",
+          "size_id": "War",
+          "army_profile": "A",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "2",
+          "player_transport_heli": "2",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "2",
+          "player_combat": "35",
+          "player_supply": "68",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "2",
+          "enemy_transport_heli": "2",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "2",
+          "enemy_combat": "35",
+          "enemy_supply": "68",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S100",
+          "size_id": "LargeWar",
+          "army_profile": "A",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "3",
+          "player_transport_heli": "2",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "2",
+          "player_combat": "49",
+          "player_supply": "90",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "3",
+          "enemy_transport_heli": "2",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "2",
+          "enemy_combat": "49",
+          "enemy_supply": "90",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "canonical_size_rows_sha256": "0cdfa973ea14d840a3b8cb85ef237d6c19b67c28f744508191507c5dfc1a1292",
+      "shared_source_candidate_group": "AP",
+      "source_selection_status": "CandidateExistingCampaignSource_NotFitCertified",
+      "protected_binding": null,
+      "existing_definition_asset": null,
+      "intended_new_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S100/SkirmishScenario_S100.asset",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "offensive_air",
+        "advanced_air",
+        "objective_ba"
+      ],
+      "capability_authority": "ExistingWorkQueue",
+      "required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "pilot_candidate": null,
+      "normal_mission_qualified": false,
+      "device_player_acceptance": "Pending"
+    },
+    {
+      "catalog_id": "S101",
+      "definition_id": "skirmish.s101",
+      "scenario_setup_id": "scenario.skirmish.s101",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "C",
+        "start_profile": "F"
+      },
+      "packet": {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+        "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+      },
+      "packet_section": "s101",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S101",
+          "size_id": "Standard",
+          "army_profile": "C",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1080",
+          "player_rifle": "8",
+          "player_gunner": "0",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "12",
+          "player_ground": "2",
+          "player_air": "0",
+          "player_combat": "14",
+          "player_supply": "20",
+          "player_logistics_support": "2",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "8",
+          "enemy_gunner": "0",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "12",
+          "enemy_ground": "2",
+          "enemy_air": "0",
+          "enemy_combat": "14",
+          "enemy_supply": "20",
+          "enemy_logistics_support": "2",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "450",
+          "oil_each": "120",
+          "usable_fuel_each": "350",
+          "materials_capacity_each": "800",
+          "oil_capacity_each": "500",
+          "fuel_capacity_each": "800",
+          "infantry_queues_each": "1",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S101",
+          "size_id": "War",
+          "army_profile": "C",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1500",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "32",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "32",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "675",
+          "oil_each": "180",
+          "usable_fuel_each": "525",
+          "materials_capacity_each": "1200",
+          "oil_capacity_each": "750",
+          "fuel_capacity_each": "1200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S101",
+          "size_id": "LargeWar",
+          "army_profile": "C",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1800",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "24",
+          "player_ground": "4",
+          "player_air": "0",
+          "player_combat": "28",
+          "player_supply": "40",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "24",
+          "enemy_ground": "4",
+          "enemy_air": "0",
+          "enemy_combat": "28",
+          "enemy_supply": "40",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1600",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "canonical_size_rows_sha256": "3a7925af471d4821b5192f883fc1f5b91d412bc20c19acb8efc20b485dd8a4b8",
+      "shared_source_candidate_group": "AP",
+      "source_selection_status": "CandidateExistingCampaignSource_NotFitCertified",
+      "protected_binding": null,
+      "existing_definition_asset": null,
+      "intended_new_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S101/SkirmishScenario_S101.asset",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "offensive_air",
+        "advanced_ground",
+        "advanced_air",
+        "objective_ba"
+      ],
+      "capability_authority": "ExistingWorkQueue",
+      "required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "pilot_candidate": null,
+      "normal_mission_qualified": false,
+      "device_player_acceptance": "Pending"
+    },
+    {
+      "catalog_id": "S102",
+      "definition_id": "skirmish.s102",
+      "scenario_setup_id": "scenario.skirmish.s102",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "C",
+        "start_profile": "E"
+      },
+      "packet": {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+        "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+      },
+      "packet_section": "s102",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S102",
+          "size_id": "Standard",
+          "army_profile": "C",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "0",
+          "player_apc": "1",
+          "player_tank": "1",
+          "player_aa": "1",
+          "player_transport_heli": "1",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "1",
+          "player_combat": "24",
+          "player_supply": "44",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "0",
+          "enemy_apc": "1",
+          "enemy_tank": "1",
+          "enemy_aa": "1",
+          "enemy_transport_heli": "1",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "1",
+          "enemy_combat": "24",
+          "enemy_supply": "44",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S102",
+          "size_id": "War",
+          "army_profile": "C",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "0",
+          "player_apc": "2",
+          "player_tank": "2",
+          "player_aa": "1",
+          "player_transport_heli": "2",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "2",
+          "player_combat": "35",
+          "player_supply": "70",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "0",
+          "enemy_apc": "2",
+          "enemy_tank": "2",
+          "enemy_aa": "1",
+          "enemy_transport_heli": "2",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "2",
+          "enemy_combat": "35",
+          "enemy_supply": "70",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S102",
+          "size_id": "LargeWar",
+          "army_profile": "C",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "0",
+          "player_apc": "2",
+          "player_tank": "3",
+          "player_aa": "2",
+          "player_transport_heli": "2",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "2",
+          "player_combat": "49",
+          "player_supply": "94",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "0",
+          "enemy_apc": "2",
+          "enemy_tank": "3",
+          "enemy_aa": "2",
+          "enemy_transport_heli": "2",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "2",
+          "enemy_combat": "49",
+          "enemy_supply": "94",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "canonical_size_rows_sha256": "038db23669147141bb68d66d23ea42ec6956ea559c892fc4c01e19be13b4a3ef",
+      "shared_source_candidate_group": "AP",
+      "source_selection_status": "CandidateExistingCampaignSource_NotFitCertified",
+      "protected_binding": null,
+      "existing_definition_asset": null,
+      "intended_new_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S102/SkirmishScenario_S102.asset",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "offensive_air",
+        "advanced_ground",
+        "advanced_air",
+        "objective_ba"
+      ],
+      "capability_authority": "ExistingWorkQueue",
+      "required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "pilot_candidate": null,
+      "normal_mission_qualified": false,
+      "device_player_acceptance": "Pending"
+    }
+  ],
+  "actual_authored_objective_geometry": null,
+  "per_source_readable_view_profiles": null,
+  "source_fit_certified": false,
+  "native_qualification": false,
+  "player_ready": false
+}

@@ -56,7 +56,7 @@ namespace Game.Runtime
                 HomeAlive = true, ObjectiveAlive = true
             };
             var sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            if (em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
+            if (setup.ObjectiveKind==SkirmishObjectiveKind.BaseAssault && em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
             {
                 var facts = em.GetComponentData<SkirmishBaseAssaultFactComponent>(session);
                 result.HomeAlive = facts.EnemyDesignatedAlive != 0;

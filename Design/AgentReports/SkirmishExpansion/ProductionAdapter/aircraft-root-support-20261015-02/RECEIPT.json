@@ -1,0 +1,10 @@
+{
+  "archive": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\aircraft-root-support-20261015-02\\actual-seven-explicit-heli-roots.zip",
+  "sha256": "9705770e44dfc596ce62185a86c6ebe266d7b85c9130c862917e26f9cf804413",
+  "actualCheckedWrapperExit": 0,
+  "rawReportSha256": "8462a93b09b74531161c18ebd6d069b37891274effc4c2536f361533836aac0f",
+  "roles": 7,
+  "templateOnly": true,
+  "cameraAccepted": false,
+  "normalMissionReady": false
+}

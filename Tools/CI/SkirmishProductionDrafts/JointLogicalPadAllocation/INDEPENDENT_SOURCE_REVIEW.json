@@ -1,0 +1,27 @@
+{
+  "result": "IndependentSourceReviewClear_ExactProofAcknowledged",
+  "manifest_sha256": "57b074178528d02dc7750541edca827a2e7507a8445e2d9ba8bcf9464c8c103a",
+  "source_and_current_before_pins_match": true,
+  "findings": [],
+  "reviewed": [
+    "Finite9 ephemeral candidates: baseline+four32m enemyInfantrySpawn translations, thenfour32m jointstaging+infantry translations. Widest128 logicalframe uses samephysicalsource/playable/gridbounds; coded7 refused, noothersearchflags multiplied.",
+    "OriginalLayout and Definition serialized values reset before EACH candidate, preventing measuredflags/logicalbinding from failedfinalizer carrying forward. Caller retains owner disposal; originaldefaultentry delegates unchangedprivatecore.",
+    "Infantry-only translations keep anchor/routes/allotherpads exact; staging translations retain waypointIDs, update actual anchor and normalizedprojection, recalculate same8linepolyline geometry and preserve each prior provisional metricrate; times explicitlyProvisional. Padwidths/depths never shrink and fullpadbounds checked.",
+    "Fresh allprofile baseline nativequeries/routefootprint reservations recomputed in core per candidate. Movedstaging refuses nonexactbaseline beforefacilitysearch; baseline/infantry-only may retain honestdiagnosis. ALL9 require exactnative routes again under same completefacilityreservations for finalcomplete/strict result. Failed/missing/emptyroutes cannot pass.",
+    "Same all3size canonicalbudgets, normalallocator/radius, fullfootprint typedpacking, source/slope/QA/sharedreservations, discovery+atmost2strict and finalnormalcompiler/view/nativecamerapending boundaries preserved. Source-only plots or placementalone never selectwinner.",
+    "Durablecallback includes candidateID/localpass and uniquecandidate*3+pass identifier; eachcandidate retains itsmeasurement/failure; no fabricatedmissionacceptance.",
+    "Composite entry executes cleaned-upcollector, Legacycontrols, then correctnormal asynchronous late-ECS witnessentry. No catch/skip/asynccompletion marker or directoutcome/order injection."
+  ],
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/joint-logical-pads-kn7779ma/result.json",
+    "sha256": "c690b77f094fd2ec738da44b81044d4762cbc0447e51fbf3fd9b4e91a1ff9e17",
+    "result": "PassedFocusedEditorJointLogicalPadAllocation",
+    "parent": "ExactC358/equivalent2ea04027Legacy836/760",
+    "scope": "Producer837Editor/760Tests twooverlays stable/noFallback/mismatches[]. No reviewercompiler/native execution."
+  },
+  "controls": "10 sourcecontrols typechecked; nativeexecution remainsrequired",
+  "native_execution": false,
+  "source_fit_certified": false,
+  "normal_mission_ready": false,
+  "broad113_authorized": false
+}

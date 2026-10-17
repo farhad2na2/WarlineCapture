@@ -1,0 +1,550 @@
+{
+  "result": "Passed",
+  "scope": "OnePassiveCurrentSourceEnemyBaselineNotChallengeOrPerformanceCertification",
+  "attempt": "expanded-s005-155926-e58aad931fb7446f86d62de45c7f6918",
+  "censusSnapshots": 239,
+  "playingSnapshots": 228,
+  "observedStateChanges": 129,
+  "observedReservationChanges": 0,
+  "firstObservedPlayingElapsed": 0.5585306882858276,
+  "lastObservedPlayingElapsed": 234.47634887695312,
+  "unobservedTailSimulationSeconds": 0.6666511230468757,
+  "wallSamplingGapsAbove1_5Seconds": [
+    {
+      "fromSample": 1,
+      "toSample": 2,
+      "wallGap": 3.942203958009486,
+      "simulationGap": 0.0
+    },
+    {
+      "fromSample": 3,
+      "toSample": 4,
+      "wallGap": 1.9122216669929912,
+      "simulationGap": 0.0
+    },
+    {
+      "fromSample": 4,
+      "toSample": 5,
+      "wallGap": 2.0576115419971757,
+      "simulationGap": 0.0
+    },
+    {
+      "fromSample": 54,
+      "toSample": 55,
+      "wallGap": 1.919867417003843,
+      "simulationGap": 1.0461311340332031
+    },
+    {
+      "fromSample": 60,
+      "toSample": 61,
+      "wallGap": 1.7198367090022657,
+      "simulationGap": 0.9574203491210938
+    },
+    {
+      "fromSample": 61,
+      "toSample": 62,
+      "wallGap": 2.040736166003626,
+      "simulationGap": 0.6666641235351562
+    },
+    {
+      "fromSample": 62,
+      "toSample": 63,
+      "wallGap": 2.0515816249971977,
+      "simulationGap": 0.6666641235351562
+    },
+    {
+      "fromSample": 72,
+      "toSample": 73,
+      "wallGap": 1.74099487499916,
+      "simulationGap": 0.757720947265625
+    },
+    {
+      "fromSample": 76,
+      "toSample": 77,
+      "wallGap": 1.6406734580086777,
+      "simulationGap": 1.0000076293945312
+    },
+    {
+      "fromSample": 112,
+      "toSample": 113,
+      "wallGap": 3.250732959000743,
+      "simulationGap": 0.153228759765625
+    },
+    {
+      "fromSample": 163,
+      "toSample": 164,
+      "wallGap": 1.6680578329978744,
+      "simulationGap": 0.85052490234375
+    },
+    {
+      "fromSample": 167,
+      "toSample": 168,
+      "wallGap": 1.7406466659886064,
+      "simulationGap": 0.9498291015625
+    },
+    {
+      "fromSample": 221,
+      "toSample": 222,
+      "wallGap": 1.7296222500008298,
+      "simulationGap": 0.4979705810546875
+    },
+    {
+      "fromSample": 233,
+      "toSample": 234,
+      "wallGap": 1.7907413329958217,
+      "simulationGap": 0.666656494140625
+    }
+  ],
+  "observedPriorities": {
+    "AttackBase": 225,
+    "DefendHome": 3
+  },
+  "observedLastGroupIds": [
+    0,
+    6,
+    8
+  ],
+  "maxObservedFailedAttempts": 1104,
+  "counterCommittedObserved": false,
+  "firstOwnMaterials": 450,
+  "lastOwnMaterials": 650,
+  "maxVisibleHostileInfantry": 15,
+  "maxVisibleHostileGround": 1,
+  "maxVisibleHostileAir": 0,
+  "groups": [
+    {
+      "groupId": 6,
+      "role": "Rifle",
+      "observedOrders": [
+        "Hold",
+        "None"
+      ],
+      "maxAlive": 4,
+      "finalObservedAlive": 3,
+      "orderSnapshots": {
+        "None": 100,
+        "Hold": 134
+      }
+    },
+    {
+      "groupId": 7,
+      "role": "Rifle",
+      "observedOrders": [
+        "None"
+      ],
+      "maxAlive": 4,
+      "finalObservedAlive": 2,
+      "orderSnapshots": {
+        "None": 234
+      }
+    },
+    {
+      "groupId": 8,
+      "role": "Rocketeer",
+      "observedOrders": [
+        "Move"
+      ],
+      "maxAlive": 4,
+      "finalObservedAlive": 0,
+      "orderSnapshots": {
+        "Move": 234
+      }
+    },
+    {
+      "groupId": 9,
+      "role": "Car",
+      "observedOrders": [
+        "None"
+      ],
+      "maxAlive": 1,
+      "finalObservedAlive": 1,
+      "orderSnapshots": {
+        "None": 234
+      }
+    },
+    {
+      "groupId": 10,
+      "role": "ApcArmored",
+      "observedOrders": [
+        "None"
+      ],
+      "maxAlive": 1,
+      "finalObservedAlive": 1,
+      "orderSnapshots": {
+        "None": 234
+      }
+    },
+    {
+      "groupId": 13,
+      "role": "Tanker",
+      "observedOrders": [
+        "None"
+      ],
+      "maxAlive": 1,
+      "finalObservedAlive": 1,
+      "orderSnapshots": {
+        "None": 234
+      }
+    },
+    {
+      "groupId": 14,
+      "role": "LogisticsTruck",
+      "observedOrders": [
+        "None"
+      ],
+      "maxAlive": 1,
+      "finalObservedAlive": 1,
+      "orderSnapshots": {
+        "None": 234
+      }
+    }
+  ],
+  "ownActors": [
+    {
+      "id": "role.logistics_truck.2.11.0",
+      "role": "LogisticsTruck",
+      "groupId": 14,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 94.13206481933594,
+      "minDistanceToPublicPlayerObjective": 469.5130310058594,
+      "pathFollowingSnapshots": 176,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.tanker.2.10.0",
+      "role": "Tanker",
+      "groupId": 13,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 22.022714614868164,
+      "minDistanceToPublicPlayerObjective": 485.0634765625,
+      "pathFollowingSnapshots": 21,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.car.2.6.0",
+      "role": "Car",
+      "groupId": 9,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 475.5002746582031,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.apc_armored.2.7.0",
+      "role": "ApcArmored",
+      "groupId": 10,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 480.51275634765625,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rocketeer.2.5.3",
+      "role": "Rocketeer",
+      "groupId": 8,
+      "observedAliveSnapshots": 96,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 98.55406951904297,
+      "maxDisplacementFromFirstObservedPose": 378.3405456542969,
+      "minDistanceToPublicPlayerObjective": 35.59140396118164,
+      "pathFollowingSnapshots": 95,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rocketeer.2.5.1",
+      "role": "Rocketeer",
+      "groupId": 8,
+      "observedAliveSnapshots": 98,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 100.67505645751953,
+      "maxDisplacementFromFirstObservedPose": 387.1764221191406,
+      "minDistanceToPublicPlayerObjective": 35.51310348510742,
+      "pathFollowingSnapshots": 97,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rocketeer.2.5.2",
+      "role": "Rocketeer",
+      "groupId": 8,
+      "observedAliveSnapshots": 103,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 106.16786193847656,
+      "maxDisplacementFromFirstObservedPose": 405.8710632324219,
+      "minDistanceToPublicPlayerObjective": 32.12590026855469,
+      "pathFollowingSnapshots": 102,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rifle.2.4.1",
+      "role": "Rifle",
+      "groupId": 6,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 419.51458740234375,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 133,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rifle.2.4.6",
+      "role": "Rifle",
+      "groupId": 7,
+      "observedAliveSnapshots": 158,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 163.15353393554688,
+      "maxDisplacementFromFirstObservedPose": 0.0013814866542816162,
+      "minDistanceToPublicPlayerObjective": 416.1640319824219,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 11,
+      "legallyVisibleEngagementSnapshots": 11
+    },
+    {
+      "id": "role.rifle.2.4.7",
+      "role": "Rifle",
+      "groupId": 7,
+      "observedAliveSnapshots": 205,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 211.481201171875,
+      "maxDisplacementFromFirstObservedPose": 0.0013814996927976608,
+      "minDistanceToPublicPlayerObjective": 424.6839904785156,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 8,
+      "legallyVisibleEngagementSnapshots": 8
+    },
+    {
+      "id": "role.rifle.2.4.3",
+      "role": "Rifle",
+      "groupId": 6,
+      "observedAliveSnapshots": 193,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 198.94256591796875,
+      "maxDisplacementFromFirstObservedPose": 0.0013814996927976608,
+      "minDistanceToPublicPlayerObjective": 424.78289794921875,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 93,
+      "engagedSnapshots": 4,
+      "legallyVisibleEngagementSnapshots": 4
+    },
+    {
+      "id": "role.rifle.2.4.5",
+      "role": "Rifle",
+      "groupId": 7,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 428.58428955078125,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rifle.2.4.2",
+      "role": "Rifle",
+      "groupId": 6,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 432.51416015625,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 133,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rifle.2.4.0",
+      "role": "Rifle",
+      "groupId": 6,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 435.5140686035156,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 133,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rifle.2.4.4",
+      "role": "Rifle",
+      "groupId": 7,
+      "observedAliveSnapshots": 233,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 235.14300537109375,
+      "maxDisplacementFromFirstObservedPose": 0.0,
+      "minDistanceToPublicPlayerObjective": 438.6507873535156,
+      "pathFollowingSnapshots": 0,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    },
+    {
+      "id": "role.rocketeer.2.5.0",
+      "role": "Rocketeer",
+      "groupId": 8,
+      "observedAliveSnapshots": 100,
+      "firstElapsed": 0.5585306882858276,
+      "lastElapsed": 102.88825988769531,
+      "maxDisplacementFromFirstObservedPose": 398.5956726074219,
+      "minDistanceToPublicPlayerObjective": 30.052927017211914,
+      "pathFollowingSnapshots": 100,
+      "holdSnapshots": 0,
+      "engagedSnapshots": 0,
+      "legallyVisibleEngagementSnapshots": 0
+    }
+  ],
+  "ownPaidReservations": [],
+  "pressureAttribution": {
+    "terminalPlayerBaseHp": 800,
+    "terminalPlayerBaseBelowStartingHealth": false,
+    "observedGroupOrderAndMovementFacts": [
+      {
+        "groupId": 6,
+        "role": "Rifle",
+        "observedOrders": [
+          "Hold",
+          "None"
+        ],
+        "maxAlive": 4,
+        "finalObservedAlive": 3,
+        "orderSnapshots": {
+          "None": 100,
+          "Hold": 134
+        }
+      },
+      {
+        "groupId": 7,
+        "role": "Rifle",
+        "observedOrders": [
+          "None"
+        ],
+        "maxAlive": 4,
+        "finalObservedAlive": 2,
+        "orderSnapshots": {
+          "None": 234
+        }
+      },
+      {
+        "groupId": 8,
+        "role": "Rocketeer",
+        "observedOrders": [
+          "Move"
+        ],
+        "maxAlive": 4,
+        "finalObservedAlive": 0,
+        "orderSnapshots": {
+          "Move": 234
+        }
+      },
+      {
+        "groupId": 9,
+        "role": "Car",
+        "observedOrders": [
+          "None"
+        ],
+        "maxAlive": 1,
+        "finalObservedAlive": 1,
+        "orderSnapshots": {
+          "None": 234
+        }
+      },
+      {
+        "groupId": 10,
+        "role": "ApcArmored",
+        "observedOrders": [
+          "None"
+        ],
+        "maxAlive": 1,
+        "finalObservedAlive": 1,
+        "orderSnapshots": {
+          "None": 234
+        }
+      },
+      {
+        "groupId": 13,
+        "role": "Tanker",
+        "observedOrders": [
+          "None"
+        ],
+        "maxAlive": 1,
+        "finalObservedAlive": 1,
+        "orderSnapshots": {
+          "None": 234
+        }
+      },
+      {
+        "groupId": 14,
+        "role": "LogisticsTruck",
+        "observedOrders": [
+          "None"
+        ],
+        "maxAlive": 1,
+        "finalObservedAlive": 1,
+        "orderSnapshots": {
+          "None": 234
+        }
+      }
+    ],
+    "productionFacts": [],
+    "unknowns": [
+      "No native per-decision or per-command enemy event stream; snapshot state changes are not counts of actions",
+      "No native duty assignment field; order None/Hold/Attack/Move is not a certified strategic duty",
+      "Transitions and queued/cancelled reservations between snapshots may be missed",
+      "No exact enemy per-shot/damage-source event capture; effectiveness and reasons for any weak pressure remain partially unknown",
+      "No enemy-specific CPU measurement, human/device balance or difficulty certification"
+    ]
+  },
+  "playerPlanningReadTelemetry": false,
+  "gameplayWrites": false,
+  "enemyBehaviorChanged": false,
+  "playerReady": false,
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "fullSourceUnchanged": true,
+  "raw": "native1196-enemy-baseline.jsonl",
+  "rawSha256": "af9db5bbe8a40dc05c1a82e0e6dedc4058a2d131ecb77ee7702578eb759f72fe",
+  "parserSha256": "f5f998b3f0ada3dbf8c2411c9fe36eafc193917de6f6e11a1d64987782edbfe4",
+  "nativeLoadOnlySerializationProof": "native1196-loadonly-serialization-selfcheck.jsonl",
+  "serializationProofSha256": "e453c34bf7ba1fafdb57927b08db9d9dd61e13cf47cb5653219ea88bb53f2ece",
+  "serializationQualification": {
+    "result": "Passed",
+    "scope": "NativeLoadOnlyFullFlatJsonCaptureNotGameplay",
+    "flatRows": 3,
+    "exactPrimitiveFieldsPerRow": 112,
+    "nativeFromJsonOrNestedEnvelopeUsed": false,
+    "raw": "native1196-loadonly-serialization-selfcheck.jsonl",
+    "rawSha256": "e453c34bf7ba1fafdb57927b08db9d9dd61e13cf47cb5653219ea88bb53f2ece",
+    "parserSha256": "f5f998b3f0ada3dbf8c2411c9fe36eafc193917de6f6e11a1d64987782edbfe4"
+  }
+}

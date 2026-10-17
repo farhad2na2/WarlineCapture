@@ -1,0 +1,15 @@
+{
+  "sourceHash": "d52b134a53b23c5554f116bfdabe2fab0ec8a1e79cc4bcfbf2bc5189bc6287f7",
+  "scope": "Read-only full native placement validator, coarse48m sample, current dynamic occupants; no global impossibility claim",
+  "tested": 120,
+  "nativeValidatorCandidates": 2,
+  "candidateOrigins": [
+    "origin=(400, 636) rotated=False effective=(x:400, y:636, width:210, height:55)",
+    "origin=(448, 636) rotated=False effective=(x:448, y:636, width:210, height:55)"
+  ],
+  "normalInputConstructionPassed": false,
+  "bilateralCapacityCertified": false,
+  "playerReady": false,
+  "physicalSourceModified": false,
+  "rawDiagnostic": "readonly411-native-airport-fit.json"
+}

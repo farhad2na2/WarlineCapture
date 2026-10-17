@@ -1,0 +1,12 @@
+{
+  "mission": "S005",
+  "source": "Existing Campaign CityEdgeAirfield",
+  "normalInput": "Menu/Scroll/S005/Launch/ARIA/result/AdjustSetup",
+  "result": "Victory",
+  "inputViolations": 0,
+  "humanInterventions": 0,
+  "visual": "Complete scenery; wide opening framing needs correction",
+  "currentCandidateAcceptance": false,
+  "reason": "Camera framing subsequently improved; new normal-input run required",
+  "physicalMapChanged": false
+}

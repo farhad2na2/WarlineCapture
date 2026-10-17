@@ -1,0 +1,11 @@
+--- 1392
++++ 1403
+@@ -94,7 +94,7 @@
+   if r['stage']=='PublicIntermediateLegPrepared':require(r['leg']==1 and r['rearReceipt']==rearReceipt and rearReceipt>0,'Intermediate leg lost actual rear receipt')
+   if r['stage']=='NativeApproachArrived':
+    require(r['moveReceipt']==acceptedReceipt,'Approach arrival changed accepted receipt')
+-   require(r['leg']==1 and r['rearReceipt']==rearReceipt and r['moveReceipt']!=rearReceipt and r['aligned'] is True and r['nativeGoalMatches'] is True and r['moveReceipt']>0 and r['approachReceipt']==r['moveReceipt'] and r['nearCommandGoal'] is True and r['airborne'] is True and r['returningHome']==0,'First approach needs actual accepted native airborne near-goal Move');previousReceipt=r['moveReceipt']
++   require(r['leg']==1 and r['rearReceipt']==rearReceipt and r['moveReceipt']!=rearReceipt and r['nativeGoalMatches'] is True and r['moveReceipt']>0 and r['approachReceipt']==r['moveReceipt'] and r['nearCommandGoal'] is True and r['airborne'] is True and r['returningHome']==0,'First approach needs actual accepted native airborne near-goal Move');previousReceipt=r['moveReceipt']
+   if r['stage']=='PublicAlignedLegPrepared':require(r['leg']==2 and r['approachReceipt']==previousReceipt,'Final public Move loses actual first approach receipt')
+   if r['stage'] in ('NativeAlignedApproachArrived','HeldAlignedObserved','PublicCameraPreparedAligned','TargetFlightDepartureAligned'):
+    require(r['leg']==2 and r['moveReceipt']==acceptedReceipt and r['moveReceipt']>0 and r['approachReceipt']==previousReceipt and r['moveReceipt']!=r['approachReceipt'] and r['aligned'] is True and r['airborne'] is True and r['returningHome']==0 and r['takeoffRolling']==0 and r['landingRolling']==0,'Final approach must retain both receipts, real flight and forward firing arc')

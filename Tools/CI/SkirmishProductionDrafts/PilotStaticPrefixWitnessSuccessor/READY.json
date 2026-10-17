@@ -1,0 +1,21 @@
+{
+  "manifest": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/manifest.json",
+  "manifest_sha256": "1bf99e683326f610e9e58dd16a3265e7380f02187c6784a00e4dd738ef11cfbf",
+  "proof": "Logs/SkirmishProduction/Offline/pilot-prefix-oorcs3bu/result.json",
+  "proof_sha256": "7b3921270bd488d6fe31711416b72c1321640a43b1bcc988ad0084cd4aad60d8",
+  "result": "PassedFocusedEditorPilotStaticPrefixWitness",
+  "source_count": 831,
+  "reference_count": 353,
+  "source_reference_mismatches": 0,
+  "no_fallback": true,
+  "controls_native_executed": false,
+  "speedup_measured": false,
+  "source_fit_certified": false,
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunPilotStaticPrefixAndOpeningWitnessPreparation",
+  "required_markers": [
+    "[PilotStaticPlacementPrefixControls] result=Passed controls=6 rectangleComparisons=900 nativeSearchParity=1 sourceFitCertified=0",
+    "[S005OpeningPlacementWitnessPreparation] result=Passed original=11 measured=3 witness=4 warmup=1 gameplayCertified=0",
+    "[PilotStaticPrefixAndOpeningWitnessPreparation] result=Passed prefix=6 opening=18 warmup=1 gameplayCertified=0"
+  ],
+  "review": "Originalprefixb7 sourceclear8be07e849405214df7d8f9ffcc6e18210ee5f2b3c59bf795eb64ce7a76644c2a; tinyfacadereview pending"
+}

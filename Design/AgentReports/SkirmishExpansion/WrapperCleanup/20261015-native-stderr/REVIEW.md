@@ -1,0 +1,9 @@
+The normal camera trial06 had already failed with a real fatal marker. Windows taskkill then wrote a child-termination diagnostic to stderr. Under the wrapper's ErrorActionPreference=Stop, PowerShell5.1 promoted that native stderr to NativeCommandError and aborted before final cleanup/ExitCode reporting. This correction preserves that original failed trial; it does not turn it into a passing run.
+
+Stop-UnityProcessTree now captures taskkill output and real status under a scoped Continue preference, restores the previous preference, and records diagnostics. If the exact wrapper-owned root survives the owned-tree attempt, cleanup uses its already-cached Process object/handle and a bounded wait. An already-exited owned root is not targeted by PID. The final wait is bounded too, and incomplete cleanup remains failed. No process-name enumeration or unrelated process termination was added.
+
+Fatal markers still produce exit1, timeout still produces124, actual nonzero child exits remain nonzero, and the focused wrapper still rejects a missing exact pass marker. Neither wrapper pass-marker logic nor fatal patterns were relaxed.
+
+The final wrapper bytes in result.json passed all14 existing actual synthetic child controls plus4 new actual-wrapper controls: taskkill stderr after the owned child ended, taskkill stderr while the owned root survives followed by cached-handle cleanup, timeout with that fallback, and a zero-exit focused child missing its required marker. Every synthetic target was freshly owned by the wrapper; the checks verified those children exited. No Unity or Hub was launched or terminated. No Assets were changed. Full logs, scripts, synthetic source and before/after wrapper bytes are archived beside this receipt; executable binaries were excluded.
+
+The existing process-control scratch directory now uses unique ignored Logs/SkirmishProduction/Offline rather than project Temp, so a concurrent Unity shutdown cannot delete the evidence.

@@ -1,0 +1,23 @@
+{
+  "mission": "S005",
+  "candidateHash": "514693d22f952f68591038d4e5875fea2845f6ffbd4a0b7cba4779d969185ff3",
+  "device": "Editor",
+  "locale": "en",
+  "seed": 104734,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "wrapperExit": 0,
+  "outcome": "Victory",
+  "durationSeconds": 240.4975,
+  "normalSpeed": true,
+  "countedAriaWin": true,
+  "completedGestures": 45,
+  "inputViolations": 0,
+  "humanInterventions": 0,
+  "receiptViolations": 0,
+  "frozenResultAndAdjustSetupReturn": "Passed",
+  "fullAriaMatrixAccepted": false,
+  "realPlayerDeviceAcceptance": false,
+  "playerReady": false,
+  "log": "native-012-aria-en.log"
+}

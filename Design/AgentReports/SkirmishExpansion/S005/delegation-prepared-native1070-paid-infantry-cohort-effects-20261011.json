@@ -1,0 +1,90 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005InfantryCombatEffects1070.cs",
+  "fixtureSha256": "c948d9b6ae65b3e7fdd1223e80e8392e69cd6e818c6ad3a82ff322454554200c",
+  "runner": "/private/tmp/s005-run-infantry-combat-1070.py",
+  "runnerSha256": "2dd97210c645dbf29d415858819573818376f9855ad6a73b55796568aebf073e",
+  "pythonSyntax": "Passed",
+  "sourceEditsOrUnityCallsByReviewer": false,
+  "roles": [
+    "Rifle",
+    "Gunner",
+    "Marksman",
+    "Breacher",
+    "Rocketeer"
+  ],
+  "scope": "Five complete paid native Barracks infantry cohorts; actual native squad-card Touch selection and public native API Attack; actual hostile HP effect with unchanged raw native exact-source or SourceEntity=null mixed-source telemetry. No per-soldier picking or full normal mission wins.",
+  "reusedProof": "Native1024 basic paid delivery/member/producer/selection/move/death proofs are reused conceptually; this fixture exists to establish role-attributed actual native combat effects, not rerun22 isolated role screens.",
+  "nativeAttributionRules": [
+    "Every delivered receipt member required, exactly authored squad size, at least2; all selected through presented native card.",
+    "Native cohort member raw entity IDs/versions, role, same paid reservation, positive HP recorded.",
+    "Global UnitAttack+UnitHealth set excluding native dead/static/suppressed/passenger/AA launcher/non-attacking actors must equal this paid cohort before Attack and at observed event. Unexpected eligible shooter fails.",
+    "All opening units retired except real native enemy Armored APC. Any other live DirectFire actor receives disclosed combat suppression; building defense runtime system disabled/restored for disposable session.",
+    "Native CombatDamageObservationElement event must be new after Attack baseline/frame, exact native hostile target, DirectFire, DamageApplied>0 and matching observed HP loss.",
+    "Exact native SourceEntity must be a paid cohort member; native Entity.Null remains null and records HomogeneousPaidCohortMixedNativeSources, not a fabricated last shooter.",
+    "Raw cohort evidence must contain only same-role same-reservation actors, unique IDs, count equal complete cohort and global eligible shooter count. Runner repeats this audit."
+  ],
+  "telemetrySourceEvidence": [
+    "Assets/Game/Scripts/Systems/UnitAttackSystem.cs:375 emits native Entity.Null when aggregated target damage has mixed sources.",
+    "Assets/Tests/Editor/CombatDamageObservationTelemetryTests.cs:126 explicitly expects Entity.Null for clamped mixed-source DirectFire."
+  ],
+  "isolatedSetup": [
+    "FullArsenal,1800materials, own stored fuel/oil refill",
+    "Opening actors retired except actual enemy Ground APC and native Infantry target; enemy strategy disabled",
+    "Building defense system disabled/restored and other DirectFire actors suppressed",
+    "Selected native target position/grid relocated near cohort center within actual weapon range and grid bounds; unchanged maxhealth/domain/prefab",
+    "Before each public command still-live target Current reset to unchanged Max, full vision granted, target retaliation disabled",
+    "HealthZero stimulates paid squad death and native idempotent capacity release; cleanup confirms owned Play ends"
+  ],
+  "neverInjected": [
+    "Shots/projectiles/damage events/result outcomes",
+    "Own paid actor positions",
+    "SelectedUnitTag or component-written EngageTarget orders",
+    "Weapon damage/range, prices/caps/budgets",
+    "Physical Campaign map geometry"
+  ],
+  "runnerGuards": [
+    "Unique1070 outputs and exact fixtureSHA",
+    "Idle owner plus explicit main1070 heavy-lane token afterT7 release",
+    "Fresh source preflight and pre-dispatch equality",
+    "Checked GUI reuse wrapper720s, fixture watchdog600s",
+    "Missing receipt keeps ownership, no alternate Editor route",
+    "Fresh postsource equality, wrapper/native0, perrole markers, completed Touch stream, exactly five ordered valid raw native damage/cohort rows"
+  ],
+  "dryRunCompileInstruction": "Parent only while main idle: rtk proxy unity command run_script --file /private/tmp/S005InfantryCombatEffects1070.cs --entry S005InfantryCombatEffects1070.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "launchInstruction": "Root afterT7 heavy-lane release and compile review: rtk proxy python3 /private/tmp/s005-run-infantry-combat-1070.py <CURRENT-PRE-source-manifest.json> --heavy-lane-owner main1070",
+  "limits": [
+    "Not compiled, loaded or executed by reviewer",
+    "Group-level attribution proves role effect, not that every individual soldier fired or caused a specified share of damage",
+    "Target setup cannot qualify ordinary world clearance/path/fog/counterattack survival",
+    "Public API Attack not normal Touch Attack; no complete ARIA/result/return certificate",
+    "Native target dies/disposes before event or later case: fail closed, no resurrection/synthetic fallback",
+    "No vehicle/AntiAir/air/transport/domain matrix/player-device acceptance"
+  ],
+  "technicallyReady": false,
+  "playerReady": false,
+  "preloadStaticRepair": {
+    "unloaded": true,
+    "problem": "Marksman Infantry-only and Breacher Infantry/Structure could not attack retained Ground APC.",
+    "fix": "Retain actual native opening hostile Infantry plus Armored APC; suppress retaliation on both and retire others. Select native Infantry for Marksman/Breacher and Ground for Rifle/Gunner/Rocketeer. Per-role DomainAllows gate and raw target role/domain/mask included; no synthetic hostile or domain changes.",
+    "source": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs:68-77",
+    "verifiedAllowlist": {
+      "Rifle": "Infantry|Ground -> Ground",
+      "Gunner": "Infantry|Ground -> Ground",
+      "Marksman": "Infantry -> Infantry",
+      "Breacher": "Infantry|Structure -> Infantry",
+      "Rocketeer": "Ground|Structure -> Ground"
+    },
+    "bothRetainedTargetsExcludedFromCombatSuppression": true,
+    "actualNativeCategoryAndCombatTargetPolicyChecked": true
+  },
+  "supersedesPriorFixtureHash": "c6fceb4aeed53a114413322783591433b86e82a3d84a768e904033741f8ad5c2",
+  "compileAfterRepair": "Pending",
+  "nativeInputAuditCorrection": "Selection-only Touch may have AcceptedCommands=0. Require nonempty completed contact stream/no input violations and exactly five per-role public API Attack accepted markers separately. Never count API Attack as Touch command. Native1061 failed run/runner executed bytes preserved.",
+  "validation": "Python AST passed; corrected still-unloaded fixture, Unity dry compilation/loading/execution pending",
+  "secondPreloadCorrection": {
+    "targetSetup": "Phase4 selects legal target/domain and audits cohort only. Original far-away target retained throughout Touch selection; phase11 resets/moves/reveals/clears hostile target intent synchronously immediately before event baseline and public API Attack. No own AutoEngage/CanAttack or suppression tag writes.",
+    "range": "Minimum actual UnitAttack.Range across all members and allowed overlay range. Target distance min(range*.3,6); every member independently checked inside actual and overlay range, otherwise fail without moving own actors.",
+    "evidence": "Raw all new native damage events and complete cohort/target health, attack, trace/ShotCounter, transform, grid, move/intent, cooldown snapshots before Touch, pre/post API, while waiting and before cleanup on failure."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "result": "PassedIsolatedBeforeFixReproduced",
+  "sourceHash": "c69396566ba9875bb46514d07a9b1972d717debe59abb538c7fb6100d85098d0",
+  "sourceUnchanged": true,
+  "nativeExit": 0,
+  "checkedWrapperExit": 0,
+  "nativeMarker": "[S005HeldFixedWingReturn1328] result=Passed mode=BeforeFixReproduced cases=2 zeroDeltaControl=1 positiveMotionControls=2 unheldBoundedLanding=1 actualSystem=1 isolatedWorld=1 normalMission=0 exact1320CausalityClaim=0",
+  "nativeLog": "native-1328-held-fixedwing-return-before.log",
+  "nativeLogSha256": "1bc645ee0b163a6d3f28b4428c7cd57800981be07f424f48ff7436c5b9d5387e",
+  "rowCount": 26,
+  "scope": "ActualUnitAirMovementSystemDisposableWorld",
+  "normalMission": false,
+  "exact1320CausalityClaim": false,
+  "playerReady": false
+}

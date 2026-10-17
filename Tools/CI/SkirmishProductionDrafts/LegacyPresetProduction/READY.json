@@ -1,0 +1,25 @@
+{
+  "manifest_sha256": "36136449791c2aa25a8dadd0dce6c44b249188a3219adced1368a4255f622744",
+  "proof": "Logs\\SkirmishProduction\\Offline\\legacy-prefix-008o3yf2\\composed-result.json",
+  "proof_sha256": "6631a0f5bdc33f099c15bfd7132d1595d010b31ba54c5b1d9c154994e28dae26",
+  "exact_editor_sources": 834,
+  "exact_tests_sources": 760,
+  "current_worktree_proof_only": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/current-editor-tests-i4zbul64/result.json",
+  "excluded_ambient_editor_sources": [
+    "SkirmishAircraftFramingInventory.cs",
+    "SkirmishAirportBuildMetadataDiagnostic.cs",
+    "SkirmishGroundSourceFitSurvey.AircraftRootProvenance.cs",
+    "SkirmishGroundSourceFitSurvey.Ground30SourceChunk.cs",
+    "SkirmishS002AriaRunHarness.GroundOpeningOnly.cs",
+    "SkirmishS002AriaRunHarness.ProductionAircraftFocus.cs"
+  ],
+  "offline_controls": {
+    "methods": 4,
+    "log_sha256": "a97433762af21712e884802f089e4cc34b38e72c4c7af405bd9e38d4bcbe052d"
+  },
+  "native_controls": "Typechecked only; actual checked wrapper required",
+  "native_jobs": 0,
+  "regular_standard_equivalence": "Not asserted",
+  "sampling_coverage_credit": 0,
+  "queue_success_enabled": false
+}

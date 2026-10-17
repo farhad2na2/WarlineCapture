@@ -1,0 +1,21 @@
+{
+  "result": "Failed",
+  "sourceHash": "3a8a290394589d7ae0f8943b39ad0cd02a4085e9b7e1e3084449daff81158b8e",
+  "independentSourceUnchanged": true,
+  "all562MaterialsUnchanged": true,
+  "wrapperExit": 2,
+  "artifact": "ac2296b8e9244fd68b3dd1dfc1388596",
+  "reason": "Player Save/Resume setup watchdog expired at step0, native elapsed806.1135",
+  "normalInputScope": {
+    "logistics": "3 Oil trucks and3 Tankers paid/live",
+    "industry": "OilPump100 plus3 Fabrication depots100 each",
+    "readiness": "240+480 materials paid",
+    "airport": "Native paid construction passed",
+    "strike": "520 material receipt1006, live native runway home; no sortie certified"
+  },
+  "contacts": 117,
+  "contactErrors": [],
+  "fullMatchCertified": false,
+  "playerReady": false,
+  "traceLimitation": "Primary trace empty after manual/scoped failure; log and economy/actors/commands/touch companions preserved."
+}

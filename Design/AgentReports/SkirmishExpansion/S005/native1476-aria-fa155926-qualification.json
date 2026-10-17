@@ -1,0 +1,86 @@
+{
+  "acceptedCommandCount": 16,
+  "completeSourceUnchanged": true,
+  "contactAudit": {
+    "completeMatchCertified": false,
+    "completedContacts": 92,
+    "errors": [],
+    "nativeMenuContactsRecorded": true,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "phases": {
+      "Menu": 9,
+      "Runtime": 82,
+      "Terminal": 1
+    },
+    "recordedContacts": 92,
+    "strictAllContactsEnded": true,
+    "strictRecordedContacts": true,
+    "terminalCancellations": [],
+    "terminalContactsRecorded": true
+  },
+  "countedRow": [
+    "S005-aria-rs-155926-fa-1",
+    "S005",
+    "2",
+    "3f985cbcb3c9e657523642916e6885b35800d6ba28fda3542c37e213cee2b33c",
+    "010cce1a74ad1a72f1005527463a9b3f021874b52a5e3c9927c5470ad00493ec",
+    "Standard",
+    "Regular",
+    "155926",
+    "fa-IR",
+    "Editor",
+    "aria",
+    "1",
+    "2026-10-13T23:03:15Z",
+    "Victory",
+    "MainBaseDestroyed",
+    "426.622",
+    "0",
+    "0",
+    "Design/AgentReports/SkirmishExpansion/S005//candidates/3f985cbcb3c9e657523642916e6885b35800d6ba28fda3542c37e213cee2b33c/s005-aria-rs-155926-fa-1.jsonl",
+    "Design/AgentReports/SkirmishExpansion/S005//candidates/3f985cbcb3c9e657523642916e6885b35800d6ba28fda3542c37e213cee2b33c/s005-aria-rs-155926-fa-1-log.txt"
+  ],
+  "errors": [
+    "genuine frozen Victory trace missing"
+  ],
+  "expectedSource": "3f985cbcb3c9e657523642916e6885b35800d6ba28fda3542c37e213cee2b33c",
+  "independentSourceHashes": [
+    "3f985cbcb3c9e657523642916e6885b35800d6ba28fda3542c37e213cee2b33c",
+    "3f985cbcb3c9e657523642916e6885b35800d6ba28fda3542c37e213cee2b33c"
+  ],
+  "locale": "fa-IR",
+  "log": "native1476-aria-fa155926.log",
+  "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed3",
+  "missingMarkers": [],
+  "nativeExit": 0,
+  "nativeInputCounts": [
+    82,
+    82,
+    430,
+    0,
+    0,
+    16,
+    0
+  ],
+  "result": "Failed",
+  "run": 1476,
+  "scope": "One normal-input S005 Standard/Regular ARIA Editor journey; not full mission/player readiness",
+  "seed": 155926,
+  "terminal": {
+    "clockElapsed": 426.622,
+    "clockPaused": 1,
+    "elapsed": 426.622,
+    "enemyBaseHp": -1,
+    "leadX": 921.505,
+    "leadZ": 605.875,
+    "outcome": "Victory",
+    "pathFollowing": 1,
+    "pathRequests": 4,
+    "phase": "Finished",
+    "playerBaseHp": 800,
+    "playerUnits": 13,
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0
+  },
+  "wrapperExit": 0
+}

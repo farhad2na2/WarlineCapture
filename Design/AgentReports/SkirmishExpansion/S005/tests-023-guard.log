@@ -1,0 +1,65 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Tests.Editor.SkirmishCombinedArmsTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishLaunch] queued expanded catalog=S002 definition=skirmish.s002 start=EstablishedBase difficulty=Regular size=Standard seed=104731 mapHint=0
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:136)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:59)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:LibraryDispatchIndexQueuesEstablishedS002 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:864)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1031)
+Game.Tests.Editor.SkirmishCombinedArmsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishLaunch] queued expanded catalog=S003 definition=skirmish.s003 start=FieldBase difficulty=Regular size=Standard seed=104732 mapHint=0
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:136)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:61)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:LibraryDispatchIndexQueuesAirMobileS003 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:889)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1032)
+Game.Tests.Editor.SkirmishCombinedArmsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishLaunch] queued expanded catalog=S004 definition=skirmish.s004 start=EstablishedBase difficulty=Regular size=Standard seed=104733 mapHint=0
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:136)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:63)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:LibraryDispatchIndexQueuesEstablishedAirMobileS004 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:916)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1033)
+Game.Tests.Editor.SkirmishCombinedArmsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishExpandedDefinitionTests] result=Passed
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1055)
+Game.Tests.Editor.SkirmishCombinedArmsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs:233)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishCombinedArmsTests] result=Passed matrixConfigurations=12 existingMissionRegressions=Passed publication=InProgress
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishCombinedArmsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs:234)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Tests.Editor.SkirmishCombinedArmsTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_7138d699/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

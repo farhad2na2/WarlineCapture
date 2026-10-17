@@ -113,6 +113,9 @@ namespace Game.UI.Shell.Ecs
                 if (current.Phase == AriaPlayPhase.Touching && !touch.IsBusy)
                 {
                     current.Actions++;
+                    current.LastCompletedTargetId=current.TargetId;
+                    current.LastCompletedFrame=UnityEngine.Time.frameCount;
+                    current.LastCompletedPosition=current.Contact;
                     current.Phase = AriaPlayPhase.Verifying;
                     current.DueAt = UnityEngine.Time.unscaledTime + (hasSkirmish ? .65f : 1.5f);
                 }

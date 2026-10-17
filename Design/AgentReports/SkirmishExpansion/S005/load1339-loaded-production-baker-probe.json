@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-loaded-baker1339-readonly-v2/S005LoadedBaker1339Readonly.cs",
+      "entry": "S005LoadedBaker1339Readonly.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 335,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005LoadedBaker1339Readonly_c9311a8ce60340f9bb87b90714b2bc59",
+      "success": true,
+      "result": "Read-only production baker identity fixture loaded; no refresh/recompile/bake or Editor changes."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

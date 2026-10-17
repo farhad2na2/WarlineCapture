@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-native1628-connected-review-only/live-observer-presence1628.cs",
+      "entry": "S005LiveObserverPresence1628.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 376,
+      "executeMs": 33,
+      "assemblyName": "PipelineRunScript_live-observer-presence1628_c4616677a901417eb0b40c1a33885478",
+      "success": true,
+      "result": "{\"assemblyName\":\"PipelineRunScript_S005NormalPaidScoutStage1628Observer_1f0c784705cd4600ab6935f1ab477cb4\",\"assemblyMvid\":\"57c1b8f6-c8be-47f4-ba99-e99855ccf573\",\"observerType\":\"S005NormalNorthFlank1628Observer\",\"validationMember\":\"RunValidation\",\"fogCompanionType\":\"S005ManualFogFallback1628\",\"northRouteType\":\"S005NorthFlank1628\",\"nativeInputFields\":[\"manualTouch\",\"manualDue\",\"manualActions\",\"manualStep\",\"manualSlot\"],\"loadedMatchingTypeCount\":1,\"resolverFirst\":true,\"editorIdle\":true,\"gameplayStarted\":false}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

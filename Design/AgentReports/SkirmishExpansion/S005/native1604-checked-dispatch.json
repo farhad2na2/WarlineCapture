@@ -1,0 +1,20 @@
+{
+  "sourceHash": "3751581fe7fb8acd2c7c6c865956fbb675b8ebd9e828473db803718d87d8282d",
+  "fixtureSha256": "82a40945ccd0a996deae52423091c242035c4fad1d833e5b1d3717a945d892eb",
+  "command": [
+    "rtk",
+    "proxy",
+    "Tools/CI/invoke_unity_macos.sh",
+    "--project",
+    "/Users/farhad/Projects/WarlineCapture",
+    "--reuse",
+    "--timeout",
+    "1800",
+    "--log",
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1604-stop-diagnostic-3751.log",
+    "--",
+    "-executeMethod",
+    "S005NormalSouthFlank1604Observer.RunValidation"
+  ],
+  "scope": "intentional early-abort Stop diagnosis; not full mission readiness"
+}

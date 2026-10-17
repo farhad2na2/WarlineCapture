@@ -1,0 +1,22 @@
+{
+  "result": "PreparedNotCompiledOrRun",
+  "previous1048": "Failed before producer placement/queue; 2 Touch gestures, no catalog owner diagnostic; no runtime Drone delivery defect proven",
+  "sourceExplanation": "BuildDrawerCatalogRuntimeView stores assigned serialized private BuildDrawerView view, can be bound elsewhere. GetComponent<BuildDrawerView>() is merely Awake fallback and is not authoritative. ResolveCatalogTarget requires only assigned view != null and view.IsOpen; active catalog component and same-GO ownership are not additional source guards.1050 mirrors actual gate and lets normal native Touch presentation reject unavailable button.",
+  "fixture": "/private/tmp/S005DroneProducerSmoke1050.cs",
+  "runner": "/private/tmp/s005-run-drone-1050.py",
+  "resolver": "Reflect assigned private view; require IsOpen; fail and dump inventory if multiple assigned-open catalog owners instead of choosing one arbitrarily",
+  "diagnostics": [
+    "Bounded catalog/drawer inventory including inactive surfaces, hierarchy IDs, actual assigned view, component activity, assigned openness",
+    "Overlay Build control activity/hierarchy, exact Build button dispatched once",
+    "Before native Build contact; 3 seconds after if no assigned open catalog; no repeated Build toggles",
+    "Assigned catalog source/restriction/keys and exact Satellite control resolution; fail after3sec if unresolved"
+  ],
+  "noForcedRefresh": true,
+  "noNativeProducerBugClaim": true,
+  "runtimeAssetsEdited": false,
+  "fixtureSha256": "e631f546d63838d79b66a0664f6599628e6b6348ccbb9cf08e2e9b35d3f5f058",
+  "runnerSha256": "4210cd4c9dfb68628d42a64736d3dd3bacfeb4c5c6b07adfc4b3e513cb9e47a7",
+  "normalMissionCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

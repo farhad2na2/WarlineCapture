@@ -1,0 +1,8 @@
+{
+  "result": "Failed",
+  "wrapper_exit": 1,
+  "reason": "Unity Mono legacy Windows path limit in 140-character filename fixture under overly long artifact directory",
+  "required_marker_present": false,
+  "archive_sha256": "a831009277263234f17833b2f21491e3e693b4853851202755f92a14be00f267",
+  "correction": "Shorten ignored artifact directory; preserve exact filename/hash assertions and all fingerprint rules"
+}

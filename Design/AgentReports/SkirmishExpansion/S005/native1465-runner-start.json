@@ -1,0 +1,18 @@
+{
+  "explicitHeavyLaneOwner": "main1465",
+  "sourceHash": "3846bdfdf94779742fc0f956a4e945b3eff9c2dea4eef539e1b18709fa1c2a65",
+  "preManifest": "current-fighter1465-visible-camera-source-manifest.json",
+  "preflightManifest": "final-1465-paid-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1465-paid-air-pre-dispatch-source-manifest.json",
+  "method": "S005PaidEnemyAirEffects1465.RunValidation",
+  "fixtureSha256": "b05a0cf5b4f20381d84c96dac85f51611a05d888882b97c7d0dc887b446811ab",
+  "runnerSha256": "1302e61653114a42112b7c36e72870602b27299c00f6acda3850fb8ed4cbd721",
+  "dryCompileProof": "compile1465-paid-air-visible-camera-dry-run.json",
+  "dryCompileProofSha256": "98efe54fe192eb0b447aff1f117fa0b1a9b32fb2106dc5e9ca117ce3a4e51f84",
+  "loadOnlyProof": "/private/tmp/s005-fighter-camera1465-prepared/load-only1465-reviewed.json",
+  "loadOnlyProofSha256": "e2c5d1809c3bd65f8e057a9812dff7ed3353cf32ec47a3a9ab45a824c7faf5f7",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

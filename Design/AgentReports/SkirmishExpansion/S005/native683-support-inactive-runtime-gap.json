@@ -1,0 +1,34 @@
+{
+  "mission": "S005",
+  "sourceHash": "6556d2943218388b9738e277aa0b9ddef06d79cdbd015e5ef97a22d7d644ec1e",
+  "run": "native683",
+  "log": "native-683-boarded-resume-manual-roster-selection-en.log",
+  "scope": "Read-only connected Editor diagnostics during resumed normal-input manual qualification",
+  "observed": {
+    "supportUi": {
+      "MissionId": "",
+      "Active": false,
+      "Visible": false,
+      "Phase": "Closed",
+      "SmokeAvailable": false,
+      "SmokeCharges": 0,
+      "SmokeReason": "support.reason.4"
+    },
+    "supportRootCount": 1,
+    "nativeOwner": false,
+    "rootActive": 0,
+    "rootAttemptOrdinal": 0,
+    "rootSessionTokenEmpty": true
+  },
+  "requiredPlan": "Design/Roadmap/Support/SKIRMISH_SUPPORT.csv:6; S005 smoke2 strike1 paratroopers1 supply1, readiness R1/R3/R2/R2, ScenarioPerFaction",
+  "conclusion": "Observed native attempt runs with Support denied; planned Support adapter/exposure is unfinished. Its certification remains separate from an otherwise accepted no-Support baseline under the explicit rollout policy.",
+  "gameplayStateChanged": false,
+  "countsForSupportAcceptance": false,
+  "releaseScopeCorrection": {
+    "authority": "Design/Roadmap/Support/PLAN.md:78",
+    "instruction": "Do not make Support a prerequisite for releasing an otherwise accepted no-Support baseline; recertify when it is added.",
+    "classification": "Unfinished planned native Support extension. Missing policy correctly denies Support; not by itself a baseline runtime defect.",
+    "nativeSupportCertification": "Pending; no with-Support acceptance claimed",
+    "baselineReleaseBlockedBySupportAlone": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "result": "PassedNativeCodeAndEditorSceneArtifactWarmup",
+  "wrapper_exit_code": 0,
+  "native_api_tests": 12,
+  "native_objective_rules": 42,
+  "actual_native_census": "Logs/SkirmishProduction/NativeIdentity/s005-regular-standard-155926-fa-5bff448ae11741ec99c241273e1e4a6e.json",
+  "editor_mvid": "a7cf1f35-69e5-4593-8438-8c660a267d63",
+  "source_sha256": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs": "144be19d8474eb5c8e3264cb5d86b1638a01c04fec84703158cbbd765e46cf41",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidTransportCruiseExtension.cs": "a248fab5f6385b4f02df073e4da3d2ddcd6b24cc7cc2343d2f53fb99ca0dc656",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneFollowTouchSeam.cs": "e97c1036069fb8f87c0d99309f6c7500de61f7a3a6c447d21c9b00f3aaf61fa0",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs": "d3b2ee192d63a1ef500b31137774fb9b7447bdee61ec07a3466d50b23fb9f8b5",
+    "Assets/Game/Scripts/Editor/Skirmish/S005SceneArtifactWarmup.cs": "89b2e7c67026cec9f8e0df821b2345ff1dde19c38ca720cd1b1421d04825d6fb",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs": "034b292e4a9dd3d19409bb593c957b67e43d151d338f3e445135f8c28926b893",
+    "Assets/Tests/Editor/SkirmishExpansion/S005CameraCalibrationNativePreparation.cs": "7f6cec54a3cd685d524b3489fbde4af63ec49c89fa1111aa63eeba22677f1d84",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs": "2e8226e87d444467e68be45f2579ae3ba10c6d094026fc29debf46e7d8c06408"
+  },
+  "exact_editor_cache_guids": [
+    "e4e00d5e92a7e6706d16595c4c32f1cf",
+    "c4f8c91329530ce6f383a99579ad8402"
+  ],
+  "play_started": false,
+  "camera_accepted": false,
+  "full_mission_certified": false
+}

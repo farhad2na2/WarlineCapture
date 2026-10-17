@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var w=Unity.Entities.World.DefaultGameObjectInjectionWorld; using var q=w.EntityManager.CreateEntityQuery(typeof(Game.Components.OperationMapRenderDatabaseComponent)); var e=q.GetSingletonEntity(); var s=w.EntityManager.GetComponentData<Game.Components.OperationMapRenderVirtualizationStateComponent>(e); var m=w.EntityManager.GetComponentData<Game.Components.OperationMapRenderVirtualizationMetricsComponent>(e); return new {s.Initialized,s.InitialViewApplied,s.ActiveSlotCount,s.OverflowCount,s.RebuildCount,m.Capacity,m.EnabledSlotCount,m.ActiveCellCount,m.ActivePlacementCount,m.HighestDeficit,m.CommandVersion};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "Initialized": 1,
+        "InitialViewApplied": 1,
+        "ActiveSlotCount": 2605,
+        "OverflowCount": 0,
+        "RebuildCount": 2,
+        "Capacity": 7291,
+        "EnabledSlotCount": 2605,
+        "ActiveCellCount": 111,
+        "ActivePlacementCount": 1750,
+        "HighestDeficit": 0,
+        "CommandVersion": 2
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

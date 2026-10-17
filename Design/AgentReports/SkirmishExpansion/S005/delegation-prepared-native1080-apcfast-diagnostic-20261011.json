@@ -1,0 +1,25 @@
+{
+  "scope": "Prepared only; no source mutation or Unity calls",
+  "fixture": "/private/tmp/S005ApcFastDiagnostic1080.cs",
+  "fixtureSha256": "3adc00c01762a99f84b4305524887a895b7a4cbe54f3fa2cb130d7373ced8616",
+  "runner": "/private/tmp/s005-run-apcfast-diagnostic-1080.py",
+  "runnerSha256": "416f10d8c147a9bba4012f67a5f730ddb7d0802c29dc824c505a72edea8a0c82",
+  "validation": "Python AST passed; Unity dry-run, load and execution pending",
+  "original1061": "Preserved exact executed fixture and runner. Actual Car DirectFire12HP passed; actual paid ApcFast attack accepted but no qualified event before timeout. No production bug assumed.",
+  "nativeSetup": "One actual paid ApcFast from native GroundStaging, existing native hostile ArmoredAPC retained. Funding/readiness, enemy retirement/strategy disable, target transform/grid/health/full vision and retaliation suppression are isolated technical setup, disclosed.",
+  "targetDistance": "Inside minimum of actual UnitAttack.Range and allowed overlay range before accepted public API attack. Native range, weapons and own actor placements unchanged.",
+  "diagnostics": [
+    "1s actor UnitAttack/Combat/Grid/Move/Transform/Engage/Cooldown/ShotCounter/target policy snapshots",
+    "Target Health/Grid/Move/UnitTarget/Transform/Combat/policy state",
+    "Read-only actual native target availability gate; Physics linecast is diagnostic only",
+    "All new raw native damage events including nonmatching sources/targets; exact paid source/target event and actual HP required for pass",
+    "Final snapshot on failure before cleanup"
+  ],
+  "inputAudit": "Touch selection only; AcceptedCommands=0 is valid. Nonempty completed contacts and zero violations remain required. Exactly one separately logged accepted public native API Attack required.",
+  "guards": "Unique outputs; supplied full source manifest compared preflight/pre-dispatch/post; fixture SHA enforced; main idle and explicit main1080 heavy lane release token; checked GUI reuse wrapper; missing receipt preserves ownership.",
+  "command": "rtk proxy python3 /private/tmp/s005-run-apcfast-diagnostic-1080.py <current-source-manifest.json> --heavy-lane-owner main1080",
+  "dryCompile": "rtk proxy unity command run_script --file /private/tmp/S005ApcFastDiagnostic1080.cs --entry S005ApcFastDiagnostic1080.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "normalMissionCertified": false,
+  "productionBugEstablished": false,
+  "additionalIsolationDisclosure": "Inherited1061 paid own actor UnitCombat.AutoEngage=0 before target relocation/Touch selection; does not change CanAttack/ranges/damage/weapons. This diagnostic retains original1061 selection protocol with APC alone, not normal-input certification."
+}

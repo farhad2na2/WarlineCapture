@@ -1,0 +1,9 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/s005-opening-four-with-ui-runtime-errors-20261015-01/actual-native-evidence.zip",
+  "sha256": "d8786d091d497616eaf71d21986b31a31a5f52e70cc9b13d96267e126f71af18",
+  "wrapperExit": 0,
+  "engineeringChecksPassed": false,
+  "cameraAccepted": false,
+  "normalMissionReady": false,
+  "interpretation": "Four native PNGs, unchanged source/DLL endpoints and exit0; UI archetype overflow repeated, clipping/HUD/roof issues remain, NOT mission/camera acceptance"
+}

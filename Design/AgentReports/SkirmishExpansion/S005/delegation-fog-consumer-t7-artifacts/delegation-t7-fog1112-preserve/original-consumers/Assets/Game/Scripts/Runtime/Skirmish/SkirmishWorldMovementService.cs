@@ -1,0 +1,434 @@
+using System.Collections.Generic;
+using Game.Components;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Game.Tactical.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+
+namespace Game.Runtime
+{
+    public static class SkirmishWorldMovementService
+    {
+        public const float InfantryMetersPerSecond = 4f;
+        public const float GroundMetersPerSecond = 8f;
+        public const float ArriveDistance = 0.35f;
+
+        public static bool AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
+            => AssignIntent(em, unit, destination, order, out _);
+
+        public static bool AssignIntent(EntityManager em, Entity unit, float3 destination,
+            SkirmishGroupOrderKind order, out TacticalCommandResult result)
+        {
+            bool hadIntent = em.HasComponent<SkirmishMoveIntentComponent>(unit);
+            var savedIntent = hadIntent ? em.GetComponentData<SkirmishMoveIntentComponent>(unit) : default;
+            bool sameDestination = false;
+            if (hadIntent)
+            {
+                SkirmishMoveIntentComponent previous = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+                sameDestination = previous.Active != 0 && previous.Order == order &&
+                    math.abs(previous.DestinationX - destination.x) < 0.1f &&
+                    math.abs(previous.DestinationZ - destination.z) < 0.1f;
+            }
+
+            // A missing anchor is filled from the measured pad before the step.
+            // Pinning the unit at the origin here kept that pad from ever applying.
+            var intent = new SkirmishMoveIntentComponent
+            {
+                DestinationX = destination.x,
+                DestinationZ = destination.z,
+                Active = 1,
+                Order = order
+            };
+            if (em.HasComponent<SkirmishMoveIntentComponent>(unit))
+                em.SetComponentData(unit, intent);
+            else
+                em.AddComponentData(unit, intent);
+
+            // A rejected command leaves the existing intent and Hold state intact.
+            result = TacticalCommandResult.Success();
+            bool accepted = sameDestination || TryReuseSharedPath(em, unit, destination, out result);
+            if (!accepted)
+            {
+                if (hadIntent) em.SetComponentData(unit, savedIntent);
+                else em.RemoveComponent<SkirmishMoveIntentComponent>(unit);
+            }
+            else if (em.HasComponent<HoldPositionOrderTag>(unit) && order != SkirmishGroupOrderKind.Hold)
+                em.RemoveComponent<HoldPositionOrderTag>(unit);
+            return accepted;
+        }
+
+        public static void ClearIntent(EntityManager em, Entity unit)
+        {
+            if (!em.HasComponent<SkirmishMoveIntentComponent>(unit))
+            {
+                if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
+                    UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, unit);
+                return;
+            }
+            var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+            intent.Active = 0;
+            intent.Order = SkirmishGroupOrderKind.Hold;
+            intent.AttackTarget = Entity.Null;
+            intent.Engaged = 0;
+            intent.Cooldown = 0f;
+            em.SetComponentData(unit, intent);
+            if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
+            {
+                UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, unit);
+                return;
+            }
+            ClearSharedPath(em, unit);
+        }
+
+        public static int Step(EntityManager em, Entity session, float deltaSeconds, bool paused)
+        {
+            if (paused || deltaSeconds <= 0f || !em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return 0;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(
+                typeof(SkirmishMoveIntentComponent),
+                typeof(SkirmishAttemptOwnedComponent),
+                typeof(LocalTransform));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            bool hasGrid = !grids.IsEmptyIgnoreFilter;
+            GridConfig grid = hasGrid ? grids.GetSingleton<GridConfig>() : default;
+            int moved = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity unit = entities[i];
+                if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).SessionId.Equals(sessionId))
+                    continue;
+                var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+                HomeAttackDestination(em, unit, ref intent);
+                if (intent.Active == 0)
+                    continue;
+                // Accepted production commands are owned by the shared Move/AttackMove
+                // systems, including interruption, retries and aircraft travel.
+                if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit)) continue;
+                if (intent.Engaged != 0)
+                {
+                    ClearSharedPath(em, unit);
+                    SyncVisual(em, unit);
+                    moved++;
+                    continue;
+                }
+
+                if (em.HasComponent<HoldPositionOrderTag>(unit))
+                {
+                    intent.Active = 0;
+                    em.SetComponentData(unit, intent);
+                    ClearSharedPath(em, unit);
+                    continue;
+                }
+
+                // Shared navigation owns movement whenever the unit carries real
+                // movement data and the destination resolves inside the loaded grid.
+                // The direct step remains only for worlds without a grid (Editor
+                // fixtures), never as production stall recovery.
+                if (TrySharedPathStep(em, unit, ref intent, deltaSeconds, hasGrid, in grid))
+                {
+                    moved++;
+                    continue;
+                }
+
+                // Production units must wait for a valid shared route. Stepping their
+                // transforms when the grid/route is unavailable bypasses obstacles.
+                if (em.HasComponent<SkirmishSharedActorTag>(unit))
+                    continue;
+
+                // Fallback integration: no shared follower can exist without a grid,
+                // and a stalled follower is cleared so it cannot double-integrate.
+                if (em.HasComponent<UnitPathFollow>(unit))
+                    em.RemoveComponent<UnitPathFollow>(unit);
+
+                var transform = em.GetComponentData<LocalTransform>(unit);
+                float3 dest = new float3(intent.DestinationX, transform.Position.y, intent.DestinationZ);
+                float3 delta = dest - transform.Position;
+                delta.y = 0f;
+                float distance = math.length(delta);
+                if (distance <= ArriveDistance)
+                {
+                    transform.Position = dest;
+                    em.SetComponentData(unit, transform);
+                    intent.Active = 0;
+                    em.SetComponentData(unit, intent);
+                    SyncVisual(em, unit);
+                    moved++;
+                    continue;
+                }
+
+                float speed = ResolveSpeed(em, unit);
+                float step = math.min(distance, speed * deltaSeconds);
+                transform.Position += math.normalizesafe(delta) * step;
+                em.SetComponentData(unit, transform);
+                SyncVisual(em, unit);
+                moved++;
+            }
+
+            return moved;
+        }
+
+        private static void HomeAttackDestination(
+            EntityManager em,
+            Entity unit,
+            ref SkirmishMoveIntentComponent intent)
+        {
+            if (intent.Order != SkirmishGroupOrderKind.Attack)
+                return;
+            Entity target = intent.AttackTarget;
+            if (target == Entity.Null || !em.Exists(target) || !em.HasComponent<LocalTransform>(target))
+                return;
+
+            // Attack issued before the base had a transform stored the stand-in pad.
+            // Follow the target's current position or the column never enters range.
+            float3 live = em.GetComponentData<LocalTransform>(target).Position;
+            float dx = live.x - intent.DestinationX;
+            float dz = live.z - intent.DestinationZ;
+            bool moved = dx * dx + dz * dz > 0.01f;
+            byte active = intent.Active;
+            if (em.HasComponent<LocalTransform>(unit))
+            {
+                float3 position = em.GetComponentData<LocalTransform>(unit).Position;
+                float distance = math.length(new float3(live.x - position.x, 0f, live.z - position.z));
+                if (distance > ArriveDistance)
+                    active = 1;
+            }
+
+            if (!moved && active == intent.Active)
+                return;
+            intent.DestinationX = live.x;
+            intent.DestinationZ = live.z;
+            intent.Active = active;
+            em.SetComponentData(unit, intent);
+            TryReuseSharedPath(em, unit, live, out _);
+        }
+
+        public static float3 DefaultAdvance(EntityManager em, Entity session)
+        {
+            // The assault default is the enemy staging pad in the loaded map's frame.
+            // The stand-in extent frame is only a no-layout fallback.
+            if (em.HasComponent<SkirmishResolvedSetupRecord>(session))
+            {
+                SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                if (setup != null && setup.MeasuredLayoutBound &&
+                    (setup.EnemyStagingWorldX != 0f || setup.EnemyStagingWorldZ != 0f))
+                    return new float3(setup.EnemyStagingWorldX, 0f, setup.EnemyStagingWorldZ);
+            }
+
+            return SkirmishVisualSpawnService.StagingWorld(2, true);
+        }
+
+        private const float SharedPathStallSeconds = 3f;
+
+        /// <summary>
+        /// Drives the unit through the shared grid pathfinding pipeline instead of
+        /// stepping the transform locally. Returns false when the shared path cannot
+        /// own this unit (no movement data, no grid, out-of-grid goal) or after a
+        /// bounded stall, in which case the caller falls back to the local step.
+        /// </summary>
+        private static bool TrySharedPathStep(
+            EntityManager em,
+            Entity unit,
+            ref SkirmishMoveIntentComponent intent,
+            float deltaSeconds,
+            bool hasGrid,
+            in GridConfig grid)
+        {
+            if (!hasGrid || !em.HasComponent<UnitMove>(unit))
+                return false;
+
+            int2 cell = GridUtils.WorldToCell(grid, new float3(intent.DestinationX, 0f, intent.DestinationZ));
+            if (cell.x < 0 || cell.y < 0 || cell.x >= grid.Width || cell.y >= grid.Height)
+                return false;
+
+            // Registry units take the shared manual-order path. A bare automatic
+            // request retries the same short segment around dense city blocks, and
+            // the local step would walk through those blocks.
+            if (IsRegistryUnit(em, unit))
+            {
+                bool hasFollow = em.HasComponent<UnitPathFollow>(unit);
+                bool hasRequest = em.HasComponent<UnitPathRequest>(unit);
+                if (hasRequest && !em.GetComponentData<UnitPathRequest>(unit).Goal.Equals(cell))
+                {
+                    IssueRegistryPath(em, unit, cell);
+                    intent.NoSharedPathSeconds = 0f;
+                }
+                else if (!hasFollow && !hasRequest)
+                {
+                    IssueRegistryPath(em, unit, cell);
+                    intent.NoSharedPathSeconds = 0f;
+                }
+                else if (!hasFollow)
+                {
+                    intent.NoSharedPathSeconds += deltaSeconds;
+                    if (intent.NoSharedPathSeconds >= SharedPathStallSeconds)
+                    {
+                        IssueRegistryPath(em, unit, cell);
+                        intent.NoSharedPathSeconds = 0f;
+                    }
+                }
+                else
+                {
+                    intent.NoSharedPathSeconds = 0f;
+                    float3 followedPosition = em.GetComponentData<LocalTransform>(unit).Position;
+                    float3 remaining = new float3(intent.DestinationX - followedPosition.x, 0f, intent.DestinationZ - followedPosition.z);
+                    if (math.length(remaining) <= ArriveDistance * 2f)
+                        intent.Active = 0;
+                }
+
+                em.SetComponentData(unit, intent);
+                return true;
+            }
+
+            // A stalled unit keeps the local step until the shared follower engages or
+            // a new order arrives; it does not re-enter the wait every tick.
+            if (intent.SharedStalled != 0)
+            {
+                if (!em.HasComponent<UnitPathFollow>(unit))
+                    return false;
+                intent.SharedStalled = 0;
+            }
+
+            var request = new UnitPathRequest { Goal = cell };
+            if (!em.HasComponent<UnitPathRequest>(unit))
+                em.AddComponentData(unit, request);
+            else if (!em.GetComponentData<UnitPathRequest>(unit).Goal.Equals(cell))
+                em.SetComponentData(unit, request);
+
+            float3 position = em.GetComponentData<LocalTransform>(unit).Position;
+            float dx = position.x - intent.LastProgressX;
+            float dz = position.z - intent.LastProgressZ;
+            bool progressed = dx * dx + dz * dz > 0.0004f;
+            if (em.HasComponent<UnitPathFollow>(unit) || progressed)
+            {
+                intent.NoSharedPathSeconds = 0f;
+                intent.LastProgressX = position.x;
+                intent.LastProgressZ = position.z;
+            }
+            else if ((intent.NoSharedPathSeconds += deltaSeconds) >= SharedPathStallSeconds)
+            {
+                intent.NoSharedPathSeconds = 0f;
+                intent.SharedStalled = 1;
+                em.SetComponentData(unit, intent);
+                return false;
+            }
+
+            float3 toDestination = new float3(intent.DestinationX - position.x, 0f, intent.DestinationZ - position.z);
+            if (math.length(toDestination) <= ArriveDistance * 2f)
+                intent.Active = 0;
+
+            em.SetComponentData(unit, intent);
+            return true;
+        }
+
+        private static float ResolveSpeed(EntityManager em, Entity unit)
+        {
+            if (em.HasComponent<UnitMove>(unit) && em.GetComponentData<UnitMove>(unit).Speed > 0f)
+                return em.GetComponentData<UnitMove>(unit).Speed;
+            SkirmishPopulationCategory domain = em.HasComponent<SkirmishArmyGroupMembershipComponent>(unit)
+                ? em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).Domain
+                : em.HasComponent<SkirmishUnitRoleComponent>(unit)
+                    ? em.GetComponentData<SkirmishUnitRoleComponent>(unit).Category
+                    : SkirmishPopulationCategory.Infantry;
+            return domain == SkirmishPopulationCategory.Ground ||
+                   domain == SkirmishPopulationCategory.LogisticsSupport
+                ? GroundMetersPerSecond
+                : InfantryMetersPerSecond;
+        }
+
+        private static bool TryReuseSharedPath(EntityManager em, Entity unit, float3 destination,
+            out TacticalCommandResult result)
+        {
+            result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetUnreachable);
+            if (!em.HasComponent<UnitMove>(unit))
+            {
+                bool fixture = !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+                if (fixture) result = TacticalCommandResult.Success();
+                return fixture;
+            }
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.IsEmptyIgnoreFilter)
+            {
+                bool fixture = !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+                if (fixture) result = TacticalCommandResult.Success();
+                return fixture;
+            }
+            GridConfig grid = grids.GetSingleton<GridConfig>();
+            int2 cell = GridUtils.WorldToCell(grid, destination);
+            if (IsRegistryUnit(em, unit))
+            {
+                return IssueRegistryPath(em, unit, cell, out result);
+            }
+
+            result = TacticalCommandResult.Success();
+            var request = new UnitPathRequest { Goal = cell };
+            if (em.HasComponent<UnitPathRequest>(unit))
+                em.SetComponentData(unit, request);
+            else
+                em.AddComponentData(unit, request);
+            return true;
+        }
+
+        private static bool IsRegistryUnit(EntityManager em, Entity unit)
+        {
+            return em.HasComponent<SkirmishSharedActorTag>(unit);
+        }
+
+        private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
+            => IssueRegistryPath(em, unit, cell, out _);
+
+        private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell,
+            out TacticalCommandResult result)
+        {
+            result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetUnreachable);
+            if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
+            {
+                if (em.GetComponentData<SkirmishMoveIntentComponent>(unit).Order == SkirmishGroupOrderKind.Attack)
+                {
+                    using var grids = em.CreateEntityQuery(typeof(GridConfig));
+                    if (grids.CalculateEntityCount() != 1) return false;
+                    using var units = new NativeList<Entity>(1, Allocator.Temp);
+                    units.Add(unit);
+                    result = AttackMoveSystem.IssueUnits(em, units.AsArray(), em.GetComponentData<Faction>(unit).Id,
+                        cell, GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell), Time.frameCount);
+                    return result.Accepted;
+                }
+                int requestId = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(em, unit, cell);
+                UnitMoveOrderRequestSystem.ProcessPendingRequests(em);
+                if (!UnitMoveOrderRequestSystem.TryGetResult(em, requestId, out var receipt)) return false;
+                result = receipt.Issued != 0 ? TacticalCommandResult.Success()
+                    : TacticalCommandResult.Rejected((TacticalCommandReasonCode)receipt.RejectionReasonCode);
+                return result.Accepted;
+            }
+            new UnitMoveOrderSystem().IssueImmediateMoveCommand(em, unit, cell);
+            result = TacticalCommandResult.Success();
+            return true;
+        }
+
+        private static void ClearSharedPath(EntityManager em, Entity unit)
+        {
+            if (em.HasComponent<UnitPathRequest>(unit)) em.RemoveComponent<UnitPathRequest>(unit);
+            if (em.HasComponent<UnitPathFollow>(unit)) em.RemoveComponent<UnitPathFollow>(unit);
+            if (em.HasComponent<UnitPathRange>(unit)) em.RemoveComponent<UnitPathRange>(unit);
+            if (em.HasComponent<UnitTarget>(unit)) em.RemoveComponent<UnitTarget>(unit);
+            if (em.HasComponent<ManualMoveOrderTag>(unit)) em.RemoveComponent<ManualMoveOrderTag>(unit);
+        }
+
+        private static void SyncVisual(EntityManager em, Entity unit)
+        {
+            if (!em.HasComponent<SkirmishVisualInstanceRecord>(unit) ||
+                !em.HasComponent<LocalTransform>(unit))
+                return;
+            GameObject instance = em.GetComponentObject<SkirmishVisualInstanceRecord>(unit).Instance;
+            if (instance == null)
+                return;
+            float3 position = em.GetComponentData<LocalTransform>(unit).Position;
+            instance.transform.position = new Vector3(position.x, position.y, position.z);
+        }
+    }
+}

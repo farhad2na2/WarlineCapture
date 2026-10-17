@@ -1,0 +1,18 @@
+{
+  "explicitHeavyLaneOwner": "main1483",
+  "sourceHash": "58812256a6ec7f0590e66aeef96092f666864939765262a97a9892db3254a915",
+  "preManifest": "post-air-picker-candidate-source-manifest.json",
+  "preflightManifest": "final-1483-paid-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1483-paid-air-pre-dispatch-source-manifest.json",
+  "method": "S005PaidEnemyAirEffects1483.RunValidation",
+  "fixtureSha256": "cf13fc9437c6c914a4ce50c5557517b1b6225b2b7dcf051066ab27009dedc99f",
+  "runnerSha256": "36823ab27993bd254e19a23249ef85e7be1d2ae800b508765220333651028f04",
+  "dryCompileProof": "compile1483-air-picker-dry-run.json",
+  "dryCompileProofSha256": "40affd2b252e7ea6d3cc634ec1386479f9252c92ebc4ccab1a2add65bf2ea72c",
+  "loadOnlyProof": "/private/tmp/s005-fighter-air-picker1483-prepared/load-only1483-air-picker.json",
+  "loadOnlyProofSha256": "e478abf8423dd6816817d484cc2b499766352e9cfced0a4e5bbe948816712deb",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

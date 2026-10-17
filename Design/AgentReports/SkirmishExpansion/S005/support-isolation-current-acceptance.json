@@ -1,0 +1,32 @@
+{
+  "sourceHash": "77b51a57825f280875176624fc1992f5e8de58728f5b95b68d3b19bc15847045",
+  "result": "Passed",
+  "sourceUnchangedDuringValidation": true,
+  "focusedSupport": "support-faction-isolation-focused-acceptance.json",
+  "currentNativeManual": "native254-support-isolation-manual-fa-evidence.json",
+  "sharedRegression": {
+    "log": "tests-255-support-isolation-shared-regression.log",
+    "logSha256": "60b33520f70af40d74c0a24f1a37ea204c8bf34616918a35719289e621e945f1",
+    "wrapperExit": 0,
+    "receiptExit": 0,
+    "requiredPassMarkers": [
+      "[UnitMoveOrderFocusedValidation] result=Passed tests=22",
+      "[AIFactionControlStartupValidation] result=Passed tests=4",
+      "[SkirmishExpandedArmyTests] result=Passed",
+      "[SkirmishExpandedEconomyTests] result=Passed",
+      "[SkirmishExpandedCheckpointTests] result=Passed",
+      "[AriaTouchInputValidation] result=Passed cases=22",
+      "[SkirmishSharedMaterialsTests] result=Passed",
+      "[ExistingEditorValidation] result=Passed"
+    ]
+  },
+  "editorFinalGate": {
+    "compiling": false,
+    "scriptCompilationFailed": false,
+    "updating": false,
+    "playing": false,
+    "validationRunning": false
+  },
+  "nativeSkirmishSupportAcceptance": false,
+  "playerReady": false
+}

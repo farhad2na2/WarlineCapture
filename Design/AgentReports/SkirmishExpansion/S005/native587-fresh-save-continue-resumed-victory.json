@@ -1,0 +1,60 @@
+{
+  "playerReady": false,
+  "catalog": "S005",
+  "locale": "en",
+  "seed": 104734,
+  "sourceHash": "956db3d5e328f281a0d25dc50d317dd926b3b2f1c2c906b8e1aa8f4b86ab2224",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "logExit": 0,
+  "saveResume": {
+    "schema": 7,
+    "sameAttempt": true,
+    "paidReceiptPreserved": true,
+    "oldPhysicalGone": 4977,
+    "normalSpeed": true,
+    "completedTouchGestures": 6
+  },
+  "resumedMatch": {
+    "elapsed": 214.559,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 214.559,
+    "clockPaused": 0,
+    "playerBaseHp": 800,
+    "enemyBaseHp": -1,
+    "playerUnits": 11,
+    "pathRequests": 4,
+    "pathFollowing": 1,
+    "leadX": 906.591,
+    "leadZ": 607.403
+  },
+  "terminal": "Frozen result and Adjust Setup passed",
+  "contacts": {
+    "recordedContacts": 56,
+    "completedContacts": 56,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 6,
+      "Runtime": 44,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-en-2153b02b6496477e9d9c4a7cc02982a0.jsonl.touch.jsonl",
+    "sha256": "67d0a42be2440081e3a73531b2afbc87492567d07b07e328e15c82c908be5379"
+  },
+  "log": "native-587-streamed-sidewalk-orthographic-save-continue-en.log",
+  "trace": "s005-aria-live-104734-en-2153b02b6496477e9d9c4a7cc02982a0.jsonl",
+  "runtimeExceptions": 0,
+  "visualAcceptance": false,
+  "realPlayerDeviceAcceptance": false
+}

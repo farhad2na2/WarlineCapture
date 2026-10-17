@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005InputSettingsInspection1203.cs",
+      "entry": "S005InputSettingsInspection1203.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 48,
+      "executeMs": 625,
+      "assemblyName": "PipelineRunScript_S005InputSettingsInspection1203_3b21e75253484a2bae8b15e7f20ab928",
+      "success": true,
+      "result": "CurrentManagedNull=False;CurrentNativeNull=True\nLive=;Persistent=False;Path=;Flags=HideAndDontSave\n"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

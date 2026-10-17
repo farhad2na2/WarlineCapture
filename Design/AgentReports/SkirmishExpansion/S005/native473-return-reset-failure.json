@@ -1,0 +1,34 @@
+{
+  "sourceHash": "d609f4034eb368adc4ce356af3e8e9afe2ac88ee13a3900cc7892fe5a5e5216d",
+  "sourceUnchanged": true,
+  "log": "native-473-early-two-tankers-strike-cycle.log",
+  "logSha256": "206308abf79a555ad7c9c97eb00a124608dbbc8e6666f8c784549aca2c511d6e",
+  "wrapperExit": 1,
+  "outcome": "Draw",
+  "matchSeconds": 1080.001,
+  "paidStrikeReceipt": 1005,
+  "scopedObserved": {
+    "airportPaid": true,
+    "strikePaid520": true,
+    "nativeTakeoff": true,
+    "nativeFire": true,
+    "firstSortieFuelSpent": 291,
+    "normalReturnRequested": true
+  },
+  "failure": "Fuel exhausted during return; repeated low-Fuel safety resets discarded maneuver/approach progress. No touchdown, refuel or second sortie completed.",
+  "contactAudit": {
+    "trace": "s005-aria-live-155926-en-7df7970fb89d41fa84ae789593fe26dc.jsonl.touch.jsonl",
+    "sha256": "af9a041448df7d9af5a3436839c81403209958b4c8cb2c100657aee6e3852a26",
+    "recordedContacts": 110,
+    "completed": 110,
+    "unexpectedSamples": 0,
+    "physicalInterventions": 0,
+    "contactErrors": [],
+    "strictRecordedContacts": true,
+    "nativeMenuContactsReconciled": false,
+    "fullStreamCertification": false
+  },
+  "flightCycleCertified": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 3,
+      "returned": 3,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[S005NormalSouthFlank1617] companionFailure=1 originalFailurePreserved=1",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005NormalSouthFlank1617Observer:CloseAfterCompanionFailure () (at /private/tmp/s005-full-south-flank1617-source-0df6/S005NormalSouthFlank1617Observer.cs:282)\nS005NormalSouthFlank1617Observer:Observe () (at /private/tmp/s005-full-south-flank1617-source-0df6/S005NormalSouthFlank1617Observer.cs:193)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T12:42:54.5875690Z"
+        },
+        {
+          "type": "Error",
+          "message": "[S005ManualFogFallback1617] failed=1 nativeGameplayUntouched=1 reason=Unverified native phase change during fallback lease",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005ManualFogFallback1617:Tick () (at /private/tmp/s005-full-south-flank1617-source-0df6/S005NormalSouthFlank1617Observer.cs:1514)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T12:42:54.5350700Z"
+        },
+        {
+          "type": "Error",
+          "message": "[S005EarlyRoute1617] failure=Real frozen same-attempt Victory terminal required",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005EarlyRoute1617:Tick () (at /private/tmp/s005-full-south-flank1617-source-0df6/S005NormalSouthFlank1617Observer.cs:2510)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T12:42:54.5266500Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

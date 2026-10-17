@@ -25,6 +25,27 @@ namespace Game.UI.Runtime
                 (Mathf.Min(bottom, safe.center.y) + top) * .5f / Screen.height);
         }
 
+        public Rect GetPlacementViewportRect(bool isValid)
+        {
+            var bar = _buildPlacementConfirmationBarView;
+            if (bar == null) return Rect.zero;
+            bar.Root.GetComponent<BuildPlacementConfirmationBarDesignLayoutView>()?.ApplyValidityState(isValid);
+            Canvas.ForceUpdateCanvases();
+            var safe = Screen.safeArea;
+            float bottom = Mathf.Max(safe.yMin, PlacementScreenRect(bar.Root).yMax);
+            float right = safe.xMax;
+            var root = bar.transform.root;
+            foreach (var aria in root.GetComponentsInChildren<AriaTutorialBriefingView>(true))
+                if (aria.IsPresentationVisible)
+                    right = Mathf.Min(right, PlacementScreenRect(aria.BriefingLayout).xMin);
+            foreach (var map in root.GetComponentsInChildren<MatchHudMinimapView>(false))
+                if (map.MapRect != null) right = Mathf.Min(right, PlacementScreenRect(map.MapRect).xMin);
+            // Keep clear of the resource header as well as the footer and right rail.
+            float top = safe.yMax - safe.height * .12f;
+            if(Screen.width<=0||Screen.height<=0||right<=safe.xMin||top<=bottom)return Rect.zero;
+            return Rect.MinMaxRect(safe.xMin/Screen.width,bottom/Screen.height,right/Screen.width,top/Screen.height);
+        }
+
         private static Rect PlacementScreenRect(RectTransform rect)
         {
             var canvas = rect.GetComponentInParent<Canvas>();

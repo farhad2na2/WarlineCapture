@@ -1,0 +1,12 @@
+# Exact raw CRLF authorities for Batch matrix checkpoint; forward-slash Git paths only.
+/Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/RECEIPT.json -text
+/Design/AgentReports/SkirmishExpansion/All120Refinement/s026-incomplete-compound-20261015-01/actual-native-evidence.zip -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/BatchMatrixStableCheckpoint/owning-and-offline-evidence.zip -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/RECEIPT.json -text
+/Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/batch-matrix-controls-20261015-01/actual-native-evidence.zip -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/INDEPENDENT_REVIEW.193cd3d9.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/READY.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/manifest.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/INDEPENDENT_REVIEW.4a58b00a.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/READY.json -text
+/Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatchRuntimeGate/manifest.json -text

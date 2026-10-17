@@ -1,0 +1,28 @@
+{
+  "sourceHash": "38839b8b47b067daa583be62912b075b5814086d4f0c6776f8f002af5e8e21d6",
+  "sourceMatched": true,
+  "result": "Failed",
+  "reason": "Qualification tapped distant target before enough Fuel; first-sortie safe reserve check missing",
+  "paidStrikeObserved": true,
+  "hudTitleObserved": "Strike Jet",
+  "groupAndHudSelectionSynchronized": true,
+  "nativeTargetObserved": false,
+  "nativeFlightCertified": false,
+  "manualEditorStop": true,
+  "strictInputCertification": false,
+  "playerReady": false,
+  "log": "native-461-strike-synchronized-selection-cycle.log",
+  "logSha256": "04c5402134b02a6d8efc5eefb5a83dbf5497f7aedeab8bb3d5d21b2a0811c1ed",
+  "liveReadObservations": {
+    "strikeAirFuelPerCell": 0.25,
+    "usableFuelApproximately100": true,
+    "refineryOil": 12,
+    "refineryOilPerBatch": 30,
+    "refineryFuelStored": 112,
+    "refineryFuelOutboundReserved": 8,
+    "pumpOilStored": 200,
+    "profileFuelPerPeriod": 120,
+    "metadataFuelPerDay": 100
+  },
+  "observationScope": "Bounded read-only Editor component inspection; native throughput and flight not certified"
+}

@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1081",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1076-attack-heli-combat-producer-post-source-manifest.json",
+  "preflightManifest": "final-1081-vehicle-combat-preflight-source-manifest.json",
+  "fixtureSha256": "6af010f9470f69c45f7823f867b315a9b3135098e1a3ecc4e06afe7e466eb567",
+  "validationMethod": "S005VehicleCombatEffects1081.RunValidation"
+}

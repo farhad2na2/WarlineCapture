@@ -96,7 +96,7 @@ namespace Game.Editor.MapVariants
                     try
                     {
                         if(view.Item1=="overview"){RenderSettings.fog=false;type?.GetProperty("renderPostProcessing")?.SetValue(data,false);}
-                        go.transform.rotation=Quaternion.Euler(58,0,0);go.transform.position=view.Item2-go.transform.forward*view.Item3;camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1600,1000),0,0);image.Apply();File.WriteAllBytes((directory??Report)+"/"+map+"-"+label+"-"+view.Item1+".png",image.EncodeToPNG());
+                        go.transform.rotation=view.Item1.Contains("oblique")?Quaternion.Euler(40,25,0):Quaternion.Euler(58,0,0);go.transform.position=view.Item2-go.transform.forward*view.Item3;camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1600,1000),0,0);image.Apply();File.WriteAllBytes((directory??Report)+"/"+map+"-"+label+"-"+view.Item1+".png",image.EncodeToPNG());
                     }
                     finally{RenderSettings.fog=fog;type?.GetProperty("renderPostProcessing")?.SetValue(data,true);}
                 }

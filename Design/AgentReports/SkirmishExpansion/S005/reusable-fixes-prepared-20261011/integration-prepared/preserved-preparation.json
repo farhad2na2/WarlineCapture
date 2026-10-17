@@ -1,0 +1,28 @@
+{
+  "status": "PreparedNotApplied",
+  "originalDirectory": "/private/tmp/s005-enemy-main-integration-prepared",
+  "files": [
+    {
+      "path": "integrate_main.py",
+      "sha256": "a04f050c985b0c41c68a7138f60a56f89fa008a6b06d19d4e5048fc751eca981",
+      "bytes": 11560
+    },
+    {
+      "path": "integration-plan.json",
+      "sha256": "02f226f15136d5afd9c9110817b6f7c5f2b85b19acc6c774a851b036db7ff1b2",
+      "bytes": 27932
+    },
+    {
+      "path": "focused-entries.json",
+      "sha256": "36b14f8eda2c87892a757a199d6c1b90ccec01d7faec06dc1fb7e5f3b3d85287",
+      "bytes": 5291
+    },
+    {
+      "path": "prepared-manifest.json",
+      "sha256": "c2fda21cbadac6e8c97a2b2667d9b325677591e8efdb8517db7383a3ee9abfcb",
+      "bytes": 2041
+    }
+  ],
+  "nativeTestsPending": true,
+  "rootReviewedScript": true
+}

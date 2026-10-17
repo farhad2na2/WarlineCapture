@@ -1,0 +1,21 @@
+{
+  "result": "FrozenExternalProposalOnly_NotApplied",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "proposal": "/private/tmp/s005-readiness60de-through1291-proposal",
+  "manifestSha256": "3b60401e1d924f2ff7b31704d383199f98ac0d6c45303e1359cbe7481f1eae2e",
+  "patchSha256": "8c791502919217609b28e056d4fb7cd16ecba129d55c1b9fc937aff8757d3427",
+  "updaterSha256": "ee1304183fb9609f3bb080d0f7fe32334cd035207dcbe4c70169ce1b27f93bd1",
+  "keyedUpdateSha256": "8886bf7e76f234dc8969e7fcc04fa69b26c4830835c5a3ee1489f7d7f33d1174",
+  "archive": "delegation-readiness60de-through1291-proposal.zip",
+  "archiveSha256": "6a6c0fe45ec134ce06ea675bccc73dd8eee6a58d38919f67d257c5e538c2a0a7",
+  "offlineControls": 39,
+  "historySuffixByteIdentical": true,
+  "originalFailureRecordsPreserved": true,
+  "realGuardExit": 1,
+  "realGuardRefusalExpectedWhileActive": true,
+  "activeNativeRunExcluded": "native1274",
+  "technicallyReady": false,
+  "playerReady": false,
+  "sharedFilesWritten": false,
+  "rootReviewedApplyCommand": "rtk proxy python3 /private/tmp/s005-readiness60de-through1291-proposal/update-readiness.py --apply --backup /private/tmp/s005-readiness-before-reviewed-through1291.json"
+}

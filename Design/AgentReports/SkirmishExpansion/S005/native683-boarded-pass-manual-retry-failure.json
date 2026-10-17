@@ -1,0 +1,17 @@
+{
+  "run": "native683",
+  "sourceHash": "6556d2943218388b9738e277aa0b9ddef06d79cdbd015e5ef97a22d7d644ec1e",
+  "wrapperExit": 2,
+  "sourceUnchanged": true,
+  "log": "native-683-boarded-resume-manual-roster-selection-en.log",
+  "trace": "s005-aria-live-155926-en-f34d2172e2c3438d9472e46098003962.jsonl",
+  "passengerRecovery": "Passed four restored and unloaded, paid receipt/same attempt/old physical cleanup verified",
+  "manualRosterCorrection": "Native roster shift detected and rocketeer structure order acknowledged",
+  "completeResumedMission": "FailedDiagnosticAbort",
+  "reason": "Unbounded unacknowledged escort retry prevented finishing roster scan and paid reinforcements; attack toggle retry and native ground attack receipts now handled in qualification driver",
+  "strictEndedContacts": 349,
+  "readOnlyCliDiagnostics": 3,
+  "physicalInputInterventions": 0,
+  "gameplayStateInjections": 0,
+  "countsForReadiness": false
+}

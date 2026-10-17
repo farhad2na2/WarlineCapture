@@ -1,0 +1,21 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared-native-preparation-20261015-01/failed-native-two-fixtures.zip",
+  "sha256": "b74421ca0f41c74cfe4c427bd065389a8a6afd76ecf7a939a3aa5c54c0d1b290",
+  "checkedWrapperExit": 1,
+  "failures": [
+    "Blade DynamicBuffer fixture invalidated by structural change",
+    "Typed spawn fixture uses local units as world metres"
+  ],
+  "passed": [
+    "Transport refresh2 and real3source57draw geometry verification",
+    "Additional Canonical6/Rotor4 metadata generation",
+    "Terminal6",
+    "Enemy5",
+    "Approach3",
+    "View6",
+    "ARIA70"
+  ],
+  "sourceMutationAttribution": "Exactly8 expected new files and1 transport-cache stamp update; no removed or unexpected changed source files",
+  "sourceFiles": 41562,
+  "missionReady": false
+}

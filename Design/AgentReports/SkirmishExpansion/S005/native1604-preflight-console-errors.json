@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 2,
+      "returned": 2,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[ExistingEditorValidation] result=Failed executeMethod=Game.Tests.Editor.RtsSelectionInputSystemTests.RunFocusedValidation",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nGame.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)\nWarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1606-selection-focused-after-hud.log.dispatch.cs:1)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T10:04:30.6691990Z"
+        },
+        {
+          "type": "Exception",
+          "message": "MissingMemberException: Game.Tests.Editor.RtsSelectionInputSystemTests",
+          "stackTrace": "Game.Editor.ExistingEditorValidation.Run (System.String executeMethod, System.String logFile) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)\nUnityEngine.Debug:LogException(Exception)\nGame.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)\n<>c__DisplayClass0_0:<Run>b__0() (at Design/AgentReports/SkirmishExpansion/S005/native1606-selection-focused-after-hud.log.dispatch.cs:1)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T10:04:30.6662670Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

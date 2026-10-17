@@ -1,0 +1,56 @@
+{
+  "sourceHash": "d9bdc907477342fd50d3535a6c79e622d4c9e5010421d8ca0931c48556ae781b",
+  "previousSourceHash": "c24ced8ef16ffc1a4022bf60a126690c1230d8812853e438ecaddf3a893cc1d1",
+  "playerReady": false,
+  "checkpointSchema": 6,
+  "changes": [
+    "Typed Skirmish Support ownership without Campaign progress",
+    "Native Playing/pause/terminal lifecycle without reset of paid state",
+    "Checkpoint-local Support owner and Smoke aliases; no raw world Entity handles",
+    "Rebind current baked catalog and Smoke visual configuration; borrowed blobs never disposed by restored roots",
+    "Restore charges, cooldowns, request high-water marks, receipts, fuel scopes and active Smoke through native preflight/commit",
+    "Clear dead historical receipt effect handles in saved copy only",
+    "Reject foreign owners, ambiguous configuration and unsupported flight/payload state"
+  ],
+  "nativeSupportActivated": false,
+  "flightPayloadRecovery": false,
+  "normalInputSupportAcceptance": false,
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Components/SupportEffectComponents.cs",
+      "sha256": "b3293788e508cd03dcddd6a0e4e8f67a8ea7916f3439756fa60a172291812e8c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAbilityStartupSystem.cs",
+      "sha256": "f0d039d8b6bf3255f3db136563785b2c570b52890f249586a7b2e183fd2dc90a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "sha256": "3f625daea8593aaccde572b662bbf82a157cbc16fe1677dcdc39242ddf90100d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSnapshotService.cs",
+      "sha256": "c191691660bbda0281f7f996b7ff1ffdb86ed509029a129e58fa3c072b697cef"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointTransientState.cs",
+      "sha256": "075e5deedb62a4939e4e8c719228544938564e1708db09894cbc931e08561eeb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "sha256": "0db80f8ae778a48b3ec5566e53b078cdd6e38dc8b4bd08bbfff22cb583bc3dc4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs",
+      "sha256": "68e3df046ebeca6ff853f8686767d967f1ba4d98b5fcfebe803621db5f6aa72b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs",
+      "sha256": "cf8e06fab89b9e7a7859205c8577deb4cefc0985943a088bf15bcc32140c9078"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSupportState.cs",
+      "sha256": "5b1b864dd7c7f796aca5ad4b74083ddc94d737b2d1ec6571ad812d7612a6dee8"
+    }
+  ]
+}

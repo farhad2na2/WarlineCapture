@@ -1,0 +1,44 @@
+[
+  {
+    "log": "tests-056-binding-repair.log",
+    "requiredMarker": "[ExistingUiBindings] result=Passed prefabs=40",
+    "completionReceipt": 0,
+    "sha256": "b2b40b9300a9612ee6d3f2bef4736582baec709e0f61766b8846b1ba3b2999ab"
+  },
+  {
+    "log": "tests-058-localization.log",
+    "requiredMarker": "[StartM02Localization] result=Passed tests=27",
+    "completionReceipt": 0,
+    "sha256": "a1cd65a3177cf8c5f2dbdcb43f69ba1e880df5b46f48e8c934715fe9cd2486ee"
+  },
+  {
+    "log": "tests-059-camera.log",
+    "requiredMarker": "[SharedAirfieldCameraProfileTests] result=Passed",
+    "completionReceipt": 0,
+    "sha256": "9ed70cebf49daf88f58a798e2b7203b5159498e9b1553af68c1342f6f4d1b8da"
+  },
+  {
+    "log": "native-060-aria-en.log",
+    "requiredMarker": "[SkirmishS002AriaRun] appended=1 countedWin=1 error=",
+    "completionReceipt": 0,
+    "sha256": "0ec41354a656eceea1a87dd1812b806a011bdd76ed03a064247f06c91aa9424a"
+  },
+  {
+    "log": "map-066-frontage.log",
+    "requiredMarker": "[CampaignAirfieldVisualAuthoring] result=Passed palms=129 details=559",
+    "completionReceipt": 0,
+    "sha256": "ac349c6053a9f20893f67d526a3c60912c07cb9a76f51a5b57ea40470bccbbd7"
+  },
+  {
+    "log": "native-067-frontage-review.log",
+    "requiredMarker": "[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.SkirmishS002AriaRunHarness.RunS005MapReviewAndExit",
+    "completionReceipt": 0,
+    "sha256": "95220f07fb5980522e793cf7f38ffb21db472064704fec1d6c8b5ad12a223940"
+  },
+  {
+    "log": "native-068-manual-fa-frontage.log",
+    "requiredMarker": "[S004ManualNative] result=Passed outcome=Victory",
+    "completionReceipt": 0,
+    "sha256": "d948578c64f8f34af7b53c9231c31db7e147dd1903a2b427e00ea8fb8f0508ed"
+  }
+]

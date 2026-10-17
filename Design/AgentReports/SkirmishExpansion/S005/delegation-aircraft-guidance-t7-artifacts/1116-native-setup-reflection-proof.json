@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var t=System.Linq.Enumerable.FirstOrDefault(System.Linq.Enumerable.Select(System.AppDomain.CurrentDomain.GetAssemblies(),a=>a.GetType(\"S005GuidancePlayLifecycle1116\",false)),x=>x!=null); if(t==null)throw new System.InvalidOperationException(\"Actual1116 driver assembly missing\"); var prior=(UnityEditor.SceneManagement.SceneSetup[])t.GetField(\"originalSetup\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null); var now=UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup(); var a=System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(prior,s=>new {path=s.path,loaded=s.isLoaded,active=s.isActive})); var b=System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(now,s=>new {path=s.path,loaded=s.isLoaded,active=s.isActive})); return new {cachedNativeOriginalSetup=a,currentNativeSetup=b,exact=System.Linq.Enumerable.SequenceEqual(System.Linq.Enumerable.Select(prior,s=>s.path+\"|\"+s.isLoaded+\"|\"+s.isActive),System.Linq.Enumerable.Select(now,s=>s.path+\"|\"+s.isLoaded+\"|\"+s.isActive)),source=\"Actual1116PrivateOriginalSetupReadOnlyReflection\",writes=0};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "cachedNativeOriginalSetup": [
+          {
+            "path": "Assets/Game/Scenes/Menu.unity",
+            "loaded": true,
+            "active": true
+          }
+        ],
+        "currentNativeSetup": [
+          {
+            "path": "Assets/Game/Scenes/Menu.unity",
+            "loaded": true,
+            "active": true
+          }
+        ],
+        "exact": true,
+        "source": "Actual1116PrivateOriginalSetupReadOnlyReflection",
+        "writes": 0
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

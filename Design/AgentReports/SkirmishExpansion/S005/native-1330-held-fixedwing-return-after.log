@@ -1,0 +1,120 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=S005HeldFixedWingReturn1328.RunAfterValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"RejoinBefore","step":0,"held":false,"landed":false,"hasHold":false,"phase":5,"returning":1,"airborne":1,"landing":0,"approach":0,"x":74.5,"y":12.0,"z":128.5,"rotationX":0.0,"rotationY":-0.7071067690849304,"rotationZ":0.0,"rotationW":0.7071067690849304,"farthestFromHome":54.0}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:99)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"RejoinBefore","step":0,"held":true,"landed":false,"hasHold":true,"phase":5,"returning":1,"airborne":1,"landing":0,"approach":0,"x":74.5,"y":12.0,"z":128.5,"rotationX":0.0,"rotationY":-0.7071067690849304,"rotationZ":0.0,"rotationW":0.7071067690849304,"farthestFromHome":54.0}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:99)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"RejoinAfterOnePositiveStep","step":1,"held":false,"landed":false,"hasHold":false,"phase":5,"returning":1,"airborne":1,"landing":0,"approach":0,"x":73.30000305175781,"y":13.199999809265137,"z":128.5,"rotationX":0.018510038033127786,"rotationY":0.7068644762039185,"rotationZ":0.0185097586363554,"rotationW":-0.7068644762039185,"farthestFromHome":55.19999694824219}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:102)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"RejoinAfterOnePositiveStep","step":1,"held":true,"landed":false,"hasHold":true,"phase":5,"returning":1,"airborne":1,"landing":0,"approach":0,"x":73.30000305175781,"y":13.199999809265137,"z":128.5,"rotationX":0.018510038033127786,"rotationY":0.7068644762039185,"rotationZ":0.0185097586363554,"rotationW":-0.7068644762039185,"farthestFromHome":55.19999694824219}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:102)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"FullReturnBefore","step":0,"held":false,"landed":false,"hasHold":false,"phase":0,"returning":1,"airborne":1,"landing":0,"approach":0,"x":150.5,"y":12.0,"z":144.5,"rotationX":0.0,"rotationY":0.0,"rotationZ":0.0,"rotationW":1.0,"farthestFromHome":0.0}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:110)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"FullReturnBefore","step":0,"held":true,"landed":false,"hasHold":true,"phase":0,"returning":1,"airborne":1,"landing":0,"approach":0,"x":150.5,"y":12.0,"z":144.5,"rotationX":0.0,"rotationY":0.0,"rotationZ":0.0,"rotationW":1.0,"farthestFromHome":0.0}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:110)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"FullReturnProgress","step":1,"held":false,"landed":false,"hasHold":false,"phase":4,"returning":1,"airborne":1,"landing":0,"approach":0,"x":150.59414672851563,"y":13.199999809265137,"z":145.69630432128907,"rotationX":-0.028009610250592233,"rotationY":0.03794621676206589,"rotationZ":-0.046898189932107928,"rotationW":0.9977855682373047,"farthestFromHome":27.997575759887697}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:115)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"FullReturnProgress","step":1,"held":true,"landed":false,"hasHold":true,"phase":4,"returning":1,"airborne":1,"landing":0,"approach":0,"x":150.59414672851563,"y":13.199999809265137,"z":145.69630432128907,"rotationX":-0.028009610250592233,"rotationY":0.03794621676206589,"rotationZ":-0.046898189932107928,"rotationW":0.9977855682373047,"farthestFromHome":27.997575759887697}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:115)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"FullReturnFinal","step":361,"held":false,"landed":true,"hasHold":false,"phase":0,"returning":0,"airborne":0,"landing":0,"approach":0,"x":128.5,"y":0.0,"z":128.5,"rotationX":0.0,"rotationY":-0.7071067690849304,"rotationZ":0.0,"rotationW":0.7071067690849304,"farthestFromHome":99.40686798095703}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:118)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldReturnState1328] {"stage":"FullReturnFinal","step":361,"held":true,"landed":true,"hasHold":true,"phase":0,"returning":0,"airborne":0,"landing":0,"approach":0,"x":128.5,"y":0.0,"z":128.5,"rotationX":0.0,"rotationY":-0.7071067690849304,"rotationZ":0.0,"rotationW":0.7071067690849304,"farthestFromHome":99.40686798095703}
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328/Pair:Log (Unity.Entities.Entity,string,int) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:70)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:118)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005HeldFixedWingReturn1328] result=Passed mode=AfterFixConserved cases=2 zeroDeltaControl=1 positiveMotionControls=2 unheldBoundedLanding=1 actualSystem=1 isolatedWorld=1 normalMission=0 exact1320CausalityClaim=0
+UnityEngine.Debug:Log (object)
+S005HeldFixedWingReturn1328:RunValidation (bool) (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:124)
+S005HeldFixedWingReturn1328:RunAfterValidation () (at /private/tmp/s005-held-fixedwing-return1328-v2/S005HeldFixedWingReturn1328.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1330-held-fixedwing-return-after.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=S005HeldFixedWingReturn1328.RunAfterValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

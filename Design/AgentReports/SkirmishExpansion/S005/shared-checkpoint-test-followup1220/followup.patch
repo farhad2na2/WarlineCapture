@@ -1,0 +1,36 @@
+--- v1/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs
++++ v2/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs
+@@ -146,6 +146,9 @@
+             EntityManager sourceEm = source.EntityManager;
+             CompileAndSpawn(sourceEm, out Entity sourceSession, out SkirmishResolvedSetup setup);
+             MutatePauseAndSpend(sourceEm, sourceSession);
++            Assert.AreEqual(SkirmishObjectiveKind.BaseAssault, setup.ObjectiveKind);
++            Assert.IsFalse(sourceEm.HasComponent<SkirmishBaseAssaultFactComponent>(sourceSession),
++                "Ledger-only spawn has not run native objective fact projection; capture uses its documented fallback.");
+             Assert.IsTrue(SkirmishCheckpointService.TryCapture(sourceEm, sourceSession, out SkirmishCheckpointDocument document));
+             string path = Path.Combine(Path.GetTempPath(), "skirmish-s002-checkpoint-" + Guid.NewGuid().ToString("N") + ".json");
+             try
+@@ -165,6 +168,10 @@
+                 Assert.AreNotEqual(Entity.Null, restoredSession);
+                 Assert.AreEqual(document.Header.SessionId,
+                     restored.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(restoredSession).SessionId.ToString());
++                Assert.AreEqual(document.Header.SetupHash,
++                    restored.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(restoredSession).SetupHash);
++                Assert.AreEqual(SkirmishCheckpointStatus.Restored,
++                    restored.EntityManager.GetComponentData<SkirmishCheckpointRequestComponent>(restoredSession).Status);
+                 Assert.IsNull(restored.EntityManager.GetComponentObject<SkirmishResolvedSetupRecord>(restoredSession).Setup.EnemyPolicy);
+                 var restoredClock = restored.EntityManager.GetComponentData<SkirmishObjectiveClockComponent>(restoredSession);
+                 Assert.AreEqual(1, restoredClock.Paused);
+@@ -173,8 +180,10 @@
+                     restored.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(restoredSession));
+                 Assert.AreEqual(sourceEm.GetComponentData<SkirmishEnemyStockComponent>(sourceSession),
+                     restored.EntityManager.GetComponentData<SkirmishEnemyStockComponent>(restoredSession));
+-                Assert.AreEqual(sourceEm.GetComponentData<SkirmishBaseAssaultFactComponent>(sourceSession),
+-                    restored.EntityManager.GetComponentData<SkirmishBaseAssaultFactComponent>(restoredSession));
++                Assert.IsTrue(restored.EntityManager.HasComponent<SkirmishBaseAssaultFactComponent>(restoredSession));
++                var restoredFacts = restored.EntityManager.GetComponentData<SkirmishBaseAssaultFactComponent>(restoredSession);
++                Assert.AreEqual(document.Payload.PlayerDesignatedAlive, restoredFacts.PlayerDesignatedAlive);
++                Assert.AreEqual(document.Payload.EnemyDesignatedAlive, restoredFacts.EnemyDesignatedAlive);
+                 // Retain the independent same-world atomic read/apply conservation scope.
+                 var changed = sourceEm.GetComponentData<SkirmishEconomyStockComponent>(sourceSession);
+                 changed.Materials = 1;

@@ -1,0 +1,1776 @@
+{
+  "state": "NativePassed_ReadyForEngineeringCommit",
+  "requiredNativeLog": "Logs/SkirmishProduction/shared-production-wave-20261015-09.log",
+  "requiredWrapperExit": 0,
+  "sourceRows": [
+    {
+      "path": "Assets/Game/Resources/SkirmishConvoyRoleCatalog.asset",
+      "sha256": "e8ac4950edd80b1b3e934a54cc4be8203c700163051ed5222dc467939ce0a38c",
+      "gitBlobOid": "8b2545abf60150fad1aa8659480734cfa9450a31",
+      "stagedSha256": "e8ac4950edd80b1b3e934a54cc4be8203c700163051ed5222dc467939ce0a38c",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "e8ac4950edd80b1b3e934a54cc4be8203c700163051ed5222dc467939ce0a38c"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishConvoyRoleCatalog.asset.meta",
+      "sha256": "cd2ed9555f2b1934fc6275b283350625ae7b9b18b3c7247c4bc7f5dcb05048c5",
+      "gitBlobOid": "90fbace9091892a9bae06ad44422ca636cba825c",
+      "stagedSha256": "cd2ed9555f2b1934fc6275b283350625ae7b9b18b3c7247c4bc7f5dcb05048c5",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "cd2ed9555f2b1934fc6275b283350625ae7b9b18b3c7247c4bc7f5dcb05048c5"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishConvoyTruckDefinition.asset",
+      "sha256": "aaeeff1e14a94041962371c5128abe88de83bb10c4a0dac9153f51803e17b54c",
+      "gitBlobOid": "3adaca2845af090ed56732ce902d40dbdd4a7a7e",
+      "stagedSha256": "aaeeff1e14a94041962371c5128abe88de83bb10c4a0dac9153f51803e17b54c",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "aaeeff1e14a94041962371c5128abe88de83bb10c4a0dac9153f51803e17b54c"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishConvoyTruckDefinition.asset.meta",
+      "sha256": "890b3762b58c1c8d3b7a9e5021d8f2847afceb1e447cd7c880130d79e5f6c093",
+      "gitBlobOid": "12ce0e7cbb6a94c6c86edcb642f07367409762e6",
+      "stagedSha256": "890b3762b58c1c8d3b7a9e5021d8f2847afceb1e447cd7c880130d79e5f6c093",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "890b3762b58c1c8d3b7a9e5021d8f2847afceb1e447cd7c880130d79e5f6c093"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicOrderFeedbackComponent.cs",
+      "sha256": "3b9581ba2d685f8765836b96c77351d14a767df80c59e8f0a27567e618ea2c23",
+      "gitBlobOid": "bb0630c53c545bd511a59e91470eb32552ce3188",
+      "stagedSha256": "3b9581ba2d685f8765836b96c77351d14a767df80c59e8f0a27567e618ea2c23",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "3b9581ba2d685f8765836b96c77351d14a767df80c59e8f0a27567e618ea2c23"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishPublicOrderFeedbackComponent.cs.meta",
+      "sha256": "5a5f1b2fd8e5582b0e051b00fe2c45cc98408342b754707675c101613afd27e3",
+      "gitBlobOid": "2348d9cf39cc95e9baaf984e5c00a53a8da6f988",
+      "stagedSha256": "64b9d4c6530c5fd19216154882a5cc29dac4c415672df8d8d301ce8100942858",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "5a5f1b2fd8e5582b0e051b00fe2c45cc98408342b754707675c101613afd27e3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/VehicleRepairComponents.cs",
+      "sha256": "07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3",
+      "gitBlobOid": "fddad6707b7a023b9dbd19f46db91295da19812e",
+      "stagedSha256": "07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/VehicleRepairComponents.cs.meta",
+      "sha256": "cad3564598be36c768b65a66ef46b3dbd67cfc9834c313dd67261dab1d1d7ae3",
+      "gitBlobOid": "c34c4377ca2112909ae69e3837f8b1edc58b3bc5",
+      "stagedSha256": "e3ab74267d43d3ef5d2cfd237ff60bf65d70a1f79198d799675ed158f0be00e8",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "cad3564598be36c768b65a66ef46b3dbd67cfc9834c313dd67261dab1d1d7ae3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyObjectivePolicyScope.cs",
+      "sha256": "4090213342335fc0465f0169be27cb224a5c8b3c45af4d26a3ac98932d4c1a4a",
+      "gitBlobOid": "0bedfd6b1b9a252c56a30b14294757fde4feb522",
+      "stagedSha256": "4090213342335fc0465f0169be27cb224a5c8b3c45af4d26a3ac98932d4c1a4a",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "4090213342335fc0465f0169be27cb224a5c8b3c45af4d26a3ac98932d4c1a4a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyObjectivePolicyScope.cs.meta",
+      "sha256": "b3416bf5142245b5600df3fa82ba4ac1a6048344a5c5ee729af51c610292781b",
+      "gitBlobOid": "b0f41f7395360fbda478840192a2dab8412554c1",
+      "stagedSha256": "4d592005af0f344f79db073aee617cc25f875f2c9c7dc9fe257f183eb2b9a29d",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b3416bf5142245b5600df3fa82ba4ac1a6048344a5c5ee729af51c610292781b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs",
+      "sha256": "1ba7ddd6445e36f49aefb2ca82d2560e9c68fc6a82b403b8bce11addfd5827a8",
+      "gitBlobOid": "b26a56d200e64d1937e429a9486541992e34e56f",
+      "stagedSha256": "1ba7ddd6445e36f49aefb2ca82d2560e9c68fc6a82b403b8bce11addfd5827a8",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "1ba7ddd6445e36f49aefb2ca82d2560e9c68fc6a82b403b8bce11addfd5827a8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishGenericGroundEnemyRollout.cs",
+      "sha256": "a93af4364bbcc3c00e85293be9e75718f8bb886a0f06a4c9a5d16b637ac6ee0d",
+      "gitBlobOid": "57301217a887f0dd117db043a25ce9d5be5c49f5",
+      "stagedSha256": "a93af4364bbcc3c00e85293be9e75718f8bb886a0f06a4c9a5d16b637ac6ee0d",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "a93af4364bbcc3c00e85293be9e75718f8bb886a0f06a4c9a5d16b637ac6ee0d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishGenericGroundEnemyRollout.cs.meta",
+      "sha256": "d9ddc53576317c3e0705a7e41f22eef8e781920fcd8d13c217c6b6573225fe37",
+      "gitBlobOid": "aa58a2a96f32fe465561f3359d890924fd3fe5a9",
+      "stagedSha256": "9f6d617b3584344c9d88230189565320bd6b4e7c4bcf25f605b49c174c68fc22",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "d9ddc53576317c3e0705a7e41f22eef8e781920fcd8d13c217c6b6573225fe37"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "sha256": "dd34c3dbad60d55afc1273343b39ddfade241aaa2196d748a31798fe1f0c6953",
+      "gitBlobOid": "21f16949242a4f0f37a88f68aece9799f9f95854",
+      "stagedSha256": "dd34c3dbad60d55afc1273343b39ddfade241aaa2196d748a31798fe1f0c6953",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "dd34c3dbad60d55afc1273343b39ddfade241aaa2196d748a31798fe1f0c6953"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishNativeRepairSourceIdentity.cs",
+      "sha256": "8690e3ab03133cfa5d0865b1311fec1ef3b52e64a1a60f5faf102118a3eb3618",
+      "gitBlobOid": "0ca276e659aff5c7996ee9c01c5ddc7e15c0a16c",
+      "stagedSha256": "8690e3ab03133cfa5d0865b1311fec1ef3b52e64a1a60f5faf102118a3eb3618",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "8690e3ab03133cfa5d0865b1311fec1ef3b52e64a1a60f5faf102118a3eb3618"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishNativeRepairSourceIdentity.cs.meta",
+      "sha256": "f594605b2596c2bf20fb22383b3e83eefd064e6db2dac07698d06dd3bf9af05b",
+      "gitBlobOid": "352fdbc55fdd2053706eb22c7403d1a0fc995167",
+      "stagedSha256": "144566a2d7af75b71af1b5596c3e3a119af70c691898a6793aba0b855dc7db8b",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "f594605b2596c2bf20fb22383b3e83eefd064e6db2dac07698d06dd3bf9af05b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "8a7334a31429f058dcf417d189ec126335d59b5f670ea935668eade27c21b669",
+      "gitBlobOid": "c712019a42dcde85b5501b94cc495be6a312ec84",
+      "stagedSha256": "8a7334a31429f058dcf417d189ec126335d59b5f670ea935668eade27c21b669",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "8a7334a31429f058dcf417d189ec126335d59b5f670ea935668eade27c21b669"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs",
+      "sha256": "5dd82a808b59ac867564acaa35143e1cf083f0bb26e7b25b50de40130ea22c6d",
+      "gitBlobOid": "4e50303b48f905ed1398fb451234fcc86e99b8fc",
+      "stagedSha256": "5dd82a808b59ac867564acaa35143e1cf083f0bb26e7b25b50de40130ea22c6d",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "5dd82a808b59ac867564acaa35143e1cf083f0bb26e7b25b50de40130ea22c6d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S005ObservedSquadPageReceipt.cs",
+      "sha256": "355ab8e5f7e63b8c9d4a55f84e1d15b31b87fca4e5ff785e5d09f9e38a84877c",
+      "gitBlobOid": "4ecedfe32e1e208ca9fe377aa147ccc4af3f47a2",
+      "stagedSha256": "355ab8e5f7e63b8c9d4a55f84e1d15b31b87fca4e5ff785e5d09f9e38a84877c",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "355ab8e5f7e63b8c9d4a55f84e1d15b31b87fca4e5ff785e5d09f9e38a84877c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S005ObservedSquadPageReceipt.cs.meta",
+      "sha256": "0f3efffa85f4183e2b7b1b6fe74db430a49cad845e4df1256e5a95a9a965445a",
+      "gitBlobOid": "5f084e139bc767c12f918a36c587b8457758409d",
+      "stagedSha256": "ac800976b75a1fa876011a2c9f9ae76689a611327a08697198197c8e9acac059",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "0f3efffa85f4183e2b7b1b6fe74db430a49cad845e4df1256e5a95a9a965445a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCameraFramingMeasurement.cs",
+      "sha256": "defab2352e014885070650e96a37e45611f06979f429097c5761342a574e9fc5",
+      "gitBlobOid": "69c10c5d5924d7cf226e463ccce76766f10e4c4b",
+      "stagedSha256": "0ec30d3c4e80fb8ae932abb7702e6f1698ee0e37d82c10ea17fa85e48b1c68b7",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "defab2352e014885070650e96a37e45611f06979f429097c5761342a574e9fc5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCameraPosedMeshReader.cs",
+      "sha256": "c7353cbd112b66636bc2ea170cb1f9ba7c023c4fb9cc596991f431c66020997b",
+      "gitBlobOid": "d7fbbeba9b63dbfddc438dd896395d7b66468550",
+      "stagedSha256": "c7353cbd112b66636bc2ea170cb1f9ba7c023c4fb9cc596991f431c66020997b",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "c7353cbd112b66636bc2ea170cb1f9ba7c023c4fb9cc596991f431c66020997b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCameraPosedMeshReader.cs.meta",
+      "sha256": "25442c52d21ffb3297b80a5506f8b173f3d6cb83a74265c7eef5b0bb7eb83376",
+      "gitBlobOid": "a6dde7bbdf8e64e94462c8bdde57156be2fd1deb",
+      "stagedSha256": "1f90b03563f80b142de49d9776149b6f286257b4ef92d68fc3293926d541e180",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "25442c52d21ffb3297b80a5506f8b173f3d6cb83a74265c7eef5b0bb7eb83376"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConvoyLogicalAssetsAuthoringEntry.cs",
+      "sha256": "0fb1c0b8a1b2b5d9c6af2238854bafb3e78866369850c1bc06df111907389b03",
+      "gitBlobOid": "a57067cbcea220aa8f1b17fa2c32229cb2a1c1cd",
+      "stagedSha256": "0fb1c0b8a1b2b5d9c6af2238854bafb3e78866369850c1bc06df111907389b03",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "0fb1c0b8a1b2b5d9c6af2238854bafb3e78866369850c1bc06df111907389b03"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConvoyLogicalAssetsAuthoringEntry.cs.meta",
+      "sha256": "e55e443f43868a92e35db044a4efd9a47de78f09d4886c31cdbeac5e4824e333",
+      "gitBlobOid": "3627ed039d396a3bb83c3a81859db86090a9132e",
+      "stagedSha256": "d8d93a03cef65f58fdaba54cda7476aca65fc95c4f3a6f5cf83903288b7730a5",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "e55e443f43868a92e35db044a4efd9a47de78f09d4886c31cdbeac5e4824e333"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "sha256": "6a5d773ac8543dd7e7348217d0120dfdbb97191c8df2bc97467d1871bb2112ca",
+      "gitBlobOid": "9a44d35892f85db1c7ded2b3cf64c8bb7bc232e5",
+      "stagedSha256": "6a5d773ac8543dd7e7348217d0120dfdbb97191c8df2bc97467d1871bb2112ca",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "6a5d773ac8543dd7e7348217d0120dfdbb97191c8df2bc97467d1871bb2112ca"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.meta",
+      "sha256": "b8b8594283ec60140b33708385eba819f3f40fe54e85018f489fd3702400a351",
+      "gitBlobOid": "9ac2614ce8467694f1e1b8274309a6be40d9ad08",
+      "stagedSha256": "a9b53b8e11f4c0efd29154a881de48ff96acf594c48906b733ceacf5328c826b",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b8b8594283ec60140b33708385eba819f3f40fe54e85018f489fd3702400a351"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "sha256": "65429934533b49768fb34e00000bd123579bf937a7d9895c57c415894071ca19",
+      "gitBlobOid": "ad0dabbf48f67b0560dd54b2a6f84596804c39d8",
+      "stagedSha256": "e08135bdf89ec0f921b94514daacfc7ca3e596c95bd22af19c194b4d39705feb",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "65429934533b49768fb34e00000bd123579bf937a7d9895c57c415894071ca19"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs.meta",
+      "sha256": "b365c62e266b513f82db8b2e392541db4ea925c33cad468adc7071aee1775714",
+      "gitBlobOid": "047abb674bccac5a74943ce4caa1db6c85b0bff3",
+      "stagedSha256": "839cdb618a35e2a36136ab3ff1305f2734f71acee4fcf619996e388c3c2f6384",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b365c62e266b513f82db8b2e392541db4ea925c33cad468adc7071aee1775714"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotRouteDetours.cs",
+      "sha256": "eddef40e3c501d1f520f28959ac8128c99f5966aa797d4c6d95ec979742adc40",
+      "gitBlobOid": "77e5661373462fe1198a37e2d59d732e1096f1a2",
+      "stagedSha256": "eddef40e3c501d1f520f28959ac8128c99f5966aa797d4c6d95ec979742adc40",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "eddef40e3c501d1f520f28959ac8128c99f5966aa797d4c6d95ec979742adc40"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotRouteDetours.cs.meta",
+      "sha256": "9d36107676e9c825671798fa00069da3f3d5245505868d320bd1baf76ccddfa1",
+      "gitBlobOid": "a08385d231c0cd822e1b8a2ee87f6ce4d1a3b050",
+      "stagedSha256": "14e13d43d95a8573c023f3ff536fb608bf80c01273e7abd84ea6440096169f78",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "9d36107676e9c825671798fa00069da3f3d5245505868d320bd1baf76ccddfa1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "sha256": "376ed81c1c3f6f10076485c2fe80edcf80e9ab5bdcb5f5cc787436161f936d6d",
+      "gitBlobOid": "d5f74655792d531c0c79474d56b267eb0c4e2cea",
+      "stagedSha256": "376ed81c1c3f6f10076485c2fe80edcf80e9ab5bdcb5f5cc787436161f936d6d",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "376ed81c1c3f6f10076485c2fe80edcf80e9ab5bdcb5f5cc787436161f936d6d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs.meta",
+      "sha256": "8e3a4fdef67161fa1f7c0f355cdafd192cbaf37d31893592c92a207c2d1215ce",
+      "gitBlobOid": "59139f612ea99407797f154b8bdbe8dd5607bfb2",
+      "stagedSha256": "1a8cd82c12c2357193fde2483482adfdefd56e2c9e80dfe6ca13eaabbe9bda85",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "8e3a4fdef67161fa1f7c0f355cdafd192cbaf37d31893592c92a207c2d1215ce"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "sha256": "2a357ad5fca296794a062c645a1cb77e7d14c8e0f4832285810c5aaa08eb4560",
+      "gitBlobOid": "53b4c4250038a3912eef18c24e364a547d9bf518",
+      "stagedSha256": "2a357ad5fca296794a062c645a1cb77e7d14c8e0f4832285810c5aaa08eb4560",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "2a357ad5fca296794a062c645a1cb77e7d14c8e0f4832285810c5aaa08eb4560"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "sha256": "c03a58239162eeef560370931d8347a8c4ee7cf3d1feec41e1f4cb74d9f4bf41",
+      "gitBlobOid": "0ab097e4173f4db00d38f9bb21380246b16ba29b",
+      "stagedSha256": "c03a58239162eeef560370931d8347a8c4ee7cf3d1feec41e1f4cb74d9f4bf41",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "c03a58239162eeef560370931d8347a8c4ee7cf3d1feec41e1f4cb74d9f4bf41"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs",
+      "sha256": "0ee0682a541b7c0f2a3f1ba38a2f58f6fa5a1eb1f86883883c136bc2871b2ae8",
+      "gitBlobOid": "c1bfd8e97502e069f5cfe4dae543f8c27d7ac2cd",
+      "stagedSha256": "0ee0682a541b7c0f2a3f1ba38a2f58f6fa5a1eb1f86883883c136bc2871b2ae8",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "0ee0682a541b7c0f2a3f1ba38a2f58f6fa5a1eb1f86883883c136bc2871b2ae8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningDriverDiagnostic.cs",
+      "sha256": "cd17610e3773a38df12b88a19bd0dc824f1c0236b95bc52259cec30448d91a6a",
+      "gitBlobOid": "ae7931f42ea8d3fb9ef70c1456acea960e202695",
+      "stagedSha256": "cd17610e3773a38df12b88a19bd0dc824f1c0236b95bc52259cec30448d91a6a",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "cd17610e3773a38df12b88a19bd0dc824f1c0236b95bc52259cec30448d91a6a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "sha256": "9d736b742dc0a49f6f6a4f0f30707ffbab8f90fe4d5f2d7e77eb163a072018bc",
+      "gitBlobOid": "d6e1b8aae2d81b499113587c819c744ec6c79f5d",
+      "stagedSha256": "9d736b742dc0a49f6f6a4f0f30707ffbab8f90fe4d5f2d7e77eb163a072018bc",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "9d736b742dc0a49f6f6a4f0f30707ffbab8f90fe4d5f2d7e77eb163a072018bc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "sha256": "836b381698a1fbbf3b69c95d558af88f5b6f93b1d325956fb9500ae8f0ed34b0",
+      "gitBlobOid": "7eddc7852650577a980bfb242a50900aad4f2de0",
+      "stagedSha256": "836b381698a1fbbf3b69c95d558af88f5b6f93b1d325956fb9500ae8f0ed34b0",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "836b381698a1fbbf3b69c95d558af88f5b6f93b1d325956fb9500ae8f0ed34b0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyTruckCommandEligibility.cs",
+      "sha256": "4479dcf5dfb21a3fa21cffabb57bdeb69850d8f59ef3d7d7af295ef257468290",
+      "gitBlobOid": "97f2f66d0db812666a20c4609f41dd29d5baeb70",
+      "stagedSha256": "4479dcf5dfb21a3fa21cffabb57bdeb69850d8f59ef3d7d7af295ef257468290",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "4479dcf5dfb21a3fa21cffabb57bdeb69850d8f59ef3d7d7af295ef257468290"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyTruckCommandEligibility.cs.meta",
+      "sha256": "f4fa8753e7f10b7455a83aaa2d60b94ad30d0f60d8927a9888c2653d51d5c136",
+      "gitBlobOid": "3df112b432f54e4399050b499b4621a0170e87b0",
+      "stagedSha256": "8cea0946f1a2b5012a36be68ff4a4c39406de1e258095b5cdd96e960addd624a",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "f4fa8753e7f10b7455a83aaa2d60b94ad30d0f60d8927a9888c2653d51d5c136"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "sha256": "81e37f7df652df039aaa9fa124f98e24db8c629a09e38df478a098c65a60b1b3",
+      "gitBlobOid": "acf77b816f87bfd11a75a63edd8048268c277582",
+      "stagedSha256": "81e37f7df652df039aaa9fa124f98e24db8c629a09e38df478a098c65a60b1b3",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "81e37f7df652df039aaa9fa124f98e24db8c629a09e38df478a098c65a60b1b3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "sha256": "dab98c69d01e35b1ec4f0f76967bc72ee31a9d5d5a8945057a97b72dfa4c82cc",
+      "gitBlobOid": "98413900112f14e79cd19f03a60b55d94a4754f5",
+      "stagedSha256": "dab98c69d01e35b1ec4f0f76967bc72ee31a9d5d5a8945057a97b72dfa4c82cc",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "dab98c69d01e35b1ec4f0f76967bc72ee31a9d5d5a8945057a97b72dfa4c82cc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "sha256": "9dbd20a0ccf5efe74a4dedfd15e159edc2fa411d812303ff312ac935c749a1d2",
+      "gitBlobOid": "b86e24660b568ee111106a54e6029f232496c7fe",
+      "stagedSha256": "9dbd20a0ccf5efe74a4dedfd15e159edc2fa411d812303ff312ac935c749a1d2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "9dbd20a0ccf5efe74a4dedfd15e159edc2fa411d812303ff312ac935c749a1d2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "sha256": "b10a6b4715dbfec25d4707dc36c9923fa2be71764379c20837009c80837bd8cf",
+      "gitBlobOid": "cb2f494c0128d85fc9933a16a5d58c07de5a90b6",
+      "stagedSha256": "b10a6b4715dbfec25d4707dc36c9923fa2be71764379c20837009c80837bd8cf",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "b10a6b4715dbfec25d4707dc36c9923fa2be71764379c20837009c80837bd8cf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+      "sha256": "eb1ed9bb155bedbdb3b356d6c898e2bf4e78b8ce0f9b1a02a1964cbcf15aec1c",
+      "gitBlobOid": "56ffc8422d460a3fdbaede3f5ab232caf362f7ce",
+      "stagedSha256": "eb1ed9bb155bedbdb3b356d6c898e2bf4e78b8ce0f9b1a02a1964cbcf15aec1c",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "eb1ed9bb155bedbdb3b356d6c898e2bf4e78b8ce0f9b1a02a1964cbcf15aec1c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionCheckpoint.cs",
+      "sha256": "991790346dca563a5cf14b21327d3c9ce608b1dd5e81a89ae385e7aa4d932082",
+      "gitBlobOid": "fad2f8666d9d26b591d1e8d304e52a9ec3fd0f9f",
+      "stagedSha256": "991790346dca563a5cf14b21327d3c9ce608b1dd5e81a89ae385e7aa4d932082",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "991790346dca563a5cf14b21327d3c9ce608b1dd5e81a89ae385e7aa4d932082"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs",
+      "sha256": "94713e44a03c60683b884a08b2e6af0ed7f89841837cac5b8b19d47ccade5fc3",
+      "gitBlobOid": "d6f7ed2243f5a38dccd5e01f1df78f71e4435164",
+      "stagedSha256": "94713e44a03c60683b884a08b2e6af0ed7f89841837cac5b8b19d47ccade5fc3",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "94713e44a03c60683b884a08b2e6af0ed7f89841837cac5b8b19d47ccade5fc3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectiveAllocationUtilitySystemHelper.cs",
+      "sha256": "17bd3fd7d1821c3edab4d42d1c37a8287865160489e5be42de4d58b560ecd9e5",
+      "gitBlobOid": "8453e06383a55abd50c63273751002a15ec6fb5d",
+      "stagedSha256": "17bd3fd7d1821c3edab4d42d1c37a8287865160489e5be42de4d58b560ecd9e5",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "17bd3fd7d1821c3edab4d42d1c37a8287865160489e5be42de4d58b560ecd9e5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectiveAllocationUtilitySystemHelper.cs.meta",
+      "sha256": "9cddc0a7a6ea3a27a95bf6559c6f39de650ac5a53cc80d8b861eb52c3eae970a",
+      "gitBlobOid": "c20cf7648ce5d17a151de54d3bb3a278a7aba3ed",
+      "stagedSha256": "96e2b2cc4640065efd2236b11f444004592f92ccfbf38ed5e63fe3b866552b72",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "9cddc0a7a6ea3a27a95bf6559c6f39de650ac5a53cc80d8b861eb52c3eae970a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectiveCommanderService.cs",
+      "sha256": "a62b5b3a3119594f0f3137780cf3bd2f0c31b42a5bc819561c8505a3d8139a67",
+      "gitBlobOid": "eaf70281d7db404816e3880f50c6b256097ce17e",
+      "stagedSha256": "a62b5b3a3119594f0f3137780cf3bd2f0c31b42a5bc819561c8505a3d8139a67",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "a62b5b3a3119594f0f3137780cf3bd2f0c31b42a5bc819561c8505a3d8139a67"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectiveCommanderService.cs.meta",
+      "sha256": "1d25d3833d93febbfa9d1b6b707e3b2035e0cc80aabf1ea9f118e13b1a8c5650",
+      "gitBlobOid": "bd36749b9fcdba6784dda5e5d1845dd1f7950f6e",
+      "stagedSha256": "0b7974c2a15335dd20480c2747a2747b02f9261a4dd1445f3c40da76ffa596dc",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "1d25d3833d93febbfa9d1b6b707e3b2035e0cc80aabf1ea9f118e13b1a8c5650"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectivePublicPerspective.cs",
+      "sha256": "9f8a94e806214ffd10b217a240c11a7d26835e375c6932efe1627dff3d21d9f1",
+      "gitBlobOid": "7a6a9f7cee04ac90481cede58ca79428e1223def",
+      "stagedSha256": "9f8a94e806214ffd10b217a240c11a7d26835e375c6932efe1627dff3d21d9f1",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "9f8a94e806214ffd10b217a240c11a7d26835e375c6932efe1627dff3d21d9f1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectivePublicPerspective.cs.meta",
+      "sha256": "05097ce87d41e1af14085415416354092cd66c750066d3764fd983522a92f4a1",
+      "gitBlobOid": "82e678e984f3cb131bf0d77e0a4175fba696aaf7",
+      "stagedSha256": "eb0c1cc81ec14e9be2005bc15f66efad5c8c3ec9a5d4006618dae2ec79ae6ef8",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "05097ce87d41e1af14085415416354092cd66c750066d3764fd983522a92f4a1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs",
+      "sha256": "ebaeb713f950c7e192568d2097c532fb9cd436c05ca4151862a8b97fa057dbbb",
+      "gitBlobOid": "72f5bae0a4bb4e800dd1d46dcac6f74e49c37a71",
+      "stagedSha256": "ebaeb713f950c7e192568d2097c532fb9cd436c05ca4151862a8b97fa057dbbb",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "ebaeb713f950c7e192568d2097c532fb9cd436c05ca4151862a8b97fa057dbbb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "sha256": "5f182ee3a9dd124206b7643315624e0f15e908b30ba66a40b80481c453e0d414",
+      "gitBlobOid": "98a3d7f48e21465f9c7d4e78e84c855b744efe6c",
+      "stagedSha256": "5f182ee3a9dd124206b7643315624e0f15e908b30ba66a40b80481c453e0d414",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "5f182ee3a9dd124206b7643315624e0f15e908b30ba66a40b80481c453e0d414"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "sha256": "a79036f8ff342641e06cbc86df19805c978e9b089bd7707b81030d26ae04e507",
+      "gitBlobOid": "e593940a31534a73bb8450eff22601b2475e5ea5",
+      "stagedSha256": "a79036f8ff342641e06cbc86df19805c978e9b089bd7707b81030d26ae04e507",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "a79036f8ff342641e06cbc86df19805c978e9b089bd7707b81030d26ae04e507"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyVehicleRepairPolicy.cs",
+      "sha256": "5a36f1e2408a3ec533fac979cf06131f3b479da5aa6f799df28ea52bacad7b72",
+      "gitBlobOid": "1664fce873c57297af82b607840e99a6dc6580dd",
+      "stagedSha256": "5a36f1e2408a3ec533fac979cf06131f3b479da5aa6f799df28ea52bacad7b72",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "5a36f1e2408a3ec533fac979cf06131f3b479da5aa6f799df28ea52bacad7b72"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyVehicleRepairPolicy.cs.meta",
+      "sha256": "cc3d32779b9e35c7235eae546507161f5f0297e5241d122beb4af4d8cbde38eb",
+      "gitBlobOid": "088626f09690fd137d193bb44534758489e845b0",
+      "stagedSha256": "e1e6e0d5a124009bbb2e0e3575586ecd8fce8af270421e89fe37332339ad00c3",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "cc3d32779b9e35c7235eae546507161f5f0297e5241d122beb4af4d8cbde38eb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs",
+      "sha256": "324563091578d19261bf318a6bb3d63c52522ebc68c651699c1cdb75607ac799",
+      "gitBlobOid": "135a917dafacbde49f30cdb26b566683fa2df6ec",
+      "stagedSha256": "324563091578d19261bf318a6bb3d63c52522ebc68c651699c1cdb75607ac799",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "324563091578d19261bf318a6bb3d63c52522ebc68c651699c1cdb75607ac799"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "sha256": "9d1a0664a51870d63123af5456d4974c5fee2b58c79cdcf26d008c1cd1d2caf2",
+      "gitBlobOid": "bcda103f4dd7f604a44071cf261a633c9a8cc127",
+      "stagedSha256": "9d1a0664a51870d63123af5456d4974c5fee2b58c79cdcf26d008c1cd1d2caf2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "9d1a0664a51870d63123af5456d4974c5fee2b58c79cdcf26d008c1cd1d2caf2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryCommit.cs",
+      "sha256": "74f1165ed62173e371c42fd80366f1cd845b81f358441944a54eb5599c1d03c8",
+      "gitBlobOid": "3e9685e4abe8e5a8e9fac948f7154dca5e1a5be7",
+      "stagedSha256": "b093fe10545ad0205b0458d7b04b5cea8856077cf80ec5a31d73da7748961d6d",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "74f1165ed62173e371c42fd80366f1cd845b81f358441944a54eb5599c1d03c8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs",
+      "sha256": "011b245a54487615bc4280283b80966888589793dc669c915c7ba0258f961fcc",
+      "gitBlobOid": "50cdb344d5827ae210f982971fb31e5f253a5290",
+      "stagedSha256": "eaa1e372b64232c2dd1e8788efef64a3f4b89c00a51fdcad748cb1fd814fb4cb",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "011b245a54487615bc4280283b80966888589793dc669c915c7ba0258f961fcc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSnapshotService.cs",
+      "sha256": "0d2338207393dab7c0ef7c3492b77400079a3b2e472ec03d6bd11ea24c20250a",
+      "gitBlobOid": "9191c55ed1d25fd0f1525894db4fa157701c8585",
+      "stagedSha256": "17e734d59d91a296669711010ce6cb1a0215b3f2be07be88a924d7a0b78840d8",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "0d2338207393dab7c0ef7c3492b77400079a3b2e472ec03d6bd11ea24c20250a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeLegacyBa7Json.cs",
+      "sha256": "3ad55a8fdacb4f4a8554fb5dbd7c52c54f2bfb8297c0b31be702a540d569e34a",
+      "gitBlobOid": "6a07792950cc60ad84bb5c5eeb14619b0c9e97f6",
+      "stagedSha256": "3ad55a8fdacb4f4a8554fb5dbd7c52c54f2bfb8297c0b31be702a540d569e34a",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "3ad55a8fdacb4f4a8554fb5dbd7c52c54f2bfb8297c0b31be702a540d569e34a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeLegacyBa7Json.cs.meta",
+      "sha256": "a15ce7a85d817873d1badc1be9ff58b6621922254a79b4f83c333239e735b315",
+      "gitBlobOid": "8556300f2bc73b5b4a5b2a58a419fa4c98be3d85",
+      "stagedSha256": "8a81f4dfccc34bec98f061316b75ea9967fbadd940661bcc8fe33d49a35db10c",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "a15ce7a85d817873d1badc1be9ff58b6621922254a79b4f83c333239e735b315"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePublicGoalPresentation.cs",
+      "sha256": "a356a7bf321efc72d5dc6215218a65ff9d7379ed28c0acee3bd7064fae15e76e",
+      "gitBlobOid": "b439fd0658bc5b5bd7aa23ecaf16dc424a52ad53",
+      "stagedSha256": "9f56a1faeef15dd007a19128235d253958e0bdf0d6bd134b8757d0307048386f",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "a356a7bf321efc72d5dc6215218a65ff9d7379ed28c0acee3bd7064fae15e76e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePublicGoalPresentation.cs.meta",
+      "sha256": "b4f71c78dfc13c47aaaa131bec1aafff1c707e8166edea40dcedada4165a1b6f",
+      "gitBlobOid": "56cc270bea26bda5bdf0c555a487641d78a85785",
+      "stagedSha256": "399a7a6cef7d7e13ca0714a76784d4a793880a3c889afb5443693c6dbbed21c4",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b4f71c78dfc13c47aaaa131bec1aafff1c707e8166edea40dcedada4165a1b6f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairCheckpoint.cs",
+      "sha256": "e6feed5d25bc10bbd7129f7d2c79a258e003bb3fdad32e05a178ad8eed70214d",
+      "gitBlobOid": "7a9a2153be20e4364b32909ce180bda5bd57a010",
+      "stagedSha256": "e6feed5d25bc10bbd7129f7d2c79a258e003bb3fdad32e05a178ad8eed70214d",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "e6feed5d25bc10bbd7129f7d2c79a258e003bb3fdad32e05a178ad8eed70214d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairCheckpoint.cs.meta",
+      "sha256": "76fcab2b67fc7c511325a0308f6619c6246d4b502912ddb8be019eafa47f405e",
+      "gitBlobOid": "d8a96a0422c566f80c8301ce26c2ac2e8e5294be",
+      "stagedSha256": "f135de7fe1ef4c086f0d16bb901cea6f370be86f5ddb91fe6ef618dc4f52e687",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "76fcab2b67fc7c511325a0308f6619c6246d4b502912ddb8be019eafa47f405e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairCheckpointGuard.cs",
+      "sha256": "ff42ecd9800d9a047aafcfaea264543791932dc83cb1c4da054a6380dee0d13a",
+      "gitBlobOid": "fe9b032b73713406bfa771a5522510f1c15270e3",
+      "stagedSha256": "ff42ecd9800d9a047aafcfaea264543791932dc83cb1c4da054a6380dee0d13a",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "ff42ecd9800d9a047aafcfaea264543791932dc83cb1c4da054a6380dee0d13a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairCheckpointGuard.cs.meta",
+      "sha256": "0163f9b87fe5d95bdb770deb8615395a8003c9507f2118acb2d5499f27acdf04",
+      "gitBlobOid": "06de149e11a6d3c86044e4d557a19fd011311ecb",
+      "stagedSha256": "442327f55947ddbc9572d79a02a20b81821dda7ce3a4f3887e7cbe063bc2d63a",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "0163f9b87fe5d95bdb770deb8615395a8003c9507f2118acb2d5499f27acdf04"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairWireCodec.cs",
+      "sha256": "d21212b245f26d8ddec11e6e5d972eb21b82f58770706d7f886f9e6d88506656",
+      "gitBlobOid": "07671e13e15ce1997eb576af8a63a4187f45dc35",
+      "stagedSha256": "d21212b245f26d8ddec11e6e5d972eb21b82f58770706d7f886f9e6d88506656",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "d21212b245f26d8ddec11e6e5d972eb21b82f58770706d7f886f9e6d88506656"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairWireCodec.cs.meta",
+      "sha256": "35d656c5e7203b1dde5e1a73313cd51b7d9afcf4f81e53145cf5c8708e79d5b3",
+      "gitBlobOid": "9b398bddf9cab8c2ec136a2239c3495cbd309672",
+      "stagedSha256": "019a6747754b94a13828a2bbcf98ce293c3d060b23ccc100624dd412dbf2c959",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "35d656c5e7203b1dde5e1a73313cd51b7d9afcf4f81e53145cf5c8708e79d5b3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairWireHash.cs",
+      "sha256": "ea42184c0f5b1b99a2ba8a8ffad9c32d2273a053378d838b31d4e2f9b695c187",
+      "gitBlobOid": "c8608352a795147c4223a60ec7eea0834ee6438d",
+      "stagedSha256": "ea42184c0f5b1b99a2ba8a8ffad9c32d2273a053378d838b31d4e2f9b695c187",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "ea42184c0f5b1b99a2ba8a8ffad9c32d2273a053378d838b31d4e2f9b695c187"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeRepairWireHash.cs.meta",
+      "sha256": "b7796c3959a06a2f8a5f3f173ff18631a11007476249bd0cc730ea05cd5bd829",
+      "gitBlobOid": "9676d951a28ca8ba244df4d7eabd6fee3d29f9fd",
+      "stagedSha256": "46b376bd9c042fcfee2cadc757399b83fe65b1e725dbb7531d9ce016b2f65772",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b7796c3959a06a2f8a5f3f173ff18631a11007476249bd0cc730ea05cd5bd829"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalUnloadPresentation.cs",
+      "sha256": "d86089144273f780e207573704d59c1fff97cee31303405e55a3249218c43c90",
+      "gitBlobOid": "1858426415e4e9cd15d5fdb1caccd7f1572d2434",
+      "stagedSha256": "d86089144273f780e207573704d59c1fff97cee31303405e55a3249218c43c90",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "d86089144273f780e207573704d59c1fff97cee31303405e55a3249218c43c90"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalUnloadPresentation.cs.meta",
+      "sha256": "8fefebb800d55b6b17466a12f60e256035f754cf735f01cc6e0af1dec787f35a",
+      "gitBlobOid": "aa55b3232787e9b5a985f92700a403e2baa92ce7",
+      "stagedSha256": "63dac3d135c366f1d626612e4f9cabaaca4022b4d1c6435dc86661005b88781f",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "8fefebb800d55b6b17466a12f60e256035f754cf735f01cc6e0af1dec787f35a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs",
+      "sha256": "67200c638d9ce7fc541be926e7f240f54a644131ee8da409da11a73acf22e88e",
+      "gitBlobOid": "e39598e6f3ff2ba8225b0ad109cee7c046c5731d",
+      "stagedSha256": "67200c638d9ce7fc541be926e7f240f54a644131ee8da409da11a73acf22e88e",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "67200c638d9ce7fc541be926e7f240f54a644131ee8da409da11a73acf22e88e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOrderFeedback.cs.meta",
+      "sha256": "4c3607bcbbc21f434f1d59e08027f659d51baca573153d9cab17d4baeef28778",
+      "gitBlobOid": "486e2c588ad9c03b66b663f68fee2c935bb13f03",
+      "stagedSha256": "b014d824d82f7eafcff4a98d444299c3f9250dfdd1ab27bd7e51ad0df0478b0a",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "4c3607bcbbc21f434f1d59e08027f659d51baca573153d9cab17d4baeef28778"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOriginalTransportProjection.cs",
+      "sha256": "195c1c3d486cd2a7c7aba0193596466065e055fdfe6278751f12e13e70046ea4",
+      "gitBlobOid": "898bd693b5c7b0f72593b5e7a52807ab2d576d1b",
+      "stagedSha256": "195c1c3d486cd2a7c7aba0193596466065e055fdfe6278751f12e13e70046ea4",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "195c1c3d486cd2a7c7aba0193596466065e055fdfe6278751f12e13e70046ea4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicOriginalTransportProjection.cs.meta",
+      "sha256": "e62c2513ce063a11b5290634ac8abdd2ad6a55fa5a959c2c674cd2f22d78e35b",
+      "gitBlobOid": "c0b1311ad0cdc32fa7c54ee61f8e359e0427fd80",
+      "stagedSha256": "c65e4bd9a78febe48b7ac07c33b4ac7bd8bceb5ecf6ffe17ff687930079ab556",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "e62c2513ce063a11b5290634ac8abdd2ad6a55fa5a959c2c674cd2f22d78e35b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs",
+      "sha256": "3d83cf7f9e44d3ea8f115428846a3f2ac0ac3a3dd78762c2f20a2613d0aa9b55",
+      "gitBlobOid": "fedd09be8ee46a4d1febcc0a64437971179d452c",
+      "stagedSha256": "3d83cf7f9e44d3ea8f115428846a3f2ac0ac3a3dd78762c2f20a2613d0aa9b55",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "3d83cf7f9e44d3ea8f115428846a3f2ac0ac3a3dd78762c2f20a2613d0aa9b55"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs.meta",
+      "sha256": "2dc39dc591975ba71ab67b86d79f1b8c9770c0e8ae5856c105c6025cdc2c9a94",
+      "gitBlobOid": "a6caa4dc6dc9e879685fc561d1be3aaa1f34f579",
+      "stagedSha256": "1737491703f48853019de5b8b8cee04d40b052d4a2ea5f4b150eba039daee7e2",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "2dc39dc591975ba71ab67b86d79f1b8c9770c0e8ae5856c105c6025cdc2c9a94"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/VehicleRepairRules.cs",
+      "sha256": "43d1cc13c12c7db4b008ef17c66d8897d1e2015b1d2ffb89e9435f335c67631b",
+      "gitBlobOid": "6884b4d45ac9dc61b2fd972d0b4ca65871363b50",
+      "stagedSha256": "43d1cc13c12c7db4b008ef17c66d8897d1e2015b1d2ffb89e9435f335c67631b",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "43d1cc13c12c7db4b008ef17c66d8897d1e2015b1d2ffb89e9435f335c67631b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/VehicleRepairRules.cs.meta",
+      "sha256": "746f645546f138964daa07fba49ac9e27d97e33256e4b30c6a5a8882b428006a",
+      "gitBlobOid": "6c11ddd11b2cd9786dab36fd806b9df1d0df18fd",
+      "stagedSha256": "0762991c6279fa66c22036c77734f71ba266fb83ecaffab0903edd659c7da040",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "746f645546f138964daa07fba49ac9e27d97e33256e4b30c6a5a8882b428006a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishObjectivePolicyUtilitySystemHelper.cs",
+      "sha256": "19e13b960847afb48ab0842200a8d337bffe88931c9f299119775394c55c8982",
+      "gitBlobOid": "907185ad5acb59baf28395d31f13579dfae72ef8",
+      "stagedSha256": "19e13b960847afb48ab0842200a8d337bffe88931c9f299119775394c55c8982",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "19e13b960847afb48ab0842200a8d337bffe88931c9f299119775394c55c8982"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishObjectivePolicyUtilitySystemHelper.cs.meta",
+      "sha256": "33641743fec1d119aa319539d091f7281162fd376eb0977c6fb16f2ae331955d",
+      "gitBlobOid": "a5f7e855585b957b7c94a9d322ba1f6436f39b5a",
+      "stagedSha256": "095daf2875d807d81a00687c07001343b160661eb53d028d830cb2429062d347",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "33641743fec1d119aa319539d091f7281162fd376eb0977c6fb16f2ae331955d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPlayerObjectivePolicyUtilitySystemHelper.cs",
+      "sha256": "fc4311d9dd5a98b6322d1e8ca5c6eff8841baf8048b1295b1e4eaaae6c2ff5b5",
+      "gitBlobOid": "622d01c65b96d97e9929185977fa37563f1c07f2",
+      "stagedSha256": "fc4311d9dd5a98b6322d1e8ca5c6eff8841baf8048b1295b1e4eaaae6c2ff5b5",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "fc4311d9dd5a98b6322d1e8ca5c6eff8841baf8048b1295b1e4eaaae6c2ff5b5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPlayerObjectivePolicyUtilitySystemHelper.cs.meta",
+      "sha256": "bcf01afae4f746a415d9a908c56f8cf6ab2554470ca2d39f64635c5b723bf374",
+      "gitBlobOid": "e85fa7e72bd9a700aa230f21699688ac9a65ed7a",
+      "stagedSha256": "86ac926520531b8f7f42c13f1a61ae552d10292ab8ed7a24018d2c16c7e5f110",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "bcf01afae4f746a415d9a908c56f8cf6ab2554470ca2d39f64635c5b723bf374"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicGoalContracts.cs",
+      "sha256": "c690906ca18a6dccecac678e3a10156fceeb435b56095ccd77de31a0c31ed39e",
+      "gitBlobOid": "b01d210c1a256dc5f5d48a293f7f2b3e75299d25",
+      "stagedSha256": "eb34ec445c13a6808931525f8e2db820980b5ccaa4808e3d56e73c13156364bc",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "c690906ca18a6dccecac678e3a10156fceeb435b56095ccd77de31a0c31ed39e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicGoalContracts.cs.meta",
+      "sha256": "aa4ec468d3857c1afd0f571e9ab857bd036728d38963265ff503ef418aabb7a0",
+      "gitBlobOid": "b32e73d992f972f44efa5ed0f24dd5b6f83fb5f3",
+      "stagedSha256": "43badb364e43fab7e438766f46b7a178189436a30278ac2160b9d9f3ba27ce2d",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "aa4ec468d3857c1afd0f571e9ab857bd036728d38963265ff503ef418aabb7a0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicOriginalTransportGroup.cs",
+      "sha256": "e6e227099fa955950328f844c19097e908360b47a2d5dfa4826e475349d33838",
+      "gitBlobOid": "4c2bb725deaadf2a9fb3fa42334d55c40f49ae98",
+      "stagedSha256": "e6e227099fa955950328f844c19097e908360b47a2d5dfa4826e475349d33838",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "e6e227099fa955950328f844c19097e908360b47a2d5dfa4826e475349d33838"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicOriginalTransportGroup.cs.meta",
+      "sha256": "cb0a9415e814ccbe874942ef75b5e648e8177b4cdf49f7234a517bf8861cbdb6",
+      "gitBlobOid": "0809b02b625e3ac72e23be0c546a383208a168c7",
+      "stagedSha256": "a37639984b8b3a44456a66a607bbe0d565ef1c8a51ee7506e9df9c73936bb209",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "cb0a9415e814ccbe874942ef75b5e648e8177b4cdf49f7234a517bf8861cbdb6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Combat/Observation/CombatDamageObservationSystem.cs",
+      "sha256": "49012a11cbd9b3bc19c39ce2c0e4ae1b2b3da6a51129e8d1d22694e20fa3b2c1",
+      "gitBlobOid": "c6f3dc9768c93144333e884f542beb6a70f4ba45",
+      "stagedSha256": "49012a11cbd9b3bc19c39ce2c0e4ae1b2b3da6a51129e8d1d22694e20fa3b2c1",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "49012a11cbd9b3bc19c39ce2c0e4ae1b2b3da6a51129e8d1d22694e20fa3b2c1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
+      "sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0",
+      "gitBlobOid": "495355ef40562862a9a8f1c93559fb078bfc9ea5",
+      "stagedSha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs",
+      "sha256": "2c34a52e06451df7d72beba80d135881b1c99700640208f4418266bbb1343746",
+      "gitBlobOid": "6af207fa56da81ba1664ffad4bc7589f6583135d",
+      "stagedSha256": "2c34a52e06451df7d72beba80d135881b1c99700640208f4418266bbb1343746",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "2c34a52e06451df7d72beba80d135881b1c99700640208f4418266bbb1343746"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "sha256": "ff35fdb1447204c25b23399057cca4189190b2c218a35c9a55d33d6f6f57fb1e",
+      "gitBlobOid": "83ef0657259fdfd53df0888ed7b38bd740beae94",
+      "stagedSha256": "ff35fdb1447204c25b23399057cca4189190b2c218a35c9a55d33d6f6f57fb1e",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "ff35fdb1447204c25b23399057cca4189190b2c218a35c9a55d33d6f6f57fb1e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
+      "sha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971",
+      "gitBlobOid": "682083657267ace814d5b18f53787d020a8d78b9",
+      "stagedSha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+      "sha256": "b5c3f556b8c0e75f002ce062e5ddca97e4ab95d626015fe667b4e70b2b8a3740",
+      "gitBlobOid": "819c342f8db2db62a57bc861c353e05a7d166abd",
+      "stagedSha256": "b5c3f556b8c0e75f002ce062e5ddca97e4ab95d626015fe667b4e70b2b8a3740",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "b5c3f556b8c0e75f002ce062e5ddca97e4ab95d626015fe667b4e70b2b8a3740"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
+      "sha256": "066caffbd9411e1b42a4c06cb1e62e24b5dddc3cc455c60ca102da83cb2517b8",
+      "gitBlobOid": "452f5b42b70bb97ffbbbf0fa8f7d554b51db0cea",
+      "stagedSha256": "066caffbd9411e1b42a4c06cb1e62e24b5dddc3cc455c60ca102da83cb2517b8",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "066caffbd9411e1b42a4c06cb1e62e24b5dddc3cc455c60ca102da83cb2517b8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs",
+      "sha256": "535b2ecd675c23ea72dc1a0aac5d0c9cd628b16acb8fae53576505668552b98e",
+      "gitBlobOid": "5aa9d52f19bcd039afc9fee8373d5ce0c5967d03",
+      "stagedSha256": "535b2ecd675c23ea72dc1a0aac5d0c9cd628b16acb8fae53576505668552b98e",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "535b2ecd675c23ea72dc1a0aac5d0c9cd628b16acb8fae53576505668552b98e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs",
+      "sha256": "769c268c257b0d940348f23d548115247d8b1e6766aae0e199df50f917e242a0",
+      "gitBlobOid": "7020a9588820bcbbda6d94301a40f03834743347",
+      "stagedSha256": "769c268c257b0d940348f23d548115247d8b1e6766aae0e199df50f917e242a0",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "769c268c257b0d940348f23d548115247d8b1e6766aae0e199df50f917e242a0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/VehicleFieldRepairSystem.cs",
+      "sha256": "4b228828cb96f42bd969fa68585d1c38a55531942baed7a6a3d68d13fde7c3b2",
+      "gitBlobOid": "b61944eef496f208aa9d205e1ae283b3571254dc",
+      "stagedSha256": "4b228828cb96f42bd969fa68585d1c38a55531942baed7a6a3d68d13fde7c3b2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "4b228828cb96f42bd969fa68585d1c38a55531942baed7a6a3d68d13fde7c3b2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/VehicleFieldRepairSystem.cs.meta",
+      "sha256": "a4d6ab968c833b0426fc43fa19699d38ebee5cf70083eb5f6cdafacc8dad27db",
+      "gitBlobOid": "0673ccac02b117213885d58194a3b91779867b0f",
+      "stagedSha256": "0bc0baa43eaeaae2ef20ce2c695de3229825f3708c1f9333c9effc01481b8db0",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "a4d6ab968c833b0426fc43fa19699d38ebee5cf70083eb5f6cdafacc8dad27db"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Art/V3GradientGraphic.Appearance.cs",
+      "sha256": "47bec50449cbb08c6fffe1bd9b653bf48b3d71aba67d042617ed27890a4996fd",
+      "gitBlobOid": "9c652c8393e3eb7929f9076bdfa1b042ee850bc1",
+      "stagedSha256": "47bec50449cbb08c6fffe1bd9b653bf48b3d71aba67d042617ed27890a4996fd",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "47bec50449cbb08c6fffe1bd9b653bf48b3d71aba67d042617ed27890a4996fd"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Art/V3GradientGraphic.Appearance.cs.meta",
+      "sha256": "5a23106b6ee2d5011573f3a888bfe442b73f1b39518f6c30a33a8853212d27d6",
+      "gitBlobOid": "7815f47387924d9066943957cf7afddb3329d7ed",
+      "stagedSha256": "9b2cc2fac67db6dd3b414d7899d349576f1e4ead666e6c9248cf72a1814f7224",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "5a23106b6ee2d5011573f3a888bfe442b73f1b39518f6c30a33a8853212d27d6"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.ContentSize.cs",
+      "sha256": "5e2c3954ba0a92fd47c78ee995b87c8aea4d38fa02838298cf06ccb4b28bf317",
+      "gitBlobOid": "a64373a1e992d52d100ff6dd935d9b3a58a57cf8",
+      "stagedSha256": "5e2c3954ba0a92fd47c78ee995b87c8aea4d38fa02838298cf06ccb4b28bf317",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "5e2c3954ba0a92fd47c78ee995b87c8aea4d38fa02838298cf06ccb4b28bf317"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.FieldRepair.cs",
+      "sha256": "3e4500281d0e5930babb505ae48782b30cdefeea03cc11d04826165cabdb24ed",
+      "gitBlobOid": "678ec7936a698ad38b69c4a56d31088af3bdc7b4",
+      "stagedSha256": "3e4500281d0e5930babb505ae48782b30cdefeea03cc11d04826165cabdb24ed",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "3e4500281d0e5930babb505ae48782b30cdefeea03cc11d04826165cabdb24ed"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.FieldRepair.cs.meta",
+      "sha256": "61ac320a72e18cc099d5dc79acc2d11b2f23b10076ef9fee9e47329f6386d573",
+      "gitBlobOid": "3f56081fcb7af0613762be3c4067ef8143585e07",
+      "stagedSha256": "566f691c69134f4d88ebcbeae449fc67b5153e47bd2e52200d912400b80582db",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "61ac320a72e18cc099d5dc79acc2d11b2f23b10076ef9fee9e47329f6386d573"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.PublicTransport.cs",
+      "sha256": "135b52652a6813a36192dcad4087a27813a5e5c5525a1006ba2f67cf1eca05f4",
+      "gitBlobOid": "8ec6c44eeb167a312c12fab7cf9d8e33e164e6b5",
+      "stagedSha256": "135b52652a6813a36192dcad4087a27813a5e5c5525a1006ba2f67cf1eca05f4",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "135b52652a6813a36192dcad4087a27813a5e5c5525a1006ba2f67cf1eca05f4"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.PublicTransport.cs.meta",
+      "sha256": "1b236e1f44f75f39ff03ade5ddfc6519e81a9b909cc7285cddcc427608d8b178",
+      "gitBlobOid": "d265d57d014b90c0724cb4d22bc0131a69b27ae5",
+      "stagedSha256": "50e6d4067d87a49bd0b829b393347e50cc84d85da0ac0fe7c9f231780a7a0235",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "1b236e1f44f75f39ff03ade5ddfc6519e81a9b909cc7285cddcc427608d8b178"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
+      "sha256": "b926bbd0d83b34396900c5bf2f46f9a238e04b22bd86e16eca9e683f3f826499",
+      "gitBlobOid": "a714f7403adc86f334b098ae61e2f9a172bf74aa",
+      "stagedSha256": "b926bbd0d83b34396900c5bf2f46f9a238e04b22bd86e16eca9e683f3f826499",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "b926bbd0d83b34396900c5bf2f46f9a238e04b22bd86e16eca9e683f3f826499"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.PublicTransport.cs",
+      "sha256": "2250b053ceb90b1c8244a9aa43a515a85a90e3dc5ca7de5e0831fc975ecf333c",
+      "gitBlobOid": "eed8b3812c54469062e9101ac2241d8dc55d3ccb",
+      "stagedSha256": "2250b053ceb90b1c8244a9aa43a515a85a90e3dc5ca7de5e0831fc975ecf333c",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "2250b053ceb90b1c8244a9aa43a515a85a90e3dc5ca7de5e0831fc975ecf333c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.PublicTransport.cs.meta",
+      "sha256": "996414ea37f01416b46405eeb8d209bea4b3b226c9f1c199689cafec80bf5ea1",
+      "gitBlobOid": "d69517b149f356f76614ee09bd8f3e8f78acddfc",
+      "stagedSha256": "083d411b5760ab8124bbe086074790ef9d67f865d376b01e88c63fbd32886cb3",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "996414ea37f01416b46405eeb8d209bea4b3b226c9f1c199689cafec80bf5ea1"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs",
+      "sha256": "e59a479f21b85aab6377700615e0fdbeda00bfd2eadca9bb01b7e71c7dd73427",
+      "gitBlobOid": "f8b465f0ff1bf99dd7a02c97db8ba6ed069b327e",
+      "stagedSha256": "e59a479f21b85aab6377700615e0fdbeda00bfd2eadca9bb01b7e71c7dd73427",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "e59a479f21b85aab6377700615e0fdbeda00bfd2eadca9bb01b7e71c7dd73427"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveAria.cs.meta",
+      "sha256": "e8a7558c601a396b1ebd76c4197ee29abe13ac1e90730b1a75e8637df517f695",
+      "gitBlobOid": "e1c75031bec0219aa6513695d76f848526218593",
+      "stagedSha256": "4dbc3295dc6517075cb5b9fe475fb7563584f3ce6067324e31b86f8bf4e61d7e",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "e8a7558c601a396b1ebd76c4197ee29abe13ac1e90730b1a75e8637df517f695"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs",
+      "sha256": "5b8bbb6b9afd5d24fe5d56a69cf5c562baa406e6c3013cabd7c7fc00442b0b07",
+      "gitBlobOid": "be91ea27b412c2158f185d3080afcce803ab78e6",
+      "stagedSha256": "5b8bbb6b9afd5d24fe5d56a69cf5c562baa406e6c3013cabd7c7fc00442b0b07",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "5b8bbb6b9afd5d24fe5d56a69cf5c562baa406e6c3013cabd7c7fc00442b0b07"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.PublicObjectiveHud.cs.meta",
+      "sha256": "d98d52400e640be8b07057933dd8edb1b119152d384f1c56621ae77f8a70bf6e",
+      "gitBlobOid": "98b690ca52283c067ba8daeb04fa04e6017b7035",
+      "stagedSha256": "72b2bced8c7a75e92cc452b8c992562672acd994a3dd419e8acd9897e98b6b54",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "d98d52400e640be8b07057933dd8edb1b119152d384f1c56621ae77f8a70bf6e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.cs",
+      "sha256": "7a7aca29db4111a9c9d325902cc090082962c16bec7445bee7cee82b3ed84583",
+      "gitBlobOid": "24f17d3c3e85fa040c30280a56854f61ce69364a",
+      "stagedSha256": "7a7aca29db4111a9c9d325902cc090082962c16bec7445bee7cee82b3ed84583",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "7a7aca29db4111a9c9d325902cc090082962c16bec7445bee7cee82b3ed84583"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishPublicObjectiveOutlineGraphic.cs",
+      "sha256": "dbb2e74ab6203d5ae6fdbad971df75e78a12cb2c7cb84937e1074ff0a628a255",
+      "gitBlobOid": "caa6b8a4c4cdb98b58a669f219c9b534869a5f99",
+      "stagedSha256": "dbb2e74ab6203d5ae6fdbad971df75e78a12cb2c7cb84937e1074ff0a628a255",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "dbb2e74ab6203d5ae6fdbad971df75e78a12cb2c7cb84937e1074ff0a628a255"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishPublicObjectiveOutlineGraphic.cs.meta",
+      "sha256": "5a224a948e305328a3b67dd2889f161232cdca5444449b5af59b0b8dbf2a2ac0",
+      "gitBlobOid": "545b5b9e73d0a1b4857ef8400ae459fc1560da10",
+      "stagedSha256": "cedfd24fc728be35780d6cb471331b1d44d9fe44022039b310d772ec590c2176",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "5a224a948e305328a3b67dd2889f161232cdca5444449b5af59b0b8dbf2a2ac0"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/AriaObjectiveTouchContracts.cs",
+      "sha256": "b4d286d75bae0ddc74e006eab2291a7e53d7ad05209219e133cac705fb939b8d",
+      "gitBlobOid": "88b1b688190ef7d6b1ce423d817aee2ce202755b",
+      "stagedSha256": "b4d286d75bae0ddc74e006eab2291a7e53d7ad05209219e133cac705fb939b8d",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "b4d286d75bae0ddc74e006eab2291a7e53d7ad05209219e133cac705fb939b8d"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/AriaObjectiveTouchContracts.cs.meta",
+      "sha256": "fc4a8749952642451e6da7b6accafac29f4ee645c613684faff256c7c09e45fb",
+      "gitBlobOid": "ad51e5c72f94c4a82290a06ce6f1290999405004",
+      "stagedSha256": "b766dd8eee1e6ca979d05067b96b6f9c655c5b3d7276de0c6310fa43f22c6bc3",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "fc4a8749952642451e6da7b6accafac29f4ee645c613684faff256c7c09e45fb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+      "sha256": "289e729b5e1ad18d8049315fd3cdea628ae1973e22971e3caf0fee7d83148058",
+      "gitBlobOid": "395bea975fe418f50059112d85e655c52d94c377",
+      "stagedSha256": "289e729b5e1ad18d8049315fd3cdea628ae1973e22971e3caf0fee7d83148058",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "289e729b5e1ad18d8049315fd3cdea628ae1973e22971e3caf0fee7d83148058"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "sha256": "2df652db36018ec44615b16c484412d1a14086eb997d85f56f7c0a3ef20695be",
+      "gitBlobOid": "604f9e9e69710385ef2a1831b85a77b3fdf833d8",
+      "stagedSha256": "2df652db36018ec44615b16c484412d1a14086eb997d85f56f7c0a3ef20695be",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "2df652db36018ec44615b16c484412d1a14086eb997d85f56f7c0a3ef20695be"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "sha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21",
+      "gitBlobOid": "7b110832eecd1e144764c7ba254d16e24e18c3f2",
+      "stagedSha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs",
+      "sha256": "262952cbdfda8bdcf428d1070e17e908c0ae1b3602292d9828a3ff03275d325a",
+      "gitBlobOid": "12c641615d760b6ede50dac51c43a3c995736fd1",
+      "stagedSha256": "262952cbdfda8bdcf428d1070e17e908c0ae1b3602292d9828a3ff03275d325a",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "262952cbdfda8bdcf428d1070e17e908c0ae1b3602292d9828a3ff03275d325a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.ObjectivePolicy.cs.meta",
+      "sha256": "f702fdb43f5f1a838dce4ef6c53e5c1f8cefbd281073fc922286df1733fbbe64",
+      "gitBlobOid": "8bdd5782686f4f8ab1b6ea0fcfce516ffa1cdb4c",
+      "stagedSha256": "9e5b76b9a068a72afc05442abcabb9cbc9a259b5cb6bd241facb34cf546e75cb",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "f702fdb43f5f1a838dce4ef6c53e5c1f8cefbd281073fc922286df1733fbbe64"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Watch.cs",
+      "sha256": "8b1580267ec9f44f39b8f0fb3d20690a459d4829175214ce668cd51551b08754",
+      "gitBlobOid": "c250bcfbf49957d902cf513c01fa699366138de2",
+      "stagedSha256": "8b1580267ec9f44f39b8f0fb3d20690a459d4829175214ce668cd51551b08754",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "8b1580267ec9f44f39b8f0fb3d20690a459d4829175214ce668cd51551b08754"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs",
+      "sha256": "4c81be332c52136e2a564c9b01fb53153b4c8dbb768128e7f51e4b7ee846780f",
+      "gitBlobOid": "58b604d41733a9be661c7d0160bcbc5e1c029688",
+      "stagedSha256": "4c81be332c52136e2a564c9b01fb53153b4c8dbb768128e7f51e4b7ee846780f",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "4c81be332c52136e2a564c9b01fb53153b4c8dbb768128e7f51e4b7ee846780f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.FieldRepair.cs.meta",
+      "sha256": "17ce80658b259daf080dd31430eda9e76ec04d028c7ba2e0e9ce45b3a84afcbc",
+      "gitBlobOid": "c559fed077032dd98db8dfd0bfc580e61eb18983",
+      "stagedSha256": "a7d9d24bd367ee9fe43bb0db07768c698e7a7452f03dcccea5e4ac7924697eb0",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "17ce80658b259daf080dd31430eda9e76ec04d028c7ba2e0e9ce45b3a84afcbc"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs",
+      "sha256": "ff50ad53db4714ccb1ba1ae5558ba23e12d9cc12540f12f565e5373b667dcad0",
+      "gitBlobOid": "344f2ce27cb5b27f516701db1b58467550767ca0",
+      "stagedSha256": "ff50ad53db4714ccb1ba1ae5558ba23e12d9cc12540f12f565e5373b667dcad0",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "ff50ad53db4714ccb1ba1ae5558ba23e12d9cc12540f12f565e5373b667dcad0"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjective.cs.meta",
+      "sha256": "8556ce702a337dd39db1182932df10fd050d4ae8a840c2f58862a51ca23b9006",
+      "gitBlobOid": "4e3f21b25d3a03fbec9da6722a28f8d8d61dbdb6",
+      "stagedSha256": "f0b5cde10c443003d2879ddf29244014ff047d5a6348da5230a6923ebede6413",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "8556ce702a337dd39db1182932df10fd050d4ae8a840c2f58862a51ca23b9006"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjectiveMap.cs",
+      "sha256": "c6753ee95b09b7bcb02831a04e259375575de791da5d49401d47a57e3c948db4",
+      "gitBlobOid": "d8cbcd02b0fc45a21535390f005954b3a529dc87",
+      "stagedSha256": "c6753ee95b09b7bcb02831a04e259375575de791da5d49401d47a57e3c948db4",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "c6753ee95b09b7bcb02831a04e259375575de791da5d49401d47a57e3c948db4"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PublicObjectiveMap.cs.meta",
+      "sha256": "8ba7fc7cc0bab5d01ef077cff4d6a0f6559d8b767340501cabe5474886bf297f",
+      "gitBlobOid": "0bf57edb368aef1566e56ffcd779449b093bd40e",
+      "stagedSha256": "557a53942495f2792ed1d2c680922c26fe412219c4d0a4277603abf56801f615",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "8ba7fc7cc0bab5d01ef077cff4d6a0f6559d8b767340501cabe5474886bf297f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "sha256": "145b984a4511d9ad34c7e74789371ce198d5f1db168cc805b6092df736481d78",
+      "gitBlobOid": "abdf82df9544b1369b4f554be5fdafbd7315582b",
+      "stagedSha256": "145b984a4511d9ad34c7e74789371ce198d5f1db168cc805b6092df736481d78",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "145b984a4511d9ad34c7e74789371ce198d5f1db168cc805b6092df736481d78"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.NormalCameraZoom.cs",
+      "sha256": "92b2a2de1d6883ab37b447eabdf7e491bd92f59aabb8635af69e5e7ab3dade20",
+      "gitBlobOid": "3eee3d758a672f9469b4d050fed31745a00b9d35",
+      "stagedSha256": "92b2a2de1d6883ab37b447eabdf7e491bd92f59aabb8635af69e5e7ab3dade20",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "92b2a2de1d6883ab37b447eabdf7e491bd92f59aabb8635af69e5e7ab3dade20"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.NormalCameraZoom.cs.meta",
+      "sha256": "15109fa4f1a2f72c8e5f00a5e964a6a01c035baa9e0f5a5b795e60a1aca31d65",
+      "gitBlobOid": "c7b9a925e38bc1bc1a6aac0eca60058de7ae73b0",
+      "stagedSha256": "3063fdc2e477980b4bbca3af2044103261966dc65193fe3de8eac9ce143bb77f",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "15109fa4f1a2f72c8e5f00a5e964a6a01c035baa9e0f5a5b795e60a1aca31d65"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaPlayInputSystem.cs",
+      "sha256": "e4596cc07016f00921fd4a9275244265ad074513bf4bcb039accdfaf4f5ec50a",
+      "gitBlobOid": "5c2fac7abb843ee4254a994767442b2e59975dea",
+      "stagedSha256": "e4596cc07016f00921fd4a9275244265ad074513bf4bcb039accdfaf4f5ec50a",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "e4596cc07016f00921fd4a9275244265ad074513bf4bcb039accdfaf4f5ec50a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.Objective.cs",
+      "sha256": "fd19d4bd42e42284583cdd76044dde6ac05668757958dd0412b19314791420da",
+      "gitBlobOid": "931e45bbb98fbcc77d6aa5e3f161c64206546a71",
+      "stagedSha256": "fd19d4bd42e42284583cdd76044dde6ac05668757958dd0412b19314791420da",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "fd19d4bd42e42284583cdd76044dde6ac05668757958dd0412b19314791420da"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.Objective.cs.meta",
+      "sha256": "59c741843ae3e2f95fd3896e0f370607f13eed779bcaa03051e6e9bf5a39fbfd",
+      "gitBlobOid": "a6e3ba7cdfe4aa324b9ba6c1178ceb250c28df87",
+      "stagedSha256": "5b502f59fdcf28c80619dc82b9f14ee7fc2d968ac8b2638c9d7892a12da6c078",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "59c741843ae3e2f95fd3896e0f370607f13eed779bcaa03051e6e9bf5a39fbfd"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "sha256": "d7dfb98ca906c146d679222ab28fea408e53124072e4745b26b88179d4c52d72",
+      "gitBlobOid": "7a3f9c697fe1e3a047b78b1205d9cab863ec3181",
+      "stagedSha256": "d7dfb98ca906c146d679222ab28fea408e53124072e4745b26b88179d4c52d72",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "d7dfb98ca906c146d679222ab28fea408e53124072e4745b26b88179d4c52d72"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaPlayComponents.cs",
+      "sha256": "c5c4906d4763ee2731165587e2f0002a7ed7aea1fbf1adb4d9c0a6aa1c4f423e",
+      "gitBlobOid": "6defe3177d09d11fee37e05dc88f45e186038c72",
+      "stagedSha256": "c5c4906d4763ee2731165587e2f0002a7ed7aea1fbf1adb4d9c0a6aa1c4f423e",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "c5c4906d4763ee2731165587e2f0002a7ed7aea1fbf1adb4d9c0a6aa1c4f423e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+      "sha256": "1541101bcd88fbf0f89f0f430358763496be802c0d2561092782790e51e392c2",
+      "gitBlobOid": "9d45227f499ad2c613a64381277caea013657f33",
+      "stagedSha256": "1541101bcd88fbf0f89f0f430358763496be802c0d2561092782790e51e392c2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "1541101bcd88fbf0f89f0f430358763496be802c0d2561092782790e51e392c2"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldRepair.cs",
+      "sha256": "beed2913a2f23433ce2bc42ef564655f2734abac6e109bf6df24ea3ed4d1d55b",
+      "gitBlobOid": "9d02f37ae30bf945634b8836171b8f1c6c0f0b26",
+      "stagedSha256": "beed2913a2f23433ce2bc42ef564655f2734abac6e109bf6df24ea3ed4d1d55b",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "beed2913a2f23433ce2bc42ef564655f2734abac6e109bf6df24ea3ed4d1d55b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldRepair.cs.meta",
+      "sha256": "a0959991a5792e204b3e25a985d353b1f67eaf19d17e8abc3e1bf6d9cf8bed04",
+      "gitBlobOid": "d395c93e4d831658eaedb6bae6244f7a5ecdae04",
+      "stagedSha256": "7b8609d5d75dc589cff580f68ca40ef04c3c52012d0247e31f15c8a5aa2bb658",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "a0959991a5792e204b3e25a985d353b1f67eaf19d17e8abc3e1bf6d9cf8bed04"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs",
+      "sha256": "39a2bda98566f57cec524c2f5efdf3ebef91316b9812e5d8a6fed56f6777add4",
+      "gitBlobOid": "03d05b4976bfba3e00c599b01bc1bfce72bdef4a",
+      "stagedSha256": "39a2bda98566f57cec524c2f5efdf3ebef91316b9812e5d8a6fed56f6777add4",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "39a2bda98566f57cec524c2f5efdf3ebef91316b9812e5d8a6fed56f6777add4"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs.meta",
+      "sha256": "20d1e1c82fc4c3e36a8ad14f1dbbdfda99dabbcceb413c2262f58e4760b55be9",
+      "gitBlobOid": "555c88eeeb2a06a456949f197143891e40462f1c",
+      "stagedSha256": "dd34ea0cb5ac4060758fad4abf99edb18db8e0d16502c1ebd85ea5bbb47b075c",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "20d1e1c82fc4c3e36a8ad14f1dbbdfda99dabbcceb413c2262f58e4760b55be9"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicTransport.cs",
+      "sha256": "a865f54ba2260ba9929e22c28fd0acb23faea325fb9739cedd7be8d331c29ce6",
+      "gitBlobOid": "f9c4fb979053641a8660aa958a30c20a505602d8",
+      "stagedSha256": "a865f54ba2260ba9929e22c28fd0acb23faea325fb9739cedd7be8d331c29ce6",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "a865f54ba2260ba9929e22c28fd0acb23faea325fb9739cedd7be8d331c29ce6"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicTransport.cs.meta",
+      "sha256": "a271494c35a8e737254d2b9e1488721ee48045de8470985cbf97118f76283e5c",
+      "gitBlobOid": "06b4d5efab28fdd9ea62b4ac8fca54bb4a7e9399",
+      "stagedSha256": "320d563dab09a647897778b265617b8bbfcfc446f0ad507bffb5d3a702f04e06",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "a271494c35a8e737254d2b9e1488721ee48045de8470985cbf97118f76283e5c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs",
+      "sha256": "04c6a32ec4082d591b435ec6852cc1b0d0d9f982eb29d9dd487ab8b15a25ff04",
+      "gitBlobOid": "530b5c2631ebd15002bd80c67937edf52273af04",
+      "stagedSha256": "04c6a32ec4082d591b435ec6852cc1b0d0d9f982eb29d9dd487ab8b15a25ff04",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "04c6a32ec4082d591b435ec6852cc1b0d0d9f982eb29d9dd487ab8b15a25ff04"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiSkirmishPublicObjectiveModel.cs.meta",
+      "sha256": "111e585c62b7fbb7937074127b9e19a7744356acaa6d9b70b02eeadbdab8a668",
+      "gitBlobOid": "2b7b1898461c6ebe6e4dbdd70aae1dc1c98e75a2",
+      "stagedSha256": "3b4965f4616feb32f6ae227d8ba5cfc63b3b08342c78ca6b297555bb5bd8d71f",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "111e585c62b7fbb7937074127b9e19a7744356acaa6d9b70b02eeadbdab8a668"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiVehicleRepairModel.cs",
+      "sha256": "d3348519393b7f19ffe5c71dccbf2009245cc66b51c600a89df4a71c5d425a40",
+      "gitBlobOid": "ca4eecf407d7958c19309d38307d68a803df19ae",
+      "stagedSha256": "d3348519393b7f19ffe5c71dccbf2009245cc66b51c600a89df4a71c5d425a40",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "d3348519393b7f19ffe5c71dccbf2009245cc66b51c600a89df4a71c5d425a40"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiVehicleRepairModel.cs.meta",
+      "sha256": "89710df56ef99dc43c4cb45c37a0af372f17d5f52f12b2bf6d9d5296d66c2e16",
+      "gitBlobOid": "3ea447c84afc4e50daf5f515030a4e7bbb66bf25",
+      "stagedSha256": "e234eec9b141cc31294bea4ccae83ac6947656a578f10fd4deb216e6c8c9af7a",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "89710df56ef99dc43c4cb45c37a0af372f17d5f52f12b2bf6d9d5296d66c2e16"
+    },
+    {
+      "path": "Assets/Tests/Editor/MatchHudNormalCameraZoomTests.cs",
+      "sha256": "fef57531a8d4a0ecc91dc2c929ac1913bb44851150d3ff7e0fe895be9988e315",
+      "gitBlobOid": "995ab40648cb054db46f8051d3e3958ebdbbbbb9",
+      "stagedSha256": "fef57531a8d4a0ecc91dc2c929ac1913bb44851150d3ff7e0fe895be9988e315",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "fef57531a8d4a0ecc91dc2c929ac1913bb44851150d3ff7e0fe895be9988e315"
+    },
+    {
+      "path": "Assets/Tests/Editor/MatchHudNormalCameraZoomTests.cs.meta",
+      "sha256": "52344929f84fb96e304f40582302907ee19c8bda7d8f69f67d5b5d3b2255a368",
+      "gitBlobOid": "157a71a990df8f1ff65a41bba5daef1387051e6a",
+      "stagedSha256": "6eff52ac96aa8899ac5496106324726a0d66313b1002500841b49cd390d05938",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "52344929f84fb96e304f40582302907ee19c8bda7d8f69f67d5b5d3b2255a368"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/S005ObservedSquadPageReceiptTests.cs",
+      "sha256": "d4367e75db70c12f525b809ac3289120e8399b4d1aa07092312bf9ee9de018a1",
+      "gitBlobOid": "a427268025232675972027d5f09c3678a91d1f80",
+      "stagedSha256": "d4367e75db70c12f525b809ac3289120e8399b4d1aa07092312bf9ee9de018a1",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "d4367e75db70c12f525b809ac3289120e8399b4d1aa07092312bf9ee9de018a1"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/S005ObservedSquadPageReceiptTests.cs.meta",
+      "sha256": "4e9d1e85518ea3552dff620f5290facd179ce7c033a22429f4bb2677fe87670f",
+      "gitBlobOid": "413d422a5054881366468eb2747413c5736abfd7",
+      "stagedSha256": "cbfc62c795001c86c990e898d4f276ed379e961567e007e3b0c05b2a1f811aa1",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "4e9d1e85518ea3552dff620f5290facd179ce7c033a22429f4bb2677fe87670f"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActiveRepairRecoveryIntegrationTests.cs",
+      "sha256": "c0a5854c012febe8839748405cbf13b49df21ffe3dbc82f10971eba9fc2fb7c9",
+      "gitBlobOid": "8587ddeb07979f5593779a492cfccd1a59750638",
+      "stagedSha256": "c0a5854c012febe8839748405cbf13b49df21ffe3dbc82f10971eba9fc2fb7c9",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "c0a5854c012febe8839748405cbf13b49df21ffe3dbc82f10971eba9fc2fb7c9"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActiveRepairRecoveryIntegrationTests.cs.meta",
+      "sha256": "2bfdc019ca9b408e15869ebb846f01f50e1b9aa60b3c56bee64d1d5f2b00f13f",
+      "gitBlobOid": "95bad21610a445d3da54bee235947a26dd845f24",
+      "stagedSha256": "3347c7e71256c8af9049b79a8dffa08a51c2fff1e1319bd36d63d4752a99919c",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "2bfdc019ca9b408e15869ebb846f01f50e1b9aa60b3c56bee64d1d5f2b00f13f"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActiveRepairRecoveryValidation.cs",
+      "sha256": "4c5fce7b5c0130130cb00345bb219e821ac69e1424c63702f88b566470df0a51",
+      "gitBlobOid": "aff3fe63589b72ce8e10e44d7e5475076f06beb2",
+      "stagedSha256": "0264693ae92eb3c02469b6ca15f29ec14d3a2fbabaf9da9df1bb746ab3a8bf37",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "4c5fce7b5c0130130cb00345bb219e821ac69e1424c63702f88b566470df0a51"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActiveRepairRecoveryValidation.cs.meta",
+      "sha256": "2be1a0faf40e02e5b596d86afb3a94127155d59e8b099c65a53cc228e49aa858",
+      "gitBlobOid": "5bb556ad3de84f09986bba253dcbd4eedb326b26",
+      "stagedSha256": "f5d8edaff22cdf392590b363a662fa192127226a72bd06e6cd7ecbafd86553b4",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "2be1a0faf40e02e5b596d86afb3a94127155d59e8b099c65a53cc228e49aa858"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishCameraFramingMeasurementTests.cs",
+      "sha256": "2b04e3f7943ad826c01d860a7082e9ec6be288b8d53b2663a5f30604baa44947",
+      "gitBlobOid": "264ba63d9970c21ee33e83c6aafd827631d1a62f",
+      "stagedSha256": "ee2025b9f6c76111aa84bd35c794e95eaa8d250fe3f7d0f99c763ecaa4f310f5",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "2b04e3f7943ad826c01d860a7082e9ec6be288b8d53b2663a5f30604baa44947"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishCameraPosedMeshReaderTests.cs",
+      "sha256": "354de0de9bac200b86dd1573562ed968b2260907a2d26a196f9e8faa1b01324e",
+      "gitBlobOid": "7d5869f0b1f305e99b8f72a481be7d791d351c70",
+      "stagedSha256": "354de0de9bac200b86dd1573562ed968b2260907a2d26a196f9e8faa1b01324e",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "354de0de9bac200b86dd1573562ed968b2260907a2d26a196f9e8faa1b01324e"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishCameraPosedMeshReaderTests.cs.meta",
+      "sha256": "79221e87eafd7316636496c05633a698c9fd272b86b7d7d97137e02afcdd4555",
+      "gitBlobOid": "aa85a7c49a60cca93f17583941bf02c59ffcf0ad",
+      "stagedSha256": "ac7d3d8c46d434e80a4fb1165d102d67548af1aada2a78d6abe6a6a95ac03fc2",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "79221e87eafd7316636496c05633a698c9fd272b86b7d7d97137e02afcdd4555"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyCommandDomainTests.cs",
+      "sha256": "0a595c7ac8db41cf4e1717a17b84b3cec497af8fe9fd26cccfd4d17e05514ffb",
+      "gitBlobOid": "805c6aa8cd12322c8b229cbdc322c84aa1eca1ef",
+      "stagedSha256": "0a595c7ac8db41cf4e1717a17b84b3cec497af8fe9fd26cccfd4d17e05514ffb",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "0a595c7ac8db41cf4e1717a17b84b3cec497af8fe9fd26cccfd4d17e05514ffb"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyCommandDomainTests.cs.meta",
+      "sha256": "ad86f894a633daba089d0591dcc029b913761cb404d1c52d797fe461d5720793",
+      "gitBlobOid": "f1e85306392aded7cb6bc13f32deac35b9280ac3",
+      "stagedSha256": "a5259ca26fdb6f2f733823072aadb5e2e72f8e80934eee02b8c167f9f26dd4a6",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "ad86f894a633daba089d0591dcc029b913761cb404d1c52d797fe461d5720793"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyObjectiveAllocationTests.cs",
+      "sha256": "c302f2c6a2d06d0b3eee4126b6c667d99b7e9e95ab93e53e836b457de304ab86",
+      "gitBlobOid": "25f2f672073337bce177b34eefc45fd9d0b4aa24",
+      "stagedSha256": "c302f2c6a2d06d0b3eee4126b6c667d99b7e9e95ab93e53e836b457de304ab86",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "c302f2c6a2d06d0b3eee4126b6c667d99b7e9e95ab93e53e836b457de304ab86"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyObjectiveAllocationTests.cs.meta",
+      "sha256": "79193c912a7039183fa48ecbc75ca7646cc0f346a2bdb71aa717f8c5c0adc2e7",
+      "gitBlobOid": "0cfb05dfbf67029f5a21d008abff0b6676fd49cc",
+      "stagedSha256": "af372c540642463f488192234b4aa5bb6732ffba9814876e6f613a82ce033c44",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "79193c912a7039183fa48ecbc75ca7646cc0f346a2bdb71aa717f8c5c0adc2e7"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyObjectiveNativeTests.cs",
+      "sha256": "f8db191343a6f02db0288ae3e73ae520d944ecaf26f87e4a1927995de14fff0f",
+      "gitBlobOid": "d50736bfd2480b7549563a8485e53dd2ff234762",
+      "stagedSha256": "f8db191343a6f02db0288ae3e73ae520d944ecaf26f87e4a1927995de14fff0f",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "f8db191343a6f02db0288ae3e73ae520d944ecaf26f87e4a1927995de14fff0f"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyObjectiveNativeTests.cs.meta",
+      "sha256": "15cad548ad9840343db7681530480367d0f33c169a56cdec9cde7f6491ce3152",
+      "gitBlobOid": "64336320195a3c2df5d03f73596dbb4701f9b195",
+      "stagedSha256": "e3644217fd2c10f8fbc78994abdace9a20410d30d9e0e5013909c9fd2187df88",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "15cad548ad9840343db7681530480367d0f33c169a56cdec9cde7f6491ce3152"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyObjectiveValidation.cs",
+      "sha256": "4b9d229cd032d3400b45d5399ecb32ef27a007ec07d2f63084ec7f6d5f83b972",
+      "gitBlobOid": "5c8af2709a81d50bf6b6bfeb46dd327d4bb80e93",
+      "stagedSha256": "4b9d229cd032d3400b45d5399ecb32ef27a007ec07d2f63084ec7f6d5f83b972",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "4b9d229cd032d3400b45d5399ecb32ef27a007ec07d2f63084ec7f6d5f83b972"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyObjectiveValidation.cs.meta",
+      "sha256": "a6fd7b81d412e84f6382fba70a74b9045a981e1843a43f2a6d4b799d11397477",
+      "gitBlobOid": "1e41b4ac592bf65b5002b55563eb71539cf68527",
+      "stagedSha256": "1555cb6388490a607fa6b98cc185aa7d1bc907f19066873ee30e5e4089357f19",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "a6fd7b81d412e84f6382fba70a74b9045a981e1843a43f2a6d4b799d11397477"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyVehicleRepairPolicyTests.cs",
+      "sha256": "68ed3262aaddd6faaebc4633fb1e3daf2717f7e68cd4adc0f35b035601869c08",
+      "gitBlobOid": "9224cc5a728e523f93067f1e19d2da7bbb5ac44c",
+      "stagedSha256": "68ed3262aaddd6faaebc4633fb1e3daf2717f7e68cd4adc0f35b035601869c08",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "68ed3262aaddd6faaebc4633fb1e3daf2717f7e68cd4adc0f35b035601869c08"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyVehicleRepairPolicyTests.cs.meta",
+      "sha256": "9b72939f85920ff12ed619348626633b7e35a38616feeb371c19478bfa4ff7a7",
+      "gitBlobOid": "12b5068e6f5da595c985044aa00d91cda62f2f5c",
+      "stagedSha256": "1a9ee5e9423ef7fce3953575de316b96d9d776685e4476cabebedfac78748531",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "9b72939f85920ff12ed619348626633b7e35a38616feeb371c19478bfa4ff7a7"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericGroundEnemyTests.cs",
+      "sha256": "33a621f1c71c7a3ac69e518b852c5a452758f01470a8c9e63ff13488a134ad12",
+      "gitBlobOid": "451d0a9ddc964d0beeb3c8738dc27e99905d0388",
+      "stagedSha256": "33a621f1c71c7a3ac69e518b852c5a452758f01470a8c9e63ff13488a134ad12",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "33a621f1c71c7a3ac69e518b852c5a452758f01470a8c9e63ff13488a134ad12"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericGroundEnemyTests.cs.meta",
+      "sha256": "20a8053662ef17c56839f43f82480df0d2aec92dcbac6381bae25fc867801725",
+      "gitBlobOid": "ff7c4c936b445b926be11e43ff328ed43b15f628",
+      "stagedSha256": "84f8b77cfd6b67e905e93ae7dee6b85bc728931bc1759c401e76db71f3e440de",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "20a8053662ef17c56839f43f82480df0d2aec92dcbac6381bae25fc867801725"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericMissionDispatchTests.cs",
+      "sha256": "bb93515b18f23c40dba4814f2ed35246120dd9c3477680de5eb2b5af42c31363",
+      "gitBlobOid": "6d9e98afb0bb5c41139a5d7165084e9de5fab7e3",
+      "stagedSha256": "bb93515b18f23c40dba4814f2ed35246120dd9c3477680de5eb2b5af42c31363",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "bb93515b18f23c40dba4814f2ed35246120dd9c3477680de5eb2b5af42c31363"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredLayoutBinderTests.cs",
+      "sha256": "29d7f46886a63ceb62da2b83a79d131d15f4094a93bdb6aa3d69f92835b90791",
+      "gitBlobOid": "10e57721a3f4ad77e31a1b7424c182e85004966a",
+      "stagedSha256": "29d7f46886a63ceb62da2b83a79d131d15f4094a93bdb6aa3d69f92835b90791",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "29d7f46886a63ceb62da2b83a79d131d15f4094a93bdb6aa3d69f92835b90791"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingNativeTestFixture.cs",
+      "sha256": "7fc886fe00319c3f7526c63c73038d075bef2370c050084575c1dbb434687faf",
+      "gitBlobOid": "37b7e1dc6313d436385b6b73be9122d2b368e9cf",
+      "stagedSha256": "d067a07443cc85d50a8c05e93490bfd9e5a2a4039a3c5b6b65b0bd411eff7961",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "7fc886fe00319c3f7526c63c73038d075bef2370c050084575c1dbb434687faf"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingNativeTestFixture.cs.meta",
+      "sha256": "c2df67b1d41152b7d7218298a19111587939c57da351283dc2b2c56f7b6c5973",
+      "gitBlobOid": "8a54848a4bfb76e9d6e1b53c6400e55e26d77784",
+      "stagedSha256": "0b15e96199ac3e641137ad025629f10de56ed18b2f7fdc4391f96e03bca50d67",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "c2df67b1d41152b7d7218298a19111587939c57da351283dc2b2c56f7b6c5973"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectFixtureTests.cs",
+      "sha256": "45c1e48d381290d6ec93043cce370d99f080d38b1116434e4d33eec388775517",
+      "gitBlobOid": "e131e7a50a9634aefc16ff38e04b89e4e838297e",
+      "stagedSha256": "45c1e48d381290d6ec93043cce370d99f080d38b1116434e4d33eec388775517",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "45c1e48d381290d6ec93043cce370d99f080d38b1116434e4d33eec388775517"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectFixtureTests.cs.meta",
+      "sha256": "b1acffcde618e14280ee586b073e7ac520e7b59148afcb0c775f94a6d2157428",
+      "gitBlobOid": "96698f1e96236b79f4383482802682f9f89effa7",
+      "stagedSha256": "78f0a6849762f1b03444eccad58d9571912e039750db34a5c293b5c1631a1870",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b1acffcde618e14280ee586b073e7ac520e7b59148afcb0c775f94a6d2157428"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs",
+      "sha256": "1ed379531c953432ab2a005a31617fd13c6966e885998dfe71f41f12f31100e1",
+      "gitBlobOid": "55e2fe01808ecacddea1f4db1115340ad55c2f9f",
+      "stagedSha256": "1ed379531c953432ab2a005a31617fd13c6966e885998dfe71f41f12f31100e1",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "138a6f5d6c60792ffd28d8873670a9649f3d3192ccf1dba0b39867be5ed2bb43",
+      "postValidationChange": "Removed indentation on one otherwise empty test-fixture line59; no executable text changed"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingSubjectTestFixture.cs.meta",
+      "sha256": "7967d424d0e965315797455047005743ee7d4533aca49f668eae318553407f20",
+      "gitBlobOid": "4ceaad2a5e6ca6ebf7d0b5bc3a3efed109b27810",
+      "stagedSha256": "bc7c06f398e2fec8658e3d61e9be4aa7e9bfb7d8b9613514fca418ccb4b91d9f",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "7967d424d0e965315797455047005743ee7d4533aca49f668eae318553407f20"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalSubsystemValidation.cs",
+      "sha256": "103aa62fbefa8795d611568b4f8fd934eb5c28e051e326bf320de820d4396ac8",
+      "gitBlobOid": "67e52826e1484675fdbc3293b86fd2e4c520b88f",
+      "stagedSha256": "aa3e47e3de20551f2a87d42aac61dad60ba4cf7cc4c1069aafea0fed4f5d43e4",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "103aa62fbefa8795d611568b4f8fd934eb5c28e051e326bf320de820d4396ac8"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointCodecTests.cs",
+      "sha256": "53628fd0cfe88883173b644c0e18a4dfdab9de07617510743f3233e4bf662612",
+      "gitBlobOid": "a6b7ad8b79528c57b07f3c58b02092713ce5e0d4",
+      "stagedSha256": "53628fd0cfe88883173b644c0e18a4dfdab9de07617510743f3233e4bf662612",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "53628fd0cfe88883173b644c0e18a4dfdab9de07617510743f3233e4bf662612"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointSnapshotTests.cs",
+      "sha256": "322850439934b5cd98f248382747dc04e857e008d0c97e1e00598b150438c4d0",
+      "gitBlobOid": "714b184057a73ddf84b6fb32a122d7b5b0df9568",
+      "stagedSha256": "322850439934b5cd98f248382747dc04e857e008d0c97e1e00598b150438c4d0",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "322850439934b5cd98f248382747dc04e857e008d0c97e1e00598b150438c4d0"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCodecJsonDiagnostic.cs",
+      "sha256": "224983a45d1ea45b9c1862dc084c5cfa9d76a3489bb60aaccc6c844c8511f11c",
+      "gitBlobOid": "0a32279b3d2aa9853bf6a92ef914140ca9ecff64",
+      "stagedSha256": "224983a45d1ea45b9c1862dc084c5cfa9d76a3489bb60aaccc6c844c8511f11c",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "224983a45d1ea45b9c1862dc084c5cfa9d76a3489bb60aaccc6c844c8511f11c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCodecJsonDiagnostic.cs.meta",
+      "sha256": "3d763528b60fbedc5eecbbcebbca3600734dcb951be34942f4c7eca7dfcb9ff8",
+      "gitBlobOid": "da9ffb89e5fb6b583949e2757d66ae91a22d6d45",
+      "stagedSha256": "09d010587fc83c8639475549947a6312a309e71d03341eb16ace94027599f411",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "3d763528b60fbedc5eecbbcebbca3600734dcb951be34942f4c7eca7dfcb9ff8"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativePublicGoalPresentationTests.cs",
+      "sha256": "e365027e3dfeec0c0a49992b2debf1ecc9e9b364e40ba1ff71364d614c90fecf",
+      "gitBlobOid": "1a87709f9da264db0aa4252825df97292f102fb6",
+      "stagedSha256": "e365027e3dfeec0c0a49992b2debf1ecc9e9b364e40ba1ff71364d614c90fecf",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "e365027e3dfeec0c0a49992b2debf1ecc9e9b364e40ba1ff71364d614c90fecf"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativePublicGoalPresentationTests.cs.meta",
+      "sha256": "4fabd9274fec2208b020caa4597f37a73aafd85724c1145f69c971e5bb9f6365",
+      "gitBlobOid": "8647db8237dfc7f07d34103e86a84a6d82b305a4",
+      "stagedSha256": "a9e45101e5aba02f07d06e6d1657e653ccf2ff2be586397cade7a54e7274ad3e",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "4fabd9274fec2208b020caa4597f37a73aafd85724c1145f69c971e5bb9f6365"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativePublicGoalPresentationValidation.cs",
+      "sha256": "aa51d24613b39a9a03aa7fcf4f0b1a66e2f86d44f817f4e5c60d005f8d911b35",
+      "gitBlobOid": "ba3bd0e4d29762e86de24bf5872babe1a651cdd0",
+      "stagedSha256": "aa51d24613b39a9a03aa7fcf4f0b1a66e2f86d44f817f4e5c60d005f8d911b35",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "aa51d24613b39a9a03aa7fcf4f0b1a66e2f86d44f817f4e5c60d005f8d911b35"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativePublicGoalPresentationValidation.cs.meta",
+      "sha256": "6064e33453860f18e63c0663294e6ea882e7630759e4ee7a4303bbbdbbf12cf3",
+      "gitBlobOid": "261e79d82925118cd64057eec6c7129cfc728da8",
+      "stagedSha256": "d7b9f7e75d161a7b80bd2dbeedb41edb3cafce5e2cdf85f07fe0e61fc6f80c62",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "6064e33453860f18e63c0663294e6ea882e7630759e4ee7a4303bbbdbbf12cf3"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativePublicSubjectPresentationTests.cs",
+      "sha256": "063f888769a3813b88bb1068ea7d912ba18544130cb0bff0b6cfa8c9d686424b",
+      "gitBlobOid": "959bf159b839da7a80e2297dc1993313e080d6c8",
+      "stagedSha256": "063f888769a3813b88bb1068ea7d912ba18544130cb0bff0b6cfa8c9d686424b",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "063f888769a3813b88bb1068ea7d912ba18544130cb0bff0b6cfa8c9d686424b"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativePublicSubjectPresentationTests.cs.meta",
+      "sha256": "6297a806b121376a205dfb6075b4d8ba01a73f597e0a3eb7550482ad4fa4eddd",
+      "gitBlobOid": "d0800daa2cde68dd3c68f3cc95add452134a019b",
+      "stagedSha256": "9a156b4a8325a9377a57af3667cb284e52aceecfe73168666dccf89bd165e02e",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "6297a806b121376a205dfb6075b4d8ba01a73f597e0a3eb7550482ad4fa4eddd"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRepairCheckpointHelperTests.cs",
+      "sha256": "b8e20e9e56e1ec4467e300ee704a46c889dd1d95b3817c105114857ae869968b",
+      "gitBlobOid": "31ccd503539fc2252d9271295cb827fb4575c622",
+      "stagedSha256": "b8e20e9e56e1ec4467e300ee704a46c889dd1d95b3817c105114857ae869968b",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "b8e20e9e56e1ec4467e300ee704a46c889dd1d95b3817c105114857ae869968b"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRepairCheckpointHelperTests.cs.meta",
+      "sha256": "de6d56017af790bdf6f0168574dd9c217c8be6875d57b8cb21c0bd4a32f37789",
+      "gitBlobOid": "b3bca3caae573cbd00dc8e945287739ea53284b8",
+      "stagedSha256": "34258de162a221f6d5d6d0efce4251d05cc8fecfa3b1784c807475ec87f7fa31",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "de6d56017af790bdf6f0168574dd9c217c8be6875d57b8cb21c0bd4a32f37789"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRepairWireTests.cs",
+      "sha256": "82cc36a738933fb444d9ed4e0638679b2094ff53dd6935df5dcb4026e8d927eb",
+      "gitBlobOid": "62038502414cce6c14b674d0b407e4d2a558c3e7",
+      "stagedSha256": "82cc36a738933fb444d9ed4e0638679b2094ff53dd6935df5dcb4026e8d927eb",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "82cc36a738933fb444d9ed4e0638679b2094ff53dd6935df5dcb4026e8d927eb"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRepairWireTests.cs.meta",
+      "sha256": "b3133e283aca9a3dd13350a001af4df97716fe7cb54bc40d2c7fc3cab936f7d8",
+      "gitBlobOid": "f9b766fb3d012044232e6735140f7646f612ca00",
+      "stagedSha256": "4ebeac2f53afba4e302a58dc2b2751dfbab7db6bb7a14156e645e8bda49a3c8c",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b3133e283aca9a3dd13350a001af4df97716fe7cb54bc40d2c7fc3cab936f7d8"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs",
+      "sha256": "deb250b6be5ba4699cf2fd5091b9bc7fe76244f759a599341eff263a21d6d05b",
+      "gitBlobOid": "3f4e57ab16c9c0ded340135029628d847f4da04d",
+      "stagedSha256": "deb250b6be5ba4699cf2fd5091b9bc7fe76244f759a599341eff263a21d6d05b",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "deb250b6be5ba4699cf2fd5091b9bc7fe76244f759a599341eff263a21d6d05b"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicObjectiveHudTests.cs",
+      "sha256": "78c6579d0c7723c1a4514a36429503df352c350fb6858deb2dc303dee547cfe2",
+      "gitBlobOid": "4a0aeea0591097c36d3accb00c0268aceba4ae3e",
+      "stagedSha256": "78c6579d0c7723c1a4514a36429503df352c350fb6858deb2dc303dee547cfe2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "78c6579d0c7723c1a4514a36429503df352c350fb6858deb2dc303dee547cfe2"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicObjectiveHudTests.cs.meta",
+      "sha256": "1f9cb2d35f08de09438dfc04d7506fa2186174feb2163474628d9f988cc06533",
+      "gitBlobOid": "6d8e3586a24e721391dac5754d1f78e5504877f3",
+      "stagedSha256": "32cb5e71fae411658afd75843190459bdd67e3b6465383274127244760e0dae3",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "1f9cb2d35f08de09438dfc04d7506fa2186174feb2163474628d9f988cc06533"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicOriginalTransportProjectionTests.cs",
+      "sha256": "b80ceed330337856ff939febd66ac14db3bc31d87f798770187a65dcc7420929",
+      "gitBlobOid": "12cd3f99a1d1bf01eb7adf74bcb3bb917ee65da7",
+      "stagedSha256": "b80ceed330337856ff939febd66ac14db3bc31d87f798770187a65dcc7420929",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "b80ceed330337856ff939febd66ac14db3bc31d87f798770187a65dcc7420929"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicOriginalTransportProjectionTests.cs.meta",
+      "sha256": "ee901e5a4fd5404a8d76ad522b93da6f4073ebab1dd6d4a3859fee4b6a253f75",
+      "gitBlobOid": "733a51528daf857b93fd6ec2ffffb8efa2d11649",
+      "stagedSha256": "ed3586636053e8ef06c9a0eac2f04174fe53912b70eda354155ddb97220304c9",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "ee901e5a4fd5404a8d76ad522b93da6f4073ebab1dd6d4a3859fee4b6a253f75"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicRepairHudTests.cs",
+      "sha256": "1565be9a9f60082023a00554955d1c10eee5436457bee9814454d353a10e27dd",
+      "gitBlobOid": "132d3e30541e4c437409e4ced9ba1f128d6bfb43",
+      "stagedSha256": "1565be9a9f60082023a00554955d1c10eee5436457bee9814454d353a10e27dd",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "1565be9a9f60082023a00554955d1c10eee5436457bee9814454d353a10e27dd"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicRepairHudTests.cs.meta",
+      "sha256": "0a5f18665587347ed62f987e4ef6ef63a72984901103c91df36d9f79c9a59342",
+      "gitBlobOid": "d2de3a6a4c9149a16044687e785a6199dceefe3d",
+      "stagedSha256": "6cbe2b64fad219f6e4a3629108918338654cf799301558a7e985dd352e198830",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "0a5f18665587347ed62f987e4ef6ef63a72984901103c91df36d9f79c9a59342"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicUnloadNativeTests.cs",
+      "sha256": "dbf2727ae60ecd8ba062da022dd4e6e42c5c4a18b893d0750281622c65ce37c2",
+      "gitBlobOid": "7899e1a145b8f76c2f6e3a01aae4b7b9a5c27ac5",
+      "stagedSha256": "dbf2727ae60ecd8ba062da022dd4e6e42c5c4a18b893d0750281622c65ce37c2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "dbf2727ae60ecd8ba062da022dd4e6e42c5c4a18b893d0750281622c65ce37c2"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPublicUnloadNativeTests.cs.meta",
+      "sha256": "0b2f0644a52e38875261ecdf5db32ccbd1fe107bc008c5c8d90f88fefcdc19d8",
+      "gitBlobOid": "096e5ab8c202a3ee96dca1bfddd04f66d152204b",
+      "stagedSha256": "a2682543d80f1ec34c28a2d39c18dc1b1ddfa53260277a8fd63e35e12fd3c1f2",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "0b2f0644a52e38875261ecdf5db32ccbd1fe107bc008c5c8d90f88fefcdc19d8"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedObjectivePublicWaveValidation.cs",
+      "sha256": "d5b9a398264d05e995a5befb26a3f7170ae99e16a709eee1245ba13320faad6f",
+      "gitBlobOid": "4929828dc548d8f68c2f007b8be78acb29582bc0",
+      "stagedSha256": "87d4989f8085ebe76769e21d354bebc8180a2b38fb7dacf78dfe752cad62a277",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "d5b9a398264d05e995a5befb26a3f7170ae99e16a709eee1245ba13320faad6f"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedObjectivePublicWaveValidation.cs.meta",
+      "sha256": "de5d1a5d4dae39576f6a1fa32f08be148e3b3ae7fb0b2d94840945f708df96b5",
+      "gitBlobOid": "d726dd9c99c00e489fc322adc538b961f31a0c48",
+      "stagedSha256": "07fa2190d62988e1dd317d02bdc2d55f743ffef3c991881a55fd4615e75ecda7",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "de5d1a5d4dae39576f6a1fa32f08be148e3b3ae7fb0b2d94840945f708df96b5"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedProductionNativeValidation.cs",
+      "sha256": "5004175abd74000447c4073b1ced40d374c267f24025543c9ad40b3cbb8c8798",
+      "gitBlobOid": "53b06c5b33af48880daec7168f8f6433a947753b",
+      "stagedSha256": "43c56a125dc03e622f3c82d1823b65e21181352b45373ab10ff14c8e0f1ad5ad",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "5004175abd74000447c4073b1ced40d374c267f24025543c9ad40b3cbb8c8798"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedProductionNativeValidation.cs.meta",
+      "sha256": "b8dc220391331664ff50b3fa36a6352555542d825d7fb8cd09cc624b0e0542a6",
+      "gitBlobOid": "3f8997be350c230fa068666b9310c298c4e324fc",
+      "stagedSha256": "b063050a2a4143e154608c9e929e888cbd0bab078874b2d606526a3cd747ca15",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "b8dc220391331664ff50b3fa36a6352555542d825d7fb8cd09cc624b0e0542a6"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedProductionWaveValidation.cs",
+      "sha256": "aad95f6a4722e1922d82ab4f0e037e1071d873dab80967bfe9edb36b2fa98748",
+      "gitBlobOid": "d284fda8dbcbc8606b620989b274d51d2a4f8a9e",
+      "stagedSha256": "d69640053c13e347cebf8407e399eb15ab2c9710f969c22908c481df42f8f9c7",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "aad95f6a4722e1922d82ab4f0e037e1071d873dab80967bfe9edb36b2fa98748"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedProductionWaveValidation.cs.meta",
+      "sha256": "1b2f8e2da9855896a87b35196d3e2049a9c81c0bc0c1078f2e274d20c4d0f09a",
+      "gitBlobOid": "12546d9e6123cbf8eaec04de38ffd11515e0777e",
+      "stagedSha256": "b1e50c908558c95f56b27099b3083603a9c769dd419d5a85cb9e6020a887ed3d",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "1b2f8e2da9855896a87b35196d3e2049a9c81c0bc0c1078f2e274d20c4d0f09a"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs",
+      "sha256": "dbf5c2c7b0c8708c3b9b35e958c0fd26465015bf32a418537dfafa792e04de87",
+      "gitBlobOid": "8a7a40ec5f6eb0bafa95b107edba234f8f112fdd",
+      "stagedSha256": "dbf5c2c7b0c8708c3b9b35e958c0fd26465015bf32a418537dfafa792e04de87",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "dbf5c2c7b0c8708c3b9b35e958c0fd26465015bf32a418537dfafa792e04de87"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs.meta",
+      "sha256": "0674ebf32cc4544ef348cfcd333b41c6cd550e3a700a03adfb169872a43e8c9a",
+      "gitBlobOid": "e7111a3e82a77fd2c000e8bbe93309428f30af34",
+      "stagedSha256": "eeb9df859870913db3530fb66ebea8f3d40ce11fe130b186788c04e429c6b26c",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "0674ebf32cc4544ef348cfcd333b41c6cd550e3a700a03adfb169872a43e8c9a"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/VehicleRepairRulesTests.cs",
+      "sha256": "fbef855760d90537c2f66457eaf99f8991fc3b0fc5da939b1bb329d5146cc8b2",
+      "gitBlobOid": "73dd398611ca58a0f525b65e68c912726f8dc873",
+      "stagedSha256": "fbef855760d90537c2f66457eaf99f8991fc3b0fc5da939b1bb329d5146cc8b2",
+      "gitTextNormalizationOnly": false,
+      "nativeValidationSha256": "fbef855760d90537c2f66457eaf99f8991fc3b0fc5da939b1bb329d5146cc8b2"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/VehicleRepairRulesTests.cs.meta",
+      "sha256": "c99b414fa97099aa4a7eeebfd056de293ce37c7a6035df02538e50c2f695cd76",
+      "gitBlobOid": "da4cf87e424096ff903f1f75e5c64daa0610e8ac",
+      "stagedSha256": "c002f797c0432c83f5f2388753d61cd114b8dd700b2d803a9ab6e7e1b03b22e7",
+      "gitTextNormalizationOnly": true,
+      "nativeValidationSha256": "c99b414fa97099aa4a7eeebfd056de293ce37c7a6035df02538e50c2f695cd76"
+    }
+  ],
+  "excluded": [
+    "Unaccepted S005 camera calibration Resource and meta",
+    "All historical/source draft packages not imported",
+    "Unrelated evidence logs"
+  ],
+  "missionReadiness": "Pending all normal-input/localization/recovery/player/device gates",
+  "archive": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\shared-production-native-20261015\\run09\\checked-native-shared-controls-and-placement.zip",
+  "gitTextNormalizationOnlyFiles": 95
+}

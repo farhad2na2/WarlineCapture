@@ -1,0 +1,39 @@
+{
+  "result": "Failed",
+  "sourceHash": "9d3ed138e68dadaed3c935defe27c5657e275b236d724584dfecc3ed8996acfa",
+  "wrapperExit": 2,
+  "seed": 155926,
+  "locale": "en",
+  "normalInput": true,
+  "normalBudget": true,
+  "airportConstruction": "Passed with3 legal fallback sites",
+  "strikeDelivery": "Passed paid520M/native runway receipt1005",
+  "timing": "Strike delivered just over13min, outside8\u201312min target",
+  "failedStage": "stage2 normal factory selection; three full-map camera gestures did not expose an unobscured world tap",
+  "failureMarker": "[SkirmishS003HelipadProbe] result=Failed reason=baseGuardCameraFocusNotObserved",
+  "cyclePassed": false,
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-652-neutral-selection-bounded-search-pre-source-manifest.json",
+  "postManifest": "final-652-native-selection-camera-failure-post-source-manifest.json",
+  "trace": "s005-aria-live-155926-en-dab569e3252b4e9ebb65c48a42889f81.jsonl",
+  "log": "native-652-neutral-selection-bounded-search-strike-cycle.log",
+  "inputAudit": {
+    "recordedContacts": 128,
+    "completedContacts": 128,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 122
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-dab569e3252b4e9ebb65c48a42889f81.jsonl.touch.jsonl",
+    "sha256": "4a7c0c8bd3cc79fa35faafd688ed4cb04acab202c954b2019dd43f60d8c849c3"
+  },
+  "diagnosticAfterExit": "Read-only CLI command could not connect after owned Editor had exited; no gameplay mutation"
+}

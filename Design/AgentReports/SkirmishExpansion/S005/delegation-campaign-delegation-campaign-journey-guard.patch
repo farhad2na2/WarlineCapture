@@ -1,0 +1,65 @@
+--- a/Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs
++++ b/Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs
+@@ -30,6 +30,8 @@
+         private static int gatePoseCheckedEntry = -1;
+         private static double missingDefenseInstructionSince, missingDefenseStatusSince;
+         private static int defenseStatusCapture = -1;
++        private static double staleSelectionCueSince;
++        private static int staleSelectionCueKey = -1;
+         private static void TickGameView()
+         {
+             if (insideGameView || stage != 2 || !SessionState.GetBool(Journey, false) || !EditorApplication.isPlaying) return;
+@@ -78,6 +80,7 @@
+             SessionState.SetBool(SharedCueRegression, false);
+             SessionState.SetBool(Journey, true);
+             entry = mission; journeyStep = 0; lastJourneyAction = null;
++            staleSelectionCueSince = 0; staleSelectionCueKey = -1;
+         }
+ 
+         // Editor replay of visible controls and screen-position input. Does not alter
+@@ -191,6 +194,10 @@
+             Button button = cue != null ? targetRect?.GetComponent<Button>() : null;
+             if (entry % 5 == 1 && trainingWaitEntry == entry && button?.name == "BuildCommand")
+                 throw new InvalidOperationException("M2 repeated Build guidance after recruitment was accepted.");
++            // The rendered cue can trail the public selection state. Select is a
++            // mode toggle, so replaying the old cue can undo the mode immediately
++            // before a queued Touch release is consumed. Never replay that lag.
++            if (WaitForSelectionCueToSettle(button, now)) return;
+             if (button == null && Ready(aria.ShowMeButton)) button = aria.ShowMeButton;
+             if (button != null)
+             {
+@@ -231,6 +238,34 @@
+             CaptureJourney("lesson-" + journeyStep + "-world"); RecordAction(worldAction, now);
+         }
+ 
++        private static bool WaitForSelectionCueToSettle(Button button, double now)
++        {
++            var target = default(Game.UI.Contracts.UiMissionTutorialTarget);
++            bool stale = button?.name == "SelectCommand" &&
++                UiShellRuntimeGateway.TryReadMissionTutorialTarget(out target) &&
++                (!target.NeedsSelection || UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state) &&
++                    state.ActiveCommandMode == TacticalCommandMode.Select);
++            if (!stale)
++            {
++                if (staleSelectionCueSince != 0)
++                    Debug.Log("[CampaignPlayerJourney] selection-cue-settled seconds=" +
++                        (now - staleSelectionCueSince).ToString("F3"));
++                staleSelectionCueSince = 0; staleSelectionCueKey = -1; return false;
++            }
++            int key = entry * 100 + journeyStep;
++            if (staleSelectionCueSince == 0 || staleSelectionCueKey != key)
++            {
++                staleSelectionCueSince = now; staleSelectionCueKey = key;
++                CaptureJourney("lesson-" + journeyStep + "-stale-selection-cue");
++                Debug.Log("[CampaignPlayerJourney] selection-cue-deferred lesson=" + journeyStep +
++                    " publicSelectionSatisfied=" + !target.NeedsSelection + " actionInjected=0");
++            }
++            if (now - staleSelectionCueSince > 3)
++                throw new InvalidOperationException("Select guidance disagreed with current public selection/mode for over 3 seconds; lesson=" + journeyStep);
++            waitUntil = now + .1;
++            return true;
++        }
++
+         private static void RecordAction(string action, double now)
+         {
+             Debug.Log("[CampaignPlayerJourney] action=" + action);

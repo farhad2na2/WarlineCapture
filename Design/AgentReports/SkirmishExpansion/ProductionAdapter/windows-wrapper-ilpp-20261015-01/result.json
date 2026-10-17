@@ -1,0 +1,107 @@
+{
+  "result": "PassedOwnedProcessExitRegression",
+  "cases": [
+    {
+      "case": "fast-zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "log": "fast-zero.log"
+    },
+    {
+      "case": "fast-nonzero",
+      "expected": 37,
+      "actual": 37,
+      "passed": true,
+      "log": "fast-nonzero.log"
+    },
+    {
+      "case": "refresh-zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "log": "refresh-zero.log"
+    },
+    {
+      "case": "refresh-nonzero",
+      "expected": 37,
+      "actual": 37,
+      "passed": true,
+      "log": "refresh-nonzero.log"
+    },
+    {
+      "case": "no-process-exit",
+      "expected": 37,
+      "actual": 37,
+      "passed": true,
+      "log": "no-process-exit.log"
+    },
+    {
+      "case": "timeout",
+      "expected": 124,
+      "actual": 124,
+      "passed": true,
+      "log": "timeout.log"
+    },
+    {
+      "case": "fatal-before-timeout",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "log": "fatal-before-timeout.log"
+    },
+    {
+      "case": "fatal-over-zero",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "log": "fatal-over-zero.log"
+    },
+    {
+      "case": "compiler-before-timeout",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "log": "compiler-before-timeout.log"
+    },
+    {
+      "case": "compiler-over-zero",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "log": "compiler-over-zero.log"
+    },
+    {
+      "case": "compiler-warning-zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "log": "compiler-warning-zero.log"
+    },
+    {
+      "case": "compiler-split-line-zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "log": "compiler-split-line-zero.log"
+    },
+    {
+      "case": "entities-ilpp-before-timeout",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "log": "entities-ilpp-before-timeout.log"
+    },
+    {
+      "case": "entities-ilpp-over-zero",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "log": "entities-ilpp-over-zero.log"
+    }
+  ],
+  "output_directory": "D:\\Projects\\WarlineCapture\\Temp\\InvokeUnityProcessExitTests\\canary-ofxw6o5v",
+  "unity_launched": false,
+  "assets_changed": false,
+  "scope": "Actual InvokeUnity.ps1 and Windows PowerShell5.1 with freshly compiled owned synthetic child EXE; no log-only success acceptance"
+}

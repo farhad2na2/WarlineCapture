@@ -1,0 +1,211 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005AriaApproachReadOnly1153.cs",
+      "entry": "S005AriaApproachReadOnly1153.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 114,
+      "executeMs": 15,
+      "assemblyName": "PipelineRunScript_S005AriaApproachReadOnly1153_f643decd537a44b1857b919a715c5cd4",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyActualPublicProjection",
+        "available": true,
+        "worldFrame": 10700,
+        "capturedTime": 288.576,
+        "observationFrame": 10700,
+        "attempt": "expanded-s005-104734-773a0e021d7d417796bcf7c81202b96e",
+        "seed": 104734,
+        "sessionPhase": "Playing",
+        "active": true,
+        "expanded": true,
+        "nativeCommandInputCount": 1,
+        "nativeGameplayCount": 1,
+        "nativeCommandMode": "None",
+        "nativeSelectionMode": false,
+        "publishedAttackMode": false,
+        "publishedSelectionMode": false,
+        "publishedSelectionVisible": false,
+        "publishedSelectedCount": 0,
+        "page": 0,
+        "pageCount": 2,
+        "totalGroups": 10,
+        "selectedGroups": 0,
+        "selectedOffPage": 0,
+        "rosterRevision": 696281997,
+        "assaultMask": 31,
+        "structureMask": 4,
+        "selectedMask": 0,
+        "attackOrderMask": 3,
+        "selectionPresent": true,
+        "nativePage": 0,
+        "nativePageSize": 5,
+        "nativeSelectedGroupCount": 0,
+        "advanceGroundAvailable": false,
+        "advanceGroundId": 0,
+        "advanceScreenX": 0,
+        "advanceScreenY": 0,
+        "advancePreferred": false,
+        "enemyBaseTargetAvailable": false,
+        "focusEnemyAvailable": true,
+        "assaultDistanceVisible": true,
+        "nearestFriendlyObjectiveDistance": 22.5000114,
+        "planIntent": "SelectSquad",
+        "assaultIssued": 0,
+        "structureOrdered": 0,
+        "assaultSelecting": 1,
+        "pagedToAssault": 1,
+        "pagesOrdered": 0,
+        "assaultPageSeen": 0,
+        "lastProgressAt": 231.350555,
+        "assaultDistanceObserved": 0,
+        "bestAssaultDistance": 0,
+        "objectiveProgressAt": 231.350555,
+        "touchPhase": "Aiming",
+        "actions": 123,
+        "attempts": 0,
+        "touchTargetId": -9821452,
+        "touchGoalId": 10000,
+        "gestureRequested": 0,
+        "observedKind": "Control",
+        "observedTargetId": -9821452,
+        "observedGoalId": 10000,
+        "observedFrame": 10700,
+        "drawerPresent": true,
+        "groupsPresent": true,
+        "drawer": [
+          {
+            "slot": 0,
+            "groupId": 1,
+            "role": "Rifle",
+            "alive": 3,
+            "selected": 0,
+            "lastOrder": "Attack"
+          },
+          {
+            "slot": 1,
+            "groupId": 2,
+            "role": "Rifle",
+            "alive": 2,
+            "selected": 0,
+            "lastOrder": "Attack"
+          },
+          {
+            "slot": 2,
+            "groupId": 3,
+            "role": "Rocketeer",
+            "alive": 4,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "slot": 3,
+            "groupId": 4,
+            "role": "Car",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "slot": 4,
+            "groupId": 5,
+            "role": "ApcArmored",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          }
+        ],
+        "groups": [
+          {
+            "groupId": 1,
+            "role": "Rifle",
+            "alive": 3,
+            "selected": 0,
+            "lastOrder": "Attack"
+          },
+          {
+            "groupId": 2,
+            "role": "Rifle",
+            "alive": 2,
+            "selected": 0,
+            "lastOrder": "Attack"
+          },
+          {
+            "groupId": 3,
+            "role": "Rocketeer",
+            "alive": 4,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 4,
+            "role": "Car",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 5,
+            "role": "ApcArmored",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 11,
+            "role": "Tanker",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 12,
+            "role": "LogisticsTruck",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 15,
+            "role": "Rocketeer",
+            "alive": 4,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 16,
+            "role": "Tanker",
+            "alive": 1,
+            "selected": 0,
+            "lastOrder": "None"
+          },
+          {
+            "groupId": 17,
+            "role": "Rifle",
+            "alive": 4,
+            "selected": 0,
+            "lastOrder": "None"
+          }
+        ],
+        "selectedCohort": [],
+        "gameplayOrPresentationWrites": false,
+        "callbacksRegistered": false,
+        "hiddenActorReads": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,27 @@
+{
+  "historical_commit": "81569142d",
+  "git_show_stdout_sha256": "b1da79e7d52f17a20201faa5ec78bdd4df339969d66300d053a690d16531595e",
+  "historical_fields_in_order": [
+    "Version",
+    "SessionId",
+    "CatalogId",
+    "SetupHash",
+    "ContentHash",
+    "OperationMapId",
+    "LayoutId",
+    "MapMetadataHash",
+    "WorldTime",
+    "UnityTime",
+    "Frame",
+    "MissileVisuals",
+    "MissileStates",
+    "DropVisuals",
+    "Support",
+    "Actors",
+    "MapReferences",
+    "Banks",
+    "SessionParts"
+  ],
+  "production_and_independent_test_fields_match": true,
+  "native_execution": false
+}

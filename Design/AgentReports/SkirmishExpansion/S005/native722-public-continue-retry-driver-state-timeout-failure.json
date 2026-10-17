@@ -1,0 +1,33 @@
+{
+  "result": "Failed",
+  "sourceHash": "ba35c99af680bae25aa9df70c9a55c8b55ebdcd771647f49150301b5a88b2566",
+  "sourceUnchanged": true,
+  "preManifest": "final-721-current-aria-en-seed155926-post-source-manifest.json",
+  "postManifest": "final-722-public-continue-retry-driver-timeout-post-source-manifest.json",
+  "wrapperExit": 2,
+  "log": "native-722-current-savecontinue-en-seed104734.log",
+  "logSha256": "11124b51496a68fa0a5cb7e33e607b725e60c20cf1d98359b1ddd7e9e5251263",
+  "trace": "s005-aria-live-104734-en-899beb800c5e4692817c7a5014e35cc7.jsonl",
+  "inputAudit": {
+    "recordedContacts": 11,
+    "completedContacts": 11,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 6
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-en-899beb800c5e4692817c7a5014e35cc7.jsonl.touch.jsonl",
+    "sha256": "983aa547c608860648aefce69b1fb450419940f81cdbb255fe12c92239ac9779"
+  },
+  "reason": "Save/Resume driver timed out at step3 after Continue retry; native ExitMenu/EnterMatchHud completed while driver waited for no session",
+  "gameplayMutation": false,
+  "nativeRecoveryCertified": false,
+  "playerReady": false
+}

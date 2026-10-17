@@ -1,0 +1,829 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.UI.Contracts;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// PREPARED, NOT COMPILED/RUN: narrow genuine paid Drone populated-fog native Save/Continue.
+// Public Touch Scan/ Pause / Save & Exit / Continue; real saved bytes, no knowledge injection.
+// Scan destination uses publicly presented objective geometry, never the hidden actor transform.
+// Native Touch legal IntelStation placement; no Airport is created or injected.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005PopulatedFogRecovery1150
+{
+    static SkirmishBattleCatalogConfig shippingCatalog,candidateCatalog;
+    static IDisposable candidateCatalogScope;
+    static string shippingCatalogSnapshot;
+    static void BindScopedCandidateCatalog()
+    {
+        shippingCatalog=Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName);
+        if(shippingCatalog==null||SkirmishBattleCatalogConfig.Load()!=shippingCatalog)throw new InvalidOperationException("Shipping catalog missing or another Editor candidate already owns catalog.");
+        shippingCatalogSnapshot=EditorJsonUtility.ToJson(shippingCatalog);
+        if(!shippingCatalog.TryGet("S005",out var shipped)||shipped.Status!=SkirmishBattleCatalogStatus.Planned||shipped.PlayableScenarioIndex!=-1||shipped.IsPlayable)throw new InvalidOperationException("This unpublished Editor candidate fixture expects shipping S005 Planned/nonplayable.");
+        var definition=AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset");
+        if(definition==null||definition.CatalogId!="S005"||definition.DefinitionId!="skirmish.s005")throw new InvalidOperationException("Current authored S005 definition identity missing; no invented candidate binding.");
+        var rows=new SkirmishBattleCatalogEntry[shippingCatalog.Entries.Count];int changed=0;
+        for(int i=0;i<rows.Length;i++){rows[i]=shippingCatalog.Entries[i];if(rows[i].ScenarioId!="S005")continue;changed++;rows[i].Status=SkirmishBattleCatalogStatus.Playable;rows[i].PlayableScenarioIndex=SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex;rows[i].DefinitionId=definition.DefinitionId;}
+        if(changed!=1)throw new InvalidOperationException("Expected exactly one S005 catalog row.");
+        candidateCatalog=ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();candidateCatalog.hideFlags=HideFlags.HideAndDontSave;candidateCatalog.Configure(rows);
+        if(!candidateCatalog.TryValidate(out var error))throw new InvalidOperationException("Editor candidate catalog invalid: "+error);
+        for(int i=0;i<rows.Length;i++)if(JsonUtility.ToJson(rows[i])!=JsonUtility.ToJson(candidateCatalog.Entries[i]))throw new InvalidOperationException("Candidate row copy changed unrelated fields.");
+        candidateCatalogScope=SkirmishBattleCatalogConfig.UseEditorValidationCatalog(candidateCatalog);
+        RequireCandidateCatalog();Debug.Log("[S005PopulatedFogRecoveryCandidateCatalog] result=ScopedEditorOnly onlyS005PlayableIndexDefinitionChanged=1 otherEntriesCopiedExactly=1 shippingCatalogModified=0 publicationReady=0");
+    }
+    static void RequireCandidateCatalog()
+    {
+        if(candidateCatalog==null||candidateCatalogScope==null||SkirmishBattleCatalogConfig.Load()!=candidateCatalog||EditorJsonUtility.ToJson(shippingCatalog)!=shippingCatalogSnapshot||!candidateCatalog.TryGet("S005",out var row)||!row.IsPlayable||row.PlayableScenarioIndex!=SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex||row.DefinitionId!="skirmish.s005")throw new InvalidOperationException("Scoped candidate/shipping catalog authority changed.");
+    }
+    static void DisposeCandidateCatalog()
+    {
+        candidateCatalogScope?.Dispose();candidateCatalogScope=null;
+        if(candidateCatalog!=null)UnityEngine.Object.DestroyImmediate(candidateCatalog);candidateCatalog=null;
+        if(shippingCatalog!=null&&shippingCatalogSnapshot!=null&&(SkirmishBattleCatalogConfig.Load()!=shippingCatalog||EditorJsonUtility.ToJson(shippingCatalog)!=shippingCatalogSnapshot))throw new InvalidOperationException("Shipping catalog did not restore unchanged after scoped Editor candidate.");
+        Debug.Log("[S005PopulatedFogRecoveryCandidateCatalogCleanup] result=Passed scopeDisposed=1 cloneDestroyed=1 shippingCatalogRestoredUnchanged=1 publicationReady=0");
+    }
+    static readonly Type CleanupMarker=typeof(Entity).Assembly.GetType("Unity.Entities.CleanupEntity",true);
+    static bool IsDestroyedCleanupShell(EntityManager em,Entity actor)
+    {
+        if(!em.Exists(actor))return false;
+        using var types=em.GetComponentTypes(actor,Allocator.Temp);bool marker=false;
+        foreach(var component in types)
+        {
+            if(component.GetManagedType()==CleanupMarker){marker=true;continue;}
+            if(!component.IsCleanupComponent)return false;
+        }
+        return marker;
+    }
+    static bool OldPhysicalOrNonCleanupRemains(EntityManager em,Entity old)
+    {return OldPhysicalActorRemains(em,old)||(em.Exists(old)&&!IsDestroyedCleanupShell(em,old));}
+    static bool OldPhysicalActorRemains(EntityManager em,Entity old)
+    {return em.Exists(old)&&(em.HasComponent<SkirmishAttemptOwnedComponent>(old)||em.HasComponent<RuntimeBuildingCombatInfo>(old)||em.HasComponent<OperationMapBuildingComponent>(old)||em.HasComponent<LocalTransform>(old)||em.HasComponent<UnitHealth>(old));}
+    static string saveRoot,nativeSavePath,droneStableId,targetStableId;
+    static string checkpointArchive=>Path.Combine(Path.GetDirectoryName(touchPath),"native1150-populated-fog-native-checkpoint.json");
+    static string profileEvidence=>Path.Combine(Path.GetDirectoryName(touchPath),"native1150-inherited-profile-path.json");
+    static bool nativeRecoveryObserved,savedDescriptorRead,startupTickTransferred;
+    static float pausedWorldTime,savedElapsed,savedAge,restoredAge,restoredElapsed,restoredWorldTime;
+    static double savedWorldTime;
+    static int savedFrame;
+    static SkirmishCapacityComponent pausedCapacity;
+    static SkirmishContactKnowledgeElement pausedContact;
+    static SkirmishContactLedgerElement pausedLedger;
+    static readonly List<Entity> oldBattlefield=new();
+    static double continueStableAt,continueAttemptAt;
+    static Vector2 continuePoint;
+    static Type NativeProjection=>typeof(SkirmishExpandedLaunchProjection).Assembly.GetType("Game.Composition.SkirmishLaunchProjection",true);
+    static MethodInfo NativeProjectionMethod(string name)=>NativeProjection.GetMethod(name,BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)??throw new MissingMethodException(name);
+    static bool NativeTryGetMatch(EntityManager em,out Entity liveSession,out SkirmishMatchState match)
+    {object[] a={em,default(Entity),default(SkirmishMatchState)};bool found=(bool)NativeProjectionMethod("TryGet").Invoke(null,a);liveSession=(Entity)a[1];match=(SkirmishMatchState)a[2];return found;}
+    static float NativeReadElapsed(EntityManager em,Entity liveSession,in SkirmishMatchState match)=>(float)NativeProjectionMethod("ReadMatchElapsedSeconds").Invoke(null,new object[]{em,liveSession,match});
+    static bool NativeSimulationActive(EntityManager em)=>(bool)NativeProjectionMethod("IsSimulationActive").Invoke(null,new object[]{em});
+    static object Field(object value,string name)=>value.GetType().GetField(name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).GetValue(value);
+    static object Managed(EntityManager em,Entity entity,Type type)
+    {foreach(var method in typeof(EntityManager).GetMethods(BindingFlags.Public|BindingFlags.Instance))if(method.Name=="GetComponentObject"&&method.IsGenericMethodDefinition&&method.GetParameters().Length==1)return method.MakeGenericMethod(type).Invoke(em,new object[]{entity});throw new MissingMethodException("GetComponentObject");}
+    static string ActualNativeSavePath()
+    {var property=typeof(SkirmishNativePlayerSaveService).GetProperty("SavePath",BindingFlags.Static|BindingFlags.NonPublic)??throw new MissingMemberException("Native SavePath unavailable.");return Path.GetFullPath((string)property.GetValue(null));}
+    [Serializable] struct InheritedProfileRow {public string actualProfileRoot,expectedTempParent,nativeSavePath;public bool inheritedInitializedProfileVerified,ownerProfileUntouched,environmentOverridden;}
+    static void BindInheritedInitializedProfile()
+    {
+        var method=harness.GetMethod("ValidationProfileRoot",privateStatic)??throw new MissingMethodException("Native validation profile helper missing.");
+        string inherited=Path.GetFullPath((string)method.Invoke(null,null));string expectedParent=Path.GetFullPath(Path.Combine(Path.GetTempPath(),"aria-play-validation-profile"));
+        if(Path.GetDirectoryName(inherited)!=expectedParent||!Guid.TryParseExact(Path.GetFileName(inherited),"N",out _))throw new InvalidOperationException("Inherited profile is outside expected native temporary GUID-owned parent.");
+        if(Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")!=inherited||!Directory.Exists(inherited))throw new InvalidOperationException("Native inherited initialized profile/environment mismatch.");
+        saveRoot=inherited;nativeSavePath=Path.Combine(inherited,"skirmish-s005-native.json");RequireOwnedSavePath();
+        if(File.Exists(nativeSavePath)||File.Exists(profileEvidence))throw new InvalidOperationException("Preserve unique inherited1150 checkpoint/profile evidence; pre-existing checkpoint refused.");
+        File.WriteAllText(profileEvidence,JsonUtility.ToJson(new InheritedProfileRow{actualProfileRoot=saveRoot,expectedTempParent=expectedParent,nativeSavePath=nativeSavePath,inheritedInitializedProfileVerified=true,ownerProfileUntouched=true,environmentOverridden=false},true));
+        Debug.Log("[S005PopulatedFogRecoverySavePath] result=Verified exactInheritedInitializedRoot=1 uniqueTempGuid=1 emptyRootSwitch=0 ownerProfileUntouched=1");
+    }
+    static void RequireOwnedSavePath()
+    {
+        if(string.IsNullOrEmpty(saveRoot)||string.IsNullOrEmpty(nativeSavePath)||Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")!=saveRoot||ActualNativeSavePath()!=nativeSavePath||Path.GetFullPath((string)harness.GetMethod("ValidationProfileRoot",privateStatic).Invoke(null,null))!=saveRoot)throw new InvalidOperationException("Native save path/profile no longer resolves to exact inherited initialized1150 GUID-owned root.");
+    }
+    static object ReadActualSavedSnapshot()
+    {RequireOwnedSavePath();object[] a={"S005",null,null};var method=typeof(SkirmishNativePlayerSaveService).GetMethod("TryRead",BindingFlags.Static|BindingFlags.NonPublic);if(!(bool)method.Invoke(null,a)||a[1]==null||(string)Field(a[1],"SessionId")!=attempt.ToString())throw new InvalidOperationException("Actual persisted native checkpoint attempt missing/mismatched.");return a[1];}
+    static object SavedPart(object parts,string type)
+    {foreach(var part in (System.Collections.IEnumerable)parts)if((string)Field(part,"Type")==type)return part;throw new InvalidOperationException("Native saved optional part missing: "+type);}
+    static T[] DecodeRealBuffer<T>(object part) where T:unmanaged,IBufferElementData
+    {using var bytes=new NativeArray<byte>(Convert.FromBase64String((string)Field(part,"Data")),Allocator.Temp);var values=bytes.Reinterpret<T>(1);if(values.Length!=(int)Field(part,"Count"))throw new InvalidOperationException("Actual saved buffer count mismatch: "+typeof(T).Name);return values.ToArray();}
+    static SkirmishContactLedgerElement ReadLedger(EntityManager em)
+    {if(!em.HasBuffer<SkirmishContactLedgerElement>(session))throw new InvalidOperationException("Actual session ledger missing.");SkirmishContactLedgerElement found=default;int count=0;foreach(var item in em.GetBuffer<SkirmishContactLedgerElement>(session,true))if(item.ObserverFactionId==1&&item.ContactStableObjectId.ToString()==targetStableId){found=item;count++;}if(count!=1)throw new InvalidOperationException("Actual frozen target ledger must have one observer1 row, found="+count);return found;}
+    static bool SameFrozen(SkirmishContactKnowledgeElement a,SkirmishContactKnowledgeElement b)
+    {return a.ObserverFactionId==b.ObserverFactionId&&a.Sight==b.Sight&&math.all(a.LastSeenCell==b.LastSeenCell)&&math.all(a.LastSeenPosition==b.LastSeenPosition)&&a.LastSeenHealth==b.LastSeenHealth&&a.LastSeenMax==b.LastSeenMax&&a.ScanRequestId==b.ScanRequestId&&a.ObservationKind==b.ObservationKind&&a.ObservationSourceStableObjectId.Equals(b.ObservationSourceStableObjectId);}
+    static bool SameLedger(SkirmishContactLedgerElement a,SkirmishContactLedgerElement b)
+    {return a.ContactStableObjectId.Equals(b.ContactStableObjectId)&&a.ContactFactionId==b.ContactFactionId&&a.ObserverFactionId==b.ObserverFactionId&&a.Sight==b.Sight&&math.all(a.LastSeenCell==b.LastSeenCell)&&math.all(a.LastSeenPosition==b.LastSeenPosition)&&a.LastSeenHealth==b.LastSeenHealth&&a.LastSeenMax==b.LastSeenMax&&a.ScanRequestId==b.ScanRequestId&&a.ObservationKind==b.ObservationKind&&a.ObservationSourceStableObjectId.Equals(b.ObservationSourceStableObjectId);}
+    static void RequireCapacity(EntityManager em)
+    {var a=em.GetComponentData<SkirmishCapacityComponent>(session);if(a.InfantryLive!=pausedCapacity.InfantryLive||a.GroundLive!=pausedCapacity.GroundLive||a.AirLive!=pausedCapacity.AirLive||a.SupplyLive!=pausedCapacity.SupplyLive||a.InfantryReserved!=pausedCapacity.InfantryReserved||a.GroundReserved!=pausedCapacity.GroundReserved||a.AirReserved!=pausedCapacity.AirReserved||a.SupplyReserved!=pausedCapacity.SupplyReserved||a.NextReservationId!=pausedCapacity.NextReservationId)throw new InvalidOperationException("Actual paid Drone capacity changed across native recovery.");}
+    [Serializable] struct RecoveryRow { public string phase,attempt,targetStable,droneStable,checkpointSha;public float worldTime,observedTime,age,remaining,matchElapsed;public int scanRequest,observationKind,health,maxHealth,frame;public Vector3 frozenPosition;public bool knowledgeInjected,checkpointEdited,sourceRemapExact,liveMarker; }
+    static void RecordRecovery(string stage,EntityManager em,SkirmishContactKnowledgeElement knowledge,string hash="")
+    {NativeTryGetMatch(em,out var live,out var match);float now=(float)em.WorldUnmanaged.Time.ElapsedTime;File.AppendAllText(effectPath,JsonUtility.ToJson(new RecoveryRow{phase=stage,attempt=attempt.ToString(),targetStable=targetStableId,droneStable=droneStableId,checkpointSha=hash,worldTime=now,observedTime=knowledge.LastObservedTimeSeconds,age=now-knowledge.LastObservedTimeSeconds,remaining=originalFog.LastSeenExpireSeconds-(now-knowledge.LastObservedTimeSeconds),matchElapsed=NativeReadElapsed(em,live,in match),scanRequest=knowledge.ScanRequestId,observationKind=knowledge.ObservationKind,health=knowledge.LastSeenHealth,maxHealth=knowledge.LastSeenMax,frame=Time.frameCount,frozenPosition=(Vector3)knowledge.LastSeenPosition,knowledgeInjected=false,checkpointEdited=false,sourceRemapExact=knowledge.ObservationSource==members[0],liveMarker=HasLiveTargetMarker(em)})+"\n");}
+    [Serializable] struct PauseControlPresentationRow
+    {
+        public string phase,button,canvas,canvasHierarchy;public int frame,screenWidth,screenHeight;
+        public Vector2 point;public Vector4 canvasPixelRect,safeArea;
+        public bool buttonFound,active,interactable,canvasActive,presentedPointValid,ownedTouchIdle,handoffAlreadyTransferred;
+        public float actualMatchElapsed;
+    }
+    static double pausePresentationLoggedAt;
+    static void ObservePauseControlPresentation(EntityManager em,UnityEngine.UI.Button button,bool presented,Vector2 point,bool beforeHandoff=false)
+    {
+        double now=EditorApplication.timeSinceStartup;if(!beforeHandoff&&now-pausePresentationLoggedAt<.5)return;pausePresentationLoggedAt=now;
+        var canvas=RootCanvas(button);Rect pixels=canvas!=null?canvas.pixelRect:default;Rect safe=Screen.safeArea;NativeTryGetMatch(em,out var live,out var match);
+        var row=new PauseControlPresentationRow{phase=beforeHandoff?"BeforeNativePauseOwnershipHandoff":"AwaitingPresentedNativePause",button=button!=null?button.name:"none",canvas=canvas!=null?canvas.name:"none",canvasHierarchy=canvas!=null?Hierarchy(canvas.transform):"none",frame=Time.frameCount,screenWidth=Screen.width,screenHeight=Screen.height,point=point,canvasPixelRect=new Vector4(pixels.x,pixels.y,pixels.width,pixels.height),safeArea=new Vector4(safe.x,safe.y,safe.width,safe.height),buttonFound=button!=null,active=button!=null&&button.IsActive(),interactable=button!=null&&button.IsInteractable(),canvasActive=canvas!=null&&canvas.isActiveAndEnabled&&canvas.gameObject.activeInHierarchy,presentedPointValid=presented,ownedTouchIdle=touch!=null&&!touch.IsBusy&&ReferenceEquals(Get("playerResumeTouch"),touch),handoffAlreadyTransferred=startupTickTransferred,actualMatchElapsed=NativeReadElapsed(em,live,in match)};
+        string json=JsonUtility.ToJson(row);File.AppendAllText(effectPath,json+"\n");Debug.Log("[S005PopulatedFogRecoveryNativePausePresentation] "+json);
+    }
+    static void TransferStartupOwnership(EntityManager em,UnityEngine.UI.Button pauseButton,Vector2 presentedPoint)
+    {
+        if(startupTickTransferred)return;RequireOwnedSavePath();RequireCandidateCatalog();
+        if(!NativeTryGetMatch(em,out var live,out var match)||live!=session||match.Phase!=SkirmishPhase.Playing||!NativeSimulationActive(em)||NativeReadElapsed(em,live,in match)<4f||!UiShellRuntimeGateway.TryReadSkirmish(out var shown)||shown.Paused||shown.Finished||touch==null||touch.IsBusy||!ReferenceEquals(Get("playerResumeTouch"),touch)||(int)Get("stage")!=2)throw new InvalidOperationException("Startup ownership transfer requires same actual playing session, positive elapsed, public active HUD and idle owned Touch/stage2.");
+        object[] pointArgs={pauseButton,Vector2.zero};bool presented=(bool)harness.GetMethod("TryPresentedButtonPoint",privateStatic).Invoke(null,pointArgs);var actualPoint=(Vector2)pointArgs[1];ObservePauseControlPresentation(em,pauseButton,presented,actualPoint,true);
+        if(pauseButton==null||pauseButton.name!="PauseButton"||RootCanvas(pauseButton)==null||!presented||Vector2.Distance(actualPoint,presentedPoint)>1)throw new InvalidOperationException("Actual public Pause control presentation changed before startup ownership transfer.");
+        var method=harness.GetMethod("Tick",privateStatic);if(method==null||!method.IsStatic)throw new MissingMethodException("Exact inherited startup Tick unavailable.");
+        EditorApplication.update-=(EditorApplication.CallbackFunction)Delegate.CreateDelegate(typeof(EditorApplication.CallbackFunction),method);
+        startupTickTransferred=true;Debug.Log("[S005PopulatedFogRecoveryOwnership] result=Transferred exactInheritedStartupTickOnly=1 fixtureWatchdogActive=1 actualPlayingPositiveElapsedHud=1 simulationClockFlagsEdited=0 actualPresentedPauseBeforeNativeTouch=1");
+    }
+    static void BeginRecovery(EntityManager em)
+    {
+        if(!scanOrderObserved||!nativeResultObserved||!nativeFeedObserved||!nativeLastSeenObserved||!nativeAirborneObserved||!nativeVisibleObserved)throw new InvalidOperationException("Populated fog recovery needs actual paid-source Scan order/result/feed/firstVisible before LastSeen.");
+        droneStableId=em.GetComponentData<SkirmishAttemptOwnedComponent>(members[0]).StableObjectId.ToString();targetStableId=em.GetComponentData<SkirmishAttemptOwnedComponent>(hostileTarget).StableObjectId.ToString();
+        float age=(float)em.WorldUnmanaged.Time.ElapsedTime-frozenContact.LastObservedTimeSeconds;
+        if(originalFog.LastSeenExpireSeconds-age<8)throw new InvalidOperationException("Natural LastSeen window has less than8s remaining before public Pause; unsuitable scoped timing, no clock injection fallback.");
+        // Ownership transfers only after popup closure and actual native Pause presentation in recovery Canvas frame.
+        oldBattlefield.Clear();using var q=em.CreateEntityQuery(new EntityQueryDesc{Any=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),ComponentType.ReadOnly<OperationMapBuildingComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities});using var actors=q.ToEntityArray(Allocator.Temp);foreach(var actor in actors)oldBattlefield.Add(actor);
+        continueStableAt=continueAttemptAt=0;phase=30;caseDeadline=EditorApplication.timeSinceStartup+180;
+        Debug.Log("[S005PopulatedFogRecoveryWindow] result=Passed remaining="+(originalFog.LastSeenExpireSeconds-age)+" actualScan=1 actualLastSeen=1 knowledgeInjected=0");
+    }
+    static void ReadAndVerifySavedDescriptor()
+    {
+        var snapshot=ReadActualSavedSnapshot();savedWorldTime=(double)Field(snapshot,"WorldTime");savedFrame=(int)Field(snapshot,"Frame");if(Math.Abs(savedWorldTime-pausedWorldTime)>.05)throw new InvalidOperationException("Actual public save clock differs from paused native snapshot.");
+        object target=null;foreach(var actor in (System.Collections.IEnumerable)Field(snapshot,"Actors"))if((string)Field(actor,"Id")==targetStableId){if(target!=null)throw new InvalidOperationException("Duplicate target identity in actual save.");target=actor;}
+        if(target==null)throw new InvalidOperationException("Actual target omitted from saved actor roster.");
+        var part=SavedPart(Field(target,"Parts"),typeof(SkirmishContactKnowledgeElement).FullName);var values=DecodeRealBuffer<SkirmishContactKnowledgeElement>(part);int count=0;foreach(var k in values)if(k.ObserverFactionId==1){if(!SameFrozen(pausedContact,k)||k.LastObservedTimeSeconds!=pausedContact.LastObservedTimeSeconds||k.ObservationFrame!=pausedContact.ObservationFrame)throw new InvalidOperationException("Actual saved frozen knowledge differs from paused observed record.");count++;}if(count!=1)throw new InvalidOperationException("Actual save lacks exactly one player knowledge row.");
+        bool sourceReference=false;foreach(var reference in (System.Collections.IEnumerable)Field(part,"References"))if((string)Field(reference,"ObjectId")==droneStableId)sourceReference=true;if(pausedContact.ObservationSource==members[0]&&!sourceReference)throw new InvalidOperationException("Saved observed source reference missing actual paid Drone stable identity.");
+        var ledgerPart=SavedPart(Field(snapshot,"SessionParts"),typeof(SkirmishContactLedgerElement).FullName);int ledgerCount=0;foreach(var item in DecodeRealBuffer<SkirmishContactLedgerElement>(ledgerPart))if(item.ObserverFactionId==1&&item.ContactStableObjectId.ToString()==targetStableId){if(!SameLedger(pausedLedger,item)||item.LastObservedTimeSeconds!=pausedLedger.LastObservedTimeSeconds||item.ObservationFrame!=pausedLedger.ObservationFrame)throw new InvalidOperationException("Saved optional contact ledger differs from actual paused contact.");ledgerCount++;}if(ledgerCount!=1)throw new InvalidOperationException("Saved ledger must contain exactly one remembered target row.");
+        if(File.Exists(checkpointArchive))throw new InvalidOperationException("Preserve unique1150 original native checkpoint archive.");File.Copy(nativeSavePath,checkpointArchive);
+        string hash;using(var sha=System.Security.Cryptography.SHA256.Create())hash=BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(checkpointArchive))).Replace("-","").ToLowerInvariant();
+        File.AppendAllText(effectPath,JsonUtility.ToJson(new RecoveryRow{phase="ActualSavedDescriptor",attempt=attempt.ToString(),targetStable=targetStableId,droneStable=droneStableId,checkpointSha=hash,worldTime=(float)savedWorldTime,observedTime=pausedContact.LastObservedTimeSeconds,age=savedAge,remaining=originalFog.LastSeenExpireSeconds-savedAge,matchElapsed=savedElapsed,scanRequest=pausedContact.ScanRequestId,observationKind=pausedContact.ObservationKind,health=pausedContact.LastSeenHealth,maxHealth=pausedContact.LastSeenMax,frame=savedFrame,frozenPosition=(Vector3)pausedContact.LastSeenPosition,knowledgeInjected=false,checkpointEdited=false,sourceRemapExact=false,liveMarker=false})+"\n");
+        savedDescriptorRead=true;Debug.Log("[S005PopulatedFogRecoverySavedDescriptor] result=Passed knowledgeRows=1 ledgerRows=1 sourceStableReference="+sourceReference+" savedAge="+savedAge+" checkpointSha256="+hash+" actualPublicSave=1 checkpointEdited=0 payloadPrinted=0");
+    }
+    static void RecoveryFrame(EntityManager em,double now)
+    {
+        RequireOwnedSavePath();RequireCandidateCatalog();bool hasSession=NativeTryGetMatch(em,out var live,out var match);if(now>caseDeadline)throw new TimeoutException("Bounded populated-fog public Pause/SaveExit/Continue exceeded180s.");
+        if(phase==30)
+        {
+            var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);if(drawer!=null&&drawer.IsOpen){Tap(drawer.CloseButton);return;}
+            var popup=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);if(popup!=null&&popup.IsOpen){Tap(popup.CloseAction);return;}
+            if(!hasSession||!UiShellRuntimeGateway.TryReadSkirmish(out var model)||model.Finished)throw new InvalidOperationException("Owned real fog match ended before public Pause.");
+            if(model.Paused)
+            {
+                if(!startupTickTransferred)throw new InvalidOperationException("Public Pause occurred before exact inherited startup ownership handoff.");
+                if(!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out pausedContact)||pausedContact.Sight!=SkirmishContactSight.LastSeen||!SameFrozen(frozenContact,pausedContact)||pausedContact.LastObservedTimeSeconds!=frozenContact.LastObservedTimeSeconds)throw new InvalidOperationException("Natural LastSeen contact changed/expired before public Pause.");
+                pausedWorldTime=(float)em.WorldUnmanaged.Time.ElapsedTime;savedAge=pausedWorldTime-pausedContact.LastObservedTimeSeconds;if(savedAge<4f||originalFog.LastSeenExpireSeconds-savedAge<8)throw new InvalidOperationException("Public Pause arrived too late for remaining-age recovery; no forged lifetime fallback.");
+                pausedLedger=ReadLedger(em);if(pausedLedger.Sight!=SkirmishContactSight.LastSeen||!math.all(pausedLedger.LastSeenPosition==pausedContact.LastSeenPosition)||pausedLedger.LastSeenHealth!=pausedContact.LastSeenHealth||pausedLedger.LastSeenMax!=pausedContact.LastSeenMax||!math.all(pausedLedger.LastSeenCell==pausedContact.LastSeenCell)||pausedLedger.ScanRequestId!=pausedContact.ScanRequestId||pausedLedger.ObservationKind!=pausedContact.ObservationKind||pausedLedger.ObservationFrame!=pausedContact.ObservationFrame||!pausedLedger.ObservationSourceStableObjectId.Equals(pausedContact.ObservationSourceStableObjectId)||pausedLedger.LastObservedTimeSeconds!=pausedContact.LastObservedTimeSeconds)throw new InvalidOperationException("Paused native knowledge and remembered ledger diverge.");
+                if(HasLiveTargetMarker(em)||!HasFrozenContactMarker(em,pausedContact.LastSeenPosition))throw new InvalidOperationException("Paused native anonymous LastSeen marker missing/exposes live Entity.");
+                pausedCapacity=em.GetComponentData<SkirmishCapacityComponent>(session);savedElapsed=NativeReadElapsed(em,live,in match);RecordRecovery("ActualPausedLastSeen",em,pausedContact);phase=31;Debug.Log("[S005PopulatedFogRecoveryPaused] result=Passed input=Touch sameAttempt="+attempt+" savedAge="+savedAge+" pausedAnonymousMarker=1");return;
+            }
+            if(!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var naturallyAging)||naturallyAging.Sight!=SkirmishContactSight.LastSeen||!SameFrozen(frozenContact,naturallyAging))throw new InvalidOperationException("Natural contact changed before bounded public Pause window.");
+            if((float)em.WorldUnmanaged.Time.ElapsedTime-naturallyAging.LastObservedTimeSeconds<4f)return; // Meaningful nonzero remaining-age conservation control, ordinary simulation time only.
+            bool foundPause=false;
+            foreach(var button in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+            {
+                if(button.name!="PauseButton")continue;foundPause=true;
+                object[] pointArgs={button,Vector2.zero};bool presented=(bool)harness.GetMethod("TryPresentedButtonPoint",privateStatic).Invoke(null,pointArgs);var point=(Vector2)pointArgs[1];ObservePauseControlPresentation(em,button,presented,point);
+                if(!presented||RootCanvas(button)==null)continue;
+                TransferStartupOwnership(em,button,point);
+                if(Tap(button)){Debug.Log("[S005PopulatedFogRecoveryPauseTouch] result=Accepted input=Touch presentedPointVerified=1");return;}
+            }
+            if(!foundPause)ObservePauseControlPresentation(em,null,false,Vector2.zero);return;
+        }
+        if(phase==31)
+        {
+            if(!hasSession||!UiShellRuntimeGateway.TryReadSkirmish(out var model)||!model.Paused||!model.CanSaveMatch||model.SaveFailed)throw new InvalidOperationException("Native paused public Save&Exit unavailable/failed.");
+            if(Math.Abs((float)em.WorldUnmanaged.Time.ElapsedTime-pausedWorldTime)>.05f||Math.Abs(NativeReadElapsed(em,live,in match)-savedElapsed)>.05f||!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var still)||!SameFrozen(pausedContact,still)||still.LastObservedTimeSeconds!=pausedContact.LastObservedTimeSeconds)throw new InvalidOperationException("Paused fog/clock mutated before actual Save.");
+            var pause=UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>();if(pause==null)return;if(Tap(pause.RestartButton)){phase=32;Debug.Log("[S005PopulatedFogRecoverySaveExitTouch] result=Accepted input=Touch checkpointEdited=0");}return;
+        }
+        if(phase==32||phase==33)
+        {
+            if(hasSession&&continueAttemptAt>0){phase=34;return;}if(hasSession){if(SkirmishNativePlayerSaveService.HasSaveFailed(em,live))throw new InvalidOperationException("Actual public Save&Exit failed.");return;}
+            if(!savedDescriptorRead)ReadAndVerifySavedDescriptor();
+            foreach(var old in oldBattlefield)if(OldPhysicalOrNonCleanupRemains(em,old))return;
+            if(phase==33&&now-continueAttemptAt<2)return;
+            foreach(var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))if(setup.IsBaseAssaultSetup&&setup.SelectedScenarioId=="S005")foreach(var button in setup.GetComponentsInChildren<UnityEngine.UI.Button>())
+            {var label=button.GetComponentInChildren<TMPro.TMP_Text>();if(button.name!="LaunchMissionButton"||label==null||string.IsNullOrWhiteSpace(label.text))continue;object[] pointArgs={button,Vector2.zero};if(!(bool)harness.GetMethod("TryPresentedButtonPoint",privateStatic).Invoke(null,pointArgs)){continueStableAt=0;return;}var point=(Vector2)pointArgs[1];if(continueStableAt==0||Vector2.Distance(point,continuePoint)>1){continuePoint=point;continueStableAt=now;return;}if(now-continueStableAt<.5)return;if(Tap(button)){continueAttemptAt=now;continueStableAt=0;phase=33;Debug.Log("[S005PopulatedFogRecoveryContinueTouch] result=Accepted input=Touch directResumeCalled=0");}return;}return;
+        }
+        if(!hasSession||match.Phase!=SkirmishPhase.Playing||!NativeSimulationActive(em))return;
+        Type type=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointRecoveryRecord",true);if(!em.HasComponent(live,ComponentType.ReadOnly(type)))throw new InvalidOperationException("Continue launched fresh rather than actual native checkpoint.");var recovery=Managed(em,live,type);if(!(bool)Field(recovery,"Complete"))return;
+        int oldCleanupShells=0;foreach(var old in oldBattlefield){if(OldPhysicalOrNonCleanupRemains(em,old))throw new InvalidOperationException("Old physical/noncleanup battlefield actor survived completed native recovery; only actual CleanupEntity plus all cleanup components may remain.");if(em.Exists(old))oldCleanupShells++;}
+        session=live;if(!em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.Equals(attempt)||!em.GetComponentData<SkirmishFogStateComponent>(session).Equals(originalFog))throw new InvalidOperationException("Recovered native attempt/authored fog config differs.");
+        members.Clear();hostileTarget=Entity.Null;using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(!o.SessionId.Equals(attempt))continue;if(o.StableObjectId.ToString()==droneStableId&&o.FactionId==1&&o.ReservationId==receiptId&&em.GetComponentData<UnitHealth>(actor).Current>0)members.Add(actor);if(o.StableObjectId.ToString()==targetStableId&&o.FactionId==2&&em.GetComponentData<UnitHealth>(actor).Current>0){if(hostileTarget!=Entity.Null)throw new InvalidOperationException("Duplicate recovered hostile identity.");hostileTarget=actor;}}
+        if(members.Count!=1||hostileTarget==Entity.Null||em.GetComponentData<SkirmishUnitRoleComponent>(members[0]).Role!=SkirmishRoleKind.Drone)throw new InvalidOperationException("Actual recovered paid Drone/retained target identity missing.");
+        if(!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var restored)||restored.Sight!=SkirmishContactSight.LastSeen||!SameFrozen(pausedContact,restored))throw new InvalidOperationException("Recovered real frozen pose/cell/health/provenance differs/expired.");
+        if(pausedContact.ObservationSource!=Entity.Null&&restored.ObservationSource!=members[0])throw new InvalidOperationException("Actual checkpoint source Entity did not remap to recovered paid Drone.");
+        var ledger=ReadLedger(em);if(!SameLedger(pausedLedger,ledger)||ledger.LastObservedTimeSeconds!=restored.LastObservedTimeSeconds)throw new InvalidOperationException("Actual restored optional ledger differs from frozen knowledge.");
+        restoredWorldTime=(float)em.WorldUnmanaged.Time.ElapsedTime;restoredAge=restoredWorldTime-restored.LastObservedTimeSeconds;restoredElapsed=NativeReadElapsed(em,live,in match);float resumed=restoredElapsed-savedElapsed;if(resumed<-.05f||Math.Abs((restoredAge-savedAge)-Math.Max(0,resumed))>.75f)throw new InvalidOperationException("Native Continue did not conserve LastSeen remaining age across world-clock rebasing.");
+        if(restored.ObservationKind==2){int shift=restored.ObservationFrame-pausedContact.ObservationFrame;if(shift<0||restored.ObservationFrame>Time.frameCount||ledger.ObservationFrame-pausedLedger.ObservationFrame!=shift)throw new InvalidOperationException("Native Scan observation frame rebase inconsistent between actor/ledger.");}
+        RequireCapacity(em);int receipts=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId&&r.MaterialsPaid==roles[index].MaterialsCost&&r.Role==SkirmishRoleKind.Drone&&r.Phase==SkirmishReservationPhase.Live)receipts++;if(receipts!=1)throw new InvalidOperationException("Recovered actual paid Drone reservation absent/duplicated.");
+        enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();if(enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;
+        if(HasLiveTargetMarker(em)||!HasFrozenContactMarker(em,restored.LastSeenPosition))return; // Wait only for actual frozen anonymous native presentation.
+        Debug.Log("[S005PopulatedFogRecoveryOldPhysicalCleanup] result=Passed physicalComponentsAbsent=1 pureCleanupShells="+oldCleanupShells+" pureShellsAreNotLiveActors=1 nativeCleanupEntityMarkerAndAllCleanupTypes=1 nonCleanupRemaining=0");
+        frozenContact=restored;nativeRecoveryObserved=true;phase=35;caseDeadline=now+45;RecordRecovery("ActualRestoredFrozenLastSeen",em,restored);Debug.Log("[S005PopulatedFogRecoveryRestored] result=Passed sameAttempt=1 frozenPoseHealthProvenanceExact=1 sourceRemapExact=1 paidReceiptPreserved=1 actorLedgerClockRebased=1 savedAge="+savedAge+" restoredAge="+restoredAge+" resumedSimulation="+resumed+" oldPhysicalGone=1 checkpointEdited=0");
+    }
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session, boundary;
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next, queueStatusAt;
+    static int phase, index, requestId, buildSite; static bool siteTapped; static double catalogSeenAt; static bool catalogLogged; static bool buildDispatched; static double buildDispatchedAt; static UnityEngine.UI.Button clickedBuild;
+    static uint receiptId, precedingReceipt;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1150.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public Vector2 position;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1, scanBaseline, scanRequest, scanStartedFrame, scanTapFrame;
+    static Entity hostileTarget; static SkirmishFogStateComponent originalFog; static UnitAirComponent deliveredHome;
+    static bool nativeResultObserved, scanOrderObserved, nativeFeedObserved, nativeLastSeenObserved, nativeAirborneObserved, nativeReturnObserved;
+    static bool initialUnknownObserved, nativeVisibleObserved, frozenLastSeenObserved, nativeExpiryObserved, homeLandingObserved;
+    static SkirmishContactKnowledgeElement frozenContact;
+    static readonly string effectPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1150-drone-fog-recon-events.jsonl";
+    [Serializable] struct NativeReconRow {public string phase;public int frame,request,startedFrame,sourceIndex,sourceVersion,targetIndex,targetVersion,radius,revealedCount,lastSeenFrame;public byte sharedFog,fullVision;public Vector3 center,targetPosition,home,position;public bool sourceExactPaidDrone,scanResultsInjected,fogFlagsInjected,autoReturnObserved;}
+    static void RecordRecon(string stage, EntityManager em, UnitScanOrder order, int revealed=0, int lastSeen=0) {
+        var drone=members[0];var fog=em.GetComponentData<SkirmishFogStateComponent>(session);
+        File.AppendAllText(effectPath,JsonUtility.ToJson(new NativeReconRow {phase=stage,frame=Time.frameCount,request=scanRequest,startedFrame=scanStartedFrame,sourceIndex=drone.Index,sourceVersion=drone.Version,targetIndex=hostileTarget.Index,targetVersion=hostileTarget.Version,radius=order.RadiusCells,revealedCount=revealed,lastSeenFrame=lastSeen,sharedFog=fog.SharedFog,fullVision=fog.DevelopmentFullVision,center=(Vector3)order.CenterWorld,targetPosition=SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var known)?(Vector3)known.LastSeenPosition:Vector3.zero,home=(Vector3)deliveredHome.HomePosition,position=(Vector3)em.GetComponentData<LocalTransform>(drone).Position,sourceExactPaidDrone=true,scanResultsInjected=false,fogFlagsInjected=false,autoReturnObserved=nativeReturnObserved})+"\n");
+    }
+    static UnitScanOrder capturedOrder;
+    static Vector3 destination; [Serializable] sealed class PlacementCandidate { public Vector3 world; public string source; } static readonly List<PlacementCandidate> placementCandidates=new(); static int actualPlacementTouches,actualBlockedPlacements; static double candidateSince; static bool candidatesPrepared; static bool anchorsCached; static Vector3 playerBaseAnchor,enemyBaseAnchor; static double surfaceBlockedSince; static int viewRepairs; static bool viewRepairQueued;
+    static readonly Dictionary<Entity,float3> origins=new();
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    static BuildDrawerCatalogRuntimeView ResolveLiveCatalog(out BuildDrawerView drawer)
+    {
+        BuildDrawerCatalogRuntimeView found=null;drawer=null;
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            var ownView=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            if(ownView==null || !ownView.IsOpen)continue; // Match native ResolveCatalogTarget assigned-view gate exactly.
+            if(found!=null){DumpNativeBuildInventory("MultipleAssignedOpenCatalogs",clickedBuild);throw new InvalidOperationException("Multiple catalogs assigned to open native drawer views; ambiguous fixture ownership.");}
+            found=candidate;drawer=ownView;
+        }
+        return found;
+    }
+    static string Hierarchy(Transform transform)
+    {
+        if(transform==null)return "none";var names=new List<string>();
+        for(int depth=0;transform!=null&&depth<10;depth++,transform=transform.parent)names.Add(transform.name);
+        names.Reverse();return string.Join("/",names);
+    }
+    static string ButtonState(UnityEngine.UI.Button button)
+    {
+        if(button==null)return "button=none";
+        return "button="+button.name+" id="+button.GetEntityId()+" active="+button.IsActive()+" interactable="+button.IsInteractable()+" hierarchy="+Hierarchy(button.transform);
+    }
+    static void DumpNativeBuildInventory(string reason,UnityEngine.UI.Button buildButton)
+    {
+        int catalogs=0,drawers=0;
+        Debug.Log("[S005PopulatedFogRecoveryNativeBuildInventory] reason="+reason+" "+ButtonState(buildButton)+" touchBusy="+(touch!=null&&touch.IsBusy));
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            if(catalogs++>=12)break;
+            var assigned=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            Debug.Log("[S005PopulatedFogRecoveryNativeCatalogOwner] reason="+reason+" catalog="+candidate.GetEntityId()+" active="+candidate.isActiveAndEnabled+" hierarchy="+Hierarchy(candidate.transform)+" assignedView="+(assigned!=null?assigned.GetEntityId().ToString():"none")+" assignedActive="+(assigned!=null&&assigned.isActiveAndEnabled)+" assignedOpen="+(assigned!=null&&assigned.IsOpen)+" assignedHierarchy="+Hierarchy(assigned!=null?assigned.transform:null));
+        }
+        foreach(var drawer in UnityEngine.Object.FindObjectsByType<BuildDrawerView>(FindObjectsInactive.Include))
+        {
+            if(drawers++>=12)break;
+            Debug.Log("[S005PopulatedFogRecoveryNativeDrawerOwner] reason="+reason+" drawer="+drawer.GetEntityId()+" active="+drawer.isActiveAndEnabled+" open="+drawer.IsOpen+" hierarchy="+Hierarchy(drawer.transform));
+        }
+        foreach(var controls in UnityEngine.Object.FindObjectsByType<MatchOverlayCommandControlsView>(FindObjectsInactive.Include))
+            Debug.Log("[S005PopulatedFogRecoveryNativeBuildControls] reason="+reason+" controls="+controls.GetEntityId()+" active="+controls.isActiveAndEnabled+" "+ButtonState(controls.BuildButton));
+    }
+
+    static bool LogLiveCatalog(BuildDrawerCatalogRuntimeView catalog, BuildDrawerView drawer)
+    {
+        var keys=new List<string>();
+        var field=typeof(BuildDrawerCatalogRuntimeView).GetField("_items",BindingFlags.Instance|BindingFlags.NonPublic);
+        foreach(var item in (IEnumerable<BuildDrawerCatalogItem>)field.GetValue(catalog))
+            if(item.Prefab!=null && keys.Count<64)keys.Add(item.Prefab.name);
+        var source=typeof(BuildDrawerCatalogRuntimeView).GetField("buildingPlacementConfig",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog) as ScriptableObject;
+        var category=typeof(BuildDrawerCatalogRuntimeView).GetField("_activeCategory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        var restriction=typeof(BuildDrawerCatalogRuntimeView).GetField("_cat",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        bool missionRestricted=(bool)restriction.GetType().GetField("_restricted",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        var missionAllowed=(List<string>)restriction.GetType().GetField("_allowedBuildingConfigIds",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        Debug.Log("[S005PopulatedFogRecoveryLiveCatalogRestriction] missionRestricted="+missionRestricted+" allowed="+string.Join(",",missionAllowed));
+        Debug.Log("[S005PopulatedFogRecoveryLiveCatalog] catalog="+catalog.GetEntityId()+" drawer="+drawer.GetEntityId()+" assignedViewOpen="+drawer.IsOpen+" active="+catalog.isActiveAndEnabled+" category="+category+" source="+(source!=null?source.name:"none")+" keys="+string.Join(",",keys));
+        return keys.Contains("Building_Satelite_Dish");
+    }
+
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists(touchPath)||File.Exists("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1150.placement.jsonl"))throw new InvalidOperationException("Preserve existing unique native1150 Touch/placement evidence");File.WriteAllText(touchPath,"");if(File.Exists(effectPath))throw new InvalidOperationException("Preserve unique1150 recon evidence");File.WriteAllText(effectPath,"");
+        if(File.Exists(profileEvidence)||File.Exists(checkpointArchive))throw new InvalidOperationException("Preserve unique1150 inherited profile evidence/native archive.");saveRoot=nativeSavePath=null;
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=false;results.Clear();world=null;hostileTarget=Entity.Null;scanRequest=scanBaseline=scanStartedFrame=scanTapFrame=0;nativeResultObserved=scanOrderObserved=nativeFeedObserved=nativeLastSeenObserved=nativeAirborneObserved=nativeReturnObserved=false;initialUnknownObserved=nativeVisibleObserved=frozenLastSeenObserved=nativeExpiryObserved=homeLandingObserved=false;frozenContact=default;
+        deadline=EditorApplication.timeSinceStartup+1000;next=0;buildSite=0;siteTapped=false;catalogSeenAt=0;catalogLogged=false;buildDispatched=false;buildDispatchedAt=0;clickedBuild=null;anchorsCached=false;playerBaseAnchor=enemyBaseAnchor=Vector3.zero;surfaceBlockedSince=0;viewRepairs=0;viewRepairQueued=false;placementCandidates.Clear();actualPlacementTouches=actualBlockedPlacements=0;candidateSince=0;candidatesPrepared=false;
+        try{BindScopedCandidateCatalog();Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();BindInheritedInitializedProfile();}catch{DisposeCandidateCatalog();throw;} // Native initialized profile and scoped Editor-only candidate retained through Continue; no environment override.
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch; touch=null; inputFrame=-1;
+        Debug.Log("[S005PopulatedFogRecoveryMovement] scope=IsolatedPaidDroneNativePopulatedFogPublicSaveContinueRebasedExpiry normalMission=0 fundingInjected=1 readinessGranted=Established deathStimulus=HealthZero pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                DisposeCandidateCatalog();bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005PopulatedFogRecoveryMovementCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick; Canvas.willRenderCanvases-=InputFrame;
+                completion.TrySetResult(failed?1:0);return; // Inherited harness Finish restores original pre-startup environment.
+            }
+            if(now>deadline)throw new TimeoutException("Paid Drone recon fixture exceeded1000 seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null||!world.IsCreated||world!=World.DefaultGameObjectInjectionWorld)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase>=30&&phase<=34)return;
+            if(phase==35){if(!em.GetComponentData<SkirmishFogStateComponent>(session).Equals(originalFog)||!Mathf.Approximately(Time.timeScale,1f)||!NativeSimulationActive(em))throw new InvalidOperationException("Recovered fog expiry requires unchanged authored fog and positive native simulation at normal speed.");ObserveNativeFog(em);if(nativeExpiryObserved){if(!nativeRecoveryObserved)throw new InvalidOperationException("Expiry without native saved recovery.");RecordRecovery("ActualRestoredExpiry",em,SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var expired)?expired:default);Debug.Log("[S005PopulatedFogRecoveryRebasedExpiry] result=Passed savedAge="+savedAge+" restoredAge="+restoredAge+" authoredExpiry="+originalFog.LastSeenExpireSeconds+" positiveWorldClock=1 actorKnowledgeAndLedgerExpired=1 liveMarker=0 anonymousMarker=0 knowledgeInjected=0");Kill(em,members[0]);phase=5;caseDeadline=now+10;}else if(now>caseDeadline)throw new TimeoutException("Restored natural LastSeen expiry exceeded45s.");return;}
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId) && r.RoleKind==SkirmishRoleKind.Drone)selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=1)throw new InvalidOperationException("Expected enabled Drone role, found "+roles.Length);
+                attempt=state.SessionId;
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp)) {
+                    foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(hostileTarget==Entity.Null&&owner.FactionId==2&&owner.SessionId.Equals(attempt)&&em.GetComponentData<UnitHealth>(actor).Current>0&&em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.ApcArmored)hostileTarget=actor;}
+                    if(hostileTarget==Entity.Null)throw new InvalidOperationException("Actual opening hostile APC missing; no synthetic recon target fallback.");
+                    foreach(var actor in actors)if(actor!=hostileTarget)Kill(em,actor);
+                }
+                SkirmishWorldMovementService.ClearIntent(em,hostileTarget);var targetCombat=em.GetComponentData<UnitCombat>(hostileTarget);targetCombat.CanAttack=0;targetCombat.AutoEngage=0;em.SetComponentData(hostileTarget,targetCombat);if(!em.HasComponent<HoldPositionOrderTag>(hostileTarget))em.AddComponent<HoldPositionOrderTag>(hostileTarget);
+                originalFog=em.GetComponentData<SkirmishFogStateComponent>(session);
+                if(originalFog.SharedFog!=1||originalFog.DevelopmentFullVision!=0)throw new InvalidOperationException("Shared authored fog must already be enabled with DevelopmentFullVision0; fixture cannot change configuration.");
+                if(!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var initial)||initial.Sight!=SkirmishContactSight.Unknown)throw new InvalidOperationException("Retained opening hostile APC must start genuinely Unknown; no Hide or knowledge injection allowed.");
+                if(SkirmishFogService.IsVisible(em,hostileTarget))throw new InvalidOperationException("Unknown target is exposed by visible-contact authority.");
+                initialUnknownObserved=true;
+                Debug.Log("[S005PopulatedFogRecoveryNativeUnknown] result=Passed target=ActualOpeningEnemyApc authoredFullVision=0 sharedFog=1 fogKnowledgeInjected=0");
+                Debug.Log("[S005PopulatedFogRecoveryHostileSetup] actualOpeningEnemyApc=1 targetPoseInjected=0 targetHealthInjected=0 contactRevealInjected=0 authoredFullVision="+originalFog.DevelopmentFullVision+" authoredSharedFog="+originalFog.SharedFog+" fogFlagsInjected=0 enemyRetaliationDisabled=1");
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.Established;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!em.GetComponentData<SkirmishFogStateComponent>(session).Equals(originalFog))throw new InvalidOperationException("Authored fog flags changed during recon proof.");
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                // Native API queue requests are explicitly disclosed isolated QA, outside the Touch order audit.
+                AriaCommandEvidence.End();
+                if(index==roles.Length){Finish(false,"actualPaidDroneNativeScanFrozenLastSeenPublicSaveContinueRebasedExpiryWithoutAirport");return;}
+                var role=roles[index];
+                if(SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1))throw new InvalidOperationException("Unexpected Airport invalidates R2 Drone producer case.");
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))
+                {
+                    SkirmishMaterialsService.Write(em,session,1,1800);
+                    if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                    phase=20;caseDeadline=now+360;Debug.Log("[S005PopulatedFogRecoveryProducer] phase=NativeLegalIntelStationBuild airportPresent=0 readiness=Established fundingInjected=1");return;
+                }
+                Debug.Log("[S005PopulatedFogRecoveryProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0 readiness=Established nativeLegalPlacement=1");
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(phase==23){if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.IntelStation,1)){if(now>caseDeadline)throw new TimeoutException("Native IntelStation construction did not become functional.");return;}phase=2;return;}
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                Debug.Log("[S005PopulatedFogRecoveryNativeQueueRequest] result=Accepted role="+roles[index].RoleKind+" requestId="+(9000+requestId)+" nativeApi=1");
+                queueStatusAt=0;receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(now>=queueStatusAt){queueStatusAt=now+5;Debug.Log("[S005PopulatedFogRecoveryNativeQueueProgress] role="+roles[index].RoleKind+" receipt="+receipt.ReservationId+" phase="+receipt.Phase+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+receipt.DeliveredMembers+" required="+receipt.MemberCount+" airportPresent="+SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1));}
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005PopulatedFogRecoveryPaidQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                foreach(var member in members)if(em.HasComponent<UnitSpawnTransitTag>(member))return;
+                if(members.Count!=1)throw new InvalidOperationException("Paid Drone requires one actual native actor.");
+                var drone=members[0];deliveredHome=em.GetComponentData<UnitAirComponent>(drone);if(deliveredHome.UsesRunway!=0||deliveredHome.HomeInitialized==0)throw new InvalidOperationException("Paid Drone native IntelStation home/runway contract missing.");
+                if(!anchorsCached)throw new InvalidOperationException("Public HUD objective anchors were not captured before native facility build.");
+                if(!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var beforeScan)||beforeScan.Sight!=SkirmishContactSight.Unknown||HasLiveTargetMarker(em))throw new InvalidOperationException("Unknown retained target leaked to native live minimap before actual paid Drone survey.");
+                if(!SelectionUiReadModelLookup.IsSelectedUnitScanCapable(em,drone)||em.GetComponentData<UnitCombat>(drone).CanAttack!=0)throw new InvalidOperationException("Real paid unarmed Drone must expose native Scan capability without attack permission.");
+                destination=ResolvePublicEnemyStagingDeploymentSurvey(em);
+                Debug.Log("[S005PopulatedFogRecoveryPublicSurvey] destination="+destination+" enemyObjective="+enemyBaseAnchor+" candidate=AuthoredPublicEnemyVehicleStagingDeploymentPad hiddenActorPoseUsedForInput=0 currentCoverageUnproved=1 boundedSingleSurvey=1");
+                origins.Clear();origins.Add(drone,em.GetComponentData<LocalTransform>(drone).Position);
+                using(var sq=em.CreateEntityQuery(typeof(ScanIntelCommandQueueComponent))){if(sq.CalculateEntityCount()!=1)throw new InvalidOperationException("Native scan command singleton missing; no fixture creation.");scanBaseline=em.GetComponentData<ScanIntelCommandQueueComponent>(sq.GetSingletonEntity()).LastRequestId;}
+                if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                AriaCommandEvidence.Begin();phase=10;caseDeadline=now+500;return;
+            }
+            if(phase==12)
+            {
+                if(touch.IsBusy)return;var drone=members[0];if(!em.Exists(drone)||em.GetComponentData<UnitHealth>(drone).Current<=0||!em.Exists(hostileTarget)||em.GetComponentData<UnitHealth>(hostileTarget).Current<=0)throw new InvalidOperationException("Native Drone/retained target died before recon qualification.");
+                ObserveNativeFog(em);
+                if(phase>=30&&phase<=34)return;
+                var air=em.GetComponentData<UnitAirComponent>(drone);if(air.UsesRunway!=0||air.HomeInitialized==0||!math.all(air.HomePosition==deliveredHome.HomePosition)||!math.all(air.HomeCell==deliveredHome.HomeCell))throw new InvalidOperationException("Drone native IntelStation home mutated.");
+                nativeAirborneObserved |= air.Airborne!=0&&math.distance(origins[drone],em.GetComponentData<LocalTransform>(drone).Position)>=5;
+                if(now>=queueStatusAt){queueStatusAt=now+5;Debug.Log("[S005PopulatedFogRecoveryNativeProgress] phase=ScanFlightOrReturn source="+drone+" position="+em.GetComponentData<LocalTransform>(drone).Position+" home="+air.HomePosition+" airborne="+air.Airborne+" returningHome="+air.ReturningHome+" hasScanOrder="+em.HasComponent<UnitScanOrder>(drone)+" request="+scanRequest+" nativeResult="+nativeResultObserved+" feed="+nativeFeedObserved+" lastSeen="+nativeLastSeenObserved+" observedAirborne="+nativeAirborneObserved+" automaticReturn="+nativeReturnObserved+" authoredFullVision="+originalFog.DevelopmentFullVision);}
+                if(em.HasComponent<UnitScanOrder>(drone)) {
+                    var order=em.GetComponentData<UnitScanOrder>(drone);
+                    if(order.SourceEntity!=drone||order.RequestId<=scanBaseline||order.StartedFrame<scanTapFrame||order.RadiusCells!=12||order.ReturnHomeAfterCompletion==0)throw new InvalidOperationException("Native selected Drone scan order source/request/radius/automatic return mismatch.");
+                    if(!scanOrderObserved){scanOrderObserved=true;scanRequest=order.RequestId;scanStartedFrame=order.StartedFrame;capturedOrder=order;RecordRecon("ActualNativeScanOrder",em,order);Debug.Log("[S005PopulatedFogRecoveryNativeScanOrder] result=Passed role=Drone source="+drone+" request="+scanRequest+" radius=12 returnHome=1 input=Touch selectedOrderInjected=0");}
+                    using(var cq=em.CreateEntityQuery(typeof(ScanIntelCommandQueueComponent),typeof(ScanIntelCommandResultElement))){if(cq.CalculateEntityCount()==1){var outcomes=em.GetBuffer<ScanIntelCommandResultElement>(cq.GetSingletonEntity(),true);foreach(var result in outcomes)if(result.RequestId==scanRequest&&result.SourceEntity==drone&&result.HasSourceEntity!=0&&result.Accepted!=0&&result.RadiusCells==12){if(!nativeResultObserved){nativeResultObserved=true;Debug.Log("[S005PopulatedFogRecoveryNativeScanResult] result=Passed role=Drone request="+scanRequest+" source="+drone+" deferred="+result.DeferredToSource+" resultsInjected=0 input=Touch");}}}}
+                    if(nativeLastSeenObserved) {
+                        int2 observedDelta=math.abs(order.CenterCell-em.GetComponentData<ScanIntelLastSeen>(hostileTarget).Cell);
+                        if(math.max(observedDelta.x,observedDelta.y)>12)throw new InvalidOperationException("Observed native target outside actual Scan area; no relocation or hidden-pose retargeting fallback.");
+                    }
+                    if(order.HasStarted!=0) {
+                        using var fq=em.CreateEntityQuery(typeof(ScanIntelFeedQueueTag),typeof(ScanIntelFeedEntry));
+                        if(fq.CalculateEntityCount()==1){var feed=em.GetBuffer<ScanIntelFeedEntry>(fq.GetSingletonEntity(),true);foreach(var entry in feed)if(entry.RequestId==scanRequest&&entry.SourceEntity==drone&&entry.HasSourceEntity!=0&&entry.RadiusCells==12&&entry.RevealedCount>0&&entry.Frame>=scanStartedFrame){if(!nativeFeedObserved){RecordRecon("ActualNativeScanFeed",em,order,entry.RevealedCount);Debug.Log("[S005PopulatedFogRecoveryNativeScanFeed] result=Passed role=Drone request="+scanRequest+" source="+drone+" revealed="+entry.RevealedCount+" resultsInjected=0");}nativeFeedObserved=true;}}
+                        if(em.HasComponent<ScanIntelRevealedTag>(hostileTarget)&&em.HasComponent<ScanIntelLastSeen>(hostileTarget)){var last=em.GetComponentData<ScanIntelLastSeen>(hostileTarget);var actual=em.GetComponentData<LocalTransform>(hostileTarget).Position;var grid=em.GetComponentData<UnitGrid>(hostileTarget).Cell;if(last.LastScanFrame>=scanStartedFrame&&last.FactionId==2&&math.all(last.Cell==grid)&&math.distance(last.Position,actual)<=.05f){if(!nativeLastSeenObserved){RecordRecon("ActualNativeLastSeen",em,order,0,last.LastScanFrame);Debug.Log("[S005PopulatedFogRecoveryNativeLastSeen] result=Passed role=Drone request="+scanRequest+" target="+hostileTarget+" lastScanFrame="+last.LastScanFrame+" positionInjected=0 metadataInjected=0");}nativeLastSeenObserved=true;}}
+                    }
+                    return;
+                }
+                if(!scanOrderObserved)return;
+                if(!nativeResultObserved||!nativeFeedObserved||!nativeLastSeenObserved||!nativeAirborneObserved)throw new InvalidOperationException("Native scan completed without actual paid-source feed, retained target last-seen, or positive-time airborne movement.");
+                // Native automatic return remains ordinary gameplay. This narrow recovery
+                // case waits for genuine departure/LastSeen without certifying landing.
+                if(air.ReturningHome!=0)nativeReturnObserved=true;
+                return;
+            }
+            if(phase==5)
+            {
+                foreach(var member in members)if(em.Exists(member) && em.HasComponent<SkirmishAttemptOwnedComponent>(member) && em.GetComponentData<SkirmishAttemptOwnedComponent>(member).CapacityReleased==0)return;
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0)throw new InvalidOperationException("Capacity not fully released after delivered role death.");
+                foreach(var member in members)if(em.Exists(member) && SkirmishProductionService.TryReleaseDeath(em,session,member))throw new InvalidOperationException("Death released capacity twice.");
+                Debug.Log("[S005PopulatedFogRecoveryPaidQueueDeath] result=Passed role="+roles[index].RoleKind+" capacityReleased=1 idempotent=1 stimulus=HealthZero");results.Add(roles[index].RoleKind.ToString());index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;try{DisposeCandidateCatalog();}catch(Exception catalogError){Debug.LogException(catalogError);}Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    [Serializable] struct NativeFogRow {
+        public string phase,sight; public int frame,request,observationKind,lastSeenHealth,lastSeenMax;
+        public Vector3 frozenPosition; public float observedWorldTime,currentWorldTime,ageSeconds;
+        public bool exactPaidSource,sourceEntityHandleInjected,knowledgeInjected,liveMarker;
+    }
+    static bool HasLiveTargetMarker(EntityManager em) {
+        using var q=em.CreateEntityQuery(typeof(MatchHudMinimapMarkerStateComponent),typeof(MatchHudMinimapMarkerElement));
+        if(q.CalculateEntityCount()!=1)throw new InvalidOperationException("Actual native minimap marker boundary missing or ambiguous.");
+        foreach(var marker in em.GetBuffer<MatchHudMinimapMarkerElement>(q.GetSingletonEntity(),true))if(marker.SourceEntity==hostileTarget)return true;
+        return false;
+    }
+    static bool HasFrozenContactMarker(EntityManager em,float3 frozenPosition) {
+        using var q=em.CreateEntityQuery(typeof(MatchHudMinimapMarkerStateComponent),typeof(MatchHudMinimapMarkerElement));
+        if(q.CalculateEntityCount()!=1)throw new InvalidOperationException("Actual native minimap marker boundary missing or ambiguous.");
+        foreach(var marker in em.GetBuffer<MatchHudMinimapMarkerElement>(q.GetSingletonEntity(),true))
+            if(marker.SourceEntity==Entity.Null&&marker.FactionId==2&&math.distancesq(marker.Position,frozenPosition)<=.01f)return true;
+        return false;
+    }
+    static void RecordFog(string stage,EntityManager em,SkirmishContactKnowledgeElement knowledge) {
+        float now=(float)em.WorldUnmanaged.Time.ElapsedTime;
+        File.AppendAllText(effectPath,JsonUtility.ToJson(new NativeFogRow{phase=stage,sight=knowledge.Sight.ToString(),frame=Time.frameCount,request=knowledge.ScanRequestId,observationKind=knowledge.ObservationKind,lastSeenHealth=knowledge.LastSeenHealth,lastSeenMax=knowledge.LastSeenMax,frozenPosition=(Vector3)knowledge.LastSeenPosition,observedWorldTime=knowledge.LastObservedTimeSeconds,currentWorldTime=now,ageSeconds=now-knowledge.LastObservedTimeSeconds,exactPaidSource=knowledge.ObservationSource==members[0],sourceEntityHandleInjected=false,knowledgeInjected=false,liveMarker=HasLiveTargetMarker(em)})+"\n");
+    }
+    static void ObserveNativeFog(EntityManager em) {
+        if(!SkirmishFogService.TryGetKnowledge(em,hostileTarget,1,out var knowledge))throw new InvalidOperationException("Native per-observer knowledge missing; no fixture fallback.");
+        bool visible=SkirmishFogService.IsVisible(em,hostileTarget);
+        if(visible!=(knowledge.Sight==SkirmishContactSight.Visible))throw new InvalidOperationException("Native player projection disagrees with observer knowledge.");
+        if(knowledge.Sight==SkirmishContactSight.Visible&&knowledge.ObservationKind==2&&knowledge.ObservationSource==members[0]&&knowledge.ScanRequestId==scanRequest&&scanRequest>scanBaseline) {
+            if(!nativeVisibleObserved) {
+                nativeVisibleObserved=true;RecordFog("ActualNativeScanVisible",em,knowledge);
+                Debug.Log("[S005PopulatedFogRecoveryNativeVisible] result=Passed source=ExactPaidDrone nativeScanRequest="+scanRequest+" observationKind=Scan authoredFullVision=0 knowledgeInjected=0 directApproachMayAlsoObserve=1");
+                ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1150-fog-visible.png");
+            }
+        }
+        if(!nativeVisibleObserved)return;
+        if(knowledge.Sight==SkirmishContactSight.LastSeen) {
+            if(HasLiveTargetMarker(em)||!HasFrozenContactMarker(em,knowledge.LastSeenPosition))return; // Presentation may finish later this frame.
+            if(!frozenLastSeenObserved) {
+                frozenLastSeenObserved=true;frozenContact=knowledge;RecordFog("ActualFrozenLastSeen",em,knowledge);
+                Debug.Log("[S005PopulatedFogRecoveryNativeFrozenLastSeen] result=Passed liveEntityMarker=0 position="+knowledge.LastSeenPosition+" health="+knowledge.LastSeenHealth+" frozenFromActualObservation=1");
+                ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1150-fog-lastseen.png");
+                BeginRecovery(em);
+            }
+            else if(!math.all(knowledge.LastSeenCell==frozenContact.LastSeenCell)||!math.all(knowledge.LastSeenPosition==frozenContact.LastSeenPosition)||knowledge.LastSeenHealth!=frozenContact.LastSeenHealth||knowledge.LastSeenMax!=frozenContact.LastSeenMax||knowledge.LastObservedTimeSeconds!=frozenContact.LastObservedTimeSeconds)
+                throw new InvalidOperationException("Native stale contact changed frozen position/health/observation timestamp without observation.");
+        }
+        else if(knowledge.Sight==SkirmishContactSight.Visible&&frozenLastSeenObserved)
+            throw new InvalidOperationException("Retained hostile was reobserved after first departure; scoped single-observation expiry remains unqualified.");
+        if(knowledge.Sight==SkirmishContactSight.Unknown&&frozenLastSeenObserved&&!nativeExpiryObserved) {
+            float age=(float)em.WorldUnmanaged.Time.ElapsedTime-frozenContact.LastObservedTimeSeconds;
+            if(age+0.01f<originalFog.LastSeenExpireSeconds)throw new InvalidOperationException("Unknown before authored native LastSeen expiry elapsed.");
+            if(HasLiveTargetMarker(em)||HasFrozenContactMarker(em,frozenContact.LastSeenPosition))return;
+            if(nativeRecoveryObserved){foreach(var item in em.GetBuffer<SkirmishContactLedgerElement>(session,true))if(item.ObserverFactionId==1&&item.ContactStableObjectId.ToString()==targetStableId)throw new InvalidOperationException("Native restored ledger retained expired frozen contact.");}
+            nativeExpiryObserved=true;RecordFog("ActualNativeExpiry",em,knowledge);
+            Debug.Log("[S005PopulatedFogRecoveryNativeExpiry] result=Passed authoredExpiry="+originalFog.LastSeenExpireSeconds+" positiveSimulationAge="+age+" liveEntityMarker=0 frozenAnonymousMarker=0 targetRetainedAlive=1 elapsedInjected=0 knowledgeInjected=0");
+            ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1150-fog-unknown.png");
+        }
+    }
+
+    [Serializable] struct PublicSurveyGeometryRow {public string phase,padId,anchorId,source;public Vector3 authoredEnvelope,projectedCenter,publicEnemyObjective;public Vector2 nativeCenterCell;public float nativeCellSize,declaredPadWidth,declaredPadDepth;public int radiusCells;public bool hiddenActorPoseUsedForInput,actorPoseInjected,currentCoverageProven;}
+    static Vector3 ResolvePublicEnemyStagingDeploymentSurvey(EntityManager em)
+    {
+        var layout=AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset");
+        if(layout==null||!layout.TryGetPad(2,SkirmishLegalPadKind.VehicleSpawn,out var pad)||pad.PadId!="pad.skirmish.db.spawn_vehicle_enemy"||pad.AnchorId!="anchor.skirmish.db.staging_enemy"||!layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z))throw new InvalidOperationException("Public authored enemy staging vehicle deployment pad/map binding missing; no hidden actor coordinate fallback.");
+        var center=new Vector3(x,enemyBaseAnchor.y,z);using var q=em.CreateEntityQuery(typeof(GridConfig));if(q.CalculateEntityCount()!=1)throw new InvalidOperationException("Actual native grid missing/ambiguous for public staging survey.");var grid=q.GetSingleton<GridConfig>();var cell=GridUtils.WorldToCell(grid,(float3)center);
+        var row=new PublicSurveyGeometryRow{phase="PublicAuthoredStagingSurveyGeometry",padId=pad.PadId,anchorId=pad.AnchorId,source="ExistingAuthoredPublicStagingVehicleDeploymentPad",authoredEnvelope=new Vector3(pad.CenterX,0,pad.CenterZ),projectedCenter=center,publicEnemyObjective=enemyBaseAnchor,nativeCenterCell=new Vector2(cell.x,cell.y),nativeCellSize=grid.CellSize,declaredPadWidth=pad.WidthMetres,declaredPadDepth=pad.DepthMetres,radiusCells=12,hiddenActorPoseUsedForInput=false,actorPoseInjected=false,currentCoverageProven=false};
+        string json=JsonUtility.ToJson(row);File.AppendAllText(effectPath,json+"\n");Debug.Log("[S005PopulatedFogRecoveryPublicStagingSurveyGeometry] "+json);return center;
+    }
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=point,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static void AddPlacementCandidate(Vector3 world,string source)
+    {
+        if(world.x<750||world.x>1900||world.z<150||world.z>1000)return;
+        world.y=playerBaseAnchor.y;
+        foreach(var old in placementCandidates)if((old.world-world).sqrMagnitude<4)return;
+        placementCandidates.Add(new PlacementCandidate{world=world,source=source});
+    }
+    static void PreparePlacementCandidates()
+    {
+        if(candidatesPrepared)return;candidatesPrepared=true;
+        var layout=AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset");
+        if(layout==null)throw new InvalidOperationException("Existing S005 logical layout missing.");
+        foreach(var pad in layout.Pads)
+        {
+            if(pad.FactionId!=1||pad.Kind is not (SkirmishLegalPadKind.Service or SkirmishLegalPadKind.AirReturn or SkirmishLegalPadKind.Supply))continue;
+            if(!layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z))throw new InvalidOperationException("Typed pad map binding unavailable.");
+            AddPlacementCandidate(new Vector3(x,0,z),"DeclaredTypedPad:"+pad.PadId+";currentNativeLegalityUnproved");
+        }
+        // Prioritize the nearby recorded paid Campaign lot; this facility still needs native validity.
+        AddPlacementCandidate(new Vector3(825.5f,0,671f),"RecordedPaidCampaignAirportLot:rotatedAirport;notIntelStationQualification");
+        Vector3 forward=enemyBaseAnchor-playerBaseAnchor;forward.y=0;forward.Normalize();var side=Vector3.Cross(Vector3.up,forward);
+        // Every point is only a prospective lot on unchanged existing geometry.
+        // Search rings around the legitimate visible objective, not an injected pose.
+        for(int ring=1;ring<=4;ring++)
+            for(int along=-ring;along<=ring;along++)
+                for(int across=-ring;across<=ring;across++)
+                    if(Mathf.Max(Mathf.Abs(along),Mathf.Abs(across))==ring)
+                        AddPlacementCandidate(playerBaseAnchor+forward*(along*24)+side*(across*24),"PublicBaseCandidateGrid24m:ring"+ring+";currentNativeLegalityUnproved");
+        // Native paid Airport plots recorded by the existing Campaign-source
+        // fixture; candidate provenance only. IntelStation must pass its own rules.
+        AddPlacementCandidate(new Vector3(1399f,0,177.5f),"RecordedPaidCampaignAirportLot:seed155926;notIntelStationQualification");
+        AddPlacementCandidate(new Vector3(1415f,0,177.5f),"RecordedPaidCampaignAirportLot:seed155926;notIntelStationQualification");
+        Debug.Log("[S005PopulatedFogRecoveryPlacementSearch] candidates="+placementCandidates.Count+" source=ExistingTypedPadsPublicBaseGridRecordedCampaignLots currentLegalityUnproved=1 sourceFitExhaustive=0 forceValid=0 physicalGeometryChanged=0 offscreenCandidatesNotConsumed=1");
+    }
+    [Serializable] sealed class PlacementObservation
+    {
+        public string phase,source,rawNativeStatus,shownStatus,title,footprint,materialsCost,oilCost,fuelCost,readiness,validityPanelStatus;
+        public int candidate,actualTouches,actualBlocked,ownMaterials,currentDollars,activeMaterialsCost,activeCreditsCost;
+        public Vector3 world,camera;
+        public bool hasPending,canConfirmNative,confirmActive,confirmInteractable,fullMapOpen;
+    }
+    static void ObservePlacement(BuildPlacementConfirmationBarView placement,string phaseName)
+    {
+        var command=(IBuildingUiCommand)typeof(BuildPlacementConfirmationBarView).GetField("_commandSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(placement);
+        UiShellRuntimeGateway.TryReadSkirmish(out var model);UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness);
+        var candidate=placementCandidates[buildSite];var map=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        var row=new PlacementObservation {phase=phaseName,candidate=buildSite,actualTouches=actualPlacementTouches,actualBlocked=actualBlockedPlacements,world=candidate.world,source=candidate.source,rawNativeStatus=command?.PlacementStatusText,shownStatus=placement.StatusText?.text,title=placement.TitleText?.text,footprint=placement.FootprintText?.text,materialsCost=placement.MaterialsCostText?.text,oilCost=placement.OilCostText?.text,fuelCost=placement.FuelCostText?.text,ownMaterials=model.OwnMaterials,currentDollars=command?.CurrentDollars??-1,activeMaterialsCost=command?.ActivePlacementCost??-1,activeCreditsCost=command?.ActivePlacementCreditsCost??-1,readiness="stage="+readiness.Stage+" visible="+readiness.Visible+" upgradeEligible="+readiness.CanUpgrade+" pending="+readiness.InProgress+" reason="+readiness.Reason,validityPanelStatus=placement.ValidityPanel!=null?placement.ValidityPanel.StatusText?.text:null,hasPending=placement.HasPendingPlacement,canConfirmNative=command!=null&&command.CanConfirmBuildingPlacement,confirmActive=placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive(),confirmInteractable=placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable(),fullMapOpen=map!=null&&map.IsOpen,camera=Camera.main!=null?Camera.main.transform.position:Vector3.zero};
+        string json=JsonUtility.ToJson(row);Debug.Log("[S005PopulatedFogRecoveryNativePlacementObservation] "+json);
+        File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1150.placement.jsonl",json+"\n");
+        if(actualPlacementTouches<=6||row.canConfirmNative)ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1150-placement-"+buildSite+"-"+phaseName+".png");
+    }
+
+    static Canvas RootCanvas(Component component)
+    {
+        var canvas=component!=null?component.GetComponentInParent<Canvas>()?.rootCanvas:null;
+        return canvas!=null&&canvas.isActiveAndEnabled&&canvas.gameObject.activeInHierarchy?canvas:null;
+    }
+    static Canvas ResolvePresentedInputCanvas()
+    {
+        var fullMap=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        if(fullMap!=null&&fullMap.IsOpen)
+        {var fullCanvas=RootCanvas(fullMap.CloseAction)??RootCanvas(fullMap.Minimap);if(fullCanvas!=null)return fullCanvas;}
+        var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+        if(placement!=null&&placement.HasPendingPlacement&&placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive())
+        {var canvas=RootCanvas(placement.ConfirmButton);if(canvas!=null)return canvas;}
+        var catalog=ResolveLiveCatalog(out var drawer);
+        if(drawer!=null&&drawer.IsOpen)
+        {
+            var canvas=RootCanvas(drawer.DrawerRoot!=null?drawer.DrawerRoot.transform:drawer.transform);
+            if(canvas==null)canvas=RootCanvas(drawer.CloseButton);
+            if(canvas!=null)return canvas;
+        }
+        var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+        return RootCanvas(tray)??RootCanvas(hud);
+    }
+    static void SurfaceBlocked(Canvas canvas,double now)
+    {
+        if(surfaceBlockedSince==0)
+        {
+            surfaceBlockedSince=now;
+            Debug.Log("[S005PopulatedFogRecoveryNativeInputSurface] phase="+phase+" presentedCanvas="+(canvas!=null?Hierarchy(canvas.transform):"none")+" canvasPixels="+(canvas!=null?canvas.pixelRect.ToString():"none")+" renderScreen="+Screen.width+"x"+Screen.height+" guard=ExactPresentedCanvasWidth");
+            if(phase>=20)DumpNativeBuildInventory("InputSurfaceBlocked",clickedBuild);
+        }
+        if(now-surfaceBlockedSince>=1&&!viewRepairQueued&&viewRepairs<2&&!touch.IsBusy)
+        {
+            viewRepairQueued=true;
+            EditorApplication.delayCall+=()=>
+            {
+                viewRepairQueued=false;if(!EditorApplication.isPlaying||phase==9)return;
+                // Existing harness fixed Game View strategy. Only Editor presentation changes.
+                try
+                {
+                    typeof(Game.Editor.MainMenuV3PrefabBuilder).GetMethod("SetGameViewResolution",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{1920,1080});
+                    viewRepairs++;surfaceBlockedSince=EditorApplication.timeSinceStartup;
+                    Debug.Log("[S005PopulatedFogRecoveryNativeInputSurface] action=ExistingFixedGameViewStrategy width=1920 height=1080 retry="+viewRepairs+" simulationUntouched=1");
+                }
+                catch(Exception error){Finish(true,"Existing native Game View correction failed: "+error);}
+
+            };
+        }
+        if(now-surfaceBlockedSince>6&&touch.IsBusy)
+            throw new InvalidOperationException("Native gesture pending while no matching presented Canvas exists; bounded fixture/input-surface failure, no Drone queue attempted.");
+        if(now-surfaceBlockedSince>3&&viewRepairs>=2)
+            throw new InvalidOperationException("Native input surface did not match presented Canvas after bounded existing Game View correction; fixture/presentation failure, no producer or queue defect proven.");
+    }
+
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        if(phase>=30&&phase<=34)
+        {
+            inputFrame=Time.frameCount;
+            try{touch.Tick(Time.unscaledTime);if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native recovery Touch interrupted.");if(touch.IsBusy||EditorApplication.timeSinceStartup<(double)Get("playerResumeDue"))return;world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;RecoveryFrame(world.EntityManager,EditorApplication.timeSinceStartup);}catch(Exception e){Finish(true,e.ToString());}return;
+        }
+        try
+        {
+            double surfaceNow=EditorApplication.timeSinceStartup;
+            var canvas=ResolvePresentedInputCanvas();
+            if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1){SurfaceBlocked(canvas,surfaceNow);return;}
+            surfaceBlockedSince=0;inputFrame=Time.frameCount;
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (10 or 11 or 20 or 21 or 22 or 23))return;
+            var em=world.EntityManager;
+            if(phase>=20)
+            {
+                var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                var catalog=ResolveLiveCatalog(out var drawer);
+                var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+                var buildControls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                if(phase==20)
+                {
+                    if(hud==null)return;
+                    playerBaseAnchor=hud.PlayerBaseObjectivePosition;enemyBaseAnchor=hud.EnemyBaseObjectivePosition;
+                    if((enemyBaseAnchor-playerBaseAnchor).sqrMagnitude<1)throw new InvalidOperationException("Public HUD base anchors not ready before Build.");
+                    anchorsCached=true;
+                    if(Tap(hud.PlayerFocusButton))
+                    {phase=21;Debug.Log("[S005PopulatedFogRecoveryPublicAnchorCache] source=VisibleHUD beforeBuild=1 player="+playerBaseAnchor+" enemy="+enemyBaseAnchor+" actorStateReadForPlacement=0");}
+                    return;
+                }
+                if(!anchorsCached)throw new InvalidOperationException("No legitimate public HUD base anchor cache for placement.");
+                if(phase==21)
+                {
+                    if(placement!=null&&placement.HasPendingPlacement){phase=22;return;}
+                    if(catalog!=null && !catalogLogged){catalogLogged=true;catalogSeenAt=now;LogLiveCatalog(catalog,drawer);}
+                    if(catalog==null)
+                    {
+                        if(!buildDispatched)
+                        {
+                            DumpNativeBuildInventory("BeforeBuildContact",buildControls?.BuildButton);
+                            if(Tap(buildControls?.BuildButton))
+                            {
+                                clickedBuild=buildControls.BuildButton;buildDispatched=true;buildDispatchedAt=now;
+                                Debug.Log("[S005PopulatedFogRecoveryNativeBuildContact] dispatched=1 "+ButtonState(clickedBuild));
+                            }
+                            return;
+                        }
+                        if(now-buildDispatchedAt>=3)
+                        {
+                            DumpNativeBuildInventory("NoAssignedOpenCatalogAfterBuild",clickedBuild);
+                            throw new InvalidOperationException("No native catalog with assigned open view appeared within 3 seconds after actual Build Touch. Fixture/UI ownership unresolved; no Drone producer or queue defect proven.");
+                        }
+                        return;
+                    }
+                    var build=catalog.ResolveCatalogTarget(BuildDrawerCategory.Buildings,"Building_Satelite_Dish");
+                    if(build==null && now-catalogSeenAt>3)
+                    {
+                        bool included=LogLiveCatalog(catalog,drawer);
+                        DumpNativeBuildInventory("AssignedOpenCatalogMissingSatelliteControl",clickedBuild);
+                        throw new InvalidOperationException("Actual native catalog assigned to open view has no Satellite control; keyIncluded="+included+". Producer UI prerequisite unresolved; no Drone queue attempted.");
+                    }
+                    if(!Tap(build)&&build!=null)harness.GetMethod("PlayerResumeScrollTo",privateStatic).Invoke(null,new object[]{build});return;
+                }
+                if(phase==23)return;
+                if(placement==null||!placement.HasPendingPlacement)throw new InvalidOperationException("Native placement closed before IntelStation commit.");
+                PreparePlacementCandidates();
+                if(siteTapped)
+                {
+                    ObservePlacement(placement,"AfterCompletedGroundTouch");
+                    if(placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable())
+                    {if(Tap(placement.ConfirmButton)){phase=23;Debug.Log("[S005PopulatedFogRecoveryProducer] phase=NativeIntelStationConfirmed forceValid=0 relocationInjected=0 actualPlacementTouches="+actualPlacementTouches+" candidate="+buildSite);}return;}
+                    actualBlockedPlacements++;siteTapped=false;buildSite++;candidateSince=0;
+                }
+                if(buildSite>=placementCandidates.Count)throw new InvalidOperationException("Bounded current native IntelStation candidates exhausted after actual Touch observations="+actualPlacementTouches+" blocked="+actualBlockedPlacements+". This sample is not exhaustive source-fit/impossibility proof.");
+                var candidate=placementCandidates[buildSite];
+                if(candidateSince==0){candidateSince=now;ObservePlacement(placement,"BeforeCandidateTouchOrNativeNavigation");}
+                if(now-candidateSince>20)
+                {
+                    ObservePlacement(placement,"UnobservedCandidateNavigationTimeout");
+                    throw new InvalidOperationException("Candidate could not be exposed/touched through normal full-map input within20secs; not counted invalid; source-fit remains unqualified. candidate="+buildSite);
+                }
+                // False means navigation/input not yet complete, never 'bad lot'.
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{candidate.world,now}))
+                {siteTapped=true;actualPlacementTouches++;Debug.Log("[S005PopulatedFogRecoveryProducer] phase=NativePlacementTouch candidate="+candidate.world+" candidateIndex="+buildSite+" actualTouches="+actualPlacementTouches+" source="+candidate.source+" input=Touch offscreenCandidateConsumed=0");}
+                return;
+            }
+            if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;
+            var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if(tray==null||controls==null)return;
+            if(phase==10)
+            {
+                using var query=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=query.ToEntityArray(Allocator.Temp);
+                bool exact=selected.Length==members.Count;foreach(var actor in selected)exact &= members.Contains(actor);
+                if(!exact)
+                {
+                    if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return;}
+                    if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                    for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&members.Contains(member)){Tap(tray.VisibleCardButton(slot));return;}
+                    if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);
+                    return;
+                }
+                Debug.Log("[S005PopulatedFogRecoveryNativeSelection] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" input=Touch selectionInjected=0");phase=11;
+            }
+            if(command.ActiveCommandMode!=TacticalCommandMode.Scan){Tap(controls.ScanButton);return;}
+            bool started=(bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{destination,now});
+            if(started){scanTapFrame=Time.frameCount;phase=12;Debug.Log("[S005PopulatedFogRecoveryNativeScanTouch] phase=Order role=Drone destination="+destination+" input=Touch fogFlagsInjected=0");}
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005PopulatedFogRecoveryMovementInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005PopulatedFogRecoveryMovement] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending nativeTouchSelectionScanSaveContinue=Measured checkpoint=NativePopulatedFogRecoveryMeasured reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedPaidDroneRecon:"+reason});
+    }
+}

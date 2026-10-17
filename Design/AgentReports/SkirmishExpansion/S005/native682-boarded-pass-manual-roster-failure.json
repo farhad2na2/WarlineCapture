@@ -1,0 +1,16 @@
+{
+  "run": "native682",
+  "sourceHash": "6002513acaa33254a1eb1261a0768a2f5f84e43de28d1366d011b7cc65e21c45",
+  "wrapperExit": 2,
+  "sourceUnchanged": true,
+  "log": "native-682-boarded-selection-ack-save-resume-en.log",
+  "trace": "s005-aria-live-155926-en-7ee96281c50042b38e676c805b1de70b.jsonl",
+  "passengerRecovery": "Passed restored and unloaded four via native touches; same attempt, paid receipt preserved and old physical actors removed",
+  "completeResumedMission": "FailedDiagnosticAbort",
+  "reason": "Native casualty removed first rifle group; driver kept old card slot and misinterpreted selected rifle as rocketeer. Read-only diagnostics retained in log.",
+  "readOnlyCliDiagnostics": 2,
+  "gameplayInjections": 0,
+  "strictEndedContacts": 153,
+  "physicalInputInterventions": 0,
+  "countsForFullReadiness": false
+}

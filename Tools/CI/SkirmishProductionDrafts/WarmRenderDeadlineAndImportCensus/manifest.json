@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/SkirmishS002AriaRunHarness.WarmRenderExitDiagnostic.cs.txt",
+      "before_sha256": "f8e0c8b3e53f6072120f3948a912894bc38271b0a961b18d6a1723aa14a06e21",
+      "sha256": "c40af611e4c23d5a4eea40d451b8a9b8c0890f99f6e845f87df6abee0c461f75"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/WarmRenderDeadlineAndImportCensus/SkirmishS002AriaRunHarness.StartupExitDiagnostic.cs.txt",
+      "before_sha256": "6bd28f435c65df4af21e6338d38e3180cd415bda6e36d09b51959e7e609b1cae",
+      "sha256": "1875c21974c6aca56f5b94c5231c2d226bbcf91f40baeacdb6807dd6e8fe87e7"
+    }
+  ],
+  "scope": "Only explicit warm stage180s after original readiness; minimum90 simulation-frame offset with separate observed rendered-frame counters; read-only effective/stored import census and actual EOF facts",
+  "native_execution": false,
+  "readinessClaim": false,
+  "required_marker": "[S005WarmRenderExitDiagnostic] result=Collected mode=None samples=4 minimumFrameOffset=90 readinessClaim=0 wrapperExitStillRequired=1",
+  "original_readiness_timeout_unchanged": true,
+  "settings_mutated": false,
+  "worker_control": false
+}

@@ -1,0 +1,39 @@
+{
+  "userAuthorizedCleanup": true,
+  "removedCaches": [
+    {
+      "path": "/Users/farhad/Library/Caches/Google/Chrome",
+      "allocatedBytesBefore": 6619213824,
+      "removed": true,
+      "classification": "Generated cache; application closed; source/profile/history preserved"
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Library/BurstCache/JIT",
+      "allocatedBytesBefore": 1970839552,
+      "removed": true,
+      "classification": "Generated cache; application closed; source/profile/history preserved"
+    },
+    {
+      "path": "/Users/farhad/Library/Caches/JetBrains/Rider2026.1/index",
+      "allocatedBytesBefore": 1354502144,
+      "removed": true,
+      "classification": "Generated Rider index/cache; IDE closed; LocalHistory preserved"
+    },
+    {
+      "path": "/Users/farhad/Library/Caches/JetBrains/Rider2026.1/caches",
+      "allocatedBytesBefore": 526630912,
+      "removed": true,
+      "classification": "Generated Rider index/cache; IDE closed; LocalHistory preserved"
+    }
+  ],
+  "totalAllocatedBytesRemoved": 10471186432,
+  "preserved": [
+    "Source/assets",
+    "Git history and LFS",
+    "Validation evidence",
+    "Codex chat records",
+    "Chrome profile/passwords/history",
+    "Rider Local History"
+  ],
+  "diskFreeGiBAfterCleanup": 59.63
+}

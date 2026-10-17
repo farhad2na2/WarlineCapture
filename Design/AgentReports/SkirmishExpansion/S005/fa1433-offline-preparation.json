@@ -1,0 +1,26 @@
+{
+  "result": "PreparedDispatchDisabled",
+  "runId": 1433,
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "sourceFiles": 43296,
+  "sourceManifest": "fa1433-prepared-current-source-manifest.json",
+  "sourceManifestSha256": "292949fc5894e13bc05684a7e46d9c0f2b3e5b1a5f9d7ce1d646c66eb990049b",
+  "packagePath": "/private/tmp/s005-fa1433-paid-r2-manual",
+  "packageReadme": "README.md",
+  "fixtureSha256": "80ca35a12c34d5a110b0c61df3b9050a0b8732c70000c01fb8a1adb1b2b47924",
+  "runnerSha256": "c4fdb205dd865e12e131575f56885e2fa0b2c66fb72af21d62f281e0fc2f07e7",
+  "reviewedSourceContractCount": 137,
+  "staticAudit": "PassedStaticOnly",
+  "postContinueParserControls": "PassedSyntheticOnly; real1428 rejection, six synthetic rejections, one synthetic parser-positive",
+  "homeDefenseSupplementalControls": "PassedSyntheticOnly; 32 checks",
+  "fullManifestVerification": "Identical before and after preparation",
+  "unityCompiled": false,
+  "nativeRun": false,
+  "dispatchPermitted": false,
+  "playerReady": false,
+  "preservedPriorFailures": [
+    1425,
+    1428,
+    1431
+  ]
+}

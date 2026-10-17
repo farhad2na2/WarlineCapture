@@ -1,0 +1,25 @@
+{
+  "palms": 63,
+  "details": 128,
+  "rejected": 291,
+  "townGroups": 6,
+  "courtyards": 9,
+  "wallSegments": 121,
+  "scope": "Shared CityEdgeAirfield presentation",
+  "playerReady": false,
+  "ownerAuthorized": true,
+  "sharedConsumers": "All missions using the existing CityEdgeAirfield scene",
+  "missionPlacement": "S005 southern frontage, z=520",
+  "nativeMissionCapture": "Pending",
+  "priorCandidateRuns": "Historical; new placement and camera require fresh validation",
+  "verifiedDirectConsumers": [
+    "CH01-M04",
+    "CH04-M01",
+    "S004",
+    "S005"
+  ],
+  "sourceSceneGuid": "915718fcf0cd7422db987b388cd0d925",
+  "authoredSubSceneGuid": "cd836ff2ddd2a440e81db4a20332d266",
+  "allSourceConsumersInheritDressing": true,
+  "configurationValidation": "tests-011-town-camera.log: 12 configurations and existing mission regressions Passed"
+}

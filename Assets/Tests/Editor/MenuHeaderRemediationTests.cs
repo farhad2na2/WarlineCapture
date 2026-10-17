@@ -22,7 +22,11 @@ using TMPro;
 public sealed class MenuHeaderRemediationTests
 {
     // Native prefab geometry/captures only; this fixture is not player-input acceptance.
-    public static void BuildAndCaptureColumnAlignment()
+    public static void BuildAndCaptureColumnAlignment() => CaptureColumnAlignment(rebuild: true);
+
+    public static void CaptureColumnAlignment() => CaptureColumnAlignment(rebuild: false);
+
+    private static void CaptureColumnAlignment(bool rebuild)
     {
         string output = "Design/AgentReports/MenuUiUxAudit/After/main-menu-columns-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
         Directory.CreateDirectory(output);
@@ -33,7 +37,7 @@ public sealed class MenuHeaderRemediationTests
         using var world = new World("main-menu-column-geometry-fixture");
         try
         {
-            MainMenuV3PrefabBuilder.Build();
+            if (rebuild) MainMenuV3PrefabBuilder.Build();
             World.DefaultGameObjectInjectionWorld = world;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
             CreatePresentation(world, CampaignMissionSequence.SteelPush, false, 0x1ffff);
@@ -52,8 +56,8 @@ public sealed class MenuHeaderRemediationTests
                             Canvas.ForceUpdateCanvases();
                             string[] paths =
                             {
-                                "HeaderContent/CreditsVisualPanel", "RightContent/CommanderPanel",
-                                "RightContent/AriaPanel", "FooterContent/StoreButton", "FooterContent/OpenArmoryButton"
+                                "RightContent/CommanderPanel", "RightContent/AriaPanel",
+                                "FooterContent/StoreButton", "FooterContent/OpenArmoryButton"
                             };
                             var reference = new Vector3[4];
                             ((RectTransform)instance.transform.Find(paths[0])).GetWorldCorners(reference);
@@ -64,12 +68,16 @@ public sealed class MenuHeaderRemediationTests
                                 Assert.That(corners[0].x, Is.EqualTo(reference[0].x).Within(0.5f), path + " left edge");
                                 Assert.That(corners[3].x, Is.EqualTo(reference[3].x).Within(0.5f), path + " right edge");
                             }
+                            // Credits and Settings share the column: Credits on the inner side, Settings on the outer edge.
+                            var credits = new Vector3[4];
+                            ((RectTransform)instance.transform.Find("HeaderContent/CreditsVisualPanel")).GetWorldCorners(credits);
                             var gear = new Vector3[4];
                             ((RectTransform)instance.transform.Find("HeaderContent/SettingsButton")).GetWorldCorners(gear);
-                            if (locale == "fa-IR")
-                                Assert.Greater(gear[0].x, reference[3].x, "RTL Settings must be right of Credits without overlap");
-                            else
-                                Assert.Less(gear[3].x, reference[0].x, "Settings must be left of Credits without overlap");
+                            bool rtl = locale == "fa-IR";
+                            Vector3[] left = rtl ? gear : credits, right = rtl ? credits : gear;
+                            Assert.That(left[0].x, Is.EqualTo(reference[0].x).Within(0.5f), "header column left edge");
+                            Assert.That(right[3].x, Is.EqualTo(reference[3].x).Within(0.5f), "header column right edge");
+                            Assert.Less(left[3].x, right[0].x, "Credits and Settings must not overlap");
                         });
                 }
             }

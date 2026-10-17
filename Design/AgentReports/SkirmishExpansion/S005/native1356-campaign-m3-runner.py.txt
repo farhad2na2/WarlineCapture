@@ -1,0 +1,163 @@
+"""Root-owned M3 native compatibility journey; external QA only, no implicit Editor ownership."""
+import argparse, hashlib, json, math, pathlib, re, subprocess, sys
+
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+BUNDLE=pathlib.Path('/private/tmp/campaign-m3-current1356-2df3')
+FIXTURE=BUNDLE/'CampaignSelectionJourney1356.cs'
+PREP=pathlib.Path('/private/tmp/campaign-m3-current1356-2df3-enabled-v1/manifest.json')
+IDLE=BUNDLE/'CampaignM3Idle1356.cs'
+HELPER=pathlib.Path('/private/tmp/warline-s005-source-manifest.py')
+STATE=REPORT/'TECHNICAL_READINESS_CURRENT.json'
+LOG=REPORT/'native-1356-campaign-m3-current.log'
+
+def read(p): return json.loads(p.read_text())
+def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def write_new(p,value):
+ with p.open('x') as f: json.dump(value,f,indent=2);f.write('\n')
+def state_idle():
+ s=read(STATE)
+ if s.get('activeRun') is not None: raise RuntimeError('Heavy lane already owned: '+str(s['activeRun']))
+ return s
+def source_manifest(label):
+ prefix='final-1356-campaign-m3-'+label
+ for ext in ['-source-manifest.json','-independent-fingerprint.json']:
+  if (REPORT/(prefix+ext)).exists():raise RuntimeError('Preserve existing source evidence '+prefix)
+ subprocess.run(['rtk','proxy','python3',str(HELPER),prefix],cwd=ROOT,check=True)
+ return prefix+'-source-manifest.json'
+def cli(argv,name):
+ p=REPORT/name
+ result=subprocess.run(['rtk','proxy','unity','command',*argv,'--project-path',str(ROOT),'--format','json'],cwd=ROOT,capture_output=True,text=True)
+ with p.open('x') as f:f.write(result.stdout)
+ if result.stderr:write_new(p.with_name(p.name+'.stderr.json'),{'exit':result.returncode,'stderr':result.stderr})
+ x=read(p);d=x.get('data',{});v=d.get('result',{})
+ if result.returncode or x.get('success') is not True or d.get('success') is not True or v.get('success') is not True or d.get('target',{}).get('projectPath')!=str(ROOT):raise RuntimeError('Native CLI failed exact target/nested success: '+name)
+ return v.get('result')
+def native_idle(stage):
+ value=cli(['run_script','--file',str(IDLE),'--entry','CampaignM3Idle1356.Run','--timeout_ms','30000'],'native1356-'+stage+'-idle.json')
+ fields=value.split('|') if isinstance(value,str) else []
+ if fields!=['False']*5+[str(ROOT/'Assets'),'0']:raise RuntimeError('Editor not idle/clean on exact project: '+str(value))
+
+def qualify(log,rows,status,scope):
+ errors=[];entries=[7] if scope=='fa-IR' else [2] if scope=='en' else [2,7]
+ marker='[CampaignM3Journey1356] result=Passed'
+ if marker not in log:errors.append('Missing complete native M3 witness marker')
+ if '[CampaignNativeSelection] result=Passed' not in log:errors.append('Missing paired native companion input gate')
+ if '[CampaignScopedJourney] result=Passed mission=3' not in log:errors.append('Generic M3 native journey did not pass')
+ if '[CampaignTutorialEntry] result=Passed' not in log:errors.append('Native Campaign journey failure')
+ if any(t in log for t in ['[CampaignNativeContinuousStatus1356] result=Failed','[CampaignM3Journey1356] result=Failed']):errors.append('Native witness explicitly failed')
+ for entry in entries:
+  native=[x for x in rows if x.get('entry')==entry]
+  required=['CampaignLaunchObserved','InitialDragDispatched','InitialDragAccepted','NativeHoldFourAccepted','NativeVictoryRendered','CampaignReturnRendered']
+  chosen=[]
+  for stage in required:
+   candidates=[x for x in native if x.get('stage')==stage]
+   if not candidates:errors.append(f'Missing actual {stage} entry={entry}');continue
+   chosen.append(candidates[0])
+  if len(chosen)!=len(required):continue
+  if [x['frame'] for x in chosen]!=sorted(x['frame'] for x in chosen):errors.append('M3 observed journey chronology invalid entry='+str(entry))
+  identity={(x.get('session'),x.get('attempt')) for x in chosen[:-1]}
+  if len(identity)!=1 or any(not session or not isinstance(attempt,int) or attempt<=0 for session,attempt in identity):errors.append('M3 attempt identity invalid entry='+str(entry))
+  for x in chosen:
+   if x.get('readOnly') is not True:errors.append('Invalid read-only native M3 witness')
+  for x in chosen[:-1]:
+   if x.get('mission')!='saga.ch01.m03.radar_warning':errors.append('Invalid native M3 witness identity')
+  if chosen[0].get('launchOrigin')!='CampaignOperations' or chosen[0].get('returnDestination')!='None' or chosen[0].get('outcome')!='None':errors.append('True nonterminal Campaign launch provenance missing')
+  expected_locale='fa-IR' if entry==7 else 'en'
+  if any(x.get('locale')!=expected_locale for x in chosen):errors.append('Native locale does not match requested entry')
+  victory,returned=chosen[-2:]
+  if victory.get('launchOrigin')!='CampaignOperations' or victory.get('returnDestination')!='CampaignOperations' or victory.get('outcome')!='Victory':errors.append('Exact native terminal Victory route missing')
+  if returned.get('terminalSnapshot') is not True or any(returned.get('terminal'+k)!=victory.get(v) for k,v in [('Frame','frame'),('Mission','mission'),('Session','session'),('Attempt','attempt'),('Locale','locale'),('Outcome','outcome'),('LaunchOrigin','launchOrigin'),('ReturnDestination','returnDestination')]):errors.append('Rendered Campaign return lacks exact frozen native terminal identity')
+  if returned.get('frame',-1)<=victory.get('frame',-1):errors.append('Rendered Campaign return must follow native Victory frame')
+  if returned.get('shellPresent') is not True or returned.get('shellTransition') is not False or returned.get('shellMode')!='MainMenu' or returned.get('shellPhase')!='MenuReady' or returned.get('shellRoute')!='Campaign' or returned.get('campaignValid') is not True:errors.append('Actual current Campaign menu route missing')
+  if returned.get('boundTitlePresented') is not True or returned.get('boundTitleOwned') is not True or returned.get('renderedCampaignScreenCount')!=1 or not returned.get('boundTitleOwner') or not returned.get('boundTitleText') or returned.get('title')!=returned.get('boundTitleText'):errors.append('Rendered bound Campaign title ownership missing')
+  if returned.get('boundTitleKey')!='ui.campaign.title' or not returned.get('boundTitleSource') or returned.get('boundTitleResolver')!='PresentedOwnedLocalizedMenuTitlePanel' or not returned.get('boundTitlePath','').endswith('/MenuTitlePanel/MenuTitle'):errors.append('Actual localized approved Campaign header provenance missing')
+  census=[x for x in native if x.get('stage')=='PostResultShellCensus' and victory['frame']<x.get('frame',-1)<=returned['frame'] and x.get('readOnly') is True]
+  if not census:errors.append('Post-result actual shell census absent')
+  if chosen[2].get('selected')!=4 or not chosen[2].get('group'):errors.append('Initial real drag did not select exact four current native rifles')
+  if chosen[3].get('selected')!=4 or chosen[3].get('held')!=4:errors.append('Actual four-rifle Hold state missing')
+  if chosen[-2].get('hostileTotal')!=7 or chosen[-2].get('hostileDefeated')!=7:errors.append('All seven native M3 hostiles must be defeated at Victory')
+  if chosen[-2].get('convoyElements')!=2 or chosen[-2].get('convoyResolved')!=2:errors.append('Both native convoy elements not resolved at Victory')
+  if any(x.get('actualRendered') is not True for x in chosen[-2:]) or chosen[-2].get('outcome')!='Victory':errors.append('Actual rendered native Victory/Campaign return missing')
+  for dispatched in [x for x in native if x.get('stage')=='ReserveCardDispatched']:
+   accepted=[x for x in native if x.get('stage')=='ReserveCardAccepted' and x.get('frame',-1)>=dispatched['frame'] and x.get('expectedGroup')==dispatched.get('expectedGroup')]
+   rejected=[x for x in native if x.get('stage')=='ReserveCardRejected' and x.get('frame',-1)>=dispatched['frame']]
+   if not accepted and not rejected:errors.append('Unresolved native reserve card contact')
+  for accepted in [x for x in native if x.get('stage')=='ReserveCardAccepted']:
+   if accepted.get('selected')!=4 or not accepted.get('expectedGroup') or accepted.get('group')!=accepted.get('expectedGroup'):errors.append('Reserve selection lacks exact current target-group provenance')
+  # missingSeconds includes intentionally hidden owned surfaces. Measure only
+  # consecutive eligible missing samples, matching native eligibleMissingSince.
+  samples=[x for x in status if x.get('entry')==entry and x.get('mission')=='saga.ch01.m03.radar_warning']
+  visible=[];missing_since=None;previous_wall=None
+  for x in samples:
+   wall=x.get('wall')
+   if not isinstance(wall,(int,float)) or not math.isfinite(wall) or (previous_wall is not None and wall<previous_wall):
+    errors.append('Invalid ordered native countdown sample time entry='+str(entry));break
+   previous_wall=wall
+   eligible=x.get('phase')=='Engage' and x.get('eligibleDefense') is True
+   presented=x.get('activePredicatePanel') is True and isinstance(x.get('statusText'),str) and bool(x['statusText'].strip())
+   if not eligible or presented:
+    missing_since=None
+    if eligible and presented:visible.append(x)
+    continue
+   if missing_since is None:missing_since=wall
+   if wall-missing_since>1.5:
+    errors.append('Recorded eligible non-owned countdown gap over1.5s');break
+  if not visible:errors.append('Independent eligible active defense countdown samples absent entry='+str(entry))
+ if any(x.get('stage') in ['WitnessFailed','CompleteFailed'] for x in rows):errors.append('Actual native read-only witness failed')
+ return errors
+
+def main():
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('pre_manifest');ap.add_argument('--dry-compile-proof',required=True);ap.add_argument('--heavy-lane-owner',choices=['main1356'],required=True);ap.add_argument('--scope',choices=['fa-IR'],default='fa-IR');args=ap.parse_args()
+ state_idle();prep=read(PREP)
+ if prep.get('nativeDispatchPermitted') is not True:raise RuntimeError('Frozen current-source Campaign package is offline-only; root must preserve an enabled successor before dispatch')
+ if pathlib.Path(args.pre_manifest).name!=args.pre_manifest:raise RuntimeError('Source manifest basename required')
+ if sha(REPORT/args.pre_manifest)!=prep['expectedFullSourceManifestSha256']:raise RuntimeError('Full source manifest not reviewed current source')
+ for name,expected in prep['sourceContracts'].items():
+  if sha(ROOT/name)!=expected:raise RuntimeError('Source dependency changed: '+name)
+ for p,k in [(FIXTURE,'fixtureSha256'),(IDLE,'idleHelperSha256'),(HELPER,'sourceManifestHelperSha256'),(pathlib.Path(__file__),'runnerSha256')]:
+  if sha(p)!=prep[k]:raise RuntimeError('Frozen bundle changed '+str(p))
+ dry_path=pathlib.Path(args.dry_compile_proof)
+ if dry_path.parent!=REPORT:raise RuntimeError('Archive exact native drycompile proof in report')
+ x=read(dry_path);d=x.get('data',{});v=d.get('result',{});parameters=d.get('parameters',{})
+ if x.get('success') is not True or d.get('success') is not True or v.get('success') is not True or any(a.get('severity','').lower()=='error' for a in v.get('diagnostics',[])) or parameters.get('file')!=str(FIXTURE) or parameters.get('entry')!='CampaignSelectionJourney1356.Run' or parameters.get('dry_run') not in [True,'true'] or d.get('target',{}).get('projectPath')!=str(ROOT):raise RuntimeError('Exact new native drycompile not proven')
+ for p in [REPORT/n for n in ['native-1356-campaign-m3-current.log','native-1356-campaign-m3-current.log.exit','native-1356-campaign-m3-current.log.dispatch.json','native-1356-campaign-m3-current.log.wrapper-exit','native1356-before-load-idle.json','native1356-before-dispatch-idle.json','native1356-after-close-idle.json','load1356-campaign-m3-current.json','native1356-runner-start.json','native1356-campaign-m3-pass.json','native1356-campaign-m3-failure.json','native1356-campaign-m3-fixture.cs.txt','native1356-campaign-m3-runner.py.txt']]+[BUNDLE/'native1356-journey.jsonl',BUNDLE/'native1356-input-route.jsonl']:
+  if p.exists() and not p.name.startswith('compile1356-'):raise RuntimeError('Preserve prior1356 artifact '+str(p))
+ preflight=source_manifest('preflight')
+ if read(REPORT/preflight)!=read(REPORT/args.pre_manifest) or read(REPORT/preflight.replace('-source-manifest.json','-independent-fingerprint.json'))['sourceHash']!=prep['currentCandidateSourceHash']:raise RuntimeError('Current full source differs before native calls')
+ native_idle('before-load')
+ raw=cli(['run_script','--file',str(FIXTURE),'--entry','CampaignSelectionJourney1356.Run','--timeout_ms','30000'],'load1356-campaign-m3-current.json')
+ check=json.loads(raw)
+ if not all(check.get(k)==v for k,v in {'stage':'SelfCheck','entry':7,'selected':4,'held':4,'attempt':1356,'group':'native-group','actualRendered':True,'readOnly':True,'terminalSnapshot':True,'terminalFrame':10,'terminalMission':'saga.ch01.m03.radar_warning','terminalSession':'native-terminal','terminalAttempt':1,'terminalLocale':'fa-IR','terminalOutcome':'Victory','terminalLaunchOrigin':'CampaignOperations','terminalReturnDestination':'CampaignOperations','shellPresent':True,'shellTransition':False,'shellMode':'MainMenu','shellPhase':'MenuReady','shellRoute':'Campaign','campaignValid':True,'boundTitlePresented':True,'boundTitleOwned':True,'boundTitleOwner':'typed-campaign-owner','boundTitleText':'CAMPAIGN','boundTitleKey':'ui.campaign.title','boundTitleSource':'CAMPAIGN','boundTitlePath':'Root/CampaignComposition/MenuTitlePanel/MenuTitle','boundTitleResolver':'PresentedOwnedLocalizedMenuTitlePanel'}.items()):raise RuntimeError('Actual flat native serialization selfcheck failed')
+ method='CampaignSelectionJourney1356.RunM03FA'
+ predispatch=source_manifest('pre-dispatch')
+ if read(REPORT/predispatch)!=read(REPORT/args.pre_manifest):raise RuntimeError('Source changed before dispatch')
+ native_idle('before-dispatch');s=state_idle();s.update(activeRun='native1356',activeLog=LOG.name,activeScope=method,activePreManifest=args.pre_manifest);STATE.write_text(json.dumps(s,indent=2)+'\n')
+ write_new(REPORT/'native1356-runner-start.json',{'method':method,'owner':args.heavy_lane_owner,'scope':args.scope,'sourceHash':prep['currentCandidateSourceHash'],'sourceUnmodifiedByFixture':True,'strictAllTouchJourney':False})
+ with (REPORT/'native1356-campaign-m3-fixture.cs.txt').open('xb') as f:f.write(FIXTURE.read_bytes())
+ with (REPORT/'native1356-campaign-m3-runner.py.txt').open('xb') as f:f.write(pathlib.Path(__file__).read_bytes())
+ wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','600','--log',str(LOG),'--','-executeMethod',method],cwd=ROOT).returncode
+ with pathlib.Path(str(LOG)+'.wrapper-exit').open('x') as f:f.write(str(wrapper)+'\n')
+ receipt=pathlib.Path(str(LOG)+'.exit')
+ if not receipt.exists() or not re.fullmatch(r'-?\d+\s*',receipt.read_text()):raise RuntimeError('Missing exact native receipt; ownership remains, no relaunch or process termination')
+ native=int(receipt.read_text());native_idle('after-close')
+ post=source_manifest('post');same=read(REPORT/args.pre_manifest)==read(REPORT/preflight)==read(REPORT/predispatch)==read(REPORT/post)
+ log=LOG.read_text(errors='replace');rows=[];status=[];errors=[];archives=[]
+ for p in sorted(BUNDLE.glob('native1356-*.jsonl')):
+  data=[json.loads(line) for line in p.read_text().splitlines() if line.strip()]
+  if p.name=='native1356-journey.jsonl':rows=data
+  if 'threat-' in p.name:status.extend(data)
+  target=REPORT/p.name
+  with target.open('xb') as f:f.write(p.read_bytes())
+  archives.append({'file':target.name,'sha256':sha(target)})
+ for p in BUNDLE.glob('*.observer-error.txt'):errors.append('Native observer error: '+p.name)
+ errors.extend(qualify(log,rows,status,args.scope))
+ if wrapper!=0 or native!=0:errors.append('Actual wrapper/native exits not both0')
+ if not same:errors.append('Whole source/material manifests changed')
+ proof={'result':'Failed' if errors else 'PassedScopedNativeCampaignM3Journey','scope':args.scope,'sourceHash':prep['currentCandidateSourceHash'],'fullSourceUnchanged':same,'actualWrapperExit':wrapper,'nativeBridgeExit':native,'preManifest':args.pre_manifest,'postManifest':post,'log':LOG.name,'logSha256':sha(LOG),'fixtureSha256':sha(FIXTURE),'runnerSha256':sha(pathlib.Path(__file__)),'rawEvidence':archives,'errors':errors,'fullJourneyStrictTouchAudit':False,'disclosedQA':'Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.','playerReady':False}
+ write_new(REPORT/('native1356-campaign-m3-'+('failure' if errors else 'pass')+'.json'),proof)
+ s=read(STATE)
+ if s.get('activeRun')!='native1356':raise RuntimeError('Run ownership changed; preserve shared state')
+ s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None);STATE.write_text(json.dumps(s,indent=2)+'\n')
+ print(json.dumps(proof,indent=2));return 2 if errors else 0
+if __name__=='__main__':sys.exit(main())

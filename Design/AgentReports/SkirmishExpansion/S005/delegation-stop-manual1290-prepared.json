@@ -1,0 +1,54 @@
+{
+  "status": "PreparedNativeDryCompileAndJourneyPending",
+  "runId": 1290,
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "candidate": "/private/tmp/s005-stop-manual-takeover1290",
+  "manifestSha256": "72d37603981073a60fba63b037fdf0159e36399229e967b4dc4b8f7f16ebbc82",
+  "fixtureSha256": "4b250bbe04e5aca7cf4c6a5758a8662e2e28eff9d2479d835a718075fca8bcb3",
+  "runnerSha256": "180fe5092f31b37f72e5a5bb94c4b537d4e2e205c6907151adf04d2934cdecdd",
+  "preparedSha256": "7f50a84d08716ecbbc11629191f35ec7008a2b9497001fa46c612fec6c5d9b81",
+  "archive": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-stop-manual1290-prepared.zip",
+  "archiveSha256": "d823c09d99bbffa5c745e20a47ec14139afaf7558fcd3b24e3097ca99291a79e",
+  "archiveRoundtrip": true,
+  "offlineControls": 104,
+  "sourceContracts": 124,
+  "sourceContractsMatch": true,
+  "preservedFailure": {
+    "predecessor": 1278,
+    "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+    "nativeFailurePreserved": true,
+    "wrapperExit": 1,
+    "nativeExit": 1,
+    "actualVerifiedStop": {
+      "frame": 1962,
+      "elapsed": 106.29330444335938,
+      "completedGestures": 32,
+      "dispatchedGestures": 32,
+      "ExplicitStops": 1,
+      "acceptedCommandsConserved": 5
+    },
+    "exactException": "Cannot carry combat input into a different or unverified attempt.",
+    "provenGuard": "StartS004ManualProbe enters rejecting resume guard only when playerResumeCombatInputCarryPending is true",
+    "unknown": "Original 1278 did not census each inner OR operand. Its precise failed operand is unknown. Prior-attempt stale QA state is the source-supported hypothesis, not a uniquely observed operand.",
+    "source": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+    "sourceSha256": "0d36ee2fd287d285bf0fc4352935848b2b24d34418c3b784985c40ff6c327d5d",
+    "newDiagnostic": "Every resume guard field, actual current attempt and native recovery record presence recorded immediately after verified nativeStop",
+    "correction": "Clear only the inactive, non-native-recovery carry flag with a nonempty different recorded prior attempt; refuse same/unknown/active carry. Restore original flag only after closed nativePlay. No game-state writes.",
+    "failureFiles": {
+      "native1278-normal-stop-manual-failure.json": "0016b144b99179a873b46eec8bc57bc1ef0a4e5495dc26ebb0d62110de0632c3",
+      "native1278-stop-manual-controls.jsonl": "f2ec2345be8ba7cfae8cc38d261b00500c8f3ceaeba94809f8e142f5203dcaea",
+      "native-1278-normal-stop-manual-en155926.log": "3ee8b4a92cc04a301b6bbf5dac2c3b1b42df8e9a19e752cb348006388c559697"
+    },
+    "notClaimed": [
+      "whole match pass",
+      "production save corruption",
+      "exact failing inner OR operand",
+      "physical takeover",
+      "unattended ARIA baseline"
+    ]
+  },
+  "changes": "ID-only lineage plus exact guard census, narrow inactive foreign QA carry isolation/restoration and strict zero fresh driver audit; all native input/result/return/closure gates retained",
+  "nativeCompilePending": true,
+  "nativeExecuted": false,
+  "playerReady": false
+}

@@ -1,0 +1,15 @@
+{
+  "result": "FailedReadOnlyEvalCompilation",
+  "actualCommandExit": 6,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "The type or namespace name Components does not exist in namespace Game.UI (line1,col247)"
+    }
+  ],
+  "correctNamespace": "Game.UI.Runtime",
+  "correctedActualReadonlyProof": "native1185-readonly-manual-driver-state.json",
+  "productionSourceCompilationFailed": false,
+  "gameplayOrQAStateWritten": false,
+  "readinessClaim": false
+}

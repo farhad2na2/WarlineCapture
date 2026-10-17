@@ -1,0 +1,167 @@
+"""Prepared normal EN155926 journey. Root must review/compile and explicitly release heavy lane before execution."""
+import argparse,csv,hashlib,importlib.util,json,pathlib,re,subprocess,sys
+
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+STATE=REPORT/'TECHNICAL_READINESS_CURRENT.json'
+FIXTURE=pathlib.Path('/private/tmp/s005-aria-current-1450-1455/1452/S005NormalAria1452Observer.cs')
+PREP=pathlib.Path('/private/tmp/s005-aria-current-1450-1455/1452/manifest.json')
+HELPER=pathlib.Path('/private/tmp/warline-s005-source-manifest.py')
+IDLE_HELPER=pathlib.Path('/private/tmp/S005MainIdle1242.cs')
+LOG='native-1452-normal-aria-en-seed155926.log'
+OBS='native1452-normal-aria-observation.jsonl'
+ARCHIVE='native1452-normal-aria-observer.cs.txt'
+METHOD='S005NormalAria1452Observer.RunValidation'
+
+def read(p):return json.loads(p.read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def new_json(p,d):
+ with p.open('x') as f:f.write(json.dumps(d,indent=2)+'\n')
+def idle_state():
+ s=read(STATE)
+ if s.get('activeRun') is not None:raise RuntimeError('Main heavy lane already owned: '+str(s.get('activeRun')))
+ return s
+def manifest(prefix):
+ for suffix in ('-source-manifest.json','-independent-fingerprint.json'):
+  if (REPORT/(prefix+suffix)).exists():raise RuntimeError('Preserve existing manifest '+prefix)
+ subprocess.run(['rtk','proxy','python3',str(HELPER),prefix],cwd=ROOT,check=True)
+ return prefix+'-source-manifest.json'
+def cli_json(arguments,path):
+ result=subprocess.run(['rtk','proxy','unity','command',*arguments,'--project-path',str(ROOT),'--format','json'],cwd=ROOT,capture_output=True,text=True)
+ with path.open('x') as f:f.write(result.stdout)
+ if result.stderr:new_json(path.with_name(path.name+'.stderr.json'),{'stderr':result.stderr,'exit':result.returncode})
+ value=json.loads(result.stdout)
+ if result.returncode!=0 or value.get('success') is not True or value.get('data',{}).get('success') is not True or value.get('data',{}).get('result',{}).get('success') is not True:raise RuntimeError('Native CLI outer/nested failure: '+path.name)
+ return value['data']['result'].get('result')
+def verify_aria_no_physical_takeover(log_text, touch_rows):
+ if '[AriaTouchInput] physicalTakeover' in log_text or 'ariaStopped:Manual' in log_text:
+  raise ValueError('Physical input takeover/Manual abort cannot qualify an ARIA baseline')
+ if not touch_rows or any(row.get('kind')=='PhysicalTakeover' or any(row.get(key)!=0 for key in ('unexpected','interventions','receiptViolations')) for row in touch_rows):
+  raise ValueError('Every ARIA native Touch row must have zero unexpected/interventions/receipt violations and no physical takeover')
+
+def native_idle(tag):
+ if sha(IDLE_HELPER.read_bytes())!=prep['nativeIdleHelperSha256']:raise RuntimeError('Reviewed new idle helper changed')
+ path=REPORT/('native1452-'+tag+'-native-idle.json')
+ raw=cli_json(['run_script','--file',str(IDLE_HELPER),'--entry','S005MainIdle1242.Run','--timeout_ms','30000'],path)
+ evidence=read(path);data=evidence['data'];params=data['parameters']
+ value=json.loads(raw)
+ if params.get('file')!=str(IDLE_HELPER) or params.get('entry')!='S005MainIdle1242.Run' or params.get('timeout_ms') not in ('30000',30000) or data.get('target',{}).get('projectPath')!=str(ROOT) or any(value.get(k) is not False for k in ('applicationIsPlaying','editorIsCompiling','editorIsUpdating','editorIsPlayingOrWillChangePlaymode')) or value.get('assemblyCompilationState')!='Idle' or value.get('assemblyCompilationStateOwner')!='UnityEditor.EditorApplication.isCompiling' or value.get('dataPath')!=str(ROOT/'Assets') or not isinstance(value.get('activeScenePath'),str):raise RuntimeError('Actual reviewed read-only main native idle check failed: '+tag)
+
+ap=argparse.ArgumentParser(description=__doc__)
+ap.add_argument('pre_manifest',help='Root-selected current complete source-manifest basename, required to match fresh source before native calls')
+ap.add_argument('--dry-compile-proof',required=True)
+ap.add_argument('--heavy-lane-owner',required=True,choices=['main1452'])
+args=ap.parse_args()
+gate=read(PREP)
+if gate.get('sourceRepinPending') is not False or gate.get('nativeDispatchPermitted') is not True or gate.get('compilerAndLoadedAssemblyFreshnessQualified') is not True:
+ raise RuntimeError('ARIA replay dispatch disabled pending exact current source, compiler and loaded-assembly review plus explicit root heavy-lane release')
+idle_state();prep=read(PREP)
+if pathlib.Path(args.pre_manifest).name!=args.pre_manifest or not (REPORT/args.pre_manifest).is_file():raise RuntimeError('Existing pre-manifest basename required')
+dry_path=pathlib.Path(args.dry_compile_proof)
+if dry_path.parent!=REPORT:raise RuntimeError('Native drycompile proof must be archived in exact report directory')
+dry=read(dry_path);data=dry.get('data',{});native_compile=data.get('result',{});params=data.get('parameters',{})
+if dry.get('success') is not True or data.get('success') is not True or native_compile.get('success') is not True or any(str(d.get('severity','')).lower()=='error' for d in native_compile.get('diagnostics',[])) or params.get('file')!=str(FIXTURE) or params.get('entry')!='S005NormalAria1452Observer.Run' or params.get('dry_run') not in ('true',True) or data.get('target',{}).get('projectPath')!=str(ROOT):raise RuntimeError('Exact new native fixture drycompile success/parameters/target not proven')
+if sha((REPORT/args.pre_manifest).read_bytes())!=prep['expectedFullSourceManifestSha256']:raise RuntimeError('Reviewed complete current source manifest mismatch')
+
+for p,expected in ((FIXTURE,prep['fixtureSha256']),(HELPER,prep['sourceManifestHelperSha256'])):
+ if sha(p.read_bytes())!=expected:raise RuntimeError('Frozen fixture/helper changed; review required')
+for name,expected in prep['sourceContracts'].items():
+ if sha((ROOT/name).read_bytes())!=expected:raise RuntimeError('Reviewed source contract changed: '+name)
+if sha(pathlib.Path(__file__).read_bytes())!=prep['runnerSha256']:raise RuntimeError('Runner bytes changed from reviewed preparation')
+for name in (LOG,LOG+'.exit',LOG+'.wrapper-exit',LOG+'.dispatch.json',OBS,ARCHIVE,'native1452-normal-aria-pass.json','native1452-normal-aria-failure.json','native1452-runner-start.json','load1452-normal-aria-observer.json','native1452-before-load-native-idle.json','native1452-before-dispatch-native-idle.json','native1452-after-close-native-idle.json','native1452-before-load-native-idle.json.stderr.json','native1452-before-dispatch-native-idle.json.stderr.json','native1452-after-close-native-idle.json.stderr.json','native1452-unclosed-ownership.json','native1452-executed-runner.py.txt'):
+ if (REPORT/name).exists():raise RuntimeError('Preserve existing1452 artifact '+name)
+preflight=manifest('final-1452-normal-aria-preflight')
+if read(REPORT/args.pre_manifest)!=read(REPORT/preflight):raise RuntimeError('Supplied source differs from current source; no Unity call started')
+if read(REPORT/preflight.replace('-source-manifest.json','-independent-fingerprint.json'))['sourceHash']!=prep['currentCandidateSourceHash']:raise RuntimeError('Fresh whole-source hash differs from reviewed candidate')
+native_idle('before-load');idle_state()
+new_json(REPORT/'native1452-runner-start.json',{'explicitHeavyLaneOwner':args.heavy_lane_owner,'coordination':'Root supplied token only after explicit T7 release; no implicit ownership takeover','preManifest':args.pre_manifest,'preflightManifest':preflight,'fixtureSha256':prep['fixtureSha256'],'executedRunnerSha256':sha(pathlib.Path(__file__).read_bytes()),'method':METHOD,'normalInput':True,'matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter':False})
+with (REPORT/ARCHIVE).open('xb') as f:f.write(FIXTURE.read_bytes())
+with (REPORT/'native1452-executed-runner.py.txt').open('xb') as f:f.write(pathlib.Path(__file__).read_bytes())
+cli_json(['run_script','--file',str(FIXTURE),'--entry','S005NormalAria1452Observer.Run','--timeout_ms','30000'],REPORT/'load1452-normal-aria-observer.json')
+predispatch=manifest('final-1452-normal-aria-pre-dispatch')
+if read(REPORT/args.pre_manifest)!=read(REPORT/predispatch):raise RuntimeError('Source changed before native dispatch')
+native_idle('before-dispatch');s=idle_state();s.update(activeRun='native1452',activeLog=LOG,activeScope=METHOD,activePreManifest=args.pre_manifest);STATE.write_text(json.dumps(s,indent=2)+'\n')
+print('native1452 normal Menu/ARIA EN155926; explicit root heavy-lane ownership; checked macOS reuse wrapper',flush=True)
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','1800','--log',str(REPORT/LOG),'--','-executeMethod',METHOD],cwd=ROOT).returncode
+with (REPORT/(LOG+'.wrapper-exit')).open('x') as f:f.write(str(wrapper)+'\n')
+receipt=REPORT/(LOG+'.exit')
+if not receipt.is_file() or not re.fullmatch(r'-?\d+\s*',receipt.read_text()):
+ print('Missing/malformed actual native receipt. Keep ownership/evidence; no fallback launch or termination.',flush=True);sys.exit(4)
+native=int(receipt.read_text().strip())
+try:native_idle('after-close')
+except Exception as e:
+ new_json(REPORT/'native1452-unclosed-ownership.json',{'result':'Unclosed','wrapperExit':wrapper,'nativeExit':native,'reason':str(e),'ownershipPreserved':True,'playerReady':False});raise
+post=manifest('final-1452-normal-aria-post')
+same=read(REPORT/args.pre_manifest)==read(REPORT/preflight)==read(REPORT/predispatch)==read(REPORT/post)
+fp=read(REPORT/post.replace('-source-manifest.json','-independent-fingerprint.json'));h=fp['sourceHash']
+text=(REPORT/LOG).read_text(errors='replace');errors=[]
+if wrapper!=0 or native!=0:errors.append('Actual wrapper/native exit must both be0 for counted win')
+if not same:errors.append('Full source/material manifests changed')
+markers=['[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0','[S004MenuProfileFixture] chapter1Completed=5 progressionGate=Preserved isolatedProfile=1','[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S005,Launch seedFixture=155926 nativeSessionObserved=1','[SkirmishNativeShaderGate] result=Passed compiling=0 settledSeconds=2','[S004AriaConsent] result=Passed input=Touch controls=Play,Confirm','[SkirmishS002AriaRun] watchStarted=1 seed=155926 locale=en','[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=ADJUST SETUP','[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:ADJUST SETUP','[SkirmishS002AriaRun] appended=1 countedWin=1 error=','[SkirmishValidationExit] result=Requested code=0']
+for marker in markers:
+ if marker not in text:errors.append('Missing native marker '+marker)
+if not re.search(r'\[SkirmishNormalSpeed\] latch=True .* counted=True',text):errors.append('Native normal-speed latch missing/failed')
+for forbidden in ('[S004ManualNative] started=1','[S005PlayerSaveResume] result=Passed','[SkirmishS003Startup] result=Passed','[S005NativeRecoveryCase] result=Passed','[S005NormalAria1452] observerFailure=1'):
+ if forbidden in text:errors.append('Unexpected diagnostic or read-only observer failure '+forbidden)
+if re.search(r'error CS\d+|Compilation failed',text):errors.append('Native compiler failure')
+
+obs=[];binding=None;trace=None;terminal=None;audit=None;commands=[];countedrow=None
+try:
+ obs=[json.loads(line) for line in (REPORT/OBS).read_text().splitlines() if line.strip()]
+ if any(r['stage']=='ObserverFailure' for r in obs):errors.append('Read-only observer failed')
+ contexts=[r for r in obs if r['stage']=='RenderedViewportContext' and r.get('nativeViewportMatched') is True]
+ if not contexts or any(r.get('samplingPhase')!='CanvasWillRenderCanvases' or abs(r['canvasWidth']-r['screenWidth'])>1 or abs(r['canvasHeight']-r['screenHeight'])>1 for r in contexts):errors.append('Actual native Canvas render viewport evidence missing/invalid')
+ boundrows=[r for r in obs if r['stage']=='NativeBoundText']
+ for role in ('SetupTitle','SetupObjective','HudPurposeTitle','HudPurposeBody','ObjectiveStrip','AriaControl','ResultText','AdjustSetupTitle','AdjustSetupObjective'):
+  if not any(r['role']==role and r.get('exactBoundReference') is True and r.get('samplingPhase')=='CanvasWillRenderCanvases' and r['activeText'] is True and r['culledText'] is False and r['textAlpha']>.01 and r['ancestorAlpha']>.01 and r['visibleGlyphs']>0 and r['safeAreaOverlap'] is True and r['renderedBody'] is True for r in boundrows):errors.append('Strict actual native bound rendered text evidence missing: '+role)
+ if not any(r['stage']=='NormalDriverFlags' and r['normalDriverFlags'] is True for r in obs):errors.append('Native normal driver flags not verified')
+ bindings=[r for r in obs if r['stage']=='ActualResolvedBinding']
+ if len(bindings)!=1:raise ValueError('Exactly one actual resolved native session required')
+ binding=bindings[0]
+ required={'catalog':'S005','definition':'skirmish.s005','size':'Standard','difficulty':'Regular','army':'CombinedArms','start':'FieldBase','readiness':'Field','readinessValue':1,'seed':155926,'deadline':1080,'objective':'BaseAssault','sharedFog':True,'developmentFullVision':False,'locale':'en'}
+ if any(binding.get(k)!=v for k,v in required.items()):errors.append('Actual resolved setup/gates differ: '+str({k:binding.get(k) for k,v in required.items() if binding.get(k)!=v}))
+ if not binding['attempt']:errors.append('Actual session attempt identity absent')
+ setup=[r for r in obs if r['stage']=='NativeSetupBriefing' and r['seed']==155926 and r['renderedTitle'] and r['renderedObjective']]
+ if not any('Destroy the original enemy Barracks' in r['objective'] and 'draw' in r['objective'].lower() for r in setup):errors.append('Actual setup objective/failure-rule copy missing')
+ purposes=[r for r in obs if r['stage']=='NativeHudPurpose' and not r['ariaActive'] and r['renderedTitle'] and r['renderedBody']]
+ if not any(all(token in r['body'] for token in ('Destroy the original enemy Barracks','defend yours','Squad card','Attack','target')) for r in purposes):errors.append('Actual rendered pre-consent purpose/next action missing')
+ if not any(r['stage']=='NativeAriaControl' and r['ariaActive'] and r['presentedControl'] and r['renderedBody'] and 'STOP' in r['controlText'].upper() for r in obs):errors.append('Actual presented active ARIA Stop control missing')
+ if not any(r['stage']=='NativeObjectiveStrip' and r['ariaActive'] and not r['finished'] and all(r[k] for k in ('renderedPlayerBase','renderedEnemyBase','renderedClock')) for r in obs):errors.append('Actual rendered objectives/clock during ARIA missing')
+ if not any(r['stage']=='NativeRenderedResultText' and r['finished'] and r['renderedTitle'] and 'VICTORY' in r['title'].upper() for r in obs):errors.append('Actual rendered Victory result text missing')
+ victory_indices=[i for i,row in enumerate(obs) if row['stage']=='NativeRenderedResultText' and row.get('finished') is True and row.get('frozenVictory') is True and row.get('renderedTitle') is True and row.get('renderedVictoryWitnessed') is True and row.get('outcome')=='Victory' and row.get('attempt')==binding['attempt'] and row['title'].upper()=='VICTORY']
+ returns=[(i,row) for i,row in enumerate(obs) if row['stage']=='NativeAdjustSetupDestination' and row['seed']==155926 and row['renderedTitle'] and row['renderedObjective']]
+ if not victory_indices or not returns or any(i<=min(victory_indices) or row.get('finished') is not True or row.get('frozenVictory') is not True or row.get('renderedVictoryWitnessed') is not True or row.get('outcome')!='Victory' or row.get('attempt')!=binding['attempt'] or row['frame']<obs[min(victory_indices)]['frame'] for i,row in returns):errors.append('Actual rendered S005 AdjustSetup must follow exact native frozen/rendered Victory of same attempt')
+ closed=[r for r in obs if r['stage']=='ClosedObserver']
+ if len(closed)!=1 or not all(closed[0].get(k) is True for k in ('setupSeen','bindingSeen','purposeSeen','activeControlSeen','resultSeen','returnSeen')):errors.append('Read-only observer closure incomplete')
+ paid=[r for r in obs if r['stage']=='NativePaidReservation' and r['faction']==1 and r['materialsPaid']>0 and r['producer']>0 and r['deliveredMembers']>0 and r['expectedCost']>0 and r['materialsPaid']>=r['expectedCost'] and r['attempt']==binding['attempt']]
+ trace=pathlib.Path(binding['tracePath'])
+ if trace.parent!=REPORT or not re.fullmatch(r's005-aria-live-155926-en-[0-9a-f]{32}\.jsonl',trace.name):raise ValueError('Trace path not unique expected native session')
+ rows=[json.loads(line) for line in trace.read_text().splitlines() if line.strip()]
+ if not rows:raise ValueError('Actual normal trace empty')
+ terminal=rows[-1]
+ if terminal['phase']!='Finished' or terminal['outcome']!='Victory' or terminal['clockPaused']!=1 or terminal['simulationActive']!=0 or not 0<terminal['elapsed']<=1080:errors.append('Actual frozen Victory trace/clock missing')
+ touch=trace.with_name(trace.name+'.touch.jsonl');rawtouch=[json.loads(line) for line in touch.read_text().splitlines() if line.strip()]
+ if not rawtouch or any(any(row.get(k)!=0 for k in ('unexpected','interventions','receiptViolations')) for row in rawtouch):errors.append('Every actual raw Touch row must retain zero unexpected/interventions/receipt violations')
+ verify_aria_no_physical_takeover(text,rawtouch)
+ spec=importlib.util.spec_from_file_location('s005_native_contact_audit',ROOT/'Tools/CI/audit_skirmish_native_contacts.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);audit=module.audit(rawtouch)
+ if audit['errors'] or not audit['strictRecordedContacts'] or not audit['nativeMenuContactsRecorded'] or not audit['terminalContactsRecorded']:errors.append('Strict actual recorded native Menu/Runtime/Terminal contacts failed')
+ commands=[json.loads(line) for line in pathlib.Path(str(trace)+'.commands.jsonl').read_text().splitlines() if line.strip()]
+ if not commands or any(c['verified'] is not True or not c['receipt'] for c in commands):errors.append('Native accepted command receipt evidence missing/failed')
+ csvrows=[]
+ for line in text.splitlines():
+  values=next(csv.reader([line]))
+  if len(values)==20 and values[1]=='S005' and values[7]=='155926' and values[8]=='en':csvrows.append(values)
+ if len(csvrows)!=1:raise ValueError('Exactly one native CSV terminal row required in this log')
+ countedrow=csvrows[0]
+ if countedrow[3]!=h or countedrow[5:12]!=['Standard','Regular','155926','en','Editor','aria','1'] or countedrow[13]!='Victory' or countedrow[16:18]!=['0','0']:errors.append('Actual native counted row configuration/provenance differs')
+ copied=ROOT/countedrow[18];copiedlog=ROOT/countedrow[19]
+ if copied.read_bytes()!=trace.read_bytes() or '[SkirmishS002AriaRun] appended=1 countedWin=1 error=' not in copiedlog.read_text():errors.append('Native copied candidate trace/log differs from actual run')
+except (OSError,KeyError,ValueError,TypeError,StopIteration) as e:errors.append('Missing/malformed actual normal evidence: '+str(e))
+
+proof={'result':'Passed' if not errors else 'Failed','scope':'One current-source NORMAL INPUT S005 Standard/Regular CombinedArms Field/R1 ARIA EN seed155926; native menu/PlayConfirm/actual Victory/frozen result/AdjustSetup, passive paid-delivery observations if present. Not complete six-seed matrix, manual journey, checkpoint/full-role/performance/device/visual acceptance.','sourceHash':h,'fullSourceUnchanged':same,'preManifest':args.pre_manifest,'preflightManifest':preflight,'preDispatchManifest':predispatch,'postManifest':post,'actualWrapperExit':wrapper,'nativeBridgeExit':native,'log':LOG,'logSha256':sha((REPORT/LOG).read_bytes()),'fixture':ARCHIVE,'fixtureSha256':prep['fixtureSha256'],'executedRunnerSha256':sha(pathlib.Path(__file__).read_bytes()),'observation':OBS,'observationSha256':sha((REPORT/OBS).read_bytes()) if (REPORT/OBS).is_file() else None,'actualResolvedSetup':binding,'trace':trace.name if trace is not None else None,'terminal':terminal,'inputAudit':audit,'paidDeliveryObservationCount':len([r for r in obs if r.get('stage')=='NativePaidReservation' and r.get('faction')==1 and r.get('deliveredMembers',0)>0]),'nativeCountedRow':countedrow,'normalInput':True,'normalSpeedCertified':not errors,'countedWinCertified':not errors,'countsForAriaSeedBaseline':not errors,'fundingReadinessActorPoseDamageVisibilityOutcomeInjected':False,'disclosedFixture':'Existing isolated completed Chapter1 QA profile, EditorMemoryOnly candidate catalog, fixed reproducible seed through existing setup adjustment; background native Touch handling; no shipping catalog edit.','errors':errors,'playerReady':False,'realHumanDeviceAcceptance':False}
+new_json(REPORT/('native1452-normal-aria-'+('pass' if not errors else 'failure')+'.json'),proof)
+s=read(STATE)
+if s.get('activeRun')!='native1452':raise RuntimeError('Main ownership changed; do not clear unrelated lane')
+s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,latestNormalAria1452='native1452-normal-aria-'+('pass' if not errors else 'failure')+'.json');STATE.write_text(json.dumps(s,indent=2)+'\n')
+print(json.dumps({'result':proof['result'],'errors':errors,'sourceHash':h,'playerReady':False}),flush=True)
+sys.exit(0 if not errors else 2)

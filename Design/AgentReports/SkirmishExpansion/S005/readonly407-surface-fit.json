@@ -1,0 +1,312 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var path = UnityEditor.AssetDatabase.GUIDToAssetPath(\"8f750533817554c5e8ec1d550cdd0554\");\nvar asset = UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.MapSurfaceDataAsset>(path);\nif (!asset.TryCreateRuntimeBlobAsset(Unity.Collections.Allocator.Persistent, out var blob)) throw new System.Exception(\"No source surface blob\");\ntry {\nvar surface = new Game.Components.MapSurfaceComponent { SurfaceBlob=blob, HasSurfaceData=1, GridOrigin=blob.Value.GridOrigin, CellSize=blob.Value.CellSize, Dimensions=blob.Value.Dimensions };\nvar type = typeof(Game.Runtime.OperationMapRunwayReadModelUtility).Assembly.GetType(\"Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper\");\nvar method=type.GetMethod(\"IsSkirmishFootprintLevel\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);\nvar sites=new System.Collections.Generic.List<object>(); int tested=0, level=0;\nforeach (bool rotated in new[]{false,true}) { int w=rotated?55:210, h=rotated?210:55;\nfor(int z=300;z+h<=700;z+=48) for(int x=400;x+w<=1000;x+=48) {\nvar rect=new UnityEngine.RectInt(x,z,w,h); tested++;\nif (!(bool)method.Invoke(null,new object[]{surface,rect})) continue;\nlevel++; if(sites.Count<40) sites.Add(new {x,z,w,h,rotated});\n}}\nreturn new { sourceSurface=path, tested, level, candidates=sites, scope=\"Surface-only coarse scan inside S005 playable bounds; no road/occupancy or complete placement certificate\", physicalSourceModified=false };\n} finally { blob.Dispose(); }\n"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "sourceSurface": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset",
+        "tested": 120,
+        "level": 49,
+        "candidates": [
+          {
+            "x": 400,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 448,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 496,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 544,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 592,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 640,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 688,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 736,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 784,
+            "z": 300,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 400,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 448,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 496,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 544,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 592,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 640,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 688,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 736,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 784,
+            "z": 348,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 400,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 448,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 496,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 544,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 592,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 640,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 688,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 736,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 784,
+            "z": 396,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 400,
+            "z": 588,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 448,
+            "z": 588,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 496,
+            "z": 588,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 544,
+            "z": 588,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 400,
+            "z": 636,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 448,
+            "z": 636,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 496,
+            "z": 636,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 544,
+            "z": 636,
+            "w": 210,
+            "h": 55,
+            "rotated": false
+          },
+          {
+            "x": 400,
+            "z": 300,
+            "w": 55,
+            "h": 210,
+            "rotated": true
+          },
+          {
+            "x": 448,
+            "z": 300,
+            "w": 55,
+            "h": 210,
+            "rotated": true
+          },
+          {
+            "x": 496,
+            "z": 300,
+            "w": 55,
+            "h": 210,
+            "rotated": true
+          },
+          {
+            "x": 592,
+            "z": 300,
+            "w": 55,
+            "h": 210,
+            "rotated": true
+          },
+          {
+            "x": 640,
+            "z": 300,
+            "w": 55,
+            "h": 210,
+            "rotated": true
+          }
+        ],
+        "scope": "Surface-only coarse scan inside S005 playable bounds; no road/occupancy or complete placement certificate",
+        "physicalSourceModified": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

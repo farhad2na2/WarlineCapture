@@ -1,0 +1,28 @@
+{
+  "result": "Failed",
+  "sourceHash": "1a44f3fc81c50151d84828ba3e690181ef965022f929c522797dbcb8a70a85e4",
+  "scope": "Native boarded heavy APC Save/Continue/unload followed by manual strategy",
+  "log": "native-208-paused-boarded-apc-save-resume-en.log",
+  "logSha256": "08cb22b594c0f25316be44482eb537a90a0e4deb25905a4df469ea2203e74497",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "passengerRecovery": {
+    "result": "Passed",
+    "pausedPassengers": 3,
+    "restoredPassengers": 3,
+    "nativeUnloadedPassengers": 3,
+    "linksPreserved": true,
+    "hiddenVisualsPreserved": true,
+    "unloadedEnabledAndUnlinked": true,
+    "paidReceiptPreservedOnce": true,
+    "oldPhysicalGone": 385,
+    "sameAttempt": true,
+    "savedElapsed": 142.2919,
+    "nativeGestures": 42,
+    "receiptViolations": 0
+  },
+  "fullMission": "Failed: all infantry lost in frontal attack; heavy APC cannot damage structures; fixed manual strategy did not replace lost infantry",
+  "earlyCutoff": "Only fixture deadline shortened after read-only observation of zero living infantry and one healthy heavy APC; game clock/stocks/health/outcome unchanged",
+  "countedWin": 0,
+  "playerReady": false
+}

@@ -1,0 +1,69 @@
+{
+  "run": 500,
+  "sourceHash": "9666b37525b5e533cee98a52177edcabcf5bbe480560ff9ce3e4999d8790f40e",
+  "fullSourceUnchanged": true,
+  "preFingerprint": "final-498-starting-support-paging-pre-independent-fingerprint.json",
+  "postFingerprint": "final-501-starting-logistics-fa-post-independent-fingerprint.json",
+  "log": "native-500-starting-logistics-aria-fa-seed2.log",
+  "logSha256": "d9697353fe8c7fb01513129a35e095fa2c3ed937ebeed840d10a77a2eb935b84",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "requiredMarkersVerified": true,
+  "locale": "fa-IR",
+  "seed": 130368,
+  "outcome": "Victory",
+  "matchSeconds": 207.605,
+  "playerBaseHealth": 800,
+  "nativeOutcomeResultReturnPassed": true,
+  "resultFrozen": true,
+  "returnAction": "ADJUST SETUP",
+  "startingLogisticsEvidence": "native500-starting-logistics-live-observation.json",
+  "inputAudit": {
+    "trace": "s005-aria-live-130368-fa-88ecff247e1843e89673ee29fea92c46.jsonl.touch.jsonl",
+    "sha256": "530ce25089e2e8859355818db80a1a940b2d4c38d12526fde053b087f16cdc94",
+    "recordedContacts": 44,
+    "phases": {
+      "Menu": 5,
+      "Runtime": 38,
+      "Terminal": 1
+    },
+    "errors": [
+      {
+        "driver": [
+          61,
+          2
+        ],
+        "kind": "Canceled",
+        "reason": "input interrupted"
+      },
+      {
+        "contact": [
+          61,
+          2,
+          38
+        ],
+        "kinds": [
+          "Dispatched",
+          "Began"
+        ]
+      },
+      {
+        "driver": [
+          61,
+          2
+        ],
+        "completed": 37,
+        "recorded": 38
+      }
+    ],
+    "strictRecordedContacts": false,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only; native outcome, result-return, source identity and wrapper pass must be checked separately."
+  },
+  "normalInputJourneyCertified": false,
+  "completeMissionCertified": false,
+  "playerReady": false,
+  "pending": "One runtime touch canceled at terminal; exact match-state and command evidence absent from the contact trace. Preserve strict audit failure and rerun with explicit cancellation evidence. Full role, flight, bilateral capacity, recovery, visual and device gates remain pending."
+}

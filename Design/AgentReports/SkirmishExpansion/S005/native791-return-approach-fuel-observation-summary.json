@@ -1,0 +1,220 @@
+{
+  "readOnly": true,
+  "ownFactionOnly": true,
+  "source": "native791-return-approach-fuel-observation-series.json",
+  "gridDimensionsBasis": "Unchanged S005 reused Campaign physical GridConfig2048x1024, CellSize1, Origin0; native source fit proof retained.",
+  "samples": [
+    {
+      "utc": "2026-10-09T16:41:44.612214+00:00",
+      "position": {
+        "x": 832.4723510742188,
+        "y": 0.7948350310325623,
+        "z": 568.8057861328125
+      },
+      "grid": {
+        "x": 832,
+        "y": 568
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 832,
+          "y": 568
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:41:47.520341+00:00",
+      "position": {
+        "x": 834.054931640625,
+        "y": 0.8040674924850464,
+        "z": 613.4081420898438
+      },
+      "grid": {
+        "x": 834,
+        "y": 613
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 834,
+          "y": 613
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:41:50.480212+00:00",
+      "position": {
+        "x": 835.5945434570312,
+        "y": 0.813047468662262,
+        "z": 656.7927856445312
+      },
+      "grid": {
+        "x": 835,
+        "y": 656
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 835,
+          "y": 656
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:41:53.582337+00:00",
+      "position": {
+        "x": 837.1809692382812,
+        "y": 0.8223032355308533,
+        "z": 701.5093383789062
+      },
+      "grid": {
+        "x": 837,
+        "y": 701
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 701
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:41:56.529258+00:00",
+      "position": {
+        "x": 837.5,
+        "y": 0.8241641521453857,
+        "z": 710.5
+      },
+      "grid": {
+        "x": 837,
+        "y": 710
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 710
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:41:59.518444+00:00",
+      "position": {
+        "x": 837.5,
+        "y": 0.8241641521453857,
+        "z": 710.5
+      },
+      "grid": {
+        "x": 837,
+        "y": 710
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 710
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:42:02.483164+00:00",
+      "position": {
+        "x": 837.5,
+        "y": 0.8241641521453857,
+        "z": 710.5
+      },
+      "grid": {
+        "x": 837,
+        "y": 710
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 710
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:42:05.564615+00:00",
+      "position": {
+        "x": 837.5,
+        "y": 0.8241641521453857,
+        "z": 710.5
+      },
+      "grid": {
+        "x": 837,
+        "y": 710
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 710
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:42:08.533586+00:00",
+      "position": {
+        "x": 837.5,
+        "y": 0.8241641521453857,
+        "z": 710.5
+      },
+      "grid": {
+        "x": 837,
+        "y": 710
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 710
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    },
+    {
+      "utc": "2026-10-09T16:42:11.538452+00:00",
+      "position": {
+        "x": 837.5,
+        "y": 0.8241641521453857,
+        "z": 710.5
+      },
+      "grid": {
+        "x": 837,
+        "y": 710
+      },
+      "fuelState": {
+        "LastCell": {
+          "x": 837,
+          "y": 710
+        },
+        "Initialized": 1
+      },
+      "phase": 0,
+      "outsidePhysicalGrid": false
+    }
+  ],
+  "outsideGridSamples": 0,
+  "doesNotCertifySecondSortie": true
+}

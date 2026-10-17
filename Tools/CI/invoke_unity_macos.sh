@@ -96,7 +96,7 @@ for arg in "$@"; do
 done
 
 if [[ -z "$UNITY_EXE" ]]; then
-    version="$(awk -F': ' '/m_EditorVersion:/ {print $2; exit}' "$PROJECT_PATH/ProjectSettings/ProjectVersion.txt")"
+    version="$(awk -F': ' '/m_EditorVersion:/ {gsub(/\r/, "", $2); print $2; exit}' "$PROJECT_PATH/ProjectSettings/ProjectVersion.txt")"
     UNITY_EXE="/Applications/Unity/Hub/Editor/$version/Unity.app/Contents/MacOS/Unity"
 fi
 

@@ -1,0 +1,434 @@
+{
+  "status": "PlanOnly_HOLD_ForActualNativeCompileCensusAndFinalSnapshot",
+  "parent": {
+    "path": "Tools/CI/SkirmishProductionDrafts/S005ProductionAriaLaunch/PLAN.json",
+    "sha256": "c59ae54a3e758f061c5ed65b4bf2e62b6d0c78f5ceaf4871af7c05b38aeea1a1",
+    "bytes": 5258
+  },
+  "baseline_head": "eaeb9ff694cc72f44c84920c54f7e824af94eb13",
+  "historical_runbook": {
+    "path": "Tools/CI/SkirmishProductionDrafts/S005ProductionAriaLaunch/RUNBOOK.md",
+    "sha256": "1284c11f19278dd98b3c71575ffc87a7bc82a66e12a78c201ec43ee0819d3522",
+    "bytes": 16412
+  },
+  "current_observed_pins": [
+    {
+      "path": "Tools/CI/ResolveUnityEditor.ps1",
+      "sha256": "0667bed34fd9956ee3b22869979a25f19023733fc05ea7ff156b1f41f9d27f10",
+      "bytes": 9025,
+      "historical_sha256": "0667bed34fd9956ee3b22869979a25f19023733fc05ea7ff156b1f41f9d27f10",
+      "changed": false
+    },
+    {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "sha256": "2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add",
+      "bytes": 13201,
+      "historical_sha256": "2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add",
+      "changed": false
+    },
+    {
+      "path": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+      "sha256": "79205bc9d9660c15627a254d8834cc5feef1513dfa4e12b389caa91d2f2abc1d",
+      "bytes": 2615,
+      "historical_sha256": "79205bc9d9660c15627a254d8834cc5feef1513dfa4e12b389caa91d2f2abc1d",
+      "changed": false
+    },
+    {
+      "path": "Tools/CI/s005_windows_source_snapshot.py",
+      "sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+      "bytes": 5028,
+      "historical_sha256": "2b422d58b6e06ffa19286938118ecfe967027bc538eb6eb9ae5d5b01d5b0ab81",
+      "changed": true
+    },
+    {
+      "path": "Tools/CI/skirmish_native_identity.py",
+      "sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "bytes": 4134,
+      "historical_sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "changed": false
+    },
+    {
+      "path": "Tools/CI/skirmish_production_queue.py",
+      "sha256": "22f508c8c945e1c8e2f48a7c1e328328364d97d6627eff10f4eca74c581019e2",
+      "bytes": 18801,
+      "historical_sha256": "4fb6d6c26d6ae2974d99fb6f89a09005f8e2b097e6bdad7b075758e49c330aa1",
+      "changed": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "2c8c535e2e69ad5ea2f906d03e46b8d6bbfc24abbb41b1cd641b19e8fc5c041f",
+      "bytes": 17874,
+      "historical_sha256": "08ca06f08c3929bc89923d6680f475af7cbd3d53453339ea4929c2d695dc5d0c",
+      "changed": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs",
+      "sha256": "6c35a0c59f71e6a40ae0ea226c9fcee7cc6af41e6ef19b2a37ecd9ed3a09f999",
+      "bytes": 4900,
+      "historical_sha256": "6c35a0c59f71e6a40ae0ea226c9fcee7cc6af41e6ef19b2a37ecd9ed3a09f999",
+      "changed": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "2d6cac73496e5b25d272a84fea394fbc8f8e5a4ef40ac3a6f9c77fba7da0955f",
+      "bytes": 94815,
+      "historical_sha256": "4a73c542b7d3be956a1a5db03679b4349e06a379cef0d2e2a94c601468fcb8ba",
+      "changed": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "244da2885c534bf379f710f15817133b0a399f13b01eb0d95940f3bda1d390c1",
+      "bytes": 18824,
+      "historical_sha256": "321d2603cf9f5cfa65af8236ad92df6c77d7aac6399f7a660588f817e9c106fe",
+      "changed": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "bytes": 25163,
+      "historical_sha256": "208bfd164554a8913e8cec67ddf8edb6054202b94aed3c63db5b36102f837579",
+      "changed": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+      "bytes": 18146,
+      "historical_sha256": "4dc0808d473debfc7a093f9cba10745c9c796e852037727bab4a4d169bac2269",
+      "changed": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishObservationStorage.cs",
+      "sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "bytes": 4726,
+      "historical_sha256": "c17d8581a1f86f5f037007200b03ce5735750bde1c9fb0cde804c85a8dc4b763",
+      "changed": false
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+      "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+      "bytes": 37713,
+      "historical_sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+      "changed": false
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCALABLE_MISSION_PRODUCTION_HANDOFF.md",
+      "sha256": "5f91b02d0b28adbd830261cf9538ccf82a0167554525f733032361ea6af266ef",
+      "bytes": 15497,
+      "historical_sha256": "5f91b02d0b28adbd830261cf9538ccf82a0167554525f733032361ea6af266ef",
+      "changed": false
+    },
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "sha256": "09292e3f32140b54a6f8b5b377812ef2a19fd855ee0a3cb30d2a5fa5f421b10a",
+      "bytes": 85,
+      "historical_sha256": "09292e3f32140b54a6f8b5b377812ef2a19fd855ee0a3cb30d2a5fa5f421b10a",
+      "changed": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "0df084bb4443138ea9a6ea0cc2420fc9fa304860ba22d7073e747cc51f2f6842",
+      "bytes": 35028,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "sha256": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+      "bytes": 16404,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e",
+      "bytes": 7483,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Tools/CI/prepare_s005_current_source_pins.py",
+      "sha256": "b89c4cab0a63508cb314290f30d55867a39d2c28d470861ffa374647b903ceb2",
+      "bytes": 7435,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Tools/CI/audit_skirmish_native_contacts.py",
+      "sha256": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+      "bytes": 4201,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Tools/CI/skirmish_production_matrix_authority.py",
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "bytes": 7726,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab",
+      "sha256": "1d0c81eddd13570b33e666fafabef225d2689840751f1a8cc2a455aff7d17875",
+      "bytes": 329334,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+      "sha256": "74a39ee0f21e911af74f0b2c308a34928a1971f229b9f6611c045a61ab3f7f0d",
+      "bytes": 1579259,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MainMenuCampaignCardView.cs",
+      "sha256": "13aedc11f9cebfc77a3b27eaff4ca90520e96c16638a3f41bc3973acbe1d282a",
+      "bytes": 9134,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MainMenuRtlLayoutView.cs",
+      "sha256": "6986f76ecf235eafe16e338add356bdf0b4b7b8403166941e22f4b8f353f2414",
+      "bytes": 4647,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MainMenuAlignmentValidation.cs",
+      "sha256": "bbadf65e13ac7fa2fea00785f5f603ee75e667f958679303e5bdad39104e3c40",
+      "bytes": 7264,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs",
+      "sha256": "14eea76e039bd41597a6599b826b30460e3fe3ed77df5cc7b1fb29aee2827d09",
+      "bytes": 84617,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MenuUiApprovedAuthoring.cs",
+      "sha256": "7bc4a47966e498f5a8804826fdce3bcf8cf8b499d9da728d5f651ca31a2ac689",
+      "bytes": 37609,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs",
+      "sha256": "4f5cc2d505b17242af8545a0c3c30e2f539957c18823c9eccce21d32578ed3c0",
+      "bytes": 78381,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    },
+    {
+      "path": "Assets/Tests/Editor/MenuHeaderRemediationTests.cs",
+      "sha256": "09774ef5a402c71cb7cc76e9bf8699b91722bbe31c49870da2c84e5dad6e5ca1",
+      "bytes": 31544,
+      "role": "Explicit added current integration pin; full snapshot remains authority"
+    }
+  ],
+  "changed_historical_inspected_count": 6,
+  "source_candidate_before_current_native": "86b814a121399adcef02f5df463bb492f82e846343678be614edfb938a7be7d5",
+  "source_count_before_current_native": 41604,
+  "current_native": {
+    "session": 18282,
+    "directory": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness",
+    "state": "InProgress_NotAcceptance",
+    "wrapper": {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/run-checked.ps1",
+      "sha256": "fd870778c21370390444d293dea8497364f54fb6aa0d4d604bcd22fa6e179815",
+      "bytes": 8210
+    }
+  },
+  "job_scope": {
+    "catalog_id": "S005",
+    "definition_id": "skirmish.s005",
+    "definition_version": 2,
+    "difficulty": "Regular",
+    "size": "Standard",
+    "seed": 155926,
+    "locale": "FA",
+    "control_mode": "aria",
+    "schema_version": 1
+  },
+  "job_created": false,
+  "claim_created": false,
+  "candidate_frozen": false,
+  "dll_identity": null,
+  "qualified": false,
+  "mission_readiness": "Pending",
+  "dispatch": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionJobFromEnvironment",
+  "census": "Game.Editor.SkirmishProductionNativeIdentityCensus.ExportS005RegularStandard155926Fa",
+  "reseal_order": [
+    "Wait actual current checked wrapper exit0, all12 required markers and raw collector/witness/census cleanup joins; preserve unfit source rows and all failed history.",
+    "Root complete after-source/DLL snapshot: compare source endpoint exactly to current before; classify actual native compiler DLL changes explicitly. No job may use precompile build hash.",
+    "If source changed or native wrapper failed, preserve evidence and stop this candidate seal. Any corrected import needs its own actual compile and new snapshot.",
+    "Run unchanged actual S005 FA155926 census through version-resolved GUI focused wrapper, fresh exclusive output. Preserve integer caller0, terminal log0, exact native marker and stream/output hashes. Census may compile/bake; final freeze follows it.",
+    "At idle boundary after last native compile/warmup/census: capture final complete candidate with installed d32, independently rehash DLL manifest, pin all actual Tools including queue/native identity/readout and normal UI source integration. Do not reuse old jobs or manually substitute SHA fields.",
+    "Regenerate source-pins output in fresh outsideAssets path if used; its tool list is camera-oriented and does not include queue, so explicitly record queue/native-census/production adapter pins from this plan.",
+    "Prepare a new schema1 job from actual native census fields with exact packet seed/locale and final snapshot. Existing queue.preflight; new canonical enqueue/claim only root when ready; no sampling-plan or legacy schema2 needed for single S005.",
+    "Launch existing normal owner NO -quit; preserve normal visible Menu/ARIA paid gameplay/result/MainMenu, actual runtime-error audit, real caller exit, all raw source/DLL after equality. Queue finish qualification stays disabled."
+  ],
+  "contract_notes": [
+    "C358 legacy schema2/source_resolution affects legacy regressions only; S005 remains expanded schema1 and unchanged native identity schema1. Do not use legacy job builder for S005.",
+    "Current single-job production request accepts S004/S005 without Matrix; no matrix descriptor/720 plan required for this one claim.",
+    "Batch threaded quitting runtime gate is attached by ProductionBatch owner. A direct single-job dispatch must retain its existing native/input/runtime error audits; do not claim a Batch RuntimeQuittingGate marker was executed.",
+    "Old runbook claim current dispatch onlyS004/S005 should be read as standalone scope; current matrix path also supports reviewed other catalog jobs. It does not change this S005 procedure.",
+    "Editor-memory S005 candidate exposure remains lawful handoff59 isolatedQA; no publishedPlayable requirement or publication/readiness claim.",
+    "Actual source checkpoint includes d32 already committed on main; preserve its historical replay before/new pins rather than copying old helper into installed Tools."
+  ],
+  "stable_checkpoint": {
+    "status": "OneUnionPendingActualNativeAllMarkersAndEvidenceArchive",
+    "parent_plan": {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/LegacyWitnessLogicalFrame/PLAN.json",
+      "sha256": "9a710197d9b1f741b3962947dc3b062e6b5707bb02223da48a6a22f9cf3ffaee",
+      "bytes": 21585
+    },
+    "adoption": {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/ADOPTION.json",
+      "sha256": "f6ed36ca7cb248eefca6c2f4ff96616d0e6ed3d1638e5e65ebf665be67128b93",
+      "bytes": 3828
+    },
+    "implementation_count": 24,
+    "implementation": [
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs",
+        "sha256": "fb92f8feaa7b086506750e3a447a9296da78f1f5ce542ed76b9446ccda3a4c6c",
+        "bytes": 6832
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs.meta",
+        "sha256": "831b10effd6f3556890830b51af9265959ac92d1d2c6ede480cff4db7ff3f39f",
+        "bytes": 59
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs",
+        "sha256": "926e2614c4e8a362d05ba08f75b5aa3541e44ea1536ac1918eb68d698c039e9f",
+        "bytes": 15704
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.meta",
+        "sha256": "c390a5ef286bfb3e7e54887dac2aa6ca610de3720d35bac3026f843dd756ddac",
+        "bytes": 243
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs",
+        "sha256": "f5a322371dbf3bab456b62d18e53752128f9606820314413461e7f4fb5ff3672",
+        "bytes": 14261
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs.meta",
+        "sha256": "d26c2479305806901bb5ed46e2341ec92a8e30d060071ddc5f46c7a806fc40ee",
+        "bytes": 59
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+        "sha256": "c349413d5b540ab159f7676539a16ff7c58e97b190d60b74be12208f87f59b0a",
+        "bytes": 37837
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+        "sha256": "089291acbaa3d71a3b04ff7d888a9bdf21027bad3ee7d09acb69f23f7c3d948f",
+        "bytes": 21931
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+        "sha256": "a60ef894179f3ef9d07df558d224b1a7fb78bedf483723ce84d1ff685eaac01a",
+        "bytes": 6634
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs.meta",
+        "sha256": "dbe1f2229b67f8b719f196ff1060c213371142d4831320ae754ea492f312593e",
+        "bytes": 62
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+        "sha256": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+        "bytes": 16404
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs.meta",
+        "sha256": "c9cddc1d959f6b4148eb12e0134013e8f1b21851dbc929c6791277dfcca41f80",
+        "bytes": 62
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+        "sha256": "2c8c535e2e69ad5ea2f906d03e46b8d6bbfc24abbb41b1cd641b19e8fc5c041f",
+        "bytes": 17874
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs",
+        "sha256": "e18922373e16078d0b3f48618823dc4e2a75ac12962cd3fd813bfbd910f6ba03",
+        "bytes": 14113
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.meta",
+        "sha256": "36c6a2f9282dd865a26c46b3dea417f9bc850c0cd6aa15fba036635ceef7dd34",
+        "bytes": 254
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+        "sha256": "b8501cac55fd30bce71d1bcdeb6c453963f79bbb166cca20e7d513a21b43e11c",
+        "bytes": 59920
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+        "sha256": "0df084bb4443138ea9a6ea0cc2420fc9fa304860ba22d7073e747cc51f2f6842",
+        "bytes": 35028
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+        "sha256": "244da2885c534bf379f710f15817133b0a399f13b01eb0d95940f3bda1d390c1",
+        "bytes": 18824
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs",
+        "sha256": "5eec7f52601c34916296499073a29cd48b66f098fc99081ccf44f79b130d2848",
+        "bytes": 10138
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs.meta",
+        "sha256": "2e23b5b84a46fe023e8b8fc025e34c8d096f98de2968690eb53dcb9edddd97a3",
+        "bytes": 62
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+        "sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+        "bytes": 18146
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+        "sha256": "2d6cac73496e5b25d272a84fea394fbc8f8e5a4ef40ac3a6f9c77fba7da0955f",
+        "bytes": 94815
+      },
+      {
+        "path": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+        "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e",
+        "bytes": 7483
+      },
+      {
+        "path": "Tools/CI/skirmish_production_queue.py",
+        "sha256": "22f508c8c945e1c8e2f48a7c1e328328364d97d6627eff10f4eca74c581019e2",
+        "bytes": 18801
+      }
+    ],
+    "already_in_head": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab",
+      "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+      "Assets/Game/Scripts/UI/Screens/MainMenuCampaignCardView.cs",
+      "Assets/Game/Scripts/UI/Screens/MainMenuRtlLayoutView.cs",
+      "Assets/Game/Scripts/Editor/MainMenuAlignmentValidation.cs",
+      "Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs",
+      "Assets/Game/Scripts/Editor/MenuUiApprovedAuthoring.cs",
+      "Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs",
+      "Assets/Tests/Editor/MenuHeaderRemediationTests.cs",
+      "Tools/CI/s005_windows_source_snapshot.py"
+    ],
+    "pending": [
+      "Exact current native before/after source manifests and actual DLL rows/logs/outcomes, including incomplete S026 fit if any",
+      "Archive actual evidence without DLL binaries, preserve source/proof maps and importer apply receipt/backup provenance",
+      "Append exact implementation metas and only minimal immutable authority/review/proof input closure; normalize Git path separators and dedupe before scoped rawCRLF -text list",
+      "Root final staged blob SHA checks against tested raw bytes; no broad directory staging"
+    ],
+    "excluded": [
+      "ProtectedLegacyExpandedCounterparts mutable18-target draft and future classification fix",
+      "Future sequential113 wrapper",
+      "Unrelated WIP or dirty folder metas",
+      "Existing jobs/claims/candidate hashes from historical runbooks"
+    ]
+  },
+  "actions_executed": [
+    "ReadOnlyPinAndSourceInspection",
+    "WriteOutsideAssetsPlanOnly"
+  ]
+}

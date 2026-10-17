@@ -1,0 +1,32 @@
+{
+  "result": "Passed",
+  "sourceHash": "7fecf45e8da8250b03a73993e4616effc7b9d384ccd575e2b6719edf9940aa4d",
+  "actualWrapperExit": 0,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-760-shared-full-map-edge-fit-green-post-source-manifest.json",
+  "postManifest": "final-762-shared-full-map-southern-native-camera-pass-post-source-manifest.json",
+  "log": "native-762-current-manual-en-seed104734.log",
+  "trace": "s005-aria-live-104734-en-6a038ee09547418d99a3efe4622fba28.jsonl",
+  "target": [
+    1399,
+    177.5
+  ],
+  "touch": [
+    1240.38,
+    201.66
+  ],
+  "firstHit": "Map",
+  "normalNativeFocus": [
+    0.56,
+    0.03
+  ],
+  "targetNativeScreen": [
+    1199.92,
+    540.02,
+    84.85
+  ],
+  "troopCommandsAdded": 0,
+  "scope": "Normal touch camera navigation only; no construction, aircraft capacity or complete mission claimed",
+  "inputAudit": "native762-touch-contact-audit.json",
+  "playerReady": false
+}

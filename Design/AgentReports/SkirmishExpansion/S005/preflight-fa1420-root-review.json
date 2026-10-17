@@ -1,0 +1,13 @@
+{
+  "review": "Root reviewed FA1420 bounded-wait-only diff, 7 static negative controls, 148 current source contracts, exact dry compile and load-only assembly; native dispatch enabled",
+  "sourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "fixtureSha256": "8bc71eaaff891cd8eb1d3da2aea4e329076afb60fe8e4ead4be64806730e91f0",
+  "runnerSha256": "87b211fb045365f419f5f5cef6d866bc4c2c879bcfa294879932005adfb4b7f5",
+  "dryCompileProof": "Design/AgentReports/SkirmishExpansion/S005/compile1420-fa-stop-manual-reviewed-dry-run.json",
+  "dryCompileSha256": "b5312e9f28fa823adfd9fad33e4636c0b4a8168d88d1838e5dec292adcd63dbf",
+  "loadOnlyProof": "Design/AgentReports/SkirmishExpansion/S005/load1420-fa-stop-manual-review.json",
+  "loadOnlySha256": "fa8a701e59cb799280ca0bb8f9670cfc0d32d9595ea490e5c59c0ab8ec706603",
+  "previousNativeIdle": "Design/AgentReports/SkirmishExpansion/S005/native1414-after-close-native-idle.json",
+  "disabledManifestSha256": "5dc72bf7e1f79151eb5498da3e32cbb915b1cae088722d7ca2857a7e7d183ce6",
+  "nativeRunPending": true
+}

@@ -20,6 +20,7 @@ namespace Game.Runtime
             var state = em.GetComponentData<SkirmishExpandedSessionComponent>(prepared.Session);
             if (state.SpawnComplete != 0 ||
                 (state.Phase != SkirmishSessionPhase.Queued && state.Phase != SkirmishSessionPhase.Spawning)) return false;
+            if(!SkirmishNativeRepairCheckpointGuard.TryValidateWorld(em,prepared.Session,out failure))return false;
             var reverse = new Dictionary<Entity, string>();
             var before = new Dictionary<Entity, SkirmishNativeCheckpointParts.Part[]>();
             var owners = new Dictionary<RuntimeBuildingEntity, SkirmishNativeBuildingCheckpointRecord>();
@@ -30,6 +31,7 @@ namespace Game.Runtime
             bool hadMatch = em.HasComponent<SkirmishMatchState>(prepared.Session);
             var previousMatch = hadMatch ? em.GetComponentData<SkirmishMatchState>(prepared.Session) : default;
             bool applyingParts = false;
+            bool objectiveInstalled = false;
             try
             {
                 foreach (var identity in prepared.Identities)
@@ -88,6 +90,17 @@ namespace Game.Runtime
                 visualCommands.Playback(em);
                 // Restore the playing clock only after all actors, stores and banks.
                 SkirmishNativeCheckpointParts.Apply(em, prepared.Session, prepared.Parts[prepared.Session], Resolve);
+                if (prepared.Objective != null)
+                {
+                    if (!em.HasComponent<SkirmishResolvedSetupRecord>(prepared.Session))
+                        throw new InvalidOperationException("Actual resolved objective setup missing.");
+                    SkirmishNativeConvoyCheckpoint.ValidateAfterParts(em,prepared.Session,
+                        em.GetComponentObject<SkirmishResolvedSetupRecord>(prepared.Session).Setup);
+                    SkirmishNativeObjectiveCheckpoint.Commit(em,prepared.Session,prepared.Objective);
+                    objectiveInstalled = true;
+                }
+                if(prepared.Repairs!=null&&!SkirmishNativeRepairCheckpoint.TryCommit(em,prepared.Session,prepared.Repairs,out var repairFailure))
+                    throw new InvalidOperationException("Native repair rebinding failed: "+repairFailure);
                 SkirmishExpandedSessionControlService.ProjectMatchPhase(em, prepared.Session);
                 foreach (var identity in prepared.Identities)
                     if (em.HasComponent<SkirmishAttemptOwnedComponent>(identity.Value) &&
@@ -109,6 +122,9 @@ namespace Game.Runtime
             }
             catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)
             {
+                SkirmishNativeRepairCheckpoint.Rollback(em,prepared.Repairs);
+                if (objectiveInstalled && em.Exists(prepared.Session) && em.HasComponent<SkirmishNativeObjectiveRecord>(prepared.Session))
+                    em.RemoveComponent<SkirmishNativeObjectiveRecord>(prepared.Session);
                 foreach (Entity entity in unsuppressed)
                     if (em.Exists(entity) && !em.HasComponent<CampaignMissionCombatSuppressedTag>(entity))
                         em.AddComponent<CampaignMissionCombatSuppressedTag>(entity);

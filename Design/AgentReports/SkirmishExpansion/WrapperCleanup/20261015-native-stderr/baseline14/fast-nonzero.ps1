@@ -1,0 +1,2 @@
+﻿& 'D:\Projects\WarlineCapture\Tools\CI\InvokeUnity.ps1' -UnityExe 'D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\OwnedExitProbe.exe' -ProjectPath 'D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve' -LogFile 'D:\Projects\WarlineCapture\Logs\SkirmishProduction\Offline\InvokeUnityProcessExitTests\canary-hrn5onve\fast-nonzero.log' -GuiLicensing -TimeoutSeconds 10 -UnityArguments @('--exit','37','--sleep','0','--fatal','0')
+exit $global:LASTEXITCODE

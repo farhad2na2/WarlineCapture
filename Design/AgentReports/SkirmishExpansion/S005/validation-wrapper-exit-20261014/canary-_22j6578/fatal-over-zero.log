@@ -1,0 +1,13 @@
+﻿[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578\fatal-over-zero.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578 -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578\fatal-over-zero.log --exit 0 --sleep 0 --fatal 1
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578 -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578\fatal-over-zero.log --exit 0 --sleep 0 --fatal 1
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578\fatal-over-zero.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-_22j6578\fatal-over-zero.stderr.log
+
+Crash!!! owned synthetic child only
+[UnityInvoke] ERROR: Unity reported a fatal log marker: Crash!!!
+[UnityInvoke] ExitCode: 1

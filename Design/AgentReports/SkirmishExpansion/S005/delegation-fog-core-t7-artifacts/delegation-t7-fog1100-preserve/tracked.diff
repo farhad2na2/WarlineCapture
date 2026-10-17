@@ -1,0 +1,882 @@
+diff --git a/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab b/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
+index ab128a474..95181f54f 100644
+--- a/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
++++ b/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
+@@ -22883,7 +22883,7 @@ MonoBehaviour:
+     m_PressedTrigger: Pressed
+     m_SelectedTrigger: Selected
+     m_DisabledTrigger: Disabled
+-  m_Interactable: 1
++  m_Interactable: 0
+   m_TargetGraphic: {fileID: 7437314175761415324}
+   m_OnClick:
+     m_PersistentCalls:
+diff --git a/Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs b/Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs
+index 81a30cdd4..8bb44a9a6 100644
+--- a/Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs
++++ b/Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs
+@@ -21,7 +21,7 @@ namespace Game.Configs
+         {
+             intelId = "skirmish.intel.shared_fog.v1";
+             sharedFog = true;
+-            developmentFullVision = true;
++            developmentFullVision = false;
+             lastSeenExpireSeconds = 20;
+             contentVersion = 1;
+         }
+diff --git a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs
+index 095d17084..3c178ce95 100644
+--- a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs
++++ b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs
+@@ -2,67 +2,360 @@ using Game.Components;
+ using Game.Skirmish.Contracts;
+ using Unity.Collections;
+ using Unity.Entities;
++using Unity.Mathematics;
++using Unity.Transforms;
+ 
+ namespace Game.Runtime
+ {
+     public static class SkirmishFogService
+     {
+-        public static void Project(EntityManager em, Entity session)
++        private struct ContactSample
++        {
++            public Entity Entity;
++            public byte FactionId;
++            public byte Alive;
++            public byte Presentable;
++            public byte DetectorDomain;
++            public int Health;
++            public int MaxHealth;
++            public int2 Cell;
++            public float3 Position;
++        }
++        private struct ObserverSample
+         {
+-            if (!em.HasComponent<SkirmishFogStateComponent>(session))
+-                return;
++            public Entity Entity;
++            public byte FactionId;
++            public FixedString64Bytes StableObjectId;
++            public float AcquisitionRadius;
++            public int ThreatRadiusCells;
++            public byte ThreatKind;
++            public int2 Cell;
++            public float3 Position;
++            public UnitScanOrder Scan;
++            public byte ActiveScan;
++        }
+ 
+-            SkirmishFogStateComponent fog = em.GetComponentData<SkirmishFogStateComponent>(session);
+-            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+-            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
++        // Spawn/adoption may call this repeatedly. It initializes knowledge without
++        // aging contacts; only the positive-time simulation update advances sight.
++        public static void Project(EntityManager em, Entity session)
++        {
++            if (!TrySession(em, session, out var state, out var fog)) return;
++            float now = (float)em.WorldUnmanaged.Time.ElapsedTime;
++            using var query = OwnedContacts(em);
++            using var entities = query.ToEntityArray(Allocator.Temp);
+             for (int i = 0; i < entities.Length; i++)
+             {
+                 Entity entity = entities[i];
+                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+-                if (!owned.SessionId.Equals(sessionId))
+-                    continue;
+-                WriteSight(em, entity, Resolve(fog, owned.FactionId, Current(em, entity)));
++                if (!owned.SessionId.Equals(state.SessionId)) continue;
++                var sample = Sample(em, entity, owned);
++                EnsureKnowledge(em, entity);
++                for (byte observer = 1; observer <= 2; observer++)
++                {
++                    var knowledge = GetKnowledge(em, entity, observer);
++                    if (owned.FactionId == observer || fog.DevelopmentFullVision != 0 || fog.SharedFog == 0)
++                        Observe(ref knowledge, sample, now, Entity.Null, 0, 0, 3);
++                    Store(em, entity, knowledge);
++                }
++                ProjectPlayer(em, entity);
+             }
+         }
+ 
+-        public static bool IsVisible(EntityManager em, Entity contact)
++        public static bool IsVisible(EntityManager em, Entity contact) => IsVisibleToFaction(em, contact, 1);
++
++        public static bool IsVisibleToFaction(EntityManager em, Entity contact, byte observerFaction)
+         {
++            if (!em.Exists(contact)) return false;
++            if (em.HasComponent<SkirmishAttemptOwnedComponent>(contact))
++            {
++                if (em.GetComponentData<SkirmishAttemptOwnedComponent>(contact).FactionId == observerFaction) return true;
++                if (TryGetKnowledge(em, contact, observerFaction, out var knowledge))
++                    return knowledge.Sight == SkirmishContactSight.Visible;
++                // Old native checkpoints lack the optional buffer. Do not grant the
++                // opposing observer the player's previously projected knowledge.
++                return observerFaction == 1 && Current(em, contact) == SkirmishContactSight.Visible;
++            }
+             return Current(em, contact) == SkirmishContactSight.Visible;
+         }
+ 
+-        public static void Reveal(EntityManager em, Entity contact)
++        public static bool TryGetKnowledge(EntityManager em, Entity contact, byte observerFaction,
++            out SkirmishContactKnowledgeElement knowledge)
+         {
+-            WriteSight(em, contact, SkirmishContactSight.Visible);
++            knowledge = default;
++            if (!em.Exists(contact) || !em.HasBuffer<SkirmishContactKnowledgeElement>(contact)) return false;
++            var buffer = em.GetBuffer<SkirmishContactKnowledgeElement>(contact, true);
++            for (int i = 0; i < buffer.Length; i++)
++                if (buffer[i].ObserverFactionId == observerFaction) { knowledge = buffer[i]; return true; }
++            return false;
+         }
+ 
+-        public static void Hide(EntityManager em, Entity contact)
++        // Called only after the native Scan system has revealed the actual contact.
++        // A stale pooled source, other attempt, or Campaign actor cannot confer sight.
++        public static bool ObserveFromScan(EntityManager em, Entity target, Entity source, int requestId, int frame)
+         {
+-            WriteSight(em, contact, SkirmishContactSight.Unknown);
++            if (em.WorldUnmanaged.Time.DeltaTime <= 0 || !em.Exists(source) || !em.Exists(target) ||
++                !em.HasComponent<SkirmishAttemptOwnedComponent>(source) ||
++                !em.HasComponent<SkirmishAttemptOwnedComponent>(target) || !em.HasComponent<Faction>(source)) return false;
++            var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(source);
++            var targetOwned = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
++            if (owned.CapacityReleased != 0 || !owned.SessionId.Equals(targetOwned.SessionId) ||
++                owned.FactionId < 1 || owned.FactionId > 2 ||
++                em.GetComponentData<Faction>(source).Id != owned.FactionId || !Alive(em, source) || !Alive(em, target)) return false;
++            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishFogStateComponent));
++            using var entities = sessions.ToEntityArray(Allocator.Temp);
++            for (int i = 0; i < entities.Length; i++)
++            {
++                Entity session = entities[i];
++                var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
++                if (!state.SessionId.Equals(owned.SessionId) || !CanAdvance(em, session, state)) continue;
++                EnsureKnowledge(em, target);
++                var knowledge = GetKnowledge(em, target, owned.FactionId);
++                Observe(ref knowledge, Sample(em, target, targetOwned), (float)em.WorldUnmanaged.Time.ElapsedTime,
++                    source, requestId, frame, 2);
++                knowledge.ObservationSourceStableObjectId = owned.StableObjectId;
++                Store(em, target, knowledge);
++                ProjectPlayer(em, target);
++                return true;
++            }
++            return false;
+         }
+ 
+-        private static SkirmishContactSight Resolve(
+-            SkirmishFogStateComponent fog,
+-            byte factionId,
+-            SkirmishContactSight current)
++        public static bool TryGetActiveScanObserverFaction(EntityManager em, Entity source, out byte faction)
+         {
+-            if (factionId == 1 || fog.DevelopmentFullVision != 0 || fog.SharedFog == 0)
+-                return SkirmishContactSight.Visible;
+-            return current == SkirmishContactSight.Visible
+-                ? SkirmishContactSight.LastSeen
+-                : SkirmishContactSight.Unknown;
++            faction = 0;
++            if (!em.Exists(source) || !em.HasComponent<SkirmishAttemptOwnedComponent>(source) ||
++                !em.HasComponent<Faction>(source) || !Alive(em, source)) return false;
++            var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(source);
++            if (owned.CapacityReleased != 0 || owned.FactionId < 1 || owned.FactionId > 2 ||
++                em.GetComponentData<Faction>(source).Id != owned.FactionId) return false;
++            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishFogStateComponent));
++            using var entities = sessions.ToEntityArray(Allocator.Temp);
++            for (int i = 0; i < entities.Length; i++)
++            {
++                var state = em.GetComponentData<SkirmishExpandedSessionComponent>(entities[i]);
++                if (!state.SessionId.Equals(owned.SessionId) || !CanAdvance(em, entities[i], state)) continue;
++                faction = owned.FactionId;
++                return true;
++            }
++            return false;
+         }
+ 
+-        private static SkirmishContactSight Current(EntityManager em, Entity entity)
++        public static void UpdateSession(EntityManager em, Entity session)
+         {
+-            return em.HasComponent<SkirmishContactSightComponent>(entity)
+-                ? em.GetComponentData<SkirmishContactSightComponent>(entity).Sight
+-                : SkirmishContactSight.Unknown;
++            if (em.WorldUnmanaged.Time.DeltaTime <= 0 || !TrySession(em, session, out var state, out var fog) ||
++                !CanAdvance(em, session, state)) return;
++            float now = (float)em.WorldUnmanaged.Time.ElapsedTime;
++            float cellSize = 0;
++            using (var grids = em.CreateEntityQuery(typeof(GridConfig)))
++                if (grids.CalculateEntityCount() == 1) cellSize = math.max(0, grids.GetSingleton<GridConfig>().CellSize);
++            using var contacts = new NativeList<ContactSample>(Allocator.Temp);
++            using var observers = new NativeList<ObserverSample>(Allocator.Temp);
++            using var query = OwnedContacts(em);
++            using var entities = query.ToEntityArray(Allocator.Temp);
++            // EntityManager access is linear in the roster. Pair comparisons below
++            // use copied data, not component queries or structural writes.
++            for (int i = 0; i < entities.Length; i++)
++            {
++                Entity entity = entities[i];
++                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
++                if (!owned.SessionId.Equals(state.SessionId)) continue;
++                var contact = Sample(em, entity, owned);
++                contacts.Add(contact);
++                if (contact.Alive == 0 || owned.CapacityReleased != 0 ||
++                    owned.FactionId < 1 || owned.FactionId > 2 ||
++                    !em.HasComponent<Faction>(entity) || em.GetComponentData<Faction>(entity).Id != owned.FactionId) continue;
++                var observer = new ObserverSample { Entity = entity, FactionId = owned.FactionId, StableObjectId = owned.StableObjectId,
++                    Cell = contact.Cell, Position = contact.Position };
++                // Reuse native acquisition/detector radii. No new vision radius,
++                // stat boost, or invented terrain LOS is introduced here.
++                if (em.HasComponent<UnitCombat>(entity))
++                    {
++                    observer.AcquisitionRadius = math.max(0, em.GetComponentData<UnitCombat>(entity).AggroRangeCells) * cellSize;
++                    if (cellSize > 0 && em.HasComponent<UnitAttack>(entity))
++                    {
++                        float range = math.max(0, em.GetComponentData<UnitAttack>(entity).Range);
++                        observer.AcquisitionRadius = math.max(observer.AcquisitionRadius, math.ceil(range / cellSize) * cellSize);
++                    }
++                }
++                if (em.HasComponent<ThreatDetector>(entity))
++                {
++                    var detector = em.GetComponentData<ThreatDetector>(entity);
++                    observer.ThreatKind = detector.Kind;
++                    observer.ThreatRadiusCells = math.max(0, detector.RadiusCells);
++                }
++                if (em.HasComponent<UnitScanOrder>(entity))
++                {
++                    observer.Scan = em.GetComponentData<UnitScanOrder>(entity);
++                    observer.ActiveScan = (byte)(observer.Scan.SourceEntity == entity && observer.Scan.HasStarted != 0 &&
++                        (observer.Scan.DurationSeconds <= 0 || now - observer.Scan.StartedTimeSeconds < observer.Scan.DurationSeconds) &&
++                        Chebyshev(observer.Cell, observer.Scan.CenterCell) <= math.max(1, observer.Scan.RadiusCells) ? 1 : 0);
++                }
++                observers.Add(observer);
++            }
++            for (int i = 0; i < contacts.Length; i++)
++            {
++                var contact = contacts[i];
++                EnsureKnowledge(em, contact.Entity);
++                for (byte faction = 1; faction <= 2; faction++)
++                {
++                    var knowledge = GetKnowledge(em, contact.Entity, faction);
++                    bool visible = contact.FactionId == faction || fog.DevelopmentFullVision != 0 || fog.SharedFog == 0;
++                    Entity source = Entity.Null;
++                    FixedString64Bytes sourceStableId = default;
++                    int request = 0, frame = 0;
++                    byte kind = visible ? (byte)3 : (byte)1;
++                    if (!visible && contact.Presentable != 0)
++                    {
++                        // Sustain only a scan that actually emitted this contact.
++                        // This never turns an unobserved contact visible pre-reveal.
++                        for (int j = 0; j < observers.Length; j++)
++                        {
++                            var observer = observers[j];
++                            if (observer.FactionId != faction || observer.ActiveScan == 0 || knowledge.ObservationKind != 2 ||
++                                knowledge.ObservationSource != observer.Entity || !knowledge.ObservationSourceStableObjectId.Equals(observer.StableObjectId) ||
++                                knowledge.ScanRequestId != observer.Scan.RequestId ||
++                                Chebyshev(contact.Cell, observer.Scan.CenterCell) > math.max(1, observer.Scan.RadiusCells)) continue;
++                            visible = true; source = observer.Entity; sourceStableId = observer.StableObjectId; request = observer.Scan.RequestId;
++                            frame = observer.Scan.StartedFrame; kind = 2; break;
++                        }
++                        if (!visible)
++                            for (int j = 0; j < observers.Length; j++)
++                            {
++                                var observer = observers[j];
++                                if (observer.FactionId != faction) continue;
++                                float radius = observer.AcquisitionRadius;
++                                bool acquired = radius > 0 && math.distancesq(observer.Position.xz, contact.Position.xz) <= radius * radius;
++                                // Native detectors use Chebyshev grid radius, unlike
++                                // combat's horizontal Euclidean acquisition reach.
++                                bool detected = contact.Alive != 0 && contact.DetectorDomain != 0 && observer.ThreatKind == contact.DetectorDomain &&
++                                    observer.ThreatRadiusCells > 0 && Chebyshev(observer.Cell, contact.Cell) <= observer.ThreatRadiusCells;
++                                if (!acquired && !detected) continue;
++                                visible = true; source = observer.Entity; sourceStableId = observer.StableObjectId; break;
++                            }
++                    }
++                    if (visible)
++                    {
++                        Observe(ref knowledge, contact, now, source, request, frame, kind);
++                        knowledge.ObservationSourceStableObjectId = sourceStableId;
++                    }
++                    else if (knowledge.Sight != SkirmishContactSight.Unknown)
++                    {
++                        knowledge.Sight = now - knowledge.LastObservedTimeSeconds >= math.max(0, fog.LastSeenExpireSeconds)
++                            ? SkirmishContactSight.Unknown : SkirmishContactSight.LastSeen;
++                        // LastSeen position/health provenance remain frozen. Hidden
++                        // contact movement or death does not refresh this record.
++                    }
++                    Store(em, contact.Entity, knowledge);
++                }
++                ProjectPlayer(em, contact.Entity);
++            }
+         }
+ 
++        public static void Reveal(EntityManager em, Entity contact) => ManualSight(em, contact, SkirmishContactSight.Visible);
++        public static void Hide(EntityManager em, Entity contact) => ManualSight(em, contact, SkirmishContactSight.Unknown);
++        private static void ManualSight(EntityManager em, Entity contact, SkirmishContactSight sight)
++        {
++            if (!em.Exists(contact)) return;
++            if (em.HasComponent<SkirmishAttemptOwnedComponent>(contact))
++            {
++                EnsureKnowledge(em, contact);
++                var knowledge = GetKnowledge(em, contact, 1);
++                if (sight == SkirmishContactSight.Visible)
++                    Observe(ref knowledge, Sample(em, contact, em.GetComponentData<SkirmishAttemptOwnedComponent>(contact)),
++                        (float)em.WorldUnmanaged.Time.ElapsedTime, Entity.Null, 0, 0, 3);
++                else knowledge.Sight = sight;
++                Store(em, contact, knowledge);
++            }
++            WriteSight(em, contact, sight);
++        }
++        private static bool TrySession(EntityManager em, Entity session, out SkirmishExpandedSessionComponent state,
++            out SkirmishFogStateComponent fog)
++        {
++            state = default; fog = default;
++            if (!em.Exists(session) || !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
++                !em.HasComponent<SkirmishFogStateComponent>(session)) return false;
++            state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
++            fog = em.GetComponentData<SkirmishFogStateComponent>(session);
++            return state.IsLegacy == 0;
++        }
++        private static bool CanAdvance(EntityManager em, Entity session, SkirmishExpandedSessionComponent state)
++        {
++            return state.IsLegacy == 0 && state.Phase == SkirmishSessionPhase.Playing &&
++                (!em.HasComponent<SkirmishObjectiveClockComponent>(session) ||
++                 em.GetComponentData<SkirmishObjectiveClockComponent>(session).Paused == 0);
++        }
++        private static EntityQuery OwnedContacts(EntityManager em) => em.CreateEntityQuery(new EntityQueryDesc
++        {
++            All = new[] { ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>() },
++            Options = EntityQueryOptions.IncludeDisabledEntities
++        });
++        private static bool Alive(EntityManager em, Entity entity) => !em.HasComponent<Disabled>(entity) &&
++            !em.HasComponent<UnitDeathAnimationComponent>(entity) && !em.HasComponent<UnitTransportPassenger>(entity) &&
++            (!em.HasComponent<UnitHealth>(entity) || em.GetComponentData<UnitHealth>(entity).Current > 0);
++        private static ContactSample Sample(EntityManager em, Entity entity, SkirmishAttemptOwnedComponent owned) => new()
++        {
++            Entity = entity, FactionId = owned.FactionId, Alive = (byte)(Alive(em, entity) ? 1 : 0),
++            Presentable = (byte)(!em.HasComponent<Disabled>(entity) && !em.HasComponent<UnitTransportPassenger>(entity) ? 1 : 0),
++            DetectorDomain = em.HasComponent<RuntimeBuildingCombatInfo>(entity) ? (byte)0 :
++                em.HasComponent<UnitAirMovement>(entity) ? (byte)2 :
++                em.HasComponent<UnitMovementBehavior>(entity) && em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0 ? (byte)1 : (byte)0,
++            Health = em.HasComponent<UnitHealth>(entity) ? em.GetComponentData<UnitHealth>(entity).Current : 0,
++            MaxHealth = em.HasComponent<UnitHealth>(entity) ? em.GetComponentData<UnitHealth>(entity).Max : 0,
++            Cell = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell : default,
++            Position = em.HasComponent<LocalTransform>(entity) ? em.GetComponentData<LocalTransform>(entity).Position : default
++        };
++        private static int Chebyshev(int2 a, int2 b) { int2 d = math.abs(a - b); return math.max(d.x, d.y); }
++        private static void Observe(ref SkirmishContactKnowledgeElement knowledge, ContactSample sample, float now,
++            Entity source, int request, int frame, byte kind)
++        {
++            knowledge.Sight = SkirmishContactSight.Visible;
++            knowledge.LastSeenCell = sample.Cell;
++            knowledge.LastSeenPosition = sample.Position;
++            knowledge.LastSeenHealth = sample.Health;
++            knowledge.LastSeenMax = sample.MaxHealth;
++            knowledge.LastObservedTimeSeconds = now;
++            knowledge.ObservationSource = source;
++            knowledge.ObservationSourceStableObjectId = default;
++            knowledge.ScanRequestId = request;
++            knowledge.ObservationFrame = frame;
++            knowledge.ObservationKind = kind;
++        }
++        private static void EnsureKnowledge(EntityManager em, Entity entity)
++        {
++            if (em.HasBuffer<SkirmishContactKnowledgeElement>(entity)) return;
++            SkirmishContactSight previous = Current(em, entity);
++            // Previous Visible saves contain an observed actor pose/health. Earlier
++            // LastSeen saves have no frozen-pose/time record, so do not invent one.
++            var initial = new SkirmishContactKnowledgeElement { ObserverFactionId = 1,
++                Sight = SkirmishContactSight.Unknown };
++            if (previous == SkirmishContactSight.Visible && em.HasComponent<SkirmishAttemptOwnedComponent>(entity))
++                Observe(ref initial, Sample(em, entity, em.GetComponentData<SkirmishAttemptOwnedComponent>(entity)),
++                    (float)em.WorldUnmanaged.Time.ElapsedTime, Entity.Null, 0, 0, 3);
++            var buffer = em.AddBuffer<SkirmishContactKnowledgeElement>(entity);
++            buffer.Add(initial);
++            buffer.Add(new SkirmishContactKnowledgeElement { ObserverFactionId = 2, Sight = SkirmishContactSight.Unknown });
++        }
++        private static SkirmishContactKnowledgeElement GetKnowledge(EntityManager em, Entity entity, byte faction)
++        {
++            if (TryGetKnowledge(em, entity, faction, out var knowledge)) return knowledge;
++            return new SkirmishContactKnowledgeElement { ObserverFactionId = faction, Sight = SkirmishContactSight.Unknown };
++        }
++        private static void Store(EntityManager em, Entity entity, SkirmishContactKnowledgeElement knowledge)
++        {
++            var buffer = em.GetBuffer<SkirmishContactKnowledgeElement>(entity);
++            for (int i = 0; i < buffer.Length; i++) if (buffer[i].ObserverFactionId == knowledge.ObserverFactionId)
++            { buffer[i] = knowledge; return; }
++            // Only the two authored participants have contact knowledge.
++            if (buffer.Length < 2) buffer.Add(knowledge);
++        }
++        private static void ProjectPlayer(EntityManager em, Entity entity) => WriteSight(em, entity, GetKnowledge(em, entity, 1).Sight);
++        private static SkirmishContactSight Current(EntityManager em, Entity entity) =>
++            em.HasComponent<SkirmishContactSightComponent>(entity) ? em.GetComponentData<SkirmishContactSightComponent>(entity).Sight : SkirmishContactSight.Unknown;
+         private static void WriteSight(EntityManager em, Entity entity, SkirmishContactSight sight)
+         {
+-            if (em.HasComponent<CombatTargetPolicy>(entity))
++            // Expanded combat policy is a domain rule, not player perspective.
++            // Combat consumers explicitly consult the attacker's faction knowledge.
++            if (!em.HasComponent<SkirmishAttemptOwnedComponent>(entity) && em.HasComponent<CombatTargetPolicy>(entity))
+             {
+                 var policy = em.GetComponentData<CombatTargetPolicy>(entity);
+                 policy.Visible = (byte)(sight == SkirmishContactSight.Visible ? 1 : 0);
+@@ -70,9 +363,10 @@ namespace Game.Runtime
+             }
+             var component = new SkirmishContactSightComponent { Sight = sight };
+             if (em.HasComponent<SkirmishContactSightComponent>(entity))
+-                em.SetComponentData(entity, component);
+-            else
+-                em.AddComponentData(entity, component);
++            {
++                if (Current(em, entity) != sight) em.SetComponentData(entity, component);
++            }
++            else em.AddComponentData(entity, component);
+         }
+     }
+ }
+diff --git a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs
+index 8f3d11cb1..ca33d4718 100644
+--- a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs
++++ b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs
+@@ -2,6 +2,9 @@ using System;
+ using System.Collections.Generic;
+ using Game.Components;
+ using Unity.Mathematics;
++using Unity.Collections;
++using Unity.Collections.LowLevel.Unsafe;
++using Game.Skirmish.Contracts;
+ 
+ namespace Game.Runtime
+ {
+@@ -108,6 +111,21 @@ namespace Game.Runtime
+                     value.NextPatrolMoveTimeSeconds = Shift(value.NextPatrolMoveTimeSeconds, worldOffset);
+                     part.Data = Convert.ToBase64String(Pack(value));
+                 }
++                else if (part.Type == typeof(SkirmishContactKnowledgeElement).FullName)
++                {
++                    using var data = new NativeArray<byte>(bytes, Allocator.Temp);
++                    var values = data.Reinterpret<SkirmishContactKnowledgeElement>(1);
++                    for (int k = 0; k < values.Length; k++)
++                    {
++                        var value = values[k];
++                        if (value.Sight != SkirmishContactSight.Unknown)
++                            value.LastObservedTimeSeconds = Shift(value.LastObservedTimeSeconds, worldOffset);
++                        if (value.ObservationKind == 2)
++                            value.ObservationFrame = unchecked(value.ObservationFrame + frameOffset);
++                        values[k] = value;
++                    }
++                    part.Data = Convert.ToBase64String(data.ToArray());
++                }
+                 else if (part.Type == typeof(ScanIntelLastSeen).FullName)
+                 {
+                     var value = Unpack<ScanIntelLastSeen>(bytes);
+diff --git a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs
+index 75a667910..94fff1a0b 100644
+--- a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs
++++ b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs
+@@ -84,6 +84,32 @@ namespace Game.Runtime
+                                 {receipt.Effect=Entity.Null;receipts[i]=receipt;}
+                             }
+                         }
++                        if(typeof(T)==typeof(SkirmishContactKnowledgeElement))
++                        {
++                            var knowledge=values.Reinterpret<SkirmishContactKnowledgeElement>();
++                            for(int i=0;i<knowledge.Length;i++)
++                            {
++                                var value=knowledge[i];
++                                if(value.ObservationSource!=Entity.Null)
++                                {
++                                    Entity source=value.ObservationSource;
++                                    bool valid=em.Exists(source) && !em.HasComponent<Disabled>(source) &&
++                                        !em.HasComponent<UnitTransportPassenger>(source) && !em.HasComponent<UnitDeathAnimationComponent>(source) &&
++                                        em.HasComponent<SkirmishAttemptOwnedComponent>(source) &&
++                                        em.HasComponent<SkirmishAttemptOwnedComponent>(e);
++                                    if(valid)
++                                    {
++                                        var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(source);
++                                        var contact=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);
++                                        valid=owner.CapacityReleased==0 && owner.SessionId.Equals(contact.SessionId) &&
++                                            owner.StableObjectId.Equals(value.ObservationSourceStableObjectId) &&
++                                            (!em.HasComponent<UnitHealth>(source) || em.GetComponentData<UnitHealth>(source).Current>0);
++                                    }
++                                    if(!valid || string.IsNullOrEmpty(id(source)))
++                                    { value.ObservationSource=Entity.Null; knowledge[i]=value; }
++                                }
++                            }
++                        }
+                         var part = Build<T>(values.Reinterpret<byte>(UnsafeUtility.SizeOf<T>()).ToArray(),values.Length,index,id);
+                         part.Enabled = !index.IsEnableable || em.IsComponentEnabled(e, ComponentType.ReadWrite<T>());
+                         return part;
+@@ -203,6 +229,7 @@ namespace Game.Runtime
+             Register<SkirmishMoveIntentComponent>(NormalizeExpiredMoveTarget);
+             Register<SkirmishArmyGroupMembershipComponent>();
+             Register<SkirmishContactSightComponent>();
++            RegisterBuffer<SkirmishContactKnowledgeElement>();
+             Register<SkirmishUpgradeStampComponent>();
+             Register<SkirmishExpandedSessionComponent>();
+             Register<SkirmishObjectiveClockComponent>();
+diff --git a/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs b/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs
+index 54423ad63..7cdbee8d4 100644
+--- a/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs
++++ b/Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs
+@@ -568,6 +568,10 @@ namespace Game.Runtime
+                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
+             }
+ 
++            if (hasSourceEntity && em.HasComponent<SkirmishAttemptOwnedComponent>(sourceEntity) &&
++                !SkirmishFogService.TryGetActiveScanObserverFaction(em, sourceEntity, out _))
++                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
++
+             if (hasSourceEntity && request.DeferRevealUntilSourceArrives != 0)
+             {
+                 IssueSelectedUnitScanOrder(em, sourceEntity, request.RequestId, request.Frame, centerCell, centerWorld, radiusCells);
+@@ -582,6 +586,8 @@ namespace Game.Runtime
+                 (unitScanTargetQuery.IsEmptyIgnoreFilter ? 0 : unitScanTargetQuery.CalculateEntityCount()) +
+                 (buildingScanTargetQuery.IsEmptyIgnoreFilter ? 0 : buildingScanTargetQuery.CalculateEntityCount()));
+             using NativeList<ScanRevealCandidate> candidates = new(expectedCandidates, Allocator.Temp);
++            byte expandedObserverFaction = 0;
++            if (hasSourceEntity) SkirmishFogService.TryGetActiveScanObserverFaction(em, sourceEntity, out expandedObserverFaction);
+             CollectRevealUnits(
+                 unitScanTargetQuery,
+                 entityType,
+@@ -593,6 +599,7 @@ namespace Game.Runtime
+                 grid,
+                 centerCell,
+                 radiusCells,
++                expandedObserverFaction,
+                 candidates);
+             CollectRevealBuildings(
+                 buildingScanTargetQuery,
+@@ -604,14 +611,22 @@ namespace Game.Runtime
+                 grid,
+                 centerCell,
+                 radiusCells,
++                expandedObserverFaction,
+                 candidates);
+             for (int i = 0; i < candidates.Length; i++)
+             {
+                 ScanRevealCandidate candidate = candidates[i];
++                // A native expanded Scan only observes its own current attempt.
++                // Preserve the original Campaign/nonowned reveal path unchanged.
++                if (expandedObserverFaction != 0 &&
++                    (!em.HasComponent<SkirmishAttemptOwnedComponent>(candidate.Entity) ||
++                     !em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate.Entity).SessionId.Equals(
++                         em.GetComponentData<SkirmishAttemptOwnedComponent>(sourceEntity).SessionId))) continue;
+                 RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, request.Frame);
++                if (hasSourceEntity) SkirmishFogService.ObserveFromScan(em, candidate.Entity, sourceEntity, request.RequestId, request.Frame);
++                revealedCount++;
+             }
+ 
+-            revealedCount = candidates.Length;
+             SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
+                 $"scanApply revealed request={request.RequestId} count={revealedCount} cell={centerCell} radius={radiusCells} frame={request.Frame}");
+             AppendFeedEntry(
+@@ -749,6 +764,7 @@ namespace Game.Runtime
+             in GridConfig grid,
+             int2 centerCell,
+             int radiusCells,
++            byte expandedObserverFaction,
+             NativeList<ScanRevealCandidate> candidates)
+         {
+             if (unitScanTargetQuery.IsEmptyIgnoreFilter)
+@@ -774,7 +790,7 @@ namespace Game.Runtime
+                     : default;
+                 for (int i = 0; i < chunk.Count; i++)
+                 {
+-                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default))
++                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default, expandedObserverFaction))
+                         continue;
+ 
+                     int2 cell = unitGrids[i].Cell;
+@@ -799,6 +815,7 @@ namespace Game.Runtime
+             in GridConfig grid,
+             int2 centerCell,
+             int radiusCells,
++            byte expandedObserverFaction,
+             NativeList<ScanRevealCandidate> candidates)
+         {
+             if (buildingScanTargetQuery.IsEmptyIgnoreFilter)
+@@ -821,7 +838,7 @@ namespace Game.Runtime
+                     : default;
+                 for (int i = 0; i < chunk.Count; i++)
+                 {
+-                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default))
++                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default, expandedObserverFaction))
+                         continue;
+ 
+                     RuntimeBuildingCombatInfo building = buildings[i];
+@@ -837,12 +854,14 @@ namespace Game.Runtime
+             }
+         }
+ 
+-        private static bool IsRevealableScanTarget(Faction faction, bool hasHealth, UnitHealth health)
++        private static bool IsRevealableScanTarget(Faction faction, bool hasHealth, UnitHealth health, byte expandedObserverFaction)
+         {
+             if (hasHealth && health.Current <= 0)
+                 return false;
+ 
+-            return FactionIdentity.IsHostileToPlayer(faction.Id);
++            return expandedObserverFaction != 0
++                ? faction.Id != 0 && faction.Id != expandedObserverFaction
++                : FactionIdentity.IsHostileToPlayer(faction.Id);
+         }
+ 
+         private static bool TryResolveSelectedScanSource(EntityManager em, out Entity sourceEntity)
+@@ -865,7 +884,11 @@ namespace Game.Runtime
+                 for (int i = 0; i < selectedEntities.Length; i++, candidateIndex++)
+                 {
+                     Entity candidate = selectedEntities[i];
+-                    if (!IsValidScanSource(em, candidate))
++                    // UI selection remains player-owned; opposing expanded API
++                    // scans do not authorize player control of enemy actors.
++                    if (!em.HasComponent<Faction>(candidate) ||
++                        !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(candidate).Id) ||
++                        !IsValidScanSource(em, candidate))
+                     {
+                         SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
+                             $"scanSourceResolve candidateRejected index={candidateIndex} entity={candidate}");
+@@ -889,7 +912,8 @@ namespace Game.Runtime
+             if (sourceEntity == Entity.Null ||
+                 !em.Exists(sourceEntity) ||
+                 !em.HasComponent<Faction>(sourceEntity) ||
+-                !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(sourceEntity).Id) ||
++                (!FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(sourceEntity).Id) &&
++                 !SkirmishFogService.TryGetActiveScanObserverFaction(em, sourceEntity, out _)) ||
+                 !em.HasComponent<UnitGrid>(sourceEntity) ||
+                 !em.HasComponent<UnitMove>(sourceEntity) ||
+                 em.HasComponent<Disabled>(sourceEntity) ||
+diff --git a/Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs b/Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs
+index 1306331b1..38c552613 100644
+--- a/Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs
++++ b/Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs
+@@ -7,6 +7,7 @@ using UnityEngine;
+ using Game.Configs;
+ using Game.Tactical.Contracts;
+ using Game.Components;
++using Game.Skirmish.Contracts;
+ 
+ namespace Game.Runtime
+ {
+@@ -96,9 +97,15 @@ namespace Game.Runtime
+ 
+         public static bool IsSelectedUnitScanCapable(EntityManager entityManager, Entity entity)
+         {
+-            return entityManager.Exists(entity) &&
+-                   entityManager.HasComponent<UnitCombat>(entity) &&
+-                   entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0;
++            if (!entityManager.Exists(entity) || !entityManager.HasComponent<UnitCombat>(entity)) return false;
++            if (entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0) return true;
++            // Expanded reconnaissance Drone is deliberately unarmed. Scan capability
++            // must not grant attack permission or change legacy unarmed-unit policy.
++            return entityManager.HasComponent<SkirmishSharedActorTag>(entity) &&
++                   entityManager.HasComponent<SkirmishUnitRoleComponent>(entity) &&
++                   entityManager.GetComponentData<SkirmishUnitRoleComponent>(entity).Role == SkirmishRoleKind.Drone &&
++                   entityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity) &&
++                   entityManager.GetComponentData<SkirmishAttemptOwnedComponent>(entity).CapacityReleased == 0;
+         }
+ 
+         public static bool IsSelectedUnitScanSpecialist(EntityManager entityManager, Entity entity)
+diff --git a/Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs b/Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs
+index 81bc68484..9f1aaccba 100644
+--- a/Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs
++++ b/Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs
+@@ -134,7 +134,8 @@ namespace Game.Runtime
+             // Keep the defense status present even between warning records. A resolved
+             // scout alert is not the end of the mission or a reason to hide its timer.
+             if (_defenseVisible && _defenseText == text && _defenseSession.Equals(runtime.SessionToken) &&
+-                _defenseAttempt == runtime.AttemptOrdinal) return true;
++                _defenseAttempt == runtime.AttemptOrdinal &&
++                matchUi.HasPersistentMatchHudThreatWarningPresentation) return true;
+             if (!matchUi.TryShowMatchHudThreatWarning(text, float.PositiveInfinity)) return true;
+             _defenseText = text;
+             _defenseVisible = true;
+diff --git a/Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs b/Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs
+index 16f8afcc4..3c862e998 100644
+--- a/Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs
++++ b/Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs
+@@ -44,6 +44,8 @@ namespace Game.UI.Contracts
+ 
+         void TriggerSelectionModeFromHold();
+ 
++        bool HasPersistentMatchHudThreatWarningPresentation { get; }
++
+         bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime);
+ 
+         void Update();
+diff --git a/Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs b/Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs
+index 899f88750..9c6a119ac 100644
+--- a/Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs
++++ b/Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs
+@@ -2,6 +2,14 @@ namespace Game.UI.Runtime
+ {
+     public sealed partial class MainMenuPlayUI
+     {
++        // Hidden/requested state belongs to tactical surfaces and camera/passenger
++        // suppression. A header rebind invalidates the expiry instead, so the
++        // persistent defense presenter can safely restore the lost binding.
++        public bool HasPersistentMatchHudThreatWarningPresentation =>
++            _matchHudThreatJumpPanel != null && _matchHudThreatTitle != null &&
++            float.IsPositiveInfinity(_matchHudThreatVisibleUntil) &&
++            !string.IsNullOrWhiteSpace(_matchHudThreatTitle.text);
++
+         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
+         {
+             if (_matchHudThreatJumpPanel == null || _matchHudThreatTitle == null)
+diff --git a/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs b/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
+index 9421880ae..eca4faca6 100644
+--- a/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
++++ b/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
+@@ -18,6 +18,17 @@ namespace Game.UI.Runtime
+                 ApplyInteractionState(Game.Tactical.Contracts.TacticalCommandMode.None,false);
+             selectionInstruction=null;
+         }
++        internal void SetNormalSquadCardSelectionInstruction()
++        {
++            bool fa = UiShellRuntimeGateway.Localization.CurrentLocaleCode.StartsWith("fa");
++            selectionInstruction = fa
++                ? "کارت «گروه تفنگدار» رو بزن تا هر چهار سرباز انتخاب بشن."
++                : "Tap the Rifle Squad card to select all four soldiers.";
++            if (_currentInstructionBody != selectionInstruction)
++                ApplyInstruction(UiShellRuntimeGateway.Localization.Get("ui.aria.normal_selection.title", fa ? "نیروها رو انتخاب کن" : "Select units"),
++                    selectionInstruction, UiTutorialNarrationPhase.PrimaryAction);
++            SetContinueAvailable(false);
++        }
+         internal void SetNormalSelectionInstruction(bool selectMode,bool drag)
+         {
+             bool fa=UiShellRuntimeGateway.Localization.CurrentLocaleCode.StartsWith("fa");
+diff --git a/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs b/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs
+index 0b778fada..52f04aabc 100644
+--- a/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs
++++ b/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs
+@@ -59,6 +59,26 @@ namespace Game.UI.Runtime
+             return _selectionBoxRequested && _selectionBox!=null && _selectionBox.gameObject.activeInHierarchy &&
+                 SelectionDragIsUnobstructed();
+         }
++        internal bool TryShowPresentedSquadTutorialControl(string captionKey)
++        {
++            var button = ResolveSquadTutorialControl();
++            if (button == null || !button.IsActive() || !button.IsInteractable()) return false;
++            var rect = button.transform as RectTransform;
++            var canvas = button.GetComponentInParent<Canvas>()?.rootCanvas;
++            Camera eventCamera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
++            Vector2 point = RectTransformUtility.WorldToScreenPoint(eventCamera, rect.TransformPoint(rect.rect.center));
++            if (!Screen.safeArea.Contains(point)) return false;
++            var events = EventSystem.current;
++            if (events != null)
++            {
++                var pointer = new PointerEventData(events) { position = point };
++                _selectionHits.Clear(); events.RaycastAll(pointer, _selectionHits);
++                if (_selectionHits.Count == 0 || !(_selectionHits[0].gameObject.transform == button.transform ||
++                    _selectionHits[0].gameObject.transform.IsChildOf(button.transform))) return false;
++            }
++            ShowTutorialControl(button, captionKey);
++            return HasVisibleDirectTutorialTarget;
++        }
+         private bool SelectionDragIsUnobstructed()
+         {
+             var events = EventSystem.current;
+diff --git a/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs b/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
+index 14ff2f1be..6042bf1a2 100644
+--- a/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
++++ b/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
+@@ -226,16 +226,33 @@ namespace Game.UI.Runtime
+         {
+             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || !target.NeedsSelection) return;
+             _selectionActionRequested=true;
+-            _embeddedTutorialView.SetNormalSelectionInstruction(_activeCommandMode==TacticalCommandMode.Select,target.DragSelection);
+             if(_activeCommandMode!=TacticalCommandMode.Select)
+-            {Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;}
++            {
++                _embeddedTutorialView.SetNormalSelectionInstruction(false,target.DragSelection);
++                Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;
++            }
+             if(target.DragSelection)
+             {
+                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
++                // First Contact's normal card selects its full four-soldier squad.
++                // If HUD chrome blocks the world drag, guide that visible existing control.
++                if (!_highlightPresentationSystem.TryObserveVisibleSelectionDrag(out _, out _) &&
++                    UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var mission) &&
++                    mission.MissionId == "saga.ch01.m01.first_contact" &&
++                    _highlightPresentationSystem.TryShowPresentedSquadTutorialControl("ui.aria.select_group"))
++                {
++                    _embeddedTutorialView.SetNormalSquadCardSelectionInstruction();
++                    return;
++                }
++                _embeddedTutorialView.SetNormalSelectionInstruction(true,true);
+                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
+                 {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+             }
+-            else ShowTutorialWorld(target.Selection,true);
++            else
++            {
++                _embeddedTutorialView.SetNormalSelectionInstruction(true,false);
++                ShowTutorialWorld(target.Selection,true);
++            }
+         }
+ 
+         private void ShowSelectionOrControl(Button button,string key)
+diff --git a/Assets/Settings/Pipeline/EditorPipelineManager.asset b/Assets/Settings/Pipeline/EditorPipelineManager.asset
+index 14fb99bb4..9c1d3528c 100644
+--- a/Assets/Settings/Pipeline/EditorPipelineManager.asset
++++ b/Assets/Settings/Pipeline/EditorPipelineManager.asset
+@@ -12,7 +12,7 @@ MonoBehaviour:
+   m_Script: {fileID: 11500000, guid: 9e6f601455c0e0549b841c969d30c2b7, type: 3}
+   m_Name: EditorPipelineManager
+   m_EditorClassIdentifier: Unity.Pipeline.Editor::Unity.Pipeline.Editor.EditorPipelineManager
+-  m_Port: 7801
++  m_Port: 7802
+   m_AutoStart: 1
+   m_WatchdogEnabled: 1
+   m_WatchdogIntervalSeconds: 5
+diff --git a/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs b/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs
+index f317ac841..8fce7b03b 100644
+--- a/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs
++++ b/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs
+@@ -24,7 +24,7 @@ namespace Game.Tests.Editor
+             EntityManager em = world.EntityManager;
+             CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup);
+             Assert.IsTrue(setup.SharedFog);
+-            Assert.IsTrue(setup.DevelopmentFullVision);
++            Assert.IsFalse(setup.DevelopmentFullVision);
+             Assert.AreEqual(11, SkirmishArmyGroupSystem.CountFactionGroups(em, session, 1));
+             Assert.AreEqual(1, CountPlayerGroups(em, session, SkirmishRoleKind.Tanker));
+             Assert.AreEqual(2, CountPlayerGroups(em, session, SkirmishRoleKind.LogisticsTruck));
+@@ -127,6 +127,8 @@ namespace Game.Tests.Editor
+             Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session,
+                 FirstPlayerGroup(em, session, SkirmishRoleKind.Tank).GroupId, false, out _));
+             Entity target = FirstFactionUnit(em, 2, SkirmishRoleKind.Tank);
++            // Isolated command receipt test uses an explicitly observed contact.
++            SkirmishFogService.Reveal(em, target);
+             try
+             {
+                 AriaCommandEvidence.Begin();
+@@ -153,16 +155,7 @@ namespace Game.Tests.Editor
+                 em, session, FirstPlayerGroup(em, session, SkirmishRoleKind.Tank).GroupId, false, out _));
+             Entity enemyTank = FirstFactionUnit(em, 2, SkirmishRoleKind.Tank);
+             Assert.AreNotEqual(Entity.Null, enemyTank);
+-            Assert.AreEqual(SkirmishContactSight.Visible, em.GetComponentData<SkirmishContactSightComponent>(enemyTank).Sight);
+-            Assert.IsTrue(SkirmishArmyCommandService.TryAttack(
+-                em, session, enemyTank, out SkirmishCommandDecision seen));
+-            Assert.AreEqual(SkirmishGroupOrderKind.Attack, seen.Order);
+-
+-            var fog = em.GetComponentData<SkirmishFogStateComponent>(session);
+-            fog.DevelopmentFullVision = 0;
+-            em.SetComponentData(session, fog);
+-            SkirmishFogService.Project(em, session);
+-            Assert.AreEqual(SkirmishContactSight.LastSeen, em.GetComponentData<SkirmishContactSightComponent>(enemyTank).Sight);
++            Assert.AreEqual(SkirmishContactSight.Unknown, em.GetComponentData<SkirmishContactSightComponent>(enemyTank).Sight);
+             Assert.IsFalse(SkirmishArmyCommandService.TryAttack(
+                 em, session, enemyTank, out SkirmishCommandDecision hidden));
+             Assert.AreEqual(SkirmishReasonCode.HiddenContact, hidden.Reason);
+diff --git a/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs b/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs
+index 6e6404085..ac0e85689 100644
+--- a/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs
++++ b/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs
+@@ -48,7 +48,7 @@ public sealed class SkirmishExpandedDefinitionTests
+         Assert.AreEqual("obj.s002.base.player", setup.PlayerBaseObjectId);
+         Assert.AreEqual("obj.s002.base.enemy", setup.EnemyBaseObjectId);
+         Assert.IsTrue(setup.SharedFog);
+-        Assert.IsTrue(setup.DevelopmentFullVision);
++        Assert.IsFalse(setup.DevelopmentFullVision);
+     }
+ 
+     [Test]

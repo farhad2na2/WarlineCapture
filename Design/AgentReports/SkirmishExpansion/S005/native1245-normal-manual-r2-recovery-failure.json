@@ -1,0 +1,23 @@
+{
+  "run": "native1245-normal-manual-r2-recovery-en-seed155926",
+  "result": "Failed",
+  "playerReady": false,
+  "sourceHash": "746a4680c6445adf8c350cffb139c3cbb25362501507f6ed00be2b449a08650d",
+  "sourceUnchanged": true,
+  "nativeExit": 1,
+  "wrapperExit": 1,
+  "missionLoaded": true,
+  "normalInput": "Touch",
+  "paidReadinessAndHeavyApc": true,
+  "saveContinueCompleted": false,
+  "terminalVictoryQualified": false,
+  "nativeFailure": "[SkirmishPlayerSave] result=Failed reason=NativeCaptureIncomplete:Checkpoint reference has no stable identity: UnitTransportPassenger",
+  "stage": "Player Save & Exit, after paid R2 and Heavy APC and actual manual attacks",
+  "runnerFailure": "The external collector indexed an empty trace after native failure; this secondary IndexError prevented its usual failure JSON from being written.",
+  "log": "native-1245-normal-manual-r2-recovery-en-seed155926.log",
+  "observation": "native1245-normal-manual-r2-recovery-observation.jsonl",
+  "nativeIdleAfterFailure": "native1245-after-close-native-idle.json",
+  "preSourceFingerprint": "final-1245-normal-manual-r2-recovery-preflight-independent-fingerprint.json",
+  "postSourceFingerprint": "final-1245-normal-manual-r2-recovery-post-independent-fingerprint.json",
+  "finding": "A real shared native checkpoint capture failure blocks this manual recovery path. The missing transport reference owner must be identified before a production repair is chosen."
+}

@@ -1,0 +1,33 @@
+{
+  "run": 500,
+  "sourceHash": "9666b37525b5e533cee98a52177edcabcf5bbe480560ff9ce3e4999d8790f40e",
+  "kind": "Read-only live ECS observation during normal-input journey",
+  "rows": [
+    {
+      "role": "Tanker",
+      "faction": 1,
+      "reservationId": 0,
+      "capacityReleased": 0
+    },
+    {
+      "role": "LogisticsTruck",
+      "faction": 1,
+      "reservationId": 0,
+      "capacityReleased": 0
+    },
+    {
+      "role": "Tanker",
+      "faction": 2,
+      "reservationId": 0,
+      "capacityReleased": 0
+    },
+    {
+      "role": "LogisticsTruck",
+      "faction": 2,
+      "reservationId": 0,
+      "capacityReleased": 0
+    }
+  ],
+  "scope": "Starting support physically present on both factions; not a complete lifecycle or final readiness certificate",
+  "playerReady": false
+}

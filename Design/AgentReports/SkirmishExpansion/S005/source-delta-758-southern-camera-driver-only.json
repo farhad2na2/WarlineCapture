@@ -1,0 +1,10 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "allMaterialHashesUnchanged": true,
+  "countsForExactCurrentFullSource": false,
+  "previousPost": "final-756-current-manual-en-seed155926-post-source-manifest.json"
+}

@@ -1,0 +1,19 @@
+{
+  "result": "FailedAsExpectedControlledRegression",
+  "sourceHash": "4581916686cb6ebb8d879e16b5552e2099dc3277d828ee300f79b05f57738442",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-792-runway-fuel-old-runtime-repro-reviewed-pre-source-manifest.json",
+  "postSourceManifest": "final-792-runway-fuel-old-runtime-repro-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "requiredPassMarkerAbsent": true,
+  "failureMarkerPresent": true,
+  "log": "native-792-runway-fuel-old-runtime-repro.log",
+  "shippingRuntimeUnchangedFromNative791": true,
+  "changedFiles": [
+    "Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs"
+  ],
+  "observedFailure": "Native recorded Return approach reaches physical cell832,1024 while UnitGrid remains832,1023. Expected cumulativeFuel372.25; actual372.0 at first outside-ground-grid cell. Fuel accounting follows frozen ground-grid membership, omitting external approach movement.",
+  "fixtureScope": "Recorded native791 own-air state replayed in isolated World using real UnitAirMovementSystem and VehicleFuelConsumptionSystem. Does not inject live mission outcomes or certify player readiness.",
+  "normalMissionCertified": false,
+  "playerReady": false
+}

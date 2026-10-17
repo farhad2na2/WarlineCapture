@@ -1,0 +1,21 @@
+{
+  "evidenceKind": "ObservedStructuredCliResultMetadataNotRawStdout",
+  "command": "unity command eval readonly Editor state after1104 closure",
+  "nativeOuterAndInnerSuccess": true,
+  "playing": false,
+  "changingPlay": false,
+  "compiling": false,
+  "quality": "Mobile",
+  "msaa": 0,
+  "scenes": [
+    {
+      "name": "Menu",
+      "path": "Assets/Game/Scenes/Menu.unity",
+      "isDirty": false,
+      "isLoaded": true
+    }
+  ],
+  "sourceHashFromClosed1104": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "ownerMSAAChoice": "Keep MSAA disabled",
+  "normalMissionCertified": false
+}

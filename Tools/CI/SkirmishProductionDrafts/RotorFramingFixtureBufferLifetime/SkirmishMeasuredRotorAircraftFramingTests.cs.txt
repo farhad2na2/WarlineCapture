@@ -1,0 +1,296 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Game.Components;
+using Game.Configs;
+using Game.Editor;
+using Game.Rendering;
+using Game.Rendering.Contracts;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using NUnit.Framework;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Rendering;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+namespace Game.Tests.Editor
+{
+    public sealed class SkirmishMeasuredRotorAircraftFramingTests
+    {
+        static readonly SkirmishRoleKind[] Roles={SkirmishRoleKind.TransportHeli,SkirmishRoleKind.Drone,SkirmishRoleKind.Fighter,SkirmishRoleKind.Strike,SkirmishRoleKind.AttackHeli,SkirmishRoleKind.AttackHeliLight};
+        [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)][TestCase(6)][TestCase(7)][TestCase(8)][TestCase(9)][TestCase(10)][TestCase(11)]
+        public void ActualIndexedDrawsApplyAndKeepRoleSizedCapturedCenter(int index)
+        {
+            var role=Roles[index/2];float aspect=index%2==0?16f/9:9f/16;
+            var installed=SkirmishCanonicalAircraftGeometryConfig.Load();Assert.IsNotNull(installed,"Run explicit checked metadata generation first");
+            SkirmishCanonicalAircraftGeometryAuthoring.VerifyInstalled();
+            string key=SkirmishCanonicalAircraftGeometryConfig.ExpectedKey(role);Assert.IsTrue(installed.TryRole(role,key,1,out var metadata));
+            using var world=new World("CanonicalAircraftMeasuredMeshDerivedFixture");var em=world.EntityManager;
+            var go=new GameObject("CanonicalAircraftFramingCamera");var camera=go.AddComponent<Camera>();camera.aspect=aspect;
+            var originalProvider=RenderBoundsGateway.Provider;
+            try
+            {
+                CreateSession(em);var actor=CreateActor(em,role,key,false);em.AddComponent<SelectedUnitTag>(actor);
+                var owner=world.GetOrCreateSystemManaged<RtsCameraSystem>();var queue=world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+                AircraftProductionFocusFact requested=null,applied=null;
+                void Observe(AircraftProductionFocusFact row){if(row.stage=="Requested")requested=row;if(row.stage=="Applied")applied=row;}
+                AircraftProductionFocusEvidence.Recorded+=Observe;
+                try
+                {
+                    Assert.IsFalse(owner.TryRequestAircraftFocus(em,actor,camera,7),"An original actor must not masquerade as paid production");
+                    Assert.IsTrue(RtsCameraSystem.ObserveNormalOwnAircraftSelection(em,actor));
+                    var normalRequest=em.GetBuffer<RtsCameraRequestElement>(queue.EnsureCameraEntity(em))[0];Assert.AreEqual(actor,normalRequest.TargetEntity);Assert.AreEqual(0,normalRequest.Flag);
+                    queue.ProcessPendingRequests(em,owner,camera);Assert.IsNotNull(requested);Assert.AreEqual("NormalSelectedOwnActor",requested.focusOrigin);Assert.AreEqual(0,requested.reservation);
+                    Assert.IsFalse(owner.TickAircraftFocus(em,camera,false));Assert.IsTrue(owner.HasAircraftFocusContext);Assert.AreEqual(Vector3.zero,camera.transform.position);
+                    var parts=BuildActualImportedDraws(em,actor,metadata.Sources[0].Prefab);RenderBoundsGateway.Bind(RenderBoundsPresentation.Create());
+                    Assert.IsTrue(owner.TickAircraftFocus(em,camera,false),"Actual role geometry fit failed; retain its hard gate");Assert.IsNotNull(applied);
+                    Assert.AreEqual(actor.Index,applied.actorIndex);Assert.AreEqual(actor.Version,applied.actorVersion);Assert.AreEqual("NormalSelectedOwnActor",applied.focusOrigin);
+                    Assert.AreEqual(camera.fieldOfView,applied.fieldOfView);Assert.IsFalse(camera.orthographic);
+                    var center=applied.capturedCenter;var captured=camera.transform.position;
+                    using(var transforms=em.CreateEntityQuery(typeof(LocalToWorld)))
+                    using(var entities=transforms.ToEntityArray(Unity.Collections.Allocator.Temp))
+                        foreach(var part in entities){var value=em.GetComponentData<LocalToWorld>(part);value.Value.c3.x+=10;em.SetComponentData(part,value);}
+                    var moved=em.GetComponentData<LocalTransform>(actor);moved.Position.x+=10;em.SetComponentData(actor,moved);
+                    Assert.IsTrue(owner.TickAircraftFocus(em,camera,false));Assert.AreEqual(captured,camera.transform.position,"One-shot context must not track moving actor or blades");
+                    float prior=-1;
+                    for(int level=-1;level<=1;level++)
+                    {
+                        Assert.IsTrue(owner.ZoomAircraftFocus(em,camera,level));float distance=Vector3.Distance(center,camera.transform.position);
+                        Assert.Greater(distance,camera.nearClipPlane);Assert.LessOrEqual(distance,300.001f);if(prior>0)Assert.Greater(distance,prior+.001f);prior=distance;
+                    }
+                    Assert.IsTrue(owner.ZoomAircraftFocus(em,camera,2));Assert.AreEqual(1,owner.AircraftFocusZoomLevel);Assert.That(Vector3.Distance(center,camera.transform.position),Is.EqualTo(prior).Within(.001f));
+                    owner.ClearAircraftFocus(camera,"ExplicitTestExit",true);Assert.IsFalse(owner.HasAircraftFocusContext);
+                    var owned=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);owned.ReservationId=81;em.SetComponentData(actor,owned);
+                    Assert.IsTrue(queue.QueueFocusAircraft(em,actor));Assert.AreEqual(1,em.GetBuffer<RtsCameraRequestElement>(queue.EnsureCameraEntity(em))[0].Flag);
+                    queue.ProcessPendingRequests(em,owner,camera);Assert.AreEqual("PaidProduction",requested.focusOrigin);Assert.AreEqual(81,requested.reservation);
+                    Assert.IsTrue(owner.TickAircraftFocus(em,camera,false));
+                    Assert.IsTrue(queue.QueuePan(em,new Vector2(1,1),.01f));queue.ProcessPendingRequests(em,owner,camera);Assert.IsFalse(owner.HasAircraftFocusContext);
+                    Debug.Log("[CanonicalAircraftFramingControl] role="+role+" aspect="+aspect+" actualGeometryApplied=1 cameraDistance="+Vector3.Distance(applied.capturedCenter,applied.cameraPosition)+" normalPixelAcceptance=Pending fixture=MeasuredImportedGeometrySyntheticWorld");
+                }
+                finally{AircraftProductionFocusEvidence.Recorded-=Observe;}
+            }
+            finally{RenderBoundsGateway.Bind(originalProvider);UnityEngine.Object.DestroyImmediate(go);}
+        }
+        [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)][TestCase(6)][TestCase(7)]
+        public void ExactActorSourceAndSelectionScopeRejectsCorruption(int mutation)
+        {
+            using var world=new World("CanonicalAircraftIdentityFixture");var em=world.EntityManager;CreateSession(em);
+            var actor=CreateActor(em,SkirmishRoleKind.Drone,"Unit_Veh_Drone",false);em.AddComponent<SelectedUnitTag>(actor);
+            var go=new GameObject("CanonicalAircraftIdentityCamera");var camera=go.AddComponent<Camera>();camera.aspect=16f/9;
+            try
+            {
+                if(mutation==0)em.RemoveComponent<SelectedUnitTag>(actor);
+                if(mutation==1)em.SetComponentData(actor,new UnitSourcePrefabKey{Value="Unit_Veh_Jet_01"});
+                if(mutation==2)em.SetComponentData(actor,new Faction{Id=2});
+                if(mutation==3){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);o.SessionId="foreign";em.SetComponentData(actor,o);}
+                if(mutation==4)em.SetComponentData(actor,new UnitHealth{Current=0,Max=100});
+                if(mutation==5)em.AddComponentData(actor,new Parent{Value=em.CreateEntity()});
+                if(mutation==6)em.SetComponentData(actor,new SkirmishUnitRoleComponent{Role=(SkirmishRoleKind)0,Category=SkirmishPopulationCategory.Air});
+                if(mutation==7)em.SetComponentData(actor,new SkirmishUnitRoleComponent{Role=SkirmishRoleKind.Drone,Category=SkirmishPopulationCategory.Ground});
+                Assert.IsFalse(world.GetOrCreateSystemManaged<RtsCameraSystem>().TryRequestAircraftFocus(em,actor,camera,1,false));Assert.AreEqual(Vector3.zero,camera.transform.position);
+            }
+            finally{UnityEngine.Object.DestroyImmediate(go);}
+        }
+        [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)]
+        public void FrozenMetadataRejectsMutationAndMissingFighterLod(int mutation)
+        {
+            var actual=SkirmishCanonicalAircraftGeometryConfig.Load();Assert.IsNotNull(actual);var copy=UnityEngine.Object.Instantiate(actual);
+            try
+            {
+                Assert.IsTrue(copy.TryRole(SkirmishRoleKind.Fighter,"Unit_Veh_Jet_02",1,out var entry));
+                Assert.IsFalse(copy.TryRole(SkirmishRoleKind.Fighter,"Unit_Veh_Jet_02",2,out _));Assert.IsFalse(copy.TryRole(SkirmishRoleKind.Fighter,"Unit_Veh_Jet_02",3,out _));
+                if(mutation==0)copy.SchemaVersion=2;
+                if(mutation==1)entry.PrefabKey="Unit_Veh_Drone";
+                if(mutation==2)entry.Draws[0].LocalBounds=new Bounds(Vector3.zero,Vector3.one);
+                if(mutation==3)entry.Sources[0].DependencyHash=new string('0',32);
+                Assert.IsFalse(copy.TryRole(SkirmishRoleKind.Fighter,"Unit_Veh_Jet_02",1,out _));
+            }
+            finally{UnityEngine.Object.DestroyImmediate(copy);}
+        }
+        static void CreateSession(EntityManager em)
+        {
+            var definition=AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset");
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out _));
+            Assert.IsTrue(SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,155926,new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out var setup,out var errors),string.Join(";",errors));
+            var session=em.CreateEntity();em.AddComponentData(session,new SkirmishExpandedSessionComponent{SessionId="canonical-aircraft-fixture",Phase=SkirmishSessionPhase.Playing});em.AddComponentObject(session,new SkirmishResolvedSetupRecord{Setup=setup});
+            em.AddComponentData(em.CreateEntity(),new RuntimeGameplayStateComponent());
+        }
+        static Entity CreateActor(EntityManager em,SkirmishRoleKind role,string key,bool paid)
+        {
+            var actor=em.CreateEntity();em.AddComponentData(actor,new SkirmishAttemptOwnedComponent{SessionId="canonical-aircraft-fixture",StableObjectId="actual-role-source-fixture",FactionId=1,ReservationId=paid?81u:0});
+            em.AddComponentData(actor,new Faction{Id=1});em.AddComponentData(actor,new UnitHealth{Current=100,Max=100});em.AddComponentData(actor,new UnitSourcePrefabKey{Value=key});
+            em.AddComponentData(actor,new SkirmishUnitRoleComponent{Role=role,Category=SkirmishPopulationCategory.Air});em.AddComponentData(actor,LocalTransform.FromPosition(100,55,100));em.AddComponent<UnitAirMovement>(actor);em.AddComponent<UnitGrid>(actor);em.AddComponent<UnitMovementBehavior>(actor);return actor;
+        }
+        static List<Entity> BuildActualImportedDraws(EntityManager em,Entity actor,GameObject source)
+        {
+            var authoring=source.GetComponent<Game.Authoring.UnitGridAuthoring>();
+            var so=new SerializedObject(authoring);var model=so.FindProperty("modelRoot").objectReferenceValue as Transform;
+            if(model==null)model=source.transform.Find("Model");Assert.IsNotNull(model);
+            em.AddComponentData(actor,new UnitModelLocalTransform{Position=model.localPosition,Rotation=model.localRotation,Scale=model.localScale.x});
+            var map=new Dictionary<Transform,Entity>();var parts=new List<Entity>();var transforms=model.GetComponentsInChildren<Transform>(true);
+            foreach(var t in transforms){var entity=em.CreateEntity();map.Add(t,entity);em.AddBuffer<Child>(entity);}
+            em.AddBuffer<UnitHelicopterBladeReference>(actor);
+            foreach(var t in transforms)
+            {
+                var entity=map[t];Entity parent=t==model?actor:map[t.parent];
+                em.AddComponentData(entity,new Parent{Value=parent});
+                if(em.HasBuffer<Child>(parent))em.GetBuffer<Child>(parent).Add(new Child{Value=entity});
+                Vector3 position=t.localPosition;Quaternion rotation=t.localRotation;Vector3 scale=t.localScale;
+                Assert.That(scale.x,Is.EqualTo(scale.y).Within(1e-5));Assert.That(scale.x,Is.EqualTo(scale.z).Within(1e-5));
+                em.AddComponentData(entity,LocalTransform.FromPositionRotationScale(position,rotation,scale.x));
+                var relative=source.transform.worldToLocalMatrix*t.localToWorldMatrix;
+                em.AddComponentData(entity,new LocalToWorld{Value=(float4x4)(Matrix4x4.Translate(new Vector3(100,55,100))*relative)});
+                if(t.name.Contains("Blade",StringComparison.Ordinal))
+                {
+                    byte axis=t.name.EndsWith("_X",StringComparison.Ordinal)?(byte)0:t.name.EndsWith("_Y",StringComparison.Ordinal)?(byte)1:(byte)2;
+                    Assert.IsTrue(t.name.EndsWith("_X",StringComparison.Ordinal)||t.name.EndsWith("_Y",StringComparison.Ordinal)||t.name.EndsWith("_Z",StringComparison.Ordinal));
+                    em.GetBuffer<UnitHelicopterBladeReference>(actor).Add(new UnitHelicopterBladeReference{Blade=entity,Axis=axis});
+                }
+                var renderer=t.GetComponent<MeshRenderer>();if(renderer==null)continue;
+                var mesh=t.GetComponent<MeshFilter>().sharedMesh;
+                for(int sub=0;sub<mesh.subMeshCount;sub++)
+                {
+                    Entity draw=entity;
+                    if(sub>0){draw=em.CreateEntity();em.AddComponentData(draw,new Parent{Value=entity});em.AddComponentData(draw,LocalTransform.Identity);em.AddComponentData(draw,em.GetComponentData<LocalToWorld>(entity));em.GetBuffer<Child>(entity).Add(new Child{Value=draw});}
+                    parts.Add(draw);em.AddSharedComponentManaged(draw,new RenderMeshArray(new[]{renderer.sharedMaterials[sub]},new[]{mesh}));
+                    em.AddComponentData(draw,MaterialMeshInfo.FromRenderMeshArrayIndices(0,0,(ushort)sub));
+                }
+            }
+            Assert.Greater(parts.Count,0);em.AddComponentData(actor,new UnitDetailedVisualReference{Root=map[model]});
+            em.AddComponentData(actor,new UnitRenderVisualComponent{Current=(byte)UnitRenderVisualKind.Detail,Desired=(byte)UnitRenderVisualKind.Detail});return parts;
+        }
+        [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)][TestCase(6)][TestCase(7)][TestCase(8)]
+        public void ActualRotorDrawJoinRejectsCorruption(int mutation)
+        {
+            var catalog=SkirmishCanonicalAircraftGeometryConfig.Load();Assert.IsNotNull(catalog);
+            Assert.IsTrue(catalog.TryRole(SkirmishRoleKind.Drone,"Unit_Veh_Drone",1,out var geometry));
+            var rotor=UnityEngine.Object.Instantiate(SkirmishAircraftRotorGeometryConfig.Load());Assert.IsNotNull(rotor);
+            using var world=new World("MeasuredActualIndexedDroneRotorJoinFixture");var em=world.EntityManager;
+            try
+            {
+                var actor=CreateActor(em,SkirmishRoleKind.Drone,"Unit_Veh_Drone",false);
+                BuildActualImportedDraws(em,actor,geometry.Sources[0].Prefab);
+                var blade=em.GetBuffer<UnitHelicopterBladeReference>(actor)[0].Blade;
+                var root=em.GetComponentData<UnitDetailedVisualReference>(actor).Root;
+                var info=em.GetComponentData<MaterialMeshInfo>(blade);var array=em.GetSharedComponentManaged<RenderMeshArray>(blade);
+                var mesh=array.GetMesh(info);Assert.IsTrue(geometry.TryRead(mesh,info.SubMesh,out var indexed));
+                // An identity child represents the same draw/pivot and permits
+                // independent renderer publication and fixed-relation controls.
+                var draw=em.CreateEntity();em.AddComponentData(draw,new Parent{Value=blade});em.AddComponentData(draw,LocalTransform.Identity);
+                em.AddComponentData(draw,em.GetComponentData<LocalToWorld>(blade));
+                var context=new SkirmishAircraftRotorDrawPresentation(em,actor,draw,root,SkirmishRoleKind.Drone,1,geometry,rotor);
+                Matrix4x4 matrix=em.GetComponentData<LocalToWorld>(draw).Value;
+                Assert.IsTrue(context.TryReadWorld(mesh,info.SubMesh,indexed,matrix,out var actual,out _));
+                Assert.Greater(actual.size.sqrMagnitude,0);
+                if(mutation==0)em.SetComponentData(draw,new Parent{Value=em.CreateEntity()});
+                if(mutation==1){var refs=em.GetBuffer<UnitHelicopterBladeReference>(actor);var value=refs[0];value.Axis=(byte)((value.Axis+1)%3);refs[0]=value;}
+                if(mutation==2)em.AddComponentData(blade,new PostTransformMatrix{Value=float4x4.identity});
+                if(mutation==3)em.GetBuffer<UnitHelicopterBladeReference>(actor).Add(new UnitHelicopterBladeReference{Blade=root,Axis=1});
+                if(mutation==4)em.SetComponentData(draw,LocalTransform.FromPosition(1,0,0));
+                if(mutation==5){Assert.IsTrue(rotor.Prepare());rotor.Bindings[0].MaximumRadius+=1;}
+                if(mutation==6)matrix.m03+=1;
+                if(mutation==7)
+                {
+                    var wrong=new SkirmishRigidAircraftGeometryConfig.Draw{Mesh=mesh,SubMesh=info.SubMesh,VertexCount=indexed.VertexCount,
+                        DrawnIndexCount=indexed.DrawnIndexCount,LocalBounds=indexed.LocalBounds,GeometrySha256=new string('0',64)};
+                    indexed=new SkirmishRigidAircraftGeometryConfig.DrawSnapshot(wrong);
+                }
+                if(mutation==8){var refs=em.GetBuffer<UnitHelicopterBladeReference>(actor);var value=refs[0];value.Blade=root;refs[0]=value;}
+                Assert.IsFalse(context.TryReadWorld(mesh,info.SubMesh,indexed,matrix,out _,out _),"Corruption must not produce a rotor framing envelope");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(rotor);}
+        }
+        static List<Entity> BuildOrdinaryLodInstance(EntityManager em,Entity actor,GameObject source,byte visual)
+        {
+            var rootTransform=source.transform;var transforms=rootTransform.GetComponentsInChildren<Transform>(true);
+            var map=new Dictionary<Transform,Entity>();var draws=new List<Entity>();
+            foreach(var t in transforms){var entity=em.CreateEntity();map.Add(t,entity);em.AddBuffer<Child>(entity);}
+            var copied=em.GetComponentData<UnitModelLocalTransform>(actor);
+            var rootLocal=Matrix4x4.TRS(copied.Position,copied.Rotation,Vector3.one*copied.Scale);
+            var rootWorld=Matrix4x4.Translate(new Vector3(100,55,100))*rootLocal;
+            foreach(var t in transforms)
+            {
+                Entity entity=map[t];Entity parent=t==rootTransform?actor:map[t.parent];
+                em.AddComponentData(entity,new Parent{Value=parent});
+                if(em.HasBuffer<Child>(parent))em.GetBuffer<Child>(parent).Add(new Child{Value=entity});
+                var local=t==rootTransform?LocalTransform.FromPositionRotationScale(copied.Position,copied.Rotation,copied.Scale):
+                    LocalTransform.FromPositionRotationScale(t.localPosition,t.localRotation,t.localScale.x);
+                Assert.That(t.localScale.x,Is.EqualTo(t.localScale.y).Within(1e-5));Assert.That(t.localScale.x,Is.EqualTo(t.localScale.z).Within(1e-5));
+                em.AddComponentData(entity,local);
+                em.AddComponentData(entity,new LocalToWorld{Value=(float4x4)(rootWorld*rootTransform.worldToLocalMatrix*t.localToWorldMatrix)});
+                var renderer=t.GetComponent<MeshRenderer>();if(renderer==null)continue;var mesh=t.GetComponent<MeshFilter>().sharedMesh;
+                Assert.AreEqual(1,mesh.subMeshCount,"Current actual canonical LOD draws have one drawn submesh; extend the fixture explicitly if sources change");
+                em.AddSharedComponentManaged(entity,new RenderMeshArray(new[]{renderer.sharedMaterials[0]},new[]{mesh}));
+                em.AddComponentData(entity,MaterialMeshInfo.FromRenderMeshArrayIndices(0,0));draws.Add(entity);
+            }
+            if(visual==2)em.AddComponentData(actor,new UnitMidLodInstanceReference{Instance=map[rootTransform]});
+            else em.AddComponentData(actor,new UnitLowLodInstanceReference{Instance=map[rootTransform]});
+            em.SetComponentData(actor,new UnitRenderVisualComponent{Current=visual,Desired=visual});
+            return draws;
+        }
+        [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)][TestCase(6)][TestCase(7)]
+        [TestCase(8)][TestCase(9)][TestCase(10)][TestCase(11)][TestCase(12)][TestCase(13)][TestCase(14)][TestCase(15)]
+        public void OrdinaryIndependentMidLowUsesMeasuredPivotAndActualFixedMotion(int index)
+        {
+            var roles=new[]{SkirmishRoleKind.TransportHeli,SkirmishRoleKind.Drone,SkirmishRoleKind.AttackHeli,SkirmishRoleKind.AttackHeliLight};
+            var role=roles[index/4];byte visual=(byte)(2+(index/2)%2);float aspect=index%2==0?16f/9:9f/16;
+            var catalog=SkirmishCanonicalAircraftGeometryConfig.Load();Assert.IsNotNull(catalog);
+            Assert.IsTrue(catalog.TryRole(role,SkirmishCanonicalAircraftGeometryConfig.ExpectedKey(role),visual,out var metadata));
+            using var world=new World("IndependentCanonicalLodProductionPathFixture");var em=world.EntityManager;
+            var go=new GameObject("IndependentCanonicalLodCamera");var camera=go.AddComponent<Camera>();camera.aspect=aspect;
+            var previous=RenderBoundsGateway.Provider;
+            try
+            {
+                CreateSession(em);var actor=CreateActor(em,role,metadata.PrefabKey,false);em.AddComponent<SelectedUnitTag>(actor);
+                var detail=BuildActualImportedDraws(em,actor,metadata.Sources[0].Prefab);
+                foreach(var node in detail)em.SetComponentEnabled<MaterialMeshInfo>(node,false);
+                var source=Array.Find(metadata.Sources,s=>s.VisualKind==visual).Prefab;
+                var lod=BuildOrdinaryLodInstance(em,actor,source,visual);
+                var rotations=lod.ToDictionary(e=>e,e=>em.GetComponentData<LocalTransform>(e).Rotation);
+                var firstBlade=em.GetBuffer<UnitHelicopterBladeReference>(actor)[0].Blade;
+                var before=em.GetComponentData<LocalTransform>(firstBlade).Rotation;
+                em.AddComponentData(actor,new UnitAirComponent{Airborne=1,HomeInitialized=1});
+                world.SetTime(new Unity.Core.TimeData(1,.1f));var spin=world.CreateSystem<UnitHelicopterBladeSpinSystem>();spin.Update(world.Unmanaged);em.CompleteAllTrackedJobs();
+                Assert.Greater(math.length(em.GetComponentData<LocalTransform>(firstBlade).Rotation.value-before.value),.01f);
+                foreach(var pair in rotations)Assert.AreEqual(pair.Value,em.GetComponentData<LocalTransform>(pair.Key).Rotation,
+                    "Existing baked-buffer path rotates Detail only; do not claim Mid/Low animation");
+                RenderBoundsGateway.Bind(RenderBoundsPresentation.Create());
+                var owner=world.GetOrCreateSystemManaged<RtsCameraSystem>();Assert.IsTrue(owner.TryRequestAircraftFocus(em,actor,camera,71,false));
+                Assert.IsTrue(owner.TickAircraftFocus(em,camera,false),"Actual independently owned Mid/Low source geometry must fit without Detail blade aliases");
+                Assert.IsFalse(camera.orthographic);Assert.That(camera.fieldOfView,Is.EqualTo(60).Within(.01));
+                Debug.Log("[MeasuredRotorLodControl] role="+role+" visual="+visual+" detailBufferDisjoint=1 lodAnimationClaimed=0 actorModelRootTransformCopied=1 nativePixelAcceptance=Pending");
+            }
+            finally{RenderBoundsGateway.Bind(previous);UnityEngine.Object.DestroyImmediate(go);}
+        }
+        [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)]
+        public void IndependentLodOwnershipAndPivotCorruptionRefuses(int mutation)
+        {
+            var catalog=SkirmishCanonicalAircraftGeometryConfig.Load();Assert.IsTrue(catalog.TryRole(SkirmishRoleKind.Drone,"Unit_Veh_Drone",2,out var metadata));
+            using var world=new World("IndependentLodExactOwnershipRefusalFixture");var em=world.EntityManager;
+            var actor=CreateActor(em,SkirmishRoleKind.Drone,metadata.PrefabKey,false);BuildActualImportedDraws(em,actor,metadata.Sources[0].Prefab);
+            var lod=BuildOrdinaryLodInstance(em,actor,Array.Find(metadata.Sources,s=>s.VisualKind==2).Prefab,2);
+            Entity root=em.GetComponentData<UnitMidLodInstanceReference>(actor).Instance;
+            Entity draw=lod.Find(n=>{var info=em.GetComponentData<MaterialMeshInfo>(n);var a=em.GetSharedComponentManaged<RenderMeshArray>(n);return SkirmishAircraftRotorGeometryConfig.Load().HasRotorDraw(SkirmishRoleKind.Drone,2,a.GetMesh(info),info.SubMesh,FindHash(metadata,a.GetMesh(info),info.SubMesh));});
+            Assert.AreNotEqual(Entity.Null,draw);Assert.IsTrue(CanonicalAircraftVisibleGeometryPresentation.TryRead(em,actor,draw,out _,out bool drawn,out _));Assert.IsTrue(drawn);
+            if(mutation==0)em.SetComponentData(actor,new UnitMidLodInstanceReference{Instance=em.CreateEntity()});
+            if(mutation==1){var refs=em.GetBuffer<UnitHelicopterBladeReference>(actor);var v=refs[0];v.Blade=draw;refs[0]=v;}
+            if(mutation==2){var t=em.GetComponentData<LocalTransform>(draw);t.Position.x+=1;em.SetComponentData(draw,t);var w=em.GetComponentData<LocalToWorld>(draw);w.Value.c3.x+=1;em.SetComponentData(draw,w);}
+            if(mutation==3)em.RemoveComponent<UnitHelicopterBladeReference>(actor);
+            if(mutation==4)em.SetComponentData(em.GetBuffer<UnitHelicopterBladeReference>(actor)[0].Blade,new Parent{Value=em.CreateEntity()});
+            if(mutation==5)em.AddComponentData(draw,new PostTransformMatrix{Value=float4x4.identity});
+            Assert.IsFalse(CanonicalAircraftVisibleGeometryPresentation.TryRead(em,actor,draw,out _,out _,out _));
+        }
+        static string FindHash(SkirmishCanonicalAircraftGeometryConfig.Entry entry,Mesh mesh,int sub)
+        {Assert.IsTrue(entry.TryRead(mesh,sub,out var draw));return draw.GeometrySha256;}
+        public static void RunFocusedValidation()
+        {
+            var tests=new SkirmishMeasuredRotorAircraftFramingTests();for(int i=0;i<12;i++)tests.ActualIndexedDrawsApplyAndKeepRoleSizedCapturedCenter(i);for(int i=0;i<8;i++)tests.ExactActorSourceAndSelectionScopeRejectsCorruption(i);for(int i=0;i<4;i++)tests.FrozenMetadataRejectsMutationAndMissingFighterLod(i);
+            for(int i=0;i<9;i++)tests.ActualRotorDrawJoinRejectsCorruption(i);
+            for(int i=0;i<16;i++)tests.OrdinaryIndependentMidLowUsesMeasuredPivotAndActualFixedMotion(i);
+            for(int i=0;i<6;i++)tests.IndependentLodOwnershipAndPivotCorruptionRefuses(i);
+            Debug.Log("[MeasuredRotorAircraftFramingTests] result=Passed controls=55 roleNativePoseAndPixelAcceptance=Pending");
+        }
+    }
+}

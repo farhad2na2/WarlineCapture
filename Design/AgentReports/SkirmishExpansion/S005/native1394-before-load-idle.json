@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-current-stop-manual1394-fa-reselect-reviewed/S005NormalStopIdle1394.cs",
+      "entry": "S005NormalStopIdle1394.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 70,
+      "executeMs": 7,
+      "assemblyName": "PipelineRunScript_S005NormalStopIdle1394_2e109f736bc04f7e9e9051776ef7f7f3",
+      "success": true,
+      "result": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

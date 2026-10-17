@@ -1,0 +1,16 @@
+{
+  "result": "NeedsIndependentNativeQualification",
+  "lane": "fa_r2",
+  "attempt": "retry1",
+  "runId": 1627,
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "log": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1627-retry1-normal-fa_r2-seed155926.log",
+  "logSha256": "5aafeeb9a04b63d666d4b33bbc26e9018213d41179ad6b15723bfe2000f40dad",
+  "missingMarkers": [],
+  "scope": "Checked native execution and marker gate only. Raw reset witness, Touch, paid R2, same-attempt Save/Continue, natural Victory, rendered result and return require independent strict qualification.",
+  "firstFailedDispatchPreserved": true,
+  "playerReady": false,
+  "humanDeviceAcceptance": false
+}

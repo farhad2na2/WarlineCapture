@@ -1,0 +1,65 @@
+{
+  "status": "PassedRegularStandardBaseline",
+  "currentPassedCases": 6,
+  "remainingCases": 0,
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "qualifiedCases": [
+    {
+      "seed": 104734,
+      "locale": "fa-IR",
+      "proof": "native1176-normal-aria-pass.json",
+      "matchSeconds": 232.394
+    },
+    {
+      "seed": 104734,
+      "locale": "en",
+      "proof": "native1171-normal-aria-pass.json",
+      "matchSeconds": 233.071
+    },
+    {
+      "seed": 130368,
+      "locale": "en",
+      "proof": "native1172-normal-aria-pass.json",
+      "matchSeconds": 234.984
+    },
+    {
+      "seed": 155926,
+      "locale": "en",
+      "proof": "native1173-normal-aria-pass.json",
+      "matchSeconds": 241.313
+    },
+    {
+      "seed": 130368,
+      "locale": "fa-IR",
+      "proof": "native1165-normal-aria-pass.json",
+      "matchSeconds": 234.546
+    },
+    {
+      "seed": 155926,
+      "locale": "fa-IR",
+      "proof": "native1166-normal-aria-pass.json",
+      "matchSeconds": 252.282
+    }
+  ],
+  "fullMatrixCertified": true,
+  "preparedIndex": "delegation-final-d5af-normal-matrix-prepared-index.json",
+  "retainedFailures": [],
+  "qualifiedScope": "Standard/Regular only; additional exposed combinations and all other acceptance gates remain separate",
+  "individualProofSha256": {
+    "native1176-normal-aria-pass.json": "addb039bca21f89fc3b9a21bff3666127a8aa31ead03b1a255ee0e9699a5efad",
+    "native1171-normal-aria-pass.json": "c4259f666fa3fac5f6ceda69d5bb6ed78c2335fd67b3c65da6b2ef46b308272e",
+    "native1172-normal-aria-pass.json": "f9cd08c68cafda9c0607f02791ab89d6332334bd0bfda38e4ea08e2cb5a0a560",
+    "native1173-normal-aria-pass.json": "b3cf12eb7cb51fda7589b773c5efd6ce93c7d28e30e06503a4dcbfba1910dad8",
+    "native1165-normal-aria-pass.json": "e0c2b624209344f98488b9c52fe288231a9d2589cb31a55f61fe1556e45ab0e9",
+    "native1166-normal-aria-pass.json": "65c7771e82ed4d266bd804226de6229a5ecc8c52b4f62082cb56a8267affb433"
+  },
+  "normalInput": true,
+  "sourceManifest": "final-1175-integrated-post-source-manifest.json",
+  "sourceManifestSha256": "31476f77e313143d7d9c5e3854379b6e82f2c8acccecfb9e732775e6dd6b26c5",
+  "isolatedProfileAndEditorCandidateDisclosed": true,
+  "countsForAlternatingStartFamilyStress": false,
+  "realHumanDeviceAcceptance": false,
+  "visualOwnerReviewPending": true,
+  "technicallyReady": false,
+  "playerReady": false
+}

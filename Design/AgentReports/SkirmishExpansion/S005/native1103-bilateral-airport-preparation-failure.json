@@ -1,0 +1,31 @@
+{
+  "result": "FailedBeforeNativeDispatch",
+  "compileArtifact": "compile1103-bilateral-airport-dry-run.json",
+  "loadArtifact": "load1103-bilateral-airport-fixture.json",
+  "outerCompileSuccess": true,
+  "nativeCompileSuccess": false,
+  "nativeLoadSuccess": false,
+  "compilerErrors": [
+    {
+      "severity": "error",
+      "message": "'MatchSceneView' does not contain a definition for 'MatchBootstrap' and no accessible extension method 'MatchBootstrap' accepting a first argument of type 'MatchSceneView' could be found (are you missing a using directive or an assembly reference?)",
+      "line": 209,
+      "column": 179,
+      "id": "CS1061"
+    },
+    {
+      "severity": "error",
+      "message": "'WorldUnmanaged' does not contain a definition for 'UpdateSystem' and no accessible extension method 'UpdateSystem' accepting a first argument of type 'WorldUnmanaged' could be found (are you missing a using directive or an assembly reference?)",
+      "line": 235,
+      "column": 88,
+      "id": "CS1061"
+    }
+  ],
+  "wrapperStarted": false,
+  "playStarted": false,
+  "nativeActorsQueued": false,
+  "activeRun": null,
+  "rootDispatchError": "Runner requested before dry compilation result inspected; guarded loader rejected compilation and did not dispatch executeMethod.",
+  "fixtureSha256": "9a7459fae76149613ff25db3245e38baae7f42fe4be40bbbe4f649fe2d4afc9b",
+  "next": "Unique1104 corrected fixture, never reuse1103 evidence or loaded bytes."
+}

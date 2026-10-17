@@ -1,0 +1,233 @@
+{
+  "result": "PassedScopedOfflineAuditedNative1274",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "fullSourceUnchanged": true,
+  "originalRunnerFailure": "native1274-passive-pressure-performance-failure.json",
+  "originalRunnerFailurePreserved": true,
+  "auditedException": "Legacy SkirmishValidationExit marker is absent on Task<int> ExistingEditorValidation path; exact bridge Passed, native exit0, wrapper0 and idle replace no gameplay/result/input gate.",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "nativePassiveDefeatCertified": true,
+  "pressureEvidence": {
+    "features": {
+      "nativeInitialEnemyActorsMoved": true,
+      "paidEnemyReservationsObserved": [
+        1001,
+        1002,
+        1003,
+        1004,
+        1005
+      ],
+      "nativePaidEnemyDeliveredReservationsObserved": [
+        1001,
+        1002,
+        1003,
+        1004,
+        1005
+      ],
+      "paidIntentStatesObserved": [
+        "AcceptedWaiting",
+        "Delivered",
+        "RequestPending"
+      ],
+      "enemyDutiesObserved": [
+        "Escort",
+        "HomeReserve",
+        "MainAssault",
+        "Recover",
+        "Scout"
+      ],
+      "lastObservedPlayerUnitsLost": 12,
+      "lastObservedEnemyUnitsLost": 14,
+      "playerBaseMinimumObservedHp": 0,
+      "nativeElapsedAtDefeat": 568.171630859375,
+      "paidReplacementScoutDefenseRecoveryQualified": false
+    },
+    "contactAudits": {
+      "externalPassive": {
+        "recordedContacts": 1,
+        "completedContacts": 1,
+        "phases": {
+          "PassivePressure": 1
+        },
+        "terminalCancellations": [],
+        "errors": [],
+        "strictRecordedContacts": true,
+        "strictAllContactsEnded": true,
+        "nativeMenuContactsRecorded": false,
+        "terminalContactsRecorded": false,
+        "completeMatchCertified": false,
+        "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+      },
+      "inheritedPublicNormal": {
+        "recordedContacts": 12,
+        "completedContacts": 12,
+        "phases": {
+          "Menu": 11,
+          "Manual": 1
+        },
+        "terminalCancellations": [],
+        "errors": [],
+        "strictRecordedContacts": true,
+        "strictAllContactsEnded": true,
+        "nativeMenuContactsRecorded": true,
+        "terminalContactsRecorded": false,
+        "completeMatchCertified": false,
+        "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+      }
+    },
+    "attempt": "expanded-s005-104734-744c591c66cf4b339957960c09ea9949",
+    "tracePath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-a22e9e77c3d7444f86091a411446051c.jsonl"
+  },
+  "naturalPaidEscortEvidence": {
+    "scope": "Same-attempt natural paid enemy delivery and original Car/APC Escort Move/body trajectories; sampled native net-goal progress reset guard",
+    "paidDeliveredReservations": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005
+    ],
+    "escortActors": [
+      {
+        "role": "Car",
+        "groups": [
+          9
+        ],
+        "samples": 535,
+        "maximumDisplacement": 239.89315795898438,
+        "acceptedEscortRows": 248
+      },
+      {
+        "role": "ApcArmored",
+        "groups": [
+          10
+        ],
+        "samples": 535,
+        "maximumDisplacement": 451.0128479003906,
+        "acceptedEscortRows": 39
+      }
+    ],
+    "sameGoalChecks": 1346,
+    "netGoalResetChecks": 127,
+    "allEnemyPlanStepsCertified": false,
+    "combatEffectAttributed": false
+  },
+  "editorPerformanceEvidence": {
+    "measurementQualified": true,
+    "scope": "InstrumentedEditorRenderedCallbackIntervalsNotDeviceCertification",
+    "deviceCertified": false,
+    "androidCertified": false,
+    "performanceBudgetPassed": false,
+    "renderGpuTimeMeasured": false,
+    "expectedScale": "Actual passive Standard/Regular; no injected population saturation",
+    "sampleCount": 5742,
+    "measuredActiveFrames": 5458,
+    "retainedFrameGaps": 0,
+    "missingFramesNeverImputed": true,
+    "measuredFrameIntervalMs": {
+      "available": true,
+      "count": 5458,
+      "average": 102.01917407838317,
+      "p95": 202.11133360862732,
+      "p99": 295.85251212120056,
+      "max": 2008.9058876037598,
+      "percentileMethod": "NearestRank"
+    },
+    "measuredWallIntervalMs": {
+      "available": true,
+      "count": 5458,
+      "average": 102.00999198424336,
+      "p95": 203.2542500001,
+      "p99": 299.62075000003097,
+      "max": 1976.2570839993714,
+      "percentileMethod": "NearestRank"
+    },
+    "nativeFrameGcAllocatedBytesInclusive": {
+      "available": true,
+      "count": 5458,
+      "average": 405494.79223158665,
+      "p95": 1839530,
+      "p99": 2015677,
+      "max": 4952337,
+      "percentileMethod": "NearestRank"
+    },
+    "ecsSimulationMilliseconds": {
+      "available": true,
+      "count": 5458,
+      "average": 40.05164781879818,
+      "p95": 79.196,
+      "p99": 95.664958,
+      "max": 379.772917,
+      "percentileMethod": "NearestRank"
+    },
+    "unavailableGcMeasuredFrames": 0,
+    "unavailableEcsMeasuredFrames": 0,
+    "memoryPeaks": {
+      "managedBytes": 3932332032,
+      "nativeAllocatedBytes": 7496184564,
+      "nativeReservedBytes": 8875212800,
+      "graphicsBytes": 2906164320
+    },
+    "hardware": {
+      "unityVersion": "6000.5.2f1",
+      "operatingSystem": "Mac OS X 26.6.2",
+      "gpu": "Apple M5",
+      "width": 1885,
+      "height": 932,
+      "quality": 0,
+      "msaa": 0
+    },
+    "recorderAlignment": "Last completed profiler sample; observation frame retained; no exact event-frame/GPU attribution",
+    "observerOverheadIncluded": true
+  },
+  "nativeReplayPerformed": false,
+  "normalResourcesPosesDamageVisibilityClocksOutcomeInjected": false,
+  "enemyAIOrNativeDefensiveCombatDisabled": false,
+  "countedPlayerWins": 0,
+  "allEnemyPlanStepsCertified": false,
+  "normalMissionWinCertified": false,
+  "deviceCertified": false,
+  "performanceBudgetPassed": false,
+  "fullX17MemoryQualified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [],
+  "supersedesInvalidV1AuditFreeze": true,
+  "originalV1ProofPreserved": "native1274-offline-audited-passive-pressure-performance-proof.json",
+  "auditSha256": "43eb6b0444a352d73a5879333c3bcd18623e1efc68784378baaa51945e3cbf45",
+  "rawPins": {
+    "native1274-passive-pressure-performance-failure.json": "b82c69f739ed70ad1b32403f967eff1618693fb51aae9c34733136f739ef1592",
+    "native-1274-passive-pressure-performance-fa-seed104734.log": "11d92d449cbe6d8c68c270f9ab57e4bc449ccab692833511b645db7d050c944c",
+    "native-1274-passive-pressure-performance-fa-seed104734.log.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "native-1274-passive-pressure-performance-fa-seed104734.log.wrapper-exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "native-1274-passive-pressure-performance-fa-seed104734.log.dispatch.json": "d70cb3ce7f7d9874e5a5cf23d81ea2d57b1c7e148120bd6a32d1bbdd12cd8725",
+    "native-1274-passive-pressure-performance-fa-seed104734.log.dispatch.cs": "48b7f8d5f17a8d77aab0eea6655b4fbfc486b87e2adb9d98fb7e7a6338411ff2",
+    "native1274-fixture.cs.txt": "d0ca4430483eb7011fa409a392b8b351db5315ca182fe2824c462c1feb39849a",
+    "native1274-runner-start.json": "717d9912103d9e5668b05668508e48f8e2479f5e97ed10088a323b67ea7c185d",
+    "load1274-passive-performance.json": "32451727ec32f5101b0169b644be50c4a19d14f3102a13b36a7644b56facdc95",
+    "compile1274-passive-v2-reviewed-dry-run.json": "455206f5aebdf3389f37c18d8baff9ea729c6be04e86a1281114cb0815b3d347",
+    "native1274-before-load-idle.json": "b3639d8fba05d70db97913105c421fb0e3a117ebef1e3a0ea8447a7ba1db3f4c",
+    "native1274-before-dispatch-idle.json": "2eb50c2ce89bbc3bf1860aee7962f587dd1ffb5b42a55a94d56009ad347c460e",
+    "native1274-after-close-idle.json": "59c7e424733293f7f6c1cfe560c26e26c93f1a2838ff3cdd415d483f637e520c",
+    "native1274-passive-pressure-observation.jsonl": "2f7990b7add459d2e02ee309993c5dbeac7950e826d83b9dac600d0e9dac810e",
+    "native1274-passive-performance.jsonl": "01fc580900a949093e13c18e0a1d3021290c6b746d3069ee9f8270c17810a9ad",
+    "native1274-passive-pressure-touch.jsonl": "b15248752dad7cdad6d310f8e190525ddb20e135d6886ce6b82a9b518a5f4fd1",
+    "s005-aria-live-104734-fa-a22e9e77c3d7444f86091a411446051c.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "s005-aria-live-104734-fa-a22e9e77c3d7444f86091a411446051c.jsonl.touch.jsonl": "14c95ae2ff37ee0ccf807e2cbb8b18ee96a47e57973751b1f6dcfc9c3c9583de",
+    "final-1258-ground-carrier-post-source-manifest.json": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+    "final-1258-ground-carrier-post-independent-fingerprint.json": "05bad39e5a035645760b6c8b9d409bf015aa24f6e1c4b441ac5efcf4167a7c79",
+    "final-1274-passive-performance-preflight-source-manifest.json": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+    "final-1274-passive-performance-preflight-independent-fingerprint.json": "d49f94afc164b6008ce06a002507bdf12483f0a8244996cb0ddd7721ae8599d0",
+    "final-1274-passive-performance-pre-dispatch-source-manifest.json": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+    "final-1274-passive-performance-pre-dispatch-independent-fingerprint.json": "be011835934a8117b21fa81c9d5293b7d1183789582dbf4747a4337742d7f071",
+    "final-1274-passive-performance-post-source-manifest.json": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+    "final-1274-passive-performance-post-independent-fingerprint.json": "71129c0017d0ec95e0f148258e408740c1a91adea11c9fe5016f46fca824f3fb"
+  },
+  "sourceContractPins": {
+    "Assets/Game/Scripts/Editor/ExistingEditorValidation.cs": "dfe23b800afacf0e21a4447ebd9c0a21568c184da0b518897430e8ada3e35882",
+    "Assets/Game/Scripts/Editor/MissionEditorValidationExit.cs": "0468f715425b8e5f60f4ca4e3da319e129d81d904cd9a8c283e050c8de24699f",
+    "Tools/CI/invoke_unity_macos.sh": "42be5b26166954408447c37a68a98c17ac3fc50fbefbdd8870e659595c84d396",
+    "Tools/CI/audit_skirmish_native_contacts.py": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92"
+  }
+}

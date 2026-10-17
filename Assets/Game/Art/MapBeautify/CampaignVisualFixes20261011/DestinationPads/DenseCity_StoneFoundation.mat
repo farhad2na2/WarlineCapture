@@ -47,6 +47,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 7d5b1bd53457449b8e07e53543128ad6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RoadBlendMap:
+        m_Texture: {fileID: 2800000, guid: 42356f0a159e148c1893d8ae21f1afc9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _ActivityStrength: 0.85
@@ -69,6 +73,8 @@ Material:
     - _MacroContrastLow: 0.1
     - _MacroScale: 0.027
     - _MacroStrength: 0.22
+    - _RoadBlendRole: 0
+    - _RoadBlendStrength: 1
     - _RoadTerminalStrength: 0
     - _RunwayEdgeStrength: 0
     - _SandPaletteStrength: 0.9
@@ -83,6 +89,9 @@ Material:
     - _DistrictSurfaceRect: {r: 0, g: 0, b: 2048, a: 1024}
     - _MacroTintA: {r: 0.96, g: 0.94, b: 0.89, a: 1}
     - _MacroTintB: {r: 1.07, g: 1.02, b: 0.94, a: 1}
+    - _RoadBlendAsphalt: {r: 0.23, g: 0.25, b: 0.28, a: 1}
+    - _RoadBlendRect: {r: -80, g: -80, b: 2208, a: 1184}
+    - _RoadBlendSand: {r: 0.72, g: 0.665, b: 0.56, a: 1}
     - _RoadTerminalA: {r: 0, g: 0, b: 0, a: 0}
     - _RoadTerminalB: {r: 0, g: 0, b: 0, a: 0}
     - _RoadTerminalEarth: {r: 0.65, g: 0.6, b: 0.49, a: 1}

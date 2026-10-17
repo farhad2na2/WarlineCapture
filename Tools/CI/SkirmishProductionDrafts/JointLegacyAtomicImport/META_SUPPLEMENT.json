@@ -1,0 +1,12 @@
+{
+  "scope": "ExactlyOneNewJointScriptMeta_NoExistingMetaChanges",
+  "guid": "52c25f6cce394ce78538c68605b5c5f9",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.meta",
+      "source": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.meta.txt",
+      "before_sha256": null,
+      "sha256": "c390a5ef286bfb3e7e54887dac2aa6ca610de3720d35bac3026f843dd756ddac"
+    }
+  ]
+}

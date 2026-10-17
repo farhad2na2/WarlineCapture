@@ -22,7 +22,7 @@ namespace Game.Runtime
             foreach(var m in saved.MapReferences)if(HasAny(m.Parts))return false;
             foreach(var b in saved.Banks)if(HasAny(b.Parts))return false;
             if(!HasAny(saved.SessionParts))return true;
-            if(setup?.EnemyPolicy==null || setup.EnemyFaction!=2 || setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault ||
+            if(setup?.EnemyPolicy==null || setup.EnemyFaction!=2 || (setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault&&!SkirmishEnemyObjectivePolicyScope.Supports(setup)) ||
                 !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts,out SkirmishEnemyConstructionIntentV1Component i) ||
                 !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts,out SkirmishObjectiveClockComponent clock) ||
                 i.Version!=1 || i.SessionId.ToString()!=saved.SessionId || i.RejectionCount>3 ||

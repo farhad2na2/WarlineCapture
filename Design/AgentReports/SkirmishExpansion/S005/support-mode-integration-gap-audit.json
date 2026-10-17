@@ -1,0 +1,94 @@
+{
+  "sourceHash": "b3cc9737842d732cae6798b1a00eb85675df171c326882779d207556dd6d1f70",
+  "result": "Open integration gate",
+  "nativeObservation": {
+    "run": "Native242 initial live state",
+    "supportRoots": 1,
+    "root": "Entity(326:1)",
+    "active": 0,
+    "testEncounter": 0,
+    "faction": 1,
+    "campaignRoot": true,
+    "skirmishRoot": false,
+    "sessionToken": ""
+  },
+  "catalog": [
+    {
+      "kind": "Smoke",
+      "productionReady": true,
+      "charges": 2,
+      "fuel": 1
+    },
+    {
+      "kind": "Strike",
+      "productionReady": false,
+      "charges": 1,
+      "fuel": 4
+    },
+    {
+      "kind": "Paratroopers",
+      "productionReady": false,
+      "charges": 1,
+      "fuel": 6
+    },
+    {
+      "kind": "Supply",
+      "productionReady": true,
+      "charges": 1,
+      "fuel": 3
+    }
+  ],
+  "policy": "S005: Smoke2;Strike1;Paratroopers1;Supply1, per faction. SmokeR1,paratroopers/supplyR2,strikeR3; runtime acceptancePending.",
+  "sourceFindings": [
+    "SupportAbilityStartupSystem requires CampaignMissionRuntimeComponent outside a test encounter",
+    "Historical global UI/lifecycle/visual/fuel assumptions repaired; native roots and policy integration remain pending",
+    "Skirmish native checkpoint explicitly rejects active Support sessions and effects",
+    "Campaign ownership unlocks must remain separate from core Skirmish content access"
+  ],
+  "requiredWork": [
+    "Mode/session/faction scope that preserves Campaign ownership and singleton assumptions",
+    "Data-driven Skirmish policy/readiness, genuine faction fuel and reservations/caps",
+    "Authored safe routes, public visibility/target legality and objective exclusions",
+    "Checkpoint/replay conservation including active Support transients",
+    "Native Support and no-Support wins, cancellations and result cleanup"
+  ],
+  "playerReady": false,
+  "latestIsolationSource": "77b51a57825f280875176624fc1992f5e8de58728f5b95b68d3b19bc15847045",
+  "completedFoundation": [
+    "Request system processes each Support session independently",
+    "Player UI ignores enemy and inactive bindings, rejects ambiguous active player sessions",
+    "Faction fuel read models match transaction scope and reserve calculation",
+    "56 focused checks passed, including six new isolation/scope cases and existing Support regressions"
+  ],
+  "remainingIntegration": [
+    "Native Skirmish root lifecycle and per-faction policy/readiness",
+    "Create native per-faction fuel scope over genuine attempt-owned stock; preserve Campaign ownership",
+    "Authored safe routes and public visibility/objective-exclusion target legality",
+    "Native payload role/group/capacity reservation ownership",
+    "Checkpoint serialization, prefab reconstruction and reference remapping for active effects",
+    "Native Support/no-Support wins and pause/replay/result cleanup"
+  ],
+  "latestLifecycleSource": "fab34f288dc39cc6aaff038172119a5705e8aaa7b03e4177c33cf746dab808b4",
+  "completedLifecycle": [
+    "Root-owned Smoke zones resolve independent attempt clocks and preserve pause",
+    "Cleanup visits all sessions and deletes only the terminal owners Smoke",
+    "Supply collection visits every root queue",
+    "ARIA consent and Stop use the same player-only resolver as UI",
+    "61 Support checks and shared Skirmish checks passed"
+  ],
+  "latestPresentationSource": "1f69b3e85fe87dc82499cbfc056becd1df42e96ebf67f4ff9563a668aa26c967",
+  "completedPresentation": [
+    "Smoke visual config follows the exact owning root",
+    "Ambiguous legacy attempts fail closed instead of borrowing another prefab",
+    "Smoke and cleanup preserve Burst execution",
+    "Shared read-only resolver introduces no new assembly dependencies"
+  ],
+  "latestOwnedFuelSource": "c24ced8ef16ffc1a4022bf60a126690c1230d8812853e438ecaddf3a893cc1d1",
+  "completedOwnedFuel": [
+    "Explicit session storage takes priority over unrelated Campaign scopes",
+    "UI, preview legality, immediate spending and aircraft reservations pass identical owner root",
+    "Same-faction sessions retain independent stocks and protected reserves",
+    "Destroyed owner/source and foreign faction scope fail closed",
+    "Focused owner-scope Runtime tests11 passed; complete regression batch65 Support checks plus shared Skirmish passed"
+  ]
+}

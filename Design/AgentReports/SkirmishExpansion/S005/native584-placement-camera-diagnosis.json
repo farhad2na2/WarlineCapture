@@ -1,0 +1,10 @@
+{
+  "playerReady": false,
+  "sourceHash": "0c291f41db2a0d2682d76db6027aa9938541abc5fb8509bec1fb7c7b27378b59",
+  "sourceUnchanged": true,
+  "wrapperExit": 1,
+  "log": "native-584-placement-camera-diagnostic-save-continue-en.log",
+  "placement": "Eight restored structures rejected by sidewalk mask; refinery at (903,613) size (25,15), road=false water=false sidewalk=(903,613)",
+  "camera": "Valid orthographic planning view at (700,600,500), size220, determinant1.85956e-9 rejected by absolute cutoff1e-8",
+  "next": "Invalidate placement cache when packed sidewalk owners/record counts change; accept finite invertible orthographic camera matrices; regression tests and native retry pending"
+}

@@ -1,0 +1,29 @@
+{
+  "status": "ReadOnlyReview_NoBlockingCompilerApiStartupSequenceDefectIdentified_StaleRunnerSaveRootMetadataRequiresCorrection",
+  "fixture": "/private/tmp/S005BoardedRecovery1134.cs",
+  "fixtureSha256": "4b90b670e9aa2f32da59fb2ba977508062bcd593402802ccb66db90196158732",
+  "runner": "/private/tmp/s005-run-boarded-recovery-1134.py",
+  "runnerSha256": "8a8fd16fa2dc6eaa19d8d70647d86b0e5b262a7023c2e3784677d4dc53b4b358",
+  "reviewed": [
+    "Inherited RunS005StartupEn generates its own fresh GUID artifactId/profileRoot and initializes Completed profile.1134 reflects that same helper afterward without changing environment; queued Play/menu therefore uses initialized profile rather than an empty replacement.",
+    "Path.GetFullPath lexical equality, exact Path.GetTempPath/aria-play-validation-profile parent, GUID N leaf, actual environment identity and native private SavePath equality are coherent with exact inherited helper. Fresh root must have no prior native checkpoint.",
+    "Before public Pause, actual session Playing, positive native elapsed>=4, owned idle Touch and inherited stage2 asserted; exact startupTick detached while fixture watchdog remains. Native Pause picks accepted/interactable button candidates; SaveExit and presented Continue require real same-attempt checkpoint, real recovery record Complete, old battlefield Entity identities gone.",
+    "Real paid carrier/Rifle cohort stable IDs+reservation IDs, whole4 restored Disabled/link/hidden buffers, native capacity snapshots and native receipt phases are checked. Then actual Touch loadedMove/ExitAll, body/nonselection exact snapshots plus narrow typed marker current visibility, idempotent native release/Play cleanup.",
+    "Actual save bytes copied from same verified inherited native SavePath to unique report archive. Runner checks unique archive absence before start and later existence/hash; nested CLI load success, full source pre/preflight/pre-dispatch/post comparison, wrapper/native exits, required native closure markers, all raw Touch zero audit counters, exact7 capacity stages and primitive four-passenger body/typed-marker assertions."
+  ],
+  "finding": {
+    "priority": "P2 evidence metadata",
+    "runnerLines": "14,53,186",
+    "problem": "SAVE_ROOT remains REPORT/native1134-player-save-root and proof isolatedNativeSaveRoot uses it, although fixture now uses inherited temp GUID root and never creates that report directory. This is false checkpoint provenance metadata; stale precheck also refers to an unused directory.",
+    "correction": "Record actual verified inherited save path in log/primitive row and parse it into runner proof; remove obsolete report-dir root claim/precheck. Retain actual report archive identity/hash. No profile switching needed."
+  },
+  "limitations": [
+    "Native compilation/execution not performed by reviewer.",
+    "Native idle state is only readiness-pointer gate in runner; root must independently establish main Editor idle and exclusive heavy-lane scheduling.",
+    "Ordinary populated passenger/receipt checkpoint only; opening hostiles retired, no populated fog-ledger or VTOL/Plane recovery certification."
+  ],
+  "pythonSyntax": "ast.parse Passed",
+  "noUnityCalls": true,
+  "noFrozenEdits": true,
+  "noProductionEdits": true
+}

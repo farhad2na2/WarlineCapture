@@ -1,0 +1,47 @@
+{
+  "status": "PreparedExternalOnly_AllHeld_NoUnity_NoSourceEdits",
+  "productionPatch": {
+    "status": "ExternalProposalReconstructedAfterRootAppliedExactBranch_NoAgentSourceMutation",
+    "source": "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs",
+    "originalSha256": "0b71eee1657e9a79b213fbae5764ac75cba73172e563d22ad4e23f4be5284c21",
+    "proposedAndActualSha256": "c5d1b46d042ba5a7f0e2a0318c7f2a8e0001d1596d0fe39a8e4c2c6266918b98",
+    "patch": "/private/tmp/s005-title-persian-overflow1167.patch",
+    "patchSha256": "53639b4e8fe60b767ff1231ad2d2416508c154e5652ca7c214d4205c9ee623da",
+    "scope": "Exact S005-only braces/Overflow matching existing S004. No generic title replacement or render predicate loosening."
+  },
+  "observers": [
+    {
+      "run": 1167,
+      "seed": 104734,
+      "fixture": "/private/tmp/S005NormalAria1167Observer.cs",
+      "fixtureSha256": "9812d68b1e2d585ad9972c524e7063fd33beb3b1058a9c327f76533ff6275fb5",
+      "runner": "/private/tmp/s005-run-normal-aria-1167.py",
+      "runnerSha256": "fbd854bf6d2a274d9404ecc78cabe406bfbc463d32519e976833a27bba0d7485",
+      "prep": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-normal-aria1167-prepared.json"
+    },
+    {
+      "run": 1165,
+      "seed": 130368,
+      "fixture": "/private/tmp/S005NormalAria1165Observer.cs",
+      "fixtureSha256": "5bae20ee1fad7b0692e4932d6b792c7e7438d682d526b23f58ead0657d6c2c19",
+      "runner": "/private/tmp/s005-run-normal-aria-1165.py",
+      "runnerSha256": "980aaeac0ca1f142001b09a2344e1e5b04a15f3d104569458ee832f13a862a05",
+      "prep": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-normal-aria1165-prepared.json"
+    },
+    {
+      "run": 1166,
+      "seed": 155926,
+      "fixture": "/private/tmp/S005NormalAria1166Observer.cs",
+      "fixtureSha256": "b08205f38c664d526bf76c9a7266bd66e12c6c0bf3800fd09f43c625fb735c53",
+      "runner": "/private/tmp/s005-run-normal-aria-1166.py",
+      "runnerSha256": "7373d113bce9c4dda09d54d8d5f541fa09e368689a21035dfc043d90e6c81bf7",
+      "prep": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-normal-aria1166-prepared.json"
+    }
+  ],
+  "currentFullSource": "f788e01e25897c16ae470e4e4d9d687a574c35eca934aea9aa25ed9f72254893",
+  "prior1156Preserved": true,
+  "core1168": "Pending actual closure",
+  "diagnosis": "delegation-fa1156-rendered-owner-diagnosis1167.json",
+  "diagnosisSha256": "ee8c88da8b2e3b3747896d238dcd64fdb99a9e7f4bfa403da4bffb4172e48a2a",
+  "preservedOriginalRevisions": true
+}

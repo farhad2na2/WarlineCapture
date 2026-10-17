@@ -14,10 +14,35 @@ namespace Game.Composition
             EntityManager em,
             SkirmishLaunchPayload payload,
             SkirmishResolvedSetup setup,
-            UnitPrefabRegistryAuthoringConfig registry = null)
+            UnitPrefabRegistryAuthoringConfig registry = null,
+            SkirmishScenarioDefinitionConfig explicitDefinition = null)
         {
             if (em == default || payload == null || setup == null || payload.IsLegacy)
                 return false;
+            if (!SkirmishMissionDispatch.PayloadMatches(payload, setup)) return false;
+            SkirmishMissionDispatch.TryGetLegacyIndex(payload.CatalogId,out int scenarioIndex);
+            bool generic = SkirmishMissionDispatch.RequiresSourceBoundDefinition(payload.CatalogId);
+            SkirmishScenarioDefinitionConfig definition = explicitDefinition;
+            if (definition == null)
+            {
+                var authored = SkirmishExpansionCatalogConfig.Load();
+                if (authored != null) authored.TryGetDefinition(payload.CatalogId, out definition);
+            }
+            if (generic)
+            {
+                if (!SkirmishMissionDispatch.TryGetGenericById(SkirmishBattleCatalogConfig.Load(), payload.CatalogId, out var entry) ||
+                    !SkirmishMissionDispatch.MatchesDefinition(entry, definition) || !setup.MeasuredLayoutBound ||
+                    setup.SetupHash != SkirmishSetupCompiler.ComputeHash(setup, setup.Seed) ||
+                    string.IsNullOrEmpty(setup.LayoutBindingFingerprint) || definition.CampaignMap == null ||
+                    ContentAccessRuntime.Evaluate(definition.DefinitionId) != Game.Missions.Contracts.ContentAccessState.Allowed ||
+                    !definition.CampaignMap.TryValidateMetadata(out _) || !definition.CampaignMap.TryValidateLocalContentReferences(out _)) return false;
+                scenarioIndex = entry.PlayableScenarioIndex;
+            }
+            if (definition != null && (definition.CatalogId != setup.CatalogId || definition.DefinitionId != setup.DefinitionId ||
+                definition.ContentVersion != setup.ContentVersion || definition.OperationMapId != setup.OperationMapId || definition.MapLayoutId != setup.LayoutId)) return false;
+            if (!SkirmishMissionLogicalBindingProvider.TryCompileForLaunch(definition,setup,out var missionLogical,out _)) return false;
+            var launchDefinition = definition == null ? null : new SkirmishLaunchDefinitionRecord(definition, setup, generic);
+            if (!string.IsNullOrWhiteSpace(payload.SessionId) && (System.Text.Encoding.UTF8.GetByteCount(payload.SessionId) > 61 || payload.SessionId.IndexOf('\0') >= 0)) return false;
             if (string.IsNullOrWhiteSpace(payload.SessionId))
                 payload.SessionId = Guid.NewGuid().ToString("N");
 
@@ -40,7 +65,7 @@ namespace Game.Composition
             {
                 SessionId = new FixedString64Bytes(payload.SessionId),
                 Seed = payload.Seed,
-                ScenarioIndex = ScenarioIndex(payload.CatalogId, setup.OperationMapId),
+                ScenarioIndex = scenarioIndex,
                 Phase = SkirmishPhase.Queued
             });
 
@@ -89,27 +114,24 @@ namespace Game.Composition
             else
                 em.AddComponentObject(entity, new SkirmishResolvedSetupRecord { Setup = setup });
 
-            // A visible S005 Launch/Continue action starts the short match once
+            if (em.HasComponent<SkirmishLaunchDefinitionRecord>(entity))
+                em.RemoveComponent<SkirmishLaunchDefinitionRecord>(entity);
+            if (launchDefinition != null)
+                em.AddComponentObject(entity, launchDefinition);
+            if (Game.Configs.SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup) &&
+                !SkirmishMissionLogicalBindingProvider.TryAttachCompiled(em,entity,definition,setup,missionLogical,out _))
+            {
+                sessionComponent.Phase=SkirmishSessionPhase.Failed;sessionComponent.FailureCode=SkirmishReasonCode.MissingReference;
+                em.SetComponentData(entity,sessionComponent);return false;
+            }
+            // A visible expanded Launch/Continue action starts the match once
             // native loading completes. It must not depend on an Editor harness.
-            if (payload.CatalogId == "S005" && !em.HasComponent<SkirmishExpandedReplayStartPending>(entity))
+            if ((payload.CatalogId == "S005" || generic) && !em.HasComponent<SkirmishExpandedReplayStartPending>(entity))
                 em.AddComponent<SkirmishExpandedReplayStartPending>(entity);
             if (registry != null)
                 SkirmishVisualSpawnService.BindSceneRegistry(em, entity, registry);
             return true;
         }
 
-        private static int ScenarioIndex(string catalogId, string operationMapId)
-        {
-            // Shared physical maps do not identify a mission. Result actions must
-            // retain the catalog binding even when several missions reuse one map.
-            var catalog = SkirmishBattleCatalogConfig.Load();
-            if (catalog != null && catalog.TryGet(catalogId, out var entry) && entry.IsPlayable)
-                return entry.PlayableScenarioIndex;
-            if (catalogId == "S005")
-                return SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex;
-            if (operationMapId == "opmap.skirmish.city_crossroads")
-                return SkirmishPresetConfig.CityCrossroadsScenarioIndex;
-            return SkirmishPresetConfig.DesertBaseScenarioIndex;
-        }
     }
 }

@@ -1,0 +1,12 @@
+{
+  "review": "Root reviewed corrected read-only catalog-scroll observer, 354 source contracts, exact dry compile and load-only assembly; native diagnostic dispatch enabled",
+  "sourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "fixtureSha256": "785306dca8f1cbaf1b68d786186fe166106f01d2ceebfccbf188404c2d57ff33",
+  "runnerSha256": "93fbac594dab6db2db962ec8ad16fe7715ce5234d2c217b28c369c9439f78096",
+  "failedDryCompilePreserved": "Design/AgentReports/SkirmishExpansion/S005/compile1421-targeted-scroll-dry.json",
+  "passedDryCompileSha256": "9fa11c387c6b59d9e3a8223a708fc0407cdc485824d354a6bdaa4f42db3ae7e3",
+  "loadOnlySha256": "f2c41fd178d37699b5428203c96c42d1ab6e5756a7d6e264afb80370ecdebbb4",
+  "previousNativeIdle": "Design/AgentReports/SkirmishExpansion/S005/native1417-after-close-idle.json",
+  "disabledManifestSha256": "74c855c321123cdd494371be0c4fe54f4372d207edeb704433dfad0f10d743d0",
+  "nativeRunPending": true
+}

@@ -1,0 +1,26 @@
+{
+  "runId": 1192,
+  "status": "PreparedImmutableExternalOnlyRootReviewNativeDrycompileLoadRunPending",
+  "manifest": "/private/tmp/s005-performance1192/manifest.json",
+  "manifestSha256": "a07c2d63d8a9822a8f72a1b1128005dd27b16dc199d913fb1835c91b955f28b6",
+  "fixture": "/private/tmp/s005-performance1192/S005NormalAria1192Observer.cs",
+  "fixtureSha256": "87ca45e139cce14fa961721aef7770c506820f85a919e8bf3d42e3557c9a85db",
+  "runner": "/private/tmp/s005-performance1192/s005-run-normal-performance1192.py",
+  "runnerSha256": "4050c5ac85db8482d7560562e6817720ad1f0aa7914ccbbef78a1644e10691cd",
+  "performanceParser": "/private/tmp/s005-performance1192/performance1192_analysis.py",
+  "performanceParserSha256": "b81b1428d26ea77f1f8a5ef8315b75d6db6ad9b452ca1b88ade273572ba36c44",
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "sourceContractsCount": 43,
+  "offlineControls": {
+    "count": 18,
+    "path": "/private/tmp/s005-performance1192/parser-schema-controls-result.json",
+    "sha256": "d2a9773f4dfe354c42e4f488e6f02637ae37c376b7ac7ce87c3aa0d362d0850f",
+    "scope": "OfflineSyntheticParserAndStaticCSharpSchemaOnly_NoNativeSerializerExecution"
+  },
+  "nativeDryCompiled": false,
+  "nativeLoaded": false,
+  "nativeExecuted": false,
+  "productionEdited": false,
+  "enemyAIChanged": false,
+  "original1183FailurePreserved": true
+}

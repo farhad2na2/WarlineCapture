@@ -1,0 +1,45 @@
+{
+  "result": "ReadOnlyCurrentSourceExposureRechecked",
+  "mission": "S005",
+  "scope": "Packaged player launch/Continue/Replay routing, not native UI run or qualification of hidden presets.",
+  "exposedFreshLaunch": {
+    "size": "Standard",
+    "difficulty": "Regular",
+    "launchLines": [
+      66,
+      117,
+      120,
+      121
+    ],
+    "configConsumed": "S005 branch consumes selected scenario index and MapSeed; compile arguments hardcode Regular+Standard."
+  },
+  "launchShaMatchesPriorExposureAudit": true,
+  "sourceHashes": {
+    "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs": "7ea6bd2dd2451cc2c04e290b51d010bcf21bcd9d77baae62388d489cf21a7501",
+    "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs": "b525b62d467edd1f92d3e975e07c7314b562ca53e94fd8ecab2a70413cb21847",
+    "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs": "ae3e06cc89d6ac4c2b32d2c0da011fcf7ea03dacd553aca9ca9524b3e9963f76",
+    "Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs": "4cf2f4ea1d1a41e1e18560f78bd2228836b0c0508cd8faa3c32c12c3c5562277",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResultSettlementService.cs": "f6b809bd885d2ac8a80a31a6d223418adb3ae365a83b5eb98a54164a134e279b",
+    "Assets/Game/Scripts/Configs/QuickGameConfig.cs": "d69c95e0b9dfed7de8afb82f9fb8dbdae52bf6a5e6898969891d81a1072936ef"
+  },
+  "runtimeCompileAndQueueCallers": [
+    "SkirmishLaunchProjection fresh launch",
+    "SkirmishCheckpointCompositionSystemHelper compatible saved setup restore"
+  ],
+  "otherResolverCallers": "Three Editor-only S002/S003/S004 capture tools; no player exposure.",
+  "directExpandedProjectionRoutes": [
+    "Presentation replay launch record preserves previous setup identity",
+    "Presentation native Continue takes checked saved setup SizeId/DifficultyId",
+    "Checkpoint fresh Replay request is created from existing session setup; no player size/difficulty selector"
+  ],
+  "uiReality": "Generic QuickCustomGame config contains Difficulty/StartingResources/etc and routes through MatchLaunchCommand -> SkirmishLaunchProjection.TryQueue; those generic settings are not a distinct S005 expanded setup matrix selector. No UI SizeId/DifficultyId usages found. This does not claim every generic control absent.",
+  "mandatoryCapacityProfileForThisDriver": "Standard Air2 per faction; preserve all actor/cap budgets.",
+  "notCurrentS005CompletionGates": [
+    "War Air4",
+    "LargeWar Air6",
+    "hidden difficulty/start-package/army-profile preset matrix",
+    "all360 global matrix entries per S005 native role smoke"
+  ],
+  "remainRequired": "Normal current S005 journey, default setup identity/purpose/UI behavior, role behavior/cap/cleanup, checkpoint and all other actual S005 acceptance; global catalog gates remain global. Repeat exposure audit after launch or setup UI changes.",
+  "actionsPerformed": "Read-only source inspection and report writing only; no Unity calls/source edits/checkpoint manipulation."
+}

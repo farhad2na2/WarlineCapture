@@ -1,0 +1,21 @@
+{
+  "result": "PassedScopedOfflineAuditedNative1290",
+  "candidate": "/private/tmp/s005-stop-manual1290-offline-audit",
+  "manifestSha256": "857f9b0b3af483a5f3309ffb9375a3e454955be2453985097a9b245b59b13aa9",
+  "auditorSha256": "5181d718f66daf5e34460278b10b04f19f66c5a938a8edcb5fee14db8ac53023",
+  "independentProof": "native1290-offline-audited-stop-manual-proof.json",
+  "proofSha256": "82bd3c5dd806f36daa4e3d6cc16ea43d1fd280770778e149a1fef57ccb6e9dbb",
+  "archive": "delegation-native1290-offline-audit.zip",
+  "archiveSha256": "b1f664c3471e82b275cb937845dcec501230004ba1d58ffd610b64aaa8860f49",
+  "roundtripPassed": true,
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "nativeReplayPerformed": false,
+  "originalFailurePreserved": true,
+  "offlineControls": 32,
+  "normalStopManualVictoryQualified": true,
+  "noSubstantiveGateRemoved": true,
+  "exception": "Final unissued fallback lease crosses actual nativeVictory; exact original due restored, no new gameplay receipt, pending real UIcontact ends and actual frozenResult/MainMenu render follows",
+  "foreignCarryCleanupBranchNativelyExercised": false,
+  "playerReady": false,
+  "sharedReadinessEdited": false
+}

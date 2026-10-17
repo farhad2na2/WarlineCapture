@@ -1,0 +1,55 @@
+{
+  "result": "IndependentSourceReviewClear",
+  "manifest": "Tools\\CI\\SkirmishProductionDrafts\\TransportMeasuredDependencyRefresh\\manifest.json",
+  "manifestSha256": "1dad1e39331070383eef2115fcf2134436e8d0865fcb2a6ebd64f8b13feb8697",
+  "sourcePins": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishTransportMeasuredDependencyRefresh.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TransportMeasuredDependencyRefresh/SkirmishTransportMeasuredDependencyRefresh.cs.txt",
+      "before_sha256": null,
+      "sha256": "846c45242d6429c2f9c6cff3b4662eac16c1bff43b3e2a120892fb71371d3471",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishTransportMeasuredDependencyRefreshTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/TransportMeasuredDependencyRefresh/SkirmishTransportMeasuredDependencyRefreshTests.cs.txt",
+      "before_sha256": null,
+      "sha256": "7fdd00174ebd86f5e9a27e014c9d657d43a2d124347d73f2824c68df230ba020",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "checks": [
+    "Actual native Measure owns fresh3source/57draw dependency and indexed mesh measurements",
+    "Exact vertex count/index count/geometry SHA/mesh/submesh/full bounds equality; dependency stamps only excluded",
+    "Fresh complete7 report SHA plus exact ordered Detail/Mid/Low root paths, root inclusion and stable graph stamps",
+    "All Transport Assets raw source/meta bytes join historical8462 audit original or proven GitLF-equivalent bytes",
+    "Measured dependency stamps must equal fresh native report stamps",
+    "JsonUtility exact Sources serialization schema before mutation; only3DependencyHash fields may change",
+    "Preserved exact pre-cache/meta bytes and nonindexed lookup admission",
+    "Backup before write; existing asset GUID/meta preserved; original VerifyInstalledTransportMetadata unchanged",
+    "Tests use typed Editor-side helpers; no Tests Newtonsoft/asmdef expansion"
+  ],
+  "correctionsClosed": [
+    "EditorJsonUtility envelope recurrence",
+    "Missing/duplicate Transport LOD graph completeness",
+    "Tests owner Newtonsoft compile boundary"
+  ],
+  "owningProof": {
+    "path": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\current-editor-tests-ohs7l3z2\\result.json",
+    "sha256": "34b78a82e68d610e0f237dd19ab43b2266f2d5e7332b01aa1d390a2cfb7d84a5",
+    "producerResult": "PassedCurrentEditorTestsTypeCompile",
+    "EditorSources": 828,
+    "TestSources": 762,
+    "noFallback": true,
+    "stable": true
+  },
+  "priorFailedProofPreserved": "current-editor-tests-7ztmjsx3",
+  "nativeControlsAndRefresh": "Pending root checked run",
+  "pending": [
+    "Actual control2 and native refresh marker",
+    "Exact saved after-cache SHA and same GUID/meta",
+    "Metadata2/shared150 native checks and actual wrapper0",
+    "Native camera/mission acceptance remains independent"
+  ],
+  "assetsNativeGitWrites": false
+}

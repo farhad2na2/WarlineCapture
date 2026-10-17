@@ -1,0 +1,29 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005TransportScaleDiagnostic1096.cs",
+  "fixtureSha256": "76198c5ba2352f01f726b46d486606d141447080123a0d2c615526aa09c9cf96",
+  "baseFrozenFixture": "native1072-paid-transport-fixture.cs.txt",
+  "scope": "One actual paid Rifle4/FastAPC native Board/loadedMove/ExitAll; original strict hidden/link/scale/capacity assertions unchanged. Adds only read-only explicit primitive/string visual identity/scale diagnostics afterBoard/afterLoadedMove/postUnload BEFORE original strict check.",
+  "schema": "Top-level Serializable ScaleRow, primitive/string mandatory fields; components are a semicolon string. No nested arrays or dynamic anonymous objects.",
+  "native1072FailurePreserved": true,
+  "noProductionEdits": true,
+  "noUnityCalls": true,
+  "diagnosticOnly": true,
+  "playerReady": false,
+  "knownClosedEvidenceLimits": "1072 did not record exact mismatched visual or expected/observed scales; production cause cannot be concluded from generic error.",
+  "staticPotentialWriters": [
+    "UnitTransportVisualUtility restores all stored scales then applies authoritative alive/dead model presentation.",
+    "SelectionMarkerVisibilitySystem updates selection child/outline scales based on current passenger selection, which changes to carrier.",
+    "UnitHealthBarSystem updates HealthBarFill child scale according to damage/passenger/render state."
+  ],
+  "launchInstructions": [
+    "Parent drycompile using Unity CLI run_script --dry_run true.",
+    "Only parent may load after main idle/T7 heavy release; actual execution through checked invoke_unity_macos.sh --reuse with explicit unique1096 log and timeout720.",
+    "Freeze reviewed compiled bytes before loading.",
+    "Retain failure and all scale rows; determine child component/refs/actual scale before any production fix or assertion correction."
+  ],
+  "runner": "/private/tmp/s005-run-transport-scale-1096.py",
+  "runnerSha256": "82bb352e286863deb16a067602c920fd40218e08aed3c26a98f97d58e7dfff48",
+  "authoritativeDynamicReferences": "SelectionMarkerVisualChild / SelectionMarkerOwner / SelectionObjectOutlineVisibleScale / HealthBarFill component JSON encoded as strings, plus explicit root alive/dead/model refs and component-name string",
+  "nativeFailureHandling": "Reproduced strict mismatch retains nonzero wrapper/native completion and runner exit3; diagnostic completion label is not a transport gameplay pass. Only active-run ownership cleared, no readiness/acceptance current pointer updated."
+}

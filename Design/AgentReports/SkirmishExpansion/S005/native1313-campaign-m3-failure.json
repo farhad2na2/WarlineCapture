@@ -1,0 +1,54 @@
+{
+  "result": "Failed",
+  "scope": "bilingual",
+  "sourceHash": "5168b56e1498f6a65257b2341631bfa3055be40cee3b5786dc8b762dc8632eec",
+  "fullSourceUnchanged": true,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "preManifest": "final-1317-catalog-scroll-verified-source-manifest.json",
+  "postManifest": "final-1313-campaign-m3-post-source-manifest.json",
+  "log": "native-1313-campaign-m3-current.log",
+  "logSha256": "b970160b5c20b98a3eff91847d2b3c9bad502362832b361af89224664cce55c6",
+  "fixtureSha256": "3a354d835e8f0e59bad47eee59df26805d2d5a6a6a8757e0ab531d6e878fc7c0",
+  "runnerSha256": "a27b242783ae2e1c7442a390096b95ff4e33db72bb86cf6c53a685fa0778ba9d",
+  "rawEvidence": [
+    {
+      "file": "native1313-defense-2.jsonl",
+      "sha256": "f9a5c8ea4b49e5c7c6b8c2b3d418472f8c048e62a30955180197d9529249e4a5"
+    },
+    {
+      "file": "native1313-defense-7.jsonl",
+      "sha256": "9d1f0e9c77c252ee12b106c0c9788d0f940518b99807a65da06a68fa4b01d9f9"
+    },
+    {
+      "file": "native1313-input-route.jsonl",
+      "sha256": "c833fa2ec0f2c56d8333057391d33933180574a82aa62ed2ba1e4efb21e77a62"
+    },
+    {
+      "file": "native1313-journey.jsonl",
+      "sha256": "a59619b3a329be9244b905b017196900961973bc3105eb84dc1335533c61439b"
+    },
+    {
+      "file": "native1313-threat-2.jsonl",
+      "sha256": "a80df1c7f3347e51e5b7b93ec6bb04f654e17d3282b0172251cf12bb2a4c8242"
+    },
+    {
+      "file": "native1313-threat-7.jsonl",
+      "sha256": "cb3a520b1392c867b62e889168041182ba5c651b937b2293b1744adaa234a46b"
+    }
+  ],
+  "errors": [
+    "Missing complete native M3 witness marker",
+    "Missing paired native companion input gate",
+    "Generic M3 native journey did not pass",
+    "Native Campaign journey failure",
+    "Native witness explicitly failed",
+    "Missing actual NativeVictoryRendered entry=7",
+    "Missing actual CampaignReturnRendered entry=7",
+    "Actual native read-only witness failed",
+    "Actual wrapper/native exits not both0"
+  ],
+  "fullJourneyStrictTouchAudit": false,
+  "disclosedQA": "Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.",
+  "playerReady": false
+}

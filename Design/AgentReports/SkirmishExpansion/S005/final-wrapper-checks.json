@@ -1,0 +1,34 @@
+[
+  {
+    "log": "tests-048-placement.log",
+    "requiredMarker": "[PlayerPlacementLocalization] result=Passed",
+    "markerPresent": true,
+    "completionReceipt": "0",
+    "passed": true,
+    "logSha256": "09ac5694a94c04c2001298512bd952088eb74b7dbe87401ae5df9918cf6b9200"
+  },
+  {
+    "log": "tests-051-runway-alignment.log",
+    "requiredMarker": "[TransportPlaneRunwayAlignmentValidation] result=Passed tests=4",
+    "markerPresent": true,
+    "completionReceipt": "0",
+    "passed": true,
+    "logSha256": "2897bb248e3322f799311c0c4c66a44d1e72b7d4d1aa335f6591dac75d6f3feb"
+  },
+  {
+    "log": "native-053-manual-fa-tray.log",
+    "requiredMarker": "[S004ManualNative] result=Passed outcome=Victory",
+    "markerPresent": true,
+    "completionReceipt": "0",
+    "passed": true,
+    "logSha256": "b4d6867a46eb285be1c09f51085073dca8965c05987885ca54ca213c382e12cb"
+  },
+  {
+    "log": "native-054-aria-en-final.log",
+    "requiredMarker": "[SkirmishS002AriaRun] appended=1 countedWin=1 error=",
+    "markerPresent": true,
+    "completionReceipt": "0",
+    "passed": true,
+    "logSha256": "99df127c1b24db0751557ef228f5366fbf70c465fb0777a2b9b6db02c4213c70"
+  }
+]

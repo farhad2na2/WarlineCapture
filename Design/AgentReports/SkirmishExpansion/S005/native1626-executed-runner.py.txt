@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+"""Single-use S005 native1626 run. Checked macOS wrapper only; fail closed."""
+import argparse
+import hashlib
+import json
+import pathlib
+import re
+import runpy
+import subprocess
+import sys
+
+HERE = pathlib.Path(__file__).resolve().parent
+ROOT = pathlib.Path('/Volumes/T7/Projects/WarlineCapture')
+REPORT = ROOT / 'Design/AgentReports/SkirmishExpansion/S005'
+STATE = REPORT / 'TECHNICAL_READINESS_CURRENT.json'
+PIN = '0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc'
+FIXTURE = HERE / 'S005NormalNorthFlank1626Observer.cs'
+OBS = REPORT / 'native1626-normal-paid-north-flank-observation.jsonl'
+LOG = REPORT / 'native-1626-normal-paid-north-flank-fa-seed155926.log'
+RESULT = REPORT / 'native1626-normal-paid-north-flank-result.json'
+METHOD = 'S005NormalNorthFlank1626Observer.RunValidation'
+CALLBACK_EMPTY = 'EditorApplication.update:|EditorApplication.delayCall:|Canvas.willRenderCanvases:|Application.s_LogCallbackHandler:|AriaCommandEvidence.Recorded:'
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def read(path):
+    return json.loads(path.read_text())
+
+def new_json(path, value):
+    with path.open('x') as output:
+        output.write(json.dumps(value, indent=2) + '\n')
+
+def rows(path):
+    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+
+def verify_seals():
+    candidate = read(HERE / 'CANDIDATE_SHA256.json')
+    package = read(HERE / 'PACKAGE_SHA256.json')
+    if candidate.get('sourcePin') != PIN or package.get('sourcePin') != PIN:
+        raise RuntimeError('Candidate/package source pin differs')
+    for seal in (candidate, package):
+        for name, expected in seal['fileSha256'].items():
+            if sha(HERE / name) != expected:
+                raise RuntimeError('Sealed fixture/qualifier/dispatch helper changed: ' + name)
+
+def native_idle(label):
+    command = ['rtk', 'proxy', 'unity', 'command', 'run_script', '--file', str(HERE / 'S005NormalRecoveryIdle1626.cs'), '--entry', 'S005NormalRecoveryIdle1626.Run', '--timeout_ms', '30000', '--project-path', str(ROOT), '--format', 'json']
+    path = REPORT / ('native1626-' + label + '-idle.json')
+    try:
+        process = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=90)
+    except subprocess.TimeoutExpired as error:
+        new_json(path.with_suffix('.timeout.json'), {'result': 'FailedTimeout', 'step': label, 'outerTimeoutSeconds': 90})
+        raise RuntimeError('Connected native idle probe timed out: ' + label) from error
+    with path.open('x') as output:
+        output.write(process.stdout)
+    if process.returncode:
+        raise RuntimeError('Connected native idle probe failed: ' + label)
+    envelope = json.loads(process.stdout)
+    data = envelope.get('data') or {}
+    result = data.get('result') or {}
+    if envelope.get('success') is not True or data.get('command') != 'run_script' or data.get('target', {}).get('projectPath') != str(ROOT) or not isinstance(result, dict) or result.get('success') is not True or result.get('result') != 'False|False|False|False|False|' + str(ROOT / 'Assets'):
+        raise RuntimeError('T7 Editor or native owner is not idle: ' + label)
+
+def editor_instance(label):
+    command = ['rtk', 'proxy', 'unity', 'status', '--project-path', str(ROOT), '--format', 'json']
+    path = REPORT / ('native1626-' + label + '-editor-instance.json')
+    try:
+        process = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=30)
+    except subprocess.TimeoutExpired as error:
+        new_json(path.with_suffix('.timeout.json'), {'result': 'FailedTimeout', 'step': label, 'outerTimeoutSeconds': 30})
+        raise RuntimeError('T7 Editor instance witness timed out: ' + label) from error
+    with path.open('x') as output:
+        output.write(process.stdout)
+    if process.returncode:
+        raise RuntimeError('T7 Editor instance witness failed: ' + label)
+    envelope = json.loads(process.stdout)
+    instances = (envelope.get('data') or {}).get('instances') or []
+    if envelope.get('success') is not True or len(instances) != 1 or instances[0].get('project') != str(ROOT) or instances[0].get('state') != 'ready' or not isinstance(instances[0].get('pid'), int) or instances[0]['pid'] <= 0:
+        raise RuntimeError('Exactly one ready T7 Editor required: ' + label)
+    return instances[0]['pid']
+
+def live_observer_before_dispatch(expected_mvid, expected_name):
+    command = ['rtk', 'proxy', 'unity', 'command', 'run_script', '--file', str(HERE / 'live-observer-presence1626.cs'), '--entry', 'S005LiveObserverPresence1626.Run', '--timeout_ms', '30000', '--project-path', str(ROOT), '--format', 'json']
+    path = REPORT / 'native1626-pre-dispatch-loaded-observer.json'
+    try:
+        process = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=90)
+    except subprocess.TimeoutExpired as error:
+        new_json(path.with_suffix('.timeout.json'), {'result': 'FailedTimeout', 'step': 'live-observer-before-dispatch', 'outerTimeoutSeconds': 90})
+        raise RuntimeError('Live observer MVID witness timed out before dispatch') from error
+    with path.open('x') as output:
+        output.write(process.stdout)
+    if process.returncode:
+        raise RuntimeError('Live observer MVID witness command failed before dispatch')
+    envelope = json.loads(process.stdout)
+    data = envelope.get('data') or {}
+    nested = data.get('result') or {}
+    if envelope.get('success') is not True or data.get('command') != 'run_script' or data.get('target', {}).get('projectPath') != str(ROOT) or not isinstance(nested, dict) or nested.get('success') is not True or envelope.get('errors'):
+        raise RuntimeError('Live observer MVID witness outer result/target failed')
+    witness = json.loads(nested.get('result') or '{}')
+    if (witness.get('observerType') != 'S005NormalNorthFlank1626Observer' or
+            witness.get('validationMember') != 'RunValidation' or
+            witness.get('assemblyName') != expected_name or witness.get('assemblyMvid') != expected_mvid or
+            witness.get('resolverFirst') is not True or witness.get('loadedMatchingTypeCount', 0) < 1 or
+            witness.get('editorIdle') is not True or witness.get('gameplayStarted') is not False):
+        raise RuntimeError('Resolver-first live loaded observer differs from SHA-backed release')
+    return path
+
+def editor_ready_before_dispatch():
+    command = ['rtk', 'proxy', 'unity', 'command', 'editor_status', '--project-path', str(ROOT), '--format', 'json']
+    path = REPORT / 'native1626-pre-dispatch-editor-status.json'
+    try:
+        process = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=90)
+    except subprocess.TimeoutExpired as error:
+        new_json(path.with_suffix('.timeout.json'), {'result': 'FailedTimeout', 'step': 'editor-status', 'outerTimeoutSeconds': 90})
+        raise RuntimeError('Connected Editor status timed out before dispatch') from error
+    with path.open('x') as output:
+        output.write(process.stdout)
+    if process.returncode:
+        raise RuntimeError('Connected Editor status failed before dispatch')
+    envelope = json.loads(process.stdout)
+    data = envelope.get('data') or {}
+    status = data.get('result') or {}
+    if (envelope.get('success') is not True or data.get('command') != 'editor_status' or
+            data.get('target', {}).get('projectPath') != str(ROOT) or
+            status.get('status') != 'ready' or status.get('playMode') != 'stopped' or
+            status.get('compiling') or status.get('domainReloadInProgress') or envelope.get('errors')):
+        raise RuntimeError('Editor reload, compile, or Play mode active before dispatch')
+    return path
+
+def manifest(prefix):
+    subprocess.run(['rtk', 'proxy', 'python3', str(HERE / 'source-manifest-external1626.py'), prefix, str(REPORT)], cwd=ROOT, check=True, timeout=120)
+    fingerprint = read(REPORT / (prefix + '-independent-fingerprint.json'))
+    source = read(REPORT / (prefix + '-source-manifest.json'))
+    if fingerprint.get('sourceHash') != PIN or source != read(HERE / 'native1626-review-source-manifest.json'):
+        raise RuntimeError('Complete T7 source/material source pin diverged: ' + prefix)
+    return fingerprint, source
+
+def post_callback():
+    command = ['rtk', 'proxy', 'unity', 'command', 'run_script', '--file', str(HERE / 'callback-audit1626.cs'), '--entry', 'S005CallbackAudit1626.Run', '--timeout_ms', '30000', '--project-path', str(ROOT), '--format', 'json']
+    path = REPORT / 'native1626-post-run-callback-audit.json'
+    try:
+        process = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=90)
+    except subprocess.TimeoutExpired as error:
+        new_json(path.with_suffix('.timeout.json'), {'result': 'FailedTimeout', 'step': 'post-run-callback-audit', 'outerTimeoutSeconds': 90})
+        raise RuntimeError('Post-run callback census timed out') from error
+    with path.open('x') as output:
+        output.write(process.stdout)
+    if process.returncode:
+        raise RuntimeError('Post-run callback census command failed')
+    envelope = json.loads(process.stdout)
+    data = envelope.get('data') or {}
+    result = data.get('result') or {}
+    if envelope.get('success') is not True or data.get('target', {}).get('projectPath') != str(ROOT) or not isinstance(result, dict) or result.get('success') is not True or result.get('result') != CALLBACK_EMPTY:
+        raise RuntimeError('S005 external callbacks remain after native run')
+
+def qualify(log_text, wrapper_exit, native_exit, source_unchanged):
+    errors = []
+    if wrapper_exit != 0 or native_exit != 0:
+        errors.append('Checked wrapper/native bridge exit was nonzero')
+    if not source_unchanged:
+        errors.append('Complete source/material hash changed during run')
+    markers = [
+        '[ExistingEditorValidation] result=Passed executeMethod=' + METHOD,
+        '[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0',
+        '[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S005,Launch seedFixture=155926 nativeSessionObserved=1',
+        '[S005RoleLifecycle] phase=PaidDelivery role=ApcHeavy',
+        '[S004ManualReceiptAudit] result=Passed measured=1',
+        '[S004ManualNative] result=Passed outcome=Victory',
+        '[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU',
+        '[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU',
+        '[SkirmishValidationExit] result=Requested code=0',
+    ]
+    errors.extend('Missing native marker: ' + marker for marker in markers if marker not in log_text)
+    if re.search(r'error CS\d+|Compilation failed|\[S005NormalNorthFlank1626\] observerFailure=1', log_text):
+        errors.append('Native compile/observer failure appeared in actual log')
+    attempt = None
+    proof = None
+    try:
+        observer = rows(OBS)
+        bindings = [r for r in observer if r.get('stage') == 'ActualResolvedBinding']
+        if len(bindings) != 1:
+            raise ValueError('Exactly one actual native S005 binding required')
+        binding = bindings[0]
+        expected = {'catalog': 'S005', 'definition': 'skirmish.s005', 'seed': 155926, 'locale': 'fa-IR', 'size': 'Standard', 'difficulty': 'Regular', 'army': 'CombinedArms', 'start': 'FieldBase', 'objective': 'BaseAssault', 'deadline': 1080, 'sharedFog': True, 'developmentFullVision': False}
+        if any(binding.get(key) != value for key, value in expected.items()):
+            raise ValueError('Actual normal-input S005 setup differs')
+        attempt = binding.get('attempt')
+        if not attempt or not any(r.get('stage') == 'NormalDriverFlags' and r.get('normalDriverFlags') is True for r in observer):
+            raise ValueError('Native normal-input owner/attempt absent')
+        trace = pathlib.Path(binding['tracePath'])
+        if trace.parent != REPORT or not re.fullmatch(r's005-aria-live-155926-fa-[0-9a-f]{32}\.jsonl', trace.name):
+            raise ValueError('Actual native trace path differs')
+        command_rows = rows(pathlib.Path(str(trace) + '.commands.jsonl'))
+        if not command_rows or any(r.get('verified') is not True or not r.get('receipt') for r in command_rows):
+            raise ValueError('Strict native accepted command receipts absent')
+        sys.path.insert(0, str(HERE))
+        qualifier = runpy.run_path(str(HERE / 'north-flank-qualifier.py'))['qualify']
+        proof = qualifier(
+            rows(REPORT / 'native1626-north-flank.jsonl'),
+            rows(REPORT / 'native1626-manual-fog-fallback.jsonl'),
+            command_rows,
+            rows(REPORT / 'native1626-direct-attack-actors.jsonl'),
+            rows(REPORT / 'native1626-stop-frames.jsonl'),
+            rows(REPORT / 'native1626-scan-lifecycle.jsonl'),
+            observer,
+            attempt,
+        )
+        if proof.get('qualified') is not True:
+            raise ValueError('Strict all-five-waypoint north proof did not qualify')
+    except (OSError, KeyError, ValueError, TypeError, IndexError) as error:
+        errors.append('Strict normal-input north-flank evidence: ' + str(error))
+    return errors, attempt, proof
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--one-run-reviewed', action='store_true')
+    parser.add_argument('--heavy-lane-owner', choices=['main1626'], required=True)
+    args = parser.parse_args()
+    if not args.one_run_reviewed or not (HERE / 'DISPATCH_DISABLED').is_file():
+        raise RuntimeError('Immutable dispatch guard absent or explicit main1626 review token missing')
+    release = read(HERE / 'RELEASE1626.json')
+    if release.get('result') != 'Released1626ConnectedProof' or release.get('sourceHash') != PIN or release.get('candidateSha256') != sha(FIXTURE) or release.get('runnerSha256') != sha(pathlib.Path(__file__)) or release.get('packageSealSha256') != sha(HERE / 'PACKAGE_SHA256.json'):
+        raise RuntimeError('Exact connected independent release receipt absent')
+    verify_seals()
+    connected_file = release.get('connectedReviewFile')
+    if not isinstance(connected_file, str) or not connected_file.startswith('CONNECTED_REVIEW1626-') or not connected_file.endswith('.json') or '/' in connected_file or '\\' in connected_file:
+        raise RuntimeError('Released connected review filename is not local native1626 proof')
+    connected_path = HERE / connected_file
+    connected = read(connected_path)
+    if release.get('connectedReviewSha256') != sha(connected_path) or connected.get('result') != 'PassedConnectedCompileLoadReview1626':
+        raise RuntimeError('Connected compile/load proof changed after release')
+    release_review = runpy.run_path(str(HERE / 'release-review1626.py'))['review']
+    if release_review(connected_file) != release:
+        raise RuntimeError('Current independent release review differs from immutable receipt')
+    permit = read(HERE / 'ONE_RUN_PERMIT1626.json')
+    if permit.get('result') != 'Permitted1626OneRun' or permit.get('owner') != 'main1626' or permit.get('sourceHash') != PIN or permit.get('releaseSha256') != sha(HERE / 'RELEASE1626.json') or permit.get('packageSealSha256') != sha(HERE / 'PACKAGE_SHA256.json') or permit.get('candidateSha256') != sha(FIXTURE):
+        raise RuntimeError('Separate exact one-run permit absent or changed')
+    if read(STATE).get('activeRun') is not None:
+        raise RuntimeError('T7 heavy validation lane already owned')
+    if any(REPORT.glob('native1626-*')) or LOG.exists() or RESULT.exists():
+        raise RuntimeError('Preserve native1626 output collision; no second dispatch')
+    pre, pre_source = manifest('native1626-pre-dispatch')
+    native_idle('pre-dispatch')
+    editor_ready_before_dispatch()
+    if editor_instance('pre-dispatch') != release.get('editorPid') or release.get('editorPid') != connected.get('editorPid') or release.get('observerAssemblyMvid') != (connected.get('loadedObserver') or {}).get('assemblyMvid') or release.get('observerAssemblyName') != (connected.get('loadedObserver') or {}).get('assemblyName'):
+        raise RuntimeError('Dispatch Editor PID or loaded observer MVID differs from connected release')
+    live_witness_path = live_observer_before_dispatch(release['observerAssemblyMvid'], release['observerAssemblyName'])
+    if editor_instance('pre-dispatch-after-witness') != release['editorPid']:
+        raise RuntimeError('Editor PID changed after resolver-first MVID witness')
+    state = read(STATE)
+    if state.get('activeRun') is not None:
+        raise RuntimeError('T7 heavy validation ownership changed before dispatch')
+    with (REPORT / 'native1626-executed-observer.cs.txt').open('xb') as output:
+        output.write(FIXTURE.read_bytes())
+    with (REPORT / 'native1626-executed-runner.py.txt').open('xb') as output:
+        output.write(pathlib.Path(__file__).read_bytes())
+    state.update(activeRun='native1626', activeLog=LOG.name, activeScope=METHOD, activePreManifest='native1626-pre-dispatch-source-manifest.json')
+    STATE.write_text(json.dumps(state, indent=2) + '\n')
+    command = ['rtk', 'proxy', 'Tools/CI/invoke_unity_macos.sh', '--project', str(ROOT), '--reuse', '--timeout', '1800', '--log', str(LOG), '--', '-executeMethod', METHOD]
+    wrapper = subprocess.run(command, cwd=ROOT).returncode
+    with (REPORT / (LOG.name + '.wrapper-exit')).open('x') as output:
+        output.write(str(wrapper) + '\n')
+    receipt = REPORT / (LOG.name + '.exit')
+    if not receipt.is_file() or not re.fullmatch(r'-?\d+\s*', receipt.read_text()):
+        raise RuntimeError('Actual wrapper native exit receipt absent; preserve ownership and evidence')
+    native = int(receipt.read_text().strip())
+    native_idle('post-dispatch')
+    if editor_instance('post-dispatch') != release.get('editorPid'):
+        raise RuntimeError('T7 Editor process changed during native1626 run; preserve ownership/evidence')
+    post_callback()
+    post, post_source = manifest('native1626-post-dispatch')
+    same = pre_source == post_source and pre.get('sourceHash') == post.get('sourceHash') == PIN
+    verify_seals()
+    if release_review(connected_file) != release:
+        raise RuntimeError('SHA-backed release proof changed before live qualification')
+    errors, attempt, north = qualify(LOG.read_text(errors='replace'), wrapper, native, same)
+    result = {'result': 'Passed' if not errors else 'Failed', 'sourceHash': PIN, 'sourceUnchanged': same, 'candidateSha256': sha(FIXTURE), 'executedRunnerSha256': sha(pathlib.Path(__file__)), 'preDispatchLiveObserverWitnessSha256': sha(live_witness_path), 'wrapperExit': wrapper, 'nativeExit': native, 'normalInput': True, 'northFlankProof': north, 'attempt': attempt, 'errors': errors, 'playerReady': False, 'realPlayerDeviceAcceptance': False}
+    new_json(RESULT, result)
+    state = read(STATE)
+    if state.get('activeRun') != 'native1626':
+        raise RuntimeError('T7 heavy validation ownership changed; preserve state')
+    state.update(activeRun=None, activeLog=None, activeScope=None, activePreManifest=None, latestNormalManual1626=RESULT.name)
+    STATE.write_text(json.dumps(state, indent=2) + '\n')
+    print(json.dumps({'result': result['result'], 'errors': errors, 'northFlankProof': north, 'playerReady': False}), flush=True)
+    return 0 if not errors else 2
+
+if __name__ == '__main__':
+    sys.exit(main())

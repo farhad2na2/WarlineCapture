@@ -1,0 +1,15 @@
+{
+  "result": "Failed",
+  "sourceHash": "f3101ec1099eb38268edc27adb398bff3a78d1a0383b10615a6a960eee785394",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1118-integrated-pre-source-manifest.json",
+  "postSourceManifest": "final-1118-integrated-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "log": "native-1118-integrated-technical.log",
+  "requiredPassMarker": "[S005IntegratedTechnical1118] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+  "requiredPassMarkerPresent": false,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

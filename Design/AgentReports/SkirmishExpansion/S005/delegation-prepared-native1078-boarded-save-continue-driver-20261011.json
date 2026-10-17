@@ -1,0 +1,111 @@
+{
+  "result": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005BoardedRecovery1078.cs",
+  "fixtureSha256": "0eb5b7511bb7c9de31aeea08ed63bfc67c97044c86b31fe9ab5b6ee141de7dbf",
+  "runner": "/private/tmp/s005-run-boarded-recovery-1078.py",
+  "runnerSha256": "12020b54d8d2da52116b6a8350cdc2d9685d7c3d2db594db7def76b093aa0f49",
+  "pythonSyntax": "Passed",
+  "sourceEditsOrUnityCallsByReviewer": false,
+  "defaultCases": [
+    "ApcFast",
+    "TransportHeli"
+  ],
+  "selectableCases": {
+    "grouped": "RunGroundAndVtolValidation",
+    "fast": "RunFastApcValidation",
+    "armored": "RunArmoredApcValidation",
+    "vtol": "RunTransportHeliValidation"
+  },
+  "protocol": "Actual1072 paid whole Rifle/native carrier Board handoff -> presented Pause -> paused native Save&Exit (existing RestartButton semantic binding) -> saved S005 native setup Continue via stable presented LaunchMissionButton Touch -> actual native checkpoint recovery complete -> original battlefield entities gone -> resolve same-attempt paid carrier/passengers by exact stable IDs and native receipt IDs -> hidden links, paid receipts and all8 capacity counters preserved -> loaded TouchMove -> native PassengerChip/ExitAll -> actual unlink/visual scale restore/native capacity/idempotency cleanup.",
+  "isolatedSetup": [
+    "Same disclosed actual paid native queue funding/readiness/opening retirement/enemyStrategy suppression as1072",
+    "Own WARLINE_VALIDATION_SAVE_ROOT temporarily points to unique native1078-player-save-root and restores after owned Play cleanup; no existing player save is overwritten. Save content written only by actual native player Save UI.",
+    "Actual native saved checkpoint copied unchanged to per-carrier evidence archive before Continue; snapshot fields never written by fixture",
+    "Per-recovery180s watchdog; fixture900s and wrapper1020s. Gameplay match clock, budgets, caps, native Save/Continue implementation unchanged."
+  ],
+  "nativeChecks": [
+    "Complete paid passenger cohort remains hidden/linked at paused snapshot",
+    "Paused clock unchanged while pressing native Save control",
+    "Persisted checkpoint SessionId matches attempt, actual setup Continue touch stable0.5s",
+    "RecoveryRecord.Complete read-only reflection; fresh same attempt/native clock/normal speed",
+    "Every captured old battlefield entity absent after recovery",
+    "Carrier exact StableObjectId/native role/reservation retained; passenger exact stable IDs/role/reservation retained",
+    "Carrier and passenger native Live receipts preserved without duplication",
+    "Actual native passenger buffer exactly restored cohort; native hidden visual buffer and scales observed",
+    "Faction/fixed caps plus all8 live/reserved counters and NextReservationId equal pre-save paid pair baseline",
+    "Read-only native checkpoint archives and current-source/log/fixture/Touch evidence hashes preserved"
+  ],
+  "reflectionLimits": "Only reads internal TryRead checkpoint descriptor and actual RecoveryRecord.Complete through reflection. Never invokes TryResume/LaunchMatch/recovery runner or edits checkpoint/actor fields. All capture, exit and continue operations are real native Touch controls.",
+  "capacityStages": [
+    "BeforeBoard",
+    "AfterBoard",
+    "PausedSnapshot",
+    "RecoveredBoarded",
+    "AfterLoadedMove",
+    "AfterUnload",
+    "AfterPairDeath"
+  ],
+  "sharedGroundPathApplicability": {
+    "status": "Static shared-path applicability, not executed ArmoredAPC recovery certificate",
+    "evidence": [
+      "NativeCheckpointParts.cs:155-167 registers generic transport/passenger/cargo/boarding/deploy components;229 registers generic passenger buffer.",
+      "NativeCheckpointRecoveryPreparation.cs:148-153 maps generic hidden passenger scale; NativeCheckpointRecoveryCommit.cs:79-86 applies generic UnitTransportVisualUtility.SetPassengerHidden.",
+      "These inspected paths branch on stored generic component/entity state, not Fast/Armored/Heavy APC names. Prefab/role identity remains separately validated via native catalog."
+    ],
+    "conclusion": "A passed current-source FastAPC case qualifies this exercised shared ground checkpoint path. ExistingHeavyAPC931 is historical supporting evidence. ArmoredAPC still needs its current1072 paid Board/Move/Unload role effect, and targeted1078 --case armored is available if prefab/component variance remains unresolved. No claim of every ground transport individually executed."
+  },
+  "airApplicability": {
+    "transportHeli": "Prepared default VTOL case, native run pending; actual boarding/hidden recovery/unload may reveal air-specific gate.",
+    "transportPlane": "Untested runway/door/airdrop path remains pending; cannot inherit VTOL or generic-ground proof."
+  },
+  "sharedPathSourceHashes": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "sha256": "a821bac4c57aea8eb2f2ad917833a7d6b5cf89800ba6f5982273b9528393189c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs",
+      "sha256": "2622f5bb0c0b033016ce466179e1400bd3ba6f9c8f5c9c5d3754be8216673cc4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryCommit.cs",
+      "sha256": "6bf12de083df45f9f5613405c40bd9ad4397d4f2c052d438bf84c635806b8a00"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs",
+      "sha256": "cf8e06fab89b9e7a7859205c8577deb4cefc0985943a088bf15bcc32140c9078"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs",
+      "sha256": "3181c90294fe3b5a2bfe1448e70f8b6968de8565a0a297fda96822828314110e"
+    }
+  ],
+  "neverInjected": [
+    "Snapshotfields or native resume request",
+    "Passenger links/buffers",
+    "Own actor transforms/selectiontags/orders",
+    "Combat results/shots/damage",
+    "Physical maps, prices/caps/gameplay budgets"
+  ],
+  "dryRunCompileInstruction": "Parent while main idle: rtk proxy unity command run_script --file /private/tmp/S005BoardedRecovery1078.cs --entry S005BoardedRecovery1078.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "launchInstruction": "Root after heavy-lane release and compile review: rtk proxy python3 /private/tmp/s005-run-boarded-recovery-1078.py <CURRENT-PRE-source-manifest.json> --heavy-lane-owner main1078 --case grouped",
+  "limitations": [
+    "Not compiled, loaded or executed by reviewer; private reflection/UI bindings require parent dry compile/native verification",
+    "Preserves prior1072 and931 proofs as scoped/historical; no22 independent full journeys required",
+    "Native blocker/navigation/VTOL boarding or unload failure is preserved, no forced placement/link fallback",
+    "No whole normal ARIA/result/return, combat survival or real player/device certificate"
+  ],
+  "technicallyReady": false,
+  "playerReady": false,
+  "validation": "Python AST passed; original dry compile CS0122 preserved, revised C# dry compile/load/execution pending",
+  "compileCorrection": {
+    "cause": "SkirmishLaunchProjection is internal and inaccessible to external disposable compilation assembly. Original compile1078-boarded-recovery-dry-run.json preserved.",
+    "fix": "Read-only reflection bridge from public SkirmishExpandedLaunchProjection assembly calls exact unchanged TryGet, ReadMatchElapsedSeconds and IsSimulationActive. No launch/restore/write calls or production visibility changes. Genuine Save and Continue still presented native Touch.",
+    "notLoaded": true,
+    "touchOutputCorrection": "Fixture and runner now both native1078-boarded-recovery.touch.jsonl; prior1072-derived fixture path mismatched runner, caught before load."
+  },
+  "latestVisualContractReport": "delegation-prepared-native1097-and1078-visual-contract-20261011.json",
+  "latestFixtureSha256": "8c85697451fa60fee129798cc1b078b5616ae11090b015719ad1e301c432b85a",
+  "latestRunnerSha256": "d4d2000e6f8fbbecf5324cdd3a8e0271d00d31ecf78e271e62fd6dfaa836effe",
+  "priorPreparedBytesPreserved": "/private/tmp/S005BoardedRecovery1078-pre-scale-contract-20261011.cs"
+}

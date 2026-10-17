@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "sourceHash": "c8a9875ba4f29b7e8b936f78cc52fbf036d01c87ab92276c8e25dcbb987f8146",
+  "log": "native-202-combat-save-resume-en.log",
+  "logSha256": "c30a1f4780e27738e9d728e06ea2bd18fe0290ffabfe6107d9aa14d064bc176c",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "battleObserved": {
+    "enemyBaseHp": 778,
+    "elapsed": 137.6823,
+    "nativeAttackReceipts": 15
+  },
+  "playerSaveExitContinueObserved": true,
+  "failure": "Probe gesture count omitted earlier native driver when checking the total; overall acceptance failed. Corrected probe retains counts across handovers and exact audit equality.",
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false
+}

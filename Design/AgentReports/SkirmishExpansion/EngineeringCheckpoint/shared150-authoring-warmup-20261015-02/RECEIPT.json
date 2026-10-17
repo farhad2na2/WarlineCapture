@@ -1,0 +1,9 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/actual-native-evidence.zip",
+  "sha256": "8a2b15db5d5cdb05ae95e5c6b0bd394ee553bd7b76074096640eadfa5f40a1b1",
+  "wrapperExit": 0,
+  "engineeringChecksPassed": true,
+  "cameraAccepted": false,
+  "normalMissionReady": false,
+  "interpretation": "All19shared150/authoring/warmup markers passed; complete post-wrapper source/DLL candidate preserved"
+}

@@ -1,0 +1,20 @@
+{
+  "status": "PassedBoundedExactByteReview",
+  "package": "/private/tmp/s005-fighter-flight1401",
+  "sourceContracts": 258,
+  "offlineControls": 23,
+  "executableChanges": [
+    "Only unsupported intermediateleg1heading assertion removed infixture and qualifier."
+  ],
+  "unchangedGates": [
+    "Final32m",
+    "Finalforwarddot0.88",
+    "Advancingtrajectory",
+    "ActualHold",
+    "Pairednativecontacts/receipts",
+    "Naturalvisibility",
+    "Actualnativedamage"
+  ],
+  "compilerAndLoadedAssemblyFreshnessQualified": false,
+  "nativePending": true
+}

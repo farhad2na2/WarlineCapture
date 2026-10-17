@@ -1,0 +1,657 @@
+{
+  "base": "f9f436c53d145091bcb1b81f2496309951a73166",
+  "scope": "Exact40 camera production/prefab/test target adoption list; root alone imports/commits",
+  "closure": "Design/AgentReports/SkirmishExpansion/S005/aircraft-framing-inventory/CAMERA_PRODUCTION_DEPENDENCY_CLOSURE_20261015.json",
+  "closure_sha256": "ca3cda35930066eaed39a6d38d961a1ceceecfcd909b018dfc43f59431ab0127",
+  "targets": [
+    {
+      "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab",
+      "source": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab",
+      "sha256": "a001382a66ffb83b39e85b19010ee822e945f5c1c42c56b3821d421512c380f4",
+      "base_sha256": "5645a3ccbd98c1641dd52b475b367abd1728671128df149bd1e87ed92889274e",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab.meta",
+        "sha256": "8e916f002face0a602a2150d68f4acb12b63165fb65b6c6ce095534a31a85ff7",
+        "base_sha256": "44bf83e8fbab8955855fee74ad7932770651ff80faadab9391292df1999b572f",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab",
+      "source": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab",
+      "sha256": "d4b0050eed247b25e1a79c25ba00419bfb6ea93d3d418d165a0c5d4b7cb6d7f7",
+      "base_sha256": "01b7495be94a04a67443129b0e1ea2e3f35a023e3cc123cb4dd06031c87211dc",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab.meta",
+        "sha256": "688088ed98e895cc20cc7e26549b7ef6e9f99137ff2c1665e54d76bfbb3246b1",
+        "base_sha256": "5407a2a51c77969065f2085be7056130cbcf3731c0da0862b768facef73f2509",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
+      "source": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
+      "sha256": "efc514a45864a1bdcb44c33861aef98a6c6b192747cc48ecff5e9f99d18cca68",
+      "base_sha256": "2bac7b72c0670c299dbf7a67632c18a9d6c898cbf4bd7ec46e50d3525a707d14",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs.meta",
+        "sha256": "3881e34b64e313d487eb0948e050fa3b809bf8241c055efd323a76367a021bdc",
+        "base_sha256": "f7d84e8cd1e1ad369125cf46867468cdc8f7b3edc7e9f2196207d348a1ec0630",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishAircraftRotorGeometryConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishAircraftRotorGeometryConfig.cs.txt",
+      "sha256": "d5cad85b96d692654c1528c64d32049a1c20409f2e5f0220a3b1b4207fa14631",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishAircraftRotorGeometryConfig.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishCanonicalAircraftGeometryConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishCanonicalAircraftGeometryConfig.cs.txt",
+      "sha256": "971e8c3aeeaa01225d90d73beb2173cf0fd5e82c8b8346d067adfa7183bcaae7",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishCanonicalAircraftGeometryConfig.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRigidAircraftGeometryConfig.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishRigidAircraftGeometryConfig.cs.txt",
+      "sha256": "52e5a72b302769c94e0aeb01fa92abdbf6856120ea67a006ab805c65ccb3505c",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRigidAircraftGeometryConfig.cs.meta",
+        "sha256": "f2619d78b8acbcaa0bb0a118ff426afb56449cc030e8d642c575fb66bdeb51a3",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRotorGeometryAuthoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishAircraftRotorGeometryAuthoring.cs.txt",
+      "sha256": "103fa980f1407772094dddbe9d0c5a078149e53401bfaec85effd5a8b6d1a3ca",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishAircraftRotorGeometryAuthoring.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCanonicalAircraftGeometryAuthoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishCanonicalAircraftGeometryAuthoring.cs.txt",
+      "sha256": "9e04015193c67e295980f01ed38dd43e0081d6f4606625da28e28e5c3eb51079",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCanonicalAircraftGeometryAuthoring.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishRigidAircraftGeometryAuthoring.cs",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishRigidAircraftGeometryAuthoring.cs",
+      "sha256": "ffd76952eda28c9552df165bbd4fd3b0c0dc3fcec0f3a552887f878bb7b410c7",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishRigidAircraftGeometryAuthoring.cs.meta",
+        "sha256": "1e1735bd7d9ec6fa854d566f593e5b8c50f8cf09a31e245f9b2c33b6af996e7b",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/CanonicalAircraftVisibleGeometryPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/CanonicalAircraftVisibleGeometryPresentation.cs.txt",
+      "sha256": "8d4b8f1ed86879d96894f3c432880a1364a99bd44d3113db284c108cbf1ecabd",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/CanonicalAircraftVisibleGeometryPresentation.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderAircraftVisibleGeometryPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/IRenderAircraftVisibleGeometryPresentation.cs.txt",
+      "sha256": "1054036e10260f8c9d2903becba7185af914e66bd751f848d37da5b486d469f1",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderAircraftVisibleGeometryPresentation.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderVisibleGeometryPresentation.cs",
+      "source": "Assets/Game/Scripts/Rendering/Contracts/IRenderVisibleGeometryPresentation.cs",
+      "sha256": "cfa2b953a3fcb51f17b35a2e158b63a03d6df4554afddf1d9d1f4757b547d91b",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/Contracts/IRenderVisibleGeometryPresentation.cs.meta",
+        "sha256": "bafeb3714e3416e1110beb2e2beeaddab3a2ba800d694844a969594c384a4ff5",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/Contracts/SkirmishRigidRotorSweep.cs",
+      "source": "Assets/Game/Scripts/Rendering/Contracts/SkirmishRigidRotorSweep.cs",
+      "sha256": "a5f75fa8d32dbf701fa375383555b2c91af1c4756adab87d23b6e7434b0a64eb",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/Contracts/SkirmishRigidRotorSweep.cs.meta",
+        "sha256": "27735b48965c85098a0d840ec5375d094fb35030269dd3dc6b55586bf2f1b09b",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RenderBoundsPresentation.cs.txt",
+      "sha256": "82bf379f5bb3e5ae55705f608c3e4a26ed915afffeec7488c79b9448cecfb5a4",
+      "base_sha256": "696dfa4b7264d5f7ccfa151837251dd66086a0e0c56f9de076c51979f8fdd761",
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs.meta",
+        "sha256": "6a2afb72aaf3609e2f3af1c7f5e7c4ac249cdde925fd662402b3d5991432f415",
+        "base_sha256": "6a2afb72aaf3609e2f3af1c7f5e7c4ac249cdde925fd662402b3d5991432f415",
+        "disposition": "Already on stable main; preserve"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/RigidAircraftVisibleGeometryPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RigidAircraftVisibleGeometryPresentation.cs.txt",
+      "sha256": "d117975ab0f8d90ca1829475e85a74c52a06d8257e214d4d93706a3b28512737",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/RigidAircraftVisibleGeometryPresentation.cs.meta",
+        "sha256": "872e96f7dcdec96d79302fa67a911e2e39f39e60710ebb4a6016fd257db7febc",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Rendering/SkirmishAircraftRotorDrawPresentation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishAircraftRotorDrawPresentation.cs.txt",
+      "sha256": "d7ec6949a891ccf55bb00eb0d2c148d1ad76019b2be121b6c38b49fbbc2057b2",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Rendering/SkirmishAircraftRotorDrawPresentation.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishMissionViewProfileApplication.cs.txt",
+      "sha256": "ed8cd00685e06b7d62e0e0afd177a2c1bc9a876251635c53f0556bb15d38db94",
+      "base_sha256": "1a1f08775a9515bc2e2bc308ee787f3634319d1a886358d7c1c418f1a6cbc092",
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs.meta",
+        "sha256": "17972657ad8b91fa5d72662631ec79fae8364d10b6fda9f8800adf1e7a21d0e1",
+        "base_sha256": "0be7d9ac789c2bf43756d5facbccb93c0aab2d8b6ea609a4934b23a981c8a9ac",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPlacementCameraFit.cs",
+      "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPlacementCameraFit.cs",
+      "sha256": "503663a2db8413877b4ced3891c638322064d8e1943a9804251a83777f3d0300",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPlacementCameraFit.cs.meta",
+        "sha256": "e67ac33ebf455be6dfcddddaae6e0ed2a357f0acdd35843954096794e7a4f16d",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs",
+      "sha256": "39281b2082095b95247c967e46051b2424786cb39a7f1aa76f73d9ac6e46b2d7",
+      "base_sha256": "107a1da68d3c1d658beb886f66fe45afd438266a9946ac07927cccf36fb0ffb9",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs.meta",
+        "sha256": "e7b36cc986852c4b14c60a0b3028b2ed628518999f2eec9a86ffbd3698a7b6bd",
+        "base_sha256": "b3960e48abb972d939aea7919ccfdd0800637273740dd1b1aa9fd7116c71212c",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+      "sha256": "38cc9c3666d1ef8e1376a795729d0f91eb451ecd69fe98b5779d3e1defc7e6f4",
+      "base_sha256": "4ee1decf419bb74999782320705c5177ddff4e18d1c439e36f3c5cd6f0011b34",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs.meta",
+        "sha256": "e42bbed7189aa29f1518ba6e0461744ca31dcdb0bbc73a36aea56ca1866da063",
+        "base_sha256": "41e8f8d23b82efdc27b4fd916df7f1dbd439e258a6e6e1e48ef20f10002db3bf",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs",
+      "sha256": "ab91531efbac4d3fec798efd91d8a34464e9cf480e5d773832df7bd15985510a",
+      "base_sha256": "d27b77e6cb7edf40add5769ddc7fecec87a1f4117c6181acdf0a280f286a93b5",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs.meta",
+        "sha256": "3040c2b2065ca3a25c88f5f4186ca8751fc994e312301d51c4bad546930c1e0b",
+        "base_sha256": "3040c2b2065ca3a25c88f5f4186ca8751fc994e312301d51c4bad546930c1e0b",
+        "disposition": "Already on stable main; preserve"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
+      "sha256": "0c4d200f3807042c6b7f3e30c0db545838b87ff9fba1edf8f5be8a999bbb4be6",
+      "base_sha256": "0474b9de3e584c9b7bbb3fabed6cc37719ba33b8ed7eebfeeff66912456254c3",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs.meta",
+        "sha256": "36ff5fb179ef393db2a6cdfbdfe87057645efd1d9ad66ad57072b55a947ae5c6",
+        "base_sha256": "619692648cbfbb21c6892263564a633b2d67079218879dcabb3134b7dbc78a29",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+      "sha256": "219744641ac1de1e5316d4cdc6a3f6236b08e42abad9986f982ba1540a8fe037",
+      "base_sha256": "02d9937e75b212c2ffb15933a3f8b50e3cefad03acef7e9b07b9c4356bb507af",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs.meta",
+        "sha256": "6f97955f67d512de757b1c2e28b08444a34927e243cd5f3a6262cb2d601bbab8",
+        "base_sha256": "d8d61a01769db7e13924f25d509e18c307e15fac4cad313558f4c96cf2b7de78",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+      "sha256": "b8b6b9080698cdf2974716179d79b9aabb04bfa502209ed1a5fdb8e2a85c73a7",
+      "base_sha256": "4a726701fb3f4914d731b7b9a67b26d7fdf820423690bf7069a80c99fcf8d71b",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs.meta",
+        "sha256": "0de6a55463a2b1f9824ea06ef6d55a9fa849ed89cbf95aa0725e9dcbfea3ae13",
+        "base_sha256": "59ae99054676e08e90902255fe081a745d212402f47c507ded2e671afdf7bc87",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs",
+      "sha256": "0bf9a1432c40c4702fc1d130aaa2f081fda7021f91f7ee6a60f7bdde68a378bd",
+      "base_sha256": "2126aa193ac4e2cfc8bf4cf15e54fce88667564411fe3a1752f5a2f3b26f80d2",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs.meta",
+        "sha256": "7de0ef030c754ffd26a9d8ce4456819912093c51d40f4bfe1d963891424b9249",
+        "base_sha256": "8cb9f9522c540349bd35241cdfc595cc0e34044c66b186fb3dcfd82f25b757ad",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/FocusedUnitLifecycleCompositionSystemHelper.cs.txt",
+      "sha256": "bfac5e01f50770a755664b71f7bd1bf7117ebd7ee28bda62b74bfaabf97bd525",
+      "base_sha256": "bfd1f1eb8a9d03ebf1d63539b258be028fd73cff53f8293484d149e1384985c6",
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs.meta",
+        "sha256": "f8f82c14e7806177feae5a48baa76a0592b04bba569f5ba297836d95f31a4d10",
+        "base_sha256": "13f5f801c3e45cb573fe4dcdf9ed166a1f5cb33975cec3c756673e2c9def85b0",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RtsCameraRequestSystem.cs.txt",
+      "sha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
+      "base_sha256": "476221241328fa0cc9c5b2f430e77db9e87087bf7fecbba47ee16b5825e0c360",
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs.meta",
+        "sha256": "8aa2f9e092ff4282cb641e5b367669286d2ad821095f59f2e0fe9ea5d305f720",
+        "base_sha256": "347bea5ed0cac3e67d8df0716118b8591f2a2940e623ff25cf225c2fefc3fb52",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/RtsCameraSystem.AircraftFocus.cs.txt",
+      "sha256": "ae0bf6a9081e8d5e7138c7760a6c74bd6d9516f623c14e96357b8d75e7361c38",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs.meta",
+        "sha256": "b45d1935031094e9f3bf3f7b8c6978e5a38d044633b92be87da5a12cb6804560",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs",
+      "source": "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs",
+      "sha256": "0719c8828e4348e708c25dc22905dfb127b335b697574f68941839a2d5f6f3fb",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs.meta",
+        "sha256": "7505514acc37611753ea53ac10273fbcadacb24ecca4f60561a7d074ce4b5c3e",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.AircraftFocus.cs",
+      "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.AircraftFocus.cs",
+      "sha256": "491f5186c984d9c960ade316885d1fee8c021223cc18ddfbd83b5e9d52cca4ba",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.AircraftFocus.cs.meta",
+        "sha256": "aafd1fd954b8c919e0182e09e150821d26547d9104dc89fe04fdb085231a90e7",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Placement.cs",
+      "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Placement.cs",
+      "sha256": "c3bd9824cc96ce9ec916e1409ff0ba29c5f41dc5198c8704b62464b627b961d2",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Placement.cs.meta",
+        "sha256": "d2300aec1e579c3efbb6925b3fd2d6ce6fd484e8c421f6c4eda8260f9cbc7e39",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+      "sha256": "32a45375e1981705f3677f9bb72746acb2b48cd31d3aa69f82b95aa048c3a7c3",
+      "base_sha256": "2152a78cd04e69747a1e312f26f33cb8e11e6ee6149a58c16733bc59f9fa4ec8",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs.meta",
+        "sha256": "2861c3d999c8878b155414bf1fcd774ae0532d26cd1428036bf211aa6646cf66",
+        "base_sha256": "c935b1b7576e8545400c734f699ee6a25b12323dd04cccc5d8d57cd2c2231258",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
+      "source": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
+      "sha256": "26baca41312d4d3d1a5de1318435132b29208244a5cac5b03f9244ac6e94bf23",
+      "base_sha256": "c5ca00797c7fb6fad5a664b1c97e2f41fc88408a2301b436e53aca76b0547ce9",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs.meta",
+        "sha256": "e219ddd019b971fd9c2f5217cc29c3998eb881b02234e2ed3e230fb558fa3325",
+        "base_sha256": "618e366ec778ac09a62b65832d3ef817ec17c63c921323b4dbe4312c6721d8b1",
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs",
+      "source": "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs",
+      "sha256": "63cb986cb6ea782aa07d2bcf010ef3d637d400c36b910d44553d3f16175ccc9e",
+      "base_sha256": "53612dd595a7c26669e02f40220f4805fd2a63df1a1cb75a3ca22c00caf43531",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs.meta",
+        "sha256": "abb1d4c5ac4520a19c3dc11a2bfa1bf8077e383967255804b58326ff83871e37",
+        "base_sha256": "abb1d4c5ac4520a19c3dc11a2bfa1bf8077e383967255804b58326ff83871e37",
+        "disposition": "Already on stable main; preserve"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs",
+      "source": "Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs",
+      "sha256": "f7a9a0a084850fd450106a929188b8db5d8b29b34344d460eb7ccccb26e82b7e",
+      "base_sha256": "85f32d96d15742c6f318daf43c4d7d44bf6d5a2eb5644860411999b21452be6b",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs.meta",
+        "sha256": "5601127d8499b0143387ac59a5b4f32debccbdfd085cdabcbe74713c5b36269d",
+        "base_sha256": "5601127d8499b0143387ac59a5b4f32debccbdfd085cdabcbe74713c5b36269d",
+        "disposition": "Already on stable main; preserve"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusTests.cs",
+      "sha256": "9a1d2fe00834cbfea648fa0533f847cfd98b9cb7605cfc60f6db5a1b57d63171",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusTests.cs.meta",
+        "sha256": "98d9a3d5f592e0c558167e1e743a7138d90953c170aa85f6666fab8273f59652",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredRotorAircraftFramingTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/MeasuredRotorAircraftFramingLodOwnership/SkirmishMeasuredRotorAircraftFramingTests.cs.txt",
+      "sha256": "b497bd6b0a940fb8c50cfaaa74cf04bb0b0f63a0872eedb5c0044c137e88ee8f",
+      "base_sha256": null,
+      "kind": "Finalized15Projection",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredRotorAircraftFramingTests.cs.meta",
+        "sha256": null,
+        "base_sha256": null,
+        "disposition": "Pin root-owned Unity-generated meta after import; no invented GUID"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPlacementCameraFitTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPlacementCameraFitTests.cs",
+      "sha256": "9249b9f0bdf63d3aa84d35cd488d788bc0325fe529fc6762a263c8b4d52b907a",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishPlacementCameraFitTests.cs.meta",
+        "sha256": "894ba9ba90c8e46f6ece0fa59501e0a7c69174fc32f97e347cd467256cd2b479",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidAircraftGeometryTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidAircraftGeometryTests.cs",
+      "sha256": "7f11069ea69e517aaf151076d14e289fdaa9ec019b1268264efb5bf9bdc3351d",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidAircraftGeometryTests.cs.meta",
+        "sha256": "d4ad170397328e48b62e7276c33294033a4d7fe17895258b0c426f9e5588169c",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidRotorSweepTests.cs",
+      "source": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidRotorSweepTests.cs",
+      "sha256": "1987f7d7d9d272404885bc04d6b26279ccbbe75dea57f4327891b8470377938d",
+      "base_sha256": null,
+      "kind": "CurrentRequiredBaselineCandidate",
+      "meta": {
+        "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishRigidRotorSweepTests.cs.meta",
+        "sha256": "fca389f211476c6b9affd5a52a4d30ccf3d2f6a721e0031c84b1b5fef0459d5a",
+        "base_sha256": null,
+        "disposition": "Include this exact existing generated meta"
+      }
+    }
+  ],
+  "target_count": 40,
+  "existing_transport_metadata": {
+    "path": "Assets/Game/Resources/SkirmishRigidAircraftGeometry_Transport.asset",
+    "sha256": "cdb8a88b59c1f85b30803f956b6b0b368519bed3459726c2180b7669f045d99a",
+    "meta_sha256": "688cb44c10b88ffd62541007b249ce77bdf158431794d7b316676cad7f20920b",
+    "meaning": "Existing native-baked three-source/57-draw Transport indexed metadata; no regeneration/change by finalized15.",
+    "base_sha256": null,
+    "meta_base_sha256": null
+  },
+  "isolated_type_proof": "Design/AgentReports/SkirmishExpansion/S005/camera-f9-closure/owning-f44xc3ux/result.json",
+  "isolated_type_proof_sha256": "f5d32590222b6a7bf40fd077eba2dbc41a52f8c3fa2c93f153fda7fb79e3cae9",
+  "diagnostic_harness_not_in40": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GroundOpeningOnly.cs",
+      "base_sha256": null,
+      "current_sha256": "d690980a59308cbb5de121c07c03ab76acc088c5c298c8cf5a7e6776dea6fedd",
+      "adopted_sha256": "d690980a59308cbb5de121c07c03ab76acc088c5c298c8cf5a7e6776dea6fedd",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "finalized15": false,
+      "origin_packages": [
+        {
+          "package": "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json",
+          "package_target_sha256": "d690980a59308cbb5de121c07c03ab76acc088c5c298c8cf5a7e6776dea6fedd"
+        }
+      ],
+      "current_matches_origin_packages": [
+        "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json"
+      ],
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.GroundOpeningOnly.cs.meta",
+        "sha256": "d2269bfceefbca8e1e7e501a7b82b3605b4ae5c5e584aeadef2895773f52bb03"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
+      "base_sha256": "dc148376da3477abfa29eda303d9397c5d7880ce4900f875488c8cc76cf6c5e1",
+      "current_sha256": "1679fdb1289e18bb081d245260c15ce770228c809fb8e3a4f6559c9039e9ab40",
+      "adopted_sha256": "1679fdb1289e18bb081d245260c15ce770228c809fb8e3a4f6559c9039e9ab40",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "finalized15": false,
+      "origin_packages": [
+        {
+          "package": "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json",
+          "package_target_sha256": "1679fdb1289e18bb081d245260c15ce770228c809fb8e3a4f6559c9039e9ab40"
+        }
+      ],
+      "current_matches_origin_packages": [
+        "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json"
+      ],
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs.meta",
+        "sha256": "62400ade4a7ab1f1291449a86ad4afe0c3d868608a83820aff778211242a08cc"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs",
+      "base_sha256": "0ee0682a541b7c0f2a3f1ba38a2f58f6fa5a1eb1f86883883c136bc2871b2ae8",
+      "current_sha256": "272f29ae90f3ae95a79ee4e4f1589875b9aeb8420cfefe6bca2704e251045049",
+      "adopted_sha256": "272f29ae90f3ae95a79ee4e4f1589875b9aeb8420cfefe6bca2704e251045049",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "finalized15": false,
+      "origin_packages": [
+        {
+          "package": "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json",
+          "package_target_sha256": "272f29ae90f3ae95a79ee4e4f1589875b9aeb8420cfefe6bca2704e251045049"
+        }
+      ],
+      "current_matches_origin_packages": [
+        "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json"
+      ],
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs.meta",
+        "sha256": "579a55982f6a54d08c14f6ccdd2517cdf17bfe2e6f435df2c7c23b3d403cffd7"
+      }
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionAircraftFocus.cs",
+      "base_sha256": null,
+      "current_sha256": "accc7e5abb33d56080e47e5767abcc886cc7027cc5a826af1adac82b8e18c20a",
+      "adopted_sha256": "accc7e5abb33d56080e47e5767abcc886cc7027cc5a826af1adac82b8e18c20a",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "finalized15": false,
+      "origin_packages": [
+        {
+          "package": "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json",
+          "package_target_sha256": "accc7e5abb33d56080e47e5767abcc886cc7027cc5a826af1adac82b8e18c20a"
+        }
+      ],
+      "current_matches_origin_packages": [
+        "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json"
+      ],
+      "meta": {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionAircraftFocus.cs.meta",
+        "sha256": "d7b776dd9141e6fa76d369f1d5ca1268175cb5446131a92b1f94d48949a73cff"
+      }
+    },
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusReceiptTests.cs",
+      "base_sha256": null,
+      "current_sha256": "ea0369ff944eb8d5bf4ee8717ab666620acb047048b5e7b03b1fb33dca46165e",
+      "adopted_sha256": "ea0369ff944eb8d5bf4ee8717ab666620acb047048b5e7b03b1fb33dca46165e",
+      "kind": "CurrentRequiredBaselineCandidate",
+      "finalized15": false,
+      "origin_packages": [
+        {
+          "package": "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json",
+          "package_target_sha256": "ea0369ff944eb8d5bf4ee8717ab666620acb047048b5e7b03b1fb33dca46165e"
+        }
+      ],
+      "current_matches_origin_packages": [
+        "Tools/CI/SkirmishProductionDrafts/RigidAircraftProductionFocus/manifest.with-canary-7e32f2604f08.json"
+      ],
+      "meta": {
+        "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProductionFocusReceiptTests.cs.meta",
+        "sha256": "a875c8f71373747025d0779c2e63d35cfa633dc887d3b70f68f6b5a8941411d9"
+      }
+    }
+  ],
+  "new_generated_metadata_pending": [
+    "Assets/Game/Resources/SkirmishCanonicalAircraftGeometry_V1.asset",
+    "Assets/Game/Resources/SkirmishAircraftRotorGeometry_V1.asset"
+  ],
+  "local_S005_profile": {
+    "path": "Assets/Game/Resources/SkirmishMissionViewProfile_S005.asset",
+    "sha256": "d8e0f770500fd2d92b3fec835c1495dc38651a9ceba443cf8eb9ee314cdf262d",
+    "disposition": "Keep separate as explicit S005 engineering calibration, not blanket120 acceptance or automatic production commit. Profile/source fit and native images remain pending."
+  },
+  "native55Pending": true,
+  "cameraAccepted": false
+}

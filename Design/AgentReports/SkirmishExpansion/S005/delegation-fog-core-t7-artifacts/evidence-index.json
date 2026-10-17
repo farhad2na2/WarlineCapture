@@ -1,0 +1,245 @@
+{
+  "scope": "Exact core1099 failed/core1100 scopedPASS19; not native mission readiness",
+  "files": [
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-idle-proof.json",
+      "path": "delegation-t7-fog1099-idle-proof.json",
+      "sha256": "09980e6066826d83c36ac7c4d915a28221c97d75df08ca1cdc8125486c6757b9",
+      "bytes": 923
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-commands.json",
+      "path": "delegation-t7-fog1099-commands.json",
+      "sha256": "a83429204443539804027e8d7d0bc18ab81577e6c40341f5916e9aadeae96e56",
+      "bytes": 128928
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-recompile-request.json",
+      "path": "delegation-t7-fog1099-recompile-request.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-core19.log.dispatch.json",
+      "path": "delegation-t7-fog1099-core19.log.dispatch.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-editor-poststatus.json",
+      "path": "delegation-t7-fog1099-editor-poststatus.json",
+      "sha256": "abe6bc987e98b6615f61488462dab64ab0b0d66cc2f5d407cbce0df09242b7c3",
+      "bytes": 623
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-core19.log",
+      "path": "delegation-t7-fog1099-core19.log",
+      "sha256": "6c4dcec69a625e3cb43c6a3c93d42a3e627532764f8991718d1391d31e5a3b40",
+      "bytes": 2368
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-idle-postproof.json",
+      "path": "delegation-t7-fog1099-idle-postproof.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-recompile-status01.json",
+      "path": "delegation-t7-fog1099-recompile-status01.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-editor-prestate.json",
+      "path": "delegation-t7-fog1099-editor-prestate.json",
+      "sha256": "e854a48407a030b4dd4286d41e13c15b10945a2664559bcc759508e07d98aff9",
+      "bytes": 623
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-core19.log.exit",
+      "path": "delegation-t7-fog1099-core19.log.exit",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-core-base-check.json",
+      "path": "delegation-t7-fog1099-core-base-check.json",
+      "sha256": "07532fda45585f5a5905727729d381425cc06252655e44139af72e2e493e4b8f",
+      "bytes": 4533
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/pre-source.json",
+      "path": "delegation-t7-fog1099-preserve/pre-source.json",
+      "sha256": "08a4c64f7fef8ec83c920149c8da34867cb24f55664f950cd20e8b7dc3c90969",
+      "bytes": 9966751
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/post-source.json",
+      "path": "delegation-t7-fog1099-preserve/post-source.json",
+      "sha256": "4ce58cfae73e1e660a4820725d1f944547731bccd8d6c336600d567185aa0b22",
+      "bytes": 9967862
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/source-delta.json",
+      "path": "delegation-t7-fog1099-preserve/source-delta.json",
+      "sha256": "acd90b2904723e2e48cefa5d64e35396cb475a6753d9f0ee838154dc63b94322",
+      "bytes": 1158
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/applied-index.json",
+      "path": "delegation-t7-fog1099-preserve/applied-index.json",
+      "sha256": "12891c061b857c3cf237b36498bc6de12b5ec4b46dded5be54fe4f9457f4c8e8",
+      "bytes": 8201
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/git-status.txt",
+      "path": "delegation-t7-fog1099-preserve/git-status.txt",
+      "sha256": "6d244bf4b2f2cea641b8ce082c508bcf7d07cb7ac1f224fc83ac53f695faf575",
+      "bytes": 68654
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/tracked.diff",
+      "path": "delegation-t7-fog1099-preserve/tracked.diff",
+      "sha256": "3938f2101d792e3717691983d2b92a90beecfba667f40a453f1af194c04aab2b",
+      "bytes": 9895
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/unexpected-serialized-deltas.json",
+      "path": "delegation-t7-fog1099-preserve/unexpected-serialized-deltas.json",
+      "sha256": "c4f8d42bd4abf2ab463e26465b6fd7c361a06d1596eabbae1625cae7ae03a555",
+      "bytes": 733
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/unexpected-serialized.diff",
+      "path": "delegation-t7-fog1099-preserve/unexpected-serialized.diff",
+      "sha256": "21b37874caf544e202927c29e4e510cf0629b372b79d613babf6be4bb39ef25b",
+      "bytes": 1056
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/serialized-post/ProjectSettings/QualitySettings.asset",
+      "path": "delegation-t7-fog1099-preserve/serialized-post/ProjectSettings/QualitySettings.asset",
+      "sha256": "f4324caa2b7b019ef74a1b8c04dce4fb462cc9a7cda227115e1203a8c211b25e",
+      "bytes": 6873
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/serialized-post/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "path": "delegation-t7-fog1099-preserve/serialized-post/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "sha256": "f6c962bc523c8b4ba00380d37e1340426266c196d98b2471b4c4e18f7cb53881",
+      "bytes": 1577822
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs.meta",
+      "path": "delegation-t7-fog1099-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs.meta",
+      "sha256": "9f8e9e3ba08242c37585fec40235fe1dc8a7f454f151f23da1ee72c00596b20f",
+      "bytes": 59
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs.meta",
+      "path": "delegation-t7-fog1099-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs.meta",
+      "sha256": "4d7f9de3587b49a67b29aa85846e57afd3ddfc5c6e71aec0c7da0dc6cb1f07e3",
+      "bytes": 59
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1099-preserve/generated-metas/Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs.meta",
+      "path": "delegation-t7-fog1099-preserve/generated-metas/Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs.meta",
+      "sha256": "3236f9d56f5299177da32bed9ad33a835d19703f4938f195fbe8e310cac2f86e",
+      "bytes": 59
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-core19.log.exit",
+      "path": "delegation-t7-fog1100-core19.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-core19.log",
+      "path": "delegation-t7-fog1100-core19.log",
+      "sha256": "9f7b3d8d2f27f36aac1a0e332495a40e75d6d3ef15a7d98305406378803ce986",
+      "bytes": 3427
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-recompile-request.json",
+      "path": "delegation-t7-fog1100-recompile-request.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-quality-owner-disabled.json",
+      "path": "delegation-t7-fog1100-quality-owner-disabled.json",
+      "sha256": "2a1df7eca3d2ef4109e287b935967fe43a74984632cdb09777575c66b1c5bd14",
+      "bytes": 892
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-idle-postproof.json",
+      "path": "delegation-t7-fog1100-idle-postproof.json",
+      "sha256": "09980e6066826d83c36ac7c4d915a28221c97d75df08ca1cdc8125486c6757b9",
+      "bytes": 923
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-idle-preproof.json",
+      "path": "delegation-t7-fog1100-idle-preproof.json",
+      "sha256": "09980e6066826d83c36ac7c4d915a28221c97d75df08ca1cdc8125486c6757b9",
+      "bytes": 923
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-recompile-status01.json",
+      "path": "delegation-t7-fog1100-recompile-status01.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-core19.log.dispatch.json",
+      "path": "delegation-t7-fog1100-core19.log.dispatch.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-quality-before.json",
+      "path": "delegation-t7-fog1100-quality-before.json",
+      "sha256": "13cab332114f8b31a97f9f9cebcfb1cba37b53a936a2f44e881d81ff838b92f3",
+      "bytes": 803
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/pre-source.json",
+      "path": "delegation-t7-fog1100-preserve/pre-source.json",
+      "sha256": "71cf211ae9b8d2a43de7d368c5dd84fdaacad6ca1b93b165d0bfd8e52e9c9f86",
+      "bytes": 9967862
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/post-source.json",
+      "path": "delegation-t7-fog1100-preserve/post-source.json",
+      "sha256": "b7a307396120ebdbb9e8a009a097ec9949f47d1fdafb48fa8de4116af6755c7e",
+      "bytes": 9967780
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/source-delta.json",
+      "path": "delegation-t7-fog1100-preserve/source-delta.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/applied-index.json",
+      "path": "delegation-t7-fog1100-preserve/applied-index.json",
+      "sha256": "97d530d0a80867fafe1062013aa00c36cef39bcabe3785a295834d993fe37365",
+      "bytes": 1775
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/git-status.txt",
+      "path": "delegation-t7-fog1100-preserve/git-status.txt",
+      "sha256": "81b97a31e39378a74551143ccde158736b8b2ea5847e6bc5c0e3de054989e73c",
+      "bytes": 69736
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/tracked.diff",
+      "path": "delegation-t7-fog1100-preserve/tracked.diff",
+      "sha256": "1e4fa23fe826cee1c15c0098d73b08cc265871b49a61146b30929e0375665620",
+      "bytes": 54632
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1100-preserve/closure.json",
+      "path": "delegation-t7-fog1100-preserve/closure.json",
+      "sha256": "2250abeac4432919619fa35f29f508b1a8088021bdb9fce9e2024249b863f34c",
+      "bytes": 1307
+    }
+  ]
+}

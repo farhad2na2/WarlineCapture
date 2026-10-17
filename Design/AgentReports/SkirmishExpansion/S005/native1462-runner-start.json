@@ -1,0 +1,18 @@
+{
+  "explicitHeavyLaneOwner": "main1462",
+  "sourceHash": "172f6e27fd95ce6132bb5d35e4fc632cc5bbbd394b7b62d269113b1b5d27c9cf",
+  "preManifest": "current-fighter1462-receipt-window-source-manifest.json",
+  "preflightManifest": "final-1462-paid-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1462-paid-air-pre-dispatch-source-manifest.json",
+  "method": "S005PaidEnemyAirEffects1462.RunValidation",
+  "fixtureSha256": "60a5ce2f8fb15ed9d104128e32005728f1c52b854de74596246c51bd41e1c943",
+  "runnerSha256": "3ff0afcc235f06b76e80f669512ef02a5edae9bb67f91745a11e0c21037b793e",
+  "dryCompileProof": "compile1462-paid-air-receipt-window-dry-run.json",
+  "dryCompileProofSha256": "18c6441eaa41c88aa6057a531397e557c28f9fcea9860b3cb358557884b2f984",
+  "loadOnlyProof": "/private/tmp/s005-fighter-early1462-prepared/load-only1462-reviewed.json",
+  "loadOnlyProofSha256": "0e36e79d607f93b4f2890e07d18a15aceb46d08886180c619f4b6e142c214740",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

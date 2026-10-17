@@ -1,0 +1,69 @@
+{
+  "result": "ReadOnlyLedgerReviewOneConcreteBlockingHiddenDeathLeak",
+  "manifestSha256": "049a4d9c204f0985a379229bfe197971444e990a0f44f4d35b65236e8fcb57a6",
+  "manifestStatus": "PreparedNotFrozenNotCompiledNotExecuted",
+  "scope": "8 external files exact staged diff review, actual native checkpoint codec/capture/recovery dependency inspection. No Unity, source mutation, or claim of runtime test pass.",
+  "fileHashes": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "actualSha256": "b98cf29313e0ac49b748368aba7b1dc27f97a976e10cd46f24d78e04c9f353db",
+      "manifestMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "actualSha256": "517fbf215cd8bc6d3aa07884c4e5def1d6813d2ea4b50bebba922dbef339238b",
+      "manifestMatches": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "actualSha256": "0e46b36edaba43ebcde4310df1787c52c3452f68dc58c65627b50659d8935e3f",
+      "manifestMatches": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "actualSha256": "23d24da07a6f842c5f7ab30067dc4b1ffbf2046b2a163e59430e99d83de10e8b",
+      "manifestMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "actualSha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+      "manifestMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "actualSha256": "5c0f21dbd43b10b291bd4cececc41c44db08d2a517ac8b6b4cd143fbe41a8849",
+      "manifestMatches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "actualSha256": "92f46c6e3e6934bd42352e76591d7f093945f43b91e1587c0f447104d5060ef6",
+      "manifestMatches": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "actualSha256": "ea2e94763ea736ddde953748256549c2300912eef8128fdf8d55824b58854d65",
+      "manifestMatches": false
+    }
+  ],
+  "finding": {
+    "file": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+    "function": "NotifyObservedDeath",
+    "problem": "Prior knowledge.Sight Visible is treated as current death observation, overwrites saved LastSeenHealth0 and deletes ledger. Target movement/death after latest fog update and before actual FinalizeDeath can remain prior Visible while currently out of all actual observing radii. Removal reveals hidden death.",
+    "reproduction": "Actual ECS Step1 records alive hostile target4m in observer5m radius; target moves100m; Health0; call actual native UnitDeathSystem.FinalizeDeath before next sharedFog tick. Expected frozen last observed alive record20s; current branch removes it. Existing native hidden-death control calls Step2 after relocation BEFOREkill and does not cover the stale Visible interval.",
+    "recommendation": "Only remove on actual current native death-observation qualification; never infer hidden death from stale priorVisible. Add focused no-intervening-fog-tick case. Aircraft notified; implementation remains their external bundle."
+  },
+  "reviewedWithoutAdditionalConcreteBlocker": [
+    "Ledger holds only stable strings/scalars, no Entity handles; actor despawn cannot erase immutable missing-contact record except known-death hook.",
+    "Session identity is independently guarded on reads/reset; copied records only currentattempt.",
+    "Missing contacts age on active positive simulation tick, retain frozen pose/health/provenance until authored expiry; pause gates stop update.",
+    "Immediate actual Scan emission copied into ledger avoids native Scan-after-shared-updater schedule losing contact before nextTick.",
+    "Session SnapshotService real Capture(Session) includes newly registered optional parts; codec validates registry/layout, recovery preparation Parts(Session) and commitApply preserve them.",
+    "Clocks staging rebases worldLastObserved and actualScanFrame; only new optionaltypes, existingregisteredcomponentlayouts unchanged; oldfilesmayomit both.",
+    "Native session cleanup removes ledgerbuffer/state and replaychangedattempt clears stale records."
+  ],
+  "limits": [
+    "Eight written cases not compiled/executed by this agent.",
+    "Real populated SaveExit/presentedContinue not yet proven; actualParts isolated case is separately scoped.",
+    "Parent owns consumer bridge; service ledger persistence alone does not display despawned LastSeen contacts unless consumer enumerates ledger."
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "mission": "S005",
+  "result": "FailedNativeManualDefeat",
+  "wrapperExit": 2,
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-678-manual-controls-disk-full-failure-post-source-manifest.json",
+  "postManifest": "final-679-current-manual-defeat-post-source-manifest.json",
+  "outcome": {
+    "elapsed": 156.529,
+    "phase": "Finished",
+    "outcome": "Defeat",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 156.529,
+    "clockPaused": 1,
+    "playerBaseHp": -1,
+    "enemyBaseHp": 800,
+    "playerUnits": 16,
+    "pathRequests": 0,
+    "pathFollowing": 0,
+    "leadX": 914.5,
+    "leadZ": 650.5
+  },
+  "inputAudit": {
+    "recordedContacts": 189,
+    "completedContacts": 189,
+    "phases": {
+      "Menu": 6,
+      "Manual": 182,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-fa-0bbd2b2846754925934fc44c0af95d8a.jsonl.touch.jsonl",
+    "sha256": "c6131b19fc629a1126b81f4bb43bf3e95ba65b05cb7273faf6952fe65a4b15a7"
+  },
+  "acceptedAttackMoves": 65,
+  "manualAttackAcknowledgments": 0,
+  "firstRifleGroupNativeDisplacementMeters": [
+    415.15,
+    409.02,
+    407.38,
+    397.05
+  ],
+  "remainingCombatGroupsMoved": false,
+  "diagnosis": "Manual qualification waited for structure AttackOrderMask after a native ground AttackMove. It repeatedly commanded the first escort group and never advanced to structure counters.",
+  "normalInput": true,
+  "ariaActive": false,
+  "frozenResultAndMainMenuReturn": true,
+  "log": "native-679-current-manual-fa-seed104734-retry.log",
+  "trace": "s005-aria-live-104734-fa-0bbd2b2846754925934fc44c0af95d8a.jsonl",
+  "playerReady": false
+}

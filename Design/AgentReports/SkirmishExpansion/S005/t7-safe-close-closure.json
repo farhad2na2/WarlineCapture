@@ -1,0 +1,33 @@
+{
+  "action": "User-approved normal native shutdown of T7 MenuUiUx only",
+  "qualifiedIdleNativeReceipt": "t7-safe-close-native-scenes.json",
+  "nativeExitReceipt": "t7-safe-close-native-exit.json",
+  "processProof": "t7-safe-close-process-proof-final.json",
+  "preSourceHash": "e1840790ea3cfc79e80fc7c804029cd571667a055604e08e4d91bbee1e9b89f6",
+  "postSourceHash": "33454ddae8bf081bf893ea86256d2d28665eaa5e74be0d1726ed223a9d63ffb0",
+  "savedDeltas": "t7-safe-close-saved-deltas.json",
+  "note": "Native SaveAssets persisted one preexisting in-memory font serialization delta; exact origin beyond native save not independently established. All code and material hashes remained equal. No discard/rollback performed.",
+  "forceKill": false,
+  "resetRestart": false,
+  "mainGitWrites": false,
+  "scriptsRunning": false,
+  "proof": {
+    "utc": "2026-10-11T18:06:53.265044+00:00",
+    "targetPid": 23518,
+    "targetPidPresent": false,
+    "remainingEditorsAndHub": [
+      {
+        "pid": 13311,
+        "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
+      },
+      {
+        "pid": 23352,
+        "command": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity -projectPath /Users/farhad/Projects/WarlineCapture -logFile /private/tmp/s005-persistent-editor-resume-20261010.log"
+      },
+      {
+        "pid": 44582,
+        "command": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit -logFile /private/tmp/warline-campaign-audit-editor-20261011.log"
+      }
+    ]
+  }
+}

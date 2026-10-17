@@ -1,0 +1,9 @@
+test_builder_requires_exact_metadata_slots_hashes_and_native_kind (__main__.LegacyQueueControls.test_builder_requires_exact_metadata_slots_hashes_and_native_kind) ... ok
+test_complete_authority_mandatory_and_no_qualification (__main__.LegacyQueueControls.test_complete_authority_mandatory_and_no_qualification) ... ok
+test_three_actual_preset_bindings_and_canonical_slots (__main__.LegacyQueueControls.test_three_actual_preset_bindings_and_canonical_slots) ... ok
+test_wrong_preset_or_fabricated_expanded_identity_refused (__main__.LegacyQueueControls.test_wrong_preset_or_fabricated_expanded_identity_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 9.984s
+
+OK

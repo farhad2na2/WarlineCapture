@@ -1,0 +1,33 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "beforeHash": "6a611f591fa42596f2af108c8ef1a038e040e9f589cb181e5f91332897f03925",
+    "afterHash": "3bd7a1d4df612d0256f54afd66a52b442c4788435960e658d17901176cd20a65",
+    "protectedHash": "539a8cb57edc0d1173e9f36d9813402fce7cc81fff5a240b60e4576c12256762",
+    "groups": 22,
+    "renderRows": 44,
+    "materialAssignments": 0,
+    "journal": [
+        "CampaignWaterDressing20261016_Bank_0 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1277.15, 0.00, 309.10)",
+        "CampaignWaterDressing20261016_Bank_1 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1284.85, 0.00, 309.10)",
+        "CampaignWaterDressing20261016_Bank_2 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1277.15, 0.00, 315.93)",
+        "CampaignWaterDressing20261016_Bank_3 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1284.85, 0.00, 315.93)",
+        "CampaignWaterDressing20261016_Bank_4 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1277.15, 0.00, 319.10)",
+        "CampaignWaterDressing20261016_Bank_5 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1284.85, 0.00, 319.10)",
+        "CampaignWaterDressing20261016_Bank_6 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1277.15, 0.00, 325.93)",
+        "CampaignWaterDressing20261016_Bank_7 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1284.85, 0.00, 325.93)",
+        "CampaignWaterDressing20261016_Bank_8 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1277.15, 0.00, 329.10)",
+        "CampaignWaterDressing20261016_Bank_9 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1284.85, 0.00, 329.10)",
+        "CampaignWaterDressing20261016_Bank_10 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1277.15, 0.00, 335.93)",
+        "CampaignWaterDressing20261016_Bank_11 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1284.85, 0.00, 335.93)",
+        "CampaignWaterDressing20261016_Bank_12 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1277.15, 0.05, 339.10)",
+        "CampaignWaterDressing20261016_Bank_13 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1284.85, 0.00, 339.10)",
+        "CampaignWaterDressing20261016_Bank_14 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1277.15, 0.05, 345.93)",
+        "CampaignWaterDressing20261016_Bank_15 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1284.85, 0.00, 345.93)",
+        "CampaignWaterDressing20261016_Bank_16 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1277.15, 0.00, 359.10)",
+        "CampaignWaterDressing20261016_Bank_17 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1284.85, 0.00, 359.10)",
+        "CampaignWaterDressing20261016_Bank_18 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1277.15, 0.00, 365.93)",
+        "CampaignWaterDressing20261016_Bank_19 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Sack_02 position=(1284.85, 0.00, 365.93)",
+        "CampaignWaterDressing20261016_CanalEnd_0 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Box_01 position=(1281.00, 0.00, 296.00)",
+        "CampaignWaterDressing20261016_CanalEnd_1 owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01 position=(1281.00, 0.00, 530.00)"
+    ]
+}

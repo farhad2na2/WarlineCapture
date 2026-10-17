@@ -1,0 +1,16 @@
+{
+  "source_manifest": [
+    {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "sha256": "e808a0cae20f7be7b765b73779047cca86f04a3aa1643176922b737abe771a82"
+    },
+    {
+      "path": "Tools/CI/invoke_unity_process_exit_test.py",
+      "sha256": "a9ffd94430b7d18dcddd1f92836360c8c6cc4adda9823e03ca0365f3c4c4cdfc"
+    }
+  ],
+  "native_unity_execution": false,
+  "cases_passed": 12,
+  "regex_scope": "single-line C# source diagnostic only; warning and splitline negative controls pass actualzero",
+  "prior_evidence": "parent directory preserves prior11case proof"
+}

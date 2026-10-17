@@ -1,0 +1,16 @@
+{
+  "recordedContacts": 61,
+  "completedContacts": 61,
+  "phases": {
+    "Menu": 5,
+    "PlayerResume": 56
+  },
+  "terminalCancellations": [],
+  "errors": [],
+  "strictRecordedContacts": true,
+  "strictAllContactsEnded": true,
+  "nativeMenuContactsRecorded": true,
+  "terminalContactsRecorded": false,
+  "completeMatchCertified": false,
+  "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+}

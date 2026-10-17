@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var index=System.Array.IndexOf(UnityEngine.QualitySettings.names,\"Mobile\"); if(index<0)throw new System.Exception(\"Mobile tier missing\"); UnityEngine.QualitySettings.SetQualityLevel(index,true);var pipeline=UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset;return new {quality=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()],msaa=UnityEngine.QualitySettings.antiAliasing,path=UnityEditor.AssetDatabase.GetAssetPath(pipeline),samples=pipeline.msaaSampleCount};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "quality": "Mobile",
+        "msaa": 0,
+        "path": "Assets/Settings/Mobile_RPAsset.asset",
+        "samples": 1
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

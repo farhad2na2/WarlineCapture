@@ -1,0 +1,13 @@
+{
+  "review": "Root reviewed current-source ARIA1414 fixture, exact dry compile and load-only Editor proof; native dispatch enabled",
+  "sourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "fixtureSha256": "417154685cc1c1d896c45e6333c418bc840fc386f8b7ab60dcf82de8cc9f0f21",
+  "runnerSha256": "5d211800df61e958aed74faa5000d10ec537770b471353ac25c5695cffdc6ce8",
+  "dryCompileProof": "Design/AgentReports/SkirmishExpansion/S005/compile1414-normal-aria-dry.json",
+  "dryCompileSha256": "d9f7ad5c0ad4d9d552b4067a0417ec7e09021d0289601af3c2427b7686e86a72",
+  "loadOnlyProof": "Design/AgentReports/SkirmishExpansion/S005/load1414-normal-aria-review.json",
+  "loadOnlySha256": "092bc75c1b51d816221d0f5abb9ecc4b9d08e9251bce68d8fd615661e73c89bf",
+  "previousNativeIdle": "Design/AgentReports/SkirmishExpansion/S005/native1403-after-close-idle.json",
+  "disabledManifestSha256": "b1fe992aac45dcd8d47f5745ebd52c22be970186693cc04141d4672eb6109976",
+  "nativeRunPending": true
+}

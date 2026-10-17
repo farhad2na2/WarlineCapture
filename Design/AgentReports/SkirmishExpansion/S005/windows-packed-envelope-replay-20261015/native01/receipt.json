@@ -1,0 +1,11 @@
+{
+  "result": "Measured",
+  "actual_checked_wrapper_exit": 0,
+  "containedSmallerOverflowEnvelopeMeasured": true,
+  "historicalPrivateGuardCausalityProven": false,
+  "smallerSelectionPoolFitProven": false,
+  "raw_label_correction": "Raw staleOverflowGuardReuseProven boolean overstates causality; interpret only as contained-smaller envelope measurement. Raw original retained unchanged.",
+  "runtimeMutation": false,
+  "cameraAccepted": false,
+  "playerReady": false
+}

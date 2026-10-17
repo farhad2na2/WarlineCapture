@@ -1,0 +1,400 @@
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+
+namespace Game.Runtime
+{
+    // This projection is the commander's only live contact input. The visibility
+    // gate precedes all hostile health, role and transform reads.
+    public static class SkirmishEnemyPerceptionBuilder
+    {
+        public sealed class Group
+        {
+            public uint Id;
+            public SkirmishRoleKind Role;
+            public SkirmishPopulationCategory Category;
+            public SkirmishTargetDomain Domains;
+            public float3 Position;
+            public int Members, Supply, Health, MaximumHealth;
+            public bool StructureCapable => SkirmishExpandedEngagementService.DomainAllows(
+                Domains, true, SkirmishPopulationCategory.None);
+            public bool MobileCapable => SkirmishExpandedEngagementService.DomainAllows(
+                Domains, false, SkirmishPopulationCategory.Infantry) ||
+                SkirmishExpandedEngagementService.DomainAllows(Domains, false, SkirmishPopulationCategory.Ground);
+        }
+        public struct Contact
+        {
+            public Entity Entity;
+            public FixedString64Bytes StableId;
+            public float3 Position;
+            public SkirmishPopulationCategory Category;
+            public SkirmishRoleKind Role;
+            public bool Structure, ThreatensStructure;
+        }
+        public sealed class Snapshot
+        {
+            public readonly List<Group> Groups = new();
+            public readonly List<Contact> Visible = new();
+            public readonly List<float3> OwnFacilities = new();
+            public readonly List<float3> LastSeen = new();
+            public float3 Home;
+            public int HomeHealth, HomeMaximum, CombatSupply, LocalThreatSupply;
+            public uint EventHash = 2166136261;
+            public bool HomeAlive, ObjectiveAlive;
+        }
+
+        public static Snapshot Build(EntityManager em, Entity session, SkirmishResolvedSetup setup)
+        {
+            var result = new Snapshot
+            {
+                Home = new float3(setup.EnemyBaseWorldX, 0, setup.EnemyBaseWorldZ),
+                HomeAlive = true, ObjectiveAlive = true
+            };
+            var sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            if (em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
+            {
+                var facts = em.GetComponentData<SkirmishBaseAssaultFactComponent>(session);
+                result.HomeAlive = facts.EnemyDesignatedAlive != 0;
+                result.ObjectiveAlive = facts.PlayerDesignatedAlive != 0;
+            }
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            // Own facts never disclose hostile state. Embarked passengers are not
+            // an independently commandable group and contribute no field force.
+            foreach (var entity in entities)
+            {
+                var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                if (!own.SessionId.Equals(sessionId) || own.FactionId != setup.EnemyFaction ||
+                    !SkirmishArmyGroupSystem.IsAlive(em, entity) || !em.HasComponent<LocalTransform>(entity)) continue;
+                var position = em.GetComponentData<LocalTransform>(entity).Position;
+                if (own.IsStructure != 0)
+                {
+                    result.OwnFacilities.Add(position);
+                    if (em.HasComponent<SkirmishObjectiveRoleComponent>(entity) &&
+                        em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role == SkirmishObjectiveRoleKind.EnemyBase)
+                    {
+                        result.Home = position;
+                        if (em.HasComponent<UnitHealth>(entity))
+                        {
+                            var health = em.GetComponentData<UnitHealth>(entity);
+                            result.HomeHealth = health.Current; result.HomeMaximum = health.Max;
+                        }
+                    }
+                    continue;
+                }
+                if (em.HasComponent<UnitTransportPassenger>(entity) ||
+                    !em.HasComponent<SkirmishArmyGroupMembershipComponent>(entity) ||
+                    !em.HasComponent<SkirmishUnitRoleComponent>(entity) ||
+                    !em.HasComponent<SkirmishRoleOverlayComponent>(entity)) continue;
+                var overlay = em.GetComponentData<SkirmishRoleOverlayComponent>(entity);
+                if (overlay.Damage <= 0) continue;
+                var role = em.GetComponentData<SkirmishUnitRoleComponent>(entity);
+                // Air orchestration is separately enabled only after its native
+                // operational owner has been certified; ground allocation never
+                // issues a ground Move to an aircraft.
+                if (role.Category == SkirmishPopulationCategory.Air) continue;
+                uint id = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(entity).GroupId;
+                if (id == 0) continue;
+                var group = result.Groups.Find(g => g.Id == id);
+                if (group == null)
+                {
+                    group = new Group { Id = id, Role = role.Role, Category = role.Category };
+                    result.Groups.Add(group);
+                }
+                group.Members++; group.Position += position; group.Supply += role.SupplyCost;
+                group.Domains |= overlay.TargetDomains;
+                if (em.HasComponent<UnitHealth>(entity))
+                {
+                    var health = em.GetComponentData<UnitHealth>(entity);
+                    group.Health += health.Current; group.MaximumHealth += health.Max;
+                }
+            }
+            result.Groups.Sort((a,b) => a.Id.CompareTo(b.Id));
+            foreach (var group in result.Groups)
+            {
+                group.Position /= group.Members;
+                result.CombatSupply += group.Supply;
+                Mix(ref result.EventHash, group.Id); Mix(ref result.EventHash, (uint)group.Members);
+            }
+            Mix(ref result.EventHash, (uint)result.HomeHealth);
+            foreach (var entity in entities)
+            {
+                var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                if (!own.SessionId.Equals(sessionId) || own.FactionId != setup.PlayerFaction) continue;
+                if (!SkirmishFogService.IsVisibleToFaction(em, entity, (byte)setup.EnemyFaction)) continue;
+                if (!SkirmishArmyGroupSystem.IsAlive(em, entity) || !em.HasComponent<LocalTransform>(entity) ||
+                    em.HasComponent<UnitTransportPassenger>(entity)) continue;
+                var role = em.HasComponent<SkirmishUnitRoleComponent>(entity)
+                    ? em.GetComponentData<SkirmishUnitRoleComponent>(entity) : default;
+                var overlay = em.HasComponent<SkirmishRoleOverlayComponent>(entity)
+                    ? em.GetComponentData<SkirmishRoleOverlayComponent>(entity) : default;
+                var contact = new Contact
+                {
+                    Entity = entity, StableId = own.StableObjectId,
+                    Position = em.GetComponentData<LocalTransform>(entity).Position,
+                    Category = role.Category, Role = role.Role, Structure = own.IsStructure != 0,
+                    ThreatensStructure = overlay.Damage > 0 && SkirmishExpandedEngagementService.DomainAllows(
+                        overlay.TargetDomains, true, SkirmishPopulationCategory.None)
+                };
+                result.Visible.Add(contact);
+            }
+            result.Visible.Sort((a,b) => a.StableId.CompareTo(b.StableId));
+            foreach (var contact in result.Visible)
+            {
+                foreach (char value in contact.StableId.ToString()) Mix(ref result.EventHash, value);
+                bool local = math.distancesq(contact.Position.xz, result.Home.xz) <= 90f * 90f;
+                if (!local) foreach (var facility in result.OwnFacilities)
+                    if (math.distancesq(contact.Position.xz, facility.xz) <= 55f * 55f) { local = true; break; }
+                if (local)
+                {
+                    result.LocalThreatSupply += contact.ThreatensStructure ? 4 : 1;
+                    Mix(ref result.EventHash, 1);
+                }
+            }
+            // Ledger positions are frozen observations, never refreshed here from
+            // a live hidden Entity. The fog owner expires stale knowledge.
+            if (em.HasBuffer<SkirmishContactLedgerElement>(session))
+            {
+                var ledger = em.GetBuffer<SkirmishContactLedgerElement>(session);
+                for (int i = 0; i < ledger.Length; i++)
+                    if (ledger[i].ObserverFactionId == setup.EnemyFaction &&
+                        ledger[i].Sight == SkirmishContactSight.LastSeen)
+                        result.LastSeen.Add(ledger[i].LastSeenPosition);
+            }
+            return result;
+        }
+        private static void Mix(ref uint hash, uint value) => hash = unchecked((hash ^ value) * 16777619);
+    }
+}
+
+namespace Game.Runtime
+{
+    // Assign whole native groups. Never split a squad or reserve empty cap slots.
+    public static class SkirmishEnemyGroupAllocation
+    {
+        public sealed class Package
+        {
+            public readonly List<SkirmishEnemyPerceptionBuilder.Group> Reserve = new();
+            public readonly List<SkirmishEnemyPerceptionBuilder.Group> Assault = new();
+            public readonly List<SkirmishEnemyPerceptionBuilder.Group> Escort = new();
+            public SkirmishEnemyPerceptionBuilder.Group Scout;
+            public int ReserveSupply;
+            public bool Viable => Assault.Count > 0 && Escort.Count > 0;
+        }
+
+        public static Package Allocate(SkirmishEnemyPerceptionBuilder.Snapshot facts, int reservePercent)
+        {
+            var package = new Package();
+            var remaining = new List<SkirmishEnemyPerceptionBuilder.Group>(facts.Groups);
+            // Keep one damage package and one complementary screen before taking
+            // optional reserves/scouts. Stable id is the final deterministic tie.
+            remaining.Sort((a,b) => a.Id.CompareTo(b.Id));
+            var structure = remaining.Find(g => g.StructureCapable && Healthy(g));
+            if (structure != null) { package.Assault.Add(structure); remaining.Remove(structure); }
+            var screen = remaining.Find(g => g.MobileCapable && Healthy(g) && !g.StructureCapable)
+                ?? remaining.Find(g => g.MobileCapable && Healthy(g));
+            if (screen != null) { package.Escort.Add(screen); remaining.Remove(screen); }
+            int target = SkirmishEnemyDecisionRules.ReserveTarget(facts.CombatSupply, reservePercent);
+            remaining.Sort((a,b) =>
+            {
+                int distance = math.distancesq(a.Position.xz, facts.Home.xz).CompareTo(
+                    math.distancesq(b.Position.xz, facts.Home.xz));
+                return distance != 0 ? distance : a.Id.CompareTo(b.Id);
+            });
+            foreach (var group in remaining)
+                if (package.ReserveSupply < target)
+                { package.Reserve.Add(group); package.ReserveSupply += group.Supply; }
+            remaining.RemoveAll(g => package.Reserve.Contains(g));
+            // A scout is optional and never consumes the sole assault/escort.
+            package.Scout = remaining.Find(g => g.Role == SkirmishRoleKind.Rifle && Healthy(g));
+            if (package.Scout != null) remaining.Remove(package.Scout);
+            foreach (var group in remaining)
+                if (group.StructureCapable && Healthy(group)) package.Assault.Add(group);
+                else if (group.MobileCapable && Healthy(group)) package.Escort.Add(group);
+                else { package.Reserve.Add(group); package.ReserveSupply += group.Supply; }
+            // A lone structure squad must not be repeatedly fed into the enemy.
+            // Insufficient armies defend/regroup while paid replacements arrive.
+            if (!package.Viable)
+            {
+                package.Reserve.AddRange(package.Assault); package.Assault.Clear();
+                package.Reserve.AddRange(package.Escort); package.Escort.Clear();
+                if (package.Scout != null) { package.Reserve.Add(package.Scout); package.Scout = null; }
+                package.ReserveSupply = facts.CombatSupply;
+            }
+            return package;
+        }
+        public static bool Healthy(SkirmishEnemyPerceptionBuilder.Group group)
+            => group.MaximumHealth <= 0 || group.Health * 100 >= group.MaximumHealth * 35;
+    }
+}
+
+namespace Game.Runtime
+{
+    // Pure decision rules are independent of Unity iteration order and mutable
+    // world state. The executor supplies only legal, currently feasible choices.
+    public static class SkirmishEnemyDecisionRules
+    {
+        public static bool ShouldSwitch(int currentScore, bool currentValid,
+            int alternativeScore, int hysteresis, bool emergency)
+            => !currentValid || emergency || alternativeScore > currentScore + hysteresis;
+
+        public static bool Due(float now, float periodicAt, bool responsePending, float responseAt)
+            => responsePending ? now >= responseAt : now >= periodicAt;
+
+        public static float CoalesceResponse(bool pending, float existing, float now, float delay)
+            => pending ? existing : now + Math.Max(0f, delay);
+
+        public static int ReserveTarget(int availableSupply, int reservePercent)
+            => availableSupply <= 0 ? 0 : (availableSupply * reservePercent + 99) / 100;
+
+        public static bool Progressed(float previousX, float previousZ, float x, float z, float minimumMetres)
+        {
+            float dx = x - previousX, dz = z - previousZ;
+            return dx * dx + dz * dz >= minimumMetres * minimumMetres;
+        }
+
+        public static bool SameDestination(float ax, float az, float bx, float bz, float tolerance)
+        {
+            float dx = ax - bx, dz = az - bz;
+            return dx * dx + dz * dz <= tolerance * tolerance;
+        }
+    }
+}
+
+namespace Game.Tests.Editor
+{
+    public static class SkirmishEnemyDecisionRulesTests
+    {
+        public static void RunFocusedValidation()
+        {
+            int checks = 0;
+            void Check(bool condition, string reason)
+            {
+                checks++; if (!condition) throw new InvalidOperationException(reason);
+            }
+            Check(!SkirmishEnemyDecisionRules.ShouldSwitch(40,true,54,15,false), "Below-margin plan must persist");
+            Check(!SkirmishEnemyDecisionRules.ShouldSwitch(40,true,55,15,false), "Exactly-margin plan must persist");
+            Check(SkirmishEnemyDecisionRules.ShouldSwitch(40,true,56,15,false), "Higher utility must replace plan");
+            Check(SkirmishEnemyDecisionRules.ShouldSwitch(100,false,1,15,false), "Invalid current plan cannot lock planner");
+            Check(SkirmishEnemyDecisionRules.ShouldSwitch(100,true,80,15,true), "Terminal danger interrupts commitment");
+            Check(!SkirmishEnemyDecisionRules.Due(4,4,true,5), "Periodic tick must not bypass chosen reaction delay");
+            Check(SkirmishEnemyDecisionRules.Due(5,8,true,5), "Reaction event must not wait for periodic tick");
+            Check(SkirmishEnemyDecisionRules.Due(8,8,false,10), "Periodic reevaluation must run when due");
+            Check(SkirmishEnemyDecisionRules.CoalesceResponse(true,5,4,3)==5, "New event cannot postpone pending response");
+            Check(SkirmishEnemyDecisionRules.CoalesceResponse(false,0,4,3)==7, "Reaction delay starts at observation");
+            Check(SkirmishEnemyDecisionRules.ReserveTarget(0,25)==0, "Empty army does not invent reserve");
+            Check(SkirmishEnemyDecisionRules.ReserveTarget(21,25)==6, "Reserve target rounds upward before whole-group allocation");
+            Check(!SkirmishEnemyDecisionRules.Progressed(0,0,1,0,2), "Subthreshold movement does not reset stuck timer");
+            Check(SkirmishEnemyDecisionRules.Progressed(0,0,2,0,2), "Real movement clears stuck timer");
+            Check(SkirmishEnemyDecisionRules.SameDestination(0,0,1,1,2), "Small centroid jitter must not spam orders");
+            Check(!SkirmishEnemyDecisionRules.SameDestination(0,0,3,0,2), "Material destination change must invalidate key");
+            Debug.Log("[SkirmishEnemyDecisionRulesTests] result=Passed checks="+checks);
+        }
+    }
+}
+
+namespace Game.Tests.Editor
+{
+    public sealed class SkirmishEnemyPerceptionTests
+    {
+        [Test]
+        public void HiddenHostileMutationsCannotChangeEnemyDecisions()
+        {
+            using var world = new World(nameof(HiddenHostileMutationsCannotChangeEnemyDecisions));
+            var em = world.EntityManager;
+            var session = em.CreateEntity();
+            em.AddComponentData(session,new SkirmishExpandedSessionComponent { SessionId = new FixedString64Bytes("perception-test") });
+            var setup = new SkirmishResolvedSetup { EnemyBaseWorldX = 50, EnemyBaseWorldZ = 50 };
+            var hidden = em.CreateEntity();
+            em.AddComponentData(hidden,new SkirmishAttemptOwnedComponent {
+                SessionId = new FixedString64Bytes("perception-test"), FactionId = 1, StableObjectId = new FixedString64Bytes("hostile") });
+            em.AddComponentData(hidden,LocalTransform.FromPosition(60,0,60));
+            em.AddComponentData(hidden,new UnitHealth { Current = 100, Max = 100 });
+            em.AddComponentData(hidden,new SkirmishUnitRoleComponent { Role = SkirmishRoleKind.Rifle, Category = SkirmishPopulationCategory.Infantry });
+            var knowledge = em.AddBuffer<SkirmishContactKnowledgeElement>(hidden);
+            knowledge.Add(new SkirmishContactKnowledgeElement { ObserverFactionId = 2, Sight = SkirmishContactSight.Unknown });
+            var before = SkirmishEnemyPerceptionBuilder.Build(em,session,setup);
+            em.SetComponentData(hidden,LocalTransform.FromPosition(500,0,900));
+            em.SetComponentData(hidden,new UnitHealth { Current = 1, Max = 999 });
+            em.SetComponentData(hidden,new SkirmishUnitRoleComponent { Role = SkirmishRoleKind.Tank, Category = SkirmishPopulationCategory.Ground });
+            var after = SkirmishEnemyPerceptionBuilder.Build(em,session,setup);
+            Assert.AreEqual(before.EventHash,after.EventHash);
+            Assert.AreEqual(0,after.Visible.Count);
+            Assert.AreEqual(0,after.LocalThreatSupply);
+            var observed = em.GetBuffer<SkirmishContactKnowledgeElement>(hidden);
+            observed[0] = new SkirmishContactKnowledgeElement { ObserverFactionId = 2, Sight = SkirmishContactSight.Visible };
+            var visible = SkirmishEnemyPerceptionBuilder.Build(em,session,setup);
+            Assert.AreEqual(1,visible.Visible.Count);
+            Assert.AreEqual(SkirmishRoleKind.Tank,visible.Visible[0].Role);
+            Assert.AreEqual(new float3(500,0,900),visible.Visible[0].Position);
+            Assert.AreNotEqual(before.EventHash,visible.EventHash);
+        }
+        [Test]
+        public void LastSeenRemainsFrozenAfterHiddenActorMovesOrDies()
+        {
+            using var world = new World(nameof(LastSeenRemainsFrozenAfterHiddenActorMovesOrDies));
+            var em = world.EntityManager;
+            var session = em.CreateEntity();
+            em.AddComponentData(session,new SkirmishExpandedSessionComponent { SessionId = new FixedString64Bytes("frozen-test") });
+            var ledger = em.AddBuffer<SkirmishContactLedgerElement>(session);
+            ledger.Add(new SkirmishContactLedgerElement {
+                ContactStableObjectId = new FixedString64Bytes("gone"), ObserverFactionId = 2,
+                Sight = SkirmishContactSight.LastSeen, LastSeenPosition = new float3(4,0,9) });
+            var facts = SkirmishEnemyPerceptionBuilder.Build(em,session,new SkirmishResolvedSetup());
+            Assert.AreEqual(0,facts.Visible.Count);
+            Assert.AreEqual(1,facts.LastSeen.Count);
+            Assert.AreEqual(new float3(4,0,9),facts.LastSeen[0]);
+        }
+        [Test]
+        public void ReserveAndAssaultDoNotSplitOrDuplicateGroups()
+        {
+            var facts = new SkirmishEnemyPerceptionBuilder.Snapshot();
+            for(uint id=1;id<=6;id++) facts.Groups.Add(new SkirmishEnemyPerceptionBuilder.Group {
+                Id=id, Members=4, Supply=4, Health=400, MaximumHealth=400,
+                Role=id==1?SkirmishRoleKind.Rocketeer:SkirmishRoleKind.Rifle,
+                Domains=id==1?SkirmishTargetDomain.Structure:SkirmishTargetDomain.Infantry });
+            facts.CombatSupply=24;
+            var package=SkirmishEnemyGroupAllocation.Allocate(facts,25);
+            Assert.IsTrue(package.Viable);
+            Assert.AreEqual(8,package.ReserveSupply);
+            var seen=new System.Collections.Generic.HashSet<uint>();
+            foreach(var group in package.Reserve) Assert.IsTrue(seen.Add(group.Id));
+            foreach(var group in package.Assault) Assert.IsTrue(seen.Add(group.Id));
+            foreach(var group in package.Escort) Assert.IsTrue(seen.Add(group.Id));
+            if(package.Scout!=null) Assert.IsTrue(seen.Add(package.Scout.Id));
+            Assert.AreEqual(6,seen.Count);
+        }
+        [Test]
+        public void LoneStructureSquadRegroupsInsteadOfUnsupportedAssault()
+        {
+            var facts = new SkirmishEnemyPerceptionBuilder.Snapshot { CombatSupply=4 };
+            facts.Groups.Add(new SkirmishEnemyPerceptionBuilder.Group {
+                Id=1,Members=4,Supply=4,Health=400,MaximumHealth=400,Domains=SkirmishTargetDomain.Structure });
+            var package=SkirmishEnemyGroupAllocation.Allocate(facts,25);
+            Assert.IsFalse(package.Viable); Assert.AreEqual(1,package.Reserve.Count);
+            Assert.AreEqual(0,package.Assault.Count);
+        }
+        public static void RunFocusedValidation()
+        {
+            var tests=new SkirmishEnemyPerceptionTests();
+            tests.HiddenHostileMutationsCannotChangeEnemyDecisions();
+            tests.LastSeenRemainsFrozenAfterHiddenActorMovesOrDies();
+            tests.ReserveAndAssaultDoNotSplitOrDuplicateGroups();
+            tests.LoneStructureSquadRegroupsInsteadOfUnsupportedAssault();
+            Debug.Log("[SkirmishEnemyPerceptionTests] result=Passed cases=4");
+        }
+    }
+}
+public static class EnemyPerceptionFocused1197 {
+ public static void LoadOnly() { UnityEngine.Debug.Log("[EnemyPerceptionFocused1197] loadedOnly=1"); }
+ public static void Run() { Game.Tests.Editor.SkirmishEnemyDecisionRulesTests.RunFocusedValidation(); Game.Tests.Editor.SkirmishEnemyPerceptionTests.RunFocusedValidation(); UnityEngine.Debug.Log("[EnemyPerceptionFocused1197] result=Passed scope=IsolatedDecisionPerceptionAllocation"); }
+}

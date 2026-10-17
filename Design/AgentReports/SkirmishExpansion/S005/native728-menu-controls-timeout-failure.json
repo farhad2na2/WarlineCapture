@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "sourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+  "wrapperExit": 2,
+  "wrapperExitArtifact": "native-728-current-manual-en-seed155926.log.exit",
+  "log": "native-728-current-manual-en-seed155926.log",
+  "reason": "menuControlsTimeout",
+  "step": 4,
+  "missionStarted": false,
+  "sourceUnchanged": true,
+  "postManifest": "final-728-menu-controls-timeout-post-source-manifest.json",
+  "playerReady": false
+}

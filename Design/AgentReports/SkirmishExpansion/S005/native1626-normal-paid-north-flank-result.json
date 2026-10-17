@@ -1,0 +1,24 @@
+{
+  "result": "Failed",
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "sourceUnchanged": true,
+  "candidateSha256": "392a7b136cd2a7bc7ee2f774869e8ef6aa7cad1472b80ad909cdbee456a901dd",
+  "executedRunnerSha256": "9f9c4c964b75a22fc94791944cc48d23ba6054df438bcef245d386ce7c4abd34",
+  "preDispatchLiveObserverWitnessSha256": "161af63a16dcc95eb80a820357551854c70440c3fdc996c2286f6e08b5a86844",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "normalInput": true,
+  "northFlankProof": null,
+  "attempt": "expanded-s005-155926-865b9b4f0b564f8aa157628ab3543a03",
+  "errors": [
+    "Checked wrapper/native bridge exit was nonzero",
+    "Missing native marker: [ExistingEditorValidation] result=Passed executeMethod=S005NormalNorthFlank1626Observer.RunValidation",
+    "Missing native marker: [S004ManualNative] result=Passed outcome=Victory",
+    "Missing native marker: [SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU",
+    "Missing native marker: [SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU",
+    "Missing native marker: [SkirmishValidationExit] result=Requested code=0",
+    "Strict normal-input north-flank evidence: Exactly one NativeRenderedResultText required"
+  ],
+  "playerReady": false,
+  "realPlayerDeviceAcceptance": false
+}

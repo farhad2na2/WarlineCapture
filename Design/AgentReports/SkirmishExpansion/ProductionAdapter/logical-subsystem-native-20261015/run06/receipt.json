@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "actual_checked_wrapper_exit": 0,
+  "shared_controls": 77,
+  "immutable_coded_configurations_checked_before_and_after": 12,
+  "managed_default_controls": 1,
+  "public_goal_controls": 6,
+  "opening_policy_controls": 5,
+  "camera_controls": 7,
+  "profile_controls": 5,
+  "objective_reducer_controls": 42,
+  "actual_scene_artifact_warmup": 2,
+  "editor_mvid": "69fbd1f0-3519-43be-b2a4-2344bf627357",
+  "native_s005_fa_setup_hash": "E3D3D033",
+  "cameraAccepted": false,
+  "normal_mission_readiness": "Pending",
+  "playerReady": false
+}

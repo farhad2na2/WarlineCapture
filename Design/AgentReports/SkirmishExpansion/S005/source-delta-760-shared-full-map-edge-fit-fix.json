@@ -1,0 +1,10 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/MatchHudFullMapPopupPrefabSetup.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs"
+  ],
+  "shippingUIChanged": true,
+  "missionConfigsAndPhysicalMapUnchanged": true,
+  "allMaterialHashesUnchanged": true,
+  "fixedBudgetDurationRulesChanged": false
+}

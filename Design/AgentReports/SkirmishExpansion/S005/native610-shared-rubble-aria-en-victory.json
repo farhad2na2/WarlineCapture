@@ -1,0 +1,21 @@
+{
+  "result": "Passed",
+  "sourceHash": "54c86e64034df9c9fb19aafd76d93f95a969b042f0b2460209a91cdad1bd10d2",
+  "independentPrePostMatch": true,
+  "all562MaterialHashesMatch": true,
+  "locale": "en",
+  "seed": 104734,
+  "journey": "Menu -> S005 -> ARIA Play/Confirm -> paid recruitment -> Victory -> frozen result -> Adjust Setup",
+  "outcome": "Victory",
+  "elapsed": 236.985,
+  "playerBaseHp": 800,
+  "enemyBaseHp": 0,
+  "playerUnits": 23,
+  "contactsCompleted": 107,
+  "contactErrors": 0,
+  "ariaReceiptViolations": 0,
+  "wrapperExit": 0,
+  "visualReview": "Pale varied ground visible, frontage density still below approved mockup.",
+  "performanceReview": "Rendered triangles reduced to about5.5M in observed view; low Editor frame rate and device acceptance remain open.",
+  "playerReady": false
+}

@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs(286,30): error CS0136: A local or parameter named 'waypoint' cannot be declared in this scope because that name is used in an enclosing local scope to define a local or parameter\",\"Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs(288,28): error CS0136: A local or parameter named 'point' cannot be declared in this scope because that name is used in an enclosing local scope to define a local or parameter\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

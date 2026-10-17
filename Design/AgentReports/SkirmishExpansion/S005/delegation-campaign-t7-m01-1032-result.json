@@ -1,0 +1,19 @@
+{
+  "mission": "M1",
+  "run": "1032",
+  "result": "Failed",
+  "nativeJourney": "lesson1 stalled; last ShowMeButton; Select command squad to begin",
+  "gestures": 3,
+  "completed": 3,
+  "unexpected": 0,
+  "interventions": 0,
+  "staleCueDeferrals": 0,
+  "maximumStaleSeconds": 0,
+  "groupRequestsUsedZeroLengthFallback": true,
+  "wholeSourceHash": "f03851c1b8761a95569b1b313a219a57924876ea99d87215387157627d595b53",
+  "prePostSourceEqual": true,
+  "mainWholeSourcePass": false,
+  "runtimeScope": "Current committed 94d949c92 runtime matches main cc; only preserved PipelineManager7802 and absent generated SceneDependencyCache meta differ. No whole-source current-main pass claimed.",
+  "logSha256": "c2a286f14ebd016480fe99673591e2ced2528f639f3e13f226308c2aede66209",
+  "guideObservationCaveat": "1032 bounded cue sample omitted publicHasTarget; default NeedsSelection=false does not prove selection satisfied."
+}

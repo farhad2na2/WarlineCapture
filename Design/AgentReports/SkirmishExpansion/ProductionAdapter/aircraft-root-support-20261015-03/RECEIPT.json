@@ -1,0 +1,16 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/aircraft-root-support-20261015-03/seven-role-canonical-importer-provenance.zip",
+  "sha256": "c6f4c257d08f3db576adef6968f7f757ea4ce3fe97b9889f9512a49f5e0f62d3",
+  "actualCheckedWrapperExit": 0,
+  "rawReport": "Logs/SkirmishProduction/AircraftRootProvenance/40aaa3bdcfba40ad881ae35c6c48977c.json",
+  "rawReportSha256": "5d7aa45d232a08b3a1336c0166d8f8834bf18758b92f1af9765acd218b1ea3bc",
+  "sourceRoles": 7,
+  "bakedRows": 7,
+  "importerPins": 342,
+  "baselineAssets": 320,
+  "approvedAttackPrefabOverrides": 2,
+  "resolvedPackagePins": 20,
+  "ownedCleanupRestored": true,
+  "cameraAccepted": false,
+  "normalMissionReady": false
+}

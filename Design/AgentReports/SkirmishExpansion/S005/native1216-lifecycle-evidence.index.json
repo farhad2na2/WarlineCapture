@@ -1,0 +1,133 @@
+{
+  "scope": "Failed1216normal-input lifecycle and preserved failed dry-compiles; no readiness claim",
+  "archive": "native1216-lifecycle-evidence.zip",
+  "sha256": "40b7cdca5efcafadf90567f8da2cdb7b0b71073f3292b205b7ce004e9942b88a",
+  "files": [
+    {
+      "path": "compile1216-lifecycle-intro-ready-v3-dry-run.json",
+      "bytes": 6248,
+      "sha256": "581f70cbc364980d34cf57b0e1a9a79dbdf9d0833d44fd8a020ff8a9128b33c2"
+    },
+    {
+      "path": "compile1216-lifecycle-intro-ready-v4-dry-run.json",
+      "bytes": 5844,
+      "sha256": "eece84262f178eece5e9c7c12795b2b353415899f093f2a397dec72f51e089d1"
+    },
+    {
+      "path": "final-1216-lifecycle-post-independent-fingerprint.json",
+      "bytes": 369,
+      "sha256": "33bba6661d24f2269217267428576c06b84208f6edaa31c517edb2cfed6deb0d"
+    },
+    {
+      "path": "final-1216-lifecycle-post-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "path": "final-1216-lifecycle-pre-dispatch-independent-fingerprint.json",
+      "bytes": 376,
+      "sha256": "bd6d03fcd797ad63130a9167ebbf28c1e86659d4c99a1325d903568cfd9b83b8"
+    },
+    {
+      "path": "final-1216-lifecycle-pre-dispatch-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "path": "final-1216-lifecycle-preflight-independent-fingerprint.json",
+      "bytes": 370,
+      "sha256": "bd7cc30c22740e713ebbc003d544745317488710288c60e87471ac021e933a00"
+    },
+    {
+      "path": "final-1216-lifecycle-preflight-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "path": "load1216-lifecycle-observer.json",
+      "bytes": 5833,
+      "sha256": "1e7d70ef69c333a2205a021fa657bdefda51161bf4ea0bc68ee5ed3b4517a71c"
+    },
+    {
+      "path": "native-1216-lifecycle-fa-seed104734.log",
+      "bytes": 88543,
+      "sha256": "c0fbcbe5d1695dbba5e7c65051fe15dd4a2f246d7cac6e21223d5343a907a0ae"
+    },
+    {
+      "path": "native-1216-lifecycle-fa-seed104734.log.dispatch.json",
+      "bytes": 982,
+      "sha256": "31ed1530067fd89985a22509684b5469e6704aa1bc56fd4316f2a3ad6ae6e9b9"
+    },
+    {
+      "path": "native-1216-lifecycle-fa-seed104734.log.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "native-1216-lifecycle-fa-seed104734.log.wrapper-exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "native1216-after-close-native-idle.json",
+      "bytes": 735,
+      "sha256": "5f4bf4e468ee0cee084b8665e169b53b8b18352d58dcdf0e2faba90baa8bd71f"
+    },
+    {
+      "path": "native1216-before-dispatch-native-idle.json",
+      "bytes": 736,
+      "sha256": "20a9b2d93afc0f6ba6ff8a87cfa05c827444819c9900cb95aa852671a71e9bbf"
+    },
+    {
+      "path": "native1216-before-load-native-idle.json",
+      "bytes": 735,
+      "sha256": "57b8ec3fb96a743c16c00488344a8f7de8be7457595c8878a0cc635c9f7c79e4"
+    },
+    {
+      "path": "native1216-confirmation-parser.py.txt",
+      "bytes": 6217,
+      "sha256": "14e1c4992a5459b94d5b2ccf987ca4f12329ab7ef60b606ff5c84c7b8a81acd7"
+    },
+    {
+      "path": "native1216-confirmation-ui-diagnostic.jsonl",
+      "bytes": 2746,
+      "sha256": "0397204c7654e5f83b5462c49b56d09ab3733165bd71ec5825b7a74e3eaadead"
+    },
+    {
+      "path": "native1216-fresh-resource-diagnostic.json",
+      "bytes": 263061,
+      "sha256": "68a2f1f1165b2c8366917ad352ea58d9b94c5ad2c7a521ad88bcfbf7d0dcad72"
+    },
+    {
+      "path": "native1216-hold-replay-diagnostic.json",
+      "bytes": 141859,
+      "sha256": "6769cf29a6c096dcd4d5beee345fdfd910affd552cf412d89d943da25c58fdfa"
+    },
+    {
+      "path": "native1216-lifecycle-failure.json",
+      "bytes": 2575,
+      "sha256": "796fb4ee5005f1169836aec96e3249f5a7cef7abf59a983f866a90203d4337f3"
+    },
+    {
+      "path": "native1216-lifecycle-observation.jsonl",
+      "bytes": 596856,
+      "sha256": "bdefb462bb624894c3533acdee2e00778cb89ccd20cfc80706ac94981c970b76"
+    },
+    {
+      "path": "native1216-lifecycle-observer.cs.txt",
+      "bytes": 76916,
+      "sha256": "f6851d34e8ef1d660bd402d875f6dc062fa0c5db5ae1906158e1ac4902852533"
+    },
+    {
+      "path": "native1216-lifecycle-touch.jsonl",
+      "bytes": 2927,
+      "sha256": "f344c6fc22c2dba74da1e5c245bae72db393500df30097a55e9b127d04c97693"
+    },
+    {
+      "path": "native1216-runner-start.json",
+      "bytes": 620,
+      "sha256": "92898832021c614210c584ca54f67daa108ef5312b5feb9b30d71d2379f3e2d0"
+    }
+  ],
+  "originalFilesRemoved": false
+}

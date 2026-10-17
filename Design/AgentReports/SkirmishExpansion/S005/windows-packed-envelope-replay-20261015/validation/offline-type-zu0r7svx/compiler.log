@@ -1,0 +1,12 @@
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(21,25): error CS0101: The namespace 'Game.Editor' already contains a definition for 'S005PackedOverflowEnvelopeReplay'
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(23,28): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Run' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(94,24): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Scalars' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(101,25): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Matrix' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(102,23): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Column' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(103,22): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Float' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(104,20): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Int' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(105,21): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'UInt' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(106,21): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Byte' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(107,24): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Envelope' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(108,23): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Hash' with the same parameter types
+Logs\SkirmishProduction\Offline\S005PlaneCamera\compile-8vpd72eu\draft2.cs(109,21): error CS0111: Type 'S005PackedOverflowEnvelopeReplay' already defines a member called 'Require' with the same parameter types

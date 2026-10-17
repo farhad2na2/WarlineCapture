@@ -1,0 +1,8 @@
+{
+  "result": "Passed",
+  "sourceHash": "9d3ed138e68dadaed3c935defe27c5657e275b236d724584dfecc3ed8996acfa",
+  "wrapperExit": 0,
+  "log": "tests-651-native-selection-bounded-airport-compile.log",
+  "marker": "[SkirmishInitialPlacementTests] result=Passed seeds=3 allocationLayouts=3 checkpointSpawnTests=2 nativeMissionAcceptance=Pending",
+  "nativeMissionAcceptance": "Pending"
+}

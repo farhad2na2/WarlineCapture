@@ -1,0 +1,127 @@
+{
+  "frame": 30271,
+  "stores": [
+    {
+      "id": 5,
+      "fuel": 0.0,
+      "received": 0.0,
+      "reservedFuel": 0.0
+    },
+    {
+      "id": 7,
+      "fuel": 64.0,
+      "received": 0.0,
+      "reservedFuel": 0.0
+    },
+    {
+      "id": 9,
+      "fuel": 1135.78,
+      "received": 1608.0,
+      "reservedFuel": 0.0
+    },
+    {
+      "id": 11,
+      "fuel": 0.0,
+      "received": 0.0,
+      "reservedFuel": 0.0
+    },
+    {
+      "id": 15,
+      "fuel": 0.0,
+      "received": 0.0,
+      "reservedFuel": 0.0
+    },
+    {
+      "id": 16,
+      "fuel": 68.0,
+      "received": 0.0,
+      "reservedFuel": 24.0
+    },
+    {
+      "id": 17,
+      "fuel": 0.0,
+      "received": 0.0,
+      "reservedFuel": 0.0
+    }
+  ],
+  "haulers": [
+    {
+      "id": "role.tanker.1.8.0",
+      "role": "Tanker",
+      "source": 16,
+      "destination": 9,
+      "phase": 2,
+      "consumption": {
+        "GroundFuelPerCell": 0.05000000074505806,
+        "AirFuelPerCell": 0.0,
+        "Enabled": 1
+      },
+      "hasAirMovement": false
+    },
+    {
+      "id": "production.1004.0",
+      "role": "Tanker",
+      "source": 16,
+      "destination": 9,
+      "phase": 1,
+      "consumption": {
+        "GroundFuelPerCell": 0.05000000074505806,
+        "AirFuelPerCell": 0.0,
+        "Enabled": 1
+      },
+      "hasAirMovement": false
+    },
+    {
+      "id": "production.1003.0",
+      "role": "Tanker",
+      "source": 16,
+      "destination": 9,
+      "phase": 1,
+      "consumption": {
+        "GroundFuelPerCell": 0.05000000074505806,
+        "AirFuelPerCell": 0.0,
+        "Enabled": 1
+      },
+      "hasAirMovement": false
+    },
+    {
+      "id": "production.1002.0",
+      "role": "LogisticsTruck",
+      "source": 5,
+      "destination": 16,
+      "phase": 3,
+      "consumption": {
+        "GroundFuelPerCell": 0.05000000074505806,
+        "AirFuelPerCell": 0.0,
+        "Enabled": 1
+      },
+      "hasAirMovement": false
+    },
+    {
+      "id": "production.1001.0",
+      "role": "LogisticsTruck",
+      "source": 5,
+      "destination": 16,
+      "phase": 3,
+      "consumption": {
+        "GroundFuelPerCell": 0.05000000074505806,
+        "AirFuelPerCell": 0.0,
+        "Enabled": 1
+      },
+      "hasAirMovement": false
+    },
+    {
+      "id": "role.logistics_truck.1.9.0",
+      "role": "LogisticsTruck",
+      "source": 5,
+      "destination": 11,
+      "phase": 3,
+      "consumption": {
+        "GroundFuelPerCell": 0.05000000074505806,
+        "AirFuelPerCell": 0.0,
+        "Enabled": 1
+      },
+      "hasAirMovement": false
+    }
+  ]
+}

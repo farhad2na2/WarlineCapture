@@ -1,0 +1,27 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=S005LoadedBaker1339Readonly.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1339-loaded-production-baker-probe.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005LoadedBaker1339Readonly] {"scope":"ReadOnlyLoadedProductionBakerIdentity","project":"/Users/farhad/Projects/WarlineCapture/Assets","assemblyName":"Game.Authoring, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","assemblyPath":"/Users/farhad/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Authoring.dll","loadedMvid":"837756c8-1bfb-4590-90bd-fd985212e2cd","diskAssemblySha256":"0b759cdb497f653ad94849aa969ad7b0c810147258222da9d51dd4b5f24b621f","diskAssemblyWriteUtc":"2026-10-12T16:01:52.3714180Z","bakerName":"Game.Authoring.UnitGridAuthoring+UnitGridBaker","bakingUser":"WarlineCapture","sourceSha256":"cf5f9decee267a41f823e37c6dd0573debfadf2a4c5e140d84af475d1b998f4b","sourcePath":"/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs","bakingVersion":2,"autoRefreshPref":-1,"autoRefreshModePref":1,"attributePresent":true,"excluded":false,"isPlaying":false,"isChanging":false,"isCompiling":false,"isUpdating":false,"autoRefreshKeyPresent":false,"autoRefreshModeKeyPresent":true,"sourceVersion2":true,"loadedVersion2":true}
+UnityEngine.Debug:Log (object)
+S005LoadedBaker1339Readonly:RunValidation () (at /private/tmp/s005-loaded-baker1339-readonly-v2/S005LoadedBaker1339Readonly.cs:25)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1339-loaded-production-baker-probe.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005LoadedBaker1339Readonly] result=Captured loadedVersion2=1 sourceVersion2=1 sourceWrites=0 cacheChanged=0 metadataFreshnessCertified=0
+UnityEngine.Debug:Log (object)
+S005LoadedBaker1339Readonly:RunValidation () (at /private/tmp/s005-loaded-baker1339-readonly-v2/S005LoadedBaker1339Readonly.cs:27)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native1339-loaded-production-baker-probe.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=S005LoadedBaker1339Readonly.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,11 @@
+{
+  "result": "ScopedFogLogicPassed",
+  "cases": 9,
+  "nativeReceipt": 0,
+  "compiler": "completed failedfalse errors[]",
+  "sourceSha256": "a40cf4c72fc8f1d576cb7931e52f4920d81df39f46736b925d3afcc94925027f",
+  "runSourceDelta": [],
+  "preflight": "FAILED expected8source+3metas foundextraQualityAA0to4; shell continued incorrectly; not full pipeline quality pass",
+  "qualityActualAndDisk": 4,
+  "idleNativeProof": "/private/tmp/delegation-t7-fog1110-native-quality-post.json"
+}

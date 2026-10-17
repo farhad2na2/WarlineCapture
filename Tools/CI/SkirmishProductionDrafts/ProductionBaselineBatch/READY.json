@@ -1,0 +1,37 @@
+{
+  "manifest": "Tools/CI/SkirmishProductionDrafts/ProductionBaselineBatch/manifest.json",
+  "manifest_sha256": "193cd3d9488f9c67a10fd34303df52432bd4f5117479e899fef66ed81ac47d62",
+  "owning_proof": {
+    "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/after-storage-zmcrpuo6/result.json",
+    "sha256": "3f197b505eecc512a299a8814649773ccf75cedea4f1307315afcac78c81f855",
+    "owners": {
+      "Editor": [
+        830,
+        353
+      ],
+      "Tests": [
+        760,
+        332
+      ]
+    },
+    "projected_csharp_sources": 9,
+    "mismatches": 0,
+    "no_fallback": true
+  },
+  "offline_controls": {
+    "path": "Logs/SkirmishProduction/Offline/ProductionBaselineBatch/offline-controls-sealed/receipt.json",
+    "sha256": "84884df704726f7416ac7fde3aa2aac5dd3daa2e1251a3a79cdd9b7fd06c3eb5",
+    "methods": 29,
+    "passed": true
+  },
+  "native_entry": "Game.Tests.Editor.SkirmishProductionMatrixAuthorityTests.RunFocusedValidation",
+  "required_marker": "[SkirmishProductionMatrixAuthorityTests] result=Passed methods=6 baselineSlots=720 syntheticStressSlots=1200 nativeJobs=0 queueSuccessEnabled=0",
+  "native_controls_executed": false,
+  "native_jobs_executed": 0,
+  "baseline": "120 IDs x 3 exact packet seeds x EN/FA, Regular/Standard",
+  "stress": "60 strata x 20 seeds; explicit complete SHA-bound authority required; no real stress plan generated",
+  "operational_completion_is_qualification": false,
+  "queue_success_enabled": false,
+  "independent_review": "Pending",
+  "root_import": "Deferred until next stable checkpoint; root only"
+}

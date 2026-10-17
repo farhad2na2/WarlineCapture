@@ -1,0 +1,11 @@
+{
+  "sourceHash": "3986ae0d0abf89331a6eb6c464cf4897c5fdffa1f2ea82e47a16905f1a242030",
+  "nativeRun": 212,
+  "unverifiedCommandRecords": 75,
+  "recordsWithActualTouchReleaseWithinTwoFrames": 75,
+  "recordsWithoutNearbyTouch": 0,
+  "diagnosis": "RecordTouchEvidence observes manual releases only while the pre-save combat probe is active. After Continue it writes touch trace but does not call ObserveRelease. Manual finish branch does not enforce the command audit.",
+  "stagedFix": "Observe all manual driver Ended samples once; snapshot strict audit before disposal; require measured zero-violation audit in final manual pass.",
+  "offlineDiagnosisIsAcceptance": false,
+  "playerReady": false
+}

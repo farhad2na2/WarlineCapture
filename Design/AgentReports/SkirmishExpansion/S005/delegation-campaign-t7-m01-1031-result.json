@@ -1,0 +1,23 @@
+{
+  "result": "FailedScopedOldT7DriverExperiment",
+  "log": "delegation-campaign-t7-m01-1031.log",
+  "sourceHash": "ed4e538c0e08ae9fb3028f1a992418eb5c577eb797f17720beb7c63fe5f65bf0",
+  "currentMainCertified": false,
+  "markers": [
+    "[CampaignTutorialEntry] result=Failed Player journey stalled: saga.ch01.m01.first_contact lesson=2 last=2:SelectCommand body=Press Select on the command bar.",
+    "[CampaignNativeSelection] result=Failed gestures=45 completed=45 unexpected=0 interventions=0 staleCueDeferrals=0 maximumStaleSeconds=0.000 staleCueBoundSeconds=3 fullJourneyStrictTouchAudit=0",
+    "[ExistingEditorValidation] result=Failed executeMethod=CampaignSelectionJourney1031.RunM01"
+  ],
+  "screenshots": [
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-journey-lesson-2.png",
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-journey-lesson-1-ShowMeButton.png",
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-journey-lesson-1.png",
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-journey-lesson-2-settled.png",
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-journey-lesson-1-SelectCommand.png",
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-opening.png",
+    "Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1031-screens/1-journey-lesson-2-SelectCommand.png"
+  ],
+  "cause": "Repeated Select despite reordered callbacks. Every-frame companion guard skips subsequent Canvas.willRenderCanvases callbacks; late read-only observer sees selected source and 4 actors with public NeedsSelection=false. Correction prepared to observe every Canvas callback; no runtime source fix claimed.",
+  "sourceAssetsEditedByAgent": false,
+  "preparedUnexecutedRetry": "delegation-campaign-CampaignSelectionJourney1032.cs.txt"
+}

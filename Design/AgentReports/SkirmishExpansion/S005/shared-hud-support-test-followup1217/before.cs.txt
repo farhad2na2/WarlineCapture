@@ -1,0 +1,559 @@
+using System;
+using System.Reflection;
+using Game.Components;
+using Game.Configs;
+using Game.Missions.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
+using Game.UI.Shell.Ecs;
+using Game.UI.Shell.Contracts.Ecs;
+using NUnit.Framework;
+using TMPro;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+
+public sealed class M01FirstContactHudRestrictionTests
+{
+    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=9";
+
+    [MenuItem("Game/Validation/Run M01 First Contact HUD Restrictions Focused")]
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            Run(CanonicalMissionRestrictionsProjectReadOnly, ref passed);
+            Run(CinematicInteractionLockTracksOpeningReturn, ref passed);
+            Run(ClearedCampaignStateDoesNotLockSkirmish, ref passed);
+            Run(SkirmishIntroLocksPlayingHudUntilCompletionAndReplay, ref passed);
+            Run(RightRailDisablesAndGraysBuildAndSupport, ref passed);
+            Run(ResourceHeaderDisablesAndGraysEconomyButPreservesCivilianRisk, ref passed);
+            Run(SquadTrayDisablesAndGraysNonAuthoredCategoriesButPreservesDefaults, ref passed);
+            Run(SquadGuidancePointsAtExactSoldierButtonWithoutBlockingInput, ref passed);
+            Run(AssistantPreviewPreservesRtsFraming, ref passed);
+            Debug.Log(Marker);
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError($"[M01FirstContactHudRestrictionValidation] result=Failed passed={passed}");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public static void CanonicalMissionRestrictionsProjectReadOnly()
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = CreateMissionWorld(out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions), Is.True);
+            Assert.That(restrictions.MissionId, Is.EqualTo("saga.ch01.m01.first_contact"));
+            Assert.That(restrictions.BuildingDisabled, Is.True);
+            Assert.That(restrictions.ProductionDisabled, Is.True);
+            Assert.That(restrictions.EconomyDisabled, Is.True);
+            Assert.That(restrictions.ShowMissionCredits, Is.False);
+            Assert.That(restrictions.UsesMaterialsOnlyConstruction, Is.True);
+            Assert.That(restrictions.TransportDisabled, Is.True);
+            Assert.That(restrictions.AirDisabled, Is.True);
+            Assert.That(restrictions.CinematicInteractionLocked, Is.False);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public static void CinematicInteractionLockTracksOpeningReturn()
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = CreateMissionWorld(out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            Entity root = world.EntityManager.CreateEntityQuery(typeof(CampaignMissionRootComponent)).GetSingletonEntity();
+            CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            runtime.SessionToken = new FixedString64Bytes("m01.hud.test");
+            world.EntityManager.SetComponentData(root, runtime);
+            world.EntityManager.AddComponentData(root, new CampaignMissionOpeningPresentationComponent
+            {
+                SessionToken = runtime.SessionToken,
+                Stage = 5
+            });
+
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var duringOpening), Is.True);
+            Assert.That(duringOpening.CinematicInteractionLocked, Is.True);
+            CampaignMissionOpeningPresentationComponent opening =
+                world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(root);
+            opening.Stage = 6;
+            world.EntityManager.SetComponentData(root, opening);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var afterReturn), Is.True);
+            Assert.That(afterReturn.CinematicInteractionLocked, Is.False);
+
+            world.EntityManager.AddComponentData(root, new CampaignMissionFinalePresentationComponent
+            {
+                SessionToken = runtime.SessionToken,
+                Required = 1,
+                Stage = 1
+            });
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var duringFinale), Is.True);
+            Assert.That(duringFinale.CinematicInteractionLocked, Is.True,
+                "The finale must disable every HUD button while the camera and combat presentation run.");
+            CampaignMissionFinalePresentationComponent finale =
+                world.EntityManager.GetComponentData<CampaignMissionFinalePresentationComponent>(root);
+            finale.Stage = 4;
+            world.EntityManager.SetComponentData(root, finale);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var afterFinale), Is.True);
+            Assert.That(afterFinale.CinematicInteractionLocked, Is.False);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public static void ClearedCampaignStateDoesNotLockSkirmish()
+    {
+        World previous=World.DefaultGameObjectInjectionWorld;
+        using World world=CreateMissionWorld(out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld=world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            using var query=world.EntityManager.CreateEntityQuery(typeof(CampaignMissionRootComponent));
+            Entity root=query.GetSingletonEntity();
+            world.EntityManager.SetComponentData(root,default(CampaignMissionRuntimeComponent));
+            world.EntityManager.AddComponentData(root,default(CampaignMissionOpeningPresentationComponent));
+            world.EntityManager.AddComponentData(root,default(CampaignMissionFinalePresentationComponent));
+            Assert.IsFalse(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var cleared));
+            Assert.IsFalse(cleared.CinematicInteractionLocked);
+            var inactive=new CampaignMissionRuntimeComponent {SessionToken=new FixedString64Bytes("retired-session")};
+            world.EntityManager.SetComponentData(root,inactive);
+            world.EntityManager.SetComponentData(root,new CampaignMissionOpeningPresentationComponent {SessionToken=inactive.SessionToken,Stage=1});
+            world.EntityManager.SetComponentData(root,new CampaignMissionFinalePresentationComponent {SessionToken=inactive.SessionToken,Stage=1,Required=1});
+            Assert.IsFalse(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var retired));
+            Assert.IsFalse(retired.CinematicInteractionLocked);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld=previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public static void SkirmishIntroLocksPlayingHudUntilCompletionAndReplay()
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = new("Skirmish intro HUD restriction test");
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity match = em.CreateEntity(typeof(SkirmishMatchState));
+            em.SetComponentData(match, new SkirmishMatchState { Phase = SkirmishPhase.Playing });
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var legacy), Is.True);
+            Assert.That(legacy.CinematicInteractionLocked, Is.False, "Absent intro retains legacy behavior.");
+
+            Entity boundary = em.CreateEntity(typeof(MatchIntroTransitionComponent), typeof(UiShellStateComponent));
+            var intro = new MatchIntroTransitionComponent
+            {
+                State = MatchIntroTransitionStateKind.EnteringHud,
+                Progress01 = .66f,
+                InputLocked = 1,
+                SequenceId = 4
+            };
+            em.SetComponentData(boundary, intro);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var entering), Is.True);
+            Assert.That(entering.CinematicInteractionLocked, Is.True,
+                "A Playing match must not present commands during the authoritative intro lock.");
+            Assert.That(em.GetComponentData<MatchIntroTransitionComponent>(boundary).InputLocked, Is.EqualTo(1));
+            Assert.That(em.GetComponentData<SkirmishMatchState>(match).Phase, Is.EqualTo(SkirmishPhase.Playing));
+
+            intro.State = MatchIntroTransitionStateKind.Complete;
+            intro.InputLocked = 0;
+            intro.Progress01 = 1f;
+            em.SetComponentData(boundary, intro);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var complete), Is.True);
+            Assert.That(complete.CinematicInteractionLocked, Is.False);
+
+            intro.State = MatchIntroTransitionStateKind.EnteringHud;
+            intro.InputLocked = 1;
+            intro.SequenceId++;
+            em.SetComponentData(boundary, intro);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var replay), Is.True);
+            Assert.That(replay.CinematicInteractionLocked, Is.True, "Replay must reapply the same intro gate.");
+
+            intro.InputLocked = 0;
+            em.SetComponentData(boundary, intro);
+            em.RemoveComponent<UiShellStateComponent>(boundary);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var invalid), Is.True);
+            Assert.That(invalid.CinematicInteractionLocked, Is.True, "An invalid intro boundary fails closed.");
+            em.AddComponent<UiShellStateComponent>(boundary);
+            Entity duplicate = em.CreateEntity(typeof(MatchIntroTransitionComponent));
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var ambiguous), Is.True);
+            Assert.That(ambiguous.CinematicInteractionLocked, Is.True, "Ambiguous intro ownership fails closed.");
+            em.DestroyEntity(duplicate);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restored), Is.True);
+            Assert.That(restored.CinematicInteractionLocked, Is.False);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
+    public static void RightRailDisablesAndGraysBuildAndSupport()
+    {
+        GameObject root = new("RightRail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
+        try
+        {
+            Button build = CreateButton(root.transform, "BuildCommand");
+            Button support = CreateButton(root.transform, "SupportCommand");
+            Button zoomIn = CreateButton(root.transform, "ZoomInButton");
+            Button zoomOut = CreateButton(root.transform, "ZoomOutButton");
+            typeof(MatchHudRightQuickRailView)
+                .GetField("buildButton", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.SetValue(root.GetComponent<MatchHudRightQuickRailView>(), build);
+
+            MatchHudRightQuickRailView view = root.GetComponent<MatchHudRightQuickRailView>();
+            view.ApplyMissionRestrictionVisibility(
+                buildDisabled: true,
+                supportDisabled: true,
+                hideUnrelatedControls: true);
+            Assert.That(build.gameObject.activeSelf, Is.True);
+            Assert.That(support.gameObject.activeSelf, Is.True);
+            Assert.That(build.interactable, Is.False);
+            Assert.That(support.interactable, Is.False);
+            Assert.That(build.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
+            Assert.That(support.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
+            var cinematicGroup = build.GetComponent<CanvasGroup>();
+            Assert.That(cinematicGroup.interactable, Is.True, "Mission scope must not become a captured cinematic lock.");
+            Assert.That(cinematicGroup.blocksRaycasts, Is.True);
+            Assert.That(build.colors.disabledColor.a, Is.EqualTo(build.colors.normalColor.a));
+            Assert.That(support.colors.disabledColor.a, Is.EqualTo(support.colors.normalColor.a));
+            Assert.That(build.GetComponent<Image>().material.shader.name,
+                Is.EqualTo("Warline/UI/Disabled Grayscale"));
+            Assert.That(support.GetComponent<Image>().material.shader.name,
+                Is.EqualTo("Warline/UI/Disabled Grayscale"));
+            Assert.That(zoomIn.gameObject.activeSelf, Is.True);
+            Assert.That(zoomOut.gameObject.activeSelf, Is.True);
+            cinematicGroup.interactable = cinematicGroup.blocksRaycasts = false;
+            view.ApplyMissionRestrictionVisibility(buildDisabled: false, supportDisabled: false);
+            Assert.That(cinematicGroup.interactable, Is.False, "An active cinematic still owns its input lock.");
+            cinematicGroup.interactable = cinematicGroup.blocksRaycasts = true;
+            Assert.That(build.gameObject.activeSelf, Is.True, "Skirmish/default presentation must remain unchanged.");
+            Assert.That(support.gameObject.activeSelf, Is.True);
+            Assert.That(build.interactable, Is.True);
+            Assert.That(support.interactable, Is.True);
+            Assert.That(build.IsInteractable(), Is.True, "The new mission's Build becomes usable after cinematic return.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    public static void ValidateScopeLockOwnership()
+    {
+        RightRailDisablesAndGraysBuildAndSupport();
+        ClearingAbsentDisabledReasonPreservesCurrentVisuals();
+        RightRailDoesNotOverrideMigratedFooterBuild();
+        Debug.Log("[MissionScopeLockOwnership] result=Passed independent input locks and idempotent visual restoration");
+    }
+
+    [Test]
+    public static void RightRailDoesNotOverrideMigratedFooterBuild()
+    {
+        var rail = new GameObject("Legacy rail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
+        var footer = new GameObject("Footer", typeof(RectTransform), typeof(MatchOverlayCommandControlsView));
+        try
+        {
+            var button = CreateButton(footer.transform, "BuildCommand");
+            var view = rail.GetComponent<MatchHudRightQuickRailView>();
+            typeof(MatchHudRightQuickRailView).GetField("buildButton", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(view, button);
+            view.ApplyMissionRestrictionVisibility(true, true);
+            Assert.That(button.IsInteractable(), Is.True, "Only the footer may apply its tutorial Build override.");
+            Assert.That(button.GetComponent<Image>().material.shader.name, Is.Not.EqualTo("Warline/UI/Disabled Grayscale"));
+        }
+        finally { UnityEngine.Object.DestroyImmediate(rail); UnityEngine.Object.DestroyImmediate(footer); }
+    }
+
+    [Test]
+    public static void ClearingAbsentDisabledReasonPreservesCurrentVisuals()
+    {
+        var root = new GameObject("Disabled state fixture", typeof(RectTransform));
+        try
+        {
+            var button = CreateButton(root.transform, "BuildCommand");
+            var image = button.GetComponent<Image>();
+            button.gameObject.AddComponent<UiDisabledMaterialStateView>();
+            button.gameObject.AddComponent<UiDisabledSelectableVisualStateView>();
+            var original = button.colors;
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, false);
+            UiDisabledMaterialUtility.SetSelectableDisabled(button, UiDisabledVisualReason.MissionRestriction, false);
+            Assert.That(image.color, Is.EqualTo(Color.white), "An empty runtime state must not erase the graphic.");
+            Assert.That(button.colors, Is.EqualTo(original));
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, true);
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, false);
+            image.color = Color.yellow;
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, false);
+            Assert.That(image.color, Is.EqualTo(Color.yellow), "Repeated clears must preserve the current enabled style.");
+        }
+        finally { UnityEngine.Object.DestroyImmediate(root); }
+    }
+
+    [Test]
+    public static void ResourceHeaderDisablesAndGraysEconomyButPreservesCivilianRisk()
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = CreateMissionWorld(out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        GameObject root = new("ResourceHeader");
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            GameObject materials = CreateSlot(root.transform, "MaterialsSlot", out TMP_Text materialsLabel, out TMP_Text materialsValue);
+            GameObject oil = CreateSlot(root.transform, "OilSlot", out TMP_Text oilLabel, out TMP_Text oilValue);
+            GameObject fuel = CreateSlot(root.transform, "FuelSlot", out TMP_Text fuelLabel, out TMP_Text fuelValue);
+            GameObject civilian = CreateSlot(root.transform, "CivilianRiskSlot", out TMP_Text civilianLabel, out TMP_Text civilianValue);
+
+            var presentation = new MatchHudResourceHeaderPresentation();
+            presentation.Bind(oil, materialsLabel, materialsValue, oilLabel, oilValue,
+                fuelLabel, fuelValue, civilianLabel, civilianValue, 0f);
+            Assert.That(materials.activeSelf, Is.True);
+            Assert.That(oil.activeSelf, Is.True);
+            Assert.That(fuel.activeSelf, Is.True);
+            Assert.That(civilian.activeSelf, Is.True);
+            Assert.That(root.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
+            Assert.That(materials.GetComponent<Image>().material.shader.name,
+                Is.EqualTo("Warline/UI/Disabled Grayscale"));
+            Assert.That(oil.GetComponent<Image>().material.shader.name,
+                Is.EqualTo("Warline/UI/Disabled Grayscale"));
+            Assert.That(fuel.GetComponent<Image>().material.shader.name,
+                Is.EqualTo("Warline/UI/Disabled Grayscale"));
+            Assert.That(civilian.GetComponent<Image>().material.shader.name,
+                Is.Not.EqualTo("Warline/UI/Disabled Grayscale"));
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public static void SquadTrayDisablesAndGraysNonAuthoredCategoriesButPreservesDefaults()
+    {
+        GameObject root = new("SquadTray", typeof(RectTransform));
+        root.SetActive(false);
+        try
+        {
+            MatchHudSquadTrayView view = root.AddComponent<MatchHudSquadTrayView>();
+            var cards = new MatchHudSquadTrayView.Card[5];
+            for (int i = 0; i < cards.Length; i++)
+            {
+                Button button = CreateButton(root.transform, $"Card{i}");
+                cards[i] = new MatchHudSquadTrayView.Card
+                {
+                    Button = button,
+                    FrameImage = button.GetComponent<Image>()
+                };
+            }
+
+            typeof(MatchHudSquadTrayView)
+                .GetField("cards", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.SetValue(view, cards);
+            root.SetActive(true);
+
+            view.ApplyMissionRestrictionVisibility(
+                combatVehiclesDisabled: true,
+                airDisabled: true,
+                transportDisabled: true,
+                hideUnrelatedControls: true);
+            Assert.That(cards[0].Button.gameObject.activeSelf, Is.True, "The authored soldier command squad must remain available.");
+            for (int i = 1; i < cards.Length; i++)
+            {
+                Assert.That(cards[i].Button.gameObject.activeSelf, Is.True, $"Restricted card {i} must remain visible.");
+                Assert.That(cards[i].Button.interactable, Is.False, $"Restricted card {i} must be disabled.");
+                Assert.That(cards[i].FrameImage.color.a, Is.EqualTo(1f), $"Restricted card {i} must preserve alpha.");
+                Assert.That(cards[i].FrameImage.material.shader.name,
+                    Is.EqualTo("Warline/UI/Disabled Grayscale"),
+                    $"Restricted card {i} must use the disabled material.");
+            }
+
+            view.ApplyMissionRestrictionVisibility(
+                combatVehiclesDisabled: false,
+                airDisabled: false,
+                transportDisabled: false);
+            for (int i = 0; i < cards.Length; i++)
+            {
+                Assert.That(cards[i].Button.gameObject.activeSelf, Is.True, "Skirmish/default presentation must remain unchanged.");
+                Assert.That(cards[i].Button.interactable, Is.True);
+            }
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public static void AssistantPreviewPreservesRtsFraming()
+    {
+        using World world = new("M01 assistant camera preview test");
+        Entity camera = world.EntityManager.CreateEntity(typeof(RtsCameraRequestQueueComponent));
+        world.EntityManager.AddBuffer<RtsCameraRequestElement>(camera);
+
+        Type previewUtility = typeof(UiShellEcsGateway).Assembly.GetType(
+            "Game.UI.Shell.Ecs.AssistantPreviewTargetUtility",
+            throwOnError: true);
+        MethodInfo queueCameraPreview = previewUtility.GetMethod(
+            "QueueCameraPreview",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.That(queueCameraPreview, Is.Not.Null);
+        queueCameraPreview.Invoke(
+            null,
+            new object[]
+            {
+                world.EntityManager,
+                camera,
+                new Unity.Mathematics.float3(10f, 0f, 20f)
+            });
+
+        DynamicBuffer<RtsCameraRequestElement> requests =
+            world.EntityManager.GetBuffer<RtsCameraRequestElement>(camera);
+        Assert.That(requests.Length, Is.EqualTo(4));
+        Assert.That(requests[0].Kind, Is.EqualTo(RtsCameraRequestKind.MoveGroundCenterTo));
+        Assert.That(requests[1].Kind, Is.EqualTo(RtsCameraRequestKind.ClearSmoothFocusTarget));
+        Assert.That(requests[2].Kind, Is.EqualTo(RtsCameraRequestKind.ClearSmoothPerspectiveTarget));
+        Assert.That(requests[3].Kind, Is.EqualTo(RtsCameraRequestKind.ClearDragging));
+        for (int index = 0; index < requests.Length; index++)
+        {
+            Assert.That(requests[index].Kind,
+                Is.Not.EqualTo(RtsCameraRequestKind.ApplyPerspectiveModeInstant),
+                "Show Me must not drop into the high-detail tactical zoom.");
+        }
+    }
+
+    [Test]
+    public static void SquadGuidancePointsAtExactSoldierButtonWithoutBlockingInput()
+    {
+        GameObject root = new("SquadTrayGuidance", typeof(RectTransform));
+        root.SetActive(false);
+        try
+        {
+            MatchHudSquadTrayView view = root.AddComponent<MatchHudSquadTrayView>();
+            var cards = new MatchHudSquadTrayView.Card[5];
+            for (int index = 0; index < cards.Length; index++)
+            {
+                Button button = CreateButton(root.transform, $"Card{index}");
+                cards[index] = new MatchHudSquadTrayView.Card
+                {
+                    Button = button,
+                    FrameImage = button.GetComponent<Image>()
+                };
+            }
+            typeof(MatchHudSquadTrayView)
+                .GetField("cards", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.SetValue(view, cards);
+            root.SetActive(true);
+
+            view.ApplyAssistantGuidance(new UiAssistantHighlightModel(
+                1, true, 7, 25010, 0, (byte)AssistantTargetKind.Squad, 0f, 0f, 0f, 1f));
+            Transform cue = cards[0].Button.transform.Find("AriaButtonGuidance");
+            Assert.That(cue, Is.Not.Null);
+            Assert.That(cue.gameObject.activeSelf, Is.True);
+            Assert.That(cue.GetComponent<CanvasGroup>().blocksRaycasts, Is.False);
+            Assert.That(
+                cue.GetComponentInChildren<TMP_Text>().text,
+                Is.EqualTo(GameLocalization.Get("ui.hud.tap_rifle_squad", "SELECT SQUAD")));
+            Assert.That(cue.GetComponent<V3GradientGraphic>(), Is.Not.Null,
+                "The local fallback must use the same V3 bordered focus treatment.");
+            Assert.That(cue.Find("Pointer"), Is.Null,
+                "The V3 focus treatment must not use a placeholder arrow.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    private static World CreateMissionWorld(out BlobAssetReference<CampaignMissionCatalogBlob> blob)
+    {
+        World world = new("M01 HUD restriction tests");
+        Entity root = world.EntityManager.CreateEntity(typeof(CampaignMissionRootComponent));
+        world.EntityManager.AddComponentData(root, new CampaignMissionRuntimeComponent
+        {
+            MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
+            Phase = MissionPhaseKind.FindSquad,
+            Version = 1,
+            SourceVersion = 1
+        });
+
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
+        BlobBuilderArray<CampaignMissionDefinitionBlob> missions = builder.Allocate(ref catalog.Missions, 1);
+        missions[0].MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact");
+        missions[0].BuildingDisabled = 1;
+        missions[0].ProductionDisabled = 1;
+        missions[0].EconomyDisabled = 1;
+        missions[0].TransportDisabled = 1;
+        missions[0].AirDisabled = 1;
+        blob = builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
+        world.EntityManager.AddComponentData(root, new CampaignMissionCatalogComponent
+        {
+            Blob = blob,
+            SourceVersion = 1,
+            OwnsBlob = 0
+        });
+        return world;
+    }
+
+    private static Button CreateButton(Transform parent, string name)
+    {
+        GameObject buttonObject = new(name, typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(parent, false);
+        return buttonObject.GetComponent<Button>();
+    }
+
+    private static GameObject CreateSlot(
+        Transform parent, string name, out TMP_Text label, out TMP_Text value)
+    {
+        GameObject slot = new(name, typeof(RectTransform), typeof(Image));
+        slot.transform.SetParent(parent, false);
+        GameObject labelObject = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        labelObject.transform.SetParent(slot.transform, false);
+        GameObject valueObject = new("Value", typeof(RectTransform), typeof(TextMeshProUGUI));
+        valueObject.transform.SetParent(slot.transform, false);
+        label = labelObject.GetComponent<TMP_Text>();
+        value = valueObject.GetComponent<TMP_Text>();
+        return slot;
+    }
+
+    private static void Run(Action test, ref int passed)
+    {
+        test();
+        passed++;
+    }
+}

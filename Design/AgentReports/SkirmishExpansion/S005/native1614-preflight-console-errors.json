@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 2,
+      "returned": 2,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[S005NormalSouthFlank1613] companionFailure=1 originalFailurePreserved=1",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005NormalSouthFlank1613Observer:CloseAfterCompanionFailure () (at /private/tmp/s005-full-south-flank1613-source-3751/S005NormalSouthFlank1613Observer.cs:282)\nS005NormalSouthFlank1613Observer:ObserveRendered () (at /private/tmp/s005-full-south-flank1613-source-3751/S005NormalSouthFlank1613Observer.cs:436)\nUnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)\n",
+          "timestampUtc": "2026-10-14T11:52:24.7753320Z"
+        },
+        {
+          "type": "Error",
+          "message": "[S005ManualHomeDefense1613] failed=1 reason=Bounded public home-defense sequence timed out",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005ManualHomeDefense1613:Tick () (at /private/tmp/s005-full-south-flank1613-source-3751/S005NormalSouthFlank1613Observer.cs:1838)\nUnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)\n",
+          "timestampUtc": "2026-10-14T11:52:24.3324640Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

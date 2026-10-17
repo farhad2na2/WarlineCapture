@@ -1,0 +1,19 @@
+{
+  "explicitHeavyLaneOwner": "main1332",
+  "sourceHash": "0dcba894b8008ee17990190eec50f9414678edd8ef330f2324a078f03661a83b",
+  "preManifest": "final-1330-shared-door-held-return-repair-source-manifest.json",
+  "preflightManifest": "final-1332-paid-cargo-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1332-paid-cargo-pre-dispatch-source-manifest.json",
+  "method": "S005PaidTransportPlane1332.RunValidation",
+  "fixtureSha256": "e292b4ff82b026dc90c4b95cb26c2d2504b2b3d840ff47bb8aff100122e1e7d4",
+  "runnerSha256": "738f64ffeba36eded0391bf586fc0e70b73a5f2b3ed3db19e6e6f345112db760",
+  "dryCompileProof": "compile1332-plane-door-dry-run.json",
+  "dryCompileProofSha256": "6765e16458d983832f5636b0edaa987c29479c9c70c7657a117ec46e98df14e9",
+  "normalMission": false,
+  "fundingReadinessOpeningIsolation": true,
+  "finalDeathStimulusPerformed": false,
+  "freshBakePerformed": false,
+  "cargoLifecycleCertified": false,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

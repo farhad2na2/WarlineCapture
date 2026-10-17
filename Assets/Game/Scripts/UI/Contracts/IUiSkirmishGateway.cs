@@ -68,6 +68,13 @@ namespace Game.UI.Contracts
     public interface IUiSkirmishGateway
     {
         bool TryReadSkirmish(out UiSkirmishModel model);
+        // Context-only consumers must not require the full economy/ARIA projection.
+        bool TryReadSkirmishContext(out bool expanded)
+        {
+            bool admitted = TryReadSkirmish(out var model);
+            expanded = admitted && model.Expanded;
+            return admitted;
+        }
         bool TryRequestSkirmish(UiSkirmishAction action);
         bool HasSavedSkirmish(string catalogId) => false;
         bool TryConsumeSkirmishResumeFailure() => false;

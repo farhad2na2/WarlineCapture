@@ -1,0 +1,59 @@
+{
+  "status": "PreparedExternalOnlyNeverCompiledLoadedExecutedByPlacementAgent",
+  "fixture": "/private/tmp/S005PaidEnemyAirEffects1120.cs",
+  "fixtureSha256": "dec60b23af4132e7249b80825b738d47154c491c9ad403495a691704f1447362",
+  "runner": "/private/tmp/s005-run-paid-enemy-air-effects-1120.py",
+  "runnerSha256": "2efe595e25723d865ceb3aac9f0fca7ff129099f389020043579be3ac10966e4",
+  "scope": "Two exact paid-source air combat effects: native AntiAir autofire AirMissile and selected paid Fighter actual NativeTouch Attack DirectFire. Two fresh actual paid faction2 Planes from real native paid faction2 Airport; actual native taxi/takeoff/public Move, native fog visible Air eligibility, no fake target state.",
+  "actualExposedConfig": "SkirmishRoleOverlayCatalog.cs32/42/46: AntiAir cost220 damage20 range28 GroundStaging; Fighter480 damage22 range32 Airport; Plane440 HP340 unarmed Air Native prefab. Actual runtime values/payment required.",
+  "nativeEligibilitySources": [
+    "CombatTargetPolicyUtility.cs Allows actual native target Visible/domain and actual source allowed mask.",
+    "AirMissileLauncherSystems.cs native target acquisition96+ scans UnitAirMovement, actual faction/health/policy/range, independent of UnitCombat.AutoEngage.",
+    "UnitAttackSystem.cs emits actual DirectFire source/entity HP observations; Jet02 prefab airMissileLauncherConfig0.",
+    "CombatDamageObservationComponents.cs actual SourceEntity TargetEntity SourceKind DamageApplied/HealthAfter/Frame."
+  ],
+  "sourceFitProtocol": "Retains frozen1104 actual separate paid player Touch Airport and native faction2 AIBuildPlanner receipt/previews/paid300 construction/current legality/settlement. No relabel, new geometry, forced footprint or capacity.",
+  "disclosures": [
+    "Both native materials banks funded to real clamp per purchase; owned native fuel/oil stores filled only to existing capacities; FullArsenal readiness.",
+    "Opening actors HealthZero retired; enemy strategy disabled; actual BuildingDefenseAttackSystem temporarily disabled and restored for exclusive damage attribution.",
+    "Own Fighter AutoEngage0 before actual paid enemy exists to prevent auto damage before genuine selected public Attack. AA native autonomous launcher not disabled/forced.",
+    "Own actors selected via native Touch, producer queue APIs/enemy Move explicitly outside Touch audit; Fighter patrol/hold/Attack use normal NativeTouch.",
+    "Each case actual own actor and own fresh paid target HealthZero retired only AFTER actual qualified native damage; true native capacity/idempotency/projectile cleanup required before next case. No target HP reset, visibility, pose, Airborne/domain writes."
+  ],
+  "strictChecks": [
+    "Four exact accepted native request IDs9201-9204, distinct actual receipts/entity index+version and native costs/spend/producer owner.",
+    "Genuine native grounded enemy Plane before actual public Move, native takeoff roll then actual Airborne and real visibility/domain policy; positive taxi only if real home-to-threshold gap requires it.",
+    "AA real native lock/projectile observed, actual AirMissile event exact paid source/target/positive HP loss; Fighter actual NativeTouch ArmyAttack receipt/true ownAirborne/increased native shot counter and exact DirectFire event.",
+    "All actual new raw damage rows preserved; foreign positive actual target damage fails attribution.",
+    "Each role death cleanup all native both-faction counters0, no in-flight old missile contamination. Every raw Touch row0 violations/unexpected/interventions across audit resets.",
+    "Full source preflight/load/pre-dispatch/post compare, explicit root idle+main1120 ownership, unique evidence no overwrite.",
+    "Exact single paid Fighter SourceEntity+native increased ShotCounter and one eligible shooter every observed rendered frame; no aggregate fallback.",
+    "Both actual PatrolRow NativeTouch flight and held-airborne observation before Fighter NativeTouch Attack, correct paid entity, positiveMoveReceipt/frame/displacement; no Hold receipt fabricated."
+  ],
+  "nativeInvocation": "rtk proxy python3 /private/tmp/s005-run-paid-enemy-air-effects-1120.py <CURRENT_FULL_SOURCE_MANIFEST_BASENAME> --heavy-lane-owner main1120",
+  "limitations": [
+    "No normal funding/strategy growth/full mission win or normal full-mission claim; genuine selected NativeTouch Attack only for Fighter, native autofire for AA.",
+    "Native actual source-fit/target visibility/launcher/flight failure remains unqualified gate, not fabricated readiness or source impossible.",
+    "No unnecessary mixed four aircraft full returns repeated;1106 separate bilateral clearance/lifecycle scope retained.",
+    "No Plane cargo, Scan/fog saved populated ledger, loaded transport recovery or device/visual certification."
+  ],
+  "technicallyReady": false,
+  "playerReady": false,
+  "priorPreparedBytesPreserved": {
+    "fixture": "/private/tmp/S005PaidEnemyAirEffects1120-prepared-v1-20261011.cs",
+    "fixtureSha256": "08f74894154a5120f5d7566ce4212ec76dfc410bd963a9ff167dacb9930958f0",
+    "runner": "/private/tmp/s005-run-paid-enemy-air-effects-1120-prepared-v1-20261011.py",
+    "runnerSha256": "46d2c0c87a060fae67880d2bc3ece5ed1b34deeed36392043d4a70571458cc17",
+    "report": "delegation-prepared-native1120-paid-enemy-air-effects-20261011-v1-preserved.json"
+  },
+  "newReadOnlyObserver": "Per-rendered-frame native taxi/roll/lock/projectile/single-eligible-shooter audit; only on phase/shot/state changes+1s heartbeat persist flat primitive state rows. Does not issue orders or modify native state.",
+  "fighterSourceObservation": "UnitAttackSystem334/669 mixed flag only if another actor contributes, initial exactsource349/684, append375\u2013385. True single Fighter requires exact SourceEntity, not aggregate substitution. All raw nulls preserved and foreign-positive target damage fails.",
+  "fighterFlightSetup": "Actual selected NativeTouch Move public HUD anchors until verified Move receipt and native Airborne/displacement\u22655. Then actual NativeTouch Hold; tag absent before real contact, observed after completed Touch while Airborne1/Returning0. Only then enemy natural public Move to currently selected own public point, actual visible Air NativeTouch Attack. Qualified hit requires native Hold removed. Native Hold has no Aria receipt instrumentation, reported explicitly as actual native mutation after completed Touch, never fabricated receipt.",
+  "sourceFlightChoiceEvidence": [
+    "Jet02 native speed36/taxi15/Aggro21 vs overlayRange32; enemyPlane30/taxi12 can cross visible32m before grounded fighter rolls/launches.",
+    "UnitAirMovementSystem612\u2013631 actual supported airborne Hold preserves position until native Attack/Return; RtsSelectionImmediateSelectedUnitCommandSystem164\u2013195 actual selected UnitMove Hold, UnitTargetOrderSystem600 removesHold on genuine attack."
+  ],
+  "shotCounterNativeType": "Native UnitCombatComponents.cs116 UnitAttackTraceComponent.ShotCounter is int, retained int in baseline/current and rendered timeline. Reservations/Touch receipt IDs remain uint.",
+  "normalFighterAttackPath": "Actual controls.AttackButton NativeTouch then visible airborne native target worldpoint via existing PlayerResumeWorldPointTap; native ArmyAttack verified Touch receipt, exact SkirmishMoveIntent.AttackTarget identity and true ShotCounter/event source required. No fixture TryAttack call, RequestTarget injection or synthetic acceptance. Receipt mismatch captured read-only and next owned fixture tick fails cleanly.",
+  "supportedHoldPath": "RtsSelectionImmediateSelectedUnitCommandSystem164\u2013195 selected UnitMove Hold; UnitAirMovementSystem612\u2013631 holds actual airborne nonreturning aircraft; UnitTargetOrderSystem600 removesHold on genuine Attack. Native Hold has no Aria Accepted instrumentation, flat PatrolRow explicitly says actual native Hold tag after completed Touch without fabricated receipt."
+}

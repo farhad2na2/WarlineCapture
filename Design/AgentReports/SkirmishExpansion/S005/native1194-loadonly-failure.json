@@ -1,0 +1,12 @@
+{
+  "result": "FailedBeforePlay",
+  "scope": "External observer load-only serialization selfcheck",
+  "nativeCompilationPassed": true,
+  "normalMissionStarted": false,
+  "activeRun": null,
+  "reason": "Dynamic nested JsonUtility envelope did not preserve synthetic primitive/array roundtrip; actual flat Row serialization separately emitted all primitive fields. Successor tests actual flat JSONL format.",
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "loadProof": "load1194-normal-aria-observer.json",
+  "loadProofSha256": "d2ed2eace398518a1eb989bf57ab45db427b1fb403bafb5d97f10660b0206f86",
+  "playerReady": false
+}

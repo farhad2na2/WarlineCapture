@@ -1,0 +1,36 @@
+{
+  "sourceHash": "a64719ad9960753e5f907bdc861c478c7245e4fd7bdae1f30acdd196c5c3edea",
+  "physicalSourceModified": false,
+  "missionBindingChanged": false,
+  "playerReady": false,
+  "cityEdge": {
+    "nativeCurrentWorldSamples": [
+      "readonly415-existing-source-airport-sectors.json",
+      "readonly416-whole-source-airport-sectors.json"
+    ],
+    "bilateralCapacity": "Pending; measured sites overlap"
+  },
+  "armorBreak": {
+    "preScreen": "readonly425-existing-armorbreak-fine-static-fit.json",
+    "samples": 3358,
+    "levelAndStaticRoadClear": 8,
+    "bilateralCapacity": "Unproven; all coarse16m sites overlap in one strip"
+  },
+  "sharedDesert": {
+    "preScreen": "readonly428-existing-desert-coarse-static-fit.json",
+    "levelAndStaticRoadClear": 462,
+    "nativePlacement": "Pending",
+    "knownHistoricalGate": "SkirmishS005DefinitionBuilder records stale render database / disabled replaced dirt roads causing native initialization failure; asset pre-screen does not resolve that gate"
+  },
+  "refineryDistrict": {
+    "preScreen": "readonly429-existing-refinery-static-fit.json",
+    "levelAndStaticRoadClear": 659,
+    "nativePlacement": "Pending"
+  },
+  "interpretation": "Read-only baked-asset screens guide evaluation only. No source selected on footprint counts alone; roads, live/authored occupants, routes, visual density, native packaging and bilateral aircraft capacity still require validation.",
+  "ashLinePort": {
+    "preScreen": "readonly430-existing-port-static-fit.json",
+    "levelAndStaticRoadClear": 657,
+    "nativePlacement": "Pending"
+  }
+}

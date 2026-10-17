@@ -1,0 +1,185 @@
+{
+  "result": "ReadOnlyCurrentRoleGapReconciliation",
+  "reviewedAt": "2026-10-11",
+  "plan": "Design/AgentReports/SkirmishExpansion/S005/role-lifecycle-current-qualification-plan.json",
+  "planSha256": "0795c788ad25224626e6889721b26ea4bcac52824b1fbed368680546713c1b1a",
+  "enabledRoleCount": 22,
+  "baselineFullSource": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "sourceQualification": "Exact old-source scopes retained. Fog/core/ledger/consumer integration forthcoming, no reclassification as full future-source pass.",
+  "contractReferences": [
+    "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md:X02/X03/X04/X36/X37",
+    "Design/AgentReports/SkirmishExpansion/S005/role-lifecycle-current-qualification-plan.json"
+  ],
+  "groups": [
+    {
+      "roles": [
+        "Rifle",
+        "Gunner",
+        "Marksman",
+        "Breacher",
+        "Rocketeer"
+      ],
+      "completed": "1024 paid native delivery/Touch movement; actual homogeneous paid four-member cohort legal damage+native death/capacity/cleanup1070 same-run offline schema v2 on17beb. Mixed-source null events retained, cohort role attribution only.",
+      "proofs": [
+        "native1070-offline-cohort-schema-evaluation-v2-20261011.json"
+      ],
+      "remaining": "Fresh normal integrated-source human/ARIA journeys and current observation/acquisition regression applicability; no new five redundant isolated damage cases solely because fog changes."
+    },
+    {
+      "roles": [
+        "Car",
+        "ApcFast",
+        "ApcArmored",
+        "ApcHeavy",
+        "Tank",
+        "Siege"
+      ],
+      "completed": "Car exact native paid-source DirectFire12HP1061 before later APC timeout. Focused ApcFast1080 exact native14HP. Group1081 actual five paid remaining vehicles exact source damage, legal native weapon kind/domain/death/cleanup17beb; Siege uses actual launcher kind.",
+      "proofs": [
+        "native1081-isolated-paid-vehicle-combat-pass.json"
+      ],
+      "remaining": "Shared current-source observation/acquisition regression and normal journeys; retain original1061 later failure separately, not whole1061 pass. No new six basic production or damage repetitions."
+    },
+    {
+      "roles": [
+        "ApcFast",
+        "ApcArmored",
+        "ApcHeavy"
+      ],
+      "completed": "Fast/Armored1097 each paid Rifle4 Board/hidden links/loaded Touch move/native ExitAll/exact body+typed current-marker visual restoration/all capacity counters/native death+cleanup passed17beb, evaluated only completed two cases from overall missing-Helipad failure. Heavy931 normal Touch paid boarded genuine SaveContinue/unload historicalsource816a.",
+      "proofs": [
+        "native1097-offline-two-apc-scoped-evaluation-20261011.json",
+        "native931-normal-boarded-save-continue-unload-pass.json"
+      ],
+      "remaining": "Prepared1102 FastAPC ordinary populated passenger/receipt actual SaveContinue on integrated source; retains ground generic path reuse applicability for Heavy/Armored. Does not populate fog ledger."
+    },
+    {
+      "roles": [
+        "TransportHeli"
+      ],
+      "completed": "1052 actual paid native Helipad and basic airborne movement/death07d.1101 paid Touch-built native Helipad exact receipt producer identity+paid Rifle4 board/61.526m loaded Touch travel/native rope ExitAll/unlinked body/current-marker restore/all capacity death+cleanup17beb.",
+      "proofs": [
+        "native1101-isolated-paid-paid-transport-pass.json"
+      ],
+      "remaining": "Actual VTOL return where exposed and loaded genuine SaveContinue restores links/visuals, plus completed rope landing/settled passengers if full flight/disembark lifecycle claimed.1101 checks immediate visible/unlinked restoration during possible native rope descent, not measured completed rope landing. One meaningful VTOL path recovery controls unique RopeDrop vs generic ground; no22 separate checkpoint journeys."
+    },
+    {
+      "roles": [
+        "AttackHeliLight",
+        "AttackHeli"
+      ],
+      "completed": "1052 actual paid Helipad native Touch move/airborne/death07d.1076 actual paid two attack helis, native Touch selection/public Attack, exact DirectFire damage+native shotcounter/legal actual APC target17beb; isolated target pose/health/visibility/retaliation setup disclosed.",
+      "proofs": [
+        "native1076-attack-heli-combat-helipad-direct-fire-pass.json"
+      ],
+      "remaining": "Native common VTOL return/refuel where supported can share meaningful actual flight path with transportheli check, but cannot claim combat from unarmed transport. Native integrated observation/normal mission separate. No third duplicate damage fixture."
+    },
+    {
+      "roles": [
+        "Radar"
+      ],
+      "completed": "1068 real paid AA companion+Radar Touch movement, exact native provider lock benefit0.35 to0.175, provider death removes benefit, exact retained-AA eight-counter baseline07d.",
+      "proofs": [
+        "native1068-isolated-paid-radar-support-pass.json"
+      ],
+      "remaining": "Required service OR intelligence has actual service effect proof; visibilityIntelCertified explicitlyfalse. If claiming advertised native Radar contact visibility, use actual paid Radar in real enemy-air/observation grouped check, not invented direct fire or synthetic detector replacement."
+    },
+    {
+      "roles": [
+        "LogisticsTruck",
+        "Tanker"
+      ],
+      "completed": "Historical normal native890 actual paid LogisticsTruck production1002.0 delivered Oil8: cargo8 to0 /destination7 Oil152 to160 /inbound8 to0; actual paid tanker1007.0 and1004.0 Touch haul/loaded cargo/native receivedFuel+32/+72.1024 basic native paid delivery/movement/death scoped retained.",
+      "proofs": [
+        "delegation-x37-role-closing-matrix-20261011.json",
+        "native890-normal-paid-strike-cycle-scoped-pass.json"
+      ],
+      "remaining": "Record precise unchanged shared service/receipt native source applicability across new candidate; ensure normal fresh mission preserves logistics/fuel effects. Do not manufacture a new truck-service gate merely because metadata stage omitted actual890 observations. UI/devices separate."
+    },
+    {
+      "roles": [
+        "Drone"
+      ],
+      "completed": "1065 actual paid140 native legal IntelStation with no Airport, native Touch move/airborne15.01935m/death/cap cleanup07d.1069 shared home initializer controls retain pad. Final19 core focused native Scan tests include actual expanded SharedCombatBinding damage0/CanAttack0 exception and two factions, but are actual ECS isolated objects, not paid native UI recon lifecycle.",
+      "proofs": [
+        "native1065-drone-intelstation-no-airport-pass.json"
+      ],
+      "remaining": "One paid native Drone Scan/actual observed contacts/current consumer no-hidden-live-pose plus freeze/20s expiry/positive-clock pause; genuine populated ledger SaveContinue can join this natural Scan case. No actor pose/visibility injected in normal certification."
+    },
+    {
+      "roles": [
+        "Fighter",
+        "AntiAir"
+      ],
+      "completed": "Fighter1092 actual paid480 Airport delivery/Touch airborne/StandardAir2 no-spend refusal/death/replacement17beb. AntiAir1024 basic paid/Touch and1068 real Radar lock companion; historical932 restored paid actor without actual enemy-Air hit.",
+      "proofs": [
+        "native1092-offline-lifecycle-evaluation-v2-20261011.json",
+        "native1068-isolated-paid-radar-support-pass.json"
+      ],
+      "remaining": "Both still need actual native legal airborne enemy target damage: use truly paid faction2 Fighter/Plane from1104 facility protocol and prepared1106 actual launch; actual SourceEntity/TargetEntity/DamageApplied+HP decrease/native kind, legal observation/lock/homing, no Ground-to-Air mutation. Two shooters can be sequential same grouped physical paid-air case, each exact source independently proven."
+    },
+    {
+      "roles": [
+        "TransportPlane"
+      ],
+      "completed": "1092 paid440 producer15, real native single tactical actor/Touch airborne59.03514m/capacity schema soldier24 vehicle2. Components/capacity do not prove loaded cargo.1104 true separate owned paid Airports passed17beb;1106 prepared only four paid mixed aircraft taxi/takeoff/homeReturn/capacity, no cargo.",
+      "proofs": [
+        "native1092-offline-lifecycle-evaluation-v2-20261011.json",
+        "native1104-isolated-paid-bilateral-airport-pass.json"
+      ],
+      "remaining": "Actual paid Plane boarding/hidden passenger ownership and supported vehicle cargo, loaded native runway taxi/flight/return/landing/unload+correct passenger/vehicle recovery/disposition. Helicopter/APC cargo cannot stand in for fixed-wing plane native runway/vehicle capacity path. Bound one meaningful paid Rifle4 plus one actual paid supported vehicle case, not fill24 soldiers2vehicles merely to mirror limits; capacity edge applies only where acceptance exposed and unproven."
+    },
+    {
+      "roles": [
+        "Strike"
+      ],
+      "completed": "Historical normal890 paid production/taxi/native fire, true Touch Return receipt/home touchdown/local refuel+199 and second airborne sortie; sourcea661. Actual second Return/full mission/bilateral capacity were explicitly not certified.",
+      "proofs": [
+        "native890-normal-paid-strike-cycle-scoped-pass.json"
+      ],
+      "remaining": "Shared fixed-wing return/runway/fuel source applicability and fresh normal integration qualification;1106 Fighter/Plane owns actual bilateral mixed clearance but cannot assert Strike weapon proof. Full actual required end disposition/death/refuel/recovery from same current normal journey may cover remaining scope; no need separate22 whole wins."
+    }
+  ],
+  "smallestNextGroupedChecks": [
+    {
+      "name": "Prepared1106 mixed bilateral Air2 flight",
+      "closes": "Four actual paid Fighter/Plane native actors from independent paid faction Airports, grounded positive taxi/roll/airborne/homeReturn with actual2 per faction.",
+      "doesNotClose": "Air combat, Plane cargo, native saved loaded transport, normal enemy growth."
+    },
+    {
+      "name": "Actual airborne paid enemy effects",
+      "closes": "Fighter and AA each real legal Air target runtime hit; optionally actual paid Radar intel supports observation if exposed.",
+      "doesNotClose": "Synthetic shots/visibility/air flags or transport cargo."
+    },
+    {
+      "name": "Actual fixed-wing loaded Plane cargo",
+      "closes": "Plane genuine passenger+vehicle links, loaded runway flight/land/unload and disposition.",
+      "doesNotClose": "Plane components alone, helicopter rope path, unrelated fullmission."
+    },
+    {
+      "name": "Integrated actual checkpoint paths",
+      "closes": "1102 one ground native paid boarded SaveContinue; one actual VTOL loaded recovery/settled rope disposition; actual populated contact ledger through naturally observed paid Drone Scan saveContinue if root chooses later joined journey.",
+      "doesNotClose": "1102 empty-ledger retirement cannot certify populated fog. Common Parts codec/focused tests retain separate isolated scope."
+    },
+    {
+      "name": "Fresh normal qualification",
+      "closes": "Current source complete human normal-input win/ARIA matrix/terminal return+replay/loss/deadline/setup; declared exposed difficulty/size publication gates unchanged.",
+      "doesNotClose": "Old candidates/isolated funding/API effects/compilation. User visual/device review stays separate."
+    }
+  ],
+  "sharedRecoveryDependencies": [
+    "SkirmishNativeCheckpointParts registers generic UnitTransportPassenger/UnitTransportPassengerElement/visual snapshots/shared stable object ID remap; ground roles share same primitive link recovery, not separate role handlers.",
+    "UnitAirComponent/native home/runway/flight clocks and air transient RopeDrop differ from ground cargo; VTOL actual loaded recovery remains distinct.",
+    "Plane carries Vehicle passenger kind and cargo capacity; actual supported cargo native path cannot be inferred from Rifle-only APC/Heli.",
+    "New optional session contact ledger scalar provenance+worldclock/ScanFrame rebase validated in focused actualParts9/T7 native1110, core19/T7 native1111; consumer integration and normal paid UI recon recovery separate."
+  ],
+  "notAddedGates": [
+    "No22 whole-match wins or22 distinct fullsource reruns.",
+    "No mandatory unique destination arrival route for every role beyond actual contract.",
+    "No new paid20s field repair for S005 BA unless actual advertised dependent ability requires it; design marks proposed repair work, Materials enum alone not mechanic.",
+    "No synthetic source-fit impossibility conclusion from sampled existing Airport placements."
+  ],
+  "normalMissionCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

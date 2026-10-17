@@ -1,0 +1,4 @@
+{
+  "exit": 0,
+  "stderr": "[rtk] /!\\ No hook installed \u2014 run `rtk init -g` for automatic token savings\n"
+}

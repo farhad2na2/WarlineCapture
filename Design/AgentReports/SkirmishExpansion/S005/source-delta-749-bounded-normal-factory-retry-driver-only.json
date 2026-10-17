@@ -1,0 +1,11 @@
+{
+  "sourceHash": "66b5edb7a81ab1c52cb0501ccea597163ef58ebaa59065ddfad848ec51e74ec4",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs"
+  ],
+  "shippingRuntimeUnchanged": true,
+  "configurationUnchanged": true,
+  "physicalMapUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "change": "At most three normal selection/building-tap retries; success still requires observed native haul destination. No order/cargo/resources injected; original 30-second watchdog retained."
+}

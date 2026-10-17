@@ -1,0 +1,28 @@
+{
+  "result": "IndependentSourceReviewClear",
+  "manifest": "Tools\\CI\\SkirmishProductionDrafts\\AircraftNativeDependencyGraph\\manifest.json",
+  "manifestSha256": "ac72680ed8f9a64f253d131c3342b3793332b5d5e5a9ec4ec44892960a6d4a58",
+  "baseSha256": "f64f2578a52afa4dfeef5e756e62fe45df555b73a6c49e1992393ca8405392de",
+  "sourceSha256": "f59eb9452efd0f51f03f918ec090f89205f880671d9462d94088a7887393049d",
+  "reviewedDelta": "Only additive Detail/Mid/Low importerDependencyGraphs row and three private readonly methods",
+  "checks": [
+    "Actual recursive AssetDatabase.GetDependencies sorted distinct root-inclusive graph",
+    "Importer dependency hash before/after read",
+    "Explicit raw source/meta SHA and package resolution",
+    "Explicit absent LOD, virtual/unresolved, physical absence and read error states",
+    "Existing owned World/default/census adapter and markers unchanged"
+  ],
+  "focusedOwningProof": {
+    "path": "Design\\AgentReports\\SkirmishExpansion\\S005\\aircraft-framing-inventory\\importer-graph-owning-gx6pusfy\\result.json",
+    "sha256": "fda1c4ead654842ba3d7825b357a8c405857e499f9fc7cacc29e03be3ece9612",
+    "result": "PassedFocusedEditorOnStrict160",
+    "sources": 820,
+    "refs": 354
+  },
+  "limitations": [
+    "Graph captured is not proof every file was physically hashable; inspect individual statuses",
+    "Fresh native seven-role importer graph collection pending",
+    "No render geometry/camera/source-fit/mission readiness inferred"
+  ],
+  "assetsUnityGitWrites": false
+}

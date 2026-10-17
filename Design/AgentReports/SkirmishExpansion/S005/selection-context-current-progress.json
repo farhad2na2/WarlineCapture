@@ -1,0 +1,23 @@
+{
+  "sourceHash": "38839b8b47b067daa583be62912b075b5814086d4f0c6776f8f002af5e8e21d6",
+  "playerReady": false,
+  "publicAircraftMask": "Passed",
+  "selectionContext": "Passed",
+  "nativeCycleStatus": "running",
+  "nativeCycle": "native-461-strike-synchronized-selection-cycle.log",
+  "historicalFailedRun": "native454-selection-context-failure.json",
+  "checks": [
+    {
+      "log": "tests-459-expanded-selection-context.log",
+      "marker": "[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=6",
+      "sha256": "371edc3f48760b14c6774e07009230ffb4721c8b6ad2a737b5a3dccf225f0368",
+      "exit": 0
+    },
+    {
+      "log": "tests-460-strike-mask-selection-regression.log",
+      "marker": "[SkirmishExpandedArmyTests] result=Passed",
+      "sha256": "379363a07fef1e50c8249afcde79611ac6fb32627c4dc130c8dbe447dc49110a",
+      "exit": 0
+    }
+  ]
+}

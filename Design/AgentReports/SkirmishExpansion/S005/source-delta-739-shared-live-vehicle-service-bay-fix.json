@@ -1,0 +1,11 @@
+{
+  "previousSourceHash": "b1a0cf94b8505934722ee1916d1aeca9ea43d7d0032a061dd40f15d44b1f3ee0",
+  "sourceHash": "bd1e220020aabf8c0097900c3caaa5c1495fc0df16be11259ef34f3788ad76ee",
+  "changedFiles": [
+    "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+    "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+  ],
+  "sharedRuntimeChanged": true,
+  "physicalMapsConfigsAndAll562MaterialsUnchanged": true,
+  "change": "Shared service approach selection checks native live hard-vehicle footprints and clearance before choosing a bay; preserves original terrain/occupancy/transfer checks and native vehicle padding."
+}

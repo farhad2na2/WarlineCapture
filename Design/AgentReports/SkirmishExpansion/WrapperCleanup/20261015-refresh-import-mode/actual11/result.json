@@ -1,0 +1,77 @@
+{
+  "result": "PassedOwnedRefreshImportModeControls",
+  "controls": 11,
+  "cases": [
+    {
+      "case": "default-gui",
+      "passed": true,
+      "exit": 0,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "explicit-empty",
+      "passed": true,
+      "exit": 0,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "in-process",
+      "passed": true,
+      "exit": 0,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "per-queue",
+      "passed": true,
+      "exit": 0,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "out-of-process",
+      "passed": true,
+      "exit": 0,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "default-command-line",
+      "passed": true,
+      "exit": 0,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "invalid-mode",
+      "passed": true,
+      "exit": 1,
+      "launched_owned_probe": false
+    },
+    {
+      "case": "argument-injection",
+      "passed": true,
+      "exit": 1,
+      "launched_owned_probe": false
+    },
+    {
+      "case": "missing-marker",
+      "passed": true,
+      "exit": 1,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "nonzero",
+      "passed": true,
+      "exit": 1,
+      "launched_owned_probe": true
+    },
+    {
+      "case": "failed-marker",
+      "passed": true,
+      "exit": 1,
+      "launched_owned_probe": true
+    }
+  ],
+  "output": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\RefreshImportModeControls\\controls-k364wzd0",
+  "unity_launched": false,
+  "assets_changed": false,
+  "focused_wrapper_sha256": "79205bc9d9660c15627a254d8834cc5feef1513dfa4e12b389caa91d2f2abc1d",
+  "lower_wrapper_sha256": "2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add"
+}

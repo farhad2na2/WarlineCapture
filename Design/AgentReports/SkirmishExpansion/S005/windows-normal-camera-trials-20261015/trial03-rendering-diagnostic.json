@@ -1,0 +1,649 @@
+{
+  "stage": "OpeningPackedRenderingFailureV2",
+  "frame": 258,
+  "databaseCount": 1,
+  "activeMapCount": 1,
+  "cameraSnapshotCount": 1,
+  "openingPreviouslyAccepted": false,
+  "databases": [
+    {
+      "entityIndex": 199692,
+      "entityVersion": 1,
+      "schemaVersion": 1,
+      "mapGeneration": 1,
+      "contentHash": "746887b5f55cd8b642c61cecb5aa573aa40a0817caa254a7f2120823263b72de",
+      "blobCreated": true,
+      "hasReadiness": true,
+      "hasState": true,
+      "hasMetrics": true,
+      "hasSync": true,
+      "initialized": true,
+      "firstViewApplied": true,
+      "rebuilt": true,
+      "positiveActiveSlots": true,
+      "stateNoOverflow": false,
+      "metricsNoOverflow": false,
+      "enabledMatchesActive": true,
+      "sufficientCapacity": true,
+      "commandsLength": 7403,
+      "canonicalStatesLength": 4530,
+      "publishedCommandVersion": 1,
+      "selector": {
+        "captured": true,
+        "error": "",
+        "selectionFailure": "None",
+        "assignmentResult": [
+          {
+            "path": "AssignedCount",
+            "kind": "System.Int32",
+            "value": "5694"
+          },
+          {
+            "path": "Failure",
+            "kind": "Game.Rendering.OperationMapRenderAssignmentFailure",
+            "value": "None"
+          },
+          {
+            "path": "OverflowCount",
+            "kind": "System.Int32",
+            "value": "136"
+          },
+          {
+            "path": "ReleasedCount",
+            "kind": "System.Int32",
+            "value": "0"
+          },
+          {
+            "path": "RetainedCount",
+            "kind": "System.Int32",
+            "value": "0"
+          }
+        ],
+        "selectedCells": 261,
+        "selectedPlacements": 3568,
+        "selectedLogicalRows": 5830,
+        "buckets": [
+          {
+            "index": 0,
+            "firstSlot": 0,
+            "capacity": 4589,
+            "peakRequiredCount": 3824,
+            "headroomCount": 765,
+            "selectedRequiredRows": 4725,
+            "deficit": 136,
+            "policy": "OpaqueShadowsOn"
+          },
+          {
+            "index": 1,
+            "firstSlot": 4589,
+            "capacity": 2734,
+            "peakRequiredCount": 2278,
+            "headroomCount": 456,
+            "selectedRequiredRows": 1088,
+            "deficit": 0,
+            "policy": "OpaqueShadowsOff"
+          },
+          {
+            "index": 2,
+            "firstSlot": 7323,
+            "capacity": 53,
+            "peakRequiredCount": 44,
+            "headroomCount": 9,
+            "selectedRequiredRows": 4,
+            "deficit": 0,
+            "policy": "AlphaClippedShadowsOn"
+          },
+          {
+            "index": 3,
+            "firstSlot": 7376,
+            "capacity": 27,
+            "peakRequiredCount": 22,
+            "headroomCount": 5,
+            "selectedRequiredRows": 13,
+            "deficit": 0,
+            "policy": "AlphaClippedShadowsOff"
+          }
+        ]
+      },
+      "readiness": [
+        {
+          "path": "EligibleSourceRendererCount",
+          "kind": "System.Int32",
+          "value": "59359"
+        },
+        {
+          "path": "EligibleSourceRowCount",
+          "kind": "System.Int32",
+          "value": "59501"
+        },
+        {
+          "path": "ProxySlotCount",
+          "kind": "System.Int32",
+          "value": "7403"
+        },
+        {
+          "path": "ResidencyMode",
+          "kind": "System.Byte",
+          "value": "1"
+        },
+        {
+          "path": "ResidentSourceRowCount",
+          "kind": "System.Int32",
+          "value": "17442"
+        },
+        {
+          "path": "RetainedVirtualizedAcceptedBuildingIdentityCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "RetainedVirtualizedAcceptedRenderOnlyIdentityCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "RetainedVirtualizedGeneratedBuildingIdentityCount",
+          "kind": "System.Int32",
+          "value": "4530"
+        },
+        {
+          "path": "RetainedVirtualizedGeneratedRenderOnlyIdentityCount",
+          "kind": "System.Int32",
+          "value": "3999"
+        },
+        {
+          "path": "VirtualizedAcceptedBuildingIdentityCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "VirtualizedAcceptedRenderOnlyIdentityCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "VirtualizedGeneratedBuildingIdentityCount",
+          "kind": "System.Int32",
+          "value": "4530"
+        },
+        {
+          "path": "VirtualizedGeneratedRenderOnlyIdentityCount",
+          "kind": "System.Int32",
+          "value": "29849"
+        }
+      ],
+      "state": [
+        {
+          "path": "ActiveEnvelopeMax.x",
+          "kind": "System.Int32",
+          "value": "39"
+        },
+        {
+          "path": "ActiveEnvelopeMax.y",
+          "kind": "System.Int32",
+          "value": "24"
+        },
+        {
+          "path": "ActiveEnvelopeMin.x",
+          "kind": "System.Int32",
+          "value": "4"
+        },
+        {
+          "path": "ActiveEnvelopeMin.y",
+          "kind": "System.Int32",
+          "value": "6"
+        },
+        {
+          "path": "ActiveSlotCount",
+          "kind": "System.Int32",
+          "value": "5694"
+        },
+        {
+          "path": "CameraSignature.High",
+          "kind": "System.UInt64",
+          "value": "0"
+        },
+        {
+          "path": "CameraSignature.Low",
+          "kind": "System.UInt64",
+          "value": "0"
+        },
+        {
+          "path": "DirtyPlacementCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "InitialViewApplied",
+          "kind": "System.Byte",
+          "value": "1"
+        },
+        {
+          "path": "Initialized",
+          "kind": "System.Byte",
+          "value": "1"
+        },
+        {
+          "path": "OverflowCount",
+          "kind": "System.Int32",
+          "value": "136"
+        },
+        {
+          "path": "RebuildCount",
+          "kind": "System.Int32",
+          "value": "1"
+        }
+      ],
+      "metrics": [
+        {
+          "path": "ActiveCellCount",
+          "kind": "System.Int32",
+          "value": "261"
+        },
+        {
+          "path": "ActivePlacementCount",
+          "kind": "System.Int32",
+          "value": "3568"
+        },
+        {
+          "path": "Capacity",
+          "kind": "System.Int32",
+          "value": "7403"
+        },
+        {
+          "path": "CommandVersion",
+          "kind": "System.UInt32",
+          "value": "1"
+        },
+        {
+          "path": "DisabledSlotCount",
+          "kind": "System.Int32",
+          "value": "1709"
+        },
+        {
+          "path": "EnabledSlotCount",
+          "kind": "System.Int32",
+          "value": "5694"
+        },
+        {
+          "path": "HighestDeficit",
+          "kind": "System.Int32",
+          "value": "136"
+        },
+        {
+          "path": "LogicalPartCount",
+          "kind": "System.Int32",
+          "value": "59501"
+        },
+        {
+          "path": "LogicalPlacementCount",
+          "kind": "System.Int32",
+          "value": "38909"
+        },
+        {
+          "path": "OverflowCount",
+          "kind": "System.Int32",
+          "value": "136"
+        },
+        {
+          "path": "ReboundCount",
+          "kind": "System.Int32",
+          "value": "5694"
+        },
+        {
+          "path": "RebuildReason",
+          "kind": "Game.Components.OperationMapRenderRebuildReason",
+          "value": "InitialView"
+        },
+        {
+          "path": "ReleasedCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "ResidentExceptionCount",
+          "kind": "System.Int32",
+          "value": "17442"
+        },
+        {
+          "path": "RetainedCount",
+          "kind": "System.Int32",
+          "value": "0"
+        }
+      ],
+      "sync": [
+        {
+          "path": "DirtyCellCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "DirtyPlacementCount",
+          "kind": "System.Int32",
+          "value": "0"
+        },
+        {
+          "path": "Initialized",
+          "kind": "System.Byte",
+          "value": "1"
+        },
+        {
+          "path": "LastAppliedChangeVersion",
+          "kind": "System.UInt32",
+          "value": "0"
+        },
+        {
+          "path": "Revision",
+          "kind": "System.UInt32",
+          "value": "1"
+        },
+        {
+          "path": "StateOwnerCount",
+          "kind": "System.Int32",
+          "value": "4530"
+        }
+      ]
+    }
+  ],
+  "cameraSnapshots": [
+    {
+      "scalars": [
+        {
+          "path": "IsValid",
+          "kind": "System.Byte",
+          "value": "1"
+        },
+        {
+          "path": "Position.x",
+          "kind": "System.Single",
+          "value": "913.317749"
+        },
+        {
+          "path": "Position.y",
+          "kind": "System.Single",
+          "value": "44"
+        },
+        {
+          "path": "Position.z",
+          "kind": "System.Single",
+          "value": "611.266357"
+        },
+        {
+          "path": "Projection.c0.w",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c0.x",
+          "kind": "System.Single",
+          "value": "1.06013346"
+        },
+        {
+          "path": "Projection.c0.y",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c0.z",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c1.w",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c1.x",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c1.y",
+          "kind": "System.Single",
+          "value": "2.35585213"
+        },
+        {
+          "path": "Projection.c1.z",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c2.w",
+          "kind": "System.Single",
+          "value": "-1"
+        },
+        {
+          "path": "Projection.c2.x",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c2.y",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c2.z",
+          "kind": "System.Single",
+          "value": "-1.00006"
+        },
+        {
+          "path": "Projection.c3.w",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c3.x",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c3.y",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "Projection.c3.z",
+          "kind": "System.Single",
+          "value": "-0.600017965"
+        },
+        {
+          "path": "PublicationVersion",
+          "kind": "System.UInt32",
+          "value": "258"
+        },
+        {
+          "path": "Rotation.value.w",
+          "kind": "System.Single",
+          "value": "0.8459573"
+        },
+        {
+          "path": "Rotation.value.x",
+          "kind": "System.Single",
+          "value": "0.440377474"
+        },
+        {
+          "path": "Rotation.value.y",
+          "kind": "System.Single",
+          "value": "0.266729325"
+        },
+        {
+          "path": "Rotation.value.z",
+          "kind": "System.Single",
+          "value": "-0.13885048"
+        },
+        {
+          "path": "Signature.High",
+          "kind": "System.UInt64",
+          "value": "2079718595384011360"
+        },
+        {
+          "path": "Signature.Low",
+          "kind": "System.UInt64",
+          "value": "5594308353253080101"
+        },
+        {
+          "path": "ViewProjection.c0.w",
+          "kind": "System.Single",
+          "value": "0.328989983"
+        },
+        {
+          "path": "ViewProjection.c0.x",
+          "kind": "System.Single",
+          "value": "0.868410468"
+        },
+        {
+          "path": "ViewProjection.c0.y",
+          "kind": "System.Single",
+          "value": "1.10688841"
+        },
+        {
+          "path": "ViewProjection.c0.z",
+          "kind": "System.Single",
+          "value": "0.3290097"
+        },
+        {
+          "path": "ViewProjection.c1.w",
+          "kind": "System.Single",
+          "value": "-0.819152057"
+        },
+        {
+          "path": "ViewProjection.c1.x",
+          "kind": "System.Single",
+          "value": "1.579722E-08"
+        },
+        {
+          "path": "ViewProjection.c1.y",
+          "kind": "System.Single",
+          "value": "1.35126126"
+        },
+        {
+          "path": "ViewProjection.c1.z",
+          "kind": "System.Single",
+          "value": "-0.8192012"
+        },
+        {
+          "path": "ViewProjection.c2.w",
+          "kind": "System.Single",
+          "value": "0.469846249"
+        },
+        {
+          "path": "ViewProjection.c2.x",
+          "kind": "System.Single",
+          "value": "-0.6080676"
+        },
+        {
+          "path": "ViewProjection.c2.y",
+          "kind": "System.Single",
+          "value": "1.58080053"
+        },
+        {
+          "path": "ViewProjection.c2.z",
+          "kind": "System.Single",
+          "value": "0.4698744"
+        },
+        {
+          "path": "ViewProjection.c3.w",
+          "kind": "System.Single",
+          "value": "-551.630859"
+        },
+        {
+          "path": "ViewProjection.c3.x",
+          "kind": "System.Single",
+          "value": "-421.4434"
+        },
+        {
+          "path": "ViewProjection.c3.y",
+          "kind": "System.Single",
+          "value": "-2036.68652"
+        },
+        {
+          "path": "ViewProjection.c3.z",
+          "kind": "System.Single",
+          "value": "-552.264"
+        },
+        {
+          "path": "WorldToCamera.c0.w",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "WorldToCamera.c0.x",
+          "kind": "System.Single",
+          "value": "0.819152"
+        },
+        {
+          "path": "WorldToCamera.c0.y",
+          "kind": "System.Single",
+          "value": "0.4698463"
+        },
+        {
+          "path": "WorldToCamera.c0.z",
+          "kind": "System.Single",
+          "value": "-0.328989983"
+        },
+        {
+          "path": "WorldToCamera.c1.w",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "WorldToCamera.c1.x",
+          "kind": "System.Single",
+          "value": "1.49011612E-08"
+        },
+        {
+          "path": "WorldToCamera.c1.y",
+          "kind": "System.Single",
+          "value": "0.57357645"
+        },
+        {
+          "path": "WorldToCamera.c1.z",
+          "kind": "System.Single",
+          "value": "0.819152057"
+        },
+        {
+          "path": "WorldToCamera.c2.w",
+          "kind": "System.Single",
+          "value": "0"
+        },
+        {
+          "path": "WorldToCamera.c2.x",
+          "kind": "System.Single",
+          "value": "-0.57357645"
+        },
+        {
+          "path": "WorldToCamera.c2.y",
+          "kind": "System.Single",
+          "value": "0.6710101"
+        },
+        {
+          "path": "WorldToCamera.c2.z",
+          "kind": "System.Single",
+          "value": "-0.469846249"
+        },
+        {
+          "path": "WorldToCamera.c3.w",
+          "kind": "System.Single",
+          "value": "1"
+        },
+        {
+          "path": "WorldToCamera.c3.x",
+          "kind": "System.Single",
+          "value": "-397.538055"
+        },
+        {
+          "path": "WorldToCamera.c3.y",
+          "kind": "System.Single",
+          "value": "-864.5222"
+        },
+        {
+          "path": "WorldToCamera.c3.z",
+          "kind": "System.Single",
+          "value": "551.630859"
+        }
+      ]
+    }
+  ]
+}

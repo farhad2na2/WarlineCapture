@@ -1,0 +1,15 @@
+{
+  "sourceHash": "823da3950a7d67e18fb29f465a821656d0588394db70ed12acf9b589833d5182",
+  "sourcePrePostMatched": true,
+  "allMaterialBytesMatch": true,
+  "wrapperExit": 0,
+  "startupPassed": true,
+  "mapCaptured": true,
+  "normalInputMissionComplete": false,
+  "visualAcceptance": false,
+  "checkpointAvailable": false,
+  "checkpointFailure": "MapReferenceAmbiguous:map/0/926/373/Wall_Dirt_Straight",
+  "performanceAcceptance": false,
+  "openingIssue": "Old S005 logical deployments/camera frame the sparse outskirts instead of the existing dense town",
+  "playerReady": false
+}

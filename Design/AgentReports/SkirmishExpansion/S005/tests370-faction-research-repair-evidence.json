@@ -1,0 +1,25 @@
+{
+  "sourceHash": "8ecc4c79dc256f6ebbb55c254a1e4c7c5aff9f967532c3c5851483d79fa8c5fc",
+  "result": "Passed",
+  "scope": "Separate paid faction research, native weapon upgrade ownership, old-checkpoint fallback and 50 checkpoint fixtures",
+  "nativeMissionRecertification": "Pending",
+  "playerReady": false,
+  "records": [
+    {
+      "log": "tests-369-faction-research-economy.log",
+      "sha256": "cc419bd06178fe8e857e3613c40ea72a4bc9cecb43136ea3181f8e773166def5",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "requiredMarker": "[SkirmishExpandedEconomyTests] result=Passed"
+    },
+    {
+      "log": "tests-370-faction-research-recovery.log",
+      "sha256": "515adfe62672c30943dd7371b140722abe093645c3763b0b1cc61197e5e5847f",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "requiredMarker": "[SkirmishNativeRecoveryStagingValidation] result=Passed tests=50"
+    }
+  ],
+  "countsForCurrentSource": false,
+  "supersededBySourceHash": "2614cfa056419cc15ca90e2a72918b0875b2cc029fbb0d42076e2d496fc54680"
+}

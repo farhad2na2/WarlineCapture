@@ -1,0 +1,7 @@
+{
+  "run": 172,
+  "result": "Failed",
+  "countsForReadiness": false,
+  "reason": "Player Save/Resume timed out at step=1; reused a prior failed validation profile. Continue did restore the saved attempt through production code.",
+  "evidencePreserved": true
+}

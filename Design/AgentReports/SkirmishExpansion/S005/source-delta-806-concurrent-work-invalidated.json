@@ -1,0 +1,481 @@
+{
+  "changes": [
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces.meta",
+      "before": null,
+      "after": "041d28dffa9a79fd9486fc680a5aff867a2e800844f934cdeb38b5b6e9313ffa"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort.meta",
+      "before": null,
+      "after": "f7ef052649542f02f0fb5ce2491ec67d5c95f9a7f7a2b2df8224c438f50087c8"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/Asphalt.mat.meta",
+      "before": null,
+      "after": "aca22b1083f6372b1586b586380f19a8ef304b32a8cacb75a165b39307de3147"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/Concrete.mat.meta",
+      "before": null,
+      "after": "ef0dc8224a4bd559abad3459da4223d4a7c604489046dca0e26cc65af8b8fc18"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/DistrictMask.asset",
+      "before": null,
+      "after": "6ce6c2efd9ab110ad8220b7d2ca5502ba426cc3669e75b0b615e8e425bf68f4d"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/DistrictMask.asset.meta",
+      "before": null,
+      "after": "4418e449b88d4bdbb9a00d9e702be5fae3c6143e13492ad89791bb86e64194cf"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/Ground.mat.meta",
+      "before": null,
+      "after": "17c809214df6fffc0a9bc2c9365ca2c0beccaf250372156f8a18534c284e3bb2"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/Limestone.mat.meta",
+      "before": null,
+      "after": "1b06e1dbcb888f7b5373cb791986f236114168e2c4500ba657a25a47af0a4d91"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/TrackSoil.mat.meta",
+      "before": null,
+      "after": "22e5d27060d9e8ab4a4cd2050f5764e6be85018a37ed24b2f55ad0019805e7b6"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal.meta",
+      "before": null,
+      "after": "c5718d373beaa3dcf8dfe63466484707411adae9a88de5acde7c626f25a64e9b"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/Asphalt.mat.meta",
+      "before": null,
+      "after": "ea1b0ad5bbd73d3e89cd9e44b1c5e96d447e97123cc07bbc1c6267484086d3d1"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/Concrete.mat.meta",
+      "before": null,
+      "after": "fc4cbf76c1c607089bb3f57058e8798bac94b3e3257b3b484e4c8f22d5bd6bfb"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/DistrictMask.asset",
+      "before": null,
+      "after": "54de68a87a4de7b5eb007b8153252556abbde0a3b1aeeccef51b3a199695439b"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/DistrictMask.asset.meta",
+      "before": null,
+      "after": "e1b2380b5ab53006d549a891709143296d9101a5daef2779ef4cccce009af563"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/Ground.mat.meta",
+      "before": null,
+      "after": "316e05a01cc938b60e7126381489bad6b40c8198e24e4961628b00738f439985"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/Limestone.mat.meta",
+      "before": null,
+      "after": "e8db15042787e571f448f9cba3ccfd12f547f4a103b28f47760fea6ad3e81930"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/TrackSoil.mat.meta",
+      "before": null,
+      "after": "fa69b06af34bce8a55c62c014a90f69cb73fa49f530f443e0894ee07cb48221f"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak.meta",
+      "before": null,
+      "after": "00b63be124dcfb5e87163d2c8ca9c964859cea3eb2579cde2155523164f23efd"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/Asphalt.mat.meta",
+      "before": null,
+      "after": "100799ac624c42b987a71674f77a28296a952be856544abf828c1ab05091abbe"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/Concrete.mat.meta",
+      "before": null,
+      "after": "9ddcac3989c56017aadbf097c0a5eb621bb74cfb762f9a6cc9a30ba2e2942c79"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/DistrictMask.asset",
+      "before": null,
+      "after": "3ed4f60c523687f89081f855ed3da79b7a07370632f02c0264bdb53d6b34d79a"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/DistrictMask.asset.meta",
+      "before": null,
+      "after": "60fed841b53c6b6df5245aa17ea9cbda782a11941b7d5d6d9b7973ef83563f9b"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/Ground.mat.meta",
+      "before": null,
+      "after": "38e8c0ce361ab0b108383126a3f74802980deabd246a4978ceed91a984c32c71"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/Limestone.mat.meta",
+      "before": null,
+      "after": "e86df4613d8dd56ee6f4d0436c39ebb5b1487c3b24a7db9a1f4c5bc03937f2e6"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/TrackSoil.mat.meta",
+      "before": null,
+      "after": "d38ac04b3aeb9f01b6664ad999d7760940d12ed7a9b3784e862e71468ac55bfd"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert.meta",
+      "before": null,
+      "after": "d27c9d61a71d4aa71c9bc31a01277a117b8b4cc145e369b041303b2005c40fd8"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/Asphalt.mat.meta",
+      "before": null,
+      "after": "1913d102d662ee03ce056c5b4daf8a33fdfbb534c34b706af6091aadc24c2782"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/Concrete.mat.meta",
+      "before": null,
+      "after": "54edc337d3805bd0cc6be1390d703f0a7dc091f4a59dfc67d8f294f8b8f35ef4"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/DistrictMask.asset",
+      "before": null,
+      "after": "b9ed262ba49df89796457ab1b6e34f47310734ff31e5ad20ce25d7284347a139"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/DistrictMask.asset.meta",
+      "before": null,
+      "after": "fa1d763d37764e0ce1efe34fdbfb480d5fb2a8caa2d60a1ceb4869065af2fda9"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/Ground.mat.meta",
+      "before": null,
+      "after": "51f08464dddbd818ed18a823b51399c20ea502bbcfff726c363a23b561fa48d3"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/Limestone.mat.meta",
+      "before": null,
+      "after": "7e901220094ce31b9ff8efd032b3aafd6118babb49ca332f0d52e431965e1bfb"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/TrackSoil.mat.meta",
+      "before": null,
+      "after": "790a8629d430bffa3d8e94393d19be8cc3c05d8234168a6ed624da44a22db625"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire.meta",
+      "before": null,
+      "after": "53a14c2b2315315eb24c36b9d29f2fd4a95b5d968c048a193e8211cd36975d24"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/Asphalt.mat.meta",
+      "before": null,
+      "after": "6be9d798df2eb7d621c43949c2192cf3c9204bbfc39666821d1d40830e0ee9da"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/Concrete.mat.meta",
+      "before": null,
+      "after": "63be8d40c81e3744c202d57b73d1d30d09fb20616f70646bde23f68bb4c663e4"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/DistrictMask.asset",
+      "before": null,
+      "after": "e8e48649f34982a83ddf19d33bb7738c479a667ba871299847ff49e2170721ca"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/DistrictMask.asset.meta",
+      "before": null,
+      "after": "a07a924c198167b338fcd0f02b5d1903a596f78133575dcc43b90a827563d310"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/Ground.mat.meta",
+      "before": null,
+      "after": "f383ba6f285c747dadae5c2e3aa1f34463fb938fd81c0426f0cb6f4b4abc6d03"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/Limestone.mat.meta",
+      "before": null,
+      "after": "2e7a79b6d4ff9caf93d16e20ae150d302b87477e03989cee8164b5c7e189d183"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/TrackSoil.mat.meta",
+      "before": null,
+      "after": "cb849297a0f5a64f540366739b2265391f0e3e07f05926b1e04f850c70230165"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse.meta",
+      "before": null,
+      "after": "efb55a9f76b93f533ff7dc3e5a08d42303b752886aba0167daae24d546a182b9"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/Asphalt.mat.meta",
+      "before": null,
+      "after": "4a403bdf8703dacecf105532a421463f0cb0dd2fd16776551bfe858ce7168183"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/Concrete.mat.meta",
+      "before": null,
+      "after": "70e2b8d8c33e00e4c353ec20c83b803d07e110998a1f83920744f9fc7644d9dd"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/DistrictMask.asset",
+      "before": null,
+      "after": "31d1e138a10bd555a764817864499b0f083630b479f293b67012e681f8a6119a"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/DistrictMask.asset.meta",
+      "before": null,
+      "after": "3d9d51d7a0c642f08b966f5ede091d24b3e8e3ff51fcf094792d90e834ee3e8b"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/Ground.mat.meta",
+      "before": null,
+      "after": "3409d85b1adc31626f5ffdbebbefcb67fa15085cd11cb0274a34af916667063d"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/Limestone.mat.meta",
+      "before": null,
+      "after": "035f2fc83462ca3be83433dca4b7900420fae5a35e83c57ceb87302031d53ef0"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/TrackSoil.mat.meta",
+      "before": null,
+      "after": "05e8b6d9235700d125f03679d710fab820959b2e47057f73c80cad0c08b33f73"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor.meta",
+      "before": null,
+      "after": "3704de405550488961409afbe039340da0461c08cacf318242654237af61d403"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/Asphalt.mat.meta",
+      "before": null,
+      "after": "eeca3e0093ac678e65231f7cf5d6a7e68f173410e17e1603bf301e299b5c4220"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/Concrete.mat.meta",
+      "before": null,
+      "after": "51cb6ec476471ade782a6f71f8b7f80ce92fc9b98b1f5593f5237db88002da9e"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/DistrictMask.asset",
+      "before": null,
+      "after": "2b891ac9e443b1923f4e63d29633edf230e15706e28b9fbbaa7c85730595b5f9"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/DistrictMask.asset.meta",
+      "before": null,
+      "after": "96c77b1cfa5c8dd2ae09f12f955177af58a8b391e7dfa64ee575a6b580edc0c5"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/Ground.mat.meta",
+      "before": null,
+      "after": "79fcf202054f3de5575b2bef03d75d9fb54cdf8e05f50e37955bac28b67e7be8"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/Limestone.mat.meta",
+      "before": null,
+      "after": "cc8c0afcfc720291fe635e13a2ef7c3215192ee09b76eb9d0d06c460d34531a0"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/TrackSoil.mat.meta",
+      "before": null,
+      "after": "33613faac026f10b90ec29eac6c19619c557ba3639e275bd4d97df7a06ff6cbe"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode.meta",
+      "before": null,
+      "after": "db19bc90afba64a2c56f1854fe835189c2bc968727eae54df52e3135d2b1a318"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/Asphalt.mat.meta",
+      "before": null,
+      "after": "065afb7e821011bcb81157d1ee0dceef8dba6f4453581c0e9ffa72bba62ace13"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/Concrete.mat.meta",
+      "before": null,
+      "after": "e44abd352d088bdb01834f5b86cc3301049eaf5cdc75461ea43b8a75442f4467"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/DistrictMask.asset",
+      "before": null,
+      "after": "36a46f2d806e578bc856b2c15276b4bfec900488a542236bda2a9d7281a7e541"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/DistrictMask.asset.meta",
+      "before": null,
+      "after": "953dc7f012cd412a4296610fa8f90986190d4db04bf314a006594c5de7d3052d"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/Ground.mat.meta",
+      "before": null,
+      "after": "6c5335a51bb2444d1fe83ab2a7e7c270ded54ab53aeecbae3cea8a799ff82baf"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/Limestone.mat.meta",
+      "before": null,
+      "after": "dcccce7edc8c2d409a8198b3c573399b074c7e1fb51062fa31e071829dbdc210"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/TrackSoil.mat.meta",
+      "before": null,
+      "after": "85f89a8562ccae0ea5d6bf8dfe454268ad6491a570d2d8d5c9f71fb4be5d42c2"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield.meta",
+      "before": null,
+      "after": "2caa965bea6e3195ccab8764a2c1244662ab8f7a580c39b450aacedec92c8a6a"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/Asphalt.mat.meta",
+      "before": null,
+      "after": "3479c144aa400fcd6913fe373d248958ee9a063ba515f42ad11a79059fa4ddde"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/Concrete.mat.meta",
+      "before": null,
+      "after": "9666540c2e900850bb3a5420b6087f1bd03cf38707813966ad0644f94b6d3f22"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/DistrictMask.asset",
+      "before": null,
+      "after": "3353c06bb8a1318a241e9614e3ee5cc388d24d5d3b61f1953b057562819e0b13"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/DistrictMask.asset.meta",
+      "before": null,
+      "after": "7241e2f63d66f6117b37d30bc7761561e0f1f6807dc3873e2fd7d841862455af"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/Ground.mat.meta",
+      "before": null,
+      "after": "5da012b589426e0df205b4f42b8baa610ce9232ae3c4e172cbb4a7d7f3e6a68e"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/Limestone.mat.meta",
+      "before": null,
+      "after": "71e8a8af5adc2247fa2b0ed8a2560e108305e9b075455790afddebc051733785"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/TrackSoil.mat.meta",
+      "before": null,
+      "after": "4f1cf5305be6856733a8abc49a8b4b55bf10db7a67b4e703756072091dc1eac4"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict.meta",
+      "before": null,
+      "after": "4ca5ef573c3fde02d3c39e68e95a37ae619c6f4131dc3c38daf7db20d9672838"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/Asphalt.mat.meta",
+      "before": null,
+      "after": "5f1d908dc961f4a27311f8c7d6847707763127cc5b88194cdf4a536df60ad5cf"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/Concrete.mat.meta",
+      "before": null,
+      "after": "49e68e52e508834a1d4478c99dac38a2ecaf5b8b06101e92159db93d16a044d0"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/DistrictMask.asset",
+      "before": null,
+      "after": "a9d7d86d2f9d237888b1dcf56c689a0438ff45f9c9cd2ce8224df791afad0094"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/DistrictMask.asset.meta",
+      "before": null,
+      "after": "d55dcb00ccfea011970d9ae808109f337ba479b3558d7a5a6db6859a783eb4c3"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/Ground.mat.meta",
+      "before": null,
+      "after": "5fa6dcbc201dd478745e581d1bcf5e016d3df577ee63da3ea19032daea8e46b4"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/Limestone.mat.meta",
+      "before": null,
+      "after": "ae518f29bf2b1eeef30dac991779e2d571d60f674ed1b17e0673f70f642e4c69"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/TrackSoil.mat.meta",
+      "before": null,
+      "after": "b7eb36dd15daed2320dd76d5ffa103dc1391b2efd1e922275b3c816e379f8339"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity",
+      "before": "78673aee0bed5e643da72744d34648b26670aaa9a3bf53f0d673babb63464672",
+      "after": "6232766e929131ea11956adf8a91941d69caa73bcf560848d7b79a56a1a4d78a"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH04M05ArmorBreak/PreparedEntities.unity",
+      "before": "acb2c59e55cca78e16007fedb1d373a5e5e47fbd7c09c1b70b4e721b7125c48d",
+      "after": "4d0cd41aaa9de74eba4f6520434aad9296f8c76fa141bf96a9d0960845f5f550"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity",
+      "before": "51063c6984b6a5e6aa8df8f16af82032235d2374da4f9fcb609d8d906b2528c6",
+      "after": "054146196732181062047badfdb3ca43d327f8621e64dcb1176e31eef22607c2"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH05M02TrustUnderFire/PreparedEntities.unity",
+      "before": "b83e61364cc11ef3b041f8ba7fd32be8a9a775462dba7cfcaa7bb15657adcf45",
+      "after": "7d111d9d86678aea758b6f971775b5da7983be617685022f83fc5478049b208f"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity",
+      "before": "520136f04026ab2c5780f399c18be1afe0898fb9a2691606a2084ea677478d4b",
+      "after": "4d67b69a5397478b115246d17b9a10ec172731d8b229e4df5a916c2d50f10152"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity",
+      "before": "30a916d9785761a2df4c20311aea7a31b42252de44dacf12b027a95d571577c3",
+      "after": "98fda82b92f39ae2f6ca922841795301b8d76bc5749bc2474dafc74798dbaeb4"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity",
+      "before": "82e3ed777d5df16c2c80850b81368b82576f18fc597dbdaa8cc06650e538ce28",
+      "after": "2ac4a5a2cae0352380283a4fd59d3b269e1f6d2e766776cdda615aaafa10d605"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity",
+      "before": "0f96c4db1233267cb2404d198119327a70d222226b3ebd05241b17f72b1b4a5a",
+      "after": "31ac0295429314db6aff1ebf817c2e78cda221c6919afb87074210bb413d866a"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+      "before": "63e6007ed8e222fe846a1083f4ccf1078c8d8d1cc507bd4f341b3dc8371ce8b4",
+      "after": "d6f03e14e02b53b1047f7449bb083b5b0eb47eafa9529587e23091b0ca4e171f"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity",
+      "before": "236326c4e9d1ad15966429b070a28d87ab1a82ce89b7793b57ce5390850686b8",
+      "after": "94f263a8d241d1698529372303ac60e224f75ac24e7a6d5a34d0944f3f30a3d1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs",
+      "before": null,
+      "after": "aa15be61891d983d342ff3fbf3c050a59932f499f48d4050f1ca1f35dfceb285"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs.meta",
+      "before": null,
+      "after": "8382c2aa64da9b66a55cdb6cd284642be05a2b31b7341ec935a41d45cadcd02e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs",
+      "before": null,
+      "after": "e31cc33b26153787d93a1ee632a969880ebc0b99a2ed68c26839102c47203ada"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs.meta",
+      "before": null,
+      "after": "de818fb4b46071fa2aa6e39691d8407a3e12b55f6afe853419c6a95accb3baa9"
+    }
+  ],
+  "sourceFrozen": false,
+  "countsForCurrentSource": false
+}

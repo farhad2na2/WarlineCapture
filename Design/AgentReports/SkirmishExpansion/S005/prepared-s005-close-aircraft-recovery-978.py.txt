@@ -1,0 +1,27 @@
+import sys,json,pathlib,subprocess,re,hashlib
+n,mode,log,pre=sys.argv[1:];assert mode in ['ReturnTaxi','Flight']
+p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+wrapper=int((p/(log+'.wrapper-exit')).read_text());bridge=int((p/(log+'.exit')).read_text())
+t=(p/log).read_text(errors='replace');post=f'final-{n}-aircraft-{mode.lower()}-recovery-post'
+subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],check=True)
+post+='-source-manifest.json';same=json.loads((p/pre).read_text())==json.loads((p/post).read_text());sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+traces=[f for f in p.glob('s005-aria-live-*-en-*.jsonl') if re.fullmatch(r's005-aria-live-\d+-en-[0-9a-f]{32}\.jsonl',f.name) and f.stat().st_mtime>=(p/log).stat().st_birthtime-1]
+errors=[];audit=None;trace=None
+if len(traces)!=1:errors.append('Missing unique trace')
+else:
+    trace=traces[0];r=subprocess.run(['rtk','proxy','python3','Tools/CI/audit_skirmish_native_contacts.py',str(trace)+'.touch.jsonl'],capture_output=True,text=True);audit=json.loads(r.stdout)
+    if not audit.get('strictRecordedContacts') or not audit.get('strictAllContactsEnded') or not audit.get('nativeMenuContactsRecorded') or audit.get('errors'):errors.append('Strict native contacts failed')
+if wrapper!=0 or bridge!=0:errors.append('Wrapper/native bridge failure')
+if not same:errors.append('Full source changed')
+if 'code='+sha not in t:errors.append('Native source census fingerprint missing')
+markers=['[S005AircraftRecovery] result=Passed mode='+mode,'[S005AircraftRecoveryCleanup] result=Passed','[S005AircraftRecovery] phase=PausedSnapshot','[S005AircraftRecovery] phase=DiskVerified schema7=1 pausedAircraftPartsExact=1','[S005PlayerSaveResume] result=Passed input=Touch','[S004MenuJourney] result=Passed']
+for marker in markers:
+    if marker not in t:errors.append('Missing '+marker)
+if not re.search(r'\[S005PlayerSaveResume\] result=Passed .*?paidRole=Strike paidCost=520.*?receiptViolations=0',t):errors.append('Missing paid Strike native recovery receipt audit')
+if '[S005AircraftRecovery] result=Failed' in t:errors.append('Aircraft-specific recovery failed')
+script=pathlib.Path('/private/tmp/S005AircraftRecovery978.cs');scriptName=f'native{n}-normal-aircraft-recovery-fixture.cs.txt';(p/scriptName).write_bytes(script.read_bytes())
+name=f'native{n}-normal-paid-strike-{mode.lower()}-save-continue-'+('pass' if not errors else 'failure')+'.json'
+d=dict(result='PassedScopedNormalAircraftRecovery' if not errors else 'Failed',scope='Normal paid Strike flight or return-taxi Pause/Save/Continue using checked native touch controls; no complete-match win or full aircraft lifecycle claimed',mode=mode,sourceHash=sha,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest(),trace=trace.name if trace else None,inputAudit=audit,fixture=scriptName,fixtureSha256=hashlib.sha256(script.read_bytes()).hexdigest(),fixtureDriverStateChangesOnly=True,actorsResourcesOrdersSelectionCheckpointInjected=False,pausedCheckpointAircraftPartsExact=not errors,paidReceiptPreserved=not errors,sameAttempt=not errors,oldPhysicalGone=not errors,runwayGeometryAndSpeedsPreserved=not errors,clockBoundedNativeMotion=not errors,nativeMarkers=[x for x in t.splitlines() if x.startswith('[S005AircraftRecovery]') or x.startswith('[S005PlayerSaveResume] result=')],errors=errors,countsForFreshAriaSeedBaseline=False,countedWin=False,fullLifecycleCertified=False,technicallyReady=False,playerReady=False,realHumanDeviceAcceptance=False)
+(p/name).write_text(json.dumps(d,indent=2)+'\n');f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text());assert s['activeRun']=='native'+n;s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None);s.setdefault('currentAircraftRecoveryProofs',[]).append(name);f.write_text(json.dumps(s,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as f:f.write(f'\nNative{n}: normal paid Strike {mode} Save/Continue {d["result"]}; wrapper{wrapper}/bridge{bridge}, full source unchanged={same}. Scoped aircraft recovery, no counted win or full lifecycle certificate. Proof `{name}`.\n')
+print(json.dumps(dict(proof=name,result=d['result'],errors=errors)),flush=True);sys.exit(3 if errors else 0)

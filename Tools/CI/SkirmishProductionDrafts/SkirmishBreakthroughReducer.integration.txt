@@ -1,0 +1,48 @@
+Unimported Breakthrough reducer, 2026-10-14.
+
+Proposed files:
+Assets/Game/Scripts/Runtime/Skirmish/SkirmishBreakthroughReducer.cs
+Assets/Tests/Editor/SkirmishExpansion/SkirmishBreakthroughReducerTests.cs
+Governing rules: OBJECTIVE_IMPLEMENTATION.md Common and BT; existing appended
+SkirmishOutcomeKind/SkirmishEndReasonKind values are consumed unchanged.
+
+Actual pure behavior: exactly 12 distinct original IDs, either of two alternative
+corridors opens a permanent latch after 20 uninterrupted seconds, ordinary support
+infantry can hold, enemy infantry/empty resets, no faster hold from more infantry.
+Only living dismounted originals earn three uninterrupted seconds after the exit
+opens. Leaving/boarding resets; authoritative death precedes credit. Stable dead/
+evacuated tombstones prevent recruitment replacement or duplicate evacuation events.
+Eight evacuations win; fewer than eight possible survivors loses; otherwise deadline
+loses. Exact objective terminal tick resolves before deadline; no base predicate.
+TimeSpan ticks persist hold/dwell/clock fractions; no simulation rate is prescribed.
+Invalid/overflowing facts cannot partially mutate state. Pause/surrender/frozen result
+are covered. Newly evacuated IDs are transition events, not native actor operations.
+
+Executed: rtk proxy python Tools/CI/skirmish_breakthrough_reducer_offline_test.py
+[SkirmishBreakthroughOffline] result=Passed tests=15 passed=15
+[SkirmishBreakthroughEditorReferenceCompile] result=Passed editor=6000.5.2f1 executedInUnity=0
+Actual draft reducer + actual 15 NUnit tests + real repository contracts ran using
+installed NUnit. Execution-only JsonUtility shim delegates to installed Newtonsoft.
+Separate compilation used matching real Editor Core/JSONSerialize/NUnit references
+without a shim. Eight pinned source/dependency hashes stayed unchanged. Evidence:
+Design/AgentReports/SkirmishExpansion/BT/offline-reducer-20261014/
+Unity method: Game.Tests.Editor.SkirmishBreakthroughReducerTests.RunFocusedValidation
+Marker: [SkirmishBreakthroughReducerTests] result=Passed tests=15
+
+Remaining integration gates:
+- Compiler first-three-squad designation and Standard Field player-only 2R+K -> 3R
+  substitution preserving fixed total infantry and Supply; no extra 12 soldiers.
+- Native stable ID mapping, damage/passenger playback then authoritative life,
+  corridor/dismounted/exit facts; vehicles cannot hold/contest, boarding and actual
+  carrier passenger deaths must be integrated and tested, not inferred from booleans.
+- Single objective/outcome scheduling owner; consume evacuation event once to remove
+  command/target/collision participation and release capacity without recording death.
+- Native checkpoint DTO/version and clock accumulator, tombstones excluded from spawn
+  recovery. Offline JSON proves value roundtrip only, not Unity checkpoint integration.
+- Two legal ground corridors and transport approach/source fit on existing Campaign
+  geometry, disclosed two defensive towers without unavoidable spawn fire.
+- HUD/group designation across boarding/splitting; public ARIA/enemy 40/40/20 policy,
+  legal unload, real normal-input/ARIA wins, result/return, EN/FA/device acceptance.
+
+No imported files, native execution, source geometry, budgets, funding, AI driver,
+publication or mission-readiness status changed.

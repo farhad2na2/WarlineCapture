@@ -151,6 +151,7 @@ namespace Game.Runtime
             Vector2Int placementFootprint = context.GetPlacementFootprint(placement.Definition, placement.AutoRotateVertical);
             placement.IsValid = context.IsPlacementValid(placement.OriginCell, placementFootprint, grid, roads, blockerData);
             context.PositionBuildingObject(placement.PreviewInstance, placement.OriginCell, placement.Definition, grid, placement.AutoRotateVertical);
+            TryFitActualPlacement(context,placement,grid);
             context.PreviewSystem.UpdateOutline(
                 placement.OriginCell,
                 placementFootprint,

@@ -1,0 +1,18 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "sourceHash": "900fa9f4db643e05bee603436cfbffbc76f3446ffe1cc83fcb33b9063e0f6322",
+    "result": "Applied",
+    "waterRenderers": 46,
+    "bankMeshes": 8,
+    "channelMeshes": 8,
+    "waterMaterials": 2,
+    "joins": 0,
+    "pavedMaterials": 4,
+    "earthMaterials": 2,
+    "shoreSegments": 0,
+    "joinRows": [],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M01CitywideAlert_d90068bfe6ce4c78a2d95bf6fd876882.mat roles=earth,kerb",
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M01CitywideAlert_32e44831749bd41d191db8d33b2859b0.mat roles=excluded,paved"
+    ]
+}

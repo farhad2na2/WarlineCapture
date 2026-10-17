@@ -1,0 +1,194 @@
+{
+  "schema": 1,
+  "status": "ExternalCandidatePrepared_NotIntegrated_NotNativeCompiled",
+  "baseWholeSourceSha256": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "scope": "expanded Base Assault immutable policy/session/checkpoint foundation; no gameplay budgets/physical map/new enemy wins",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "bc1c4344e2be74fc1a209d6e275ee6cdb68556e08d3560b807fd55232d6d21d9",
+      "bytes": 2068
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "6e2bcca62cd775603a5326103d85b4859459cfd002d3d14b9af83c35e5250c9d",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs",
+      "kind": "modified",
+      "baseSha256": "b525b62d467edd1f92d3e975e07c7314b562ca53e94fd8ecab2a70413cb21847",
+      "stagedSha256": "cc8b43569a48c07d2218d5622f089093b2b36b553d9614c25ce7393e04716e47",
+      "bytes": 15485
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishDifficultyConfig.cs",
+      "kind": "modified",
+      "baseSha256": "eabc863cce51a8b21077f8319d7a602d778f29ed2b72c29fc3759e9d95cc349d",
+      "stagedSha256": "6a62c1e7003ec9da39c8b28aac12e7d33226ca7db3c220c908aa5bcc1f43ce85",
+      "bytes": 4098
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "979be0e1c4e58c7ca76e0d5fe02e47b9b6b46a328c407a82f7cae96a916a3b69",
+      "bytes": 6679
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "12bb851a03d42a80daa31a49691f5335d0b095e273df6df910441e03336bf701",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "ec282c3dc14bfb6a1f71871e55d52eeecb61b38b1b845e8df63b412c2a94402d",
+      "bytes": 3716
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "cf6a89939bf1aa52c906598fd49b2a846a20ec40a3cb43c94e534d3ec2410bee",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "kind": "modified",
+      "baseSha256": "f0e494573d39f838f3cbe5b0815004f060c87a3cecdfd0d5f31fadd9777a9b9e",
+      "stagedSha256": "98ae45b9527119a059a870cfd7660343ab8e63fd4736691b99b1955e4b38e5e5",
+      "bytes": 7139
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs",
+      "kind": "modified",
+      "baseSha256": "360b8d1b089c00cb86497b93e8199aa218f234a226d975e7159da8b09d9f9234",
+      "stagedSha256": "9f761b97d6bc18686aa83e29e60c5529d9eb67723221b29c516e2a6e3971bd2c",
+      "bytes": 5160
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "kind": "modified",
+      "baseSha256": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0",
+      "stagedSha256": "3bfa56c432519f66cd67757e93238b98bb4b741e27a8763aa9d1d7c56ed4b911",
+      "bytes": 33304
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointService.cs",
+      "kind": "modified",
+      "baseSha256": "6aeaa95ba4b6e125148d8e4097940eec3b7dbb22b15d136fb3c31863868911e8",
+      "stagedSha256": "1b7ca29f173ef4326652e851b88d0f40f3bd2e8c9b40e6812a5364478f8b5fa5",
+      "bytes": 24388
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "2b98cbcfc04e9205b74b984ca3563f46df9b29895ce0aa9664f29d7eb19ae42d",
+      "bytes": 6769
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "bcdda7bc4dedac5306054a6779dbcad805de4c1ae67bdf4dc8edbe681371804c",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "11272239b452bc3e0b30ffe6de7579429be548276ed9e2f304146f3d5dfc4396",
+      "bytes": 4106
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "f911dc0e1e405900acc2c80af8d074464baad82ce3f5c4b3978c07f0cd6d9ee7",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "kind": "modified",
+      "baseSha256": "79f2d050e72203757d5ef6e49df0fb32ee281232bef45dfc138b7825d698c7d0",
+      "stagedSha256": "5a83faf43365a86a98c434ebab22401446c4802e3ee62f7484822915280c169a",
+      "bytes": 14649
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "kind": "modified",
+      "baseSha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+      "stagedSha256": "b1650d121d447e30437fd986851cb7a7973c6caf2edfd49234d6d8b9008c424c",
+      "bytes": 25751
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs",
+      "kind": "modified",
+      "baseSha256": "3181c90294fe3b5a2bfe1448e70f8b6968de8565a0a297fda96822828314110e",
+      "stagedSha256": "51977d17a2915ab8ccf152d25a3e387691ab21b495aaa5e46a4d742de850fc92",
+      "bytes": 8768
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs",
+      "kind": "modified",
+      "baseSha256": "d45c033405fbab5242c5e6816ab8ffaeadfec0e05127c6bd98aba99b05a5c173",
+      "stagedSha256": "e2d4e5bfff71b964925643d1ec6c8002a2e69e5f07ab378076ecb21d5486ad9d",
+      "bytes": 4776
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "03891f47828a439a2378869ae567010650da41c60e6a7e02501b60ad3ccbbfb1",
+      "bytes": 494
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "27fb81ac21e8fb2f56fad9dd9f1276a070a94618af242364768370cc7b0cea7e",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "2cfdd83b8569aae24dfcbb0b4ef7732ab317ec74ade45b16c172191f5c0d83c4",
+      "bytes": 14956
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs.meta",
+      "kind": "new",
+      "baseSha256": null,
+      "stagedSha256": "9ee435a6122d5a227083e32100f226483191e1f243a549cd4abb199485fac1dc",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs",
+      "kind": "modified",
+      "baseSha256": "6e408c7bf06f9d21015b6bd9486c9d8a49d192cbf322bfddfc8d8d7c66b2e174",
+      "stagedSha256": "a95094703224923a6327c036748e73bac304b2f570614d4dce4c13ea06380f99",
+      "bytes": 34735
+    }
+  ],
+  "patchSha256": "d8ba70e7362571a56e7d779c3aca924bd4de59acf75c6a9505329c1ac20a2921",
+  "focusedEntry": "Game.Tests.Editor.SkirmishEnemyPolicyV1Tests.RunFocusedValidation",
+  "focusedCases": 6,
+  "unchangedLegacyStrategySha256": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327",
+  "notes": [
+    "Old policyless native7 Base Assault save rejected intact; read-only exact legacy identity recognition exposes existing friendly Continue failure/NewMatch flow only.",
+    "New V1 planner/production/assignment Parts mandatory for compiled policy; elapsed clock deadlines do not rebase.",
+    "Fixture v1 codec rejects policy-enabled sessions; old fixture tests explicitly policyless and not current native acceptance.",
+    "Source compiler reads actual packaged difficulty config once, canonical defaults only for in-memory definitions.",
+    "Normal current d5af wins remain baseline history; this candidate has no player-ready claim."
+  ]
+}

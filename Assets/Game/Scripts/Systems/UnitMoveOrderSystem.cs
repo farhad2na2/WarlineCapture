@@ -115,6 +115,7 @@ namespace Game.Runtime
                 }
 
                 ecb.Playback(entityManager);
+                VehicleFieldRepairService.NotifyNewMovement(entityManager,entity);
 
                 if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
                 {
@@ -167,6 +168,7 @@ namespace Game.Runtime
                     ecb.AddComponent<ManualMoveOrderTag>(entity);
 
                 ecb.Playback(entityManager);
+                VehicleFieldRepairService.NotifyNewMovement(entityManager,entity);
                 if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
                     SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"unitMoveOrderImmediateApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
             }
@@ -221,6 +223,7 @@ namespace Game.Runtime
                     ecb.AddComponent<ManualMoveOrderTag>(entity);
 
                 ecb.Playback(entityManager);
+                VehicleFieldRepairService.NotifyNewMovement(entityManager,entity);
                 if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
                     SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"unitMoveOrderTargetOnlyApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
             }

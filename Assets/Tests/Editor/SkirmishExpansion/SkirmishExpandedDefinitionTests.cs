@@ -96,6 +96,7 @@ public sealed class SkirmishExpandedDefinitionTests
     {
         LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        authored.DefinitionS002 = LoadPinnedCompileDefinition("S002");
         var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
         Assert.IsTrue(SkirmishSetupCompiler.TryCompileCatalog(
             authored, matrix, manifest, out List<SkirmishResolvedSetup> compiled, out List<SkirmishCompileReason> reasons));
@@ -371,6 +372,7 @@ public sealed class SkirmishExpandedDefinitionTests
         EntityManager em = world.EntityManager;
         LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        authored.DefinitionS002 = LoadPinnedCompileDefinition("S002");
         var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
         Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
             em,
@@ -619,14 +621,17 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(1, setup.VehicleQueuesEach);
             Assert.AreEqual(seed, payload.Seed);
             Assert.IsTrue(setup.MeasuredLayoutBound);
-            Assert.AreEqual(949f, setup.PlayerBaseWorldX, 0.5f);
-            Assert.AreEqual(344.7f, setup.PlayerBaseWorldZ, 0.5f);
-            Assert.AreEqual(1007.21f, setup.PlayerStagingWorldX, 0.5f);
-            Assert.AreEqual(326.01f, setup.PlayerStagingWorldZ, 0.5f);
+            Assert.AreEqual(450f, setup.PlayerBaseWorldX, 0.5f);
+            Assert.AreEqual(540f, setup.PlayerBaseWorldZ, 0.5f);
+            Assert.AreEqual(485.75f, setup.PlayerStagingWorldX, 0.5f);
+            Assert.AreEqual(540f, setup.PlayerStagingWorldZ, 0.5f);
             Assert.IsTrue(TryFindStructure(setup, 1, SkirmishStructureIds.Helipad, out SkirmishResolvedStructureEntry pad));
             Assert.IsFalse(pad.DesignatedBase);
-            Assert.AreEqual(926.22f, pad.SpawnWorldX, 0.5f);
-            Assert.AreEqual(440.25f, pad.SpawnWorldZ, 0.5f);
+            // Immutable packaged S004 AirReturn pad (919,462.6), envelope
+            // origin(877,135)/600x420 -> u=.07,v=.78; measured frame
+            // origin(378.50525,540), +X595.7895/+Z160; Helipad offsets are zero.
+            Assert.AreEqual(378.50525f + ((919f - 877f) / 600f) * 595.7895f, pad.SpawnWorldX, 0.5f);
+            Assert.AreEqual(540f + (((462.6f - 135f) / 420f) - 0.5f) * 160f, pad.SpawnWorldZ, 0.5f);
             Assert.IsTrue(TryFindStructure(setup, 2, SkirmishStructureIds.Helipad, out _));
             Assert.IsFalse(HasStructure(setup, SkirmishStructureIds.Airport, false));
             Assert.AreEqual(20, setup.Structures.Length);
@@ -806,6 +811,11 @@ public sealed class SkirmishExpandedDefinitionTests
     {
         LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        authored.DefinitionS003 = LoadPinnedCompileDefinition("S003");
+        var packaged = SkirmishExpansionCatalogConfig.Load();
+        Assert.IsNotNull(packaged);
+        Assert.IsTrue(packaged.TryGetDefinition("S004", out var packagedS004));
+        authored.DefinitionS004 = packagedS004; // Actual physical binding; keep factory-only lookup/publication fixtures.
         var manifest = new SkirmishContentManifest { RequiredFeatureIds = SkirmishS004FirstVisit.RequiredFeatureIds };
         Assert.IsTrue(SkirmishSetupCompiler.TryCompileCatalog(
             authored, matrix, manifest, out List<SkirmishResolvedSetup> compiled, out List<SkirmishCompileReason> reasons));
@@ -1030,6 +1040,7 @@ public sealed class SkirmishExpandedDefinitionTests
         try
         {
             var suite = new SkirmishExpandedDefinitionTests();
+            suite.ResourcesS002CompilePathRetainsCatalogBaselineHashes();
             suite.S002StandardRegularMatchesSetupMatrix();
             suite.S002AllSizesCompileAgainstMatrix();
             suite.MissingDefinitionReportsFieldSpecificReason();
@@ -1072,6 +1083,28 @@ public sealed class SkirmishExpandedDefinitionTests
     }
 
     [Test]
+    public void ResourcesS002CompilePathRetainsCatalogBaselineHashes()
+    {
+        LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
+        var authored = SkirmishExpansionCatalogFactory.CreatePackagedS002();
+        Assert.IsNotNull(authored);
+        var catalogDefinition = LoadPinnedCompileDefinition("S002");
+        Assert.AreSame(catalogDefinition.MapLayout, authored.DefinitionS002.MapLayout,
+            "Resources capture path and catalog must use the exact same layout asset.");
+        Assert.IsNull(authored.DefinitionS002.CampaignMap);
+        var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
+        foreach (var baseline in SkirmishLegacyLayoutBaselineContract.ReadRows())
+        {
+            if (baseline.CatalogId != "S002") continue;
+            var size = (SkirmishSizeId)Enum.Parse(typeof(SkirmishSizeId), baseline.Size);
+            Assert.IsTrue(SkirmishSetupCompiler.TryCompile(authored.DefinitionS002,
+                SkirmishDifficultyId.Regular, size, baseline.Seed, manifest, matrix,
+                out var setup, out var reasons), reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            Assert.AreEqual(baseline.SetupHash, setup.SetupHash, "Resources S002 path must preserve the actual pre-integration hash.");
+        }
+    }
+
+    [Test]
     public void PackagedS002MatchesPlayableMap()
     {
         Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string error), error);
@@ -1097,6 +1130,19 @@ public sealed class SkirmishExpandedDefinitionTests
         }
     }
 
+    private static SkirmishScenarioDefinitionConfig LoadPinnedCompileDefinition(string catalogId)
+    {
+        var catalog = SkirmishExpansionCatalogConfig.Load();
+        Assert.IsNotNull(catalog, "Compile fixtures require actual packaged bindings.");
+        Assert.IsTrue(catalog.TryGetDefinition(catalogId, out var definition));
+        Assert.IsNotNull(definition.MapLayout);
+        Assert.IsNull(definition.CampaignMap, "S002/S003 retain their coded no-CampaignMap path.");
+        Assert.IsTrue(SkirmishLegacyLayoutBaselineContract.TryGetReviewedLayoutFingerprint(catalogId, out var reviewed));
+        Assert.AreEqual(reviewed, SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(definition.MapLayout),
+            "Never accept a mutable factory layout as the packaged legacy binding.");
+        return definition;
+    }
+
     private static void CompileS002(
         SkirmishSizeId size,
         int seed,
@@ -1105,6 +1151,7 @@ public sealed class SkirmishExpandedDefinitionTests
     {
         LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        authored.DefinitionS002 = LoadPinnedCompileDefinition("S002");
         var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
         Assert.IsTrue(SkirmishSetupCompiler.TryCompile(
             authored.DefinitionS002,
@@ -1141,6 +1188,7 @@ public sealed class SkirmishExpandedDefinitionTests
     {
         LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        authored.DefinitionS003 = LoadPinnedCompileDefinition("S003");
         var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
         Assert.IsTrue(SkirmishSetupCompiler.TryCompile(
             authored.DefinitionS003,
@@ -1177,6 +1225,10 @@ public sealed class SkirmishExpandedDefinitionTests
     {
         LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        var packaged = SkirmishExpansionCatalogConfig.Load();
+        Assert.IsNotNull(packaged);
+        Assert.IsTrue(packaged.TryGetDefinition("S004", out var packagedS004));
+        authored.DefinitionS004 = packagedS004; // Actual physical binding; keep factory-only lookup/publication fixtures.
         var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS004.RequiredFeatureIds };
         Assert.IsTrue(SkirmishSetupCompiler.TryCompile(
             authored.DefinitionS004,

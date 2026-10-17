@@ -1,0 +1,74 @@
+{
+  "currentSourceHash": "3986ae0d0abf89331a6eb6c464cf4897c5fdffa1f2ea82e47a16905f1a242030",
+  "scope": "Acceptance metadata only; original source hashes, outcomes, logs and CSV rows retained",
+  "updated": [
+    {
+      "file": "native190-aria-en-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "fresh-baseline-progress.json",
+      "flagsReconciled": 6
+    },
+    {
+      "file": "native192-aria-en-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "seed-matrix-history-before-native214.json",
+      "flagsReconciled": 9
+    },
+    {
+      "file": "native189-aria-fa-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native194-aria-en-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native195-aria-off-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native187-aria-fa-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native191-aria-fa-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native196-camera-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native188-aria-en-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native193-aria-fa-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native197-aircraft-cycle-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native199-aria-en-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "native160-camera-touch-evidence.json",
+      "flagsReconciled": 1
+    },
+    {
+      "file": "fresh-baseline-acceptance.json",
+      "flagsReconciled": 6
+    },
+    {
+      "file": "player-save-resume-acceptance.json",
+      "flagsReconciled": 2
+    }
+  ]
+}

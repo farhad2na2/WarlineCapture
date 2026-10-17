@@ -1,0 +1,82 @@
+{
+  "status": "Prepared_NotExecutedOnMain",
+  "project": "/Users/farhad/Projects/WarlineCapture",
+  "durableIndexSha256": "a5b48a28315ed4f03cd39ae370985098b1a3936f52ac389b600094e9096a7a30",
+  "prerequisites": [
+    "Root establishes native idle and source freeze, with Unity Hub open and signed in.",
+    "Root applies the exact guarded integration and verifies all final source hashes.",
+    "Root refreshes once, observes actual compiler completion with zero errors, and verifies native public test types are loaded.",
+    "Give each suite a fresh exclusive run ID/log path; preserve full wrapper, native exit and pass-marker receipts.",
+    "No full Play or journey qualification is claimed by these focused suites."
+  ],
+  "wrapperTemplate": "rtk proxy Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture --reuse --timeout 240 --log /private/tmp/s005-enemy-main-<freshID>-<suite>.log -- -executeMethod <entry>",
+  "mandatoryReceipts": [
+    "wrapper exit 0",
+    "actual native .exit 0",
+    "required suite marker in the dedicated full native log",
+    "same candidate full source before/after and native validation closed"
+  ],
+  "entries": [
+    {
+      "suite": "policy-codec-foundation",
+      "entry": "Game.Tests.Editor.SkirmishEnemyPolicyV1Tests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishEnemyPolicyV1Tests] result=Passed tests=6 scope=policy-native-codec-foundation nativePlayerWins=0",
+      "cases": 6,
+      "testSha256": "2cfdd83b8569aae24dfcbb0b4ef7732ab317ec74ade45b16c172191f5c0d83c4",
+      "scope": "Policy identity, immutable routes, pause clocks, paid-intent native codec/Parts, strict policyless compatibility and missing-state rejection"
+    },
+    {
+      "suite": "paid-production-adapter",
+      "entry": "Game.Tests.Editor.SkirmishEnemyPaidProductionAdapterTests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishEnemyPaidProductionAdapterTests] result=Passed tests=17",
+      "cases": 17,
+      "testSha256": "d41e9dc98307ec3701c3b6cf4411d41ae350194d65f5824258b320e729a45b72",
+      "scope": "Actual adapter isolated ECS correlation/eligibility/backoff/reconciliation; accepted queue is not delivery and no paid normal journey is established"
+    },
+    {
+      "suite": "observer-perception",
+      "entry": "Game.Tests.Editor.SkirmishEnemyPerceptionTests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishEnemyPerceptionTests] result=Passed cases=4",
+      "cases": 4,
+      "testSha256": "2635d69a3f2397020f74bbf6146a5062db4c3e1a04f7cc303c49dc864e2398ca",
+      "scope": "Current observer visibility and mandatory session-owned frozen ledger; excludes obsolete missing-ledger-state 1197 fixture"
+    },
+    {
+      "suite": "decision-rules",
+      "entry": "Game.Tests.Editor.SkirmishEnemyDecisionRulesTests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishEnemyDecisionRulesTests] result=Passed checks=27",
+      "checks": 27,
+      "testSha256": "5c0577f8b24a7f612028d340557ae80142cc2fdb70809ea429d654273ac116ba",
+      "countProvenance": "25 literal Check calls, including 2 executed twice by foreach over 90/360, hence 27 actual calls. Earlier 28-check handoff was inaccurate; frozen source unchanged.",
+      "scope": "Commitment/reaction delay, allocation bounds, route scouting, frozen investigation and terminal paid-intent reopening rules"
+    },
+    {
+      "suite": "commander-shared-orders",
+      "entry": "Game.Tests.Editor.SkirmishEnemyCommanderTests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishEnemyCommanderTests] result=Passed cases=4 configSeedPairs=4 scope=isolated-shared-orders",
+      "cases": 4,
+      "testSha256": "a79f5b486cc14cd2bda7134c7ee991105ad2ef17cfafbea8368a17ad411e229d",
+      "scope": "Actual shared isolated group orders, route completion and minimal reserve; no full native enemy pressure or win claim"
+    },
+    {
+      "suite": "typed-ground-rollout",
+      "entry": "Game.Tests.Editor.SkirmishEnemyGroundRolloutTests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishEnemyGroundRolloutTests] result=Passed tests=12 scope=typed-ground-rollout-identity nativePlayerWins=0",
+      "cases": 12,
+      "testSha256": "98b71a99ece7f147256500883b53252b29bb58fcdc9c3e3699a012198b108e38",
+      "scope": "BA CombinedArms FieldBase initial Field zero-air rollout; unsupported typed starts retain prior strategy and save identity"
+    },
+    {
+      "suite": "expanded-checkpoint-regression",
+      "entry": "Game.Tests.Editor.SkirmishExpandedCheckpointTests.RunFocusedValidation",
+      "requiredPassMarker": "[SkirmishExpandedCheckpointTests] result=Passed",
+      "directInvokedCases": 13,
+      "testSha256": "a95094703224923a6327c036748e73bac304b2f570614d4dce4c13ea06380f99",
+      "scope": "Affected existing checkpoint/reset/stock/result/pause/custom/legacy/fresh-session controls; policyless fixture codec evidence remains distinct from genuine player recovery"
+    }
+  ],
+  "nextSeparateNativeGate": "After focused tests pass, root performs the approved ordinary-input enemy pressure/production/checkpoint comparison; these suites do not establish normal paid delivery or player readiness.",
+  "unityCalledByPreparation": false,
+  "mainSourceWrittenByPreparation": false,
+  "gitCalledByPreparation": false
+}

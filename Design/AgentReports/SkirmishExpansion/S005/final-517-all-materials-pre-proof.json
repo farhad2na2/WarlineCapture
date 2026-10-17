@@ -1,0 +1,2255 @@
+{
+  "scope": "Every material under Assets; supplements the configured candidate source-extension manifest",
+  "materialCount": 562,
+  "materials": [
+    {
+      "path": "Assets/Game/Art/MapBeautify/CityEdgeDetailedGround.mat",
+      "sha256": "848538dd57d7e197a95defb8c02507546090df20ae45d2692353872417e49c4c"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CityEdgeRoofAccents/Canopy_48843a2db7a47754f9c8d6ae390ebf4b_0.mat",
+      "sha256": "b7a12c5a47fd8e32e63c2c8137b62d5e76d7e372ba621ebd554a321f41e9e584"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CityEdgeRoofAccents/Canopy_48843a2db7a47754f9c8d6ae390ebf4b_1.mat",
+      "sha256": "4be979405a4b81873ce9c54b6b6594fded1b0235e8f40c18b898aae854d559d6"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CityEdgeRoofAccents/Canopy_48843a2db7a47754f9c8d6ae390ebf4b_2.mat",
+      "sha256": "c96c8767fa755fafd612e27ba13b4ac7f1f0f9f4908653fe95cfd6e8848def37"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CityEdgeRoofAccents/Canopy_48843a2db7a47754f9c8d6ae390ebf4b_3.mat",
+      "sha256": "89fbd060a5cff696331dc6ae380247b853afb3db89f4addf692b4cf3c4f80d5e"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/Concrete.mat",
+      "sha256": "3914496ea8f8220ca77efa0ab98d02a969ffbd71b3789473ac00179fd3ae9c34"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/CityStreetAsphalt.mat",
+      "sha256": "0ca82f4ac0820aa3a3d25fd8598dd5f87c3c841c4da855310971c92aad592c83"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/FadedLanePaint.mat",
+      "sha256": "0a9797bba878ccf7af3fdd5d6e810a8cb7c5f86abe8e5043e4ae785148a87725"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/KerbPaving.mat",
+      "sha256": "658622870b42430f93c39d93d7e3b7de0f0fd0e3a95ce8039771a276617f7796"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/LaundryIvory.mat",
+      "sha256": "fba902fa148e7e009faf053dc5ba3f8fecf833801225611175f810d6869a7082"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/MarketFabric0.mat",
+      "sha256": "cad39896ac33bdefa9a2198734803672cc3d3305d055aa5a4c4acbff94af1c12"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/MarketFabric1.mat",
+      "sha256": "cb580d7f9dab90ed23ae13ef5407370cb83ac9991dd0422d60ae2cf164d436c4"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/MarketFabric2.mat",
+      "sha256": "9df12810b1147d1d02063562001e7eac74c1d4f4abf5c2a429caf4b114a7dda2"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/MarketFabric3.mat",
+      "sha256": "ff1c1fa09b8f5693eb252325c433307985b247e986d0a87ac618bab0155de46f"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/OutskirtsSand.mat",
+      "sha256": "64bb256bdbfacbddf38fa383be072592e4755a992b4655a33cf82543f2065716"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/PaperDebris.mat",
+      "sha256": "4822270923eb6f8bad5058a83ecfb19493fd3bd90d87525541c4aeb7227c173a"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/RoadCracks.mat",
+      "sha256": "c6990f9573ef118561c0d7cf7e93c8e1de070ac9d243d992e107b9102dcea4cf"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/RoadSand.mat",
+      "sha256": "baca36780e3522e17146e86497304797521c7d2e90dbf3ec223181c0425a2b08"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/RoofFabric0.mat",
+      "sha256": "89bd15975e8ae5baba0d7a93b73a63f8dc43dbf8fff7e19bb1e15ede06022fd2"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/RoofFabric1.mat",
+      "sha256": "0bd1156e20ad069d6d2f9f8d81a0e72e5bd88f0657b157a52d8df784119e2783"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/RoofFabric2.mat",
+      "sha256": "720371aec6b7b1af803a264e06c3192dd74402c1e489c65e0e84e2ad4608984c"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/RoofFabric3.mat",
+      "sha256": "270e42bcea9c2370946e2777746c761d9db8a4312a36f283f11b359b276745b1"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/SmallRubble.mat",
+      "sha256": "9055e689d1e0c2807c202d661da24e7ec909644f89adda59da3b564d8f7a6831"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/StallFabric0.mat",
+      "sha256": "7663b8d8867e97c7a71d6aed10769a3529daa27bbe30ac61a755ef12ebbb1674"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/StallFabric1.mat",
+      "sha256": "b71d6065888893c0e3e4d1e6461a0ff36aba1a14792f973f018bf4f3da8acbbc"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/StallFabric2.mat",
+      "sha256": "68210ef081ad1e90613e1963b6a950506c7ca226fa82bb05e846d0ed2005c9fe"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/StallFabric3.mat",
+      "sha256": "6f95fb9ac95f80d72d66d6ac7cd2ec034cb989989a247f3436996c93d225ea2e"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/Warm_GroundVariation_PolygonMilitary_Mat_03_A.mat",
+      "sha256": "2ab8a82d11be76676d80e0e41838e56738240fbb22fddce59bf9e10fa5d782bb"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/Warm_GroundVariation_PolygonMilitary_Mat_04_A.mat",
+      "sha256": "e61095c52110b6af8e9132130ed9fe88ae3be1013f730c64b96e7cd7de11f4c4"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/Warm_PolygonMilitary_GroundVariation.mat",
+      "sha256": "3ce1a7fca81dd045cd9a1d574f5e0ec0c5b7aa9a29881b88ccdc5586f0429f7a"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/Warm_PolygonMilitary_Mat_01_A.mat",
+      "sha256": "477b5e3c00b8cba49791add134f154e109e228c9253fb5af6c33f4d65b50af90"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity/WornAsphalt.mat",
+      "sha256": "bbb30f12e9b297b44b3a1e74e1626ce18e9feade6fdc64d5471b004b48a23362"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DetailedDesertGround.mat",
+      "sha256": "62cf7b8856efda10b17b97bb1d4524e6bccb92d3ed66e005169c58beac15be05"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/FX/FX_Circle_URP.mat",
+      "sha256": "66415e8f35aae79ca39f0560e2e05d4e44234a60f94d80f3ae3aa8ed6fc40dae"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/FX/FX_Dark_URP.mat",
+      "sha256": "874d995e7b418fa044fd75bc72e98e1d31755c444c0a4347ce4d5c2b5edd8282"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/FX/FX_Default_URP.mat",
+      "sha256": "c69431967376cb894361152bc0bb24401ba2a177d30f7bb39bf17265372ec436"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/FX/FX_Soft_Dust_URP.mat",
+      "sha256": "2a2aafcb1212d9453014f377ee130a6eb2f9d69bd964af9b69f69c23e89e07ac"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/FX/FX_Soft_URP.mat",
+      "sha256": "71523fbd0cc7b248d54f94ad46e443c146feb86f977f1830109c079b4276facd"
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/PortAsphalt.mat",
+      "sha256": "d7f440692c2de64628a6f4cd4d1b9499f6fec1c5a30127fc5abb82c50709bcb3"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/M01_DesertSkybox.mat",
+      "sha256": "9848b65df440367d32a9af10a578fcec397e02560971ab7e9c166545e7a8f525"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Asphalt.mat",
+      "sha256": "792a763cf93a7958ba1940c00f6bec1b709b77f9be276732f6268ab1ccc8d256"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Concrete.mat",
+      "sha256": "b9e0bb2fbd5739f62d2afa81d50d789f05655861e339464da46c269e474a6827"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Curb.mat",
+      "sha256": "cb8a875b5bd0c5dc0e19b36bae6cd32646faebcf4872a2ddb99a6e554c161f76"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_DirtRoad.mat",
+      "sha256": "abb38ff9c50ac1fcf0fd660da692286ddc7fc8f666fb375343b13ff05396c0cd"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_DistrictGround.mat",
+      "sha256": "dfa1aec708b5621d1421a7a4742b96052cb48eeca4609855fabf6cd4a99494bc"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Market_Turquoise.mat",
+      "sha256": "043d937e1f8fe5f429ab82ada1029e2cdbd767b08f4a8c5b800360d6b619170d"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_RoadPaint_Amber.mat",
+      "sha256": "14a517906f26d957897d27af5a5946f8bbd625e9040bf93d5ced967add8060ac"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_RoadPaint_White.mat",
+      "sha256": "ad0f0897c46e18b1587b9f51d2a6dfb0ed72ab888036c689cff8586e79217dce"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Rust.mat",
+      "sha256": "a1d5fcefbc0c2f90034a69849533efb6adb87d1b43d461fdd769b6f384743843"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Sand.mat",
+      "sha256": "49a3757dfc005dfb9bd061b4e356b4577cd4c7d18f5c6750537b7e698361c51a"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/M01/Materials/M01_TransitionGround.mat",
+      "sha256": "94a582ec9eea34d6ef983e8b33a1c9139c5a40868b69ee6bcdba54e2d6d3e289"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/Variants/Shared/PolygonBattleRoyale_01_A_Amber.mat",
+      "sha256": "7c1b3f8058e157c02b96ec339f844dd7fe03b4f32ef78bc513ae70ac0481cffe"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/Variants/Shared/PolygonBattleRoyale_01_A_Blue.mat",
+      "sha256": "5d92099102611c66fe2159ce03cc3bd5f1c5076f14f5c257cfa2d0a64fd40d39"
+    },
+    {
+      "path": "Assets/Game/Art/MapPrototypes/Variants/Shared/PolygonBattleRoyale_01_A_Green.mat",
+      "sha256": "7544e43b8e0cae4bbbb5ae18c82a7e152a813f2393dca1d52a2559852185ebff"
+    },
+    {
+      "path": "Assets/Game/Configs/Support/SupportFootprint.mat",
+      "sha256": "5f421f1d752f7db4190827344eb99757e7c72334a71c65bd0301c0016c09a26d"
+    },
+    {
+      "path": "Assets/Game/Effects/Combat/Materials/Mat_Vfx_Dust_Alpha.mat",
+      "sha256": "50aedf28c3a9a1a4f19b5e045ee61c1d67ed40db28291c6393999d7cbdd4c431"
+    },
+    {
+      "path": "Assets/Game/Effects/Combat/Materials/Mat_Vfx_ImpactFlash_Additive.mat",
+      "sha256": "736edcabeca442e659efd2a9ba68793b3688061c79e718f7fc56e4454dc548d7"
+    },
+    {
+      "path": "Assets/Game/Effects/Combat/Materials/Mat_Vfx_MuzzleFlash_Additive.mat",
+      "sha256": "8f0381cb927cc692f17cb288c27d71ee8e6aa53c0c2316cd41da1b2348138f9e"
+    },
+    {
+      "path": "Assets/Game/Effects/Combat/Materials/Mat_Vfx_Smoke_Alpha.mat",
+      "sha256": "c9880b916ae9a93e25fe8d507cd7c672634eb3775fddb4e76fd4a135cf25f1e1"
+    },
+    {
+      "path": "Assets/Game/Effects/Combat/Materials/Mat_Vfx_Spark_Additive.mat",
+      "sha256": "f20605ffff105d5fa91152bad70a0d4d0863db2b3a0330c2dd97bdf94a474cad"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/DenseCity_SkyBox_DOTS.mat",
+      "sha256": "5f33919d9d8134e2fabe82b864ae426b663e7346115f8e037e6906ea8f36a3bc"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_77d067287fb28b7409b920737e9eb9ff.mat",
+      "sha256": "5e2d6731f28e5ef5f9c9d983cc5f26ccc5dbed1cc514741f325cabe997487d6d"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+      "sha256": "219e62dc66fc8285db939e691709bbada3134e115ab8ea58c29b0a3afed930db"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_a74066172cf19cd4bacae3c6600a7217.mat",
+      "sha256": "7267995c8e9121b4dcdb44852c103e95de22081947aaf3cde5c90db4af51f0e8"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c03cd3022949c6e43af60b56befeddf7.mat",
+      "sha256": "35bcc4f7d3d3125568202b717a3bcee29320f32368c5d7e9e104ca9be505d4fb"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+      "sha256": "10ff159a57cf448457122bde54e23b0905eccb885c641787c5fa9d4ecd846b9c"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_01.mat",
+      "sha256": "ab2c18063ac8b4385866f4d5f5bfb7656e2127c29a84e1cbab73fce7f0c35e10"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_02.mat",
+      "sha256": "c6e684104cae624ea07d4b3d2b84b810072c5d200a0c667a1f28606ec45c2f60"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_03.mat",
+      "sha256": "84855cc7b2248a0ac72658026dbc77e79d9c8784d5a1f17eec0f7fb2e302eee8"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_04.mat",
+      "sha256": "1e7d8bd4cf3e3a754caef5ad22b76464b8d6a517759b5fa7e9bae5416805c0ba"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_05.mat",
+      "sha256": "ab67116180466b27b209ae1997597373ee23736624186f84e7eea381fe7948f7"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_06.mat",
+      "sha256": "a38ae94c8067dcf7b4510b0d4531a7d97a2ec951c24952dc846027d5a63681b6"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_B_01.mat",
+      "sha256": "ec56d248c4236f7a9d955c38ec8702ce44341bed820880b059c3cb81b9a44319"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_B_02.mat",
+      "sha256": "404900fde2d40d8279846e71e759a37c6301da48933155b9c1cbf3293e1db711"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_B_03.mat",
+      "sha256": "6eaddf6156b1b549054c61ba5c13e5aeff14614df560ed05d2ee28513d9b7b7c"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_B_04.mat",
+      "sha256": "4aae824498689b6b1eed61075d910fbc30388cc8e7746cb5ae22f8fe4198ecc8"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_B_05.mat",
+      "sha256": "de85de0049764471eb20ce231954d5cab898df6ff89ec59dabb3ec2de6da564b"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_B_06.mat",
+      "sha256": "24de6db282c2062561a43126d6d850c44fd818ce64ce0a963ced2e3455d36d99"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_C_01.mat",
+      "sha256": "7c8afb95b67b173e95498a08f252866c5f67ab1feeadd0bf355dc459491778e6"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_C_02.mat",
+      "sha256": "fd954b11d58d0b5695290ba02aa384f1d916209d2ab2a7cebed4d7f5260afeda"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_C_03.mat",
+      "sha256": "0e9360c813fae80966d1e8bd9c565c32c5a0bc349dc45a300162e1950ffc994f"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_C_04.mat",
+      "sha256": "2e1d9cd6973e534a9f151a22f36be87a265c77d8372e44624049204870cfdd90"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_C_05.mat",
+      "sha256": "e6ee6ecfbdc4ff9ea51a3e6af894c0c7f3a6b24381324b2bd5f54aecb5a19ff4"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_C_06.mat",
+      "sha256": "74e7c4d87eac9ece44d54b14b2b4068290b620b6eee248b63335cfe3a6c66af1"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Shop05_A_01.mat",
+      "sha256": "44728f4811561cd4caf5060169e11cc8fc8794204b34b7f4a87cccdeca8102a0"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Shop05_A_02.mat",
+      "sha256": "3822d42ec1a3c0f94fe117629e5f676607d4d6d1e0497ab5c723b41b3ff4de19"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Shop05_A_03.mat",
+      "sha256": "2ec6fd3019b6b451f6c1608165be7aa9454c312ac6021897e95df4cb992fbfef"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Shop05_A_04.mat",
+      "sha256": "f4341ee8ad5b5f4116efee975cbf103e7525d0e63cc4f2e814c3311575cf2b1f"
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Shop05_A_05.mat",
+      "sha256": "06776b22eb71ff91f93694a672fb8650bbea5fc9b7bad66032c04c8529dafc71"
+    },
+    {
+      "path": "Assets/Game/Materials/Gray.mat",
+      "sha256": "f17d73deefc703c40b002f8b4262acf56c972cea669b92d4fd74489556760a01"
+    },
+    {
+      "path": "Assets/Game/Materials/Green.mat",
+      "sha256": "85a9ab61656ded9decd8c18341ce42b8b1e731250ceda7e893debf5d747cf01e"
+    },
+    {
+      "path": "Assets/Game/Materials/Ground.mat",
+      "sha256": "f04332790d5013f48a4e13a812a760273f79f6d89dcf32636f9e234aecc091bb"
+    },
+    {
+      "path": "Assets/Game/Materials/Ground3.mat",
+      "sha256": "bab32e23c49141d6566b85200bc05185ad1e0a692b18cb392c6e7e358e86551c"
+    },
+    {
+      "path": "Assets/Game/Materials/GroundDark.mat",
+      "sha256": "5b47bfd31235ef28b6896cd1d60278b458d1821571467fdb207849adc8e408ab"
+    },
+    {
+      "path": "Assets/Game/Materials/HealthBar.mat",
+      "sha256": "4f72186a79c5fdf3e1663a2178ed2b8691d82d8a86342153d2810e0c84903087"
+    },
+    {
+      "path": "Assets/Game/Materials/Red.mat",
+      "sha256": "ec263a894cd64208630c7fc084e1af3453c2df19ca6b44cf21cfecb6fbab2dcc"
+    },
+    {
+      "path": "Assets/Game/Materials/SandGround.mat",
+      "sha256": "21f885e165a46464ebb1293817f586e753d9a963ed9c9cd901723ee814cfeb22"
+    },
+    {
+      "path": "Assets/Game/Materials/Selection.mat",
+      "sha256": "dd65d8ce3cf30fb1e44047d53a6c638d6f7a6463d13804978c890e0632e7febc"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Candidates/BarrackB/BarrackB_Concrete.mat",
+      "sha256": "5f752c352ed184745d0e003e9eedcaac1c24f6376f423eb879faaa83ca828774"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Candidates/BarrackB/BarrackB_Marking.mat",
+      "sha256": "6d86106b01104cf7c083c7ea63e5096612b4844fb49c539d8bbee79387ff4dd1"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Candidates/BarrackB/BarrackB_Yard.mat",
+      "sha256": "bd363155c6281e613bce68dd58bb8c0589c43757b6e12eec1e04c040ff01f8c4"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Visuals/BarrackMasonry/BarrackB_Concrete.mat",
+      "sha256": "3d870f3291e7e1e292b1ddcc0166277c68572c191dbf13ef0c9be42b0e1e1dbd"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Visuals/BarrackMasonry/BarrackB_Marking.mat",
+      "sha256": "8532b7851afb33c7c8c4d11ea490c084b08e905d1f79aa9663a8b62964f9bf1a"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Visuals/BarrackMasonry/BarrackB_Yard.mat",
+      "sha256": "877366df2c26b276b45b09569aadfb0a53bfcdeed1536c8581de9b7b4f447a8d"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Visuals/BarrackMasonry/Barrack_Masonry_Charred.mat",
+      "sha256": "387788f79438e8b9389904620bfd7714c0d2b91aed6d8e47dced97df57d4f797"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Cloth_0_0.mat",
+      "sha256": "185e6d8889ba706f75322f003da7d2c7e6fc7d02bb2698c72b22d730f787ffd2"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Cloth_1_0.mat",
+      "sha256": "b46e1e511f344c0f869a2fba55a1c10b530b11574525d32ba7dfe06ff223d31a"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Cloth_2_0.mat",
+      "sha256": "b50fd614144ef99a351621497ea35da109e221fd3c908b89e83e3a9f852cf1fe"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Cloth_3_0.mat",
+      "sha256": "fc97306623ee7683b331d05789d2045dea4bc7dfce2946f3fb1b1238d2c936fa"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Courtyard_0.mat",
+      "sha256": "cd6909f2c9f4e72f586ae9c5c5bb716eaf3996f36b231ccbcdb38eb11eceacc3"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Courtyard_1.mat",
+      "sha256": "ec162b9058bcae52c27ea21f69dfe923643dffc8455c0e1d56f1a1020e0a8dfe"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Courtyard_2.mat",
+      "sha256": "2be50ed3e21ce36658e70983571c784d863d76a27f2c327ce5a695fbf35a02de"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Courtyard_3.mat",
+      "sha256": "f400a4dfa4f62ebac07a646a75fb0f490f9d8e31deb05604f0f719339e434d9d"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Shade_0.mat",
+      "sha256": "304d0b8de55a6adf8a3359184a63e4e7fec9f5c191a5898ecd39a44055ec8bd0"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Shade_1.mat",
+      "sha256": "c0304e45a5300e91e3206284f4afddfb258d0ed2142de01eafaf62ff2ca84bd9"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Shade_2.mat",
+      "sha256": "732e3526ce126a73b962319eddce2bea08ad4ab0d4e45070bdea189b4f494a53"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/SkirmishS004/Shade_3.mat",
+      "sha256": "855193497802b69214ba4a57d0064c5cf1c2b89f11cd10638f6c0ef8b00a430a"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/BatchMaterial.mat",
+      "sha256": "3d268dae33f73c711801164c5cc46cdb3e1151db04608ca560b9cc72da112b86"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Generated/MidLOD/ProxySoldierMaterial.mat",
+      "sha256": "833b66a357f6e698675acbc2e82ad127614ce55d5a4f66c4e57d13910567c50b"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Generated/MidLOD/SafeStaticBatchMaterial.mat",
+      "sha256": "98d505faa29d2225f903cf7d2a072cebb9f8e1902b1ebe8b2a82d259feb9a8aa"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Generated/SM_Chr_Bombsuit_Male_01_CombinedSkinned/ModelResources/BatchMaterial.mat",
+      "sha256": "c53ea069d4c172e9b3f2985cb81f283ea30d349d0170556f295f081379e59138"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonBattleRoyale_01_A.mat",
+      "sha256": "178a88b74e89f59f3daa0f13b97beade1fdfddcb1f280eadc4dc40293727b3f5"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonBattleRoyale_02_A.mat",
+      "sha256": "01454106e66fa8398a00528cdcef5b314e2d7128c52a3e72a674e6475af14b0e"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonBattleRoyale_03_A.mat",
+      "sha256": "d19aac06b5beb216a2eb88074815dcea16079ec5753f8f74d2edbcf18dd400f9"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonBattleRoyale_04_A.mat",
+      "sha256": "2d4da7c00c007fde575519f627c2a894d413087f8b93270c304646ec3ee18014"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonBattleRoyale_Road.mat",
+      "sha256": "035283f7be11488c94470c8869d33ce6eed7ed8d1a9b5fd6cf7c79b84acdfac4"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonMilitary_Mat_03_A.mat",
+      "sha256": "f2f894cac8787658e541614e3af56078e8b6d71410213d73565f6b56bdb09675"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonMilitary_Mat_04_A.mat",
+      "sha256": "b12761be03f545e01677c08aa4ded382f4cf5cd9728cd785930be6f78b911c4f"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Generated/GroundVariation_PolygonMilitary_Mat_Road_01.mat",
+      "sha256": "2470ac2ffb4f415fd633b5f612035a916419fc1f8e0429c72f7d6de280fd1c06"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/PolygonMilitary_GroundVariation.mat",
+      "sha256": "ec51bc8ac487e50b0e79933d20e094ba2c82de9196d31f72c63d2fcb9e2c733c"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/PolygonMilitary_GroundVariation_Real.mat",
+      "sha256": "576136f0d62973ec23d72249cedf0b33e0fa9c63e64619b06ea93510995243fb"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Command_Attack_Fill_Hologram.mat",
+      "sha256": "6c886fe17c69b4821fd183a107b644dce8d0231f3f2127fd03c0218ec227f320"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Command_Attack_Hologram.mat",
+      "sha256": "c9d17038dc487e9d3a0aaff65064ccc72dbb90a96d4a2ac9b219a6c648fc4013"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Command_Move_Fill_Hologram.mat",
+      "sha256": "c361dda4d58790ad0e0f61f5d048f54cb9ad5df33eb9ec1726a3537a3c7640b6"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Command_Move_Hologram.mat",
+      "sha256": "ddeddae9a22d9c0af187965627cb5807a46f9db3c5b6a0d52de934ae0a64835d"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Player_Fill_Hologram.mat",
+      "sha256": "80bf7f860ac90e6238859126b65542742148306f62224c7d107a60be2805748d"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Player_Hologram.mat",
+      "sha256": "eca8f528452a4d8af2ec0dddd8731dfa4980a8635659f1c6d334b723be20be70"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Vehicle_Fill_Hologram.mat",
+      "sha256": "924e32d394223e83ff8f0a5c6a1ac3c3608df94d555a557baac07e4362e53f7b"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Vehicle_Hologram.mat",
+      "sha256": "61e7230aa227b01171e970346aa0d0def0334aecd65fe80879f42060ef0adede"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_TargetLock_Attack_Fill_Hologram.mat",
+      "sha256": "88778ad969b2786b14fa6dcec216dabd040576a19e068b412234cdccf79005d1"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_TargetLock_Attack_Hologram.mat",
+      "sha256": "e82408a243bd519cbd720147ab8d0613c9ef6aae5d5e52598b3fba91ec83bd6e"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_TargetPreview_Attack_Hologram.mat",
+      "sha256": "2e5bdf20e16fa48bd71b243dce3d5925ff5814cbd57fd21da4def4fa221769c1"
+    },
+    {
+      "path": "Assets/Game/Rendering/Materials/Selection/Mat_TargetPreview_Board_Hologram.mat",
+      "sha256": "99cf8eb214bca5efec0b5d8094457ac87333555ae9bf65a2e14fc7c4856a44bc"
+    },
+    {
+      "path": "Assets/Game/Resources/MilitaryUiMaterials/anodized-metal.mat",
+      "sha256": "64018c1ac746cc47f3e1cf8f653798d59598537af7270fb5050ccc439aeca4c1"
+    },
+    {
+      "path": "Assets/Game/Resources/MilitaryUiMaterials/ballistic-weave.mat",
+      "sha256": "5d4b02dccb6a92c86e0e1287f6587ca0bdb5bec1a2b0c29495c8774ba7b7ccd5"
+    },
+    {
+      "path": "Assets/Game/Resources/MilitaryUiMaterials/ceramic-armor.mat",
+      "sha256": "47dddab6d9eb660f074aeb3c5619ea22a81b9a5fa71463356585c552357a01d2"
+    },
+    {
+      "path": "Assets/Game/Resources/MilitaryUiMaterials/fractured-glass.mat",
+      "sha256": "718195e212cb2070bd6b9869bb874d0fc0618a559923fa137736a481e45ac6f7"
+    },
+    {
+      "path": "Assets/Game/Resources/MilitaryUiMaterials/tactical-glass.mat",
+      "sha256": "585226a96f5aabeb1eb20591ec327aeb47c1bbbe1b1feab9ac8448fa0cc44a99"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishS004SandGround.mat",
+      "sha256": "7f4e8d6d146df5217fcf2d26664b188e539334e519e55c7a312eedc7817cd24c"
+    },
+    {
+      "path": "Assets/Kevin Iglesias/Human Animations/Materials/HumanAnimations_Dummy-Green.mat",
+      "sha256": "bc4236b9620e3df05413946ea11084c16279a8c57eaa1edd8ed8d0bfed2fac93"
+    },
+    {
+      "path": "Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Materials/HumanSoldierAnimations_Floor.mat",
+      "sha256": "114b994e6eb882970e5c110092a64fbd25fe7ded96b2935799f2c4ca8c627a69"
+    },
+    {
+      "path": "Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Materials/HumanSoldierAnimations_Props.mat",
+      "sha256": "c96cbb555e942e43e2f671fb6b04f6903f21ad103d360963d5dda1efe5a125a3"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Arcane/ArcaneRing_Runes.mat",
+      "sha256": "ce4553ced074de4e0ccc9a2558b65d16ae7fec1bf813ef8d39d5251977770162"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Arcane/ArcaneRunes_Atlas.mat",
+      "sha256": "efafff73a162d81f9b95fe7d4fa54a1dedb30d0a0551879b57e0df2f948ba444"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Arcane/VikingRunes.mat",
+      "sha256": "a75afac537515975b7cf6caef77dca795988b957062c7981b2c75996fb2c33b4"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Blood/BloodLiquid_Slow_thick.mat",
+      "sha256": "4dba5b12d68707389077e4f0faccec1dfcebe01ef251582c4c7b2f4eac596b74"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Blood/BloodRibbon.mat",
+      "sha256": "48377e4b8d0ac6ace24af6edd7751f6d8db1ec42b3f5d8bf278f0369870a43be"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Chinese/AB_NoteSong 1.mat",
+      "sha256": "a40cd3ce0fdd2a56efdafb95bc524efc1083177fc8fda32564c5ffe33b95135f"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/DeathIce/DeathIce_Casting_swirl_add_soft.mat",
+      "sha256": "ab91c3cc4273122b17f9a960caee9ed4cfba9aebbc0ff8138e37e5ca46f2f8c4"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/DeathIce/DeathIce_Flames_add_soft_distorsion_Alpha.mat",
+      "sha256": "b5b1582d07de9f4767f0dacf8dada5a5f223e381e1df3cd0dbadffd3a43ab716"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Fire/FireNoise_NoFade_Alpha.mat",
+      "sha256": "84abb27a462e6f5c1b7d54720032e2a4b283b77811d1ba31cddfc6727e56654f"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Fire/Fire_Add.mat",
+      "sha256": "862b4fe84ca3c750639626332478f6c40ec5c99e31417758bd8ba2a200a02e3a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Fire/Fire_AlphaDistort_Ramped.mat",
+      "sha256": "20061f683d8225a71eb1ec31ebfcb4c3bd52968b2e65980279b2a1fe85a1b6ec"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Fire/Fire_AlphaDistort_Ramped_Ice.mat",
+      "sha256": "8d8b9997f9327614cb113a7657caad40025242a54dac0d3d9f0e61cf482d8005"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Fire/Fire_Flames_add_soft.mat",
+      "sha256": "ef56c100f1af122aae145e41f5169c4c354892b3298401ee670439ce4a2f5677"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Fire/Fire_Trail.mat",
+      "sha256": "02766a585dbed4f837fd5280ea837b7452b51e9ae22008fcf3551536c74619ce"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Ghostly Mist & Dark/Big_Wave_Trail_Mist.mat",
+      "sha256": "a3a736b15ce618b7ae455c480785f7ef65fc573fb13e96cac11c29965bd0c223"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Ghostly Mist & Dark/DarkOrb_Faded.mat",
+      "sha256": "65d9d1f7251cc40181c67adb7ff2ab2bd9de178b16e4d3d892e363edb12ecae3"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Ghostly Mist & Dark/MistOrb.mat",
+      "sha256": "24b5d7933a2da054d43192acf07c46496c5867b5d38ad33debbf47709980dcb7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Holy/HolySmoke.mat",
+      "sha256": "8c9162acf14754b439051f48b75c0ba7b8195f1351349381ba56813fbf5562ad"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Holy/HolyStar_Alpha.mat",
+      "sha256": "3947f88d62f712c13c823d3f4caf5a715f9635b2cffa6d8a9db26fde7c55a5a9"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Holy/Pentagram_Alpha.mat",
+      "sha256": "5c633fce68e428636ebc1393914a831e7922fd22d79d40ae58cba54af1929279"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Ice/Ice_Crystal.mat",
+      "sha256": "d5106d80db354ee1ef768d2cde5bd69bd98f0e2beb3d7e0142b73c20f5e8e45c"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Ice/Snowflake_Blurry.mat",
+      "sha256": "21a89ef31fc8fcda1b3bedcb34474e495e5fb6150bde49fc140c59c4c892b012"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/InfiniteBG.mat",
+      "sha256": "da3647da846863df8008d08a10bb79398a1b636807033edf156f69f5b13c2376"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_BloodLiquid_Slow_thick.mat",
+      "sha256": "c2c615b06d8a70f3f1c4dd5dfaced9936847baa1f9338ceaef9e8f651d43bc35"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_MusicalNotes_Alpha_DS.mat",
+      "sha256": "d5c1f275b002ee5a598b6980040ed66ef2216c9bf7bb353241beee08b418e489"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_MusicalNotes_Glow_DS.mat",
+      "sha256": "470e630700c817b76dbf772ff7fd793af7d0ee97aec7815f07954e8ff4888fef"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_SnowFlake_Static_Soft.mat",
+      "sha256": "7f97f9466c351a0340aadcc5197f27ae30ed2452c0629faa04e5c1dd101b7469"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_SpeedTrail_Raibon 1.mat",
+      "sha256": "cdf1025784986aeebe5b706884797cdb2b5bace97fd2ad437b18c253a27a9316"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_SpeedTrail_Raibon 2.mat",
+      "sha256": "f74ffcc0617df22e86c75b1e56ab0e774b10c44b2023fb5173d9d2cae9595350"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_SpeedTrail_Raibon.mat",
+      "sha256": "851157592e8d0ff77d952301e779a965ec65433b73fa236e1d8d1caca4e55f86"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Loot/Loot_mat_Portal_Rift_Rift.mat",
+      "sha256": "913c93f3ef384d65b1b84ced71b8d6ee4e41fb53f9721ffa49126fd74c304d36"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Nature & Fairy/LeafAtlas_Greyscale.mat",
+      "sha256": "df370ca6caeb57eee4c6da21f9aca03bf4ac03e8c7577af22158d6404a76d222"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Nature & Fairy/Ring_NatureVines.mat",
+      "sha256": "a726cd18d096a7339aa607ccdb39d3d0855c5114f647872df0c5727917432c63"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Nature & Fairy/VinesTrail_Panning.mat",
+      "sha256": "be58d49e4e9bac18d3a15d2817894b56d76f3c6a8541c2302c46988b5d44ed8d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Others/Grad_Fresnel_Coin_Gold.mat",
+      "sha256": "61b5fd615c07243a02ad34e9c33f835172d505f576711c127b0e8d3c7283d3ea"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Others/Grad_Fresnel_Green.mat",
+      "sha256": "d3fc9ce6361f80ab9f4cf066b96c7071d937ec6f16925a11edb84439930b02c5"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Others/Grad_Fresnel_Purple_Tech.mat",
+      "sha256": "1286f921038ae8f824e1c7058a55200bcf70be34a1c24597803405d63ae12dbb"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Others/Grad_Fresnel_Red.mat",
+      "sha256": "60446c6e27a206de2d4b86411fadc32aedfed9e34bc6e9b668f701f0521da2db"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Others/ModelGrads.mat",
+      "sha256": "9a906aa09f0c30c0ec3132bfefda9cae8bdfdeff92420463b6f9b28419c5afa7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/OverlyToony/AnimeSmoke_Soft.mat",
+      "sha256": "6707f2200297076eb1b4472be69be1860f228896d37a3b660be99a8d455a4409"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/OverlyToony/SlashFlipbook_Windy.mat",
+      "sha256": "69385a649c44d37d37a60683abfe28f7efd6dfcfd4e6d9a6de7b629a14c14700"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/FullRainbowFlare 1.mat",
+      "sha256": "2e3b1690b76ac7966294cb815a9ad810eaf4b2013f5377b130d3bc0b81b686a2"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/FullRainbowFlare.mat",
+      "sha256": "538a3d0c81e61abadad317e07010a9ce1bea41e0aba9c4e2d44b5950770c3197"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/ImpactLightrays_Blurry 1.mat",
+      "sha256": "ff46f56c06207519a4b1936fa8c6dce60798b2978256c34c7549c5b0c634756f"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/IridescenceRadial.mat",
+      "sha256": "db4fa7fa87798c762b932ce8dd011356efa18ac688a5d10bebc97c0553a85815"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/ManaSpeck_Rainbow.mat",
+      "sha256": "6b490c496fd262b7409a7c222410dc44be3ef2449ab799d8c6a677c9a4e513e7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/Rainbow360.mat",
+      "sha256": "2e223e46e8b751410c09bd634c7907be9af84f49b124e2bfa1730dec88a89afa"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowBeam_lootbeam.mat",
+      "sha256": "d630f931f96bb64537b174e65b7e793c3309cb417d4370d8d7b7e8cb500028f2"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowBeam_lootbeam_NoGaps.mat",
+      "sha256": "686c954a0a7d1eecb4964e3e2a222db32082c8454bdca227f21b9fbf14b0910e"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowNoise_Scaled2_Soft.mat",
+      "sha256": "5cf4c1e4e99558a65f7a8bf2718e3ae1f744c36ec571c17c571f338a5a9dbc80"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowNoise_Slow_Scaled.mat",
+      "sha256": "564ae66eb2095bf01308be91bee2ac21a7b94684d2ebf355395b203dc42fbf64"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowSided.mat",
+      "sha256": "3ff4e718dd2f6ddcc694f3db6134bc1dde446587ad1f691681bb55fb8bf08a19"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowSided_FlareSoft.mat",
+      "sha256": "430513353dd29967f836d5eae4da38b195539060614d879ca055f6d8a299e667"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/RainbowSided_Soft.mat",
+      "sha256": "f35dd5639c39e1564d87fb2fab0cb78e6bdf8bd6539b7325951ea1922bf5287a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Rainbow/Smoke_Harsh_Alpha_Rainbow_Soft.mat",
+      "sha256": "0cccf08ccb9323ddff8067747e4287ededfe037044d37bb749c7de166356739a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Roguelike/mat_GOW_Dot_Clip.mat",
+      "sha256": "8b218332a6810833aae4abba640b7cd828a3fd8529d92ce59637a5ff10b7ed42"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/AnimeSlash.mat",
+      "sha256": "c83e00e7f603bae232f0830cb120e6bd69fcb7409f940ebbb64ce9e24c3d8554"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/AstralMist_Flecks_Blend_Desaturate_Soft.mat",
+      "sha256": "ecf052a7cbbad968a024f894a78ef1a756af4900d779d93353e78f4157aa7620"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Circle_Add_Flowy_Soft.mat",
+      "sha256": "5d78f772b04537eb08af699bcd03fbdd132c9310c6201a4a5546d88a365e44c6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Circle_Generic_Hollow.mat",
+      "sha256": "561268c891daecf0d12da400fd69b3b63b0c42dfd41b0431812b219bcd0ab5cb"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Circle_NegativeSpaceMiddleDot.mat",
+      "sha256": "a2af511ed3f51c5f27b244f09017bfbf6fd39b0cf5e602ed83ee25e9190b853a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Fire_Add_Soft.mat",
+      "sha256": "708771183a78229e1bc7f1ea3dd880289d37c09cff4d7de422f92b51e3581a8e"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare2_Additive.mat",
+      "sha256": "9c9bd3c7af3d6d35dccc7bb280249a4028c745b334b31e834fe1472afa35ed1b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare4_Additive.mat",
+      "sha256": "88fc6511dbcfb228532678f9cf006ae7ab1793b7bfad5ee889732b5d7d2cddd7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_AnamorphicWide.mat",
+      "sha256": "1d8f821a5d0100154c3f35c6db3e5171d2b6661f0cc3a237bff2205b0239e04a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_Cross.mat",
+      "sha256": "60beb971afadcff75d4bd0287a0ca422e38d6c213f342940537dcd8ad61de5b5"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_FatDot_Add_Soft.mat",
+      "sha256": "5fe0e2f63e87cfab27d99e40a19e50cf146362ee9aa0900fe47b24e3cb520392"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_FatDot_Additive.mat",
+      "sha256": "e5c2ccb5920b63352923df0a400c7a3f309737262def6b4f85a3329a2062b881"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_FatDot_Alpha.mat",
+      "sha256": "4f4299e6da48c3c54291c7536d48801435224db26d03816f1deb6905ab9c3f0d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_FatDot_Alpha_Soft.mat",
+      "sha256": "854e6faf51446dc492f3f399c767189642af848a0a568b38fb67141101b1ea7c"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_Glint.mat",
+      "sha256": "73675b0050aff0097dfd77c1070ffe682d4475d46d58af886211c9049c26f8a0"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_Glowdot.mat",
+      "sha256": "db41354c98d7890dd4dfd10248eb4222c08722c144d2df8cf51d70af2dd482a1"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_GlowdotPickbook_Add.mat",
+      "sha256": "80594707d5e623dbf52eaa18ee75b06ad2fe46a4fd772809b80f6abf5a9eec11"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_GlowdotPickbook_Alpha.mat",
+      "sha256": "da130b5f7c0836fea064adb59ba4657a71676b4beff2eaf0ad8d23ff9e2afd9e"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_GlowdotPickbook_Strong.mat",
+      "sha256": "486a209d81ec27606b0919d9c611bf4453ce81ff68aa50e393beddac189a83a3"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_SoftCross_Soft.mat",
+      "sha256": "c8955757254dcf9058f2abfb5d6483575a829c323a9778d18a490de71ca94a11"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_SoftStarburstImpact.mat",
+      "sha256": "e357fe6412ad2f3d3c31da92aee5705cc2b8929f4cc9503d03ac82cde0653de1"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_Spiky_DirectionalSoft.mat",
+      "sha256": "4bd900276ba3c5899f764b7473d12f3c491d3830bd58c5c74c228ad8ed9029f0"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_Ultrawide.mat",
+      "sha256": "42f7d92bda9df24179d995da1b326bf5eeec6d371e109ad9abea451b30d89343"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flare_Ultrawide_Soft.mat",
+      "sha256": "2ca5bd928d172ca88b8527d544e2664e98545da898cb338661184b5a24d51820"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flecks_Clipped_Alpha.mat",
+      "sha256": "1dfb8f6117683301c5444e892c53500b98efe7fcc6b05acfad24a83e6c66d22b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flecks_Fluid_Alpha.mat",
+      "sha256": "7d2f7d65fa2beed9f0dbb6b0196113b68c6e46bb4ca7497262434d587af9a91c"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Flecks_Shiny_Alpha.mat",
+      "sha256": "ae82f98a891e3d9b5311f95b64ffaf7ffca8c25f7bdba97fbaa992e477a16c4b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/FuzzAdd.mat",
+      "sha256": "a6950e6e7ae77078cfb31aa4a6e7ad5fc0b8b48527583621d04833ccb659b9bf"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/FuzzAdd_Default.mat",
+      "sha256": "18519af83880e1f4b114b8bd3dad4456027270783bb5c19dcbbb00ec9d40f5c6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/FuzzAdd_Soft.mat",
+      "sha256": "4acc1237fd11f32b53aef37989b9b3d1e56476fd3ec331b2067204e044f89393"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/FuzzAlpha.mat",
+      "sha256": "ee2a2e13161bf93edfd7099eb9e8a27fc8a55267af55130e65762a65d233a3d6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/FuzzAlpha_Soft.mat",
+      "sha256": "87d8ddc491987508d9efc411cd92bb368f86edff618bc994cc9e4da167eeba01"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Gradient_BottomTop.mat",
+      "sha256": "ff32a1008aba57d9d7e1b1b5f7ecd54ed56a041f66e9617a3aaacc21049c2a7c"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Hit_Spikes.mat",
+      "sha256": "c20a8691457f7aa087781ef73d090bf02c618eb0fc073abae29bc19f07cde6cd"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/ImpactFlare_1.mat",
+      "sha256": "3882e6fdda40dd1bc8c3926fae8ae879db758c4a6bd2ee909bb625684dbddf91"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/ImpactFlare_2_Alpha.mat",
+      "sha256": "9c9b4b8c3ac265e33b611bbfe62ba11afd74e8959455b13ebad8b7d8fb20bda2"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/ImpactFlare_2_Distorted.mat",
+      "sha256": "ee4ea39313aff44479949f667ea6ad751acc51ece869933cfc8bf57f08b014d4"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/ImpactLightrays.mat",
+      "sha256": "c5e4221f7c7aeb1508b247d5c96e6e9b4821a90d2dac67c9b7b4d0a8f3419125"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/ImpactLightrays_Add.mat",
+      "sha256": "890dcd14419a8a519ff6eb4b0b252d1e12ff8d6977dcba4c23ae77c44a50ef54"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/ImpactLightrays_Blurry.mat",
+      "sha256": "f7eb803c0d6ddedbb08aa7b2ca92016ecd69c68bc3b895cae1a1de877b8e45aa"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/LightFlash.mat",
+      "sha256": "099a39e0531a4a289388a4c90c405db04d4bebe41d6df871db655522fa57a037"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/LightFlash_Soft.mat",
+      "sha256": "a4fe66daa6238206bf72ddee829313637c64cefc69593e4376016f6d2a448e09"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/LightRay_Generic_Distorted.mat",
+      "sha256": "2ff88416d2fc9703b83e7c1bf829c7983393a8e962e997bdc295a13f10b27748"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/LightRay_Generic_Distorted_Slower.mat",
+      "sha256": "755ab9966a5531542794d5e3a2572b1994565c062255ea50599c5d2890edb913"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/LightRay_Generic_StrongDistortion.mat",
+      "sha256": "47c993cfc65dd0a5aa5725d499f6fb5f208fca986ade21ebaf095c6fdcad6bb3"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/MeshLight.mat",
+      "sha256": "72301af9b94f741dcc04430ed8bf0bf56a3ae282d4c7d5a4771eac9eaa81aaa8"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/MeshLight2.mat",
+      "sha256": "54213f7a948233edaba6503344e4ed7dda55f4d9a3add02a6c65d470878cc184"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Nokdef_Add_Soft.mat",
+      "sha256": "9bd2c02fbf6dd419eb75c499147080bd092cb3be9142e6bcea07aba5d025b5a4"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Nokdef_AlphaFuzzball_Soft.mat",
+      "sha256": "83fb28d973d108274d7e8d72cd63b8690d24a8b9b2bef36c2310e661f14ad4b9"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Polarized_AOEIndicatorTech.mat",
+      "sha256": "799911f5fb41285f7814dcd3c69d06e528ddbe39ee49380601d2d12eeba9259a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Ring_0101_Add_soft.mat",
+      "sha256": "750f7defc5d3914842c43b2e0a398306f36744e53cb793a0c3c65b801108f12c"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/SilkyPanningNoise.mat",
+      "sha256": "46ac626ad9e176dfe961af7cb28207bb662fbc5ba97ca35e9b9aa0752dc64fee"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/SilkyPanningNoise_Inverted_Distorted.mat",
+      "sha256": "b243dbbc6a7fe8b1ad889f61ebf1556c0bc3e54be01cf7bf8c3feaee115433b5"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/SmokeSphere.mat",
+      "sha256": "1e608e5427b8318e5a8a7041320f63f0361fe2d77ac09b6be69568e3cb5cbcf0"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Generic_Add_Soft.mat",
+      "sha256": "dd5969e3bec5b2244dd0cebd9e0eb379e553ac17b98d1b2dbd8fd18d2978d2c2"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Generic_AlphaSoft.mat",
+      "sha256": "d71b6e90a445cd7da98bf24c6f9dafcc7a6a7dcc79a00fdc9ce6f9cd22ca021a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_HarshBlack_Add_Soft.mat",
+      "sha256": "45e6bedc16a4f00335e05558cb942040f1a8daa57e8b268e7741cdf8ecffd36d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_HarshBlack_Soft.mat",
+      "sha256": "89944ea44ac52a316f0f9e2a1d64a7660018f6ff257ecf12a0aebf797815ca27"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Harsh_Add_Softer.mat",
+      "sha256": "99cf61c81269c636d38e13b82bf10258c861906e7d5589682e5564496863e87a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Harsh_Add_SphericalErosion.mat",
+      "sha256": "64576858ef89f5d882d0ea0d07453a6d8af33c26999590ad9bff1316712877db"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Harsh_Alpha.mat",
+      "sha256": "aae47b88ea1a77271489ea9ab8ac0c1fa168c94aa08f8eb4d4222b1c2385f2a7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Harsh_Alpha_Soft.mat",
+      "sha256": "1227c003f9a304fd2224eae74a8fde65cfc3d30d7e6af90f0beffaf56ac79910"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Twirly_AddSoft.mat",
+      "sha256": "4bf7becb216f0417bccd203dff32545fb5c1a25cea35bbec03cecfdc54ff5d49"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Smoke_Twirly_Dissolve.mat",
+      "sha256": "6f2f6ae73cce20c456a3dfe10638b703a274f0b921bac12deadbf83ac37b836a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Speckle_Cluster.mat",
+      "sha256": "193901abab89d2c17a3d3285fa6393203f74fddde79caa6c0bc76ef3f501f607"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Speckle_Cluster_Soft_Shiny_Add.mat",
+      "sha256": "e64eb81a10aa5b57eeab38c4d505992c455f9f1ab6a0cf27031c3da664406e86"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Star_FourSides.mat",
+      "sha256": "dca35f0862095a3a4afea65e852d8014301b427b85943ea5879b3ae357ff7fd2"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/Star_FourSides_Fat.mat",
+      "sha256": "90a99ff1beffc985d893bc7bbc6e05961ae15bce5cfac38c8fad6c43f048a2b9"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/White_AlphaDouble.mat",
+      "sha256": "bbd235e89d20424a33606a52b725a63c29e3c668acbdd11a776e13d6a86538f0"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/White_AlphaDouble_10xBright.mat",
+      "sha256": "693446686a72d50a6c7cde2bb068fd0914dd1e504a0940a282cce916fa7973f0"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shared/White_AlphaDouble_HyperBright.mat",
+      "sha256": "9ab2cf8529da84364cad23eca63a5784d80e26ebb59724d9b2aebd2af7a8cdf7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shields/Shield_TopLayer_Rainbow.mat",
+      "sha256": "28dee045140a98028012afd0d1e1af05edbb5d15a448a46db06c482e00242f7d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/ElectricNoise_Quick_DoubleFade.mat",
+      "sha256": "8179883fab820b29edfedf1e1a930f4d4d6e65d2ac926119f68ad9a6a5159b0b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/Electric_FlipVerticalBlue.mat",
+      "sha256": "6dd124c750941afcaceacb6926a77cf56553385c187cab091633ecc13e6bb75b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/Electric_Thin.mat",
+      "sha256": "17e7e89d58a9be9a3a91f57934b51c6d49fcddfd134d01532fd29246491567bd"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/ElectricityFlipbook.mat",
+      "sha256": "c88f2036a99c22a886db08fccb9a970c8bcf5f258a0f914580ca1a3bdbeba840"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/ElectricityFlipbook_Faded.mat",
+      "sha256": "ead6d30046c924252a9af2880fd3467b0723c19caafecb7019a386b1f9495e1c"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/EletroBall_MainSphere.mat",
+      "sha256": "4cc8fca10113cf9d5368c2df7953edf2b915e7329e73eaaa9d3241ae7573537d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/ShockTrail.mat",
+      "sha256": "5346b92e284271e0da6df69407d6eb9942f60107281f678723f47693df249b6e"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Shock/ShockTrail_NoFade_Quick.mat",
+      "sha256": "327d3b17ca3a2f385c73f5db89a6c13725341d241067a429d5dec0a7e8cad642"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/GeometricShapes_Pickbook.mat",
+      "sha256": "490976d217027618f4f55d6bc78ec3b3e475cd551366f6d98a356988b1acb4a9"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/ShieldHexFlickering.mat",
+      "sha256": "821c41591bad3141576ed1e749dba7231033f56baf881fe4f192b53a53965df6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/TechGround_Center.mat",
+      "sha256": "659c261f39e85b137f3d7b12c89e3a2c8a41ab28a3568c49862c346607984a52"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/TechGround_Details.mat",
+      "sha256": "01bafb527c756b809c97aaf96ce5eb09af0378cdabd58bd791f4537217ac4d4a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/TechGround_Outter.mat",
+      "sha256": "bc57cccc368e06a86512e7ce81e562859313f067ada86945317b6d3c66b86074"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/TechSquare_Filled.mat",
+      "sha256": "78fe62109a9669c654af8bb4cbec42e77c99c9f0697356c5757eb4c36c02fbdd"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/Tech_AuraGround2.mat",
+      "sha256": "7a1edb16d2940e2313cdfce23be4cf365d1f46b0168eb145c866e64b3ff2414b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/Tech_AuraHex_Distorted.mat",
+      "sha256": "7fc8b06ad9563b13de0a39d262d508a03e4a44a0c22e9ec8962f912e75148cf2"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/Tech_Hex3.mat",
+      "sha256": "3a7d8ddf6696623d7aa8fad056f7e143e64a44f39936fec48b8aaca98a631a4d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/Tech_Hex4_add.mat",
+      "sha256": "b8645f88cd73e787e7e60bb3e5a3ccae0e1d3dfeb8008e9384dbedcfa9ba5865"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Tech/Tech_NeonShapesPickbook.mat",
+      "sha256": "ee1d5f995b2123a1d3b13aca2574b8071667ab5e00226243c03784d589caf2e7"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/AlphaTrail_Smoky.mat",
+      "sha256": "d42af328c6ee15de8b504e45f85363354e931111be6d5dc32a72102e135c1b42"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/ShockTrail_NoTapering.mat",
+      "sha256": "f9d3ba98d6f0a7614d99c1e2f6f16a75b777043f949524362f8ec5743834750a"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Spark1_AlphaBlend.mat",
+      "sha256": "5645b08e1a801cfe7127503808876133d488b9139f302afdfd4af7e31f2db454"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Spark1_AlphaClipped.mat",
+      "sha256": "3f8a5a24661c49c0ab643e16e1115bf673f2cba86ba64d0d6a99969fb36d4432"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Spark2_Additive.mat",
+      "sha256": "3f5995a672abc6edf821bb0540aca74fa899eb807f35e64fac0bbea2e5c75edf"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/SpeedTrail.mat",
+      "sha256": "48ee59a898472dc3befe3dad300c5e0eb57ae07bfafdd8a0c79a1d42e4cef6a3"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/SpeedTrail_Alpha.mat",
+      "sha256": "2f020fecdd8ded65c8be984dbf9bd0ce79b704cbb75b730d7b4d6002873213f8"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail1.mat",
+      "sha256": "2e683ce0e53edec6be0e8c7fde5e81794506186aa8db096d8b2d008cfe59e68b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail1_Alpha.mat",
+      "sha256": "6b36701f12fe34bb25ece3883970322d0a865b291e1014ee071cc4b3c2f55024"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_Lootbeam_Runic.mat",
+      "sha256": "2751ff1599bf0588009ce7daf5b6e294dd051ae57bbc648161bca851ffcd7ed6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_SmokyAlpha.mat",
+      "sha256": "1c22f6e2ac549aaec746de939eeb87d9392f741a7b8fe23a46e7337502f731f6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_SmokyAlpha_ColorRampedRed.mat",
+      "sha256": "6a77aa4a514fdd1571526b50656b295c222c4697464ce0a7b89d995790b16e3f"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_UniverseNoTapering.mat",
+      "sha256": "a4950bf9a5546fbc6f20653a16d4b35f6e5acf8123886f240987e7da55cf3b1e"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_WavySwirlBlue.mat",
+      "sha256": "358ccc5901b0b611cac74767e4a4fc27d5fb386019c845cf8568b04f6a270966"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_WavySwirlPurple.mat",
+      "sha256": "572d6a8a327f90fd965872c5afddac08d876fd9ec978ada0d1c121eb87fdcc9f"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_WavySwirlYellow.mat",
+      "sha256": "a85d7587b86de2a132d943df0b418c8f3811f39ebffe98af87d3fb73444de52b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_WispyGeneric_Add.mat",
+      "sha256": "5dbb0e237a3e5401204c336a9ece07f85b4e9ebc0fa308593c24bd6493067cb5"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Trail_WispyGeneric_Alpha.mat",
+      "sha256": "17963e430ecb69ee3d5e3e4b60b3f612b8b4c959908e9dc7a7d59dcca71d75e5"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Trails/Tral3.mat",
+      "sha256": "9709f91b15207853597e72627999ff58e4028b47a493bf14b070d12ec35642d9"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Void & Universe/Flare_GlintPurple.mat",
+      "sha256": "31a16c365928f846ebc28a1a8d89e22d90fb90bd68f24a616368e7e331b772a5"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Void & Universe/GalaxySuck.mat",
+      "sha256": "f20c77f9606e8eb8a5246a402bc44e5f90de02840050e262a67152c8d7a0c07d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Void & Universe/VoidRibbons_Atlas.mat",
+      "sha256": "68a7d3b496afe9db10789462bd5e70b2a404f46a68b7602ce86522dec076020d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Water/Bubbles_ADD.mat",
+      "sha256": "131890c9d44fe491b0d4c91573b5030f565794a3cf231563edbe88b9542ec8f4"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Wind/Wind_Blade_Blast_AdditiveOverlay_VerticalPanning.mat",
+      "sha256": "8ec096d9b5d4a14e010d9155aa5497812bfc8bc18763474cb8336664ab92acc6"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Wind/Wind_Blade_Blast_AdditiveOverlay_VerticalPanning_QuadFade.mat",
+      "sha256": "4d6b3c62ac62caca1c45b81e673a23151e23f16183518e06477fc9cac947a03b"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Wind/Wind_Blade_Blast_AdditiveOverlay_VerticalPanning_QuadFade_Slower.mat",
+      "sha256": "bcf7aa9977d8bef7b6f06f53a059134631e0d8df08af9c8007dfcdde5bd7302e"
+    },
+    {
+      "path": "Assets/Piloto Studio/Materials/Wind/Wind_Blade_Blast_AdditiveOverlay_VerticalPanning_Slower.mat",
+      "sha256": "3849d84c2a4d895d24ab4a029db90ee27efca9c08f161eb919f56f3ce2b1286d"
+    },
+    {
+      "path": "Assets/Piloto Studio/Shaders_Reforged/SharedMaterials/GradModels_Toony.mat",
+      "sha256": "c7e3671b5f119df531a0636ded31203e42b2df669450baaf83a8f87a05936290"
+    },
+    {
+      "path": "Assets/Piloto Studio/Shaders_Reforged/SharedMaterials/GradModels_Toony_DoubleSided.mat",
+      "sha256": "d0e410be71b1af5f69ea75cfb7c5db5ee9965f0d92f3fb1379b5a2ae0caa6592"
+    },
+    {
+      "path": "Assets/Piloto Studio/Shaders_Reforged/SharedMaterials/M_PBR_Gradient_1.mat",
+      "sha256": "6efd8b8c61829e33ab08cee57f9f62174db84c6c9cca1756b8b7e277500a01b0"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_01_A.mat",
+      "sha256": "9a1ea5b55797218b43f8956cbdb3e873c21868bd1544fc439b62162681c7b164"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_01_B.mat",
+      "sha256": "6f32a07c8b6f22ecccd97def2d11b92075b7003d4abc276da60b88bbff3ee125"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_01_C.mat",
+      "sha256": "4a9226057061fa5ddabf5ef1b959171c7db6cd654da74a6de1c1c0deee7d016f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_02_A.mat",
+      "sha256": "198e621c8b89edef933e3ea6cced3a1cfe4c007904085b73d48222c233ff8f69"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_02_B.mat",
+      "sha256": "367b38a0d7d4b7c745ba48c993e0f38a3b1c73f67abd4e5c6a0a11d617f00e2d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_02_C.mat",
+      "sha256": "2279ceb749b8777d8cd41b7ec6c9bb6d51fc9e84ac990df5409382c77aa2f4d9"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_03_A.mat",
+      "sha256": "13498e2cb2e9b1bdcc680545fc9f163a73dcc0cbe25880df4833318314ba1b1b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_03_B.mat",
+      "sha256": "6255e48ca53e1579461a92efb66dd42079e97a9ad6ad0da6656daed2758a719e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_03_C.mat",
+      "sha256": "8ee8141ca0727544c0715f86ae3fdddbcc83291cedc3b69f24712251829c37bd"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_04_A.mat",
+      "sha256": "11b8d900a8e0c4b6e53a6e300c4a9c835eea3ef664297c4719848421b0877d98"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_04_B.mat",
+      "sha256": "d1cd0ce91945bc5eee3d87bd27caa6b3a73b5a21835111afb7a5f90c3e1e71f9"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Alts/PolygonMilitary_04_C.mat",
+      "sha256": "e2c18a48dd0b36adc8f18b400e3599e1b6a20aeb3977d2df6b7fb18e7d8c927d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Camo_Netting_01.mat",
+      "sha256": "616b4f64f3171da8f9235f0bbfb1f94db5130aa6e7a1f192fdf49bb415620580"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Clouds_01.mat",
+      "sha256": "a5407575d39ae6536ce5569b6e8b6317ade6e3159af51f3258f6c64b811e4fe0"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Decal_Bullet_Holes_01.mat",
+      "sha256": "880964b1031a02463cbe1e9507854fcf6d6c65a92c517cc80396d360b8468362"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Decorative_Blocks_01.mat",
+      "sha256": "0f8b7171b4015f79b3d0f206a8019f5bd9632128866c4160532ed222f3e4c389"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Fence_Wire_01.mat",
+      "sha256": "1e9145849c81668a16b6a2fe06dc6e088bfa8c8c580855ddf47f9860cc0c46cd"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Mesh_01.mat",
+      "sha256": "0f6ce501af04774f1f890a89967e9263eb1908e407861e47b54efcf44a52ef3b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Mesh_02.mat",
+      "sha256": "b6248b8ed7f96f9aa4220a1f8f121b5338c73a17385c7df2edd2fc857e986266"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_01_A_Glass.mat",
+      "sha256": "4bb6531fcdb6a0aa22c63cf1d90341f1243a693dae63a6d35eb970acdc373fa9"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_01_A_Glass_Alt.mat",
+      "sha256": "fc5f6856346387b8aee00ecc7adb181c5ed19773dd3551007ecce7ac642f508f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_01_A_Gold.mat",
+      "sha256": "fd9f8c13860c657248c2037e26fa4386e8b2873a9bc6fd954fdf8b4f8ebf26b7"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_01_A_Water.mat",
+      "sha256": "f03f857f2b3924c8a36639e15322fa8ca5f45f78709828bd993ef053c4d6eff4"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_01_B_Gold.mat",
+      "sha256": "e04535722e557f471d9c612ff592e6e7ee1778111b477b6547fcf2a74102226e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_01_C_Gold.mat",
+      "sha256": "0a9c42df1c9160f4427c2d78bd0902f6de1da094cf65d35c414f6e9e7df31cff"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Camo_Netting_Mat.mat",
+      "sha256": "350737fbb13fe8318b7df11f7c656f3a21c312ed5c9de0b4c01fe9d86e290157"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Decal_BulletHoles_01.mat",
+      "sha256": "43dc503d8dc65b2ed07809f83341c0ab6a5d63a32550a74fd2eaa892d1a4b384"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Decorative_Blocks.mat",
+      "sha256": "c389561d51b33c6a816dd406b309cf4012182a47253b222435d92efcba852367"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Fence_Wire.mat",
+      "sha256": "30463e4ccf5ebb299b5733e7883ab694e7ab3121d732b4b01fc52fd15169a106"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Mat_Clouds.mat",
+      "sha256": "cad89fdebe708dd92e86feff32018cfd6dadee1d9a398a624da55cc1d1215afd"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Mat_Glass.mat",
+      "sha256": "3dc8b3dc6b1581ce5e15cf9bdfd0664e49ce4424eae0e3ee374bac9252362348"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Mat_Road_01.mat",
+      "sha256": "68ed0f3c404d398f68183d2a69bd0990eb83c8c4cfc22c655a0d2f77a0d5196f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Mesh_01.mat",
+      "sha256": "7315eae141f6c909595be1af2c425054325f8d212cb5095b8e15fba204a8784d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Mesh_02.mat",
+      "sha256": "bacfdb2d6a1ebfaf2789362a1b869482849c31054732e8437eca92db24cf54bd"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Rubble.mat",
+      "sha256": "9075d9fa1c88b56b979fd3580624cb3615944328338e59bc8e5b508036c1ce1c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Signs.mat",
+      "sha256": "723c540693bded15e343339cc354489af55ffa7185d467f1577134f97d4cf20b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Veh_Tank_Tracks.mat",
+      "sha256": "8623a532bf148ba87a7b9a65a1d78046c322a9af022c7fd14c1048b00f69e49f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Veh_Tank_Tracks_Burnt.mat",
+      "sha256": "7c82c577c7a90025b72439ea29a2d48318807912e6f9d10c4c6c6c58a8d76697"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Water_01.mat",
+      "sha256": "8c0eee01f5327a658e2d2a01d6db49b7a78736d4a9d0abadd0a04bab19c1cb58"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Road_01.mat",
+      "sha256": "ac9da642bc942942a21db18565aaa4379a5b316e4726abbb26d08477f34c49dc"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Rubble_01.mat",
+      "sha256": "bbaf37fc11a5ac74a6727a65fd2c5f1393791087f4b491a89846ab27fdf3c49f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/Signs_01.mat",
+      "sha256": "ca4eca4d429fd8f6f1bf77244df6af5364cc9effdea269be5a8a0c201f604aa8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/SkyBox.mat",
+      "sha256": "a86d0c647074dc70ab34f456c41808826faa7bc8f617c82f8c203dbe3730f104"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Misc/SkyBox_01.mat",
+      "sha256": "07daf86fa197ff1f431cb70579548800678c4bedeaed9bba38189621be1d2c16"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Glass_01.mat",
+      "sha256": "8785e28fef6df3015823a4296798c090fd1b6d366b0627d4277e9cfaddd7e82e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat",
+      "sha256": "368fd3cd558e63ab05c4e29e20e241f032d284099fc7cfcd6f1247e7df13d4d8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_B.mat",
+      "sha256": "99e578890afc8ffa4ca81f9e7a0800bf4aea05ae8e398ca036b9634f0e194499"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_C.mat",
+      "sha256": "fe424e0bc61a566771f5d2ec99fd8f16893301f48d60220d65fa52e05371fe28"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_02_A.mat",
+      "sha256": "e5c4dd8b0e0d10dc239b089468d785dc8a6f0f3d04e38550e7f284a69849772f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_02_B.mat",
+      "sha256": "8ef2885f3efe9a6ed91b6c6f6a6d65d0eb8e59b8d135dc6556c981213ba9183d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_02_C.mat",
+      "sha256": "35bb381b4d874eda6d55da040ed8d1c5f2dd9a4cb28552781dbd7ade6d91fc5b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_A.mat",
+      "sha256": "3db90cc551c4747237b1b5ee9aa7d90824c85824ad75e38e3218fa3e497027d8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_B.mat",
+      "sha256": "1d06c3853c5adea1f7b352d16cd75fd4b2d63d3e10664abf09d69906350f9ef2"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_C.mat",
+      "sha256": "fa7304071b4f1241d40a0e5d4a303939ca770d2c7bf5aff1ff0fc6b13315572c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_04_A.mat",
+      "sha256": "3f7becaf805b547c1a406183be5c8bbb9acee1646c53d5ac1447c3f1f94b61d7"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_04_B.mat",
+      "sha256": "a47c9b948b3ed3c0bdbe6a62d58a35d19ed8ceddb247319dcba2fe46520cc533"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_04_C.mat",
+      "sha256": "6adad885a8603243950220f4a46257fc07d0d1b45c07756534820582f4385619"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_Gold_A.mat",
+      "sha256": "4de3e3d612190cc087dbad8c148973ee7c2d44ecf9f070c9635d2ae3e7c611a6"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_Gold_B.mat",
+      "sha256": "1366aa466b80e891f6a6b47ef1f9210916592d1abbc807e033d2cb004db39fe0"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_Gold_C.mat",
+      "sha256": "a407f146d29c9caea9fdcd9d887868a41b13b3db29fe630a557f3a3c3cc38831"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_Land_Vehicles.mat",
+      "sha256": "ac0a374c9806c4d44b733001ab59cf647e20d170e75c5f8ccea28b9440218c1f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_Land_Vehicles_02.mat",
+      "sha256": "ced4357d8c78aa6869732384f3f9a995e25755a603098f757a8d4ecb4d67bb76"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_Land_Vehicles_03.mat",
+      "sha256": "68e10cd3a28df5e6dfd583bee1f68b86bf25b5bdf75872209fe52d81a596487c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Air_Large_01.mat",
+      "sha256": "50704f4675ffdf2844dfdcdeda7f9c1e6c51e42a3948332b7115c33431d5a57b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Air_Large_02.mat",
+      "sha256": "ce2a3383fe7fa7d67b906321dda5eaa0fce478337aa006db51d0c854df1c9a90"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Air_Vehicles_01.mat",
+      "sha256": "7497ee069b3794f141bbda92210e7ee59c7f48f013d882bb630acd342160523a"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Air_Vehicles_02.mat",
+      "sha256": "ce359dbceebf0194db676c29a4d4393d2303891396eedcad0aa84fdc0c0a2d1c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Air_Vehicles_Burnt_01.mat",
+      "sha256": "700ed2aa9fe7f48266189ab4939791309dd528a95d032b050ab6fdcc57bead03"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Helicopters_01_A.mat",
+      "sha256": "2ee43005fdcb5ca304606cdb9add99b473df22c6b8dd685c0f95550f2e622b29"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Helicopters_01_B.mat",
+      "sha256": "989738d9a3ca148a0745f99e8e98053fb4d7e7c3798081b04c1e0fe007396c33"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Helicopters_01_C.mat",
+      "sha256": "f86e41bf38cce3817c67ec0546fb6cc92ca67db150918168bc8835e692a619e5"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_01.mat",
+      "sha256": "81b376d666056f35d8e65c2b852ca8f64e34f29f0d28ea3ccb0598012f71668b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_01_Alt.mat",
+      "sha256": "c95464dbb4bbb41727c59c475c4aef7d3b42be9c3573e9037ca1981b6a31a178"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_01_Burnt.mat",
+      "sha256": "48b14e7f07c3da0afb50bcfd19b74f7e0e78d426e2660f74dc0b0cffd045cf13"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_02.mat",
+      "sha256": "1643a6363114efca6d65407803182039aba139e121f774716a986bc4f04552b9"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_02_Alt.mat",
+      "sha256": "1b9758460d0c3e03d4c34091992281c151164e1fdeff09f061ca6af94ddfdd78"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_03.mat",
+      "sha256": "8aa5d5d0d7522a0d1efb0ebff90eff2b8425a0bb2444cfd5fea29a80cf2863f3"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_03_Alt.mat",
+      "sha256": "0d0270136e4de82f91cbf6a40e7258fc98fc640c2c70fce3afbca50ae8d60207"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_04.mat",
+      "sha256": "cc476b4edd4a8fa51777e60787171b85e38ba8645c950ef7955e611c4759ec6f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_05.mat",
+      "sha256": "9ac6753461c7218fe4290f7eaf6d9db21cbd993e6395365350c2864a98ee8e80"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_06.mat",
+      "sha256": "992455ea5bf7d81617af202408dce50ab1a49f2b9ed6203e3c668f1a859c206c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_07.mat",
+      "sha256": "f629577f421a819df16484d673c70800432ba24454516ea9b12f6606fc1cabee"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_08.mat",
+      "sha256": "b92541ccc53897c1d77a1c70651e2c39a060acb1c25f88d39097b522089095f4"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_09.mat",
+      "sha256": "fb5aeffe9d6a953b10f809240f4b5f97fc04a06159f02df4d696a0cab5c8eef7"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Land_Vehicles_10.mat",
+      "sha256": "41900b20b79650ab37ecc06a226268abab37ac772bca4482ecd37c92b295fb4c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Large_01.mat",
+      "sha256": "18dcef7547f83c898dffc57ad457f2df479b6dc4ac244379756155aacd7a1020"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Large_02.mat",
+      "sha256": "de8c43b2bd0125c0ab9a0fbbb61e98afea24820b770a12f3aa130b1872004885"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Vehicles_01.mat",
+      "sha256": "3cec6491ed922caac9fe58941e5fea4afe319d5822af69a05ce1fa31698ecc1a"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Vehicles_02.mat",
+      "sha256": "827d65f062e5f695e3591fdbd6d08315b210918951d30d833c96ec9ceed78499"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Vehicles_Burnt.mat",
+      "sha256": "122b3b4245e9c6a8d8a4e3c83414eae220bf0a84bf342476960d33cf76482e16"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Helicopters_01_A.mat",
+      "sha256": "0d543c1518db69eb51bc625cd7e99bb9b3f19b3a4c082ab83e588070b0a325a4"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Helicopters_01_B.mat",
+      "sha256": "adfa078516a071ac5051d19109a7c3d58c87ea7fc4e5eb5c4cfd9bac1bd3fcd8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Helicopters_01_C.mat",
+      "sha256": "d0609fc414466c9780eff37420f7ce882faddbdfbc53ec587f3fbb81e74991bf"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles Burnt.mat",
+      "sha256": "59002607367f444f0d5ad40decb76fd68866bb44bcfe98294687c6a18e5ae9a9"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_1.mat",
+      "sha256": "e7f88e0cc188f77c25786b8b36797a82aae125b6920a5a9348df60a4ae88b8c0"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_10.mat",
+      "sha256": "722ce96dc26907d89dd6341daae5560eb19cc397888bf1919c5c8f6836d98d1e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_2.mat",
+      "sha256": "52575b16b213c45b6d9295da6e9b4f7fc10fbf4cd902be124f1629d101696b91"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_3.mat",
+      "sha256": "ca24e6a58862b78d8c2bd4f0e95c9c29ff3ffc8f3820a7d364eb478bcc198dd1"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_4.mat",
+      "sha256": "16cac79cc49f00ff22e29577d92efa1484699cff98a38c2993ff9f9c3858becf"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_5.mat",
+      "sha256": "86b4ac2a2de50aeeece68021cdfad478ba4e82405b8e7e89ddb2d50acd6d901f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_6.mat",
+      "sha256": "56cf90c84f12a269c5d3ec30305dcb5dd4d154aed4e7c5f4c6b0c198c4a505aa"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_7.mat",
+      "sha256": "1cebbf2797878a2a7ea043cfaf31b4a7184951c4138034f32777d4a2b85948b1"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_8.mat",
+      "sha256": "6513c3123b5dffcb333870ff121c711ac126ef412fd5d7b4949f7e2794952302"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_9.mat",
+      "sha256": "39076b0b1e77be23a83a473a06a6b0609c8c56988d4020063fc136a7cbad6a2c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Tank_Tracks_01.mat",
+      "sha256": "f646e82bd4f6642813c26d260aab6d57162efabefb8f0b98481a7d148d26cf3e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Vehicles/Tank_Tracks_01_Burnt.mat",
+      "sha256": "0b7a4b08062fbdbcb8e1778e5be5952603033cc8d34566cd5b39feccf9fced58"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_01.mat",
+      "sha256": "ffb02790af91018486c2684e45b135c5e4cfcdce484e53b6cdfe7e8cfb8274ae"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_02.mat",
+      "sha256": "766409471b066ca6ed64ef79b8bb8ae34cab8a82cbc3b1096207ce5a38bc211e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_03.mat",
+      "sha256": "1aca10dc90fedd0d9cf11ca69f0b44c402975f0676d357506fd8b1e6da4dcfa2"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_04.mat",
+      "sha256": "2cec51935e42261e224645d4cc71f17c06daefde30a09d4a9fd1190a56fc600c"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_05.mat",
+      "sha256": "c07010e05ed2bee7769bf5688c7b55f7b90b9c68cb74d0e4c69f70ddc6450575"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_06.mat",
+      "sha256": "e0632f37e1fe6bd4785a351273091c42cbb244ee6d615a27b7bbb2f733b4a187"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_07.mat",
+      "sha256": "96eeac4022d00726fae0ee882781ecfda1fde153b8d0cd0c0f85fbeed522a837"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_08.mat",
+      "sha256": "7fe5ff78643b8d33b33a08a4d831579713f0157c701d9f0807d92e2955c65e5e"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_Glass_01.mat",
+      "sha256": "bdd6bfce0befb8122e1f8ba7a1d8d503999f82aa1b12df206eb3f4817667946f"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/WeaponTextures/PolygonMilitary_Weapon_Mat_Glass_02.mat",
+      "sha256": "543f01ee7bfa973de6348f4fee6f6754ad9267d2b253b1f6588f408e4646bd18"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_01.mat",
+      "sha256": "5aa953724d007d3655163be0e789b03225958712b77edd96ca61b3bc0c0f7005"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_01_Glass.mat",
+      "sha256": "609ae167d2ddbc4675803c0d034646d6019ac643ea8e772747bc6024892ba3a3"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_02.mat",
+      "sha256": "513b1d905334088c07393446972f4cbf69ab4b4141a190bfde4d687874c5f5f8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_02_Glass.mat",
+      "sha256": "425de035631b69752ddb407036b77eb50dc42374f8daab3c18d2d32fdf7946de"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_03.mat",
+      "sha256": "b41fb9149e16c309e7e6878ceb8cd69721aef8f4864a16e75e133afd023ad8e8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_04.mat",
+      "sha256": "14ba0fceff8d85e250dee815b9d32ae2a101cdb55a705b649c1d080a8255fa7d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_05.mat",
+      "sha256": "11289a75052e378422a2f0744f7ebd9ed7276147a57883fe8b9a17e6569ae0d7"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_06.mat",
+      "sha256": "27f886fda6a7d779c3a57812dbab4795e03e09adfc74daa9b582f794c26eefc8"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_07.mat",
+      "sha256": "ef0380e28ab9c27b008f617b818e985ea853c68d722874bd4ce4fb73e8c927f5"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/Weapons/Weapon_08.mat",
+      "sha256": "b23f5e2bca48e0c1a8bbc23c7a20fd6a04b1de32b2e6c6a04650e1e1573f1c08"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Models/Materials/PolygonMilitary_Texture_01_A.mat",
+      "sha256": "52e4233b1723b037938bb8001d10e55fe936cb6dc955d1f400094ec21e4faa9b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Models/Materials/PolygonMilitary_Texture_01_A_Jason.mat",
+      "sha256": "a014d9f3360a643fa1cc4b12fbf427075aebd41a1de903b8b4f88bea15aaf58b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Models/Materials/PolygonMilitary_Texture_01_A_Mike.mat",
+      "sha256": "48467bec69aede014679362c3dc51cbb614717f2811c61ed13b50aa972b75ba3"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Models/Materials/PolygonOffice_Texture_01_A_New.mat",
+      "sha256": "5980988988cf2e318af50abc6229944956809c77eef0b26f11942b584ab79bd3"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Circle.mat",
+      "sha256": "784af2266f81c4c0634993b728646803192725114c68d7afda69c32fe3a2cabd"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Circle_Dark.mat",
+      "sha256": "78274b7f5f570fae1f929b52c2e08989f9f8ee61a1a566ff5c0a7744401eab7d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Dark.mat",
+      "sha256": "e6a436ec0d5ca0b155f1bcb64bf86d98daa25f0bccac2b4959ae50097aec2b05"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Default.mat",
+      "sha256": "89dbda213784ef72d48f84169026af70279e4c60ec2d95de148949a9a59de23b"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Glow.mat",
+      "sha256": "8835b9398547f90243c2e54908439762e5f055db1bed581cb4e1d335bbebfd7d"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Rock.mat",
+      "sha256": "59e90fec415823b2c0e4d3864328dd191956e48b2a1cf46cdb2d4a96ba26ae77"
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Soft.mat",
+      "sha256": "6a94c8656506f3f9fbaedb6ca5b3ceadcc565d4875aaf099593b75020ea8b624"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold-Underlay.mat",
+      "sha256": "710bdbeb867feb764e1b98ad8c5387aed833a5ed164550762ee98655dd6f172c"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light-Underlay.mat",
+      "sha256": "4ce673ae776adcc10592c63a713c59a6406b112a758a27bbfb7b291c8c3397bb"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium-Underlay.mat",
+      "sha256": "9b504a3ef4b8a35df3c36aa6fd15e1f2b52c229dd1d012f523a34655d53bf05b"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_HUD_Additive.mat",
+      "sha256": "5a230ae4bfbf0725bb4b487f21b2a4a6e265a1b8436327a62c12ea1ec142786d"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_HUD_Multiply.mat",
+      "sha256": "907500167a58d378d2319bc563c275f2bbf5adf8daa6f75d6a21b326f05e91bd"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_ParticleFX_Bloodsplats.mat",
+      "sha256": "a853285bdb7c5f1b752d593704b396c9eb89e49f6c040280f85eab5fa8e7e107"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_ParticleFX_BrokenGlass_Additive.mat",
+      "sha256": "8813c576225e8d9dd70c8746ce686bd0418dc9b6aedbba3e0a8a8aaa11265cc9"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_ParticleFX_GlowDot_Additive.mat",
+      "sha256": "c6834917a8afef4ed615d6c3735ce80783b8bbf3dd928b50f95b29bc282292a8"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_ParticleFX_GlowHorizontal_Additive.mat",
+      "sha256": "9008bca2bbcf97c26e4d28762428ad4be1e9fdff5720341cd7d837460969b6d9"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_ParticleFX_Glow_Additive.mat",
+      "sha256": "16203622ba3bddce88318274eaf571ad4ed755bf5510614172397b8c3d014699"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_01_B.mat",
+      "sha256": "98fbf02998902d19a18eba6c53d181843557a88b3a3ffa905f7166bf5c4a06ae"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_01_C.mat",
+      "sha256": "15a6a79c854665331ff6e709900401cf3a82afa11376bbf314c71334b5f680ed"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_02_B.mat",
+      "sha256": "470d0ac7fc33262c16cdbb3f074a216b742b4e57b7ff2e01c7cd06067348b061"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_02_C.mat",
+      "sha256": "8593625ac1aca7077043f5dfe1ba7a8feac57b1fa332a1915167f3f689d413ef"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_03_B.mat",
+      "sha256": "1d7056ec43ebcf7fdc7788a511c277db094bd684f059df80cb35f9dffd11a20d"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_03_C.mat",
+      "sha256": "68ebd1b15e42925439568041507ade89be5c5c78a852b7f0add121becc3d07c8"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_04_B.mat",
+      "sha256": "98305d91e7831bb4ad30537c993c696a31516e84876326032a4de88213412c36"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_04_C.mat",
+      "sha256": "bc41ad6a4afe916713d543ca1e1a40f3085cdeda62015a686f9e089bb230a773"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_02.mat",
+      "sha256": "e84c0ebece69f54436a77d6a0e38f62235658848ae9e72c1d1301b992e5b1adf"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_03.mat",
+      "sha256": "81f47bd2cd5af906d6856740cbcb68c73a69cb4ea0237169ca0526efb73daf3c"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_04.mat",
+      "sha256": "c05ee1cdf40383efd603657abdf3d568507658feae1c4526fa9a8ab8e4c17bb6"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_05.mat",
+      "sha256": "544bdc61d3add04b21e72348fee76741312b705b058384e989f70e02b52c3f1f"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_06.mat",
+      "sha256": "7b46386dec02928f5b394cf397ddd68fcbb06ecd1a62de0f1ce680bf87f53b72"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Destroyed_01.mat",
+      "sha256": "004cfef109f61e09bde8a4d2dd58e3b911f8213699d2061faadd1fec18222ca0"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Glass.mat",
+      "sha256": "fc14adc57f473a8d4356b911394aae75031a495f74eeaf91df025b9636353ef8"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Plane_02.mat",
+      "sha256": "7f91965512d73a8ecc12454c97ed55aac2354c7cdb269222aaa22b444ff108c2"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Plane_03.mat",
+      "sha256": "a2d68afde2a0ae6e4e79d81e8d225af5a77a74699993db8bebc7af10b98f3c2e"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Plane_04.mat",
+      "sha256": "8b9da7b1cb98f15e177f1075a2c1cee872166765f440b69d1d490dfea3010278"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Plane_Destroyed_01.mat",
+      "sha256": "14f363b01704620a323c8563485eef20e9bcf949c0931a40583f5d7dfdd9be7f"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Veh_Tank_Tracks.mat",
+      "sha256": "51f41fd35ff1ac47e8d53b56f80a465bd247b5d0339d16973adcab035b6162e4"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Wep_Chrome.mat",
+      "sha256": "d4475a2f04ff22fe0851b5dd65e971c547ece252b0867625fb1d5c6d8f2e4389"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_Wep_Gold.mat",
+      "sha256": "3174e53e6c1788f259c438f8a9ee2c6ab596ea56337308cf65a5cadfec38964f"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/Alts/PolygonBattleRoyale_WireFence.mat",
+      "sha256": "4cde0e813f549d3a47eccb37911942c80e60f61eb2df07ce79b1113c36519baa"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/DamageZone.mat",
+      "sha256": "4c5d682c7ee9cc4321fe78bf3d67f35b9e1fa7bc30a506e5ce506263681d1e29"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_FX_Default.mat",
+      "sha256": "23a671e7b75aa76be7b56d172d2fe46e509ca3e72b7b75a79e8f2cf5592bfa68"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_FX_Dirt.mat",
+      "sha256": "06aa6135d8c578a6ac03cbf055b7205fd9387a9af033d5b28c6a03db0e1f38d3"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_FX_Emmision.mat",
+      "sha256": "a2e3c87b19bb87ab7ea82388e29766233126c22b9181563ce248aadcb16c79c8"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_FX_Generic.mat",
+      "sha256": "ba6a9b31a6333841e833643ff457e0e961119720a8a076a3d595f53aa1797059"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_FX_Rain.mat",
+      "sha256": "761278ef5ffb48e9422534543266b1b817f3f188322ed97b81b8f25736c1ce37"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_Water.mat",
+      "sha256": "6973b6972b3c49741ff8357765e4af965fb90b7b314161c893e076ec267140ae"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/FX/Polygon_War_Dirt_FX.mat",
+      "sha256": "1cff1da16564f6c5f055ab5eea5e2437333b3782c26eb5c10cb76aa28313819e"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_01_A.mat",
+      "sha256": "eb29756eec1e9055607bddbe9de4e14b8e18e8ba9cd1af61675eff8531f2618b"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_02_A.mat",
+      "sha256": "676b9a83e5e79693f391479ffd11ad613ff0d2173268f60b93f956cabdbd8798"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_03_A.mat",
+      "sha256": "5e600d9a91c4a39f71989663ae208370c1516b0ae5849d356b67c6fc5a937b01"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_04_A.mat",
+      "sha256": "a91d698ffdfa0306221094eebd62f00b86eaf74abf36701a6ed1b946e87d971a"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_Glass.mat",
+      "sha256": "e610d3a80a6f931b6e7968338ae3d2c01294c4455fbc5a875422aca6b834ab7f"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_Road.mat",
+      "sha256": "da30113b87618649087ca5342365ccc18186b8dcb79743b76d5cf3c03bfa914b"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_Veh_01.mat",
+      "sha256": "6bf6c65b28dea91303cb571f1873d6084a103043b98b8401c7b46ec0c0fdaf53"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_Veh_Plane_01.mat",
+      "sha256": "07d78022843ec4840009b70b708907b0a4d518f091a5beee7754671553e1873f"
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_Wep_01.mat",
+      "sha256": "0e6b6eceab1be9b448b997e6be97574cb95295d34eed3e9faa9a5d091f14bd2f"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_01_A.mat",
+      "sha256": "919c39cfdbbc3ff7cafc221068fd4b208bd4cca35370d2ca853514eb3ea7d62c"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_01_B.mat",
+      "sha256": "fd2153b304f6a9fee725344e92734d0f3042d332c99eb2ab55c06dfbab727f02"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_01_C.mat",
+      "sha256": "9c788a4f281643048b26f891e97c78c7e902d3d6897bbddf23c2adb2d4c7aeb4"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_02_A.mat",
+      "sha256": "c7132b54e447200fc8fc9d72fecd288fb56cff8341565ff3ccaf51fb47b39522"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_02_B.mat",
+      "sha256": "57cc5bca4a7e5b20be1085ffd9646cf5765f07cc292a4eede22eb9bda45ebe53"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_02_C.mat",
+      "sha256": "9c0d3d31c2579fa60293e3739f3342a3777475d3ecab9360c37074cd3d1f7abc"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_03_A.mat",
+      "sha256": "be7e2cb7dac8c951ba3868c55200b321133b48e8dc2e7b639fe790de30933e14"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_03_B.mat",
+      "sha256": "d92dc4ba7b2d108eded56f5b5ccc9398701595494ff6c305cf8b695094b11178"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_03_C.mat",
+      "sha256": "38d1f7d7af911665480077c4284fc18b66f83a0aae8b7a6fda8b6ab3597f52c4"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_04_A.mat",
+      "sha256": "9da6361dc10e2eacf81f27a5a7f42ffd1c9b74abc083884756f4a1655e7f76d0"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_04_B.mat",
+      "sha256": "fba3257e7cc94d1e8bb3656b4032fb347576300cee1290466fa8930705b1ffb9"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Alts/Generic_04_C.mat",
+      "sha256": "d1dd825f2972690f60c73fc95c7ae42c3e68c1d1a72789c02c21b5af5681a92b"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Blank.mat",
+      "sha256": "da93fca316ea093c53f8f1a96c706c9a49ee20fa1b17f7f39b08ce84d281cd00"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Candle_Glow_01.mat",
+      "sha256": "f06bb2346c053d14d3711e979bb9f55da1251bd0c5f2806056b45e9f28ecce12"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Circle_Additive_01.mat",
+      "sha256": "a64113367cd135afc50a8f44193dbfc2d3c1a53e1a6b9f49c7a592065add6036"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Circle_Multiply_01.mat",
+      "sha256": "484e89f89251affba2bccf6bfd6b70e860513e3d800dd89065dda37f774ae229"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Circle_Soft_01.mat",
+      "sha256": "2d2417d7c694a448122ae92a6990e658cf9d30a8e129ed7bbbbc60d69fbd4182"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Leaf.mat",
+      "sha256": "e7d749dffb8348f61b5b2cb63980a7cb785df13315aeaaa00f5ed16c1eedea06"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Lightray_01.mat",
+      "sha256": "8a8ca9ac32ba5a8ea6369cf4c034d5ed302fcb7029c2ea19f1ffff03ba9734e2"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Sun_Beam_01.mat",
+      "sha256": "3eea1b8d8d6ffb76cff541775100de0e3f7c2906a8c2eff8e065151ea77627d4"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/FX/Generic_Wind_Streak.mat",
+      "sha256": "fcf304e6c660f50a926b70642d4580a5e739ee0d63c5c5b670ea255e5ebfa4c2"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Brick.mat",
+      "sha256": "cba30cd13cb484057116a10bbee3915ed489a997ecf450f421800dcd0c2927c8"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Carpet.mat",
+      "sha256": "8bcf35ec8c9f11833a71eaa3f75ff27e75618295de7dfc2fba5f1acc4635eabe"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Cloud.mat",
+      "sha256": "da71c54530ee01d358028f0292b14a148b5099a546a7ebd3e1013d7c5bbe24a6"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Concrete.mat",
+      "sha256": "3378b6458acf25701387cd73a5aa0edaa0fefb8132b0033a00e56fcb01754b3a"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Dirt.mat",
+      "sha256": "b1be51c3a11350e37b2d1e8ddc07253014cb1157d1341332d00e1eec62c88e99"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Glass.mat",
+      "sha256": "36711ce2ced4f67192d814081e151d0bca97b7d8929a28a43787f5d6fd1a6ef6"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Glass_Opaque.mat",
+      "sha256": "213a1fd9491a2d1f485b49c11467b3aac9cb9deca3677d8740a5c9d50f21bc1d"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Grass.mat",
+      "sha256": "adaf27f736275714ec2c055d3b50ade8fb1350323211a7caa081efe77a2ef718"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Ivy.mat",
+      "sha256": "b47a7a64415d30d0ba465e5eb3c328e80595e0a00c96493ff0d6e95dcff5e81c"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Mountains.mat",
+      "sha256": "ccfeb4f6a8b3cade0a87313afe891779ba213ef8f8b69b48584a6cc7ee7aa238"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Overview_Map_Ground.mat",
+      "sha256": "eda66c5c5bfe7dde4015a7199906dbc72937c2a874367660359e8ff6c989b3e4"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Plaster.mat",
+      "sha256": "8799713c69f51e851279b204c53e2d4ef5be9b49690170941375a07295ff1b8a"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Road.mat",
+      "sha256": "c146bdc6f9c70f0e4dde50cc2f69e967792aafc2bfc8dc580737e473aa2e504d"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Rock.mat",
+      "sha256": "9eeddac80232ff1682e1be3f186a2a098ed286d376002f42cc88f0a7f9ec73f6"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_SimpleSky.mat",
+      "sha256": "509d4b007183a6991360bb1a6f4a85681938726990eb7841c77507c84a3bf0e2"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Skyline.mat",
+      "sha256": "371f4bcbf379f93600cb4d4618d1cc891117a9f0b512f0308c2932f8ce8f24e2"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Triplanar_Grass_01.mat",
+      "sha256": "3a34ab6c28f3deee611805b054444cf6f4b6e7e03ee996ec7d84d7c60c52b9a1"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Water.mat",
+      "sha256": "a397953dec78e0a99b69b2115087a90e4a52fb3725e8adf217c95319e53bc431"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Water_Fade.mat",
+      "sha256": "aebf9c927298dc916a95edfa75f807ad6a644913634af539cfe51cfedf45066a"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Generic_Wood.mat",
+      "sha256": "2ccea3e348e127a556e4710e7d94ac1b5bd08d61470f63b30e91331b52bf8e5a"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Glass_Opaque_01.mat",
+      "sha256": "c801172cab6dc978854f9046bf0da3f596082d4cc13c26c86090dc12b19a8b33"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Skybox_01.mat",
+      "sha256": "903ca49af9b5f8bbb225b058fb4333ae1f5b527f56e840110f9cbf82415b238a"
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Materials/Waterflow_01.mat",
+      "sha256": "6991ef78386dd6cc45af3ddc5975ccef6adfc63d4cad97e9221e569717cd3225"
+    },
+    {
+      "path": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat",
+      "sha256": "b6b65c34e4907dd3006c2217fc8a4cef81b6da24df0a3de8e2288199eb6c5a9d"
+    },
+    {
+      "path": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Outline.mat",
+      "sha256": "25874340976d40e9f9e8abf731b7f32e5a478541dead9288140bd60c7a3287d9"
+    }
+  ],
+  "materialManifestSha256": "f666fc555d25af3e05e0596466fd10a78f62c5d83f602297e6aa139fa846c5a1"
+}

@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "scope": "Read-only failed1182 diagnosis and proposed unique1190 external oracle correction; no fixture authored or executed",
+  "sourceCandidate": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "failedFixture": {
+    "path": "/private/tmp/S005Lifecycle1182.cs",
+    "sha256": "25df5508ee43374a0347eb752caa0ab22626076b14294023d7ece59f03eac63b",
+    "immutable": true
+  },
+  "evidence": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "sha256": "b205aa50d12d86a3c799a17cc05c657c71a9075c5f197f25375456a49617e00f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyGroupSystem.cs",
+      "sha256": "b9cba24531a4e5c9617bbb5878c6b1d548f9507943e8f24976b613d2b8264b4b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "sha256": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "sha256": "b9829bc5aeaef8daee8c98d1fce4d5ebd3b85c704d40843281bce6a5bc9217ab"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStrategyScoring.cs",
+      "sha256": "bc6ee4883e562a06a2383557b8d57ee3f0da95853f9d64b9285da15579c91d8c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/AriaCommandEvidence.cs",
+      "sha256": "25b09fda4cb9c456bc0383428fe400304085bf6e9fc6ff0ba6888646d69a55f2"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1182-lifecycle-failure.json",
+      "sha256": "5a34790f642996aedfb5e121bd3776767982805d5eac078d9cf4ae32dc07f3f4"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1182-lifecycle-observation.jsonl",
+      "sha256": "eaac5312681d3f38a671b530cbb51e4b2e047c895cfa3f4d08584e94b9e0d93b"
+    }
+  ],
+  "facts": [
+    "Failure cycle0 phase0 line100 before QA coordination; no raw culprit recorded; exact failed faction/group/order unknown",
+    "Fresh predicate rejects BOTH factions LastOrder and Hold; native enemy orders are legitimate during initial simulation",
+    "Spawn Initialization sets SpawnComplete and Playing; EnemyStrategy runs Simulation after ArmyGroup and applies accepted orders; group birth LastOrder defaults None",
+    "AriaCommandEvidence excludes faction2; cannot fabricate enemy input receipts"
+  ],
+  "proposal": [
+    "Persist primitive raw group/actor/strategy intent rows before all fresh assertions",
+    "Keep every Selected value zero and player faction1 LastOrder None/Hold absent",
+    "Allow enemy non-None only exact current authored membership plus current strategy LastGroupId and native branch/order; unmatched state fails with diagnostic rows",
+    "Keep all budgets/freshclock/queues/roster/caps/cleanup/pause/saveAcknowledged/ten native cycles/result-return and source/contact closure guards"
+  ],
+  "remainingLimits": [
+    "Not a reproduced production leak; legitimate-enemy cause plausible from exact source, not proved by failed1182 raw evidence",
+    "Enemy order handoff observation uses current state and may fail closed if strategy already changed; do not weaken or disable AI to fit",
+    "No player/device or fullmission readiness promotion"
+  ]
+}

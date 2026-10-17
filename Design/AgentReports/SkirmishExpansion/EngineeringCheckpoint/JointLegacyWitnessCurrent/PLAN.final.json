@@ -1,0 +1,813 @@
+{
+  "status": "ReadyForRootScopedNormalizationResume_EngineeringOnly_NotMissionReady",
+  "baseline_head": "eaeb9ff694cc72f44c84920c54f7e824af94eb13",
+  "parent_template": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/PLAN.template.json",
+    "sha256": "a9445dcbbdbcdb82e9bdd5707e412b6122a962a2cab91dde7be04a1044f5ed14",
+    "bytes": 40260
+  },
+  "implementation_count": 24,
+  "payload": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs",
+      "sha256": "fb92f8feaa7b086506750e3a447a9296da78f1f5ce542ed76b9446ccda3a4c6c",
+      "bytes": 6832,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs.meta",
+      "sha256": "831b10effd6f3556890830b51af9265959ac92d1d2c6ede480cff4db7ff3f39f",
+      "bytes": 59,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs",
+      "sha256": "926e2614c4e8a362d05ba08f75b5aa3541e44ea1536ac1918eb68d698c039e9f",
+      "bytes": 15704,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.meta",
+      "sha256": "c390a5ef286bfb3e7e54887dac2aa6ca610de3720d35bac3026f843dd756ddac",
+      "bytes": 243,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs",
+      "sha256": "f5a322371dbf3bab456b62d18e53752128f9606820314413461e7f4fb5ff3672",
+      "bytes": 14261,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs.meta",
+      "sha256": "d26c2479305806901bb5ed46e2341ec92a8e30d060071ddc5f46c7a806fc40ee",
+      "bytes": 59,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "sha256": "c349413d5b540ab159f7676539a16ff7c58e97b190d60b74be12208f87f59b0a",
+      "bytes": 37837,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "sha256": "089291acbaa3d71a3b04ff7d888a9bdf21027bad3ee7d09acb69f23f7c3d948f",
+      "bytes": 21931,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "sha256": "a60ef894179f3ef9d07df558d224b1a7fb78bedf483723ce84d1ff685eaac01a",
+      "bytes": 6634,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs.meta",
+      "sha256": "dbe1f2229b67f8b719f196ff1060c213371142d4831320ae754ea492f312593e",
+      "bytes": 62,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "sha256": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+      "bytes": 16404,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs.meta",
+      "sha256": "c9cddc1d959f6b4148eb12e0134013e8f1b21851dbc929c6791277dfcca41f80",
+      "bytes": 62,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "2c8c535e2e69ad5ea2f906d03e46b8d6bbfc24abbb41b1cd641b19e8fc5c041f",
+      "bytes": 17874,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs",
+      "sha256": "e18922373e16078d0b3f48618823dc4e2a75ac12962cd3fd813bfbd910f6ba03",
+      "bytes": 14113,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.meta",
+      "sha256": "36c6a2f9282dd865a26c46b3dea417f9bc850c0cd6aa15fba036635ceef7dd34",
+      "bytes": 254,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs",
+      "sha256": "b8501cac55fd30bce71d1bcdeb6c453963f79bbb166cca20e7d513a21b43e11c",
+      "bytes": 59920,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "sha256": "0df084bb4443138ea9a6ea0cc2420fc9fa304860ba22d7073e747cc51f2f6842",
+      "bytes": 35028,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "244da2885c534bf379f710f15817133b0a399f13b01eb0d95940f3bda1d390c1",
+      "bytes": 18824,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs",
+      "sha256": "5eec7f52601c34916296499073a29cd48b66f098fc99081ccf44f79b130d2848",
+      "bytes": 10138,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs.meta",
+      "sha256": "2e23b5b84a46fe023e8b8fc025e34c8d096f98de2968690eb53dcb9edddd97a3",
+      "bytes": 62,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+      "bytes": 18146,
+      "kind": "implementation"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "2d6cac73496e5b25d272a84fea394fbc8f8e5a4ef40ac3a6f9c77fba7da0955f",
+      "bytes": 94815,
+      "kind": "implementation"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/All120Refinement/S026_LOGICAL_FRAME03_INDEPENDENT_FAILURE_ANALYSIS_20261015.json",
+      "sha256": "9b12e5b9afb36d85ae6e217a16f427083782798a7061a38101cb785102f01c86",
+      "bytes": 79310,
+      "kind": "actual_unfit_geometry_analysis"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/All120Refinement/s026-logical-frame-exhausted-20261015-03/EVIDENCE.json",
+      "sha256": "a3aa5272adcc4e0ba58b54cf2876524e32a6b5147d79855104b74fc216723c19",
+      "bytes": 10662,
+      "kind": "failed_native_evidence_preserved"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/All120Refinement/s026-logical-frame-exhausted-20261015-03/actual-native-evidence.zip",
+      "sha256": "5fa8f3cccdf8fffb7ab78b776303f8351300f6edb81c44f00847bce4b630b6fc",
+      "bytes": 8089780,
+      "kind": "failed_native_evidence_preserved"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/ACTUAL_NATIVE_EVIDENCE.json",
+      "sha256": "a556c499c042a1f95443a47957af8ee3f07ce1bc7d943181a7f726f691088d88",
+      "bytes": 16612,
+      "kind": "completed_native_receipt"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/ARCHIVE_MEMBERS.json",
+      "sha256": "bf49564c447fb71d0892d3a961c6658fc1288fa4263c1b5edd9102de873df0b9",
+      "bytes": 11081,
+      "kind": "archive_member_hashes"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/NOTES.md",
+      "sha256": "b5b3754532f44d1333a4fa729e468e7f4119c57279726c3064e8e368b27efed3",
+      "bytes": 1214,
+      "kind": "template_scope_notes"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/PLAN.template.json",
+      "sha256": "a9445dcbbdbcdb82e9bdd5707e412b6122a962a2cab91dde7be04a1044f5ed14",
+      "bytes": 40260,
+      "kind": "preserved_pending_template"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/actual-native18282-unqualified-evidence.zip",
+      "sha256": "0c2e5663f38069e360f86ea7b19953ec2b7580c4b09f9b0d5c9d579491aebdfe",
+      "bytes": 17560617,
+      "kind": "completed_native_evidence"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/concise-proof-and-inprogress-inputs.zip",
+      "sha256": "3ffa32184c1940707e65539ce380457a59bbe10bce6819a25152ac92618dfeb9",
+      "bytes": 2422835,
+      "kind": "concise_proof_and_current_partial_inputs"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/LegacyWitnessLogicalFrame/concise-owning-proof.zip",
+      "sha256": "f8f300765f76980778e61462a1a7c5108e89c9808deef979afa2c44d2c453b78",
+      "bytes": 647474,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/legacy-controls-native-failure-20261015-05/EVIDENCE.json",
+      "sha256": "ef09e9b5af5fa4640fd1cae23d9e04a12999d54703217ab237bb9f8fbdcc5707",
+      "bytes": 8838,
+      "kind": "failed_native_evidence_preserved"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/legacy-controls-native-failure-20261015-05/actual-native-evidence.zip",
+      "sha256": "bc84462bcff7eec07bd7735b1bd9bb7e8ef53665f465a3997b1a4c28c2bf6450",
+      "bytes": 121398,
+      "kind": "failed_native_evidence_preserved"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/prefix6-opening18-warmup-20261015-01/EVIDENCE.json",
+      "sha256": "f379ec35a3047ed5a34c6710df8e23991ba99842a19a84a64a25c9dd1a33321c",
+      "bytes": 3936,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/prefix6-opening18-warmup-20261015-01/actual-native-evidence.zip",
+      "sha256": "03502f0323792018f668a244e7a3db691ce634b0b0dab0808dd4f4b23965eda9",
+      "bytes": 2025759,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/opening-witness-startup-timeout-20261015-02/EVIDENCE.json",
+      "sha256": "4398cefea0eee72548b9a4105312383f743cf5ff8716f89fff15c1af252a680f",
+      "bytes": 3287,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/opening-witness-startup-timeout-20261015-02/actual-native-evidence.zip",
+      "sha256": "38cfb80698c6663bf790ed0edb8c405850d13dfe8b677d88429abe59be623f68",
+      "bytes": 3916173,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "0e28709336f473c2ac5d4a5679770050e9a4dd860885740e3ef01a7a39ac8e1d",
+      "bytes": 1345,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/READY.json",
+      "sha256": "157a2e4644998e8a3d00af603cd36602dab5a0cb77771402c744bcd5a62b9b36",
+      "bytes": 1574,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs.txt",
+      "sha256": "fb92f8feaa7b086506750e3a447a9296da78f1f5ce542ed76b9446ccda3a4c6c",
+      "bytes": 6832,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "sha256": "bc5fadae3b11908b86493b2723cde2c6a577335c9efcb096ca6d5f057c6011cf",
+      "bytes": 20040,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedCompoundRefinement/manifest.json",
+      "sha256": "2487c28f37ecb1c73af91aca36ccdccac38bd89cc4bb38d7c7d471b98d3177a9",
+      "bytes": 1391,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "b0da472398e88ab7887c00f497a4e298de063d7c4da090c96c0c50ecb754a1af",
+      "bytes": 2219,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/READY.json",
+      "sha256": "d8c4c41b9ef5df07b35451da618924b2fa3c38f2c90f51fcb23ba08f19effe1d",
+      "bytes": 1395,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs.txt",
+      "sha256": "f5a322371dbf3bab456b62d18e53752128f9606820314413461e7f4fb5ff3672",
+      "bytes": 14261,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "bytes": 21301,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/BoundedLogicalFrameRefinement/manifest.json",
+      "sha256": "e3e55662b37b5e6784ce2a83b53cbb3dc9c9285068663cfb8beb57c9dfc14059",
+      "bytes": 1614,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/ADOPTION.json",
+      "sha256": "f6ed36ca7cb248eefca6c2f4ff96616d0e6ed3d1638e5e65ebf665be67128b93",
+      "bytes": 3828,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/MERGE_READ_ONLY_AUDIT.json",
+      "sha256": "4eb3fc76d902590f39f63a594263f80731e2a6ff8a9b2a488605db602cc0eec8",
+      "bytes": 581,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/META_SUPPLEMENT.json",
+      "sha256": "9feea9dd154358b6acd356749d65ebdaf4e3567b4593008d23108f616c98600b",
+      "bytes": 532,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/PREFLIGHT.json",
+      "sha256": "6b16b453c1295da07ec9d43f240df7306bbe197bc39eaa615d1ec840365912c3",
+      "bytes": 418,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.meta.txt",
+      "sha256": "c390a5ef286bfb3e7e54887dac2aa6ca610de3720d35bac3026f843dd756ddac",
+      "bytes": 243,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/import_reviewed.py",
+      "sha256": "9f208ce4596afce9036d1f9f199bf7e2cf7ded2a9f633a50d5860a1d26e764fe",
+      "bytes": 5972,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "0b1a49420738c389818b66360437c99cd2409ab0da8b314bb99ec72c33b31a88",
+      "bytes": 2757,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/READY.json",
+      "sha256": "bfa14c1e8d07d192987e5737cf8018745cb58c5513aefc7fc836c09626a06b86",
+      "bytes": 2480,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.txt",
+      "sha256": "926e2614c4e8a362d05ba08f75b5aa3541e44ea1536ac1918eb68d698c039e9f",
+      "bytes": 15704,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "sha256": "089291acbaa3d71a3b04ff7d888a9bdf21027bad3ee7d09acb69f23f7c3d948f",
+      "bytes": 21931,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/manifest.json",
+      "sha256": "57b074178528d02dc7750541edca827a2e7507a8445e2d9ba8bcf9464c8c103a",
+      "bytes": 922,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/INDEPENDENT_META_AND_PROOF_REVIEW.json",
+      "sha256": "a6d21d424a106ca295c76c8e69f3d37723bf157112fe24aa93c0699d0191f73f",
+      "bytes": 1014,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "9ca0644864e2f5e2c0dc0557b6e14eb484209017f4d5e8892883a1798b688b7b",
+      "bytes": 1686,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/META_SUPPLEMENT.json",
+      "sha256": "7b63d4a1ab00cd85e91f9acb974e1b0340e9f07662f0afb61c7610505af71b56",
+      "bytes": 843,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/READY.json",
+      "sha256": "ce6cb3d87b2503d4a2f4c703f6cfbf1b330b6338b18a2c39f1e12fa8ec4b37a6",
+      "bytes": 1103,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.meta.txt",
+      "sha256": "36c6a2f9282dd865a26c46b3dea417f9bc850c0cd6aa15fba036635ceef7dd34",
+      "bytes": 254,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/SkirmishS002AriaRunHarness.LateEcsRecorderCensus.cs.txt",
+      "sha256": "e18922373e16078d0b3f48618823dc4e2a75ac12962cd3fd813bfbd910f6ba03",
+      "bytes": 14113,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LateEcsRecorderCensus/manifest.json",
+      "sha256": "5c54f24413331dab552c5f2add662cea628dac3cb8fce1d05ba2352f5227e26c",
+      "bytes": 1054,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "5d755ae83a43aef384523098bac5a0d097b773315c1024d49dbd46f5e3333ef6",
+      "bytes": 1033,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/READY.json",
+      "sha256": "565f2b8bbfe24a02a5ab0c421147e27bab2f674adbc991a6914dcf4d171185af",
+      "bytes": 741,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/SkirmishLegacyProductionControls.cs.txt",
+      "sha256": "a60ef894179f3ef9d07df558d224b1a7fb78bedf483723ce84d1ff685eaac01a",
+      "bytes": 6634,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/manifest.json",
+      "sha256": "c3588da14e009f5ecc6e6f736d939252cc9ef6b7ce865cdd4eff5ee330f53285",
+      "bytes": 2385,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/INDEPENDENT_REVIEW.json",
+      "sha256": "e95a361b42578f515abef18edf1308bc55fb08e396893037d734330657f5aa34",
+      "bytes": 2413,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/READY.json",
+      "sha256": "d95696dac072e5207f8ae22e295de66910dc21f97021aba4848333611222bb80",
+      "bytes": 1209,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionControls.cs.meta",
+      "sha256": "dbe1f2229b67f8b719f196ff1060c213371142d4831320ae754ea492f312593e",
+      "bytes": 62,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionControls.cs.txt",
+      "sha256": "3abc87351dddd78a9a19a9099201db4f087e590cd122c87267d84ea28706e407",
+      "bytes": 4674,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionIdentity.cs.meta",
+      "sha256": "c9cddc1d959f6b4148eb12e0134013e8f1b21851dbc929c6791277dfcca41f80",
+      "bytes": 62,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishLegacyProductionIdentity.cs.txt",
+      "sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2",
+      "bytes": 11801,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishProductionCanaryRequest.cs.txt",
+      "sha256": "2c8c535e2e69ad5ea2f906d03e46b8d6bbfc24abbb41b1cd641b19e8fc5c041f",
+      "bytes": 17874,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionBatch.cs.txt",
+      "sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d",
+      "bytes": 35036,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionCanary.cs.txt",
+      "sha256": "244da2885c534bf379f710f15817133b0a399f13b01eb0d95940f3bda1d390c1",
+      "bytes": 18824,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionLegacy.cs.meta",
+      "sha256": "2e23b5b84a46fe023e8b8fc025e34c8d096f98de2968690eb53dcb9edddd97a3",
+      "bytes": 62,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.ProductionLegacy.cs.txt",
+      "sha256": "5eec7f52601c34916296499073a29cd48b66f098fc99081ccf44f79b130d2848",
+      "bytes": 10138,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.TerminalProbe.cs.txt",
+      "sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+      "bytes": 18146,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/SkirmishS002AriaRunHarness.cs.txt",
+      "sha256": "2d6cac73496e5b25d272a84fea394fbc8f8e5a4ef40ac3a6f9c77fba7da0955f",
+      "bytes": 94815,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/manifest.json",
+      "sha256": "36136449791c2aa25a8dadd0dce6c44b249188a3219adced1368a4255f622744",
+      "bytes": 5217,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/offline-controls.log",
+      "sha256": "a97433762af21712e884802f089e4cc34b38e72c4c7af405bd9e38d4bcbe052d",
+      "bytes": 725,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/prepare_legacy_production_jobs.py",
+      "sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c",
+      "bytes": 5789,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/skirmish_production_queue.py",
+      "sha256": "22f508c8c945e1c8e2f48a7c1e328328364d97d6627eff10f4eca74c581019e2",
+      "bytes": 18801,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetProduction/test_legacy_queue.py",
+      "sha256": "904fe8287d87a0de746534a352e22e3dd5029038bc552372c6a8fedc1b2800e0",
+      "bytes": 6050,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/INDEPENDENT_PROOF_ACKNOWLEDGEMENT.json",
+      "sha256": "961e7c0be0d3d024b0a93ece990adae32c3c0baeea33656291dd3e14d10d724a",
+      "bytes": 747,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "6acc80649ab24316e61c1b65473e9e626995a539a2a10cacb9ddcabe8f0ea6e0",
+      "bytes": 1863,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/OFFLINE_CONTROL_RESULT.json",
+      "sha256": "8a5d4c4ce90fdc6b496762fdd3900c504282b0727c1d29e32e373669d3a97883",
+      "bytes": 423,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/READY.json",
+      "sha256": "c606ab10ebb44d383b8738e76f7ff952756eb90bba624042bd9e22475f404d50",
+      "bytes": 1460,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishLegacyProductionControls.cs.txt",
+      "sha256": "1c949092c6338ed9c442ce965c8305a25013b1e83eafb81a5f6a264e0f1af16a",
+      "bytes": 6220,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishLegacyProductionIdentity.cs.txt",
+      "sha256": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+      "bytes": 16404,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishS002AriaRunHarness.ProductionBatch.cs.txt",
+      "sha256": "0df084bb4443138ea9a6ea0cc2420fc9fa304860ba22d7073e747cc51f2f6842",
+      "bytes": 35028,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/manifest.json",
+      "sha256": "f9e8f33ad1745d203b6888b6dc7aec2beddb390a190bc8dcaef271f4c0cb13b6",
+      "bytes": 2156,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/prepare_skirmish_legacy_production_jobs.py",
+      "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e",
+      "bytes": 7483,
+      "kind": "exact_reviewed_source_projection"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/test_legacy_fallback.py",
+      "sha256": "c44c60b07763c25a88dde4dd528a77a03668d82ed5bde86b9c5f0adffb3124b6",
+      "bytes": 7893,
+      "kind": "current_authority_review"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyWitnessLogicalFrame/INDEPENDENT_PROOF_ACKNOWLEDGEMENT.json",
+      "sha256": "172bc448f5b920449ec8f5e000ad85160c81eeab054122d21797d2dc0ddb12e0",
+      "bytes": 745,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyWitnessLogicalFrame/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "dcb0b3338fb59e9175b77a85775a57d7ef4494ca132e5994dec1bde1bc7a3e1a",
+      "bytes": 1033,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyWitnessLogicalFrame/READY.json",
+      "sha256": "a5e47d0ee026cbf0dae0c5f53e0524478acaa93a1180a66a95ca961c00d20bb5",
+      "bytes": 1516,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyWitnessLogicalFrame/SkirmishLegacyProductionControls.cs.txt",
+      "sha256": "3966bf263453550f29dbce482dbb1081d9a1c3284470bda379a1b839fdc47f2e",
+      "bytes": 5166,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyWitnessLogicalFrame/manifest.json",
+      "sha256": "c609f39608876b8f74d323e8ca7d71f7666f3e829d570ec3df381f43e85e23c7",
+      "bytes": 6874,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticInvalidPrefixSuccessor/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "8be07e849405214df7d8f9ffcc6e18210ee5f2b3c59bf795eb64ce7a76644c2a",
+      "bytes": 1649,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticInvalidPrefixSuccessor/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "sha256": "7760fad1a6e9a1204c7eabcf65a587e9e6e040d24f25318e2f045d1313b979ab",
+      "bytes": 37464,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticInvalidPrefixSuccessor/manifest.json",
+      "sha256": "b7a3c74d953b5ea0b5d8084caceec6d37f1156aebd5f8c631d2e30a3ff09cd53",
+      "bytes": 916,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "677e08c1522700a1fe0bcea9cd9f2fb39c4dd8dc3a552a4561adcfdf8be53e88",
+      "bytes": 642,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/READY.json",
+      "sha256": "c6928ca835bd8c07cde059827abf44973e84d20afdb459c820e4f94aa0456bcc",
+      "bytes": 1289,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "sha256": "c349413d5b540ab159f7676539a16ff7c58e97b190d60b74be12208f87f59b0a",
+      "bytes": 37837,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/PilotStaticPrefixWitnessSuccessor/manifest.json",
+      "sha256": "1bf99e683326f610e9e58dd16a3265e7380f02187c6784a00e4dd738ef11cfbf",
+      "bytes": 1685,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005ProductionAriaResealAfterJoint/PLAN.json",
+      "sha256": "bbadddcc7194d14b1c0f76dd3fafa443cd47f809d735bb01075400029e5c6ebe",
+      "bytes": 22198,
+      "kind": "fresh_job_reseal_plan_only"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005WitnessDeadline/INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "49ca2f284b14cef065756f0fbb2354969d6f0be590f6185eef6c85ef68f11b3e",
+      "bytes": 1197,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005WitnessDeadline/READY.json",
+      "sha256": "622117cff4bc219a6f6aaf0d1b4bebd75651b8836d5ffdfd039c87eaf3299106",
+      "bytes": 501,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005WitnessDeadline/SkirmishS002AriaRunHarness.OpeningGroupCandidates.cs.txt",
+      "sha256": "b8501cac55fd30bce71d1bcdeb6c453963f79bbb166cca20e7d513a21b43e11c",
+      "bytes": 59920,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/S005WitnessDeadline/manifest.json",
+      "sha256": "d0ed6823fc72b67fd16dd8faaa69355f642ffc8cf26533eaef23b3a167c9e2f9",
+      "bytes": 859,
+      "kind": "preserved_parent_authority_or_evidence"
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e",
+      "bytes": 7483,
+      "kind": "implementation"
+    },
+    {
+      "path": "Tools/CI/skirmish_production_queue.py",
+      "sha256": "22f508c8c945e1c8e2f48a7c1e328328364d97d6627eff10f4eca74c581019e2",
+      "bytes": 18801,
+      "kind": "implementation"
+    }
+  ],
+  "attribute_override": {
+    "target": ".gitattributes",
+    "before_sha256": "8ce01808b3d3634e01cb2835cc5bf5b981ae5b13f2c751f5955fe564ab1fc6e6",
+    "source": {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.proposed",
+      "sha256": "2e54b44b7a05670c07b80f009ee10331b3a51edf995070c95eec9738ef90af51",
+      "bytes": 35912
+    },
+    "fragment": {
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.fragment",
+      "sha256": "33033dd50f05d38ce85e34b1b2cdd2cd570a522ff0c4de02d1a6327f32519945",
+      "bytes": 544
+    },
+    "exact_additional_self_authority_paths": [
+      "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/PLAN.final.json",
+      "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/final-stage.paths",
+      "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.fragment",
+      "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.proposed"
+    ],
+    "existing_67_protections_preserved_in_prefix": true,
+    "no_global_rule_change": true
+  },
+  "native_evidence": {
+    "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/ACTUAL_NATIVE_EVIDENCE.json",
+    "sha256": "a556c499c042a1f95443a47957af8ee3f07ce1bc7d943181a7f726f691088d88",
+    "bytes": 16612
+  },
+  "actual_checked_exit": 0,
+  "actual_wrapper_exit": 0,
+  "source_manifest_equal": true,
+  "compiled_dlls_equal": false,
+  "compiled_build_sha256": "1a029bf9c032e88f4bb6c8b0d72e57116e7e3a41f887c7f124c269be867a72f4",
+  "qualifications": {
+    "engineering_controls": "ActualNativePassed",
+    "source_fit": false,
+    "camera_accepted": false,
+    "normal_mission": false,
+    "baseline_credit": 0,
+    "queue_success_enabled": false
+  },
+  "outstanding": [
+    "S026 legal simultaneous facilities/army/strict routes remain unfit",
+    "G1 roof/tree occlusion unresolved",
+    "Fresh actual S005 production census/final frozen job and real normal ARIA outcome/result/return remain pending",
+    "Counterpart schema3 and future113 excluded"
+  ],
+  "root_release_checks": [
+    "No concurrent source writes through staged blob verification",
+    "Use exact forward-slash final-stage.paths; dedupe and stage files only",
+    "Apply attributes source only on exact before hash; restage/renormalize only listed raw-byte paths",
+    "Compare every staged blob SHA with final payload or explicit attributes source; no ambient WIP",
+    "Commit/push source engineering checkpoint only, preserve unfit evidence"
+  ],
+  "normalization_resume": {
+    "original_plan_sha256": "bd6e895099d55afacd6414c8c7f2fbe968c0d4b60b5c2fdf19a80f8fd57855d2",
+    "failed_state_archive": {
+      "path": "Logs/SkirmishProduction/SharedNativePreparation/20261015-06-joint-legacy-witness/stable-checkpoint-01/normalization-history/failed-bd6e-state.zip",
+      "sha256": "172d735d752283f96972ab423b4bfb2cd7c7464030a09382a20f90e27eca0290"
+    },
+    "read_only_audit_sha256": "459392c3d92f4673b5a52ed41b994437c1e2f671b5dfc93b02c53a6d9747587e",
+    "initial_indexed_entries_sha256": "b601f031a5d7a9745ff21cd23450be99684d568c169969c9c2df0fc3052a5a61",
+    "initial_staged_paths_sha256": "69dbdd935d8ea968fb28d1ebc32700a3691c434d0d7324b311fc2a576f81fee4",
+    "initial_staged_count": 122,
+    "indexed_mismatches": [
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/PLAN.final.json",
+        "indexed_sha256": "78503c8b5bbaa48f30ae9a43903c1a551eac7de60e0e19f065ba728f63957d3e",
+        "expected_raw_sha256": "bd6e895099d55afacd6414c8c7f2fbe968c0d4b60b5c2fdf19a80f8fd57855d2",
+        "worktree_raw_sha256": "bd6e895099d55afacd6414c8c7f2fbe968c0d4b60b5c2fdf19a80f8fd57855d2",
+        "indexed_bytes": 34705,
+        "worktree_bytes": 35466,
+        "matches": false,
+        "exact_crlf_to_lf_only": true
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/final-stage.paths",
+        "indexed_sha256": "fd74dffc709c4f64f79e7489cd11181875fe724fc4065093882f1cf2a9e4a4ac",
+        "expected_raw_sha256": "9e7a2827cf326c2cc16d2388442188e8cd4c1feb064a5b476cadec6e37b94782",
+        "worktree_raw_sha256": "9e7a2827cf326c2cc16d2388442188e8cd4c1feb064a5b476cadec6e37b94782",
+        "indexed_bytes": 11329,
+        "worktree_bytes": 11451,
+        "matches": false,
+        "exact_crlf_to_lf_only": true
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/JointLegacyWitnessCurrent/gitattributes.final.fragment",
+        "indexed_sha256": "635c4571285be2769e01a8fda038ea04f865c6efdd6edfee866aed9389b1cf34",
+        "expected_raw_sha256": "e577c452f0ccc024d81a11398a7f9f319ca6d7e5b7840feca00af507fdbfb947",
+        "worktree_raw_sha256": "e577c452f0ccc024d81a11398a7f9f319ca6d7e5b7840feca00af507fdbfb947",
+        "indexed_bytes": 6614,
+        "worktree_bytes": 6683,
+        "matches": false,
+        "exact_crlf_to_lf_only": true
+      }
+    ],
+    "all117_payload_pins_unchanged": true,
+    "scope_122_unchanged": true,
+    "explanation": "The117 payload-derived raw protections omitted later-added self-authorities. Only3 staged metadata blobs were CRLF-normalized. Add4 exact self-authority -text rows including proposed attributes; preserve old8ce prefix and original117 payload hashes. No source, native evidence or gameplay change."
+  }
+}

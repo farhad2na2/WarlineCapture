@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+"""Checked main-only native isolated checkpoint gate. Does not load scripts or modify readiness."""
+import argparse,ast,hashlib,json,pathlib,shutil,subprocess,sys
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture');REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+BASE=pathlib.Path('/private/tmp/s005-focused1179');FIXTURE=BASE/'S005CheckpointFocused1179.cs';FINGERPRINTER=pathlib.Path('/private/tmp/warline-s005-source-manifest.py')
+PREFIX='native1179-checkpoint-focused';ENTRY='S005CheckpointFocused1179.Run'
+MARKER='[S005CheckpointFocused1179] result=Passed suites=4 declaredCases=74 nativeWorldSceneHierarchyPreserved=True nativePlayerJourneys=0 fullX36GateClosed=0 normalTenReplayCycles=0 family20Matches=0 performanceCertified=0 deviceCertified=0'
+REQUIRED=[
+'[SkirmishExpandedCheckpointTests] result=Passed',
+'[SkirmishNativeCheckpointPartsTests] result=Passed tests=10 nativeRecoveryComplete=0',
+'[SkirmishNativeProductionCheckpointTests] result=Passed tests=6 nativeRecoveryComplete=0',
+'[SkirmishNativeCheckpointSnapshotTests] result=Passed tests=7 nativeRecoveryComplete=0',
+'[SkirmishNativeCheckpointCodecTests] result=Passed tests=3 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointRecoveryPreparationTests] result=Passed tests=3 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointActorSpawnTests] result=Passed tests=2 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointStructureReconstructionTests] result=Passed tests=3 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointRecoveryCommitTests] result=Passed tests=3 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointRecoveryRunnerTests] result=Passed tests=3 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointPrefabRegistryTests] result=Passed tests=3 editorPrefabResolver=0',
+'[SkirmishNativeRecoveryStagingValidation] result=Passed tests=51 nativeRecoveredSessions=0',
+'[SkirmishNativeCheckpointTransientTests] result=Passed tests=13 nativePlayerRecovery=0',
+'[SkirmishNativeSupportRecoveryTests] result=Passed tests=5 nativePlayerJourneys=0',
+'[SkirmishNativeStrikeRecoveryTests] result=Passed tests=5 nativePlayerJourneys=0',MARKER]
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def decode(d):
+ if isinstance(d,str):
+  try:return json.loads(d)
+  except json.JSONDecodeError:return d
+ return d
+def script_proof(path,dry):
+ d=json.loads(path.read_text());data=d.get('data',{});result=decode(data.get('result',{}));parameters=data.get('parameters',{})
+ assert d.get('success') is True and data.get('success') is True and isinstance(result,dict) and result.get('success') is True,'Nested script proof failed'
+ assert not d.get('errors') and not any(str(x.get('severity','')).lower()=='error' for x in result.get('diagnostics',[]) if isinstance(x,dict)),'Compiler diagnostics contain errors'
+ assert pathlib.Path(parameters.get('file','')).resolve()==FIXTURE.resolve() and parameters.get('entry')==ENTRY,'Proof is for another fixture'
+ assert str(parameters.get('dry_run','false')).lower()==str(dry).lower(),'Wrong compile/load mode'
+ assert data.get('target',{}).get('projectPath')==str(ROOT),'Wrong Editor project'
+def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--source-hash',required=True);ap.add_argument('--pre-manifest',required=True,type=pathlib.Path);ap.add_argument('--dry-compile-proof',required=True,type=pathlib.Path);ap.add_argument('--load-proof',required=True,type=pathlib.Path);ap.add_argument('--idle-proof',required=True,type=pathlib.Path);a=ap.parse_args()
+ log=REPORT/(PREFIX+'.log');proofPath=REPORT/(PREFIX+'-proof.json');origin=pathlib.Path('/private/tmp/s005-checkpoint-focused1179.jsonl');raw=REPORT/(PREFIX+'-census.jsonl')
+ assert not any(p.exists() for p in [log,proofPath,origin,raw]),'Unique1179 artifact exists; preserve and reserve a successor'
+ m=json.loads((BASE/'manifest.json').read_text());assert sha(FIXTURE)==m['fixtureSha256'] and sha(pathlib.Path(__file__))==m['runnerSha256'],'Frozen candidate bytes differ'
+ script_proof(a.dry_compile_proof,True);script_proof(a.load_proof,False)
+ idle=json.loads(a.idle_proof.read_text());assert idle.get('projectPath')==str(ROOT) and idle.get('isPlaying') is False and idle.get('isCompiling') is False and idle.get('qaRunning') is False,'Exact native idle proof required'
+ assert a.source_hash==m['reviewedSourceHash'],'Reviewed source differs'
+ expected=json.loads(a.pre_manifest.read_text());assert isinstance(expected.get('files'),dict)
+ pre=PREFIX+'-pre';subprocess.run(['rtk','proxy','python3',str(FINGERPRINTER),pre],cwd=ROOT,check=True)
+ preManifest=REPORT/(pre+'-source-manifest.json');preFingerprint=REPORT/(pre+'-independent-fingerprint.json');assert json.loads(preManifest.read_text())==expected and json.loads(preFingerprint.read_text())['sourceHash']==a.source_hash,'Source changed before dispatch'
+ wrapper=subprocess.run(['rtk','proxy',str(ROOT/'Tools/CI/invoke_unity_macos.sh'),'--reuse','--timeout','240','--log',str(log),'--','-executeMethod','S005CheckpointFocused1179.RunValidation'],cwd=ROOT).returncode
+ (REPORT/(PREFIX+'.wrapper-exit')).write_text(str(wrapper)+'\n');exitFile=pathlib.Path(str(log)+'.exit')
+ try:bridge=int(exitFile.read_text()) if exitFile.exists() else None
+ except ValueError:bridge=None
+ post=PREFIX+'-post';subprocess.run(['rtk','proxy','python3',str(FINGERPRINTER),post],cwd=ROOT,check=True)
+ postManifest=REPORT/(post+'-source-manifest.json');postFingerprint=REPORT/(post+'-independent-fingerprint.json');unchanged=json.loads(postManifest.read_text())==expected and json.loads(postFingerprint.read_text())['sourceHash']==a.source_hash
+ text=log.read_text(errors='replace') if log.exists() else '';errors=[]
+ if wrapper!=0 or bridge!=0:errors.append('Actual wrapper/native exits failed')
+ if not unchanged:errors.append('Complete source changed')
+ for marker in REQUIRED:
+  if text.count(marker)!=1:errors.append('Missing or duplicated exact suite marker: '+marker)
+ rows=[]
+ if not origin.exists():errors.append('Missing actual native World/scene/hierarchy census')
+ else:
+  shutil.copy2(origin,raw)
+  try:rows=[json.loads(x) for x in raw.read_text().splitlines() if x.strip()]
+  except Exception as exc:errors.append('Invalid native raw census: '+str(exc))
+ for suite,count in [('Staging',51),('Transient',13),('Support',5),('Strike',5)]:
+  pairs=[r for r in rows if r.get('suite')==suite]
+  if len(pairs)!=2 or [r.get('stage') for r in pairs]!=['Before','After']:errors.append('Incomplete/out-of-order native census '+suite);continue
+  before,after=pairs
+  if after.get('declaredCases')!=count or after.get('isPlaying') is not False or after.get('isCompiling') is not False or not all(after.get(k) is True for k in ['defaultWorldPreserved','worldsPreserved','scenesPreserved','hierarchyPreserved']):errors.append('Actual native preservation gate failed '+suite)
+  if any(before.get(k)!=after.get(k) for k in ['worlds','scenes','hierarchy']):errors.append('Raw native persistent identity delta '+suite)
+  if after.get('seconds',121)>120:errors.append('Bounded suite duration exceeded '+suite)
+ if not rows or rows[-1].get('stage')!='Closed' or rows[-1].get('result')!='PassedScopedIsolatedCheckpointConservation':errors.append('Missing native closure')
+ shutil.copy2(FIXTURE,REPORT/(PREFIX+'-fixture.cs.txt'));shutil.copy2(pathlib.Path(__file__),REPORT/(PREFIX+'-runner.py.txt'))
+ result={'result':'PassedScopedIsolatedCheckpointConservation' if not errors else 'FailedRetained','sourceHash':a.source_hash,'fullSourceUnchanged':unchanged,'preManifest':preManifest.name,'postManifest':postManifest.name,'actualWrapperExit':wrapper,'nativeBridgeExit':bridge,'log':log.name,'logSha256':sha(log) if log.exists() else None,'rawNativeCensus':raw.name if raw.exists() else None,'rawCensusSha256':sha(raw) if raw.exists() else None,'fixtureSha256':sha(FIXTURE),'runnerSha256':sha(pathlib.Path(__file__)),'passedSuites':4 if not errors else None,'declaredTechnicalCases':74,'requiredSuiteMarkers':REQUIRED,'normalPlayerJourneys':0,'normalTenReplayCycles':0,'family20Matches':0,'fullX36GateClosed':False,'performanceCertified':False,'deviceCertified':False,'playerReady':False,'nativePostIdleCensus':'Root collects separately; not inferred from wrapper','expectedNegativeRecoveryCases':['NativeStructurePrefabOrFootprintMissing:Building_Barrack','NativeRecoveryTimedOut:NativePhysicalMapCensusIncomplete'],'errors':errors}
+ proofPath.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'result':result['result'],'proof':str(proofPath),'errors':errors}),flush=True);return 0 if not errors else 3
+if __name__=='__main__':sys.exit(main())

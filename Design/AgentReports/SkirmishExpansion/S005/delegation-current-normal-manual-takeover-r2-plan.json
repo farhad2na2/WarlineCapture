@@ -1,0 +1,95 @@
+{
+  "status": "ReadOnlyPlan_ExternalProtocolProposal_NoNativeCompileLoadOrRun",
+  "currentSource": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+  "sourceContracts": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs": "5e009eccf5c0aa67427409df8322d4c9d727fa70576722c2cd624a9ba8a7fea1",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs": "0d36ee2fd287d285bf0fc4352935848b2b24d34418c3b784985c40ff6c327d5d",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs": "562649aa13135ae06b4a090ec8c3d548734f2b2e343578b270720baef040e61a",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AriaConsentProbe.cs": "1d12056dbab216d4096384e7e4056262a2ea677df5d98299cae4eae6e53fed3a",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs": "791b8230520174256144e3d21c53c5d846e860aa8b61a08b8085780e5fcc3221",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "e41423a1f8c286f9c9a15db3993ec94ff879454524d83932461443f6802efb21",
+    "Assets/Game/Scripts/UI/Components/SkirmishMatchView.Observation.cs": "bdfb1bab0e8ec6e8ae536e4162c513e59f3f9b83711dfbfe5b32daa470ccf8b8",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs": "ccb766cd303eebedb4fddb3d7512d78e3d74897752f55f46e5ed96d686eedc30",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishResearchContracts.cs": "87b9b75969dcfb37d64c5b4552aa926a4a2e0c475b14a9c4cf187b011d49c237",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs": "8b11221ca57a1f4849f0c8935b2cc664ad5623a3145bc54c00526c9ddd7908a1",
+    "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+    "Tools/CI/audit_skirmish_native_contacts.py": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92"
+  },
+  "oldProof": {
+    "path": "native1053-current-manual-fa-IR-seed104734-victory.json",
+    "sha256": "36901c16644e1fd6f5a8e19c58d1da1a332002a79bf0219188b1b318cdcc8cd5",
+    "actualSource": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+    "actualCoverage": "FA104734 StandardRegular ManualControlsDriver Victory132.146; nativeMenu10/Manual91/Terminal1 completed102, commands28/attacks12/noARIA; MAIN MENU/frozenresult normalinput normalSpeed.",
+    "currentApplicability": "Historical different source; oldproof does not attest current SharedFog/DevelopmentFullVision flags, R2 research, Move/Hold or ARIAStop/takeover. Do not relabel current ca845 qualification."
+  },
+  "authoritativeRequiredScope": {
+    "X07": "New Move/Hold/Attack/Retreat replaces actual old approach/delivery intent; acknowledgment/worldoutcome agree; no stale-order resurrection. Separate from arbitrary requirement every fullmanualmatch use allcommands.",
+    "X39": "Eachentry manualwin plusARIA matrix, twoviableapproaches/recovery/localization/device evidence. Sharedpass/oldcandidatewin notcurrent normalmatch.",
+    "S005Specific": "Field beginsR1; missing-facility explanations, actually paidR2 transition and levelzero upgrades; direct/flank viableobjectiveapproaches. Fixed normal costs and no hidden advantages.",
+    "Stop": "Acceptance Supportparagraph requiresapprove/decline/Stop; S005 takeover must use actually S005 nativeStop and manualcontrols with actual receipt history, not a stop+autorestart or another catalog.",
+    "noInventedGate": "ExistingbaselineManual driver does not issue separateMove/Hold/R2/Stop; do not pretend its victory proves them or require all to count actualmanualwin."
+  },
+  "legalPublicNormalPaths": [
+    {
+      "case": "Fresh FA manual fromR1",
+      "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorManualFa",
+      "source": "MenuProbe.cs:35",
+      "locale": "fa-IR",
+      "seed": 104734,
+      "terminal": "MAIN MENU",
+      "actualActions": "Visible card/ClearSelection/page, nativeEnemyFocus camera-only, Attack toggle, realterrainAttackMove for escorts/publicbase precision for structure roles, nativepaidRocketeer120 replacement ifneeded. NoARIA/no resources/state writes.",
+      "proofProposal": "Copy strict CanvasWillRender boundtext/nativefrozenVictory observer; manualflags must match actual existing publicentry (manual1,menu1,locale/seed) andARIA remainsinactive. Require actual ManualNative Passed/ManualReceiptAudit Passed + allrawTouch/commands/source/normalSpeed/nativefrozenVictory. Afterresult require native MainMenu route with actually presented Card_Skirmish/catalog control and unobscuredloading, record chronological destination aftersame-attempt nativeVictory. NoAriaPlayStopActive requirement orCSVcountedARIAwin.",
+      "risk": "Manual driver checks EnemyBaseMarkerVisible, not EnemyBaseTargetVisible. Marker is public objective location and can be shown while precision target hidden; engine rejects hiddenprecision target. Keep rejects, escorts reallegalterrainadvance. Cannot infer current sharedFogmanualwin fromold1053."
+    },
+    {
+      "case": "EN normalmanual+realR2+combatSaveContinue",
+      "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorHeavyApcSaveResumeEn",
+      "source": "PlayerResumeProbe.cs:69",
+      "locale": "en",
+      "seed": 155926,
+      "terminal": "MAIN MENU",
+      "actualActions": "Existing realnative menu/normal450materials/startR1 -> real displayed Build/Readiness button ->240materials45s nativeR2research -> actualpaidHeavyAPC nativeproducerdelivery -> native manualTouchcombat -> realPause/SaveExit/publicContinue same attempt -> resumedmanual fullwin/result/return.",
+      "proofProposal": "Observe real SkirmishResearchReservation nativeMaterialsPaid240/livecompletion45simulationseconds/faction1/readinessEstablished, category upgrades0unless genuinelypurchased; paidHeavyAPC realreceipt/cost/producer/actor andR2state; real before/afterincome/spend ledger no syntheticpulses. NativepreSavecombat receipt stream + SaveContinuecarry verified once. Then strict nativeManualNative Victory/MainMenu/frozenresult/chronological renderedguards/allTouch/source. Must completeactualnormalmatch; scopedSaveResume markeralone notwin.",
+      "risk": "More steps than pureENmanual; current publicdriver is realnormal path but needsactual currentnativevalidation. It has actual UI SaveContinue/catalog candidate lifetime and oldworld cleanup guards; historical isolated1144/1150checkpointpasses do not certify this wholejourney."
+    },
+    {
+      "case": "EN normalmanual+R1 AA+combatSaveContinue alternative",
+      "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorCombatSaveResumeEn",
+      "source": "PlayerResumeProbe.cs:62",
+      "locale": "en",
+      "seed": 130368,
+      "terminal": "MAIN MENU",
+      "actualActions": "RealpaidnativeR1AntiAir, native manualcombat/SaveContinue/resumedmanual; noR2 requirement inthiscase.",
+      "proofLimit": "Canclose freshENmanual/recovery ifactualwin; cannotcallitR2transition."
+    }
+  ],
+  "missingOrDifferentPublicPaths": [
+    {
+      "requested": "Pure freshENmanual fromopening withoutSaveContinue",
+      "actualGap": "No RunS005EditorManualEn exists; FAonlypublicpuremanual.",
+      "minimalEditorHarnessProposal": "Add one public wrapper RunS005EditorManualEn() => RunEditorJourney(\"en\", true, false, \"S005\"); in existing MenuProbe if pureENrequired. This is sourcechange/freshcandidate; unnecessary if existing real ENcombat/R2publicpath is acceptable."
+    },
+    {
+      "requested": "S005 nativeARIAStop thenmanual takeover continuing same normalmatch",
+      "actualGap": "No S005 publicStop/takeover entry. Existing RunS004EditorAriaStopEn bindsS004, notS005. Its StopProbe deliberately Play+Confirm+Stop+Play+Confirm autorestarts and is not manualtakeover. CurrentS005ARIA Tick aborts ariaStopped wheninactive; toggling flags privately or relabeling a freshmanualstart cannotproveTakeover.",
+      "minimalProposal": "Explicit existingharness S005 takeover publicentry + verified nativeStop input/handoff to actualmanual driver while retaining same attempt/normalfunds/fog/receipt history; expose intendedNativeTouch Move/Hold/Attack sequence and preservePause/Clock nativeowners. Requires reviewed boundedEditorharness adapter change andnewcandidate; no suchpatch applied/preparedhere."
+    },
+    {
+      "requested": "SeparateMove/Hold acknowledgment afterStop",
+      "actualGap": "Existingpuremanualdriver onlycameraFocus+selection+Attack/AttackMove; noMove/Hold/Stop inputs. Actual API Move is notNativeTouchMove, and publicAttackMove is not discreteMove+Hold proof.",
+      "minimalProposal": "Add normalinput dedicated bounded sequence to trueTakeoverdriver; observe nativeTouchreceipts/order replacement/actualmovement/hold and absenceofARIAcommands afterStopped, without injectedorders orassuming outcome."
+    }
+  ],
+  "safestNextOrder": [
+    "Finish currentca845 Regular seedmatrix withoutsourcechanges",
+    "Run existing FAmanual normalpath with externalreadonlyrendered/result/MainMenu observer",
+    "Use existing ENHeavyApcSaveResume publicnormalpath to combineENmanual+nativepaidR2+combatcheckpoint ifpractical",
+    "KeepS005Stop/takeover+Move/Hold separatelypending untilbounded legitimate publicharness path exists; do not fabricateflags or forceoutcomes"
+  ],
+  "notPrepared": "Noexecutablefixture assignedID orloaded; reportis reviewable protocolproposal only. LegalFAandENR2paths exist, butpost-parser/handoff adapter needsroot scopedchoice before freezingunique cases.",
+  "noUnityCalls": true,
+  "noAssetsOrSourceEdits": true,
+  "noGameplayInjections": true,
+  "playerReady": false
+}

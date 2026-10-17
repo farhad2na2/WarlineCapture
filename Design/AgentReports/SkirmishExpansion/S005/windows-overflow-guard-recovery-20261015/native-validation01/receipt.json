@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "actual_checked_wrapper_exit": 0,
+  "recovery_native_tests": 4,
+  "existing_renderer_native_tests": 13,
+  "camera_tests": 7,
+  "profile_tests": 5,
+  "objective_rules": 42,
+  "diagnostic_serialization": "Passed",
+  "editor_mvid": "2dd3ca97-8127-4668-bc25-aebdaa862325",
+  "budgets_changed": false,
+  "readiness_gate_changed": false,
+  "cameraAccepted": false,
+  "playerReady": false
+}

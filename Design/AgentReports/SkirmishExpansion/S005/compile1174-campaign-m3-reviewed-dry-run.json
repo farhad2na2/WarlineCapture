@@ -1,0 +1,94 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/campaign-m3-current1174/CampaignSelectionJourney1174.cs",
+      "entry": "CampaignSelectionJourney1174.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "Cannot implicitly convert type 'uint' to 'int'. An explicit conversion exists (are you missing a cast?)",
+          "line": 230,
+          "column": 66,
+          "id": "CS0266"
+        },
+        {
+          "severity": "error",
+          "message": "Cannot implicitly convert type 'uint' to 'int'. An explicit conversion exists (are you missing a cast?)",
+          "line": 313,
+          "column": 103,
+          "id": "CS0266"
+        },
+        {
+          "severity": "error",
+          "message": "Cannot implicitly convert type 'uint' to 'int'. An explicit conversion exists (are you missing a cast?)",
+          "line": 386,
+          "column": 39,
+          "id": "CS0266"
+        },
+        {
+          "severity": "error",
+          "message": "Cannot implicitly convert type 'uint' to 'int'. An explicit conversion exists (are you missing a cast?)",
+          "line": 406,
+          "column": 39,
+          "id": "CS0266"
+        },
+        {
+          "severity": "warning",
+          "message": "'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "line": 450,
+          "column": 89,
+          "id": "CS0618"
+        },
+        {
+          "severity": "warning",
+          "message": "'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "line": 450,
+          "column": 31,
+          "id": "CS0618"
+        },
+        {
+          "severity": "error",
+          "message": "Cannot implicitly convert type 'uint' to 'int'. An explicit conversion exists (are you missing a cast?)",
+          "line": 464,
+          "column": 124,
+          "id": "CS0266"
+        },
+        {
+          "severity": "error",
+          "message": "Cannot implicitly convert type 'uint' to 'int'. An explicit conversion exists (are you missing a cast?)",
+          "line": 495,
+          "column": 296,
+          "id": "CS0266"
+        },
+        {
+          "severity": "warning",
+          "message": "The field 'CampaignSelectionJourney1174.cardCaptureEntry' is assigned but its value is never used",
+          "line": 57,
+          "column": 68,
+          "id": "CS0414"
+        }
+      ],
+      "compileMs": 180,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_CampaignSelectionJourney1174_ac5b43cd1a1d4d99aea24d5fdc5883b1",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

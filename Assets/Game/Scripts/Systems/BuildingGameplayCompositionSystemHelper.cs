@@ -477,6 +477,8 @@ namespace Game.Runtime
                 $"placements={ResolveMapVehiclePlacementConfig()?.Placements?.Count ?? -1} " +
                 $"authoringRootAssigned={(ResolveMapVehicleAuthoringRoot() != null ? 1 : 0)} " +
                 $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)}");
+            PerformanceDiagnosticsSystemHelper.CaptureStartupMemoryCensus(
+                World.DefaultGameObjectInjectionWorld, "BuildingGameplay.CompositionInit");
             bool EnsureRuntimeTickContext()
             {
                 if (runtimeTickContextReady)

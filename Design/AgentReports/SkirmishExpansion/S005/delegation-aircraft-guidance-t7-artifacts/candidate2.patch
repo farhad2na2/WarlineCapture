@@ -1,0 +1,207 @@
+--- a/Assets/Game/Scripts/UI/MainMenuPlayUI.cs
++++ b/Assets/Game/Scripts/UI/MainMenuPlayUI.cs
+@@ -94,10 +94,12 @@
+ 
+         public void Dispose()
+         {
++            // Resource-strip detachment reapplies guidance. Revoke its bound HUD
++            // before cleanup so Play teardown cannot recreate an overlay root.
++            _matchHudAssistantUiSystem.Unbind();
+             DisposeGuidedHudRuntime();
+             _matchHudMinimapInputSystem.Dispose();
+             _matchHudFullMapInputSystem.Dispose();
+-            _matchHudAssistantUiSystem.Unbind();
+             if (_matchHudMinimapView != null)
+                 _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
+             if (_matchHudFullMapPopupView != null)
+--- /dev/null
++++ b/Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs
+@@ -0,0 +1,188 @@
++using System;
++using System.Collections;
++using System.Reflection;
++using Game.UI.Runtime;
++using NUnit.Framework;
++using UnityEngine;
++using UnityEngine.SceneManagement;
++using UnityEngine.TestTools;
++using UnityEngine.UI;
++
++namespace Game.Tests.Editor
++{
++    public sealed class AssistantGuidanceLifecycleTests
++    {
++        public static void RunFocusedValidation()
++        {
++            if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
++                throw new InvalidOperationException("Guidance focused suite requires idle Editor.");
++            var suite = new AssistantGuidanceLifecycleTests();
++            suite.DisposedOwnerDoesNotRecreateOverlayDestroyedEarlier();
++            suite.UnbindLateDetachAndFreshBindKeepOverlayOwnership();
++            Debug.Log("[AssistantGuidanceLifecycleTests] result=Passed cases=2 scope=ActualHelperEditModePlayTeardownPending");
++        }
++
++        [Test]
++        public void DisposedOwnerDoesNotRecreateOverlayDestroyedEarlier()
++        {
++            Assert.AreEqual(0, OverlayCount(), "Do not disturb another active guidance owner.");
++            var owner = new MainMenuPlayUI();
++            var helper = Highlight(owner);
++            var hud = Hud(out var pulse, out _);
++            int closedCallbacks = 0;
++            try
++            {
++                helper.Bind(pulse);
++                Assert.AreEqual(1, OverlayCount());
++                // Simulate native teardown ordering: the persistent overlay has
++                // already gone, but the authored HUD panel is still alive.
++                UnityEngine.Object.DestroyImmediate(Overlay(helper));
++                Assert.AreEqual(0, OverlayCount());
++                SetClosedCallback(owner, () =>
++                {
++                    closedCallbacks++;
++                    Assert.AreEqual(0, OverlayCount(), "Dispose must not recreate an overlay before assistant unbind.");
++                });
++                owner.Dispose();
++                Assert.AreEqual(1, closedCallbacks, "Observe real public Dispose at actual assistant-unbind boundary.");
++                Assert.AreEqual(0, OverlayCount());
++                owner.Dispose();
++                Assert.AreEqual(0, OverlayCount(), "Repeated cleanup remains inert.");
++            }
++            finally
++            {
++                SetClosedCallback(owner, () => { });
++                try { owner.Dispose(); }
++                finally { UnityEngine.Object.DestroyImmediate(hud); }
++            }
++        }
++
++        [Test]
++        public void UnbindLateDetachAndFreshBindKeepOverlayOwnership()
++        {
++            Assert.AreEqual(0, OverlayCount(), "Do not disturb another active guidance owner.");
++            var helper = new AssistantHighlightPresentationSystemHelper();
++            var hud = Hud(out var pulse, out var target);
++            try
++            {
++                helper.Bind(pulse);
++                helper.Unbind();
++                helper.BindResourceStrip(null);
++                helper.ApplyReadModel(Game.UI.Contracts.UiAssistantHighlightModel.Empty);
++                helper.Tick();
++                Assert.AreEqual(0, OverlayCount(), "Late detached bindings cannot allocate unowned guidance.");
++                helper.Bind(pulse);
++                helper.ShowTutorialControl(target, "tutorial.next.place");
++                AssertOverlayAboveTarget(helper, target);
++                Assert.AreEqual(1, OverlayCount(), "Fresh binding still owns exactly one working overlay.");
++            }
++            finally { helper.Unbind(); UnityEngine.Object.DestroyImmediate(hud); }
++        }
++
++        [UnityTest]
++        public IEnumerator PlayOwnerOnDestroyAndRebindPreserveOverlayLifecycle()
++        {
++            // Runner must prepare a temporary empty scene through its native Editor
++            // API. This focused test must never start a dense mission incidentally.
++            Assert.AreEqual(0, SceneManager.GetActiveScene().rootCount,
++                "Prepare a temporary empty scene before this small Play lifecycle test.");
++            yield return new EnterPlayMode();
++            Assert.IsTrue(Application.isPlaying);
++            Assert.AreEqual(0, OverlayCount());
++            var hud = Hud(out var pulse, out var target);
++            var owner = new MainMenuPlayUI();
++            var helper = Highlight(owner);
++            helper.Bind(pulse);
++            helper.ShowTutorialControl(target, "tutorial.next.place");
++            AssertOverlayAboveTarget(helper, target);
++            var probeObject = new GameObject("Guidance native teardown owner fixture");
++            var probe = probeObject.AddComponent<AssistantGuidanceDestroyProbe>();
++            probe.Owner = owner;
++            AssistantGuidanceDestroyProbe.DestroyedOwners = 0;
++            AssistantGuidanceDestroyProbe.RecreatedAtUnbind = -1;
++            SetClosedCallback(owner, () => AssistantGuidanceDestroyProbe.RecreatedAtUnbind = OverlayCount());
++            UnityEngine.Object.Destroy(Overlay(helper));
++            yield return null;
++            Assert.AreEqual(0, OverlayCount(), "Original persistent overlay must actually be destroyed first.");
++            UnityEngine.Object.Destroy(probeObject);
++            yield return null;
++            Assert.AreEqual(1, AssistantGuidanceDestroyProbe.DestroyedOwners, "Real MonoBehaviour.OnDestroy must invoke actual owner Dispose.");
++            Assert.AreEqual(0, AssistantGuidanceDestroyProbe.RecreatedAtUnbind,
++                "Actual OnDestroy resource cleanup must not recreate a persistent guidance root.");
++            Assert.AreEqual(0, OverlayCount());
++            // Positive control: preserve M3's root-overlay rendering and guidance
++            // after a normal new owner binds; no global guidance suppression.
++            var nextOwner = new MainMenuPlayUI();
++            var nextHelper = Highlight(nextOwner);
++            nextHelper.Bind(pulse);
++            nextHelper.ShowTutorialControl(target, "tutorial.next.place");
++            AssertOverlayAboveTarget(nextHelper, target);
++            Assert.AreEqual(1, OverlayCount());
++            nextOwner.Dispose();
++            UnityEngine.Object.Destroy(hud);
++            yield return null;
++            Assert.AreEqual(0, OverlayCount());
++            Debug.Log("[AssistantGuidancePlayLifecycle] result=Passed ownerOnDestroy=1 overlayRecreated=0 rebindVisible=1 M3OverlayRootPreserved=1");
++            yield return new ExitPlayMode();
++            Assert.AreEqual(0, OverlayCount(), "No orphan overlay after actual Play exit.");
++        }
++
++        [UnityTearDown]
++        public IEnumerator RestoreEditModeAfterFailedPlayCase()
++        {
++            if (Application.isPlaying) yield return new ExitPlayMode();
++        }
++
++        private static GameObject Hud(out Image pulse, out Button target)
++        {
++            var root = new GameObject("Guidance lifecycle HUD", typeof(RectTransform), typeof(Canvas));
++            root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
++            root.GetComponent<Canvas>().sortingOrder = 24000;
++            var p = new GameObject("Bound ARIA panel pulse", typeof(RectTransform), typeof(Image));
++            p.transform.SetParent(root.transform, false); pulse = p.GetComponent<Image>();
++            var t = new GameObject("Native tutorial control", typeof(RectTransform), typeof(Image), typeof(Button));
++            t.transform.SetParent(root.transform, false); target = t.GetComponent<Button>();
++            ((RectTransform)t.transform).sizeDelta = new Vector2(200, 100);
++            Canvas.ForceUpdateCanvases(); return root;
++        }
++        private static AssistantHighlightPresentationSystemHelper Highlight(MainMenuPlayUI owner)
++        {
++            var assistant = (MatchHudAssistantUiSystemHelper)typeof(MainMenuPlayUI).GetField("_matchHudAssistantUiSystem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner);
++            return (AssistantHighlightPresentationSystemHelper)typeof(MatchHudAssistantUiSystemHelper).GetField("_highlightPresentationSystem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(assistant);
++        }
++        private static void SetClosedCallback(MainMenuPlayUI owner, Action callback)
++        {
++            var assistant = typeof(MainMenuPlayUI).GetField("_matchHudAssistantUiSystem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner);
++            typeof(MatchHudAssistantUiSystemHelper).GetField("_panelOpenChanged", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(assistant, (Action<bool>)(_ => callback()));
++        }
++        private static GameObject Overlay(AssistantHighlightPresentationSystemHelper helper)
++        {
++            var canvas = (Canvas)typeof(AssistantHighlightPresentationSystemHelper).GetField("_screenTargetCanvas", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(helper);
++            return canvas != null ? canvas.gameObject : null;
++        }
++        private static int OverlayCount()
++        {
++            int count = 0;
++            foreach (var canvas in Resources.FindObjectsOfTypeAll<Canvas>())
++                if (canvas != null && canvas.gameObject.scene.IsValid() && canvas.name == "AriaGuidanceOverlay") count++;
++            return count;
++        }
++        private static void AssertOverlayAboveTarget(AssistantHighlightPresentationSystemHelper helper, Button target)
++        {
++            var overlay = Overlay(helper); Assert.IsNotNull(overlay);
++            var canvas = overlay.GetComponent<Canvas>();
++            Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode);
++            Assert.IsNull(overlay.transform.parent, "M3 cue retains isolated top-level canvas.");
++            var cue = (RectTransform)typeof(AssistantHighlightPresentationSystemHelper).GetField("_screenTargetIndicator", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(helper);
++            Assert.IsTrue(cue.gameObject.activeInHierarchy);
++            Assert.Greater(cue.GetComponent<Canvas>().sortingOrder, target.GetComponentInParent<Canvas>().sortingOrder);
++            Assert.IsFalse(cue.GetComponent<CanvasGroup>().blocksRaycasts);
++        }
++    }
++    public sealed class AssistantGuidanceDestroyProbe : MonoBehaviour
++    {
++        public MainMenuPlayUI Owner;
++        public static int DestroyedOwners, RecreatedAtUnbind;
++        private void OnDestroy() { Owner?.Dispose(); Owner = null; DestroyedOwners++; }
++    }
++}

@@ -1,0 +1,9 @@
+{
+  "status": "AppliedCompileOnlyLocalRename",
+  "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+  "beforeSha256": "4fab180b1c400a97fd99cf23d5cf0befab27b77f50b1a65a13c05439632306b8",
+  "afterSha256": "554dc9ce59498f24643714467e433c7fadf32964a9ab87d1dc492c7f7fe7c2db",
+  "reason": "C# CS0136 two route exposure loop locals shadow later waypoint and point locals; rename inner locals only",
+  "nativeCompilerFailure": "compile1214-ai-and-hud-status.json",
+  "nativeRecompile": "Pending"
+}

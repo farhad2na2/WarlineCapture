@@ -1,0 +1,11 @@
+{
+  "runner-change.diff": "88a813c3c48cc058d5afe1ac9bac3e76567e0414ac3673b67668e05ac14a0425",
+  "offline-parser-controls.json": "b15f74904f921a2a3b676cdb78fa77b48cad3dbed99bc2586a111b4628376582",
+  "offline-preflight.json": "85b7e433caabe8dd2752d8a10c67a7251998687250548ec2ab5b2385e4d3bc03",
+  "run_campaign_m3_1357.py": "20d18a47437465720fdb58fa02915b4bd4fcc033f3494951d856dd62e0fe3967",
+  "CampaignM3Idle1357.cs": "1a3d8eef74ac8422810d4c0aa3a7feacbdc3047e3cbda2d019e5e7a31f82dd9d",
+  "manifest.json": "a7c20613e1a67c3ac4c8d197f94199784b925f959de5345a6ca578d197f7bb3b",
+  "run_parser_controls.py": "5fad34df413636ed29c837388061c70d4e803a9d1dab5e566bf19f9a70d9b179",
+  "fixture-change.diff": "065e1b1ab76301d15931587229895b5f0ab76aee611e7b49177e717508fb6d3b",
+  "CampaignSelectionJourney1357.cs": "b69eccb64ade19a2299d9635bc8e4518ff8a85a4a41a38311b17605cc6d4a6db"
+}

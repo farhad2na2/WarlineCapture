@@ -1,0 +1,124 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+
+public static class S005SavedTaxiContinue979
+{
+    const string Report="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/";
+    const string FileName="native945-captured-native-checkpoint.json";
+    const string Checksum="34fecf964ef7738143f9be108a4fe01843719695f2ac3e2270ef23b3bfd07117";
+    const string Attempt="expanded-s005-155926-faca69f12fe34dbabadfc792269c53e6";
+    static readonly BindingFlags Stat=BindingFlags.Static|BindingFlags.NonPublic;
+    static readonly BindingFlags Inst=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    static Type Harness=>typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static TaskCompletionSource<int> done;
+    static bool sawPlay,configured,verified,passed;
+    static double resumeDue;
+    static UnitAirComponent savedAir;
+    static UnitAirMovement savedMovement;
+    static LocalTransform savedTransform;
+    static World ownedWorld;
+    static string Hash(string p){using var sha=SHA256.Create();return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(p))).Replace("-","").ToLowerInvariant();}
+    static object Get(string n)=>Harness.GetField(n,Stat).GetValue(null);
+    static void Set(string n,object v)=>Harness.GetField(n,Stat).SetValue(null,v);
+    public static string Run()=>"Loaded only; execute via repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Existing Play session.");
+        if(Hash(Report+FileName)!=Checksum)throw new InvalidOperationException("Retained native checkpoint changed.");
+        var codec=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointCodec");
+        object[] args={Report+FileName,null};
+        if(!(bool)codec.GetMethod("TryReadDescriptor",Stat).Invoke(null,args))throw new InvalidOperationException("Retained native checkpoint failed checksum/schema.");
+        object snapshot=args[1];if((string)snapshot.GetType().GetField("SessionId",Inst).GetValue(snapshot)!=Attempt)throw new InvalidOperationException("Saved attempt mismatch.");
+        int count=0;object parts=null;
+        foreach(var a in (IEnumerable)snapshot.GetType().GetField("Actors",Inst).GetValue(snapshot))
+        {
+            var candidate=a.GetType().GetField("Parts",Inst).GetValue(a);
+            if(!TryPart(candidate,out SkirmishAttemptOwnedComponent owner)||owner.FactionId!=1||owner.ReservationId!=1005)continue;
+            count++;parts=candidate;
+        }
+        if(count!=1||!TryPart(parts,out savedAir)||!TryPart(parts,out savedMovement)||!TryPart(parts,out savedTransform))throw new InvalidOperationException("Saved mutable aircraft parts missing.");
+        string paused=Array.Find(File.ReadAllLines(Report+"native-945-normal-strike-returntaxi-save-continue.log"),s=>s.StartsWith("[S005AircraftRecovery] phase=PausedSnapshot"));
+        string air=paused.Split(new[]{" air="},StringSplitOptions.None)[1].Split(new[]{" movement="},StringSplitOptions.None)[0];
+        string movement=paused.Split(new[]{" movement="},StringSplitOptions.None)[1].Split(new[]{" transform="},StringSplitOptions.None)[0];
+        string transform=paused.Split(new[]{" transform="},StringSplitOptions.None)[1];
+        if(JsonUtility.ToJson(savedAir)!=air||JsonUtility.ToJson(savedMovement)!=movement||JsonUtility.ToJson(savedTransform)!=transform)throw new InvalidOperationException("Saved mutable aircraft state differs from actual native945 Pause.");
+        done=new TaskCompletionSource<int>();sawPlay=configured=verified=passed=false;ownedWorld=null;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorSaveResumeEn();
+        Environment.SetEnvironmentVariable("WARLINE_S002_SEED","155926");
+        Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY","1");
+        string root=(string)Harness.GetMethod("ValidationProfileRoot",Stat).Invoke(null,null);
+        File.Copy(Report+FileName,Path.Combine(root,"skirmish-s005-native.json"),false);
+        if(Hash(Path.Combine(root,"skirmish-s005-native.json"))!=Checksum)throw new InvalidOperationException("Isolated profile checkpoint copy differs.");
+        EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;
+        Debug.Log("[S005RetainedTaxiContinue] phase=PreflightPassed originalNativeSave=945 pausedMutablePartsExact=1 immutableUnitMoveRebuiltFromPrefab=1 isolatedProfileCopyByteIdentical=1 actorsResourcesOrdersCheckpointManufactured=0 completeMatchCertified=0");
+        return done.Task;
+    }
+    static bool TryPart<T>(object parts,out T value)where T:unmanaged,IComponentData
+    {
+        var t=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointParts");object[] args={parts,null};bool ok=(bool)t.GetMethod("TryReadComponent",Stat).MakeGenericMethod(typeof(T)).Invoke(null,args);value=ok?(T)args[1]:default;return ok;
+    }
+    static void Tick()
+    {
+        if(!EditorApplication.isPlayingOrWillChangePlaymode)
+        {
+            if(!sawPlay)return;EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;
+            bool clean=ownedWorld==null||!ownedWorld.IsCreated;
+            Debug.Log("[S005RetainedTaxiContinueCleanup] result="+(clean?"Passed":"Failed"));done.TrySetResult(passed&&clean?0:1);return;
+        }
+        if(!EditorApplication.isPlaying)return;sawPlay=true;
+        try
+        {
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;ownedWorld=world;var em=world.EntityManager;
+            if(!(bool)Get("playerResumeProbeActive"))return;
+            var recoveryType=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointRecoveryRecord");
+            using var q=em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(),ComponentType.ReadOnly(recoveryType));
+            if(q.CalculateEntityCount()!=1)return;var s=q.GetSingletonEntity();object recovery=null;
+            foreach(var method in typeof(EntityManager).GetMethods())
+                if(method.Name=="GetComponentObject"&&method.IsGenericMethodDefinition&&method.GetParameters().Length==1){recovery=method.MakeGenericMethod(recoveryType).Invoke(em,new object[]{s});break;}
+            if(recovery==null||!(bool)recoveryType.GetField("Complete",Inst).GetValue(recovery))return;
+            if(em.GetComponentData<SkirmishExpandedSessionComponent>(s).SessionId.ToString()!=Attempt)throw new InvalidOperationException("Native Continue started a different attempt.");
+            if(!configured)
+            {
+                configured=true;resumeDue=EditorApplication.timeSinceStartup+1;
+                // Hold only the existing QA driver's next input. A Continue
+                // does not need a new troop order; audit the original native945
+                // command stream and this run's real menu contacts separately.
+                Set("playerResumeDue",EditorApplication.timeSinceStartup+60d);
+                Debug.Log("[S005RetainedTaxiContinue] phase=NativeRecoveryObserved sameAttempt=1 originalWorldDisposedIn945=1 gameplayOrdersInjected=0 driverInputHeldOnly=1");
+            }
+            if(verified||EditorApplication.timeSinceStartup<resumeDue-.1)return;
+            using var actors=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitAirComponent));using var entities=actors.ToEntityArray(Allocator.Temp);Entity found=Entity.Null;
+            foreach(var e in entities){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(o.FactionId!=1||o.ReservationId!=1005)continue;if(found!=Entity.Null)throw new InvalidOperationException("Duplicate restored paid aircraft.");found=e;}
+            if(found==Entity.Null)throw new InvalidOperationException("Restored paid aircraft missing.");
+            var role=em.GetComponentData<SkirmishUnitRoleComponent>(found).Role;var air=em.GetComponentData<UnitAirComponent>(found);var movement=em.GetComponentData<UnitAirMovement>(found);var pos=em.GetComponentData<LocalTransform>(found).Position;var move=em.GetComponentData<UnitMove>(found);
+            float elapsed=em.GetComponentData<SkirmishObjectiveClockComponent>(s).ElapsedSeconds,delta=math.max(0,elapsed-960.0227f),distance=math.distance(pos,savedTransform.Position);
+            if(role!=SkirmishRoleKind.Strike||air.Airborne!=0||air.LandingRolling!=0||air.ReturningHome==0||!air.HomePosition.Equals(savedAir.HomePosition)||!air.HomeCell.Equals(savedAir.HomeCell)||!air.RunwayTakeoffPosition.Equals(savedAir.RunwayTakeoffPosition)||!air.RunwayLandingPosition.Equals(savedAir.RunwayLandingPosition)||!air.RunwayTakeoffCell.Equals(savedAir.RunwayTakeoffCell)||!air.RunwayLandingCell.Equals(savedAir.RunwayLandingCell)||JsonUtility.ToJson(movement)!=JsonUtility.ToJson(savedMovement)||move.Speed!=36f)throw new InvalidOperationException("Restored taxi/runway state or prefab speed differs.");
+            if(distance<.5f||distance>movement.RunwayTaxiSpeed*delta+2)throw new InvalidOperationException("Native restored taxi failed clock-bounded movement.");
+            if(em.HasComponent<AttackMoveOrder>(found)||em.HasComponent<EngageTarget>(found)||em.HasComponent<UnitTarget>(found)||em.GetComponentData<UnitCombat>(found).AutoEngage!=0)throw new InvalidOperationException("Restored taxi retained an attack order.");
+            int receipts=0;
+            foreach(var r in em.GetBuffer<SkirmishProductionReservation>(s,true))
+                if(r.FactionId==1&&r.ReservationId==1005&&r.Role==SkirmishRoleKind.Strike&&r.MaterialsPaid==520&&r.Phase==SkirmishReservationPhase.Live)receipts++;
+            if(receipts!=1||!em.HasComponent<SkirmishSharedActorTag>(found))throw new InvalidOperationException("Native paid aircraft receipt/binding was not preserved.");
+            if(em.GetComponentData<SkirmishExpandedSessionComponent>(s).Phase!=SkirmishSessionPhase.Playing||!Mathf.Approximately(Time.timeScale,1))throw new InvalidOperationException("Restored match did not resume normal play.");
+            verified=passed=true;Debug.Log("[S005RetainedTaxiContinue] phase=NativeTaxiVerified elapsedDelta="+delta+" displacement="+distance+" taxiSpeed=15 prefabSpeed=36 paidRole=Strike receipt=1005 copiedOriginalNativeSave=1 completeMatchCertified=0");
+            Debug.Log("[S005RetainedTaxiContinue] result=Passed originalCapture=945 nativeContinue=979 sameAttempt=1 paidReceiptPreserved=1 mutablePartsExact=1 nativeTaxiMotion=1 nativeContinueMenuContactsRequired=1 originalNative945CommandsAuditedSeparately=1 completeMatchCertified=0");
+            Harness.GetMethod("Finish",Stat).Invoke(null,new object[]{false,"nativeRetainedTaxiContinueOnly"});
+        }
+        catch(Exception e){Debug.LogError("[S005RetainedTaxiContinue] result=Failed reason="+e);Harness.GetMethod("Finish",Stat).Invoke(null,new object[]{true,"retainedTaxiContinue="+e.Message});}
+    }
+    static void Observe(string message,string stack,LogType type) { }
+}

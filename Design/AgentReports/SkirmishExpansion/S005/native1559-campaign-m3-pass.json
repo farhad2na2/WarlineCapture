@@ -1,0 +1,36 @@
+{
+  "result": "PassedScopedNativeCampaignM3Journey",
+  "scope": "fa-IR",
+  "sourceHash": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "fullSourceUnchanged": true,
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "preManifest": "post-aria-unselected-hold-candidate-source-manifest.json",
+  "postManifest": "final-1559-campaign-m3-post-source-manifest.json",
+  "log": "native-1559-campaign-m3-current.log",
+  "logSha256": "e4046d2eed054f3e2b2483d46c2a78097ae3899f2e1d656f18b889dc6c76baa3",
+  "fixtureSha256": "650b24ee5ba0883a5a78b64ed699329a9878f7f0dbdda301fa41246331c24d1c",
+  "runnerSha256": "e394afcf68b06e04d6bbe5f8e045badeb6d59c4e0813f71f1c1ccacd060e33c6",
+  "rawEvidence": [
+    {
+      "file": "native1559-defense-7.jsonl",
+      "sha256": "0e08ddc0e303b5892da4c869ef4aab82ba50c24d5cbda361bbd2f1a9271cd0c1"
+    },
+    {
+      "file": "native1559-input-route.jsonl",
+      "sha256": "db2ae2d51c4c6c1b4faeb922293db90523a939036323bf630d761f42127959b7"
+    },
+    {
+      "file": "native1559-journey.jsonl",
+      "sha256": "860e503d668dacdbbd17e66f9f8d18452f3262ca46265750ff1ab6df90b13aee"
+    },
+    {
+      "file": "native1559-threat-7.jsonl",
+      "sha256": "8d8db3a52c985102e5b065cfa70190ef038cc67484eb8cbf372668fdc0764f9c"
+    }
+  ],
+  "errors": [],
+  "fullJourneyStrictTouchAudit": false,
+  "disclosedQA": "Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.",
+  "playerReady": false
+}

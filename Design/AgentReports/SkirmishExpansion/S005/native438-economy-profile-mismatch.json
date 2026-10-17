@@ -1,0 +1,33 @@
+{
+  "mission": "S005",
+  "status": "Mode correction implemented; six focused regressions passed; native normal-input qualification pending",
+  "nativeObservation": {
+    "fabricatorOilPerCycle": 4,
+    "fabricatorMaterialsPerCycle": 20,
+    "cycleSeconds": 30,
+    "pumpOilPerDay": 50,
+    "skirmishSupplyDaySeconds": 120,
+    "derivedPumpOilPerMinute": 25
+  },
+  "requiredStandardProfile": {
+    "pumpOilPerMinute": 120,
+    "fabricatorOilPerCycle": 10,
+    "fabricatorMaterialsPerCycle": 50,
+    "fabricatorCycleSeconds": 30,
+    "refineryOilPerCycle": 30,
+    "refineryFuelPerCycle": 60,
+    "refineryCycleSeconds": 30
+  },
+  "authority": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md:69-79",
+  "constraints": [
+    "Mode-owned profiles on real facilities for both factions",
+    "Campaign prefab/source recipes unchanged",
+    "Starting stocks/costs/caps/deadlines unchanged",
+    "Actual shared physical logistics and conversion",
+    "Newly built facilities use selected size profile",
+    "Native checkpoint preserves profile and in-progress conversion"
+  ],
+  "playerReady": false,
+  "observationSourceHash": "83427399c0dad3c68459c779359b6afd1e81616eb9fe520d588601cf3b09593d",
+  "currentSourceHash": "3f7c2914408eaa45227b75542666e01c5c63a2879f4ffbd2d231a7e8181ead91"
+}

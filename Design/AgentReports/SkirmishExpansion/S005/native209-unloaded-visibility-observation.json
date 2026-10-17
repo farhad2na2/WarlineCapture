@@ -1,0 +1,24 @@
+{
+  "run": 209,
+  "sourceHash": "005c7ab72a705ea453e90858882dfb8fd00dd35bafcf2aeb404ba104b9e1709e",
+  "scope": "Read-only body visibility observation after native Exit All; separate from native command stream",
+  "stateMutation": false,
+  "observations": [
+    {
+      "entity": "Entity(604:13)",
+      "exists": true,
+      "disabled": false,
+      "passengerLinked": false,
+      "scale": 1,
+      "hp": 100
+    },
+    {
+      "entity": "Entity(612:13)",
+      "exists": true,
+      "disabled": false,
+      "passengerLinked": false,
+      "scale": 1,
+      "hp": 100
+    }
+  ]
+}

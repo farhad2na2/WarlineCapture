@@ -1,0 +1,37 @@
+{
+  "mission": "S005",
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "status": "Unverified qualification-strategy hypothesis; no gameplay/source change made",
+  "retainedFailure": "native669-close-supply-paid-strike-air-timing-failure.json",
+  "observed": {
+    "lastSimulationSeconds": 1006.70849609375,
+    "materialsFabricated": 2200,
+    "materialsSpent": 2620,
+    "constructionSpent": 900,
+    "upgradeSpent": 720,
+    "productionSpent": 1000,
+    "deliveredFuel": 1560,
+    "livingFactories": 4,
+    "allFactoriesPausedAtFinalSnapshot": true,
+    "flightLaunched": false,
+    "fuelStorageTotal": 878.001220703125,
+    "usableFuelEvidence": [
+      "UsableFuel={\"FactionId\":1,\"StoredOilBarrels\":48.0,\"StoredFuelBarrels\":878.6511840820313,\"CurrentFuelBarrels\":878.6511840820313,\"FuelProducedBarrels\":0.0,\"FuelDeliveredBarrels\":878.6511840820313,\"FuelSpentBarrels\":0.0,\"OilStorageCapacity\":96,\"FuelStorageCapacity\":10000,\"Version\":2566390036}",
+      "UsableFuel={\"FactionId\":2,\"StoredOilBarrels\":10.0,\"StoredFuelBarrels\":175.61032104492188,\"CurrentFuelBarrels\":175.61032104492188,\"FuelProducedBarrels\":0.0,\"FuelDeliveredBarrels\":175.61032104492188,\"FuelSpentBarrels\":0.0,\"OilStorageCapacity\":24,\"FuelStorageCapacity\":5000,\"Version\":2787767116}"
+    ]
+  },
+  "hypothesesToMeasure": [
+    "Four factories share scarce physical oil transport; fewer nearby factories may reach readiness earlier with lower paid construction cost.",
+    "Four oil trucks and two tankers may serve the material bottleneck better than three of each, within the same six-support cap.",
+    "A first attack on a visible nearer enemy threat may permit a useful earlier sortie than the full enemy-HQ round trip.",
+    "Check runtime definition capacities against ECS storage capacities during a scoped qualification; metadata synchronization reads runtime values, but no actual mismatch has been established. A 600-fuel plateau alone is insufficient proof of a cap bug."
+  ],
+  "constraints": [
+    "No changes to costs, production rates, starting balances, support cap, timers, or Campaign physical geometry.",
+    "Route reserve must use the existing conservative calculation for the actual chosen legal target; never lower the threshold for the same HQ route.",
+    "Only public faction-visible targets and ordinary input controls; no hidden observation injected into gameplay.",
+    "Require native delivery, launch, shot/effect, return/touchdown, refuel and second sortie; keep failed runs.",
+    "Do not edit Assets while current matrix/recovery runner is active."
+  ],
+  "nextDecision": "Review measured route and paid strategy after current native matrix/recovery completes."
+}

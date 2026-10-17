@@ -1,0 +1,598 @@
+{
+  "scope": "Reviewed shared mission source foundation; authored missions and normal-input readiness remain pending",
+  "source_files": [
+    {
+      "path": "Assets/Game/Scripts/Components/SkirmishConvoyObjectiveTruckComponent.cs",
+      "sha256": "051466b4ffa713b84fa23c8cdea17a110b4ee763eff83b156b81d9a42b902185"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/SkirmishConvoyObjectiveTruckComponent.cs.meta",
+      "sha256": "7305f838fe8cfeaf6663f8c29a568ff0352bfd2a14f92e2cc68913c3240ad03a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/CampaignMissionOperationMapReuseUtility.cs",
+      "sha256": "14570cbdba72d52ac2bc8bfdc100ec55f2a7f2e642f67ce91adbb62dceba35cc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/CampaignMissionOperationMapReuseUtility.cs.meta",
+      "sha256": "74faee7246aa359f90d791aa1b131d5e43b08cbed9641ad7783e87fc6e938d24"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs",
+      "sha256": "59f82a096a30fdde771ae5bfea61b18d41df8c29b8effb6d800ecc0cf2f16bd8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs.meta",
+      "sha256": "257f83a3f914a28733dcdc247c8d559ac99e87add9ca9e54a3cc301217f11138"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.Skirmish.cs",
+      "sha256": "ef20e46d9bdc737d20b20dbc86a7fb22a0e11a89b268d12193c3dadea1b15b94"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.Skirmish.cs.meta",
+      "sha256": "589bb1212be8bafd363040324df55bc3a75077aa08332fdf3ea5cb8c42b71c0b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchProjection.cs",
+      "sha256": "27960e58de9be5dabd0a10870815fe6a2e73b0752ff7ceeec308f44fbd5df4e9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchProjection.cs.meta",
+      "sha256": "62a3a9f8f2f423670f5b2f52cdd221c5fa4060f5351ea3eaa44c91541b903e1d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchResolver.cs",
+      "sha256": "f6165109433ab99b4dbba27a5301244aefc4cb209e2061f611756b487fcbf559"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchResolver.cs.meta",
+      "sha256": "df8ef8d330fb9e68dd6406fd6ff427df0f50ed57a129829f80f7e24239612ee8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
+      "sha256": "b8aabbfa2ad7e7ef398124e2af2af86b7ee36d6d45ba851e12b8d5a8b1084b81"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs.meta",
+      "sha256": "70e1b9c1898fc03ce78023e85f0cc9189834abf7952f46a45233e7f0e2643f02"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs",
+      "sha256": "d3dbba403baef44f28da1b7754d388231342110ebae53dfc96c0e38f612edd9b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs.meta",
+      "sha256": "edb8ddabdec12186f16158c85069f9350c29abfb99cd59b0e7d6ef995ba61fd4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/QuickGameConfig.cs",
+      "sha256": "2feab03d7ff7ef5c284f14e7a724c2cb71f5619cf1add674ad87cea25781f3ae"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/QuickGameConfig.cs.meta",
+      "sha256": "039f96558bf9776963e633ea41e22bf69c8d5cde1f9cb497d7fa74cf490804a7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishConvoyTruckDefinition.cs",
+      "sha256": "087b56318af60cdaeee07904d7bdb0c609056f12a06e0150c4698f8db84b92b7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishConvoyTruckDefinition.cs.meta",
+      "sha256": "d9274de44ca2c00ca900e496e6a4b11c57e20940296cade1d23f5463082a46f0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "sha256": "baefc65b6672de32d6fa7b944410348d4de23bb648e65502ffcba293bbb5decf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs.meta",
+      "sha256": "822a287cda2d5d9493344d33b162b9145a00f9bce99c64ae963a3be0b56989b0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs",
+      "sha256": "8350ef63a624dc450f92f2c49a4bba1670195e710f49ba914f229be96d42f612"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs.meta",
+      "sha256": "9933011f71670f64b073b2f532cbcf4a0198f0d37d25aa0a1432a114eb784aff"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "sha256": "64a74245632940ff8d89d884cafd649c7291d771da4773740cc4eb77fd443bdb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs.meta",
+      "sha256": "960f1239fe1618a6af1603696724858a54f703ef4f01293065a68e2aec836671"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "sha256": "71d8ae98a3825eeabd233edb9e8126823ca127d949cf7132d81050834cb3a5ad"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs.meta",
+      "sha256": "f96c7644004173c50cb495e4758726307aec59d9d595136e83f7eb40dcfbf4f4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs",
+      "sha256": "81b9888bd2cf0ec6c31b04cc7ea3e5fc265c3ee530d3d480391e108da3e1e732"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs.meta",
+      "sha256": "20f0a01f1473acf5e0fd6617effdfe0f9142a3990ff2ec038208fd78358fb934"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalAuthoringInputs.cs",
+      "sha256": "262822fcacc470ac98758e5d0cf802bcf16e2e469788569442244f8c9ce108b3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalAuthoringInputs.cs.meta",
+      "sha256": "d5a130a6a4413b03c345811d333dba29371e4aba709ac9dadbf7ea13a34add91"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
+      "sha256": "525f8dac45b6fc0fbbdede6a5c132754bffa2d6f16f0ad35376299b146389543"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs.meta",
+      "sha256": "6d4766611957b70805f000b4e35d646c2992bc219eebe260cb1e45ec995f96f5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionOpeningFocusPolicy.cs",
+      "sha256": "8f804c577d6e841dce5be2ff0df4ee3fdcc3b5fb0cd5af513e9be31af37f9b7a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionOpeningFocusPolicy.cs.meta",
+      "sha256": "0a947a36cfb7b6c61a6d80c424ebfe5b9341db575777dece3e9d65ede3103eca"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionViewProfile.cs",
+      "sha256": "5a158d2840c8bef2a95fdfbc107e50137b7df71bc0a5fb3b065c9b46efb16fe7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionViewProfile.cs.meta",
+      "sha256": "b2666821acb86012d01065736215876d4fe9bbd579d0665dd842045f4ccc31da"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs",
+      "sha256": "66bb38cf898d9a01d93467a56043e073a38f592e17b260630297af9d4dad3d33"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs.meta",
+      "sha256": "1b9ea54992b4435e86b5f998ffe05c1b620bf44c6c631a237177723fae2ce842"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs",
+      "sha256": "a2e4ec7d26fdd8dfe834a62dccaf5f8a324505e9035ca9af2387a66881a20273"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs.meta",
+      "sha256": "f0385d8465d339ab1c22aab86d8e3ec0d280ffa18ea3c218c81d1b272e7620e1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+      "sha256": "9932ce4d9a01773f43cc7355e47ecfea9cf7fcd14229edfe49a0fb76267897b7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs.meta",
+      "sha256": "7b3473035c84c3d730e3a0f080f22113279e617b2a06a3fe205e1147331305c5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "308b322a43d2ca73521780ee8d1ab42e65ece5ac632da4b26274ac740124bc86"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs.meta",
+      "sha256": "0c0dbbfa13e80d4aad4babcdfefbbefa2b35c22819659ee2bbf7fef47ec3df6d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConvoyTruckAuthoring.cs",
+      "sha256": "404ba95de5589ffcf087a3e2c921a90af1e0c79990ad4cf035115629def4af98"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConvoyTruckAuthoring.cs.meta",
+      "sha256": "1456ce8dc3c3284913c3c8f08d891514a8784c01b3b8761fe9a357c066bd5680"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGenericMissionAvailabilityScope.cs",
+      "sha256": "e9cf6b691a3d180f3743d2dc45e29f416fc5cfca83d8ba41f1c6948e06ff08ef"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGenericMissionAvailabilityScope.cs.meta",
+      "sha256": "ad3ee429ade763a2e95af558b1004e65960cb8fd0e6a0b20394712d6faa0e93f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionLogicalBindingAuthoring.cs",
+      "sha256": "dcc70ab275bd65aa59817ea54a095d8702f20a9f7acd8461de910c57d4418138"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionLogicalBindingAuthoring.cs.meta",
+      "sha256": "b831ae5981327277621c47af0512a8d8cd844b560f4623a1ac984624e0d54d8d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionViewVisibilityObservation.cs",
+      "sha256": "f370234700e7118c052d99023c9905f15797b5422998c5128cdf9fd3509cbfd4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionViewVisibilityObservation.cs.meta",
+      "sha256": "b21d1a4aabedfce2888680366a380c913bf06755c52da0e9fd8f9a907df4b2d1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
+      "sha256": "8678eac8964c8d48d5e9bb36f8c4a2f40343e375a864e5749be76da36c95bdc5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs.meta",
+      "sha256": "62400ade4a7ab1f1291449a86ad4afe0c3d868608a83820aff778211242a08cc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs",
+      "sha256": "a154d9fe6f21c0692ca92783dec46a8909ced4fdbb5d7d00a8727b3519821051"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs.meta",
+      "sha256": "579a55982f6a54d08c14f6ccdd2517cdf17bfe2e6f435df2c7c23b3d403cffd7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningDriverDiagnostic.cs",
+      "sha256": "84eb5a5f938ffa49f0066c8f5a438cc51f5f87b340b8a0cc50ef3e32b9ad607c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.OpeningDriverDiagnostic.cs.meta",
+      "sha256": "37e3df27f2c4cf83e3301bbe73bf275c8ee9d7a46ffa746faa02d9427f88d257"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS005OpeningViewPolicyAuthoring.cs",
+      "sha256": "d7f8ba9f0f45c9fdb6d7a9651d4cf52965350013b2893283c8a7c943554abe32"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS005OpeningViewPolicyAuthoring.cs.meta",
+      "sha256": "fc98317b88ccf6bf4dd770f8384649cedd3ca6d442aac7db1a8b59355411f644"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoySpawnHooks.cs",
+      "sha256": "902efac4f0f9bbb3fadc9392edca649c639696810fa79e23da29ec69c3ca3df5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoySpawnHooks.cs.meta",
+      "sha256": "c5a796d2c7f801b023792f56dfb8ff72780c37426fe1abe3ed211215fe56f2c4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyTruckRuntime.cs",
+      "sha256": "63c650ad38b8770b0c3cc64ee070a81b5789f40cf5ec4736780e982fc8d9e478"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyTruckRuntime.cs.meta",
+      "sha256": "01878cd9b6ab509ac9dbc4714abc859333ca8668b3aa66f2aeb44d6605581dc2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishLaunchDefinitionRecord.cs",
+      "sha256": "325d7ec3ed6ae44bcd5673caf906eace82294e2a4bebaab56a2ccee24b5f79a9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishLaunchDefinitionRecord.cs.meta",
+      "sha256": "01ad73944743582db606eefd5020c115f8b2bf03135363a250a2070423adbe80"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionLogicalBindingProvider.cs",
+      "sha256": "ab96e3601a4ada390bfd9bbaa612aafec54aee21f5f278b59f60488a77850e43"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionLogicalBindingProvider.cs.meta",
+      "sha256": "a34efc4b1b9158993ca6ed8d107e55670a75883a848cd43bbbb0e996e1b782b0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs",
+      "sha256": "f013f04e79174c903d0de3c5871e9d85deb7c96f78fc248e39f8f00399f49d86"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs.meta",
+      "sha256": "17972657ad8b91fa5d72662631ec79fae8364d10b6fda9f8800adf1e7a21d0e1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "sha256": "a3992fc674fe410adad3454da4fcbab9e2c008650cec1a8284fc48b4adb9fdbe"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs.meta",
+      "sha256": "9ca40058aea2c7fef5bbc1ca7ffd952de24b77d65820d1e58e6d7834a836a301"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "sha256": "d9136d01bfa185998a08d1bbfc13f93591e5ef20bac51e3e180b06455e044b96"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs.meta",
+      "sha256": "29166fa2280a48db4b62649de4d6eb199c783e95e8f9e78fd5bddfd9cf266bb1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryCommit.cs",
+      "sha256": "231d848000f81579ab27faa9c808591fa3343585ee3f5ac10c01d2623c727bd8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryCommit.cs.meta",
+      "sha256": "8a039b5d0d7cfb6915554d3e6a7dda0754077ebae12ae63d483b21e4e7086eaa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs",
+      "sha256": "16ee8a064415ccb63eb1603289ba5bd2e627d37b998ec3d30e50e05b2dda742a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryPreparation.cs.meta",
+      "sha256": "404e56182e8d86ec387b138e14e63e7dbc6f17f00f6d866a39498d3708f8a7c8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs",
+      "sha256": "1efe029fbd87a68a9002cfe897e799239d5b09e1fcad0d9ebf33c02f8b4a7c34"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs.meta",
+      "sha256": "d0e02c97090ad564247868eb41b201e72e695767a22f000c9f6476a25b1b62bb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSnapshotService.cs",
+      "sha256": "397ab5ceb156a0049b7f5bcd04172d4a27257228ba6c8d7e32373a02cb61ad84"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointSnapshotService.cs.meta",
+      "sha256": "e78c8b558a92bd400ef48d75fed7c08a5e59e23b785c90bcf61ffe2b446900f4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeConvoyCheckpoint.cs",
+      "sha256": "071e9a25a5042ccc03ed5d59ef7703c7ca3144c7c3df300e4a464c1154ba40db"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeConvoyCheckpoint.cs.meta",
+      "sha256": "bc0441758627295da5460eb8ef7621e6352cd4ca8033fab64a87424f7423ea52"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveCheckpoint.cs",
+      "sha256": "5c8f7edab0f0ddd70e257ef1ee6cf69741927c72f1e9c904a23af6c9d88944b4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveCheckpoint.cs.meta",
+      "sha256": "7a9057f228f672226cafcc830f18289b0f787f8d0d2aa48303bc4140c8a08971"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveCollector.cs",
+      "sha256": "ec89378f80c6a3391bc9ac897c8ccd45b304085e30bfe07ccd827f6db5e832d2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveCollector.cs.meta",
+      "sha256": "3382b584a1515f20dbab52463bf008e2c2a43c69be1fd2d48c0a8d82d98f5055"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveDeparture.cs",
+      "sha256": "e22d7bac15ef28c2240d5a49e5c5bccfab84d48f450d89304066f514b2ef2ee6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveDeparture.cs.meta",
+      "sha256": "c1557d168fc3f5bd915ca43839ee2f9cb2b0af7f384104833f1838a9ddb4efb3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveLifecycleHooks.cs",
+      "sha256": "ee39eb7e86b1ad3f1b88e373fb88a8f68cb3f3e02bc4944978df0d6f087aba9b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveLifecycleHooks.cs.meta",
+      "sha256": "b53ec972530b485e306534d3c9751b69d6a0c01fc7af9850685f98056ff14973"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveTick.cs",
+      "sha256": "ed6ed111d8c1765062a7b7d68a0dfeb3ae3e657030da5d2013e641a5c81b9e7a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveTick.cs.meta",
+      "sha256": "4369fe0334579ee2befdf467af879149480949bc6180737bfb1d558383045b79"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveTickSystem.cs",
+      "sha256": "bc61fded4623774bf5110cffbed8ee12a15b127145e882e2abdbcbc000f8157e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveTickSystem.cs.meta",
+      "sha256": "fad75c037d2fb3b9762041c33a76e77198d4544e2c76db5ea58c31d5a7a40b42"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs",
+      "sha256": "77cfcefc69a2167d79e9a21a77ae6ce107a51e57d13f9f6e8445743f0a002dd4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs.meta",
+      "sha256": "365b52ad5b8d7d0fbf04751c64bda64167d01641c472562398ad18f259172444"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveBindingPlan.cs",
+      "sha256": "f6eb1ecca995522de9d6bffea5f24e00d956fe9afef1d99fdae1ef89cb563379"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveBindingPlan.cs.meta",
+      "sha256": "82d38bfe8cf22151742da1d6a6ba3f23f84cf24be4ccd299cf13f3e106c91ec7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveSpawnHooks.cs",
+      "sha256": "8349036beec555e27c09636977b86da1a5f4e0dba3dfa1bc32d589bd0834ad3b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveSpawnHooks.cs.meta",
+      "sha256": "3f812504ba15a283a0725b041bf1cc0b5a3a2106c36fc2be0a4ef1f37ae57e06"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS004Environment.cs",
+      "sha256": "3bc3caf37b0d9c529bf003340f5b75c76fb63452def1b5738b1550b528959697"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS004Environment.cs.meta",
+      "sha256": "a5252f8ae35dce4aa257affc6c0f0cd92d7858787e6a064b05292c5545aea01c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS005OpeningViewPolicy.cs",
+      "sha256": "251b706065d899e4462bf8ec8d36e6ec5268b0f8439856e706bd6467a2d01d59"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS005OpeningViewPolicy.cs.meta",
+      "sha256": "7e10e3cbd40aa21d23f0eb1c5beffc5adefb233ddb0d23f4cf765d170e41af4b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.Checkpoint.cs",
+      "sha256": "cb2b03724a22e86656b2d7ef15d7a09f5cf589be24d755463407739c305d3d1c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.Checkpoint.cs.meta",
+      "sha256": "f188d49ad1872a2ec131640be82baeab343af8477d08471b54878aa8f541036c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "sha256": "a98eff8c77c2c998eab543dff1efa93d096e3a13219cde9a41407f187c7125f1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs.meta",
+      "sha256": "f58006cde00d926ce00561f1c5543469f28ca92697a1e0cab30b1695347c06f1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingCombatUtilitySystemHelper.cs",
+      "sha256": "f65100d10cb1971d4a5f1b54d0afde3d1d22f318b5c7d2c5f17be31e4aa2185a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingCombatUtilitySystemHelper.cs.meta",
+      "sha256": "a008e8fb768238ea84e71248282082f216b5ed4b383cb8a051087d5e0e35a903"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCapacitySystemHelper.cs",
+      "sha256": "d07c242137a5742235fbbe737ce6a1e3d48f52dbb7f307a68233e8d42aa0a676"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCapacitySystemHelper.cs.meta",
+      "sha256": "6aef0850f198fea3d9476161d1b57a4e0cccbd5e4012acdeab1b80805469af42"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "sha256": "97e4817e1605f0fd14ecf6104d58ab17943d21a9452abf4c560b4c9fddf305cb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs.meta",
+      "sha256": "9551f25532aa487bae1ce5a6fe3d8fec9c26af5020d4f3771cd87b93e6572603"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs",
+      "sha256": "c3346c6b3ed2a355b98d2af00ebb9bd943bf02463af4c4d53294a7548816d30b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs.meta",
+      "sha256": "a72e8627bcd0f9f2009f1e2ae0369ffdebd35b4bd7773c5e8bf991fcba80d8f2"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyTruckRuntimeTests.cs",
+      "sha256": "264ee20c719ab09a87b77de672d8be2f385c10d31e2687b943136a47101049db"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyTruckRuntimeTests.cs.meta",
+      "sha256": "364569b9fc323c6e890ced8c0865f0618f4fb971dc3dd049d6347d84490ff5eb"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericMissionDispatchTests.cs",
+      "sha256": "b417cff75d3fb0582ad4e5c7ada2040d0551d85bdefc6e4e398d9b2210496b46"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericMissionDispatchTests.cs.meta",
+      "sha256": "62010e3cdbdf65f8587571a7ed11f41d226ace385a7f345495f8f679def58ea2"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishManagedLogicalBindingDefaultsTests.cs",
+      "sha256": "cda4fea61f7b284e01d2e5f1b95fca43574979d31b388f47277b3e5c2e9f4024"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishManagedLogicalBindingDefaultsTests.cs.meta",
+      "sha256": "ed02216ea10c7343f6c1cd98261148e9ce8d97e7d159637ae896c4576524b141"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingTestFixture.cs",
+      "sha256": "2e4b9fe4f40433c510beb663d608b638640740b666d72f2ce42c72ec15eec898"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingTestFixture.cs.meta",
+      "sha256": "87d7f0a6adecef26de21073b210fcd1873c557949c85cf805cc9300da9a51bb6"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingTests.cs",
+      "sha256": "c04363b5a1986d8ca646e2e9aab34051b268a23f6b113406525804c38ba4eced"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingTests.cs.meta",
+      "sha256": "b6e11df7f0ee7a2871f75879ac9e0ccd62d8faf75973b8b6b74692c6c4c755cc"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingValidation.cs",
+      "sha256": "2a4a1ebbd0106be024fad4d797086cd8efed07b6986f98a45735c44342d3726d"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalBindingValidation.cs.meta",
+      "sha256": "b7be5b09cee2b15b8fd2ed10fa97f5262d4c4945b6379b3d97fcef798eb6a558"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalSubsystemValidation.cs",
+      "sha256": "23b302889eca4e68f0d66889534441e93f35662c3a8afb7961015772268826a8"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionLogicalSubsystemValidation.cs.meta",
+      "sha256": "e5a70612d39283c761edb9eba97659ca197d3076ce29b07e0a11ce88edc4d8f3"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveCheckpointTests.cs",
+      "sha256": "9c439452cbe2f3c156670669ad4cb9207685f72752a1e35897ad42db77e9cb19"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveCheckpointTests.cs.meta",
+      "sha256": "45f22a0338099e1acf7a070b04408a93099c063672d89370b073d240b82841ef"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveCheckpointValidation.cs",
+      "sha256": "96373ed4c201432a1716c6a52b099b0d50b97d203b608f2b5064f1b305d1181e"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveCheckpointValidation.cs.meta",
+      "sha256": "d92bda0eca888bb6cc6ded7319f08d6246e6bc1de5b6c2861eea84ad0ed63684"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveCollectorTests.cs",
+      "sha256": "f682cc1a909e42d90746637e734b775ad5454a96b5044529d4c51e70956a48e8"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveCollectorTests.cs.meta",
+      "sha256": "6e1f614ab3508d0e26c02909f574331e687d0649c184ad068ca1fef4192d8fda"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectivePartialFailureCheckpointTests.cs",
+      "sha256": "eceedb249ccf27c69170f483b3962dd298ca9324c3cd0bb1a09d081a4cc5cadb"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectivePartialFailureCheckpointTests.cs.meta",
+      "sha256": "07af1a2e3ac1c909288c58fa2b8652b0a8253062a7e8a83377a23ea35e81aa04"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveTickTests.cs",
+      "sha256": "abb1801b7687dbf03de4debb8e8183077e9ac4b80b77a41b0963a4a17567ca6d"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeObjectiveTickTests.cs.meta",
+      "sha256": "b499decd7703688abcde31cb38f4d464ae143cbe181b1129289c706197c36f00"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs",
+      "sha256": "1a071db405d484a9f63a669734323572b60f4050ebbb97aac4414918b1212b4c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishS005OpeningViewPolicyTests.cs",
+      "sha256": "c0c87eee9d6cd5a6bc02a6b164988983c67f1f6cf6181014e18b4b59368acd34"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishS005OpeningViewPolicyTests.cs.meta",
+      "sha256": "e08d2f82808af0db2c75abcc3fa33a1c32629e809cc112ffa63ac60f51b93612"
+    }
+  ],
+  "native_proof": "logical-subsystem-native-20261015/run06/receipt.json",
+  "proof_checked_wrapper_exit": 0,
+  "uncommitted_candidate_inputs": "Native proof also contained isolated public-goal projection controls and local S005 engineering view; those are separate pending source work, not a full committed-candidate mission win",
+  "missions_published": 0,
+  "playerReady": false
+}

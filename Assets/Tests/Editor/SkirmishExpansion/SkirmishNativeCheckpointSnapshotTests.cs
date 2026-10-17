@@ -21,7 +21,7 @@ namespace Game.Tests.Editor
             var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             state.Phase = Game.Skirmish.Contracts.SkirmishSessionPhase.Playing;
             em.SetComponentData(session, state);
-            em.AddComponentObject(session, new SkirmishResolvedSetupRecord { Setup = new Game.Configs.SkirmishResolvedSetup() });
+            em.AddComponentObject(session, new SkirmishResolvedSetupRecord { Setup = new Game.Configs.SkirmishResolvedSetup {ObjectiveKind=Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault} });
             em.AddComponentObject(session, new SkirmishProductionCatalogRecord());
             foreach (int id in new[] { 15, 16 })
             {
@@ -37,7 +37,8 @@ namespace Game.Tests.Editor
                 Assert.IsFalse(em.HasComponent<SkirmishObjectiveRoleComponent>(building));
             }
             Assert.IsTrue(SkirmishNativeCheckpointSnapshotService.TryCapture(em, session, _ => "prefab", out var snapshot, out var failure), failure);
-            var decoded = JsonUtility.FromJson<SkirmishNativeCheckpointSnapshotService.Snapshot>(JsonUtility.ToJson(snapshot));
+            Assert.IsTrue(SkirmishNativeLegacyBa7Json.TryDecodeInner(SkirmishNativeLegacyBa7Json.EncodeInner(snapshot),out var decoded));
+            Assert.IsNull(decoded.Objective);
             Assert.AreEqual(2, decoded.Actors.Length);
             Assert.AreNotEqual(decoded.Actors[0].Id, decoded.Actors[1].Id);
             Assert.IsTrue(decoded.Actors[0].HasProduction && decoded.Actors[1].HasProduction);
@@ -97,11 +98,12 @@ namespace Game.Tests.Editor
             { RuntimeBuildingId = 44, CycleProgressSeconds = 15.3f, ProductionEnabled = 0 });
             Assert.IsTrue(SkirmishNativeCheckpointSnapshotService.TryCapture(em, session, _ => "prefab", out var snapshot, out var failure), failure);
             Assert.AreEqual("map/2/20/30/wall", snapshot.MapReferences[0].Id);
-            var json = JsonUtility.ToJson(snapshot);
+            var json = SkirmishNativeLegacyBa7Json.EncodeInner(snapshot);
             StringAssert.Contains("map/2/20/30/wall", json);
             Assert.AreEqual(44, snapshot.MapReferences[0].OldRuntimeBuildingId);
             Assert.IsTrue(em.Exists(wall));
-            var decoded = JsonUtility.FromJson<SkirmishNativeCheckpointSnapshotService.Snapshot>(json);
+            Assert.IsTrue(SkirmishNativeLegacyBa7Json.TryDecodeInner(json,out var decoded));
+            Assert.IsNull(decoded.Objective);
             using var restoredWorld = new World("restored-map");
             var restored = restoredWorld.EntityManager;
             Entity newWall = restored.CreateEntity();
@@ -155,7 +157,7 @@ namespace Game.Tests.Editor
         {
             Entity session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
             em.SetComponentData(session, new SkirmishExpandedSessionComponent
-            { SessionId = new FixedString64Bytes("snapshot-fixture"), CatalogId = new FixedString64Bytes("S005") });
+            { ObjectiveKind=Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault, SessionId = new FixedString64Bytes("snapshot-fixture"), CatalogId = new FixedString64Bytes("S005") });
             return session;
         }
 
@@ -229,7 +231,8 @@ namespace Game.Tests.Editor
                 RunDestruction(source);
                 Assert.IsTrue(em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(original));
                 Assert.IsTrue(SkirmishNativeCheckpointSnapshotService.TryCapture(em, session, _ => "unit", out var saved, out var failure), failure);
-                saved = JsonUtility.FromJson<SkirmishNativeCheckpointSnapshotService.Snapshot>(JsonUtility.ToJson(saved));
+                Assert.IsTrue(SkirmishNativeLegacyBa7Json.TryDecodeInner(SkirmishNativeLegacyBa7Json.EncodeInner(saved),out saved));
+                Assert.IsNull(saved.Objective);
                 Assert.AreEqual(1, saved.MapReferences.Length, "Rubble stays in the physical source census.");
 
                 using var fresh = new World("fresh-destroyed-source-presentation");

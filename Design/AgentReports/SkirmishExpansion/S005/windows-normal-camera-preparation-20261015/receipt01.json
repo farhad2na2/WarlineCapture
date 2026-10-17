@@ -1,0 +1,16 @@
+{
+  "result": "PassedNativeCodeAndPlayerBuildArtifactWarmup",
+  "wrapper_exit_code": 0,
+  "native_api_tests": 12,
+  "native_objective_rules": 42,
+  "exact_observer_sources_loaded": true,
+  "play_started": false,
+  "camera_accepted": false,
+  "scope_correction": "Warmup used Dots client build GUID75af44368d95e73ec683305b89b32631. Actual prior Editor Play artifact key used zero. This is not proof the timed Editor mission is warm. Corrected warmup pending.",
+  "logs": [
+    "camera-calibration-preparation-20261015-01.log",
+    "camera-calibration-preparation-20261015-01.stderr.log",
+    "camera-calibration-preparation-20261015-01.stdout.log",
+    "camera-scene-warmup-20261015-01.json"
+  ]
+}

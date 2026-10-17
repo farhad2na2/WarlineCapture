@@ -1,0 +1,62 @@
+diff --git a/Assets/Tests/Editor/MissionGroupSelectionTests.cs b/Assets/Tests/Editor/MissionGroupSelectionTests.cs
+index 31e78d9f1..9c7251bce 100644
+--- a/Assets/Tests/Editor/MissionGroupSelectionTests.cs
++++ b/Assets/Tests/Editor/MissionGroupSelectionTests.cs
+@@ -147,6 +147,57 @@ public sealed class MissionGroupSelectionTests
+         em.SetComponentData(actor,new Faction {Id=1});em.SetComponentData(actor,new UnitHealth {Current=100});
+         return actor;
+     }
++    [Test]
++    public void SquadCardFallbackRequiresVisibleUncoveredNormalControl()
++    {
++        var canvasObject = new GameObject("Squad fallback canvas", typeof(RectTransform), typeof(Canvas), typeof(UnityEngine.UI.GraphicRaycaster));
++        var canvas = canvasObject.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32760;
++        var buttonObject = new GameObject("RifleSquad", typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
++        buttonObject.transform.SetParent(canvasObject.transform, false);
++        var rect = buttonObject.GetComponent<RectTransform>(); rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f,.5f); rect.sizeDelta = new Vector2(140,100);
++        var button = buttonObject.GetComponent<UnityEngine.UI.Button>(); int clicks = 0; button.onClick.AddListener(() => clicks++);
++        var pulseObject = new GameObject("Pulse", typeof(RectTransform), typeof(UnityEngine.UI.Image)); pulseObject.transform.SetParent(canvasObject.transform,false); pulseObject.GetComponent<UnityEngine.UI.Image>().raycastTarget = false;
++        var oldEvents = UnityEngine.EventSystems.EventSystem.current;
++        var eventsObject = new GameObject("Fallback events",typeof(UnityEngine.EventSystems.EventSystem));
++        typeof(UnityEngine.EventSystems.EventSystem).GetMethod("OnEnable",System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
++            .Invoke(eventsObject.GetComponent<UnityEngine.EventSystems.EventSystem>(),null);
++        UnityEngine.EventSystems.EventSystem.current = eventsObject.GetComponent<UnityEngine.EventSystems.EventSystem>();
++        var raycaster = canvasObject.GetComponent<UnityEngine.UI.GraphicRaycaster>();
++        if (!UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Contains(raycaster))
++            UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Add(raycaster);
++        var helper = new Game.UI.Runtime.AssistantHighlightPresentationSystemHelper();
++        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
++        typeof(Game.UI.Runtime.AssistantHighlightPresentationSystemHelper).GetField("_panelPulse",flags).SetValue(helper,pulseObject.GetComponent<UnityEngine.UI.Image>());
++        typeof(Game.UI.Runtime.AssistantHighlightPresentationSystemHelper).GetField("_squadGuidanceButton",flags).SetValue(helper,button);
++        GameObject cover = null;
++        try
++        {
++            Canvas.ForceUpdateCanvases();
++            Assert.IsTrue(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group"),"Guide the real visible squad card.");
++            Assert.AreEqual(0,clicks,"Presenting guidance must never select or order troops.");
++            button.interactable = false; Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group")); button.interactable = true;
++            buttonObject.SetActive(false); Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group")); buttonObject.SetActive(true);
++            rect.anchoredPosition = new Vector2(Screen.width*2,0); Canvas.ForceUpdateCanvases(); Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group")); rect.anchoredPosition = Vector2.zero;
++            cover = new GameObject("Blocking panel",typeof(RectTransform),typeof(UnityEngine.UI.Image)); cover.transform.SetParent(canvasObject.transform,false);
++            var coverRect = cover.GetComponent<RectTransform>(); coverRect.anchorMin = coverRect.anchorMax = coverRect.pivot = new Vector2(.5f,.5f); coverRect.sizeDelta = new Vector2(200,200); Canvas.ForceUpdateCanvases();
++            Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group"),"A covered card cannot be suggested as reachable input.");
++            Assert.AreEqual(0,clicks);
++        }
++        finally
++        {
++            helper.Unbind();
++            UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Remove(raycaster);
++            typeof(UnityEngine.EventSystems.EventSystem).GetMethod("OnDisable",System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
++                .Invoke(eventsObject.GetComponent<UnityEngine.EventSystems.EventSystem>(),null);
++            if (oldEvents != null) UnityEngine.EventSystems.EventSystem.current = oldEvents;
++            UnityEngine.Object.DestroyImmediate(eventsObject); UnityEngine.Object.DestroyImmediate(canvasObject);
++        }
++    }
++    public static void ValidatePresentedSquadCardFallback()
++    {
++        new MissionGroupSelectionTests().SquadCardFallbackRequiresVisibleUncoveredNormalControl();
++        Debug.Log("[MissionSquadCardFallback] result=Passed visible, disabled, inactive, offscreen, covered controls; normalClickInjected=0");
++    }
+     public static void RunFull()
+     {
+         try

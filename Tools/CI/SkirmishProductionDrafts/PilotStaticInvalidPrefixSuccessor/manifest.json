@@ -1,0 +1,20 @@
+{
+  "scope": "ProbeLocalImmutableSourceInvalidPrefix_NoGameplayPolicyChange",
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/PilotStaticInvalidPrefixSuccessor/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "before_sha256": "0dca4cbde1225a67ea21b4d17fd6a2dc047ac892ef87edf8b3022818fca8149b",
+      "sha256": "7760fad1a6e9a1204c7eabcf65a587e9e6e040d24f25318e2f045d1313b979ab",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "controls_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunPilotStaticPlacementPrefixControls",
+  "controls": 6,
+  "rectangle_comparisons": 900,
+  "proof": "HELD while root native30788 owns DLLs",
+  "native_executed": false,
+  "assets_edited": false,
+  "speedup_measured": false,
+  "source_fit_certified": false
+}

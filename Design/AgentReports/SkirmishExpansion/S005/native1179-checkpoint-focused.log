@@ -1,0 +1,245 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=S005CheckpointFocused1179.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishExpandedCheckpointTests] result=Passed
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedCheckpointTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs:437)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:9)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointPartsTests] result=Passed tests=10 nativeRecoveryComplete=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointPartsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointPartsTests.cs:272)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:10)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeProductionCheckpointTests] result=Passed tests=6 nativeRecoveryComplete=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeProductionCheckpointTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeProductionCheckpointTests.cs:145)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:11)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointSnapshotTests] result=Passed tests=7 nativeRecoveryComplete=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointSnapshotTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointSnapshotTests.cs:181)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:12)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointCodecTests] result=Passed tests=3 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointCodecTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointCodecTests.cs:147)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:13)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointRecoveryPreparationTests] result=Passed tests=3 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryPreparationTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryPreparationTests.cs:141)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:14)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointActorSpawnTests] result=Passed tests=2 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointActorSpawnTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointActorSpawnTests.cs:78)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:15)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointStructureReconstructionTests] result=Passed tests=3 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointStructureReconstructionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointStructureReconstructionTests.cs:177)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:16)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointRecoveryCommitTests] result=Passed tests=3 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryCommitTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryCommitTests.cs:95)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:17)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeRecovery] result=Failed reason=NativeStructurePrefabOrFootprintMissing:Building_Barrack
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.SkirmishNativeCheckpointRecoveryRunner:Fail (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Runtime.SkirmishNativeCheckpointRecoveryRecord,string) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs:147)
+Game.Runtime.SkirmishNativeCheckpointRecoveryRunner:Step (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Configs.SkirmishResolvedSetup) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs:71)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryRunnerTests:FailedNativePreflightNeverFallsBackToStartingForceGrant () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryRunnerTests.cs:83)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryRunnerTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryRunnerTests.cs:132)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:18)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeRecovery] result=Failed reason=NativeRecoveryTimedOut:NativePhysicalMapCensusIncomplete
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.SkirmishNativeCheckpointRecoveryRunner:Fail (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Runtime.SkirmishNativeCheckpointRecoveryRecord,string) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs:147)
+Game.Runtime.SkirmishNativeCheckpointRecoveryRunner:Step (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Configs.SkirmishResolvedSetup) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs:60)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryRunnerTests:IncompleteStreamedSourceCensusWaitsThenFailsClosedOnTimeout () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryRunnerTests.cs:123)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryRunnerTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryRunnerTests.cs:133)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:18)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointRecoveryRunnerTests] result=Passed tests=3 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointRecoveryRunnerTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointRecoveryRunnerTests.cs:134)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:18)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointPrefabRegistryTests] result=Passed tests=3 editorPrefabResolver=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointPrefabRegistryTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointPrefabRegistryTests.cs:94)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:19)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeRecoveryStagingValidation] result=Passed tests=51 nativeRecoveredSessions=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeRecoveryStagingValidation:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeRecoveryStagingValidation.cs:20)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005CheckpointFocused1179Suite] result=Passed suite=Staging declaredCases=51 nativeWorldSceneHierarchyPreserved=True seconds=0.299
+UnityEngine.Debug:Log (object)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:77)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeCheckpointTransientTests] result=Passed tests=13 nativePlayerRecovery=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeCheckpointTransientTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointTransientTests.cs:250)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:89)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005CheckpointFocused1179Suite] result=Passed suite=Transient declaredCases=13 nativeWorldSceneHierarchyPreserved=True seconds=0.025
+UnityEngine.Debug:Log (object)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:77)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:89)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeSupportRecoveryTests] result=Passed tests=5 nativePlayerJourneys=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeSupportRecoveryTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeSupportRecoveryTests.cs:27)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:90)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005CheckpointFocused1179Suite] result=Passed suite=Support declaredCases=5 nativeWorldSceneHierarchyPreserved=True seconds=0.024
+UnityEngine.Debug:Log (object)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:77)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:90)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishNativeStrikeRecoveryTests] result=Passed tests=5 nativePlayerJourneys=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishNativeStrikeRecoveryTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeStrikeRecoveryTests.cs:22)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:73)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:91)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005CheckpointFocused1179Suite] result=Passed suite=Strike declaredCases=5 nativeWorldSceneHierarchyPreserved=True seconds=0.028
+UnityEngine.Debug:Log (object)
+S005CheckpointFocused1179:Suite (string,int,System.Action) (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:77)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:91)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005CheckpointFocused1179] result=Passed suites=4 declaredCases=74 nativeWorldSceneHierarchyPreserved=True nativePlayerJourneys=0 fullX36GateClosed=0 normalTenReplayCycles=0 family20Matches=0 performanceCertified=0 deviceCertified=0
+UnityEngine.Debug:Log (object)
+S005CheckpointFocused1179:RunValidation () (at /private/tmp/s005-focused1179/S005CheckpointFocused1179.cs:93)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=S005CheckpointFocused1179.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_cb04f43d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

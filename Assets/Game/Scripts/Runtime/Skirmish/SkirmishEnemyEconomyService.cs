@@ -41,7 +41,7 @@ namespace Game.Runtime
             var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             var current = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             if (setup?.EnemyPolicy == null || setup.EnemyFaction != actingFaction ||
-                setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault || current.SessionId.IsEmpty ||
+                (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault && !SkirmishEnemyObjectivePolicyScope.Supports(setup)) || current.SessionId.IsEmpty ||
                 current.SpawnComplete == 0 || !em.HasBuffer<SkirmishResearchQueueItem>(session) ||
                 !SkirmishResearchService.TryReadState(em,session,actingFaction,out var research)) return false;
             var planner = em.GetComponentData<SkirmishEnemyPlannerV1Component>(session);

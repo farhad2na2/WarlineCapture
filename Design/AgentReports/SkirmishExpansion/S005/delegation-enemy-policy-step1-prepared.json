@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "preparedAtUtc": "2026-10-11T16:28:17.777028+00:00",
+  "status": "ExternalPrepared_SourceContractsVerified_NativeCompilePending",
+  "bundleManifest": "/private/tmp/s005-enemy-policy-step1/manifest.json",
+  "manifestSha256": "43f49d6ff0a9f52f5c81efea7075e35b60a24b42682b4c1c662ef99055424379",
+  "patch": "/private/tmp/s005-enemy-policy-step1/foundation.patch",
+  "patchSha256": "d8ba70e7362571a56e7d779c3aca924bd4de59acf75c6a9505329c1ac20a2921",
+  "baseWholeSourceSha256": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "sourceMutation": false,
+  "unityCalls": 0,
+  "gitActions": 0,
+  "productionIntegrator": "aircraft_tests owns authorized T7 lane; root reviews before main integration",
+  "ownedScope": [
+    "immutable compiled policy/route snapshots/canonical settings identity",
+    "new versioned planner/assignment/production intent layouts, legacy strategy layout unchanged",
+    "idempotent initialization and explicit fresh ledger replay cleanup",
+    "strict native checkpoint V1 Parts/semantic identity and elapsed-clock preservation",
+    "old policyless native7 compatibility recognition for existing friendly UI, never decode/apply/delete",
+    "explicit unsupported old fixture codec for current-policy sessions and scoped fixture test adaptation"
+  ],
+  "focusedEntry": "Game.Tests.Editor.SkirmishEnemyPolicyV1Tests.RunFocusedValidation",
+  "focusedCasesPrepared": 6,
+  "focusedNativePass": null,
+  "currentPolicyNativeWins": 0,
+  "oldSaveChoice": {
+    "wireSchema": 7,
+    "aiPartsVersion": 1,
+    "migratesOldPurchaseState": false,
+    "oldPolicylessBAResumeAccepted": false,
+    "filePreserved": true,
+    "recognizedPresenceOnly": "checksum/current native7 original content+legacy setup identity/all generic layout/owner guards/current catalog S005 Playing SpawnComplete; no V1 parts",
+    "UI": "existing Continue failure copy and explicit NewMatch deletion; corrupt/unrelated saves remain unadvertised"
+  },
+  "compilerSource": "actual packaged difficulty config copied once when definition matches catalog owner; in-memory defaults from existing difficulty config owner; immutable route projection from current Campaign frame",
+  "unchangedBudgetAndGeometry": true,
+  "reviewFindings": [
+    {
+      "scope": "commander draft local defense",
+      "finding": "Non-local offensive groups recalled during DefendHome",
+      "status": "root corrected; read-only re-review verified route/attack preservation for prior offensive assignments"
+    },
+    {
+      "scope": "commander order rejection",
+      "finding": "Recover order rejected indefinitely/byte retry wrap/dispatch starvation",
+      "status": "root corrected; saturating terminal retry count and actual-movement reset verified"
+    },
+    {
+      "scope": "commander ProductionKey",
+      "finding": "All own stock/cap fields stamp can reopen Capacity/QueueLocked rejection on irrelevant materials generation",
+      "status": "reported; root correction pending re-review"
+    }
+  ],
+  "limitations": [
+    "No native compile/test/pass claimed yet.",
+    "Fixture-only schema tests do not qualify current native AI checkpoint recovery.",
+    "Ground commander excludes air orchestration; later supported AI operational paths remain separate.",
+    "All existing d5af player wins are baseline history after eventual AI source integration, not new-candidate acceptance."
+  ]
+}

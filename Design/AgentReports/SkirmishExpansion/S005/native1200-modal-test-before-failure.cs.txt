@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+namespace Game.Tests.Editor
+{
+    public sealed class SkirmishModalLayeringTests
+    {
+        [TestCase(UiSkirmishAction.Surrender)]
+        [TestCase(UiSkirmishAction.Restart)]
+        public void ConfirmationReceivesRaycastAbovePausedMenu(UiSkirmishAction action)
+        {
+            // Disposable UI geometry test. Full normal-input lifecycle validation
+            // separately proves gateway state, pause conservation and outcomes.
+            var previousEventSystem = EventSystem.current;
+            GameObject events = null, pause = null;
+            SkirmishMatchView view = null;
+            try
+            {
+                events = new GameObject("Modal regression events", typeof(EventSystem));
+                EventSystem.current = events.GetComponent<EventSystem>();
+                pause = new GameObject("Modal regression pause", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
+                pause.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+                UiChromeStack.RaiseAboveTutorial(pause);
+                var blocker = new GameObject("Pause blocker", typeof(RectTransform), typeof(Image));
+                blocker.transform.SetParent(pause.transform, false);
+                var blockerRect = (RectTransform)blocker.transform;
+                blockerRect.anchorMin = Vector2.zero; blockerRect.anchorMax = Vector2.one;
+                blockerRect.offsetMin = blockerRect.offsetMax = Vector2.zero;
+                view = SkirmishMatchView.Create();
+                if (view.transform.Find("SkirmishResult") == null)
+                    typeof(SkirmishMatchView).GetMethod("Awake", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(view, null);
+                view.Confirm(action);
+                var modal = view.transform.Find("SkirmishResult");
+                var actions = modal.Find("ConfirmationActions");
+                modal.gameObject.SetActive(true);
+                foreach (Transform child in modal) child.gameObject.SetActive(child == actions);
+                Canvas.ForceUpdateCanvases();
+                var button = actions.Find("CONFIRM").GetComponent<Button>();
+                Assert.IsTrue(button.IsActive() && button.IsInteractable());
+                var rect = (RectTransform)button.transform;
+                var point = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center));
+                var hits = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
+                // Exclude unrelated Editor scene UI, retaining the actual priority
+                // ordering returned by EventSystem for the two test surfaces.
+                hits.RemoveAll(hit => !hit.gameObject.transform.IsChildOf(view.transform) && !hit.gameObject.transform.IsChildOf(pause.transform));
+                Assert.IsTrue(hits.Exists(hit => hit.gameObject == blocker), "The Pause blocker must overlap this exact confirmation point.");
+                Assert.IsNotEmpty(hits);
+                Assert.AreEqual(button, hits[0].gameObject.GetComponentInParent<Button>(),
+                    "Pause must not intercept a visible confirmation; nested canvas also needs its own raycaster.");
+            }
+            finally
+            {
+                if (view != null) UnityEngine.Object.DestroyImmediate(view.gameObject);
+                if (pause != null) UnityEngine.Object.DestroyImmediate(pause);
+                if (events != null) UnityEngine.Object.DestroyImmediate(events);
+                EventSystem.current = previousEventSystem;
+            }
+        }
+        public static void RunFocusedValidation()
+        {
+            var suite = new SkirmishModalLayeringTests();
+            suite.ConfirmationReceivesRaycastAbovePausedMenu(UiSkirmishAction.Surrender);
+            suite.ConfirmationReceivesRaycastAbovePausedMenu(UiSkirmishAction.Restart);
+            Debug.Log("[SkirmishModalLayeringTests] result=Passed cases=2");
+        }
+    }
+}

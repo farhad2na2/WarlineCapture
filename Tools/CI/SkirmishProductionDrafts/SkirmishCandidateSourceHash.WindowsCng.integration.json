@@ -1,0 +1,14 @@
+{
+  "result": "PreparedOutsideAssetsOnly",
+  "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs",
+  "focusedValidation": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHashWindowsValidation.cs",
+  "originalSourceSha256": "0e85c47b19d767f386a2390c7ae1fbfcf4b406d96576da89bcd2bd14af811423",
+  "proposedSourceSha256": "93623e3618fd6148911efc88dd6a5609e05ddb4cac4c141da7680f8c99792200",
+  "patchSha256": "b1585e195dbf05a1177009924e05729da3d1ccea91c69e871a3892c4b25bed66",
+  "preservedOriginalBranches": true,
+  "executeMethod": "Game.Tests.Editor.SkirmishCandidateSourceHashWindowsValidation.RunFocusedValidation",
+  "requiredPassMarker": "[SkirmishCandidateSourceHashWindowsValidation] result=Passed",
+  "timeoutSeconds": 180,
+  "nativeRunPerformed": false,
+  "integrationGate": "Current wrapper must exit before importing source/test; root owns integration and native runs"
+}

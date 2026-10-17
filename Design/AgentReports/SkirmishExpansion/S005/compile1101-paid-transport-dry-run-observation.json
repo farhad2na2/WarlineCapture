@@ -1,0 +1,14 @@
+{
+  "kind": "ObservedToolResultMetadataNotRawStdout",
+  "outerSuccess": true,
+  "nativeResultSuccess": true,
+  "compileMs": 918,
+  "executeMs": 0,
+  "errors": [],
+  "warnings": [
+    "CS0618 obsolete FindObjectsSortMode overload"
+  ],
+  "fixtureSha256": "66a3d460c46a3f04d9a420f6676c6fadbb04aec66c233a4986372b902152cea9",
+  "loaded": false,
+  "playStarted": false
+}

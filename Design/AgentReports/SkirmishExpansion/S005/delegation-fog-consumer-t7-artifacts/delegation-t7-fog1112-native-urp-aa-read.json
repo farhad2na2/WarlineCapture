@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var pipeline=UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline; var urp=pipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset; return new { ActualAA=UnityEngine.QualitySettings.antiAliasing, CurrentTier=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()], PipelinePath=UnityEditor.AssetDatabase.GetAssetPath(pipeline), PipelineName=pipeline!=null?pipeline.name:null, UrpMsaa=urp!=null?urp.msaaSampleCount:-1 };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "ActualAA": 4,
+        "CurrentTier": "Mobile",
+        "PipelinePath": "Assets/Settings/PC_RPAsset.asset",
+        "PipelineName": "PC_RPAsset",
+        "UrpMsaa": 4
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

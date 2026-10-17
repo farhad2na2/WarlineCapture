@@ -1,0 +1,155 @@
+{
+  "archive": "native1232-camera-failure-evidence.zip",
+  "sha256": "cf083d55164021499816787bef6dc8c3c0e71dab0726e8071f293d0d18a40f87",
+  "bytes": 13913496,
+  "result": "FailedBeforeRecovery",
+  "normalWins": 0,
+  "originalsPreserved": true,
+  "files": [
+    {
+      "file": "compile1232-manual-recovery-reviewed-v2-dry-run.json",
+      "bytes": 6643,
+      "sha256": "e06a159984cc94944b7d86ea012fc3b5c33aacd0bb7ea54668f830419a527618"
+    },
+    {
+      "file": "final-1232-normal-manual-r2-recovery-post-independent-fingerprint.json",
+      "bytes": 370,
+      "sha256": "47761b738ca29af4fe512189c5f22dcba934f5fa4f3b4e1c48757402d3f5a4c0"
+    },
+    {
+      "file": "final-1232-normal-manual-r2-recovery-post-source-manifest.json",
+      "bytes": 6933113,
+      "sha256": "381a9e67bd92ca03a98bc3da004d2ee1b0b9b38be853a805272e45d57c667dfc"
+    },
+    {
+      "file": "final-1232-normal-manual-r2-recovery-pre-dispatch-independent-fingerprint.json",
+      "bytes": 376,
+      "sha256": "b24b377e4219f376ddc13e72c5cd30743c574bcacca9f97891bc7aff1ffa4975"
+    },
+    {
+      "file": "final-1232-normal-manual-r2-recovery-pre-dispatch-source-manifest.json",
+      "bytes": 6933113,
+      "sha256": "381a9e67bd92ca03a98bc3da004d2ee1b0b9b38be853a805272e45d57c667dfc"
+    },
+    {
+      "file": "final-1232-normal-manual-r2-recovery-preflight-independent-fingerprint.json",
+      "bytes": 369,
+      "sha256": "832cc0c23abc672ab7f44559875af15527df78744c3b03d4ca9cd7516c776439"
+    },
+    {
+      "file": "final-1232-normal-manual-r2-recovery-preflight-source-manifest.json",
+      "bytes": 6933113,
+      "sha256": "381a9e67bd92ca03a98bc3da004d2ee1b0b9b38be853a805272e45d57c667dfc"
+    },
+    {
+      "file": "load1232-normal-manual-r2-recovery-observer.json",
+      "bytes": 6620,
+      "sha256": "e773f9c1c8b103d333ef51b78eb289b38e04d5b8a88020a58855ab8703a5130c"
+    },
+    {
+      "file": "native-1232-normal-manual-r2-recovery-en-seed155926.log",
+      "bytes": 205548,
+      "sha256": "ca671c070e69d5605b1f06b829bbc942dde322936fa5792da746cc4b6c1e4e02"
+    },
+    {
+      "file": "native-1232-normal-manual-r2-recovery-en-seed155926.log.dispatch.cs",
+      "bytes": 662,
+      "sha256": "f8336544f67a10238df8e4e20730bd1cd70af842ced5acf38941a439bd6f6751"
+    },
+    {
+      "file": "native-1232-normal-manual-r2-recovery-en-seed155926.log.dispatch.json",
+      "bytes": 851,
+      "sha256": "908e0f10283861136f608b519f0bf9b067950b4d6ac4fd57f5281a3563f0076a"
+    },
+    {
+      "file": "native-1232-normal-manual-r2-recovery-en-seed155926.log.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "file": "native-1232-normal-manual-r2-recovery-en-seed155926.log.wrapper-exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "file": "native1232-after-close-native-idle.json",
+      "bytes": 736,
+      "sha256": "f7469bb3e18698c8f147913a702592ad5b6ea978d6e4e452898a74d1681a1338"
+    },
+    {
+      "file": "native1232-after-failed-closure-idle.json",
+      "bytes": 736,
+      "sha256": "f0fd20d4572892ba956afc9582f98c1a6dde23b36b3433ccb05e36f4b7739fc8"
+    },
+    {
+      "file": "native1232-before-dispatch-native-idle.json",
+      "bytes": 736,
+      "sha256": "1368ea59b310af3b339b61c7ce3e7cf56bc8a8448fcd1f4357823d89723a071a"
+    },
+    {
+      "file": "native1232-before-load-native-idle.json",
+      "bytes": 736,
+      "sha256": "1f69f5a58174d423979afe6e163b9dfbfe92a7c6b7f6157b45ce9f8e9f0778fe"
+    },
+    {
+      "file": "native1232-manual-fog-fallback-parser.py.txt",
+      "bytes": 6405,
+      "sha256": "6c4736beacee012fb53e73612c38ae014955250851cb6a984d15564fa3f9329f"
+    },
+    {
+      "file": "native1232-manual-fog-fallback.jsonl",
+      "bytes": 1562,
+      "sha256": "4e1abc1e2be124c8c94711ae3f5e7a5e821eb02e6baf4d708f5c46c555e6a08c"
+    },
+    {
+      "file": "native1232-normal-manual-r2-recovery-failure.json",
+      "bytes": 798,
+      "sha256": "d4df4c482ea455fc4c5b26b9bd7f3d904b9842f554b43f25a6ad72101c72c3a9"
+    },
+    {
+      "file": "native1232-normal-manual-r2-recovery-observation.jsonl",
+      "bytes": 5375186,
+      "sha256": "6654e8155a731a82337691057811d8677bd942ee054b5546f9d838fc811252bc"
+    },
+    {
+      "file": "native1232-normal-manual-r2-recovery-observer.cs.txt",
+      "bytes": 58873,
+      "sha256": "53f75d4685beb3a3dcffb267a99abf37a50f7bcadbf1a51a77c4a8043a0dd406"
+    },
+    {
+      "file": "native1232-runner-start.json",
+      "bytes": 661,
+      "sha256": "433e21352dfb68216075195c7fea90bb0c63f8853cba6e638e48efa08f608fde"
+    },
+    {
+      "file": "s005-aria-live-155926-en-27af2d83f754401f8a9a9dac9e5b9179.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "s005-aria-live-155926-en-27af2d83f754401f8a9a9dac9e5b9179.jsonl.camera-focus-failure.png",
+      "bytes": 2493934,
+      "sha256": "c4e6b598802d55c93e8715b292fbeb74da3ab3071535e09bddf5fc0ffa2f42e9"
+    },
+    {
+      "file": "s005-aria-live-155926-en-27af2d83f754401f8a9a9dac9e5b9179.jsonl.menu-selection-diagnostic.png",
+      "bytes": 1075204,
+      "sha256": "e6e205732d41d43937c9c04271fd2a4ce11aac87314f236ae5126d92e34072f1"
+    },
+    {
+      "file": "s005-aria-live-155926-en-27af2d83f754401f8a9a9dac9e5b9179.jsonl.save-step-0.png",
+      "bytes": 3494201,
+      "sha256": "4b1d60f553920fe3b88bfb4cec4aa2c77b42c1ebf4b0bd81b763e6e50f38bb83"
+    },
+    {
+      "file": "s005-aria-live-155926-en-27af2d83f754401f8a9a9dac9e5b9179.jsonl.setup.png",
+      "bytes": 1101683,
+      "sha256": "3df1029dad9b173a646a05b55c68faf614c0c7b67dc4a806c98ffe3f484c1f14"
+    },
+    {
+      "file": "s005-aria-live-155926-en-27af2d83f754401f8a9a9dac9e5b9179.jsonl.touch.jsonl",
+      "bytes": 38046,
+      "sha256": "3e0927c28ab5f30e6c0ac68392e093f1ad5273a20d760c86850287cdd176d2e1"
+    }
+  ]
+}

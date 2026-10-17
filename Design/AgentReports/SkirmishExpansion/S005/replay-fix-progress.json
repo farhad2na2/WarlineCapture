@@ -1,0 +1,40 @@
+{
+  "mission": "S005",
+  "playerReady": false,
+  "status": "Native retest running",
+  "activeRun": null,
+  "changes": [
+    "Native Replay uses full existing match/source-scene unload and preserves exact compiled setup, seed, size and difficulty.",
+    "In-place ledger replay refuses physical-supply sessions before mutation.",
+    "Persistent faction account startup resets fabrication event queue and history.",
+    "Native Replay probe requires previous physical entities removed, correct fresh structures and initial roster, and reset player materials and counters."
+  ],
+  "focusedChecks": [
+    {
+      "run": 138,
+      "result": "Passed",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 140,
+      "result": "Passed",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    }
+  ],
+  "retainedFailures": [
+    {
+      "run": 136,
+      "reason": "Visible wrecks and physical supply leaked through in-place Replay."
+    },
+    {
+      "run": 139,
+      "reason": "Blanket old-entity assertion rejected persistent account; following check permits only faction bank with verified fresh balances/counters."
+    }
+  ],
+  "mapScope": "Shared Campaign CityEdgeAirfield dressing retained for all consumers; no physical map derivative.",
+  "nativeRetest": "Passed",
+  "finalNativeEvidence": "native148-aria-en-evidence.json",
+  "sourceHash": "23ee330de45459b3dd3c553e9ba9bdae49596e23e69be7b4ac93a9895800e62d"
+}

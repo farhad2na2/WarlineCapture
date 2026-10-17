@@ -1,0 +1,18 @@
+{
+  "sourceHash": "2614cfa056419cc15ca90e2a72918b0875b2cc029fbb0d42076e2d496fc54680",
+  "result": "Failed",
+  "log": "native-386-paid-siege-combat-save.log",
+  "logSha256": "8ecc2387e758937c7fe173765d23b60739d81603e4eb40626281cf69421a7411",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "playerReady": false,
+  "countsForCurrentSource": false,
+  "paidSiegeDelivered": true,
+  "paidCost": 420,
+  "paidFabricationAdded": 2,
+  "paidReadiness": "FullArsenal",
+  "commandedMovementMetres": 387.0633,
+  "nativeFire": false,
+  "saveFailure": "NativeActorIdentityInvalid:constructed.15",
+  "savedAttemptRestored": false
+}

@@ -1,0 +1,11 @@
+{
+  "requestedHeavyLaneOwner": "main1148",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1175-integrated-post-source-manifest.json",
+  "preflightManifest": "final-1148-bilateral-airport-preflight-source-manifest.json",
+  "fixtureSha256": "993875d5fa04481d5a8fc486b500ec6d52d84724115108ac1e850294a899e1e3",
+  "validationMethod": "S005PaidEnemyAirEffects1148.RunValidation",
+  "expectedSourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "expectedFullSourceManifestSha256": "31476f77e313143d7d9c5e3854379b6e82f2c8acccecfb9e732775e6dd6b26c5",
+  "executedRunnerSha256": "095305ed4553effd9c03c5256e85888d8860eb672eff44aac4d6f324c3b07f11"
+}

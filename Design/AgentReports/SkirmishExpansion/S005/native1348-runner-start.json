@@ -1,0 +1,16 @@
+{
+  "explicitHeavyLaneOwner": "main1348",
+  "sourceHash": "418cca5fb90b830b64e8184a1d0eba1b881c99874e31a550bf4caebcdd9cdd60",
+  "preManifest": "final-1338-baker-version-repair-source-manifest.json",
+  "preflightManifest": "final-1348-paid-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1348-paid-air-pre-dispatch-source-manifest.json",
+  "method": "S005PaidEnemyAirEffects1348.RunValidation",
+  "fixtureSha256": "d3f4902e6c42ad25f97e6c951e2e77462f3f0bf7305a829442bfee27d4acb06f",
+  "runnerSha256": "b8da178c0a8ccd32f9a0313d561e8a200332355e86f026f3507c6a9b1d8b35f6",
+  "dryCompileProof": "compile1348-paid-air-reviewed-dry-run.json",
+  "dryCompileProofSha256": "502f27ef5b73046d5bda2c4d7b55af98bd3e34c62a7ce211d4b2f59df6cb17d5",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

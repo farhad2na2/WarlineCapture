@@ -1,0 +1,15 @@
+{
+  "currentFullSourceHash": "31eab475b92bb49c3fa2d6b94d49dccf476cb527b060be91083cd53f046f10d2",
+  "baselineFullSourceHash": "f58ae1200e0537c452163bcab1ec8fdab74ed4cf675420d7b103e66be618a448",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeConfigsAndPhysicalMapIdentical": true,
+  "materialsIdentical": true,
+  "exactWholeSourceEquivalent": false,
+  "focusedRegressionsApplicable": "native796-shared-oil-air-fuel-regression-pass.json",
+  "nativeFlightCycleVerified": false
+}

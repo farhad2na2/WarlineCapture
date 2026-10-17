@@ -1,0 +1,9 @@
+{
+  "result": "Failed",
+  "wrapper_exit": 124,
+  "reason": "CS0234: QA camera collector in Game.Runtime without Unity.Rendering reference; old wrapper waited for its own timeout",
+  "required_marker_present": false,
+  "archive_sha256": "c3e4743543234a5e4182a1c694d8118491f08e0be96cbac4f4b0043dad462419",
+  "correction": "Relocate QA collector to existing Editor assembly; retain failed source and apply reviewed physical S004 fixture corrections",
+  "native_missions_qualified": 0
+}

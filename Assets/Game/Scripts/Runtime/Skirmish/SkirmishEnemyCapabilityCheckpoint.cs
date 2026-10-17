@@ -17,6 +17,7 @@ namespace Game.Runtime
         }
         internal static bool Validate(SkirmishNativeCheckpointSnapshotService.Snapshot saved,SkirmishResolvedSetup setup)
         {
+            if(SkirmishGenericAirCombinedEnemyRollout.IncludesCatalog(setup.CatalogId)&&!SkirmishGenericAirCombinedEnemyRollout.Supports(setup))return false;
             if(setup.EnemyPolicy==null)return !HasAny(saved.SessionParts);
             if(!SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts,out SkirmishEnemyCapabilityStateV1Component state)||
                 !SkirmishNativeCheckpointParts.TryReadBuffer(saved.SessionParts,out SkirmishEnemyCapabilityOperationV1[] operations)||
@@ -48,6 +49,10 @@ namespace Game.Runtime
                     if(!found)return false;
                 }
                 else if(op.Kind!=SkirmishEnemyCapabilityKind.Transport)return false;
+                else if((SkirmishGenericGroundEnemyRollout.Supports(setup)||SkirmishEnemyObjectivePolicyScope.Supports(setup)||SkirmishGenericAirCombinedEnemyRollout.Supports(setup))&&op.Role==SkirmishRoleKind.TransportHeli&&
+                    !SkirmishGenericGroundEnemyRollout.IsAuthoredStartingTransport(setup,op.SourceStableId.ToString(),op.Role,setup.EnemyFaction)&&
+                    !SkirmishEnemyObjectivePolicyScope.IsAuthoredStartingTransport(setup,op.SourceStableId.ToString(),op.Role,setup.EnemyFaction)&&
+                    !SkirmishGenericAirCombinedEnemyRollout.IsAuthoredStartingTransport(setup,op.SourceStableId.ToString(),op.Role,setup.EnemyFaction))return false;
                 // Stable-only references can naturally outlive a casualty between
                 // commander ticks. Missing actors are reconciled as lost, never recreated.
                 if(actors.TryGetValue(op.SourceStableId.ToString(),out var source))
@@ -55,6 +60,9 @@ namespace Game.Runtime
                     if(!SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out SkirmishAttemptOwnedComponent own)||own.FactionId!=2||own.ReservationId!=op.ReservationId||
                        !SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out SkirmishUnitRoleComponent role)||role.Role!=op.Role||
                        !SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out SkirmishArmyGroupMembershipComponent membership)||membership.GroupId!=op.GroupId)return false;
+                    if(op.ReservationId==0&&op.Role==SkirmishRoleKind.TransportHeli&&
+                        (SkirmishGenericGroundEnemyRollout.Supports(setup)||SkirmishEnemyObjectivePolicyScope.Supports(setup)||SkirmishGenericAirCombinedEnemyRollout.Supports(setup))&&
+                        SpawnableKeyText.Normalize(source.PrefabKey)!=SpawnableKeyText.Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(op.Role)))return false;
                     if(op.Kind==SkirmishEnemyCapabilityKind.Transport&&
                         (!SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out UnitTransportCapacity capacity)||capacity.SoldierCapacity<=0))return false;
                     if(op.Kind==SkirmishEnemyCapabilityKind.CombatAir&&!SkirmishNativeCheckpointParts.TryReadComponent(source.Parts,out UnitAirComponent _))return false;

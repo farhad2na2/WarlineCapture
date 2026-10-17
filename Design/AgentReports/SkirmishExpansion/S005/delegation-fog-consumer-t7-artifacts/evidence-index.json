@@ -1,0 +1,571 @@
+{
+  "scope": "T7 scoped actual fog consumers/VFX, not whole-main mission",
+  "files": [
+    {
+      "path": "delegation-t7-fog1112-consumer13.log",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-consumer13.log",
+      "sha256": "3f427906bb258fb04dd8a18cf1bc2aaf3b424cf3bfae75c47ab5b4b2dc5a6c7c",
+      "bytes": 1696
+    },
+    {
+      "path": "delegation-t7-fog1112-consumer13.log.dispatch.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-consumer13.log.dispatch.json",
+      "sha256": "01f31da3b47f5789d0ca0fb739f5fe4ca8f2abbc8b2215ba4ee2f968dd43bff5",
+      "bytes": 950
+    },
+    {
+      "path": "delegation-t7-fog1112-consumer13.log.exit",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-consumer13.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "delegation-t7-fog1112-idle-postproof.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-idle-postproof.json",
+      "sha256": "24135c752352708928c984cd96e0baac45b7f5ec2c74e641b07963fbbe70523c",
+      "bytes": 997
+    },
+    {
+      "path": "delegation-t7-fog1112-idle-preproof-first-failed.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-idle-preproof-first-failed.json",
+      "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0",
+      "bytes": 284
+    },
+    {
+      "path": "delegation-t7-fog1112-idle-preproof.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-idle-preproof.json",
+      "sha256": "093c2df19829117b36c3def930d3d778d08ccd43003ecb67469d77b429f18ded",
+      "bytes": 997
+    },
+    {
+      "path": "delegation-t7-fog1112-native-urp-aa-read.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-native-urp-aa-read.json",
+      "sha256": "cffc0d3552435a84ce4fc169ae98da6933e7a8fb979b54ab02bcd39ab5733573",
+      "bytes": 1090
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/applied-index.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/applied-index.json",
+      "sha256": "909e4354d92bc2f192a1aca97aadd8c88d4525aa96eb2e866cd36072b0f23325",
+      "bytes": 37276
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/closure.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/closure.json",
+      "sha256": "19fd05084ab4e8f8bc3be345a19e1139e2f6b0b515236f744cb109aa228773e0",
+      "bytes": 637
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/compilefix-applied-index.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/compilefix-applied-index.json",
+      "sha256": "9b11b619a17c26f39ea85af8f6d88c809493fce4ef936ba06eed142889004b4e",
+      "bytes": 725
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/final-applied-index.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/final-applied-index.json",
+      "sha256": "7e53d6e6c4b459b3155a06a3bb1e42f71072379b8cb70ae3f0c8a2aa29e5907a",
+      "bytes": 16348
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Components/Skirmish/SkirmishFogObservedPointUtility.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Components/Skirmish/SkirmishFogObservedPointUtility.cs.meta",
+      "sha256": "0512023d98bedc60d56b7ebe5806bd846d29b6ab03131d4620a29054b6561906",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Rendering/SkirmishFogRenderVisibility.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Rendering/SkirmishFogRenderVisibility.cs.meta",
+      "sha256": "6cc6685310b005d38d780ebef64ceb997709e6a7fc44c7c1436887fcb6e36fd0",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Rendering/Systems/SkirmishFogRenderMaskSystem.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Rendering/Systems/SkirmishFogRenderMaskSystem.cs.meta",
+      "sha256": "03d486b918a16d5f4fee88c9aaa50120631159335f81fb9cb5e22fc2a3eaec2a",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs.meta",
+      "sha256": "d369aa58ea48058357bab8f49a5cf6f0e85afaba2b15231423e87c7540d596bb",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedPresentationSystem.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedPresentationSystem.cs.meta",
+      "sha256": "bd468e27f8681a17a410379cbaa72e030fd6cc9052b30b0f6bca8797bdeb8347",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedVisualMask.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedVisualMask.cs.meta",
+      "sha256": "85dca3f0102d042af5a4a8c1a13759bdcb0d2d10b21f500c3be2eeecf9c6f8b1",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs.meta",
+      "sha256": "7eebd1785716f2c8dc12962233ba3aaf4cd4df882afcc6ef9f03a73ac5144662",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs.meta",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs.meta",
+      "sha256": "6ade646843c4963de04712d8d5abcc6fee4351ad675a50a38382bb45b85df3de",
+      "bytes": 59
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/import-source-delta.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/import-source-delta.json",
+      "sha256": "8e2740564741056c6bd2faada17671493766fe54e06f1a3e027039fe3dc62339",
+      "bytes": 11135
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-compilefix/Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-compilefix/Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "sha256": "5c504ee933c5bc2f27b7ed807a974045498df7bda46aba21db38360868e39cae",
+      "bytes": 28346
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs",
+      "sha256": "e3319438b0e4bddad973e84c74b0307fa20ac60b4160fefdbf642622f6019bc4",
+      "bytes": 341
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+      "sha256": "a22147d3f380dd770ba10d17580bd0cb970845bee2cd477eadc3ffdd70b67ad2",
+      "bytes": 24681
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs",
+      "sha256": "4cf2f4ea1d1a41e1e18560f78bd2228836b0c0508cd8faa3c32c12c3c5562277",
+      "bytes": 22620
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs",
+      "sha256": "b6763fdb484a035291569e2b780c8965df802e7009b33bbc5842ca014911ade2",
+      "bytes": 12580
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "sha256": "4259bf973d6c928b9d0df0f2cf23bc90f471f5543b0d29ffb728f621ddcebbb7",
+      "bytes": 37634
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "sha256": "330b5494f0f393a9aeb67a15ba63d0213e44ffc1e40861d2183640f0553e7703",
+      "bytes": 17621
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "sha256": "7755dfbcf0d9b29f5218379c20236833daf9587956642e2d836f22a5e3f490fd",
+      "bytes": 15422
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultHudProjection.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultHudProjection.cs",
+      "sha256": "c7e86865730e9186bbd8ace9cc8d5782bef4a8ea21c76c1ad681842c159f3295",
+      "bytes": 7021
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "sha256": "4a2c26b230b848b9f3fb26723999ae2e1340232ed8f333faf74c873adc08f45e",
+      "bytes": 18627
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs",
+      "sha256": "beebc73fda43d3d79a6e557c50c68e4ba385465804e90ccd7cef822eedf74791",
+      "bytes": 12402
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs",
+      "sha256": "bd28a73a7d561fc992294cdc23f132f3715f9db836d595f186e2cc3de493f90b",
+      "bytes": 4166
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "sha256": "65a6689ae84fe751522cfbd1eb26aad9efd70db60031dda0510d7bdd0913545e",
+      "bytes": 20442
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs",
+      "sha256": "ec5baf3e9466b907b6a6f7b5046eef82b1833ccae2b361bec0b1cf074804db8f",
+      "bytes": 55485
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/AssistantPreviewAttackTargetUtility.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/AssistantPreviewAttackTargetUtility.cs",
+      "sha256": "faeb608785b2ac2de626d1f8fe644943dc71e7563731af1f6c5b15fb8f82d84e",
+      "bytes": 3354
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "sha256": "1a5bd688978ba41a866a6177c2beabf1f9c71a1b7bae2e1b6dc2208c119e4347",
+      "bytes": 25271
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
+      "sha256": "58a0530db9ee0018ac97d60bc6cd51dd961205d1bac69cd9add572e86267dbd9",
+      "bytes": 23379
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/CombatTargetPolicyUtility.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/CombatTargetPolicyUtility.cs",
+      "sha256": "8714efea2ac23e2fd31265d264796f2515113fd8de0b6da1c20ef71df514801e",
+      "bytes": 1870
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
+      "sha256": "9bb3d12ac8623cdf5fa59f90e7183a3cde4a4a8933ef213d6a6ce89b591731fe",
+      "bytes": 3605
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "sha256": "2f70f0cd9514b3019b22a64b6d07b429b2146d82bb509334abfe6040ff41b29a",
+      "bytes": 27536
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "sha256": "6cd13dbbac7e4b1d7b9b0c49fe200ff1a56970f7771d1051e2950f003d4a05d7",
+      "bytes": 13873
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "sha256": "e0c66de89a053b7030c2568aaae277d445134b67d8bf41668eb09a01e79fd2f5",
+      "bytes": 39002
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+      "sha256": "947ba28af9b954fc741990da937c79e260320a0ee1612ec0167df9cebcbe8e64",
+      "bytes": 10816
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+      "sha256": "ff0801fceb45044e73184bec57de8ad0b6191b7fc13c5bdad173f67fa0902fbb",
+      "bytes": 81168
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs",
+      "sha256": "179e5deb03a9874dde4861122f021d0525d3c317c195e54a6ccfb5d373c6d049",
+      "bytes": 24271
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+      "sha256": "d86767734e478d9a37eb2d79187f5873b175b5badf1eba344530283e5f8e61cd",
+      "bytes": 55762
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs",
+      "sha256": "912f251de1d0c3f8fa8053f9ea10af136dce532123ce8195e0186a92af7ca835",
+      "bytes": 6136
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitEngagementSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitEngagementSystem.cs",
+      "sha256": "3a032e175c06be30a747390b5c933ca4f765a9c53f7d32988e1d269be7db80e1",
+      "bytes": 23825
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
+      "sha256": "9f312f64c13e1f0d6ca424f1e4b33fc38478b81a8ff57f64203a94c87409b683",
+      "bytes": 28544
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Components/SkirmishMatchView.Observation.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Components/SkirmishMatchView.Observation.cs",
+      "sha256": "6184e1c1771604bc921148e7bc47d56ab612ee2a6e46da837af7dcc1108f012e",
+      "bytes": 2294
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
+      "sha256": "b00868a14b405c2cf9b2dcfc666f0f9475588421dfb312670088ccce229b4a39",
+      "bytes": 13454
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "sha256": "ef70ce7ddce0a8cadee96d0485f195af5386a3ff661a28f346846c7c01092783",
+      "bytes": 36790
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/original-consumers/Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "sha256": "2666a6c9dbc62e391dab035a36072903058de8a39e27d2c57312e150d045cb65",
+      "bytes": 39131
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/post-source.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/post-source.json",
+      "sha256": "5c317a917fa1c10f5617d1fcacc34dc84d9141e94459ec53dca2a5b94dee0d2b",
+      "bytes": 9971820
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/pre-source.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/pre-source.json",
+      "sha256": "5c317a917fa1c10f5617d1fcacc34dc84d9141e94459ec53dca2a5b94dee0d2b",
+      "bytes": 9971820
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/preflight-base-mismatches.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/preflight-base-mismatches.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "delegation-t7-fog1112-preserve/run-source-delta.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-preserve/run-source-delta.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "delegation-t7-fog1112-recompile-corrected-request.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-recompile-corrected-request.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "delegation-t7-fog1112-recompile-corrected-status01.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-recompile-corrected-status01.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "path": "delegation-t7-fog1112-recompile-request.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-recompile-request.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "delegation-t7-fog1112-recompile-status01.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-recompile-status01.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "path": "delegation-t7-fog1112-recompile-status02.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1112-recompile-status02.json",
+      "sha256": "6132cb17434eb7269d2e722490ad13217a6c73d4ec176ab1459b48915cb1c765",
+      "bytes": 1449
+    },
+    {
+      "path": "delegation-t7-fog1113-idle-postproof.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-idle-postproof.json",
+      "sha256": "093c2df19829117b36c3def930d3d778d08ccd43003ecb67469d77b429f18ded",
+      "bytes": 997
+    },
+    {
+      "path": "delegation-t7-fog1113-native-current-aa0.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-native-current-aa0.json",
+      "sha256": "7626defd011f9303c611eaa9fd98a04465bda899b84527487c778b0ded46118c",
+      "bytes": 1041
+    },
+    {
+      "path": "delegation-t7-fog1113-preserve/closure.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-preserve/closure.json",
+      "sha256": "f8e8aa48bf008fef95bf5508e26c7f30ff22f3903b23a08ae36f132ec2ee2243",
+      "bytes": 652
+    },
+    {
+      "path": "delegation-t7-fog1113-preserve/post-source.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-preserve/post-source.json",
+      "sha256": "5c317a917fa1c10f5617d1fcacc34dc84d9141e94459ec53dca2a5b94dee0d2b",
+      "bytes": 9971820
+    },
+    {
+      "path": "delegation-t7-fog1113-preserve/pre-source.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-preserve/pre-source.json",
+      "sha256": "5c317a917fa1c10f5617d1fcacc34dc84d9141e94459ec53dca2a5b94dee0d2b",
+      "bytes": 9971820
+    },
+    {
+      "path": "delegation-t7-fog1113-vfx8.log",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-vfx8.log",
+      "sha256": "d4c046730195e2d5d7ac1f0139e820fd45e670957c65bcfa61772f1120fe26d0",
+      "bytes": 2362
+    },
+    {
+      "path": "delegation-t7-fog1113-vfx8.log.dispatch.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-vfx8.log.dispatch.json",
+      "sha256": "fda40f0a0857f830a36d3487817a3320e953ab5b64aff85d27a0185c95b6b073",
+      "bytes": 939
+    },
+    {
+      "path": "delegation-t7-fog1113-vfx8.log.exit",
+      "sourcePath": "/private/tmp/delegation-t7-fog1113-vfx8.log.exit",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "delegation-t7-fog1117-native-idle-scenes-post.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-native-idle-scenes-post.json",
+      "sha256": "dbeb3cf294df7a76e98e9a33b3ab141d35498b64b4ac9ddaee294e851b426a95",
+      "bytes": 1751
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/closure.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/closure.json",
+      "sha256": "8bf3dade8a8e14af921fb1f7e625b92f432eabae9768f41ea72ff9eef7c06ed9",
+      "bytes": 1027
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/import-source-delta.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/import-source-delta.json",
+      "sha256": "b17291db530630509a4a78a66c2de57d9fd9eeed39626c11433784945065e7d0",
+      "bytes": 473
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/original-test.cs",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/original-test.cs",
+      "sha256": "61e75ea683e6726258dd48ca8c46bf84c2c76ac921d6b29ff0c6bd6d7ead1092",
+      "bytes": 7841
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/post-source.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/post-source.json",
+      "sha256": "6dc5b66f729cc436ed3024f220257a4b470a2c12ee5b9e0ff455819fc3f6e7ec",
+      "bytes": 9971820
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/pre-source.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/pre-source.json",
+      "sha256": "6dc5b66f729cc436ed3024f220257a4b470a2c12ee5b9e0ff455819fc3f6e7ec",
+      "bytes": 9971820
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/run-source-delta.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/run-source-delta.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "delegation-t7-fog1117-preserve/testfix-applied-index.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-preserve/testfix-applied-index.json",
+      "sha256": "8cf4da67ac6536e1b2da477b282052c78e8c22cbb145d70a494cc595e0c2fea1",
+      "bytes": 734
+    },
+    {
+      "path": "delegation-t7-fog1117-recompile-request.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-recompile-request.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "path": "delegation-t7-fog1117-recompile-status01.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-recompile-status01.json",
+      "sha256": "85dd72635944f65776516b2af8a273e56c98c366ee184949d231314d57c290a5",
+      "bytes": 259
+    },
+    {
+      "path": "delegation-t7-fog1117-recompile-status02.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-recompile-status02.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "path": "delegation-t7-fog1117-vfx8.log",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-vfx8.log",
+      "sha256": "f7cb6896fc82cd6cf3d24d2fa95f2bae38a6758df1b0e8fdaac073820b70aaf1",
+      "bytes": 1678
+    },
+    {
+      "path": "delegation-t7-fog1117-vfx8.log.dispatch.json",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-vfx8.log.dispatch.json",
+      "sha256": "edb4f224ac81a0a3be9b7ab317e15f65a8051a47842c8eab5fbc4a3a1a33ec76",
+      "bytes": 939
+    },
+    {
+      "path": "delegation-t7-fog1117-vfx8.log.exit",
+      "sourcePath": "/private/tmp/delegation-t7-fog1117-vfx8.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "delegation-t7-mobile1113-nextframe-command.sh",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-nextframe-command.sh",
+      "sha256": "5b7d1038b980ac5907f01b6e0faf68ecb59c9e3c640baec28eb94485d9720079",
+      "bytes": 1713
+    },
+    {
+      "path": "delegation-t7-mobile1113-nextframe.json",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-nextframe.json",
+      "sha256": "ea8c4d42d0dd61f42600279a9c48500d0fbea9f773f1a00c074d6d053dcf13a2",
+      "bytes": 2981
+    },
+    {
+      "path": "delegation-t7-mobile1113-post-command.sh",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-post-command.sh",
+      "sha256": "1a46105fee7b8333638c591b10c46fbf13abe01dde93ba29bd263887154cad2b",
+      "bytes": 1708
+    },
+    {
+      "path": "delegation-t7-mobile1113-post.json",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-post.json",
+      "sha256": "ea8c4d42d0dd61f42600279a9c48500d0fbea9f773f1a00c074d6d053dcf13a2",
+      "bytes": 2981
+    },
+    {
+      "path": "delegation-t7-mobile1113-pre-command.sh",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-pre-command.sh",
+      "sha256": "6c0e41b095f919ce0ed99a39dfc226ec910dcb1459fc7ab499c8762b5b249ebf",
+      "bytes": 1707
+    },
+    {
+      "path": "delegation-t7-mobile1113-pre.json",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-pre.json",
+      "sha256": "ad7e3e54ad56a28663d9fcadc065c634d3f1aebaf1b3c0e62d731722a18e5f72",
+      "bytes": 2909
+    },
+    {
+      "path": "delegation-t7-mobile1113-read-eval.cs",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-read-eval.cs",
+      "sha256": "559fed859f465ee982ad067c835b370f9a8dc2a895c1526d38d1ad5ff0c4abac",
+      "bytes": 1545
+    },
+    {
+      "path": "delegation-t7-mobile1113-repair-command.sh",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-repair-command.sh",
+      "sha256": "af8e8a5bf9a0149491cb9ce06fbd4ae0fce840023b1d02f3b6a6888ff1f94911",
+      "bytes": 5092
+    },
+    {
+      "path": "delegation-t7-mobile1113-repair-eval.cs",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-repair-eval.cs",
+      "sha256": "1c27d8c87df5a75ef5a0ab7ae88fabcff2ca84c5161bd4fb80d5ecf9bc62ab58",
+      "bytes": 4920
+    },
+    {
+      "path": "delegation-t7-mobile1113-repair-result.json",
+      "sourcePath": "/private/tmp/delegation-t7-mobile1113-repair-result.json",
+      "sha256": "7f1ed3dccb8a5519872f754c7487afad72a2967752704d132246dfc80b7f0a62",
+      "bytes": 5591
+    }
+  ],
+  "fileCount": 94,
+  "totalBytes": 60696852
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005FriendlyCommandQualificationReadOnly1161.cs",
+      "entry": "S005FriendlyCommandQualificationReadOnly1161.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "The type or namespace name 'SkirmishSharedSupplyInitialized' could not be found (are you missing a using directive or an assembly reference?)",
+          "line": 120,
+          "column": 54,
+          "id": "CS0246"
+        }
+      ],
+      "compileMs": 227,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005FriendlyCommandQualificationReadOnly1161_3f2b71cc7fb141b495a16f691a368832",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,13 @@
+{
+  "sourceHash": "051c4d23cc425480855420dcd71fc80768906172ede6ac74e7fb0ceae3417d69",
+  "editorScreens": [
+    "native-231-opening-en.png",
+    "native-232-opening-fa.png"
+  ],
+  "resolution": "2400x1080",
+  "assistantReview": "HUD objectives/base health/clock, colorful commands, ARIA Play/Stop and Field Guide visible. Persian text shaped and squad card order reversed; no visible clipping in these opening states.",
+  "density": "Broad open base yards remain; this is not exact mockup equivalence",
+  "ownerFinalVisualAcceptance": "Pending; review question sent",
+  "physicalDeviceReadability": "Pending",
+  "playerReady": false
+}

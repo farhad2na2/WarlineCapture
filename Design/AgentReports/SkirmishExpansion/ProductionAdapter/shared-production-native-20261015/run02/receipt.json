@@ -1,0 +1,26 @@
+{
+  "result": "Failed",
+  "wrapperExit": 1,
+  "error": "CE provider-bound subject fixture ambiguous convoy.origin.2/.3 faction/kind pads and missing explicit logical binding",
+  "passedMarkers": [
+    "[SkirmishConvoyLogicalAssetsAuthoringEntry] result=Passed created=0 physicalAssetsCreated=0 readiness=Pending",
+    "[SkirmishLogicalLegacyIdentity] result=Passed configurations=12 immutableBeforePin=1",
+    "[SkirmishMeasuredLayoutBinderTests] result=Passed tests=8",
+    "[SkirmishObjectiveAreaConfigTests] result=Passed tests=15 nativeSourceFitCertified=0",
+    "[SkirmishNativeObjectiveCollectorTests] result=Passed tests=15 nativeMissionReadiness=Pending",
+    "[SkirmishConvoyTruckRuntimeTests] result=Passed tests=5 nativeMissionReadiness=Pending",
+    "[SkirmishNativeObjectiveTickTests] result=Passed tests=5 nativeMissionReadiness=Pending",
+    "[SkirmishNativeObjectiveCheckpointValidation] result=Passed tests=6 missionCertified=0 freshNativeJourney=0",
+    "[SkirmishMissionLogicalBindingValidation] result=Passed tests=13 sourceFit=0 readablePixelsAccepted=0 nativeMission=0",
+    "[SkirmishNativeObjectivePartialFailureCheckpointTests] result=Passed tests=1 nativeMission=0",
+    "[SkirmishGenericMissionDispatchTests] result=Passed tests=9 nativeMissionReadiness=Pending",
+    "[SkirmishLogicalLegacyIdentity] result=Passed configurations=12 immutableBeforePin=1",
+    "[SkirmishMissionLogicalSubsystemValidation] result=Passed focusedTests=77 legacyConfigurations=12 nativeMissionReadiness=Pending",
+    "[SkirmishGenericGroundEnemyTests] result=Passed tests=6 nativeMissionReadiness=Pending",
+    "[SkirmishEnemyObjectiveValidation] result=Passed tests=22 nativeMissionReadiness=Pending",
+    "[SkirmishConvoyCommandDomainTests] result=Passed tests=5 nativeMissionReadiness=Pending"
+  ],
+  "finalRequiredMarkerFound": false,
+  "nativeReadiness": false,
+  "archiveSha256": "5dd369705b0547e54857f17dbf974c9c39d0305043177c539756aa0f6c84637d"
+}

@@ -1,0 +1,9 @@
+{
+  "result": "Failed",
+  "wrapperExit": 124,
+  "receiptExit": null,
+  "log": "tests-128-native-fingerprint.log",
+  "reason": "Scheduled callback lost during compilation reload; focused test did not run",
+  "retry": "tests-129-native-fingerprint.log",
+  "playerReady": false
+}

@@ -1,0 +1,17 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "sourceHash": "e219f1af8f57c298d977464d3e72ee6c4e73b54fb398a0b1261007c5f1a9e224",
+    "result": "Census",
+    "waterRenderers": 46,
+    "bankMeshes": 6,
+    "channelMeshes": 0,
+    "waterMaterials": 2,
+    "joins": 0,
+    "pavedMaterials": 5,
+    "earthMaterials": 2,
+    "joinRows": [],
+    "skipped": [
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M01CitywideAlert_d90068bfe6ce4c78a2d95bf6fd876882.mat roles=earth,paved",
+        "role-conflict Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground/CH05M01CitywideAlert_32e44831749bd41d191db8d33b2859b0.mat roles=excluded,paved"
+    ]
+}

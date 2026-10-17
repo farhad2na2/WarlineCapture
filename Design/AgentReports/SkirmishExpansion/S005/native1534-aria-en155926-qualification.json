@@ -1,0 +1,97 @@
+{
+  "acceptedCommandCount": 7,
+  "completeSourceUnchanged": true,
+  "contactAudit": {
+    "completeMatchCertified": false,
+    "completedContacts": 70,
+    "errors": [],
+    "nativeMenuContactsRecorded": true,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "phases": {
+      "Menu": 10,
+      "Runtime": 60
+    },
+    "recordedContacts": 70,
+    "strictAllContactsEnded": true,
+    "strictRecordedContacts": true,
+    "terminalCancellations": [],
+    "terminalContactsRecorded": false
+  },
+  "countedRow": [
+    "S005-aria-rs-155926-en-1",
+    "S005",
+    "2",
+    "253e8a457c974934f390f9f0ff9b8435a6aab0aa5cccb649151689669c2c6711",
+    "010cce1a74ad1a72f1005527463a9b3f021874b52a5e3c9927c5470ad00493ec",
+    "Standard",
+    "Regular",
+    "155926",
+    "en",
+    "Editor",
+    "aria",
+    "1",
+    "2026-10-14T02:13:01Z",
+    "Abort",
+    "ariaStopped:Blocked",
+    "214.661",
+    "0",
+    "0",
+    "Design/AgentReports/SkirmishExpansion/S005//candidates/253e8a457c974934f390f9f0ff9b8435a6aab0aa5cccb649151689669c2c6711/s005-aria-rs-155926-en-1.jsonl",
+    "Design/AgentReports/SkirmishExpansion/S005//candidates/253e8a457c974934f390f9f0ff9b8435a6aab0aa5cccb649151689669c2c6711/s005-aria-rs-155926-en-1-log.txt"
+  ],
+  "errors": [
+    "wrapper/native exit must both be 0",
+    "missing native pass marker",
+    "counted CSV source/setup/outcome/exit differs",
+    "genuine frozen Victory trace missing",
+    "copied candidate log lacks counted pass marker",
+    "strict Menu/Runtime/Terminal contact audit failed"
+  ],
+  "expectedSource": "253e8a457c974934f390f9f0ff9b8435a6aab0aa5cccb649151689669c2c6711",
+  "independentSourceHashes": [
+    "253e8a457c974934f390f9f0ff9b8435a6aab0aa5cccb649151689669c2c6711",
+    "253e8a457c974934f390f9f0ff9b8435a6aab0aa5cccb649151689669c2c6711"
+  ],
+  "locale": "en",
+  "log": "native1534-aria-en155926.log",
+  "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3",
+  "missingMarkers": [
+    "[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=ADJUST SETUP",
+    "[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:ADJUST SETUP",
+    "[SkirmishS002AriaRun] appended=1 countedWin=1 error=",
+    "[SkirmishValidationExit] result=Requested code=0",
+    "[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3"
+  ],
+  "nativeExit": 1,
+  "nativeInputCounts": [
+    60,
+    60,
+    273,
+    0,
+    0,
+    7,
+    0
+  ],
+  "result": "Failed",
+  "run": 1534,
+  "scope": "One normal-input S005 Standard/Regular ARIA Editor journey; not full mission/player readiness",
+  "seed": 155926,
+  "terminal": {
+    "clockElapsed": 195.396,
+    "clockPaused": 0,
+    "elapsed": 195.396,
+    "enemyBaseHp": 800,
+    "leadX": 922.15,
+    "leadZ": 624.466,
+    "outcome": "None",
+    "pathFollowing": 11,
+    "pathRequests": 0,
+    "phase": "Playing",
+    "playerBaseHp": 800,
+    "playerUnits": 19,
+    "reason": "None",
+    "simulationActive": 1
+  },
+  "terminalHealthQualification": "wrong-outcome-or-unfrozen",
+  "wrapperExit": 1
+}

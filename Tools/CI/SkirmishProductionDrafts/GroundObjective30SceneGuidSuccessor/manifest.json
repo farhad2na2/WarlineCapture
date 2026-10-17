@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/GroundObjective30SceneGuidSuccessor/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs.txt",
+      "before_sha256": null,
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+      "assembly": "Game.Editor"
+    }
+  ],
+  "prior_unimported_draft_sha256": "bbaa7a50a4b884ef6f82ac3311718671c82a4c2edc3da8d93987279f3f076ea6",
+  "native_execution": false,
+  "reason": "Area binding scene GUID matches actual production authoring/provider domain; no measurement or layout binding proof invented"
+}

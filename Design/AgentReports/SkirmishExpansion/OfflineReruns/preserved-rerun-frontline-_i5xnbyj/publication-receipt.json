@@ -1,0 +1,25 @@
+{
+  "action": "CopiedEvidenceAppendOnly",
+  "source": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\ObjectiveEvidence\\frontline-sfhz9yuf",
+  "output": "D:\\Projects\\WarlineCapture\\Design\\AgentReports\\SkirmishExpansion\\OfflineReruns\\preserved-rerun-frontline-_i5xnbyj",
+  "files": [
+    {
+      "file": "actual-editor-reference-compile.log",
+      "sha256": "5457dd16fc9724762fbadbfaff9d1b846a168ce6be5a94b7e21e887851c4e45f"
+    },
+    {
+      "file": "offline-13-rules.log",
+      "sha256": "d827eca1b3792c8fe81dd3c7218eead788268c57aa0b0f466eaf36124ba3516d"
+    },
+    {
+      "file": "offline-compile.log",
+      "sha256": "e3c77bfb8f88c028c35cc4b386451a5471f06ab91c3adeaac0742ba351c60548"
+    },
+    {
+      "file": "source-and-tool-manifest.json",
+      "sha256": "892bd31abefc5f0c8fc57cf12460bae2021fa1b4628bf2b162ca7dfc649d5d4e"
+    }
+  ],
+  "nativeExecutionCertified": false,
+  "validationOutcomeInCopiedLogsOnly": true
+}

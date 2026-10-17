@@ -1,0 +1,17 @@
+{
+  "archive": "Design\\AgentReports\\SkirmishExpansion\\ProductionAdapter\\ground30-source-chunks-20261015\\CC01\\collected-unqualified-CC36.zip",
+  "sha256": "c1c7e591aa48a32914660de8121e17d219a6a4dea26c24601a5ab0c1e9a69405",
+  "summary": {
+    "group": "CC",
+    "missions": 12,
+    "sizeRows": 36,
+    "normalCompiledRows": 0,
+    "completeFacilityRows": 0,
+    "canonicalBudgetsExactRows": 12,
+    "sourceFitCertified": false,
+    "missionReady": false
+  },
+  "checkedWrapperExit": 0,
+  "sourceDllEqual": true,
+  "candidateSha256": "d23c0206a541301aac31ed8c1478844eb06282048ed15446c7f040feff83b5d7"
+}

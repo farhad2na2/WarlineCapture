@@ -1,0 +1,24 @@
+{
+  "status": "PreparedOnlyNativeCompileAndTestsPending",
+  "source": "5e94ef34185750a5ef87068726815bda22899d0bb08c8685b292fc3bfbda8932",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Buildings.cs",
+      "baseSha256": "749dd30fff69fe3dfdfdaa4866e36708baa48efa5415f860ce6727230c24759b",
+      "stagedSha256": "dfbecf9cf6b98da0a39040e6380e7227f24144c49692616024a12580041dfcdc"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointPartsTests.cs",
+      "baseSha256": "aedef6ad75a8eb6ef14083ca35411e78b4fd2b188e561dbf7f5218154ddf9af2",
+      "stagedSha256": "4adf677c31e43008502b9214698f014f01a5f7b57abe1b68590b4de57a65338f"
+    }
+  ],
+  "patchSha256": "96d7c9d1acb168255197337d2148846ad8d6b27cd0558ce12e84de959e19d35a",
+  "entry": "Game.Tests.Editor.SkirmishNativeCheckpointPartsTests.RunFocusedValidation",
+  "marker": "[SkirmishNativeCheckpointPartsTests] result=Passed tests=12 nativeRecoveryComplete=0",
+  "nativeFailure": "native-1223-normal-manual-r2-recovery-en-seed155926.log",
+  "checkpointSha256": "185fd7aaf2ed9a1b401b5a4007c44a1a4461606e7d5dd75600eda19ddb176916",
+  "decodedCauseSha256": "c78b2202b68414b77806f2b95b05855c01eb01ab0e3d89ae68f82c2f649c5bee",
+  "revision": "v2",
+  "predecessorManifestSha256": "380be67270da95d73b7f33d3c149d4e761dcb386c835c6cc4cd341596d36c1a7"
+}

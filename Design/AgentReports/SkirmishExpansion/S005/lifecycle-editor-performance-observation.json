@@ -1,0 +1,78 @@
+{
+  "result": "Observed Editor samples; cause unconfirmed",
+  "comparisons": [
+    {
+      "log": "native-254-support-isolation-manual-fa.log",
+      "samples": 68,
+      "fpsMin": 3.1,
+      "fpsMax": 54.6,
+      "logSha256": "2572fd7dcbf5fd17343e6e37ec3fff84a095cd21928f5a28e48e1369b0fb6731",
+      "loggedLowFpsWindowMedian": 52.05
+    },
+    {
+      "log": "native-264-lifecycle-manual-fa.log",
+      "samples": 71,
+      "fpsMin": 2.5,
+      "fpsMax": 52.4,
+      "logSha256": "0467dd0491ae19f635f05b9ce75be754f931fd89d16354586982975b5321352b",
+      "loggedLowFpsWindowMedian": 33.5
+    },
+    {
+      "log": "native-274-smoke-owner-manual-fa.log",
+      "samples": 73,
+      "fpsMin": 0.5,
+      "fpsMax": 36.4,
+      "logSha256": "905a8f7be969ab0b7651d137d44a8c274e127f5511c86d7e2bc86e715bbb2754",
+      "loggedLowFpsWindowMedian": 20.3
+    },
+    {
+      "log": "native-275-smoke-owner-aria-en.log",
+      "samples": 115,
+      "fpsMin": 0.5,
+      "fpsMax": 23.6,
+      "logSha256": "c58cc4127b80e2231c74b0c13fbd9cfc883ad075936ae70b9702989e7fd67c48",
+      "loggedLowFpsWindowMedian": 18.6
+    },
+    {
+      "log": "native-276-profiler-aria-en-seed2.log",
+      "samples": 96,
+      "fpsMin": 2.6,
+      "fpsMax": 53.0,
+      "logSha256": "dcd6d664fe9a39729a54563a421e083639ea15626e3ad3097e6e37b379283ce8",
+      "loggedLowFpsWindowMedian": 49.2
+    },
+    {
+      "log": "native-285-owned-fuel-manual-fa.log",
+      "samples": 67,
+      "fpsMin": 19.6,
+      "fpsMax": 44.7,
+      "logSha256": "f78b75bb1872ce0c8bf8a5f03c39d031098b75c04589e552c87c8193bc6f21da",
+      "loggedLowFpsWindowMedian": 30.6
+    },
+    {
+      "log": "native-286-owned-fuel-aria-en.log",
+      "samples": 54,
+      "loggedLowFpsWindowMedian": 49.1,
+      "fpsMin": 32.8,
+      "fpsMax": 51.5,
+      "logSha256": "0cf1507ee5649c0843a66c62966099cd09a80718a2c054cbff12f49b385d88b7"
+    }
+  ],
+  "hostObservation": "Hub remains running. Active6000.5.2f1 Editor and separate6000.0.58f2 Editor observed; no process stopped.",
+  "physicalDeviceAcceptance": false,
+  "playerReady": false,
+  "conclusion": "Low-FPS windows vary within and between runs; aggregate values above refer only to emitted slow windows. Full-run performance, causal regression and phone performance are not established.",
+  "hostSettings": {
+    "lowPowerMode": 0,
+    "memoryFreePercent": 29,
+    "rawFocused": true,
+    "editorActive": true,
+    "burstEnabled": true,
+    "targetFps": -1,
+    "vSync": 0
+  },
+  "activeDiagnostic": null,
+  "diagnosticEnvironmentRestored": true,
+  "diagnosticEvidence": "native276-editor-profiler-observation.json",
+  "performanceSampleScope": "Only logged two-second gameplay windows below55 FPS; not a whole-run FPS statistic. Faster windows are omitted by PerformanceDiagnosticsSystemHelper."
+}

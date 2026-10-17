@@ -1,0 +1,37 @@
+{
+  "revision": 1,
+  "status": "ExternalRootReviewOnly_NotCompiled_NotLoaded_NotExecuted",
+  "files": [
+    {
+      "path": "/private/tmp/S005NormalAria1156Observer.cs",
+      "beforeSHA": "9fec9e4001cf6e248a428ddd3f2c1ab4c48079fc8376178d0403d3562043176c",
+      "afterSHA": "06a4ef073b41041907ca6e554f8abe653412d34d0aa45ffeebc0faf83eb3877e",
+      "preserved": "/private/tmp/S005NormalAria1156Observer.cs.before-post-result-r1"
+    },
+    {
+      "path": "/private/tmp/s005-run-normal-aria-1156.py",
+      "beforeSHA": "665db477240c21e9130a49b3a1aa528681784f4b46745fcfe1be8dbb41f1f3ca",
+      "afterSHA": "4aebc7b336c131d25df7a49521ec1be01f28cc034e22bbfc8439f3b1a5cd57de",
+      "preserved": "/private/tmp/s005-run-normal-aria-1156.py.before-post-result-r1"
+    },
+    {
+      "path": "/private/tmp/S005NormalAria1157Observer.cs",
+      "beforeSHA": "cc563c44c1f5ae2c95cca842cf920c23a2106eb0cc8d83fa3704f2b070ebbd5c",
+      "afterSHA": "2ff98caf905ec796958b23983aa4462023712246781516fa076a6082d9fc2d9f",
+      "preserved": "/private/tmp/S005NormalAria1157Observer.cs.before-post-result-r1"
+    },
+    {
+      "path": "/private/tmp/s005-run-normal-aria-1157.py",
+      "beforeSHA": "c84a662dd67a85f0631bf0422d0f65a86ab48f3b26ab7ff68552bc3a94e4de57",
+      "afterSHA": "0c4455510ef01e5dc28fa99ca7c4f5b4c4f78752a2dea2798ad7babed79b80dd",
+      "preserved": "/private/tmp/s005-run-normal-aria-1157.py.before-post-result-r1"
+    }
+  ],
+  "patchPath": "/private/tmp/normal1156-1157-post-result-r1.patch",
+  "patchSha256": "0dc90de742696da8ce63657964062ca67786e1b26e75c100d47c19817e08cad8",
+  "sourceChanged": false,
+  "unityCalls": false,
+  "pythonSyntaxOnly": "Both Passed",
+  "loaded1153Changed": false,
+  "sourceContractAddition": "Public SkirmishMatchState component already in runtime; add matching current source pin"
+}

@@ -1,0 +1,20 @@
+{
+  "result": "Failed",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1040-drone-producer-post-source-manifest.json",
+  "postSourceManifest": "final-1043-air-pause-reproduction-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "log": "native-1043-air-pause-zero-delta-reproduction.log",
+  "requiredPassMarker": "[S005AirPauseRegression] result=Passed",
+  "requiredPassMarkerPresent": false,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "scope": "Fixture setup failure before isolated air system cases",
+  "defectReproduced": false,
+  "actualWrapperExitCode": 1,
+  "failure": "Nested JsonUtility component sample deserialization returned defaults",
+  "fixture": "native1043-air-pause-fixture.cs.txt"
+}

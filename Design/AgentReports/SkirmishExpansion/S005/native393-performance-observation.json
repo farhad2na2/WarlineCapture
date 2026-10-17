@@ -1,0 +1,16 @@
+{
+  "sourceHash": "e47d57d60735b7894822751ef0891574318e9f208a56f12b222239ad0aa1b876",
+  "sample": "native393-editor-performance.sample.txt",
+  "sampleSha256": "d2f5687dcfe543b7069bfd8e097d37c32f2daf76a9f97c05b6e4bffa6c4059a5",
+  "physicalFootprintGB": 13.1,
+  "peakPhysicalFootprintGB": 16.1,
+  "readOnly": true,
+  "frameLog": "native-393-paid-siege-combat-save.log",
+  "limitations": [
+    "Short Editor sample during qualification, not controlled standalone profiling",
+    "Frame diagnostics report slow windows only",
+    "Host pressure and mission cost not isolated",
+    "Target device performance remains pending"
+  ],
+  "playerReady": false
+}

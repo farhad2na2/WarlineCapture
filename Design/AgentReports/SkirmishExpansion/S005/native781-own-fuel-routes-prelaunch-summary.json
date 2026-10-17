@@ -1,0 +1,295 @@
+{
+  "frame": 14858,
+  "stores": [
+    {
+      "id": 5,
+      "position": {
+        "x": 913.5,
+        "y": 0.009179778397083282,
+        "z": 598.0
+      },
+      "oil": 196.1,
+      "fuel": 0.0,
+      "receivedFuel": 0.0,
+      "reservedOil": 0.0
+    },
+    {
+      "id": 7,
+      "position": {
+        "x": 918.5,
+        "y": 0.009179778397083282,
+        "z": 617.5
+      },
+      "oil": 38.0,
+      "fuel": 36.0,
+      "receivedFuel": 0.0,
+      "reservedOil": 16.0
+    },
+    {
+      "id": 9,
+      "position": {
+        "x": 928.0,
+        "y": 0.009179778397083282,
+        "z": 603.0
+      },
+      "oil": 0.0,
+      "fuel": 305.1,
+      "receivedFuel": 616.0,
+      "reservedOil": 0.0
+    },
+    {
+      "id": 11,
+      "position": {
+        "x": 940.5,
+        "y": 0.009179778397083282,
+        "z": 616.0
+      },
+      "oil": 20.0,
+      "fuel": 0.0,
+      "receivedFuel": 0.0,
+      "reservedOil": 0.0
+    },
+    {
+      "id": 15,
+      "position": {
+        "x": 911.5,
+        "y": 0.009179778397083282,
+        "z": 577.0
+      },
+      "oil": 14.0,
+      "fuel": 0.0,
+      "receivedFuel": 0.0,
+      "reservedOil": 0.0
+    },
+    {
+      "id": 16,
+      "position": {
+        "x": 939.5,
+        "y": 0.009179778397083282,
+        "z": 578.0
+      },
+      "oil": 20.0,
+      "fuel": 0.0,
+      "receivedFuel": 0.0,
+      "reservedOil": 0.0
+    },
+    {
+      "id": 17,
+      "position": {
+        "x": 882.5,
+        "y": 0.009179778397083282,
+        "z": 621.5
+      },
+      "oil": 50.0,
+      "fuel": 124.0,
+      "receivedFuel": 0.0,
+      "reservedOil": 8.0
+    },
+    {
+      "id": 18,
+      "position": {
+        "x": 881.0,
+        "y": 0.009179778397083282,
+        "z": 643.0
+      },
+      "oil": 0.0,
+      "fuel": 416.0,
+      "receivedFuel": 416.0,
+      "reservedOil": 0.0
+    }
+  ],
+  "haulers": [
+    {
+      "id": "production.1004.0",
+      "role": "Tanker",
+      "position": {
+        "x": 918.0790405273438,
+        "y": 0.00917959213256836,
+        "z": 605.740478515625
+      },
+      "cargo": {
+        "BarrelCapacity": 8,
+        "FillDurationSeconds": 2.0,
+        "UnloadDurationSeconds": 1.5,
+        "CargoOilBarrels": 0.0,
+        "CargoFuelBarrels": 0.0
+      },
+      "order": {
+        "SourceBuildingId": 7,
+        "DestinationBuildingId": 9,
+        "TargetCell": {
+          "x": 914,
+          "y": 608
+        },
+        "ActionEndsAt": 0.0,
+        "Phase": 1,
+        "ResourceKind": 1
+      },
+      "status": {
+        "StatusCode": 2,
+        "ReasonCode": 0,
+        "ResourceKind": 1
+      }
+    },
+    {
+      "id": "role.tanker.1.8.0",
+      "role": "Tanker",
+      "position": {
+        "x": 918.18994140625,
+        "y": 0.00917959213256836,
+        "z": 609.155029296875
+      },
+      "cargo": {
+        "BarrelCapacity": 8,
+        "FillDurationSeconds": 2.0,
+        "UnloadDurationSeconds": 1.5,
+        "CargoOilBarrels": 0.0,
+        "CargoFuelBarrels": 0.0
+      },
+      "order": {
+        "SourceBuildingId": 7,
+        "DestinationBuildingId": 9,
+        "TargetCell": {
+          "x": 914,
+          "y": 608
+        },
+        "ActionEndsAt": 0.0,
+        "Phase": 1,
+        "ResourceKind": 1
+      },
+      "status": {
+        "StatusCode": 2,
+        "ReasonCode": 0,
+        "ResourceKind": 1
+      }
+    },
+    {
+      "id": "production.1003.0",
+      "role": "Tanker",
+      "position": {
+        "x": 918.42138671875,
+        "y": 0.00917959213256836,
+        "z": 601.6483154296875
+      },
+      "cargo": {
+        "BarrelCapacity": 8,
+        "FillDurationSeconds": 2.0,
+        "UnloadDurationSeconds": 1.5,
+        "CargoOilBarrels": 0.0,
+        "CargoFuelBarrels": 8.0
+      },
+      "order": {
+        "SourceBuildingId": 7,
+        "DestinationBuildingId": 9,
+        "TargetCell": {
+          "x": 919,
+          "y": 601
+        },
+        "ActionEndsAt": 746.8588256835938,
+        "Phase": 4,
+        "ResourceKind": 1
+      },
+      "status": {
+        "StatusCode": 2,
+        "ReasonCode": 0,
+        "ResourceKind": 1
+      }
+    },
+    {
+      "id": "production.1001.0",
+      "role": "LogisticsTruck",
+      "position": {
+        "x": 873.0891723632812,
+        "y": 0.00917959213256836,
+        "z": 608.368408203125
+      },
+      "cargo": {
+        "BarrelCapacity": 8,
+        "FillDurationSeconds": 2.0,
+        "UnloadDurationSeconds": 1.5,
+        "CargoOilBarrels": 8.0,
+        "CargoFuelBarrels": 0.0
+      },
+      "order": {
+        "SourceBuildingId": 5,
+        "DestinationBuildingId": 7,
+        "TargetCell": {
+          "x": 904,
+          "y": 611
+        },
+        "ActionEndsAt": 0.0,
+        "Phase": 3,
+        "ResourceKind": 0
+      },
+      "status": {
+        "StatusCode": 2,
+        "ReasonCode": 0,
+        "ResourceKind": 0
+      }
+    },
+    {
+      "id": "production.1002.0",
+      "role": "LogisticsTruck",
+      "position": {
+        "x": 908.3157958984375,
+        "y": 0.00917959213256836,
+        "z": 607.14990234375
+      },
+      "cargo": {
+        "BarrelCapacity": 8,
+        "FillDurationSeconds": 2.0,
+        "UnloadDurationSeconds": 1.5,
+        "CargoOilBarrels": 8.0,
+        "CargoFuelBarrels": 0.0
+      },
+      "order": {
+        "SourceBuildingId": 5,
+        "DestinationBuildingId": 7,
+        "TargetCell": {
+          "x": 908,
+          "y": 608
+        },
+        "ActionEndsAt": 746.2977294921875,
+        "Phase": 4,
+        "ResourceKind": 0
+      },
+      "status": {
+        "StatusCode": 2,
+        "ReasonCode": 0,
+        "ResourceKind": 0
+      }
+    },
+    {
+      "id": "role.logistics_truck.1.9.0",
+      "role": "LogisticsTruck",
+      "position": {
+        "x": 903.5796508789062,
+        "y": 0.00917959213256836,
+        "z": 599.6348876953125
+      },
+      "cargo": {
+        "BarrelCapacity": 8,
+        "FillDurationSeconds": 2.0,
+        "UnloadDurationSeconds": 1.5,
+        "CargoOilBarrels": 0.0,
+        "CargoFuelBarrels": 0.0
+      },
+      "order": {
+        "SourceBuildingId": 5,
+        "DestinationBuildingId": 17,
+        "TargetCell": {
+          "x": 904,
+          "y": 598
+        },
+        "ActionEndsAt": 747.3588256835938,
+        "Phase": 2,
+        "ResourceKind": 0
+      },
+      "status": {
+        "StatusCode": 2,
+        "ReasonCode": 0,
+        "ResourceKind": 0
+      }
+    }
+  ]
+}

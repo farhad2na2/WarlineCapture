@@ -1,0 +1,59 @@
+{
+  "mission": "S005",
+  "sourceHash": "4e620debdff668450cdd5f7e53c2c64999974f6836273e7ae7a66ff898eb80a7",
+  "scope": "Existing Campaign air source geometry and logical pad inventory; native capacity qualification pending",
+  "physicalSource": "CityEdgeAirfield",
+  "campaignHash": "d7bdd33612215424b1e3593c210d4b92bb9d1ac4fe4e957cfb56457da7197758",
+  "pads": [
+    {
+      "faction": 1,
+      "worldX": 420.2105,
+      "worldZ": 564.8,
+      "width": 16,
+      "depth": 16
+    },
+    {
+      "faction": 2,
+      "worldX": 932.5895,
+      "worldZ": 475.2,
+      "width": 16,
+      "depth": 16
+    }
+  ],
+  "airportAsset": {
+    "prefab": "Building_Airport",
+    "boundsCenter": [
+      49.8,
+      14.49438,
+      27.2350655
+    ],
+    "boundsSize": [
+      209.34288,
+      30.38876,
+      54.3620071
+    ],
+    "runwayLocalPosition": [
+      49.8,
+      -0.7,
+      33.6
+    ],
+    "runwayLocalScale": [
+      1.0,
+      1.0,
+      1.25051081
+    ],
+    "physicalSourceModified": false
+  },
+  "existingPhysicalGeometryEvidence": "campaign-existing-airfield-readonly-audit-348.json",
+  "geometryEvidenceIsHistorical": true,
+  "sourceFitCertified": false,
+  "capacityCertified": false,
+  "normalInputLifecycleEvidence": false,
+  "playerReady": false,
+  "requiredNextChecks": [
+    "Native R3/Airport placement using existing legal Campaign geometry and assets",
+    "Both factions largest enabled fixed-wing and rotor aircraft: producer exit, launch, return, parking and simultaneous capacity",
+    "Preserve fixed Standard caps and budgets; select another existing Campaign source if this fails; no new physical runway"
+  ],
+  "physicalMapModified": false
+}

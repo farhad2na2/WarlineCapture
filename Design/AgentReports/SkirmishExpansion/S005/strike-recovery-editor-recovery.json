@@ -1,0 +1,24 @@
+{
+  "result": "Recovered",
+  "userPermission": "you may (close/reopen only Warline Editor)",
+  "oldWarlinePid": 5476,
+  "newWarlinePid": 33571,
+  "nativePipelinePort": 7801,
+  "figPid": 19046,
+  "hubPid": 629,
+  "unrelatedProcessesPreserved": true,
+  "licensingMode": "repository wrapper GUI; no batchmode",
+  "launchLog": "/private/tmp/warline-s005-recovered-editor-305.log",
+  "launchShell": "Detached only verified launch wrapper timer to preserve ongoing Editor; launch is not validation",
+  "nativeConfig": "Assets/Settings/Pipeline/EditorPipelineManager.asset created and port set using Editor APIs; authentication unchanged",
+  "temporaryRepairSource": "Removed before tests; native config persists",
+  "compile": {
+    "compiling": false,
+    "updating": false,
+    "failed": false,
+    "playing": false
+  },
+  "focusedValidation": "tests-305-native-strike-recovery.log",
+  "focusedTestsPassed": 5,
+  "playerReady": false
+}

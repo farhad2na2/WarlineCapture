@@ -1,0 +1,22 @@
+{
+  "result": "IndependentToolReviewClear_HoldAdoptionAndFullTreeBenchmark",
+  "manifest_sha256": "5f401dd01f9d677a019c040853ae87992273a165854be43da24171a86d469061",
+  "source_sha256": "d32fdd516a437c4470e296fd20c558ae2ae5055089d6480d32be4aa182bad962",
+  "current_before_matches": true,
+  "findings": [],
+  "reviewed": [
+    "Original enumeration/filter/is_file and source finalsorting unchanged. Candidate binarywriter hash function, buildsortedlist/hash and CLI/exclusiveoutput/markers unchanged.",
+    "Hashing only uses8workers, max32pendingfutures, orderedresults, bounded submission; context manager joins all workers on success or failure, queuedfutures cancelled and exceptions rethrown. No hashcache or omittedfiles.",
+    "Fresh file reads retain non-atomic snapshot limitation; required frozen-candidate/beforeafter source gates still necessary.",
+    "No fulltree/native/concurrentbenchmark run or installedTools mutation by reviewer."
+  ],
+  "independent_tests": {
+    "methods": 7,
+    "result": "PASS",
+    "exit_code": 0,
+    "seconds": 6.98,
+    "scope": "Small fixtures underLogs only; source/build/CLIbyteparity inclUnicode/longpath, missingtrees/build, source/DLLreaderrors,8worker/orderparity, freshmutation, mismatchnoPass+preservedsnapshot"
+  },
+  "full_tree_benchmark_executed": false,
+  "speedup_measured": false
+}

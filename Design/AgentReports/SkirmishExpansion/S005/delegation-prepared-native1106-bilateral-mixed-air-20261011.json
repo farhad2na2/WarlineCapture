@@ -1,0 +1,38 @@
+{
+  "status": "PreparedExternalOnlyNeverCompiledOrLoadedByPlacementAgent",
+  "fixture": "/private/tmp/S005BilateralMixedAir1106.cs",
+  "fixtureSha256": "810cdc410d474c896a93b37dc1e237652b4756dddce40845811a0231699afcee",
+  "runner": "/private/tmp/s005-run-bilateral-mixed-air-1106.py",
+  "runnerSha256": "c7bd975e8ece9edbfadd40ee697db6ab370028d46a3181085247c56759a286b5",
+  "parentPrerequisite": "native1104-isolated-paid-bilateral-airport-pass.json",
+  "frozenPredecessorsPreserved": true,
+  "roles": [
+    "faction1 Fighter",
+    "faction1 TransportPlane",
+    "faction2 Fighter",
+    "faction2 TransportPlane"
+  ],
+  "scope": "Four actual paid mixed tactical fixed-wing aircraft from two separately paid actual Airports on current Campaign geometry, actual Air2 each faction, positive native ground taxi/takeoff roll/airborne, actual faction owned runway/home and home return. Player native Touch Move/Return; enemy public native movement API and natural return.",
+  "disclosures": [
+    "Disposable S005 startup opening actors retired HealthZero, both native faction materials funded via clamped bank per purchase, FullArsenal readiness each faction, existing owned oil/fuel storage filled only to real native capacities; no bank capacity/unit price/cap/weapon changes.",
+    "Native AI paid faction2 Airport temporary planner/control retains exact1104 protocol, no swap/spawnfake/relocation.",
+    "Four producer queue requests use actual native BuildingFactionUnitProductionRequest pipeline, request9101-9104; paid reservations/materials spent and live native actor identity required; no injected delivery/payment.",
+    "Faction2 actual public SkirmishWorldMovementService.AssignIntent is explicitly outside Touch audit; natural pass completion must set returning/landing flags by runtime.",
+    "No aircraft pose/selection/Airborne/home/taxi/return flag writes. No enemy damage/visibility injections. No combat cargo SaveContinue claim."
+  ],
+  "guards": [
+    "Complete source preflight/load-only/pre-dispatch/post comparisons, root heavy lane token main1106 and idle ownership required.",
+    "Every raw native Touch row zero unexpected/interventions/receiptViolations across audit resets.",
+    "Flat Serializable primitive/string AirRow mandatory actual actor index/version, frame, receipt, paid bank delta, native home/thresholds, taxi/roll/airborne/home-return; four ordered unique requests/reservations/actors.",
+    "Failure of legal placement/producer/native movement/home/physical flight remains real scoped gate failure, no source-fit impossible claim.",
+    "Positive taxi distance sampled only while native grounded, pre-roll and before observed takeoff; roll displacement cannot masquerade as separate native taxi."
+  ],
+  "dryCompile": "Root only: unity command compile with fixture; inspect native success/errors before load-only. No Assets copy.",
+  "nativeInvocation": "rtk proxy python3 /private/tmp/s005-run-bilateral-mixed-air-1106.py <CURRENT_FULL_SOURCE_MANIFEST_BASENAME> --heavy-lane-owner main1106",
+  "limitations": [
+    "Isolated technical QA cannot certify normal enemy growth, mission budget/start roster/full mission win/device/visual player readiness.",
+    "Exact native source revision must be recorded; prior17beb scopes retained separately.",
+    "Natural enemy home-return observed after actual public move pass, not enemy UI Return.",
+    "TransportPlane advertised seats/vehicle components not actual loaded cargo flight; air damage/interception remains next bounded check."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "wrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "failureMarker": "[AircraftReturnParkingValidation] result=Failed",
+  "reason": "Cruise-height pass over parking precedes runway landing",
+  "sourceHash": "b248a30693e70eb9759af1cebb0dfb480ee63007c3b2f34cca26d43d758b527e",
+  "prePostIdentical": true,
+  "log": "native-786-return-parking-repro.log",
+  "scope": "Focused replay of native785 own-air state through actual Return command processor and UnitAirMovementSystem",
+  "normalInputMissionCertified": false
+}

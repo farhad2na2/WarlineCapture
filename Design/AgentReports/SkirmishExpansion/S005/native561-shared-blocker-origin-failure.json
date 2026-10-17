@@ -1,0 +1,27 @@
+{
+  "run": 561,
+  "sourceHash": "c720b1373affdd0ee1b205979f871c55a879c2134a10577429b5fe3e2d2cc8ca",
+  "prePostSourceHashMatched": true,
+  "normalMenuPassed": true,
+  "ariaConsentPassed": true,
+  "completeMissionPassed": false,
+  "abortReason": "incompleteNativeInputFlow",
+  "trace": "s005-aria-live-104734-en-00e656a664ea4fa8957757ef28c2c7b0.jsonl",
+  "observedIllegalSpawn": {
+    "actor": "role.rifle.1.0.1",
+    "position": [
+      959.5,
+      860.5
+    ],
+    "sourceBuildingOrigin": [
+      957,
+      860
+    ],
+    "sourceBuildingSize": [
+      8,
+      10
+    ]
+  },
+  "sharedBug": "OperationMapBuildingAuthoring stores UnitGrid centre; StaticGridBlockerUpdateSystem incorrectly used it as footprint origin",
+  "playerReady": false
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "collector_kind": "SkirmishNativeCompiledSetupCensus",
+  "native_setup_identity": {
+    "schema_version": 1,
+    "identity_kind": "SkirmishNativeSetupIdentity",
+    "catalog_id": "S005",
+    "definition_id": "skirmish.s005",
+    "definition_version": 2,
+    "difficulty": "Regular",
+    "size": "Standard",
+    "seed": 155926,
+    "locale": "FA",
+    "native_setup_hash_uint32": 3822309427,
+    "native_content_identity": "skirmish.s005.v2/enemy-policy-v1/4a6d090dc8befd3c3f31d51f0d16ca2f4b226da8a3895d95e76c9491d09da2a1"
+  },
+  "actual_native_locale": "fa-IR",
+  "native_config_sha256": "010cce1a74ad1a72f1005527463a9b3f021874b52a5e3c9927c5470ad00493ec"
+}

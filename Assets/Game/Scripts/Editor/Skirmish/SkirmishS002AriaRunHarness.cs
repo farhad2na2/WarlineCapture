@@ -48,6 +48,7 @@ namespace Game.Editor
         private static bool nativeOpeningRenderViewAccepted;
         private static bool finishingEvidence;
         private static System.Threading.Tasks.Task<string> finishSourceHash;
+        private static System.Diagnostics.Stopwatch finishFingerprintTimer;
         private static bool finishAbort;
         private static string finishAbortReason;
 
@@ -242,7 +243,12 @@ namespace Game.Editor
                 next = now + 2d;
                 return false;
             }
-            string prefix = "/private/tmp/" + catalogId.ToLowerInvariant() + "-native-" + GameLocalization.CurrentLocaleCode + "-" + width + "x" + height;
+            string reviewDirectory = Environment.GetEnvironmentVariable("WARLINE_NATIVE_REVIEW_DIRECTORY");
+            if (string.IsNullOrWhiteSpace(reviewDirectory))
+                reviewDirectory = Application.platform == RuntimePlatform.OSXEditor ? "/private/tmp" : Path.GetTempPath();
+            reviewDirectory = Path.GetFullPath(reviewDirectory);
+            Directory.CreateDirectory(reviewDirectory);
+            string prefix = Path.Combine(reviewDirectory, catalogId.ToLowerInvariant() + "-native-" + GameLocalization.CurrentLocaleCode + "-" + width + "x" + height);
             if (nativeReviewStage == 0)
             {
                 foreach (var mapView in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -462,7 +468,8 @@ namespace Game.Editor
             return true;
         }
 
-        private static string SelectedReportDirectory() => catalogId switch
+        private static string SelectedReportDirectory() => productionCanary != null
+            ? productionCanary.Request.ArtifactDirectory : catalogId switch
         {
             "S005" => "Design/AgentReports/SkirmishExpansion/S005/",
             SkirmishAcceptanceCensusCapture.S004CatalogId => SkirmishAcceptanceScaffold.S004RelativeReportEvidenceDirectory,
@@ -473,6 +480,16 @@ namespace Game.Editor
         private static bool TryCreateSelectedPayload(string catalog, int selectedSeed, string selectedLocale,
             out SkirmishAriaAcceptancePayload payload, out string error)
         {
+            if(productionCanary!=null)
+            {
+                var request=productionCanary.Request;
+                if(catalog!=request.CatalogId||selectedSeed!=request.Seed||selectedLocale!=request.Locale)
+                    throw new InvalidOperationException("Payload differs from exact claimed normal journey");
+                if(request.IsLegacyPreset) { SkirmishLegacyProductionIdentity.ValidateJob(request.Job); payload=default; error=null; return true; }
+                return SkirmishAriaAcceptancePayload.TryCreate(catalog,(string)request.Job["definition_id"],
+                    (int)request.Job["definition_version"],SkirmishSizeId.Standard,SkirmishDifficultyId.Regular,
+                    selectedSeed,selectedLocale,out payload,out error);
+            }
             if (catalog == "S005")
                 return SkirmishAriaAcceptancePayload.TryCreate("S005", "skirmish.s005", 2,
                     SkirmishSizeId.Standard, SkirmishDifficultyId.Regular, selectedSeed, selectedLocale, out payload, out error);
@@ -519,8 +536,13 @@ namespace Game.Editor
                 : requestedCatalog;
             seed = requestedSeed;
             locale = requestedLocale;
-            SessionState.SetString(CandidateHashKey,
-                SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, ".."))));
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog");
+            var launchFingerprintTimer = System.Diagnostics.Stopwatch.StartNew();
+            string launchFingerprint = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
+            launchFingerprintTimer.Stop();
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=" + launchFingerprintTimer.Elapsed.TotalMilliseconds.ToString("R", CultureInfo.InvariantCulture) + " sha256=" + launchFingerprint);
+            RecordProductionBatchFingerprint("Begin",launchFingerprint,launchFingerprintTimer.Elapsed.TotalMilliseconds);
+            SessionState.SetString(CandidateHashKey, launchFingerprint);
             stage = 0;
             finishingEvidence = false;
             terminalSnapshotValid = terminalProbeActive = false;
@@ -602,6 +624,7 @@ namespace Game.Editor
 
         private static string ValidationProfileRoot()
         {
+            if(productionCanary!=null)return Path.Combine(productionCanary.Request.ArtifactDirectory,"save-profile");
             return Path.Combine(Path.GetTempPath(), "aria-play-validation-profile",
                 SessionState.GetString(Key + ".artifactId", "missing-artifact"));
         }
@@ -690,7 +713,7 @@ namespace Game.Editor
                     bool selected = TryCreateSelectedPayload(catalogId, seed, locale, out payload, out _);
                     if (!selected)
                         return;
-                    Debug.Log("[SkirmishS002AriaRun] selected " + payload.FormatSelectedConfiguration());
+                    Debug.Log("[SkirmishS002AriaRun] selected " + (productionCanary?.Request.IsLegacyPreset==true ? "LegacyPreset catalog="+catalogId+" seed="+seed+" nativeSettings=CodedPreset" : payload.FormatSelectedConfiguration()));
                     if (TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
                         Debug.Log(SkirmishAcceptanceCensusCapture.FormatLog(census));
                     stage = 1;
@@ -700,7 +723,7 @@ namespace Game.Editor
 
                 if (!SkirmishLaunchProjection.TryGet(em, out Entity session, out SkirmishMatchState match))
                     return;
-                bool nativeS005MenuJourney = catalogId == "S005" && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
                 if (stage <= 1 && !nativeS005MenuJourney)
                 {
                     SkirmishLaunchProjection.TryEnterMatch(em);
@@ -774,6 +797,15 @@ namespace Game.Editor
                     if (!NativeShadersAreReady(now)) return;
                     if (!NativeRenderingStartupGateAllows(em, ref nativeOpeningRenderViewAccepted))
                     {
+                        try { Debug.Log("[SkirmishNativeRenderingDiagnostic] " + CaptureNativeRenderingFailureDiagnostic(em)); }
+                        catch (Exception diagnosticError) { Debug.LogWarning("[SkirmishNativeRenderingDiagnostic] captured=0 error=" + diagnosticError); }
+                        try
+                        {
+                            string failedView = LiveTracePath() + ".packed-render-failed-unqualified.png";
+                            ScreenCapture.CaptureScreenshot(failedView);
+                            Debug.Log("[SkirmishNativeRenderingFailureView] captureRequested=1 qualified=0 path=" + failedView);
+                        }
+                        catch (Exception screenshotError) { Debug.LogWarning("[SkirmishNativeRenderingFailureView] captureRequested=0 qualified=0 error=" + screenshotError); }
                         Debug.LogError("[SkirmishNativeRendering] result=Failed reason=incompletePackedRenderInitialization");
                         Finish(true, "incompletePackedRenderInitialization");
                         return;
@@ -787,6 +819,8 @@ namespace Game.Editor
                     }
                     if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1")
                     {
+                        if (TickS005OpeningGroupCandidates(em,session)) return;
+                        if (TickS005WarmRenderExitDiagnostic(em,session)) return;
                         if (elapsed < 2f) { next = now + 0.5d; return; }
                         if (nativeProductionStage > 0)
                         {
@@ -982,6 +1016,7 @@ namespace Game.Editor
             bool simulationActive,
             float elapsed)
         {
+            RecordProductionResolvedSnapshot(em, session, in match, simulationActive, elapsed, "NativeResolvedSnapshot");
             Directory.CreateDirectory(EvidenceDirectory());
             float clockElapsed = elapsed;
             byte clockPaused = 0;
@@ -1047,6 +1082,15 @@ namespace Game.Editor
             public string phase, intent, observation;
             public int actions, attempts, targetId, observedTargetId, stopReason, pageSeen, navigationStage;
             public float progressAt, objectiveProgressAt, openingUntil;
+            public int frame, observationFrame, pageCount, totalGroups, selectedGroups;
+            public int assaultMask, attackOrderMask, selectedMask, structureMask;
+            public int squadCardMask, squadTargetMask, squadDragMask, airMask;
+            public AriaTouchTarget squad4;
+            public uint rosterRevision, sweepRosterRevision;
+            public int pagedToAssault, assaultSelecting, structureOrdered, pagesOrdered, homeDefenseStage;
+            public bool attackMode, selectionVisible, presentedHomeThreat, mapOpen, placementOpen, approachVisible;
+            public float publicApproachDistance, bestApproachDistance;
+            public byte approachBaselineObserved;
             public bool assaultStarted, assaultIssued;
             public int materials, infantry, page, structureAttackUnits;
             public bool drawer, riflePending, rocketeerPending, truckCommitted, readiness, pad;
@@ -1056,12 +1100,15 @@ namespace Game.Editor
         private static void AppendInputDiagnostic(EntityManager em, float elapsed)
         {
             using var query = em.CreateEntityQuery(typeof(AriaSkirmishObservationComponent),
-                typeof(AriaPlaySessionComponent), typeof(AriaSkirmishPlanComponent), typeof(AriaPlayObservationComponent));
+                typeof(AriaSkirmishObservationOwner), typeof(AriaSkirmishPlanComponent));
             if (query.CalculateEntityCount() != 1) return;
-            Entity boundary = query.GetSingletonEntity();
-            var view = em.GetComponentData<AriaSkirmishObservationComponent>(boundary).Value;
+            Entity storage=query.GetSingletonEntity();
+            Entity boundary=em.GetComponentData<AriaSkirmishObservationOwner>(storage).Boundary;
+            if(!Game.UI.Shell.Ecs.AriaSkirmishObservationStorage.TryGet(em,boundary,out var current)||current!=storage||
+                !em.HasComponent<AriaPlaySessionComponent>(boundary)||!em.HasComponent<AriaPlayObservationComponent>(boundary))return;
+            var view = em.GetComponentData<AriaSkirmishObservationComponent>(storage).Value;
             var input = em.GetComponentData<AriaPlaySessionComponent>(boundary);
-            var plan = em.GetComponentData<AriaSkirmishPlanComponent>(boundary);
+            var plan = em.GetComponentData<AriaSkirmishPlanComponent>(storage);
             var target = em.GetComponentData<AriaPlayObservationComponent>(boundary);
             var sample = new InputDiagnostic
             {
@@ -1070,6 +1117,21 @@ namespace Game.Editor
                 actions = input.Actions, attempts = input.Attempts, targetId = input.TargetId,
                 observedTargetId = target.TargetId, stopReason = input.StopReason,
                 pageSeen = plan.AssaultPageSeen, navigationStage = plan.MapNavigationStage,
+                frame = view.Frame, observationFrame = target.Frame,
+                pageCount = view.ExpandedPageCount, totalGroups = view.ExpandedTotalGroups, selectedGroups = view.ExpandedSelectedGroups,
+                assaultMask = view.ExpandedAssaultMask, attackOrderMask = view.ExpandedAttackOrderMask,
+                selectedMask = view.ExpandedSelectedMask, structureMask = view.ExpandedStructureMask,
+                squadCardMask = view.AvailableSquads, airMask = view.ExpandedAirMask,
+                squadTargetMask = (view.Squad0.Available ? 1 : 0) | (view.Squad1.Available ? 2 : 0) | (view.Squad2.Available ? 4 : 0) | (view.Squad3.Available ? 8 : 0) | (view.Squad4.Available ? 16 : 0),
+                squadDragMask = (view.Squad0.Drag ? 1 : 0) | (view.Squad1.Drag ? 2 : 0) | (view.Squad2.Drag ? 4 : 0) | (view.Squad3.Drag ? 8 : 0) | (view.Squad4.Drag ? 16 : 0),
+                squad4 = view.Squad4,
+                rosterRevision = view.ExpandedRosterRevision, sweepRosterRevision = plan.SweepRosterRevision,
+                pagedToAssault = plan.PagedToAssault, assaultSelecting = plan.AssaultSelecting,
+                structureOrdered = plan.StructureOrdered, pagesOrdered = plan.PagesOrdered, homeDefenseStage = plan.HomeDefenseStage,
+                attackMode = view.AttackMode, selectionVisible = view.SelectionVisible, presentedHomeThreat = view.PresentedHomeThreat,
+                mapOpen = view.MapOpen, placementOpen = view.PlacementOpen, approachVisible = view.AssaultDistanceVisible,
+                publicApproachDistance = view.NearestFriendlyObjectiveDistance, bestApproachDistance = plan.BestAssaultDistance,
+                approachBaselineObserved = plan.AssaultDistanceObserved,
                 progressAt = plan.LastProgressAt, objectiveProgressAt = input.LastObjectiveProgressAt,
                 openingUntil = plan.OpeningUntil, assaultStarted = plan.AssaultStarted != 0, assaultIssued = plan.AssaultIssued != 0,
                 materials = view.OwnMaterials, infantry = view.Infantry, page = view.ExpandedPageIndex,
@@ -1161,7 +1223,7 @@ namespace Game.Editor
         private static int DesignatedBaseHp(EntityManager em, Entity session, byte faction)
         {
             if (!em.HasComponent<SkirmishExpandedSessionComponent>(session))
-                return -1;
+                return productionCanary?.Request.IsLegacyPreset==true ? SkirmishLegacyProductionIdentity.BaseHp(em,em.GetComponentData<SkirmishMatchState>(session),faction) : -1;
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             using EntityQuery query = em.CreateEntityQuery(
                 typeof(SkirmishObjectiveRoleComponent),
@@ -1214,6 +1276,7 @@ namespace Game.Editor
 
         private static void Finish(bool abort, string abortReason)
         {
+            StopS005GuardObservation();
             if (finishingEvidence) return;
             finishingEvidence = true;
             EditorApplication.update -= Tick;
@@ -1234,6 +1297,8 @@ namespace Game.Editor
             // Hash every source byte, but keep the native Editor responsive while
             // reading the shared Campaign asset library. Unity APIs stay on the
             // Editor thread, and no receipt is written until this task completes.
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=Finish aborted=" + abort + " reason=" + abortReason);
+            finishFingerprintTimer = System.Diagnostics.Stopwatch.StartNew();
             finishSourceHash = System.Threading.Tasks.Task.Run(() => SkirmishCandidateSourceHash.Compute(root));
             EditorApplication.update += PollFinishSourceHash;
         }
@@ -1244,6 +1309,10 @@ namespace Game.Editor
             EditorApplication.update -= PollFinishSourceHash;
             var completed = finishSourceHash;
             finishSourceHash = null;
+            finishFingerprintTimer?.Stop();
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=Finish elapsedMilliseconds=" + (finishFingerprintTimer?.Elapsed.TotalMilliseconds ?? -1d).ToString("R", CultureInfo.InvariantCulture) + " taskStatus=" + completed.Status + (completed.Status == System.Threading.Tasks.TaskStatus.RanToCompletion ? " sha256=" + completed.Result : string.Empty));
+            productionBatchFinishHashMilliseconds=finishFingerprintTimer?.Elapsed.TotalMilliseconds??-1;
+            finishFingerprintTimer = null;
             if (completed.IsFaulted || completed.IsCanceled)
             {
                 Debug.LogError("[SkirmishSourceFingerprint] result=Failed error=" + completed.Exception);
@@ -1255,6 +1324,8 @@ namespace Game.Editor
 
         private static void FinishEvidence(bool abort, string abortReason, string currentSourceHash)
         {
+            try { RecordProductionBatchFingerprint("End",currentSourceHash,productionBatchFinishHashMilliseconds); }
+            catch(Exception fingerprintError) { abort=true;abortReason="productionBatchFingerprint:"+fingerprintError.GetType().Name;Debug.LogError(fingerprintError); }
             if (currentSourceHash != SessionState.GetString(CandidateHashKey, ""))
             {
                 abort = true;
@@ -1355,7 +1426,14 @@ namespace Game.Editor
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string runsPath = RunsCsvPath(root);
             string csv = File.Exists(runsPath) ? File.ReadAllText(runsPath) : SkirmishAcceptanceScaffold.RequiredHeader + "\n";
-            if (!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out string runId, out string idError))
+            string runId=null,idError=null;
+            bool matrixJob=productionBatch?.Matrix!=null;
+            if(matrixJob)
+            {
+                productionBatch.Matrix.ValidateJob(productionCanary.Request.Job);
+                runId=catalogId+"-aria-matrix-"+(string)productionCanary.Request.Claim["attempt_id"];
+            }
+            if (!matrixJob&&!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out runId, out idError))
             {
                 Debug.LogError("[SkirmishS002AriaRun] result=Failed " + idError);
                 UiShellRuntimeGateway.StopAriaPlay();
@@ -1425,15 +1503,19 @@ namespace Game.Editor
                 ForcedVictory = false,
                 Aborted = abort || !haveMatch || match.Phase != SkirmishPhase.Finished
             };
-            if (TryReadCensus(root, out SkirmishAcceptanceCensus census))
+            bool nativeProvenance=!matrixJob;
+            if(matrixJob)nativeProvenance=productionCanary.TryApplyNativeProvenance(ref facts,SessionState.GetString(CandidateHashKey,""));
+            else if (TryReadCensus(root, out SkirmishAcceptanceCensus census))
             {
                 facts.DefinitionVersion = census.DefinitionVersion;
                 facts.CodeHash = census.CodeHash;
                 facts.ConfigHash = census.ConfigHash;
             }
 
-            bool appended = SkirmishS002AriaRunLog.TryAppendTerminalRow(runsPath, in facts, out string row, out string error);
-            bool counted = appended && SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, RowResult(row));
+            bool legacyJob=productionCanary?.Request.IsLegacyPreset==true;
+            string row,error;
+            bool appended = legacyJob ? TryAppendLegacyProductionTerminal(runsPath,in facts,out row,out error) : SkirmishS002AriaRunLog.TryAppendTerminalRow(runsPath, in facts, out row, out error);
+            bool counted = !legacyJob && appended && nativeProvenance && (productionBatch==null||productionBatch.RuntimeErrorsClean) && SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, RowResult(row));
             string log = string.Format(
                 CultureInfo.InvariantCulture,
                 "[SkirmishS002AriaRun] appended={0} countedWin={1} error={2}\n{3}\n",
@@ -1450,12 +1532,16 @@ namespace Game.Editor
             AriaCommandEvidence.End();
             UiShellRuntimeGateway.StopAriaPlay();
             EditorApplication.ExitPlaymode();
-            RequestQuitIfAsked(counted ? 0 : 2);
+            bool operational=matrixJob&&(productionBatch==null||productionBatch.RuntimeErrorsClean)&&(legacyJob ? SkirmishLegacyProductionIdentity.IsOperationallyComplete(in facts,appended,terminalSnapshotValid,nativeProvenance&&productionCanary.LegacySavedResultVerified) : SkirmishProductionMatrixAuthority.IsOperationallyComplete(in facts,appended,terminalSnapshotValid));
+            if(matrixJob)Debug.Log("[SkirmishProductionOperationalRun] result="+(operational?"Completed":"Failed")+
+                " outcome="+outcome+" countedWin="+(counted?1:0)+" queueSuccessEnabled=0");
+            RequestQuitIfAsked(matrixJob?(operational?0:2):(counted?0:2));
         }
 
         private static bool TryReadCensus(string root, out SkirmishAcceptanceCensus census)
         {
             census = null;
+            if(productionBatch?.Matrix!=null)return false; // Matrix records use verified native setup observations, never the S002 fallback.
             if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out _))
                 return false;
             var packaged = SkirmishExpansionCatalogConfig.Load();
@@ -1513,13 +1599,25 @@ namespace Game.Editor
             SessionState.EraseBool(QuitPendingKey);
             SessionState.EraseInt(QuitCodeKey);
             EditorApplication.update -= FinishQuitAfterPlayMode;
+            try
+            {
+                RestoreS004EditorJourneyOptions();
+                RestoreProductionCanaryAfterOwnedPlay();
+            }
+            catch (Exception cleanupError)
+            {
+                exitCode = 2;
+                Debug.LogError("[SkirmishProductionCanaryCleanup] result=Failed error=" + cleanupError);
+                // Preserve context/artifacts for investigation; complete wrapper as failed.
+            }
+            if(TryCompleteProductionBatchJob(exitCode)) return;
             Debug.Log("[SkirmishValidationExit] result=Requested code=" + exitCode);
-            RestoreS004EditorJourneyOptions();
             if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)
             {
                 MissionEditorValidationExit.Complete(exitCode == 0);
                 return;
             }
+            productionBatchExitOwner?.RecordActualExitInvocation(exitCode);
             EditorApplication.Exit(exitCode);
         }
 

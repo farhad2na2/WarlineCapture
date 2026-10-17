@@ -1,0 +1,18 @@
+{
+  "scope": "FixtureOnly_ReacquireBladeBufferAfterStructuralChanges",
+  "files": [
+    {
+      "target": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredRotorAircraftFramingTests.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/RotorFramingFixtureBufferLifetime/SkirmishMeasuredRotorAircraftFramingTests.cs.txt",
+      "before_sha256": "b497bd6b0a940fb8c50cfaaa74cf04bb0b0f63a0872eedb5c0044c137e88ee8f",
+      "sha256": "15bd548b2ac18e4679932695158f54f5e982529393da23494d6e9c254e936a5f",
+      "assembly": "Game.Tests.Editor"
+    }
+  ],
+  "entry": "Game.Tests.Editor.SkirmishMeasuredRotorAircraftFramingTests.RunFocusedValidation",
+  "controls_unchanged": 55,
+  "runtime_unchanged": true,
+  "assertions_unchanged": true,
+  "native_failure": "67435 BuildActualImportedDraws line149 stored DynamicBuffer invalidated by Parent/LocalTransform/LocalToWorld additions",
+  "native_executed": false
+}

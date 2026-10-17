@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "failure": "Normal-input factory supply selection/delivery acknowledgment watchdog",
+  "actualWrapperExit": 2,
+  "actualWrapperExitArtifact": "native-746-current-manual-en-seed155926.log.exit",
+  "sourceHash": "285ab83e0400b7f419a20fa73cfe15bd09c597064dd83cff775df5460589b562",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-746-normal-input-factory-supply-strategy-pre-source-manifest.json",
+  "postSourceManifest": "final-746-normal-factory-supply-ack-failure-post-source-manifest.json",
+  "log": "native-746-current-manual-en-seed155926.log",
+  "logSha256": "dd9fbe6f5f08f74102a1c587d912694169ee04acab92d2b2cab9b44b9eab4416",
+  "trace": "s005-aria-live-155926-en-e48d9f9ab3d54eb48005852167aacf08.jsonl",
+  "inputAudit": "native746-touch-contact-audit.json",
+  "normalSupplyAssigned": false,
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "diagnosis": "Supply state started on industry-completion tick before the outer setup gate increased tanker target from2 to3; subsequent tanker affordability/catalog waits can preempt the pending selection watchdog. Guard supply start until all3 tankers committed; add pending-state diagnostics."
+}

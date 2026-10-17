@@ -43,6 +43,10 @@ namespace Game.Runtime
                 fresh.DefinitionId != saved.DefinitionId || fresh.ContentVersion != saved.ContentVersion ||
                 fresh.Seed != saved.Seed || fresh.SizeId != saved.SizeId || fresh.DifficultyId != saved.DifficultyId ||
                 (fresh.Phase != SkirmishSessionPhase.Queued && fresh.Phase != SkirmishSessionPhase.Spawning)) return false;
+            // Validate independently compiled objective binding before reconstruction
+            // creates native actors, buildings, banks or transient visuals.
+            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault &&
+                !SkirmishNativeObjectiveCheckpoint.TryPrepare(em,session,snapshot,setup,out _,out _)) return false;
             em.AddComponentObject(session, new SkirmishNativeCheckpointRecoveryRecord
             {
                 Snapshot = snapshot, Prefab = prefab, Deadline = Time.realtimeSinceStartupAsDouble + 240
@@ -80,7 +84,7 @@ namespace Game.Runtime
                 if (!record.UnitsCreated)
                 {
                     foreach (var actor in record.Snapshot.Actors)
-                        if (actor.IsStructure == 0 && !SkirmishScenarioSpawnSystem.TryInstantiateCheckpointUnit(em, actor, out _))
+                        if (actor.IsStructure == 0 && !SkirmishScenarioSpawnSystem.TryInstantiateCheckpointUnit(em, actor, out _, setup))
                         { Fail(em, session, record, "NativeRecoveryUnitFailed:" + actor.Id); return; }
                     record.UnitsCreated = true;
                     // Restore the authoritative banks, never reseed forces or the

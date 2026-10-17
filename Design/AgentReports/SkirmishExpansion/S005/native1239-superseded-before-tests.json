@@ -1,0 +1,7 @@
+{
+  "status": "CompiledNoErrorsAfterReloadIdle_NoFocusedTestsExecuted",
+  "sourceHash": "8225e7721b424b0c549452c878660b62873f68b0cef987f496ba12e4cd7a76b4",
+  "reason": "Final capability bundle arrived before native focused suites; combine once and test integrated behavior on1240",
+  "compilation": "compile1239-status-3.json",
+  "idle": "native1239-after-reload-idle.json"
+}

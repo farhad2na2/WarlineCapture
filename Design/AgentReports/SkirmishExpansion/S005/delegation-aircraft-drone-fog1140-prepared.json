@@ -1,0 +1,124 @@
+{
+  "status": "PreparedExternalOnly_NotCompiled_NotLoaded_NotExecuted",
+  "run": "native1140",
+  "class": "S005DroneFogReconEffects1140",
+  "method": "S005DroneFogReconEffects1140.RunValidation",
+  "fixture": "/private/tmp/S005DroneFogRecon1140.cs",
+  "fixtureSha256": "ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c",
+  "runner": "/private/tmp/s005-run-drone-fog-recon-1140.py",
+  "runnerSha256": "018f36ae6a0e1df307e8f08a9ffb7934be87a258ee2e11a1fbc9efda0d4c2242",
+  "requiredHeavyLaneToken": "main1140",
+  "unityCalls": 0,
+  "productionAssetEdits": 0,
+  "pythonSyntax": "Passed; runner not executed",
+  "csharpNativeCompilation": "Pending root review and lane release",
+  "failed1098": {
+    "fixture": "/private/tmp/S005DroneFogRecon1098.cs",
+    "fixtureSha256": "d083d12bc772a6bb0c67d5eea21fb1565979a78904715ff34c3a0d8ee2c28817",
+    "bytesPreservedUnmodified": true,
+    "log": "native-1098-drone-fog-recon-intel-scan-auto-return-smoke.log",
+    "logSha256": "79ede0e51b01e6b1820778b157e8751a7d14395d1242d3e66e9b4956acbb7a44",
+    "events": "native1098-drone-fog-recon-events.jsonl",
+    "eventsSha256": "48cfa373a2fab2d1537ac1fb6154373b4fe36aa7811c91b03e72410dd9e256e8",
+    "actualPassed": [
+      "Native legal IntelStation/paidDrone140 noAirport",
+      "Native Touch selection/Scan order/request3/radius12/returnHome1",
+      "Accepted native result",
+      "Actual exact paid-source feed revealedCount1",
+      "Positive-time airborne movement"
+    ],
+    "missing": "Retained actual opening APC ScanIntelLastSeen attribution; actual feed alone does not identify APC",
+    "productionBugEstablished": false,
+    "actualRetainedAPCPoseRecorded": false
+  },
+  "staticGeometry": {
+    "failedPublicHudEnemyObjective": [
+      1370,
+      679.5
+    ],
+    "failedScanCenter": [
+      1346.0228271484375,
+      678.3621215820312
+    ],
+    "authoredVehicleDeploymentPad": "pad.skirmish.db.spawn_vehicle_enemy",
+    "authoredPublicStagingAnchor": "anchor.skirmish.db.staging_enemy",
+    "envelopePadCenter": [
+      1427.8605,
+      650.5
+    ],
+    "projectedWorldCenter": [
+      1410.50008644125,
+      650.5
+    ],
+    "projectedDifferenceFromFailedScan": [
+      64.4772592928125,
+      -27.86212158203125
+    ],
+    "chebyshevWorldOffsetFromFailedScan": 64.4772592928125,
+    "authoredCellSize": 2,
+    "scanRadiusCells": 12,
+    "authoredApproxScanHalfExtentMetres": 24,
+    "interpretation": "Failed24m approach toward player lies about64.5m X from public authored enemy vehicle staging deployment pad; it has no strong source-fit basis for the retained APC. This is a static inference, not measured actual APC position/coverage.",
+    "spawnFitCaveat": "Native spawn initially searches radius12cells and may terrain-correct up to48 more cells. Actual hidden actor pose cannot be inferred or used to retarget; current single-pad survey still needs actual coverage."
+  },
+  "successorChange": "Use fixed existing PUBLIC authored faction2 VehicleSpawn pad tied to public staging.enemy anchor, projected by current layout world binding; choose this geometry independently of target actor Entity/pose/role-specific force coordinates. Native Touch Scan only, radius/duration/map/config preserved. One bounded survey; no adaptive hidden retargeting.",
+  "diagnostics": "Records real public pad/frame projection/grid cell/radius, then individual actual order/result/feed/APC lastSeen/positive airborne/fog flags on incomplete Scan. No hidden actor position is read for survey targeting or failure diagnostics. Native LastSeen position may be inspected only after an actual reveal.",
+  "scope": "Disposable funded1800 Established-readiness native IntelStation paidDrone140; native Touch selection/Scan; actual attributed feed/lastSeen, Unknown->ScanVisible->frozen anonymousLastSeen->authored20s expiry; native automatic Return/land; paid actor death capacity cleanup. No public recovery or complete mission certificate.",
+  "isolatedSetup": [
+    "Funding/readiness/storage fill",
+    "Other opening actors HealthZero retired; retained original APC health/pose unchanged",
+    "Retained enemy movement intent cleared/HoldPosition; retaliation and enemy strategy disabled",
+    "Queue via actual native paid production request API",
+    "Final paid actor death via HealthZero for capacity/idempotence only"
+  ],
+  "forbiddenFallbacks": [
+    "No hidden actor pose or force-coordinate targeting",
+    "No actor pose/HP/selection/scan order/result/feed/knowledge injection",
+    "No DevelopmentFullVision/fog override",
+    "No altered radius/budgets/map geometry",
+    "No claim APC covered from generic revealedCount alone"
+  ],
+  "acceptance": "Same unchanged native complete source four-way manifests, nested native compile/load success, exclusive unique artifacts, native wrapper/receipt0, full Touch JSONL zero violations/unexpected/interventions and paired stream, actual original-role effect markers/automatic return/land/death cleanup; failures retained honestly.",
+  "sourceContracts": [
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "line": 291,
+      "purpose": "Existing logical faction2 VehicleSpawn pad and public staging anchor; unchanged physical map"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "line": 154,
+      "purpose": "Existing immutable layout world projection"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs",
+      "line": 362,
+      "purpose": "Ground opening roles select VehicleSpawn pad independent of actor runtime pose"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs",
+      "line": 266,
+      "purpose": "Actual native opening force placement derives authored measured pad; ground validation may relocate"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "line": 458,
+      "purpose": "Native initial12cell placement search, then ground traversability correction"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SkirmishSpawnPlacement.cs",
+      "line": 28,
+      "purpose": "Existing native terrain correction can search up to48cells; exact hidden pose unproved"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "line": 797,
+      "purpose": "Actual unit reveal requires Chebyshev grid distance<=radius12; feed count not entity attribution"
+    }
+  ],
+  "populatedFogRecovery1124": "Held unchanged until genuine public survey coverage resolves; its frozen-v4 approach24m remains a known unqualified fixture assumption. Do not compile/run1124 superseding coverage by hidden knowledge injection.",
+  "wholeMatchCertified": false,
+  "shippingPlayerReady": false,
+  "nextAction": "Root review exact new fixture/hash and public staging geometry. If approved dry compile/load unique1140 and run once only after lane release. If actual natural APC still not covered, retain bounded unqualified source-fit evidence; no actor-pose fallback.",
+  "nativeFeedOneInterpretation": "One revealed enemy may be the publicly known Barracks footprint intersecting the old Scan boundary; feed count does not identify it. This is an inference, not a native entity-attribution claim."
+}

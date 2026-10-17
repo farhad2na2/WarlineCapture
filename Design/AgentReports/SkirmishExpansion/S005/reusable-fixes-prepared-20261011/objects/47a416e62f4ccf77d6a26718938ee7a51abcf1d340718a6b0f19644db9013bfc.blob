@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using Game.Components;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+
+namespace Game.Runtime
+{
+    internal static class SkirmishEnemyCheckpointPolicy
+    {
+        internal static bool HasAny(SkirmishNativeCheckpointParts.Part[] parts)
+        {
+            if (parts == null) return false;
+            foreach (var part in parts)
+                if (part?.Type == typeof(SkirmishEnemyPlannerV1Component).FullName ||
+                    part?.Type == typeof(SkirmishEnemyProductionIntentV1Component).FullName ||
+                    part?.Type == typeof(SkirmishEnemyGroupAssignmentV1).FullName) return true;
+            return false;
+        }
+        internal static bool Validate(SkirmishNativeCheckpointSnapshotService.Snapshot saved,
+            SkirmishResolvedSetup setup, bool policylessCompatibility)
+        {
+            if (policylessCompatibility || setup.EnemyPolicy == null) return !HasAny(saved.SessionParts);
+            if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault ||
+                !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishEnemyPlannerV1Component planner) ||
+                !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishEnemyProductionIntentV1Component intent) ||
+                !SkirmishNativeCheckpointParts.TryReadBuffer(saved.SessionParts, out SkirmishEnemyGroupAssignmentV1[] assignments) ||
+                !SkirmishNativeCheckpointParts.TryReadComponent(saved.SessionParts, out SkirmishObjectiveClockComponent clock) ||
+                !SkirmishNativeCheckpointParts.TryReadBuffer(saved.SessionParts, out SkirmishArmyGroupRecord[] groups) ||
+                !ValidPlanner(planner, setup.EnemyPolicy) || !ValidIntent(intent) || !Finite(clock.ElapsedSeconds) || assignments.Length > 1024) return false;
+            var enemyGroups = new HashSet<uint>();
+            foreach (var group in groups) if (group.FactionId == setup.EnemyFaction) enemyGroups.Add(group.GroupId);
+            var assigned = new HashSet<uint>();
+            foreach (var row in assignments)
+            {
+                if (row.GroupId == 0 || !enemyGroups.Contains(row.GroupId) || !assigned.Add(row.GroupId) ||
+                    row.ActionKey == 0 || row.Revision > planner.PlanRevision ||
+                    (byte)row.Duty > (byte)SkirmishEnemyDuty.Service || !Enum.IsDefined(typeof(SkirmishGroupOrderKind), row.Order) ||
+                    row.OrderAccepted > 1 || row.RouteWaypointIndex < 0 ||
+                    !float.IsFinite(row.DestinationX) || !float.IsFinite(row.DestinationZ) ||
+                    !float.IsFinite(row.LastProgressX) || !float.IsFinite(row.LastProgressZ) ||
+                    !Finite(row.AssignedAt) || !Finite(row.LastProgressAt) || !Finite(row.RetryAfter) || !Finite(row.LastIssuedAt)) return false;
+                if (!row.RouteId.IsEmpty)
+                {
+                    SkirmishEnemyRouteSnapshot route = null;
+                    foreach (var candidate in setup.EnemyPolicy.Routes) if (candidate.RouteId == row.RouteId.ToString()) { route = candidate; break; }
+                    // One-past Count is the persisted non-scout completed-route marker.
+                    // Patrols retain actual waypoint indices; arbitrary larger values
+                    // remain incompatible rather than silently clamping on Continue.
+                    if (route == null || row.RouteWaypointIndex > route.Waypoints.Count ||
+                        (row.RouteWaypointIndex == route.Waypoints.Count && row.Duty == SkirmishEnemyDuty.Scout)) return false;
+                }
+            }
+            if (intent.ReservationId != 0)
+            {
+                if (!SkirmishNativeCheckpointParts.TryReadBuffer(saved.SessionParts, out SkirmishProductionReservation[] receipts)) return false;
+                bool found = false;
+                foreach (var receipt in receipts)
+                {
+                    if (receipt.ReservationId != intent.ReservationId) continue;
+                    if (found || receipt.FactionId != setup.EnemyFaction || receipt.Role != intent.Role ||
+                        receipt.MemberCount != intent.ExpectedMembers) return false;
+                    found = true;
+                }
+                if (!found) return false;
+            }
+            // Policy authority lives only on the owning session, never an actor/map/bank.
+            foreach (var actor in saved.Actors) if (HasAny(actor.Parts)) return false;
+            foreach (var map in saved.MapReferences) if (HasAny(map.Parts)) return false;
+            foreach (var bank in saved.Banks) if (HasAny(bank.Parts)) return false;
+            return true;
+        }
+        internal static bool ValidPlanner(SkirmishEnemyPlannerV1Component p, SkirmishEnemyPolicySnapshot policy) =>
+            p.PolicyVersion == policy.Version && p.PolicyHash == policy.Hash && p.PolicyFingerprint.ToString() == policy.Fingerprint &&
+            p.Initialized == 1 && p.RandomState != 0 && p.NextActionKey != 0 && p.Personality == policy.Personality && p.ResponsePending <= 1 &&
+            (byte)p.CurrentPlan <= (byte)SkirmishEnemyPlanKind.Recover &&
+            Finite(p.NextDecisionAt) && Finite(p.NextObservationAt) && Finite(p.ResponseDueAt) && Finite(p.NextScoutAt) &&
+            Finite(p.OpeningUntil) && Finite(p.LastDecisionAt) && Finite(p.PlanStartedAt) && Finite(p.LastHomeHealth) && Finite(p.HomeThreatClearedAt);
+        internal static bool ValidIntent(SkirmishEnemyProductionIntentV1Component i)
+        {
+            if (i.Version != 1 || (byte)i.State > (byte)SkirmishEnemyProductionIntentState.Abandoned ||
+                i.NextRequestId <= 0 || i.RequestId < 0 || i.IdenticalRejectCount > 3 || i.RejectDomain > 2 ||
+                i.LastObservedReservationPhase > (byte)SkirmishReservationPhase.Lost ||
+                !Finite(i.RetryNotBeforeElapsed) || !Finite(i.LastRequestElapsed)) return false;
+            if (i.State == SkirmishEnemyProductionIntentState.Idle)
+                return i.ReservationId == 0 && i.RequestId == 0 && i.ActionKey.IsEmpty;
+            if (i.ActionKey.IsEmpty || i.RequestId <= 0 || i.RequestId >= i.NextRequestId ||
+                !Enum.IsDefined(typeof(SkirmishRoleKind), i.Role) || i.Role == SkirmishRoleKind.None || i.ExpectedMembers < 0) return false;
+            if (i.ExpectedMembers == 0 && !(i.ReservationId == 0 && i.RejectDomain == (byte)SkirmishEnemyRejectDomain.Feasibility &&
+                (i.State == SkirmishEnemyProductionIntentState.Backoff || i.State == SkirmishEnemyProductionIntentState.Abandoned))) return false;
+            if (i.State == SkirmishEnemyProductionIntentState.AcceptedWaiting || i.State == SkirmishEnemyProductionIntentState.Delivered)
+                return i.ReservationId != 0;
+            if (i.State == SkirmishEnemyProductionIntentState.RequestPending || i.State == SkirmishEnemyProductionIntentState.Backoff)
+                return i.ReservationId == 0;
+            return true;
+        }
+        private static bool Finite(float value) => float.IsFinite(value) && value >= 0;
+    }
+}

@@ -1,0 +1,25 @@
+{
+  "mission": "M1",
+  "run": "1041",
+  "result": "Passed",
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "nativeVictoryAndCampaignReturn": true,
+  "input": "normal visible Rifle Squad card Touch + original journey world/control input",
+  "cardGestures": 2,
+  "completed": 2,
+  "unexpected": 0,
+  "interventions": 0,
+  "healthySelectedCohort": 4,
+  "sourceHash": "f03851c1b8761a95569b1b313a219a57924876ea99d87215387157627d595b53",
+  "wholeMainSourcePass": false,
+  "scope": "T7 current94d runtime; Pipeline7802 and generated SceneDependencyCache meta differ from maincc; main subsequently added air pause fix. UI drag corner obstruction still pending on this pre-fallback candidate.",
+  "markers": [
+    "[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact",
+    "[CampaignNativeSelection] result=Passed gestures=2 completed=2 unexpected=0 interventions=0 staleCueDeferrals=0 maximumStaleSeconds=0.000 staleCueBoundSeconds=3 fullJourneyStrictTouchAudit=0",
+    "[ExistingEditorValidation] result=Passed executeMethod=CampaignSelectionJourney1041.RunM01"
+  ],
+  "logSha256": "e2d7946cc7978209e331c0fe6b826aaf37eac16608a266813d5efb8956878d1c"
+}

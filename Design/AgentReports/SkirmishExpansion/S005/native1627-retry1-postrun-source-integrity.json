@@ -1,0 +1,46 @@
+{
+  "result": "Passed",
+  "runId": 1627,
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "sourceFiles": 43462,
+  "sourceManifestSha256": "1ab0a5396429586a08e99695386b39d5e74cfcf509d97a1387e8179cfe0a4a3a",
+  "strictQualification": "PassedScopedFAPaidR2TechnicalEvidence",
+  "oneShotReset": {
+    "result": "Qualified",
+    "attempt": "expanded-s005-155926-de174c87d773473fb91bad3312537271",
+    "advances": [
+      {
+        "round": 1,
+        "candidate": 0,
+        "receipt": 43,
+        "receiptFrame": 5919,
+        "settledFrame": 5920,
+        "completedFrames": 1,
+        "dispatchedGestures": 13
+      },
+      {
+        "round": 2,
+        "candidate": 0,
+        "receipt": 83,
+        "receiptFrame": 8565,
+        "settledFrame": 8566,
+        "completedFrames": 1,
+        "dispatchedGestures": 33
+      },
+      {
+        "round": 3,
+        "candidate": 0,
+        "receipt": 111,
+        "receiptFrame": 11196,
+        "settledFrame": 11197,
+        "completedFrames": 1,
+        "dispatchedGestures": 61
+      }
+    ],
+    "maxResetFrames": 2,
+    "additionalTouches": 0,
+    "gameplayStateInjected": false,
+    "humanAcceptance": false
+  },
+  "playerReady": false
+}

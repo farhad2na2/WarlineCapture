@@ -1,0 +1,13 @@
+{
+  "sourceHash": "36c4aa20e52e364151bf1838a0204788bc75841a47785077af2e76d5a48d1ab7",
+  "fullSourceUnchanged": true,
+  "touch": "FailedFixtureClickOracle",
+  "touchFailure": "native1236-focused-results.json",
+  "minimap": "Passed19",
+  "minimapLog": "native-1236-minimap.log",
+  "minimapLogSha256": "626967dd13be255578741f83955fb7d6de426b44fa3028d37fbac6b3700792ee",
+  "minimapWrapperExit": 0,
+  "minimapNativeExit": 0,
+  "cameraExecuted": false,
+  "normalWins": 0
+}

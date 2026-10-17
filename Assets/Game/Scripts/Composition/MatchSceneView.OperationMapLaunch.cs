@@ -48,6 +48,14 @@ namespace Game.Composition
                 }
                 if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish))
                 {
+                    if (!SkirmishGenericMissionSource.TryResolve(entityManager, out bool generic, out var authoredMission, out var explicitSource, out error))
+                        return Reject(error, out failureCode, out error);
+                    if (generic)
+                    {
+                        selection = new OperationMapLaunchSelection(new FixedString64Bytes(authoredMission.Definition.DefinitionId),
+                            new FixedString64Bytes(authoredMission.Definition.ScenarioSetupId),new FixedString64Bytes(explicitSource.OperationMapId),explicitSource,false);
+                        return true;
+                    }
                     var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);
                     var map = SkirmishS004Environment.LoadMapForSession(entityManager) ?? (preset != null ? preset.operationMap : null);
                     if (map != null)

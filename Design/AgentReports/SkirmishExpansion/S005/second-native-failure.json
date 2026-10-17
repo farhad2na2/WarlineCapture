@@ -1,0 +1,23 @@
+{
+  "run": "S005-aria-rs-104734-en-1",
+  "candidate": "01065987235351f3a370d90a96120fd6a8685947034f377fbea98e34d1947788",
+  "acceptedForReadiness": false,
+  "normalInput": {
+    "completedGestures": 56,
+    "inputViolations": 0,
+    "humanInterventions": 0,
+    "durationSeconds": 374.872,
+    "outcome": "Victory",
+    "resultReturn": "Passed Adjust Setup"
+  },
+  "failures": [
+    "Fresh Campaign scene render virtualization bake failed; missing scenery",
+    "Setup title and briefing overlap mission library",
+    "Source changed while the failed candidate was still running"
+  ],
+  "evidenceCounterDefect": "Run logger counted a finished Victory despite Aborted=true; excluded explicitly and guard repair required",
+  "fixesPrepared": [
+    "Packed render representation with exact mesh/material/submesh ownership",
+    "Shared setup anchor repair"
+  ]
+}

@@ -1,0 +1,140 @@
+{
+    "SchemaVersion": 1,
+    "UnityVersion": "6000.5.2f1",
+    "Purpose": "PreCompilerIntegrationLegacyLayoutAndSetupBaselineOnly",
+    "NativeCandidateProof": false,
+    "Rows": [
+        {
+            "CatalogId": "S002",
+            "DefinitionId": "skirmish.s002",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "ca1b6e178c54b8cfdf476618887b6e3abaa7b42562d58cd96b7476357cd305d6",
+            "Difficulty": "Regular",
+            "Size": "Standard",
+            "SetupHashHex": "8E506E74",
+            "PolicylessHashHex": "8E506E74",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S002",
+            "DefinitionId": "skirmish.s002",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "ca1b6e178c54b8cfdf476618887b6e3abaa7b42562d58cd96b7476357cd305d6",
+            "Difficulty": "Regular",
+            "Size": "War",
+            "SetupHashHex": "4A3BD3C3",
+            "PolicylessHashHex": "4A3BD3C3",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S002",
+            "DefinitionId": "skirmish.s002",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "ca1b6e178c54b8cfdf476618887b6e3abaa7b42562d58cd96b7476357cd305d6",
+            "Difficulty": "Regular",
+            "Size": "LargeWar",
+            "SetupHashHex": "D82D7F8C",
+            "PolicylessHashHex": "D82D7F8C",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S003",
+            "DefinitionId": "skirmish.s003",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "ca1b6e178c54b8cfdf476618887b6e3abaa7b42562d58cd96b7476357cd305d6",
+            "Difficulty": "Regular",
+            "Size": "Standard",
+            "SetupHashHex": "81B55A11",
+            "PolicylessHashHex": "81B55A11",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S003",
+            "DefinitionId": "skirmish.s003",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "ca1b6e178c54b8cfdf476618887b6e3abaa7b42562d58cd96b7476357cd305d6",
+            "Difficulty": "Regular",
+            "Size": "War",
+            "SetupHashHex": "EBD46626",
+            "PolicylessHashHex": "EBD46626",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S003",
+            "DefinitionId": "skirmish.s003",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "ca1b6e178c54b8cfdf476618887b6e3abaa7b42562d58cd96b7476357cd305d6",
+            "Difficulty": "Regular",
+            "Size": "LargeWar",
+            "SetupHashHex": "48B47168",
+            "PolicylessHashHex": "48B47168",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S004",
+            "DefinitionId": "skirmish.s004",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "e37af2f2f7b827017b8e30af40b2507d0863ef335e154e1eb67c89157a6eea00",
+            "Difficulty": "Regular",
+            "Size": "Standard",
+            "SetupHashHex": "4197E539",
+            "PolicylessHashHex": "4197E539",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S004",
+            "DefinitionId": "skirmish.s004",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "e37af2f2f7b827017b8e30af40b2507d0863ef335e154e1eb67c89157a6eea00",
+            "Difficulty": "Regular",
+            "Size": "War",
+            "SetupHashHex": "C367BF7D",
+            "PolicylessHashHex": "C367BF7D",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S004",
+            "DefinitionId": "skirmish.s004",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "e37af2f2f7b827017b8e30af40b2507d0863ef335e154e1eb67c89157a6eea00",
+            "Difficulty": "Regular",
+            "Size": "LargeWar",
+            "SetupHashHex": "DFE40279",
+            "PolicylessHashHex": "DFE40279",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S005",
+            "DefinitionId": "skirmish.s005",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "7cc111d99da6df58f350fafe56c8f811a5a9a2b947cde86e1d4c22b47773ff5a",
+            "Difficulty": "Regular",
+            "Size": "Standard",
+            "SetupHashHex": "E3D3D033",
+            "PolicylessHashHex": "CEE5C4FD",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S005",
+            "DefinitionId": "skirmish.s005",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "7cc111d99da6df58f350fafe56c8f811a5a9a2b947cde86e1d4c22b47773ff5a",
+            "Difficulty": "Regular",
+            "Size": "War",
+            "SetupHashHex": "F16543C6",
+            "PolicylessHashHex": "A9BDE012",
+            "Seed": 155926
+        },
+        {
+            "CatalogId": "S005",
+            "DefinitionId": "skirmish.s005",
+            "LayoutId": "layout.skirmish.db.ba",
+            "LayoutSemanticSha256": "7cc111d99da6df58f350fafe56c8f811a5a9a2b947cde86e1d4c22b47773ff5a",
+            "Difficulty": "Regular",
+            "Size": "LargeWar",
+            "SetupHashHex": "8F1D10D8",
+            "PolicylessHashHex": "C2000664",
+            "Seed": 155926
+        }
+    ]
+}

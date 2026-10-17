@@ -1,0 +1,18 @@
+{
+  "result": "Failed",
+  "sourceHash": "232fb7f752382115a0b0b0be4f50f55e5addeca4efb384900235daf2b825f4de",
+  "prePostMatch": true,
+  "all562MaterialHashesMatch": true,
+  "paletteStrengthPersisted": true,
+  "wrapperExit": 1,
+  "reason": "Fuel Bladder destroyed during paid tanker setup; normal catalog rejects Tanker with requires Fuel Bladder. Driver loop did not recover the facility.",
+  "industryServiceLaneRetryReached": false,
+  "completeMatchCertified": false,
+  "renderFinding": {
+    "mesh": "DenseCity_SmallRubble",
+    "vertices": 6367660,
+    "triangles": 5877840,
+    "singleWholeMapMesh": true,
+    "optimizationImplemented": false
+  }
+}

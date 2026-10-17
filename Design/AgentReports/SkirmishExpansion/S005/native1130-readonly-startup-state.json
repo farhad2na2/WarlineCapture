@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Compilation Failed\n  The type or namespace name 'UiShellState' does not exist in the namespace 'Game.UI.Contracts' (are you missing an assembly reference?) (line 1, col 309)\n  Unreachable code detected (line 2, col 12)"
+    }
+  ],
+  "warnings": []
+}

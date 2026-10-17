@@ -1,0 +1,58 @@
+{
+  "result": "Passed",
+  "wrapperUnityExit": 0,
+  "requiredMarkers": [
+    "[SkirmishAuthoredDefinitionLookupTests] result=Passed",
+    "[SkirmishConfigOnlyBatchBuilderTests] result=Passed tests=4",
+    "[SelectModeUiDragValidation] result=Passed tests=2",
+    "[SkirmishProductionFoundationValidation] result=Passed",
+    "[UnityInvoke] ExitCode: 0"
+  ],
+  "fullLogsArchive": "foundation-20261014-02-passed.zip",
+  "archiveSha256": "b253982693d0ae51deaa4f2af598bed92d99ff44c20925dcd30f79ff1d47f440",
+  "rawLogFiles": [
+    {
+      "path": "foundation-20261014-02.log",
+      "sha256": "ce5febbe5b93d7a273d39730f4dffaa7bcb37345b1d30aca84baa90ac1fca67b"
+    },
+    {
+      "path": "foundation-20261014-02.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "foundation-20261014-02.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "ownedSourceFiles": [
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "sha256": "90f10b98acfaf7f6b7247dc9630dbd9e33d9db2453692f3ba3df7f20089eb781"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs",
+      "sha256": "3556c591ab5e21acf1057a9d44af1c646edb6200111dd868ba532353c9dd7a6c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConfigOnlyBatchBuilder.cs",
+      "sha256": "fefd4f18db34f99e292e794a09ba0447c2959f9ee8d067b9461489a2d75b169d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "sha256": "e5ddc69f4c35c0ddfa3fb5197fe16e7fd1b57efc2a335590f41b5755f675e02a"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAuthoredDefinitionLookupTests.cs",
+      "sha256": "bfd3b3ec9af90dca0364c5e790cef2f1dea4cae3dc82712a64ea20daeb2c5fd3"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConfigOnlyBatchBuilderTests.cs",
+      "sha256": "f3d3f60ef0f7edc85ccfc3857faaa72204dddf01372d7e45c69bbef28e13cc89"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionFoundationValidation.cs",
+      "sha256": "d6547a17983c1ffbd5f998083de9a8be88cbef72326233646266e735317f3092"
+    }
+  ],
+  "scope": "Focused config-only authoring, generic lookup and selection tests; no new mission gameplay/source-fit/device/player certification"
+}

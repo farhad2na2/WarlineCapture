@@ -1,0 +1,41 @@
+{
+  "status": "ReadOnlyReview_BlockedForRunUntilStartupProfileRootHandoffCorrected",
+  "fixture": "/private/tmp/S005PopulatedFogRecovery1124.cs",
+  "fixtureSha256": "f2ebba78f8bfe8898b75a6ad760cf4e2f7071acf6059b4894940d8eb7ae559fd",
+  "runner": "/private/tmp/s005-run-populated-fog-recovery-1124.py",
+  "runnerSha256": "4f3ffb31243bbb7ad49efdd8c7032e2eaef10f5e10af7238608a5e3ca267ca23",
+  "blockingFindings": [
+    {
+      "priority": "P1",
+      "fixtureLines": "254-259",
+      "finding": "The inherited startup initializes a Completed validation profile in its own root, but1124 immediately changes the shared WARLINE_VALIDATION_SAVE_ROOT to a newly empty directory while EnterPlaymode is only queued. SaveService.CreateDefault subsequently binds menu/first-launch state to that empty root. The runner establishes no WARLINE_AUTO_START_MATCH bypass. Empty profile default NotStarted/Unselected can enter AwaitingLanguage/FirstLaunch, and inherited startup explicitly waits for IsShellReadyToEnterMatch, so this knowingly risks a1000s startup stall before any paidScan.",
+      "evidence": [
+        "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:542-556 initializes Completed profile in ValidationProfileRoot;:571 queues EnterPlaymode",
+        "Assets/Game/Scripts/Persistence/SaveService.cs:20-25 CreateDefault resolves shared validation-root environment",
+        "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115-119 initializes first-launch profile, bypass only autoStartMatchRequested",
+        "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:94-123 empty profile requires first-launch/language",
+        "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:197-207 blocks Pending/FirstLaunch startup"
+      ],
+      "boundedCorrection": "Keep inherited profile root through actual Playing/positive elapsed/public HUD initialization; assign owned save-root at explicit ownership handoff before Pause, verify exact SavePath then and every recovery frame. No owner profile writes, synthetic progress, or new bypass needed. Preserve reviewed bytes and re-freeze unloaded candidate."
+    }
+  ],
+  "nonBlockingClosureFindings": [
+    {
+      "runnerLines": "26-44,52-55",
+      "finding": "Runner only checks readiness pointer idle; it lacks explicit native project/IsPlaying/IsCompiling/IsUpdating/ValidationRunning idle observations before load, directly before dispatch and after native completion, unlike other guarded main runners. The fixture rejects existing Play and asserts Play/actor cleanup, and root can establish idle independently, but do not describe this runner as proving native idle by itself."
+    }
+  ],
+  "reviewedValidScope": [
+    "Reflection bridge uses actual internal SkirmishLaunchProjection methods, native private SavePath/TryRead, Snapshot WorldTime(double)/Frame/Actors/SessionParts and Part Type/Data/Count/References fields. Buffer decoding follows native Reinterpret<T>(1); mandatory frozen checks exclude serialized normalized Entity handles, source remap checks native reconstructed Entity and stable provenance.",
+    "Explicit inherited Tick delegate removal follows actual playing positive elapsed/HUD check before public Pause. Positive native world clock, minimum4s age/minimum8s remaining, actual unchanged authored fog, public Pause/SaveExit/Continue and native recovery record completion guards are present.",
+    "Actual original saved bytes archived unchanged; source reference and optional native session ledger checked; restored frozen cell/pose/HP/provenance/source plus ledger clock/frame consistency and remaining age vs match elapsed measured. Native ordinary expiry asserts knowledge Unknown, no live/frozen marker and no retained ledger row.",
+    "No target/Drone pose writes, no fog knowledge/timestamps/air state/checkpoint writes; target intent clearing, CanAttack/AutoEngage0+Hold disclosed isolated setup; real production140 and public TouchScan/native result/feed/Scan metadata required.",
+    "Runner frozen hashes/nested load success/full four-way source comparisons/wrapper+native exit/required scoped closure markers/ordered actual recovery JSONL phases/checkpoint identical bytes/all raw Touch receipt/intervention/unexpected counters included. Python ast.parse passed."
+  ],
+  "noUnityCalls": true,
+  "noFrozenEdits": true,
+  "noProductionEdits": true,
+  "nativeCompilerVerified": false,
+  "nativeRunVerified": false,
+  "noReadinessClaim": true
+}

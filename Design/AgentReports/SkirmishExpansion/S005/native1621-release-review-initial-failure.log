@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/private/tmp/s005-full-south-flank1621-source-0df6/release_review.py", line 102, in <module>
+    receipt=review()
+  File "/private/tmp/s005-full-south-flank1621-source-0df6/release_review.py", line 61, in review
+    if prep.get('sourceHash')!=PIN or read(HERE/'offline-controls-result.json').get('result')!='PassedOfflineOnly' or read(HERE/'timestamp-controls-result.json').get('result')!='PassedOfflineOnly' or read(HERE/'arbitration-controls-result.json').get('result')!='PassedOfflineArbitrationControls' or read(HERE/'staging-controls-result.json').get('result')!='PassedOfflinePublicArmoredStagingNearRange' or read(HERE/'home-paging-controls-result.json').get('result')!='PassedOfflineHomePaging' or read(HERE/'terminal-controls-result.json').get('result')!='PassedOfflineLethalTerminalControls' or read(HERE/'retarget-controls-result.json').get('result')!='PassedOfflinePublicRetargetControls' or read(HERE/'pre-touch-vanish-controls-result.json').get('result')!='PassedOfflinePreTouchVanishControls' or read(HERE/'home-camera-controls-result.json').get('result')!='PassedOfflinePublicHomeCameraControls' or read(HERE/'stale-callback-controls-result.json').get('result')!='PassedOfflineStaleCallbackControls' or read(HERE/'recompile-controls-result.json').get('result')!='PassedOfflineRecompileControls' or read(HERE/'release-hash-controls-result.json').get('result')!='PassedOfflineOnly':raise ValueError('Unsealed source or offline controls')
+  File "/private/tmp/s005-full-south-flank1621-source-0df6/release_review.py", line 23, in read
+    def read(p):return json.loads(p.read_text())
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1256, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/s005-full-south-flank1621-source-0df6/arbitration-controls-result.json'

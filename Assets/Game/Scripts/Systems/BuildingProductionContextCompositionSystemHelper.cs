@@ -57,6 +57,7 @@ namespace Game.Runtime
             public readonly BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate TrySpendConstructionResources;
             public readonly BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate TryRestoreConstructionResources;
             public readonly BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate FocusProductionDelivery;
+            public readonly System.Func<Entity,bool> FocusProducedAircraft;
 
             public Source(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -104,7 +105,7 @@ namespace Game.Runtime
                 BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
                 BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
                 BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null,
-                BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate focusProductionDelivery = null)
+                BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate focusProductionDelivery = null, System.Func<Entity,bool> focusProducedAircraft=null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 WorldCamera = worldCamera;
@@ -152,6 +153,7 @@ namespace Game.Runtime
                 TrySpendConstructionResources = trySpendConstructionResources;
                 TryRestoreConstructionResources = tryRestoreConstructionResources;
                 FocusProductionDelivery = focusProductionDelivery;
+                FocusProducedAircraft=focusProducedAircraft;
             }
         }
 
@@ -201,7 +203,7 @@ namespace Game.Runtime
             BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
             BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
             BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null,
-            BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate focusProductionDelivery = null)
+            BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate focusProductionDelivery = null, System.Func<Entity,bool> focusProducedAircraft=null)
         {
             return new Source(
                 runtimeBuildings,
@@ -249,7 +251,7 @@ namespace Game.Runtime
                 tryResolveUnitResourceCosts,
                 trySpendConstructionResources,
                 tryRestoreConstructionResources,
-                focusProductionDelivery);
+                focusProductionDelivery,focusProducedAircraft);
         }
 
         public BuildingProductionUpdateCompositionSystemHelper.Context CreateProductionUpdateContext(Source source)
@@ -311,7 +313,7 @@ namespace Game.Runtime
                 source.SpawnSystem,
                 source.SpawnContext,
                 () => source.IsBuildDrawerOpen?.Invoke() == true,
-                worldPosition => source.SmoothMoveCameraGroundCenterTo?.Invoke(worldPosition));
+                worldPosition => source.SmoothMoveCameraGroundCenterTo?.Invoke(worldPosition),source.FocusProducedAircraft);
         }
 
         public BuildingProductionQueueCompositionSystemHelper.QueueContext CreateProductionQueueContext(Source source)

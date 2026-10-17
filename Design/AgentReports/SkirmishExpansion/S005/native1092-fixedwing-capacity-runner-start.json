@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1092",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1081-vehicle-combat-post-source-manifest.json",
+  "preflightManifest": "final-1092-fixedwing-capacity-preflight-source-manifest.json",
+  "fixtureSha256": "6465db04bd7178992e30be48082ea9edba0018a166f8af978c96bfeded55a85f",
+  "validationMethod": "S005FixedWingCapacity1092.RunValidation"
+}

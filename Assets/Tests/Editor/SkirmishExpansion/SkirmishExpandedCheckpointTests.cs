@@ -584,7 +584,9 @@ namespace Game.Tests.Editor
         {
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out matrix, out string error), error);
-            authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var packaged = SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(packaged, "Checkpoint/replay compile fixtures require actual packaged bindings.");
+            authored = packaged.ToAuthoredSet(); // All four replay identities retain their immutable native layouts.
             manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
         }
     }

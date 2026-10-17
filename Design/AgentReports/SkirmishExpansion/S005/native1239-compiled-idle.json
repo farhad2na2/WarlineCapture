@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command run_script",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Failed to execute command 'run_script': Connection reset by server"
+    }
+  ],
+  "warnings": []
+}

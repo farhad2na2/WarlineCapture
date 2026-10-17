@@ -1,0 +1,41 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring.IsolateGroundPalette
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_611a3277/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring:EnsureMapGround (UnityEngine.SceneManagement.Scene) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/CampaignAirfieldVisualAuthoring.cs:36)
+Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring:IsolateGroundPalette () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/CampaignAirfieldVisualAuthoring.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_611a3277/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CityEdgeGroundScope] replacedSlots=7 material=Assets/Game/Art/MapBeautify/CityEdgeDetailedGround.mat
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring:EnsureMapGround (UnityEngine.SceneManagement.Scene) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/CampaignAirfieldVisualAuthoring.cs:52)
+Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring:IsolateGroundPalette () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/CampaignAirfieldVisualAuthoring.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_611a3277/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CityEdgeGroundScope] result=Passed sharedConsumers=AllCityEdgeAirfield unrelatedMapPaletteRestored=1
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring:IsolateGroundPalette () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/CampaignAirfieldVisualAuthoring.cs:69)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_611a3277/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.CampaignAirfieldVisualAuthoring.IsolateGroundPalette
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_611a3277/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

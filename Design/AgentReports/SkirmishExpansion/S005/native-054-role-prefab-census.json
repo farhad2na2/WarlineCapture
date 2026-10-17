@@ -1,0 +1,135 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;var keys=new System.Collections.Generic.HashSet<string>();using(var q=em.CreateEntityQuery(typeof(Game.Components.UnitPrefabRegistryEntry))){using var es=q.ToEntityArray(Unity.Collections.Allocator.Temp);foreach(var e in es){var entries=em.GetBuffer<Game.Components.UnitPrefabRegistryEntry>(e,true);foreach(var entry in entries)if(em.Exists(entry.Prefab)&&em.HasComponent<Game.Components.UnitSourcePrefabKey>(entry.Prefab))keys.Add(em.GetComponentData<Game.Components.UnitSourcePrefabKey>(entry.Prefab).Value.ToString());}}var rows=new System.Collections.Generic.List<object>();foreach(var role in Game.Configs.SkirmishRoleOverlayCatalog.CreateCombinedArmsSlice()){var key=Game.Configs.SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind);rows.Add(new {role=role.RoleId,key=key,present=keys.Contains(key)});}return rows;"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "role": "role.rifle",
+          "key": "Unit_Chr_Soldier_Male_02_Alt_04",
+          "present": true
+        },
+        {
+          "role": "role.gunner",
+          "key": "Unit_Chr_Soldier_Male_01",
+          "present": true
+        },
+        {
+          "role": "role.marksman",
+          "key": "Unit_Chr_Soldier_Female_01",
+          "present": true
+        },
+        {
+          "role": "role.breacher",
+          "key": "Unit_Chr_Soldier_Female_02_Alt_02",
+          "present": true
+        },
+        {
+          "role": "role.rocketeer",
+          "key": "Unit_Chr_Ghillie_Male_01",
+          "present": true
+        },
+        {
+          "role": "role.car",
+          "key": "Unit_Veh_Light_Armored_Car",
+          "present": true
+        },
+        {
+          "role": "role.apc_fast",
+          "key": "Unit_Veh_APC_Fast",
+          "present": true
+        },
+        {
+          "role": "role.apc_armored",
+          "key": "Unit_Veh_APC_Slow",
+          "present": true
+        },
+        {
+          "role": "role.radar",
+          "key": "Unit_Veh_Radar_Tank",
+          "present": true
+        },
+        {
+          "role": "role.logistics_truck",
+          "key": "Unit_Veh_Truck_Tray",
+          "present": true
+        },
+        {
+          "role": "role.tanker",
+          "key": "Unit_Veh_Truck_Tanker",
+          "present": true
+        },
+        {
+          "role": "role.aa",
+          "key": "Unit_Veh_Missle_Launcher_Air",
+          "present": true
+        },
+        {
+          "role": "role.transport_heli",
+          "key": "Unit_Veh_Helicopter_Transport",
+          "present": true
+        },
+        {
+          "role": "role.attack_heli_light",
+          "key": "Unit_Veh_Helicopter_Attack_Small",
+          "present": true
+        },
+        {
+          "role": "role.attack_heli",
+          "key": "Unit_Veh_Helicopter_Attack",
+          "present": true
+        },
+        {
+          "role": "role.drone",
+          "key": "Unit_Veh_Drone",
+          "present": true
+        },
+        {
+          "role": "role.fighter",
+          "key": "Unit_Veh_Jet_02",
+          "present": true
+        },
+        {
+          "role": "role.strike",
+          "key": "Unit_Veh_Jet_01",
+          "present": true
+        },
+        {
+          "role": "role.transport_plane",
+          "key": "Unit_Veh_Plane_Transport",
+          "present": true
+        },
+        {
+          "role": "role.tank",
+          "key": "Unit_Veh_Tank_USA",
+          "present": true
+        },
+        {
+          "role": "role.apc_heavy",
+          "key": "Unit_Veh_APC_Heavy",
+          "present": true
+        },
+        {
+          "role": "role.siege",
+          "key": "Unit_Veh_Missle_Launcher_Ground",
+          "present": true
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

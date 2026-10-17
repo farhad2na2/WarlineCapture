@@ -1,0 +1,67 @@
+{
+  "scope": "ExplicitDisjointC358PlusJoint2_ReviewedSixTargetsPlusOneNewMeta",
+  "parents": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/manifest.json",
+      "sha256": "c3588da14e009f5ecc6e6f736d939252cc9ef6b7ce865cdd4eff5ee330f53285"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/manifest.json",
+      "sha256": "57b074178528d02dc7750541edca827a2e7507a8445e2d9ba8bcf9464c8c103a"
+    }
+  ],
+  "reviewed_source_targets": 6,
+  "files": [
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishLegacyProductionIdentity.cs.txt",
+      "before_sha256": "696c029af43270be7b5214efa01dc1b12342fa736eb4c0ce2c99718cf75119f2",
+      "sha256": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/SkirmishS002AriaRunHarness.ProductionBatch.cs.txt",
+      "before_sha256": "23a4112e2272da681bea3267272726aedc1a1d007e4315a3619a2964013e8f8d",
+      "sha256": "0df084bb4443138ea9a6ea0cc2420fc9fa304860ba22d7073e747cc51f2f6842",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionControls.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyFallbackWitnessDiagnostic/SkirmishLegacyProductionControls.cs.txt",
+      "before_sha256": "3966bf263453550f29dbce482dbb1081d9a1c3284470bda379a1b839fdc47f2e",
+      "sha256": "a60ef894179f3ef9d07df558d224b1a7fb78bedf483723ce84d1ff685eaac01a",
+      "assembly": "Game.Editor"
+    },
+    {
+      "target": "Tools/CI/prepare_skirmish_legacy_production_jobs.py",
+      "source": "Tools/CI/SkirmishProductionDrafts/LegacyPresetSourceFallback/prepare_skirmish_legacy_production_jobs.py",
+      "before_sha256": "0d920046d01d2a5074a457ebb18688db4ba8e1dffad410f46a75ca4ba286128c",
+      "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "before_sha256": "4aedc1e7cbc8fea850f0094769159ebd38fc34ffc577eace6705fd114bf2d74c",
+      "sha256": "089291acbaa3d71a3b04ff7d888a9bdf21027bad3ee7d09acb69f23f7c3d948f"
+    },
+    {
+      "target": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs",
+      "source": "Tools/CI/SkirmishProductionDrafts/JointLogicalPadAllocation/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs.txt",
+      "before_sha256": null,
+      "sha256": "926e2614c4e8a362d05ba08f75b5aa3541e44ea1536ac1918eb68d698c039e9f"
+    }
+  ],
+  "meta_supplement": {
+    "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/META_SUPPLEMENT.json",
+    "sha256": "9feea9dd154358b6acd356749d65ebdaf4e3567b4593008d23108f616c98600b"
+  },
+  "source_guard": "All6 exactbefore/source pins checked before anywrites; maps disjoint; mainmerge does not modify these targetbefore bytes. Root must hold idle source/Unity lane. No ambientWIP copied or staged.",
+  "importer": {
+    "path": "Tools/CI/SkirmishProductionDrafts/JointLegacyAtomicImport/import_reviewed.py",
+    "sha256": "9f208ce4596afce9036d1f9f199bf7e2cf7ded2a9f633a50d5860a1d26e764fe"
+  },
+  "root_only_apply": true,
+  "no_assets_or_Git_mutation_by_preparer": true,
+  "native_executed": false
+}

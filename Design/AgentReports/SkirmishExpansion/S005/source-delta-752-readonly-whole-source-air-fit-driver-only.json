@@ -1,0 +1,13 @@
+{
+  "sourceHash": "d1657d47b4247317ba8904cbeb2ed3a0ca5829a443141858f1841592600e4223",
+  "priorSourceHash": "66b5edb7a81ab1c52cb0501ccea597163ef58ebaa59065ddfad848ec51e74ec4",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingRuntimeUnchanged": true,
+  "configurationUnchanged": true,
+  "physicalMapUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "scope": "New read-only coarse full native validator source-fit fixture; no input, preview, resources, actor or terrain writes; no readiness/capacity/Win certificate"
+}

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "manifest": {
+    "path": "Tools/CI/SkirmishProductionDrafts/All120AuthoringSceneWarmup/manifest.json",
+    "sha256": "6131d34f66627507816beb48dd6d81d4d4bcb8d69d3eb4f84d6bf5e368e0b59c"
+  },
+  "composed9": {
+    "path": "Tools/CI/SkirmishProductionDrafts/All120AuthoringSceneWarmup/manifest.composed9.json",
+    "sha256": "04e54bb6f2832f89be64f139b5b783e4e1faf5c138dd1ddd341976a36349eda6"
+  },
+  "proof": {
+    "path": "Logs/SkirmishProduction/Offline/All120AuthoringSceneWarmup/editor-3ik0dbb4/result.json",
+    "sha256": "55b1262369b4546240aeaf4c6e114f42e140e956354c36112331273efaf152a6",
+    "result": "Passed",
+    "sources": 826,
+    "references": 353,
+    "mismatches": [],
+    "no_fallback": true
+  },
+  "entry": "Game.Editor.SkirmishAll120AuthoringSceneWarmup.Run",
+  "marker": "[All120AuthoringSceneWarmup] result=Passed sourceGroupsStarted=0 warmupScenes=2 snapshotAfterWrapperExit=1 missionCertified=0",
+  "environment": {
+    "WARLINE_S005_SCENE_WARMUP_OUTPUT": "Fresh absolute receipt path under Logs/SkirmishProduction"
+  },
+  "snapshot_timing": "After actual checked wrapper exit0, before opening",
+  "independent_source_review": "Qualification source clear; final proof/pin review requested",
+  "native_execution": false,
+  "mission_ready": false
+}

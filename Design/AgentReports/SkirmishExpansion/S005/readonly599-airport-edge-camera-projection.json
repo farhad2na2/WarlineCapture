@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var camera=UnityEngine.Camera.main; if(camera==null) return \"No camera\"; var sites=new[]{new UnityEngine.Vector3(825.5f,0,671),new UnityEngine.Vector3(809.5f,0,655),new UnityEngine.Vector3(1399,0,177.5f)}; var result=\"camera=\"+camera.transform.position+\" rotation=\"+camera.transform.eulerAngles; foreach(var site in sites) result+=\"\\nsite=\"+site+\" screen=\"+camera.WorldToScreenPoint(site); return result;"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "camera=(838.75, 65.00, 626.32) rotation=(50.00, 35.00, 0.00)\nsite=(825.50, 0.00, 671.00) screen=(582.75, 208.96, 68.44)\nsite=(809.50, 0.00, 655.00) screen=(335.27, -243.99, 54.11)\nsite=(1399.00, 0.00, 177.50) screen=(42615.98, -3926.18, 20.03)"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

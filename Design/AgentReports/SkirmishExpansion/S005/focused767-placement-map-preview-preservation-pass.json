@@ -1,0 +1,13 @@
+{
+  "result": "Passed",
+  "actualWrapperExit": 0,
+  "requiredPassMarker": "[BuildPlacementConfirmationBarV3Validation] result=Passed tests=5",
+  "fullSourceUnchanged": true,
+  "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+  "preManifest": "final-767-placement-map-controls-pre-source-manifest.json",
+  "postManifest": "final-767-placement-map-controls-post-source-manifest.json",
+  "log": "tests-767-placement-full-map-controls.log",
+  "tests": 5,
+  "scope": "Prefab layout/actions, valid-invalid state, map overlay suppression, preview preservation and restored controls; native pointer routing pending",
+  "playerReady": false
+}

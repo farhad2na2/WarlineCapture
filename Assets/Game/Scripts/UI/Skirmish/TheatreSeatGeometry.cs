@@ -3246,6 +3246,304 @@ namespace Game.UI.Runtime
             };
         }
 
+        /// <summary>
+        /// Opens DB-MP, MP-AP and IB-AP on a 4:3 reserve plate when a facing edge is
+        /// still inside the 12px drawn floor. The hex becomes a wide flat so the same
+        /// bounding box keeps its area, and the move is one short list of pulls. A plate
+        /// whose pairs already clear the floor returns before that list. Coastal City /
+        /// Industrial Basin is not a target, and a gap that already clears stays put.
+        /// </summary>
+        private static void OpenColumnGaps(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (hexes == null || pins == null || cards == null || !ShotIsFourByThree())
+                return;
+            if (detail.W < 1f || DrawnGlowGapsHold(hexes))
+                return;
+            Vec2[][] saved = CloneDistricts(hexes);
+            int[] lower = { 4, 4, 2 };
+            int[] upper = { 2, 3, 0 };
+            float need = GlowEdgeNeed();
+            for (int round = 0; round < 2 && !DrawnGlowGapsHold(hexes); round++)
+            {
+                for (int pair = 0; pair < lower.Length; pair++)
+                {
+                    if (lower[pair] >= hexes.Length || upper[pair] >= hexes.Length)
+                        continue;
+                    if (DrawnDistrictGap(hexes[upper[pair]], hexes[lower[pair]]) + 0.05f >= 12f)
+                        continue;
+                    if (PullColumnEdge(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, lower[pair], upper[pair], need, true))
+                        continue;
+                    if (PullColumnEdge(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, upper[pair], lower[pair], need, false))
+                        continue;
+                    SplitColumnPair(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, upper[pair], lower[pair], need);
+                }
+            }
+
+            if (!DrawnGlowGapsHold(hexes)
+                || !DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                CopyDistricts(saved, hexes);
+        }
+
+        private static bool PullColumnEdge(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int index,
+            int other,
+            float need,
+            bool dropTop)
+        {
+            ColumnBounds(hexes[index], out float minX, out float minY, out float maxX, out float maxY);
+            Vec2[] saved = CloneShape(hexes[index]);
+            float[] before = PairGapList(hexes);
+            float[] steps = dropTop
+                ? new[] { 8f, 16f, 24f, 32f, 40f, 44f, 52f }
+                : new[] { 4f, 8f, 16f, 24f, 32f };
+            for (int step = 0; step < steps.Length; step++)
+            {
+                float top = dropTop ? minY + steps[step] : minY;
+                float bottom = dropTop ? maxY : maxY - steps[step];
+                if (bottom - top < 120f)
+                    break;
+                if (!PlaceColumnHex(hexes, pins, cards, detail, plateWidth, plateHeight, index, top, bottom, minX, maxX))
+                    continue;
+                if (!ColumnMoveHolds(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, dropTop ? other : index, dropTop ? index : other, before, need))
+                    continue;
+                return true;
+            }
+
+            hexes[index] = saved;
+            return false;
+        }
+
+        private static void SplitColumnPair(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int upper,
+            int lower,
+            float need)
+        {
+            Vec2[] savedUpper = CloneShape(hexes[upper]);
+            Vec2[] savedLower = CloneShape(hexes[lower]);
+            ColumnBounds(savedUpper, out float upperLeft, out float upperTop, out float upperRight, out float upperBottom);
+            ColumnBounds(savedLower, out float lowerLeft, out float lowerTop, out float lowerRight, out float lowerBottom);
+            float[] before = PairGapList(hexes);
+            float[] lifts = { 0f, 4f, 8f, 16f, 20f, 24f };
+            float[] drops = { 16f, 24f, 32f, 40f, 44f, 48f };
+            for (int liftIndex = 0; liftIndex < lifts.Length; liftIndex++)
+            {
+                for (int dropIndex = 0; dropIndex < drops.Length; dropIndex++)
+                {
+                    hexes[upper] = CloneShape(savedUpper);
+                    hexes[lower] = CloneShape(savedLower);
+                    bool upperOk = lifts[liftIndex] < 1f
+                        || PlaceColumnHex(hexes, pins, cards, detail, plateWidth, plateHeight, upper, upperTop, upperBottom - lifts[liftIndex], upperLeft, upperRight);
+                    bool lowerOk = PlaceColumnHex(hexes, pins, cards, detail, plateWidth, plateHeight, lower, lowerTop + drops[dropIndex], lowerBottom, lowerLeft, lowerRight);
+                    if (!upperOk || !lowerOk)
+                        continue;
+                    if (ColumnMoveHolds(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, upper, lower, before, need))
+                        return;
+                }
+            }
+
+            hexes[upper] = savedUpper;
+            hexes[lower] = savedLower;
+        }
+
+        private static bool ColumnMoveHolds(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int left,
+            int right,
+            float[] before,
+            float need)
+        {
+            if (DistrictEdgeGap(hexes[left], hexes[right]) + 0.05f < need)
+                return false;
+            if (!ColumnOthersHold(hexes, before, left, right, need))
+                return false;
+            return DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
+        }
+
+        /// <summary>
+        /// A pair that already clears the floor stays there. Coastal City / Industrial
+        /// Basin keeps the gap it has. A pair that is still short may not get tighter.
+        /// </summary>
+        private static bool ColumnOthersHold(Vec2[][] hexes, float[] before, int left, int right, float need)
+        {
+            if (before == null)
+                return false;
+            int n = 0;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                for (int j = i + 1; j < hexes.Length; j++)
+                {
+                    if (n >= before.Length)
+                        return false;
+                    bool target = (i == left && j == right) || (i == right && j == left);
+                    float after = DistrictEdgeGap(hexes[i], hexes[j]);
+                    float was = before[n++];
+                    if (target)
+                        continue;
+                    bool cityBasin = (i == 1 && j == 3) || (i == 3 && j == 1);
+                    if (cityBasin && after + 0.35f < was)
+                        return false;
+                    if (was + 0.05f >= need && after + 0.05f < need)
+                        return false;
+                    if (was + 0.05f < need && after + 0.35f < was)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool PlaceColumnHex(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int index,
+            float top,
+            float bottom,
+            float oldLeft,
+            float oldRight)
+        {
+            float height = bottom - top;
+            if (height < 80f || index < 0 || index >= MapIds.Length)
+                return false;
+            Box card = cards[index];
+            Vec2 pin = pins[index].Center;
+            float expect = HexAspect(MapIds[index], RatioPlateWidth, RatioPlateHeight);
+            if (expect < 0.2f)
+                return false;
+            float maxWidth = expect * 1.099f * height;
+            float minWidth = expect * 0.901f * height;
+            float areaWidth = 40100f / (0.92f * height);
+            float low = Math.Max(minWidth, areaWidth);
+            if (low > maxWidth)
+                return false;
+            float coverLeft = Math.Min(card.X - 12f, pin.X - 14f);
+            float coverRight = Math.Max(card.XMax + 12f, pin.X + 14f);
+            float[] widths = { low, (low + maxWidth) * 0.5f, maxWidth, oldRight - oldLeft };
+            float[] lefts = { oldLeft, coverLeft - 8f, pin.X - maxWidth * 0.45f, card.X - 16f };
+            Box glowZone = detail.W > 1f
+                ? new Box(detail.X - HaloReach, detail.Y - HaloReach, detail.W + HaloReach * 2f, detail.H + HaloReach * 2f)
+                : default;
+            Vec2[] best = null;
+            float bestSlack = 0f;
+            bool placed = false;
+            for (int w = 0; w < widths.Length; w++)
+            {
+                float width = widths[w];
+                if (width < low - 0.5f || width > maxWidth + 0.5f)
+                    continue;
+                for (int x = 0; x < lefts.Length; x++)
+                {
+                    float left = lefts[x];
+                    if (left > coverLeft)
+                        left = coverLeft;
+                    if (left + width < coverRight)
+                        left = coverRight - width;
+                    Vec2[] shape = WideFlatHex(new Box(left, top, width, height));
+                    Vec2[] prior = hexes[index];
+                    hexes[index] = shape;
+                    bool seats = SeatHolds(card, shape, hexes);
+                    hexes[index] = prior;
+                    if (!seats)
+                        continue;
+                    float measured = MeasuredHexAspect(shape);
+                    if (Math.Abs(measured / expect - 1f) > 0.10f)
+                        continue;
+                    if (PolygonArea(shape) < 40000f)
+                        continue;
+                    if (!PointInPolygon(pin, shape) || EdgeCloserThan(pin, shape, 6f))
+                        continue;
+                    if (!GlowInside(shape, plateWidth, plateHeight, out _, out _))
+                        continue;
+                    if (glowZone.W > 1f && (PolygonHitsRect(shape, detail) || PolygonHitsRect(shape, glowZone)))
+                        continue;
+                    float slack = ColumnSlack(hexes, index, shape);
+                    if (placed && slack <= bestSlack)
+                        continue;
+                    bestSlack = slack;
+                    best = shape;
+                    placed = true;
+                }
+            }
+
+            if (!placed)
+                return false;
+            hexes[index] = best;
+            return true;
+        }
+
+        private static float ColumnSlack(Vec2[][] hexes, int index, Vec2[] shape)
+        {
+            float min = 999f;
+            Vec2[] saved = hexes[index];
+            hexes[index] = shape;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == index)
+                    continue;
+                min = Math.Min(min, DrawnDistrictGap(hexes[i], shape));
+            }
+
+            hexes[index] = saved;
+            return min;
+        }
+
+        private static Vec2[] CloneShape(Vec2[] shape)
+        {
+            if (shape == null)
+                return null;
+            var copy = new Vec2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+                copy[i] = shape[i];
+            return copy;
+        }
+
+        private static void ColumnBounds(Vec2[] shape, out float minX, out float minY, out float maxX, out float maxY)
+        {
+            minX = maxX = shape[0].X;
+            minY = maxY = shape[0].Y;
+            for (int i = 1; i < shape.Length; i++)
+            {
+                minX = Math.Min(minX, shape[i].X);
+                maxX = Math.Max(maxX, shape[i].X);
+                minY = Math.Min(minY, shape[i].Y);
+                maxY = Math.Max(maxY, shape[i].Y);
+            }
+        }
+
         private static void FlareTopFlat(Vec2[] shape, float amount)
         {
             if (shape == null || shape.Length < 3)
@@ -4683,6 +4981,7 @@ namespace Game.UI.Runtime
                 OpenDistrictCentres(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
                 OpenCityBasinGap(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
                 GrowSeatedPortrait(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
+                OpenColumnGaps(hexes, pins, placed, cue, detail, plateWidth, plateHeight, selected);
             }
 
             bool cardsLegal = placed != null;

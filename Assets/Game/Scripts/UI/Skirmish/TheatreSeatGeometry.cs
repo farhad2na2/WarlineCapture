@@ -2751,7 +2751,17 @@ namespace Game.UI.Runtime
                                     continue;
                                 cards[i] = trial;
                                 if (!DistrictsStayLegal(hexes, pins, cards, quiet, detail, plateWidth, plateHeight, selected))
+                                {
+                                    // The hex did not change, so a shape failure rejects every shift.
+                                    if (ShapeBlocksSearch(OpenBlock))
+                                    {
+                                        grown = false;
+                                        yStep = shift.Length;
+                                        break;
+                                    }
+
                                     continue;
+                                }
                                 width = tryW[axis];
                                 height = tryH[axis];
                                 originX = trial.X;
@@ -2835,7 +2845,7 @@ namespace Game.UI.Runtime
             bool progressed = false;
             for (int pass = 0; pass < 96; pass++)
             {
-                if (!ClosestDistrictPair(hexes, blocked, out int left, out int right, out float gap))
+                if (!NextDistrictPair(hexes, blocked, out int left, out int right, out float gap, out float tightest))
                 {
                     if (!progressed)
                         break;
@@ -2844,8 +2854,6 @@ namespace Game.UI.Runtime
                     continue;
                 }
 
-                if (!ClosestDistrictPair(hexes, null, out _, out _, out float tightest))
-                    break;
                 if (tightest >= need - 0.02f)
                     break;
                 if (gap >= need - 0.02f)
@@ -3340,7 +3348,7 @@ namespace Game.UI.Runtime
             {
                 int j = (i + 1) % shape.Length;
                 var mid = new Vec2((shape[i].X + shape[j].X) * 0.5f, (shape[i].Y + shape[j].Y) * 0.5f);
-                float dist = DistanceToEdge(mid, hexes[other]);
+                float dist = DistanceToEdgeSq(mid, hexes[other]);
                 if (dist >= closest)
                     continue;
                 closest = dist;
@@ -3388,6 +3396,9 @@ namespace Game.UI.Runtime
                 if (!AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight))
                     break;
 
+                if (!DistrictsLegal(hexes, pins, plateWidth, plateHeight))
+                    continue;
+
                 Box home = savedCards[index];
                 for (float sy = -16f; sy <= 16f; sy += 2f)
                 {
@@ -3400,7 +3411,16 @@ namespace Game.UI.Runtime
                         if (index == selected)
                             cue = ShiftBox(savedCue, sx, sy);
                         if (!DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                        {
+                            // Pin, area, aspect and overlap do not depend on the card nudge.
+                            if (ShapeBlocksSearch(OpenBlock))
+                            {
+                                sy = 18f;
+                                break;
+                            }
+
                             continue;
+                        }
 
                         if (!OtherGapsHold(hexes, before, left, right, need))
                             continue;
@@ -3460,7 +3480,7 @@ namespace Game.UI.Runtime
             float nextDist = float.MaxValue;
             for (int p = 0; p < shape.Length; p++)
             {
-                float dist = DistanceToEdge(shape[p], hexes[other]);
+                float dist = DistanceToEdgeSq(shape[p], hexes[other]);
                 if (PointInPolygon(shape[p], hexes[other]))
                     dist = -dist;
                 if (dist < nearDist)
@@ -3583,10 +3603,29 @@ namespace Game.UI.Runtime
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
+        private static int _pairStamp = int.MinValue;
+
+        private static float[] _pairGaps;
+
+        /// <summary>
+        /// Pair gaps for the current hexes. Repeated reads of an unchanged solve
+        /// reuse the list. Callers that keep the list across a later edit get a copy.
+        /// </summary>
         private static float[] PairGapList(Vec2[][] hexes)
+        {
+            float[] cached = EnsurePairGaps(hexes);
+            var copy = new float[cached.Length];
+            Array.Copy(cached, copy, cached.Length);
+            return copy;
+        }
+
+        private static float[] EnsurePairGaps(Vec2[][] hexes)
         {
             int count = hexes == null ? 0 : hexes.Length;
             int pairs = count * (count - 1) / 2;
+            int stamp = DistrictStamp(hexes);
+            if (stamp == _pairStamp && _pairGaps != null && _pairGaps.Length == pairs)
+                return _pairGaps;
             var gaps = new float[pairs];
             int n = 0;
             for (int i = 0; i < count; i++)
@@ -3595,7 +3634,55 @@ namespace Game.UI.Runtime
                     gaps[n++] = DistrictEdgeGap(hexes[i], hexes[j]);
             }
 
+            _pairGaps = gaps;
+            _pairStamp = stamp;
             return gaps;
+        }
+
+        private static int DistrictStamp(Vec2[][] hexes)
+        {
+            unchecked
+            {
+                int hash = 17;
+                if (hexes == null)
+                    return hash;
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    Vec2[] shape = hexes[i];
+                    if (shape == null)
+                    {
+                        hash = hash * 31 + 1;
+                        continue;
+                    }
+
+                    for (int p = 0; p < shape.Length; p++)
+                    {
+                        hash = hash * 31 + BitConverter.SingleToInt32Bits(shape[p].X);
+                        hash = hash * 31 + BitConverter.SingleToInt32Bits(shape[p].Y);
+                    }
+                }
+
+                return hash;
+            }
+        }
+
+        /// <summary>
+        /// True when the failure is the hex itself. Nudging the card cannot clear it.
+        /// </summary>
+        private static bool ShapeBlocksSearch(string why)
+        {
+            if (string.IsNullOrEmpty(why))
+                return false;
+            return why.StartsWith("aspect", StringComparison.Ordinal)
+                || why.StartsWith("area", StringComparison.Ordinal)
+                || why.StartsWith("outline", StringComparison.Ordinal)
+                || why.StartsWith("interior", StringComparison.Ordinal)
+                || why.StartsWith("pin", StringComparison.Ordinal)
+                || why.StartsWith("overlap", StringComparison.Ordinal)
+                || why.StartsWith("glow", StringComparison.Ordinal)
+                || why.StartsWith("hint", StringComparison.Ordinal)
+                || why.StartsWith("detail", StringComparison.Ordinal)
+                || why == "missing";
         }
 
         private static bool OtherGapsHold(Vec2[][] hexes, float[] before, int left, int right, float need)
@@ -3738,7 +3825,7 @@ namespace Game.UI.Runtime
                 if (OnPlateInterior(hexes[i], plateWidth, plateHeight) < 8)
                     return "interior " + i;
                 var pin = new Vec2(pins[i].Center.X, pins[i].Center.Y);
-                if (!PointInPolygon(pin, hexes[i]) || DistanceToEdge(pin, hexes[i]) < 6f)
+                if (!PointInPolygon(pin, hexes[i]) || EdgeCloserThan(pin, hexes[i], 6f))
                     return "pin " + i
                         + " d=" + DistanceToEdge(pin, hexes[i]).ToString("0.0", CultureInfo.InvariantCulture)
                         + " in=" + PointInPolygon(pin, hexes[i]);
@@ -3904,18 +3991,39 @@ namespace Game.UI.Runtime
 
         private static bool ClosestDistrictPair(Vec2[][] hexes, bool[,] blocked, out int left, out int right, out float gap)
         {
+            return NextDistrictPair(hexes, blocked, out left, out right, out gap, out _);
+        }
+
+        /// <summary>
+        /// One walk over the cached pair gaps. <paramref name="tightest"/> ignores
+        /// <paramref name="blocked"/> so the aim check does not scan the pairs twice.
+        /// </summary>
+        private static bool NextDistrictPair(
+            Vec2[][] hexes,
+            bool[,] blocked,
+            out int left,
+            out int right,
+            out float gap,
+            out float tightest)
+        {
             left = -1;
             right = -1;
             gap = float.MaxValue;
+            tightest = float.MaxValue;
             if (hexes == null)
                 return false;
+            float[] gaps = EnsurePairGaps(hexes);
+            int n = 0;
             for (int i = 0; i < hexes.Length; i++)
             {
                 for (int j = i + 1; j < hexes.Length; j++)
                 {
+                    float pair = n < gaps.Length ? gaps[n] : 0f;
+                    n++;
+                    if (pair < tightest)
+                        tightest = pair;
                     if (blocked != null && i < blocked.GetLength(0) && j < blocked.GetLength(1) && blocked[i, j])
                         continue;
-                    float pair = DistrictEdgeGap(hexes[i], hexes[j]);
                     if (pair >= gap)
                         continue;
                     gap = pair;
@@ -3929,15 +4037,12 @@ namespace Game.UI.Runtime
 
         private static float ClosestDistrictGap(Vec2[][] hexes)
         {
-            float best = float.MaxValue;
             if (hexes == null)
-                return best;
-            for (int i = 0; i < hexes.Length; i++)
-            {
-                for (int j = i + 1; j < hexes.Length; j++)
-                    best = Math.Min(best, DistrictEdgeGap(hexes[i], hexes[j]));
-            }
-
+                return float.MaxValue;
+            float[] gaps = EnsurePairGaps(hexes);
+            float best = float.MaxValue;
+            for (int i = 0; i < gaps.Length; i++)
+                best = Math.Min(best, gaps[i]);
             return best;
         }
 
@@ -3949,10 +4054,12 @@ namespace Game.UI.Runtime
                 return 0f;
             float best = float.MaxValue;
             for (int i = 0; i < left.Length; i++)
-                best = Math.Min(best, DistanceToEdge(left[i], right));
+                best = Math.Min(best, DistanceToEdgeSq(left[i], right));
             for (int i = 0; i < right.Length; i++)
-                best = Math.Min(best, DistanceToEdge(right[i], left));
-            return best;
+                best = Math.Min(best, DistanceToEdgeSq(right[i], left));
+            if (best == float.MaxValue)
+                return 0f;
+            return (float)Math.Sqrt(best);
         }
 
         private static Vec2 DistrictCentroid(Vec2[] shape)
@@ -7353,7 +7460,7 @@ namespace Game.UI.Runtime
                 if (OnPlateInterior(hexes[i], plateWidth, plateHeight) < 8)
                     return false;
                 var pin = new Vec2(pins[i].Center.X, pins[i].Center.Y);
-                if (!PointInPolygon(pin, hexes[i]) || DistanceToEdge(pin, hexes[i]) < 6f)
+                if (!PointInPolygon(pin, hexes[i]) || EdgeCloserThan(pin, hexes[i], 6f))
                     return false;
                 for (int j = i + 1; j < hexes.Length; j++)
                 {
@@ -8026,7 +8133,7 @@ namespace Game.UI.Runtime
                 {
                     float t = step / 4f;
                     var point = new Vec2(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
-                    if (!PointInPolygon(point, shape) || DistanceToEdge(point, shape) < margin)
+                    if (!PointInPolygon(point, shape) || EdgeCloserThan(point, shape, margin))
                         return false;
                 }
             }
@@ -8101,13 +8208,13 @@ namespace Game.UI.Runtime
                 return 999f;
             if (SegmentHitsRect(a, b, rect))
                 return 0f;
-            float best = PointRectDistance(a, rect);
-            best = Math.Min(best, PointRectDistance(b, rect));
-            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMin, rect.YMin), a, b));
-            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMax, rect.YMin), a, b));
-            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMax, rect.YMax), a, b));
-            best = Math.Min(best, PointSegmentDistance(new Vec2(rect.XMin, rect.YMax), a, b));
-            return best;
+            float best = PointRectDistanceSq(a, rect);
+            best = Math.Min(best, PointRectDistanceSq(b, rect));
+            best = Math.Min(best, PointSegmentDistanceSq(new Vec2(rect.XMin, rect.YMin), a, b));
+            best = Math.Min(best, PointSegmentDistanceSq(new Vec2(rect.XMax, rect.YMin), a, b));
+            best = Math.Min(best, PointSegmentDistanceSq(new Vec2(rect.XMax, rect.YMax), a, b));
+            best = Math.Min(best, PointSegmentDistanceSq(new Vec2(rect.XMin, rect.YMax), a, b));
+            return best <= 0f ? 0f : (float)Math.Sqrt(best);
         }
 
         private static float PointRectDistance(Vec2 point, Box rect)
@@ -8127,7 +8234,27 @@ namespace Game.UI.Runtime
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
+        private static float PointRectDistanceSq(Vec2 point, Box rect)
+        {
+            float dx = 0f;
+            if (point.X < rect.XMin)
+                dx = rect.XMin - point.X;
+            else if (point.X > rect.XMax)
+                dx = point.X - rect.XMax;
+            float dy = 0f;
+            if (point.Y < rect.YMin)
+                dy = rect.YMin - point.Y;
+            else if (point.Y > rect.YMax)
+                dy = point.Y - rect.YMax;
+            return dx * dx + dy * dy;
+        }
+
         private static float PointSegmentDistance(Vec2 point, Vec2 a, Vec2 b)
+        {
+            return (float)Math.Sqrt(PointSegmentDistanceSq(point, a, b));
+        }
+
+        private static float PointSegmentDistanceSq(Vec2 point, Vec2 a, Vec2 b)
         {
             float ex = b.X - a.X;
             float ey = b.Y - a.Y;
@@ -8137,7 +8264,7 @@ namespace Game.UI.Runtime
                 : Clamp(((point.X - a.X) * ex + (point.Y - a.Y) * ey) / lengthSq, 0f, 1f);
             float dx = point.X - (a.X + ex * t);
             float dy = point.Y - (a.Y + ey * t);
-            return (float)Math.Sqrt(dx * dx + dy * dy);
+            return dx * dx + dy * dy;
         }
 
         private static bool SegmentHitsRect(Vec2 a, Vec2 b, Box rect)
@@ -8185,7 +8312,21 @@ namespace Game.UI.Runtime
 
         private static float DistanceToEdge(Vec2 point, Vec2[] polygon)
         {
+            float best = DistanceToEdgeSq(point, polygon);
+            if (best == float.MaxValue)
+                return best;
+            return (float)Math.Sqrt(best);
+        }
+
+        /// <summary>
+        /// Squared distance to the nearest edge. Comparisons against a margin use
+        /// <see cref="EdgeCloserThan"/> so the square root runs only on the boundary.
+        /// </summary>
+        private static float DistanceToEdgeSq(Vec2 point, Vec2[] polygon)
+        {
             float best = float.MaxValue;
+            if (polygon == null)
+                return best;
             for (int i = 0; i < polygon.Length; i++)
             {
                 Vec2 a = polygon[i];
@@ -8198,10 +8339,40 @@ namespace Game.UI.Runtime
                     : Clamp(((point.X - a.X) * ex + (point.Y - a.Y) * ey) / lengthSq, 0f, 1f);
                 float dx = point.X - (a.X + ex * t);
                 float dy = point.Y - (a.Y + ey * t);
-                best = Math.Min(best, (float)Math.Sqrt(dx * dx + dy * dy));
+                float distSq = dx * dx + dy * dy;
+                if (distSq < best)
+                    best = distSq;
             }
 
             return best;
+        }
+
+        /// <summary>True when some edge is strictly closer than <paramref name="margin"/>.</summary>
+        private static bool EdgeCloserThan(Vec2 point, Vec2[] polygon, float margin)
+        {
+            if (polygon == null || margin <= 0f)
+                return false;
+            float limit = margin * margin;
+            for (int i = 0; i < polygon.Length; i++)
+            {
+                Vec2 a = polygon[i];
+                Vec2 b = polygon[(i + 1) % polygon.Length];
+                float ex = b.X - a.X;
+                float ey = b.Y - a.Y;
+                float lengthSq = ex * ex + ey * ey;
+                float t = lengthSq < 0.0001f
+                    ? 0f
+                    : Clamp(((point.X - a.X) * ex + (point.Y - a.Y) * ey) / lengthSq, 0f, 1f);
+                float dx = point.X - (a.X + ex * t);
+                float dy = point.Y - (a.Y + ey * t);
+                float distSq = dx * dx + dy * dy;
+                if (distSq > limit + 0.001f)
+                    continue;
+                if (distSq + 0.001f < limit || (float)Math.Sqrt(distSq) < margin)
+                    return true;
+            }
+
+            return false;
         }
 
         private static Spec PickSpec(string mapId, float frameWidth, float frameHeight)

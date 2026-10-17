@@ -7,11 +7,11 @@ namespace Game.UI.Runtime
     /// <summary>
     /// Battlefield zone tabs on the approved-3 grid.
     /// The mockup uses equal-width bars, a warm idle fill, and a lighter selected bar with a gold edge.
-    /// Height stays at 64 so the four objective rows still fit the grid viewport.
+    /// Height stays under the 64px trial: that band left the card preview on the 40% floor.
     /// </summary>
     public static class SkirmishZoneTabWidget
     {
-        public const float Height = 64f;
+        public const float Height = 52f;
         public const float Gap = 14f;
         public const float OriginX = 12f;
         public const float OriginY = 2f;

@@ -27,9 +27,13 @@ namespace Game.UI.Runtime
             float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 34f;
             float scrollTop = headerTop + headerHeight + 4f;
             float viewport = Mathf.Max(120f, gridHeight - scrollTop);
-            float titleHeight = roomy ? LibraryGridRoomyTitleHeight : LibraryGridTitleHeight;
-            float subtitleHeight = roomy ? LibraryGridRoomySubtitleHeight : LibraryGridSubtitleHeight;
-            ResolveGridCard(viewport, objectives, titleHeight, subtitleHeight, out float cardHeight, out float previewHeight);
+            // The text block under the picture used to consume the height the tabs gave up,
+            // so a 155px card kept a 62px preview. Shorter title and subtitle leave the
+            // picture at about half the card while the four rows still fit a wide frame.
+            float titleHeight = roomy ? LibraryGridRoomyTitleHeight : 20f;
+            float subtitleHeight = roomy ? LibraryGridRoomySubtitleHeight : 30f;
+            bool stayInView = IsWideLibraryFrame(_libraryGrid);
+            ResolveGridCard(viewport, objectives, titleHeight, subtitleHeight, stayInView, out float cardHeight, out float previewHeight);
             float stack = objectives * cardHeight + Mathf.Max(0, objectives - 1) * LibraryGridRowGap;
             float contentHeight = LibraryGridContentTop + stack + LibraryGridContentBottom;
             bool scrolls = contentHeight > viewport + 2f;
@@ -94,6 +98,8 @@ namespace Game.UI.Runtime
                         : CreateBattleCard(zone, card, false, cardWidth, cardHeight, slots);
                     PlaceTopLeft(widget, x, 0f, cardWidth, cardHeight);
                     AddSiblingShadow(widget);
+                    if (!IsEmptyCard(card))
+                        ApplyGridCardAccess(widget, card);
                 }
             }
 
@@ -245,19 +251,34 @@ namespace Game.UI.Runtime
 
         private static void ResolveGridCard(float viewport, int rows, out float cardHeight, out float previewHeight)
         {
-            ResolveGridCard(viewport, rows, LibraryGridTitleHeight, LibraryGridSubtitleHeight, out cardHeight, out previewHeight);
+            ResolveGridCard(viewport, rows, LibraryGridTitleHeight, LibraryGridSubtitleHeight, false, out cardHeight, out previewHeight);
         }
 
-        private static void ResolveGridCard(float viewport, int rows, float titleHeight, float subtitleHeight, out float cardHeight, out float previewHeight)
+        /// <summary>
+        /// The capture rejects a preview under 40% of the card. Wide frames also keep
+        /// every card inside the viewport, so the picture aims at half the card and
+        /// the card does not grow past the rows that fit.
+        /// </summary>
+        private static void ResolveGridCard(
+            float viewport,
+            int rows,
+            float titleHeight,
+            float subtitleHeight,
+            bool stayInView,
+            out float cardHeight,
+            out float previewHeight)
         {
+            const float previewAim = 0.50f;
             float chrome = LibraryGridTextGap + titleHeight + subtitleHeight +
                 LibraryGridMedalGap + LibraryGridMedalSize + LibraryGridCardBottom;
             int count = Mathf.Max(1, rows);
             float available = viewport - LibraryGridContentTop - LibraryGridContentBottom -
                 Mathf.Max(0, count - 1) * LibraryGridRowGap;
             float fitted = available / count;
-            float minCard = chrome / (1f - LibraryGridPreviewFloor);
+            float minCard = chrome / (1f - previewAim);
             cardHeight = fitted >= minCard ? fitted : minCard;
+            if (stayInView && cardHeight > fitted + 0.5f)
+                cardHeight = Mathf.Max(1f, fitted);
             previewHeight = Mathf.Max(1f, cardHeight - chrome);
         }
 
@@ -494,6 +515,10 @@ namespace Game.UI.Runtime
             badgeLabel.overflowMode = TextOverflowModes.Overflow;
         }
 
+        /// <summary>
+        /// A missing scenario capture uses the approved battlefield plate at full strength.
+        /// The dimmed "Preview pending" tag stays only when that plate is missing too.
+        /// </summary>
         private static Texture2D ResolveGridPreview(string key, string scenarioId, string mapId, out bool dimmed)
         {
             dimmed = false;
@@ -502,15 +527,33 @@ namespace Game.UI.Runtime
                 scenario = LoadScenarioPreview(string.IsNullOrEmpty(scenarioId) ? null : "skirmish.preview." + scenarioId);
             if (scenario != null)
                 return scenario;
-            dimmed = true;
             string map = string.IsNullOrEmpty(mapId) ? "DB" : mapId;
             Texture2D plate = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(map));
             if (plate != null)
                 return plate;
+            dimmed = true;
             Texture2D graded = SkirmishLibraryPreviewAssets.Load("skirmish.blur." + map);
             if (graded != null)
                 return graded;
             return SkirmishLibraryPreviewAssets.Load("skirmish.zone." + map);
+        }
+
+        /// <summary>
+        /// Playable and not-owned cards stay clickable. Not-owned opens the store.
+        /// Planned and unavailable cards are disabled and play the locked tap.
+        /// </summary>
+        private void ApplyGridCardAccess(RectTransform widget, SkirmishBattleCardState card)
+        {
+            if (widget == null)
+                return;
+            Button button = widget.GetComponent<Button>();
+            if (button == null)
+                return;
+            bool playable = card.Access == SkirmishCardAccess.Playable;
+            bool storeRoute = card.Access == SkirmishCardAccess.NotOwned;
+            button.interactable = playable || storeRoute || card.IsSelected;
+            if (!button.interactable)
+                AttachAudio(button, UIAudioEventKind.CardLocked);
         }
 
         private static bool IsGridLibraryCard(TMP_Text text)

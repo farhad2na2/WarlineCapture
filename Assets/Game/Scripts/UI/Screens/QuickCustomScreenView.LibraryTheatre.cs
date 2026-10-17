@@ -1666,7 +1666,7 @@ namespace Game.UI.Runtime
             ApplyDistrictMultiply(root.gameObject);
             Color neon = DistrictNeon(color, 0.08f);
             Color outer = DistrictNeon(color, 0f);
-            outer.a = 0.82f;
+            outer.a = 1f;
             Color glow = neon;
             glow.a = 1f;
             Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
@@ -1707,7 +1707,7 @@ namespace Game.UI.Runtime
             image.type = Image.Type.Simple;
             image.material = null;
             Color glow = DistrictNeon(color, 0.05f);
-            glow.a = 0.92f;
+            glow.a = 1f;
             image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
@@ -1727,10 +1727,10 @@ namespace Game.UI.Runtime
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
             // Soft falloff out to 18px, inside the 22px pad the capture rect still
-            // requires. The first 8px stay solid so the bloom reads past the 8px
-            // the pivot-centred 16px stroke reaches; it fades to zero at 18px.
+            // requires. The first 12px stay solid so the bloom is thick, then it
+            // fades to zero at 18px. The gap math still subtracts two 18px halos.
             const float reach = 18f;
-            const float shoulder = 8f;
+            const float shoulder = 12f;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -2999,7 +2999,7 @@ namespace Game.UI.Runtime
                     string mapId = child.name.Substring("ZoneCard_".Length);
                     float drawnW = (zone.rect.width > 1f ? zone.rect.width : zone.sizeDelta.x) * scaleX;
                     float drawnH = (zone.rect.height > 1f ? zone.rect.height : zone.sizeDelta.y) * scaleY;
-                    Debug.Log("[ZoneCard] " + mapId + " " + F(drawnW) + " " + F(drawnH)
+                    Debug.Log("[ZoneCard] " + mapId + ShotTag() + " " + F(drawnW) + " " + F(drawnH)
                         + " local=" + F(zone.sizeDelta.x) + "x" + F(zone.sizeDelta.y));
                 }
 
@@ -3018,7 +3018,7 @@ namespace Game.UI.Runtime
                     if (scale < 0.001f)
                         scale = 1f;
                     string pair = OutlineMapId(outlines[i]) + "-" + OutlineMapId(outlines[j]);
-                    Debug.Log("[DistrictGap] " + pair + " " + F(localGap * scale));
+                    Debug.Log("[DistrictGap] " + pair + ShotTag() + " " + F(localGap * scale));
                 }
             }
 
@@ -3045,10 +3045,17 @@ namespace Game.UI.Runtime
             string shader = "none";
             if (halo != null && halo.material != null && halo.material.shader != null)
                 shader = halo.material.shader.name;
-            Debug.Log("[DistrictGlow] " + OutlineMapId(outline)
+            Debug.Log("[DistrictGlow] " + OutlineMapId(outline) + ShotTag()
                 + " reach=" + F(localReach * scale)
                 + " alpha=" + F(alpha)
                 + " material=" + shader);
+        }
+
+        private static string ShotTag()
+        {
+            string ratio = string.IsNullOrEmpty(TheatreSeatGeometry.ShotRatio) ? "unset" : TheatreSeatGeometry.ShotRatio;
+            string locale = string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale) ? "en" : TheatreSeatGeometry.ShotLocale;
+            return " ratio=" + ratio + " locale=" + locale;
         }
 
         private static string OutlineMapId(RectTransform outline)
@@ -5423,7 +5430,7 @@ namespace Game.UI.Runtime
             for (int y = 0; y < height; y++)
             {
                 float dy = Mathf.Abs(y - (height - 1) * 0.5f) / (height * 0.5f);
-                float alpha = Mathf.Clamp01(1f - dy);
+                float alpha = dy <= 0.62f ? 1f : Mathf.Clamp01((1f - dy) / 0.38f);
                 alpha = alpha * alpha * (3f - 2f * alpha);
                 byte a = (byte)Mathf.RoundToInt(alpha * 255f);
                 for (int x = 0; x < width; x++)

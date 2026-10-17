@@ -93,6 +93,8 @@ namespace Game.UI.Runtime
                         : CreateBattleCard(zone, card, false, cardWidth, cardHeight, slots);
                     PlaceTopLeft(widget, x, 0f, cardWidth, cardHeight);
                     AddSiblingShadow(widget);
+                    if (!IsEmptyCard(card))
+                        ApplyGridCardAccess(widget, card);
                 }
             }
 
@@ -444,6 +446,10 @@ namespace Game.UI.Runtime
             badgeLabel.overflowMode = TextOverflowModes.Overflow;
         }
 
+        /// <summary>
+        /// A missing scenario capture uses the approved battlefield plate at full strength.
+        /// The dimmed "Preview pending" tag stays only when that plate is missing too.
+        /// </summary>
         private static Texture2D ResolveGridPreview(string key, string scenarioId, string mapId, out bool dimmed)
         {
             dimmed = false;
@@ -452,15 +458,33 @@ namespace Game.UI.Runtime
                 scenario = LoadScenarioPreview(string.IsNullOrEmpty(scenarioId) ? null : "skirmish.preview." + scenarioId);
             if (scenario != null)
                 return scenario;
-            dimmed = true;
             string map = string.IsNullOrEmpty(mapId) ? "DB" : mapId;
             Texture2D plate = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(map));
             if (plate != null)
                 return plate;
+            dimmed = true;
             Texture2D graded = SkirmishLibraryPreviewAssets.Load("skirmish.blur." + map);
             if (graded != null)
                 return graded;
             return SkirmishLibraryPreviewAssets.Load("skirmish.zone." + map);
+        }
+
+        /// <summary>
+        /// Playable and not-owned cards stay clickable. Not-owned opens the store.
+        /// Planned and unavailable cards are disabled and play the locked tap.
+        /// </summary>
+        private void ApplyGridCardAccess(RectTransform widget, SkirmishBattleCardState card)
+        {
+            if (widget == null)
+                return;
+            Button button = widget.GetComponent<Button>();
+            if (button == null)
+                return;
+            bool playable = card.Access == SkirmishCardAccess.Playable;
+            bool storeRoute = card.Access == SkirmishCardAccess.NotOwned;
+            button.interactable = playable || storeRoute || card.IsSelected;
+            if (!button.interactable)
+                AttachAudio(button, UIAudioEventKind.CardLocked);
         }
 
         private static bool IsGridLibraryCard(TMP_Text text)

@@ -388,11 +388,14 @@ namespace Game.UI.Contracts
     // Process-local normal library selection. Old QuickGame save bytes do not
     // acquire an expanded identity merely because a matching catalog ID exists.
     public enum UiSkirmishLibraryLaunchKind : byte { Unspecified=0, PracticePreset=1, ExpandedDefinition=2 }
+    // Mission army size; independent of the enemy AI attack-group setting.
+    public enum UiSkirmishMissionSize : byte { Unspecified=0, Standard=1, War=2, LargeWar=3 }
     public struct UiSkirmishLibrarySelection
     {
         public UiSkirmishLibraryLaunchKind Kind;
         public string CatalogId, DefinitionId;
         public int ContentVersion;
+        public UiSkirmishMissionSize MissionSize;
     }
 
     public struct UiQuickCustomGameConfig
@@ -446,6 +449,11 @@ namespace Game.UI.Contracts
         UiQuickCustomGameConfig Current { get; }
         UiQuickCustomGameConfig Defaults { get; }
         void Apply(UiQuickCustomGameConfig config);
+    }
+
+    public interface ISkirmishMissionSizePreferenceStore
+    {
+        UiSkirmishMissionSize ReadMissionSize(string catalogId, string definitionId, int contentVersion);
     }
 
     public interface IMatchLaunchCommand

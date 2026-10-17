@@ -88,6 +88,21 @@ namespace Game.Editor
             productionCanary = null;
         }
 
+        private static void RecordProductionProfileBeforeRestoreAndResetEnvironment()
+        {
+            try { productionCanary?.RecordProfileBeforeRestore(); }
+            finally
+            {
+                string previous = SessionState.GetString("Warline.AriaPlayValidation", "");
+                Environment.SetEnvironmentVariable(
+                    "WARLINE_VALIDATION_SAVE_ROOT",
+                    string.IsNullOrEmpty(previous) ? null : previous);
+                string backgroundPrevious = SessionState.GetString(BackgroundPreviousKey, "");
+                Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",
+                    string.IsNullOrEmpty(backgroundPrevious) ? null : backgroundPrevious);
+            }
+        }
+
         // Call only from actual native observation points; facts are not job flags.
         // These rows do not establish success. Preserve Defeat/Draw/failure unchanged.
         private static void RecordProductionNativeEvent(string kind, JObject nativeFacts)
@@ -235,6 +250,7 @@ namespace Game.Editor
                 using (File.Open(events, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
                 Record("ContextCaptured", new JObject { ["source_sha256"] = (string)request.Job["candidate_sha256"],
                     ["compiled_dll_manifest_sha256"] = (string)request.Job["build_sha256"], ["scene_count"] = sceneSetup.Length });
+                RecordProfileStage("ProfileBeforeDispatch");
             }
 
             internal void Record(string kind, JObject facts)
@@ -247,6 +263,137 @@ namespace Game.Editor
                     ["facts"] = facts ?? new JObject() };
                 File.AppendAllText(events, row.ToString(Formatting.None) + "\n", new UTF8Encoding(false));
                 ObserveProductionBatchNativeEvent(kind,facts);
+            }
+
+            private ProfileByteJournal profileByteJournal;
+
+            // Observation only. A failed/partial journal never changes normal cleanup.
+            internal void RecordProfileBeforeRestore() => RecordProfileStage("ProfileBeforeRestore");
+            private void RecordProfileStage(string stage)
+            {
+                ObserveProfileJournal(
+                    () => {
+                        if (profileByteJournal == null) profileByteJournal = new ProfileByteJournal(Request);
+                        Record(stage, profileByteJournal.Capture());
+                    },
+                    error => Record("ProfileJournalFailure", new JObject { ["stage"] = stage,
+                        ["exception_type"] = error.GetType().FullName }));
+            }
+            // Missing evidence refuses admission; diagnostic IO cannot interrupt existing cleanup.
+            private static void ObserveProfileJournal(Action observe, Action<Exception> recordFailure)
+            {
+                try { observe(); }
+                catch (Exception error) when (!(error is OutOfMemoryException))
+                {
+                    try { recordFailure(error); }
+                    catch (Exception writeError) when (!(writeError is OutOfMemoryException))
+                    { Debug.LogWarning("Profile journal evidence unavailable; admission remains missing."); }
+                }
+            }
+
+            private sealed class ProfileByteJournal
+            {
+                private readonly string originalRoot, ownedRoot, originalEnvironment, catalog;
+                private readonly byte[] buffer = new byte[65536];
+                internal ProfileByteJournal(SkirmishProductionCanaryRequest request)
+                {
+                    originalEnvironment = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+                    originalRoot = EffectiveRoot();
+                    ownedRoot = Path.GetFullPath(Path.Combine(request.ArtifactDirectory, "save-profile"));
+                    catalog = request.CatalogId;
+                }
+                private static string EffectiveRoot()
+                {
+                    string value = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+                    return Path.GetFullPath(string.IsNullOrWhiteSpace(value) ? Application.persistentDataPath : value);
+                }
+                internal JObject Capture() => new JObject { ["journal_version"] = 1,
+                    ["catalog_id"] = catalog, ["original_environment"] = originalEnvironment,
+                    ["actual_environment"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
+                    ["actual_effective_root"] = EffectiveRoot(),
+                    ["original"] = Snapshot(originalRoot, catalog, buffer), ["owned"] = Snapshot(ownedRoot, catalog, buffer) };
+                private static JObject Snapshot(string root, string catalog, byte[] buffer)
+                {
+                    RejectReparse(root);
+                    if (File.Exists(root)) throw new InvalidDataException("Profile root is a file");
+                    var names = new List<string>();
+                    foreach (string name in new[] { SaveService.ProfileFileName, SaveService.SettingsFileName,
+                        SaveService.QuickGameFileName, "skirmish-" + catalog.ToLowerInvariant() + "-native.json" })
+                    foreach (string suffix in new[] { "", ".tmp", ".bak", ".lock" }) names.Add(name + suffix);
+                    bool directoryExists = Directory.Exists(root);
+                    var entries = EnumerateKnownEntries(root, names);
+                    var rows = new JArray(); long total = 0;
+                    foreach (string relative in names)
+                    {
+                        string path = Path.Combine(root, relative);
+                        RejectReparse(path);
+                        if (Directory.Exists(path)) throw new InvalidDataException("Profile file is a directory");
+                        bool exists = File.Exists(path); long length = 0; string digest = null;
+                        if (exists)
+                        {
+                            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                            using (var hash = System.Security.Cryptography.SHA256.Create())
+                            {
+                                length = stream.Length;
+                                if (length > 8388608 || total + length > 16777216)
+                                    throw new InvalidDataException("Profile journal byte bound exceeded");
+                                long read = 0; int count;
+                                while ((count = stream.Read(buffer, 0, buffer.Length)) != 0)
+                                {
+                                    read += count;
+                                    if (read > length) throw new InvalidDataException("Profile grew during observation");
+                                    hash.TransformBlock(buffer, 0, count, buffer, 0);
+                                }
+                                if (read != length || stream.Length != length)
+                                    throw new InvalidDataException("Profile changed during observation");
+                                hash.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                                digest = BitConverter.ToString(hash.Hash).Replace("-", "").ToLowerInvariant();
+                            }
+                            total += length;
+                        }
+                        rows.Add(new JObject { ["name"] = relative, ["exists"] = exists,
+                            ["length"] = length, ["sha256"] = digest });
+                    }
+                    var finalEntries = EnumerateKnownEntries(root, names);
+                    RejectReparse(root);
+                    if (File.Exists(root) || directoryExists != Directory.Exists(root) ||
+                        !JToken.DeepEquals(new JArray(entries), new JArray(finalEntries)))
+                        throw new InvalidDataException("Profile directory changed during observation");
+                    return new JObject { ["root"] = root, ["directory_exists"] = directoryExists,
+                        ["directory_entries"] = new JArray(entries), ["enumeration_limit"] = 32,
+                        ["files"] = rows, ["observed_bytes"] = total };
+                }
+                private static List<string> EnumerateKnownEntries(string root, List<string> names)
+                {
+                    RejectReparse(root);
+                    var entries = new List<string>();
+                    if (Directory.Exists(root))
+                    foreach (string path in Directory.EnumerateFileSystemEntries(root))
+                    {
+                        if (entries.Count >= 32) throw new InvalidDataException("Profile entry bound exceeded");
+                        RejectReparse(path);
+                        string name = Path.GetFileName(path);
+                        if (!names.Contains(name) || Directory.Exists(path) || !File.Exists(path))
+                            throw new InvalidDataException("Unknown profile file or directory");
+                        if (entries.Contains(name)) throw new InvalidDataException("Duplicate profile entry");
+                        entries.Add(name);
+                    }
+                    entries.Sort(StringComparer.Ordinal);
+                    return entries;
+                }
+                private static void RejectReparse(string path)
+                {
+                    for (string current = Path.GetFullPath(path); !string.IsNullOrEmpty(current);
+                        current = Path.GetDirectoryName(current))
+                    {
+                        FileAttributes attributes;
+                        try { attributes = File.GetAttributes(current); }
+                        catch (FileNotFoundException) { continue; }
+                        catch (DirectoryNotFoundException) { continue; }
+                        if ((attributes & FileAttributes.ReparsePoint) != 0)
+                            throw new InvalidDataException("Profile journal reparse path refused");
+                    }
+                }
             }
 
             internal void Restore()
@@ -270,6 +417,7 @@ namespace Game.Editor
                     SessionState.EraseBool("Warline.MissionValidation.ResumeRefresh");
                     AssetDatabase.AllowAutoRefresh();
                 }
+                RecordProfileStage("ProfileAfterRestore");
                 Record("ContextRestored", new JObject { ["actual_save_root"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
                     ["actual_enter_play_options_enabled"] = EditorSettings.enterPlayModeOptionsEnabled,
                     ["actual_enter_play_options"] = (int)EditorSettings.enterPlayModeOptions,

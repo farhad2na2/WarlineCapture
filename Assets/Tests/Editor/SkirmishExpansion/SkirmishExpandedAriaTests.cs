@@ -1251,25 +1251,429 @@ namespace Game.Tests.Editor
             Assert.AreEqual(startingTankers + 1, SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).TankersCommitted);
         }
 
+        static AriaAssaultMapObservation PresentedAssaultSample(float now, int frame = 10,
+            bool full = false, int identity = 11, uint revision = 1)
+            => new AriaAssaultMapObservation { Identity = identity, ExpectedIdentity = true,
+                FullMap = full, Complete = true, ProjectionValid = true,
+                MarkerFrame = frame, MarkerTime = now, MarkerRevision = revision,
+                ObjectiveHudIdentity = 77, ObjectiveWorld = new Vector3(1370,0,679.5f) };
+        static AriaSkirmishObservation InspectionView(float now, int frame = 10)
+            => new AriaSkirmishObservation { Active = true, ExpandedSession = true,
+                Time = now, Frame = frame, Infantry = 20, PlayerHealth = 800, EnemyHealth = 800,
+                ExpandedAssaultMask = 20, ExpandedAttackOrderMask = 20,
+                AssaultMap = PresentedAssaultSample(now, frame),
+                CloseMap = new AriaTouchTarget { Id = 1234, Available = true } };
+        static AriaSkirmishPlanComponent InspectionPlan(float last = 50)
+            => new AriaSkirmishPlanComponent { LastProgressAt = last, EnemyHealth = 800,
+                PlayerHealth = 800, Infantry = 20, AssaultIssued = 1, StructureOrdered = 1 };
+        static AriaPlaySessionComponent InspectionTouch(float last = 50)
+            => new AriaPlaySessionComponent { Phase = AriaPlayPhase.Waiting,
+                LastProgressAt = last, LastObjectiveProgressAt = last };
+        static void InspectStep(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p,
+            ref AriaPlaySessionComponent t, out AriaPlayObservationComponent o)
+        { o = default; AriaSkirmishPlanSystem.Step(v, ref p, ref t, ref o); }
+
+        [Test]
+        public void ActualBlackoutKeepsTheOriginal180SecondStop()
+        {
+            var v=InspectionView(508); var p=InspectionPlan(329.260864f);var t=InspectionTouch(329.260864f);
+            InspectStep(v,ref p,ref t,out _);
+            Assert.AreNotEqual(AriaPlayPhase.Blocked,t.Phase);
+            v.Time=509.30f;v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame);
+            InspectStep(v,ref p,ref t,out _);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);
+            Assert.AreEqual(329.260864f,p.LastProgressAt);
+        }
+
+        [Test]
+        public void PublicMapInspectionOnlyOpensSamplesAndClosesWithoutCreditingUi()
+        {
+            var v=InspectionView(100);var p=InspectionPlan();var t=InspectionTouch();
+            v.AssaultMap.OpenMap=new AriaTouchTarget{Id=-20010,Available=true};
+            InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(1,p.AssaultInspectStage);Assert.AreEqual(-20010,o.TargetId);
+            Assert.AreEqual(AriaPlayObservationKind.Control,o.Kind);Assert.AreEqual(0,o.Drag);
+            t.Actions++;t.TargetId=-20010;v.MapOpen=true;v.Time=102;v.Frame=11;
+            v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame,true,22,50);
+            InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(2,p.AssaultInspectStage);Assert.AreEqual(50,p.LastProgressAt);
+            v.Time=102.3f;v.Frame=12;v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame,true,22,51);
+            v.AssaultDistanceVisible=true;v.NearestFriendlyObjectiveDistance=400;
+            InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(1,p.AssaultDistanceObserved);Assert.AreEqual(50,p.LastProgressAt);
+            Assert.AreEqual(3,p.AssaultInspectStage);Assert.AreEqual(1234,o.TargetId);
+            Assert.AreEqual(AriaPlayObservationKind.Control,o.Kind);Assert.AreEqual(0,o.Drag);
+            t.Actions++;t.TargetId=1234;v.MapOpen=false;v.Time=103;v.Frame=13;
+            v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame);
+            v.AssaultDistanceVisible=false;
+            InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(0,p.AssaultInspectStage);Assert.AreEqual(115,p.AssaultInspectReadyAt);
+            Assert.AreEqual(50,p.LastProgressAt);Assert.AreEqual(50,t.LastObjectiveProgressAt);
+            v.Time=114;v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame);
+            v.AssaultMap.OpenMap=new AriaTouchTarget{Id=-20010,Available=true};
+            InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(0,p.AssaultInspectStage,"Cadence is bounded, not a reopen loop.");
+        }
+
+        [TestCase(0),TestCase(1),TestCase(2),TestCase(3),TestCase(4),
+         TestCase(5),TestCase(6),TestCase(7),TestCase(8)]
+        public void StaleForeignOrIncompleteFullMapCannotCreditAdvance(int mutation)
+        {
+            var v=InspectionView(103,12);v.MapOpen=true;
+            v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame,true,22,51);
+            v.AssaultDistanceVisible=true;v.NearestFriendlyObjectiveDistance=300;
+            var p=InspectionPlan();p.AssaultDistanceObserved=1;p.BestAssaultDistance=400;
+            p.AssaultObjectiveHudIdentity=77;p.AssaultObjectiveWorld=v.AssaultMap.ObjectiveWorld;
+            p.AssaultInspectStage=2;p.AssaultInspectMapIdentity=22;p.AssaultInspectOpenedFrame=11;
+            p.AssaultInspectRevision=50;p.AssaultInspectDeadline=106;
+            p.AssaultInspectObjectiveHudIdentity=77;p.AssaultInspectObjectiveWorld=v.AssaultMap.ObjectiveWorld;
+            if(mutation==0)v.AssaultMap.MarkerRevision=50;
+            if(mutation==1)v.AssaultMap.MarkerFrame=11;
+            if(mutation==2)v.AssaultMap.Identity=23;
+            if(mutation==3)v.AssaultMap.ExpectedIdentity=false;
+            if(mutation==4)v.AssaultMap.Complete=false;
+            if(mutation==5)v.AssaultMap.MarkerTime=100;
+            if(mutation==6)v.AssaultMap.ObjectiveHudIdentity=78;
+            if(mutation==7)v.AssaultMap.FullMap=false;
+            if(mutation==8)v.AssaultMap.ProjectionValid=false;
+            var t=InspectionTouch();InspectStep(v,ref p,ref t,out _);
+            Assert.AreEqual(50,p.LastProgressAt);Assert.AreEqual(50,t.LastObjectiveProgressAt);
+            Assert.AreEqual(400,p.BestAssaultDistance);
+        }
+
+        [Test]
+        public void FreshSecondInspectionCreditsOnlyRealNewClosestApproach()
+        {
+            var v=InspectionView(175,20);v.MapOpen=true;
+            v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame,true,22,53);
+            v.AssaultDistanceVisible=true;v.NearestFriendlyObjectiveDistance=395;
+            var p=InspectionPlan();p.AssaultDistanceObserved=1;p.BestAssaultDistance=400;
+            p.AssaultObjectiveHudIdentity=77;p.AssaultObjectiveWorld=v.AssaultMap.ObjectiveWorld;
+            p.AssaultInspectStage=2;p.AssaultInspectMapIdentity=22;p.AssaultInspectOpenedFrame=19;
+            p.AssaultInspectRevision=52;p.AssaultInspectDeadline=178;
+            p.AssaultInspectObjectiveHudIdentity=77;p.AssaultInspectObjectiveWorld=v.AssaultMap.ObjectiveWorld;
+            var t=InspectionTouch();InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(175,p.LastProgressAt);Assert.AreEqual(175,t.LastObjectiveProgressAt);
+            Assert.AreEqual(395,p.BestAssaultDistance);Assert.AreEqual(1234,o.TargetId);
+        }
+
+        [TestCase(false),TestCase(true)]
+        public void MissingOrLateMapCannotRenewOrRestartTheInspection(bool late)
+        {
+            var v=InspectionView(100);var p=InspectionPlan();var t=InspectionTouch();
+            v.AssaultMap.OpenMap=new AriaTouchTarget{Id=-20010,Available=true};
+            InspectStep(v,ref p,ref t,out _);
+            t.Actions++;t.TargetId=-20010;v.Time=109;v.Frame=11;
+            v.MapOpen=late;v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame,late,22,50);
+            v.AssaultDistanceVisible=late;v.NearestFriendlyObjectiveDistance=200;
+            InspectStep(v,ref p,ref t,out _);
+            Assert.AreEqual(late?3:4,p.AssaultInspectStage);Assert.AreEqual(50,p.LastProgressAt);
+            Assert.AreEqual(0,p.AssaultDistanceObserved);
+            v.Time=231;v.Frame=12;v.AssaultMap=PresentedAssaultSample(v.Time,v.Frame,late,22,51);
+            InspectStep(v,ref p,ref t,out _);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);
+        }
+
+        [Test]
+        public void ActualMapEpochAndPopupIdentityAreRequired()
+        {
+            var a=new GameObject("inspection-map-a",typeof(RectTransform));
+            var b=new GameObject("inspection-map-b",typeof(RectTransform));
+            var popupObject=new GameObject("inspection-popup",typeof(RectTransform));
+            try
+            {
+                var map=a.AddComponent<Game.UI.Runtime.MatchHudMinimapView>();
+                var wrong=b.AddComponent<Game.UI.Runtime.MatchHudMinimapView>();
+                var popup=popupObject.AddComponent<Game.UI.Runtime.MatchHudFullMapPopupView>();
+                var serialized=new UnityEditor.SerializedObject(popup);
+                serialized.FindProperty("minimap").objectReferenceValue=map;serialized.ApplyModifiedPropertiesWithoutUndo();
+                map.SetProjectionMode(true);wrong.SetProjectionMode(true);
+                Assert.IsTrue(Game.UI.Runtime.MatchHudAssistantUiSystemHelper.ExpectedAssaultMapIdentity(map,popup,true));
+                Assert.IsFalse(Game.UI.Runtime.MatchHudAssistantUiSystemHelper.ExpectedAssaultMapIdentity(wrong,popup,true));
+                popup.Hide();map.ApplyInteractionOptions(false,false,false,false,false,false);
+                Assert.IsTrue(Game.UI.Runtime.MatchHudAssistantUiSystemHelper.ExpectedAssaultMapIdentity(map,popup,false),
+                    "Read/focus-only legacy compact map remains a public observation surface.");
+                Assert.IsFalse(map.OpensFullMapOnClick);
+                map.BeginPresentedMarkerUpdate();Assert.IsFalse(map.PresentedMarkersComplete);
+                uint revision=map.PresentedMarkerRevision;
+                map.CompletePresentedMarkerUpdate();
+                Assert.IsTrue(map.PresentedMarkersComplete);Assert.AreNotEqual(revision,map.PresentedMarkerRevision);
+                Assert.AreEqual(Time.frameCount,map.PresentedMarkerFrame);
+                map.enabled=false;
+                Assert.IsFalse(Game.UI.Runtime.MatchHudAssistantUiSystemHelper.ExpectedAssaultMapIdentity(map,popup,false),
+                    "A disabled map cannot authorize observation even before lifecycle invalidation.");
+                // This focused entry runs in idle Edit mode; ordinary MonoBehaviour
+                // callbacks are not automatically dispatched. Exercise the real
+                // callback explicitly as a lifecycle unit, not Play-mode delivery.
+                var onDisable=typeof(Game.UI.Runtime.MatchHudMinimapView).GetMethod("OnDisable",
+                    System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(onDisable);
+                onDisable.Invoke(map,null);
+                Assert.IsFalse(map.PresentedMarkersComplete);
+                Assert.AreEqual(0,map.PresentedMarkerFrame);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(popupObject);
+                UnityEngine.Object.DestroyImmediate(b);UnityEngine.Object.DestroyImmediate(a);
+            }
+        }
+
+        [Test]
+        public void ConfiguredMapClickDispatchesOpenWithoutCameraFocus()
+        {
+            var go=new GameObject("inspection-click",typeof(RectTransform));
+            try
+            {
+                var map=go.AddComponent<Game.UI.Runtime.MatchHudMinimapView>();
+                var imageObject=new GameObject("MapImage",typeof(RectTransform),typeof(UnityEngine.UI.Image));
+                imageObject.transform.SetParent(go.transform,false);
+                var image=imageObject.GetComponent<UnityEngine.UI.Image>();
+                var imageRect=imageObject.GetComponent<RectTransform>();
+                imageRect.sizeDelta=new Vector2(200,200);
+                var viewportObject=new GameObject("Viewport",typeof(RectTransform));
+                viewportObject.transform.SetParent(imageRect,false);
+                var viewport=viewportObject.GetComponent<RectTransform>();
+                viewport.sizeDelta=new Vector2(50,50);
+                map.Configure(image,imageRect,viewport,null,null,imageRect);
+                map.ApplyInteractionOptions(false,true,false,false,false,true);
+                Assert.AreNotSame(map.gameObject,viewport.gameObject);
+                Assert.IsNull(go.GetComponent<Game.UI.Runtime.MatchHudMinimapViewportDragRelayView>(),
+                    "The actual viewport relay belongs to its separate child, not beside the map handler.");
+                Assert.IsNotNull(viewport.GetComponent<Game.UI.Runtime.MatchHudMinimapViewportDragRelayView>());
+                int opened=0,focused=0;
+                map.FullMapOpenRequested+=()=>opened++;
+                map.FocusRequested+=_=>focused++;
+                var pointer=new UnityEngine.EventSystems.PointerEventData(null);
+                UnityEngine.EventSystems.ExecuteEvents.Execute(go,pointer,
+                    UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);
+                Assert.AreEqual(1,opened);Assert.AreEqual(0,focused);
+                UnityEngine.EventSystems.ExecuteEvents.Execute(viewportObject,pointer,
+                    UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);
+                Assert.AreEqual(2,opened);Assert.AreEqual(0,focused);
+                map.ApplyInteractionOptions(false,true,false,false,false,false);
+                UnityEngine.EventSystems.ExecuteEvents.Execute(go,pointer,
+                    UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);
+                UnityEngine.EventSystems.ExecuteEvents.Execute(viewportObject,pointer,
+                    UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);
+                Assert.AreEqual(2,opened);Assert.AreEqual(0,focused);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(go); }
+        }
+
+        [TestCase(2),TestCase(3)]
+        public void ManualStopClearsInspectionWithoutOpenOrClose(int stage)
+        {
+            var v=InspectionView(100);v.MapOpen=true;v.AssaultDistanceVisible=true;
+            v.AssaultMap=PresentedAssaultSample(100,10,true,22,51);v.NearestFriendlyObjectiveDistance=300;
+            var p=InspectionPlan();p.AssaultInspectStage=(byte)stage;p.AssaultInspectMapIdentity=22;
+            p.AssaultInspectDeadline=105;p.AssaultInspectOpenedFrame=9;p.AssaultInspectRevision=50;
+            p.AssaultInspectObjectiveHudIdentity=77;p.AssaultInspectObjectiveWorld=v.AssaultMap.ObjectiveWorld;
+            p.AssaultObjectiveHudIdentity=77;p.AssaultObjectiveWorld=v.AssaultMap.ObjectiveWorld;
+            p.AssaultDistanceObserved=1;p.BestAssaultDistance=400;
+            var t=InspectionTouch();t.Phase=AriaPlayPhase.Manual;
+            InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(0,p.AssaultInspectStage);Assert.AreEqual(0,p.AssaultInspectMapIdentity);
+            Assert.AreNotEqual(-20010,o.TargetId);Assert.AreNotEqual(1234,o.TargetId);
+            Assert.AreEqual(50,p.LastProgressAt);Assert.AreEqual(50,t.LastObjectiveProgressAt);
+        }
+
+        [Test]
+        public void ChangedRosterOrAssaultOwnershipCannotKeepAnInspection()
+        {
+            for(int change=0;change<3;change++)
+            {
+                var v=InspectionView(100);var p=InspectionPlan();var t=InspectionTouch();
+                p.AssaultInspectStage=2;p.AssaultInspectMapIdentity=22;p.AssaultInspectDeadline=105;
+                if(change==0)p.AssaultIssued=0;
+                if(change==1)p.StructureOrdered=0;
+                if(change==2){p.SweepRosterRevision=10;v.ExpandedRosterRevision=11;}
+                InspectStep(v,ref p,ref t,out var o);
+                Assert.AreEqual(0,p.AssaultInspectStage);Assert.AreEqual(0,p.AssaultInspectMapIdentity);
+                Assert.AreNotEqual(-20010,o.TargetId);Assert.AreNotEqual(1234,o.TargetId);
+                Assert.AreEqual(50,p.LastProgressAt);
+            }
+        }
+
+        [Test]
+        public void FailedOpenWithNoPopupResumesNormalPlanningAfterCooldown()
+        {
+            var v=InspectionView(110);var p=InspectionPlan();var t=InspectionTouch();
+            p.AssaultInspectStage=4;p.AssaultInspectDeadline=108;
+            v.CanUpgradeReadiness=true;v.UpgradeReadiness=new AriaTouchTarget{Id=55,Available=true};
+            InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(0,p.AssaultInspectStage);Assert.AreEqual(122,p.AssaultInspectReadyAt);
+            Assert.AreEqual(55,o.TargetId,"Failed inspection must not starve existing ordinary planning.");
+            Assert.AreEqual(50,p.LastProgressAt);
+        }
+
+        [Test]
+        public void PendingUiTransactionsDoNotStartAMapInspection()
+        {
+            for(int transaction=0;transaction<6;transaction++)
+            {
+                var v=InspectionView(100);var p=InspectionPlan();var t=InspectionTouch();
+                v.AssaultMap.OpenMap=new AriaTouchTarget{Id=-20010,Available=true};
+                if(transaction==0)p.AssaultSelecting=1;
+                if(transaction==1)p.TargetPending=1;
+                if(transaction==2){p.PadStage=1;p.PadDeadline=200;}
+                if(transaction==3)
+                {v.AirProfile=true;v.PadPresent=true;v.OwnAttackAirLive=1;p.AirCycleStage=2;p.AirCycleDeadline=200;}
+                if(transaction==4)t.Phase=AriaPlayPhase.Aiming;
+                if(transaction==5)t.Phase=AriaPlayPhase.Verifying;
+                InspectStep(v,ref p,ref t,out var o);
+                Assert.AreEqual(0,p.AssaultInspectStage);Assert.AreNotEqual(-20010,o.TargetId);
+            }
+        }
+
+        [TestCase(0),TestCase(1)]
+        public void TerminalPadOrAirStageDoesNotStarveInspection(int terminal)
+        {
+            var v=InspectionView(100);var p=InspectionPlan();var t=InspectionTouch();
+            v.AssaultMap.OpenMap=new AriaTouchTarget{Id=-20010,Available=true};
+            if(terminal==0)p.PadStage=8;
+            else {p.AirCycleStage=2;p.AirCycleCount=2;v.AirProfile=true;v.PadPresent=true;v.OwnAttackAirLive=1;}
+            InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(1,p.AssaultInspectStage);Assert.AreEqual(-20010,o.TargetId);
+        }
+
+        [Test]
+        public void ActualFriendlyFilterCannotLeaveHiddenContactsCreditable()
+        {
+            var root=new GameObject("inspection-filter-canvas",typeof(RectTransform),typeof(Canvas));
+            Texture2D texture=null;Sprite sprite=null;
+            try
+            {
+                root.GetComponent<Canvas>().renderMode=RenderMode.ScreenSpaceOverlay;
+                var mapObject=new GameObject("map",typeof(RectTransform),typeof(UnityEngine.UI.Image));
+                mapObject.transform.SetParent(root.transform,false);
+                var rect=mapObject.GetComponent<RectTransform>();rect.sizeDelta=new Vector2(200,200);
+                var map=mapObject.AddComponent<Game.UI.Runtime.MatchHudMinimapView>();
+                map.Configure(mapObject.GetComponent<UnityEngine.UI.Image>(),rect,null,null,null,rect);
+                map.SetProjectionMode(true);
+                map.PresentedProjection=new Game.UI.Runtime.MatchHudMinimapProjectionGrid(Vector3.zero,100,100);
+                var markerObject=new GameObject("friendly",typeof(RectTransform),typeof(UnityEngine.UI.Image));
+                markerObject.transform.SetParent(rect,false);
+                var marker=markerObject.GetComponent<RectTransform>();marker.sizeDelta=new Vector2(10,10);
+                var image=markerObject.GetComponent<UnityEngine.UI.Image>();image.color=Color.white;
+                texture=new Texture2D(2,2);sprite=Sprite.Create(texture,new Rect(0,0,2,2),Vector2.one*.5f);
+                image.sprite=sprite;
+                var toggleObject=new GameObject("friendlies",typeof(RectTransform),typeof(UnityEngine.UI.Toggle));
+                toggleObject.transform.SetParent(root.transform,false);
+                var toggle=toggleObject.GetComponent<UnityEngine.UI.Toggle>();toggle.SetIsOnWithoutNotify(true);
+                var filter=root.AddComponent<Game.UI.Runtime.MatchHudFullMapFilterView>();
+                filter.Configure(toggle,null,null,null,null,null,null,null,null,rect,null,sprite,null,null);
+                map.BeginPresentedMarkerUpdate();
+                map.RecordPresentedContact(new MatchHudMinimapMarkerModel(new Vector3(50,0,50),
+                    MatchHudMinimapMarkerAllegiance.Player),marker);
+                map.CompletePresentedMarkerUpdate();
+                Canvas.ForceUpdateCanvases();image.canvasRenderer.cull=false;image.canvasRenderer.SetAlpha(1);
+                var contact=map.PresentedContacts[0];uint epoch=map.PresentedMarkerRevision;
+                Assert.IsTrue(map.IsContactCurrentlyPresented(contact,null));
+                toggle.SetIsOnWithoutNotify(false);filter.RefreshFilters();
+                Assert.AreEqual(1,map.PresentedContacts.Count);Assert.AreEqual(epoch,map.PresentedMarkerRevision);
+                Assert.IsFalse(markerObject.activeInHierarchy);
+                Assert.IsFalse(map.IsContactCurrentlyPresented(contact,null),"Post-update friendly filter hides the actual marker.");
+                toggle.SetIsOnWithoutNotify(true);filter.RefreshFilters();Canvas.ForceUpdateCanvases();
+                image.canvasRenderer.cull=false;image.canvasRenderer.SetAlpha(1);
+                Assert.IsTrue(map.IsContactCurrentlyPresented(contact,null));
+                image.enabled=false;Assert.IsFalse(map.IsContactCurrentlyPresented(contact,null));image.enabled=true;
+                rect.sizeDelta=Vector2.zero;Canvas.ForceUpdateCanvases();
+                Assert.IsFalse(map.HasCurrentPresentedMapArea(null));
+                Assert.IsFalse(map.IsContactCurrentlyPresented(contact,null));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+                if(sprite!=null)UnityEngine.Object.DestroyImmediate(sprite);
+                if(texture!=null)UnityEngine.Object.DestroyImmediate(texture);
+            }
+        }
+
+        // Same Editor continuation, only after focused controls return successfully.
+        public static void RunInspectionGapInputCameraAndM5()
+        {
+            RunAssaultMapInspectionValidation();
+            global::MatchHudSquadScrollTests.RunGapInputCameraAndM5();
+        }
+
+        public static void RunAssaultMapInspectionValidation()
+        {
+            Game.Editor.AriaSkirmishPlanValidation.RunFocusedValidation();
+            var failures=new System.Collections.Generic.List<Exception>();
+            int executed=0;
+            void RunCase(string name,Action<SkirmishExpandedAriaTests> run)
+            {
+                executed++;
+                try
+                {
+                    run(new SkirmishExpandedAriaTests());
+                    Debug.Log("[AriaAssaultMapInspectionCase] result=Passed case="+name);
+                }
+                catch(OutOfMemoryException) { throw; } // Infrastructure is not an independent assertion failure.
+                catch(System.Reflection.TargetInvocationException error) when(error.InnerException is OutOfMemoryException) { throw; }
+                catch(Exception error)
+                {
+                    failures.Add(new Exception(name,error));
+                    Debug.LogError("[AriaAssaultMapInspectionCase] result=Failed case="+name+"\n"+error);
+                }
+            }
+            RunCase("ActualFriendlyFilterCannotLeaveHiddenContactsCreditable",suite=>suite.ActualFriendlyFilterCannotLeaveHiddenContactsCreditable());
+            RunCase("ManualStopClearsInspectionWithoutOpenOrClose(2)",suite=>suite.ManualStopClearsInspectionWithoutOpenOrClose(2));
+            RunCase("ManualStopClearsInspectionWithoutOpenOrClose(3)",suite=>suite.ManualStopClearsInspectionWithoutOpenOrClose(3));
+            RunCase("ChangedRosterOrAssaultOwnershipCannotKeepAnInspection",suite=>suite.ChangedRosterOrAssaultOwnershipCannotKeepAnInspection());
+            RunCase("FailedOpenWithNoPopupResumesNormalPlanningAfterCooldown",suite=>suite.FailedOpenWithNoPopupResumesNormalPlanningAfterCooldown());
+            RunCase("PendingUiTransactionsDoNotStartAMapInspection",suite=>suite.PendingUiTransactionsDoNotStartAMapInspection());
+            RunCase("TerminalPadOrAirStageDoesNotStarveInspection(0)",suite=>suite.TerminalPadOrAirStageDoesNotStarveInspection(0));
+            RunCase("TerminalPadOrAirStageDoesNotStarveInspection(1)",suite=>suite.TerminalPadOrAirStageDoesNotStarveInspection(1));
+            RunCase("ActualBlackoutKeepsTheOriginal180SecondStop",suite=>suite.ActualBlackoutKeepsTheOriginal180SecondStop());
+            RunCase("PublicMapInspectionOnlyOpensSamplesAndClosesWithoutCreditingUi",suite=>suite.PublicMapInspectionOnlyOpensSamplesAndClosesWithoutCreditingUi());
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(0)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(0));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(1)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(1));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(2)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(2));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(3)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(3));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(4)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(4));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(5)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(5));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(6)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(6));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(7)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(7));
+            RunCase("StaleForeignOrIncompleteFullMapCannotCreditAdvance(8)",suite=>suite.StaleForeignOrIncompleteFullMapCannotCreditAdvance(8));
+            RunCase("FreshSecondInspectionCreditsOnlyRealNewClosestApproach",suite=>suite.FreshSecondInspectionCreditsOnlyRealNewClosestApproach());
+            RunCase("MissingOrLateMapCannotRenewOrRestartTheInspection(false)",suite=>suite.MissingOrLateMapCannotRenewOrRestartTheInspection(false));
+            RunCase("MissingOrLateMapCannotRenewOrRestartTheInspection(true)",suite=>suite.MissingOrLateMapCannotRenewOrRestartTheInspection(true));
+            RunCase("ActualMapEpochAndPopupIdentityAreRequired",suite=>suite.ActualMapEpochAndPopupIdentityAreRequired());
+            RunCase("ConfiguredMapClickDispatchesOpenWithoutCameraFocus",suite=>suite.ConfiguredMapClickDispatchesOpenWithoutCameraFocus());
+            RunCase("VisibleAssaultAdvanceKeepsLongMarchActiveButAStoppedForceStillBlocks",suite=>suite.VisibleAssaultAdvanceKeepsLongMarchActiveButAStoppedForceStillBlocks());
+            RunCase("AssaultPagingJitterAndRetreatDoNotRenewTheBestApproach",suite=>suite.AssaultPagingJitterAndRetreatDoNotRenewTheBestApproach());
+            if(executed!=26)throw new InvalidOperationException("Exact26 independent inspection invocations required.");
+            if(failures.Count!=0)
+            {
+                Debug.LogError("[AriaAssaultMapInspectionControls] result=Failed controls="+executed+
+                    " failed="+failures.Count+" nativeGeometry=0 normalMissionReady=0");
+                throw new AggregateException("Focused map inspection controls failed; normal journey must not start.",failures);
+            }
+            Debug.Log("[AriaAssaultMapInspectionControls] result=Passed controls=26 nativeGeometry=0 normalMissionReady=0");
+        }
+
         [Test]
         public void VisibleAssaultAdvanceKeepsLongMarchActiveButAStoppedForceStillBlocks()
         {
             var view = new AriaSkirmishObservation
             { Active = true, ExpandedSession = true, Infantry = 20, Time = 10,
-                AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 400 };
+                AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 400,
+                Frame = 10, AssaultMap = PresentedAssaultSample(10) };
             var plan = new AriaSkirmishPlanComponent { LastProgressAt = 1, Infantry = 20, AssaultIssued = 1 };
             var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             var output = new AriaPlayObservationComponent();
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(1, plan.LastProgressAt, "First observation establishes a baseline, not progress.");
-            view.Time = 175; view.NearestFriendlyObjectiveDistance = 250;
+            view.Time = 175; view.NearestFriendlyObjectiveDistance = 250; view.AssaultMap = PresentedAssaultSample(view.Time);
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(175, plan.LastProgressAt);
-            view.Time = 340; view.NearestFriendlyObjectiveDistance = 80;
+            view.Time = 340; view.NearestFriendlyObjectiveDistance = 80; view.AssaultMap = PresentedAssaultSample(view.Time);
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(340, plan.LastProgressAt);
             Assert.AreNotEqual(AriaPlayPhase.Blocked, touch.Phase);
-            view.Time = 521;
+            view.Time = 521; view.AssaultMap = PresentedAssaultSample(view.Time);
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase);
         }
@@ -1279,20 +1683,21 @@ namespace Game.Tests.Editor
         {
             var view = new AriaSkirmishObservation
             { Active = true, ExpandedSession = true, Infantry = 20, Time = 10,
-                AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 100 };
+                AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 100,
+                Frame = 10, AssaultMap = PresentedAssaultSample(10) };
             var plan = new AriaSkirmishPlanComponent { LastProgressAt = 1, Infantry = 20, AssaultIssued = 1 };
             var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             var output = new AriaPlayObservationComponent();
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             foreach (float distance in new[] { 99f, 140f, 100f, 99f })
             {
-                view.Time += 30; view.ExpandedPageIndex = 1 - view.ExpandedPageIndex;
+                view.Time += 30; view.ExpandedPageIndex = 1 - view.ExpandedPageIndex; view.AssaultMap = PresentedAssaultSample(view.Time);
                 view.NearestFriendlyObjectiveDistance = distance;
                 AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             }
             Assert.AreEqual(1, plan.LastProgressAt);
             Assert.AreEqual(100, plan.BestAssaultDistance);
-            view.Time = 182;
+            view.Time = 182; view.AssaultMap = PresentedAssaultSample(view.Time);
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase);
         }

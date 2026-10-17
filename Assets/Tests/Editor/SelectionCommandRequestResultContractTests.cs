@@ -4800,6 +4800,215 @@ public sealed class SelectionCommandRequestResultContractTests
         }
     }
 
+
+    public static void RunAssaultFocusPrecisionLegacySizeValidation()
+    {
+        Game.Editor.AriaSkirmishPlanValidation.RunPublicAssaultFocusValidation();
+        RunPrecisionLegacySizeValidation();
+        Debug.Log("[AssaultFocusPrecisionLegacySizeControls] result=Passed focusChecks=27 precisionProducerCases=11 precisionPlannerChecks=22 legacyCases=141 sizeRowControls=9 sizeReceiptControls=6 sizeScopeControls=9 contextFallback=4 contextAdmission=3 contextMatrix=48 nativeCameraProved=0 missionReady=0");
+    }
+
+    public static void RunPrecisionLegacySizeValidation()
+    {
+        RunPublicPrecisionProducerValidation();
+        Game.Editor.AriaSkirmishPlanValidation.RunFocusedValidation();
+        Game.Editor.SkirmishSetupPrefabBuilder.RunMissionSizeProposalControls();
+        global::MatchHudAssistantUiSystemHelperTests.RunSkirmishContextValidation();
+        Debug.Log("[PrecisionLegacySizeControls] result=Passed precisionProducerCases=11 precisionPlannerChecks=22 legacyCases=141 sizeRowControls=9 sizeReceiptControls=6 sizeScopeControls=9 contextFallback=4 contextAdmission=3 contextMatrix=48");
+    }
+
+    public static void RunPublicPrecisionProducerValidation()
+    {
+        var tests=new SelectionCommandRequestResultContractTests();
+        string previous=Game.Configs.GameLocalization.CurrentLocaleCode;
+        int cases=0;
+        try
+        {
+            Game.Configs.GameLocalization.SetLocale("en",false);
+            foreach(var kind in new[]{"mixed","partial","rejected","noHQ","foreignGroup","foreignSession","invisible","noHud","normalScreen"})
+            {
+                tests.PrecisionAttack_NativeResultFlushProjection(kind,false);cases++;
+                if(kind=="mixed"||kind=="partial")
+                {tests.PrecisionAttack_NativeResultFlushProjection(kind,true);cases++;}
+            }
+            Game.Editor.AriaSkirmishPlanValidation.RunPublicPrecisionAttackValidation();
+            Debug.Log($"[PublicPrecisionProducerControls] result=Passed cases={cases} plannerChecks=22 sharedM5JourneyProved=0 missionReady=0");
+        }
+        finally{Game.Configs.GameLocalization.SetLocale(previous,false);}
+    }
+
+    [TestCase("mixed",false)]
+    [TestCase("mixed",true)]
+    [TestCase("partial",false)]
+    [TestCase("partial",true)]
+    [TestCase("rejected",false)]
+    [TestCase("noHQ",false)]
+    [TestCase("foreignGroup",false)]
+    [TestCase("foreignSession",false)]
+    [TestCase("invisible",false)]
+    [TestCase("noHud",false)]
+    [TestCase("normalScreen",false)]
+    public void PrecisionAttack_NativeResultFlushProjection(string kind,bool reverse)
+    {
+        var previousWorld=World.DefaultGameObjectInjectionWorld;
+        using var world=new World("PrecisionAttackNativeProducer-"+kind+"-"+reverse);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld=world;
+            Game.UI.Shell.Ecs.UiShellEcsGateway.RegisterAsRuntimeGateway();
+            var em=world.EntityManager;
+            var session=em.CreateEntity(typeof(SkirmishMatchState),typeof(SkirmishExpandedSessionComponent),
+                typeof(SkirmishArmySelectionComponent));
+            em.SetComponentData(session,new SkirmishExpandedSessionComponent{SessionId="precision-A",
+                ObjectiveKind=Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault,
+                Phase=Game.Skirmish.Contracts.SkirmishSessionPhase.Playing});
+            em.SetComponentData(session,new SkirmishArmySelectionComponent{PageSize=5});
+            var groups=em.AddBuffer<SkirmishArmyGroupRecord>(session);
+            groups.Add(new SkirmishArmyGroupRecord{GroupId=77,FactionId=1,
+                Role=Game.Skirmish.Contracts.SkirmishRoleKind.Tank,MemberCount=2,AliveCount=2});
+            Entity Target(bool designated,int x)
+            {
+                var actor=em.CreateEntity(typeof(LocalTransform),typeof(UnitGrid),typeof(UnitHealth),typeof(Faction),
+                    typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishStructureIdentityComponent),
+                    typeof(SkirmishContactSightComponent));
+                em.SetComponentData(actor,LocalTransform.FromPosition(new float3(x,0,5)));
+                em.SetComponentData(actor,new UnitGrid{Cell=new int2(x,5)});
+                em.SetComponentData(actor,new UnitHealth{Current=100,Max=100});
+                em.SetComponentData(actor,new Faction{Id=FactionIdentity.EnemyFactionId});
+                em.SetComponentData(actor,new SkirmishAttemptOwnedComponent{SessionId="precision-A",FactionId=2,IsStructure=1});
+                em.SetComponentData(actor,new SkirmishStructureIdentityComponent{DesignatedBase=designated?(byte)1:(byte)0});
+                em.SetComponentData(actor,new SkirmishContactSightComponent{
+                    Sight=Game.Skirmish.Contracts.SkirmishContactSight.Visible});
+                return actor;
+            }
+            var hq=Target(true,5);var breach=Target(false,6);
+            Entity Source(int index)
+            {
+                var actor=em.CreateEntity(typeof(LocalTransform),typeof(UnitGrid),typeof(UnitMove),typeof(UnitCombat),
+                    typeof(UnitHealth),typeof(Faction),typeof(SkirmishAttemptOwnedComponent),
+                    typeof(SkirmishArmyGroupMembershipComponent),typeof(SelectedUnitTag));
+                em.SetComponentData(actor,LocalTransform.FromPosition(new float3(index,0,0)));
+                em.SetComponentData(actor,new UnitGrid{Cell=new int2(index,0)});
+                em.SetComponentData(actor,new UnitMove{Speed=4,WalkSpeed=4,ArriveDistance=.1f});
+                em.SetComponentData(actor,new UnitCombat{CanAttack=(byte)((kind=="rejected"||(kind=="partial"&&index==1))?0:1)});
+                em.SetComponentData(actor,new UnitHealth{Current=100,Max=100});
+                em.SetComponentData(actor,new Faction{Id=FactionIdentity.PlayerFactionId});
+                em.SetComponentData(actor,new SkirmishAttemptOwnedComponent{
+                    SessionId=(kind=="foreignSession"&&index==1)?"precision-B":"precision-A",FactionId=1});
+                em.SetComponentData(actor,new SkirmishArmyGroupMembershipComponent{
+                    GroupId=(kind=="foreignGroup"&&index==1)?88u:77u});
+                return actor;
+            }
+            var source0=Source(0);var source1=Source(1);
+            var request=new RtsSelectionCommandIntentRequestElement{Kind=RtsSelectionCommandIntentKind.Attack,
+                RequestId=601,Frame=91,HasScreenPosition=1,ScreenPosition=new float2(400,260),ExplicitAttackTargetMode=1};
+            var input=new RtsSelectionInputCompositionSystemHelper(em);
+            Assert.IsTrue(input.TryGetCommandBuffers(out _,out var commandEntity,out _,out _));
+            if(kind=="invisible")
+                em.SetComponentData(hq,new SkirmishContactSightComponent{
+                    Sight=Game.Skirmish.Contracts.SkirmishContactSight.Unknown});
+            bool expected=kind=="mixed"||kind=="partial"||kind=="noHud"||kind=="normalScreen";
+            if(kind=="normalScreen"||kind=="invisible")
+            {
+                var queue=em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+                queue.Add(request);
+                bool Click(Vector2 point,EntityManager manager,out Entity target){target=hq;return true;}
+                new AttackOrderCommandSystem().ProcessCommandIntentRequests(em,commandEntity,queue,
+                    em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity),Click,
+                    (manager,list)=>{list.Add(source0);list.Add(source1);},null,default);
+                if(kind=="invisible")
+                {
+                    Assert.IsFalse(em.HasComponent<EngageTarget>(source0),"normal owner refuses invisible target");
+                    Assert.IsFalse(em.HasComponent<EngageTarget>(source1));
+                }
+                else
+                {
+                    Assert.AreEqual(hq,em.GetComponentData<EngageTarget>(source0).Target);
+                    Assert.AreEqual(hq,em.GetComponentData<EngageTarget>(source1).Target);
+                }
+            }
+            else
+            {
+                using var sourcesOwner=new NativeArray<Entity>(2,Allocator.Temp);
+                var sources=sourcesOwner;
+                sources[0]=source0;sources[1]=source1;
+                uint group=SkirmishPublicOrderFeedback.PrecisionSourceGroup(em,sources,hq);
+                using var idsOwner=new NativeArray<int>(2,Allocator.Temp);
+                var ids=idsOwner;
+                for(int i=0;i<2;i++)
+                {
+                    int index=reverse?1-i:i;
+                    Entity source=index==0?source0:source1;
+                    Entity target=kind=="noHQ"||index==1?breach:hq;
+                    ids[i]=UnitAttackOrderRequestSystem.EnqueueSourceAttackTarget(em,source,target);
+                }
+                UnitAttackOrderRequestSystem.ProcessPendingRequests(em);
+                for(int i=0;i<2;i++)
+                    Assert.IsTrue(UnitAttackOrderRequestSystem.TryGetResult(em,ids[i],out _),
+                        "fixture uses actual native source results, never inserted result rows");
+                var combine=typeof(AttackOrderCommandSystem).GetMethod("CombineSourceAttackResults",
+                    System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+                Assert.IsNotNull(combine);
+                var result=(AttackOrderCommandSystem.Result)combine.Invoke(null,new object[]{em,ids,group,2,hq});
+                if(kind=="mixed")
+                {
+                    Assert.AreEqual(reverse?hq:breach,result.TargetEntity,"ordinary last-issued target preserved");
+                    Assert.AreEqual(hq,result.PublicPrecisionTarget,"precision target is request-owned metadata");
+                    Assert.AreEqual(1,result.PublicAcceptedMembers,"only actual HQ-accepted source counted");
+                    Assert.AreEqual(2,result.PublicSourceMembers);
+                    Assert.AreEqual(hq,em.GetComponentData<EngageTarget>(source0).Target);
+                    Assert.AreEqual(breach,em.GetComponentData<EngageTarget>(source1).Target);
+                }
+                if(kind=="partial")
+                {
+                    Assert.AreEqual(1,result.PublicAcceptedMembers);
+                    Assert.AreEqual(2,result.PublicSourceMembers);
+                    Assert.IsFalse(em.HasComponent<EngageTarget>(source1),"rejected member is not credited");
+                }
+                if(kind=="noHQ")Assert.AreEqual(0,result.PublicAcceptedMembers);
+                if(kind=="rejected")Assert.IsFalse(result.Issued);
+                if(kind=="foreignGroup"||kind=="foreignSession")Assert.AreEqual(0u,result.PublicPrecisionGroup);
+                SkirmishPublicOrderFeedback.PublishPrecisionAttack(em,request,result);
+                var convert=typeof(AttackOrderCommandSystem).GetMethod("ToCommandResultElement",
+                    System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+                Assert.IsNotNull(convert);
+                var nativeRow=(RtsSelectionCommandResultElement)convert.Invoke(null,new object[]{request,result});
+                em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(nativeRow);
+            }
+            Assert.AreEqual(expected,em.HasComponent<SkirmishPublicPrecisionAttackFeedbackComponent>(session));
+            if(expected)
+            {
+                var row=em.GetComponentData<SkirmishPublicPrecisionAttackFeedbackComponent>(session);
+                Assert.AreEqual(hq,row.OriginalTarget);
+                Assert.AreEqual(0,row.Presented,"publication alone is not HUD presentation");
+            }
+            using var selected=em.CreateEntityQuery(typeof(SelectedUnitTag));
+            using var grid=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable),
+                typeof(DynamicBlockerComponent),typeof(DynamicOccupancyComponent));
+            using var surface=em.CreateEntityQuery(typeof(MapSurfaceComponent));
+            int callbacks=0;
+            Action<TacticalCommandResult> present=kind=="noHud"?null:_=>callbacks++;
+            var context=CreateFlushContext(input,selected,grid,surface,present,em);
+            new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessAttackCommandRequests(context,false);
+            Assert.IsTrue(Game.UI.Runtime.UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page));
+            Assert.AreEqual(expected&&kind!="noHud",page.PrecisionAttack.Presented);
+            if(expected)
+            {
+                Assert.AreEqual(77u,page.PrecisionAttack.GroupId);
+                Assert.AreEqual(-20001,page.PrecisionAttack.PublicTargetId);
+                Assert.AreEqual(kind=="normalScreen"?2:1,page.PrecisionAttack.AcceptedMembers);
+                Assert.AreEqual(2,page.PrecisionAttack.SourceMembers);
+            }
+            if(kind=="noHud")Assert.AreEqual(0,callbacks);
+            else Assert.AreEqual(1,callbacks);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld=previousWorld;
+            Game.UI.Shell.Ecs.UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
     [Test]
     public void AttackCommandFlush_ShowsAcceptedTargetMarkerFromResult()
     {

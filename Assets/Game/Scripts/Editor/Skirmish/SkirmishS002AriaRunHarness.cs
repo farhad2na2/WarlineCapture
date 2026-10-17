@@ -480,6 +480,11 @@ namespace Game.Editor
         private static bool TryCreateSelectedPayload(string catalog, int selectedSeed, string selectedLocale,
             out SkirmishAriaAcceptancePayload payload, out string error)
         {
+            if(codedSizeCameraActive)
+            {
+                payload=default;error=null;
+                return catalog==codedSizeExpected.CatalogId && selectedSeed==codedSizeExpected.Seed && selectedLocale==codedSizeLocale;
+            }
             if(productionCanary!=null)
             {
                 var request=productionCanary.Request;
@@ -713,8 +718,9 @@ namespace Game.Editor
                     bool selected = TryCreateSelectedPayload(catalogId, seed, locale, out payload, out _);
                     if (!selected)
                         return;
-                    Debug.Log("[SkirmishS002AriaRun] selected " + (productionCanary?.Request.IsLegacyPreset==true ? "LegacyPreset catalog="+catalogId+" seed="+seed+" nativeSettings=CodedPreset" : payload.FormatSelectedConfiguration()));
-                    if (TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
+                    if(codedSizeCameraActive) Debug.Log("[CodedBaCameraJourney] selected catalog="+catalogId+" size="+codedSizeExpected.SizeId+" qualification=0");
+                    else Debug.Log("[SkirmishS002AriaRun] selected " + (productionCanary?.Request.IsLegacyPreset==true ? "LegacyPreset catalog="+catalogId+" seed="+seed+" nativeSettings=CodedPreset" : payload.FormatSelectedConfiguration()));
+                    if (!codedSizeCameraActive && TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
                         Debug.Log(SkirmishAcceptanceCensusCapture.FormatLog(census));
                     stage = 1;
                     next = now + 2d;
@@ -723,7 +729,7 @@ namespace Game.Editor
 
                 if (!SkirmishLaunchProjection.TryGet(em, out Entity session, out SkirmishMatchState match))
                     return;
-                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null || codedSizeCameraActive) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
                 if (stage <= 1 && !nativeS005MenuJourney)
                 {
                     SkirmishLaunchProjection.TryEnterMatch(em);
@@ -810,6 +816,7 @@ namespace Game.Editor
                         Finish(true, "incompletePackedRenderInitialization");
                         return;
                     }
+                    if (codedSizeCameraActive) { TickCodedSizeCamera(em, session, in match, simulationActive, elapsed); return; }
                     if (Environment.GetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY") == "1" &&
                         Environment.GetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE") == "1")
                     {
@@ -1071,7 +1078,7 @@ namespace Game.Editor
                 leadX.ToString("0.###", CultureInfo.InvariantCulture),
                 leadZ.ToString("0.###", CultureInfo.InvariantCulture));
             File.AppendAllText(LiveTracePath(), line);
-            AppendActorDiagnostic(em, elapsed);
+            AppendActorDiagnostic(em, elapsed, match.EnemyMainBase);
             AppendInputDiagnostic(em, elapsed);
         }
 
@@ -1085,11 +1092,19 @@ namespace Game.Editor
             public int frame, observationFrame, pageCount, totalGroups, selectedGroups;
             public int assaultMask, attackOrderMask, selectedMask, structureMask;
             public int squadCardMask, squadTargetMask, squadDragMask, airMask;
-            public AriaTouchTarget squad4;
+            public AriaTouchTarget enemyBase, squad4;
+            public Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchEvidence enemyBaseEvidence;
+            public bool enemyBaseEvidenceFrameMatches, enemyBaseEvidenceTargetMatches;
+            public Game.UI.Runtime.MatchHudSquadTouchNavigation.SlotResolutionDiagnostic squad4Resolution;
+            public bool squad4ResolutionFrameMatches, squad4ResolutionTargetMatches, squad4ResolutionPageMatches;
             public uint rosterRevision, sweepRosterRevision;
             public int pagedToAssault, assaultSelecting, structureOrdered, pagesOrdered, homeDefenseStage;
             public bool attackMode, selectionVisible, presentedHomeThreat, mapOpen, placementOpen, approachVisible;
             public float publicApproachDistance, bestApproachDistance;
+            public AriaAssaultMapObservation assaultMap;
+            public byte assaultInspectStage;
+            public int assaultInspectMapIdentity, assaultInspectOpenedFrame;
+            public uint assaultInspectRevision;
             public byte approachBaselineObserved;
             public bool assaultStarted, assaultIssued;
             public int materials, infantry, page, structureAttackUnits;
@@ -1110,6 +1125,8 @@ namespace Game.Editor
             var input = em.GetComponentData<AriaPlaySessionComponent>(boundary);
             var plan = em.GetComponentData<AriaSkirmishPlanComponent>(storage);
             var target = em.GetComponentData<AriaPlayObservationComponent>(boundary);
+            var squad4Resolution = Game.UI.Runtime.MatchHudSquadTouchNavigation.ReadSlotDiagnostic(4);
+            var enemyBaseEvidence = Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchSnapshot;
             var sample = new InputDiagnostic
             {
                 elapsed = elapsed,
@@ -1124,13 +1141,38 @@ namespace Game.Editor
                 squadCardMask = view.AvailableSquads, airMask = view.ExpandedAirMask,
                 squadTargetMask = (view.Squad0.Available ? 1 : 0) | (view.Squad1.Available ? 2 : 0) | (view.Squad2.Available ? 4 : 0) | (view.Squad3.Available ? 8 : 0) | (view.Squad4.Available ? 16 : 0),
                 squadDragMask = (view.Squad0.Drag ? 1 : 0) | (view.Squad1.Drag ? 2 : 0) | (view.Squad2.Drag ? 4 : 0) | (view.Squad3.Drag ? 8 : 0) | (view.Squad4.Drag ? 16 : 0),
+                enemyBase = view.EnemyBase, enemyBaseEvidence = enemyBaseEvidence,
+                enemyBaseEvidenceFrameMatches = enemyBaseEvidence.collected && enemyBaseEvidence.frame == view.Frame,
+                enemyBaseEvidenceTargetMatches = enemyBaseEvidence.collected &&
+                    enemyBaseEvidence.target.Id == view.EnemyBase.Id &&
+                    enemyBaseEvidence.target.Position.Equals(view.EnemyBase.Position) &&
+                    enemyBaseEvidence.target.Available == view.EnemyBase.Available &&
+                    enemyBaseEvidence.target.Drag == view.EnemyBase.Drag &&
+                    enemyBaseEvidence.target.DragEnd.Equals(view.EnemyBase.DragEnd) &&
+                    enemyBaseEvidence.target.ScrollTargetId == view.EnemyBase.ScrollTargetId &&
+                    enemyBaseEvidence.target.ScrollDistanceViewports.Equals(view.EnemyBase.ScrollDistanceViewports),
                 squad4 = view.Squad4,
+                squad4Resolution = squad4Resolution,
+                squad4ResolutionFrameMatches = squad4Resolution.collected && squad4Resolution.frame == view.Frame,
+                squad4ResolutionPageMatches = squad4Resolution.collected && squad4Resolution.slotLookupEvaluated &&
+                    squad4Resolution.page == view.ExpandedPageIndex,
+                squad4ResolutionTargetMatches = squad4Resolution.collected &&
+                    squad4Resolution.target.Id == view.Squad4.Id &&
+                    squad4Resolution.target.Available == view.Squad4.Available &&
+                    squad4Resolution.target.Drag == view.Squad4.Drag &&
+                    squad4Resolution.target.Position.Equals(view.Squad4.Position) &&
+                    squad4Resolution.target.DragEnd.Equals(view.Squad4.DragEnd) &&
+                    squad4Resolution.target.ScrollTargetId == view.Squad4.ScrollTargetId &&
+                    squad4Resolution.target.ScrollDistanceViewports.Equals(view.Squad4.ScrollDistanceViewports),
                 rosterRevision = view.ExpandedRosterRevision, sweepRosterRevision = plan.SweepRosterRevision,
                 pagedToAssault = plan.PagedToAssault, assaultSelecting = plan.AssaultSelecting,
                 structureOrdered = plan.StructureOrdered, pagesOrdered = plan.PagesOrdered, homeDefenseStage = plan.HomeDefenseStage,
                 attackMode = view.AttackMode, selectionVisible = view.SelectionVisible, presentedHomeThreat = view.PresentedHomeThreat,
                 mapOpen = view.MapOpen, placementOpen = view.PlacementOpen, approachVisible = view.AssaultDistanceVisible,
                 publicApproachDistance = view.NearestFriendlyObjectiveDistance, bestApproachDistance = plan.BestAssaultDistance,
+                assaultMap = view.AssaultMap, assaultInspectStage = plan.AssaultInspectStage,
+                assaultInspectMapIdentity = plan.AssaultInspectMapIdentity, assaultInspectOpenedFrame = plan.AssaultInspectOpenedFrame,
+                assaultInspectRevision = plan.AssaultInspectRevision,
                 approachBaselineObserved = plan.AssaultDistanceObserved,
                 progressAt = plan.LastProgressAt, objectiveProgressAt = input.LastObjectiveProgressAt,
                 openingUntil = plan.OpeningUntil, assaultStarted = plan.AssaultStarted != 0, assaultIssued = plan.AssaultIssued != 0,
@@ -1141,6 +1183,135 @@ namespace Game.Editor
                 pad = view.PadPresent, recruit = view.Recruit
             };
             File.AppendAllText(LiveTracePath() + ".input.jsonl", JsonUtility.ToJson(sample) + "\n");
+        }
+
+
+        [Serializable] private sealed class CombatTargetDiagnostic
+        {
+            public int index, version;
+            public bool exists, owned, sessionMatches, hasTransform, hasHealth, hasPolicy;
+            public string stableId, sessionId, role;
+            public byte faction, nativeFaction, isStructure, domain;
+            public bool hasFaction;
+            public Vector3 position;
+            public float health, distance;
+            public bool fogEvaluated, fogVisible, policyEvaluated, policyAllows;
+            // These are sampled predicates, not the historical attack-job branch.
+            public bool losEvaluated, nativeRejectionCollected;
+        }
+        [Serializable] private sealed class ActorCombatDiagnostic
+        {
+            public int frame;
+            public float elapsed;
+            public string id, sessionId, role;
+            public byte faction, nativeFaction;
+            public bool hasFaction, hasAcceptedIntent;
+            public byte acceptedIntentOrder, engageCommanded;
+            public int acceptedTargetIndex, acceptedTargetVersion;
+            public int2 engageCell;
+            public Vector3 engagePosition;
+            public Vector3 position;
+            public bool hasAttackMove, hasEngage, hasAttack, hasCombat, capReached;
+            public int2 moveDestination;
+            public Vector3 movePosition;
+            public float attackRange;
+            public int damage, aggroRangeCells;
+            public byte canAttack, autoEngage, allowedDomains;
+            public CombatTargetDiagnostic engagedTarget, designatedEnemyBase;
+        }
+        private static CombatTargetDiagnostic ReadCombatTargetDiagnostic(
+            EntityManager em, Entity actor, in SkirmishAttemptOwnedComponent owner, Entity target)
+        {
+            var result = new CombatTargetDiagnostic
+            { index = target.Index, version = target.Version, exists = em.Exists(target) };
+            if (!result.exists) return result;
+            result.hasFaction = em.HasComponent<Faction>(target);
+            if (result.hasFaction) result.nativeFaction = em.GetComponentData<Faction>(target).Id;
+            result.owned = em.HasComponent<SkirmishAttemptOwnedComponent>(target);
+            if (result.owned)
+            {
+                var targetOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+                result.stableId = targetOwner.StableObjectId.ToString();
+                result.sessionId = targetOwner.SessionId.ToString();
+                result.sessionMatches = targetOwner.SessionId.Equals(owner.SessionId);
+                result.faction = targetOwner.FactionId; result.isStructure = targetOwner.IsStructure;
+                result.fogEvaluated = true;
+                result.fogVisible = SkirmishFogService.IsVisibleToFaction(em, target, owner.FactionId);
+            }
+            if (em.HasComponent<SkirmishUnitRoleComponent>(target))
+                result.role = em.GetComponentData<SkirmishUnitRoleComponent>(target).Role.ToString();
+            result.hasTransform = em.HasComponent<LocalTransform>(target);
+            if (result.hasTransform)
+            {
+                result.position = em.GetComponentData<LocalTransform>(target).Position;
+                result.distance = math.distance(em.GetComponentData<LocalTransform>(actor).Position.xz,
+                    new float2(result.position.x, result.position.z));
+            }
+            result.hasHealth = em.HasComponent<UnitHealth>(target);
+            if (result.hasHealth) result.health = em.GetComponentData<UnitHealth>(target).Current;
+            result.hasPolicy = em.HasComponent<CombatTargetPolicy>(target);
+            if (result.hasPolicy)
+            {
+                var policy = em.GetComponentData<CombatTargetPolicy>(target);
+                result.domain = (byte)policy.Domain;
+                if (em.HasComponent<CombatTargetPolicy>(actor))
+                {
+                    result.policyEvaluated = true;
+                    if (result.owned) policy.Visible = 1;
+                    result.policyAllows = (!result.owned || (result.sessionMatches && result.fogVisible)) &&
+                        CombatTargetPolicyUtility.Allows(true, em.GetComponentData<CombatTargetPolicy>(actor), true, policy);
+                }
+            }
+            return result;
+        }
+        private static ActorCombatDiagnostic ReadActorCombatDiagnostic(
+            EntityManager em, Entity actor, in SkirmishAttemptOwnedComponent owner,
+            ActorDiagnostic observed, Entity enemyBase)
+        {
+            var result = new ActorCombatDiagnostic
+            {
+                frame = observed.frame, elapsed = observed.elapsed, id = observed.id, role = observed.role,
+                faction = owner.FactionId, sessionId = owner.SessionId.ToString(), position = observed.position,
+                hasAttackMove = em.HasComponent<AttackMoveOrder>(actor),
+                hasEngage = em.HasComponent<EngageTarget>(actor),
+                hasAttack = em.HasComponent<UnitAttack>(actor), hasCombat = em.HasComponent<UnitCombat>(actor)
+            };
+            result.hasFaction = em.HasComponent<Faction>(actor);
+            if (result.hasFaction) result.nativeFaction = em.GetComponentData<Faction>(actor).Id;
+            result.hasAcceptedIntent = em.HasComponent<SkirmishMoveIntentComponent>(actor);
+            if (result.hasAcceptedIntent)
+            {
+                var intent = em.GetComponentData<SkirmishMoveIntentComponent>(actor);
+                result.acceptedIntentOrder = (byte)intent.Order;
+                result.acceptedTargetIndex = intent.AttackTarget.Index; result.acceptedTargetVersion = intent.AttackTarget.Version;
+            }
+            if (result.hasEngage)
+            {
+                var engage = em.GetComponentData<EngageTarget>(actor);
+                result.engageCell = engage.Cell; result.engagePosition = engage.Position; result.engageCommanded = engage.IsCommanded;
+            }
+            if (result.hasAttackMove)
+            {
+                var order = em.GetComponentData<AttackMoveOrder>(actor);
+                result.moveDestination = order.Destination; result.movePosition = order.Position;
+            }
+            if (result.hasAttack)
+            {
+                var attack = em.GetComponentData<UnitAttack>(actor);
+                result.attackRange = attack.Range; result.damage = attack.Damage;
+            }
+            if (result.hasCombat)
+            {
+                var combat = em.GetComponentData<UnitCombat>(actor);
+                result.aggroRangeCells = combat.AggroRangeCells;
+                result.canAttack = combat.CanAttack; result.autoEngage = combat.AutoEngage;
+            }
+            if (em.HasComponent<CombatTargetPolicy>(actor))
+                result.allowedDomains = (byte)em.GetComponentData<CombatTargetPolicy>(actor).AllowedTargets;
+            result.engagedTarget = ReadCombatTargetDiagnostic(em, actor, owner,
+                result.hasEngage ? em.GetComponentData<EngageTarget>(actor).Target : Entity.Null);
+            result.designatedEnemyBase = ReadCombatTargetDiagnostic(em, actor, owner, enemyBase);
+            return result;
         }
 
         [Serializable]
@@ -1162,12 +1333,14 @@ namespace Game.Editor
             public float cargoOil, cargoFuel;
         }
 
-        private static void AppendActorDiagnostic(EntityManager em, float elapsed)
+        private static void AppendActorDiagnostic(EntityManager em, float elapsed, Entity enemyBase = default)
         {
             using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
                 typeof(SkirmishUnitRoleComponent), typeof(LocalTransform));
             using var entities = query.ToEntityArray(Allocator.Temp);
             var lines = new System.Text.StringBuilder();
+            var combatSamples = Game.UI.Runtime.SkirmishMatchView.NativeCombatEvidenceEnabled
+                ? new System.Collections.Generic.List<ActorCombatDiagnostic>(16) : null;
             foreach (var unit in entities)
             {
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
@@ -1216,8 +1389,26 @@ namespace Game.Editor
                     sample.cargoOil = cargo.CargoOilBarrels; sample.cargoFuel = cargo.CargoFuelBarrels;
                 }
                 lines.AppendLine(JsonUtility.ToJson(sample));
+                if (combatSamples != null && owned.FactionId == 1 && owned.IsStructure == 0 &&
+                    em.HasComponent<SkirmishRoleOverlayComponent>(unit))
+                {
+                    var overlay = em.GetComponentData<SkirmishRoleOverlayComponent>(unit);
+                    if (overlay.Damage > 0 && (overlay.TargetDomains & SkirmishTargetDomain.Structure) != 0)
+                    {
+                        if (combatSamples.Count < 16)
+                            combatSamples.Add(ReadActorCombatDiagnostic(em, unit, owned, sample, enemyBase));
+                        else combatSamples[15].capReached = true;
+                    }
+                }
             }
             File.AppendAllText(LiveTracePath() + ".actors.jsonl", lines.ToString());
+            if (combatSamples != null && combatSamples.Count > 0)
+            {
+                var combatLines = new System.Text.StringBuilder();
+                foreach (var combatSample in combatSamples)
+                    combatLines.AppendLine(JsonUtility.ToJson(combatSample));
+                File.AppendAllText(LiveTracePath() + ".combat.jsonl", combatLines.ToString());
+            }
         }
 
         private static int DesignatedBaseHp(EntityManager em, Entity session, byte faction)
@@ -1276,6 +1467,7 @@ namespace Game.Editor
 
         private static void Finish(bool abort, string abortReason)
         {
+            if(codedSizeCameraActive) { FinishCodedSizeCamera(false,abortReason);return; }
             StopS005GuardObservation();
             if (finishingEvidence) return;
             finishingEvidence = true;
@@ -1333,13 +1525,7 @@ namespace Game.Editor
             }
             SessionState.SetBool(Key, false);
             SessionState.SetFloat(PlayingSinceKey, 0f);
-            string previous = SessionState.GetString("Warline.AriaPlayValidation", "");
-            Environment.SetEnvironmentVariable(
-                "WARLINE_VALIDATION_SAVE_ROOT",
-                string.IsNullOrEmpty(previous) ? null : previous);
-            string backgroundPrevious = SessionState.GetString(BackgroundPreviousKey, "");
-            Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",
-                string.IsNullOrEmpty(backgroundPrevious) ? null : backgroundPrevious);
+            RecordProductionProfileBeforeRestoreAndResetEnvironment();
 
             if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1")
             {
@@ -1601,6 +1787,7 @@ namespace Game.Editor
             EditorApplication.update -= FinishQuitAfterPlayMode;
             try
             {
+                CompleteCodedSizeCameraAfterOwnedPlay();
                 RestoreS004EditorJourneyOptions();
                 RestoreProductionCanaryAfterOwnedPlay();
             }

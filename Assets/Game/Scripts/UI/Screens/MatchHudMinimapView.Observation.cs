@@ -36,13 +36,62 @@ namespace Game.UI.Runtime
         private Vector2 ProjectMapPoint(Vector3 local, Camera eventCamera)
             => RectTransformUtility.WorldToScreenPoint(eventCamera, MapRect.TransformPoint(local));
         private static bool FiniteMapPoint(Vector2 value) => float.IsFinite(value.x) && float.IsFinite(value.y);
+        internal bool HasCurrentPresentedMapArea(Camera eventCamera)
+        {
+            var grid = PresentedProjection;
+            return TryGetPresentedMapPoint(grid.Origin + new Vector3(grid.Width * .5f,0,grid.Height * .5f),
+                eventCamera, out _);
+        }
+        internal bool IsContactCurrentlyPresented(in PresentedMapContact contact, Camera eventCamera)
+        {
+            var marker = contact.Marker;
+            var image = contact.Image;
+            var root = MarkerRoot != null ? MarkerRoot : MapRect;
+            if (!isActiveAndEnabled || root == null || marker == null || image == null ||
+                !marker.IsChildOf(root) || !marker.gameObject.activeInHierarchy || !image.isActiveAndEnabled ||
+                image.canvasRenderer.cull || image.color.a <= 0 || image.canvasRenderer.GetAlpha() <= 0 ||
+                marker.rect.width <= 0 || marker.rect.height <= 0 || !HasCurrentPresentedMapArea(eventCamera)) return false;
+            for (Transform node = marker; node != null; node = node.parent)
+            {
+                if (!node.TryGetComponent<CanvasGroup>(out var group) || !group.enabled) continue;
+                if (group.alpha <= 0) return false;
+                if (group.ignoreParentGroups) break;
+            }
+            var point = RectTransformUtility.WorldToScreenPoint(eventCamera, marker.TransformPoint(marker.rect.center));
+            return FiniteMapPoint(point) && Screen.safeArea.Contains(point) &&
+                RectTransformUtility.RectangleContainsScreenPoint(MapRect, point, eventCamera);
+        }
+
+        internal uint PresentedMarkerRevision;
+        internal int PresentedMarkerFrame;
+        internal float PresentedMarkerTime;
+        internal bool PresentedMarkersComplete;
+        internal void BeginPresentedMarkerUpdate()
+        {
+            PresentedMarkersComplete = false;
+            PresentedMarkerFrame = 0;
+        }
+        internal void CompletePresentedMarkerUpdate()
+        {
+            unchecked { PresentedMarkerRevision++; if (PresentedMarkerRevision == 0) PresentedMarkerRevision++; }
+            PresentedMarkerFrame = Time.frameCount;
+            PresentedMarkerTime = Time.unscaledTime;
+            PresentedMarkersComplete = true;
+        }
+        internal void InvalidatePresentedMarkerUpdate()
+        {
+            PresentedMarkersComplete = false;
+            PresentedMarkerFrame = 0;
+            PresentedMarkerTime = float.NegativeInfinity;
+        }
         internal readonly List<PresentedMapContact> PresentedContacts = new();
         internal readonly struct PresentedMapContact
         {
             internal readonly MatchHudMinimapMarkerModel Model;
             internal readonly RectTransform Marker;
+            internal readonly UnityEngine.UI.Image Image;
             internal PresentedMapContact(MatchHudMinimapMarkerModel model, RectTransform marker)
-            { Model = model; Marker = marker; }
+            { Model = model; Marker = marker; Image = marker != null ? marker.GetComponent<UnityEngine.UI.Image>() : null; }
         }
         internal void RecordPresentedContact(MatchHudMinimapMarkerModel model, RectTransform marker)
             => PresentedContacts.Add(new PresentedMapContact(model, marker));

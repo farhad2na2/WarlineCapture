@@ -966,6 +966,8 @@ namespace Game.Runtime
                     context.ApplyHudCommandResult?.Invoke(result.Accepted != 0 && result.HasTargetEntity == 0 && result.HasWorldPosition != 0
                         ? TacticalCommandResult.Success(GameText.Get("tactical.feedback.attack_move", "Advancing — engaging enemies along the route."))
                         : ToTacticalCommandResult(result));
+                if (result.HasCommandResult != 0 && context.ApplyHudCommandResult != null)
+                    SkirmishPublicOrderFeedback.MarkPrecisionAttackPresented(em, result);
 
                 if (result.Accepted == 0)
                     continue;

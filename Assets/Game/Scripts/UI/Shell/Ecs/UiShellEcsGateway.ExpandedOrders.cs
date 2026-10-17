@@ -40,6 +40,19 @@ namespace Game.UI.Shell.Ecs
             page.SelectedMask = Mask(slot0, 0, false) | Mask(slot1, 1, false) | Mask(slot2, 2, false) | Mask(slot3, 3, false) | Mask(slot4, 4, false);
             page.StructureMask = StructureBit(slot0, 0) | StructureBit(slot1, 1) | StructureBit(slot2, 2) | StructureBit(slot3, 3) | StructureBit(slot4, 4);
             page.AttackOrderMask = OrderBit(slot0, 0) | OrderBit(slot1, 1) | OrderBit(slot2, 2) | OrderBit(slot3, 3) | OrderBit(slot4, 4);
+            page.BaseAssault=em.HasComponent<Game.Components.SkirmishExpandedSessionComponent>(session)&&
+                em.GetComponentData<Game.Components.SkirmishExpandedSessionComponent>(session).ObjectiveKind==
+                Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault;
+            page.Group0=slot0.GroupId;page.Group1=slot1.GroupId;page.Group2=slot2.GroupId;
+            page.Group3=slot3.GroupId;page.Group4=slot4.GroupId;
+            if(em.HasComponent<Game.Components.SkirmishPublicPrecisionAttackFeedbackComponent>(session))
+            {
+                var receipt=em.GetComponentData<Game.Components.SkirmishPublicPrecisionAttackFeedbackComponent>(session);
+                page.PrecisionAttack=new UiExpandedPrecisionAttackResult {Presented=receipt.Presented!=0,
+                    Revision=receipt.Revision,GroupId=receipt.GroupId,Frame=receipt.Frame,RequestId=receipt.RequestId,
+                    PublicTargetId=receipt.PublicTargetId,AcceptedMembers=receipt.AcceptedMembers,
+                    SourceMembers=receipt.SourceMembers,ScreenPosition=new UnityEngine.Vector2(receipt.ScreenPosition.x,receipt.ScreenPosition.y)};
+            }
             page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3) | AirBit(slot4, 4);
             return true;
         }

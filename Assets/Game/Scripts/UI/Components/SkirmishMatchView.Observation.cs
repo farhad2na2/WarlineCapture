@@ -4,6 +4,25 @@ namespace Game.UI.Runtime
 {
     public sealed partial class SkirmishMatchView
     {
+
+#if UNITY_EDITOR
+        // Validation observer only. Never consumed by ARIA decisions.
+        public static readonly bool NativeCombatEvidenceEnabled =
+            System.Environment.GetEnvironmentVariable("WARLINE_S005_COMBAT_EVIDENCE") == "1";
+        [System.Serializable]
+        public struct NativeEnemyBaseTouchEvidence
+        {
+            public bool collected, viewPresent, markerVisible, targetVisible, reachabilityEvaluated, reachable;
+            public int frame, viewIdentity;
+            public Game.UI.Contracts.AriaTouchTarget target;
+        }
+        public static NativeEnemyBaseTouchEvidence NativeEnemyBaseTouchSnapshot { get; private set; }
+        public static void RecordNativeEnemyBaseTouchEvidence(NativeEnemyBaseTouchEvidence value)
+        {
+            if (NativeCombatEvidenceEnabled) NativeEnemyBaseTouchSnapshot = value;
+        }
+#endif
+
         public Button PlayerFocusButton => player != null ? player.GetComponentInParent<Button>() : null;
         public Button EnemyFocusButton => enemy != null ? enemy.GetComponentInParent<Button>() : null;
         // Supplied by the shared objective presentation, not by the ARIA planner.

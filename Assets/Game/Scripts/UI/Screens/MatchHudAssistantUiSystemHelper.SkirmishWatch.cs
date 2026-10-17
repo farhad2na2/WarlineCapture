@@ -107,6 +107,9 @@ namespace Game.UI.Runtime
                 view.ExpandedSelectedMask = page.SelectedMask;
                 view.ExpandedStructureMask = page.StructureMask;
                 view.ExpandedAttackOrderMask = page.AttackOrderMask;
+                view.ExpandedBaseAssault=page.BaseAssault;
+                view.ExpandedGroup0=page.Group0;view.ExpandedGroup1=page.Group1;view.ExpandedGroup2=page.Group2;
+                view.ExpandedGroup3=page.Group3;view.ExpandedGroup4=page.Group4;view.PrecisionAttack=page.PrecisionAttack;
                 view.ExpandedAirMask = page.AirMask;
                 view.ExpandedCanPreviousPage = page.PreviousPage;
                 view.ExpandedCanNextPage = page.NextPage;
@@ -237,6 +240,24 @@ namespace Game.UI.Runtime
                 var point = watchSkirmish.VisibleEnemyBasePoint;
                 view.EnemyBase = new AriaTouchTarget { Id = -20001, Position = point, Available = WatchTargetIsReachable(point, -20001, true) };
             }
+
+#if UNITY_EDITOR
+            if (SkirmishMatchView.NativeCombatEvidenceEnabled)
+            {
+                bool present = watchSkirmish != null;
+                bool markerVisible = present && watchSkirmish.EnemyBaseMarkerVisible;
+                bool targetVisible = present && watchSkirmish.EnemyBaseTargetVisible;
+                SkirmishMatchView.RecordNativeEnemyBaseTouchEvidence(new SkirmishMatchView.NativeEnemyBaseTouchEvidence
+                {
+                    collected = true, frame = view.Frame, viewPresent = present,
+                    viewIdentity = present ? watchSkirmish.GetEntityId().GetHashCode() : 0,
+                    markerVisible = markerVisible, targetVisible = targetVisible,
+                    reachabilityEvaluated = markerVisible && targetVisible,
+                    reachable = view.EnemyBase.Available, target = view.EnemyBase
+                });
+            }
+#endif
+
             ObserveMapThreat(ref view);
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
@@ -317,17 +338,68 @@ namespace Game.UI.Runtime
             return new AriaTouchTarget { Id = id, Position = point,
                 Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, id, true) };
         }
+        private void ResolveAssaultObservationMap(bool mapOpen)
+        {
+            if (mapOpen)
+            { watchMap = watchFullMap != null ? watchFullMap.Minimap : null; return; }
+            if (watchMap != null && watchMap.isActiveAndEnabled &&
+                !watchMap.UseFullMapProjection) return;
+            watchMap = null;
+            // Only reacquire on a changed/closed surface, never from hidden gameplay.
+            foreach (var map in Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsSortMode.None))
+            {
+                if (!map.isActiveAndEnabled || map.UseFullMapProjection) continue;
+                if (watchMap != null) { watchMap = null; return; } // Ambiguous compact identity.
+                watchMap = map;
+            }
+        }
+        internal static bool ExpectedAssaultMapIdentity(MatchHudMinimapView map,
+            MatchHudFullMapPopupView popup, bool open) => map != null && map.isActiveAndEnabled &&
+            (open ? popup != null && popup.IsOpen && popup.Minimap == map && map.UseFullMapProjection
+                  : !map.UseFullMapProjection);
+        private void ObserveAssaultMap(ref AriaSkirmishObservation view)
+        {
+            if (watchMap == null || !watchMap.isActiveAndEnabled || watchMap.MapRect == null ||
+                !watchMap.MapRect.gameObject.activeInHierarchy || watchSkirmish == null ||
+                !watchSkirmish.EnemyBaseObjectiveAlive || Camera.main == null || view.DrawerOpen ||
+                !watchMap.HasCurrentPresentedMapArea(ResolveEventCamera(watchMap.MapImage))) return;
+            bool expected = ExpectedAssaultMapIdentity(watchMap, watchFullMap, view.MapOpen);
+            var grid = watchMap.PresentedProjection;
+            view.AssaultMap = new AriaAssaultMapObservation {
+                Identity = watchMap.GetEntityId().GetHashCode(), ExpectedIdentity = expected, FullMap = view.MapOpen,
+                MarkerFrame = watchMap.PresentedMarkerFrame, MarkerRevision = watchMap.PresentedMarkerRevision,
+                MarkerTime = watchMap.PresentedMarkerTime, Complete = watchMap.PresentedMarkersComplete,
+                ProjectionValid = float.IsFinite(grid.Width) && float.IsFinite(grid.Height) &&
+                    grid.Width > 0 && grid.Height > 0,
+                ObjectiveHudIdentity = watchSkirmish.GetEntityId().GetHashCode(),
+                ObjectiveWorld = watchSkirmish.EnemyBaseObjectivePosition };
+            if (!view.MapOpen && expected && watchMap.OpensFullMapOnClick &&
+                UnityEngine.EventSystems.EventSystem.current != null)
+            {
+                var rect = watchMap.MapRect;
+                var point = RectTransformUtility.WorldToScreenPoint(ResolveEventCamera(watchMap.MapImage),
+                    rect.TransformPoint(rect.rect.center));
+                watchRaycast.position = point; watchHits.Clear();
+                UnityEngine.EventSystems.EventSystem.current.RaycastAll(watchRaycast, watchHits);
+                bool reachable = Screen.safeArea.Contains(point) && watchHits.Count > 0 &&
+                    watchHits[0].gameObject.GetComponentInParent<MatchHudMinimapView>() == watchMap;
+                view.AssaultMap.OpenMap = new AriaTouchTarget { Id = -20010, Position = point, Available = reachable };
+            }
+        }
+
         private void ObserveAdvanceGround(ref AriaSkirmishObservation view)
         {
             if (view.DrawerOpen || watchMap == null || watchSkirmish == null ||
-                !watchSkirmish.EnemyBaseObjectiveAlive || Camera.main == null) return;
+                !watchSkirmish.EnemyBaseObjectiveAlive || Camera.main == null ||
+                !view.AssaultMap.IsCurrent(view.Frame, view.Time)) return;
             // Use the base objective and contacts already presented on the player's map.
             // A point on its approach lets ordinary Attack Move fight the route's defenders.
             var objective = watchSkirmish.EnemyBaseObjectivePosition;
             Vector3 nearest = objective; float distance = float.MaxValue; int close = 0, assault = 0;
             foreach (var ally in watchMap.PresentedContacts)
             {
-                if (ally.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Player) continue;
+                if (ally.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Player ||
+                    !watchMap.IsContactCurrentlyPresented(ally, ResolveEventCamera(watchMap.MapImage))) continue;
                 float d = (ally.Model.Position - objective).sqrMagnitude;
                 if (d < 45 * 45) close++;
                 if (d < 50 * 50) assault++;
@@ -490,9 +562,10 @@ namespace Game.UI.Runtime
         private void ObserveMapThreat(ref AriaSkirmishObservation view)
         {
             if (watchFullMap == null) watchFullMap = Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
-            view.MapOpen = watchFullMap != null && watchFullMap.gameObject.activeInHierarchy;
-            if (view.MapOpen) { watchMap = watchFullMap.Minimap; view.CloseMap = ObserveWatchButton(watchFullMap.CloseAction); }
-            else if (watchMap == null || !watchMap.isActiveAndEnabled) watchMap = Object.FindAnyObjectByType<MatchHudMinimapView>();
+            view.MapOpen = watchFullMap != null && watchFullMap.IsOpen;
+            ResolveAssaultObservationMap(view.MapOpen);
+            if (view.MapOpen) view.CloseMap = ObserveWatchButton(watchFullMap.CloseAction);
+            ObserveAssaultMap(ref view);
             if (watchMap == null || !watchMap.isActiveAndEnabled || Camera.main == null) return;
             float best = float.MaxValue, bestVisible = float.MaxValue;
             Vector3 armyCenter = Vector3.zero; int friendlies = 0;

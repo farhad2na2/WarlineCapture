@@ -52,6 +52,7 @@ namespace Game.UI.Runtime
         public bool IsDraggingViewport => _draggingViewport;
         public bool HasManualViewportOverride => _hasManualViewportOverride;
         public Rect ManualViewportNormalizedRect => _manualViewportNormalizedRect;
+        internal bool OpensFullMapOnClick => _openFullMapOnClick;
         public bool UseFullMapProjection { get; private set; }
         public bool ShowsViewport => _showViewport;
 
@@ -71,6 +72,7 @@ namespace Game.UI.Runtime
 
         private void OnDisable()
         {
+            InvalidatePresentedMarkerUpdate();
             ZoomHeldChanged?.Invoke(1, false);
             ZoomHeldChanged?.Invoke(-1, false);
             _draggingViewport = false;

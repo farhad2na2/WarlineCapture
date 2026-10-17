@@ -35,15 +35,24 @@ namespace Game.Runtime
             public readonly TacticalCommandResult CommandResult;
             public readonly Entity TargetEntity;
             public readonly float3 TargetPosition;
+            public readonly Entity PublicPrecisionTarget;
+            public readonly uint PublicPrecisionGroup;
+            public readonly int PublicAcceptedMembers, PublicSourceMembers;
 
-            private Result(bool issued, bool hasCommandResult, TacticalCommandResult commandResult, Entity targetEntity, float3 targetPosition)
+            private Result(bool issued, bool hasCommandResult, TacticalCommandResult commandResult, Entity targetEntity, float3 targetPosition,
+                uint publicGroup = 0, int acceptedMembers = 0, int sourceMembers = 0, Entity publicTarget = default)
             {
+                PublicPrecisionGroup = publicGroup; PublicPrecisionTarget = publicTarget;
+                PublicAcceptedMembers = acceptedMembers; PublicSourceMembers = sourceMembers;
                 Issued = issued;
                 HasCommandResult = hasCommandResult;
                 CommandResult = commandResult;
                 TargetEntity = targetEntity;
                 TargetPosition = targetPosition;
             }
+
+            public Result WithPublicPrecision(uint group, int accepted, int sources, Entity requestedTarget) =>
+                new Result(Issued, HasCommandResult, CommandResult, TargetEntity, TargetPosition, group, accepted, sources, requestedTarget);
 
             public static Result NoCommand()
             {
@@ -184,6 +193,7 @@ namespace Game.Runtime
                     request.ExplicitAttackTargetMode != 0,
                     selectedAttackSourceScratch);
 
+                SkirmishPublicOrderFeedback.PublishPrecisionAttack(em, request, result);
                 AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
                 if (em.Exists(commandEntity))
                 {
@@ -264,8 +274,9 @@ namespace Game.Runtime
                 }
             }
 
+            uint publicGroup = SkirmishPublicOrderFeedback.PrecisionSourceGroup(em, selectedEntities.AsArray(), targetEntity);
             UnitAttackOrderRequestSystem.ProcessPendingRequests(em);
-            return CombineSourceAttackResults(em, attackRequestIds.AsArray());
+            return CombineSourceAttackResults(em, attackRequestIds.AsArray(), publicGroup, selectedEntities.Length, targetEntity);
         }
 
         private static bool ProcessPreResolvedAttackRequests(
@@ -336,9 +347,10 @@ namespace Game.Runtime
                 : Result.Rejected(commandResult);
         }
 
-        private static Result CombineSourceAttackResults(EntityManager em, NativeArray<int> attackRequestIds)
+        private static Result CombineSourceAttackResults(EntityManager em, NativeArray<int> attackRequestIds,
+            uint publicGroup = 0, int sourceMembers = 0, Entity publicTarget = default)
         {
-            int issuedCount = 0;
+            int issuedCount = 0, precisionAcceptedCount = 0;
             Entity targetEntity = Entity.Null;
             float3 targetPosition = default;
             string acceptedMessage = string.Empty;
@@ -354,6 +366,7 @@ namespace Game.Runtime
                 if (result.Issued != 0)
                 {
                     issuedCount += result.IssuedCount;
+                    if (result.TargetEntity == publicTarget) precisionAcceptedCount += result.IssuedCount;
                     targetEntity = result.TargetEntity;
                     targetPosition = result.TargetPosition;
                     string message = result.Message.ToString();
@@ -369,6 +382,7 @@ namespace Game.Runtime
 
             return issuedCount > 0
                 ? Result.Accepted(TacticalCommandResult.Success(acceptedMessage), targetEntity, targetPosition)
+                    .WithPublicPrecision(publicGroup, precisionAcceptedCount, sourceMembers, publicTarget)
                 : Result.Rejected(rejection);
         }
 

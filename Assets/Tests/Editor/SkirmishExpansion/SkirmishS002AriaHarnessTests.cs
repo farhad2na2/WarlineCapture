@@ -22,6 +22,279 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishS002AriaHarnessTests
     {
+        private static System.Type ProfileContextType => typeof(Game.Editor.SkirmishS002AriaRunHarness)
+            .GetNestedType("ProductionCanaryContext",System.Reflection.BindingFlags.NonPublic);
+        private static System.Reflection.MethodInfo ProfileObservationMethod => ProfileContextType.GetMethod(
+            "ObserveProfileJournal",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+        private static Newtonsoft.Json.Linq.JObject ActualProfileSnapshot(string root)
+        {
+            var type=ProfileContextType.GetNestedType("ProfileByteJournal",System.Reflection.BindingFlags.NonPublic);
+            var method=type.GetMethod("Snapshot",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(method);
+            return (Newtonsoft.Json.Linq.JObject)method.Invoke(null,new object[]{root,"S005",new byte[65536]});
+        }
+        private static string FreshProfileFixtureRoot()
+        {
+            string path=Path.Combine(Path.GetTempPath(),"WPJ-"+Guid.NewGuid().ToString("N"));
+            Assert.IsFalse(File.Exists(path)||Directory.Exists(path));Directory.CreateDirectory(path);return path;
+        }
+        private static void DeleteProfileFixtureRoot(string root)
+        {
+            string full=Path.GetFullPath(root),temporary=Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+            Assert.IsTrue(full.StartsWith(temporary,StringComparison.OrdinalIgnoreCase));
+            Assert.IsTrue(Path.GetFileName(full).StartsWith("WPJ-",StringComparison.Ordinal));
+            Assert.AreEqual(0,(int)(File.GetAttributes(full)&FileAttributes.ReparsePoint));
+            Directory.Delete(full,true);
+        }
+        // Fixture-only real NTFS points; no symbolic-link privilege or fabricated attributes.
+        private sealed class OwnedProfileSocket : IDisposable
+        {
+            private UIntPtr handle;
+            private bool started, opened;
+            [System.Runtime.InteropServices.DllImport("Ws2_32.dll", ExactSpelling=true)]
+            private static extern int WSAStartup(ushort version, IntPtr data);
+            [System.Runtime.InteropServices.DllImport("Ws2_32.dll", ExactSpelling=true)]
+            private static extern int WSACleanup();
+            [System.Runtime.InteropServices.DllImport("Ws2_32.dll", ExactSpelling=true)]
+            private static extern UIntPtr socket(int family,int type,int protocol);
+            [System.Runtime.InteropServices.DllImport("Ws2_32.dll", ExactSpelling=true)]
+            private static extern int bind(UIntPtr socket,byte[] address,int length);
+            [System.Runtime.InteropServices.DllImport("Ws2_32.dll", ExactSpelling=true)]
+            private static extern int closesocket(UIntPtr socket);
+            [System.Runtime.InteropServices.DllImport("Ws2_32.dll", ExactSpelling=true)]
+            private static extern int WSAGetLastError();
+            public OwnedProfileSocket(string path)
+            {
+                byte[] name=System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(path));
+                Assert.Less(name.Length,108,"AF_UNIX pathname including terminator must fit108 bytes");
+                IntPtr data=System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+                try
+                {
+                    int status=WSAStartup(0x0202,data);
+                    if(status!=0)throw new IOException("WSAStartup="+status);
+                    started=true;
+                    Assert.AreEqual(0x0202,(int)(ushort)System.Runtime.InteropServices.Marshal.ReadInt16(data));
+                    handle=socket(1,1,0);
+                    if(handle.ToUInt64()==(IntPtr.Size==8?ulong.MaxValue:uint.MaxValue))
+                        throw new IOException("AF_UNIX socket="+WSAGetLastError());
+                    opened=true;
+                    byte[] address=new byte[110];address[0]=1;
+                    Buffer.BlockCopy(name,0,address,2,name.Length);
+                    if(bind(handle,address,address.Length)!=0)
+                        throw new IOException("AF_UNIX bind="+WSAGetLastError());
+                    Assert.AreNotEqual(0,(int)(File.GetAttributes(path)&FileAttributes.ReparsePoint));
+                    Assert.AreEqual(0,(int)(File.GetAttributes(path)&FileAttributes.Directory));
+                }
+                catch{Dispose();throw;}
+                finally{System.Runtime.InteropServices.Marshal.FreeHGlobal(data);}
+            }
+            public void Dispose()
+            {
+                int close=0,cleanup=0;
+                if(opened){opened=false;close=closesocket(handle);}
+                if(started){started=false;cleanup=WSACleanup();}
+                if(close!=0||cleanup!=0)throw new IOException("Winsock cleanup close="+close+" cleanup="+cleanup);
+            }
+        }
+        private static void CreateOwnedProfileJunction(string link,string target,ref bool cleanupSafe)
+        {
+            var start=new System.Diagnostics.ProcessStartInfo
+            {
+                FileName=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
+                    @"WindowsPowerShell\v1.0\powershell.exe"),
+                Arguments="-NoProfile -NonInteractive -Command \"$ErrorActionPreference='Stop'; New-Item -ItemType Junction -Path $env:WARLINE_PROFILE_FIXTURE_LINK -Target $env:WARLINE_PROFILE_FIXTURE_TARGET | Out-Null\"",
+                UseShellExecute=false,CreateNoWindow=true
+            };
+            start.EnvironmentVariables["WARLINE_PROFILE_FIXTURE_LINK"]=link;
+            start.EnvironmentVariables["WARLINE_PROFILE_FIXTURE_TARGET"]=target;
+            using(var process=System.Diagnostics.Process.Start(start))
+            {
+                Assert.IsNotNull(process);
+                if(!process.WaitForExit(20000))
+                {
+                    // Never race a still-running child with recursive cleanup. Preserve owned evidence instead.
+                    cleanupSafe=false;
+                    throw new IOException("Owned junction helper timeout; preserve fixture root: "+Path.GetDirectoryName(link));
+                }
+                Assert.AreEqual(0,process.ExitCode,"Owned junction helper failed; no native reparse coverage");
+            }
+            Assert.AreNotEqual(0,(int)(File.GetAttributes(link)&FileAttributes.ReparsePoint));
+            Assert.AreNotEqual(0,(int)(File.GetAttributes(link)&FileAttributes.Directory));
+        }
+
+        public static void RunProfileJournalNativeFilesystemValidation()
+        {
+            var tests=new SkirmishS002AriaHarnessTests();int cases=0;
+            foreach(string kind in new[]{"absent","empty","changed","unknownFile","unknownDirectory","knownDirectory",
+                "rootFile","rootReparse","ancestorReparse","fileReparse"})
+            {tests.ProfileJournal_ActualSnapshotFilesystem(kind);cases++;}
+            tests.ProfileJournal_LockedNativeLogCannotBlockCleanup();cases++;
+            tests.ProfileJournal_OutOfMemoryIsNotSwallowed();cases++;
+            tests.ProfileJournal_ActualEnvironmentCleanupUsesFinally();cases++;
+            UnityEngine.Debug.Log($"[ProfileJournalNativeFilesystemControls] result=Passed cases={cases} profileAdmissionProved=0 missionReady=0");
+        }
+        [TestCase("absent")]
+        [TestCase("empty")]
+        [TestCase("changed")]
+        [TestCase("unknownFile")]
+        [TestCase("unknownDirectory")]
+        [TestCase("knownDirectory")]
+        [TestCase("rootFile")]
+        [TestCase("rootReparse")]
+        [TestCase("ancestorReparse")]
+        [TestCase("fileReparse")]
+        public void ProfileJournal_ActualSnapshotFilesystem(string kind)
+        {
+            string owned=FreshProfileFixtureRoot(),link=null,sentinel=null;
+            bool linkDirectory=false,cleanupSafe=true;OwnedProfileSocket socket=null;
+            try
+            {
+                string root=Path.Combine(owned,"profile");
+                if(kind!="absent"&&kind!="rootFile")Directory.CreateDirectory(root);
+                if(kind=="rootFile")File.WriteAllText(root,"root-is-a-file");
+                if(kind=="unknownFile")File.WriteAllText(Path.Combine(root,"unknown.txt"),"unknown");
+                if(kind=="unknownDirectory")Directory.CreateDirectory(Path.Combine(root,"unknown"));
+                if(kind=="knownDirectory")Directory.CreateDirectory(Path.Combine(root,"profile.json"));
+                if(kind.EndsWith("Reparse",StringComparison.Ordinal))
+                {
+                    Assert.AreEqual(UnityEngine.RuntimePlatform.WindowsEditor,UnityEngine.Application.platform,
+                        "Native reparse controls require Windows; do not turn unavailable coverage into a pass");
+                    string target=Path.Combine(owned,"real");Directory.CreateDirectory(target);
+                    Directory.CreateDirectory(Path.Combine(target,"nested"));
+                    sentinel=Path.Combine(target,"sentinel.txt");File.WriteAllText(sentinel,"owned-target-unchanged");
+                    link=kind=="fileReparse"?Path.Combine(root,"profile.json"):Path.Combine(owned,"alias");
+                    linkDirectory=kind!="fileReparse";
+                    if(linkDirectory)CreateOwnedProfileJunction(link,target,ref cleanupSafe);
+                    else socket=new OwnedProfileSocket(link); // bind only; never listen/connect.
+                    Assert.AreNotEqual(0,(int)(File.GetAttributes(link)&FileAttributes.ReparsePoint),
+                        "Actual native/.NET attribute is required before testing the tag-agnostic rejection");
+                    if(kind=="rootReparse")root=link;
+                    if(kind=="ancestorReparse")root=Path.Combine(link,"nested");
+                }
+                if(kind=="absent"||kind=="empty")
+                {
+                    var value=ActualProfileSnapshot(root);
+                    Assert.AreEqual(kind=="empty",(bool)value["directory_exists"]);
+                    Assert.AreEqual(0,((Newtonsoft.Json.Linq.JArray)value["directory_entries"]).Count);
+                    Assert.AreEqual(16,((Newtonsoft.Json.Linq.JArray)value["files"]).Count);
+                    Assert.AreEqual(0L,(long)value["observed_bytes"]);
+                    foreach(var row in value["files"])Assert.IsFalse((bool)row["exists"]);
+                }
+                else if(kind=="changed")
+                {
+                    byte[] bytes=new byte[131073];for(int i=0;i<bytes.Length;i++)bytes[i]=17;
+                    string path=Path.Combine(root,"profile.json");File.WriteAllBytes(path,bytes);
+                    var first=ActualProfileSnapshot(root);
+                    string expected;
+                    using(var hash=System.Security.Cryptography.SHA256.Create())
+                        expected=BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
+                    Assert.AreEqual(expected,(string)first["files"][0]["sha256"]);
+                    bytes[bytes.Length-1]=18;File.WriteAllBytes(path,bytes);
+                    var second=ActualProfileSnapshot(root);
+                    Assert.AreEqual(131073L,(long)second["observed_bytes"]);
+                    Assert.AreNotEqual((string)first["files"][0]["sha256"],(string)second["files"][0]["sha256"],
+                        "actual producer reads beyond64KiB and detects last-byte change");
+                }
+                else
+                {
+                    var error=Assert.Throws<System.Reflection.TargetInvocationException>(()=>ActualProfileSnapshot(root));
+                    Assert.IsInstanceOf<InvalidDataException>(error.InnerException);
+                }
+            }
+            finally
+            {
+                if(cleanupSafe)
+                {
+                    try{socket?.Dispose();}
+                    finally
+                    {
+                        if(link!=null)
+                        {
+                            FileAttributes attributes=0;bool exists=true;
+                            try{attributes=File.GetAttributes(link);}
+                            catch(FileNotFoundException){exists=false;}
+                            catch(DirectoryNotFoundException){exists=false;}
+                            if(exists)
+                            {
+                                Assert.AreNotEqual(0,(int)(attributes&FileAttributes.ReparsePoint),
+                                    "Refuse cleanup of an unexpected ordinary object at the exact link path");
+                                if(linkDirectory)Directory.Delete(link,false);else File.Delete(link);
+                            }
+                        }
+                        if(sentinel!=null)Assert.AreEqual("owned-target-unchanged",File.ReadAllText(sentinel));
+                        DeleteProfileFixtureRoot(owned);
+                    }
+                }
+            }
+        }
+        [Test]
+        public void ProfileJournal_LockedNativeLogCannotBlockCleanup()
+        {
+            string owned=FreshProfileFixtureRoot();bool observed=false,failure=false,cleanup=false;
+            try
+            {
+                string path=Path.Combine(owned,"native-events.jsonl");File.WriteAllText(path,"preserve");
+                using(var locked=new FileStream(path,FileMode.Open,FileAccess.ReadWrite,FileShare.None))
+                {
+                    try
+                    {
+                        Assert.DoesNotThrow(()=>ProfileObservationMethod.Invoke(null,new object[]{
+                            (Action)(()=>{observed=true;File.AppendAllText(path,"primary");}),
+                            (Action<Exception>)(error=>{failure=true;File.AppendAllText(path,"failure");})}));
+                    }
+                    finally{cleanup=true;}
+                }
+                Assert.IsTrue(observed&&failure&&cleanup);
+                Assert.AreEqual("preserve",File.ReadAllText(path),"neither failed write changes native evidence bytes");
+            }
+            finally{DeleteProfileFixtureRoot(owned);}
+        }
+        [Test]
+        public void ProfileJournal_OutOfMemoryIsNotSwallowed()
+        {
+            bool failure=false;
+            var error=Assert.Throws<System.Reflection.TargetInvocationException>(()=>ProfileObservationMethod.Invoke(null,new object[]{
+                (Action)(()=>throw new OutOfMemoryException("small fixture exception; no memory pressure")),
+                (Action<Exception>)(_=>failure=true)}));
+            Assert.IsInstanceOf<OutOfMemoryException>(error.InnerException);Assert.IsFalse(failure);
+        }
+        [Test]
+        public void ProfileJournal_ActualEnvironmentCleanupUsesFinally()
+        {
+            string owned=FreshProfileFixtureRoot();
+            string save=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+            string background=Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION");
+            string sentinel=Guid.NewGuid().ToString("N");
+            const string saveKey="Warline.AriaPlayValidation";
+            var flags=System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic;
+            var harness=typeof(Game.Editor.SkirmishS002AriaRunHarness);
+            string backgroundKey=(string)harness.GetField("BackgroundPreviousKey",flags).GetValue(null);
+            string previousSave=UnityEditor.SessionState.GetString(saveKey,sentinel);
+            string previousBackground=UnityEditor.SessionState.GetString(backgroundKey,sentinel);
+            try
+            {
+                Assert.IsNull(harness.GetField("productionCanary",flags).GetValue(null),"never interfere with owned native context");
+                string original=Path.Combine(owned,"original"),isolated=Path.Combine(owned,"isolated");
+                Directory.CreateDirectory(original);Directory.CreateDirectory(isolated);
+                UnityEditor.SessionState.SetString(saveKey,original);
+                UnityEditor.SessionState.SetString(backgroundKey,"original-background");
+                Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",isolated);
+                Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","owned-background");
+                var reset=harness.GetMethod("RecordProductionProfileBeforeRestoreAndResetEnvironment",flags);
+                Assert.IsNotNull(reset);reset.Invoke(null,null);
+                Assert.AreEqual(original,Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"));
+                Assert.AreEqual("original-background",Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION"));
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",save);
+                Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",background);
+                if(previousSave==sentinel)UnityEditor.SessionState.EraseString(saveKey);else UnityEditor.SessionState.SetString(saveKey,previousSave);
+                if(previousBackground==sentinel)UnityEditor.SessionState.EraseString(backgroundKey);else UnityEditor.SessionState.SetString(backgroundKey,previousBackground);
+                DeleteProfileFixtureRoot(owned);
+            }
+        }
+
         // Fixture-only service exercise. Never used for normal-input acceptance.
         private static bool FixtureAttackEnemyBase(EntityManager em, Entity session)
         {

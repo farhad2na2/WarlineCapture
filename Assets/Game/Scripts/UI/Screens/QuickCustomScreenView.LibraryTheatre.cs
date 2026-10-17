@@ -1726,11 +1726,11 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Soft falloff out to 18px, inside the 22px pad the capture rect still
-            // requires. The first 12px stay solid so the bloom is thick, then it
-            // fades to zero at 18px. The gap math still subtracts two 18px halos.
+            // Solid out to the 18px reach the gap math subtracts. The 22px pad
+            // still holds the capture rect. No fade inside that reach, so the
+            // bloom stays as thick as the painted halo.
             const float reach = 18f;
-            const float shoulder = 12f;
+            const float shoulder = 18f;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -1742,9 +1742,9 @@ namespace Game.UI.Runtime
                     var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
                     float dist = DistanceToPolygonEdge(point, localPoints);
                     float band = 1f;
+                    float span = reach - shoulder;
                     if (dist > shoulder)
-                        band = 1f - Mathf.Clamp01((dist - shoulder) / (reach - shoulder));
-                    band = band * band * (3f - 2f * band);
+                        band = span > 0.01f ? 1f - Mathf.Clamp01((dist - shoulder) / span) : 0f;
                     byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(band * 255f), 0, 255);
                     pixels[target + x] = new Color32(255, 255, 255, alpha);
                 }
@@ -2979,7 +2979,8 @@ namespace Game.UI.Runtime
                 cueScale = 1f;
             Debug.Log("[ZoomCue] fontSize=" + F(cue.fontSize * cueScale)
                 + " local=" + F(cue.fontSize)
-                + " scale=" + F(cueScale));
+                + " scale=" + F(cueScale)
+                + ShotTag());
             if (cue.transform.parent is not RectTransform parent)
                 return;
             var outlines = new List<RectTransform>(8);
@@ -5429,10 +5430,7 @@ namespace Game.UI.Runtime
             var pixels = new Color32[width * height];
             for (int y = 0; y < height; y++)
             {
-                float dy = Mathf.Abs(y - (height - 1) * 0.5f) / (height * 0.5f);
-                float alpha = dy <= 0.62f ? 1f : Mathf.Clamp01((1f - dy) / 0.38f);
-                alpha = alpha * alpha * (3f - 2f * alpha);
-                byte a = (byte)Mathf.RoundToInt(alpha * 255f);
+                byte a = 255;
                 for (int x = 0; x < width; x++)
                     pixels[y * width + x] = new Color32(255, 255, 255, a);
             }

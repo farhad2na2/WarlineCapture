@@ -373,6 +373,7 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(button.GetComponent<RectTransform>(), 0f, i * (rowHeight + 8f), listWidth, rowHeight);
                 bool selected = string.Equals(objective.ObjectiveId, field.SelectedObjectiveId, StringComparison.OrdinalIgnoreCase);
                 TintButton(button, selected, true);
+                StyleZoneTab(button, selected); // v33 approved-2/3: gold-framed dark-gold selected, dark idle
                 // approved-2 labelled list: medallion tile on the leading edge, name and count stacked beside it.
                 const float tile = 56f;
                 float tileX = fa ? listWidth - 6f - tile : 6f;
@@ -433,6 +434,19 @@ namespace Game.UI.Runtime
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
             }
+        }
+
+        private static void StyleZoneTab(Button button, bool selected)
+        {
+            Image face = button != null ? button.GetComponent<Image>() : null;
+            if (face == null)
+                return;
+            face.color = selected ? new Color(0.34f, 0.25f, 0.07f, 0.96f) : new Color(0.05f, 0.07f, 0.08f, 0.92f);
+            Outline edge = button.GetComponent<Outline>();
+            if (edge == null)
+                edge = button.gameObject.AddComponent<Outline>();
+            edge.effectColor = selected ? new Color(0.95f, 0.78f, 0.32f, 1f) : new Color(0.55f, 0.5f, 0.38f, 0.45f);
+            edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
         }
 
         private const float PinGutter = 14f;

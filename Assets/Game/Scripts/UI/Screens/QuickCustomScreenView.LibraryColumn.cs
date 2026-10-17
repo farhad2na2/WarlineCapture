@@ -1159,7 +1159,7 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>Height of the Theatre left-column progress block: heading, X / N, bar and 2 x 2 medal tiles.</summary>
-        internal const float TheatreSummaryHeight = 330f;
+        internal const float TheatreSummaryHeight = 350f; // v33: 106 + 2 x 118 + 8
 
         private void PresentTheatreProgressBar(RectTransform plate, int won, int published, bool fa, float inset)
         {
@@ -1202,7 +1202,7 @@ namespace Game.UI.Runtime
             string[] en = { "RECRUIT", "REGULAR", "VETERAN", "COMMANDER" };
             string[] faNames = { "تازه‌کار", "عادی", "کهنه‌کار", "فرمانده" };
             const float top = 106f;
-            const float tileHeight = 108f;
+            const float tileHeight = 118f; // v33 approved-1: big medal over name over count
             const float gap = 8f;
             var tierNames = new List<TMP_Text>(4);
             for (int i = 0; i < tiers.Length; i++)
@@ -1238,8 +1238,8 @@ namespace Game.UI.Runtime
                 var iconRect = tile.Find("Icon") as RectTransform;
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 1f);
                 iconRect.pivot = new Vector2(0.5f, 1f);
-                iconRect.sizeDelta = new Vector2(38f, 38f);
-                iconRect.anchoredPosition = new Vector2(0f, -3f); // clears the larger tier name below
+                iconRect.sizeDelta = new Vector2(58f, 58f); // sprite has ~14% padding: ~50 px drawn (approved-1)
+                iconRect.anchoredPosition = new Vector2(0f, -2f);
                 Image iconImage = iconRect.GetComponent<Image>();
                 if (iconImage != null)
                 {
@@ -1251,7 +1251,7 @@ namespace Game.UI.Runtime
                 TMP_Text tierName = tile.Find("TierName")?.GetComponent<TMP_Text>();
                 if (tierName != null)
                 {
-                    PlaceTileLine(tierName.rectTransform, 44f, 30f);
+                    PlaceTileLine(tierName.rectTransform, 58f, 28f);
                     SetCopy(tierName, fa ? faNames[i] : en[i], fa ? 30f : 26f, fa ? 32f : 28f); // FA glyphs run small: higher floor
                     tierName.alignment = TextAlignmentOptions.Center;
                     tierName.isRightToLeftText = fa;
@@ -1276,7 +1276,7 @@ namespace Game.UI.Runtime
                 TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();
                 if (tierCount != null)
                 {
-                    PlaceTileLine(tierCount.rectTransform, 74f, 34f);
+                    PlaceTileLine(tierCount.rectTransform, 84f, 34f);
                     SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), fa ? 36f : 32f, fa ? 40f : 38f);
                     tierCount.alignment = TextAlignmentOptions.Center;
                     tierCount.isRightToLeftText = false;

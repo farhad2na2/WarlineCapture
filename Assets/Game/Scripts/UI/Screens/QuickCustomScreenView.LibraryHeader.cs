@@ -30,7 +30,7 @@ namespace Game.UI.Runtime
             string route = !battlefield
                 ? LibraryTitleCopy("ui.skirmish.library.title.theatre_map", fa ? "زد و خورد | نقشه صحنه" : "SKIRMISH | THEATRE MAP")
                 : FormatLibraryTitle(LibraryTitleCopy("ui.skirmish.library.title.battlefield", fa ? "زد و خورد | {0}" : "SKIRMISH | {0}"), fa ? mapTitle : mapTitle.ToUpperInvariant());
-            SetCopy(screenTitle, MixedText(route, fa), fa ? 36f : 30f, fa ? 64f : 50f); // approved-1/2/3: large gold title
+            SetCopy(screenTitle, MixedText(route, fa), 30f, 50f); // v33: FA same size as EN // approved-1/2/3: large gold title
             if (screenTitle != null)
                 screenTitle.color = new Color(0.93f, 0.78f, 0.38f, 1f);
             SetCopy(mapNameText, mapTitle, 18f, 28f);

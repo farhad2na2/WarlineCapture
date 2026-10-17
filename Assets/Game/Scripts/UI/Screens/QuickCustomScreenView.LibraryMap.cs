@@ -334,8 +334,17 @@ namespace Game.UI.Runtime
             float half = (width - 8f) * 0.5f;
             var map = toggle.Find(SkirmishLibraryControlNames.LayoutMap) as RectTransform;
             var grid = toggle.Find(SkirmishLibraryControlNames.LayoutGrid) as RectTransform;
-            PlaceTopLeft(map, 0f, 2f, half, 44f);
-            PlaceTopLeft(grid, half + 8f, 2f, half, 44f);
+            PlaceTopLeft(map, 0f, 2f, half, 58f);
+            PlaceTopLeft(grid, half + 8f, 2f, half, 58f);
+            foreach (var choice in new[] { map, grid })
+            {
+                var label = choice != null ? choice.Find("Label")?.GetComponent<TMP_Text>() : null;
+                if (label == null)
+                    continue;
+                label.enableAutoSizing = false;
+                label.fontSize = 26f; // v34: approved-2 toggle text size
+                label.fontStyle |= FontStyles.Bold;
+            }
         }
 
         private Button LayoutChoice(Transform toggle, string controlName, string legacyName)

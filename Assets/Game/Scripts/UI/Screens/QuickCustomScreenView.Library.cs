@@ -1603,7 +1603,7 @@ namespace Game.UI.Runtime
                 ? new[] { "LibraryModeToggle", "Title", "BriefingSubtitle", "BriefingPreview", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
                 : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
-                ? new[] { 48f, 40f, 30f, 188f, 96f, 84f, 104f, 52f } // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
+                ? new[] { 64f, 40f, 30f, 188f, 80f, 84f, 104f, 52f } /* v34: taller MAP/GRID toggle row (approved-2), description 96->80 */ // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
                 : new[] { TheatreSummaryHeight, 40f, 84f, 272f };
             for (int i = 0; i < column.childCount; i++)
             {

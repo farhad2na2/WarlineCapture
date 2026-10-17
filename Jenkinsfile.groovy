@@ -552,6 +552,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
+                    -TimeoutSeconds 3600 `
                     -UnityArguments $unityArguments
                 exit $LASTEXITCODE
                 '''

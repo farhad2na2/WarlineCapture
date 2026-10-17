@@ -2602,6 +2602,97 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Height of a wrapped title at the existing name floor. Compact 112-wide tiles
+        /// keep <see cref="PortraitCompactFontFloor"/>; every wider portrait stays at
+        /// <see cref="NameFontFloor"/>.
+        /// </summary>
+        public static float WrappedFloorNameHeight(string title, float cardWidth)
+        {
+            float floor = cardWidth <= PortraitMinWidth + 8f ? PortraitCompactFontFloor : NameFontFloor;
+            if (string.IsNullOrEmpty(title))
+                return floor * NameLineFactor(title) + 2f;
+            float width = Math.Max(1f, cardWidth - 12f);
+            int lines = 2;
+            if (MeasureName(title, width, floor, out int measured, out _, out _) && measured > 0)
+                lines = measured;
+            return lines * floor * NameLineFactor(title) + 2f;
+        }
+
+        /// <summary>
+        /// How far the name may drop below the cue. Sixteen pixels is the aim. The drop
+        /// stops once the wrapped title, at the existing floor, would no longer fit the band.
+        /// The capture still rejects a gap under <see cref="MedalGapMinimum"/>.
+        /// </summary>
+        public static float NameClearanceBelowCue(string title, float cardWidth, float cardHeight, bool wide)
+        {
+            const float wanted = 16f;
+            float room = MaxNameBoxHeight(cardHeight, wide);
+            float needed = WrappedFloorNameHeight(title, cardWidth);
+            float spare = room - needed;
+            if (spare >= wanted)
+                return wanted;
+            if (spare >= MedalGapMinimum)
+                return spare;
+            return spare > 0f ? spare : 0f;
+        }
+
+        /// <summary>
+        /// Puts a layout-shrunk portrait back toward its authored size. Growth stops at the
+        /// last rect that still sits inside its hex, so the restore cannot straddle.
+        /// </summary>
+        public static Box RestoreAuthoredCard(
+            Box live,
+            float authoredW,
+            float authoredH,
+            Vec2[] own,
+            Vec2[][] districts)
+        {
+            float wantW = authoredW > 2f ? authoredW : live.W;
+            float wantH = authoredH > 2f ? authoredH : live.H;
+            var authored = new Box(live.X, live.Y, wantW, wantH);
+            if (own == null || own.Length < 3 || districts == null)
+                return authored;
+            if (SeatHolds(authored, own, districts))
+                return authored;
+
+            float fitW = live.W > 1f ? Math.Min(live.W, wantW) : wantW;
+            float fitH = live.H > 1f ? Math.Min(live.H, wantH) : wantH;
+            var fit = new Box(live.X, live.Y, fitW, fitH);
+            if (!SeatHolds(fit, own, districts))
+            {
+                for (int step = 0; step < 80 && fit.W > 48f && fit.H > 48f; step++)
+                {
+                    if (fit.W > 48f)
+                        fit = new Box(fit.X, fit.Y, fit.W - 1f, fit.H);
+                    if (!SeatHolds(fit, own, districts) && fit.H > 48f)
+                        fit = new Box(fit.X, fit.Y, fit.W, fit.H - 1f);
+                    if (SeatHolds(fit, own, districts))
+                        return fit;
+                }
+
+                return fit;
+            }
+
+            for (float next = fit.W + 1f; next <= wantW + 0.01f; next += 1f)
+            {
+                var trial = new Box(live.X, live.Y, next, fit.H);
+                if (!SeatHolds(trial, own, districts))
+                    break;
+                fit = trial;
+            }
+
+            for (float next = fit.H + 1f; next <= wantH + 0.01f; next += 1f)
+            {
+                var trial = new Box(live.X, live.Y, fit.W, next);
+                if (!SeatHolds(trial, own, districts))
+                    break;
+                fit = trial;
+            }
+
+            return fit;
+        }
+
+        /// <summary>
         /// Painted halo reaches 18px past the fill, and the 16px neon reaches 8px.
         /// Each district scales about its card centre, toward 82%, and stops where
         /// the 40000 area floor, the 6px pin clearance, or the 8px card inset would

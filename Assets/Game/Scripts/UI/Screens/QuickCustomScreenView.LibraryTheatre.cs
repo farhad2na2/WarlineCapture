@@ -1670,13 +1670,15 @@ namespace Game.UI.Runtime
             glow.a = 1f;
             Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
             ink.a = 1f;
-            // 4px core stays inside the 3–4.5 capture band. The neon edge stays at the 8px
-            // capture floor. A 16px stroke reached 8px outside the hex and, with the halo,
-            // closed the 15–23px gaps. Pivot-centred 8px reaches 4px past the edge.
+            // 4px core stays inside the 3–4.5 capture band. The soft halo and the
+            // 16px outer neon are the previous rich edge; gaps come from a smaller
+            // hex, not from thinning this paint. The outer stroke is pivot-centred,
+            // so 16px reaches 8px past the fill and the 10px mid glow sits inside it.
             const float stroke = 4f;
-            const float neonThickness = 8f;
-            DrawHexEdges(root, local, outer, neonThickness, ZoneStrokeSprite());
-            DrawHexEdges(root, local, glow, neonThickness, ZoneStrokeSprite());
+            const float outerThickness = 16f;
+            const float midThickness = 10f;
+            DrawHexEdges(root, local, outer, outerThickness, ZoneStrokeSprite());
+            DrawHexEdges(root, local, glow, midThickness, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             DrawHexLattice(root, local, color);
             for (int i = 0; i < local.Length; i++)
@@ -1720,10 +1722,10 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Alpha dies 4px outside the hex, at the same edge as the 8px neon stroke
-            // and inside the 22px pad the capture rect still requires. The old 18px
-            // reach crossed every 15–23px hex gap, so the glows touched.
-            const float reach = 4f;
+            // Soft falloff out to 18px, inside the 22px pad the capture rect still
+            // requires. The hex itself is scaled down so this reach no longer bridges
+            // the gap between districts.
+            const float reach = 18f;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -1998,6 +2000,9 @@ namespace Game.UI.Runtime
             card.raycastTarget = false;
             PlaceTopLeft(card.rectTransform, slot.Card.x, slot.Card.y, slot.Card.width, slot.Card.height);
             card.rectTransform.localScale = Vector3.one;
+            // A parent layout group or ContentSizeFitter runs after this place and
+            // was shrinking the seated portrait before Refit could see the authored size.
+            KeepAuthoredSize(card.rectTransform);
 
             float cardH = slot.Card.height;
             float nameH = Mathf.Min(TheatreSeatGeometry.MaxNameBoxHeight(cardH, wideFrame), cardH >= 190f ? 64f : 48f);
@@ -2267,7 +2272,7 @@ namespace Game.UI.Runtime
             V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(size, size);
-            cue.enableAutoSizing = true;
+            cue.enableAutoSizing = false;
             cue.fontSizeMin = size;
             cue.fontSizeMax = size;
             cue.fontSize = size;
@@ -2492,23 +2497,25 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// Keeps the fitted 16–26px cue size when the localization binding refreshes.
+        /// The section frame scales the whole library (about 0.86 on a 4:3 canvas),
+        /// so the local size is raised until the drawn pixels are at least 16.
+        /// Autosize stays off: a later LibraryPass or fitter was settling the Farsi
+        /// cue at a 12px floor.
         /// </summary>
         private static void LockCueFont(TMP_Text cue)
         {
             if (cue == null)
                 return;
-            float size = cue.fontSize;
-            if (size < 16f)
-                size = 16f;
-            if (size > 26f)
-                size = 26f;
+            float size = CueLocalSize(cue);
             string drawn = cue.text;
             int lines = cue.maxVisibleLines;
             float spacing = cue.characterSpacing;
             V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
-                binding.SetFontBounds(size, size);
-            cue.enableAutoSizing = true;
+                binding.ConfigureFontBounds(size, size);
+            if (cue.rectTransform != null)
+                KeepAuthoredSize(cue.rectTransform);
+            cue.enableAutoSizing = false;
             cue.fontSizeMin = size;
             cue.fontSizeMax = size;
             cue.fontSize = size;
@@ -2519,6 +2526,61 @@ namespace Game.UI.Runtime
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.alignment = TextAlignmentOptions.Center;
             cue.ForceMeshUpdate();
+        }
+
+        /// <summary>Local font size whose drawn height is at least 16px and at most 26px.</summary>
+        private static float CueLocalSize(TMP_Text cue)
+        {
+            float size = cue != null ? cue.fontSize : 16f;
+            if (size < 16f)
+                size = 16f;
+            if (size > 26f)
+                size = 26f;
+            float scale = 1f;
+            if (cue != null && cue.rectTransform != null)
+                scale = cue.rectTransform.lossyScale.y;
+            if (scale < 0.05f || scale > 4f)
+                scale = 1f;
+            if (scale < 0.98f)
+            {
+                float needed = 16f / scale;
+                if (needed > size)
+                    size = needed;
+            }
+
+            if (size < 16f)
+                size = 16f;
+            if (size > 26f)
+                size = 26f;
+            return size;
+        }
+
+        /// <summary>
+        /// Last word after LibraryPass, a layout group, or the localization fitter.
+        /// Capture reads the cue inside the layout pass; this runs again at the end of the frame.
+        /// </summary>
+        public static void HoldZoomCuePaint(TMP_Text cue)
+        {
+            if (cue == null || cue.name != "ZoomCue")
+                return;
+            LockCueFont(cue);
+            if (cue.transform.parent is not RectTransform parent)
+                return;
+            float cueX = cue.rectTransform.anchoredPosition.x;
+            string selected = null;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform zone)
+                    continue;
+                if (Mathf.Abs(zone.anchoredPosition.x - cueX) > 2f)
+                    continue;
+                selected = child.name.Substring("ZoneCard_".Length);
+                break;
+            }
+
+            if (!string.IsNullOrEmpty(selected))
+                DropNameBelowCue(cue, selected);
         }
 
         private static void LogTheatreCue(TMP_Text cue)
@@ -2553,19 +2615,34 @@ namespace Game.UI.Runtime
                 return;
             float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
             float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+            float nameX = name.anchoredPosition.x;
+            float nameY = -name.anchoredPosition.y;
+            float nameW = name.sizeDelta.x;
+            float nameH = name.sizeDelta.y;
+            float cardY = -card.anchoredPosition.y;
+            Rect cueBox = PlateRect(cue.rectTransform);
+            const float nameClearance = 16f;
+            float statusH = cardH >= 190f ? 40f : 34f;
+            float limit = cardH - 2f - statusH - 4f - nameH;
+            float nameGap = (cardY + nameY) - cueBox.yMax;
+            if (nameGap < nameClearance)
+            {
+                float next = nameY + (nameClearance - nameGap);
+                if (next > limit)
+                    next = limit;
+                if (next > nameY + 0.5f)
+                {
+                    PlaceTopLeft(name, nameX, next, nameW, nameH);
+                    nameY = next;
+                }
+            }
+
             TMP_Text nameText = name.GetComponent<TMP_Text>();
             if (!TryPlateInk(nameText, card, out Rect ink))
                 return;
             Rect cueRect = PlateRect(cue.rectTransform);
             // Capture still rejects a gap under 6px. The layout leaves a wider band
             // so the zoom label does not read as a second line of the name.
-            const float nameClearance = 16f;
-            float nameX = name.anchoredPosition.x;
-            float nameY = -name.anchoredPosition.y;
-            float nameW = name.sizeDelta.x;
-            float nameH = name.sizeDelta.y;
-            float statusH = cardH >= 190f ? 40f : 34f;
-            float limit = cardH - 2f - statusH - 4f - nameH;
             if (AxisGap(cueRect.xMin, cueRect.xMax, ink.xMin, ink.xMax) < nameClearance)
             {
                 float cueMidY = cueRect.y + cueRect.height * 0.5f;
@@ -2825,18 +2902,110 @@ namespace Game.UI.Runtime
             {
                 RaiseTheatreReadability(_libraryRegions);
                 FitCueInsidePackedRect(cue);
-                LockCueFont(cue);
-                DropNameBelowCue(cue, heldSelection);
                 InkZoneNames(_libraryRegions);
+                FinishCuePaint(cue, heldSelection);
                 LogTheatreCue(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
             }
 
             RaiseTheatreReadability(_libraryRegions);
-            LockCueFont(cue);
+            FinishCuePaint(cue, heldSelection);
             LogTheatreCue(cue);
             LogTheatreSeats(cue.transform.parent, fa);
+        }
+
+        /// <summary>
+        /// Locks the cue after every layout pass and writes the sizes the capture camera draws.
+        /// </summary>
+        private static void FinishCuePaint(TMP_Text cue, string selectedId)
+        {
+            if (cue == null)
+                return;
+            if (cue.GetComponent<TheatreZoomCueLock>() == null)
+                cue.gameObject.AddComponent<TheatreZoomCueLock>();
+            LockCueFont(cue);
+            if (!string.IsNullOrEmpty(selectedId))
+                DropNameBelowCue(cue, selectedId);
+            LogRenderedMeasures(cue);
+        }
+
+        /// <summary>
+        /// Drawn pixels, not the seat harness. <c>fontSize</c> is the on-screen cue size.
+        /// Card <c>w h</c> are the on-screen portrait. <c>DistrictGap</c> is the dark strip
+        /// between outer halos (18px each side).
+        /// </summary>
+        private static void LogRenderedMeasures(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null)
+                return;
+            float cueScale = cue.rectTransform.lossyScale.y;
+            if (cueScale < 0.001f)
+                cueScale = 1f;
+            Debug.Log("[ZoomCue] fontSize=" + F(cue.fontSize * cueScale)
+                + " local=" + F(cue.fontSize)
+                + " scale=" + F(cueScale));
+            if (cue.transform.parent is not RectTransform parent)
+                return;
+            var outlines = new List<RectTransform>(8);
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null)
+                    continue;
+                if (child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) && child is RectTransform zone)
+                {
+                    float scaleX = zone.lossyScale.x;
+                    float scaleY = zone.lossyScale.y;
+                    if (scaleX < 0.001f)
+                        scaleX = 1f;
+                    if (scaleY < 0.001f)
+                        scaleY = 1f;
+                    string mapId = child.name.Substring("ZoneCard_".Length);
+                    float drawnW = (zone.rect.width > 1f ? zone.rect.width : zone.sizeDelta.x) * scaleX;
+                    float drawnH = (zone.rect.height > 1f ? zone.rect.height : zone.sizeDelta.y) * scaleY;
+                    Debug.Log("[ZoneCard] " + mapId + " " + F(drawnW) + " " + F(drawnH)
+                        + " local=" + F(zone.sizeDelta.x) + "x" + F(zone.sizeDelta.y));
+                }
+
+                if (child.name.StartsWith("ZoneOutline_", StringComparison.Ordinal) && child is RectTransform outline)
+                    outlines.Add(outline);
+            }
+
+            for (int i = 0; i < outlines.Count; i++)
+            {
+                for (int j = i + 1; j < outlines.Count; j++)
+                {
+                    Vector2[] left = OutlinePlatePoints(outlines[i]);
+                    Vector2[] right = OutlinePlatePoints(outlines[j]);
+                    float localGap = OutlineEdgeGap(left, right) - 36f;
+                    float scale = outlines[i].lossyScale.x;
+                    if (scale < 0.001f)
+                        scale = 1f;
+                    string pair = OutlineMapId(outlines[i]) + "-" + OutlineMapId(outlines[j]);
+                    Debug.Log("[DistrictGap] " + pair + " " + F(localGap * scale));
+                }
+            }
+        }
+
+        private static string OutlineMapId(RectTransform outline)
+        {
+            const string prefix = "ZoneOutline_";
+            if (outline == null || !outline.name.StartsWith(prefix, StringComparison.Ordinal))
+                return "";
+            return outline.name.Substring(prefix.Length);
+        }
+
+        private static float OutlineEdgeGap(Vector2[] left, Vector2[] right)
+        {
+            if (left == null || right == null || left.Length < 3 || right.Length < 3)
+                return 0f;
+            float best = float.MaxValue;
+            for (int i = 0; i < left.Length; i++)
+                best = Mathf.Min(best, DistanceToPolygonEdge(left[i], right));
+            for (int i = 0; i < right.Length; i++)
+                best = Mathf.Min(best, DistanceToPolygonEdge(right[i], left));
+            return best;
         }
 
         private static bool TryApplyArrangedSeats(List<TheatreZoneSlot> slots, float plateWidth, float plateHeight, bool fa)
@@ -3780,14 +3949,13 @@ namespace Game.UI.Runtime
                 float cardH = card.sizeDelta.y;
                 float liveW = card.rect.width;
                 float liveH = card.rect.height;
-                if (liveW > 2f && Mathf.Abs(liveW - cardW) > 8f)
-                    cardW = liveW;
-                if (liveH > 2f && Mathf.Abs(liveH - cardH) > 8f)
-                    cardH = liveH;
-                if (Mathf.Abs(cardW - card.sizeDelta.x) > 0.5f || Mathf.Abs(cardH - card.sizeDelta.y) > 0.5f)
+                // A layout group can shrink the live rect after the seat. Adopting that
+                // rect locked the portrait near 100px. Put the authored size back.
+                if ((liveW > 2f && liveW < cardW - 8f) || (liveH > 2f && liveH < cardH - 8f))
                 {
                     PlaceTopLeft(card, card.anchoredPosition.x, -card.anchoredPosition.y, cardW, cardH);
                     card.localScale = Vector3.one;
+                    KeepAuthoredSize(card);
                 }
 
                 float nameH = name.rectTransform.rect.height > 1f

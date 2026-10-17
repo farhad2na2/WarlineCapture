@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
             int objectives = field.Tabs.Length;
             float cardWidth = GridCardWidth(gridWidth, columns, LibraryGridRightPad);
             bool roomy = cardWidth >= LibraryGridRoomyCardWidth;
-            const float headerTop = 102f;
+            float headerTop = SkirmishZoneTabWidget.BandBottom + 2f;
             float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 34f;
             float scrollTop = headerTop + headerHeight + 4f;
             float viewport = Mathf.Max(120f, gridHeight - scrollTop);
@@ -317,25 +317,30 @@ namespace Game.UI.Runtime
             if (_libraryGrid == null)
                 return;
             int tabCount = SkirmishBattleLibraryArt.MapIds.Length;
-            float span = _libraryGrid.rect.width > 240f ? _libraryGrid.rect.width - 16f : 1008f;
-            const float tabGap = 10f;
-            EnsureLibraryViewModel();
-            SkirmishTheaterState theater = _libraryViewModel.Theater;
+            float gridWidth = _libraryGrid.rect.width;
+            float tabWidth = SkirmishZoneTabWidget.Width(gridWidth, tabCount);
             for (int i = 0; i < tabCount; i++)
             {
                 string mapId = SkirmishBattleLibraryArt.MapIds[i];
-                SkirmishTheaterPinState pin = default;
-                if (!TryFindTheaterPin(theater, mapId, out pin))
-                    pin.MapId = mapId;
-                pin.MapId = mapId;
-                Rect slot = SkirmishZoneTabWidget.TabRect(i, tabCount, span, 94f, tabGap, fa);
-                SkirmishWidgetContext context = LibraryWidgetContext(default);
-                string plateKey = pin.PlatePreviewKey;
-                context.LoadPreview = k => ResolveGridPreview(plateKey, null, mapId, out bool unusedDim);
-                bool selected = string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase);
-                RectTransform tab = SkirmishZoneTabWidget.Build(_libraryGrid, pin, selected, slot.size, context, SelectGridBattlefield);
-                tab.name = "BattlefieldTab_" + mapId;
-                PlaceTopLeft(tab, 8f + slot.x, 2f, slot.width, slot.height);
+                var button = CreateChromeButton(_libraryGrid, "BattlefieldTab_" + mapId);
+                PlaceTopLeft(
+                    button.GetComponent<RectTransform>(),
+                    SkirmishZoneTabWidget.Left(i, gridWidth, tabCount),
+                    SkirmishZoneTabWidget.OriginY,
+                    tabWidth,
+                    SkirmishZoneTabWidget.Height);
+                SkirmishZoneTabWidget.Apply(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase));
+                var label = CreateLabel(button.transform, "Label", 16f);
+                Stretch(label.rectTransform, 6f, 6f, 2f, 2f);
+                label.alignment = TextAlignmentOptions.Center;
+                label.textWrappingMode = TextWrappingModes.Normal;
+                label.overflowMode = TextOverflowModes.Ellipsis;
+                SetCopy(label, MapDisplayTitle(mapId, fa), 12f, 18f);
+                label.overflowMode = TextOverflowModes.Ellipsis;
+                label.textWrappingMode = TextWrappingModes.Normal;
+                SkirmishZoneTabWidget.StyleLabel(label);
+                string captured = mapId;
+                button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }
         }
 

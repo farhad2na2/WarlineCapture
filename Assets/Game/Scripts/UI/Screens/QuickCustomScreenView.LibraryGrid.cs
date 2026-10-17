@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
             int objectives = field.Tabs.Length;
             float cardWidth = GridCardWidth(gridWidth, columns, LibraryGridRightPad);
             bool roomy = cardWidth >= LibraryGridRoomyCardWidth;
-            const float headerTop = 56f;
+            float headerTop = SkirmishZoneTabWidget.BandBottom + 2f;
             float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 34f;
             float scrollTop = headerTop + headerHeight + 4f;
             float viewport = Mathf.Max(120f, gridHeight - scrollTop);
@@ -307,15 +307,19 @@ namespace Game.UI.Runtime
             if (_libraryGrid == null)
                 return;
             int tabCount = SkirmishBattleLibraryArt.MapIds.Length;
-            float span = _libraryGrid.rect.width > 240f ? _libraryGrid.rect.width - 16f : 1008f;
-            const float tabGap = 10f;
-            float tabWidth = tabCount > 0 ? (span - tabGap * (tabCount - 1)) / tabCount : 160f;
+            float gridWidth = _libraryGrid.rect.width;
+            float tabWidth = SkirmishZoneTabWidget.Width(gridWidth, tabCount);
             for (int i = 0; i < tabCount; i++)
             {
                 string mapId = SkirmishBattleLibraryArt.MapIds[i];
                 var button = CreateChromeButton(_libraryGrid, "BattlefieldTab_" + mapId);
-                PlaceTopLeft(button.GetComponent<RectTransform>(), 8f + i * (tabWidth + tabGap), 2f, tabWidth, 52f);
-                TintButton(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase), true);
+                PlaceTopLeft(
+                    button.GetComponent<RectTransform>(),
+                    SkirmishZoneTabWidget.Left(i, gridWidth, tabCount),
+                    SkirmishZoneTabWidget.OriginY,
+                    tabWidth,
+                    SkirmishZoneTabWidget.Height);
+                SkirmishZoneTabWidget.Apply(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase));
                 var label = CreateLabel(button.transform, "Label", 16f);
                 Stretch(label.rectTransform, 6f, 6f, 2f, 2f);
                 label.alignment = TextAlignmentOptions.Center;
@@ -324,6 +328,7 @@ namespace Game.UI.Runtime
                 SetCopy(label, MapDisplayTitle(mapId, fa), 12f, 18f);
                 label.overflowMode = TextOverflowModes.Ellipsis;
                 label.textWrappingMode = TextWrappingModes.Normal;
+                SkirmishZoneTabWidget.StyleLabel(label);
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }

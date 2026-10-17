@@ -1,6 +1,26 @@
 {
   "entries": [
     {
+      "key": "ui.skirmish.library.title.theatre_map",
+      "source": "SKIRMISH | THEATRE MAP",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زد و خورد | نقشه صحنه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.library.title.battlefield",
+      "source": "SKIRMISH | {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زد و خورد | {0}"
+        }
+      ]
+    },
+    {
       "key": "ui.skirmish.library.battles_won",
       "source": "Battles won",
       "translations": [

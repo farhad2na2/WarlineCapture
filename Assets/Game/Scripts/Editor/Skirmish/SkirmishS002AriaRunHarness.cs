@@ -1086,6 +1086,24 @@ namespace Game.Editor
         private sealed class InputDiagnostic
         {
             public float elapsed;
+            // Diagnostic-only mirrors of existing public planner/touch/receipt state.
+            public float observationTime;
+            public int padStage, airCycleStage, airCycleCount;
+            public byte targetPending, advanceNavigation;
+            public bool airProfile;
+            public float airCycleDeadline;
+            public bool assaultAtBase, enemyDesignatedAlive;
+            public AriaTouchTarget focusEnemy;
+            public byte assaultFocusStage;
+            public int assaultFocusActions, assaultFocusTarget, assaultFocusFrame;
+            public float assaultFocusDeadline;
+            public int lastCompletedTargetId, lastCompletedFrame;
+            public UnityEngine.Vector2 lastCompletedPosition;
+            public byte precisionStage, precisionAttempts;
+            public uint precisionGroup, precisionRoster, precisionBaseline, precisionCurrentSlotGroup;
+            public int precisionSlot, precisionPage, precisionIssueFrame, precisionActions;
+            public float precisionDeadline, precisionReadyAt;
+            public Game.UI.Contracts.UiExpandedPrecisionAttackResult precisionAttack;
             public string phase, intent, observation;
             public int actions, attempts, targetId, observedTargetId, stopReason, pageSeen, navigationStage;
             public float progressAt, objectiveProgressAt, openingUntil;
@@ -1130,6 +1148,24 @@ namespace Game.Editor
             var sample = new InputDiagnostic
             {
                 elapsed = elapsed,
+                padStage = plan.PadStage, targetPending = plan.TargetPending,
+                advanceNavigation = plan.AdvanceNavigation, airProfile = view.AirProfile,
+                airCycleStage = plan.AirCycleStage, airCycleCount = plan.AirCycleCount,
+                airCycleDeadline = plan.AirCycleDeadline,
+                observationTime = view.Time, assaultAtBase = view.AssaultAtBase,
+                enemyDesignatedAlive = view.EnemyDesignatedAlive, focusEnemy = view.FocusEnemy,
+                assaultFocusStage = plan.AssaultFocusStage, assaultFocusActions = plan.AssaultFocusActions,
+                assaultFocusTarget = plan.AssaultFocusTarget, assaultFocusFrame = plan.AssaultFocusFrame,
+                assaultFocusDeadline = plan.AssaultFocusDeadline,
+                lastCompletedTargetId = input.LastCompletedTargetId, lastCompletedFrame = input.LastCompletedFrame,
+                lastCompletedPosition = input.LastCompletedPosition,
+                precisionStage = plan.PrecisionStage, precisionAttempts = plan.PrecisionAttempts,
+                precisionGroup = plan.PrecisionGroup, precisionRoster = plan.PrecisionRoster,
+                precisionBaseline = plan.PrecisionBaseline, precisionCurrentSlotGroup = view.ExpandedGroup(plan.PrecisionSlot),
+                precisionSlot = plan.PrecisionSlot, precisionPage = plan.PrecisionPage,
+                precisionIssueFrame = plan.PrecisionIssueFrame, precisionActions = plan.PrecisionActions,
+                precisionDeadline = plan.PrecisionDeadline, precisionReadyAt = plan.PrecisionReadyAt,
+                precisionAttack = view.PrecisionAttack,
                 phase = input.Phase.ToString(), intent = plan.Intent.ToString(), observation = target.Kind.ToString(),
                 actions = input.Actions, attempts = input.Attempts, targetId = input.TargetId,
                 observedTargetId = target.TargetId, stopReason = input.StopReason,

@@ -313,6 +313,12 @@ namespace Game.Editor
                         bool vehicle=em.HasComponent<UnitMovementBehavior>(prefab)&&em.GetComponentData<UnitMovementBehavior>(prefab).UsesVehicleMotion!=0;
                         var center=GridUtils.WorldToCell(grid,new float3(x,0,z));var cells=new JArray();row["candidateCells"]=cells;
                         row["nativePrefabEntityIndex"]=prefab.Index;row["nativePrefabEntityVersion"]=prefab.Version;row["footprintX"]=footprint.x;row["footprintZ"]=footprint.y;row["padId"]=pad.PadId;
+                        if(em.HasComponent<UnitMovementBehavior>(prefab))
+                        {
+                            var actualBehavior=em.GetComponentData<UnitMovementBehavior>(prefab);
+                            row["nativeMovementBehavior"]=new JObject{["AllowIdleWander"]=actualBehavior.AllowIdleWander,
+                                ["UsesVehicleMotion"]=actualBehavior.UsesVehicleMotion};
+                        }
                         int found=0,traversable=0,contained=0;
                         NativeBitArray constrained=default;
                         Require(typedConstraint==null||typedConstraint.TryMask(force,occupied,out constrained),"Exact typed source-authoring spawn mask required");

@@ -21,10 +21,12 @@ namespace Game.Editor
         // metadata/caches. Static proposals do not stand in for live scene fitting.
         static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
-            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false)
+            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
         {
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
+            if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
+                "Exact MP or authority-bound AP disposable service authoring context required");
             var output=new JArray();report["normalFacilityRelocationProposals"]=output;
             report["normalFacilityRelocationScope"]="ActualProductionSearchAndStaticSourceCaches_NoLiveGameplayCertificate";
             using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
@@ -70,7 +72,10 @@ namespace Game.Editor
                 foreach(byte side in new byte[]{1,2})
                 {
                     var serviceRows=new JArray();
-                    serviceAvailable[side]=PilotRepairInteractionFootprints(layout,em,gridEntity,grid,surface,side,out var keepClear,serviceRows);
+                    List<RectInt> keepClear;
+                    serviceAvailable[side]=serviceAuthority!=null
+                        ?MpPilotRepairInteractionFootprints(serviceAuthority,layout,em,gridEntity,grid,surface,side,out keepClear,serviceRows)
+                        :PilotRepairInteractionFootprints(layout,em,gridEntity,grid,surface,side,out keepClear,serviceRows);
                     serviceFootprints[side]=keepClear;
                     bool support=configuration.Any(value=>(byte)value["faction"]==side&&(string)value["structureId"]==Game.Skirmish.Contracts.SkirmishStructureIds.GroundStaging);
                     serviceAvailable[side]&=support;

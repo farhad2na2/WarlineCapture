@@ -1590,9 +1590,142 @@ namespace Game.Tests.Editor
             }
         }
 
+
+        static AriaSkirmishObservation CloseLatencyView(float now, int frame)
+        {
+            var v=InspectionView(now,frame);v.MapOpen=true;
+            v.AssaultMap=PresentedAssaultSample(now,frame,true,22,(uint)frame);
+            v.CloseMap.Position=new Vector2(1900.6802f,967.5239f);return v;
+        }
+        static AriaSkirmishPlanComponent CloseLatencyPlan(byte stage=3)
+        {
+            var p=InspectionPlan(408.499481f);p.AssaultInspectStage=stage;
+            p.AssaultInspectMapIdentity=22;p.AssaultInspectDeadline=439.285461f;
+            p.AssaultInspectObjectiveHudIdentity=77;
+            p.AssaultInspectObjectiveWorld=new Vector3(1370,0,679.5f);return p;
+        }
+        static AriaPlaySessionComponent CloseLatencyTouch()
+        {
+            var t=InspectionTouch(408.499481f);t.Actions=60;t.TargetId=-20010;
+            t.GoalId=10000;t.ObjectiveWatchdogInitialized=1;
+            t.VisitedGoalMask=1UL<<(10000&63);return t;
+        }
+        [Test]
+        public void ActualSlowCloseSamplesKeepNormalAimThroughGestureRequest()
+        {
+            var v=CloseLatencyView(436.285461f,859);var p=CloseLatencyPlan(1);
+            p.AssaultInspectActions=59;p.AssaultInspectOpenTarget=-20010;
+            p.AssaultInspectDeadline=433;p.AssaultInspectMapIdentity=0;
+            var t=CloseLatencyTouch();
+            InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(3,p.AssaultInspectStage);
+            Assert.AreEqual(439.285461f,p.AssaultInspectDeadline,.001f);
+            v=CloseLatencyView(438.702057f,860);
+            InspectStep(v,ref p,ref t,out o);AriaPlayDecisionSystem.Step(o,ref t);
+            Assert.AreEqual(AriaPlayPhase.Aiming,t.Phase);
+            Assert.AreEqual(1234,o.TargetId);Assert.AreEqual(0,t.GestureRequested);
+            v=CloseLatencyView(441.074921f,861);
+            InspectStep(v,ref p,ref t,out o);AriaPlayDecisionSystem.Step(o,ref t);
+            Assert.AreEqual(3,p.AssaultInspectStage);
+            Assert.AreEqual(AriaPlayObservationKind.Control,o.Kind);Assert.AreEqual(1234,o.TargetId);
+            Assert.AreEqual(AriaPlayPhase.Touching,t.Phase);
+            Assert.AreEqual(1,t.GestureRequested);Assert.AreEqual(1,t.Attempts);
+            Assert.AreEqual(60,t.Actions,"The decision request is not a completed physical tap.");
+            Assert.AreEqual(408.499481f,p.LastProgressAt);
+            Assert.AreEqual(408.499481f,t.LastObjectiveProgressAt);
+            v=CloseLatencyView(443.5f,862);InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(3,p.AssaultInspectStage);Assert.AreEqual(1,t.Attempts);
+            // Model the subsequent public close observation, not a claimed native receipt.
+            t.GestureRequested=0;t.Actions=61;t.Phase=AriaPlayPhase.Verifying;
+            v=InspectionView(445,863);v.MapOpen=false;
+            InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(0,p.AssaultInspectStage);Assert.AreEqual(457,p.AssaultInspectReadyAt);
+            Assert.AreEqual(408.499481f,p.LastProgressAt);
+            Assert.AreEqual(408.499481f,t.LastObjectiveProgressAt);
+        }
+        [Test]
+        public void OwnedReachableStageFourRecoversWithoutResettingRetriesOrProgress()
+        {
+            var v=CloseLatencyView(441.074921f,861);var p=CloseLatencyPlan(4);
+            var t=CloseLatencyTouch();t.Attempts=2;int actions=t.Actions;int goal=t.GoalId;
+            InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(3,p.AssaultInspectStage);Assert.AreEqual(1234,o.TargetId);
+            Assert.AreEqual(AriaPlayObservationKind.Control,o.Kind);
+            Assert.AreEqual(2,t.Attempts);Assert.AreEqual(actions,t.Actions);Assert.AreEqual(goal,t.GoalId);
+            Assert.AreEqual(439.285461f,p.AssaultInspectDeadline);
+            Assert.AreEqual(408.499481f,p.LastProgressAt);
+            Assert.AreEqual(408.499481f,t.LastObjectiveProgressAt);
+        }
+        [Test]
+        public void UnreachableCloseTimesOutAndBlocksWithoutDismissingPopup()
+        {
+            var v=CloseLatencyView(441.074921f,861);v.CloseMap.Available=false;
+            var p=CloseLatencyPlan();var t=CloseLatencyTouch();
+            InspectStep(v,ref p,ref t,out var o);Assert.AreEqual(4,p.AssaultInspectStage);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting,o.Kind);Assert.AreEqual(0,t.Actions-60);
+            v.Time=442;v.Frame++;InspectStep(v,ref p,ref t,out o);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);Assert.AreEqual(0,t.GestureRequested);
+            Assert.IsTrue(v.MapOpen);Assert.AreEqual(0,o.TargetId);
+            Assert.AreEqual(408.499481f,p.LastProgressAt);
+        }
+        [TestCase(0),TestCase(1),TestCase(2)]
+        public void ForeignStageFourCannotUseEvenAReachableCloseControl(int mutation)
+        {
+            var v=CloseLatencyView(441.074921f,861);var p=CloseLatencyPlan(4);
+            if(mutation==0)v.AssaultMap.Identity=23;
+            if(mutation==1)v.AssaultMap.ExpectedIdentity=false;
+            if(mutation==2)v.AssaultMap.FullMap=false;
+            var t=CloseLatencyTouch();InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);Assert.AreEqual(0,o.TargetId);
+            Assert.AreEqual(0,t.GestureRequested);Assert.IsTrue(v.MapOpen);
+            Assert.AreEqual(408.499481f,t.LastObjectiveProgressAt);
+        }
+        [Test]
+        public void OwnedCloseStillUsesTheExistingThreeAttemptStop()
+        {
+            var v=CloseLatencyView(441.074921f,861);var p=CloseLatencyPlan();
+            var t=CloseLatencyTouch();t.TargetId=1234;t.Attempts=3;t.Phase=AriaPlayPhase.Aiming;
+            InspectStep(v,ref p,ref t,out var o);AriaPlayDecisionSystem.Step(o,ref t);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);Assert.AreEqual(3,t.Attempts);
+            Assert.AreEqual(0,t.GestureRequested);Assert.AreEqual(60,t.Actions);
+            Assert.AreEqual(408.499481f,t.LastObjectiveProgressAt);
+        }
+        [Test]
+        public void ReachableCloseCannotBypassTheOriginalBattleWatchdog()
+        {
+            var v=CloseLatencyView(588.51f,1100);var p=CloseLatencyPlan(4);
+            var t=CloseLatencyTouch();InspectStep(v,ref p,ref t,out var o);
+            Assert.AreEqual(AriaPlayPhase.Blocked,t.Phase);Assert.AreEqual(0,t.GestureRequested);
+            Assert.AreEqual(4,p.AssaultInspectStage);Assert.AreEqual(0,o.TargetId);
+            Assert.AreEqual(408.499481f,p.LastProgressAt);
+        }
+        // Focused synchronous controls only; this entry never launches the normal mission.
+        public static void RunM5CloseInspectionFocusedValidation()
+        {
+            RunAssaultMapCloseLatencyValidation();
+            RunAssaultMapInspectionValidation();
+            SkirmishS005OpeningViewPolicyTests.RunFocusedValidation();
+            global::SelectionCommandRequestResultContractTests.RunPublicPrecisionProducerValidation();
+            Game.Editor.AriaSkirmishPlanValidation.RunPublicAssaultFocusValidation();
+            Debug.Log("[M5CloseInspectionFocusedControls] result=Passed closeControls=8 inspectionControls=26 legacyCases=141 cameraPolicyControls=9 precisionProducerCases=11 precisionPlannerChecks=22 focusChecks=27 missionReady=0");
+        }
+
+        public static void RunAssaultMapCloseLatencyValidation()
+        {
+            var suite=new SkirmishExpandedAriaTests();
+            suite.ActualSlowCloseSamplesKeepNormalAimThroughGestureRequest();
+            suite.OwnedReachableStageFourRecoversWithoutResettingRetriesOrProgress();
+            suite.UnreachableCloseTimesOutAndBlocksWithoutDismissingPopup();
+            for(int i=0;i<3;i++)suite.ForeignStageFourCannotUseEvenAReachableCloseControl(i);
+            suite.OwnedCloseStillUsesTheExistingThreeAttemptStop();
+            suite.ReachableCloseCannotBypassTheOriginalBattleWatchdog();
+            Debug.Log("[AriaAssaultMapCloseLatency] result=Passed controls=8 normalGestureOwner=1 battleWatchdogSeconds=180 missionReady=0");
+        }
+
         // Same Editor continuation, only after focused controls return successfully.
         public static void RunInspectionGapInputCameraAndM5()
         {
+            RunAssaultMapCloseLatencyValidation();
             RunAssaultMapInspectionValidation();
             global::MatchHudSquadScrollTests.RunGapInputCameraAndM5();
         }

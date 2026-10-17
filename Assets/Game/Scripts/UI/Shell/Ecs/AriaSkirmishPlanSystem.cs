@@ -735,8 +735,10 @@ namespace Game.UI.Shell.Ecs
                     ClearAssaultMapInspection(ref plan); plan.AssaultInspectReadyAt = view.Time + 12f;
                     return true;
                 }
-                if (view.Time <= plan.AssaultInspectDeadline && view.AssaultMap.ExpectedIdentity &&
-                    view.AssaultMap.FullMap && view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
+                // Keep a reachable owned close target stable through normal hand aiming.
+                // The existing input owner bounds attempts; the battle watchdog is unchanged.
+                if (view.AssaultMap.ExpectedIdentity && view.AssaultMap.FullMap &&
+                    view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
                     view.CloseMap.Available) Target(view.CloseMap, false, ref output);
                 else if (view.Time > plan.AssaultInspectDeadline) plan.AssaultInspectStage = 4;
                 return true;
@@ -748,6 +750,19 @@ namespace Game.UI.Shell.Ecs
                 ClearAssaultMapInspection(ref plan); plan.AssaultInspectReadyAt = view.Time + 12f;
                 return false;
             }
+            // A previously timed-out presentation may become closable again. Reuse only
+            // the same owned popup, without resetting attempts, deadline or progress.
+            if (view.AssaultMap.ExpectedIdentity && view.AssaultMap.FullMap &&
+                view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
+                plan.AssaultInspectMapIdentity != 0 && view.CloseMap.Available)
+            {
+                plan.AssaultInspectStage = 3;
+                Target(view.CloseMap, false, ref output);
+                return true;
+            }
+            // Never dismiss a foreign/unreachable popup or wait here indefinitely.
+            touch.Phase = AriaPlayPhase.Blocked;
+            touch.GestureRequested = 0;
             return true;
         }
 

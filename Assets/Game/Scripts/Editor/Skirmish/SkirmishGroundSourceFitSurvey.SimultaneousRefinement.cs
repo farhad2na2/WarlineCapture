@@ -70,7 +70,15 @@ namespace Game.Editor
                 owner.Definition.CampaignMap==source&&owner.Definition.MapLayout==owner.Layout&&
                 owner.Layout.OperationMapId==source.OperationMapId&&owner.Layout.WorldBinding.SourceHash==source.ContentHash&&
                 owner.Definition.CatalogId==(string)mission["catalog_id"],"Exact caller-owned source/definition/layout identity required");
+            bool apPairServiceRequested=ApPairServiceAuthority(owner.Definition);
+            if(apPairServiceRequested)
+                Require(grid.Width==source.GridMetadata.Dimensions.x&&grid.Height==source.GridMetadata.Dimensions.y&&
+                    grid.CellSize==source.GridMetadata.CellSize&&math.all(grid.Origin==(float3)source.GridMetadata.Origin),
+                    "AP service queries require actual pinned source grid metadata");
             string error;
+            JObject mpEndpointRevision=null;
+            if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid);
+            JObject s049MainRouteRevision=s049BoundedCompoundRouteRequested?ApplyS049NativeCorridorMainSegments(owner.Definition,grid):null;
             {
                 if(!preparedAuthoring)
                 {AddRefinementDefenseApproaches(owner.Definition,grid);RebuildRefinementConvoyBays(owner.Definition,em,grid);}
@@ -86,6 +94,8 @@ namespace Game.Editor
                 var passes=new JArray();
                 var output=new JObject{["catalogId"]=mission["catalog_id"],["sourcePins"]=mission["source_candidate"].DeepClone(),
                     ["passes"]=passes,["sourceFitCertified"]=false,["cameraAccepted"]=false,["normalMissionReady"]=false};
+                if(mpEndpointRevision!=null)output["mpPilotLogicalEndpointRevision"]=mpEndpointRevision;
+                if(s049MainRouteRevision!=null)output["s049ActualMainRouteSegmentation"]=s049MainRouteRevision;
                 output["defenderApproachFireSafety"]=new JObject{
                     ["status"]="Pending_ActualResolvedTowerWeaponRangeLineOfFireAndPlayerStartZoneValidation",
                     ["unavoidableStartZoneFireExcluded"]=false,
@@ -157,7 +167,7 @@ namespace Game.Editor
                         try
                         {
                         ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
-                            em,gridEntity,grid,surface,row,true,discovery,routeClearance);
+                            em,gridEntity,grid,surface,row,true,discovery,routeClearance,serviceAuthority:(mpGroundBaPilotRequested||apPairServiceRequested)?owner.Definition:null);
                         var facilities=(JArray)row["normalFacilityRelocationProposals"];
                         bool allFacilities=facilities!=null&&facilities.Count==budget.Structures.Length&&
                             facilities.All(f=>(bool?)f["entireConfigurationFound"]==true);
@@ -172,16 +182,34 @@ namespace Game.Editor
                             (int?)f["insideTypedPadCount"]==(int?)f["requestedCount"]);
                         row["allActorsInsidePads"]=allActors;complete&=allActors;
                         row["routeQueriesWithSameFacilityReservations"]=Ground30RouteQueries(budget,owner.Layout,em,gridEntity,grid,surface,facilities);
+                        if(s049BoundedCompoundRouteRequested)row["s049OriginalCentralLegDiagnostic"]=ProbeS049OriginalCentralLegControls(budget,em,gridEntity,grid,surface,facilities);
                         if((bool?)row["routeQueriesWithSameFacilityReservations"]?["endpointPolicyPreflight"]?["accepted"]!=true)
                         {row["jointRouteRefused"]="Authored endpoint policy preflight refused; no native route queries";complete=false;}
 
-                        if(requireExactJointRoutes&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
+                        if((requireExactJointRoutes||apPairServiceRequested)&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
                         {row["jointRouteRefused"]="Nonexact native route with actual facility blockers";complete=false;}
-                        if(refinementPreferenceReplay)
+                        if(refinementPreferenceReplay||mpGroundBaPilotRequested||apPairServiceRequested)
                         {
                             bool independent=PreferencePathsIndependent(owner.Layout,grid,(JObject)row["routeQueriesWithSameFacilityReservations"],out var independence);
                             row["actualProfileRouteIndependence"]=independence;
                             if(!independent)complete=false;
+                        }
+                        if(mpGroundBaPilotRequested||apPairServiceRequested)
+                        {
+                            bool coverage=MpPilotCanonicalRouteCoverage(budget,owner.Layout,em,grid,(JObject)row["routeQueriesWithSameFacilityReservations"]);
+                            row["mpPilotCanonicalRouteCoverage"]=coverage;
+                            // Discovery must derive strict typed hulls before service admission.
+                            var service=!discovery&&allActors
+                                ?MpPilotServiceAccess(budget,owner.Definition,owner.Layout,em,gridEntity,grid,surface,facilities,packing)
+                                :new JObject{["allMembersHaveExactServiceIngressAndReturn"]=false,["status"]="DeferredUntilStrictCompleteActorPacking"};
+                            // Legacy receipt field retained for the existing strict auditor.
+                            // Catalog/size/authority comes from this actual AP or MP owner.
+                            row["mpPilotServiceAccess"]=service;
+                            if(apPairServiceRequested)row["apPairStaticServiceScope"]=new JObject{
+                                ["catalogId"]=owner.Definition.CatalogId,["sourceIdentityHash"]=source.SourceIdentityHash,
+                                ["contentHash"]=source.ContentHash,["sourceFitCertified"]=false,
+                                ["normalPaidRepairCertified"]=false,["liveOccupancyIncluded"]=false};
+                            if(!coverage||(bool?)service["allMembersHaveExactServiceIngressAndReturn"]!=true)complete=false;
                         }
                         }
                         catch(Exception failure){row["sizeError"]=failure.ToString();throw;}

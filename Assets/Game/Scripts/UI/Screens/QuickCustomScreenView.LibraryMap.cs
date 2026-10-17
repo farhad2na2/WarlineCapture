@@ -323,6 +323,7 @@ namespace Game.UI.Runtime
             rect.anchorMin = new Vector2(0f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(0.5f, 1f);
+            rect.sizeDelta = new Vector2(0f, rect.sizeDelta.y); // v34: stretch exactly to the column (plate sizeDelta made GRID overflow)
             LayoutModeToggleButtons(rect);
         }
 
@@ -331,6 +332,8 @@ namespace Game.UI.Runtime
             if (toggle is not RectTransform rect)
                 return;
             float width = rect.rect.width > 120f ? rect.rect.width : 360f;
+            if (rect.parent is RectTransform owner && owner.name == "BriefingColumn" && owner.rect.width > 120f)
+                width = Mathf.Min(width, owner.rect.width);
             float half = (width - 8f) * 0.5f;
             var map = toggle.Find(SkirmishLibraryControlNames.LayoutMap) as RectTransform;
             var grid = toggle.Find(SkirmishLibraryControlNames.LayoutGrid) as RectTransform;

@@ -3117,5 +3117,176 @@ namespace Game.Tests.Editor
             for (int i = 0; i < entities.Length; i++)
                 SkirmishFogService.Reveal(em, entities[i]);
         }
+        public static void RunHomePadRefusalFocusedValidation()
+        {
+            global::MatchHudAssistantUiSystemHelperTests.RunHomePadWitnessControls();
+            RunHomePadWitnessInputFrameControls();
+            RunMissionDevelopmentFocusedValidation();
+            Debug.Log("[HomePadRefusalFocusedControls] result=Passed siteControls=11 inputFrameControls=5 normalMissionReady=0");
+        }
+        public static void RunHomePadWitnessInputFrameControls()
+        {
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode);
+            Assert.IsTrue(Game.UI.Runtime.SkirmishMatchView.NativeCombatEvidenceEnabled);
+            var saved=new[]{Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite0,
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite1,
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite2,
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite3};
+            string root=FreshProfileFixtureRoot();
+            try
+            {
+                using var world=new World("OwnedPadWitnessInput");
+                var em=world.EntityManager;
+                var boundary=em.CreateEntity(typeof(UiShellRootComponent),typeof(UiShellStateComponent),
+                    typeof(AriaPlaySessionComponent),typeof(AriaPlayObservationComponent),
+                    typeof(AriaSkirmishObservationOwner),typeof(AriaSkirmishObservationComponent),
+                    typeof(AriaSkirmishPlanComponent));
+                em.SetComponentData(boundary,new UiShellStateComponent{ActiveRoute=UIRoute.Match});
+                em.SetComponentData(boundary,new AriaSkirmishObservationOwner{Boundary=boundary,TransitionSequence=0});
+                var observation=new AriaSkirmishObservation{Active=true,Frame=0};
+                em.SetComponentData(boundary,new AriaSkirmishObservationComponent{Value=observation});
+                var plan=new AriaSkirmishPlanComponent{PadStage=3,PadAction=2,PadDeadline=45,PadSiteIndex=1};
+                em.SetComponentData(boundary,plan);
+                string path=Path.Combine(root,"pad-input.jsonl");int lines=0;
+                void Write(bool expected)
+                {
+                    var priorInput=em.GetComponentData<AriaPlaySessionComponent>(boundary);
+                    var priorObservation=em.GetComponentData<AriaSkirmishObservationComponent>(boundary);
+                    ObserverMethod("AppendInputDiagnosticToPath").Invoke(null,new object[]{em,0f,path});
+                    var all=File.ReadAllLines(path);Assert.AreEqual(++lines,all.Length);
+                    var row=Newtonsoft.Json.Linq.JObject.Parse(all[all.Length-1]);
+                    Assert.AreEqual(expected,(bool)row["padSiteEvidenceSameFrame"]);
+                    Assert.AreEqual(plan,em.GetComponentData<AriaSkirmishPlanComponent>(boundary));
+                    Assert.AreEqual(priorInput,em.GetComponentData<AriaPlaySessionComponent>(boundary));
+                    Assert.AreEqual(priorObservation,em.GetComponentData<AriaSkirmishObservationComponent>(boundary));
+                }
+                void Sites(bool collected,int frame)
+                {
+                    Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite0=new(){collected=collected,frame=frame,index=0};
+                    Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite1=new(){collected=collected,frame=frame,index=1};
+                    Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite2=new(){collected=collected,frame=frame,index=2};
+                    Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite3=new(){collected=collected,frame=frame,index=3};
+                }
+                Sites(false,0);Write(false);
+                Sites(true,0);Write(true);
+                var partial=Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite2;
+                partial.collected=false;Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite2=partial;Write(false);
+                Sites(true,0);partial=Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite3;
+                partial.frame=-1;Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite3=partial;Write(false);
+                observation.Frame=7;em.SetComponentData(boundary,new AriaSkirmishObservationComponent{Value=observation});
+                Sites(true,7);Write(true);
+            }
+            finally
+            {
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite0=saved[0];
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite1=saved[1];
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite2=saved[2];
+                Game.UI.Runtime.SkirmishMatchView.NativeHomePadSite3=saved[3];
+                DeleteProfileFixtureRoot(root);
+            }
+            Debug.Log("[HomePadWitnessInputFrameControls] result=Passed controls=5 normalMissionReady=0");
+        }
+
+        private static readonly Type PadBoundaryType=typeof(SkirmishS002AriaRunHarness)
+            .GetNestedType("OwnedPadBoundaryDiagnostic",System.Reflection.BindingFlags.NonPublic);
+        private static readonly Type PadBoundarySampleType=typeof(SkirmishS002AriaRunHarness)
+            .GetNestedType("InputDiagnostic",System.Reflection.BindingFlags.NonPublic);
+        private static object PadBoundaryCall(string name,object[] args)
+        {
+            try{return PadBoundaryType.GetMethod(name,IoFlags).Invoke(null,args);}
+            catch(System.Reflection.TargetInvocationException error)when(error.InnerException!=null)
+            {System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error.InnerException).Throw();throw;}
+        }
+        public static void RunPadBoundaryModeOnControls()
+        {
+            Assert.AreEqual("1",Environment.GetEnvironmentVariable("WARLINE_HOME_PAD_BOUNDARY_DIAGNOSTIC"));
+            Assert.AreEqual("1",Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC"));
+            PadBoundaryFixture(0);
+            Debug.Log("[HomePadBoundaryModeControls] result=Passed controls=8 nativeGameplay=0 acceptance=Unmeasured");
+        }
+        public static void RunPadBoundaryModeOffControl()
+        {
+            Assert.AreNotEqual("1",Environment.GetEnvironmentVariable("WARLINE_HOME_PAD_BOUNDARY_DIAGNOSTIC"));
+            PadBoundaryFixture(1);
+            Debug.Log("[HomePadBoundaryModeOffControls] result=Passed controls=1 nativeGameplay=0");
+        }
+        public static void RunPadBoundaryNoInputControl()
+        {
+            Assert.AreEqual("1",Environment.GetEnvironmentVariable("WARLINE_HOME_PAD_BOUNDARY_DIAGNOSTIC"));
+            Assert.AreNotEqual("1",Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC"));
+            PadBoundaryFixture(2);
+            Debug.Log("[HomePadBoundaryNoInputControls] result=Passed controls=1 nativeGameplay=0");
+        }
+        private static void PadBoundaryFixture(int mode)
+        {
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode);
+            var canary=typeof(SkirmishS002AriaRunHarness).GetField("productionCanary",IoFlags);
+            var batch=typeof(SkirmishS002AriaRunHarness).GetField("productionBatch",IoFlags);
+            Assert.IsNull(canary.GetValue(null));Assert.IsNull(batch.GetValue(null),
+                "Never replace a real owned production controller.");
+            // Identity tokens only: no constructor, context, I/O, Finish or ownership claim.
+            object first=System.Runtime.Serialization.FormatterServices.GetUninitializedObject(canary.FieldType);
+            object second=System.Runtime.Serialization.FormatterServices.GetUninitializedObject(canary.FieldType);
+            var owner=PadBoundaryType.GetField("owner",IoFlags);
+            var latest=PadBoundaryType.GetField("latest",IoFlags);
+            var sequence=PadBoundaryType.GetField("sequenceObserved",IoFlags);
+            object savedOwner=owner.GetValue(null),savedLatest=latest.GetValue(null),savedSequence=sequence.GetValue(null);
+            void Reset(){owner.SetValue(null,null);latest.SetValue(null,null);sequence.SetValue(null,false);}
+            object Sample(int stage,bool pad,int frame)
+            {
+                object value=Activator.CreateInstance(PadBoundarySampleType,true);
+                PadBoundarySampleType.GetField("padStage").SetValue(value,stage);
+                PadBoundarySampleType.GetField("pad").SetValue(value,pad);
+                PadBoundarySampleType.GetField("frame").SetValue(value,frame);return value;
+            }
+            bool Take(out string status)
+            {
+                var args=new object[]{null,null};bool captured=(bool)PadBoundaryCall("TryTakeCapture",args);
+                status=(string)args[1];return captured;
+            }
+            void Record(int stage,bool pad,int frame,bool nativePath=true)
+                =>PadBoundaryCall("Record",new[]{Sample(stage,pad,frame),(object)nativePath});
+            try
+            {
+                Reset();int frame=Time.frameCount;string status;
+                if(mode==1)
+                {
+                    canary.SetValue(null,first);Record(8,false,frame);Assert.IsFalse(Take(out status));return;
+                }
+                if(mode==2)
+                {
+                    canary.SetValue(null,first);
+                    var error=Assert.Throws<InvalidOperationException>(()=>Record(8,false,frame));
+                    StringAssert.Contains("requires existing input diagnostic",error.Message);
+                    Assert.IsFalse(Take(out status));return;
+                }
+                // Eight actual guard/cache decisions; no full Finish is called by fixtures.
+                canary.SetValue(null,null);Record(8,false,frame);Assert.IsFalse(Take(out status));
+                canary.SetValue(null,first);Reset();Record(8,false,frame,false);Assert.IsFalse(Take(out status));
+                Reset();Record(8,false,frame-1);Assert.IsFalse(Take(out status));
+                Reset();Record(8,false,frame);canary.SetValue(null,second);Assert.IsFalse(Take(out status));
+                canary.SetValue(null,first);Reset();Record(0,true,frame);Assert.IsFalse(Take(out status));
+                Reset();Record(1,false,frame);canary.SetValue(null,second);Record(0,true,frame);Assert.IsFalse(Take(out status));
+                canary.SetValue(null,first);Reset();Record(8,false,frame);
+                Assert.IsTrue(Take(out status));Assert.AreEqual("SearchStopped",status);Assert.IsNull(latest.GetValue(null));
+                Assert.IsFalse(Take(out status),"Captured cache must be consumed exactly once.");
+                Reset();Record(1,false,frame);Record(0,true,frame);
+                Assert.IsTrue(Take(out status));Assert.AreEqual("PadPresent",status);Assert.IsNull(latest.GetValue(null));
+                Assert.IsFalse(Take(out status));
+            }
+            finally
+            {
+                canary.SetValue(null,null);owner.SetValue(null,savedOwner);
+                latest.SetValue(null,savedLatest);sequence.SetValue(null,savedSequence);
+            }
+        }
+
+        public static void RunHomePadWitnessAndBoundaryFocusedValidation()
+        {
+            RunPadBoundaryModeOnControls();
+            RunHomePadRefusalFocusedValidation();
+            Debug.Log("[HomePadWitnessAndBoundaryFocusedControls] result=Passed siteControls=11 inputFrameControls=5 boundaryControls=8 normalMissionReady=0");
+        }
+
     }
 }

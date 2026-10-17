@@ -313,14 +313,38 @@ namespace Game.UI.Runtime
             return new AriaTouchTarget { Id = -20100 - index, Position = point,
                 Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20100 - index, true) };
         }
+#if UNITY_EDITOR
+        private SkirmishMatchView.NativeHomePadSiteEvidence homePadSiteEvidence;
+#endif
+        private AriaTouchTarget HomePadSiteResult(string refusal, AriaTouchTarget target=default)
+        {
+#if UNITY_EDITOR
+            if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+            {
+                homePadSiteEvidence.refusal=refusal;homePadSiteEvidence.reachable=target.Available;
+                SkirmishMatchView.RecordNativeHomePadSiteEvidence(homePadSiteEvidence);
+            }
+#endif
+            return target;
+        }
         private AriaTouchTarget ObserveHomePadSite(int index)
         {
-            if (watchSkirmish == null || watchMap == null || Camera.main == null) return default;
+#if UNITY_EDITOR
+            if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+                homePadSiteEvidence=new SkirmishMatchView.NativeHomePadSiteEvidence {collected=true,
+                    index=index,frame=Time.frameCount,uiHitCount=-1,
+                    viewIdentity=watchSkirmish!=null?watchSkirmish.GetEntityId().GetHashCode():0};
+#endif
+            if (watchSkirmish == null || watchMap == null || Camera.main == null) return HomePadSiteResult("MissingViewMapCamera");
             Vector3 home = watchSkirmish.PlayerBaseObjectivePosition;
             Vector3 enemy = watchSkirmish.EnemyBaseObjectivePosition;
+#if UNITY_EDITOR
+            if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+            {homePadSiteEvidence.homeKnown=true;homePadSiteEvidence.home=home;homePadSiteEvidence.enemy=enemy;}
+#endif
             Vector3 forward = enemy - home;
             forward.y = 0;
-            if (forward.sqrMagnitude < 1) return default;
+            if (forward.sqrMagnitude < 1) return HomePadSiteResult("DegenerateHomeEnemyDirection");
             forward.Normalize();
             Vector3 side = Vector3.Cross(Vector3.up, forward);
             // The pad footprint and landing approach need a broad clear area. These
@@ -333,17 +357,45 @@ namespace Game.UI.Runtime
             const float enemyBaseClearance = 75f;
             Vector3 site = home + forward * (index / 2 == 0 ? 18f : 12f) -
                 side * (index % 2 == 0 ? 34f : 42f);
-            if ((site - enemy).sqrMagnitude < enemyBaseClearance * enemyBaseClearance) return default;
+#if UNITY_EDITOR
+            if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+            {homePadSiteEvidence.siteKnown=true;homePadSiteEvidence.site=site;}
+#endif
+            float enemyDistanceSquared=(site-enemy).sqrMagnitude;
+            if(enemyDistanceSquared<enemyBaseClearance*enemyBaseClearance)
+            {
+#if UNITY_EDITOR
+                if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+                {homePadSiteEvidence.rejectedDistanceSquared=enemyDistanceSquared;homePadSiteEvidence.requiredClearance=enemyBaseClearance;}
+#endif
+                return HomePadSiteResult("EnemyBaseClearance");
+            }
             foreach (var contact in watchMap.PresentedContacts)
             {
                 float clearance = contact.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Enemy
                     ? hostileContactClearance : footprintAndAccessClearance;
-                if ((site - contact.Model.Position).sqrMagnitude < clearance * clearance) return default;
+                float contactDistanceSquared=(site-contact.Model.Position).sqrMagnitude;
+                if(contactDistanceSquared<clearance*clearance)
+                {
+#if UNITY_EDITOR
+                    if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+                    {homePadSiteEvidence.rejectedDistanceSquared=contactDistanceSquared;homePadSiteEvidence.requiredClearance=clearance;}
+#endif
+                    return HomePadSiteResult(contact.Model.Allegiance==MatchHudMinimapMarkerAllegiance.Enemy?"PublicEnemyContactClearance":"PublicFriendlyContactClearance");
+                }
             }
             var point = Camera.main.WorldToScreenPoint(site);
             int id = -20200 - index;
-            return new AriaTouchTarget { Id = id, Position = point,
-                Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, id, true) };
+            bool inSafeArea=point.z>0 && Screen.safeArea.Contains(point);
+            var target = new AriaTouchTarget { Id = id, Position = point,
+                Available = point.z > 0 && inSafeArea && WatchTargetIsReachable(point, id, true) };
+#if UNITY_EDITOR
+            if(SkirmishMatchView.NativeCombatEvidenceEnabled)
+            {homePadSiteEvidence.screenKnown=true;homePadSiteEvidence.screen=point;homePadSiteEvidence.screenValid=inSafeArea;
+             homePadSiteEvidence.reachabilityEvaluated=point.z>0&&inSafeArea;
+             homePadSiteEvidence.uiHitCount=homePadSiteEvidence.reachabilityEvaluated&&UnityEngine.EventSystems.EventSystem.current!=null?watchHits.Count:-1;}
+#endif
+            return HomePadSiteResult(target.Available?"None":point.z<=0?"BehindCamera":!inSafeArea?"OutsideSafeArea":"ReachabilityRejected",target);
         }
         private void ResolveAssaultObservationMap(bool mapOpen)
         {

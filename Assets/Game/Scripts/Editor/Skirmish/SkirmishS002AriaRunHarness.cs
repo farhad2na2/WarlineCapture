@@ -966,7 +966,8 @@ namespace Game.Editor
                     return;
                 }
 
-                if (elapsed >= 180f && Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1")
+                if (OwnedPadBoundaryDiagnostic.TryFinish()) return;
+                if (elapsed >= 180f && !OwnedPadBoundaryDiagnostic.Active && Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1")
                 {
                     Finish(abort: false, abortReason: "diagnosticWindowComplete");
                     return;
@@ -1099,6 +1100,43 @@ namespace Game.Editor
             finally{EditorTraceTimings.Complete(traceTiming,traceTimingStart,traceTimingCompleted);}
         }
 
+        // Editor-owned diagnostic: reuse the SAME already serialized public sample.
+        private static class OwnedPadBoundaryDiagnostic
+        {
+            static readonly bool enabled=Environment.GetEnvironmentVariable("WARLINE_HOME_PAD_BOUNDARY_DIAGNOSTIC")=="1";
+            static readonly bool inputDiagnostic=Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC")=="1";
+            static object owner;
+            static InputDiagnostic latest;
+            static bool sequenceObserved;
+            internal static bool Active => enabled && productionCanary!=null;
+            internal static void Record(InputDiagnostic value,bool nativePath)
+            {
+                if(!Active||!nativePath)return;
+                if(!inputDiagnostic)throw new InvalidOperationException("Owned pad diagnostic requires existing input diagnostic completion path.");
+                if(!ReferenceEquals(owner,productionCanary))
+                {owner=productionCanary;latest=null;sequenceObserved=false;}
+                latest=value;
+                if(value.padStage!=0)sequenceObserved=true;
+            }
+            internal static bool TryTakeCapture(out InputDiagnostic sample,out string status)
+            {
+                sample=null;status=null;
+                if(!Active||!ReferenceEquals(owner,productionCanary)||latest==null||latest.frame!=Time.frameCount)return false;
+                status=sequenceObserved&&latest.pad?"PadPresent":latest.padStage==8?"SearchStopped":null;
+                if(status==null)return false;
+                sample=latest;latest=null;return true;
+            }
+            internal static bool TryFinish()
+            {
+                if(!TryTakeCapture(out var sample,out string status))return false;
+                Debug.Log("[HomePadBoundaryDiagnostic] result=Captured status="+status+
+                    " frame="+sample.frame+" padStage="+sample.padStage+" actions="+sample.actions+
+                    " elapsed="+sample.elapsed.ToString("R",CultureInfo.InvariantCulture)+" acceptance=Unmeasured");
+                Finish(abort:false,abortReason:"padBoundary:"+status);
+                return true;
+            }
+        }
+
         [Serializable]
         private sealed class InputDiagnostic
         {
@@ -1106,6 +1144,11 @@ namespace Game.Editor
             // Diagnostic-only mirrors of existing public planner/touch/receipt state.
             public float observationTime;
             public int padStage, airCycleStage, airCycleCount;
+            public Game.UI.Runtime.SkirmishMatchView.NativeHomePadSiteEvidence padSiteEvidence0, padSiteEvidence1, padSiteEvidence2, padSiteEvidence3;
+            public bool padSiteEvidenceSameFrame;
+            public int padTargetId, padActions, padSiteIndex, padFeedbackFrame;
+            public float padDeadline, padReadyAt;
+            public AriaTouchTarget padFocusPlayer, padCatalogTarget, padSite0, padSite1, padSite2, padSite3, padConfirm, padCancel;
             public byte targetPending, advanceNavigation;
             public bool airProfile;
             public float airCycleDeadline;
@@ -1172,6 +1215,23 @@ namespace Game.Editor
             var sample = new InputDiagnostic
             {
                 elapsed = elapsed,
+                padSiteEvidence0 = SkirmishMatchView.NativeHomePadSite0,
+                padSiteEvidence1 = SkirmishMatchView.NativeHomePadSite1,
+                padSiteEvidence2 = SkirmishMatchView.NativeHomePadSite2,
+                padSiteEvidence3 = SkirmishMatchView.NativeHomePadSite3,
+                padSiteEvidenceSameFrame = SkirmishMatchView.NativeHomePadSite0.collected &&
+                    SkirmishMatchView.NativeHomePadSite1.collected && SkirmishMatchView.NativeHomePadSite2.collected &&
+                    SkirmishMatchView.NativeHomePadSite3.collected && SkirmishMatchView.NativeHomePadSite0.frame == view.Frame &&
+                    SkirmishMatchView.NativeHomePadSite1.frame == view.Frame &&
+                    SkirmishMatchView.NativeHomePadSite2.frame == view.Frame &&
+                    SkirmishMatchView.NativeHomePadSite3.frame == view.Frame,
+                padTargetId = plan.PadTargetId, padActions = plan.PadAction,
+                padSiteIndex = plan.PadSiteIndex, padFeedbackFrame = plan.PadFeedbackFrame,
+                padDeadline = plan.PadDeadline, padReadyAt = plan.PadReadyAt,
+                padFocusPlayer = view.FocusPlayer, padCatalogTarget = view.AirPad,
+                padSite0 = view.PadSite0, padSite1 = view.PadSite1,
+                padSite2 = view.PadSite2, padSite3 = view.PadSite3,
+                padConfirm = view.PlacementConfirm, padCancel = view.PlacementCancel,
                 padStage = plan.PadStage, targetPending = plan.TargetPending,
                 advanceNavigation = plan.AdvanceNavigation, airProfile = view.AirProfile,
                 airCycleStage = plan.AirCycleStage, airCycleCount = plan.AirCycleCount,
@@ -1249,6 +1309,7 @@ namespace Game.Editor
             if(traceTiming!=null)traceTiming.inputSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
             OwnedDiagnosticTraceIo.Append(inputOutput, serializedInput, ownedOutputPath == null);
             if(traceTiming!=null)traceTiming.inputWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
+            OwnedPadBoundaryDiagnostic.Record(sample,ownedOutputPath==null);
         }
 
 

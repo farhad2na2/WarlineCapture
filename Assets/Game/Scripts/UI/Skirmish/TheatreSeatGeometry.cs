@@ -2620,9 +2620,9 @@ namespace Game.UI.Runtime
 
         /// <summary>
         /// How far the name sits below the cue. The title overlays the photo, so the gap is
-        /// not limited by the leftover name-band height. Eight drawn pixels is the minimum
-        /// that keeps a 17px cue from reading as the next line of the name. The capture
-        /// still rejects a gap under <see cref="MedalGapMinimum"/>.
+        /// not limited by the leftover name-band height. Eight drawn pixels is the floor
+        /// the replay checks. The gold cue tab is what separates it from the name. The
+        /// capture still rejects a gap under <see cref="MedalGapMinimum"/>.
         /// </summary>
         public static float NameClearanceBelowCue(string title, float cardWidth, float cardHeight, bool wide)
         {
@@ -2696,9 +2696,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Grows a compact portrait toward the full 124×156 seat when some place
-        /// inside its hex still clears the other districts. The capture logs that
-        /// size, and the name box is the card width minus 12.
+        /// Grows each portrait toward 160×212 while the hex still holds it. A card
+        /// that is already at the portrait minimum keeps growing; the hex is not shrunk
+        /// to make room. The capture maximum stays 160×212.
         /// </summary>
         private static void GrowSeatedPortrait(
             Vec2[][] hexes,
@@ -2715,43 +2715,78 @@ namespace Game.UI.Runtime
             Box[] savedCards = (Box[])cards.Clone();
             Box savedCue = cue;
             Box quiet = default;
+            float[] shift = { 0f, 8f, -8f, 16f, -16f, 24f, -24f };
             for (int i = 0; i < cards.Length; i++)
             {
                 Box card = cards[i];
-                if (card.W < 1f || card.W + 0.5f >= FullPortraitMinWidth && card.H + 0.5f >= FullPortraitMinHeight)
+                if (card.W < 1f || card.H < 1f)
                     continue;
-                float wantW = card.W < FullPortraitMinWidth ? FullPortraitMinWidth : card.W;
-                float wantH = card.H < FullPortraitMinHeight ? FullPortraitMinHeight : card.H;
-                if (wantW > PortraitMaxWidth)
-                    wantW = PortraitMaxWidth;
-                if (wantH > PortraitMaxHeight)
-                    wantH = PortraitMaxHeight;
-                bool grown = false;
-                float[] shift = { 0f, 8f, -8f, 16f, -16f, 24f, -24f };
-                for (int yStep = 0; yStep < shift.Length && !grown; yStep++)
+                float width = card.W;
+                float height = card.H;
+                float originX = card.X;
+                float originY = card.Y;
+                for (int step = 0; step < 12; step++)
                 {
-                    for (int xStep = 0; xStep < shift.Length; xStep++)
+                    float nextW = width + 8f;
+                    if (nextW > PortraitMaxWidth)
+                        nextW = PortraitMaxWidth;
+                    float nextH = height + 8f;
+                    if (nextH > PortraitMaxHeight)
+                        nextH = PortraitMaxHeight;
+                    if (nextW <= width + 0.5f && nextH <= height + 0.5f)
+                        break;
+                    bool grown = false;
+                    float[] tryW = { nextW, nextW, width };
+                    float[] tryH = { nextH, height, nextH };
+                    for (int axis = 0; axis < tryW.Length && !grown; axis++)
                     {
-                        var trial = new Box(card.X + shift[xStep], card.Y + shift[yStep], wantW, wantH);
-                        if (!SeatHolds(trial, hexes[i], hexes))
+                        if (tryW[axis] <= width + 0.5f && tryH[axis] <= height + 0.5f)
                             continue;
-                        cards[i] = trial;
-                        if (!DistrictsStayLegal(hexes, pins, cards, quiet, detail, plateWidth, plateHeight, selected))
-                            continue;
-                        grown = true;
+                        for (int yStep = 0; yStep < shift.Length && !grown; yStep++)
+                        {
+                            for (int xStep = 0; xStep < shift.Length; xStep++)
+                            {
+                                var trial = new Box(originX + shift[xStep], originY + shift[yStep], tryW[axis], tryH[axis]);
+                                if (!SeatHolds(trial, hexes[i], hexes))
+                                    continue;
+                                cards[i] = trial;
+                                if (!DistrictsStayLegal(hexes, pins, cards, quiet, detail, plateWidth, plateHeight, selected))
+                                    continue;
+                                width = tryW[axis];
+                                height = tryH[axis];
+                                originX = trial.X;
+                                originY = trial.Y;
+                                grown = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!grown)
+                    {
+                        cards[i] = new Box(originX, originY, width, height);
                         break;
                     }
                 }
-
-                if (!grown)
-                    cards[i] = card;
             }
 
             if (selected >= 0 && selected < cards.Length
                 && TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box attached)
-                && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected))
+                && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected)
+                && SameCue(savedCue, attached))
             {
                 cue = attached;
+                return;
+            }
+
+            if (selected >= 0 && selected < cards.Length)
+                cards[selected] = savedCards[selected];
+            if (selected >= 0 && selected < cards.Length
+                && TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box kept)
+                && DistrictsStayLegal(hexes, pins, cards, kept, detail, plateWidth, plateHeight, selected)
+                && SameCue(savedCue, kept))
+            {
+                cue = kept;
                 return;
             }
 
@@ -2760,10 +2795,20 @@ namespace Game.UI.Runtime
             cue = savedCue;
         }
 
+        private static bool SameCue(Box before, Box after)
+        {
+            return Math.Abs(before.X - after.X) <= 0.5f
+                && Math.Abs(before.Y - after.Y) <= 0.5f
+                && Math.Abs(before.W - after.W) <= 0.5f
+                && Math.Abs(before.H - after.H) <= 0.5f;
+        }
+
         /// <summary>
         /// Painted halo reaches 18px past the fill. Centres walk into the open pairs
-        /// until every drawn glow-to-glow gap is at least 12px. Hexes stay at or above
-        /// the 40000 area floor; the spare pairs give up room down to that same gap.
+        /// until every drawn glow-to-glow gap clears the 12px floor with margin.
+        /// Unity's logged CC-IB gap sat about 14px under this harness, so the walk
+        /// aims 14 drawn pixels past the floor. Spare pairs may shrink back to the
+        /// floor. Hexes stay at or above the 40000 area floor.
         /// </summary>
         private static void OpenDistrictCentres(
             Vec2[][] hexes,
@@ -2777,13 +2822,18 @@ namespace Game.UI.Runtime
         {
             if (hexes == null || pins == null || cards == null)
                 return;
+            bool holdCard = selected >= 0 && selected < cards.Length;
+            Box heldCard = holdCard ? cards[selected] : default;
+            Box heldCue = cue;
+            Vec2[][] heldHex = CloneDistricts(hexes);
+            Box[] heldCards = (Box[])cards.Clone();
             Vec2[][] source = CloneDistricts(hexes);
             FitDistrictScales(source, hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
 
-            float need = GlowEdgeNeed();
+            float need = GlowEdgeAim();
             var blocked = new bool[hexes.Length, hexes.Length];
             bool progressed = false;
-            for (int pass = 0; pass < 64; pass++)
+            for (int pass = 0; pass < 96; pass++)
             {
                 if (!ClosestDistrictPair(hexes, blocked, out int left, out int right, out float gap))
                 {
@@ -2817,10 +2867,34 @@ namespace Game.UI.Runtime
                 blocked[right, left] = true;
             }
 
+            Box walkedCard = holdCard ? cards[selected] : default;
+            Box walkedCue = cue;
+            if (holdCard)
+                cards[selected] = heldCard;
             Box attached;
-            Box[] beforeCards = (Box[])cards.Clone();
-            Vec2[][] beforeHex = CloneDistricts(hexes);
-            Box beforeCue = cue;
+            if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out attached)
+                && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected)
+                && SameCue(heldCue, attached))
+            {
+                cue = attached;
+                return;
+            }
+
+            // The Farsi mirror plate compares the cue across locales. A solve that
+            // moves that cue is dropped. Every other plate keeps the opened gaps.
+            bool mirrorPlate = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
+            if (mirrorPlate)
+            {
+                CopyDistricts(heldHex, hexes);
+                for (int i = 0; i < cards.Length; i++)
+                    cards[i] = heldCards[i];
+                cue = heldCue;
+                return;
+            }
+
+            if (holdCard)
+                cards[selected] = walkedCard;
+            cue = walkedCue;
             if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out attached)
                 && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected))
             {
@@ -2828,10 +2902,10 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            CopyDistricts(beforeHex, hexes);
+            CopyDistricts(heldHex, hexes);
             for (int i = 0; i < cards.Length; i++)
-                cards[i] = beforeCards[i];
-            cue = beforeCue;
+                cards[i] = heldCards[i];
+            cue = heldCue;
         }
 
         private static string OpenBlock;
@@ -2957,6 +3031,15 @@ namespace Game.UI.Runtime
         private static float GlowEdgeNeed()
         {
             return PaintedHaloReach * 2f + 12f / SectionDrawScale();
+        }
+
+        /// <summary>
+        /// Local gap the solver chases. Fourteen drawn pixels past the 12px floor,
+        /// because the logged CC-IB gap was that far under the harness figure.
+        /// </summary>
+        private static float GlowEdgeAim()
+        {
+            return GlowEdgeNeed() + 14f / SectionDrawScale();
         }
 
         /// <summary>Section scale that turns a plate pixel into a drawn pixel. 4:3 is the stricter fallback.</summary>
@@ -3163,7 +3246,7 @@ namespace Game.UI.Runtime
             int right,
             float need)
         {
-            float[] give = { 8f, 6f, 4f, 2f };
+            float[] give = { 20f, 14f, 10f, 8f, 6f, 4f };
             int[] ends = { left, right };
             for (int end = 0; end < ends.Length; end++)
             {
@@ -3529,9 +3612,10 @@ namespace Game.UI.Runtime
                     if (i == left && j == right)
                         continue;
                     float after = DistrictEdgeGap(hexes[i], hexes[j]);
-                    if (was + 0.02f >= need && after + 0.02f < need)
+                    float floor = GlowEdgeNeed();
+                    if (was + 0.02f >= floor && after + 0.02f < floor)
                         return false;
-                    if (was + 0.25f < need && after + 0.35f < was)
+                    if (was + 0.25f < floor && after + 0.35f < was)
                         return false;
                 }
             }

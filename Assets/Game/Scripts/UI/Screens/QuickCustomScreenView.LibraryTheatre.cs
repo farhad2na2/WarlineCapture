@@ -1664,7 +1664,6 @@ namespace Game.UI.Runtime
             Color fill = DistrictMultiplyTint(color);
             polygon.Configure(local, fill);
             ApplyDistrictMultiply(root.gameObject);
-            PlaceDistrictHalo(root, local, color);
             Color neon = DistrictNeon(color, 0.08f);
             Color outer = DistrictNeon(color, 0f);
             outer.a = 0.82f;
@@ -1672,10 +1671,9 @@ namespace Game.UI.Runtime
             glow.a = 1f;
             Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
             ink.a = 1f;
-            // 4px core stays inside the 3–4.5 capture band. The soft halo and the
-            // 16px outer neon are the previous rich edge; gaps come from a smaller
-            // hex, not from thinning this paint. The outer stroke is pivot-centred,
-            // so 16px reaches 8px past the fill and the 10px mid glow sits inside it.
+            // 4px core stays inside the 3–4.5 capture band. The 16px outer neon and
+            // the 10px mid glow stay. The soft halo is painted last, on the default
+            // UI material, so it blooms over that stroke instead of hiding under it.
             const float stroke = 4f;
             const float outerThickness = 16f;
             const float midThickness = 10f;
@@ -1692,6 +1690,8 @@ namespace Game.UI.Runtime
                 cap.raycastTarget = false;
                 PlaceHexPoint(cap.rectTransform, local[i], stroke + 3f);
             }
+
+            PlaceDistrictHalo(root, local, color);
         }
 
         private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
@@ -1705,12 +1705,14 @@ namespace Game.UI.Runtime
             image.transform.SetParent(root, false);
             image.sprite = halo;
             image.type = Image.Type.Simple;
+            image.material = null;
             Color glow = DistrictNeon(color, 0.05f);
-            glow.a = 0.9f;
+            glow.a = 0.92f;
             image.color = glow;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
             image.rectTransform.localScale = Vector3.one;
+            image.rectTransform.SetAsLastSibling();
         }
 
         private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad)
@@ -1725,9 +1727,10 @@ namespace Game.UI.Runtime
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
             // Soft falloff out to 18px, inside the 22px pad the capture rect still
-            // requires. The hex itself is scaled down so this reach no longer bridges
-            // the gap between districts.
+            // requires. The first 8px stay solid so the bloom reads past the 8px
+            // the pivot-centred 16px stroke reaches; it fades to zero at 18px.
             const float reach = 18f;
+            const float shoulder = 8f;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -1738,7 +1741,9 @@ namespace Game.UI.Runtime
                 {
                     var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
                     float dist = DistanceToPolygonEdge(point, localPoints);
-                    float band = 1f - Mathf.Clamp01(dist / reach);
+                    float band = 1f;
+                    if (dist > shoulder)
+                        band = 1f - Mathf.Clamp01((dist - shoulder) / (reach - shoulder));
                     band = band * band * (3f - 2f * band);
                     byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(band * 255f), 0, 255);
                     pixels[target + x] = new Color32(255, 255, 255, alpha);
@@ -1746,6 +1751,8 @@ namespace Game.UI.Runtime
             }
 
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.filterMode = FilterMode.Bilinear;
+            texture.wrapMode = TextureWrapMode.Clamp;
             texture.SetPixels32(pixels);
             texture.Apply(false, true);
             texture.hideFlags = HideFlags.HideAndDontSave;
@@ -1970,7 +1977,7 @@ namespace Game.UI.Runtime
             plate.transform.SetParent(parent, false);
             plate.sprite = ZonePillSprite();
             plate.type = Image.Type.Sliced;
-            plate.color = new Color(0.03f, 0.05f, 0.07f, 0.92f);
+            plate.color = CueTabColor();
             plate.raycastTarget = false;
             PlaceTopLeft(plate.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
             plate.rectTransform.localScale = Vector3.one;
@@ -1981,7 +1988,7 @@ namespace Game.UI.Runtime
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.fontStyle = FontStyles.Bold;
-            cue.color = new Color(1f, 0.97f, 0.9f, 1f);
+            cue.color = CueInkColor();
             SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 16f, 26f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
@@ -1989,7 +1996,19 @@ namespace Game.UI.Runtime
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.maxVisibleLines = 2;
             cue.fontStyle = FontStyles.Bold;
-            cue.color = new Color(1f, 0.97f, 0.9f, 1f);
+            cue.color = CueInkColor();
+        }
+
+        /// <summary>Gold tab, distinct from the charcoal portrait, so the cue is not another line of the name.</summary>
+        private static Color CueTabColor()
+        {
+            return new Color(0.93f, 0.72f, 0.28f, 1f);
+        }
+
+        /// <summary>Dark ink on the gold tab. Light-on-charcoal was the same colour as the zone name.</summary>
+        private static Color CueInkColor()
+        {
+            return new Color(0.11f, 0.07f, 0.04f, 1f);
         }
 
         private void PlaceZoneCard(Transform parent, TheatreZoneSlot slot, bool fa, bool wideFrame)
@@ -2521,6 +2540,7 @@ namespace Game.UI.Runtime
             cue.fontSizeMin = size;
             cue.fontSizeMax = size;
             cue.fontSize = size;
+            cue.color = CueInkColor();
             cue.text = drawn;
             cue.maxVisibleLines = lines > 0 ? lines : 2;
             cue.characterSpacing = spacing;
@@ -2794,7 +2814,11 @@ namespace Game.UI.Runtime
         private static void SyncCuePlate(RectTransform parent, Rect spot)
         {
             if (parent != null && parent.Find("CuePlate") is RectTransform plate)
+            {
                 PlaceTopLeft(plate, spot.x, spot.y, spot.width, spot.height);
+                if (plate.TryGetComponent<Image>(out Image image))
+                    image.color = CueTabColor();
+            }
         }
 
         private static bool MarginSpotClear(RectTransform parent, Rect spot, float frameW, float frameH, Rect detail)
@@ -2997,6 +3021,34 @@ namespace Game.UI.Runtime
                     Debug.Log("[DistrictGap] " + pair + " " + F(localGap * scale));
                 }
             }
+
+            for (int i = 0; i < outlines.Count; i++)
+                LogDistrictGlow(outlines[i]);
+        }
+
+        /// <summary>
+        /// What the camera composites for the soft halo. Reach is the 18px falloff
+        /// times the section scale. Alpha is the image tint. The material is the
+        /// shader actually on the halo, not the multiply shader on the fill.
+        /// </summary>
+        private static void LogDistrictGlow(RectTransform outline)
+        {
+            if (outline == null)
+                return;
+            const float localReach = 18f;
+            Transform haloNode = outline.Find("ZoneHalo");
+            Image halo = haloNode != null ? haloNode.GetComponent<Image>() : null;
+            float scale = outline.lossyScale.x;
+            if (scale < 0.001f)
+                scale = 1f;
+            float alpha = halo != null ? halo.color.a : 0f;
+            string shader = "none";
+            if (halo != null && halo.material != null && halo.material.shader != null)
+                shader = halo.material.shader.name;
+            Debug.Log("[DistrictGlow] " + OutlineMapId(outline)
+                + " reach=" + F(localReach * scale)
+                + " alpha=" + F(alpha)
+                + " material=" + shader);
         }
 
         private static string OutlineMapId(RectTransform outline)

@@ -2696,6 +2696,164 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// The selected Industrial Basin card sits against its pin, so it cannot grow
+        /// toward that pin, and the cue stroke is already touching the hex shoulders.
+        /// Move those shoulders toward the far side of the same bounding box, and only
+        /// keep a move that lets the card grow. Aspect stays put. A glow gap that
+        /// already clears 12px is not allowed to fall under it.
+        /// </summary>
+        private static bool WidenSelectedThroat(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            const int basin = 3;
+            if (selected != basin || hexes == null || pins == null || cards == null)
+                return false;
+            if (hexes.Length <= basin || pins.Length <= basin || cards.Length <= basin)
+                return false;
+            Vec2[] shape = hexes[basin];
+            if (shape == null || shape.Length < 3 || cards[basin].W + 0.5f >= PortraitMaxWidth)
+                return false;
+            var savedShape = new Vec2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+                savedShape[i] = shape[i];
+            Box savedCard = cards[basin];
+            Box savedCue = cue;
+            float[] before = PairGapList(hexes);
+            bool pinOnRight = pins[basin].Center.X >= savedCard.Center.X;
+            float[] amounts = { 0f, 16f, 32f, 48f, 64f };
+            Box card = savedCard;
+            Vec2[] good = null;
+            for (int step = 0; step < 6; step++)
+            {
+                float nextW = card.W + 8f;
+                if (nextW > PortraitMaxWidth)
+                    nextW = PortraitMaxWidth;
+                if (nextW <= card.W + 0.5f)
+                    break;
+                float dx = pinOnRight ? card.W - nextW : 0f;
+                var grown = new Box(card.X + dx, card.Y, nextW, card.H);
+                bool placed = false;
+                for (int flare = 0; flare < amounts.Length && !placed; flare++)
+                {
+                    for (int i = 0; i < shape.Length; i++)
+                        shape[i] = savedShape[i];
+                    if (amounts[flare] > 0f)
+                        FlareFarShoulders(shape, pins[basin], card, amounts[flare]);
+                    if (amounts[flare] > 0f && !OtherGapsHold(hexes, before, -1, -1, GlowEdgeNeed()))
+                        break;
+                    if (!SeatHolds(grown, shape, hexes))
+                        continue;
+                    cards[basin] = grown;
+                    if (!SeatedCue(grown, hexes, pins, cards, detail, plateWidth, plateHeight, basin, out Box tab))
+                    {
+                        cards[basin] = card;
+                        continue;
+                    }
+
+                    cue = tab;
+                    card = cards[basin];
+                    if (good == null)
+                        good = new Vec2[shape.Length];
+                    for (int i = 0; i < shape.Length; i++)
+                        good[i] = shape[i];
+                    placed = true;
+                }
+
+                if (!placed)
+                    break;
+            }
+
+            if (cards[basin].W <= savedCard.W + 0.5f)
+            {
+                for (int i = 0; i < shape.Length; i++)
+                    shape[i] = savedShape[i];
+                cards[basin] = savedCard;
+                cue = savedCue;
+                return false;
+            }
+
+            if (good != null)
+            {
+                for (int i = 0; i < shape.Length; i++)
+                    shape[i] = good[i];
+            }
+
+            return true;
+        }
+
+        /// <summary>A flush top tab the district stroke still clears. Taller tabs win.</summary>
+        private static bool SeatedCue(
+            Box card,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            out Box cue)
+        {
+            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            for (int i = 0; i < heights.Length; i++)
+            {
+                var tab = new Box(card.X, card.Y - heights[i], card.W, heights[i]);
+                if (!DistrictsStayLegal(hexes, pins, cards, tab, detail, plateWidth, plateHeight, selected))
+                    continue;
+                cue = tab;
+                return true;
+            }
+
+            cue = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Pulls the far-side flats toward the bounding-box edge. The tip that already
+        /// defines that edge stays where it is, so the measured aspect does not change.
+        /// </summary>
+        private static void FlareFarShoulders(Vec2[] shape, Box pin, Box card, float amount)
+        {
+            if (shape == null || shape.Length < 3 || amount <= 0f)
+                return;
+            float minX = shape[0].X;
+            float maxX = shape[0].X;
+            for (int i = 1; i < shape.Length; i++)
+            {
+                minX = Math.Min(minX, shape[i].X);
+                maxX = Math.Max(maxX, shape[i].X);
+            }
+
+            bool pinOnRight = pin.Center.X >= card.Center.X;
+            float limit = pinOnRight ? minX + 4f : maxX - 4f;
+            float mid = (minX + maxX) * 0.5f;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                float x = shape[i].X;
+                if (pinOnRight)
+                {
+                    if (x <= minX + 1f || x >= mid)
+                        continue;
+                    x = Math.Max(limit, x - amount);
+                }
+                else
+                {
+                    if (x >= maxX - 1f || x <= mid)
+                        continue;
+                    x = Math.Min(limit, x + amount);
+                }
+
+                shape[i] = new Vec2(x, shape[i].Y);
+            }
+        }
+
+        /// <summary>
         /// Grows each portrait toward 160×212 while the hex still holds it. A card
         /// that is already at the portrait minimum keeps growing; the hex is not shrunk
         /// to make room. The capture maximum stays 160×212.
@@ -2712,6 +2870,7 @@ namespace Game.UI.Runtime
         {
             if (hexes == null || cards == null)
                 return;
+            WidenSelectedThroat(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected);
             Box[] savedCards = (Box[])cards.Clone();
             Box savedCue = cue;
             Box quiet = default;
@@ -2780,13 +2939,31 @@ namespace Game.UI.Runtime
                 }
             }
 
+            bool mirrorPlate = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
             if (selected >= 0 && selected < cards.Length
                 && TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box attached)
                 && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected)
-                && SameCue(savedCue, attached))
+                && (SameCue(savedCue, attached) || !mirrorPlate))
             {
                 cue = attached;
                 return;
+            }
+
+            // A taller selected card can lose its cue. Keep the extra width at the
+            // height the cue already cleared, seated on the same bottom edge.
+            if (selected >= 0 && selected < cards.Length
+                && cards[selected].W > savedCards[selected].W + 0.5f)
+            {
+                Box grown = cards[selected];
+                Box home = savedCards[selected];
+                cards[selected] = new Box(grown.X, grown.YMax - home.H, grown.W, home.H);
+                if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box wideCue)
+                    && DistrictsStayLegal(hexes, pins, cards, wideCue, detail, plateWidth, plateHeight, selected)
+                    && (SameCue(savedCue, wideCue) || !mirrorPlate))
+                {
+                    cue = wideCue;
+                    return;
+                }
             }
 
             if (selected >= 0 && selected < cards.Length)
@@ -2800,6 +2977,10 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            cue = savedCue;
+            if (DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                return;
+
             for (int i = 0; i < cards.Length; i++)
                 cards[i] = savedCards[i];
             cue = savedCue;
@@ -2811,6 +2992,322 @@ namespace Game.UI.Runtime
                 && Math.Abs(before.Y - after.Y) <= 0.5f
                 && Math.Abs(before.W - after.W) <= 0.5f
                 && Math.Abs(before.H - after.H) <= 0.5f;
+        }
+
+        /// <summary>
+        /// Opens the Coastal City / Industrial Basin pair when the walk left it under
+        /// the 12px drawn floor. A handful of legal tries, and only while that pair is
+        /// short, so a plate that already holds the gap does not pay for the search.
+        /// Unity logs the plate gap at scale 1; <see cref="GlowEdgeNeed"/> is that floor.
+        /// </summary>
+        private static void OpenCityBasinGap(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            const int cc = 1;
+            const int ib = 3;
+            if (hexes == null || pins == null || cards == null || hexes.Length <= ib)
+                return;
+            float need = GlowEdgeNeed();
+            if (DistrictEdgeGap(hexes[cc], hexes[ib]) + 0.05f >= need)
+                return;
+            Vec2[][] savedHex = CloneDistricts(hexes);
+            Box[] savedCards = (Box[])cards.Clone();
+            Box savedCue = cue;
+            if (TryDropBasin(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, savedHex, savedCards, savedCue, need)
+                || TryPullCityEdge(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, savedHex, savedCards, savedCue, need)
+                || TryFlareCityTab(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, savedHex, savedCards, savedCue, need)
+                || TryRebuildBasin(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, savedCards, savedCue, need))
+            {
+                bool mirror = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
+                if (mirror && !SameCue(savedCue, cue))
+                    RestoreBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
+                return;
+            }
+
+            RestoreBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
+        }
+
+        private static void RestoreBasin(
+            Vec2[][] savedHex,
+            Vec2[][] hexes,
+            Box[] savedCards,
+            Box[] cards,
+            Box savedCue,
+            ref Box cue)
+        {
+            CopyDistricts(savedHex, hexes);
+            for (int i = 0; i < cards.Length; i++)
+                cards[i] = savedCards[i];
+            cue = savedCue;
+        }
+
+        private static void ResetBasin(
+            Vec2[][] savedHex,
+            Vec2[][] hexes,
+            Box[] savedCards,
+            Box[] cards,
+            Box savedCue,
+            ref Box cue)
+        {
+            RestoreBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
+        }
+
+        private static bool BasinAccepted(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            float need)
+        {
+            if (DistrictEdgeGap(hexes[1], hexes[3]) + 0.05f < need)
+                return false;
+            return DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
+        }
+
+        /// <summary>Slides Industrial Basin down. The shape stays, so aspect and the cue stroke stay.</summary>
+        private static bool TryDropBasin(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            Vec2[][] savedHex,
+            Box[] savedCards,
+            Box savedCue,
+            float need)
+        {
+            for (int step = 2; step <= 16; step += 2)
+            {
+                ResetBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
+                ShiftDistrict(hexes[3], cards, ref cue, 3, selected, 0f, step);
+                if (BasinAccepted(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, need))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>Pulls Coastal City's facing edge up. The card stays put.</summary>
+        private static bool TryPullCityEdge(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            Vec2[][] savedHex,
+            Box[] savedCards,
+            Box savedCue,
+            float need)
+        {
+            for (int step = 12; step <= 18; step += 2)
+            {
+                ResetBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
+                PullFacingEdge(hexes[1], hexes[3], step);
+                if (BasinAccepted(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, need))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Coastal City is selected and its card sits on the facing edge. Shorten that
+        /// card to the full-portrait floor, lift it with the cue, and flare the top
+        /// flat so the cue stroke still clears.
+        /// </summary>
+        private static bool TryFlareCityTab(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            Vec2[][] savedHex,
+            Box[] savedCards,
+            Box savedCue,
+            float need)
+        {
+            if (selected != 1 || savedCards[1].H + 0.5f < FullPortraitMinHeight)
+                return false;
+            ResetBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
+            PullFacingEdge(hexes[1], hexes[3], 14f);
+            FlareTopFlat(hexes[1], 10f);
+            Box home = savedCards[1];
+            cards[1] = new Box(home.X, home.Y - 10f, home.W, FullPortraitMinHeight);
+            if (selected == 1)
+                cue = new Box(savedCue.X, savedCue.Y - 10f, savedCue.W, savedCue.H);
+            return BasinAccepted(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, need);
+        }
+
+        /// <summary>
+        /// Rebuilds the two city hexes at the aspect rail, wide through the card, with
+        /// Industrial Basin's bottom held above Airfield Plains.
+        /// </summary>
+        private static bool TryRebuildBasin(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            Box[] savedCards,
+            Box savedCue,
+            float need)
+        {
+            if (hexes[4] == null)
+                return false;
+            float left = 24f;
+            float right = plateWidth - 24f;
+            if (detail.W > 1f)
+            {
+                bool onLeft = detail.X + detail.W * 0.5f < plateWidth * 0.5f;
+                if (onLeft)
+                    left = Math.Max(left, detail.XMax + 23f);
+                else
+                    right = Math.Min(right, detail.XMin - 23f);
+            }
+
+            float apTop = hexes[4][0].Y;
+            for (int i = 1; i < hexes[4].Length; i++)
+                apTop = Math.Min(apTop, hexes[4][i].Y);
+            const float factor = 1.06f;
+            float ccAspect = HexAspect("CC", RatioPlateWidth, RatioPlateHeight) * factor;
+            float ibAspect = HexAspect("IB", RatioPlateWidth, RatioPlateHeight) * factor;
+            if (ccAspect < 0.2f || ibAspect < 0.2f)
+                return false;
+            Box ccBox = BasinCover(ccAspect, 23f, pins[1].Center, savedCards[1], left, right);
+            float ibHeight = (float)Math.Sqrt(41500.0 / (0.75 * ibAspect));
+            float ibTop = apTop - 8f - ibHeight;
+            Box ibBox = BasinCover(ibAspect, ibTop, pins[3].Center, savedCards[3], left, right);
+            hexes[1] = WideFlatHex(ccBox);
+            hexes[3] = WideFlatHex(ibBox);
+            cards[1] = savedCards[1];
+            cards[3] = savedCards[3];
+            cue = savedCue;
+            if (!SeatHolds(cards[1], hexes[1], hexes) || !SeatHolds(cards[3], hexes[3], hexes))
+                return false;
+            return BasinAccepted(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, need);
+        }
+
+        private static Box BasinCover(float aspect, float top, Vec2 pin, Box card, float left, float right)
+        {
+            float height = (float)Math.Sqrt(41500.0 / (0.75 * Math.Max(0.4, aspect)));
+            float width = height * aspect;
+            float needLeft = Math.Min(card.X - 14f, pin.X - 16f);
+            float needRight = Math.Max(card.XMax + 14f, pin.X + 16f);
+            float x = pin.X - width * 0.5f;
+            if (x > needLeft)
+                x = needLeft;
+            if (x + width < needRight)
+                x = needRight - width;
+            if (x < left)
+                x = left;
+            if (x + width > right)
+                x = right - width;
+            return new Box(x, top, width, height);
+        }
+
+        private static Vec2[] WideFlatHex(Box box)
+        {
+            float x0 = box.X;
+            float y0 = box.Y;
+            float x1 = box.X + box.W;
+            float y1 = box.Y + box.H;
+            float span = box.W;
+            return new[]
+            {
+                new Vec2(x0 + span * 0.08f, y0),
+                new Vec2(x0 + span * 0.92f, y0),
+                new Vec2(x1, y0 + box.H * 0.5f),
+                new Vec2(x0 + span * 0.92f, y1),
+                new Vec2(x0 + span * 0.08f, y1),
+                new Vec2(x0, y0 + box.H * 0.5f)
+            };
+        }
+
+        private static void FlareTopFlat(Vec2[] shape, float amount)
+        {
+            if (shape == null || shape.Length < 3)
+                return;
+            float minX = shape[0].X;
+            float maxX = shape[0].X;
+            float top = shape[0].Y;
+            for (int i = 1; i < shape.Length; i++)
+            {
+                minX = Math.Min(minX, shape[i].X);
+                maxX = Math.Max(maxX, shape[i].X);
+                top = Math.Min(top, shape[i].Y);
+            }
+
+            int left = -1;
+            int right = -1;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                if (shape[i].Y > top + 1.5f)
+                    continue;
+                if (left < 0 || shape[i].X <= shape[left].X)
+                    left = i;
+                if (right < 0 || shape[i].X >= shape[right].X)
+                    right = i;
+            }
+
+            if (left < 0 || right < 0)
+                return;
+
+            shape[left] = new Vec2(Math.Max(minX + 4f, shape[left].X - amount), shape[left].Y);
+            shape[right] = new Vec2(Math.Min(maxX - 4f, shape[right].X + amount), shape[right].Y);
+        }
+
+        private static void PullFacingEdge(Vec2[] own, Vec2[] other, float distance)
+        {
+            if (own == null || other == null || own.Length < 3)
+                return;
+            Vec2 from = DistrictCentroid(own);
+            Vec2 toward = DistrictCentroid(other);
+            float dx = from.X - toward.X;
+            float dy = from.Y - toward.Y;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (length < 1f)
+                return;
+            dx /= length;
+            dy /= length;
+            int edge = 0;
+            float best = float.MaxValue;
+            for (int i = 0; i < own.Length; i++)
+            {
+                int j = (i + 1) % own.Length;
+                var mid = new Vec2((own[i].X + own[j].X) * 0.5f, (own[i].Y + own[j].Y) * 0.5f);
+                float dist = DistanceToEdgeSq(mid, other);
+                if (dist >= best)
+                    continue;
+                best = dist;
+                edge = i;
+            }
+
+            int next = (edge + 1) % own.Length;
+            own[edge] = new Vec2(own[edge].X + dx * distance, own[edge].Y + dy * distance);
+            own[next] = new Vec2(own[next].X + dx * distance, own[next].Y + dy * distance);
         }
 
         /// <summary>
@@ -4184,6 +4681,7 @@ namespace Game.UI.Runtime
             if (portraitSeated && placed != null)
             {
                 OpenDistrictCentres(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
+                OpenCityBasinGap(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
                 GrowSeatedPortrait(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
             }
 

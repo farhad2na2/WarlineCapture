@@ -480,7 +480,7 @@ namespace Game.UI.Runtime
             float quarter = width / 4f;
             float boxWidth = Mathf.Max(40f, quarter - 8f);
             float boxHeight = MedalCircleSlot - MedalCircleIcon(fa);
-            float max = fa ? 22f : 18f;
+            float max = 18f; // v33: FA caption shares EN box (78 - 58 = 20 px)
             Transform titleTransform = FindDeep(transform.Find("SkirmishSetupComposition/BaseAssaultRules"), "Title");
             TMP_FontAsset latin = titleTransform != null ? titleTransform.GetComponent<TMP_Text>()?.font : null;
             var captions = new List<TMP_Text>(4);
@@ -519,7 +519,7 @@ namespace Game.UI.Runtime
         // Same 104 px row (Library.cs approved height): heading 26, slot 78 = icon + caption.
         private const float MedalCircleTop = 26f;
         private const float MedalCircleSlot = 78f;
-        private static float MedalCircleIcon(bool fa) => fa ? 50f : 58f; // FA captions need the taller line
+        private static float MedalCircleIcon(bool fa) => 58f; // v33: FA equals EN; FA caption fits a 20 px box at <=18 px
 
         private void PlaceMedalsHeading(RectTransform row, bool fa, float width)
         {

@@ -9,15 +9,27 @@ namespace Game.UI.Runtime
 {
     public sealed partial class QuickCustomScreenView
     {
+        private static string LibraryTitleCopy(string key, string fallback)
+        {
+            string localized = UiShellRuntimeGateway.Localization.Get(key, string.Empty);
+            return string.IsNullOrEmpty(localized) || localized == key ? fallback : localized;
+        }
+
+        private static string FormatLibraryTitle(string pattern, string name)
+        {
+            return pattern.Contains("{0}") ? pattern.Replace("{0}", name) : pattern + " " + name;
+        }
+
         private void PresentScreenHeading(SkirmishTheaterState theater, SkirmishBattlefieldState field, bool fa, bool battlefield)
         {
             TMP_Text screenTitle = transform.Find("SkirmishSetupComposition/ScreenTitlePanel/ScreenTitle")?.GetComponent<TMP_Text>();
             string headingMap = string.IsNullOrEmpty(field.MapId) ? theater.SelectedMapId : field.MapId;
             bool hasHeading = TryFindTheaterPin(theater, headingMap, out SkirmishTheaterPinState headingPin);
             string mapTitle = hasHeading ? MapDisplayTitle(headingPin.MapId, fa) : (fa ? "صحنه نبرد" : "THEATRE");
+            // approved-1: "SKIRMISH | THEATRE MAP"; Map/Grid: "SKIRMISH | <BATTLEFIELD NAME>" (localised keys, FA mirrored).
             string route = !battlefield
-                ? (fa ? "زد و خورد | نقشه صحنه" : "SKIRMISH | THEATRE MAP")
-                : (fa ? "زد و خورد | صحنه › " : "SKIRMISH | THEATRE › ") + mapTitle;
+                ? LibraryTitleCopy("ui.skirmish.library.title.theatre_map", fa ? "زد و خورد | نقشه صحنه" : "SKIRMISH | THEATRE MAP")
+                : FormatLibraryTitle(LibraryTitleCopy("ui.skirmish.library.title.battlefield", fa ? "زد و خورد | {0}" : "SKIRMISH | {0}"), fa ? mapTitle : mapTitle.ToUpperInvariant());
             SetCopy(screenTitle, MixedText(route, fa), fa ? 36f : 30f, fa ? 64f : 50f); // approved-1/2/3: large gold title
             if (screenTitle != null)
                 screenTitle.color = new Color(0.93f, 0.78f, 0.38f, 1f);

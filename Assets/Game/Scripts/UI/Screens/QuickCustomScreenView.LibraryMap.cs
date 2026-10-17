@@ -233,6 +233,8 @@ namespace Game.UI.Runtime
             if (pin)
                 AddSiblingShadow(rect);
             StyleBattleCard(button.transform, card.IsSelected, playable, pin);
+            if (pin)
+                AddUnitArtBadge(button.transform, card.ArmyProfile, width, fa);
             return rect;
         }
 

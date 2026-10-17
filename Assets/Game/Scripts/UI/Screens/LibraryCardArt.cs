@@ -193,6 +193,64 @@ namespace Game.UI.Runtime
             edge.effectDistance = selected ? new Vector2(4f, -4f) : new Vector2(1.5f, -1.5f);
         }
 
+        /// <summary>
+        /// v35 unit art slot, one per force type, loaded from Resources/SkirmishLibrary/UnitArt/{Ground,AirMobile,Combined}.
+        /// Today Ground/AirMobile are copies of the Synty map tank/helicopter icons; Combined has no file, so it shows
+        /// both (tank + helicopter). Drop-in swap: replace or add the PNG under that folder (same name, Sprite import),
+        /// or change UnitArtKey below; no other code changes. Force type is SkirmishBattleCardState.ArmyProfile (G/A/C).
+        /// </summary>
+        public const string UnitArtRoot = "SkirmishLibrary/UnitArt/";
+
+        public static string UnitArtKey(string armyProfile)
+        {
+            switch (armyProfile)
+            {
+                case "G": return "Ground";
+                case "A": return "AirMobile";
+                case "C": return "Combined";
+                default: return null;
+            }
+        }
+
+        private static void AddUnitArtBadge(Transform card, string armyProfile, float width, bool fa)
+        {
+            string key = UnitArtKey(armyProfile);
+            if (card == null || key == null || card.Find("UnitArt") != null)
+                return;
+            Sprite own = LoadLibraryIcon(UnitArtRoot + key);
+            Sprite[] icons = own != null
+                ? new[] { own }
+                : key == "Combined"
+                    ? new[] { LoadLibraryIcon(UnitArtRoot + "Ground"), LoadLibraryIcon(UnitArtRoot + "AirMobile") }
+                    : System.Array.Empty<Sprite>();
+            icons = System.Array.FindAll(icons, icon => icon != null);
+            if (icons.Length == 0)
+                return;
+            const float size = 34f;
+            const float gap = 2f;
+            const float pad = 4f;
+            float run = icons.Length * size + (icons.Length - 1) * gap + pad * 2f;
+            var slot = new GameObject("UnitArt", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            slot.transform.SetParent(card, false);
+            slot.raycastTarget = false;
+            slot.color = new Color(0.015f, 0.02f, 0.025f, 0.9f);
+            // Opposite corner from the scenario id badge (top-left in EN, top-right in FA).
+            PlaceTopLeft(slot.rectTransform, fa ? 4f : width - 4f - run, 4f, run, size + pad * 2f);
+            var edge = slot.gameObject.AddComponent<Outline>();
+            edge.effectColor = new Color(0.86f, 0.66f, 0.24f, 0.9f);
+            edge.effectDistance = new Vector2(1f, -1f);
+            for (int i = 0; i < icons.Length; i++)
+            {
+                var icon = new GameObject("UnitArt" + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                icon.transform.SetParent(slot.transform, false);
+                icon.sprite = icons[i];
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                icon.color = Color.white;
+                PlaceTopLeft(icon.rectTransform, pad + i * (size + gap), pad, size, size);
+            }
+        }
+
         private static void FillPinPortrait(Transform card)
         {
             Transform previewNode = card.Find("Preview");

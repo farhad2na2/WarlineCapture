@@ -709,46 +709,178 @@ namespace Game.Tests.Editor
             variant.ReviewedGeometryFingerprint=new string('b',64);Refuses();variant.ReviewedGeometryFingerprint=null;
             Assert.IsNull(variant.Areas);AssertManagedAreaFixtureCompiles(definition);Assert.AreEqual(23,controls);return controls;
         }
-        public static void RunBaManagedAreaSerializationValidation()
+        private sealed class ManagedBindingInventoryRow
         {
-            // No pre-existing inline binding asset may silently become a managed-reference asset.
-            Assert.AreEqual(0,AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig").Length,
-                "Existing binding assets require separately reviewed migration before this repair");
-            var authoredBefore=SkirmishExpansionCatalogConfig.Load();var battleBefore=SkirmishBattleCatalogConfig.Load();
-            var defaultBefore=World.DefaultGameObjectInjectionWorld;
-            string authoredPath=AssetDatabase.GetAssetPath(authoredBefore),battlePath=AssetDatabase.GetAssetPath(battleBefore);
-            string authoredHash=DraftFileHash(authoredPath),battleHash=DraftFileHash(battlePath);
-            RunBaInlineAreaSerializationCharacterization();
-            string output=Environment.GetEnvironmentVariable("WARLINE_BA_INLINE_AREAS_CHARACTERIZATION_OUTPUT");
-            var report=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(output));
-            Assert.IsTrue((bool)report["cleanupCompleted"]&&(bool)report["allStagesObserved"]);
-            var stages=(Newtonsoft.Json.Linq.JArray)report["stages"];Assert.AreEqual(11,stages.Count);
-            foreach(Newtonsoft.Json.Linq.JObject stage in stages)
+            public string Guid,Path,AssetSha,MetaSha;
+        }
+        private static void AssertManagedInventoryPath(string path)
+        {
+            string full=System.IO.Path.GetFullPath(path),assets=System.IO.Path.GetFullPath("Assets");
+            Assert.IsTrue(full.StartsWith(assets+System.IO.Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase),"Binding path must be under actual Assets");
+            string cursor=full;
+            while(true)
             {
-                string phase=(string)stage["stage"];
-                foreach(Newtonsoft.Json.Linq.JObject variant in stage["variants"])
-                    if(phase!="JsonCloneBeforeNullReset")Assert.IsTrue((bool)variant["areasIsNull"],phase);
-                foreach(Newtonsoft.Json.Linq.JObject row in stage["compiler"])
+                var flags=System.IO.File.GetAttributes(cursor);
+                Assert.IsFalse((flags&System.IO.FileAttributes.ReparsePoint)!=0,"Binding inventory refuses reparse: "+cursor);
+                if(string.Equals(cursor,assets,StringComparison.OrdinalIgnoreCase))break;
+                cursor=System.IO.Path.GetDirectoryName(cursor);Assert.IsNotNull(cursor);
+            }
+            Assert.IsFalse((System.IO.File.GetAttributes(full)&System.IO.FileAttributes.Directory)!=0);
+        }
+        private static List<ManagedBindingInventoryRow> CaptureManagedBindingInventory()
+        {
+            string[] guids=AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig");Array.Sort(guids,StringComparer.Ordinal);
+            var rows=new List<ManagedBindingInventoryRow>();var paths=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var ids=new HashSet<string>(StringComparer.Ordinal);
+            foreach(string guid in guids)
+            {
+                Assert.IsTrue(!string.IsNullOrEmpty(guid)&&ids.Add(guid),"Duplicate/empty binding GUID");
+                string path=AssetDatabase.GUIDToAssetPath(guid);
+                Assert.IsTrue(!string.IsNullOrEmpty(path)&&paths.Add(System.IO.Path.GetFullPath(path)),"Duplicate/empty binding path");
+                Assert.AreEqual(guid,AssetDatabase.AssetPathToGUID(path));
+                AssertManagedInventoryPath(path);AssertManagedInventoryPath(path+".meta");
+                var binding=AssetDatabase.LoadAssetAtPath<SkirmishMissionLogicalBindingConfig>(path);
+                Assert.NotNull(binding);Assert.IsTrue(AssetDatabase.Contains(binding));
+                Assert.AreEqual(path,AssetDatabase.GetAssetPath(binding));
+                foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+                    Assert.IsFalse(EditorUtility.IsDirty(asset),"Inventory refuses dirty existing binding asset: "+path);
+                rows.Add(new ManagedBindingInventoryRow{Guid=guid,Path=path,AssetSha=DraftFileHash(path),MetaSha=DraftFileHash(path+".meta")});
+            }
+            string[] end=AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig");Array.Sort(end,StringComparer.Ordinal);
+            CollectionAssert.AreEqual(guids,end,"Binding inventory changed during observation");
+            return rows;
+        }
+        private static void AssertManagedBindingInventoryEqual(List<ManagedBindingInventoryRow> before,List<ManagedBindingInventoryRow> after)
+        {
+            Assert.AreEqual(before.Count,after.Count,"Binding inventory membership changed");
+            for(int i=0;i<before.Count;i++)
+            {
+                Assert.AreEqual(before[i].Guid,after[i].Guid,"Binding GUID changed");
+                Assert.AreEqual(before[i].Path,after[i].Path,"Binding path changed");
+                Assert.AreEqual(before[i].AssetSha,after[i].AssetSha,"Binding bytes changed");
+                Assert.AreEqual(before[i].MetaSha,after[i].MetaSha,"Binding metadata bytes changed");
+            }
+        }
+        // Original migration proof remains zero-existing-assets only.
+        public static void RunBaManagedAreaSerializationValidation(){RunManagedAreaSerializationCore(true);}
+        // Preservation controls do not certify existing assets' migration or gameplay validity.
+        public static void RunManagedAreaRepeatableSerializationValidation(){RunManagedAreaSerializationCore(false);}
+        public static void RunManagedAreaRepeatableInventoryControls()
+        {
+            var original=CaptureManagedBindingInventory();int controls=0;
+            using var fixture=new Fixture(published:false,activateScopes:false);
+            var binding=UnityEngine.Object.Instantiate(fixture.Definition.MissionLogicalBinding);
+            string name="ManagedAreaInventory_"+Guid.NewGuid().ToString("N"),root="Assets/"+name;
+            string path=root+"/Binding.asset";bool owned=false;
+            try
+            {
+                foreach(var asset in Resources.FindObjectsOfTypeAll<ScriptableObject>())
+                    if(AssetDatabase.Contains(asset))Assert.IsFalse(EditorUtility.IsDirty(asset),"Refuse SaveAssets with unrelated dirty object");
+                Assert.IsFalse(AssetDatabase.IsValidFolder(root));AssetDatabase.CreateFolder("Assets",name);
+                owned=AssetDatabase.IsValidFolder(root);Assert.IsTrue(owned);
+                // Persistent references must not point at disposable non-persistent fixture views.
+                var view=UnityEngine.Object.Instantiate(binding.Variants[0].View);
+                AssetDatabase.CreateAsset(view,root+"/View.asset");binding.Variants[0].View=view;
+                AssetDatabase.CreateAsset(binding,path);AssetDatabase.SaveAssets();
+                var baseline=CaptureManagedBindingInventory();Assert.AreEqual(original.Count+1,baseline.Count);
+                Assert.Throws<AssertionException>(()=>RunBaManagedAreaSerializationValidation());controls++;
+                RunManagedAreaRepeatableSerializationValidation();
+                AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory());controls++;
+                byte[] raw=System.IO.File.ReadAllBytes(path);
+                try
                 {
-                    if(phase=="OriginalFactory"&&(string)row["size"]!="Standard")continue;
-                    if(phase=="JsonCloneBeforeNullReset"&&System.Linq.Enumerable.Any(stage["variants"],v=>(bool)v["areasIsNull"]==false))
-                    {Assert.IsFalse((bool)row["setupAccepted"]);continue;}
-                    Assert.IsTrue((bool)row["setupAccepted"]&&(bool)row["logicalAccepted"]&&(bool)row["compiledAreasNull"],phase);
+                    System.IO.File.AppendAllText(path,"\n");
+                    Assert.Throws<AssertionException>(()=>AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory()));controls++;
+                }
+                finally{System.IO.File.WriteAllBytes(path,raw);}
+                byte[] meta=System.IO.File.ReadAllBytes(path+".meta");
+                try
+                {
+                    System.IO.File.AppendAllText(path+".meta","\n");
+                    Assert.Throws<AssertionException>(()=>AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory()));controls++;
+                }
+                finally{System.IO.File.WriteAllBytes(path+".meta",meta);}
+                EditorUtility.SetDirty(binding);
+                Assert.Throws<AssertionException>(()=>CaptureManagedBindingInventory());controls++;
+                // This is the owned fixture only; no SaveAssets call after marking dirty.
+                EditorUtility.ClearDirty(binding);
+                var extra=UnityEngine.Object.Instantiate(binding);string extraPath=root+"/Extra.asset";
+                AssetDatabase.CreateAsset(extra,extraPath);AssetDatabase.SaveAssets();
+                Assert.Throws<AssertionException>(()=>AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory()));controls++;
+                Assert.IsTrue(AssetDatabase.DeleteAsset(extraPath));
+                AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory());
+                string moved=root+"/Moved.asset";Assert.AreEqual("",AssetDatabase.MoveAsset(path,moved));
+                Assert.Throws<AssertionException>(()=>AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory()));controls++;
+                Assert.AreEqual("",AssetDatabase.MoveAsset(moved,path));
+                AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory());
+                Assert.IsTrue(AssetDatabase.DeleteAsset(path));binding=null;
+                Assert.Throws<AssertionException>(()=>AssertManagedBindingInventoryEqual(baseline,CaptureManagedBindingInventory()));controls++;
+            }
+            finally
+            {
+                if(owned)DeleteManagedAreaFixture(root,name);
+                if(binding!=null&&!AssetDatabase.Contains(binding))UnityEngine.Object.DestroyImmediate(binding);
+                AssertManagedBindingInventoryEqual(original,CaptureManagedBindingInventory());
+            }
+            Assert.AreEqual(8,controls);
+            Debug.Log("[ManagedAreaRepeatableInventoryControls] result=Passed controls=8 existingAssetsMigrationCertified=0 sourceFitCertified=0 missionReady=0");
+        }
+
+        private static void RunManagedAreaSerializationCore(bool migration)
+        {
+            var inventory=migration?null:CaptureManagedBindingInventory();
+            try
+            {
+                // No pre-existing inline binding asset may silently become a managed-reference asset.
+                if(migration)Assert.AreEqual(0,AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig").Length,
+                    "Existing binding assets require separately reviewed migration before this repair");
+                var authoredBefore=SkirmishExpansionCatalogConfig.Load();var battleBefore=SkirmishBattleCatalogConfig.Load();
+                var defaultBefore=World.DefaultGameObjectInjectionWorld;
+                string authoredPath=AssetDatabase.GetAssetPath(authoredBefore),battlePath=AssetDatabase.GetAssetPath(battleBefore);
+                string authoredHash=DraftFileHash(authoredPath),battleHash=DraftFileHash(battlePath);
+                RunBaInlineAreaSerializationCharacterization();
+                string output=Environment.GetEnvironmentVariable("WARLINE_BA_INLINE_AREAS_CHARACTERIZATION_OUTPUT");
+                var report=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(output));
+                Assert.IsTrue((bool)report["cleanupCompleted"]&&(bool)report["allStagesObserved"]);
+                var stages=(Newtonsoft.Json.Linq.JArray)report["stages"];Assert.AreEqual(11,stages.Count);
+                foreach(Newtonsoft.Json.Linq.JObject stage in stages)
+                {
+                    string phase=(string)stage["stage"];
+                    foreach(Newtonsoft.Json.Linq.JObject variant in stage["variants"])
+                        if(phase!="JsonCloneBeforeNullReset")Assert.IsTrue((bool)variant["areasIsNull"],phase);
+                    foreach(Newtonsoft.Json.Linq.JObject row in stage["compiler"])
+                    {
+                        if(phase=="OriginalFactory"&&(string)row["size"]!="Standard")continue;
+                        if(phase=="JsonCloneBeforeNullReset"&&System.Linq.Enumerable.Any(stage["variants"],v=>(bool)v["areasIsNull"]==false))
+                        {Assert.IsFalse((bool)row["setupAccepted"]);continue;}
+                        Assert.IsTrue((bool)row["setupAccepted"]&&(bool)row["logicalAccepted"]&&(bool)row["compiledAreasNull"],phase);
+                    }
+                }
+                Assert.IsNull(DraftInvoke("ReadAll120LogicalAreas",new object[]{null}));
+                Assert.IsNull(DraftInvoke("ReadAll120LogicalAreas",Newtonsoft.Json.Linq.JValue.CreateNull()));
+                foreach(Newtonsoft.Json.Linq.JToken invalid in new Newtonsoft.Json.Linq.JToken[]{new Newtonsoft.Json.Linq.JArray(),new Newtonsoft.Json.Linq.JValue("not an area object")})
+                {
+                    var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>DraftInvoke("ReadAll120LogicalAreas",invalid));
+                    Assert.IsInstanceOf<InvalidOperationException>(failure.InnerException);
+                }
+                Assert.AreEqual(4,RunNonBaManagedAreaRoundtripControls());Assert.AreEqual(23,RunBaManagedAreaStrictRefusals());
+                if(migration)Assert.AreEqual(0,AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig").Length);
+                Assert.AreSame(authoredBefore,SkirmishExpansionCatalogConfig.Load());Assert.AreSame(battleBefore,SkirmishBattleCatalogConfig.Load());
+                Assert.AreSame(defaultBefore,World.DefaultGameObjectInjectionWorld);
+                Assert.AreEqual(authoredHash,DraftFileHash(authoredPath));Assert.AreEqual(battleHash,DraftFileHash(battlePath));
+            }
+            finally
+            {
+                if(!migration)
+                {
+                    var after=CaptureManagedBindingInventory();AssertManagedBindingInventoryEqual(inventory,after);
+                    Debug.Log("[ManagedAreaBindingInventory] preserved=1 dirty=0 before="+
+                        Newtonsoft.Json.Linq.JArray.FromObject(inventory).ToString(Newtonsoft.Json.Formatting.None)+" after="+
+                        Newtonsoft.Json.Linq.JArray.FromObject(after).ToString(Newtonsoft.Json.Formatting.None));
                 }
             }
-            Assert.IsNull(DraftInvoke("ReadAll120LogicalAreas",new object[]{null}));
-            Assert.IsNull(DraftInvoke("ReadAll120LogicalAreas",Newtonsoft.Json.Linq.JValue.CreateNull()));
-            foreach(Newtonsoft.Json.Linq.JToken invalid in new Newtonsoft.Json.Linq.JToken[]{new Newtonsoft.Json.Linq.JArray(),new Newtonsoft.Json.Linq.JValue("not an area object")})
-            {
-                var failure=Assert.Throws<System.Reflection.TargetInvocationException>(()=>DraftInvoke("ReadAll120LogicalAreas",invalid));
-                Assert.IsInstanceOf<InvalidOperationException>(failure.InnerException);
-            }
-            Assert.AreEqual(4,RunNonBaManagedAreaRoundtripControls());Assert.AreEqual(23,RunBaManagedAreaStrictRefusals());
-            Assert.AreEqual(0,AssetDatabase.FindAssets("t:SkirmishMissionLogicalBindingConfig").Length);
-            Assert.AreSame(authoredBefore,SkirmishExpansionCatalogConfig.Load());Assert.AreSame(battleBefore,SkirmishBattleCatalogConfig.Load());
-            Assert.AreSame(defaultBefore,World.DefaultGameObjectInjectionWorld);
-            Assert.AreEqual(authoredHash,DraftFileHash(authoredPath));Assert.AreEqual(battleHash,DraftFileHash(battlePath));
-            Debug.Log("[BaManagedAreaSerializationControls] result=Passed baPhases=11 nonBaRoundtrips=4 strictRefusals=23 reportReaders=4 sourceFitCertified=0 missionReady=0");
+            if(migration)Debug.Log("[BaManagedAreaSerializationControls] result=Passed baPhases=11 nonBaRoundtrips=4 strictRefusals=23 reportReaders=4 sourceFitCertified=0 missionReady=0");
+            else Debug.Log("[ManagedAreaRepeatableSerializationControls] result=Passed baPhases=11 nonBaRoundtrips=4 strictRefusals=23 reportReaders=4 existingAssetsMigrationCertified=0 sourceFitCertified=0 missionReady=0");
         }
 
         public static void RunBaManagedAreaMaterializationFocusedValidation()

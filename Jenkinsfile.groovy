@@ -1,5 +1,5 @@
 def PROJECT_NAME = 'WarlineCapture'
-def UNITY_EDITOR_VERSION = '6000.5.2f1'
+def UNITY_EDITOR_VERSION = '6000.5.8f1'
 def CUSTOM_WORKSPACE = "D:\\Projects\\Jenkins\\${PROJECT_NAME}"
 
 pipeline {

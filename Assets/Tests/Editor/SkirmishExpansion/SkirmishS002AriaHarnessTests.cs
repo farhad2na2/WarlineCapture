@@ -162,6 +162,26 @@ namespace Game.Tests.Editor
             Debug.Log("[S002IdentityAndFinishFocusedControls] result=Passed identityControls=11 finishRecoveryControls=12 nativeCleanupProved=0 fullSharedEpoch20Passed=0 missionReady=0");
         }
 
+        public static void RunInventoryApAndSharedFocusedValidation()
+        {
+            const string outputKey="WARLINE_BA_INLINE_AREAS_CHARACTERIZATION_OUTPUT";
+            string fullOutput=Environment.GetEnvironmentVariable(outputKey);
+            Assert.IsFalse(string.IsNullOrEmpty(fullOutput),"Owned characterization output required.");
+            Assert.IsTrue(Path.IsPathRooted(fullOutput),"Absolute owned characterization output required.");
+            string inventoryOutput=Path.ChangeExtension(fullOutput,"inventory.json");
+            Assert.IsFalse(File.Exists(inventoryOutput),"Fresh inventory output required.");
+            try
+            {
+                Environment.SetEnvironmentVariable(outputKey,inventoryOutput);
+                SkirmishGenericMissionDispatchTests.RunManagedAreaRepeatableInventoryControls();
+            }
+            finally { Environment.SetEnvironmentVariable(outputKey,fullOutput); }
+            SkirmishGroundSourceFitSurvey.RunApJointPreferenceBranchControls();
+            Debug.Log("[InventoryApFull35Scope] begin=1");
+            RunNextSharedEpoch20FocusedValidation();
+            Debug.Log("[InventoryApAndSharedFocusedControls] result=Passed nativeInputPending=1 coldPending=1 inventory=8 apBranch=20 fullSharedMarkers=35 missionReady=0");
+        }
+
         public static void RunNextSharedEpoch20FocusedValidation()
         {
             global::UnitCombatFocusedEditModeTests.RunConfiguredRocketeerAttackCadenceRegression();

@@ -374,7 +374,7 @@ def inspect(project,spec):
             if not(isinstance(observer,dict) and all(type(observer.get(k))is type(v) and observer.get(k)==v for k,v in expected_observer.items())):
                 observer_errors.append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"errors":observer.get("errors",["Observer receipt differs from inspected subject"]) if isinstance(observer,dict) else ["Malformed observer receipt"]})
             result["attempts"].append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"catalog_id":job["catalog_id"],
-                "run_id":run["run_id"],"session":session,"outcome":outcome,"result":"NormalCompletedUnqualified",
+                "run_id":run["run_id"],"session":session,"native_config_sha256":config,"outcome":outcome,"result":"NormalCompletedUnqualified",
                 "wins":int(outcome=="Victory"),"input_audit":contact_audit,"qualified":False})
         read.stable()
         # Credit this one facet only after EVERY declared normal attempt and all stable reads succeed.

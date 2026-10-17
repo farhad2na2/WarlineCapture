@@ -157,9 +157,12 @@ namespace Game.UI.Runtime
                     float rowWidth = _difficultyRow.rect.width > 200f ? _difficultyRow.rect.width : _difficultyRow.sizeDelta.x;
                     if (rowWidth < 200f || rowWidth > 760f)
                         rowWidth = 548f;
-                    float buttonWidth = (rowWidth - 8f) * 0.5f;
-                    const float buttonHeight = 50f;
-                    PlaceTopLeft(choiceRect, (i % 2) * (buttonWidth + 8f), (i / 2) * (buttonHeight + 6f), buttonWidth, buttonHeight);
+                    // approved-2/3: compact segmented control, one row of four, mirrored in FA.
+                    float segment = rowWidth / 4f;
+                    const float segmentHeight = 40f;
+                    int visual = fa ? 3 - i : i;
+                    PlaceTopLeft(choiceRect, visual * segment, 4f, segment - 2f, segmentHeight);
+                    StyleDifficultySegment(button, offered && difficulties[i] == selected, offered);
                 }
                 TMP_Text choice = slot.GetComponentInChildren<TMP_Text>(true);
                 if (choice != null)
@@ -211,56 +214,6 @@ namespace Game.UI.Runtime
             }
 
             TMP_FontAsset latin = title != null ? title.font : null;
-            if (_medalRow != null)
-            {
-                // One shared size for the four captions: smallest fit to a quarter of the row minus an 8 px gap,
-                // so 4:3 VETERAN/COMMANDER never touch. Width is held through the slot's LayoutElement.
-                float pitch = _medalRow.rect.width / 4f - 8f;
-                Transform s0 = _medalRow.Find("Slot0"), s1 = _medalRow.Find("Slot1");
-                if (s0 != null && s1 != null)
-                {
-                    // Real centre-to-centre spacing of the presented slots (the row rect can be wider than the slots).
-                    float spacing = Mathf.Abs(_medalRow.InverseTransformPoint(s1.position).x - _medalRow.InverseTransformPoint(s0.position).x);
-                    if (spacing > 20f)
-                        pitch = Mathf.Min(pitch, spacing - 8f);
-                }
-                pitch = Mathf.Max(40f, pitch);
-                float max = fa ? 20f : 18f;
-                var captions = new List<TMP_Text>(4);
-                float shared = max;
-                for (int i = 0; i < 4; i++)
-                {
-                    TMP_Text caption = _medalRow.Find("Slot" + i)?.Find("Caption")?.GetComponent<TMP_Text>();
-                    if (caption == null)
-                        continue;
-                    ReassertPanelLabel(caption, latin, fa, max, max);
-                    RectTransform r = caption.rectTransform;
-                    float height = fa ? 34f : Mathf.Max(22f, r.rect.height); // FitArabicLineBox caps at h/1.65
-                    LayoutElement element = r.GetComponent<LayoutElement>() ?? r.gameObject.AddComponent<LayoutElement>();
-                    element.minWidth = element.preferredWidth = pitch;
-                    element.flexibleWidth = 0f;
-                    element.minHeight = element.preferredHeight = height;
-                    r.sizeDelta = new Vector2(pitch, height);
-                    caption.fontSize = max;
-                    float natural = caption.GetPreferredValues(caption.text, 9999f, 100f).x;
-                    if (natural > pitch - 2f && natural > 1f)
-                        shared = Mathf.Min(shared, Mathf.Floor(max * (pitch - 2f) / natural));
-                    captions.Add(caption);
-                }
-
-                shared = Mathf.Max(11f, shared);
-                for (int i = 0; i < captions.Count; i++)
-                {
-                    TMP_Text t = captions[i];
-                    t.enableAutoSizing = false;
-                    t.fontSize = t.fontSizeMin = t.fontSizeMax = shared;
-                    V3LocalizedTextBindingView binding = t.GetComponent<V3LocalizedTextBindingView>();
-                    if (binding != null)
-                        binding.ConfigureFontBounds(shared, shared);
-                    t.ForceMeshUpdate();
-                }
-            }
-
             if (_difficultyRow != null)
             {
                 for (int i = 0; i < _difficultyRow.childCount; i++)
@@ -268,7 +221,7 @@ namespace Game.UI.Runtime
                     Transform slot = _difficultyRow.GetChild(i);
                     if (!slot.name.StartsWith("DifficultyChoice_", StringComparison.Ordinal))
                         continue;
-                    ReassertPanelLabel(slot.GetComponentInChildren<TMP_Text>(true), latin, fa, 20f, 26f);
+                    ReassertPanelLabel(slot.GetComponentInChildren<TMP_Text>(true), latin, fa, 14f, fa ? 20f : 18f);
                 }
             }
         }
@@ -283,6 +236,24 @@ namespace Game.UI.Runtime
             text.fontStyle = FontStyles.Bold;
             text.alignment = TextAlignmentOptions.Center;
             FitDetailLine(text, min, max);
+        }
+
+        private static void StyleDifficultySegment(Button button, bool selected, bool offered)
+        {
+            if (button == null)
+                return;
+            // approved-2 MAP/GRID toggle colours: gold fill + gold edge when selected, dark slate otherwise.
+            Color top = selected ? new Color(0.58f, 0.44f, 0.14f, 1f) : new Color(0.07f, 0.1f, 0.11f, 0.96f);
+            Color bottom = selected ? new Color(0.36f, 0.26f, 0.06f, 1f) : new Color(0.03f, 0.05f, 0.06f, 0.96f);
+            if (!offered)
+            {
+                top.a *= 0.5f;
+                bottom.a *= 0.5f;
+            }
+            TintCommand(button, top, bottom);
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+                label.color = selected ? new Color(1f, 0.96f, 0.86f, 1f) : new Color(0.82f, 0.82f, 0.78f, offered ? 1f : 0.5f);
         }
 
         private void OnLibraryDifficulty(SkirmishDifficultyId difficulty)
@@ -480,6 +451,11 @@ namespace Game.UI.Runtime
 
             PresentFlaggedTile("Time", briefing.ShowTime, fa ? "زمان" : "TIME", FormatClock(briefing.DeadlineSeconds), true);
             PresentFlaggedTile("Size", briefing.ShowSize, fa ? "اندازه" : "SIZE", LibraryText(briefing.SizeLocKey, fa), false);
+            // approved-2/3: three tiles (Objective, Army, Start). Time/Size fold into the subtitle line when present.
+            string timeCopy = briefing.ShowTime ? FormatClock(briefing.DeadlineSeconds) : string.Empty;
+            string sizeCopy = briefing.ShowSize ? LibraryText(briefing.SizeLocKey, fa) : string.Empty;
+            SetActive(_statRow.Find("Time"), false);
+            SetActive(_statRow.Find("Size"), false);
 
             string army = hasCard ? card.ArmyProfile : string.Empty;
             string start = hasCard ? card.StartProfile : string.Empty;
@@ -509,7 +485,8 @@ namespace Game.UI.Runtime
             DecorateIconTile(_statRow.Find("Objective"), FooterGlyph.None, string.IsNullOrEmpty(objectiveId) ? null : SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), fa);
             DecorateIconTile(_statRow.Find("Army"), FooterGlyph.Shield, null, fa);
             DecorateIconTile(_statRow.Find("Start"), FooterGlyph.Pin, null, fa);
-            PresentBriefingSubtitle(armyLabel, startLabel, fa);
+            string extra = string.IsNullOrEmpty(timeCopy) ? sizeCopy : string.IsNullOrEmpty(sizeCopy) ? timeCopy : timeCopy + " · " + sizeCopy;
+            PresentBriefingSubtitle(armyLabel, string.IsNullOrEmpty(extra) ? startLabel : (string.IsNullOrEmpty(startLabel) ? extra : startLabel + " · " + extra), fa);
         }
 
         private void DecorateIconTile(Transform tile, FooterGlyph glyph, string sprite, bool fa)
@@ -801,3 +778,38 @@ namespace Game.UI.Runtime
         }
     }
 }
+
+namespace Game.UI.Runtime
+{
+    /// <summary>
+    /// Holds a fixed TMP size with autosize off every frame. Late library text passes (FinishLibraryText after the
+    /// Grid refit) re-enable autosize on medal captions; this keeps the shared caption size the panel computed.
+    /// </summary>
+    [DisallowMultipleComponent]
+    public sealed class LibraryFixedTextSize : MonoBehaviour
+    {
+        public float Size;
+
+        private void LateUpdate()
+        {
+            Apply();
+        }
+
+        public void Apply()
+        {
+            var text = GetComponent<TMP_Text>();
+            if (text == null || Size <= 0f)
+                return;
+            if (text.enableAutoSizing || !Mathf.Approximately(text.fontSize, Size))
+            {
+                text.enableAutoSizing = false;
+                text.fontSize = text.fontSizeMin = text.fontSizeMax = Size;
+                text.overflowMode = TextOverflowModes.Overflow;
+                var binding = GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(Size, Size);
+            }
+        }
+    }
+}
+

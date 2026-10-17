@@ -427,7 +427,54 @@ namespace Game.UI.Runtime
             }
 
             if (LibraryLevel == SkirmishLibraryLevel.Battlefield)
+            {
                 PlaceMedalsHeading(row, fa, width);
+                FitMedalCaptions(row, fa, width);
+            }
+        }
+
+        /// <summary>
+        /// approved-2/3 medal captions: one shared size (smallest fit to quarter - 8 px gap), autosize off, held each
+        /// frame so the later text passes cannot re-autosize them. FA gets a taller box (FitArabicLineBox caps at h/1.65).
+        /// </summary>
+        private void FitMedalCaptions(RectTransform row, bool fa, float width)
+        {
+            float quarter = width / 4f;
+            float boxWidth = Mathf.Max(40f, quarter - 8f);
+            float boxHeight = fa ? 36f : 26f;
+            float max = fa ? 22f : 18f;
+            Transform titleTransform = FindDeep(transform.Find("SkirmishSetupComposition/BaseAssaultRules"), "Title");
+            TMP_FontAsset latin = titleTransform != null ? titleTransform.GetComponent<TMP_Text>()?.font : null;
+            var captions = new List<TMP_Text>(4);
+            float shared = max;
+            for (int i = 0; i < 4; i++)
+            {
+                TMP_Text caption = row.Find("Slot" + i)?.Find("Caption")?.GetComponent<TMP_Text>();
+                if (caption == null)
+                    continue;
+                PlaceTopLeft(caption.rectTransform, 4f, fa ? 40f : 44f, boxWidth, boxHeight);
+                HoldFixed(caption.rectTransform, boxWidth, boxHeight, 0f);
+                if (!fa && latin != null && !ContainsArabicScript(caption.text))
+                    caption.font = latin;
+                caption.fontStyle = FontStyles.Bold;
+                caption.alignment = TextAlignmentOptions.Center;
+                caption.textWrappingMode = TextWrappingModes.NoWrap;
+                caption.enableAutoSizing = false;
+                caption.fontSize = max;
+                float natural = caption.GetPreferredValues(caption.text, 9999f, 100f).x;
+                if (natural > boxWidth - 2f && natural > 1f)
+                    shared = Mathf.Min(shared, Mathf.Floor(max * (boxWidth - 2f) / natural));
+                captions.Add(caption);
+            }
+
+            shared = Mathf.Max(11f, shared);
+            for (int i = 0; i < captions.Count; i++)
+            {
+                LibraryFixedTextSize hold = captions[i].GetComponent<LibraryFixedTextSize>() ?? captions[i].gameObject.AddComponent<LibraryFixedTextSize>();
+                hold.Size = shared;
+                hold.Apply();
+                captions[i].ForceMeshUpdate();
+            }
         }
 
         private void PlaceMedalsHeading(RectTransform row, bool fa, float width)

@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 128
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -125,10 +125,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 302903
-  packageName: Military Combat HUD - Synty INTERFACE - GUI
-  packageVersion: 1.0.3
-  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Helicopter_01_Clean.png
-  uploadId: 782058

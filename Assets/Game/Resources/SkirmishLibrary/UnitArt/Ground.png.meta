@@ -1,12 +1,5 @@
 fileFormatVersion: 2
 guid: d987ad73241a45ae96dd51836e170303
-AssetOrigin:
-  serializedVersion: 1
-  productId: 302903
-  packageName: Military Combat HUD - Synty INTERFACE - GUI
-  packageVersion: 1.0.3
-  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Tank_01_Clean.png
-  uploadId: 782058
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -76,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -115,7 +108,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Android
-    maxTextureSize: 128
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1

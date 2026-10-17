@@ -152,7 +152,11 @@ namespace Game.UI.Runtime
             string previewKey = ScenarioPreviewKey(card.PreviewSpriteKey);
             if (string.IsNullOrEmpty(previewKey) && !string.IsNullOrEmpty(card.ScenarioId))
                 previewKey = "skirmish.preview." + card.ScenarioId;
-            if (pin)
+            if (pin && TryShowUnitArt(preview, card.ArmyProfile, 3f, 3f, width - 6f, previewHeight))
+            {
+                // approved-2: Design's painted unit art is the card's main image; the aerial preview is the fallback.
+            }
+            else if (pin)
                 ShowPinPreview(preview, previewKey, card.MapId, 3f, 3f, width - 6f, previewHeight);
             else
             {
@@ -233,8 +237,6 @@ namespace Game.UI.Runtime
             if (pin)
                 AddSiblingShadow(rect);
             StyleBattleCard(button.transform, card.IsSelected, playable, pin);
-            if (pin)
-                AddUnitArtBadge(button.transform, card.ArmyProfile, width, fa);
             return rect;
         }
 

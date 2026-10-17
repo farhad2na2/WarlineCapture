@@ -194,10 +194,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// v35 unit art slot, one per force type, loaded from Resources/SkirmishLibrary/UnitArt/{Ground,AirMobile,Combined}.
-        /// Today Ground/AirMobile are copies of the Synty map tank/helicopter icons; Combined has no file, so it shows
-        /// both (tank + helicopter). Drop-in swap: replace or add the PNG under that folder (same name, Sprite import),
-        /// or change UnitArtKey below; no other code changes. Force type is SkirmishBattleCardState.ArmyProfile (G/A/C).
+        /// v35 unit art slot, one per force type, loaded from Resources/SkirmishLibrary/UnitArt/{Ground,AirMobile,Combined}
+        /// (Design PR #67 painted card art). Drop-in swap: replace the PNG under that folder (same name, keep the meta),
+        /// or change UnitArtKey below. Force type is SkirmishBattleCardState.ArmyProfile (G/A/C).
         /// </summary>
         public const string UnitArtRoot = "SkirmishLibrary/UnitArt/";
 
@@ -212,6 +211,30 @@ namespace Game.UI.Runtime
             }
         }
 
+        /// <summary>
+        /// Map card main image: UnitArt/{Ground,AirMobile,Combined} (Design PR #67 painted 1152x720) at full contrast,
+        /// cover-fitted so the aspect is preserved (no stretching). Returns false when the file is missing so the caller
+        /// falls back to the scenario preview.
+        /// </summary>
+        private static bool TryShowUnitArt(RawImage preview, string armyProfile, float x, float y, float frameWidth, float frameHeight)
+        {
+            string key = UnitArtKey(armyProfile);
+            if (preview == null || key == null)
+                return false;
+            Sprite sprite = LoadLibraryIcon(UnitArtRoot + key);
+            Texture2D texture = sprite != null ? sprite.texture : Resources.Load<Texture2D>(UnitArtRoot + key);
+            if (texture == null)
+                return false;
+            preview.raycastTarget = false;
+            preview.texture = texture;
+            preview.color = Color.white;
+            preview.enabled = true;
+            PlaceTopLeft(preview.rectTransform, x, y, frameWidth, frameHeight);
+            CoverCrop(preview, frameWidth, frameHeight);
+            return true;
+        }
+
+        /// <summary>Retired in v35 (map cards now use the unit art as the main image); kept for a possible corner-badge variant.</summary>
         private static void AddUnitArtBadge(Transform card, string armyProfile, float width, bool fa)
         {
             string key = UnitArtKey(armyProfile);

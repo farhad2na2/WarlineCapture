@@ -58,13 +58,13 @@ namespace Game.UI.Runtime
                     SkirmishBattleLibraryArt.ProfileCopy(starts[startIndex], fa, out string startLabel);
                     float labelX = fa ? columnX : columnX + 22f;
                     float labelWidth = Mathf.Max(48f, cardWidth - (fa ? 24f : 26f));
-                    var header = CreateLabel(_libraryGrid, "Column_" + column, fa ? 20f : 16f);
+                    var header = CreateLabel(_libraryGrid, "Column_" + column, 22f);
                     PlaceTopLeft(header.rectTransform, labelX, headerTop, labelWidth, headerHeight);
                     header.alignment = TextAlignmentOptions.Center;
                     header.isRightToLeftText = fa;
                     header.color = new Color(0.96f, 0.93f, 0.82f, 1f);
                     string headerCopy = fa || roomy ? armyLabel + " · " + startLabel : armyLabel + "\n" + startLabel;
-                    SetCopy(header, headerCopy, roomy ? 16f : fa ? 16f : 14f, roomy ? 24f : fa ? 20f : 17f);
+                    SetCopy(header, headerCopy, roomy ? 18f : 16f, roomy ? 26f : 22f);
                     ShowColumnHeader(header, fa);
                 }
             }
@@ -92,6 +92,7 @@ namespace Game.UI.Runtime
                         break;
                     float x = LibraryLabelColumnWidth() + column * (cardWidth + LibraryGridCardGap);
                     SkirmishBattleCardState card = field.GridCards[index];
+                    // Card bodies come only from P2's LibraryCardArt path (CreateBattleCard / CreateEmptyGridCell).
                     RectTransform widget = IsEmptyCard(card)
                         ? CreateEmptyGridCell(zone, objective.ObjectiveId, armies[column / 2], starts[column % 2], card.PreviewSpriteKey, card.MapId, slots, cardWidth)
                         : CreateBattleCard(zone, card, false, cardWidth, cardHeight, slots);
@@ -118,26 +119,35 @@ namespace Game.UI.Runtime
         {
             var rowIcon = new GameObject("RowIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             rowIcon.transform.SetParent(parent, false);
-            PlaceTopLeft(rowIcon.rectTransform, 2f, y + 4f, 24f, 24f);
+            // Icon tile (approved-3): a medallion plate behind the objective icon.
+            var rowTile = new GameObject("RowTile", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            rowTile.transform.SetParent(parent, false);
+            float tileSize = Mathf.Min(LibraryGridOriginX - 8f, 50f);
+            PlaceTopLeft(rowTile.rectTransform, (LibraryGridOriginX - 4f - tileSize) * 0.5f, y + 2f, tileSize, tileSize);
+            rowTile.sprite = ZoneMedallionSprite();
+            rowTile.preserveAspect = true;
+            rowTile.raycastTarget = false;
+            rowIcon.transform.SetAsLastSibling();
+            PlaceTopLeft(rowIcon.rectTransform, (LibraryGridOriginX - 4f - 30f) * 0.5f, y + 2f + (tileSize - 30f) * 0.5f, 30f, 30f);
             ShowIcon(rowIcon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
             SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string rowName);
             var rowLabel = CreateLabel(parent, "Row_" + objective.ObjectiveId, 13f);
-            PlaceTopLeft(rowLabel.rectTransform, 1f, y + 26f, LibraryLabelColumnWidth() - 6f, 28f);
+            PlaceTopLeft(rowLabel.rectTransform, 1f, y + 54f, LibraryLabelColumnWidth() - 6f, 24f);
             rowLabel.alignment = TextAlignmentOptions.Center;
             rowLabel.textWrappingMode = TextWrappingModes.Normal;
             rowLabel.overflowMode = TextOverflowModes.Ellipsis;
-            SetCopy(rowLabel, rowName, 13f, 16f);
+            SetCopy(rowLabel, rowName, 15f, 20f);
             var rowCount = CreateLabel(parent, "RowCount_" + objective.ObjectiveId, 13f);
             bool pending = objective.PublishedCount <= 0;
             if (pending)
             {
-                PlaceTopLeft(rowCount.rectTransform, 1f, y + 50f, LibraryLabelColumnWidth() - 4f, 42f);
+                PlaceTopLeft(rowCount.rectTransform, 1f, y + 76f, LibraryLabelColumnWidth() - 4f, 40f);
                 rowCount.textWrappingMode = TextWrappingModes.Normal;
                 rowCount.maxVisibleLines = 2;
             }
             else
             {
-                PlaceTopLeft(rowCount.rectTransform, 2f, y + 56f, LibraryLabelColumnWidth() - 8f, 16f);
+                PlaceTopLeft(rowCount.rectTransform, 2f, y + 78f, LibraryLabelColumnWidth() - 8f, 22f);
                 rowCount.textWrappingMode = TextWrappingModes.NoWrap;
                 rowCount.maxVisibleLines = 1;
             }
@@ -355,6 +365,23 @@ namespace Game.UI.Runtime
             }
         }
 
+        private RectTransform CreateGridCellWidget(Transform parent, SkirmishBattleCardState card, string objectiveId, string army, string start,
+            float width, float height, bool fa)
+        {
+            if (IsEmptyCard(card))
+            {
+                card.ObjectiveId = objectiveId;
+                card.ArmyProfile = army;
+                card.StartProfile = start;
+            }
+
+            SkirmishWidgetContext context = LibraryWidgetContext(card);
+            ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
+            string pendingText = fa ? "پیش‌نمایش در راه" : "Preview pending";
+            return SkirmishBattleCardWidget.BuildGridCell(parent, card, new Vector2(width, height), context, OnLibraryCard,
+                !IsEmptyCard(card) && dimmed, pendingText);
+        }
+
         private void SelectGridBattlefield(string mapId)
         {
             EnsureLibraryViewModel();
@@ -405,8 +432,31 @@ namespace Game.UI.Runtime
             PlaceTopLeft(subtitle.rectTransform, 4f, textY + titleHeight, width - 8f, subtitleHeight);
             ShowCardSubtitle(subtitle, detail, fa, false);
             AddMedalIcons(rect, SkirmishMedalMask.None, 4f, textY + titleHeight + subtitleHeight + LibraryGridMedalGap, medalSize);
+            AddGridCornerMedal(rect, SkirmishMedalMask.None, width, previewHeight, fa);
             StyleBattleCard(rect, false, false, false);
             return rect;
+        }
+
+        /// <summary>approved-3: one medal circle in the preview's bottom corner (best earned tier, else a dim Recruit).
+        /// Drawn inside the preview rect so #66 card/plate/seat geometry is unchanged.</summary>
+        private void AddGridCornerMedal(Transform parent, SkirmishMedalMask medals, float width, float previewHeight, bool fa)
+        {
+            SkirmishDifficultyId[] order = { SkirmishDifficultyId.Commander, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Recruit };
+            SkirmishDifficultyId shown = SkirmishDifficultyId.Recruit;
+            bool earned = false;
+            for (int i = 0; i < order.Length; i++)
+            {
+                if (MedalEarned(medals, order[i])) { shown = order[i]; earned = true; break; }
+            }
+            // medal sprite is ~86% of its rect: 30 px rect draws ~26 px (approved-3). Capped by preview height and cell width.
+            float size = Mathf.Min(30f, previewHeight * 0.56f, width * 0.2f);
+            if (size < 16f)
+                return;
+            float x = fa ? 4f : width - size - 4f;
+            var image = new GameObject("CornerMedal", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            image.transform.SetParent(parent, false);
+            PlaceTopLeft(image.rectTransform, x, previewHeight - size - 2f, size, size);
+            PaintDifficultyMedal(image, shown, earned);
         }
 
         private void MarkPendingPreview(Transform card, bool fa, bool dimmed, float width, float previewHeight)
@@ -517,6 +567,24 @@ namespace Game.UI.Runtime
             }
 
             return false;
+        }
+
+        private bool IsGridLibrary() =>
+            LibraryLevel == SkirmishLibraryLevel.Battlefield && LibraryLayout == SkirmishBattlefieldLayout.Grid;
+
+        /// <summary>On the Grid the search shares the top row with the Map/Grid toggle, so the zone tabs own the band below it.</summary>
+        private float GridTopOffset() => IsGridLibrary() ? 60f : 112f;
+
+        private bool PlaceGridSearch(RectTransform search, float searchWidth)
+        {
+            if (!IsGridLibrary() || search == null)
+                return false;
+            PlaceTopLeft(search, 12f, 8f, searchWidth, 44f);
+            if (mapNameText != null)
+                mapNameText.gameObject.SetActive(false);
+            if (_libraryGrid != null)
+                _libraryGrid.offsetMax = new Vector2(_libraryGrid.offsetMax.x, -GridTopOffset());
+            return true;
         }
     }
 }

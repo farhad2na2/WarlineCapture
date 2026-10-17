@@ -1774,6 +1774,148 @@ namespace Game.UI.Runtime
             return cardHeight - 6f - art - 4f - ring - 4f - 6f;
         }
 
+        /// <summary>
+        /// Grows each portrait into the hex it already occupies. The painted glow, not a
+        /// smaller hex, is what leaves dark map between districts.
+        /// </summary>
+        private static void SettlePortraitChrome(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (hexes == null || pins == null || cards == null)
+                return;
+            EnlargePortraitCards(hexes, pins, cards, detail, plateWidth, plateHeight, selected);
+        }
+
+        private static void EnlargePortraitCards(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (cards == null)
+                return;
+            float[] widths = { 160f, 152f, 144f, 136f, 128f };
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (cards[i].W < FullPortraitMinWidth - 0.5f || hexes == null || i >= hexes.Length)
+                    continue;
+                Box best = cards[i];
+                for (int s = 0; s < widths.Length; s++)
+                {
+                    float width = widths[s];
+                    if (width <= cards[i].W + 0.5f || width > PortraitMaxWidth + PortraitMaxSlop)
+                        continue;
+                    float tall = width * FullPortraitMinHeight / FullPortraitMinWidth;
+                    if (tall > PortraitMaxHeight)
+                        tall = PortraitMaxHeight;
+                    float mid = (tall + cards[i].H) * 0.5f;
+                    float[] heights = { tall, mid, cards[i].H };
+                    for (int band = 0; band < heights.Length; band++)
+                    {
+                        float height = heights[band];
+                        if (height > PortraitMaxHeight + PortraitMaxSlop || height < cards[i].H - 0.5f)
+                            continue;
+                        if (height <= best.H + 0.5f && width <= best.W + 0.5f)
+                            continue;
+                        if (TryPlaceLargerPortrait(pins[i], cards, hexes, detail, plateWidth, plateHeight, selected, i, width, height, out Box grown))
+                        {
+                            best = grown;
+                            break;
+                        }
+                    }
+
+                    if (best.W > cards[i].W + 0.5f)
+                        break;
+                }
+
+                cards[i] = best;
+            }
+        }
+
+        private static bool PortraitCardSits(
+            Box pin,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int index,
+            Box trial)
+        {
+            if (trial.W < 1f || hexes == null || index < 0 || index >= hexes.Length)
+                return false;
+            if (trial.X < Edge - 0.1f || trial.Y < Edge - 0.1f)
+                return false;
+            if (trial.XMax > plateWidth - Edge + 0.1f || trial.YMax > plateHeight - Edge + 0.1f)
+                return false;
+            if (!Clears(trial, detail) || !OnPlate(trial, plateWidth, plateHeight))
+                return false;
+            if (Separation(trial, pin) < PinGap || Leader(pin, trial) < LeaderMin)
+                return false;
+            var tab = new Box(trial.X, trial.Y - CueTabRoom, trial.W, CueTabRoom);
+            if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
+                return false;
+            for (int j = 0; j < cards.Length; j++)
+            {
+                if (j == index || cards[j].W < 1f)
+                    continue;
+                if (Separation(trial, cards[j]) < CardGap)
+                    return false;
+            }
+
+            if (!SeatHolds(trial, hexes[index], hexes))
+                return false;
+            if (index == selected && HexEdgeHits(hexes[index], InflateBox(tab, CueHexStroke)))
+                return false;
+            return true;
+        }
+
+        private static bool TryPlaceLargerPortrait(
+            Box pin,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            int index,
+            float width,
+            float height,
+            out Box grown)
+        {
+            grown = default;
+            Box card = cards[index];
+            bool pinOnLeft = pin.Center.X <= card.Center.X;
+            float beside = pinOnLeft ? pin.XMax + PinGap + 0.5f : pin.X - PinGap - 0.5f - width;
+            for (float y = card.Y - 16f; y <= card.Y + 64.1f; y += 8f)
+            {
+                for (float x = card.X - 48f; x <= card.X + 80.1f; x += 8f)
+                {
+                    float[] xs = { x, beside };
+                    for (int sample = 0; sample < xs.Length; sample++)
+                    {
+                    var trial = new Box(xs[sample], y, width, height);
+                    if (!PortraitCardSits(pin, cards, hexes, detail, plateWidth, plateHeight, selected, index, trial))
+                        continue;
+                    grown = trial;
+                    return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private static void GrowCardsForNames(
             Box[] cards,
             Vec2[][] hexes,
@@ -2495,10 +2637,12 @@ namespace Game.UI.Runtime
             Box packDetail = default;
             Box[] placed = null;
             Box seatedCue = default;
-            if (PortraitCards != null)
+            bool portraitSeated = PortraitCards != null;
+            if (portraitSeated)
             {
                 placed = PortraitCards;
                 PortraitCards = null;
+                SettlePortraitChrome(hexes, pins, placed, detail, plateWidth, plateHeight, selected);
             }
             else
                 TryPack(frameWidth, frameHeight, hexes, pins, packDetail, selected, out placed, out seatedCue);
@@ -5037,12 +5181,15 @@ namespace Game.UI.Runtime
             Box detail,
             int selected,
             Box card,
+            float shortest,
             out Box cue)
         {
             cue = default;
             float[] heights = { 52f, 48f, 44f, 40f, 36f };
             for (int h = 0; h < heights.Length; h++)
             {
+                if (heights[h] + 0.1f < shortest)
+                    continue;
                 if (!TrySeatTabHeight(
                     heights[h], card, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out cue))
                     continue;
@@ -5162,14 +5309,47 @@ namespace Game.UI.Runtime
             Box card = cards[selected];
             if (card.W < 48f || card.H < 48f)
                 return false;
-            if (TrySeatAlignedTop(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+            // Two 16px Farsi lines need 48–52px. A 36px tab that already fits must not win
+            // before the card has been dropped to make the taller tab legal.
+            if (TrySeatAlignedTop(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, 48f, out cue))
                 return true;
+            if (TryDropCardForCue(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, 48f, out cue))
+                return true;
+            if (TrySeatAlignedTop(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, 36f, out cue))
+                return true;
+            if (TryDropCardForCue(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, 36f, out cue))
+                return true;
+            if (TryShiftCardForTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                return true;
+            cue = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Moves the selected card down, then sideways, until a tab at least
+        /// <paramref name="shortest"/> pixels tall clears the hex stroke.
+        /// </summary>
+        private static bool TryDropCardForCue(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float shortest,
+            out Box cue)
+        {
+            cue = default;
             float floor = plateHeight - Edge - card.H;
             float[] heights = { 52f, 48f, 44f, 40f, 36f };
             float[] slides = { 0f, 4f, -4f, 8f, -8f, 12f, -12f, 16f, -16f, 20f, -20f, 28f, -28f, 36f, -36f };
             for (int h = 0; h < heights.Length; h++)
             {
                 float stripH = heights[h];
+                if (stripH + 0.1f < shortest)
+                    continue;
                 float minY = Math.Max(card.Y, Edge + stripH);
                 for (float y = minY; y <= floor + 0.1f; y += 4f)
                 {
@@ -5195,9 +5375,6 @@ namespace Game.UI.Runtime
                 }
             }
 
-            if (TryShiftCardForTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
-                return true;
-            cue = default;
             return false;
         }
 

@@ -2466,10 +2466,11 @@ namespace Game.UI.Runtime
                     RelaxLibraryText(text, 12f, 18f, true);
                 else if (text.name == "ZoomCue")
                 {
-                    RelaxLibraryText(text, 12f, 16f, false);
+                    // FitZoomCue locks 16–26. A 12px floor here is what Farsi autosize
+                    // settles on once the cue is narrower than the longest word.
                     text.textWrappingMode = TextWrappingModes.NoWrap;
                     text.overflowMode = TextOverflowModes.Overflow;
-                    text.maxVisibleLines = 1;
+                    text.maxVisibleLines = 2;
                     text.isRightToLeftText = fa;
                 }
                 else if (text.name == "ZoneCount")

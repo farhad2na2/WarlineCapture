@@ -1670,10 +1670,13 @@ namespace Game.UI.Runtime
             glow.a = 1f;
             Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
             ink.a = 1f;
-            // 4px core stays inside the 3–4.5 capture band. The neon edge is thinner than the old 26px white rim.
+            // 4px core stays inside the 3–4.5 capture band. The neon edge stays at the 8px
+            // capture floor. A 16px stroke reached 8px outside the hex and, with the halo,
+            // closed the 15–23px gaps. Pivot-centred 8px reaches 4px past the edge.
             const float stroke = 4f;
-            DrawHexEdges(root, local, outer, 16f, ZoneStrokeSprite());
-            DrawHexEdges(root, local, glow, 10f, ZoneStrokeSprite());
+            const float neonThickness = 8f;
+            DrawHexEdges(root, local, outer, neonThickness, ZoneStrokeSprite());
+            DrawHexEdges(root, local, glow, neonThickness, ZoneStrokeSprite());
             DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
             DrawHexLattice(root, local, color);
             for (int i = 0; i < local.Length; i++)
@@ -1717,8 +1720,10 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Edge band only. A filled blur stacks on the 0.23 tint and hides the painting.
-            const float reach = 18f;
+            // Alpha dies 4px outside the hex, at the same edge as the 8px neon stroke
+            // and inside the 22px pad the capture rect still requires. The old 18px
+            // reach crossed every 15–23px hex gap, so the glows touched.
+            const float reach = 4f;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -2251,6 +2256,32 @@ namespace Game.UI.Runtime
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
                     return;
             }
+
+            // The rect cannot hold 16px without a clip. Still lock 16. Autosize used to
+            // settle this cue at 12–13px once the longest Farsi word missed the box.
+            ApplyCueFloor(cue, source, cueFloor, boxW);
+        }
+
+        private static void ApplyCueFloor(TMP_Text cue, string source, float size, float boxW)
+        {
+            V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            cue.enableAutoSizing = true;
+            cue.fontSizeMin = size;
+            cue.fontSizeMax = size;
+            cue.fontSize = size;
+            cue.characterSpacing = -12f;
+            cue.maxVisibleLines = 2;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            if (!CueLabelSplits(cue, source, size, boxW, boxW))
+            {
+                cue.text = source;
+                cue.maxVisibleLines = 2;
+            }
+
+            cue.ForceMeshUpdate();
         }
 
         /// <summary>
@@ -2526,7 +2557,9 @@ namespace Game.UI.Runtime
             if (!TryPlateInk(nameText, card, out Rect ink))
                 return;
             Rect cueRect = PlateRect(cue.rectTransform);
-            const float nameClearance = 6f;
+            // Capture still rejects a gap under 6px. The layout leaves a wider band
+            // so the zoom label does not read as a second line of the name.
+            const float nameClearance = 16f;
             float nameX = name.anchoredPosition.x;
             float nameY = -name.anchoredPosition.y;
             float nameW = name.sizeDelta.x;

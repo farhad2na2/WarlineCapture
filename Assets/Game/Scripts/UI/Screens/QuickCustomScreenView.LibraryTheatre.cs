@@ -2623,7 +2623,17 @@ namespace Game.UI.Runtime
             float nameH = name.sizeDelta.y;
             float cardY = -card.anchoredPosition.y;
             Rect cueBox = PlateRect(cue.rectTransform);
-            const float nameClearance = 16f;
+            TMP_Text nameText = name.GetComponent<TMP_Text>();
+            string title = nameText != null ? nameText.text : string.Empty;
+            bool wide = parent.rect.height > 2f && parent.rect.width / parent.rect.height >= 2.4f;
+            float nameClearance = TheatreSeatGeometry.NameClearanceBelowCue(title, cardW, cardH, wide);
+            float needed = TheatreSeatGeometry.WrappedFloorNameHeight(title, cardW);
+            float nameCap = TheatreSeatGeometry.MaxNameBoxHeight(cardH, wide);
+            if (nameH + 0.5f < needed && needed <= nameCap + 1f)
+            {
+                nameH = Mathf.Min(nameCap, Mathf.Max(nameH, needed));
+                PlaceTopLeft(name, nameX, nameY, nameW, nameH);
+            }
             float statusH = cardH >= 190f ? 40f : 34f;
             float limit = cardH - 2f - statusH - 4f - nameH;
             float nameGap = (cardY + nameY) - cueBox.yMax;
@@ -2639,7 +2649,6 @@ namespace Game.UI.Runtime
                 }
             }
 
-            TMP_Text nameText = name.GetComponent<TMP_Text>();
             if (!TryPlateInk(nameText, card, out Rect ink))
                 return;
             Rect cueRect = PlateRect(cue.rectTransform);
@@ -3352,7 +3361,6 @@ namespace Game.UI.Runtime
                     : TheatreSeatGeometry.NameFontFloor;
                 if (fontFloor > TheatreSeatGeometry.PortraitCompactFontFloor && boxWidth <= 114f)
                     fontFloor = TheatreSeatGeometry.PortraitCompactFontFloor;
-                fontFloor = Mathf.Min(fontFloor, 13f);
             }
             else
                 fontFloor = LatinNameFloor;
@@ -3480,7 +3488,7 @@ namespace Game.UI.Runtime
                 float boxProbe = PortraitNameWidth(card.sizeDelta.x);
                 if (size > TheatreSeatGeometry.PortraitCompactFontFloor && boxProbe <= 114f)
                     size = TheatreSeatGeometry.PortraitCompactFontFloor;
-                stop = 13f;
+                stop = size;
             }
             else
             {
@@ -3518,8 +3526,8 @@ namespace Game.UI.Runtime
                     return;
             }
 
-            float wrapStart = farsi ? 13f : DrawnNameTarget;
-            float wrapStop = farsi ? 13f : size;
+            float wrapStart = farsi ? size : DrawnNameTarget;
+            float wrapStop = size;
             for (float wrapped = wrapStart; wrapped >= wrapStop - 0.01f; wrapped -= 1f)
             {
                 if (binding != null)
@@ -3543,6 +3551,9 @@ namespace Game.UI.Runtime
                     continue;
 
                 float wrappedHeight = PortraitNameBox(name, source, wrapped, card.sizeDelta.y);
+                float floorHeight = TheatreSeatGeometry.WrappedFloorNameHeight(source, card.sizeDelta.x);
+                if (cap + 1f < wrappedHeight && floorHeight <= cap + 1f)
+                    wrappedHeight = floorHeight;
                 if (cap + 1f < wrappedHeight)
                     continue;
                 ApplyPortraitNameLayout(card, name, wrappedHeight, card.sizeDelta.y, wide, false);
@@ -3930,6 +3941,57 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// A layout group can shrink the live rect after the seat. Put the authored size back
+        /// only as far as the card still sits inside its hex.
+        /// </summary>
+        private static void KeepRestoredCardInsideHex(RectTransform card)
+        {
+            if (card == null || card.parent is not RectTransform parent)
+                return;
+            string mapId = card.name.StartsWith("ZoneCard_", StringComparison.Ordinal)
+                ? card.name.Substring("ZoneCard_".Length)
+                : string.Empty;
+            string[] ids = TheatreSeatGeometry.MapIds;
+            var hexes = new TheatreSeatGeometry.Vec2[ids.Length][];
+            int own = 0;
+            bool any = false;
+            for (int i = 0; i < ids.Length; i++)
+            {
+                if (string.Equals(ids[i], mapId, StringComparison.OrdinalIgnoreCase))
+                    own = i;
+                if (parent.Find("ZoneOutline_" + ids[i]) is not RectTransform outline)
+                    continue;
+                Vector2[] points = OutlinePlatePoints(outline);
+                if (points.Length < 3)
+                    continue;
+                var shape = new TheatreSeatGeometry.Vec2[points.Length];
+                for (int p = 0; p < points.Length; p++)
+                    shape[p] = new TheatreSeatGeometry.Vec2(points[p].x, points[p].y);
+                hexes[i] = shape;
+                any = true;
+            }
+
+            if (!any || hexes[own] == null)
+                return;
+            float x = card.anchoredPosition.x;
+            float y = -card.anchoredPosition.y;
+            float authoredW = card.sizeDelta.x;
+            float authoredH = card.sizeDelta.y;
+            float liveW = card.rect.width > 2f ? card.rect.width : authoredW;
+            float liveH = card.rect.height > 2f ? card.rect.height : authoredH;
+            bool shrunk = (liveW > 2f && liveW < authoredW - 8f) || (liveH > 2f && liveH < authoredH - 8f);
+            var authored = new TheatreSeatGeometry.Box(x, y, authoredW, authoredH);
+            if (!shrunk && TheatreSeatGeometry.SeatHolds(authored, hexes[own], hexes))
+                return;
+            var live = new TheatreSeatGeometry.Box(x, y, shrunk ? liveW : authoredW, shrunk ? liveH : authoredH);
+            TheatreSeatGeometry.Box fit = TheatreSeatGeometry.RestoreAuthoredCard(
+                live, authoredW, authoredH, hexes[own], hexes);
+            PlaceTopLeft(card, fit.X, fit.Y, fit.W, fit.H);
+            card.localScale = Vector3.one;
+            KeepAuthoredSize(card);
+        }
+
+        /// <summary>
         /// Last theatre pass, after the frame has the final plate. Lays the full-width portrait
         /// from the card's live size and logs the rect the capture camera will draw.
         /// </summary>
@@ -3947,19 +4009,9 @@ namespace Game.UI.Runtime
                 if (card == null || !card.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
                     continue;
                 KeepAuthoredSize(card);
-                float cardW = card.sizeDelta.x;
-                float cardH = card.sizeDelta.y;
-                float liveW = card.rect.width;
-                float liveH = card.rect.height;
-                // A layout group can shrink the live rect after the seat. Adopting that
-                // rect locked the portrait near 100px. Put the authored size back.
-                if ((liveW > 2f && liveW < cardW - 8f) || (liveH > 2f && liveH < cardH - 8f))
-                {
-                    PlaceTopLeft(card, card.anchoredPosition.x, -card.anchoredPosition.y, cardW, cardH);
-                    card.localScale = Vector3.one;
-                    KeepAuthoredSize(card);
-                }
+                KeepRestoredCardInsideHex(card);
 
+                float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
                 float nameH = name.rectTransform.rect.height > 1f
                     ? name.rectTransform.rect.height
                     : name.rectTransform.sizeDelta.y;
@@ -3971,6 +4023,7 @@ namespace Game.UI.Runtime
                 LogTheatreCardArt(card);
             }
 
+            FitZoneNames(_libraryRegions);
             TMP_Text zoom = null;
             for (int i = 0; i < texts.Length; i++)
             {

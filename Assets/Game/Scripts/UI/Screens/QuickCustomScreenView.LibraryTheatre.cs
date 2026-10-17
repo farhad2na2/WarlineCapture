@@ -1975,7 +1975,7 @@ namespace Game.UI.Runtime
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.fontStyle = FontStyles.Bold;
             cue.color = new Color(1f, 0.97f, 0.9f, 1f);
-            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 16f, 20f);
+            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 16f, 26f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -2218,8 +2218,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Zoom label at 16–20px. One line when the card width holds it, otherwise a split at a space.
-        /// Tracking may tighten to −12. The size never drops under 16.
+        /// Zoom label at 16–26px inside the 36–52px tab. One line when the card width holds it,
+        /// otherwise a split at a space. Tracking stays at 0 until the line needs −12.
+        /// The size never drops under 16.
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
@@ -2233,7 +2234,7 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
-            const float cueCeiling = 20f;
+            const float cueCeiling = 26f;
             const float cueFloor = 16f;
             for (float size = cueCeiling; size >= cueFloor - 0.01f; size -= 1f)
             {
@@ -2461,7 +2462,7 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Keeps the fitted 16–20px cue size when the localization binding refreshes.
+        /// Keeps the fitted 16–26px cue size when the localization binding refreshes.
         /// </summary>
         private static void LockCueFont(TMP_Text cue)
         {
@@ -2470,8 +2471,8 @@ namespace Game.UI.Runtime
             float size = cue.fontSize;
             if (size < 16f)
                 size = 16f;
-            if (size > 20f)
-                size = 20f;
+            if (size > 26f)
+                size = 26f;
             string drawn = cue.text;
             int lines = cue.maxVisibleLines;
             float spacing = cue.characterSpacing;

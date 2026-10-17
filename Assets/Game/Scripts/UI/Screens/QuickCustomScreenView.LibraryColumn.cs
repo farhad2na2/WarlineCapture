@@ -1238,7 +1238,7 @@ namespace Game.UI.Runtime
                 var iconRect = tile.Find("Icon") as RectTransform;
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 1f);
                 iconRect.pivot = new Vector2(0.5f, 1f);
-                iconRect.sizeDelta = new Vector2(58f, 58f); // sprite has ~14% padding: ~50 px drawn (approved-1)
+                iconRect.sizeDelta = new Vector2(54f, 54f); // sprite has ~14% padding: ~46 px drawn, clears TierName at y58
                 iconRect.anchoredPosition = new Vector2(0f, -2f);
                 Image iconImage = iconRect.GetComponent<Image>();
                 if (iconImage != null)

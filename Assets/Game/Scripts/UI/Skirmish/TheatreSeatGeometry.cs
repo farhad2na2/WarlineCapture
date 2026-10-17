@@ -2654,15 +2654,199 @@ namespace Game.UI.Runtime
                 SeatCardHeight = heights[size];
                 for (int s = 0; s < squeezes.Length; s++)
                 {
-                    if (!TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
-                        continue;
-                    return true;
+                    if (TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
+                        return true;
+                    if (TrySeatPackedRows(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
+                        return true;
                 }
             }
 
             hexes = null;
             cards = null;
             return false;
+        }
+
+        /// <summary>
+        /// Short plates cannot spare a 92px header. Pack each row outward: the top row sits
+        /// high, the bottom row sits on the hint, and the middle row uses the gap. Card size
+        /// and the 160px / 26px / 8px rules stay the same.
+        /// </summary>
+        private static bool TrySeatPackedRows(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            out Vec2[][] hexes,
+            out Box[] cards)
+        {
+            hexes = new Vec2[MapIds.Length][];
+            cards = new Box[MapIds.Length];
+            int count = MapIds.Length;
+            var order = new int[count];
+            for (int i = 0; i < count; i++)
+                order[i] = i;
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    float dy = pins[order[j]].Center.Y - pins[order[i]].Center.Y;
+                    bool swap = dy < -0.5f || (Math.Abs(dy) <= 0.5f && pins[order[j]].Center.X < pins[order[i]].Center.X);
+                    if (!swap)
+                        continue;
+                    int hold = order[i];
+                    order[i] = order[j];
+                    order[j] = hold;
+                }
+            }
+
+            var rowOf = new int[count];
+            int rowCount = 0;
+            float rowAnchor = -1000f;
+            for (int n = 0; n < count; n++)
+            {
+                int index = order[n];
+                if (n == 0 || pins[index].Center.Y - rowAnchor > 80f)
+                {
+                    rowCount++;
+                    rowAnchor = pins[index].Center.Y;
+                }
+
+                rowOf[index] = rowCount - 1;
+            }
+
+            var place = new int[count];
+            int placedCount = 0;
+            for (int row = 0; row < rowCount; row++)
+            {
+                int target = row == 0 || rowCount < 3 ? row : row == 1 ? rowCount - 1 : row - 1;
+                for (int n = 0; n < count; n++)
+                {
+                    if (rowOf[order[n]] == target)
+                        place[placedCount++] = order[n];
+                }
+            }
+
+            float cardW = SeatCardWidth > 48f ? SeatCardWidth : PortraitMinWidth;
+            float cardH = SeatCardHeight > 48f ? SeatCardHeight : PortraitMinHeight;
+            float yFloor = Edge + CueTabRoom;
+            float limit = frameHeight - 47f - InsideMargin - cardH;
+            for (int n = 0; n < count; n++)
+            {
+                int index = place[n];
+                if (!TryPackDistrictRow(
+                    index, rowOf[index], rowCount, frameWidth, frameHeight, pins, squeeze, cardW, cardH, yFloor, limit, hexes, cards))
+                {
+                    hexes = null;
+                    cards = null;
+                    return false;
+                }
+            }
+
+            if (!PortraitSeatClosed(pins, hexes, cards))
+            {
+                hexes = null;
+                cards = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool TryPackDistrictRow(
+            int index,
+            int row,
+            int rowCount,
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float squeeze,
+            float cardW,
+            float cardH,
+            float yFloor,
+            float limit,
+            Vec2[][] hexes,
+            Box[] cards)
+        {
+            Box pin = pins[index];
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            AuthoredHalf(MapIds[index], ratioW, ratioH, out float halfW, out float halfH);
+            float authored = halfH > 1f ? halfW / halfH * squeeze : 1.6f;
+            bool packDown = rowCount >= 3 && row == rowCount - 1;
+            bool leftSide = pin.Center.X <= frameWidth * 0.5f;
+            // Half a pixel past the gap so float error cannot report 11.999 as under 12.
+            float gap = PinGap + 0.5f;
+            float outside = leftSide ? pin.X - gap - cardW : pin.XMax + gap;
+            float inside = leftSide ? pin.XMax + gap : pin.X - gap - cardW;
+            float[] sides = { outside, inside };
+            int slide = leftSide ? 1 : 2;
+            float bestScore = float.MaxValue;
+            Box bestCard = default;
+            Vec2[] bestHex = null;
+            // Coarse authored ratio, then a 1px search, then a slightly wider hex still
+            // inside the 10% aspect band. The wider hex is shorter, which is what lets a
+            // middle district sit in the gap on a short plate.
+            float[] ratioScales = { 1f, 1f, 1.099f };
+            float[] steps = { 4f, 1f, 1f };
+            for (int scaleIndex = 0; scaleIndex < ratioScales.Length && bestHex == null; scaleIndex++)
+            {
+                float ratio = authored * ratioScales[scaleIndex];
+                float step = steps[scaleIndex];
+                for (int pass = 0; pass < sides.Length; pass++)
+                {
+                    float x0 = Clamp(sides[pass], Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+                    float horiz = Math.Abs(x0 + cardW * 0.5f - pin.Center.X);
+                    if (horiz >= CueNearLimit - 1f)
+                        continue;
+                    float vMax = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                    float yLo = Math.Max(yFloor, pin.Center.Y - vMax);
+                    float yHi = Math.Min(limit, pin.Center.Y + vMax);
+                    if (yLo > yHi + 0.01f)
+                        continue;
+                    float yStep = step < 2f ? 1f : 6f;
+                    for (float y = yLo; y <= yHi + 0.01f; y += yStep)
+                    {
+                        float x = x0;
+                        if (!ShiftTabClearOfPins(ref x, y, cardW, pins, frameWidth))
+                            continue;
+                        horiz = Math.Abs(x + cardW * 0.5f - pin.Center.X);
+                        if (horiz >= CueNearLimit - 1f)
+                            continue;
+                        float reach = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                        if (Math.Abs(y - pin.Center.Y) > reach)
+                            continue;
+                        var trial = new Box(x, y, cardW, cardH);
+                        var tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                        if (Separation(trial, pin) < PinGap || Leader(pin, trial) < LeaderMin)
+                            continue;
+                        if (!TabClearsPins(tab, pins) || !ClearsPlacedCards(trial, cards))
+                            continue;
+                        if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
+                            continue;
+                        if (!TrySolvePortraitHex(
+                            trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slide, out Vec2[] hex, step))
+                            continue;
+                        BoundsOf(hex, out _, out float minY, out _, out float maxY);
+                        float score = packDown ? -minY : maxY;
+                        if (score >= bestScore)
+                            continue;
+                        bestScore = score;
+                        bestCard = trial;
+                        bestHex = hex;
+                        if (step < 2f)
+                            break;
+                    }
+
+                    if (step < 2f && bestHex != null)
+                        break;
+                }
+            }
+
+            if (bestHex == null)
+                return false;
+            cards[index] = bestCard;
+            hexes[index] = bestHex;
+            return true;
         }
 
         private static bool TrySeatPortraitsAt(
@@ -2909,7 +3093,8 @@ namespace Game.UI.Runtime
             Box[] cards,
             int index,
             int slide,
-            out Vec2[] hex)
+            out Vec2[] hex,
+            float hhStep = 4f)
         {
             hex = null;
             float hint = frameHeight - 47f;
@@ -2943,7 +3128,9 @@ namespace Game.UI.Runtime
             if (hhStart > hhMax)
                 return false;
             float hhLimit = Math.Min(hhMax, hhStart + 42f);
-            for (float hh = hhStart; hh <= hhLimit + 0.01f; hh += 4f)
+            if (hhStep < 1f)
+                hhStep = 1f;
+            for (float hh = hhStart; hh <= hhLimit + 0.01f; hh += hhStep)
             {
                 float cyLo = 23f + hh;
                 float cyHi = hint - hh;
@@ -2956,7 +3143,20 @@ namespace Game.UI.Runtime
                 if (cyLo > cyHi + 0.05f)
                     continue;
                 float hw = hh * ratio;
-                float[] cys = { (cyLo + cyHi) * 0.5f, cyLo, cyHi };
+                float[] cys;
+                if (hhStep < 2f && cyHi > cyLo + 0.5f)
+                {
+                    int steps = (int)Math.Ceiling((cyHi - cyLo) / 1.5f);
+                    if (steps < 2)
+                        steps = 2;
+                    if (steps > 16)
+                        steps = 16;
+                    cys = new float[steps + 1];
+                    for (int sample = 0; sample <= steps; sample++)
+                        cys[sample] = cyLo + (cyHi - cyLo) * sample / steps;
+                }
+                else
+                    cys = new[] { (cyLo + cyHi) * 0.5f, cyLo, cyHi };
                 for (int c = 0; c < cys.Length; c++)
                 {
                     float cy = cys[c];

@@ -165,7 +165,9 @@ namespace Game.Editor
                 if(!request.IsLegacyPreset&&SkirmishMissionDispatch.IsExpandedCounterpart(request.CatalogId))
                     productionCounterpartScope=SkirmishProtectedExpandedCounterpartScope.Open(packaged,request.CatalogId);
                 // One existing normal Menu runner. No LaunchCatalog direct bootstrap.
+                bool ownedInputDiagnosticRequested = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1";
                 RunEditorJourney(request.Locale, request.Manual, false, request.CatalogId, request.Seed);
+                if (ownedInputDiagnosticRequested) Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC", "1");
                 // Existing method defaults ARIA to ADJUST SETUP; v1 canary requires Main Menu.
                 Environment.SetEnvironmentVariable("WARLINE_TERMINAL_ACTION", "MAIN MENU");
                 context.Record("DispatchReturned", new JObject { ["editorPlayingOrWillChange"] = EditorApplication.isPlayingOrWillChangePlaymode });

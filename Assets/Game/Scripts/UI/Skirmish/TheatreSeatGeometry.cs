@@ -168,7 +168,10 @@ namespace Game.UI.Runtime
             return BuildAll(frameWidth, frameHeight)[index];
         }
 
-        /// <summary>Width/height of the v35 flat hex. The detail reserve does not enter.</summary>
+        /// <summary>
+        /// Width/height of the v35 flat hex for the frame the caller passes.
+        /// When the detail reserve is up, that frame is the open viewport beside the column.
+        /// </summary>
         public static float HexAspect(string mapId, float frameWidth, float frameHeight)
         {
             if (frameWidth < 2f || frameHeight < 2f)
@@ -1290,8 +1293,20 @@ namespace Game.UI.Runtime
                     }
                 }
 
-                // The detail reserve does not enter. Hexes are authored on the plate.
-                float expected = HexAspect(mapId, plateWidth, plateHeight);
+                float aspectWidth = plateWidth;
+                float aspectHeight = plateHeight;
+                if (detail.W > 1f)
+                {
+                    bool panelOnLeft = detail.Center.X < plateWidth * 0.5f;
+                    Box view = OpenViewport(plateWidth, plateHeight, panelOnLeft, true);
+                    if (view.W > 2f && view.H > 2f)
+                    {
+                        aspectWidth = view.W;
+                        aspectHeight = view.H;
+                    }
+                }
+
+                float expected = HexAspect(mapId, aspectWidth, aspectHeight);
                 float measured = MeasuredHexAspect(hexes[i]);
                 if (expected >= 0.2f && measured > 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
                 {
@@ -2318,6 +2333,20 @@ namespace Game.UI.Runtime
             return true;
         }
 
+        /// <summary>
+        /// The open viewport is narrower than the plate, and this row still has a shared
+        /// slide that keeps both locales off the detail column.
+        /// </summary>
+        private static bool ReserveRowFits(float plateWidth, float plateHeight, Box[] pins, Vec2[][] hexes, Box[] cards)
+        {
+            if (plateWidth < 2f || RatioPlateWidth + 2f >= plateWidth)
+                return true;
+            Box enDetail = DetailRect(plateWidth, plateHeight, false, true);
+            Box faDetail = DetailRect(plateWidth, plateHeight, true, true);
+            float faViewX = OpenViewport(plateWidth, plateHeight, true, true).X;
+            return TrySharedReserveDelta(hexes, pins, cards, default, plateWidth, enDetail, faDetail, faViewX, out _);
+        }
+
         private static void NoteReserveBox(
             Box[] boxes,
             float plateWidth,
@@ -2434,13 +2463,19 @@ namespace Game.UI.Runtime
                 SelectedMapId = selectedMapId,
                 Seats = new Seat[MapIds.Length]
             };
-            // Hexes are authored on the plate. The side column overlays the trailing
-            // edge and the row slides clear of it; the ratio does not change.
-            RatioPlateWidth = plateWidth;
-            RatioPlateHeight = plateHeight;
+            // Placement stays on the plate. The authored ratio is the open viewport
+            // when the side column is up, so the hex keeps that proportion.
+            Box aspectView = OpenViewport(plateWidth, plateHeight, fa, reserveOn);
+            RatioPlateWidth = aspectView.W > 2f ? aspectView.W : plateWidth;
+            RatioPlateHeight = aspectView.H > 2f ? aspectView.H : plateHeight;
             float frameWidth = plateWidth;
             float frameHeight = plateHeight;
+            int selected = IndexOf(selectedMapId);
+            if (selected < 0)
+                selected = 0;
+            SelectedPortrait = selected;
             Vec2[][] hexes = BuildAll(frameWidth, frameHeight, false);
+            SelectedPortrait = -1;
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
@@ -2452,9 +2487,6 @@ namespace Game.UI.Runtime
 
             Box detail = DetailRect(plateWidth, plateHeight, fa, reserveOn);
             Box packDetail = default;
-            int selected = IndexOf(selectedMapId);
-            if (selected < 0)
-                selected = 0;
             Box[] placed = null;
             Box seatedCue = default;
             if (PortraitCards != null)
@@ -2535,7 +2567,7 @@ namespace Game.UI.Runtime
             layout.CardsLegal = cardsLegal;
             layout.Cue = cue;
             layout.CueNear = cueNear;
-            layout.HexAspectLegal = AspectsHold(hexes, frameWidth, frameHeight)
+            layout.HexAspectLegal = AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight)
                 && DistrictsLegal(hexes, pins, plateWidth, plateHeight);
             layout.LogLines = BuildLog(fa ? "fa" : "en", layout);
             return layout;
@@ -2617,15 +2649,43 @@ namespace Game.UI.Runtime
         /// <summary>Cards seated inside the hexes from the last <see cref="BuildAll"/> call.</summary>
         private static Box[] PortraitCards;
 
-        /// <summary>Plate whose aspect the hex is authored against. Placement may use a narrower viewport.</summary>
+        /// <summary>Frame whose aspect the hex is authored against. The open viewport when the reserve is up; placement stays on the plate.</summary>
         private static float RatioPlateWidth;
 
         private static float RatioPlateHeight;
+
+        /// <summary>Selected district for this seating pass. Only that card reserves the top-tab stroke when the full row cannot.</summary>
+        private static int SelectedPortrait = -1;
+
+        /// <summary>-1 keeps the top-tab stroke inside every hex. A district index reserves it on that card alone.</summary>
+        private static int PortraitTabIndex = -1;
+
+        /// <summary>Slide the hex centre toward the plate middle so the outer vertex stays near the pin.</summary>
+        private static bool PreferInwardHex;
+
+        /// <summary>Keep a bottom district's hex against the hint so it clears the row above.</summary>
+        private static bool PreferLowHex;
+
+        /// <summary>Keep an upper district's hex against its pin so the bottom district can sit under it.</summary>
+        private static bool PreferHighHex;
+
+        /// <summary>Extra half-height the portrait solver may add while fitting a full seat into the open viewport.</summary>
+        private static float PortraitHexExtra;
+
+        /// <summary>Portrait hexes must clear the 40000 area rule after the reserve slide moves them.</summary>
+        private static float PortraitAreaFloor = 40000f;
+
+        private static float PortraitRatioScale = 1f;
 
         /// <summary>Portrait size for the current seating attempt. Full seats are tried before the compact minimum.</summary>
         private static float SeatCardWidth = PortraitMinWidth;
 
         private static float SeatCardHeight = PortraitMinHeight;
+
+        private static bool HostsCueTab(int index)
+        {
+            return PortraitTabIndex < 0 || index == PortraitTabIndex;
+        }
 
         /// <summary>
         /// Sizes every district around a portrait that sits inside it, beside the pin, with the
@@ -2640,30 +2700,630 @@ namespace Game.UI.Runtime
         {
             hexes = null;
             cards = null;
+            PortraitTabIndex = -1;
+            PreferInwardHex = false;
+            PreferHighHex = false;
+            PreferLowHex = false;
+            PortraitHexExtra = 0f;
+            PortraitAreaFloor = 40000f;
             if (frameWidth < 64f || frameHeight < 64f)
                 return false;
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
                 pins[i] = PinBox(i, frameWidth, frameHeight, plainCover);
-            float[] widths = { FullPortraitMinWidth, PortraitMinWidth };
-            float[] heights = { FullPortraitMinHeight, PortraitMinHeight };
-            float[] squeezes = { 1f, 0.94f };
-            for (int size = 0; size < widths.Length; size++)
+            bool narrow = RatioPlateWidth > 2f && RatioPlateWidth + 2f < frameWidth;
+            if (TryPortraitBand(frameWidth, frameHeight, pins, FullPortraitMinWidth, FullPortraitMinHeight, true, narrow, false, out hexes, out cards))
+                return true;
+            if (narrow && frameHeight >= 760f
+                && TryPortraitBand(frameWidth, frameHeight, pins, PortraitMinWidth, PortraitMinHeight, true, true, false, out hexes, out cards)
+                && TryEnlargePortraitRow(frameWidth, frameHeight, pins, hexes, cards, out Vec2[][] grown, out Box[] grownCards))
             {
-                SeatCardWidth = widths[size];
-                SeatCardHeight = heights[size];
-                for (int s = 0; s < squeezes.Length; s++)
+                hexes = grown;
+                cards = grownCards;
+                return true;
+            }
+
+            if (narrow)
+            {
+                PreferInwardHex = true;
+                if (TryPortraitBand(frameWidth, frameHeight, pins, FullPortraitMinWidth, FullPortraitMinHeight, false, true, true, out hexes, out cards))
                 {
-                    if (TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
-                        return true;
-                    if (TrySeatPackedRows(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
-                        return true;
+                    PreferInwardHex = false;
+                    return true;
                 }
+
+                if (SelectedPortrait >= 0)
+                {
+                    PortraitTabIndex = SelectedPortrait;
+                    if (TryPortraitBand(frameWidth, frameHeight, pins, FullPortraitMinWidth, FullPortraitMinHeight, false, true, true, out hexes, out cards))
+                    {
+                        PortraitTabIndex = -1;
+                        PreferInwardHex = false;
+                        return true;
+                    }
+
+                    PortraitTabIndex = -1;
+                }
+
+                PreferInwardHex = false;
+            }
+
+            return TryPortraitBand(frameWidth, frameHeight, pins, PortraitMinWidth, PortraitMinHeight, true, false, false, out hexes, out cards);
+        }
+
+        /// <summary>
+        /// The compact row already has the open-viewport ratio and clears the detail column.
+        /// Grow each tile to a full portrait on that same side of its pin.
+        /// </summary>
+        private static bool TryEnlargePortraitRow(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] seedHex,
+            Box[] seedCards,
+            out Vec2[][] hexes,
+            out Box[] cards)
+        {
+            hexes = null;
+            cards = null;
+            if (seedCards == null || pins == null)
+                return false;
+            int savedTab = PortraitTabIndex;
+            float savedExtra = PortraitHexExtra;
+            float savedFloor = PortraitAreaFloor;
+            bool savedInward = PreferInwardHex;
+            PortraitTabIndex = SelectedPortrait;
+            PortraitHexExtra = 48f;
+            PortraitAreaFloor = 40800f;
+            PreferInwardHex = true;
+            hexes = new Vec2[MapIds.Length][];
+            cards = new Box[MapIds.Length];
+            var order = new int[MapIds.Length];
+            int count = 0;
+            for (int i = 0; i < order.Length; i++)
+            {
+                if (i != SelectedPortrait)
+                    order[count++] = i;
+            }
+
+            if (SelectedPortrait >= 0 && SelectedPortrait < order.Length)
+                order[count++] = SelectedPortrait;
+
+            float[] scales = { 1f, 1.05f, 1.08f };
+            bool seated = TryStackBottomPortrait(frameWidth, frameHeight, pins, hexes, cards);
+            for (int scaleIndex = 0; scaleIndex < scales.Length && !seated; scaleIndex++)
+            {
+                PortraitRatioScale = scales[scaleIndex];
+                for (int i = 0; i < count; i++)
+                {
+                    cards[i] = default;
+                    hexes[i] = null;
+                }
+
+                seated = EnlargePortraitOrder(frameWidth, frameHeight, pins, seedHex, seedCards, hexes, cards, order, count);
+            }
+
+            PortraitRatioScale = 1f;
+
+            if (seated && !PortraitSeatClosed(pins, hexes, cards))
+                seated = false;
+            else if (seated && !ReserveRowFits(frameWidth, frameHeight, pins, hexes, cards))
+                seated = false;
+            else if (seated && !AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight))
+                seated = false;
+            else if (seated && !DistrictsLegal(hexes, pins, frameWidth, frameHeight))
+                seated = false;
+            PortraitTabIndex = savedTab;
+            PortraitHexExtra = savedExtra;
+            PortraitAreaFloor = savedFloor;
+            PreferInwardHex = savedInward;
+            if (!seated)
+            {
+                hexes = null;
+                cards = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// The bottom district keeps its tab inside the hex. The four districts above it sit
+        /// high, on the inward side of their pins, so the bottom hex can use the open band
+        /// and the row still shares one slide off the detail column.
+        /// </summary>
+        private static bool TryStackBottomPortrait(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box[] cards)
+        {
+            if (hexes == null || cards == null || SelectedPortrait < 0)
+                return false;
+            int savedTab = PortraitTabIndex;
+            float savedExtra = PortraitHexExtra;
+            float savedFloor = PortraitAreaFloor;
+            bool savedInward = PreferInwardHex;
+            bool savedHigh = PreferHighHex;
+            bool savedLow = PreferLowHex;
+            PortraitTabIndex = SelectedPortrait;
+            PortraitHexExtra = 48f;
+            // 40800 leaves room for the shared slide to move the shoelace area without
+            // crossing the 40000 capture floor.
+            PortraitAreaFloor = 40800f;
+            PreferInwardHex = true;
+            float[] scales = { 1f, 1.05f, 1.08f };
+            bool seated = false;
+            bool selectedLow = SelectedPinIsLowest(pins);
+            for (int scaleIndex = 0; scaleIndex < scales.Length && !seated; scaleIndex++)
+            {
+                PortraitRatioScale = scales[scaleIndex];
+                seated = StackPortraitOrder(frameWidth, frameHeight, pins, hexes, cards, selectedLow, false);
+                if (!seated && !selectedLow)
+                    seated = StackPortraitOrder(frameWidth, frameHeight, pins, hexes, cards, selectedLow, true);
+            }
+
+            PortraitRatioScale = 1f;
+            PreferHighHex = savedHigh;
+            PreferLowHex = savedLow;
+            PortraitTabIndex = savedTab;
+            PortraitHexExtra = savedExtra;
+            PortraitAreaFloor = savedFloor;
+            PreferInwardHex = savedInward;
+            return seated;
+        }
+
+        private static bool StackPortraitOrder(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box[] cards,
+            bool selectedLow,
+            bool selectedFirst)
+        {
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                cards[i] = default;
+                hexes[i] = null;
+            }
+
+            if (selectedFirst
+                && !TryPlaceStackedPortrait(SelectedPortrait, frameWidth, frameHeight, pins, hexes, cards, !selectedLow))
+                return false;
+
+            for (int i = 0; i < MapIds.Length; i++)
+            {
+                if (i == SelectedPortrait)
+                    continue;
+                // Every unselected district stays beside its own pin. Only the selected
+                // bottom district is pushed down against the hint.
+                if (TryPlaceStackedPortrait(i, frameWidth, frameHeight, pins, hexes, cards, true))
+                    continue;
+                return false;
+            }
+
+            if (!selectedFirst
+                && !TryPlaceStackedPortrait(SelectedPortrait, frameWidth, frameHeight, pins, hexes, cards, !selectedLow))
+                return false;
+
+            return true;
+        }
+
+        private static bool SelectedPinIsLowest(Box[] pins)
+        {
+            if (pins == null || SelectedPortrait < 0 || SelectedPortrait >= pins.Length)
+                return false;
+            float y = pins[SelectedPortrait].Center.Y;
+            for (int i = 0; i < pins.Length; i++)
+            {
+                if (i != SelectedPortrait && pins[i].Center.Y > y - 40f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Places one full portrait. Upper districts start at the top of the pin's reach.
+        /// The selected bottom district starts against the hint.
+        /// </summary>
+        private static bool TryPlaceStackedPortrait(
+            int index,
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box[] cards,
+            bool high)
+        {
+            Box pin = pins[index];
+            const float cardW = FullPortraitMinWidth;
+            const float cardH = FullPortraitMinHeight;
+            float gap = PinGap + 0.5f;
+            float rightX = Clamp(pin.XMax + gap, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+            float leftX = Clamp(pin.X - gap - cardW, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+            bool leftPin = pin.Center.X <= frameWidth * 0.5f;
+            float[] xs = leftPin ? new[] { rightX, leftX } : new[] { leftX, rightX };
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            AuthoredHalf(MapIds[index], ratioW, ratioH, out float halfW, out float halfH);
+            float ratio = (halfH > 1f ? halfW / halfH : 1.6f) * PortraitRatioScale;
+            float limit = frameHeight - 47f - InsideMargin - cardH;
+            float yNear = Math.Max(48f, pin.Center.Y - (CueNearLimit - 8f));
+            float yFar = Math.Min(limit, pin.Center.Y + (high ? 40f : CueNearLimit));
+            if (yFar < yNear - 0.1f)
+                return false;
+            float yStep = high ? 8f : 4f;
+            int ySteps = (int)Math.Max(0f, (yFar - yNear) / yStep);
+            int[] slides = leftPin ? new[] { 2, 0, 1 } : new[] { 1, 0, 2 };
+            int kickCount = high ? 8 : 12;
+            float kickStep = high ? 8f : 4f;
+            for (int side = 0; side < xs.Length; side++)
+            {
+                float dir = xs[side] + cardW * 0.5f >= pin.Center.X ? 1f : -1f;
+                for (int kick = 0; kick < kickCount; kick++)
+                {
+                    for (int n = 0; n <= ySteps; n++)
+                    {
+                        float y = high ? yNear + n * yStep : yFar - n * yStep;
+                        if (y < yNear - 0.1f || y > yFar + 0.1f || y < 48f || y > limit)
+                            continue;
+                        float x = Clamp(xs[side] + dir * kick * kickStep, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+                        if (!ShiftTabClearOfPins(ref x, y, cardW, pins, frameWidth))
+                            continue;
+                        float horiz = Math.Abs(x + cardW * 0.5f - pin.Center.X);
+                        if (horiz >= CueNearLimit - 1f)
+                            continue;
+                        float reach = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                        if (Math.Abs(y - pin.Center.Y) > reach)
+                            continue;
+                        var trial = new Box(x, y, cardW, cardH);
+                        var tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                        if (Separation(trial, pin) < PinGap || Leader(pin, trial) < LeaderMin)
+                            continue;
+                        if (!TabClearsPins(tab, pins) || !ClearsPlacedCards(trial, cards))
+                            continue;
+                        if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
+                            continue;
+                        PreferHighHex = high;
+                        PreferLowHex = !high;
+                        for (int s = 0; s < slides.Length; s++)
+                        {
+                            if (!TrySolvePortraitHex(
+                                trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slides[s], out Vec2[] hex, high ? 4f : 2f))
+                                continue;
+                            PreferHighHex = false;
+                            PreferLowHex = false;
+                            cards[index] = trial;
+                            hexes[index] = hex;
+                            return true;
+                        }
+
+                        PreferHighHex = false;
+                        PreferLowHex = false;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool EnlargePortraitOrder(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] seedHex,
+            Box[] seedCards,
+            Vec2[][] hexes,
+            Box[] cards,
+            int[] order,
+            int count)
+        {
+            for (int step = 0; step < count; step++)
+            {
+                if (TryEnlargePortrait(order[step], frameWidth, frameHeight, pins, seedHex, seedCards, hexes, cards))
+                    continue;
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Raises the lower vertices of districts that hang into the selected pin, when the
+        /// card and the pin still sit inside. The open-viewport ratio stays inside 10%.
+        /// </summary>
+        private static void LiftHexBottoms(Vec2[][] hexes, Box[] cards, Box[] pins, int selected)
+        {
+            if (hexes == null || cards == null || pins == null || selected < 0)
+                return;
+            float limit = pins[selected].Center.Y - 110f;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == selected || hexes[i] == null || cards[i].W < 1f)
+                    continue;
+                BoundsOf(hexes[i], out _, out float minY, out _, out float maxY);
+                if (maxY <= limit + 0.5f || maxY - minY < 40f)
+                    continue;
+                float dy = maxY - limit;
+                float midY = (minY + maxY) * 0.5f;
+                bool liftedAny = false;
+                for (float step = dy; step >= 4f; step -= 4f)
+                {
+                    var copy = new Vec2[hexes[i].Length];
+                    for (int p = 0; p < hexes[i].Length; p++)
+                    {
+                        Vec2 point = hexes[i][p];
+                        if (point.Y > midY)
+                            point = new Vec2(point.X, Math.Max(midY, point.Y - step));
+                        copy[p] = point;
+                    }
+
+                    var lifted = new Box(cards[i].X, cards[i].Y - step, cards[i].W, cards[i].H);
+                    if (lifted.Y < 48f)
+                    {
+                        continue;
+                    }
+
+                    if (Separation(lifted, pins[i]) < PinGap || Leader(pins[i], lifted) < LeaderMin)
+                    {
+                        continue;
+                    }
+
+                    if (CueAnchorDistance(new Box(lifted.X, lifted.Y - CueTabRoom, lifted.W, CueTabRoom), lifted, pins[i]) > CueNearLimit)
+                    {
+                        continue;
+                    }
+
+                    if (!RestsInside(lifted, copy, InsideMargin))
+                    {
+                        continue;
+                    }
+
+                    if (!PointInPolygon(pins[i].Center, copy) || DistanceToEdge(pins[i].Center, copy) < 8f)
+                    {
+                        continue;
+                    }
+                    bool blocked = false;
+                    for (int j = 0; j < cards.Length; j++)
+                    {
+                        if (j == i || j == selected || cards[j].W < 1f)
+                            continue;
+                        if (Separation(lifted, cards[j]) < CardGap)
+                        {
+                            blocked = true;
+                            break;
+                        }
+                    }
+
+                    if (blocked)
+                    {
+                        continue;
+                    }
+
+                    float expected = HexAspect(MapIds[i], RatioPlateWidth, RatioPlateHeight);
+                    float measured = MeasuredHexAspect(copy);
+                    if (expected < 0.2f || Math.Abs(measured / expected - 1f) > 0.10f)
+                    {
+                        continue;
+                    }
+                    cards[i] = lifted;
+                    hexes[i] = copy;
+                    liftedAny = true;
+                    break;
+                }
+
+                if (!liftedAny)
+                    continue;
+            }
+        }
+
+        private static bool TryEnlargePortrait(
+            int index,
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] seedHex,
+            Box[] seedCards,
+            Vec2[][] hexes,
+            Box[] cards)
+        {
+            Box pin = pins[index];
+            Box seed = seedCards[index];
+            if (pin.W < 1f || seed.W < 1f)
+                return false;
+            if (index == SelectedPortrait)
+                LiftHexBottoms(hexes, cards, pins, index);
+            const float cardW = FullPortraitMinWidth;
+            const float cardH = FullPortraitMinHeight;
+            float gap = PinGap + 0.5f;
+            float rightX = Clamp(pin.XMax + gap, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+            float leftX = Clamp(pin.X - gap - cardW, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+            bool seedRight = seed.Center.X >= pin.Center.X;
+            float[] xs = seedRight ? new[] { rightX, leftX } : new[] { leftX, rightX };
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            AuthoredHalf(MapIds[index], ratioW, ratioH, out float halfW, out float halfH);
+            float ratio = (halfH > 1f ? halfW / halfH : 1.6f) * PortraitRatioScale;
+            float limit = frameHeight - 47f - InsideMargin - cardH;
+            float y0 = Math.Min(Math.Max(48f, seed.Y), limit);
+            int ySteps = 1 + (int)Math.Max(0f, (limit - 48f) / 8f);
+            var ys = new float[ySteps + 1];
+            ys[0] = y0;
+            for (int step = 0; step < ySteps; step++)
+                ys[step + 1] = 48f + step * 8f;
+            int[] slides = pin.Center.X <= frameWidth * 0.5f ? new[] { 2, 0, 1 } : new[] { 1, 0, 2 };
+            for (int side = 0; side < xs.Length; side++)
+            {
+                float dir = xs[side] + cardW * 0.5f >= pin.Center.X ? 1f : -1f;
+                int kickCount = index == SelectedPortrait ? 16 : 6;
+                float kickStep = index == SelectedPortrait ? 4f : 8f;
+                for (int kick = 0; kick < kickCount; kick++)
+                {
+                for (int n = 0; n < ys.Length; n++)
+                {
+                    float y = ys[n];
+                    if (y < 48f || y > limit)
+                        continue;
+                    float x = Clamp(xs[side] + dir * kick * kickStep, Edge, Math.Max(Edge, frameWidth - Edge - cardW));
+                    if (!ShiftTabClearOfPins(ref x, y, cardW, pins, frameWidth))
+                        continue;
+
+                    float horiz = Math.Abs(x + cardW * 0.5f - pin.Center.X);
+                    if (horiz >= CueNearLimit - 1f)
+                        continue;
+
+                    float reach = (float)Math.Sqrt(CueNearLimit * CueNearLimit - horiz * horiz) - 1f;
+                    if (Math.Abs(y - pin.Center.Y) > reach)
+                        continue;
+
+                    var trial = new Box(x, y, cardW, cardH);
+                    var tab = new Box(x, y - CueTabRoom, cardW, CueTabRoom);
+                    if (Separation(trial, pin) < PinGap || Leader(pin, trial) < LeaderMin)
+                        continue;
+
+                    if (!TabClearsPins(tab, pins) || !ClearsPlacedCards(trial, cards))
+                        continue;
+
+                    if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
+                        continue;
+
+                    bool seedHolds = seedHex != null && index < seedHex.Length && seedHex[index] != null
+                        && RestsInside(trial, seedHex[index], InsideMargin)
+                        && (!HostsCueTab(index) || !HexEdgeHits(seedHex[index], InflateBox(tab, CueHexStroke)));
+                    if (seedHolds && !HostsCueTab(index))
+                    {
+                        for (int s = 0; s < slides.Length; s++)
+                        {
+                            if (!TrySolvePortraitHex(
+                                trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slides[s], out Vec2[] tight, 4f))
+                                continue;
+                            if (SelectedPortrait >= 0
+                                && index != SelectedPortrait
+                                && pins[SelectedPortrait].Center.Y > pin.Center.Y + 80f)
+                            {
+                                BoundsOf(tight, out _, out _, out _, out float maxY);
+                                if (maxY > pins[SelectedPortrait].Center.Y - 80f)
+                                    continue;
+                            }
+
+                            cards[index] = trial;
+                            hexes[index] = tight;
+                            return true;
+                        }
+
+                        bool seedTooLow = false;
+                        if (SelectedPortrait >= 0
+                            && index != SelectedPortrait
+                            && pins[SelectedPortrait].Center.Y > pin.Center.Y + 80f)
+                        {
+                            BoundsOf(seedHex[index], out _, out _, out _, out float seedBottom);
+                            seedTooLow = seedBottom > pins[SelectedPortrait].Center.Y - 80f;
+                        }
+
+                        if (!seedTooLow)
+                        {
+                            cards[index] = trial;
+                            hexes[index] = seedHex[index];
+                            return true;
+                        }
+                    }
+
+                    if (seedHolds && HostsCueTab(index))
+                    {
+                        cards[index] = trial;
+                        hexes[index] = seedHex[index];
+                        return true;
+                    }
+
+                    if (!HostsCueTab(index))
+                        continue;
+
+                    bool low = SelectedPortrait == index
+                        && SelectedPortrait >= 0
+                        && pin.Center.Y + 40f >= pins[0].Center.Y
+                        && pin.Center.Y + 40f >= pins[1].Center.Y
+                        && pin.Center.Y + 40f >= pins[2].Center.Y
+                        && pin.Center.Y + 40f >= pins[3].Center.Y;
+                    for (int s = 0; s < slides.Length; s++)
+                    {
+                        PreferLowHex = low;
+                        if (!TrySolvePortraitHex(
+                            trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slides[s], out Vec2[] hex, 2f))
+                        {
+                            PreferLowHex = false;
+                            continue;
+                        }
+
+                        PreferLowHex = false;
+                        cards[index] = trial;
+                        hexes[index] = hex;
+                        return true;
+                    }
+                }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// One card size across the authored ratio and the 6% squeeze. A narrowed plate
+        /// keeps a row only when English and Farsi still share a slide off the detail column.
+        /// </summary>
+        private static bool TryPortraitBand(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            float cardWidth,
+            float cardHeight,
+            bool packed,
+            bool requireClear,
+            bool widen,
+            out Vec2[][] hexes,
+            out Box[] cards)
+        {
+            hexes = null;
+            cards = null;
+            SeatCardWidth = cardWidth;
+            SeatCardHeight = cardHeight;
+            PortraitHexExtra = widen ? 36f : 0f;
+            PortraitAreaFloor = widen ? 40800f : 40000f;
+            float[] squeezes = { 1f, 0.94f };
+            if (widen)
+                squeezes = new[] { 1f };
+            for (int s = 0; s < squeezes.Length; s++)
+            {
+                if (TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards)
+                    && PortraitBandHolds(frameWidth, frameHeight, pins, hexes, cards, requireClear))
+                    return true;
+                if (packed
+                    && TrySeatPackedRows(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards)
+                    && PortraitBandHolds(frameWidth, frameHeight, pins, hexes, cards, requireClear))
+                    return true;
             }
 
             hexes = null;
             cards = null;
             return false;
+        }
+
+        private static bool PortraitBandHolds(
+            float frameWidth,
+            float frameHeight,
+            Box[] pins,
+            Vec2[][] hexes,
+            Box[] cards,
+            bool requireClear)
+        {
+            if (!requireClear)
+                return true;
+            if (!ReserveRowFits(frameWidth, frameHeight, pins, hexes, cards))
+                return false;
+            return AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight)
+                && DistrictsLegal(hexes, pins, frameWidth, frameHeight);
         }
 
         /// <summary>
@@ -2780,6 +3440,8 @@ namespace Game.UI.Runtime
             float inside = leftSide ? pin.XMax + gap : pin.X - gap - cardW;
             float[] sides = { outside, inside };
             int slide = leftSide ? 1 : 2;
+            if (PreferInwardHex)
+                slide = leftSide ? 2 : 1;
             float bestScore = float.MaxValue;
             Box bestCard = default;
             Vec2[] bestHex = null;
@@ -2862,6 +3524,8 @@ namespace Game.UI.Runtime
             var order = new int[MapIds.Length];
             for (int i = 0; i < order.Length; i++)
                 order[i] = i;
+            if (PreferInwardHex)
+                return SeatPortraitOrders(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, true);
             if (SeatPortraitOrders(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, false))
                 return true;
             return SeatPortraitOrders(frameWidth, frameHeight, pins, squeeze, order, hexes, cards, true);
@@ -2946,7 +3610,7 @@ namespace Game.UI.Runtime
             int[] budget,
             bool slide)
         {
-            if (budget[0] > 360)
+            if (budget[0] > (PortraitHexExtra > 0f ? 720 : 360))
                 return false;
             if (step >= order.Length)
                 return PortraitSeatClosed(pins, hexes, cards);
@@ -3012,10 +3676,17 @@ namespace Game.UI.Runtime
                     if (CueAnchorDistance(tab, trial, pin) > CueNearLimit)
                         continue;
                     int slides = slide ? 3 : 1;
-                    for (int slideIndex = 0; slideIndex < slides; slideIndex++)
+                    for (int slideSlot = 0; slideSlot < slides; slideSlot++)
                     {
+                        int slideIndex = slideSlot;
+                        if (PreferInwardHex && slide)
+                        {
+                            int inward = pin.Center.X <= frameWidth * 0.5f ? 2 : 1;
+                            slideIndex = slideSlot == 0 ? inward : slideSlot == 1 ? 0 : inward == 1 ? 2 : 1;
+                        }
+
                         budget[0]++;
-                        if (budget[0] > 360)
+                        if (budget[0] > (PortraitHexExtra > 0f ? 720 : 360))
                             return false;
                         if (!TrySolvePortraitHex(
                             trial, pin, ratio, frameWidth, frameHeight, hexes, cards, index, slideIndex, out Vec2[] hex))
@@ -3053,25 +3724,31 @@ namespace Game.UI.Runtime
             {
                 if (cards[i].W < 1f || hexes[i] == null)
                     return false;
+
                 var tab = new Box(cards[i].X, cards[i].Y - CueTabRoom, cards[i].W, CueTabRoom);
                 if (CueAnchorDistance(tab, cards[i], pins[i]) > CueNearLimit)
                     return false;
+
                 if (!CueReadsAsSelected(cards[i].Center, pins[i].Center, hexes, pins, i))
                     return false;
+
                 if (LeaderHitsOtherHex(pins[i].Center, NearestOn(cards[i], pins[i].Center), hexes, i))
                     return false;
-                Box stroke = InflateBox(tab, CueHexStroke);
+
+                bool hostsTab = HostsCueTab(i);
+                Box stroke = hostsTab ? InflateBox(tab, CueHexStroke) : default;
                 for (int j = 0; j < MapIds.Length; j++)
                 {
                     if (j == i || hexes[j] == null)
                         continue;
                     if (PolygonsOverlap(hexes[i], hexes[j], 0.75f))
                         return false;
-                    if (PolygonHitsRect(hexes[j], stroke))
+
+                    if (hostsTab && PolygonHitsRect(hexes[j], stroke))
                         return false;
                 }
 
-                if (HexEdgeHits(hexes[i], stroke))
+                if (hostsTab && HexEdgeHits(hexes[i], stroke))
                     return false;
             }
 
@@ -3114,12 +3791,18 @@ namespace Game.UI.Runtime
             px[4] = pin.Center.X;
             py[4] = pin.Center.Y;
             pm[4] = 8f;
-            Vec2[] strokeCorners = Corners(stroke);
-            for (int i = 0; i < 4; i++)
+            int boundCount = 5;
+            if (HostsCueTab(index))
             {
-                px[5 + i] = strokeCorners[i].X;
-                py[5 + i] = strokeCorners[i].Y;
-                pm[5 + i] = 1f;
+                Vec2[] strokeCorners = Corners(stroke);
+                for (int i = 0; i < 4; i++)
+                {
+                    px[5 + i] = strokeCorners[i].X;
+                    py[5 + i] = strokeCorners[i].Y;
+                    pm[5 + i] = 1f;
+                }
+
+                boundCount = 9;
             }
 
             const float sqrt3 = 1.7320508f;
@@ -3127,14 +3810,14 @@ namespace Game.UI.Runtime
             float hhStart = MinPortraitHexHeight(ratio);
             if (hhStart > hhMax)
                 return false;
-            float hhLimit = Math.Min(hhMax, hhStart + 42f);
+            float hhLimit = Math.Min(hhMax, hhStart + 42f + PortraitHexExtra);
             if (hhStep < 1f)
                 hhStep = 1f;
             for (float hh = hhStart; hh <= hhLimit + 0.01f; hh += hhStep)
             {
                 float cyLo = 23f + hh;
                 float cyHi = hint - hh;
-                for (int i = 0; i < px.Length; i++)
+                for (int i = 0; i < boundCount; i++)
                 {
                     cyLo = Math.Max(cyLo, py[i] - (hh - pm[i]));
                     cyHi = Math.Min(cyHi, py[i] + (hh - pm[i]));
@@ -3155,6 +3838,10 @@ namespace Game.UI.Runtime
                     for (int sample = 0; sample <= steps; sample++)
                         cys[sample] = cyLo + (cyHi - cyLo) * sample / steps;
                 }
+                else if (PreferLowHex)
+                    cys = new[] { cyHi, (cyLo + cyHi) * 0.5f, cyLo };
+                else if (PreferHighHex)
+                    cys = new[] { cyLo, (cyLo + cyHi) * 0.5f, cyHi };
                 else
                     cys = new[] { (cyLo + cyHi) * 0.5f, cyLo, cyHi };
                 for (int c = 0; c < cys.Length; c++)
@@ -3163,7 +3850,7 @@ namespace Game.UI.Runtime
                     float cxLo = 23f + hw;
                     float cxHi = frameWidth - 23f - hw;
                     bool open = true;
-                    for (int i = 0; i < px.Length; i++)
+                    for (int i = 0; i < boundCount; i++)
                     {
                         float yRel = Math.Abs(py[i] - cy);
                         if (yRel > hh - pm[i] + 0.08f)
@@ -3226,16 +3913,22 @@ namespace Game.UI.Runtime
         {
             if (!GlowInside(shape, frameWidth, frameHeight, out _, out _))
                 return false;
+
             if (!PointInPolygon(pinPoint, shape) || DistanceToEdge(pinPoint, shape) < 8f)
                 return false;
+
             if (!RestsInside(card, shape, InsideMargin))
                 return false;
-            if (HexEdgeHits(shape, stroke))
+
+            if (HostsCueTab(index) && HexEdgeHits(shape, stroke))
                 return false;
-            if (PolygonArea(shape) < 40000f)
+
+            if (PolygonArea(shape) < PortraitAreaFloor)
                 return false;
+
             if (OnPlateInterior(shape, frameWidth, frameHeight) < 8)
                 return false;
+
             if (LeaderHitsOtherHex(pinPoint, NearestOn(card, pinPoint), placed, index))
                 return false;
             if (placed == null)
@@ -3246,9 +3939,9 @@ namespace Game.UI.Runtime
                     continue;
                 if (PolygonsOverlap(shape, placed[j], 0.75f))
                     return false;
-                if (PolygonHitsRect(placed[j], stroke))
+                if (HostsCueTab(index) && PolygonHitsRect(placed[j], stroke))
                     return false;
-                if (cards != null && j < cards.Length && cards[j].W > 1f)
+                if (cards != null && j < cards.Length && cards[j].W > 1f && HostsCueTab(j))
                 {
                     var other = new Box(cards[j].X, cards[j].Y - CueTabRoom, cards[j].W, CueTabRoom);
                     if (HexEdgeHits(shape, InflateBox(other, CueHexStroke)))

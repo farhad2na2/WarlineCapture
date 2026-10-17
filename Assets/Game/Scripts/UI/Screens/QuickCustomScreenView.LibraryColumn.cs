@@ -451,7 +451,7 @@ namespace Game.UI.Runtime
                     // approved-2: MEDALS heading over four tier circles with names, one row.
                     float quarter = width / 4f;
                     int visual = fa ? 3 - i : i;
-                    PlaceTopLeft(slot, visual * quarter, 30f, quarter, 72f);
+                    PlaceTopLeft(slot, visual * quarter, MedalCircleTop, quarter, MedalCircleSlot);
                 }
                 LayoutElement element = slot.GetComponent<LayoutElement>();
                 if (element != null)
@@ -479,7 +479,7 @@ namespace Game.UI.Runtime
         {
             float quarter = width / 4f;
             float boxWidth = Mathf.Max(40f, quarter - 8f);
-            float boxHeight = fa ? 36f : 26f;
+            float boxHeight = MedalCircleSlot - MedalCircleIcon(fa);
             float max = fa ? 22f : 18f;
             Transform titleTransform = FindDeep(transform.Find("SkirmishSetupComposition/BaseAssaultRules"), "Title");
             TMP_FontAsset latin = titleTransform != null ? titleTransform.GetComponent<TMP_Text>()?.font : null;
@@ -490,7 +490,7 @@ namespace Game.UI.Runtime
                 TMP_Text caption = row.Find("Slot" + i)?.Find("Caption")?.GetComponent<TMP_Text>();
                 if (caption == null)
                     continue;
-                PlaceTopLeft(caption.rectTransform, 4f, fa ? 40f : 44f, boxWidth, boxHeight);
+                PlaceTopLeft(caption.rectTransform, 4f, MedalCircleIcon(fa), boxWidth, boxHeight);
                 HoldFixed(caption.rectTransform, boxWidth, boxHeight, 0f);
                 if (!fa && latin != null && !ContainsArabicScript(caption.text))
                     caption.font = latin;
@@ -515,14 +515,20 @@ namespace Game.UI.Runtime
             }
         }
 
+        // v32: the medal sprites carry ~14% transparent padding per side, so a 40 px rect drew ~34 px circles.
+        // Same 104 px row (Library.cs approved height): heading 26, slot 78 = icon + caption.
+        private const float MedalCircleTop = 26f;
+        private const float MedalCircleSlot = 78f;
+        private static float MedalCircleIcon(bool fa) => fa ? 50f : 58f; // FA captions need the taller line
+
         private void PlaceMedalsHeading(RectTransform row, bool fa, float width)
         {
             Transform existing = row.Find("MedalsHeading");
             TMP_Text heading = existing != null ? existing.GetComponent<TMP_Text>() : CreateLabel(row, "MedalsHeading", 22f);
             LayoutElement element = heading.GetComponent<LayoutElement>() ?? heading.gameObject.AddComponent<LayoutElement>();
             element.ignoreLayout = true;
-            PlaceTopLeft(heading.rectTransform, 8f, 0f, width - 16f, 28f);
-            SetCopy(heading, fa ? "مدال ها" : "MEDALS", 20f, 26f);
+            PlaceTopLeft(heading.rectTransform, 8f, 0f, width - 16f, MedalCircleTop - 2f);
+            SetCopy(heading, fa ? "مدال ها" : "MEDALS", 20f, 24f);
             heading.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             heading.isRightToLeftText = fa;
             heading.textWrappingMode = TextWrappingModes.NoWrap;
@@ -539,14 +545,14 @@ namespace Game.UI.Runtime
             HorizontalLayoutGroup row = slot.GetComponent<HorizontalLayoutGroup>();
             if (row != null)
                 row.enabled = false;
-            const float icon = 50f; // approved-2/3: larger medal art in the detail panel
+            float icon = MedalCircleIcon(fa); // approved-2/3: medal art dominates the slot
             RectTransform iconRect = slot.Find("Icon") as RectTransform;
             RectTransform caption = slot.Find("Caption") as RectTransform;
             RectTransform count = slot.Find("Count") as RectTransform;
             PlaceTopLeft(iconRect, (width - icon) * 0.5f, 0f, icon, icon);
-            PlaceTopLeft(caption, 2f, 49f, width - 4f, 23f);
+            PlaceTopLeft(caption, 2f, icon, width - 4f, MedalCircleSlot - icon);
             HoldFixed(iconRect, icon, icon, 0f);
-            HoldFixed(caption, width - 4f, 23f, 0f);
+            HoldFixed(caption, width - 4f, MedalCircleSlot - icon, 0f);
             if (count != null)
                 count.gameObject.SetActive(false); // approved-2: no duplicate count badges on the selected-battle panel
             Image image = iconRect != null ? iconRect.GetComponent<Image>() : null;

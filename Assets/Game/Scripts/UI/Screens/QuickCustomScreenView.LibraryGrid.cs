@@ -422,13 +422,14 @@ namespace Game.UI.Runtime
             {
                 if (MedalEarned(medals, order[i])) { shown = order[i]; earned = true; break; }
             }
-            float size = Mathf.Clamp(previewHeight * 0.36f, 18f, 30f);
-            if (width < size * 3f || previewHeight < size + 6f)
+            // medal sprite is ~86% of its rect: 30 px rect draws ~26 px (approved-3). Capped by preview height and cell width.
+            float size = Mathf.Min(30f, previewHeight * 0.56f, width * 0.2f);
+            if (size < 16f)
                 return;
             float x = fa ? 4f : width - size - 4f;
             var image = new GameObject("CornerMedal", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             image.transform.SetParent(parent, false);
-            PlaceTopLeft(image.rectTransform, x, previewHeight - size - 3f, size, size);
+            PlaceTopLeft(image.rectTransform, x, previewHeight - size - 2f, size, size);
             PaintDifficultyMedal(image, shown, earned);
         }
 

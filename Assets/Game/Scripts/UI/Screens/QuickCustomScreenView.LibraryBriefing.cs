@@ -22,7 +22,18 @@ namespace Game.UI.Runtime
             if (titleTransform != null)
                 title = titleTransform.GetComponent<TMP_Text>();
             if (battlefield && !string.IsNullOrEmpty(briefing.ScenarioId))
-                SetCopy(title, LibraryText(briefing.TitleLocKey, fa), 26f, 34f);
+            {
+                // approved-2 heading: "S005 · BASE ASSAULT" in gold.
+                string objectiveTitle = string.Empty;
+                if (TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry headingEntry) && !string.IsNullOrEmpty(headingEntry.ObjectiveId))
+                    SkirmishBattleLibraryArt.ObjectiveCopy(headingEntry.ObjectiveId, fa, out objectiveTitle, out _);
+                string heading = string.IsNullOrEmpty(objectiveTitle)
+                    ? LibraryText(briefing.TitleLocKey, fa)
+                    : briefing.ScenarioId + " · " + UpperLatin(objectiveTitle);
+                SetCopy(title, MixedText(heading, fa), 26f, 34f);
+                if (title != null)
+                    title.color = new Color(0.93f, 0.78f, 0.38f, 1f);
+            }
             else if (hasPin)
                 SetCopy(title, MapDisplayTitle(pin.MapId, fa), 26f, 34f);
             KeepSingleLine(title, 26f, 34f);
@@ -113,7 +124,7 @@ namespace Game.UI.Runtime
             {
                 string purpose = MixedText(LibraryPurpose(briefing, fa), fa);
                 string reason = LibraryReason(briefing, fa);
-                SetCopy(scenarioDescription, string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason, 15f, 22f);
+                SetCopy(scenarioDescription, string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason, 20f, 26f);
             }
 
             if (launchButton != null && !_savedMatchAvailable)
@@ -146,9 +157,12 @@ namespace Game.UI.Runtime
                     float rowWidth = _difficultyRow.rect.width > 200f ? _difficultyRow.rect.width : _difficultyRow.sizeDelta.x;
                     if (rowWidth < 200f || rowWidth > 760f)
                         rowWidth = 548f;
-                    float buttonWidth = (rowWidth - 8f) * 0.5f;
-                    const float buttonHeight = 50f;
-                    PlaceTopLeft(choiceRect, (i % 2) * (buttonWidth + 8f), (i / 2) * (buttonHeight + 6f), buttonWidth, buttonHeight);
+                    // approved-2/3: compact segmented control, one row of four, mirrored in FA.
+                    float segment = rowWidth / 4f;
+                    const float segmentHeight = 40f;
+                    int visual = fa ? 3 - i : i;
+                    PlaceTopLeft(choiceRect, visual * segment, 4f, segment - 2f, segmentHeight);
+                    StyleDifficultySegment(button, offered && difficulties[i] == selected, offered);
                 }
                 TMP_Text choice = slot.GetComponentInChildren<TMP_Text>(true);
                 if (choice != null)
@@ -169,6 +183,99 @@ namespace Game.UI.Runtime
                     choice.fontSizeMin = LibraryFontFloor;
                 }
             }
+        }
+
+        /// <summary>
+        /// approved-2/3 selected panel type scale. Runs from PlaceLibraryHeader, after the late text passes and
+        /// V3LocalizedTextBindingView's FitArabicLineBox, so the sizes hold in FA too.
+        /// </summary>
+        private void ReassertBriefingPanel()
+        {
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            Transform rules = transform.Find("SkirmishSetupComposition/BaseAssaultRules");
+            Transform titleTransform = FindDeep(rules, "Title");
+            TMP_Text title = titleTransform != null ? titleTransform.GetComponent<TMP_Text>() : null;
+            if (title != null && title.gameObject.activeInHierarchy)
+            {
+                title.fontStyle = FontStyles.Bold;
+                title.color = new Color(0.96f, 0.64f, 0.2f, 1f); // approved-2 orange heading
+                FitDetailLine(title, 22f, 34f);
+            }
+
+            Transform column = title != null ? title.transform.parent : null;
+            TMP_Text subtitle = column != null ? column.Find("BriefingSubtitle")?.GetComponent<TMP_Text>() : null;
+            if (subtitle != null && subtitle.gameObject.activeInHierarchy)
+            {
+                subtitle.fontStyle = FontStyles.Bold;
+                subtitle.color = new Color(0.98f, 0.96f, 0.9f, 1f);
+                FitDetailLine(subtitle, 18f, 28f);
+            }
+
+            TMP_FontAsset latin = title != null ? title.font : null;
+            var labels = new List<TMP_Text>(4);
+            if (_difficultyRow != null)
+            {
+                for (int i = 0; i < _difficultyRow.childCount; i++)
+                {
+                    Transform slot = _difficultyRow.GetChild(i);
+                    if (!slot.name.StartsWith("DifficultyChoice_", StringComparison.Ordinal))
+                        continue;
+                    labels.Add(slot.GetComponentInChildren<TMP_Text>(true));
+                }
+            }
+
+            // Segment labels: one shared size (smallest fit), held fixed so the Grid refit text pass cannot clip them.
+            float segShared = fa ? 20f : 18f;
+            for (int i = 0; i < labels.Count; i++)
+            {
+                if (labels[i] == null)
+                    continue;
+                ReassertPanelLabel(labels[i], latin, fa, 11f, fa ? 20f : 18f);
+                segShared = Mathf.Min(segShared, labels[i].fontSize);
+            }
+
+            for (int i = 0; i < labels.Count; i++)
+            {
+                if (labels[i] == null)
+                    continue;
+                labels[i].margin = new Vector4(2f, 0f, 2f, 0f);
+                LibraryFixedTextSize hold = labels[i].GetComponent<LibraryFixedTextSize>() ?? labels[i].gameObject.AddComponent<LibraryFixedTextSize>();
+                hold.Size = segShared;
+                hold.Apply();
+                labels[i].textWrappingMode = TextWrappingModes.NoWrap;
+            }
+        }
+
+        private static void ReassertPanelLabel(TMP_Text text, TMP_FontAsset latin, bool fa, float min, float max)
+        {
+            if (text == null)
+                return;
+            // EN: same display face as the heading (no Arial fallback look); FA keeps the locale font.
+            if (!fa && latin != null && !ContainsArabicScript(text.text))
+                text.font = latin;
+            text.fontStyle = FontStyles.Bold;
+            text.alignment = TextAlignmentOptions.Center;
+            FitDetailLine(text, min, max);
+        }
+
+        private static void StyleDifficultySegment(Button button, bool selected, bool offered)
+        {
+            if (button == null)
+                return;
+            // approved-2 MAP/GRID toggle colours: gold fill + gold edge when selected, dark slate otherwise.
+            Color top = selected ? new Color(0.58f, 0.44f, 0.14f, 1f) : new Color(0.07f, 0.1f, 0.11f, 0.96f);
+            Color bottom = selected ? new Color(0.36f, 0.26f, 0.06f, 1f) : new Color(0.03f, 0.05f, 0.06f, 0.96f);
+            if (!offered)
+            {
+                top.a *= 0.5f;
+                bottom.a *= 0.5f;
+            }
+            TintCommand(button, top, bottom);
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+                label.color = selected ? new Color(1f, 0.96f, 0.86f, 1f) : new Color(0.82f, 0.82f, 0.78f, offered ? 1f : 0.5f);
         }
 
         private void OnLibraryDifficulty(SkirmishDifficultyId difficulty)
@@ -246,24 +353,11 @@ namespace Game.UI.Runtime
                 slotWidth = 540f;
             if (slotHeight < 2f)
                 slotHeight = 200f;
-            float aspect = texture.width / (float)texture.height;
-            float fittedWidth = slotWidth;
-            float fittedHeight = fittedWidth / aspect;
-            if (fittedHeight > slotHeight)
-            {
-                fittedHeight = slotHeight;
-                fittedWidth = fittedHeight * aspect;
-            }
-
-            picture.uvRect = new Rect(0f, 0f, 1f, 1f);
+            // approved-2/3: the battle art is a full-bleed plate across the panel, cropped to cover.
             picture.color = Color.white;
             picture.raycastTarget = false;
-            PlaceTopLeft(
-                picture.rectTransform,
-                (slotWidth - fittedWidth) * 0.5f,
-                (slotHeight - fittedHeight) * 0.5f,
-                fittedWidth,
-                fittedHeight);
+            PlaceTopLeft(picture.rectTransform, 0f, 0f, slotWidth, slotHeight);
+            SkirmishBattleCardWidget.FitCover(picture, slotWidth, slotHeight);
         }
 
         private string BriefingPreviewKey(SkirmishBriefingState briefing)
@@ -335,7 +429,7 @@ namespace Game.UI.Runtime
             string copy = string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason;
             if (string.IsNullOrWhiteSpace(copy))
                 return;
-            SetCopy(scenarioDescription, copy, 15f, 22f);
+            SetCopy(scenarioDescription, copy, 20f, 26f);
         }
 
         private void EnsureStatTile(RectTransform row, string name, float x, string captionText)
@@ -379,6 +473,11 @@ namespace Game.UI.Runtime
 
             PresentFlaggedTile("Time", briefing.ShowTime, fa ? "زمان" : "TIME", FormatClock(briefing.DeadlineSeconds), true);
             PresentFlaggedTile("Size", briefing.ShowSize, fa ? "اندازه" : "SIZE", LibraryText(briefing.SizeLocKey, fa), false);
+            // approved-2/3: three tiles (Objective, Army, Start). Time/Size fold into the subtitle line when present.
+            string timeCopy = briefing.ShowTime ? FormatClock(briefing.DeadlineSeconds) : string.Empty;
+            string sizeCopy = briefing.ShowSize ? LibraryText(briefing.SizeLocKey, fa) : string.Empty;
+            SetActive(_statRow.Find("Time"), false);
+            SetActive(_statRow.Find("Size"), false);
 
             string army = hasCard ? card.ArmyProfile : string.Empty;
             string start = hasCard ? card.StartProfile : string.Empty;
@@ -402,7 +501,103 @@ namespace Game.UI.Runtime
             BindStatTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel, false);
             BindStatTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel, false);
             LayoutVisibleStatTiles();
+            // approved-2: icon tiles at mockup weight (icon over value, no caption). Only real values are shown.
+            DecorateIconTile(_statRow.Find("Time"), FooterGlyph.Clock, null, fa);
+            DecorateIconTile(_statRow.Find("Size"), FooterGlyph.Squares, null, fa);
+            DecorateIconTile(_statRow.Find("Objective"), FooterGlyph.None, string.IsNullOrEmpty(objectiveId) ? null : SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), fa);
+            DecorateIconTile(_statRow.Find("Army"), FooterGlyph.Shield, null, fa);
+            DecorateIconTile(_statRow.Find("Start"), FooterGlyph.Pin, null, fa);
+            string extra = string.IsNullOrEmpty(timeCopy) ? sizeCopy : string.IsNullOrEmpty(sizeCopy) ? timeCopy : timeCopy + " · " + sizeCopy;
+            PresentBriefingSubtitle(armyLabel, string.IsNullOrEmpty(extra) ? startLabel : (string.IsNullOrEmpty(startLabel) ? extra : startLabel + " · " + extra), fa);
         }
+
+        private void DecorateIconTile(Transform tile, FooterGlyph glyph, string sprite, bool fa)
+        {
+            if (tile is not RectTransform rect || !tile.gameObject.activeSelf)
+                return;
+            float width = rect.sizeDelta.x > 20f ? rect.sizeDelta.x : Mathf.Max(60f, rect.rect.width);
+            const float icon = 38f; // approved-2/3: icon carries the tile
+            Transform caption = tile.Find("Caption");
+            if (caption != null)
+                caption.gameObject.SetActive(false);
+            Transform oldRaw = tile.Find("TileGlyph");
+            Transform oldImg = tile.Find("TileArt");
+            if (!string.IsNullOrEmpty(sprite))
+            {
+                if (oldRaw != null)
+                    oldRaw.gameObject.SetActive(false);
+                Image art = oldImg != null ? oldImg.GetComponent<Image>() : null;
+                if (art == null)
+                {
+                    art = new GameObject("TileArt", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                    art.transform.SetParent(tile, false);
+                }
+                art.gameObject.SetActive(true);
+                PlaceTopLeft(art.rectTransform, (width - icon) * 0.5f, 5f, icon, icon);
+                art.preserveAspect = true;
+                art.raycastTarget = false;
+                ShowIcon(art, sprite, new Color(0.96f, 0.93f, 0.84f, 1f));
+            }
+            else if (glyph != FooterGlyph.None)
+            {
+                if (oldImg != null)
+                    oldImg.gameObject.SetActive(false);
+                RawImage raw = oldRaw != null ? oldRaw.GetComponent<RawImage>() : null;
+                if (raw == null)
+                {
+                    raw = new GameObject("TileGlyph", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+                    raw.transform.SetParent(tile, false);
+                }
+                raw.gameObject.SetActive(true);
+                PlaceTopLeft(raw.rectTransform, (width - icon) * 0.5f, 5f, icon, icon);
+                raw.texture = FooterGlyphTexture(glyph);
+                raw.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                raw.raycastTarget = false;
+            }
+
+            TMP_Text value = tile.Find("Value")?.GetComponent<TMP_Text>();
+            if (value != null)
+            {
+                PlaceTopLeft(value.rectTransform, 4f, 45f, width - 8f, 36f);
+                value.alignment = TextAlignmentOptions.Center;
+                value.textWrappingMode = TextWrappingModes.Normal;
+                value.overflowMode = TextOverflowModes.Overflow;
+                value.enableAutoSizing = true;
+                value.fontSizeMin = 15f;
+                value.fontSizeMax = 22f;
+                value.maxVisibleLines = 2;
+                value.fontStyle = FontStyles.Bold;
+                value.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                V3LocalizedTextBindingView binding = value.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(15f, 22f);
+            }
+        }
+
+        /// <summary>approved-2 subtitle under the gold heading: army · start from the catalog (e.g. COMBINED ARMS · FIELD BASE).</summary>
+        private void PresentBriefingSubtitle(string army, string start, bool fa)
+        {
+            Transform column = transform.Find("SkirmishSetupComposition/BaseAssaultRules/BriefingColumn");
+            if (column == null)
+                return;
+            Transform existing = column.Find("BriefingSubtitle");
+            TMP_Text text = existing != null ? existing.GetComponent<TMP_Text>() : CreateLabel(column, "BriefingSubtitle", 22f);
+            string copy = string.IsNullOrEmpty(army) ? start : string.IsNullOrEmpty(start) ? army : army + " · " + start;
+            _briefingSubtitleShown = !string.IsNullOrWhiteSpace(copy);
+            text.gameObject.SetActive(_briefingSubtitleShown);
+            if (!_briefingSubtitleShown)
+                return;
+            SetCopy(text, UpperLatin(copy), 20f, 28f);
+            text.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            text.isRightToLeftText = fa;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.fontStyle = FontStyles.Bold;
+            text.margin = new Vector4(16f, 0f, 16f, 0f);
+            text.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+        }
+
+        private bool _briefingSubtitleShown;
 
         private void PresentFlaggedTile(string name, bool show, string caption, string value, bool latinValue)
         {
@@ -592,5 +787,53 @@ namespace Game.UI.Runtime
                 _medalGrid.gameObject.SetActive(false);
             }
         }
+
+        /// <summary>
+        /// Map and Grid put the briefing on the trailing side per approved-2/3 (right in LTR, left in RTL).
+        /// The Theatre keeps the frame default, where the briefing column is approved-1's left column.
+        /// </summary>
+        private bool? LibraryBriefingOnLeft()
+        {
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield)
+                return null;
+            return UiShellRuntimeGateway.Localization.IsRightToLeft;
+        }
     }
 }
+
+namespace Game.UI.Runtime
+{
+    /// <summary>
+    /// Holds a fixed TMP size with autosize off every frame. Late library text passes (FinishLibraryText after the
+    /// Grid refit) re-enable autosize on medal captions; this keeps the shared caption size the panel computed.
+    /// </summary>
+    [DisallowMultipleComponent]
+    public sealed class LibraryFixedTextSize : MonoBehaviour
+    {
+        public float Size;
+
+        private void LateUpdate()
+        {
+            Apply();
+        }
+
+        public void Apply()
+        {
+            var text = GetComponent<TMP_Text>();
+            if (text == null || Size <= 0f)
+                return;
+            text.textWrappingMode = TextWrappingModes.NoWrap; // refit text pass can turn wrapping back on
+            text.maxVisibleLines = 1;
+            if (text.enableAutoSizing || !Mathf.Approximately(text.fontSize, Size))
+            {
+                text.enableAutoSizing = false;
+                text.fontSize = text.fontSizeMin = text.fontSizeMax = Size;
+                text.overflowMode = TextOverflowModes.Overflow;
+                var binding = GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(Size, Size);
+            }
+        }
+    }
+}
+

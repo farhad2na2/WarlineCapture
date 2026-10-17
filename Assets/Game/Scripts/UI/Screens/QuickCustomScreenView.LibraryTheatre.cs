@@ -92,24 +92,17 @@ namespace Game.UI.Runtime
             TheatreSeatGeometry.ShotReserve = reserve;
             TheatreSeatGeometry.Box viewport = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, reserve);
             TheatreSeatGeometry.Box reserveRect = TheatreSeatGeometry.DetailRect(plateWidth, plateHeight, fa, reserve);
-            bool reframed = viewport.X > 0.5f || viewport.W < plateWidth - 0.5f;
             RawImage theatrePaint = null;
             if (painted != null)
             {
                 var raw = new GameObject("TheaterPaint", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 raw.transform.SetParent(fit, false);
-                if (reframed)
-                    PlaceTopLeft(raw.rectTransform, viewport.X, viewport.Y, viewport.W, viewport.H);
-                else
-                    Stretch(raw.rectTransform);
+                Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = TheatrePaintDim();
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
-                if (reframed)
-                    ApplyPlainTheatreCover(raw, viewport.W, viewport.H);
-                else
-                    ApplyTheatreCover(raw, plateWidth, plateHeight);
+                ApplyTheatreCover(raw, plateWidth, plateHeight);
                 theatrePaint = raw;
                 var wash = new GameObject("TheatreWash", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 wash.transform.SetParent(fit, false);
@@ -188,6 +181,16 @@ namespace Game.UI.Runtime
             }
 
             PlaceZoneSlots(slots, safe, plateWidth, plateHeight, fa);
+            if (theatrePaint != null && Mathf.Abs(TheatreSeatGeometry.ReserveSlideX) > 0.5f)
+            {
+                RectTransform paintRect = theatrePaint.rectTransform;
+                PlaceTopLeft(
+                    paintRect,
+                    TheatreSeatGeometry.ReserveSlideX,
+                    0f,
+                    plateWidth,
+                    plateHeight);
+            }
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
             PlaceTheatreSurround(fit, slots, plateWidth, plateHeight);
             for (int i = 0; i < slots.Count; i++)
@@ -2129,9 +2132,77 @@ namespace Game.UI.Runtime
             // The closed seam only hides the briefing edge when the opaque map is painted above it.
             if (briefing != null && map.parent == briefing.parent && map.GetSiblingIndex() < briefing.GetSiblingIndex())
                 map.SetSiblingIndex(briefing.GetSiblingIndex());
-            // The frame pass runs after the seat stack. Refit from the card's final rect so a
-            // layout group, an early size, or a parent scale cannot leave a ~38px tile.
+            // The frame pass runs after the first seat. Rebuild on the clip it just sized,
+            // then keep a reserved detail column on the trailing edge.
+            ReseatTheatreOnFinalPlate(map);
+            SeatTheatreDetailPanel();
             RefitTheatreCardArt();
+        }
+
+        /// <summary>
+        /// The first theatre pass can run before <c>ApplyLibraryFrame</c> has the capture clip.
+        /// Hexes authored on that earlier plate read as stretched once the clip is final.
+        /// </summary>
+        private void ReseatTheatreOnFinalPlate(RectTransform map)
+        {
+            if (!TheatreSeatGeometry.SeatingReady || _libraryViewModel == null || map == null)
+                return;
+            Transform clip = map.Find("MapPreviewClip");
+            if (clip is not RectTransform plate)
+                return;
+            Canvas.ForceUpdateCanvases();
+            if (!TryFrameSize(plate, out float width, out float height) || width < 64f || height < 64f)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            PresentRegions(_libraryViewModel.Theater, fa);
+        }
+
+        /// <summary>
+        /// The detail column stays on the trailing edge while the reserve is on.
+        /// A reserve-off shot must not leave that panel on the leading edge or across the plate.
+        /// </summary>
+        private void SeatTheatreDetailPanel()
+        {
+            Transform panel = FindTheatreDetailPanel(transform);
+            if (panel is not RectTransform rect)
+                return;
+            Transform clip = transform.Find("SkirmishSetupComposition/OperationPreview/MapPreviewClip");
+            if (clip is not RectTransform plate || !TryFrameSize(plate, out float plateWidth, out float plateHeight))
+            {
+                rect.gameObject.SetActive(false);
+                return;
+            }
+
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            bool reserve = TheatreSeatGeometry.TheatreDetailReserved && plateWidth >= 600f;
+            TheatreSeatGeometry.Box detail = TheatreSeatGeometry.DetailRect(plateWidth, plateHeight, fa, reserve);
+            if (!reserve || detail.W < 1f)
+            {
+                rect.gameObject.SetActive(false);
+                return;
+            }
+
+            rect.gameObject.SetActive(true);
+            rect.SetParent(plate, false);
+            PlaceTopLeft(rect, detail.X, detail.Y, detail.W, detail.H);
+            rect.localScale = Vector3.one;
+            KeepAuthoredSize(rect);
+        }
+
+        private static Transform FindTheatreDetailPanel(Transform root)
+        {
+            if (root == null)
+                return null;
+            if (root.name == "TheatreDetailPanel")
+                return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindTheatreDetailPanel(root.GetChild(i));
+                if (found != null)
+                    return found;
+            }
+
+            return null;
         }
 
         private static void HideEdgeShadow(Transform shadow)

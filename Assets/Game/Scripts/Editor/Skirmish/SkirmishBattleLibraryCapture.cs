@@ -853,6 +853,7 @@ namespace Game.Editor
             }
 
             GuardTheatre(() => RejectDistrictHalo(regions, mapIds, locale));
+            GuardTheatre(() => RejectDistrictHexAspect(regions, mapIds, locale));
             GuardTheatre(() => RejectZoneProgressMatchesCard(root, view, locale));
             GuardTheatre(() => RejectStripMatchesZoneTotals(root, view, locale));
             GuardTheatre(() => RejectMirroredTheatreChrome(root, locale));
@@ -948,8 +949,8 @@ namespace Game.Editor
             Transform panel = FindNamed(regions, "TheatreDetailPanel");
             if (panel is RectTransform panelRect && panelRect.gameObject.activeInHierarchy)
                 detail = PlateBox(space, panelRect);
-            else
-                detail = TheatreSeatGeometry.DetailRect(space.rect.width, space.rect.height, fa, space.rect.width >= 600f);
+            else if (TheatreSeatGeometry.TheatreDetailReserved)
+                detail = TheatreSeatGeometry.DetailRect(space.rect.width, space.rect.height, fa, true);
 
             var violations = new List<string>();
             TheatreSeatGeometry.CollectViolations(
@@ -2118,19 +2119,26 @@ namespace Game.Editor
 
                 float height = Mathf.Max(1f, maxY - minY);
                 float measured = (maxX - minX) / height;
-                RectTransform frame = outline.parent as RectTransform;
+                // Hexes are authored on the map clip. The side column does not enter the ratio.
+                RectTransform plate = regions != null ? regions.parent as RectTransform : null;
+                if (plate == null || plate.name != "MapPreviewClip")
+                    plate = FindNamed(regions != null ? regions.root : null, "MapPreviewClip") as RectTransform;
                 float frameW = 0f;
                 float frameH = 0f;
-                if (frame != null)
-                {
-                    frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
-                    frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
-                }
-
-                if ((frameW < 2f || frameH < 2f) && regions is RectTransform plate)
+                if (plate != null)
                 {
                     frameW = plate.rect.width > 2f ? plate.rect.width : plate.sizeDelta.x;
                     frameH = plate.rect.height > 2f ? plate.rect.height : plate.sizeDelta.y;
+                }
+
+                if (frameW < 2f || frameH < 2f)
+                {
+                    RectTransform frame = outline.parent as RectTransform;
+                    if (frame != null)
+                    {
+                        frameW = frame.rect.width > 2f ? frame.rect.width : frame.sizeDelta.x;
+                        frameH = frame.rect.height > 2f ? frame.rect.height : frame.sizeDelta.y;
+                    }
                 }
 
                 float expected = V35HexAspect(mapIds[i], frameW, frameH);

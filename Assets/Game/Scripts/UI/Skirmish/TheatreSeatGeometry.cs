@@ -182,8 +182,8 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Theatre map clip on a capture canvas after the search bar and the floating title
         /// are removed. Matches <c>SkirmishLibraryFrame</c> plus the theatre clip insets
-        /// (top 8, bottom 128) inside the header and footer bands. The strip widget is
-        /// inactive; the inset stays so district glow still clears the plate.
+        /// in <c>PlaceLibraryChrome</c> (top 8, bottom 8). The old 128px strip band is
+        /// part of the plate; a replay that still stores that short plate is reseated here.
         /// </summary>
         public static void CaptureMapSize(float canvasWidth, float canvasHeight, out float mapWidth, out float mapHeight)
         {
@@ -194,7 +194,7 @@ namespace Game.UI.Runtime
             const float narrowAspect = 1.55f;
             const float seam = 2f;
             const float clipTop = 8f;
-            const float clipBottom = 128f;
+            const float clipBottom = 8f;
             if (canvasWidth < 200f)
                 canvasWidth = 1672f;
             if (canvasHeight < 200f)
@@ -214,6 +214,108 @@ namespace Game.UI.Runtime
 
             mapWidth += gap + seam;
             mapHeight = panelHeight - clipTop - clipBottom;
+        }
+
+        /// <summary>
+        /// Plate a dumped shot is checked on. A 4:3 file that stored the old 724px clip
+        /// (or any other plate) is reseated on the capture clip of its canvas. Section
+        /// dumps keep the stored plate; their frame is not <see cref="CaptureMapSize"/>.
+        /// The 20:9 notch is applied after the theatre checks, so those files use the plain clip.
+        /// </summary>
+        public static void ResolveReplayPlate(
+            float storedWidth,
+            float storedHeight,
+            float canvasWidth,
+            float canvasHeight,
+            string notch,
+            float insetLeft,
+            float insetTop,
+            float insetRight,
+            float insetBottom,
+            out float plateWidth,
+            out float plateHeight)
+        {
+            bool haveCanvas = canvasWidth > 2f && canvasHeight > 2f;
+            bool section = string.Equals(notch, "section", StringComparison.Ordinal);
+            if (!haveCanvas || section)
+            {
+                plateWidth = storedWidth;
+                plateHeight = storedHeight;
+                return;
+            }
+
+            if (string.Equals(notch, "safe", StringComparison.Ordinal))
+            {
+                if (insetBottom > 0.5f || insetRight > 0.5f)
+                {
+                    CaptureMapSize(
+                        Math.Max(2f, canvasWidth - insetLeft - insetRight),
+                        Math.Max(2f, canvasHeight - insetTop - insetBottom),
+                        out plateWidth,
+                        out plateHeight);
+                    return;
+                }
+
+                ApplySafeFrame(
+                    canvasWidth, canvasHeight, insetLeft, insetTop, insetRight, insetBottom,
+                    out float usableWidth, out float usableHeight);
+                CaptureMapSize(usableWidth, usableHeight, out plateWidth, out plateHeight);
+                return;
+            }
+
+            CaptureMapSize(canvasWidth, canvasHeight, out plateWidth, out plateHeight);
+        }
+
+        public static bool TryReadCanvas(
+            string json,
+            out float canvasWidth,
+            out float canvasHeight,
+            out float insetLeft,
+            out float insetTop,
+            out float insetRight,
+            out float insetBottom)
+        {
+            canvasWidth = 0f;
+            canvasHeight = 0f;
+            insetLeft = 0f;
+            insetTop = 0f;
+            insetRight = 0f;
+            insetBottom = 0f;
+            if (string.IsNullOrEmpty(json))
+                return false;
+            int canvas = json.IndexOf("\"canvas\"", StringComparison.Ordinal);
+            if (canvas < 0)
+                return false;
+            int open = json.IndexOf('[', canvas);
+            if (open < 0)
+                return false;
+            canvasWidth = ReadArrayNumber(json, open + 1, out int next);
+            canvasHeight = ReadArrayNumber(json, next, out _);
+            int insets = json.IndexOf("\"insets\"", StringComparison.Ordinal);
+            if (insets >= 0)
+            {
+                insetLeft = ReadNumber(json, "\"left\"", insets);
+                insetTop = ReadNumber(json, "\"top\"", insets);
+                insetRight = ReadNumber(json, "\"right\"", insets);
+                insetBottom = ReadNumber(json, "\"bottom\"", insets);
+            }
+
+            return canvasWidth > 2f && canvasHeight > 2f;
+        }
+
+        private static float ReadArrayNumber(string json, int start, out int next)
+        {
+            next = start;
+            while (next < json.Length && (json[next] == ' ' || json[next] == '\n' || json[next] == ','))
+                next++;
+            int end = next;
+            while (end < json.Length && (char.IsDigit(json[end]) || json[end] == '.' || json[end] == '-'))
+                end++;
+            float value = 0f;
+            if (end > next)
+                float.TryParse(json.Substring(next, end - next), NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+            next = end;
+            return value;
         }
 
         /// <summary>
@@ -412,6 +514,9 @@ namespace Game.UI.Runtime
         /// False means the plate was not inset and the detail panel is a bottom sheet.
         /// </summary>
         public static bool TheatreDetailReserved { get; private set; }
+
+        /// <summary>Horizontal slide applied so the row clears the side column. The painting uses the same slide.</summary>
+        public static float ReserveSlideX { get; private set; }
 
         /// <summary>
         /// Capture sets this false until the canvas has been forced to the shot size.
@@ -1185,20 +1290,8 @@ namespace Game.UI.Runtime
                     }
                 }
 
-                float aspectWidth = plateWidth;
-                float aspectHeight = plateHeight;
-                if (detail.W > 1f)
-                {
-                    bool panelOnLeft = detail.Center.X < plateWidth * 0.5f;
-                    Box view = OpenViewport(plateWidth, plateHeight, panelOnLeft, true);
-                    if (view.W > 2f && view.H > 2f)
-                    {
-                        aspectWidth = view.W;
-                        aspectHeight = view.H;
-                    }
-                }
-
-                float expected = HexAspect(mapId, aspectWidth, aspectHeight);
+                // The detail reserve does not enter. Hexes are authored on the plate.
+                float expected = HexAspect(mapId, plateWidth, plateHeight);
                 float measured = MeasuredHexAspect(hexes[i]);
                 if (expected >= 0.2f && measured > 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
                 {
@@ -2151,6 +2244,103 @@ namespace Game.UI.Runtime
             }
         }
 
+        /// <summary>
+        /// Slides a plate-space row off the side column. English and Farsi share one delta,
+        /// and Farsi then adds the open-viewport origin, so the cue stays put inside that viewport.
+        /// </summary>
+        private static bool TrySlideReserveRow(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            float plateWidth,
+            float plateHeight,
+            bool fa)
+        {
+            Box enDetail = DetailRect(plateWidth, plateHeight, false, true);
+            Box faDetail = DetailRect(plateWidth, plateHeight, true, true);
+            float faViewX = OpenViewport(plateWidth, plateHeight, true, true).X;
+            if (!TrySharedReserveDelta(hexes, pins, cards, cue, plateWidth, enDetail, faDetail, faViewX, out float delta))
+                delta = 0f;
+            float dx = fa ? delta + faViewX : delta;
+            ReserveSlideX = dx;
+            ShiftSeats(hexes, pins, cards, ref cue, dx, 0f);
+            return true;
+        }
+
+        private static bool TrySharedReserveDelta(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            float plateWidth,
+            Box enDetail,
+            Box faDetail,
+            float faViewX,
+            out float delta)
+        {
+            delta = 0f;
+            float lo = -plateWidth;
+            float hi = plateWidth;
+            float enGlow = enDetail.X - HaloReach;
+            float faGlow = faDetail.XMax + HaloReach;
+            if (hexes != null)
+            {
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    if (hexes[i] == null)
+                        continue;
+                    for (int p = 0; p < hexes[i].Length; p++)
+                    {
+                        float x = hexes[i][p].X;
+                        lo = Math.Max(lo, 1f + HaloReach - x);
+                        hi = Math.Min(hi, plateWidth - 1f - HaloReach - x);
+                        hi = Math.Min(hi, enGlow - 0.75f - x);
+                        lo = Math.Max(lo, 1f + HaloReach - faViewX - x);
+                        hi = Math.Min(hi, plateWidth - 1f - HaloReach - faViewX - x);
+                        lo = Math.Max(lo, faGlow + 0.75f - faViewX - x);
+                    }
+                }
+            }
+
+            NoteReserveBox(pins, plateWidth, enDetail.X, faDetail.XMax, faViewX, ref lo, ref hi);
+            NoteReserveBox(cards, plateWidth, enDetail.X, faDetail.XMax, faViewX, ref lo, ref hi);
+            if (cue.W > 1f)
+                NoteReserveBox(new[] { cue }, plateWidth, enDetail.X, faDetail.XMax, faViewX, ref lo, ref hi);
+            if (lo > hi + 0.05f)
+                return false;
+            if (lo <= 0f && hi >= 0f)
+                delta = 0f;
+            else if (hi < 0f)
+                delta = hi;
+            else
+                delta = lo;
+            return true;
+        }
+
+        private static void NoteReserveBox(
+            Box[] boxes,
+            float plateWidth,
+            float enDetailX,
+            float faDetailMax,
+            float faViewX,
+            ref float lo,
+            ref float hi)
+        {
+            if (boxes == null)
+                return;
+            for (int i = 0; i < boxes.Length; i++)
+            {
+                Box box = boxes[i];
+                if (box.W < 1f && box.H < 1f)
+                    continue;
+                lo = Math.Max(lo, Edge - box.X);
+                hi = Math.Min(hi, plateWidth - Edge - box.XMax);
+                hi = Math.Min(hi, enDetailX - 0.75f - box.XMax);
+                lo = Math.Max(lo, faDetailMax + 0.75f - faViewX - box.X);
+            }
+        }
+
         private static void ShiftSeats(Vec2[][] hexes, Box[] pins, Box[] cards, ref Box cue, float dx, float dy)
         {
             if (Math.Abs(dx) < 0.01f && Math.Abs(dy) < 0.01f)
@@ -2238,27 +2428,30 @@ namespace Game.UI.Runtime
         {
             if (string.IsNullOrEmpty(selectedMapId))
                 selectedMapId = "DB";
+            ReserveSlideX = 0f;
             var layout = new Layout
             {
                 SelectedMapId = selectedMapId,
                 Seats = new Seat[MapIds.Length]
             };
-            Box view = OpenViewport(plateWidth, plateHeight, fa, reserveOn);
-            bool reframed = view.X > 0.5f || view.W < plateWidth - 0.5f;
-            float frameWidth = Math.Max(2f, view.W);
-            float frameHeight = Math.Max(2f, view.H);
-            Vec2[][] hexes = BuildAll(frameWidth, frameHeight, reframed);
+            // Hexes are authored on the plate. The side column overlays the trailing
+            // edge and the row slides clear of it; the ratio does not change.
+            RatioPlateWidth = plateWidth;
+            RatioPlateHeight = plateHeight;
+            float frameWidth = plateWidth;
+            float frameHeight = plateHeight;
+            Vec2[][] hexes = BuildAll(frameWidth, frameHeight, false);
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
-                pins[i] = PinBox(i, frameWidth, frameHeight, reframed);
+                pins[i] = PinBox(i, frameWidth, frameHeight, false);
                 layout.Seats[i].MapId = MapIds[i];
                 layout.Seats[i].Hex = hexes[i];
                 layout.Seats[i].Pin = pins[i];
             }
 
             Box detail = DetailRect(plateWidth, plateHeight, fa, reserveOn);
-            Box packDetail = reframed ? default : detail;
+            Box packDetail = default;
             int selected = IndexOf(selectedMapId);
             if (selected < 0)
                 selected = 0;
@@ -2271,8 +2464,6 @@ namespace Game.UI.Runtime
             }
             else
                 TryPack(frameWidth, frameHeight, hexes, pins, packDetail, selected, out placed, out seatedCue);
-            if (reframed)
-                ShiftSeats(hexes, pins, placed, ref seatedCue, view.X, view.Y);
             if (placed != null)
             {
                 bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
@@ -2297,6 +2488,9 @@ namespace Game.UI.Runtime
                     plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue);
             }
 
+            if (reserveOn && detail.W > 1f && placed != null)
+                TrySlideReserveRow(hexes, pins, placed, ref cue, plateWidth, plateHeight, fa);
+
             bool cardsLegal = placed != null;
             if (placed == null)
                 placed = new Box[MapIds.Length];
@@ -2313,8 +2507,12 @@ namespace Game.UI.Runtime
             {
                 for (int i = 0; i < MapIds.Length; i++)
                 {
+                    Box glowZone = detail.W > 1f
+                        ? new Box(detail.X - HaloReach, detail.Y - HaloReach, detail.W + HaloReach * 2f, detail.H + HaloReach * 2f)
+                        : default;
                     if (!layout.Seats[i].Legal || Leader(pins[i], placed[i]) < LeaderMin
-                        || SegmentHitsRect(pins[i].Center, NearestOn(placed[i], pins[i].Center), detail))
+                        || SegmentHitsRect(pins[i].Center, NearestOn(placed[i], pins[i].Center), detail)
+                        || (glowZone.W > 1f && (PolygonHitsRect(hexes[i], detail) || PolygonHitsRect(hexes[i], glowZone))))
                     {
                         cardsLegal = false;
                         break;
@@ -2330,6 +2528,9 @@ namespace Game.UI.Runtime
                     }
                 }
             }
+
+            if (cardsLegal && detail.W > 1f && cue.W > 1f && Overlaps(cue, detail, 0f))
+                cardsLegal = false;
 
             layout.CardsLegal = cardsLegal;
             layout.Cue = cue;
@@ -2408,11 +2609,23 @@ namespace Game.UI.Runtime
 
         private static Vec2[][] BuildAll(float frameWidth, float frameHeight)
         {
+            RatioPlateWidth = frameWidth;
+            RatioPlateHeight = frameHeight;
             return BuildAll(frameWidth, frameHeight, false);
         }
 
         /// <summary>Cards seated inside the hexes from the last <see cref="BuildAll"/> call.</summary>
         private static Box[] PortraitCards;
+
+        /// <summary>Plate whose aspect the hex is authored against. Placement may use a narrower viewport.</summary>
+        private static float RatioPlateWidth;
+
+        private static float RatioPlateHeight;
+
+        /// <summary>Portrait size for the current seating attempt. Full seats are tried before the compact minimum.</summary>
+        private static float SeatCardWidth = PortraitMinWidth;
+
+        private static float SeatCardHeight = PortraitMinHeight;
 
         /// <summary>
         /// Sizes every district around a portrait that sits inside it, beside the pin, with the
@@ -2432,12 +2645,19 @@ namespace Game.UI.Runtime
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
                 pins[i] = PinBox(i, frameWidth, frameHeight, plainCover);
+            float[] widths = { FullPortraitMinWidth, PortraitMinWidth };
+            float[] heights = { FullPortraitMinHeight, PortraitMinHeight };
             float[] squeezes = { 1f, 0.94f };
-            for (int s = 0; s < squeezes.Length; s++)
+            for (int size = 0; size < widths.Length; size++)
             {
-                if (!TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
-                    continue;
-                return true;
+                SeatCardWidth = widths[size];
+                SeatCardHeight = heights[size];
+                for (int s = 0; s < squeezes.Length; s++)
+                {
+                    if (!TrySeatPortraitsAt(frameWidth, frameHeight, pins, squeezes[s], out hexes, out cards))
+                        continue;
+                    return true;
+                }
             }
 
             hexes = null;
@@ -2548,10 +2768,12 @@ namespace Game.UI.Runtime
                 return PortraitSeatClosed(pins, hexes, cards);
             int index = order[step];
             Box pin = pins[index];
-            AuthoredHalf(MapIds[index], frameWidth, frameHeight, out float halfW, out float halfH);
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
+            AuthoredHalf(MapIds[index], ratioW, ratioH, out float halfW, out float halfH);
             float ratio = halfH > 1f ? halfW / halfH * squeeze : 1.6f;
-            const float cardW = 112f;
-            const float cardH = 140f;
+            float cardW = SeatCardWidth > 48f ? SeatCardWidth : PortraitMinWidth;
+            float cardH = SeatCardHeight > 48f ? SeatCardHeight : PortraitMinHeight;
             float right = pin.XMax + PinGap;
             float left = pin.X - PinGap - cardW;
             bool preferRight = frameWidth - (pin.XMax + PinGap + cardW) >= left;
@@ -2734,7 +2956,7 @@ namespace Game.UI.Runtime
                 if (cyLo > cyHi + 0.05f)
                     continue;
                 float hw = hh * ratio;
-                float[] cys = { cyLo, cyHi };
+                float[] cys = { (cyLo + cyHi) * 0.5f, cyLo, cyHi };
                 for (int c = 0; c < cys.Length; c++)
                 {
                     float cy = cys[c];
@@ -2898,9 +3120,11 @@ namespace Game.UI.Runtime
 
             var placed = new Placement[MapIds.Length];
             var hexes = new Vec2[MapIds.Length][];
+            float ratioW = RatioPlateWidth > 2f ? RatioPlateWidth : frameWidth;
+            float ratioH = RatioPlateHeight > 2f ? RatioPlateHeight : frameHeight;
             for (int i = 0; i < MapIds.Length; i++)
             {
-                AuthoredHalf(MapIds[i], frameWidth, frameHeight, out float halfW, out float halfH);
+                AuthoredHalf(MapIds[i], ratioW, ratioH, out float halfW, out float halfH);
                 float fullArea = HexArea(halfW, halfH);
                 float areaScale = fullArea > 40800f ? (float)Math.Sqrt(40800.0 / fullArea) : 1f;
                 float scale = FitInteriorScale(halfW, halfH, areaScale);

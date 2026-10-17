@@ -12,7 +12,7 @@ internal static class Program
         int seated = 0;
         int blocked = 0;
         int failed = 0;
-        if (!StampHolds() || !DumpRoundTrips() || !MirrorHolds())
+        if (!StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds())
             failed++;
 
         RunCanvasPlates(ref seated, ref blocked, ref failed);
@@ -425,6 +425,31 @@ internal static class Program
         return ok;
     }
 
+    private static bool ReplayPlateHolds()
+    {
+        TheatreSeatGeometry.CaptureMapSize(1440f, 1080f, out float liveWidth, out float liveHeight);
+        TheatreSeatGeometry.SetShot("4:3", "none", "en", false, 1440f, 1080f, 0f, 0f, 0f, 0f);
+        string json = TheatreSeatGeometry.FormatDump(1039.6f, 724f, default, default, null);
+        bool read = TheatreSeatGeometry.TryReadDump(
+            json, out float storedWidth, out float storedHeight, out _, out string ratio, out string notch, out _, out _);
+        bool canvas = TheatreSeatGeometry.TryReadCanvas(
+            json, out float canvasWidth, out float canvasHeight, out float left, out float top, out float right, out float bottom);
+        TheatreSeatGeometry.ResolveReplayPlate(
+            storedWidth, storedHeight, canvasWidth, canvasHeight, notch, left, top, right, bottom,
+            out float plateWidth, out float plateHeight);
+        bool ok = read && canvas && ratio == "4:3" && notch == "none"
+            && Math.Abs(storedHeight - 724f) < 0.1f
+            && Math.Abs(plateWidth - liveWidth) < 0.1f
+            && Math.Abs(plateHeight - liveHeight) < 0.1f
+            && plateHeight > 800f
+            && Math.Abs(liveWidth - 1039.6f) < 0.2f;
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " replay 4:3 plate "
+            + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
+            + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
+            + " stored=" + storedHeight.ToString("0.0", CultureInfo.InvariantCulture));
+        return ok;
+    }
+
     private static void ReplayDumps(ref int seated, ref int blocked, ref int failed)
     {
         if (!Directory.Exists(ReplayRoot))
@@ -447,6 +472,23 @@ internal static class Program
             }
 
             bool fa = locale != null && locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            float replayWidth = plateWidth;
+            float replayHeight = plateHeight;
+            float canvasWidth = 0f;
+            float canvasHeight = 0f;
+            float insetLeft = 0f;
+            float insetTop = 0f;
+            float insetRight = 0f;
+            float insetBottom = 0f;
+            if (TheatreSeatGeometry.TryReadCanvas(
+                json, out canvasWidth, out canvasHeight, out insetLeft, out insetTop, out insetRight, out insetBottom))
+            {
+                TheatreSeatGeometry.ResolveReplayPlate(
+                    plateWidth, plateHeight, canvasWidth, canvasHeight, notch,
+                    insetLeft, insetTop, insetRight, insetBottom,
+                    out replayWidth, out replayHeight);
+            }
+
             if (TheatreSeatGeometry.TryReadNameOverflow(
                 json, out string overflowMap, out string overflowText, out float overflowPreferred, out float overflowBox))
             {
@@ -475,14 +517,14 @@ internal static class Program
                 notch,
                 fa,
                 reserve,
-                0f,
-                0f,
-                0f,
-                0f,
-                0f,
-                0f,
-                plateWidth,
-                plateHeight,
+                canvasWidth,
+                canvasHeight,
+                insetLeft,
+                insetTop,
+                insetRight,
+                insetBottom,
+                replayWidth,
+                replayHeight,
                 false,
                 selected,
                 ref seated,

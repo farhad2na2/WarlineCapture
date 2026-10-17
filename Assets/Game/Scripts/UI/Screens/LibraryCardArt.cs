@@ -176,11 +176,20 @@ namespace Game.UI.Runtime
             if (card.Find("Subtitle") is Transform subtitleNode && subtitleNode.TryGetComponent<TMP_Text>(out TMP_Text subtitle))
                 subtitle.color = new Color(0.86f, 0.80f, 0.66f, 1f);
 
-            for (int i = 0; i < 4; i++)
+            SkirmishDifficultyId[] tiers =
             {
+                SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander
+            };
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                // v36 approved-2: every circle carries its tier colour (SkirmishMedalRowWidget.TierColor) over the real medal
+                // sprite; earned stays full white (true sprite colours), unearned is the tier fill at reduced brightness.
                 if (card.Find("Medal" + i) is Transform medal && medal.TryGetComponent<Image>(out Image medalImage) &&
                     medalImage.color.r < 0.99f)
-                    medalImage.color = new Color(0.62f, 0.62f, 0.62f, 1f); // unearned: still a visible circle, just greyed
+                {
+                    Color tier = SkirmishMedalRowWidget.TierColor(tiers[i]);
+                    medalImage.color = new Color(tier.r * 0.8f, tier.g * 0.8f, tier.b * 0.8f, 1f);
+                }
             }
 
             Outline edge = card.GetComponent<Outline>();

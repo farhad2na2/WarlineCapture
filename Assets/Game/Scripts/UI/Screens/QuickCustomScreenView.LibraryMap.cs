@@ -64,13 +64,18 @@ namespace Game.UI.Runtime
             ClearChildren(_libraryPins);
             if (field.MapCards == null)
                 return;
+            var routePins = new System.Collections.Generic.List<RectTransform>();
             for (int i = 0; i < field.MapCards.Length; i++)
             {
                 if (IsEmptyCard(field.MapCards[i]))
                     continue;
                 RectTransform pinRect = CreateBattleCard(_libraryPins, field.MapCards[i], true);
                 LightenPlannedShade(pinRect, field.MapCards[i].Access == SkirmishCardAccess.Playable);
+                if (pinRect != null && pinRect.anchorMin == pinRect.anchorMax)
+                    routePins.Add(pinRect);
             }
+
+            AddPinRoutes(routePins);
         }
 
         private TMP_FontAsset _libraryWidgetFont;
@@ -140,7 +145,7 @@ namespace Game.UI.Runtime
             if (gridPreview <= 1f)
                 ResolveGridCard(740f, 4, out _, out gridPreview);
             float previewHeight = pin
-                ? Mathf.Max(48f, height - (titleHeight + subtitleHeight + LibraryPinMedalSize + 4f + 14f))
+                ? Mathf.Max(48f, height - (titleHeight + subtitleHeight + PinMedalSize(height) + 4f + 14f))
                 : gridPreview;
             bool playable = card.Access == SkirmishCardAccess.Playable;
             TintButton(button, card.IsSelected, playable, true);
@@ -216,7 +221,7 @@ namespace Game.UI.Runtime
                 SetCopy(recommended, fa ? "پیشنهاد" : "NEXT", 11f, 13f);
             }
 
-            float medalSize = pin ? LibraryPinMedalSize : gridSlots.Medal > 1f ? gridSlots.Medal : LibraryGridMedalSize;
+            float medalSize = pin ? PinMedalSize(height) : gridSlots.Medal > 1f ? gridSlots.Medal : LibraryGridMedalSize;
             float medalRun = 4f * (medalSize + 2f);
             float medalX = fa && pin ? width - 8f - medalRun : 4f;
             float medalGap = pin ? 2f : LibraryGridMedalGap;
@@ -498,7 +503,10 @@ namespace Game.UI.Runtime
             edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
         }
 
-        private const float LibraryPinMedalSize = 22f; // v35: approved-2 medal circles read at map scale (was 18)
+        private const float LibraryPinMedalSize = 30f; // v36: approved-2 medal circles (~30px; was 22)
+
+        /// <summary>Medal circle size for a pin of this height: 30px, shrinking on short cards (4:3) so the art keeps room.</summary>
+        private static float PinMedalSize(float pinHeight) => Mathf.Clamp(pinHeight * 0.16f, 20f, LibraryPinMedalSize);
         private const float PinGutter = 14f;
         private const float ObjectiveListWidth = 224f;
         private const float PinRailReserve = ObjectiveListWidth + 8f + 14f;
@@ -540,31 +548,101 @@ namespace Game.UI.Runtime
                 return false;
             int legacyColumn = centre.x < 0.42f ? 0 : centre.x < 0.68f ? 1 : 2;
             int legacyRow = centre.y < 0.5f ? 0 : 1;
-            int ordinal = legacyRow * 3 + legacyColumn;
-            int column = ordinal % 2;
-            int row = ordinal / 2;
+            int ordinal = legacyRow * 3 + legacyColumn; // battle order S001..S006
+            return TryStaggeredPinSlot(width, height, ordinal, out slot);
+        }
+
+        private const float PinMaxWidth = 440f;
+        private const float PinStaggerFraction = 0.32f;
+
+        /// <summary>
+        /// v36 approved-2 staggered layout sized from the live map area (the objective rail is reserved on the leading side;
+        /// FA inherits the plate's mirroring). Two candidate layouts are measured and the one giving the larger card wins:
+        /// 2 columns x 3 rows with alternate rows shifted sideways (tall areas, 4:3), or 3 columns x 2 rows with alternate
+        /// columns dropped (wide areas, 16:9 / 20:9). The stagger is added to the block size, so cards can never overlap
+        /// and always stay inside the area.
+        /// </summary>
+        private static bool TryStaggeredPinSlot(float width, float height, int ordinal, out Rect slot)
+        {
+            slot = default;
             float left = PinRailReserve;
+            const float top = 12f;
             float availWidth = width - left - 12f;
-            float availHeight = height - 24f;
+            float availHeight = height - top * 2f;
+            if (availWidth < 200f || availHeight < 200f)
+                return false;
             float aspect = SkirmishBattleCardWidget.PinReferenceSize.y / SkirmishBattleCardWidget.PinReferenceSize.x;
-            float pinHeight = (availHeight - PinGutter * 2f) / 3f;
-            float pinWidth = pinHeight / aspect;
-            float maxWidth = Mathf.Min(availWidth * 0.42f, 360f);
-            if (pinWidth > maxWidth)
+            float g = PinGutter;
+            float k = PinStaggerFraction;
+
+            // A: 2 cols x 3 rows, odd rows shifted right by k*w.  width = (2+k)w + g, height = 3h + 2g.
+            float wA = Mathf.Min((availWidth - g) / (2f + k), (availHeight - 2f * g) / 3f / aspect, PinMaxWidth);
+            // B: 3 cols x 2 rows, odd columns dropped by k*h.  width = 3w + 2g, height = (2+k)h + g.
+            float wB = Mathf.Min((availWidth - 2f * g) / 3f, (availHeight - g) / (2f + k) / aspect, PinMaxWidth);
+            bool wide = wB > wA;
+            float w = Mathf.Max(80f, wide ? wB : wA);
+            float h = w * aspect;
+            int column;
+            int row;
+            float x;
+            float y;
+            if (wide)
             {
-                pinWidth = maxWidth;
-                pinHeight = pinWidth * aspect;
+                column = ordinal % 3;
+                row = ordinal / 3;
+                float blockW = 3f * w + 2f * g;
+                float blockH = (2f + k) * h + g;
+                float x0 = left + (availWidth - blockW) * 0.5f;
+                float y0 = top + (availHeight - blockH) * 0.5f;
+                x = x0 + column * (w + g);
+                y = y0 + row * (h + g) + (column % 2 == 1 ? k * h : 0f);
+            }
+            else
+            {
+                column = ordinal % 2;
+                row = ordinal / 2;
+                float blockW = (2f + k) * w + g;
+                float blockH = 3f * h + 2f * g;
+                float x0 = left + (availWidth - blockW) * 0.5f;
+                float y0 = top + (availHeight - blockH) * 0.5f;
+                x = x0 + column * (w + g) + (row % 2 == 1 ? k * w : 0f);
+                y = y0 + row * (h + g);
             }
 
-            float blockHeight = pinHeight * 3f + PinGutter * 2f;
-            float y0 = 12f + (availHeight - blockHeight) * 0.5f;
-            float centreX = column == 0
-                ? 0.27f + PinZigzagLeft[row]
-                : 0.73f + PinZigzagRight[row];
-            float x = left + availWidth * centreX - pinWidth * 0.5f;
-            x = Mathf.Clamp(x, left, left + availWidth - pinWidth);
-            slot = new Rect(x, y0 + row * (pinHeight + PinGutter), pinWidth, pinHeight);
+            slot = new Rect(x, y, w, h);
             return true;
+        }
+
+        /// <summary>v36: subtle route lines joining pin centres in battle order, drawn behind the cards.</summary>
+        private void AddPinRoutes(System.Collections.Generic.List<RectTransform> pins)
+        {
+            if (_libraryPins == null || pins == null || pins.Count < 2)
+                return;
+            for (int i = pins.Count - 1; i >= 1; i--)
+            {
+                RectTransform a = pins[i - 1];
+                RectTransform b = pins[i];
+                if (a == null || b == null)
+                    continue;
+                Vector2 pa = a.anchoredPosition;
+                Vector2 pb = b.anchoredPosition;
+                Vector2 d = pb - pa;
+                float length = d.magnitude;
+                if (length < 1f)
+                    continue;
+                var line = new GameObject("PinRoute" + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                line.transform.SetParent(_libraryPins, false);
+                line.raycastTarget = false;
+                line.color = new Color(0.96f, 0.78f, 0.32f, 0.38f);
+                RectTransform r = line.rectTransform;
+                r.anchorMin = a.anchorMin;
+                r.anchorMax = a.anchorMax;
+                r.pivot = new Vector2(0.5f, 0.5f);
+                r.sizeDelta = new Vector2(length, 3f);
+                r.anchoredPosition = (pa + pb) * 0.5f;
+                r.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
+                line.transform.SetAsFirstSibling();
+            }
         }
     }
 }

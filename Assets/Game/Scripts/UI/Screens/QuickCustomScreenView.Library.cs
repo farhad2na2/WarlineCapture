@@ -2313,7 +2313,7 @@ namespace Game.UI.Runtime
                     text.overflowMode = TextOverflowModes.Overflow;
                     text.maxVisibleLines = bodyCopy ? 3 : 1;
                 }
-                else if (footer)
+                else if (footer && !_refittingGrid)
                 {
                     RelaxLibraryText(text, 11f, 20f, text.rectTransform.rect.width < 150f);
                     text.alignment = TextAlignmentOptions.Center;

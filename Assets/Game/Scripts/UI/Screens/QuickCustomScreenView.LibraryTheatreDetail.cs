@@ -134,7 +134,12 @@ namespace Game.UI.Runtime
             {
                 Transform child = panel.GetChild(i);
                 if (child.name == "Subtitle")
-                    FitDetailLine(child.GetComponent<TMP_Text>(), 14f, 22f); // objective names, past the text pass's subtitle floor
+                {
+                    TMP_Text sub = child.GetComponent<TMP_Text>();
+                    FitDetailLine(sub, 14f, 22f); // objective names, past the text pass's subtitle floor
+                    if (sub != null)
+                        sub.color = new Color(0.96f, 0.94f, 0.88f, 1f); // approved-1: white detail lines, not grey
+                }
             }
         }
 

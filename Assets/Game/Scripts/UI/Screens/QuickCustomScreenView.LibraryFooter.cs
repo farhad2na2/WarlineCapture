@@ -470,7 +470,7 @@ namespace Game.UI.Runtime
             }
             else
             {
-                BindFooter(randomizeSeedButton, OnLibraryZoom, fa ? "نزدیک‌تر" : "ZOOM IN");
+                BindFooter(randomizeSeedButton, OnLibraryZoom, ZoomFooterLabel(fa)); // approved-1: "ZOOM IN · DESERT BASE"
                 BindFooter(launchButton, OnLibraryQuickBattle, fa ? "نبرد سریع" : "QUICK BATTLE");
             }
 
@@ -478,6 +478,20 @@ namespace Game.UI.Runtime
             ClearFooterIcon(_libraryFavouritesButton);
             ClearFooterIcon(_libraryAdvancedButton);
             ClearFooterIcon(randomizeSeedButton);
+        }
+
+        private string ZoomFooterLabel(bool fa)
+        {
+            string verb = fa ? "نزدیک‌تر" : "ZOOM IN";
+            if (_libraryViewModel == null)
+                return verb;
+            SkirmishTheaterState theater = _libraryViewModel.Theater;
+            if (!TryFindTheaterPin(theater, theater.SelectedMapId, out SkirmishTheaterPinState pin))
+                return verb;
+            string map = MapDisplayTitle(pin.MapId, fa);
+            if (string.IsNullOrEmpty(map))
+                return verb;
+            return MixedText(verb + " · " + (fa ? map : map.ToUpperInvariant()), fa);
         }
 
         private void BindFooter(Button button, UnityEngine.Events.UnityAction action, string label)

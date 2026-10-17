@@ -295,6 +295,44 @@ namespace Game.UI.Runtime
             }
         }
 
+        /// <summary>
+        /// approved-1 left column polish (colour/weight only; structure and counts untouched): framed medal tiles and a
+        /// gold bold RECOMMENDED NEXT heading. Runs from PlaceLibraryHeader, after the late text passes.
+        /// </summary>
+        private void ReassertTheatreColumn()
+        {
+            if (LibraryLevel == SkirmishLibraryLevel.Battlefield)
+                return;
+            Transform composition = transform.Find("SkirmishSetupComposition");
+            string[] tiers = { "Recruit", "Regular", "Veteran", "Commander" };
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                Transform tile = FindDeep(composition, "TheatreMedal_" + tiers[i]);
+                Image frame = tile != null ? tile.GetComponent<Image>() : null;
+                if (frame == null)
+                    continue;
+                frame.color = new Color(0.1f, 0.13f, 0.14f, 0.96f);
+                Outline edge = tile.GetComponent<Outline>() ?? tile.gameObject.AddComponent<Outline>();
+                edge.effectColor = new Color(0.93f, 0.78f, 0.38f, 0.45f);
+                edge.effectDistance = new Vector2(1.5f, -1.5f);
+            }
+
+            if (_recommendedPanel != null && _recommendedPanel.gameObject.activeInHierarchy)
+            {
+                TMP_Text heading = _recommendedPanel.Find("Heading")?.GetComponent<TMP_Text>();
+                if (heading != null)
+                {
+                    heading.fontStyle = FontStyles.Bold;
+                    heading.color = new Color(0.93f, 0.78f, 0.38f, 1f);
+                    FitDetailLine(heading, 16f, 22f);
+                }
+
+                TMP_Text body = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
+                if (body != null)
+                    body.color = new Color(0.96f, 0.94f, 0.88f, 1f);
+            }
+        }
+
         private void PlaceMedalSlot(RectTransform slot, int index, bool fa)
         {
             if (slot == null)

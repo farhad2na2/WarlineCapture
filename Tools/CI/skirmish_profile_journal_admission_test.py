@@ -9,6 +9,8 @@ while not (ROOT/"Tools/CI/skirmish_production_queue.py").is_file():ROOT=ROOT.par
 sys.path[:0]=[str(HERE),str(ROOT/"Tools/CI")]
 from skirmish_native_identity import sha256,content_identity
 from skirmish_production_queue import fingerprint
+import skirmish_profile_journal_admission as profile_admission
+assert Path(profile_admission.__file__).resolve()==(ROOT/"Tools/CI/skirmish_profile_journal_admission.py").resolve(), "Actual Tools consumer required"
 from skirmish_profile_journal_admission import validate_profile_journal
 
 class ProfileControls(unittest.TestCase):
@@ -125,5 +127,43 @@ class ProfileControls(unittest.TestCase):
         self.facts("ProfileBeforeDispatch")["actual_effective_root"]="\\persistent"
         self.facts("ProfileAfterRestore")["actual_effective_root"]="\\persistent"
         self.check()
+
+class ScopedControls(unittest.TestCase):
+ def setUp(self):
+  self.old=ProfileControls();self.old.setUp()
+  for stage in ['ProfileBeforeDispatch','ProfileBeforeRestore','ProfileAfterRestore']:
+   value=self.old.facts(stage);value['journal_version']=2
+   for scope in ['original','owned']:
+    snap=value[scope]
+    snap['namespace_scope']='OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded' if scope=='original' else 'OwnedCurrentCatalogSaveFiles_Exclusive'
+    snap['excluded_non_save_entries']=[{'name':'TestResults.xml','kind':'File'},{'name':'Unity','kind':'Directory'}] if scope=='original' else []
+    snap['total_directory_entries']=sorted(snap['directory_entries']+[v['name'] for v in snap['excluded_non_save_entries']])
+ def check(self,passed=False):
+  actual=profile_admission.validate_profile_journal(self.old.job,self.old.claim,self.old.events)
+  self.assertEqual(passed,actual['profile_restored'],actual);self.assertFalse(actual['qualified']);self.assertFalse(actual['queue_success_enabled'])
+ def snap(self,stage='ProfileAfterRestore',scope='original'):return self.old.facts(stage)[scope]
+ def test_original_engine_siblings_all_three_stages(self):self.check(True)
+ def test_engine_only_presence_changes_not_save_bytes(self):
+  value=self.snap();value['excluded_non_save_entries']=[];value['total_directory_entries']=value['directory_entries'][:];self.check(True)
+ def test_owned_engine_entries_refused(self):
+  value=self.snap(scope='owned');value['excluded_non_save_entries']=[{'name':'Unity','kind':'Directory'}];value['total_directory_entries']=sorted(value['directory_entries']+['Unity']);self.check()
+ def test_wrong_type_refused(self):self.snap()['excluded_non_save_entries'][0]['kind']='Directory';self.check()
+ def test_unity_file_type_refused(self):self.snap()['excluded_non_save_entries'][1]['kind']='File';self.check()
+ def test_other_unknown_save_refused(self):self.snap()['directory_entries'].append('unknown.json');self.snap()['total_directory_entries'].append('unknown.json');self.check()
+ def test_unknown_excluded_namespace_refused(self):
+  value=self.snap();value['excluded_non_save_entries'].append({'name':'unknown.json','kind':'File'});value['total_directory_entries'].append('unknown.json');self.check()
+ def test_reparse_metadata_cannot_be_waived(self):self.snap()['excluded_non_save_entries'][0]['reparse']=True;self.check()
+ def test_save_hash_still_preserved(self):self.snap()['files'][0]['sha256']='f'*64;self.check()
+ def test_mixed_version_refused(self):self.old.facts('ProfileBeforeRestore')['journal_version']=1;self.check()
+ def test_namespace_ownership_refused(self):self.snap()['namespace_scope']='OwnedCurrentCatalogSaveFiles_Exclusive';self.check()
+ def test_duplicate_exclusion_refused(self):
+  self.snap()['excluded_non_save_entries'].append({'name':'Unity','kind':'Directory'});self.check()
+ def test_null_exclusion_direct_snapshot_refused(self):
+  value=copy.deepcopy(self.snap())
+  value['directory_entries']=[];value['observed_bytes']=0
+  for row in value['files']:row.update(exists=False,length=0,sha256=None)
+  value['excluded_non_save_entries']=[{'name':None,'kind':None}];value['total_directory_entries']=[None]
+  with self.assertRaises(ValueError):profile_admission.snapshot(value,'S005','original')
+ def test_failed_attempt_never_rehabilitated(self):self.old.events[3]['kind']='ProfileJournalFailure';self.check()
 
 if __name__=="__main__":unittest.main(verbosity=2)

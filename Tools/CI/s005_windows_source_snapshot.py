@@ -4,45 +4,27 @@ import hashlib
 import json
 from pathlib import Path
 import struct
-from collections import deque
-from concurrent.futures import ThreadPoolExecutor
 
 EXTENSIONS = {".cs", ".asmdef", ".asmref", ".rsp", ".json", ".asset", ".prefab", ".unity",
               ".shader", ".hlsl", ".cginc", ".compute", ".meta"}
 
 
-HASH_WORKERS = 8
-MAX_PENDING_HASHES = HASH_WORKERS * 4
+HASH_BUFFER_BYTES = 65536
 
 
 def _file_row(project, path):
-    with path.open("rb") as stream:
-        digest = hashlib.file_digest(stream, "sha256").hexdigest()
-    return dict(path=path.relative_to(project).as_posix(), sha256=digest)
+    digest = hashlib.sha256()
+    with path.open("rb", buffering=0) as stream:
+        buffer = bytearray(HASH_BUFFER_BYTES)
+        view = memoryview(buffer)
+        while (count := stream.readinto(buffer)):
+            digest.update(view[:count])
+    return dict(path=path.relative_to(project).as_posix(), sha256=digest.hexdigest())
 
 
 def _hash_paths(project, paths):
-    """Bounded IO concurrency; every future is joined and any failure aborts."""
-    pending = deque()
-    found = []
-    iterator = iter(paths)
-    with ThreadPoolExecutor(max_workers=HASH_WORKERS) as executor:
-        try:
-            for _ in range(MAX_PENDING_HASHES):
-                path = next(iterator, None)
-                if path is None:
-                    break
-                pending.append(executor.submit(_file_row, project, path))
-            while pending:
-                found.append(pending.popleft().result())
-                path = next(iterator, None)
-                if path is not None:
-                    pending.append(executor.submit(_file_row, project, path))
-        except BaseException:
-            for future in pending:
-                future.cancel()
-            raise
-    return found
+    """Sequential, bounded hashing; preserve every input row and its order."""
+    return [_file_row(project, path) for path in paths]
 
 
 def snapshot(project):

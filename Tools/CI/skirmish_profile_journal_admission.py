@@ -13,8 +13,10 @@ def normal(path):
     need(bool(ntpath.splitdrive(path)[0]), "Fully qualified native Windows root required")
     return ntpath.normcase(ntpath.normpath(path))
 
-def snapshot(value, catalog):
-    need(isinstance(value, dict) and set(value) == {"root", "directory_exists", "directory_entries", "enumeration_limit", "files", "observed_bytes"},
+def snapshot(value, catalog, scope=None):
+    keys={"root", "directory_exists", "directory_entries", "enumeration_limit", "files", "observed_bytes"}
+    if scope is not None:keys|={"namespace_scope","excluded_non_save_entries","total_directory_entries"}
+    need(isinstance(value, dict) and set(value) == keys,
          "Exact profile snapshot schema")
     normal(value["root"]); need(type(value["directory_exists"]) is bool, "Actual directory existence")
     names = [name + suffix for name in ("profile.json", "settings.json", "quickgame.json",
@@ -38,7 +40,22 @@ def snapshot(value, catalog):
          and len(value["directory_entries"]) <= 32, "Complete bounded directory enumeration required")
     need(type(value["observed_bytes"]) is int and value["observed_bytes"] == total <= 16777216,
          "Actual bounded byte total")
+    if scope is not None:
+        need(scope in ("original","owned"),"Exact journal namespace role")
+        expected="OriginalCurrentCatalogSaveFiles_KnownEngineSiblingsExcluded" if scope=="original" else "OwnedCurrentCatalogSaveFiles_Exclusive"
+        need(value["namespace_scope"]==expected,"Native original/owned namespace scope")
+        excluded=value["excluded_non_save_entries"]
+        need(isinstance(excluded,list) and all(isinstance(e,dict) and set(e)=={"name","kind"} for e in excluded),"Exact typed non-save exclusions")
+        allowed={"TestResults.xml":"File","Unity":"Directory"} if scope=="original" else {}
+        need(all(isinstance(e["name"],str) and isinstance(e["kind"],str) and e["name"] in allowed and allowed[e["name"]]==e["kind"] for e in excluded) and
+             len({e["name"] for e in excluded})==len(excluded) and excluded==sorted(excluded,key=lambda e:e["name"]),"Only original known engine/test siblings may be excluded")
+        total=value["total_directory_entries"]
+        need(isinstance(total,list) and all(isinstance(n,str) for n in total) and total==sorted(value["directory_entries"]+[e["name"] for e in excluded]) and
+             len(set(total))==len(total)<=32 and (value["directory_exists"] or not total),"Complete bounded save+excluded entry census")
     return value
+
+def save_projection(value):
+    return {k:v for k,v in value.items() if k not in {"namespace_scope","excluded_non_save_entries","total_directory_entries"}}
 
 def validate_profile_journal(job, claim, events):
     try:
@@ -72,17 +89,20 @@ def validate_profile_journal(job, claim, events):
              "Before/after journal must span actual redirect/restoration")
         originals = []
         owned = []
+        versions=[stage.get("journal_version") for stage in (begin,pre,after)]
+        need(all(type(v) is int and v in (1,2) for v in versions) and len(set(versions))==1,"One consistent journal schema version")
+        version=versions[0]
         for stage in (begin, pre, after):
             need(set(stage) == {"journal_version", "catalog_id", "original_environment", "actual_environment",
                  "actual_effective_root", "original", "owned"} and type(stage["journal_version"]) is int
-                 and stage["journal_version"] == 1 and stage["catalog_id"] == job["catalog_id"],
+                 and stage["journal_version"] == version and stage["catalog_id"] == job["catalog_id"],
                  "Actual journal schema/catalog")
             need(stage["original_environment"] is None or isinstance(stage["original_environment"], str),
                  "Original environment type")
             need(stage["actual_environment"] is None or isinstance(stage["actual_environment"], str),
                  "Actual environment type")
-            originals.append(snapshot(stage["original"], job["catalog_id"]))
-            owned.append(snapshot(stage["owned"], job["catalog_id"]))
+            originals.append(snapshot(stage["original"], job["catalog_id"],"original" if version==2 else None))
+            owned.append(snapshot(stage["owned"], job["catalog_id"],"owned" if version==2 else None))
         expected_owned = normal(ntpath.join(claim["artifact_directory"], "save-profile"))
         need(normal(menu["actual_save_root"]) == expected_owned, "Actual launch profile root splice")
         need("actual_save_root" in restored and restored["actual_save_root"] == after["actual_environment"],
@@ -94,7 +114,7 @@ def validate_profile_journal(job, claim, events):
         need(original_root != expected_owned and not original_root.startswith(expected_owned + "\\")
              and not expected_owned.startswith(original_root + "\\"), "Profile roots overlap")
         need(all(normal(o["root"]) == expected_owned for o in owned), "Owned profile path splice")
-        need(originals[0] == originals[1] == originals[2], "Original profile bytes/existence changed")
+        need(save_projection(originals[0]) == save_projection(originals[1]) == save_projection(originals[2]), "Original profile bytes/existence changed")
         need(not owned[0]["directory_exists"] and not any(r["exists"] for r in owned[0]["files"]),
              "Preexisting isolated profile is not a fresh owned lease")
         need(owned[1] == owned[2] and owned[1]["directory_exists"]

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T13:23:50.595480+00:00",
+  "status": "Successor source proposal; C# compilation and native controls not run on Mac. Windows must peer review before integration.",
+  "rejected_proposal": "6d6359c81b525b3d3b72a701b5d5ea4393b5c48b",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "scope": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta"
+  ],
+  "failure_evidence": {
+    "origin": "Windows coordinator source/API peer review; not a native gameplay reproduction",
+    "finding": "Old proposal only set local helipadProbeStage0. Parent Tick remained subscribed and could time out, resume after reload, inspect replacement default World or dispatch Finish/StopAriaPlay/ExitPlaymode. Synthetic tanker-only controls did not cover parent dispatch.",
+    "preservation": "Old commit and tanker-probe-ownership-proposal.json remain intact as rejected/superseded evidence; no integration or readiness credit."
+  },
+  "correction": [
+    "Parent callback ownership uses existing per-LaunchCatalog immutable artifact GUID, independent of World/Entity identity. A stale frame must match both captured probe artifact and current harness artifact before any ownership/world/input action.",
+    "Successful aircraft capture suspends Tick, PollFinishSourceHash and FinishQuitAfterPlayMode while player-frame probe owns the journey, closing the timeout/default-World race before loss can occur. Owned input evidence remains active.",
+    "Initial capture failure and lost owner retire exact-artifact parent callbacks and clear active/quit resume flags before returning, with no Finish/StopAriaPlay/ExitPlaymode against replacement World. Owned virtual input device uses existing no-Click disposal. Failure/timeout remains unqualified.",
+    "A persisted delegation artifact is checked in static field initialization before existing static constructor. Interrupted delegation cannot re-register Tick/quit in a new domain. Mismatching later launch artifact is preserved.",
+    "Normal owned completion releases delegation marker before existing Finish. Only explicit probe launch resets capture; no rebinding after observed end. Main harness file remains byte-unchanged."
+  ],
+  "controls": {
+    "total_declared_cases": 35,
+    "prior_helper_cases": 29,
+    "new_integrated_cases": 6,
+    "new_groups": [
+      "Actual initial-capture failure removes actual three parent callbacks with expired deadline and clears reload flags",
+      "Actual lost-world player frame removes same callbacks before input and cannot dispatch timeout/Finish/UI cleanup",
+      "Stale frame cannot remove replacement harness callbacks or invalidate replacement tanker owner",
+      "Matching reload marker retires parent; later artifact marker preserves unrelated current run",
+      "Successful probe handoff suspends parent before deadline dispatch"
+    ],
+    "dispatch_method": "Install actual private harness callback delegates on real EditorApplication.update in idle fixture; after failure assert zero remaining owned callbacks and dispatch only the empty owned slice. Never invoke unrelated global handlers. Unrelated sentinel callback remains installed/callable. This tests actual wiring, not only the isolated tanker predicate.",
+    "state_protection": "Fixtures refuse active or pending-quit harness; restore original harness fields/session values and callback subscriptions in finally. Resource/input/time/defaultWorld/finishing/hash-task observations retained.",
+    "expected_log_scope": "Individual NUnit tests use LogAssert.Expect. Direct static runner establishes the installed internal LogScope only if no NUnit scope exists, evaluates all expected/error logs and disposes it; no ignoreFailingMessages. Internal API inspected in installed com.unity.test-framework1.7.0 source. Compile/runtime verification remains pending.",
+    "entry": "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation",
+    "pass_marker": "[SkirmishAircraftProbeTankerOwnership] result=Passed",
+    "fixture_only": true,
+    "execution": "NOT RUN"
+  },
+  "verification": {
+    "git_diff_check": "Passed",
+    "authorized_path_check": "Passed: only two Editor partials and their test changed; no main harness/runtime/UI/gameplay/cost/geometry changes",
+    "brace_case_count": "Passed as structural review only",
+    "before_after_pins": "Recorded for baseline5f and rejected6d; not C# or native proof",
+    "consumer_frozen_a6eb": "Verified exact hashes",
+    "CSharpCompile": "Pending Windows",
+    "native_controls": "Pending Windows",
+    "normal_input_or_device": "Not performed"
+  },
+  "integration": "Old proposal is NOT approved as-is. Fetch successor and verify baseline pins before copying final exact four source/test/meta paths into disjoint Windows lane at terminal boundary (or reviewed equivalent cherry-picks). Baseline native worktree stays5f until exact approved new main. New candidate/build/config identities and focused checked-wrapper35controls required; no old-candidate proof transfer.",
+  "source_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": {
+      "baseline_before_sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+      "rejected_proposal_before_sha256": "c31b1438289ee43ef41b563ce5beec40f620dd5e0ad472b8268e86f332e1c606",
+      "after_sha256": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": {
+      "baseline_before_sha256": "0ee7d75371eee6c4fc540c84b40d96441051cec40e9c8eaece4eafc359450810",
+      "rejected_proposal_before_sha256": "1ab6b81ec8f46ec70a1fb336656aa5acc28cac7167ee5ecb36204230c209fa21",
+      "after_sha256": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": {
+      "baseline_before_sha256": null,
+      "rejected_proposal_before_sha256": "3d99455c635199fb373bbb5671509808f3f75b205e59899042a50e9c33bd50c1",
+      "after_sha256": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": {
+      "baseline_before_sha256": null,
+      "rejected_proposal_before_sha256": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7",
+      "after_sha256": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+    }
+  },
+  "unchanged_consumer_sha256": {
+    "Tools/CI/skirmish_construction_ledger_admission.py": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36",
+    "Tools/CI/skirmish_construction_ledger_admission_test.py": "3feaa1e4a81a1d2b62e3c1640e8bb37f3ca7cec0da4aaf7eb9f415f5843f2b8e"
+  },
+  "mission_ready": false
+}

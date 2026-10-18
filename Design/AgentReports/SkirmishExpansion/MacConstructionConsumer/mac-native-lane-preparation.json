@@ -2,23 +2,27 @@
   "schema_version": 1,
   "observed_utc": "2026-10-18T13:02:21.788076+00:00",
   "task": "Prepare a separate clean Mac native worktree on exact stable5f; conditional rebuildable cache seeding only after complete native inventory is free; no Editor/build/mission launch until new stable candidate provided.",
-  "status": "IN PROGRESS: source/sampling/disk prerequisite audit complete. Worktree creation and cache copy not started because free-native-lane prerequisite remains false.",
+  "status": "IN PROGRESS: separate real external Git worktree is clean at exact5f. Cache copy not started because a new unrelated P2c Editor owns the heavy lane. No native launch.",
   "stable_base": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
   "worktree": {
-    "created": false,
-    "reason": "Confirmed live SCN13 wrapper92987/Editor92995; coordinator explicitly gates native worktree preparation/cache copy on free complete Editor inventory.",
+    "created": true,
+    "reason": "External path selected after home space audit and authoritative free lane; no global Codex setting or Library symlink changed.",
     "proposal_root": "/Users/farhad/.codex/worktrees/mac-construction-ledger/WarlineCapture",
     "proposal_source_commit_frozen": "6d6359c81b525b3d3b72a701b5d5ea4393b5c48b",
     "dirty_base_and_SCN13": "Not edited or reused for native validation.",
-    "next": "Recheck full Editor/wrapper inventory. Once free, create or reuse a separate clean attached managed worktree at exact5f, confirm filesystem/space before imports, and await exact new stable main before any native execution. Do not adopt active or dirty checkouts."
+    "next": "Await free full native inventory; verify idle6000.5.8donor and adequate disk before cache-only copy. No Editor/build/mission launch until exact new stablemain provided.",
+    "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "branch": "codex/mac-native-s003",
+    "head": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+    "clean": true,
+    "app_managed": false,
+    "app_attach_result": "Rejected: The checkout exists but is not a managed worktree. Coordinator explicitly permits honestly reported external unmanaged worktree."
   },
   "live_native_owner_at_audit": {
-    "wrapper_pid": 92987,
-    "editor_pid": 92995,
-    "root": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
-    "method": "Game.Editor.SkirmishBattleLibraryFlowCapture.RunFocusedValidation",
-    "log": "/private/tmp/scn13-flow.log",
-    "status": "Verified live; preserve owner. Old83106/83113 capture failed, but successor keeps machine occupied."
+    "editor_pid": 99809,
+    "importworker_pid": 99918,
+    "root": "/Users/farhad/Projects/WarlineCapture-P2c",
+    "status": "Fresh pre-copy full inventory found new unrelated owner; preserve and defer cache copy. No native work by this support task."
   },
   "disk_audit": {
     "home_free_bytes_at_measurement": 14763474944,
@@ -26,7 +30,7 @@
     "base_Library_allocated_KiB": 10297488,
     "active_SCN13_Library_allocated_KiB": 10621480,
     "idle_PR65b_Library_allocated_KiB": 10762460,
-    "decision": "Home source+~10GiBLibrary would leave inadequate import/build headroom. Re-audit actual native worktree location before creation/copy. External T7 has more headroom, but no new placement/move/symlink/cache copy has been performed. Do not bypass path/reparse admission with a Library symlink.",
+    "decision": "Full tracked native checkout occupies56.88GiB; remaining external free space about41GiB at measurement. Re-audit before copy/import; no cache copied. No Library symlink bypass.",
     "donors": [
       {
         "root": "/Volumes/T7/Projects/WarlineCapture",
@@ -41,7 +45,10 @@
         "state": "Live Editor6000.5.8 verified. Cannot copy active Library; may reassess only after terminal/idle ownership and same-version proof."
       }
     ],
-    "cache_copy_contract": "Only if free lane, sufficient measured headroom and verified terminal same-version donor: copy rebuildable Library content only to separately owned native root; do not copy Temp, lock files, EditorInstance, process/IPC ownership or validation evidence. Reconfirm donor still idle, preserve its source/evidence. Cache reuse earns no readiness; fresh normal UPM/Pipeline/Android/import and actual source/build identity checks remain mandatory."
+    "cache_copy_contract": "Only if free lane, sufficient measured headroom and verified terminal same-version donor: copy rebuildable Library content only to separately owned native root; do not copy Temp, lock files, EditorInstance, process/IPC ownership or validation evidence. Reconfirm donor still idle, preserve its source/evidence. Cache reuse earns no readiness; fresh normal UPM/Pipeline/Android/import and actual source/build identity checks remain mandatory.",
+    "native_checkout_allocated_KiB": 59642100,
+    "T7_free_after_checkout_bytes": 44052570112,
+    "current_free_bytes": 43622875136
   },
   "sampling_authority": {
     "result": "PreparedUnqualified",
@@ -150,7 +157,7 @@
       "OpenJDK": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK"
     },
     "actual_build_target": "Not inspected through Editor; cache/build profile is not target certification.",
-    "UPM_Pipeline_Android_import": "Not run; native lane occupied.",
+    "UPM_Pipeline_Android_import": "Not run; P2c heavy lane occupied.",
     "Unity_launch": "Not performed",
     "mission_or_build_ready": false
   },
@@ -192,5 +199,6 @@
     "Packages/manifest.json": "6ed24229bb0eaf72dd0b654ab6f985b4eb25293c3e9cb0336a759352e3fe7683",
     "Packages/packages-lock.json": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51"
   },
-  "readiness_credit": false
+  "readiness_credit": false,
+  "updated_utc": "2026-10-18T13:23:50.595480+00:00"
 }

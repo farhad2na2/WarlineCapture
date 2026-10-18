@@ -483,11 +483,65 @@ namespace Game.Editor
 
         private static SkirmishAircraftProbeTankerOwner airProbeTankerOwner;
         private static bool airProbeTankerCaptureAttempted;
+        private const string AircraftProbeParentKey = "Warline.S003.AircraftProbe.ParentArtifact";
+        private static string airProbeHarnessArtifactId;
+        // All static field initializers run before the existing static constructor:
+        // an interrupted delegated probe must not resume Tick in a new World/domain.
+        private static readonly bool airProbeResumeGuard = RetireAircraftProbeParentAfterReload();
+
+        private static bool IsAircraftProbeHarnessOwner(string artifactId) =>
+            !string.IsNullOrEmpty(artifactId) && string.Equals(artifactId,
+                UnityEditor.SessionState.GetString(Key + ".artifactId", ""), StringComparison.Ordinal);
+
+        private static bool SuspendAircraftProbeParent(string artifactId)
+        {
+            if (!IsAircraftProbeHarnessOwner(artifactId)) return false;
+            UnityEditor.SessionState.SetString(AircraftProbeParentKey, artifactId);
+            UnityEditor.EditorApplication.update -= Tick;
+            UnityEditor.EditorApplication.update -= PollFinishSourceHash;
+            UnityEditor.EditorApplication.update -= FinishQuitAfterPlayMode;
+            UnityEditor.SessionState.EraseBool(QuitPendingKey);
+            UnityEditor.SessionState.EraseInt(QuitCodeKey);
+            return true;
+        }
+
+        private static bool RetireOwnedAircraftProbeParent(string artifactId)
+        {
+            if (!IsAircraftProbeHarnessOwner(artifactId)) return false;
+            UnityEditor.EditorApplication.update -= Tick;
+            UnityEditor.EditorApplication.update -= PollFinishSourceHash;
+            UnityEditor.EditorApplication.update -= FinishQuitAfterPlayMode;
+            UnityEditor.SessionState.SetBool(Key, false);
+            UnityEditor.SessionState.EraseBool(QuitPendingKey);
+            UnityEditor.SessionState.EraseInt(QuitCodeKey);
+            if (UnityEditor.SessionState.GetString(AircraftProbeParentKey, "") == artifactId)
+                UnityEditor.SessionState.EraseString(AircraftProbeParentKey);
+            return true;
+        }
+
+        private static bool RetireAircraftProbeParentAfterReload()
+        {
+            string artifactId = UnityEditor.SessionState.GetString(AircraftProbeParentKey, "");
+            if (string.IsNullOrEmpty(artifactId)) return false;
+            bool retired = RetireOwnedAircraftProbeParent(artifactId);
+            // A stale marker never owns a later launch with a different artifact id.
+            if (!retired) UnityEditor.SessionState.EraseString(AircraftProbeParentKey);
+            return retired;
+        }
+
+        private static void ReleaseAircraftProbeParentDelegation()
+        {
+            if (IsAircraftProbeHarnessOwner(airProbeHarnessArtifactId) &&
+                UnityEditor.SessionState.GetString(AircraftProbeParentKey, "") == airProbeHarnessArtifactId)
+                UnityEditor.SessionState.EraseString(AircraftProbeParentKey);
+        }
 
         private static void ResetAircraftProbeTankerOwner()
         {
+            _ = airProbeResumeGuard;
             airProbeTankerOwner = null;
             airProbeTankerCaptureAttempted = false;
+            airProbeHarnessArtifactId = null;
         }
 
         private static bool HasCommittedTanker()

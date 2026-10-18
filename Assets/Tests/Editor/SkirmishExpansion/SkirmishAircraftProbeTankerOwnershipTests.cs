@@ -1,4 +1,9 @@
 using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine.TestTools;
 using Game.Components;
 using Game.Editor;
 using Game.Runtime;
@@ -230,22 +235,205 @@ namespace Game.Tests.Editor
             Assert.AreEqual(commands, AriaCommandEvidence.AcceptedCommands); Assert.AreEqual(violations, AriaCommandEvidence.Violations);
         }
 
+        private sealed class ParentDispatchFixture : IDisposable
+        {
+            internal const string Active = "Warline.S002.AriaRun";
+            internal const string Artifact = Active + ".artifactId";
+            internal const string Pending = "Warline.Skirmish.ValidationQuitPending";
+            internal const string Code = "Warline.Skirmish.ValidationQuitCode";
+            internal const string Delegated = "Warline.S003.AircraftProbe.ParentArtifact";
+            internal static readonly string[] ParentMethods = { "Tick", "PollFinishSourceHash", "FinishQuitAfterPlayMode" };
+            private static readonly Type Harness = typeof(SkirmishS002AriaRunHarness);
+            private const BindingFlags Flags = BindingFlags.Static | BindingFlags.NonPublic;
+            private readonly Dictionary<string, object> saved = new Dictionary<string, object>();
+            private readonly Delegate[] originalCallbacks;
+            private readonly string originalArtifact, originalDelegated;
+            private readonly bool originalActive, originalPending;
+            private readonly int originalCode;
+            private readonly EditorApplication.CallbackFunction unrelated;
+            internal readonly string Owner = Guid.NewGuid().ToString("N");
+            internal int UnrelatedDispatches;
+
+            internal static Delegate[] OwnedCallbacks() =>
+                (EditorApplication.update?.GetInvocationList() ?? Array.Empty<Delegate>())
+                    .Where(d => d.Method.DeclaringType == Harness && ParentMethods.Contains(d.Method.Name)).ToArray();
+
+            internal static object Call(string name, params object[] args)
+            {
+                var method = Harness.GetMethod(name, Flags);
+                Assert.IsNotNull(method, name);
+                try { return method.Invoke(null, args); }
+                catch (TargetInvocationException error) { throw error.InnerException ?? error; }
+            }
+
+            internal static void Set(string name, object value) => Harness.GetField(name, Flags).SetValue(null, value);
+            internal static object Get(string name) => Harness.GetField(name, Flags).GetValue(null);
+            private static EditorApplication.CallbackFunction Callback(string name) =>
+                (EditorApplication.CallbackFunction)Delegate.CreateDelegate(typeof(EditorApplication.CallbackFunction), Harness.GetMethod(name, Flags));
+
+            internal ParentDispatchFixture()
+            {
+                Assert.IsFalse(EditorApplication.isPlayingOrWillChangePlaymode, "Idle callback fixture only");
+                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(Harness.TypeHandle);
+                Assert.IsFalse(SessionState.GetBool(Active, false), "Never borrow an active harness for fixture controls");
+                Assert.IsFalse(SessionState.GetBool(Pending, false), "Never borrow another run's pending quit callbacks");
+                originalCallbacks = OwnedCallbacks();
+                originalArtifact = SessionState.GetString(Artifact, ""); originalDelegated = SessionState.GetString(Delegated, "");
+                originalActive = SessionState.GetBool(Active, false); originalPending = SessionState.GetBool(Pending, false);
+                originalCode = SessionState.GetInt(Code, 2);
+                foreach (string name in new[] { "airProbeTankerOwner", "airProbeTankerCaptureAttempted", "airProbeHarnessArtifactId",
+                    "helipadProbeAircraftCycle", "helipadProbeStage", "helipadProbeTouch", "deadline", "stage" }) saved[name] = Get(name);
+                foreach (string name in ParentMethods) { EditorApplication.update -= Callback(name); EditorApplication.update += Callback(name); }
+                SessionState.SetString(Artifact, Owner); SessionState.SetBool(Active, true);
+                SessionState.SetBool(Pending, true); SessionState.SetInt(Code, 0);
+                SessionState.SetString(Delegated, Owner);
+                Set("airProbeTankerOwner", null); Set("airProbeTankerCaptureAttempted", false);
+                Set("airProbeHarnessArtifactId", Owner); Set("helipadProbeAircraftCycle", true);
+                Set("helipadProbeStage", 1); Set("helipadProbeTouch", null);
+                Set("deadline", EditorApplication.timeSinceStartup - 1d);
+                unrelated = () => UnrelatedDispatches++;
+                EditorApplication.update += unrelated;
+                Assert.AreEqual(3, OwnedCallbacks().Length, "Install the actual parent callbacks, including an already-expired timeout");
+            }
+
+            internal void AssertRetiredAndDispatch()
+            {
+                Assert.AreEqual(0, OwnedCallbacks().Length, "No actual Tick/finish/quit callback may remain dispatchable");
+                Assert.IsFalse(SessionState.GetBool(Active, false), "Static constructor cannot resume Tick after reload");
+                Assert.IsFalse(SessionState.GetBool(Pending, false), "Static constructor cannot resume quit after reload");
+                int commands = AriaCommandEvidence.AcceptedCommands, violations = AriaCommandEvidence.Violations;
+                var world = World.DefaultGameObjectInjectionWorld; float scale = Time.timeScale;
+                object finishing = Get("finishingEvidence"), hashTask = Get("finishSourceHash");
+                // Dispatch only this fixture's remaining owned callback slice; never
+                // invoke unrelated global Editor update handlers from a test.
+                int dispatched = 0;
+                foreach (var callback in OwnedCallbacks()) { callback.DynamicInvoke(); dispatched++; }
+                Assert.AreEqual(0, dispatched, "Expired timeout, Finish and UI cleanup never execute after retirement");
+                Assert.AreEqual(finishing, Get("finishingEvidence")); Assert.AreSame(hashTask, Get("finishSourceHash"));
+                Assert.AreEqual(commands, AriaCommandEvidence.AcceptedCommands); Assert.AreEqual(violations, AriaCommandEvidence.Violations);
+                Assert.AreSame(world, World.DefaultGameObjectInjectionWorld); Assert.AreEqual(scale, Time.timeScale);
+                Assert.IsTrue((EditorApplication.update?.GetInvocationList() ?? Array.Empty<Delegate>()).Contains(unrelated));
+                unrelated(); Assert.AreEqual(1, UnrelatedDispatches, "Unrelated callback remains installed and callable");
+            }
+
+            public void Dispose()
+            {
+                foreach (string name in ParentMethods) EditorApplication.update -= Callback(name);
+                foreach (var callback in originalCallbacks) EditorApplication.update += (EditorApplication.CallbackFunction)callback;
+                EditorApplication.update -= unrelated;
+                foreach (var pair in saved) Set(pair.Key, pair.Value);
+                SessionState.SetString(Artifact, originalArtifact); SessionState.SetString(Delegated, originalDelegated);
+                SessionState.SetBool(Active, originalActive); SessionState.SetBool(Pending, originalPending); SessionState.SetInt(Code, originalCode);
+            }
+        }
+
+        [Test]
+        public void InitialCaptureFailureRetiresActualExpiredParentCallbacks()
+        {
+            using var fixture = new ParentDispatchFixture();
+            string prior = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE");
+            try
+            {
+                Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
+                LogAssert.Expect(LogType.Error, "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerCaptureRejected");
+                ParentDispatchFixture.Call("StartNativeHelipadProbe", Entity.Null);
+                fixture.AssertRetiredAndDispatch();
+            }
+            finally { Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", prior); }
+        }
+
+        [Test]
+        public void LostWorldFrameRetiresActualExpiredParentCallbacksBeforeInput()
+        {
+            using var fixture = new ParentDispatchFixture();
+            using var world = new World("ProbeLostDispatchOwner"); var root = Session(world.EntityManager);
+            Assert.AreNotSame(world, World.DefaultGameObjectInjectionWorld);
+            ParentDispatchFixture.Set("airProbeTankerOwner", Capture(world, root));
+            ParentDispatchFixture.Set("airProbeTankerCaptureAttempted", true);
+            LogAssert.Expect(LogType.Error, "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerContextChanged");
+            ParentDispatchFixture.Call("TickHelipadPlayerFrame", root, fixture.Owner);
+            fixture.AssertRetiredAndDispatch();
+        }
+
+        [Test]
+        public void StalePlayerFrameCannotRetireReplacementHarnessOrInvalidateItsOwner()
+        {
+            using var fixture = new ParentDispatchFixture();
+            using var world = new World("ProbeReplacementDispatchOwner"); var root = Session(world.EntityManager);
+            var replacement = Capture(world, root); string later = Guid.NewGuid().ToString("N");
+            ParentDispatchFixture.Set("airProbeTankerOwner", replacement);
+            ParentDispatchFixture.Set("airProbeHarnessArtifactId", later);
+            SessionState.SetString(ParentDispatchFixture.Artifact, later);
+            ParentDispatchFixture.Call("TickHelipadPlayerFrame", root, fixture.Owner);
+            Assert.AreEqual(3, ParentDispatchFixture.OwnedCallbacks().Length);
+            Assert.IsTrue(SessionState.GetBool(ParentDispatchFixture.Active, false));
+            Assert.IsTrue(SessionState.GetBool(ParentDispatchFixture.Pending, false));
+            Assert.IsTrue(replacement.Matches(world, root), "Stale frame never reaches the later owner or its UI");
+        }
+
+        [TestCase(false)] [TestCase(true)]
+        public void ReloadResumeGuardRetiresOnlyMatchingArtifact(bool laterLaunch)
+        {
+            using var fixture = new ParentDispatchFixture();
+            if (laterLaunch) SessionState.SetString(ParentDispatchFixture.Artifact, Guid.NewGuid().ToString("N"));
+            Assert.AreEqual(!laterLaunch, (bool)ParentDispatchFixture.Call("RetireAircraftProbeParentAfterReload"));
+            if (!laterLaunch) fixture.AssertRetiredAndDispatch();
+            else
+            {
+                Assert.AreEqual(3, ParentDispatchFixture.OwnedCallbacks().Length);
+                Assert.IsTrue(SessionState.GetBool(ParentDispatchFixture.Active, false));
+                Assert.IsTrue(SessionState.GetBool(ParentDispatchFixture.Pending, false));
+            }
+        }
+
+        [Test]
+        public void SuccessfulProbeHandoffSuspendsParentBeforeAnyDeadlineDispatch()
+        {
+            using var fixture = new ParentDispatchFixture();
+            Assert.IsTrue((bool)ParentDispatchFixture.Call("SuspendAircraftProbeParent", fixture.Owner));
+            Assert.AreEqual(0, ParentDispatchFixture.OwnedCallbacks().Length);
+            Assert.IsTrue(SessionState.GetBool(ParentDispatchFixture.Active, false), "Keep owned input evidence enabled during the active probe");
+            Assert.AreEqual(fixture.Owner, SessionState.GetString(ParentDispatchFixture.Delegated, ""));
+        }
+
+        private static IDisposable BeginDirectLogScope(out Type scopeType)
+        {
+            // Direct executeMethod does not install NUnit's log scope. Preserve
+            // strict expected/error checks rather than ignoring failing messages.
+            scopeType = typeof(LogAssert).Assembly.GetType("UnityEngine.TestTools.Logging.LogScope", true);
+            bool hasScope = (bool)scopeType.GetMethod("HasCurrentLogScope").Invoke(null, null);
+            return hasScope ? null : (IDisposable)Activator.CreateInstance(scopeType, true);
+        }
+
         public static void RunFocusedValidation()
         {
-            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode, "Idle synthetic-world controls only");
-            var test = new SkirmishAircraftProbeTankerOwnershipTests();
-            test.AcceptsCurrentStartingTankerWithoutPaidReservation();
-            for (int i = 0; i < 10; i++) test.RejectsForeignStaleOrNonLivingActor(i);
-            test.AcceptsOnlyPendingReceiptOnExactCurrentRoot(SkirmishReservationPhase.Reserved);
-            test.AcceptsOnlyPendingReceiptOnExactCurrentRoot(SkirmishReservationPhase.Producing);
-            test.RejectsTerminalReceiptsAndEmptyDeliveredOrForeignOrders();
-            for (int i = 0; i < 10; i++) test.RejectsReplacedIdentityOrEndedSessionWithoutRebinding(i);
-            test.RejectsAnotherWorldWithReplayedEntityIndexVersionAndSessionText();
-            test.RejectsDestroyedRootAndDisposedWorldWithoutReadingDisposedManager();
-            test.DirectWorldDisposalRejectsWithoutPriorInvalidation();
-            test.CaptureRequiresActualPlayingRootAndDoesNotAdoptLaterContext();
-            test.ObservationLeavesResourcesReservationsAndInputEvidenceUnchanged();
-            Debug.Log("[SkirmishAircraftProbeTankerOwnership] result=Passed fixture=SyntheticWorld normalMissionReady=0");
+            var logScope = BeginDirectLogScope(out var logScopeType);
+            try
+            {
+                Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode, "Idle synthetic-world controls only");
+                var test = new SkirmishAircraftProbeTankerOwnershipTests();
+                test.AcceptsCurrentStartingTankerWithoutPaidReservation();
+                for (int i = 0; i < 10; i++) test.RejectsForeignStaleOrNonLivingActor(i);
+                test.AcceptsOnlyPendingReceiptOnExactCurrentRoot(SkirmishReservationPhase.Reserved);
+                test.AcceptsOnlyPendingReceiptOnExactCurrentRoot(SkirmishReservationPhase.Producing);
+                test.RejectsTerminalReceiptsAndEmptyDeliveredOrForeignOrders();
+                for (int i = 0; i < 10; i++) test.RejectsReplacedIdentityOrEndedSessionWithoutRebinding(i);
+                test.RejectsAnotherWorldWithReplayedEntityIndexVersionAndSessionText();
+                test.RejectsDestroyedRootAndDisposedWorldWithoutReadingDisposedManager();
+                test.DirectWorldDisposalRejectsWithoutPriorInvalidation();
+                test.CaptureRequiresActualPlayingRootAndDoesNotAdoptLaterContext();
+                test.ObservationLeavesResourcesReservationsAndInputEvidenceUnchanged();
+                test.InitialCaptureFailureRetiresActualExpiredParentCallbacks();
+                test.LostWorldFrameRetiresActualExpiredParentCallbacksBeforeInput();
+                test.StalePlayerFrameCannotRetireReplacementHarnessOrInvalidateItsOwner();
+                test.ReloadResumeGuardRetiresOnlyMatchingArtifact(false);
+                test.ReloadResumeGuardRetiresOnlyMatchingArtifact(true);
+                test.SuccessfulProbeHandoffSuspendsParentBeforeAnyDeadlineDispatch();
+                if (logScope != null)
+                    logScopeType.GetMethod("EvaluateLogScope").Invoke(logScope, new object[] { true });
+                Debug.Log("[SkirmishAircraftProbeTankerOwnership] result=Passed fixture=SyntheticWorldAndOwnedEditorDispatch normalMissionReady=0");
+            }
+            finally { logScope?.Dispose(); }
         }
     }
 }

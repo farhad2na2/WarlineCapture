@@ -236,7 +236,7 @@ namespace Game.UI.Runtime
             // tall enough for the 18px floor; wide tabs keep name + count side by side in one strip.
             bool stacked = h < 120f;
             if (stacked)
-                strip = Mathf.Min(h - 4f, Mathf.Max(strip, SkirmishZoneTabWidget.NameBand));
+                strip = Mathf.Min(h - 20f, Mathf.Max(strip, 40f)); // FA line box at 18px needs ~40px; badge keeps the top 18px
             float nameMax = h >= 120f ? 22f : 15f;
             var scrim = new GameObject("TabScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             scrim.transform.SetParent(button.transform, false);
@@ -279,15 +279,15 @@ namespace Game.UI.Runtime
                 if (stacked)
                 {
                     // Count badge in the top corner, above the name strip, on its own small scrim over the art.
-                    const float badgeH = 18f;
+                    float badgeH = Mathf.Clamp(h - strip - 4f, 14f, 18f);
                     float bx = fa ? 4f : width - 4f - countW;
                     var badge = new GameObject("TabCountScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     badge.transform.SetParent(button.transform, false);
-                    PlaceTopLeft(badge.rectTransform, bx, 3f, countW, badgeH);
+                    PlaceTopLeft(badge.rectTransform, bx, 2f, countW, badgeH);
                     badge.color = new Color(0.02f, 0.03f, 0.04f, 0.82f);
                     badge.raycastTarget = false;
                     count.transform.SetAsLastSibling();
-                    PlaceTopLeft(count.rectTransform, bx + 2f, 3f, countW - 4f, badgeH);
+                    PlaceTopLeft(count.rectTransform, bx + 2f, 2f, countW - 4f, badgeH);
                 }
                 else
                     PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);

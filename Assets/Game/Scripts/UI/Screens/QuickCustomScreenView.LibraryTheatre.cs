@@ -7,6 +7,7 @@ using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Game.UI.Runtime
@@ -227,6 +228,8 @@ namespace Game.UI.Runtime
                 if (button.targetGraphic is Image hit)
                     hit.color = new Color(0f, 0f, 0f, 0f);
                 string captured = slot.MapId;
+                TheatreDistrictPress press = button.gameObject.AddComponent<TheatreDistrictPress>();
+                press.Bind(fit, captured);
                 button.onClick.AddListener(() => SelectTheaterRegion(captured));
                 _regionButtons.Add(button);
             }
@@ -2284,8 +2287,23 @@ namespace Game.UI.Runtime
         private void SelectTheaterRegion(string mapId)
         {
             EnsureLibraryViewModel();
+            // SelectMapCollection already plays TabSelect. BackToTheater is only
+            // returning the level to the theatre; its ScreenBack belongs to real
+            // back navigation, not to this tap.
             _libraryViewModel.SelectMapCollection(mapId);
-            _libraryViewModel.BackToTheater();
+            bool wired = _libraryNotificationsWired;
+            if (wired)
+                _libraryViewModel.Interaction -= OnLibraryInteraction;
+            try
+            {
+                _libraryViewModel.BackToTheater();
+            }
+            finally
+            {
+                if (wired)
+                    _libraryViewModel.Interaction += OnLibraryInteraction;
+            }
+
             _mapFilter = mapId;
             PresentScenarioChoices();
         }
@@ -7494,6 +7512,54 @@ namespace Game.UI.Runtime
             _zoneVignette = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
             _zoneVignette.hideFlags = HideFlags.HideAndDontSave;
             return _zoneVignette;
+        }
+    }
+
+    /// <summary>
+    /// Pressed state for a transparent territory hit. The hit image stays clear so it
+    /// does not cover the painting or add a rect the overlap checks would see.
+    /// The existing district fill brightens while the pointer is down, at the same alpha.
+    /// </summary>
+    sealed class TheatreDistrictPress : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+    {
+        private V3PolygonGraphic _fill;
+        private Color _rest;
+        private bool _held;
+
+        public void Bind(Transform plate, string mapId)
+        {
+            Transform outline = plate != null ? plate.Find("ZoneOutline_" + mapId) : null;
+            _fill = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
+            if (_fill != null)
+                _rest = _fill.color;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (_fill == null)
+                return;
+            _rest = _fill.color;
+            _held = true;
+            Color pressed = _rest;
+            pressed.r = Mathf.Min(1f, _rest.r + 0.22f);
+            pressed.g = Mathf.Min(1f, _rest.g + 0.22f);
+            pressed.b = Mathf.Min(1f, _rest.b + 0.22f);
+            pressed.a = _rest.a;
+            _fill.color = pressed;
+        }
+
+        public void OnPointerUp(PointerEventData eventData) => Release();
+
+        public void OnPointerExit(PointerEventData eventData) => Release();
+
+        private void OnDisable() => Release();
+
+        private void Release()
+        {
+            if (!_held || _fill == null)
+                return;
+            _fill.color = _rest;
+            _held = false;
         }
     }
 }

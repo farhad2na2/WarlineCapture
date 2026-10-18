@@ -111,7 +111,7 @@ namespace Game.UI.Runtime
                 // v37 (Game PM no-stub): the 6x3 medal cabinet was mostly empty dark squares. The Theatre data has no
                 // per-battle medal states or thumbnails for a zone (only tier totals, already in DetailMedalRow), so it is removed.
                 y += 6f;
-                // The zone's own subtitle copy fills the gap between cabinet and objective types (no invented data).
+                // The zone's own subtitle copy fills the gap between the header and objective types (no invented data).
                 y = DetailBlurb(root, pin, fa, pad, y, inner, objectivesTop - y - 8f - DetailMedalRowHeight);
                 if (objectivesTop - y >= DetailMedalRowHeight)
                     y = DetailMedalRow(root, pin, fa, pad, Mathf.Max(y, objectivesTop - DetailMedalRowHeight - 4f), inner);
@@ -283,7 +283,6 @@ namespace Game.UI.Runtime
             return y + height + 6f;
         }
 
-        /// <summary>Medal cabinet: earned medals first (commander → recruit), the rest empty. Returns the bottom y.</summary>
         /// <summary>
         /// "OBJECTIVE TYPE" heading and a 2 x 2 block of icon + short name. The library text pass holds captions at the
         /// subtitle floor (~20 px), so each name gets half the panel width and its own row instead of four across.

@@ -1663,7 +1663,10 @@ namespace Game.UI.Runtime
                     break;
                 }
 
-                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null);
+                // v42: on the Theatre the Recommended next row takes the column's leftover height (approved-1 fills the
+                // left panel); its layout scales the thumbnail to that height.
+                bool absorb = !battlefield && order[nameIndex] == "RecommendedNext";
+                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null, absorb);
             }
 
             if (battlefield && scenarioDescription != null)
@@ -2386,10 +2389,10 @@ namespace Game.UI.Runtime
                 }
                 else if (recommended)
                 {
-                    bool bodyCopy = text.name == "Body";
-                    RelaxLibraryText(text, bodyCopy ? 18f : 20f, bodyCopy ? 24f : 26f, bodyCopy);
-                    text.overflowMode = TextOverflowModes.Overflow;
-                    text.maxVisibleLines = bodyCopy ? 3 : 1;
+                    // v42: Recommended next copy is fitted and pinned by FitRecommendedText (largest size that fits,
+                    // >= 14px body, two lines); the old 18-24 / 3-line relax here pushed it past its box.
+                    if (text.name == "Heading" || text.name == "Body")
+                        FitRecommendedText(fa);
                 }
                 else if (footer && !_refittingGrid)
                 {

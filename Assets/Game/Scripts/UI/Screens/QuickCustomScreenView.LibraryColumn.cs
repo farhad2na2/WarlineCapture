@@ -1457,12 +1457,17 @@ namespace Game.UI.Runtime
             float textWidth = Mathf.Max(140f, panelWidth - 16f);
             // v41b (Game PM v90 review): compact row - small thumbnail beside the id/objective copy (2 lines, >=14px)
             // instead of the 160px image block under the caption.
-            const float headingHeight = 30f;
-            const float thumbW = 96f;
-            const float thumbH = 72f;
-            const float frameW = thumbW + 4f;
-            const float frameHeight = thumbH + 4f;
+            // v42: the row grows into the height the column gives it (RecommendedNext takes the leftover space), so the
+            // thumbnail scales up to half the panel width; the heading box is 38px so the Farsi line-box fitter
+            // (height / 1.65) no longer caps the heading below the English size.
+            const float headingHeight = RecommendedHeadingHeight;
             const float rowGap = 10f;
+            float panelHeight = _recommendedPanel.rect.height > 1f ? _recommendedPanel.rect.height : RecommendedCompactHeight;
+            float rowHeight = Mathf.Clamp(panelHeight - headingHeight - 8f, 76f, 220f);
+            float thumbW = Mathf.Min((rowHeight - 4f) * 4f / 3f, textWidth * 0.5f);
+            float thumbH = thumbW * 0.75f;
+            float frameW = thumbW + 4f;
+            float frameHeight = thumbH + 4f;
             float previewY = headingHeight + 2f;
             float frameX = fa ? 8f + textWidth - frameW : 8f;
             float captionX = fa ? 8f : 8f + frameW + rowGap;
@@ -1550,15 +1555,86 @@ namespace Game.UI.Runtime
                 }
             }
 
+            FitRecommendedText(fa);
             TMP_Text loggedBody = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
+            TMP_Text loggedHeading = _recommendedPanel.Find("Heading")?.GetComponent<TMP_Text>();
             Debug.Log("[RecommendedNext] layout=compact scenario=" + (scenarioId ?? string.Empty) +
                 " thumb=" + (showPreview ? thumbW.ToString("0") + "x" + thumbH.ToString("0") : "none") +
                 " bodyFont=" + (loggedBody != null ? loggedBody.fontSize.ToString("0.0") : "-") +
                 " bodyMin=" + (loggedBody != null ? loggedBody.fontSizeMin.ToString("0.0") : "-") +
-                " panelW=" + panelWidth.ToString("0") + " locale=" + (fa ? "fa-IR" : "en"));
+                " headingFont=" + (loggedHeading != null ? loggedHeading.fontSize.ToString("0.0") : "-") +
+                " panelW=" + panelWidth.ToString("0") + " panelH=" + panelHeight.ToString("0") + " locale=" + (fa ? "fa-IR" : "en"));
         }
 
-        private const float RecommendedCompactHeight = 112f; // v41b: heading 30 + 76px thumbnail row + padding (was 272)
+        private const float RecommendedHeadingHeight = 38f;
+        private const float RecommendedCompactHeight = 124f; // v42: heading 38 + 76px minimum thumbnail row + padding (v41b 112, was 272)
+        private const float RecommendedHeadingMax = 22f;
+        private const float RecommendedHeadingMin = 16f;
+        private const float RecommendedBodyMax = 24f;
+        private const float RecommendedBodyMin = 14f;
+
+        /// <summary>
+        /// v42: final sizes for the Recommended next copy, run last (FinishLibraryText calls it instead of the old
+        /// 18-24 / 3-line relax). Heading: one line, the largest size up to 22px that fits, same rule in en and fa-IR.
+        /// Body: the largest size from 24 down to 14px whose wrapped text fits the box in at most two lines.
+        /// Both are pinned (auto-size off, binding bounds = size) so no later pass can grow them past the fit.
+        /// </summary>
+        private void FitRecommendedText(bool fa)
+        {
+            if (_recommendedPanel == null)
+                return;
+            TMP_Text heading = _recommendedPanel.Find("Heading")?.GetComponent<TMP_Text>();
+            if (heading != null)
+            {
+                heading.textWrappingMode = TextWrappingModes.NoWrap;
+                float width = heading.rectTransform.sizeDelta.x > 1f ? heading.rectTransform.sizeDelta.x : heading.rectTransform.rect.width;
+                float size = RecommendedHeadingMax;
+                for (; size > RecommendedHeadingMin; size -= 1f)
+                {
+                    heading.fontSize = size;
+                    if (width <= 1f || heading.GetPreferredValues(heading.text, 9999f, 100f).x <= width - 2f)
+                        break;
+                }
+
+                PinRecommendedSize(heading, size, false, 1);
+                heading.overflowMode = TextOverflowModes.Overflow;
+            }
+
+            TMP_Text body = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
+            if (body != null)
+            {
+                body.textWrappingMode = TextWrappingModes.Normal;
+                body.enableAutoSizing = false;
+                Vector2 box = body.rectTransform.sizeDelta;
+                float width = box.x > 1f ? box.x : body.rectTransform.rect.width;
+                float height = box.y > 1f ? box.y : body.rectTransform.rect.height;
+                float size = RecommendedBodyMax;
+                for (; size > RecommendedBodyMin; size -= 1f)
+                {
+                    body.fontSize = size;
+                    if (width <= 1f || height <= 1f)
+                        break;
+                    TMP_TextInfo info = body.GetTextInfo(body.text);
+                    float needed = body.GetPreferredValues(body.text, width - body.margin.x - body.margin.z, 0f).y;
+                    if (info != null && info.lineCount <= 2 && needed <= height)
+                        break;
+                }
+
+                PinRecommendedSize(body, size, true, 2);
+                body.overflowMode = TextOverflowModes.Ellipsis; // at 14px a longer copy is clipped with an ellipsis, never drawn outside
+            }
+        }
+
+        private static void PinRecommendedSize(TMP_Text text, float size, bool wrap, int lines)
+        {
+            text.enableAutoSizing = false;
+            text.fontSize = text.fontSizeMin = text.fontSizeMax = size;
+            text.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            text.maxVisibleLines = lines;
+            V3LocalizedTextBindingView binding = text.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+        }
 
         private void FitRecommendedPreview()
         {

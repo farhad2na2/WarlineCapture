@@ -1,0 +1,9 @@
+{
+  "scope": "DisabledReview_OnlyNarrowRestorationAlreadyAuthorizedAndExecuted",
+  "files": {
+    "layout-restoration.py.proposal": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf",
+    "plan.disabled.json": "3e541c2b4f080aa44e4afef5e76849287627844cabbbf5c3f71979ff8e1b5859",
+    "prior-restoration-journal.json": "74014aba90fadd7039cd2e7a91ae8270e1be6d41af597d328e330ea3b6756f90",
+    "requested-CC-controller.py.proposal": "295a20f43e850f5d85b5c3bae9ee421884baeba5c52cfcc60c9ada81b004e4a2"
+  }
+}

@@ -1,0 +1,116 @@
+# REVIEW PROPOSAL ONLY. Default invocation launches nothing.
+import os,sys,json,time,hashlib,datetime,subprocess,importlib.machinery,importlib.util
+from pathlib import Path
+sys.path.insert(0,"/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI")
+import mac_tanker_probe35_controller as life
+HERE=Path(__file__).resolve().parent
+ROOT=Path("/Volumes/T7/Projects/WarlineCapture-mac-native-s003")
+def need(x,s):
+ if not x:raise RuntimeError(s)
+def save(name,value):
+ with (HERE/name).open("x") as f:json.dump(value,f,indent=2);f.write("\n")
+def read(path):return json.loads(Path(path).read_text())
+def core(rows):return {r["path"]:r["sha256"] for r in rows}
+def layout_rows():
+ b=Path("/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts")
+ return [life.checked_file(p) for p in sorted(b.rglob("*")) if p.is_file() and not p.is_symlink()]
+def grant_time(g):
+ now=datetime.datetime.now(datetime.timezone.utc)
+ issued=datetime.datetime.fromisoformat(g["issued_utc"]);expires=datetime.datetime.fromisoformat(g["expires_utc"])
+ need(issued.tzinfo is not None and expires.tzinfo is not None and issued<=now<expires,"Grant expired or invalid")
+def execute_reviewed(grant_path):
+ plan=read(HERE/"plan.disabled.json");g=read(grant_path)
+ need(g.get("launch_authorized") is True and g.get("allowed_runs")==1,"New exact one-run grant required")
+ for key in ("project","source_commit","candidate_sha256"):
+  need(g.get(key)==plan[key],"Grant "+key+" mismatch")
+ need(g.get("nonce")==plan["planned_run_id"] and g.get("method")==plan["entry"] and g.get("allowed_selector")=="CC","Exact CC method/nonce required")
+ need(g.get("plan_sha256")==life.digest(HERE/"plan.disabled.json") and g.get("controller_sha256")==life.digest(Path(__file__)),"Grant code/plan pins differ")
+ need(isinstance(g.get("review_receipt_sha256"),str) and len(g["review_receipt_sha256"])==64,"Reviewed receipt required")
+ need(g.get("restore_exact_owned_layout") is True,"Exact layout restoration scope required")
+ grant_time(g)
+ result={"runid":plan["planned_run_id"],"scope":"FreshCCCollectionOnly_Unqualified","wrapper_started":False,"wrapper_reaped":False,"qualified":False,"prior_compile29_operational_failure_preserved":True,"operational_collection_control_passed":False}
+ lease=Path("/private/tmp/warline-mac-normal-worker.host-lock");identity=None;child=None;tree=None;safe=False;prebytes=None;before=None;before_gui=None
+ restoration_path=HERE/"layout-restoration.py.proposal"
+ need(life.digest(restoration_path)==plan["restoration_contract"]["helper_sha256"],"Restoration helper drift")
+ loader=importlib.machinery.SourceFileLoader("reviewed_owned_layout_restoration",str(restoration_path));spec=importlib.util.spec_from_loader(loader.name,loader);restore=importlib.util.module_from_spec(spec);loader.exec_module(restore)
+ try:
+  need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper drift")
+  fd=os.open(lease,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600);os.write(fd,result["runid"].encode());st=os.fstat(fd);identity=(st.st_dev,st.st_ino);os.close(fd)
+  need(subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()==plan["source_commit"],"Source commit changed")
+  need(subprocess.check_output(["git","status","--porcelain","--untracked-files=normal"],cwd=ROOT,text=True).strip()=="?? ProjectSettings/ProjectAuditorSettings.asset","Unexpected source state")
+  need(not (ROOT/"Temp/UnityLockfile").exists(),"Target project locked")
+  save("capacity-before.json",life.capacity(ROOT));save("tools-before.json",life.tools_state(ROOT))
+  need(life.digest(ROOT/"Tools/CI/invoke_unity_macos.sh")==plan["wrapper_sha256"],"Wrapper drift")
+  restore.no_owner();prebytes=restore.TARGET.read_bytes();need(restore.sha(prebytes)==restore.BEFORE,"Exact restored before layout required")
+  with (HERE/"owned-layout-preimage.bytes").open("xb") as f:f.write(prebytes);f.flush();os.fsync(f.fileno())
+  before_gui=layout_rows();save("global-GUI-before.json",before_gui)
+  before=life.state_snapshot(ROOT);save("state-before.json",before)
+  need(before["candidate_sha256"]==plan["candidate_sha256"] and len(before["source_manifest"])==plan["source_file_count"],"Own full source epoch changed")
+  need(life.digest(ROOT/"Library/ScriptAssemblies/Game.Editor.dll")==plan["existing_control_proof"]["GameEditorDLL_sha256"],"Prior actual control DLL changed; stop for review")
+  rsp=ROOT/"Library/Bee/artifacts/1300b0aE.dag/Game.Editor.rsp";need(life.digest(rsp)==plan["existing_control_proof"]["GameEditorRSP_sha256"],"Prior actual response file changed")
+  dest=Path(plan["environment"]["WARLINE_GROUND_SOURCE_SURVEY_OUTPUT"])
+  need(not dest.parent.exists() and not dest.exists(),"Fresh native report directory required")
+  need(all(not p.is_symlink() for p in dest.parents),"Report path symlink refused")
+  baseline=life.processes();need(not any(life.editor(r) or life.native_kind(r) in ("worker","uncertain_worker") for r in baseline),"Conflicting native owner")
+  save("capacity-at-launch.json",life.capacity(ROOT));restore.no_owner()
+  need(restore.TARGET.read_bytes()==prebytes,"Global layout changed before launch")
+  grant_time(g);env=dict(os.environ,LC_ALL="C",**plan["environment"])
+  # Wrapper log directory exists here, never the native report directory.
+  need(not Path(plan["unity_log"]).exists() and not Path(plan["wrapper_log"]).exists(),"New logs required")
+  save("launch-intent.json",{"command":plan["command"],"env":plan["environment"],"grant_sha256":life.digest(Path(grant_path)),"prior_actual_control_evidence":plan["existing_control_proof"]})
+  with Path(plan["wrapper_log"]).open("xb") as log:
+   child=subprocess.Popen(plan["command"],cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT);result.update(wrapper_started=True,wrapper_pid=child.pid,controller_pid=os.getpid());save("live-original-handle.json",result)
+   tree=life.OwnedProcessTree(child.pid,baseline)
+   while child.poll() is None:
+    try:
+     rows=life.processes();tree.observe(rows,ROOT)
+     need(any(life.hub(r) for r in rows),"Hub closed during owned job")
+     need(all(not life.editor(r) or life.project_of(r)==str(ROOT) for r in rows),"Unrelated Editor entered GUI lane; preserve")
+    except BaseException as e:life.lifecycle_error(result,"live_observation",e)
+    time.sleep(1)
+   result.update(wrapper_exit=child.wait(),wrapper_reaped=True)
+  shutdown,rows=life.owned_shutdown_barrier(tree,ROOT);result.update(shutdown=shutdown,process_tree=tree.evidence(),target_editor_observed=tree.saw_target_editor);safe=shutdown["closed"]
+  need(safe and tree.saw_target_editor and any(life.hub(r) for r in rows),"Owned terminal/Hub proof failed")
+ except BaseException as e:result["error"]=type(e).__name__+": "+str(e)
+ finally:
+  if child is not None and not result.get("wrapper_reaped"):
+   if tree is not None:life.wait_original_wrapper(child,tree,ROOT,result)
+   else:result.update(wrapper_exit=child.wait(),wrapper_reaped=True)
+  if child is not None and not safe and tree is not None:
+   try:
+    shutdown,rows=life.owned_shutdown_barrier(tree,ROOT);result["shutdown"]=shutdown;safe=shutdown["closed"]
+   except BaseException as e:life.lifecycle_error(result,"shutdown",e)
+  if child is None:safe=True
+  # Restoration belongs ONLY here, after original wrapper reap + zero-owned-survivor proof.
+  if child is not None and safe and result.get("wrapper_reaped") and prebytes is not None:
+   try:
+    save("global-GUI-before-restoration.json",layout_rows())
+    result["layout_restoration"]=restore.restore_exact(prebytes,HERE/"finally-layout-restoration","Reviewed new CC collection finally; exact owned target only; preserve prior failed compile29 result")
+   except BaseException as e:life.lifecycle_error(result,"layout_restoration",e)
+  if child is not None and safe and before is not None:
+   try:
+    after=life.state_snapshot(ROOT);save("state-after.json",after);save("global-GUI-after-restoration.json",layout_rows())
+    result["source_unchanged"]=core(before["source_manifest"])==core(after["source_manifest"])
+    result["project_settings_unchanged"]=core(before["project_settings"])==core(after["project_settings"])
+    result["user_settings_unchanged"]=core(before["user_settings"])==core(after["user_settings"])
+    result["all_global_layouts_restored_unchanged"]=core(before_gui)==core(layout_rows())
+    text=Path(plan["unity_log"]).read_text(errors="replace");result["exact_marker_count"]=text.count(plan["expected_marker"])
+    report=read(plan["environment"]["WARLINE_GROUND_SOURCE_SURVEY_OUTPUT"]);save("native-report-copy.json",report)
+    result["native_query_status"]=[x.get("nativeQueryStatus") for x in report.get("sources",[])]
+    exact_scope=type(report.get("schema")) is int and report.get("schema")==1 and report.get("kind")=="FreshRequestedSourceGroupSurvey-v1" and report.get("scope")=="RequestedSingleSourceGroup_NewGeneration_Unqualified" and report.get("runId")==plan["planned_run_id"] and report.get("outputPath")==plan["environment"]["WARLINE_GROUND_SOURCE_SURVEY_OUTPUT"] and report.get("result")=="CollectedUnqualified" and report.get("requestedScopeComplete") is True and report.get("collectionErrors")==0 and all(report.get(k)==["CC"] for k in ["requestedGroups","attemptedGroups","measuredGroups"]) and len(report.get("sources",[]))==1 and report["sources"][0].get("group")=="CC" and report["sources"][0].get("collectionCompleted") is True and "error" not in report["sources"][0] and "error" not in report
+    false_flags=["historicalSurvey11Compatible","supersedesHistoricalAuthority","runtimeFitCertified","sourceFitCertified","strictServiceCertified","cameraAccepted","normalMissionReady","paidAircraftLifecycleCertified","playerReady"]
+    result["exact_unqualified_report_scope"]=exact_scope and all(report.get(k) is False for k in false_flags)
+    result["compiler_identity_unchanged"]=life.digest(ROOT/"Library/ScriptAssemblies/Game.Editor.dll")==plan["existing_control_proof"]["GameEditorDLL_sha256"] and life.digest(rsp)==plan["existing_control_proof"]["GameEditorRSP_sha256"]
+    shared=all(text.count(m)==1 for m in plan["expected_shared_markers"])
+    compile_errors=bool(__import__("re").search(r"error CS[0-9]+|Scripts have compiler errors|Aborting",text))
+    result["operational_collection_control_passed"]=all([result.get("wrapper_exit")==0,result.get("wrapper_reaped"),safe,result.get("target_editor_observed"),result.get("source_unchanged"),result.get("project_settings_unchanged"),result.get("user_settings_unchanged"),result.get("all_global_layouts_restored_unchanged"),result.get("layout_restoration",{}).get("restored"),result.get("exact_marker_count")==1,result.get("exact_unqualified_report_scope"),result.get("compiler_identity_unchanged"),shared,not compile_errors,not result.get("lifecycle_errors"),not result.get("error")])
+   except BaseException as e:life.lifecycle_error(result,"post_evidence",e)
+  if identity and safe:
+   st=lease.stat();need((st.st_dev,st.st_ino)==identity and lease.read_text()==result["runid"],"Lease identity changed; preserve")
+   lease.unlink();result["host_lease_released"]=True
+  result["finished_utc"]=datetime.datetime.now(datetime.timezone.utc).isoformat();save("result.json",result)
+ return result
+if __name__=="__main__":
+ if len(sys.argv)!=3 or sys.argv[1]!="--execute-reviewed-grant":
+  print("Disabled CC collection proposal; no new exact reviewed grant, no native launch.");sys.exit(0)
+ r=execute_reviewed(sys.argv[2]);print(json.dumps(r,indent=2));sys.exit(0 if r["operational_collection_control_passed"] else 1)

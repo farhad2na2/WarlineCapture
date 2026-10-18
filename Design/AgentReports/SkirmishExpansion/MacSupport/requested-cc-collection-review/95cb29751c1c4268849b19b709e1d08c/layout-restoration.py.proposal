@@ -1,0 +1,56 @@
+import os,sys,json,hashlib,datetime,tarfile,tempfile,time,stat,subprocess
+from pathlib import Path
+sys.path.insert(0,"/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI")
+import mac_tanker_probe35_controller as life
+TARGET=Path("/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt")
+BEFORE="531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee"
+AFTER="184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e"
+def sha(b):return hashlib.sha256(b).hexdigest()
+def need(x,message):
+ if not x:raise RuntimeError(message)
+def no_owner():
+ samples=[]
+ for n in range(2):
+  rows=life.processes();need(not any(life.editor(r) or life.native_kind(r) in ("worker","uncertain_worker") for r in rows),"Live or unresolved native owner; preserve layout")
+  p=subprocess.run(["/usr/sbin/lsof","-F","pc","--",str(TARGET)],capture_output=True,text=True,timeout=20)
+  need(p.returncode==1 and not p.stdout.strip() and not p.stderr.strip(),"Layout file owner unresolved or live; preserve layout")
+  samples.append({"native_processes":life.evidence_rows(rows),"layout_lsof_exit":p.returncode,"layout_lsof_output_empty":True})
+  if n==0:time.sleep(1)
+ return samples
+def restore_exact(before_bytes,out,reason):
+ out=Path(out);out.mkdir(parents=True,exist_ok=True)
+ journal={"started_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"target":str(TARGET),"reason":reason,"original_compile29_result_changed":False,"restored":False,"atomic_replace_performed":False}
+ temp=None
+ try:
+  need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper drift")
+  need(sha(before_bytes)==BEFORE,"Exact saved pre-run bytes changed")
+  need(not TARGET.is_symlink() and all(not x.is_symlink() for x in TARGET.parents),"Layout symlink refused")
+  journal["owner_checks"]=no_owner()
+  st=TARGET.stat();current=TARGET.read_bytes();journal.update(observed_current_sha256=sha(current),saved_before_sha256=sha(before_bytes))
+  need(sha(current) in (AFTER,BEFORE),"Layout changed again; do not overwrite another state")
+  backup=out/"observed-layout-before-restoration.bytes"
+  with backup.open("xb") as f:f.write(current);f.flush();os.fsync(f.fileno())
+  journal["preserved_after_copy"]={"path":str(backup),"bytes":len(current),"sha256":sha(current)}
+  if sha(current)==BEFORE:
+   journal.update(already_exact_before=True,restored=True)
+  else:
+   need(sha(current)==AFTER,"Expected exact owned post-run bytes required")
+   fd,temp=tempfile.mkstemp(prefix=".warline-owned-layout-",dir=TARGET.parent)
+   with os.fdopen(fd,"wb") as f:f.write(before_bytes);f.flush();os.fsync(f.fileno());os.fchmod(f.fileno(),stat.S_IMODE(st.st_mode))
+   journal["owner_recheck"]=no_owner()
+   now=TARGET.stat();need((now.st_dev,now.st_ino,now.st_size,now.st_mtime_ns)==(st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns) and sha(TARGET.read_bytes())==AFTER,"Layout changed during restoration preparation; preserve")
+   os.replace(temp,TARGET);temp=None;journal["atomic_replace_performed"]=True
+   need(TARGET.read_bytes()==before_bytes,"Actual restored layout bytes mismatch")
+   journal.update(restored=True,actual_after_sha256=sha(TARGET.read_bytes()),actual_after_bytes=TARGET.stat().st_size)
+ except BaseException as e:journal["error"]=type(e).__name__+": "+str(e)
+ finally:
+  if temp is not None:os.unlink(temp)
+  journal["finished_utc"]=datetime.datetime.now(datetime.timezone.utc).isoformat()
+  with (out/"restoration-journal.json").open("x") as f:json.dump(journal,f,indent=2);f.write("\n")
+ return journal
+if __name__=="__main__":
+ c=json.loads(Path("/private/tmp/warline-cc-controls-current.json").read_text()); previous=Path(c["out"])
+ with tarfile.open(previous/"settings-preimages.tar.gz") as t:before=t.extractfile("global-layouts/current/default-6000.dwlt").read()
+ journal=restore_exact(before,previous/"authorized-layout-restoration","Windows coordinator explicitly authorized exact owned pre-run bytes after fresh no-Editor/file-owner checks; preserve failed aggregate, no relabel/rebaseline")
+ print(json.dumps({k:v for k,v in journal.items() if k not in ("owner_checks","owner_recheck")},indent=2),flush=True)
+ sys.exit(0 if journal["restored"] else 1)

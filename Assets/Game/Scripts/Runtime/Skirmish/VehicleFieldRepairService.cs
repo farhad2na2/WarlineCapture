@@ -301,6 +301,11 @@ namespace Game.Runtime
             public UnitHealth Health;public FactionTacticalMaterialsComponent Materials;public SkirmishLegalPadConfig Pad;
             public FixedString64Bytes FacilityStableId;public float3 Position,PadPosition,FacilityPosition;
         }
+        // Shared spatial predicate only; callers retain actual session/facility/movement/threat gates.
+        // Preserve the original comparison exactly, including its floating-point behavior.
+        public static bool IsWithinServiceRegion(float3 position,float2 center)
+            =>math.all(math.isfinite(position))&&!(math.distancesq(position.xz,center)>144);
+
         private static bool TryContext(EntityManager em,Entity session,Entity actor,byte faction,out Context context,Entity requiredFacility=default)
         {
             context=default;
@@ -311,7 +316,7 @@ namespace Game.Runtime
                 !launch.Definition.MapLayout.TryGetPad(faction,SkirmishLegalPadKind.Service,out var pad)||
                 !launch.Definition.MapLayout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z))return false;
             var position=em.GetComponentData<LocalTransform>(actor).Position;
-            if(!math.all(math.isfinite(position))||math.distancesq(position.xz,new float2(x,z))>144||Moving(em,actor)||VisibleThreat(em,native.SessionId,faction,position))return false;
+            if(!IsWithinServiceRegion(position,new float2(x,z))||Moving(em,actor)||VisibleThreat(em,native.SessionId,faction,position))return false;
             Entity facility=Entity.Null,bank=Entity.Null;FixedString64Bytes facilityId=default;float3 facilityPosition=default;
             double nearestDistance=double.PositiveInfinity;var facilityIds=new HashSet<string>(StringComparer.Ordinal);
             using(var facilities=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishStructureIdentityComponent),typeof(UnitHealth),typeof(Faction)))

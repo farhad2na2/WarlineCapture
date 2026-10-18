@@ -189,7 +189,7 @@ namespace Game.Editor
         // Spatial authority: VehicleFieldRepairService.TryContext uses distance squared<=144.
         // This adapter changes no runtime behavior and certifies static witnesses only.
         static bool MpPilotRepairWorldInRange(float2 point,float2 center)
-            =>math.all(math.isfinite(point))&&math.all(math.isfinite(center))&&math.distancesq(point,center)<=144f;
+            =>math.all(math.isfinite(center))&&VehicleFieldRepairService.IsWithinServiceRegion(new float3(point.x,0,point.y),center);
         static List<int2> MpPilotRepairRegionCells(GridConfig grid,float2 center)
         {
             Require(grid.CellSize==1&&math.all(math.isfinite(center)),"Pinned one-metre MP service grid required");
@@ -295,12 +295,14 @@ namespace Game.Editor
         }
         public static void RunMpGroundBaServiceRegionControls()
         {
-            Require(Hash("Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs")=="3d83cf7f9e44d3ea8f115428846a3f2ac0ac3a3dd78762c2f20a2613d0aa9b55","Exact reviewed runtime service spatial authority required");
             var zero=float2.zero;
             Require(MpPilotRepairWorldInRange(new float2(12,0),zero),"Inclusive runtime12m boundary must admit");
             Require(!MpPilotRepairWorldInRange(new float2(12.001f,0),zero),"Outside runtime radius must refuse");
             Require(!MpPilotRepairWorldInRange(new float2(9,9),zero),"Radius square corners must refuse");
-            Require(!MpPilotRepairWorldInRange(new float2(float.NaN,0),zero),"Nonfinite actor pose must refuse");
+            Require(!MpPilotRepairWorldInRange(new float2(float.NaN,0),zero)&&
+                !MpPilotRepairWorldInRange(new float2(0,0),new float2(float.PositiveInfinity,0))&&
+                !VehicleFieldRepairService.IsWithinServiceRegion(new float3(0,float.NaN,0),zero)&&
+                !VehicleFieldRepairService.IsWithinServiceRegion(new float3(0,float.PositiveInfinity,0),zero),"Nonfinite actor XYZ and diagnostic center must refuse");
             Require(MpPilotRepairWorldInRange(new float2(6,0),zero),"Valid non-center pose must admit spatial policy");
             var grid=new GridConfig{Width=40,Height=40,CellSize=1,Origin=float3.zero};
             var cells=MpPilotRepairRegionCells(grid,new float2(20,20));

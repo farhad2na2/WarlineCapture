@@ -2244,10 +2244,13 @@ namespace Game.UI.Runtime
             shadow.gameObject.SetActive(false);
         }
 
+        /// <summary>Why the zoom cue kept its size. Captured as <c>[ZoomCue] reason=</c>.</summary>
+        private static string ZoomCueFitReason = "unset";
+
         /// <summary>
         /// Zoom label at 16–26px inside the 36–52px tab. One line when the card width holds it,
         /// otherwise a split at a space. Tracking stays at 0 until the line needs −12.
-        /// Farsi tries 22–26 on two tighter lines before that search. The size never drops under 16.
+        /// Farsi stays on 22–26. The size never drops under 16.
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
@@ -2273,41 +2276,74 @@ namespace Game.UI.Runtime
                     cue.maxVisibleLines = 1;
                     cue.ForceMeshUpdate();
                     if (cue.preferredHeight <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
+                    {
+                        ZoomCueFitReason = "fallback";
                         return;
+                    }
                 }
 
                 cue.characterSpacing = 0f;
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
+                {
+                    ZoomCueFitReason = "fallback";
                     return;
+                }
+
                 cue.characterSpacing = -12f;
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
+                {
+                    ZoomCueFitReason = "fallback";
                     return;
+                }
             }
 
             // The rect cannot hold 16px without a clip. Still lock 16. Autosize used to
             // settle this cue at 12–13px once the longest Farsi word missed the box.
             ApplyCueFloor(cue, source, cueFloor, boxW);
+            ZoomCueFitReason = "fallback";
         }
 
         /// <summary>
-        /// The Farsi phrase fits one line near 18 inside a 160px tab, so the ordinary
-        /// search stops there. Two lines at 22–26 fit the width. Line spacing tightens
-        /// until the pair sits in the tab, and the name under the tab does not move.
+        /// Farsi stays at 22–26. Two lines are tried first, with the leading pulled in
+        /// until the pair sits in the tab. A single tracked line is the second choice.
+        /// Neither path hands the phrase to the 16px search, which was stopping at 17–18
+        /// once auto-size refit the unsplit line.
         /// </summary>
         private static bool TryFitFaCue(TMP_Text cue, string source, float boxW, float boxH)
         {
-            float[] spacing = { 0f, -12f, -24f, -36f };
+            cue.enableAutoSizing = false;
+            float[] spacing = { 0f, -24f, -48f, -72f, -96f, -120f };
             for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
             {
                 for (int i = 0; i < spacing.Length; i++)
                 {
                     cue.lineSpacing = spacing[i];
                     cue.characterSpacing = 0f;
-                    if (CueLabelSplits(cue, source, size, boxW, boxH))
-                        return true;
-                    cue.characterSpacing = -12f;
-                    if (CueLabelSplits(cue, source, size, boxW, boxH))
-                        return true;
+                    if (!CueLabelSplits(cue, source, size, boxW, boxH))
+                    {
+                        cue.characterSpacing = -12f;
+                        if (!CueLabelSplits(cue, source, size, boxW, boxH))
+                            continue;
+                    }
+
+                    HoldCueSize(cue, size);
+                    ZoomCueFitReason = "fa-two-line";
+                    return true;
+                }
+            }
+
+            float[] tracking = { -36f, -72f, -108f };
+            for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
+            {
+                for (int i = 0; i < tracking.Length; i++)
+                {
+                    if (!FitsNameLine(cue, source, size, boxW, tracking[i]))
+                        continue;
+                    cue.lineSpacing = 0f;
+                    cue.maxVisibleLines = 1;
+                    HoldCueSize(cue, size);
+                    ZoomCueFitReason = "fa-track";
+                    return true;
                 }
             }
 
@@ -2315,6 +2351,17 @@ namespace Game.UI.Runtime
             cue.characterSpacing = 0f;
             cue.text = source;
             return false;
+        }
+
+        private static void HoldCueSize(TMP_Text cue, float size)
+        {
+            V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            cue.enableAutoSizing = false;
+            cue.fontSizeMin = size;
+            cue.fontSizeMax = size;
+            cue.fontSize = size;
         }
 
         private static void ApplyCueFloor(TMP_Text cue, string source, float size, float boxW)
@@ -2430,7 +2477,7 @@ namespace Game.UI.Runtime
         /// Grows a short Farsi tab upward, bottom still flush with the card, when the
         /// district stroke still clears. The name under the card does not move.
         /// </summary>
-        private static Rect RaiseFaCueTab(RectTransform parent, Rect spot)
+        private static Rect RaiseFaCueTab(RectTransform parent, Rect spot, string selectedId)
         {
             if (parent == null || spot.height >= 51.5f || spot.height < 8f)
                 return spot;
@@ -2443,12 +2490,47 @@ namespace Game.UI.Runtime
                 if (top < 1f)
                     continue;
                 var grown = new Rect(spot.x, top, spot.width, heights[i]);
-                if (PillHitsLiveHex(parent, InflateRect(grown, TheatreSeatGeometry.CueHexStroke)))
+                // The selected district fails on the stroke edge, the same test capture uses.
+                // An interior overlap was rejecting a tab the cue rule still allows.
+                if (FaCueTabBlocked(parent, grown, selectedId))
                     continue;
                 return grown;
             }
 
             return spot;
+        }
+
+        private static bool FaCueTabBlocked(RectTransform parent, Rect spot, string selectedId)
+        {
+            Rect inflated = InflateRect(spot, TheatreSeatGeometry.CueHexStroke);
+            string own = string.IsNullOrEmpty(selectedId) ? null : "ZoneOutline_" + selectedId;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneOutline_", StringComparison.Ordinal) || child is not RectTransform outline)
+                    continue;
+                if (!outline.gameObject.activeInHierarchy)
+                    continue;
+                Vector2[] shape = OutlinePlatePoints(outline);
+                if (shape.Length < 3)
+                    continue;
+                bool selected = own != null && string.Equals(child.name, own, StringComparison.Ordinal);
+                if (selected ? EdgesHitRect(shape, inflated) : RectHitsPolygon(inflated, shape))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool EdgesHitRect(Vector2[] shape, Rect rect)
+        {
+            for (int i = 0; i < shape.Length; i++)
+            {
+                if (SegmentHitsRect(shape[i], shape[(i + 1) % shape.Length], rect))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -2521,7 +2603,7 @@ namespace Game.UI.Runtime
 
             var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
             if (fa)
-                spot = RaiseFaCueTab(parent, spot);
+                spot = RaiseFaCueTab(parent, spot, selectedId);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
             KeepAuthoredSize(cue.rectTransform);
             SyncCuePlate(parent, spot);
@@ -2596,6 +2678,7 @@ namespace Game.UI.Runtime
             string drawn = cue.text;
             int lines = cue.maxVisibleLines;
             float spacing = cue.characterSpacing;
+            float leading = cue.lineSpacing;
             V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(size, size);
@@ -2609,6 +2692,7 @@ namespace Game.UI.Runtime
             cue.text = drawn;
             cue.maxVisibleLines = lines > 0 ? lines : 2;
             cue.characterSpacing = spacing;
+            cue.lineSpacing = leading;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.alignment = TextAlignmentOptions.Center;
@@ -3046,6 +3130,7 @@ namespace Game.UI.Runtime
             Debug.Log("[ZoomCue] fontSize=" + F(cue.fontSize * cueScale)
                 + " local=" + F(cue.fontSize)
                 + " scale=" + F(cueScale)
+                + " reason=" + ZoomCueFitReason
                 + ShotTag());
             if (cue.transform.parent is not RectTransform parent)
                 return;

@@ -80,6 +80,11 @@ namespace Game.UI.Runtime
         {
             if (applyingLocalization || !observeRuntimeSourceChanges || target == null || specializedOwner)
                 return;
+            // The zoom cue inserts its own line break while fitting. That edit is layout,
+            // not a new translation. Reapplying here turned auto-size back on at 16–26 and
+            // the single-line fit settled at 17–22.
+            if (target.name == "ZoomCue")
+                return;
 
             string current = ReadAuthoredText();
             if (string.Equals(current, lastApplied, System.StringComparison.Ordinal))

@@ -230,6 +230,47 @@ class AdmissionTests(unittest.TestCase):
         f.transactions[-1]['after']['enemy_intent']['action']='build.next'
         self.good(f)
 
+    def normalized_request_fixture(self,outcome='delivered',raw=' \tbuilding_barrack \r\n'):
+        f=Fixture();f.enemy(outcome)
+        for row in f.transactions:
+            if row['prefab_name']is not None:row['prefab_name']='Building_Barrack'
+            if row['actor']is not None:row['actor']['source_key']='Building_Barrack'
+            for side in ('before','after'):
+                p=row[side]
+                if p['enemy_intent']is not None:p['enemy_intent']['building']='Building_Barrack'
+                if p['request']is not None:p['request']['building']=raw
+        return f
+
+    def test_native_normalized_request_key_preserves_raw_dto(self):
+        for outcome in ('delivered','refund','reenqueue','pending'):
+            f=self.normalized_request_fixture(outcome);before=copy.deepcopy(f.transactions)
+            self.good(f);self.assertEqual(f.transactions,before)
+
+    def test_normalization_keeps_genuinely_different_keys_distinct(self):
+        f=self.normalized_request_fixture(raw='building_barrack_other')
+        self.assertIn('request correlation',self.bad(f)['errors'][0])
+
+    def test_unsupported_unicode_and_controls_refused(self):
+        for key in ('barracks\u0130','barracks\u00df','barracks\u00a0','barracks\x00','barracks\x7f'):
+            f=self.normalized_request_fixture(raw=key)
+            self.assertIn('non-ASCII boundary key',self.bad(f)['errors'][0])
+            for row in f.transactions:
+                for side in ('before','after'):
+                    if row[side]['enemy_intent']is not None:row[side]['enemy_intent']['building']=key
+            self.assertIn('non-ASCII boundary key',self.bad(f)['errors'][0])
+
+    def test_actor_key_remains_literal_even_when_normalized_equal(self):
+        f=self.normalized_request_fixture();f.transactions[-1]['actor']['source_key']='building_barrack'
+        self.assertIn('Actor prefab splice',self.bad(f)['errors'][0])
+
+    def test_only_reviewed_literal_checkout_pins_are_supported(self):
+        path='Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs'
+        self.assertTrue(admission.policy_pin_matches(path,'8f1f0f4dca3bad579805c748f62b558eeb6ef75a1179cd0cbe3ed4b872964310'))
+        self.assertTrue(admission.policy_pin_matches(path,'5cff92b2f3b1d5f7c09e275ec53134a1557ebdac828c8d5546a904fc6075987f'))
+        self.assertFalse(admission.policy_pin_matches(path,'f'*64))
+        other='Assets/Game/Scripts/Systems/SpawnableKeyText.cs'
+        self.assertFalse(admission.policy_pin_matches(other,'5cff92b2f3b1d5f7c09e275ec53134a1557ebdac828c8d5546a904fc6075987f'))
+
     def test_policy_cost_change_and_unsupported_version(self):
         f=Fixture();f.player(policy=2);f.transactions[0]['credits_quoted']=40001;self.bad(f)
         f=Fixture();f.player();f.transactions[0]['before']['economy']['MaterialsOnlyConstruction']=3;self.bad(f)

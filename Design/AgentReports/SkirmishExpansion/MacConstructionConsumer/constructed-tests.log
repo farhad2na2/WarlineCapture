@@ -1,3 +1,4 @@
+test_actor_key_remains_literal_even_when_normalized_equal (__main__.AdmissionTests) ... ok
 test_corrupted_debit_refund_counters_and_version (__main__.AdmissionTests) ... ok
 test_debt_replacement_spends_then_refunds_once (__main__.AdmissionTests) ... ok
 test_deferred_refund_requires_real_failure (__main__.AdmissionTests) ... ok
@@ -12,6 +13,9 @@ test_envelope_closure_faults_and_order (__main__.AdmissionTests) ... ok
 test_interleaved_other_resource_origins_are_not_global_conservation (__main__.AdmissionTests) ... ok
 test_job_claim_setup_world_config_splices (__main__.AdmissionTests) ... ok
 test_native_cleanup_refund_does_not_require_fabricated_debt_event (__main__.AdmissionTests) ... ok
+test_native_normalized_request_key_preserves_raw_dto (__main__.AdmissionTests) ... ok
+test_normalization_keeps_genuinely_different_keys_distinct (__main__.AdmissionTests) ... ok
+test_only_reviewed_literal_checkout_pins_are_supported (__main__.AdmissionTests) ... ok
 test_player_duplicate_settlement_or_reservation (__main__.AdmissionTests) ... ok
 test_player_finalize_refund_and_all_cost_policies (__main__.AdmissionTests) ... ok
 test_player_placement_must_match_and_settle (__main__.AdmissionTests) ... ok
@@ -20,6 +24,7 @@ test_reenqueue_cannot_charge_twice (__main__.AdmissionTests) ... ok
 test_saturated_counters_and_wrapped_version (__main__.AdmissionTests) ... ok
 test_settled_enemy_cannot_reuse_action_key (__main__.AdmissionTests) ... ok
 test_strict_types_nonfinite_and_unknown_fields (__main__.AdmissionTests) ... ok
+test_unsupported_unicode_and_controls_refused (__main__.AdmissionTests) ... ok
 test_bounded_oversized_file (__main__.ArtifactTests) ... ok
 test_build_bytes_and_derived_identity_fail_closed (__main__.ArtifactTests) ... ok
 test_candidate_hash_cannot_be_caller_only (__main__.ArtifactTests) ... ok
@@ -40,6 +45,6 @@ test_unknown_event_and_capture_fault_are_retained (__main__.ArtifactTests) ... o
 test_wrong_immutable_claim_even_rehashed (__main__.ArtifactTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 0.108s
+Ran 45 tests in 0.169s
 
 OK

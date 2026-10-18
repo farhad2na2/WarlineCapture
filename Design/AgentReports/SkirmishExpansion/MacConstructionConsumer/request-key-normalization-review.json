@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T12:05:25.667435+00:00",
+  "scope": "Constructed normalization reproducer plus exact committed source-owner pin verification; no native gameplay/DLL admission.",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "native_contract": "SkirmishEnemyConstructionAdapter.BoundaryKeyEquals normalizes both request.BuildingId and intent.BuildingId via BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey -> SpawnableKeyText.Normalize; enqueue normalizes request key. Native delivered actor source key is still literal.",
+  "supported_key_subset": "Printable ASCII plus ASCII trim whitespace TAB/LF/CR/VT/FF/space; lowercase invariant on ASCII. Refuse unsupported non-ASCII, controls, empty/whitespace-only normalized keys. Raw DTOs are unchanged.",
+  "before_correction": {
+    "commit": "0f90646f9bfe8ed47da58a3dd566f2987d5ad319",
+    "result": "MissingOrFailedAdmission",
+    "errors": [
+      "Enemy request correlation/authority differs"
+    ]
+  },
+  "after_correction": {
+    "result": "ConsistentRecordedConstructionBoundaries",
+    "raw_dto_preservation_test": "passed",
+    "actor_literal_equality_negative_control": "passed",
+    "different_key_and_unicode_controls": "passed"
+  },
+  "literal_source_pins": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "actual_mac_git_sha256": "e6efcd87fd7b2494b0506e9354e3f904a747d5c2fffd12e167903c59972ab9c3",
+      "primary_policy_sha256": "e6efcd87fd7b2494b0506e9354e3f904a747d5c2fffd12e167903c59972ab9c3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingConstructionResourceTransactionSystemHelper.cs",
+      "actual_mac_git_sha256": "38daf611d9103717b131f66112bf5ca1f793e80a79d5f34b9ae850e6356512ff",
+      "primary_policy_sha256": "38daf611d9103717b131f66112bf5ca1f793e80a79d5f34b9ae850e6356512ff"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementConstructionTransaction.cs",
+      "actual_mac_git_sha256": "a977bccfe30c86e51a9a03a9f649af36f2c9d08e260da97fc41bf86a98343d17",
+      "primary_policy_sha256": "a977bccfe30c86e51a9a03a9f649af36f2c9d08e260da97fc41bf86a98343d17"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
+      "actual_mac_git_sha256": "dfebb4af2b1a78815442f51aa299bfade96398875c3f8651ea3f6ebd3423e9b1",
+      "primary_policy_sha256": "dfebb4af2b1a78815442f51aa299bfade96398875c3f8651ea3f6ebd3423e9b1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+      "actual_mac_git_sha256": "93ff16981342afe19e4b1aaaeb45a1cabe32215dc0dccd53f762e27ac0af5363",
+      "primary_policy_sha256": "93ff16981342afe19e4b1aaaeb45a1cabe32215dc0dccd53f762e27ac0af5363"
+    },
+    {
+      "path": "Assets/Game/Scripts/Contracts/MissionConstructionCostPolicy.cs",
+      "actual_mac_git_sha256": "96c8df5a3574af4d3b647d51f0c82065f0cd3ddbcf7a0ab0064d868b8579ad88",
+      "primary_policy_sha256": "96c8df5a3574af4d3b647d51f0c82065f0cd3ddbcf7a0ab0064d868b8579ad88"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
+      "actual_mac_git_sha256": "2451eef2ac4b75042b529cb115cdffd6d4597e320d0055347bbe711e6ad57ed4",
+      "primary_policy_sha256": "2451eef2ac4b75042b529cb115cdffd6d4597e320d0055347bbe711e6ad57ed4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
+      "actual_mac_git_sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0",
+      "primary_policy_sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs",
+      "actual_mac_git_sha256": "d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb",
+      "primary_policy_sha256": "d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/FactionAIComponents.cs",
+      "actual_mac_git_sha256": "7ceb43eca68cbed12dcb7bf5409dc84810b04863f91c6472bc7213e36108bb34",
+      "primary_policy_sha256": "7ceb43eca68cbed12dcb7bf5409dc84810b04863f91c6472bc7213e36108bb34"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyConstructionIntentV1Component.cs",
+      "actual_mac_git_sha256": "bdbf7e772efb6cb5c4208da72d2c3474ca38598c329f2a51ee8d31725e61829f",
+      "primary_policy_sha256": "bdbf7e772efb6cb5c4208da72d2c3474ca38598c329f2a51ee8d31725e61829f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+      "actual_mac_git_sha256": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5",
+      "primary_policy_sha256": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SpawnableKeyText.cs",
+      "actual_mac_git_sha256": "424547625a12322c9a3925baf5baf6f7c50b1ee1f47be69609cd82212f060452",
+      "primary_policy_sha256": "424547625a12322c9a3925baf5baf6f7c50b1ee1f47be69609cd82212f060452"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+      "actual_mac_git_sha256": "bd74357ad26ed786853e914cf827db885407b07ad1570cd2bdf57e36024d0314",
+      "primary_policy_sha256": "bd74357ad26ed786853e914cf827db885407b07ad1570cd2bdf57e36024d0314"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs",
+      "actual_mac_git_sha256": "5cff92b2f3b1d5f7c09e275ec53134a1557ebdac828c8d5546a904fc6075987f",
+      "primary_policy_sha256": "8f1f0f4dca3bad579805c748f62b558eeb6ef75a1179cd0cbe3ed4b872964310"
+    }
+  ],
+  "literal_checkout_exception": {
+    "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs",
+    "reviewed_git_mac_LF_sha256": "5cff92b2f3b1d5f7c09e275ec53134a1557ebdac828c8d5546a904fc6075987f",
+    "reviewed_windows_CRLF_sha256": "8f1f0f4dca3bad579805c748f62b558eeb6ef75a1179cd0cbe3ed4b872964310",
+    "verified_relation": "Exact frozen LF source with every LF replaced by CRLF yields the Windows hash. Both are explicit fixed literals for this owner only; every third hash is rejected. No generic EOL normalization or caller override. Actual source/candidate hashes and final barriers continue using exact bytes."
+  },
+  "policy_pin_check": "15 owner files matched reviewed baseline bytes and final streaming hash/path barrier on Mac (the one explicit LF variant used); Windows spellings require Windows rerun.",
+  "constructed_tests": 45,
+  "windows_tests": "pending coordinator rerun",
+  "real_M5_rows": "Coordinator reports four real player rows passed pure validation; full byte/source admission still pending; not independently rerun here.",
+  "paid_resources_qualified": false,
+  "mission_ready": false
+}

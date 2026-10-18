@@ -37,8 +37,19 @@ POLICY_PINS = {
     "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs": "d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb",
     "Assets/Game/Scripts/Components/FactionAIComponents.cs": "7ceb43eca68cbed12dcb7bf5409dc84810b04863f91c6472bc7213e36108bb34",
     "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyConstructionIntentV1Component.cs": "bdbf7e772efb6cb5c4208da72d2c3474ca38598c329f2a51ee8d31725e61829f",
-    "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5"
+    "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5",
+    "Assets/Game/Scripts/Systems/SpawnableKeyText.cs": "424547625a12322c9a3925baf5baf6f7c50b1ee1f47be69609cd82212f060452",
+    "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs": "bd74357ad26ed786853e914cf827db885407b07ad1570cd2bdf57e36024d0314",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs": "8f1f0f4dca3bad579805c748f62b558eeb6ef75a1179cd0cbe3ed4b872964310"
 }
+# One reviewed owner has an LF Git/Mac checkout and CRLF Windows checkout.
+# These are literal independent byte pins, NOT a generic line-ending canonicalizer.
+POLICY_CHECKOUT_VARIANTS = {
+    'Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs': {
+        '5cff92b2f3b1d5f7c09e275ec53134a1557ebdac828c8d5546a904fc6075987f'
+    }
+}
+
 SCOPE = 'ConstructionCommittedBoundariesPartial'
 UNCOVERED = ['PlayerWallMemberIdentities', 'AlternateConstructionEntryPoints',
              'RepairEconomyFuelOrigins', 'WholeAttemptConservation']
@@ -175,6 +186,24 @@ class Reader:
             self.verify({'path':str(p),'sha256':h},limit,allow_empty)
 
 
+def boundary_key(value):
+    """Pinned BoundaryKeyEquals for printable ASCII plus ASCII Trim whitespace.
+
+    .NET invariant Unicode casing/whitespace is outside this consumer's reviewed
+    subset. Do not approximate it with Python Unicode casefold or rewrite DTOs.
+    """
+    need(isinstance(value,str) and 0<len(value)<=128 and
+         all(32<=ord(c)<=126 or c in '\t\n\r\v\f' for c in value),
+         'Unsupported non-ASCII boundary key or control character')
+    result=value.strip(' \t\n\r\v\f').lower()
+    need(bool(result),'Empty normalized boundary key')
+    return result
+
+
+def policy_pin_matches(path,actual):
+    return actual==POLICY_PINS[path] or actual in POLICY_CHECKOUT_VARIANTS.get(path,())
+
+
 def point(p,session):
     exact(p,POINT)
     for k in ('bank_index','bank_version','session_index','session_version'):
@@ -189,7 +218,9 @@ def point(p,session):
         exact(i,INTENT);need(e['FactionId']==2,'Player carries enemy intent')
         integer(i['version'],1,1);need(i['session']==session,'Enemy intent session splice')
         integer(i['phase'],0,5)
-        for k in ('action','pad','building','result_stable_id'):string(i[k],128,True)
+        for k in ('action','pad','result_stable_id'):string(i[k],128,True)
+        # The first-capture Idle intent can have an empty default building field.
+        if i['building']!='':boundary_key(i['building'])
         for k in ('origin_x','origin_y','candidate'):integer(i[k],-I32-1)
         for k in ('width','depth','paid','request_id','desired_count'):integer(i[k])
         finite(i['retry_after']);need(i['retry_after']>=0,'Negative retry time')
@@ -201,7 +232,7 @@ def point(p,session):
         exact(r,REQUEST);need(i is not None,'Request without intent')
         for k in REQUEST-{'building'}:integer(r[k],-I32-1 if k in ('preferred_x','preferred_y','actual_x','actual_y') else 0)
         need(r['kind']==4 and r['status'] in (0,1,2) and r['faction']==2 and r['id']==i['request_id']
-             and r['materials']==i['paid'] and r['building']==i['building']
+             and r['materials']==i['paid'] and boundary_key(r['building'])==boundary_key(i['building'])
              and (r['plan_index'],r['plan_version'])==(p['session_index'],p['session_version'])
              and r['authored_grant']==r['allow_nonbuildable']==0 and r['require_origin']==1
              and (r['preferred_x'],r['preferred_y'])==(i['origin_x'],i['origin_y']), 'Enemy request correlation/authority differs')
@@ -416,7 +447,7 @@ def inspect(project,descriptor):
         exact(ref,{'path','sha256'});need(ref['path'] not in seen,'Duplicate source manifest path')
         need(isinstance(ref['path'],str) and not Path(ref['path']).is_absolute() and '\\' not in ref['path'], 'Relative forward-slash source row required')
         reader.verify(ref);seen[ref['path']]=ref['sha256']
-    need(all(seen.get(p)==h for p,h in POLICY_PINS.items()),'Literal reviewed source/policy pins differ or missing')
+    need(all(policy_pin_matches(p,seen.get(p)) for p in POLICY_PINS),'Literal reviewed source/policy pins differ or missing')
     need(candidate_hash(pins)==job['candidate_sha256'], 'Source manifest does not derive candidate identity')
     builds=store['build_manifest']
     need(isinstance(builds,list) and 0<len(builds)<=1024 and fingerprint(builds)==job['build_sha256'], 'Build manifest does not derive compiled identity')

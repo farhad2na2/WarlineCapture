@@ -20,6 +20,89 @@ namespace Game.Editor
         const string StrictJointReportSha="7336d2bfc6a381b3b0f760c47acc7eb6d1a3a900c4059aaccde631e009e0b9f9";
         static bool strictLogicalCandidatesRequested;
         static JObject strictLogicalCandidates;
+        const string ReviewedJointPathEnv="WARLINE_REVIEWED_LOGICAL_CANDIDATES_INPUT";
+        const string ReviewedJointShaEnv="WARLINE_REVIEWED_LOGICAL_CANDIDATES_SHA256";
+        static JObject strictLogicalInputReceipt;
+        static void RequireReviewedJointPair(string path,string digest)
+        {
+            Require(string.IsNullOrEmpty(path)==string.IsNullOrEmpty(digest),"Complete reviewed input path/hash pair required");
+            if(!string.IsNullOrEmpty(path))Require(digest.Length==64&&digest.All(c=>c>='0'&&c<='9'||c>='a'&&c<='f'),"Exact lowercase SHA256 required");
+        }
+        static string ReviewedJointOrdinaryPath(string root,string path)
+        {
+            Require(!string.IsNullOrWhiteSpace(path)&&Path.IsPathRooted(path),"Absolute reviewed input required");
+            root=Path.GetFullPath(root);path=Path.GetFullPath(path);
+            var comparison=Application.platform==RuntimePlatform.WindowsEditor?StringComparison.OrdinalIgnoreCase:StringComparison.Ordinal;
+            Require(path.StartsWith(Path.Combine(root,"Logs")+Path.DirectorySeparatorChar,comparison),"Reviewed input must remain under owned Logs");
+            Require(File.Exists(path),"Actual reviewed input file required");
+            for(string cursor=path;!string.IsNullOrEmpty(cursor);cursor=Path.GetDirectoryName(cursor))
+                BuildScript.RequirePreparedNonReparse(File.GetAttributes(cursor));
+            return path;
+        }
+        static void ValidateReviewedJointEnvelope(JObject input,JObject reference,JObject baseline,JObject authority)
+        {
+            Require(input.Properties().Select(x=>x.Name).OrderBy(x=>x,StringComparer.Ordinal).SequenceEqual(new[]{"schema","catalogId","definitionId","canonical_size_rows","inputReportSha256","sourceAuthority","candidates","nativePending","logicalDifferencePolicy"}.OrderBy(x=>x,StringComparer.Ordinal)),"Exact reviewed input envelope shape required");
+            Require(input["schema"]?.Type==JTokenType.Integer&&(int?)input["schema"]==1&&(string)input["catalogId"]==(string)authority["catalog_id"]&&
+                (string)input["definitionId"]==(string)authority["definition_id"],"Actual catalog/definition authority required");
+            Require(JToken.DeepEquals(input["canonical_size_rows"],authority["canonical_size_rows"])&&
+                ((JArray)authority["canonical_size_rows"]).Count==3,"Exact own three canonical budgets required");
+            Require(JToken.DeepEquals(input["sourceAuthority"],reference["sourceAuthority"])&&
+                (string)input["inputReportSha256"]==StrictJointReportSha,"Unchanged physical source/grid and historical report required");
+            Require(input["nativePending"]?.Type==JTokenType.Boolean&&(bool?)input["nativePending"]==true&&(string)input["logicalDifferencePolicy"]==JointStagingPolicy&&
+                input["candidates"] is JArray values&&values.Count==3&&values.All(x=>x is JObject),"Exact three reviewed unqualified candidates required");
+            int index=0;
+            foreach(JObject item in (JArray)input["candidates"])
+            {
+                Require(item["candidate"]?.Type==JTokenType.Integer&&(int?)item["candidate"]==index++&&item["layout"] is JObject,"Exact ordered candidate identities required");
+                ValidateReviewedJointCandidate(baseline,(JObject)item["layout"],JointStagingPolicy);
+            }
+        }
+        static JObject ReadReviewedJointOverride(string root,string path,string digest,JObject reference,JObject baseline,JObject authority)
+        {
+            RequireReviewedJointPair(path,digest);path=ReviewedJointOrdinaryPath(root,path);
+            Require(Hash(path)==digest,"Reviewed logical input hash mismatch");
+            var input=JObject.Parse(File.ReadAllText(path));
+            ValidateReviewedJointEnvelope(input,reference,baseline,authority);
+            Require(Hash(path)==digest,"Reviewed logical input changed during read");
+            return input;
+        }
+        public static void RunReviewedLogicalInputAuthorityControls()
+        {
+            var reference=JObject.Parse(File.ReadAllText(StrictJointDirectory+"candidates.json"));
+            var baseline=JObject.Parse(File.ReadAllText(StrictJointDirectory+"baseline-layout.json"));
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(x=>(string)x["catalog_id"]=="S049");
+            var valid=(JObject)reference.DeepClone();valid["schema"]=1;valid["catalogId"]=authority["catalog_id"].DeepClone();
+            valid["definitionId"]=authority["definition_id"].DeepClone();valid["canonical_size_rows"]=authority["canonical_size_rows"].DeepClone();
+            ValidateReviewedJointEnvelope(valid,reference,baseline,authority);int controls=1;
+            void Refuse(Action action)
+            {
+                bool refused=false;try{action();}catch(InvalidOperationException){refused=true;}
+                Require(refused,"Malformed reviewed input must refuse");controls++;
+            }
+            void Changed(Action<JObject> change)
+            {var v=(JObject)valid.DeepClone();change(v);Refuse(()=>ValidateReviewedJointEnvelope(v,reference,baseline,authority));}
+            foreach(JToken token in new JToken[]{new JValue("1"),new JValue(1.0),new JValue(true)})
+                Changed(v=>v["schema"]=token.DeepClone());
+            foreach(JToken token in new JToken[]{new JValue("0"),new JValue(0.0),new JValue(false)})
+                Changed(v=>v["candidates"][0]["candidate"]=token.DeepClone());
+            foreach(JToken token in new JToken[]{new JValue("true"),new JValue(1)})
+                Changed(v=>v["nativePending"]=token.DeepClone());
+            Changed(v=>v["unknownOverride"]=true);
+            Changed(v=>v["catalogId"]="S050");
+            Changed(v=>v["definitionId"]="foreign");
+            Changed(v=>v["canonical_size_rows"][0]["materials_each"]=((int)v["canonical_size_rows"][0]["materials_each"]+1).ToString(System.Globalization.CultureInfo.InvariantCulture));
+            Changed(v=>v["sourceAuthority"]["sourcePins"]["sourceIdentityHash"]="foreign");
+            Changed(v=>((JArray)v["candidates"]).RemoveAt(0));
+            Changed(v=>v["candidates"][0]["layout"]["worldBinding"]["SourceHash"]="foreign");
+            Refuse(()=>RequireReviewedJointPair("path",null));
+            Refuse(()=>RequireReviewedJointPair(null,new string('0',64)));
+            string root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            Refuse(()=>ReadReviewedJointOverride(root,Path.GetFullPath(StrictJointDirectory+"candidates.json"),new string('0',64),reference,baseline,authority));
+            Refuse(()=>ReviewedJointOrdinaryPath(root,Path.Combine(root,"Assets","foreign.json")));
+            Refuse(()=>ReviewedJointOrdinaryPath(root,Path.Combine(root,"Logs","..","Assets","foreign.json")));
+            Require(controls==21,"Exact twenty-one input-authority controls");
+            Debug.Log("[ReviewedLogicalInputAuthorityControls] result=Passed controls=21 nativeQueries=0 sourceFitCertified=0");
+        }
         public static void RunReviewedLogicalJointStaticPilot()
         {
             Require(!strictLogicalCandidatesRequested&&!mpGroundBaPilotRequested&&!refinementJointPadSearchRequested&&
@@ -30,7 +113,19 @@ namespace Game.Editor
             Require(Hash(StrictJointDirectory+"candidates.json")==StrictJointCandidateSha&&
                 Hash(StrictJointDirectory+"baseline-layout.json")==StrictJointBaselineSha&&Hash(StrictJointReport)==StrictJointReportSha,
                 "Exact immutable candidate/baseline/failed native report required");
-            var input=JObject.Parse(File.ReadAllText(StrictJointDirectory+"candidates.json"));
+            string selectedPath=ReviewedJointOrdinaryPath(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),Path.GetFullPath(StrictJointDirectory+"candidates.json"));
+            string selectedSha=StrictJointCandidateSha;
+            string overridePath=Environment.GetEnvironmentVariable(ReviewedJointPathEnv),overrideSha=Environment.GetEnvironmentVariable(ReviewedJointShaEnv);
+            RequireReviewedJointPair(overridePath,overrideSha);
+            var reference=JObject.Parse(File.ReadAllText(selectedPath));
+            var input=reference;
+            if(!string.IsNullOrEmpty(overridePath))
+            {
+                var own=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(x=>(string)x["catalog_id"]=="S049");
+                input=ReadReviewedJointOverride(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),overridePath,overrideSha,reference,
+                    JObject.Parse(File.ReadAllText(StrictJointDirectory+"baseline-layout.json")),own);
+                selectedPath=Path.GetFullPath(overridePath);selectedSha=overrideSha;
+            }
             Require((string)input["inputReportSha256"]==StrictJointReportSha&&(bool?)input["nativePending"]==true&&
                 input["candidates"] is JArray candidates&&candidates.Count==3,"Exactly three unqualified candidates required");
             var baseline=JObject.Parse(File.ReadAllText(StrictJointDirectory+"baseline-layout.json"));
@@ -38,12 +133,15 @@ namespace Game.Editor
             foreach(JObject candidate in (JArray)input["candidates"])ValidateReviewedJointCandidate(baseline,(JObject)candidate["layout"],JointStagingPolicy);
             RunReviewedLogicalJointControls();RunReviewedJointStagingControls();RunAuthoredRouteEndpointPreflightControls();RunMpGroundBaEndpointAdmissionControls();
             RunMpGroundBaZeroDistanceQueryControls();RunMpGroundBaServiceRegionControls();
+            RunReviewedLogicalInputAuthorityControls();
+            strictLogicalInputReceipt=new JObject{["path"]=selectedPath,["sha256"]=selectedSha,["overrideApplied"]=!string.IsNullOrEmpty(overridePath),["sourceFitCertified"]=false};
             strictLogicalCandidates=input;strictLogicalCandidatesRequested=true;
             mpGroundBaPilotRequested=true;s049BoundedCompoundRouteRequested=true;
             try{RunAll120SimultaneousLogicalRefinement();}
-            finally{strictLogicalCandidatesRequested=false;strictLogicalCandidates=null;mpGroundBaPilotRequested=false;s049BoundedCompoundRouteRequested=false;}
+            finally{strictLogicalCandidatesRequested=false;strictLogicalCandidates=null;strictLogicalInputReceipt=null;mpGroundBaPilotRequested=false;s049BoundedCompoundRouteRequested=false;}
             Require(Hash(StrictJointDirectory+"candidates.json")==StrictJointCandidateSha&&Hash(StrictJointDirectory+"baseline-layout.json")==StrictJointBaselineSha&&Hash(StrictJointReport)==StrictJointReportSha,
                 "Input evidence changed during native collection");
+            Require(Hash(ReviewedJointOrdinaryPath(Path.GetFullPath(Path.Combine(Application.dataPath,"..")),selectedPath))==selectedSha,"Reviewed input changed during collection");
             ValidateMpGroundBaStaticPilotResult("S049");
             Debug.Log("[ReviewedLogicalJointStaticPilot] result=Passed catalog=S049 sizes=3 candidateLimit=3 overlapWaiver=0 sourceFitCertified=0 normalMissionReady=0");
         }
@@ -189,6 +287,7 @@ namespace Game.Editor
             EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string prefix,Action<JObject> checkpoint)
         {
             Require(strictLogicalCandidatesRequested&&strictLogicalCandidates!=null&&!ProtectedRefinementCatalog(owner.Definition.CatalogId),"Exact owned strict candidate scope required");
+            mission["reviewedLogicalInput"]=strictLogicalInputReceipt.DeepClone();
             var authority=(JObject)strictLogicalCandidates["sourceAuthority"];var pins=(JObject)authority["sourcePins"];
             Require(grid.Width==(int)authority["grid"]["width"]&&grid.Height==(int)authority["grid"]["height"]&&grid.CellSize==(float)authority["grid"]["cellSize"]&&
                 grid.Origin.x==(float)authority["grid"]["originXZ"][0]&&grid.Origin.z==(float)authority["grid"]["originXZ"][1]&&
@@ -218,6 +317,7 @@ namespace Game.Editor
                     foreach(JObject pass in selectedPasses){int local=(int)pass["pass"];pass["candidateLocalPass"]=local;pass["pass"]=selectedIndex*3+local;}
                 if(result["strictThreeSizePlacementPass"]!=null)
                     result["strictThreeSizePlacementPass"]=selectedIndex*3+(int)result["strictThreeSizePlacementPass"];
+                result["reviewedLogicalInput"]=strictLogicalInputReceipt.DeepClone();
                 result["strictLogicalSelectedCandidate"]=selectedIndex;result["strictLogicalCandidateDiagnostics"]=diagnostics;
                 result["sourceFitCertified"]=false;result["normalMissionReady"]=false;result["cameraAccepted"]=false;
                 return result;

@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:08:58.898818+00:00",
+  "kind": "DisabledConcreteOuterControllerPeerReview",
+  "enabled": false,
+  "native_execution_authorized": false,
+  "launch_performed": false,
+  "native_projection": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "files": {
+    "Tools/CI/mac_tanker_probe35_controller.py": "e5d701724c5db9f94bca4a3b1f697f23f117963fe6ab60b0f199d6018cbb52c0",
+    "Tools/CI/mac_tanker_probe35_controller_test.py": "396feba0ae73df0fccb4ba104c73fbd4e2a2f1777fbe70035fd0f2ddcfbde4c0"
+  },
+  "unchanged_dependency_pins": {
+    "skirmish_construction_ledger_admission.py": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36",
+    "s005_windows_source_snapshot.py": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba",
+    "skirmish_native_identity.py": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+    "skirmish_production_queue.py": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd"
+  },
+  "validation": {
+    "pure_tests_passed": 14,
+    "default_disabled_plan_exercised": true,
+    "native_execution": false,
+    "initial_failed_observation": "One SDK alias fixture compared /var temp spelling to canonical /private/var output; corrected expected path to resolve(). Production canonicalization retained. Initial13 controls had1 failure; corrected14 controls all pass."
+  },
+  "gates": [
+    "Separate exact controller-hash/commit/root/scope bound reviewed launch authorization JSON; disabled default launches nothing",
+    "Exact local a9 projection/direct9f parent/branch/clean/four source pins/wrapper/version checks; no source changes",
+    "Three bounded CPU samples including Editor descendants, stable unrelated Editor logs, Hub open, 25GiB free disk and memory_pressure>=15%; own existing Editor refused",
+    "Actual installed Android SDK/NDK/JDK and Hub/Editor plist byte pins, CLI signed-in status, Pipeline manifest/package-lock presence",
+    "Full actual source manifest/candidate hash, DLL/build manifest, ProjectSettings/UserSettings, Csc RSP/Bee DLL and normal package-cache manifest before/after",
+    "Invocation only checked GUI wrapper through RTK, explicit -buildTarget Android, -quit synchronous35 entry, default3600s cold-import timeout (authorized1800..7200)",
+    "Invocation-local child ENV removes inherited WARLINE overrides and keeps repair flag0; parent ENV untouched",
+    "Observed wrapper descendant Editor PID/start/command ownership; exact-project shutdown required; no outer termination/reuse/cleanup of unrelated processes",
+    "Wrapper exit0 + unique exact35 final marker after the two exact expected LogAssert negative errors; targeted unexpected compile/import/test errors refuse controls",
+    "Source and settings unchanged, current compiled DLLs present, parent ENV unchanged and Hub still open; actual before/after build identities recorded rather than falsely requiring cold-import outputs unchanged",
+    "Authorization-passed preflight failures and partial/failed output retained in fresh owned Logs/SkirmishProduction/MacProbe35/run-UUID/controller-result.json"
+  ],
+  "evidence_split": {
+    "operationalControlPassed": "Wrapper+fixture+OS state controls only; no native run yet",
+    "native_compiler_input_consumption_closure": "Pending",
+    "native_in_process_environment_witness": "Pending",
+    "callback_world_input_restoration": "Existing35 fixture assertions only; no independent postprocess witness",
+    "active_android_target": "Explicit wrapper target plus actual current Android RSP define when present; no invented in-process witness",
+    "normal_UPM": "Actual lock/cache manifests recorded; independent native witness not established",
+    "actual_domain_reload_player_frame": "Pending",
+    "Android_build": false,
+    "normal_mission": false,
+    "player_device": false
+  },
+  "limitations": [
+    "Controller has no new C# witness and does not alter frozen4files",
+    "CLI auth is recorded as CLI auth; Hub process/version are separate observations",
+    "Process capture polling is bounded1second; an unobserved owned Editor fails closed",
+    "Wrapper alone owns its started Editor timeout. Outer exceptions preserve failures and never kill any process; an owned wrapper still live is recordedPending",
+    "Source/DLL/RSP before-after pins do not establish actual compiler-input-consumption closure",
+    "No cache copy, Library symlink, Editor launch/import, real focused35 run, Android build, normal playthrough or player/device acceptance performed"
+  ]
+}

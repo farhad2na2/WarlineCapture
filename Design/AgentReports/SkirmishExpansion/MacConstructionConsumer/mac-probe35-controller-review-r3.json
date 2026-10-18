@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:24:21.676385+00:00",
+  "enabled": false,
+  "native_execution_authorized": false,
+  "launch_performed": false,
+  "supersedes_controller_commit": "3716705f948c322711fe20255501ab05acb8213e",
+  "prior_report": "mac-probe35-controller-review-r2.json",
+  "change": "Fix verified macOS Hub Android module path from nonexistent Unity.app/Contents/PlaybackEngines to actual sibling PlaybackEngines/AndroidPlayer. Include Hub module/install metadata and OpenJDK release bytes in eventual tool pins. No C# or wrapper changes.",
+  "files": {
+    "Tools/CI/mac_tanker_probe35_controller.py": "001fa0fa58464caaa0d7f2adf2fea585b0867ad7fa7148d6683966b7b0e7b059",
+    "Tools/CI/mac_tanker_probe35_controller_test.py": "a0986bfdaa4767f7ec9c1700cc8848b0d71337b0b31badcd520d030e786819d0"
+  },
+  "pure_tests_passed": 16,
+  "actual_read_only_evidence": {
+    "wrong_path_exists": false,
+    "correct_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer",
+    "correct_path_exists": true,
+    "metadata": [
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/modules.json",
+        "sha256": "cd537d8b363506b0bd85709a21101262e31cd9580cecc138f5cf611451686b2d",
+        "size": 47834
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/metadata.hub.json",
+        "sha256": "3146c1f3f5183bcf5d7d453f9c052ec3c4ce9e579f7a0e3bdc4f38675de323ca",
+        "size": 120
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/source.properties",
+        "sha256": "70f1c5165e6d997b18782a49cff71da7a3caacd0c4cd811da24c43359fb83cf6",
+        "size": 108,
+        "version_fields": [
+          "Pkg.Desc = Android NDK",
+          "Pkg.Revision = 27.2.12479018",
+          "Pkg.BaseRevision = 27.2.12479018",
+          "Pkg.ReleaseName = r27c"
+        ]
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/release",
+        "sha256": "382ba84027b8c4c011c3ff244593c26e135517d581bf4a2c31eace5efe15ecd1",
+        "size": 1625,
+        "version_fields": [
+          "JAVA_RUNTIME_VERSION=\"17.0.18+8\"",
+          "JAVA_VERSION=\"17.0.18\"",
+          "OS_ARCH=\"x86_64\""
+        ]
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-34/source.properties",
+        "sha256": "ed679a4634da4ab755f33ec6d1b7ac21f279e45cf0a75349f6205efee332e608",
+        "size": 256,
+        "version_fields": [
+          "Pkg.Desc=Android SDK Platform 14",
+          "Pkg.UserSrc=false",
+          "Platform.Version=14",
+          "Pkg.Revision=2",
+          "AndroidVersion.ApiLevel=34",
+          "AndroidVersion.ExtensionLevel=7",
+          "AndroidVersion.IsBaseSdk=true"
+        ]
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-36/source.properties",
+        "sha256": "72291ff6611dbfc46fdfb6de2821c4a62c87befa5200713847eda426e3a501c2",
+        "size": 257,
+        "version_fields": [
+          "Pkg.Desc=Android SDK Platform 16",
+          "Pkg.UserSrc=false",
+          "Platform.Version=16",
+          "Pkg.Revision=2",
+          "AndroidVersion.ApiLevel=36",
+          "AndroidVersion.ExtensionLevel=17",
+          "AndroidVersion.IsBaseSdk=true"
+        ]
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-37.0/source.properties",
+        "sha256": "fa89029fc0cee414cb5e44a37cd3033771217eeecb5086577bb6d9b1b03b5b5f",
+        "size": 343,
+        "version_fields": [
+          "Pkg.Desc=Android SDK Platform 17",
+          "Pkg.UserSrc=false",
+          "Platform.Version=17",
+          "Pkg.Revision=2",
+          "AndroidVersion.ApiLevel=37.0",
+          "AndroidVersion.CodeName=",
+          "AndroidVersion.ExtensionLevel=22",
+          "AndroidVersion.IsBaseSdk=true",
+          "AndroidVersion.PreviewSdkInt=0",
+          "AndroidVersion.BetaVersion="
+        ]
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/source.properties",
+        "sha256": "7dee6632e9ad6cb111da2bb99d747211e27927061b1276d040bb1d71fded5ebb",
+        "size": 62,
+        "version_fields": [
+          "Pkg.UserSrc=false",
+          "Pkg.Revision=36.0.0"
+        ]
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/cmdline-tools/16.0/source.properties",
+        "sha256": "03f5b26666088084eb66618b5a4f39f937cc9f75a8f4c22acbd859487e50ad04",
+        "size": 86,
+        "version_fields": [
+          "Pkg.Revision=16.0",
+          "Pkg.Path=cmdline-tools;16.0",
+          "Pkg.Desc=Android SDK Command-line Tools"
+        ]
+      }
+    ],
+    "required_binary_paths": [
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+        "exists": true,
+        "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang-18",
+        "size": 169477200
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/java",
+        "exists": true,
+        "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/java",
+        "size": 70464
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/javac",
+        "exists": true,
+        "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/javac",
+        "size": 70464
+      },
+      {
+        "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb",
+        "exists": true,
+        "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb",
+        "size": 15577280
+      }
+    ],
+    "sdk_license_file_names": [],
+    "frozen_project_settings": {
+      "min_sdk_serialized": 26,
+      "target_sdk_serialized": 0,
+      "target_architectures_serialized": 2,
+      "build_or_native_selection": "Not run; autoSDK0 with installed34/36/37.0 is not verified resolved target"
+    }
+  },
+  "validation": "16 pure controls pass after correction; actual installed metadata/path existence verified read-only. No tools_state full SDK byte census, SDK invocation, Editor import, compile or build executed.",
+  "unchanged_scope": "Separate exact-hash launch authorization remains absent. Nativea9+3e four-source projection frozen, P2c preserved. All operational-vs-proof Pending splits and15prior controls retained.",
+  "result": "DisabledController16ConstructedPassed_ActualModulePathCorrected_PeerReviewPending",
+  "native_compiler_input_consumption_closure": "Pending",
+  "normal_mission_ready": false,
+  "Android_build": false,
+  "player_device": false
+}

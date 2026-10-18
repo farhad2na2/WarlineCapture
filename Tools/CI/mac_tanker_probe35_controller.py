@@ -137,13 +137,18 @@ def capacity(root):
     return dict(samples=samples,free_bytes=free,vm_stat=vm,memory_pressure=pressure)
 
 
+def android_module(editor_install):
+    # Hub macOS modules are siblings of Unity.app, confirmed on this installation.
+    return Path(editor_install)/'PlaybackEngines/AndroidPlayer'
+
+
 def tools_state(root):
     auth=parse(run(['unity','auth','status','--format','json']))
     need(auth.get('loggedIn') is True,'Unity CLI auth not confirmed signed in')
     base=Path('/Applications/Unity/Hub/Editor/6000.5.8f1')
-    android=base/'Unity.app/Contents/PlaybackEngines/AndroidPlayer'
-    required=[base/'Unity.app/Contents/Info.plist',Path('/Applications/Unity Hub.app/Contents/Info.plist'),
-        android/'NDK/source.properties',android/'NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang',
+    android=android_module(base)
+    required=[base/'modules.json',base/'metadata.hub.json',base/'Unity.app/Contents/Info.plist',Path('/Applications/Unity Hub.app/Contents/Info.plist'),
+        android/'NDK/source.properties',android/'OpenJDK/release',android/'NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang',
         android/'OpenJDK/bin/java',android/'OpenJDK/bin/javac',android/'SDK/platform-tools/adb']
     for pattern in ('platforms/*/android.jar','build-tools/*/aapt2','build-tools/*/apksigner','cmdline-tools/*/bin/sdkmanager'):
         found=sorted((android/'SDK').glob(pattern));need(found,'Missing actual Android SDK component '+pattern);required.extend(found)

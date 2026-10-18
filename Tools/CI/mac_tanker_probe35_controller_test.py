@@ -83,6 +83,11 @@ class ControllerTests(unittest.TestCase):
         text=' 2 1 Sun Oct 18 14:00:00 2026 0.0 1024 /Applications/Unity Hub.app/Contents/MacOS/Unity Hub\n'
         with patch.object(c,'run',return_value=text):
             rows=c.processes();self.assertEqual(rows[0]['pid'],2);self.assertEqual(rows[0]['started'],'Sun Oct 18 14:00:00 2026')
+    def test_mac_hub_android_module_is_sibling_of_unity_app(self):
+        root=Path('/Applications/Unity/Hub/Editor/6000.5.8f1')
+        self.assertEqual(c.android_module(root),root/'PlaybackEngines/AndroidPlayer')
+        self.assertNotIn('Unity.app',c.android_module(root).relative_to(root).parts)
+
     def test_sdk_alias_only_resolves_inside_explicit_android_root(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d);(p/'actual').write_text('tool');(p/'alias').symlink_to(p/'actual')

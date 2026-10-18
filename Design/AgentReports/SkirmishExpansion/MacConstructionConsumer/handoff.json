@@ -13,7 +13,7 @@
   ],
   "test_command": "rtk proxy python3 Tools/CI/skirmish_construction_ledger_admission_test.py",
   "tests": {
-    "passed": 35,
+    "passed": 40,
     "fixtures": "Constructed Python fixtures only, not native evidence. Fixture-only pins are monkeypatched in tests; CLI uses 12 literal reviewed source/policy pins.",
     "log": "constructed-tests.log"
   },
@@ -49,7 +49,8 @@
     "Native setup/config/session/world joins and ledger lifecycle/count/owned sink/zero capture faults",
     "Player cost-policy reserve, placement correlation, finalize, rollback and deferred-refund arithmetic",
     "Enemy request debit, refund debt and settlement, no-debit reenqueue, actor/request delivery correlation, spend-before-debt replacement",
-    "Typed finite fields, exact versioned schemas, bounded reads and path escape/reparse rejection"
+    "Typed finite fields, exact versioned schemas, bounded reads and path escape/reparse rejection",
+    "Enemy exposed intent history continuity and duplicate action rejection, with native cleanup refund transition preserved."
   ],
   "limits": [
     "Real Windows construction traces were still being produced at handoff; no real trace run performed.",
@@ -87,6 +88,7 @@
     "elapsed_seconds": 23.079
   },
   "corrections": [
-    "Initial source bounds would reject this real project. Repaired reader streams source/DLL pins separately from parsed artifacts and retains bounded total reads and the final barrier. Empty source pins are supported; empty parsed artifacts and DLLs remain refused."
+    "Initial source bounds would reject this real project. Repaired reader streams source/DLL pins separately from parsed artifacts and retains bounded total reads and the final barrier. Empty source pins are supported; empty parsed artifacts and DLLs remain refused.",
+    "Focused corruption reproducers at f8a5c91 accepted erased prior enemy intent and skipped settlement phase. Consumer now requires exposed intent continuity except native PaidPending-to-RefundPending cleanup, and rejects duplicate enemy action keys. Five regression tests cover lost history, skipped settlement, spliced fields, valid native cleanup and next distinct action."
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "scope": "Constructed corruption reproducer; not native gameplay",
+  "original_commit": "f8a5c91f26f5d882bbfa2bc6715142b8bfae6e71",
+  "original_observations": {
+    "lost_prior_intent": "ConsistentRecordedConstructionBoundaries (incorrect acceptance)",
+    "skipped_settlement_phase": "ConsistentRecordedConstructionBoundaries (incorrect acceptance)"
+  },
+  "corrected_result": "MissingOrFailedAdmission for both corruptions",
+  "native_cleanup_exception": "CleanupAttempt changes PaidPending phase to RefundPending before Refund captures its boundary; this real path remains accepted",
+  "regression_test_count": 5,
+  "qualified": false,
+  "paid_resources_qualified": false
+}

@@ -342,9 +342,15 @@ def validate_construction_ledger(job,claim,events):
             else:
                 need(faction==2 and a['economy']['MaterialsOnlyConstruction']in (1,2) and f['transaction_owner_sequence']==0 and f['credits_quoted']==0 and f['rotated']is False,'Enemy owner/policy')
                 x,y=a['enemy_intent'],b['enemy_intent'];need(y is not None,'Missing enemy intent')
-                if enemy is not None and x is not None:
-                    need(all(x[k]==enemy[k] for k in ('request_id','building','paid','action','pad','origin_x','origin_y','width','depth','result_stable_id')),'Enemy history correlation differs')
+                if enemy is not None:
+                    need(x is not None,'Recorded enemy intent disappeared')
+                    # CleanupAttempt can move PaidPending to RefundPending before
+                    # Refund captures its boundary; all other exposed changes emit.
+                    changed={k for k in INTENT if x[k]!=enemy[k]}
+                    need(not changed or changed=={'phase'} and enemy['phase']==1 and x['phase']==4,
+                         'Enemy history correlation/settlement differs')
                 if op=='EnemyRequest':
+                    need(x is None or x['action']!=y['action'],'Duplicate enemy action key')
                     debt=x['paid'] if x is not None and x['phase']==4 else 0
                     need(x is None or x['phase'] in (0,3,4,5),'Overlapping paid enemy request')
                     need(y['phase']==1 and y['paid']==f['materials_quoted']>0 and y['request_id']==f['transaction_id'] and y['result_stable_id']=='','Enemy debit intent')

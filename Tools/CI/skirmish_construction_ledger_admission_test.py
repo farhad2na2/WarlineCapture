@@ -193,6 +193,41 @@ class AdmissionTests(unittest.TestCase):
         self.good(f)
         f.transactions[-1]['after']['bank']['Version']=3;self.bad(f)
 
+    def test_enemy_intent_cannot_disappear_between_paid_requests(self):
+        f=Fixture();f.enemy('pending')
+        row=copy.deepcopy(f.transactions[0]);row['ledger_sequence']=2
+        f.transactions.append(row);self.bad(f)
+
+    def test_enemy_settlement_phase_cannot_be_skipped(self):
+        f=Fixture();f.enemy('pending')
+        row=copy.deepcopy(f.transactions[0]);row['ledger_sequence']=2
+        row['before']=copy.deepcopy(f.transactions[0]['after']);row['before']['enemy_intent']['phase']=3
+        row['after']['enemy_intent']['action']='build.next'
+        row['after']['bank'].update(Current=600,LifetimeSpent=400,LifetimeConstructionSpent=400,Version=3)
+        f.transactions.append(row);self.bad(f)
+
+    def test_enemy_exposed_history_fields_cannot_be_spliced(self):
+        for field in ('candidate','desired_count','retry_after'):
+            f=Fixture();f.enemy();f.transactions[1]['before']['enemy_intent'][field]+=1
+            self.bad(f)
+
+    def test_native_cleanup_refund_does_not_require_fabricated_debt_event(self):
+        f=Fixture();f.enemy()
+        f.transactions.pop(1) # CleanupAttempt sets phase before capturing Refund.
+        f.transactions[1]['ledger_sequence']=2
+        self.good(f)
+
+    def test_settled_enemy_cannot_reuse_action_key(self):
+        f=Fixture();f.enemy('delivered')
+        before=copy.deepcopy(f.transactions[-1]['after']);before['request']=None
+        after=copy.deepcopy(before)
+        after['enemy_intent']=f.intent(request_id=8);after['request']=f.request(id=8)
+        after['bank'].update(Current=600,LifetimeSpent=400,LifetimeConstructionSpent=400,Version=3)
+        f.transaction('EnemyRequest',before,after,transaction_id=8,materials_quoted=200,prefab_name='barracks',origin_x=5,origin_y=6)
+        self.bad(f)
+        f.transactions[-1]['after']['enemy_intent']['action']='build.next'
+        self.good(f)
+
     def test_policy_cost_change_and_unsupported_version(self):
         f=Fixture();f.player(policy=2);f.transactions[0]['credits_quoted']=40001;self.bad(f)
         f=Fixture();f.player();f.transactions[0]['before']['economy']['MaterialsOnlyConstruction']=3;self.bad(f)

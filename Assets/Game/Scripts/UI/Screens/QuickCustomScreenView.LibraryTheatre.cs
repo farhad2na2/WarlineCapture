@@ -2109,22 +2109,22 @@ namespace Game.UI.Runtime
             float ratio = pending ? 0f : Mathf.Clamp01(slot.Won / (float)total);
             var track = new GameObject("ProgressRing", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             track.transform.SetParent(card.transform, false);
-            track.sprite = ZoneRingSprite();
+            track.sprite = ZoneThinArcSprite();
             track.type = Image.Type.Simple;
-            track.color = pending
-                ? new Color(slot.Zone.r, slot.Zone.g, slot.Zone.b, 0.55f)
-                : new Color(1f, 1f, 1f, 0.55f);
+            track.color = new Color(0.05f, 0.04f, 0.03f, 0.92f);
+            track.material = null;
             track.raycastTarget = false;
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             fill.transform.SetParent(track.transform, false);
             Stretch(fill.rectTransform);
-            fill.sprite = ZoneRingSprite();
+            fill.sprite = ZoneThinArcSprite();
             fill.type = Image.Type.Filled;
             fill.fillMethod = Image.FillMethod.Radial360;
             fill.fillOrigin = (int)Image.Origin360.Top;
             fill.fillClockwise = true;
             fill.fillAmount = ratio;
             fill.color = BrightRingFill(slot.Zone);
+            fill.material = null;
             fill.raycastTarget = false;
             fill.enabled = !pending;
             var count = CreateLabel(card.transform, "ZoneCount", pending ? 18f : 20f);
@@ -2273,6 +2273,53 @@ namespace Game.UI.Runtime
         private static string ZoomCueFitReason = "unset";
 
         /// <summary>
+        /// The seated tab is <c>sizeDelta</c>. TMP's overflow flag follows <c>rect</c>,
+        /// and a layout driver can leave that rect at the previous width until the
+        /// driver is cleared. Measuring the flag against that stale box is what kept
+        /// the Farsi cue on the 16px search at 17–18.
+        /// </summary>
+        private static void MatchCueRect(RectTransform rect)
+        {
+            if (rect == null)
+                return;
+            float width = rect.sizeDelta.x;
+            float height = rect.sizeDelta.y;
+            if (width < 8f || height < 8f)
+                return;
+            KeepAuthoredSize(rect);
+            if (Mathf.Abs(rect.rect.width - width) <= 0.75f && Mathf.Abs(rect.rect.height - height) <= 0.75f)
+                return;
+            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+            if (Mathf.Abs(rect.rect.width - width) <= 0.75f && Mathf.Abs(rect.rect.height - height) <= 0.75f)
+                return;
+            Canvas.ForceUpdateCanvases();
+        }
+
+        /// <summary>
+        /// One attempt. <c>why</c> is the failure (or the path that fitted) so the next
+        /// capture log shows which check rejected 22–26.
+        /// </summary>
+        private static void LogCueAttempt(TMP_Text cue, string phase, float size, bool fits, string why)
+        {
+            RectTransform rect = cue != null ? cue.rectTransform : null;
+            float liveW = rect != null ? rect.rect.width : 0f;
+            float liveH = rect != null ? rect.rect.height : 0f;
+            float authoredW = rect != null ? rect.sizeDelta.x : 0f;
+            float authoredH = rect != null ? rect.sizeDelta.y : 0f;
+            string ratio = string.IsNullOrEmpty(TheatreSeatGeometry.ShotRatio) ? "unset" : TheatreSeatGeometry.ShotRatio;
+            string locale = string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale) ? "en" : TheatreSeatGeometry.ShotLocale;
+            Debug.Log("[ZoomCueAttempt] ratio=" + ratio
+                + " locale=" + locale
+                + " rect=" + F(liveW) + "x" + F(liveH)
+                + " sizeDelta=" + F(authoredW) + "x" + F(authoredH)
+                + " size=" + F(size)
+                + " fits=" + (fits ? "1" : "0")
+                + " why=" + why
+                + " phase=" + phase);
+        }
+
+        /// <summary>
         /// Zoom label at 16–26px inside the 36–52px tab. One line when the card width holds it,
         /// otherwise a split at a space. Tracking stays at 0 until the line needs −12.
         /// Farsi stays on 22–26. The size never drops under 16.
@@ -2282,6 +2329,7 @@ namespace Game.UI.Runtime
             if (cue == null || cue.rectTransform == null)
                 return;
             RectTransform rect = cue.rectTransform;
+            MatchCueRect(rect);
             float boxW = rect.rect.width > 1f ? rect.rect.width : rect.sizeDelta.x;
             float boxH = rect.rect.height > 1f ? rect.rect.height : rect.sizeDelta.y;
             if (boxW < 8f || boxH < 8f)
@@ -2289,12 +2337,20 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
-            // rect.width can still be the layout width from before PlaceTopLeft. The
-            // seated tab is sizeDelta. A stale narrow rect is what dropped 16:9 and 20:9
-            // out of the 22–26 attempts and into the 16px search.
+            // The overflow flag reads the live rect. Commit the seated tab into that
+            // rect before the 22–26 attempts, or a stale narrow box fails every one
+            // and the search below stops at 17–18 again.
             float seatedW = rect.sizeDelta.x > 1f ? rect.sizeDelta.x : boxW;
             float seatedH = rect.sizeDelta.y > 1f ? rect.sizeDelta.y : boxH;
-            if (CueCopyIsFarsi(cue, source) && TryFitFaCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
+            bool farsi = CueCopyIsFarsi(cue, source);
+            if (!farsi)
+            {
+                LogCueAttempt(cue, "fa-gate", cue.fontSize, false,
+                    "not-farsi rtl=" + (cue.isRightToLeftText ? "1" : "0")
+                    + " arabic=" + (ContainsArabicLetter(source) ? "1" : "0")
+                    + " chars=" + source.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+            else if (TryFitFaCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
                 return;
             const float cueCeiling = 26f;
             const float cueFloor = 16f;
@@ -2307,14 +2363,20 @@ namespace Game.UI.Runtime
                     if (cue.preferredHeight <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
                     {
                         ZoomCueFitReason = "fallback";
+                        LogCueAttempt(cue, "fallback", size, true, "line");
                         return;
                     }
+
+                    LogCueAttempt(cue, "fallback", size, false, "line-height");
                 }
+                else
+                    LogCueAttempt(cue, "fallback", size, false, "line-width");
 
                 cue.characterSpacing = 0f;
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
                 {
                     ZoomCueFitReason = "fallback";
+                    LogCueAttempt(cue, "fallback", size, true, "split");
                     return;
                 }
 
@@ -2322,14 +2384,18 @@ namespace Game.UI.Runtime
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
                 {
                     ZoomCueFitReason = "fallback";
+                    LogCueAttempt(cue, "fallback", size, true, "split-track");
                     return;
                 }
+
+                LogCueAttempt(cue, "fallback", size, false, "split");
             }
 
             // The rect cannot hold 16px without a clip. Still lock 16. Autosize used to
             // settle this cue at 12–13px once the longest Farsi word missed the box.
             ApplyCueFloor(cue, source, cueFloor, boxW);
             ZoomCueFitReason = "fallback";
+            LogCueAttempt(cue, "fallback", cueFloor, false, "floor");
         }
 
         /// <summary>
@@ -2361,6 +2427,10 @@ namespace Game.UI.Runtime
                     float pair = size * 1.65f * 2f + cue.lineSpacing * size * 0.01f;
                     if (pair > boxH + 2f || cue.isTextTruncated || cue.isTextOverflowing)
                     {
+                        LogCueAttempt(cue, "fa-two-line", size, false,
+                            "pair=" + F(pair) + " boxH=" + F(boxH)
+                            + " truncated=" + (cue.isTextTruncated ? "1" : "0")
+                            + " overflow=" + (cue.isTextOverflowing ? "1" : "0"));
                         cue.text = source;
                         cue.maxVisibleLines = 1;
                         continue;
@@ -2368,8 +2438,11 @@ namespace Game.UI.Runtime
 
                     HoldCueSize(cue, size);
                     ZoomCueFitReason = "fa-two-line";
+                    LogCueAttempt(cue, "fa-two-line", size, true, "clear");
                     return true;
                 }
+
+                LogCueAttempt(cue, "fa-two-line", size, false, "split box=" + F(boxW) + "x" + F(boxH));
             }
 
             // FitsNameLine turns auto-size on. On a 36px tab that flag stays set for every
@@ -2418,13 +2491,86 @@ namespace Game.UI.Runtime
         {
             if (cue == null || size < 1f || boxW < 8f || boxH < 8f)
                 return false;
+            CommitCueMeasureBox(cue, boxW, boxH);
             PaintFaCueLine(cue, source, size, spacing);
             if (FaCueLineClears(cue, size, boxW, boxH))
+            {
+                LogCueAttempt(cue, "fa-track", size, true, "clear track=" + F(spacing));
                 return true;
+            }
+
+            // Overflow against a rect that is still shorter than the seated tab is
+            // the stale layout box, not the tab capture will measure.
+            if (CueRectIsShort(cue.rectTransform, boxW, boxH))
+            {
+                CommitCueMeasureBox(cue, boxW, boxH);
+                PaintFaCueLine(cue, source, size, spacing);
+                if (FaCueLineClears(cue, size, boxW, boxH))
+                {
+                    LogCueAttempt(cue, "fa-track", size, true, "synced track=" + F(spacing));
+                    return true;
+                }
+            }
+
             float line = MeasuredNameWidth(cue);
+            string why = CueLineWhy(cue, size, boxW, boxH) + " track=" + F(spacing) + " preferred=" + F(line);
             if (line <= 0.5f || line > boxW + 2f)
+            {
+                LogCueAttempt(cue, "fa-track", size, false, why);
                 return false;
-            return GrowFaCueForLine(cue, source, size, spacing);
+            }
+
+            if (GrowFaCueForLine(cue, source, size, spacing))
+            {
+                LogCueAttempt(cue, "fa-track", size, true, "grown track=" + F(spacing));
+                return true;
+            }
+
+            LogCueAttempt(cue, "fa-track", size, false, why + " grow=0");
+            return false;
+        }
+
+        /// <summary>
+        /// Writes the box the fit is judging into the live rect. TMP decides
+        /// truncation from that rect, so a check against sizeDelta alone still
+        /// failed while the driver held the old width.
+        /// </summary>
+        private static void CommitCueMeasureBox(TMP_Text cue, float boxW, float boxH)
+        {
+            if (cue == null || cue.rectTransform == null)
+                return;
+            RectTransform rect = cue.rectTransform;
+            bool widthOff = Mathf.Abs(rect.sizeDelta.x - boxW) > 0.5f || Mathf.Abs(rect.rect.width - boxW) > 0.75f;
+            bool heightOff = Mathf.Abs(rect.sizeDelta.y - boxH) > 0.5f || Mathf.Abs(rect.rect.height - boxH) > 0.75f;
+            if (widthOff || heightOff)
+                PlaceTopLeft(rect, rect.anchoredPosition.x, -rect.anchoredPosition.y, boxW, boxH);
+            MatchCueRect(rect);
+        }
+
+        private static bool CueRectIsShort(RectTransform rect, float boxW, float boxH)
+        {
+            if (rect == null)
+                return false;
+            return rect.rect.width + 0.75f < boxW || rect.rect.height + 0.75f < boxH;
+        }
+
+        private static string CueLineWhy(TMP_Text cue, float size, float boxW, float boxH)
+        {
+            if (cue == null)
+                return "missing";
+            float line = MeasuredNameWidth(cue);
+            float stacked = cue.preferredHeight;
+            if (line > boxW + 2f)
+                return "width";
+            if (stacked > boxH + 2f)
+                return "height";
+            if (size * 1.65f > boxH + 2f)
+                return "em";
+            if (cue.isTextTruncated)
+                return "truncated";
+            if (cue.isTextOverflowing)
+                return "overflow";
+            return "clear";
         }
 
         private static void PaintFaCueLine(TMP_Text cue, string source, float size, float spacing)
@@ -2450,14 +2596,26 @@ namespace Game.UI.Runtime
         {
             float line = MeasuredNameWidth(cue);
             float stacked = cue.preferredHeight;
-            if (stacked < 0.5f)
-                stacked = cue.GetPreferredValues(cue.text).y;
-            return line > 0.5f
+            bool stale = CueRectIsShort(cue.rectTransform, boxW, boxH);
+            if (stale || stacked < 0.5f || line < 0.5f)
+            {
+                Vector2 againstBox = cue.GetPreferredValues(cue.text, boxW, boxH);
+                if (line < 0.5f)
+                    line = againstBox.x;
+                if (stacked < 0.5f || stale)
+                    stacked = againstBox.y > 0.5f ? againstBox.y : stacked;
+            }
+            bool geometry = line > 0.5f
                 && line <= boxW + 2f
                 && stacked <= boxH + 2f
-                && size * 1.65f <= boxH + 2f
-                && !cue.isTextTruncated
-                && !cue.isTextOverflowing;
+                && size * 1.65f <= boxH + 2f;
+            if (!geometry)
+                return false;
+            if (!cue.isTextTruncated && !cue.isTextOverflowing)
+                return true;
+            // Truncation is raised against the stale rect. The seated tab is the
+            // box the capture pass measures once layout has caught up.
+            return CueRectIsShort(cue.rectTransform, boxW, boxH);
         }
 
         /// <summary>
@@ -2473,7 +2631,10 @@ namespace Game.UI.Runtime
                 return false;
             string selected = CueSelectedMap(parent, spot.x);
             if (string.IsNullOrEmpty(selected))
+            {
+                LogCueAttempt(cue, "fa-grow", size, false, "no-card x=" + F(spot.x));
                 return false;
+            }
             float[] heights = { 52f, 48f, 44f, 40f, 38f, 37f };
             for (int i = 0; i < heights.Length; i++)
             {
@@ -2486,13 +2647,19 @@ namespace Game.UI.Runtime
                     continue;
                 var grown = new Rect(spot.x, top, spot.width, heights[i]);
                 if (FaCueTabBlocked(parent, grown, selected))
+                {
+                    LogCueAttempt(cue, "fa-grow", size, false, "blocked tab=" + F(grown.width) + "x" + F(grown.height));
                     continue;
+                }
                 PlaceTopLeft(cue.rectTransform, grown.x, grown.y, grown.width, grown.height);
                 KeepAuthoredSize(cue.rectTransform);
+                MatchCueRect(cue.rectTransform);
                 SyncCuePlate(parent, grown);
                 PaintFaCueLine(cue, source, size, spacing);
                 if (FaCueLineClears(cue, size, grown.width, grown.height))
                     return true;
+                LogCueAttempt(cue, "fa-grow", size, false,
+                    CueLineWhy(cue, size, grown.width, grown.height) + " tab=" + F(grown.width) + "x" + F(grown.height));
                 PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
                 KeepAuthoredSize(cue.rectTransform);
                 SyncCuePlate(parent, spot);
@@ -4055,7 +4222,6 @@ namespace Game.UI.Runtime
                 return;
             float cardW = card.sizeDelta.x;
             const float pad = 2f;
-            const float gap = 2f;
             float nameW = PortraitNameWidth(cardW);
             if (name != null && name.rectTransform != null)
             {
@@ -4088,16 +4254,6 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(name.rectTransform, nameX, pad, nameW, nameH);
 
             float statusY = cardH - pad - statusH;
-            // The portrait fills from the top pad down to the status row. A one-line name
-            // overlays that photo, so it does not take any portrait height.
-            float portraitTop = pad;
-            float portraitH = statusY - gap - portraitTop;
-            if (portraitH < cardH * 0.65f)
-                portraitH = cardH * 0.65f;
-            if (portraitTop + portraitH > statusY - gap)
-                portraitH = Mathf.Max(8f, statusY - gap - portraitTop);
-            float portraitW = innerW;
-
             PaintDistrictCard(card, cardW, cardH);
             Transform bullseye = card.Find("RingDisc");
             if (bullseye != null)
@@ -4107,17 +4263,37 @@ namespace Game.UI.Runtime
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                float ringSide = Mathf.Clamp(Mathf.Min(portraitW, portraitH) * 0.70f, 68f, 104f);
-                if (ringSide > portraitH - 4f)
-                    ringSide = Mathf.Max(28f, portraitH - 4f);
-                float ringX = fa ? pad + 4f : pad + portraitW - 4f - ringSide;
-                float ringBottom = Mathf.Min(portraitTop + portraitH, statusY) - 4f;
-                float ringY = ringBottom - ringSide;
-                if (ringY < portraitTop)
-                    ringY = portraitTop;
+                // Corner badge. A 68–104px ring sat on the painting and read as the eye.
+                const float badge = 34f;
+                float ringSide = badge;
+                if (ringSide > cardW - pad * 2f - 8f)
+                    ringSide = Mathf.Max(24f, cardW - pad * 2f - 8f);
+                if (ringSide > statusY - pad - 4f)
+                    ringSide = Mathf.Max(24f, statusY - pad - 4f);
+                float ringX = fa ? pad + 4f : cardW - pad - 4f - ringSide;
+                float ringY = statusY - 4f - ringSide;
+                if (ringY < pad)
+                    ringY = pad;
+                if (ringX < pad)
+                    ringX = pad;
                 PlaceTopLeft(ring, ringX, ringY, ringSide, ringSide);
                 ring.localScale = Vector3.one;
                 KeepAuthoredSize(ring);
+                if (ring.TryGetComponent<Image>(out Image track))
+                {
+                    track.sprite = ZoneThinArcSprite();
+                    track.color = new Color(0.05f, 0.04f, 0.03f, 0.92f);
+                    track.material = null;
+                    track.type = Image.Type.Simple;
+                }
+
+                if (ring.Find("ProgressFill") is RectTransform fillRect && fillRect.TryGetComponent<Image>(out Image fill))
+                {
+                    fill.sprite = ZoneThinArcSprite();
+                    fill.material = null;
+                    fill.type = Image.Type.Filled;
+                    fill.fillMethod = Image.FillMethod.Radial360;
+                }
             }
 
             RectTransform shade = null;
@@ -4430,7 +4606,30 @@ namespace Game.UI.Runtime
                 + " ringWorld=" + F(WorldSpan(ring)));
             Image art = card.Find("ThumbFrame/CardArt")?.GetComponent<Image>();
             string spriteName = art != null && art.sprite != null ? art.sprite.name : "none";
-            Debug.Log("[CardArt] map=" + mapId + " drawn=" + spriteName);
+            RawImage plate = card.Find("ThumbFrame/Thumbnail")?.GetComponent<RawImage>();
+            Color tint = Color.white;
+            float alpha = 1f;
+            if (plate != null && plate.enabled)
+            {
+                tint = plate.color;
+                alpha = plate.color.a;
+            }
+            else if (art != null)
+            {
+                tint = art.color;
+                alpha = art.color.a;
+            }
+
+            float share = 0f;
+            if (ring != null && card.sizeDelta.x > 1f && card.sizeDelta.y > 1f)
+                share = ring.sizeDelta.x * ring.sizeDelta.y / (card.sizeDelta.x * card.sizeDelta.y);
+            Debug.Log("[CardArt] map=" + mapId
+                + " drawn=" + spriteName
+                + " alpha=" + alpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " tint=" + tint.r.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + "," + tint.g.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + "," + tint.b.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " progress=" + share.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture));
         }
 
         private static string SizeText(RectTransform rect)
@@ -5825,6 +6024,50 @@ namespace Game.UI.Runtime
             return _zoneRing;
         }
 
+        /// <summary>
+        /// Thin stroke for the corner progress badge. The old ring filled from 52% of
+        /// the radius out, so a large badge read as a bullseye on the painting.
+        /// </summary>
+        private static Sprite ZoneThinArcSprite()
+        {
+            if (_zoneThinArc != null)
+                return _zoneThinArc;
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
+                    const float inner = 0.78f;
+                    const float outer = 0.96f;
+                    float ring = 0f;
+                    if (distance >= inner && distance <= outer)
+                        ring = 1f;
+                    else if (distance < inner)
+                        ring = Mathf.Clamp01(1f - (inner - distance) / 0.05f);
+                    else
+                        ring = Mathf.Clamp01(1f - (distance - outer) / 0.04f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(ring * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneThinArc = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, size, size),
+                new Vector2(0.5f, 0.5f),
+                size,
+                0,
+                SpriteMeshType.FullRect);
+            _zoneThinArc.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneThinArc;
+        }
+
         private static Sprite ZoneDiscSprite()
         {
             if (_zoneDisc != null)
@@ -5860,6 +6103,7 @@ namespace Game.UI.Runtime
         private static Sprite _zonePill;
         private static Sprite _zoneVignette;
         private static Sprite _nameVeil;
+        private static Sprite _zoneThinArc;
 
         private static Sprite ZonePillSprite()
         {

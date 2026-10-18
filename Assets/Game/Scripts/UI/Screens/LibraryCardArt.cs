@@ -65,8 +65,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Draws the district plate across the whole card. The progress arc stays; the
-        /// filled disc that read as an eye does not.
+        /// Draws the district plate across the whole card, opaque and untinted.
+        /// The progress mark is a separate corner badge; this paint does not dim the plate.
         /// </summary>
         private static void PaintDistrictCard(RectTransform card, float cardW, float cardH)
         {
@@ -85,13 +85,15 @@ namespace Game.UI.Runtime
             if (frame.TryGetComponent<Image>(out Image frameImage))
             {
                 frameImage.sprite = ZoneSolidSprite();
-                frameImage.color = Color.white;
+                frameImage.color = new Color(1f, 1f, 1f, 1f);
+                frameImage.material = null;
                 frameImage.type = Image.Type.Simple;
             }
 
             Image art = EnsureDistrictCardArt(frame);
             art.sprite = plate;
-            art.color = Color.white;
+            art.color = new Color(1f, 1f, 1f, 1f);
+            art.material = null;
             art.type = Image.Type.Simple;
             art.preserveAspect = false;
             art.raycastTarget = false;
@@ -109,7 +111,8 @@ namespace Game.UI.Runtime
                 if (picture != null)
                 {
                     picture.texture = plate != null ? plate.texture : null;
-                    picture.color = Color.white;
+                    picture.color = new Color(1f, 1f, 1f, 1f);
+                    picture.material = null;
                     picture.raycastTarget = false;
                     picture.enabled = plate != null && plate.texture != null;
                     if (picture.enabled)

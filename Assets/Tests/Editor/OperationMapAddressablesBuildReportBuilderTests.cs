@@ -7,6 +7,81 @@ using UnityEditor.AddressableAssets.Build.Layout;
 
 public sealed class OperationMapAddressablesBuildReportBuilderTests
 {
+    private static string PreparedManagedOracle(string path)
+    {using var stream=System.IO.File.OpenRead(path);using var sha=System.Security.Cryptography.SHA256.Create();return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}
+    [Test] public void PreparedCngKnownVectors()
+    {
+        using var f=new PreparedFixture();using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+        string empty=f.Write("empty.bin",""),abc=f.Write("abc.bin","abc");
+        Assert.AreEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",digest.ComputeFile(empty));
+        Assert.AreEqual("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",digest.ComputeFile(abc));
+        Assert.AreEqual(PreparedManagedOracle(empty),digest.ComputeFile(empty));Assert.AreEqual(PreparedManagedOracle(abc),digest.ComputeFile(abc));
+    }
+    [Test] public void PreparedCngChunkBoundaries()
+    {
+        using var f=new PreparedFixture();using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+        foreach(int length in new[]{1,63,64,65,65535,65536,65537,131071}){
+            var data=new byte[length];for(int i=0;i<data.Length;i++)data[i]=(byte)((i*37+11)&255);
+            string path=System.IO.Path.Combine(f.Root,"binary.bin");System.IO.File.WriteAllBytes(path,data);
+            string actual=digest.ComputeFile(path);Assert.AreEqual(PreparedManagedOracle(path),actual);
+            Assert.IsTrue(System.Text.RegularExpressions.Regex.IsMatch(actual,"\\A[a-f0-9]{64}\\z"));
+        }
+    }
+    [Test] public void PreparedCngConsecutiveFileResetAndNoCache()
+    {
+        using var f=new PreparedFixture();using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+        string path=f.Write("changing.bin","A");
+        foreach(string value in new[]{"A","","B","A",""}){System.IO.File.WriteAllBytes(path,System.Text.Encoding.UTF8.GetBytes(value));Assert.AreEqual(PreparedManagedOracle(path),digest.ComputeFile(path));}
+    }
+    [Test] public void PreparedCngCompleteTempTreeMatchesManaged()
+    {
+        using var f=new PreparedFixture();f.Write("image.png","binary");f.Write("Nested/\u03a9-font.ttf","font");f.Write("zero.bytes","");
+        using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+        var expected=BuildScript.PreparedTree(f.Root);var actual=BuildScript.PreparedTree(f.Root,fileHash:digest.ComputeFile);
+        Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(expected,actual));
+        CollectionAssert.AreEqual(System.Text.Encoding.UTF8.GetBytes(expected.ToString(Newtonsoft.Json.Formatting.None)),System.Text.Encoding.UTF8.GetBytes(actual.ToString(Newtonsoft.Json.Formatting.None)));
+    }
+    [Test] public void PreparedCngIoAndDisposedRefusals()
+    {
+        using var f=new PreparedFixture();using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+        Assert.Throws<System.IO.FileNotFoundException>(()=>digest.ComputeFile(System.IO.Path.Combine(f.Root,"missing.bin")));
+        string path=f.Write("locked.bin","locked");
+        using(var held=new System.IO.FileStream(path,System.IO.FileMode.Open,System.IO.FileAccess.ReadWrite,System.IO.FileShare.None))
+            Assert.Throws<System.IO.IOException>(()=>digest.ComputeFile(path));
+        digest.Dispose();Assert.Throws<ObjectDisposedException>(()=>digest.ComputeFile(path));
+    }
+    [Test] public void PreparedCngMutationAndExtraRefused()
+    {
+        using var f=new PreparedFixture();f.Write("input.bin","original");using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+        var expected=BuildScript.PreparedTree(f.Root,fileHash:digest.ComputeFile);f.Write("input.bin","mutated");
+        Assert.Throws<InvalidOperationException>(()=>BuildScript.RequirePreparedEqual(expected,BuildScript.PreparedTree(f.Root,fileHash:digest.ComputeFile),"CNG mutation"));
+        f.Write("input.bin","original");f.Write("extra.bin","extra");
+        Assert.Throws<InvalidOperationException>(()=>BuildScript.RequirePreparedEqual(expected,BuildScript.PreparedTree(f.Root,fileHash:digest.ComputeFile),"CNG extra"));
+        PreparedCaseAndReparseRefusals();
+    }
+    public static void RunPreparedCngManifestValidation()
+    {
+#if !UNITY_EDITOR_WIN
+        throw new InvalidOperationException("Installed Windows Editor CNG validation required");
+#else
+        string output=Environment.GetEnvironmentVariable("WARLINE_PREPARED_CNG_MANIFEST_OUTPUT");
+        string root=System.IO.Path.GetFullPath("Logs/SkirmishProduction/Offline")+System.IO.Path.DirectorySeparatorChar;
+        if(string.IsNullOrWhiteSpace(output)||!System.IO.Path.IsPathRooted(output))throw new InvalidOperationException("Fresh absolute CNG manifest output required");
+        output=System.IO.Path.GetFullPath(output);
+        if(!output.StartsWith(root,StringComparison.OrdinalIgnoreCase)||System.IO.File.Exists(output)||!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(output)))throw new InvalidOperationException("Fresh owned CNG manifest output required");
+        for(string parent=System.IO.Path.GetDirectoryName(output);!string.IsNullOrEmpty(parent);parent=System.IO.Path.GetDirectoryName(parent))BuildScript.RequirePreparedNonReparse(System.IO.File.GetAttributes(parent));
+        var controls=new OperationMapAddressablesBuildReportBuilderTests();controls.PreparedCngKnownVectors();controls.PreparedCngChunkBoundaries();controls.PreparedCngConsecutiveFileResetAndNoCache();
+        controls.PreparedCngCompleteTempTreeMatchesManaged();controls.PreparedCngIoAndDisposedRefusals();controls.PreparedCngMutationAndExtraRefused();
+        UnityEngine.Debug.Log("[PreparedCngFileControls] result=Passed controls=6 actualContentBuild=0 actualPlayerBuild=0");
+        var timer=System.Diagnostics.Stopwatch.StartNew();Newtonsoft.Json.Linq.JObject manifest;
+        using(var digest=new SkirmishCandidateSourceHash.FileDigestSession())manifest=BuildScript.PreparedSourceManifestWithHasher(digest.ComputeFile);
+        timer.Stop();long files=0,bytes=0;foreach(var property in manifest.Properties())foreach(Newtonsoft.Json.Linq.JObject row in (Newtonsoft.Json.Linq.JArray)property.Value){checked{files++;bytes+=(long)row["bytes"];}}
+        var report=new Newtonsoft.Json.Linq.JObject{["schema"]=1,["scope"]="PreparedSourceManifestWindowsCng_IndependentEqualityPending",["algorithm"]="SHA256",["backend"]="ExistingFileDigestSession",["files"]=files,["bytes"]=bytes,["elapsedSeconds"]=timer.Elapsed.TotalSeconds,["sourceManifest"]=manifest,["independentEqualityPassed"]=false,["actualContentBuild"]=false,["actualPlayerBuild"]=false,["missionAccepted"]=false};
+        using(var stream=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))using(var writer=new System.IO.StreamWriter(stream,new System.Text.UTF8Encoding(false)))writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented));
+        UnityEngine.Debug.Log("[PreparedCngManifestControls] result=Passed controls=6 fullManifestExported=1 independentEqualityPending=1 actualContentBuild=0 actualPlayerBuild=0");
+#endif
+    }
+
     private sealed class PreparedFixture : IDisposable
     {
         internal readonly string Root;
@@ -56,9 +131,47 @@ public sealed class OperationMapAddressablesBuildReportBuilderTests
     {var a=PreparedLinkSources();var link=PreparedLink();link["xmlSha256"]=new string('e',64);Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSourceLifecycle(a,(Newtonsoft.Json.Linq.JObject)a.DeepClone(),link));
         link=PreparedLink();link["metaGuid"]="bad";Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSourceLifecycle(a,(Newtonsoft.Json.Linq.JObject)a.DeepClone(),link));}
     [Test] public void PreparedSerializedSettingsOnlyScopedEnumMayDiffer()
-    {var expected=new Newtonsoft.Json.Linq.JObject{["m_BuildAddressablesWithPlayerBuild"]=0,["other"]=1};var actual=(Newtonsoft.Json.Linq.JObject)expected.DeepClone();BuildScript.ValidatePreparedSettings(expected,actual,false);
-        actual["m_BuildAddressablesWithPlayerBuild"]=2;BuildScript.ValidatePreparedSettings(expected,actual,true);Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(expected,actual,false));
-        actual["other"]=2;Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(expected,actual,true));}
+    {var persisted=UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
+        Assert.IsNotNull(persisted);
+        string persistedBefore=EditorJsonUtility.ToJson(persisted);
+        var persistedJson=Newtonsoft.Json.Linq.JObject.Parse(persistedBefore);
+        BuildScript.ValidatePreparedSettings(persistedJson,Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(persisted)),false);
+        Assert.AreEqual(persistedBefore,EditorJsonUtility.ToJson(persisted));
+        WithPreparedSettings(settings=>{
+        settings.BuildAddressablesWithPlayerBuild=UnityEditor.AddressableAssets.Settings.AddressableAssetSettings.PlayerBuildOption.BuildWithPlayer;
+        var expected=Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings));
+        var original=expected.DeepClone();
+        Assert.IsInstanceOf<Newtonsoft.Json.Linq.JObject>(expected["MonoBehaviour"]);
+        Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Integer,expected["MonoBehaviour"]["m_BuildAddressablesWithPlayerBuild"].Type);
+        BuildScript.ValidatePreparedSettings(expected,Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings)),false);
+        BuildScript.WithPreparedNoRebuild(settings,()=>{
+            var actual=Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings));
+            Assert.AreEqual((int)UnityEditor.AddressableAssets.Settings.AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer,(int)actual["MonoBehaviour"]["m_BuildAddressablesWithPlayerBuild"]);
+            BuildScript.ValidatePreparedSettings(expected,actual,true);
+            Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(expected,actual,false));
+            var foreign=(Newtonsoft.Json.Linq.JObject)actual.DeepClone();foreign["MonoBehaviour"]["m_Name"]="foreign";
+            Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(expected,foreign,true));
+            foreign=(Newtonsoft.Json.Linq.JObject)actual.DeepClone();foreign["foreignRootField"]=1;
+            Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(expected,foreign,true));
+        });
+        Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(original,expected));
+        BuildScript.ValidatePreparedSettings(expected,Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings)),false);
+        Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(new Newtonsoft.Json.Linq.JObject{["m_BuildAddressablesWithPlayerBuild"]=1},expected,false));
+        var malformed=(Newtonsoft.Json.Linq.JObject)expected.DeepClone();malformed["MonoBehaviour"]["m_BuildAddressablesWithPlayerBuild"]="1";
+        Assert.Throws<InvalidOperationException>(()=>BuildScript.ValidatePreparedSettings(malformed,expected,false));
+    });}
+    public static void RunPreparedSettingsAndCngFocusedValidation()
+    {
+        RunPreparedSettingsSerializationControls();
+        RunPreparedCngManifestValidation();
+        RunPreparedContentFocusedValidation();
+        UnityEngine.Debug.Log("[PreparedSettingsAndCngControls] result=Passed settingsCapture=1 cngFileControls=6 legacyPreparedControls=20 independentManifestEqualityPending=1 contentBuild=0 playerBuild=0 acceptance=0");
+    }
+    public static void RunPreparedSettingsSerializationControls()
+    {
+        new OperationMapAddressablesBuildReportBuilderTests().PreparedSerializedSettingsOnlyScopedEnumMayDiffer();
+        UnityEngine.Debug.Log("[PreparedSettingsSerializationControls] result=Passed actualEditorJsonUtilityCapture=1 persistedReadOnlyCapture=1 scopedEnumOnly=1 contentBuild=0 playerBuild=0 acceptance=0");
+    }
     private static void WithPreparedSettings(Action<UnityEditor.AddressableAssets.Settings.AddressableAssetSettings> action)
     {Assert.IsNull(AddressablesPlayerBuildProcessor.BuildAddressablesOverride);var settings=UnityEngine.ScriptableObject.CreateInstance<UnityEditor.AddressableAssets.Settings.AddressableAssetSettings>();
         try{action(settings);}finally{UnityEngine.Object.DestroyImmediate(settings);}}

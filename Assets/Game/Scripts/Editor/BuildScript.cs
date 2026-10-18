@@ -270,7 +270,7 @@ namespace Game.Editor
             using var stream=File.OpenRead(Path.GetFullPath(path));using var sha=System.Security.Cryptography.SHA256.Create();
             return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();
         }
-        internal static Newtonsoft.Json.Linq.JArray PreparedTree(string directory,Func<string,bool> include=null)
+        internal static Newtonsoft.Json.Linq.JArray PreparedTree(string directory,Func<string,bool> include=null,Func<string,string> fileHash=null)
         {
             string root=Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar);var files=new System.Collections.Generic.List<string>();
             RequirePreparedOrdinaryPath(root);
@@ -288,7 +288,7 @@ namespace Game.Editor
             Walk(root);RequireUniquePreparedPaths(files);files.Sort(StringComparer.Ordinal);
             if(files.Count==0||files.Count>100000)throw new InvalidOperationException("Bounded nonempty prepared tree required");
             return new Newtonsoft.Json.Linq.JArray(files.Select(file=>new Newtonsoft.Json.Linq.JObject {
-                ["path"]=file.Substring(root.Length+1).Replace('\\','/'),["bytes"]=new FileInfo(file).Length,["sha256"]=PreparedFileHash(file,checkAncestry:false)}));
+                ["path"]=file.Substring(root.Length+1).Replace('\\','/'),["bytes"]=new FileInfo(file).Length,["sha256"]=fileHash==null?PreparedFileHash(file,checkAncestry:false):fileHash(file)}));
         }
         internal static void RequireUniquePreparedPaths(System.Collections.Generic.IEnumerable<string> paths)
         {
@@ -307,9 +307,24 @@ namespace Game.Editor
         }
         private static Newtonsoft.Json.Linq.JObject PreparedSourceManifest()
         {
+#if UNITY_EDITOR_WIN
+            // Reuse the existing same-assembly CNG provider/buffer across every
+            // file, without caching any path, byte, digest or manifest decision.
+            // Native/read failures remain failures; never retry midstream with
+            // another backend. Non-Windows retains the original managed path.
+            using var digest=new SkirmishCandidateSourceHash.FileDigestSession();
+            return PreparedSourceManifestWithHasher(digest.ComputeFile);
+#else
+            return PreparedSourceManifestWithHasher(null);
+#endif
+        }
+        // The null path is the original SHA256.Create oracle. Installed-Editor
+        // controls must compare complete manifests before adopting this change.
+        internal static Newtonsoft.Json.Linq.JObject PreparedSourceManifestWithHasher(Func<string,string> fileHash)
+        {
             var result=new Newtonsoft.Json.Linq.JObject();
             foreach(string directory in new[]{"Assets","Packages","ProjectSettings"})
-                result[directory]=PreparedTree(directory);
+                result[directory]=PreparedTree(directory,fileHash:fileHash);
             return result;
         }
         private static Newtonsoft.Json.Linq.JObject ValidatePreparedAndroidContent(Newtonsoft.Json.Linq.JObject receipt,bool scoped=false)
@@ -342,10 +357,12 @@ namespace Game.Editor
         {if(expected==null||actual==null||!Newtonsoft.Json.Linq.JToken.DeepEquals(expected,actual))throw new InvalidOperationException("Prepared "+kind+" bytes differ");}
         internal static void ValidatePreparedSettings(Newtonsoft.Json.Linq.JObject expected,Newtonsoft.Json.Linq.JObject actual,bool scoped)
         {
+            if(expected==null||actual==null)throw new InvalidOperationException("Actual serialized settings objects required");
             var normalized=(Newtonsoft.Json.Linq.JObject)expected.DeepClone();
-            if(normalized["m_BuildAddressablesWithPlayerBuild"]?.Type!=Newtonsoft.Json.Linq.JTokenType.Integer)
-                throw new InvalidOperationException("Actual serialized settings option required");
-            if(scoped)normalized["m_BuildAddressablesWithPlayerBuild"]=(int)UnityEditor.AddressableAssets.Settings.AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
+            var serialized=normalized["MonoBehaviour"] as Newtonsoft.Json.Linq.JObject;
+            if(serialized?["m_BuildAddressablesWithPlayerBuild"]?.Type!=Newtonsoft.Json.Linq.JTokenType.Integer)
+                throw new InvalidOperationException("Actual serialized MonoBehaviour settings option required");
+            if(scoped)serialized["m_BuildAddressablesWithPlayerBuild"]=(int)UnityEditor.AddressableAssets.Settings.AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
             RequirePreparedEqual(normalized,actual,"serialized settings");
         }
         private static Newtonsoft.Json.Linq.JObject CapturePreparedPlayerLink(UnityEditor.AddressableAssets.Settings.AddressableAssetSettings settings)

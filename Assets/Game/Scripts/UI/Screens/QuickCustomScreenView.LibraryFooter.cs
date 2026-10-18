@@ -612,6 +612,7 @@ namespace Game.UI.Runtime
 
             AdoptLibrarySelection(catalogId);
             LaunchMatch();
+            Debug.Log("[QuickBattle] scenario=" + catalogId + " selected=" + _selectedScenarioId + " launchRequested=" + LibraryLaunchRequested);
         }
 
         private void EnsureFilterPanel(RectTransform panel)

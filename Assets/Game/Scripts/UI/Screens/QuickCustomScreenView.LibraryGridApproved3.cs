@@ -180,12 +180,15 @@ namespace Game.UI.Runtime
             scrim.raycastTarget = false;
 
             string countCopy = string.Empty;
-            if (havePin)
+            bool comingSoon = havePin && pin.PublishedCount <= 0;
+            if (comingSoon)
+                countCopy = SkirmishBattleLibraryArt.ComingSoon(fa); // capture rule: zero playable reads Coming soon, never 0/0
+            else if (havePin)
             {
                 string ratio = pin.WonCount + "/" + pin.PublishedCount;
                 countCopy = fa ? SkirmishWidgetContext.ToPersianDigits(ratio) : ratio;
             }
-            float countW = string.IsNullOrEmpty(countCopy) ? 0f : Mathf.Clamp(width * 0.26f, 34f, 52f);
+            float countW = string.IsNullOrEmpty(countCopy) ? 0f : comingSoon ? Mathf.Clamp(width * 0.42f, 60f, 104f) : Mathf.Clamp(width * 0.26f, 34f, 52f);
             if (label != null)
             {
                 label.transform.SetAsLastSibling();
@@ -206,13 +209,13 @@ namespace Game.UI.Runtime
 
             if (countW > 0f)
             {
-                var count = CreateLabel(button.transform, "TabCount", 14f);
+                var count = CreateLabel(button.transform, comingSoon ? "ComingSoon" : "TabCount", 14f);
                 PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);
-                SetCopy(count, countCopy, 11f, 15f);
+                SetCopy(count, countCopy, comingSoon ? 9f : 11f, comingSoon ? 13f : 15f);
                 count.alignment = fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
                 count.overflowMode = TextOverflowModes.Overflow;
-                count.isRightToLeftText = false;
+                count.isRightToLeftText = comingSoon && fa;
                 count.color = new Color(1f, 0.86f, 0.42f, 1f);
                 count.raycastTarget = false;
             }

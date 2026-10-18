@@ -2129,29 +2129,17 @@ namespace Game.UI.Runtime
             float compositionWidth = compositionRect != null && compositionRect.rect.width > 200f
                 ? compositionRect.rect.width
                 : 1672f;
+            float compositionHeight = compositionRect != null && compositionRect.rect.height > 200f
+                ? compositionRect.rect.height
+                : 941f;
             float bannerWidth = Mathf.Clamp(compositionWidth * 0.28f, 280f, 440f);
-            // v38: the banner sat at y=8, on top of the "SKIRMISH | <BATTLEFIELD>" header title. It now centres on the
-            // OperationPreview (map/grid plate), so it never touches the header at any aspect.
+            // v39: the v38 banner centred on the OperationPreview and covered the S002-S004 tiles. It now sits in the
+            // footer band (same 100px band LibraryFooter lays out at compositionHeight - 112), centred horizontally,
+            // so it never touches the header or any battle card/tile at any aspect; the buttons are idle while launching.
+            const float footerBand = 100f;
+            const float bannerHeight = 52f;
             float bannerX = (compositionWidth - bannerWidth) * 0.5f;
-            float bannerY = 8f;
-            RectTransform operation = composition.Find("OperationPreview") as RectTransform;
-            if (compositionRect != null && operation != null && operation.rect.height > 120f)
-            {
-                var corners = new Vector3[4];
-                operation.GetWorldCorners(corners);
-                Vector3 topLeft = compositionRect.InverseTransformPoint(corners[1]);
-                Vector3 bottomRight = compositionRect.InverseTransformPoint(corners[3]);
-                Rect area = compositionRect.rect;
-                float left = topLeft.x - area.xMin;
-                float top = area.yMax - topLeft.y;
-                float w = bottomRight.x - topLeft.x;
-                float h = topLeft.y - bottomRight.y;
-                bannerWidth = Mathf.Min(bannerWidth, Mathf.Max(200f, w - 24f));
-                bannerX = left + (w - bannerWidth) * 0.5f;
-                bannerY = top + (h - 52f) * 0.5f;
-            }
-            else if (compositionRect != null && compositionRect.rect.height > 200f)
-                bannerY = compositionRect.rect.height * 0.45f;
+            float bannerY = compositionHeight - 112f + (footerBand - bannerHeight) * 0.5f;
             PlaceTopLeft(plate, bannerX, bannerY, bannerWidth, 52f);
             plate.gameObject.SetActive(true);
             RaiseLaunchTransition();

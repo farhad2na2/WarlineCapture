@@ -39,6 +39,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", "S004");
             Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            ResetAircraftProbeTankerOwner();
             helipadProbeStage = 0;
             RunS003StartupAndExit();
         }
@@ -48,6 +49,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", "1");
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
             Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            ResetAircraftProbeTankerOwner();
             helipadProbeStage = 0;
             RunS005StartupEn();
         }
@@ -57,6 +59,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
             Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            ResetAircraftProbeTankerOwner();
             helipadProbeStage = 0;
             RunS005StartupEn();
         }
@@ -65,6 +68,7 @@ namespace Game.Editor
         {
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", "S003");
             Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            ResetAircraftProbeTankerOwner();
             helipadProbeStage = 0;
             RunS003StartupAndExit();
         }
@@ -72,6 +76,32 @@ namespace Game.Editor
         private static void StartNativeHelipadProbe(Entity session)
         {
             helipadProbeAircraftCycle = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE") == "1";
+            if (helipadProbeAircraftCycle)
+            {
+                // The startup watcher may revisit this callback; never adopt a later
+                // World/root after the original capture attempt (successful or not).
+                if (airProbeTankerCaptureAttempted) return;
+                airProbeTankerCaptureAttempted = true;
+                airProbeHarnessArtifactId = UnityEditor.SessionState.GetString(Key + ".artifactId", "");
+                if (!SkirmishAircraftProbeTankerOwner.TryCapture(
+                        World.DefaultGameObjectInjectionWorld, session, out airProbeTankerOwner))
+                {
+                    RetireOwnedAircraftProbeParent(airProbeHarnessArtifactId);
+                    helipadProbeStage = 0;
+                    Debug.LogError("[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerCaptureRejected");
+                    return;
+                }
+                // While this player-frame probe owns the journey, the parent must
+                // not inspect a different default World or fire its earlier timeout.
+                if (!SuspendAircraftProbeParent(airProbeHarnessArtifactId))
+                {
+                    helipadProbeStage = 0;
+                    airProbeTankerOwner = null;
+                    Debug.LogError("[SkirmishS003AircraftCycleProbe] result=Failed reason=unownedParentArtifact");
+                    return;
+                }
+            }
+            else airProbeHarnessArtifactId = UnityEditor.SessionState.GetString(Key + ".artifactId", "");
             airProbeCameraCommandsBefore = -1;
             airProbeCameraAttackMaskBefore = -1;
             if (Environment.GetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY") == "1") Game.Runtime.AriaCommandEvidence.Begin();
@@ -93,16 +123,36 @@ namespace Game.Editor
             foreach (var item in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 if (item.name.StartsWith("Helipad_", StringComparison.Ordinal))
                     initialHelipadObjects.Add(item.gameObject.GetEntityId().GetHashCode());
-            new GameObject("NativeHelipadInputProbe").AddComponent<SkirmishHelipadInputProbeFrame>().Session = session;
+            var frame = new GameObject("NativeHelipadInputProbe").AddComponent<SkirmishHelipadInputProbeFrame>();
+            frame.Session = session;
+            frame.ArtifactId = airProbeHarnessArtifactId;
             helipadProbeDeadline = UnityEditor.EditorApplication.timeSinceStartup +
                 (helipadProbeAircraftCycle ? 900d : 180d);
             deadline = helipadProbeDeadline + 20d;
         }
 
-        internal static void TickHelipadPlayerFrame(Entity session)
+        internal static void TickHelipadPlayerFrame(Entity session, string artifactId)
         {
-            if (helipadProbeStage == 0) return;
+            // A stale MonoBehaviour from the previous probe cannot retire or drive
+            // a later launch, even when Entity indices or session text are reused.
+            if (!string.Equals(artifactId, airProbeHarnessArtifactId, StringComparison.Ordinal) ||
+                !IsAircraftProbeHarnessOwner(artifactId) || helipadProbeStage == 0) return;
             var world = World.DefaultGameObjectInjectionWorld;
+            if (helipadProbeAircraftCycle && (airProbeTankerOwner == null ||
+                !airProbeTankerOwner.Matches(world, session)))
+            {
+                // Stop this probe before any touch/queue action. Do not call Finish
+                // against a replacement World or stop another attempt's ARIA input.
+                RetireOwnedAircraftProbeParent(artifactId);
+                helipadProbeStage = 0;
+                airProbeTankerOwner = null;
+                // Dispose only this probe's virtual touch device. Its existing
+                // cancellation path removes the device without issuing a Click.
+                helipadProbeTouch?.Dispose();
+                helipadProbeTouch = null;
+                Debug.LogError("[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerContextChanged");
+                return;
+            }
             if (world == null || !world.IsCreated || !world.EntityManager.Exists(session)) return;
             double now = UnityEditor.EditorApplication.timeSinceStartup;
             next = now + .1d;
@@ -318,6 +368,8 @@ namespace Game.Editor
                     ? "CameraTouchOnly" : helipadProbeAircraftCycle ? "AircraftLifecycleTouchProbe" : "PlacementVisualOnly"));
             Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", null);
             helipadProbeStage = 0;
+            ReleaseAircraftProbeParentDelegation();
+            airProbeTankerOwner = null;
             Finish(!passed, reason);
         }
     }
@@ -325,6 +377,7 @@ namespace Game.Editor
     internal sealed class SkirmishHelipadInputProbeFrame : MonoBehaviour
     {
         internal Entity Session;
-        private void Update() => SkirmishS002AriaRunHarness.TickHelipadPlayerFrame(Session);
+        internal string ArtifactId;
+        private void Update() => SkirmishS002AriaRunHarness.TickHelipadPlayerFrame(Session, ArtifactId);
     }
 }

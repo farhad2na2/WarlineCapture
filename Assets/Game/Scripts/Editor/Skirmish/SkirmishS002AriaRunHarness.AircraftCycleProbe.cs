@@ -481,23 +481,73 @@ namespace Game.Editor
             return 0;
         }
 
+        private static SkirmishAircraftProbeTankerOwner airProbeTankerOwner;
+        private static bool airProbeTankerCaptureAttempted;
+        private const string AircraftProbeParentKey = "Warline.S003.AircraftProbe.ParentArtifact";
+        private static string airProbeHarnessArtifactId;
+        // All static field initializers run before the existing static constructor:
+        // an interrupted delegated probe must not resume Tick in a new World/domain.
+        private static readonly bool airProbeResumeGuard = RetireAircraftProbeParentAfterReload();
+
+        private static bool IsAircraftProbeHarnessOwner(string artifactId) =>
+            !string.IsNullOrEmpty(artifactId) && string.Equals(artifactId,
+                UnityEditor.SessionState.GetString(Key + ".artifactId", ""), StringComparison.Ordinal);
+
+        private static bool SuspendAircraftProbeParent(string artifactId)
+        {
+            if (!IsAircraftProbeHarnessOwner(artifactId)) return false;
+            UnityEditor.SessionState.SetString(AircraftProbeParentKey, artifactId);
+            UnityEditor.EditorApplication.update -= Tick;
+            UnityEditor.EditorApplication.update -= PollFinishSourceHash;
+            UnityEditor.EditorApplication.update -= FinishQuitAfterPlayMode;
+            UnityEditor.SessionState.EraseBool(QuitPendingKey);
+            UnityEditor.SessionState.EraseInt(QuitCodeKey);
+            return true;
+        }
+
+        private static bool RetireOwnedAircraftProbeParent(string artifactId)
+        {
+            if (!IsAircraftProbeHarnessOwner(artifactId)) return false;
+            UnityEditor.EditorApplication.update -= Tick;
+            UnityEditor.EditorApplication.update -= PollFinishSourceHash;
+            UnityEditor.EditorApplication.update -= FinishQuitAfterPlayMode;
+            UnityEditor.SessionState.SetBool(Key, false);
+            UnityEditor.SessionState.EraseBool(QuitPendingKey);
+            UnityEditor.SessionState.EraseInt(QuitCodeKey);
+            if (UnityEditor.SessionState.GetString(AircraftProbeParentKey, "") == artifactId)
+                UnityEditor.SessionState.EraseString(AircraftProbeParentKey);
+            return true;
+        }
+
+        private static bool RetireAircraftProbeParentAfterReload()
+        {
+            string artifactId = UnityEditor.SessionState.GetString(AircraftProbeParentKey, "");
+            if (string.IsNullOrEmpty(artifactId)) return false;
+            bool retired = RetireOwnedAircraftProbeParent(artifactId);
+            // A stale marker never owns a later launch with a different artifact id.
+            if (!retired) UnityEditor.SessionState.EraseString(AircraftProbeParentKey);
+            return retired;
+        }
+
+        private static void ReleaseAircraftProbeParentDelegation()
+        {
+            if (IsAircraftProbeHarnessOwner(airProbeHarnessArtifactId) &&
+                UnityEditor.SessionState.GetString(AircraftProbeParentKey, "") == airProbeHarnessArtifactId)
+                UnityEditor.SessionState.EraseString(AircraftProbeParentKey);
+        }
+
+        private static void ResetAircraftProbeTankerOwner()
+        {
+            _ = airProbeResumeGuard;
+            airProbeTankerOwner = null;
+            airProbeTankerCaptureAttempted = false;
+            airProbeHarnessArtifactId = null;
+        }
+
         private static bool HasCommittedTanker()
         {
-            var world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated) return false;
-            var em = world.EntityManager;
-            using var units = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent), typeof(Faction), typeof(UnitHealth));
-            using var actors = units.ToEntityArray(Allocator.Temp);
-            foreach (var actor in actors)
-                if (em.GetComponentData<Faction>(actor).Id == 1 && em.GetComponentData<UnitHealth>(actor).Current > 0 &&
-                    em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role == SkirmishRoleKind.Tanker) return true;
-            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishProductionReservation));
-            using var roots = sessions.ToEntityArray(Allocator.Temp);
-            foreach (var root in roots)
-                foreach (var receipt in em.GetBuffer<SkirmishProductionReservation>(root,true))
-                    if (receipt.FactionId == 1 && receipt.Role == SkirmishRoleKind.Tanker &&
-                        (receipt.Phase == SkirmishReservationPhase.Reserved || receipt.Phase == SkirmishReservationPhase.Producing)) return true;
-            return false;
+            return airProbeTankerOwner != null &&
+                airProbeTankerOwner.HasCommittedTanker(World.DefaultGameObjectInjectionWorld);
         }
 
         private static bool EnsureAircraftAttackMode(double now, MatchOverlayCommandControlsView controls)
@@ -601,4 +651,81 @@ namespace Game.Editor
             return true;
         }
     }
+    // Editor-probe observation only. Capture the owning World/root/attempt once;
+    // Entity index/version values alone can alias an Entity in a different World.
+    public sealed class SkirmishAircraftProbeTankerOwner
+    {
+        private readonly World world;
+        private readonly Entity session;
+        private readonly SkirmishExpandedSessionComponent expected;
+        private bool invalidated;
+
+        private SkirmishAircraftProbeTankerOwner(World world, Entity session,
+            SkirmishExpandedSessionComponent expected)
+        {
+            this.world = world;
+            this.session = session;
+            this.expected = expected;
+        }
+
+        public static bool TryCapture(World world, Entity session,
+            out SkirmishAircraftProbeTankerOwner owner)
+        {
+            owner = null;
+            if (world == null || !world.IsCreated || session == Entity.Null) return false;
+            var em = world.EntityManager;
+            if (!em.Exists(session) || !em.HasComponent<SkirmishExpandedSessionComponent>(session)) return false;
+            var current = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            if (current.SessionId.Length == 0 || !IsActive(current.Phase)) return false;
+            owner = new SkirmishAircraftProbeTankerOwner(world, session, current);
+            return true;
+        }
+
+        public bool Matches(World currentWorld, Entity currentSession)
+        {
+            if (invalidated) return false;
+            if (!ReferenceEquals(world, currentWorld) || world == null || !world.IsCreated ||
+                currentSession != session) { invalidated = true; return false; }
+            var em = world.EntityManager;
+            if (!em.Exists(session) || !em.HasComponent<SkirmishExpandedSessionComponent>(session))
+            { invalidated = true; return false; }
+            var current = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            bool matches = IsActive(current.Phase) && current.SessionId.Equals(expected.SessionId) &&
+                current.SetupHash == expected.SetupHash && current.Seed == expected.Seed &&
+                current.ContentVersion == expected.ContentVersion &&
+                current.CatalogId.Equals(expected.CatalogId) && current.DefinitionId.Equals(expected.DefinitionId);
+            if (!matches) invalidated = true;
+            return matches;
+        }
+
+        public bool HasCommittedTanker(World currentWorld)
+        {
+            if (!Matches(currentWorld, session)) return false;
+            var em = world.EntityManager;
+            using var units = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
+                typeof(SkirmishUnitRoleComponent), typeof(Faction), typeof(UnitHealth));
+            using var actors = units.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                if (owned.SessionId.Equals(expected.SessionId) && owned.FactionId == 1 &&
+                    owned.IsStructure == 0 && owned.CapacityReleased == 0 &&
+                    em.GetComponentData<Faction>(actor).Id == 1 &&
+                    em.GetComponentData<UnitHealth>(actor).Current > 0 &&
+                    em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role == SkirmishRoleKind.Tanker)
+                    return true;
+            }
+            if (!em.HasBuffer<SkirmishProductionReservation>(session)) return false;
+            foreach (var receipt in em.GetBuffer<SkirmishProductionReservation>(session, true))
+                if (receipt.FactionId == 1 && receipt.Role == SkirmishRoleKind.Tanker &&
+                    receipt.MemberCount > receipt.DeliveredMembers && receipt.DeliveredMembers >= 0 &&
+                    (receipt.Phase == SkirmishReservationPhase.Reserved ||
+                     receipt.Phase == SkirmishReservationPhase.Producing)) return true;
+            return false;
+        }
+
+        private static bool IsActive(SkirmishSessionPhase phase) =>
+            phase == SkirmishSessionPhase.Playing;
+    }
+
 }

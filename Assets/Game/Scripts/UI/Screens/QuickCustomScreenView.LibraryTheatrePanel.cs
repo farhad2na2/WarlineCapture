@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Skirmish.Contracts;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +22,10 @@ namespace Game.UI.Runtime
         private const int TheatrePanelColumns = 6;
         private const float TheatrePanelMinThumb = 28f;
         private const float TheatrePanelGap = 4f;
+        private const int TheatreCompactColumns = 3;
+        private const float TheatreCompactSummaryH = 22f;
+        private const float TheatreCompactMinThumb = 20f;
+        private const float TheatreCompactMinText = 14f;
 
         private void BuildTheatrePanel(SkirmishTheaterPinState selectedZone, RectTransform parent)
         {
@@ -61,10 +66,15 @@ namespace Game.UI.Runtime
             int rowsNeeded = Mathf.Max(1, Mathf.CeilToInt(battles.Count / (float)TheatrePanelColumns));
             float thumbW = (area.width - TheatrePanelGap * (TheatrePanelColumns - 1)) / TheatrePanelColumns;
             float thumbH = Mathf.Min(thumbW * 0.75f, (area.height - TheatrePanelGap * (rowsNeeded - 1)) / rowsNeeded);
-            if (battles.Count == 0 || thumbH < TheatrePanelMinThumb)
+            if (battles.Count == 0)
             {
-                Debug.Log("[TheatrePanel] map=" + selectedZone.MapId + " battles=" + battles.Count +
-                    " skipped=too-small area=" + area.width.ToString("0") + "x" + area.height.ToString("0"));
+                Debug.Log("[TheatrePanel] map=" + selectedZone.MapId + " battles=0 skipped=no-battles");
+                return;
+            }
+
+            if (thumbH < TheatrePanelMinThumb)
+            {
+                BuildTheatreCompact(selectedZone, parent, area, blurb, battles, fa);
                 return;
             }
 
@@ -105,6 +115,104 @@ namespace Game.UI.Runtime
                 " pinWon=" + selectedZone.WonCount + "/" + selectedZone.PublishedCount +
                 " thumb=" + thumbW.ToString("0.0") + "x" + thumbH.ToString("0.0") +
                 " layout=side rect=" + TheatrePanelRectCopy(parent, area) +
+                " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        /// <summary>
+        /// v41 compact layout for small side areas (e.g. 241x251) where six columns would fall under the 28px thumb floor:
+        /// a one-line won/open summary (14px minimum, medal icon) and then as many 3-column thumbnails as fit; the last
+        /// slot becomes a "+N" count when battles remain. Every number is from the same real GridCards list.
+        /// </summary>
+        private void BuildTheatreCompact(SkirmishTheaterPinState zone, RectTransform parent, Rect area, Transform blurb,
+            List<SkirmishBattleCardState> battles, bool fa)
+        {
+            int playable = 0;
+            int won = 0;
+            int medals = 0;
+            SkirmishMedalMask best = SkirmishMedalMask.None;
+            for (int i = 0; i < battles.Count; i++)
+            {
+                if (battles[i].Access == SkirmishCardAccess.Playable)
+                    playable++;
+                if (battles[i].Medals != SkirmishMedalMask.None)
+                    won++;
+                medals += MedalCount(battles[i].Medals);
+                best |= battles[i].Medals;
+            }
+
+            if (blurb != null)
+                blurb.gameObject.SetActive(false);
+            var holder = new GameObject(TheatrePanelBattlesName, typeof(RectTransform)).GetComponent<RectTransform>();
+            holder.SetParent(parent, false);
+            PlaceTopLeft(holder, area.x, area.y, area.width, area.height);
+
+            const float iconSize = 18f;
+            var medalIcon = new GameObject("SummaryMedal", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            medalIcon.transform.SetParent(holder, false);
+            medalIcon.raycastTarget = false;
+            medalIcon.preserveAspect = true;
+            PlaceTopLeft(medalIcon.rectTransform, fa ? area.width - iconSize : 0f, (TheatreCompactSummaryH - iconSize) * 0.5f, iconSize, iconSize);
+            ShowIcon(medalIcon, HighestMedalIcon(best), Color.white);
+
+            string wonCopy = won + "/" + battles.Count;
+            string openCopy = playable.ToString();
+            string summaryCopy = fa
+                ? "پیروزی " + SkirmishWidgetContext.ToPersianDigits(wonCopy) + " · باز " + SkirmishWidgetContext.ToPersianDigits(openCopy)
+                : "WON " + wonCopy + " · OPEN " + openCopy;
+            float textW = Mathf.Max(30f, area.width - iconSize - 4f);
+            TMP_Text summary = CreateLabel(holder, "Summary", 16f);
+            PlaceTopLeft(summary.rectTransform, fa ? 0f : iconSize + 4f, 0f, textW, TheatreCompactSummaryH);
+            SetCopy(summary, summaryCopy, TheatreCompactMinText, 16f);
+            summary.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            summary.isRightToLeftText = fa;
+            summary.textWrappingMode = TextWrappingModes.NoWrap;
+            summary.overflowMode = TextOverflowModes.Overflow;
+            FitReadableLine(summary, textW, TheatreCompactMinText);
+
+            float top = TheatreCompactSummaryH + TheatrePanelGap;
+            float left = area.height - top;
+            float thumbW = (area.width - TheatrePanelGap * (TheatreCompactColumns - 1)) / TheatreCompactColumns;
+            float thumbH = Mathf.Min(thumbW * 0.75f, left);
+            int rows = thumbH >= TheatreCompactMinThumb ? Mathf.Max(1, Mathf.FloorToInt((left + TheatrePanelGap) / (thumbH + TheatrePanelGap))) : 0;
+            int slots = rows * TheatreCompactColumns;
+            int shown = Mathf.Min(battles.Count, slots);
+            int more = battles.Count - shown;
+            if (more > 0 && shown > 0)
+            {
+                shown--;
+                more++;
+            }
+
+            for (int i = 0; i < shown; i++)
+            {
+                int column = i % TheatreCompactColumns;
+                int visual = fa ? TheatreCompactColumns - 1 - column : column;
+                AddTheatreThumb(holder, battles[i], visual * (thumbW + TheatrePanelGap), top + (i / TheatreCompactColumns) * (thumbH + TheatrePanelGap), thumbW, thumbH, fa);
+            }
+
+            if (more > 0 && slots > 0)
+            {
+                int column = shown % TheatreCompactColumns;
+                int visual = fa ? TheatreCompactColumns - 1 - column : column;
+                TMP_Text rest = CreateLabel(holder, "MoreBattles", 16f);
+                PlaceTopLeft(rest.rectTransform, visual * (thumbW + TheatrePanelGap), top + (shown / TheatreCompactColumns) * (thumbH + TheatrePanelGap), thumbW, thumbH);
+                string moreCopy = "+" + more;
+                SetCopy(rest, fa ? SkirmishWidgetContext.ToPersianDigits(moreCopy) : moreCopy, TheatreCompactMinText, 16f);
+                rest.textWrappingMode = TextWrappingModes.NoWrap;
+                FitReadableLine(rest, thumbW, TheatreCompactMinText);
+            }
+
+            Debug.Log("[TheatrePanel] map=" + zone.MapId +
+                " battles=" + battles.Count +
+                " visible=" + shown +
+                " more=" + Mathf.Max(0, more) +
+                " playable=" + playable +
+                " won=" + won +
+                " medals=" + medals +
+                " pinWon=" + zone.WonCount + "/" + zone.PublishedCount +
+                " thumb=" + (rows > 0 ? thumbW.ToString("0.0") + "x" + thumbH.ToString("0.0") : "none") +
+                " summaryFont=" + summary.fontSize.ToString("0.0") +
+                " layout=compact rect=" + TheatrePanelRectCopy(parent, area) +
                 " locale=" + (fa ? "fa-IR" : "en"));
         }
 
@@ -305,7 +413,7 @@ namespace Game.UI.Runtime
                 return false;
             float start = top + 8f;
             float end = bottom - 18f; // medal icons are placed a little under their row top
-            if (end - start < TheatrePanelMinThumb)
+            if (end - start < TheatreCompactSummaryH)
                 return false;
             area = new Rect(left, start, right - left, end - start);
             return true;

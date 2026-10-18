@@ -8042,16 +8042,17 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// The one zoom cue: a tab above the selected card, outside it, exact card x and width,
-        /// 36–52px tall, bottom flush with the card's top edge.
+        /// The one zoom cue: a tab above the selected card, outside it, covering the card's top
+        /// edge, 36–62px tall, bottom flush with the card's top edge. It may be wider than the card.
         /// </summary>
         private static bool CueIsCardTopTab(Box card, Box cue)
         {
             if (card.W < 48f || cue.W < 8f)
                 return false;
-            if (cue.H < 36f - 0.5f || cue.H > 52f + 0.5f)
+            if (cue.H < 36f - 0.5f || cue.H > 62f + 0.5f)
                 return false;
-            if (Math.Abs(cue.X - card.X) > 1.5f || Math.Abs(cue.W - card.W) > 1.5f)
+            // The tab may be wider than the card. It still has to cover the card's top edge.
+            if (cue.X > card.X + 1.5f || cue.XMax < card.XMax - 1.5f)
                 return false;
             if (Math.Abs(cue.YMax - card.Y) > 1.5f)
                 return false;
@@ -8107,7 +8108,7 @@ namespace Game.UI.Runtime
             out Box cue)
         {
             cue = default;
-            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float[] heights = TabHeights;
             for (int h = 0; h < heights.Length; h++)
             {
                 if (heights[h] + 0.1f < shortest)
@@ -8248,6 +8249,228 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Two Farsi lines at 22–26 need a 56–62px tab. The selected card moves, and if a
+        /// neighbour or the card's own height is what blocks that tab, that blocker shrinks
+        /// or steps aside. The cue may also widen past the card when one line is wider than 160.
+        /// </summary>
+        public static bool TryAttachFarsiCue(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            out Box cue)
+        {
+            cue = default;
+            if (plateWidth < 32f || plateHeight < 32f || pins == null || cards == null)
+                return false;
+            if (selected < 0 || selected >= cards.Length)
+                return false;
+            Box card = cards[selected];
+            if (card.W < 48f || card.H < 48f)
+                return false;
+            if (TryFarsiTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                return true;
+            float minH = PortraitMinHeight;
+            for (float cut = 4f; cut <= card.H - minH + 0.1f; cut += 4f)
+            {
+                var shorter = new Box(card.X, card.Y + cut, card.W, card.H - cut);
+                Box held = cards[selected];
+                cards[selected] = shorter;
+                bool seated = TryFarsiTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, shorter, out cue);
+                if (seated)
+                    return true;
+                cards[selected] = held;
+            }
+
+            if (TryWidenFarsiCue(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                return true;
+            if (TryNudgeNeighbourForFarsi(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                return true;
+            return false;
+        }
+
+        /// <summary>Steps a card that sits under the selected one downward so the Farsi tab can drop.</summary>
+        private static bool TryNudgeNeighbourForFarsi(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (i == selected || cards[i].W < 1f || cards[i].Y + 8f < card.YMax)
+                    continue;
+                Box neighbour = cards[i];
+                for (float drop = 8f; drop <= 48.1f; drop += 8f)
+                {
+                    var moved = new Box(neighbour.X, neighbour.Y + drop, neighbour.W, neighbour.H);
+                    if (!SelectedCardCanDrop(moved, i, cards, pins, hexes, detail, plateWidth, plateHeight))
+                        continue;
+                    Box held = cards[i];
+                    cards[i] = moved;
+                    if (TryFarsiTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                        return true;
+                    cards[i] = held;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryFarsiTab(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            UseFarsiTabs = true;
+            try
+            {
+                if (TrySeatAlignedTop(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, 56f, out cue))
+                    return true;
+                if (TryDropCardForCue(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, 56f, out cue))
+                    return true;
+                if (TryShiftCardForTab(plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, out cue))
+                    return true;
+            }
+            finally
+            {
+                UseFarsiTabs = false;
+            }
+
+            cue = default;
+            return false;
+        }
+
+        private static bool UseFarsiTabs;
+        private static readonly float[] StandardTabHeights = { 52f, 48f, 44f, 40f, 36f };
+        private static readonly float[] FarsiTabHeights = { 62f, 60f, 58f, 56f, 52f, 48f, 44f, 40f, 36f };
+        private static float[] TabHeights => UseFarsiTabs ? FarsiTabHeights : StandardTabHeights;
+
+        /// <summary>
+        /// One Farsi line at 22px is wider than the 160px card. The tab grows past the card,
+        /// still flush with its top, and the card steps aside when the stroke is the blocker.
+        /// </summary>
+        private static bool TryWidenFarsiCue(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            out Box cue)
+        {
+            cue = default;
+            float[] widths = { 176f, 196f, 220f, 240f };
+            float[] heights = { 48f, 44f, 40f, 62f, 56f };
+            float[] slides = { 0f, 8f, -8f, 16f, -16f, 28f, -28f, 40f, -40f };
+            for (int w = 0; w < widths.Length; w++)
+            {
+                float width = widths[w];
+                for (int h = 0; h < heights.Length; h++)
+                {
+                    float stripH = heights[h];
+                    for (int s = 0; s < slides.Length; s++)
+                    {
+                        float x = card.X + slides[s];
+                        var dropped = new Box(x, card.Y, card.W, card.H);
+                        if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
+                            continue;
+                        float cueX = dropped.X + dropped.W * 0.5f - width * 0.5f;
+                        var spot = new Box(cueX, dropped.Y - stripH, width, stripH);
+                        Box held = cards[selected];
+                        cards[selected] = dropped;
+                        bool legal = FarsiWideTabLegal(spot, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight);
+                        if (!legal)
+                        {
+                            cards[selected] = held;
+                            continue;
+                        }
+
+                        cue = spot;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool FarsiWideTabLegal(
+            Box spot,
+            Box card,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (!CueIsCardTopTab(card, spot))
+                return false;
+            if (!OnPlate(spot, plateWidth, plateHeight) || !Clears(spot, detail))
+                return false;
+            if (pins != null)
+            {
+                for (int i = 0; i < pins.Length; i++)
+                {
+                    if (pins[i].W > 1f && Separation(spot, pins[i]) < 1f)
+                        return false;
+                }
+            }
+
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == selected || cards[i].W < 1f)
+                        continue;
+                    if (Overlaps(spot, cards[i], 2f))
+                        return false;
+                }
+            }
+
+            if (LeaderHitsRect(pins, cards, spot))
+                return false;
+            if (hexes == null)
+                return true;
+            Box stroke = InflateBox(spot, CueHexStroke);
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (hexes[i] == null)
+                    continue;
+                if (i == selected)
+                {
+                    if (HexEdgeHits(hexes[i], stroke))
+                        return false;
+                    continue;
+                }
+
+                if (PolygonHitsRect(hexes[i], stroke))
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Moves the selected card down, then sideways, until a tab at least
         /// <paramref name="shortest"/> pixels tall clears the hex stroke.
         /// </summary>
@@ -8265,7 +8488,7 @@ namespace Game.UI.Runtime
         {
             cue = default;
             float floor = plateHeight - Edge - card.H;
-            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float[] heights = TabHeights;
             float[] slides = { 0f, 4f, -4f, 8f, -8f, 12f, -12f, 16f, -16f, 20f, -20f, 28f, -28f, 36f, -36f };
             for (int h = 0; h < heights.Length; h++)
             {
@@ -8316,7 +8539,7 @@ namespace Game.UI.Runtime
             out Box cue)
         {
             cue = default;
-            float[] heights = { 52f, 48f, 44f, 40f, 36f };
+            float[] heights = TabHeights;
             float best = float.MaxValue;
             Box bestCard = default;
             Box bestCue = default;
@@ -8324,6 +8547,9 @@ namespace Game.UI.Runtime
             for (int h = 0; h < heights.Length; h++)
             {
                 float stripH = heights[h];
+                // A short tab must not win the Farsi search and skip the widen path.
+                if (UseFarsiTabs && stripH + 0.1f < 56f)
+                    continue;
                 bool taller = false;
                 for (float dy = -240f; dy <= 240.1f; dy += 2f)
                 {
@@ -9532,14 +9758,26 @@ namespace Game.UI.Runtime
         {
             if (shape == null || shape.Length < 3)
                 return false;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                Vec2 next = shape[(i + 1) % shape.Length];
+                if (SegmentHitsRect(shape[i], next, card))
+                    return false;
+            }
+
             Vec2[] corners = Corners(card);
+            const float sample = 4f;
             for (int edge = 0; edge < corners.Length; edge++)
             {
                 Vec2 a = corners[edge];
                 Vec2 b = corners[(edge + 1) % corners.Length];
-                for (int step = 0; step < 4; step++)
+                float span = Distance(a, b);
+                int steps = (int)Math.Ceiling(span / sample);
+                if (steps < 1)
+                    steps = 1;
+                for (int step = 0; step < steps; step++)
                 {
-                    float t = step / 4f;
+                    float t = step / (float)steps;
                     var point = new Vec2(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
                     if (!PointInPolygon(point, shape) || EdgeCloserThan(point, shape, margin))
                         return false;

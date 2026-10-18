@@ -87,22 +87,60 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Width of the count/status label, padded, taken out of the name strip.
+        /// The name keeps at least 48px when the tab is wide enough for both.
+        /// </summary>
+        public static float CountStripWidth(TMP_Text status, float inner)
+        {
+            float preferred = 0f;
+            if (status != null)
+            {
+                status.textWrappingMode = TextWrappingModes.NoWrap;
+                status.overflowMode = TextOverflowModes.Overflow;
+                status.ForceMeshUpdate();
+                preferred = status.preferredWidth;
+                if (preferred < 0.5f && !string.IsNullOrEmpty(status.text))
+                    preferred = status.GetPreferredValues(status.text).x;
+            }
+
+            float padded = Mathf.Ceil(Mathf.Max(0f, preferred)) + 8f;
+            float limit = inner > 76f ? inner - 48f : Mathf.Max(28f, inner * 0.5f);
+            if (padded < 1f)
+                padded = 36f;
+            return Mathf.Clamp(padded, 28f, Mathf.Max(28f, limit));
+        }
+
+        /// <summary>
+        /// Live width of the name label. The count's width is already out of this rect.
+        /// A stale sizeDelta must not widen the strip back over the count.
+        /// </summary>
+        public static float NameWidth(TMP_Text name)
+        {
+            if (name == null || name.rectTransform == null)
+                return 0f;
+            RectTransform rect = name.rectTransform;
+            if (rect.rect.width > 8f)
+                return rect.rect.width;
+            return Mathf.Max(0f, rect.sizeDelta.x);
+        }
+
+        /// <summary>
         /// Keeps the district name on its own line at 18px or larger. A 4:3 section is scaled
         /// below 1, so the local size rises until the drawn size is 18 when the tab is wide enough.
         /// Tracking tightens before the size drops, and the size never drops below 18.
+        /// The box is the name label's own width, after the count has been taken out.
         /// </summary>
         public static void FitName(TMP_Text name)
         {
             if (name == null || name.rectTransform == null)
                 return;
             RectTransform rect = name.rectTransform;
-            float boxW = Mathf.Max(rect.rect.width, rect.sizeDelta.x);
-            float boxH = Mathf.Max(rect.rect.height, rect.sizeDelta.y);
+            float boxW = NameWidth(name);
+            float boxH = rect.rect.height > 8f ? rect.rect.height : rect.sizeDelta.y;
             if (boxW < 8f)
-                boxW = 120f;
+                return;
             if (boxH < 8f)
                 boxH = NameBand;
-            SyncBox(rect, boxW, boxH);
             float scale = Mathf.Max(0.01f, rect.lossyScale.y);
             float local = Mathf.Max(NameFontFloor, NameFontFloor / scale);
             // Line spacing can pull a 1.65em box into the 32px band only so far. Past this the
@@ -160,6 +198,7 @@ namespace Game.UI.Runtime
                 + " nameVisible=" + (visible ? "1" : "0")
                 + " fontSize=" + drawn.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
                 + " local=" + local.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                + " width=" + NameWidth(name).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
                 + " truncated=" + (truncated ? "1" : "0"));
         }
 
@@ -171,15 +210,13 @@ namespace Game.UI.Runtime
             if (name == null)
                 return false;
             RectTransform rect = name.rectTransform;
-            float boxW = 0f;
+            float boxW = NameWidth(name);
             float boxH = NameBand;
             if (rect != null)
             {
-                boxW = Mathf.Max(rect.rect.width, rect.sizeDelta.x);
-                boxH = Mathf.Max(rect.rect.height, rect.sizeDelta.y);
+                boxH = rect.rect.height > 8f ? rect.rect.height : rect.sizeDelta.y;
                 if (boxH < 8f)
                     boxH = NameBand;
-                SyncBox(rect, boxW > 8f ? boxW : rect.sizeDelta.x, boxH);
             }
 
             name.ForceMeshUpdate();
@@ -216,14 +253,6 @@ namespace Game.UI.Runtime
             if (natural <= band - 1f)
                 return 0f;
             return Mathf.Max(-48f, (band - 1f - natural) / Mathf.Max(0.01f, size * 0.01f));
-        }
-
-        private static void SyncBox(RectTransform rect, float boxW, float boxH)
-        {
-            if (Mathf.Abs(rect.rect.width - boxW) <= 0.75f && Mathf.Abs(rect.rect.height - boxH) <= 0.75f)
-                return;
-            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, boxW);
-            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, boxH);
         }
 
         private static bool LineFits(TMP_Text text, float boxW, float boxH)

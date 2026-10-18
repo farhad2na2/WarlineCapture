@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Game.Skirmish.Contracts;
 using TMPro;
 using UnityEngine;
@@ -125,6 +126,56 @@ namespace Game.UI.Runtime
             Transform disc = card.Find("RingDisc");
             if (disc != null)
                 DestroyUi(disc.gameObject);
+        }
+
+        /// <summary>
+        /// Luminance standard deviation of the district plate, 0–1. The imported texture
+        /// is not readable, so this loads the png. Capture rejects a value under 0.07.
+        /// </summary>
+        public static float PlateLuminanceContrast(string mapId)
+        {
+            string id = string.IsNullOrEmpty(mapId) ? "DB" : mapId;
+            string path = Path.Combine(
+                Application.dataPath,
+                "Game/Art/SkirmishLibrary/Plates/skirmish.plate." + id + ".png");
+            if (!File.Exists(path))
+                return 0f;
+            byte[] bytes = File.ReadAllBytes(path);
+            var probe = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!probe.LoadImage(bytes))
+                    return 0f;
+                Color32[] pixels = probe.GetPixels32();
+                if (pixels == null || pixels.Length < 8)
+                    return 0f;
+                double sum = 0d;
+                double sumSq = 0d;
+                int count = 0;
+                for (int i = 0; i < pixels.Length; i += 4)
+                {
+                    Color32 pixel = pixels[i];
+                    double luma = (0.2126d * pixel.r + 0.7152d * pixel.g + 0.0722d * pixel.b) / 255d;
+                    sum += luma;
+                    sumSq += luma * luma;
+                    count++;
+                }
+
+                if (count < 2)
+                    return 0f;
+                double mean = sum / count;
+                double variance = sumSq / count - mean * mean;
+                if (variance < 0d)
+                    variance = 0d;
+                return (float)Math.Sqrt(variance);
+            }
+            finally
+            {
+                if (Application.isPlaying)
+                    UnityEngine.Object.Destroy(probe);
+                else
+                    UnityEngine.Object.DestroyImmediate(probe);
+            }
         }
 
         private static Image EnsureDistrictCardArt(RectTransform frame)

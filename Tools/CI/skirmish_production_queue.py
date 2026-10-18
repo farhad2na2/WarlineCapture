@@ -245,12 +245,14 @@ def guard(directory):
         lock.rmdir()
 
 
-def claim(directory, worker, project, sampling_authority=None):
-    return _claim_checked(directory, worker, project,
-                          lambda job: preflight(job, project, sampling_authority))
+def claim(directory, worker, project, sampling_authority=None, *, before_reserve=None):
+    validate = lambda job: preflight(job, project, sampling_authority)
+    if before_reserve is None:
+        return _claim_checked(directory, worker, project, validate)
+    return _claim_checked(directory, worker, project, validate, before_reserve=before_reserve)
 
 
-def _claim_checked(directory, worker, project, validate):
+def _claim_checked(directory, worker, project, validate, *, before_reserve=None):
     directory = Path(directory)
     worker = identifier(worker)
     outside_assets(directory, project)
@@ -263,6 +265,10 @@ def _claim_checked(directory, worker, project, validate):
         require(not any(r["status"] == "qualified" for r in results), "job already qualified")
         signatures = [r.get("failure_signature") for r in results if r["status"] == "failed"]
         require(not any(signatures.count(s) >= 2 for s in signatures), "two identical failure signatures; repair/revise job before retry")
+        # Optional refusal-only final admission after fresh source/history IO.
+        # Existing callers retain their complete validation and locking rules.
+        if before_reserve is not None:
+            before_reserve()
         attempt = "attempt-" + uuid.uuid4().hex
         artifacts = directory / attempt
         artifacts.mkdir()

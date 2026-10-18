@@ -148,8 +148,14 @@ def validate_profile_journal(job, claim, events, *, path_platform='windows'):
         original_environment = begin["original_environment"]
         if isinstance(original_environment, str) and original_environment.strip():
             need(normalize(original_environment) == original_root, "Original environment/effective-root mismatch")
-        need(original_root != expected_owned and not original_root.startswith(expected_owned + path_module.sep)
-             and not expected_owned.startswith(original_root + path_module.sep), "Profile roots overlap")
+        if path_platform == 'macos':
+            # '/' is already terminated: appending '/' would turn its prefix
+            # into '//' and incorrectly admit every descendant save-profile.
+            need(posixpath.commonpath((original_root,expected_owned)) not in (original_root,expected_owned),
+                 'Profile roots overlap')
+        else:
+            need(original_root != expected_owned and not original_root.startswith(expected_owned + path_module.sep)
+                 and not expected_owned.startswith(original_root + path_module.sep), "Profile roots overlap")
         need(all(normalize(o["root"]) == expected_owned for o in owned), "Owned profile path splice")
         need(save_projection(originals[0]) == save_projection(originals[1]) == save_projection(originals[2]), "Original profile bytes/existence changed")
         need(not owned[0]["directory_exists"] and not any(r["exists"] for r in owned[0]["files"]),

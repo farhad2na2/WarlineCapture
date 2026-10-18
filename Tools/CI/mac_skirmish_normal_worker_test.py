@@ -39,6 +39,11 @@ def png():
             chunk(b'IDAT', zlib.compress(b'\x00\x00\x00\x00'))+chunk(b'IEND', b''))
 
 
+def time_fields():
+    issued=dt.datetime.now(dt.timezone.utc)
+    return dict(issued_utc=issued.isoformat(),expires_utc=(issued+dt.timedelta(minutes=10)).isoformat())
+
+
 class NormalReceipts(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -217,7 +222,7 @@ class NormalReceipts(unittest.TestCase):
         for i,paths in enumerate(self.f.paths):
             job=w.queue.load(paths['job']);job['job_id']='fresh-worker-'+str(i)
             folders.append(Path(w.queue.enqueue(self.f.root/'Logs/SkirmishProduction/Queue',job,self.f.root,authority)['job_directory']))
-        claimed=[];grant=dict(worker='mac-fixture',nonce='a'*32)
+        claimed=[];grant=dict(worker='mac-fixture',nonce='a'*32,**time_fields())
         descriptor=w.claim_and_prepare(self.f.root,grant,authority,folders,self.f.storepath,claimed)
         data=w.queue.load(descriptor)
         self.assertEqual(data['schema_version'],2);self.assertEqual(len(claimed),3)
@@ -234,7 +239,7 @@ class NormalReceipts(unittest.TestCase):
             folders.append(Path(w.queue.enqueue(self.f.root/'Logs/SkirmishProduction/Queue',job,self.f.root,authority)['job_directory']))
         foreign=w.queue.claim(folders[1],'other-worker',self.f.root,authority);claimed=[]
         with self.assertRaisesRegex(w.queue.ContractError,'already claimed'):
-            w.claim_and_prepare(self.f.root,dict(worker='mac-fixture',nonce='c'*32),authority,folders,self.f.storepath,claimed)
+            w.claim_and_prepare(self.f.root,dict(worker='mac-fixture',nonce='c'*32,**time_fields()),authority,folders,self.f.storepath,claimed)
         self.assertEqual(len(claimed),1)
         self.assertEqual(w.queue.load(folders[0]/'claim.json'),claimed[0]['claim'])
         self.assertEqual(w.queue.load(folders[1]/'claim.json'),foreign)
@@ -266,6 +271,33 @@ class NormalReceipts(unittest.TestCase):
             jobs=[dict(directory=str(folder),job_sha256=w.queue.fingerprint(job))])
         with self.assertRaisesRegex(ValueError,'Development-only schema3'):w.validate_jobs(self.f.root,grant)
         self.assertFalse((folder/'claim.json').exists());self.assertEqual(len(authority.slots),720)
+
+    def test_expiry_during_canonical_preflight_creates_no_claim_or_attempt(self):
+        authority=w.SamplingAuthority(self.f.root,self.f.planpath,w.digest(self.f.planpath))
+        job=w.queue.load(self.f.paths[0]['job']);job['job_id']='expiry-preflight-control'
+        folder=Path(w.queue.enqueue(self.f.root/'Logs/SkirmishProduction/Queue',job,self.f.root,authority)['job_directory'])
+        grant=dict(worker='mac-fixture',nonce='d'*32,**time_fields());clock=[dt.datetime.fromisoformat(grant['issued_utc'])]
+        saved=copy.deepcopy(grant);real=w.queue.preflight
+        def slow_preflight(*args,**kwargs):
+            result=real(*args,**kwargs);clock[0]=dt.datetime.fromisoformat(grant['expires_utc']);return result
+        with patch.object(w,'utc_now',side_effect=lambda:clock[0]),patch.object(w.queue,'preflight',side_effect=slow_preflight),patch.object(w,'prepare',side_effect=AssertionError('prepare forbidden')):
+            with self.assertRaisesRegex(ValueError,'Grant expired'):w.claim_and_prepare(self.f.root,grant,authority,[folder],self.f.storepath,[])
+        self.assertFalse((folder/'claim.json').exists());self.assertEqual(list(folder.glob('attempt-*')),[])
+        self.assertFalse((folder/'.metadata-lock').exists());self.assertEqual(grant,saved)
+
+    def test_clock_advance_before_later_claim_preserves_only_prior_valid_claim(self):
+        authority=w.SamplingAuthority(self.f.root,self.f.planpath,w.digest(self.f.planpath));folders=[]
+        for index,paths in enumerate(self.f.paths[:2]):
+            job=w.queue.load(paths['job']);job['job_id']='expiry-between-'+str(index)
+            folders.append(Path(w.queue.enqueue(self.f.root/'Logs/SkirmishProduction/Queue',job,self.f.root,authority)['job_directory']))
+        grant=dict(worker='mac-fixture',nonce='e'*32,**time_fields());clock=[dt.datetime.fromisoformat(grant['issued_utc'])]
+        real=w.queue.claim;claimed=[]
+        def claim_then_advance(*args,**kwargs):
+            value=real(*args,**kwargs);clock[0]=dt.datetime.fromisoformat(grant['expires_utc']);return value
+        with patch.object(w,'utc_now',side_effect=lambda:clock[0]),patch.object(w.queue,'claim',side_effect=claim_then_advance) as calls,patch.object(w,'prepare',side_effect=AssertionError('prepare forbidden')):
+            with self.assertRaisesRegex(ValueError,'Grant expired'):w.claim_and_prepare(self.f.root,grant,authority,folders,self.f.storepath,claimed)
+        self.assertEqual(calls.call_count,1);self.assertEqual(len(claimed),1)
+        self.assertEqual(w.queue.load(folders[0]/'claim.json'),claimed[0]['claim']);self.assertFalse((folders[1]/'claim.json').exists())
 
 
 class PortableBoundaries(unittest.TestCase):
@@ -360,6 +392,31 @@ class PortableBoundaries(unittest.TestCase):
         with patch.object(w.life.OwnedProcessTree,'observe',return_value=[own]),patch.object(w.life,'editor',return_value=True):
             self.assertEqual(tree.observe([own],self.root),[own])
             with self.assertRaisesRegex(ValueError,'Another Editor'):tree.observe([foreign],self.root)
+
+    def test_exact_expiry_before_popen_refuses_spawn_without_renewing_subject(self):
+        grant=time_fields();saved=copy.deepcopy(grant)
+        # Time was valid before slow IO and is exactly expired at Popen.
+        w.check_grant_time(grant,dt.datetime.fromisoformat(grant['issued_utc']))
+        with patch.object(w,'utc_now',return_value=dt.datetime.fromisoformat(grant['expires_utc'])),patch.object(w.subprocess,'Popen') as spawn:
+            with self.assertRaisesRegex(ValueError,'Grant expired'):w.spawn_checked_wrapper(self.root,grant,['never-spawn'],{},io.StringIO())
+        spawn.assert_not_called();self.assertEqual(grant,saved)
+
+    def test_valid_last_boundary_preserves_original_grant_and_command(self):
+        grant=time_fields();saved=copy.deepcopy(grant);console=io.StringIO();argv=['checked-wrapper'];env={'PATH':'unchanged'};child=object()
+        with patch.object(w,'utc_now',return_value=dt.datetime.fromisoformat(grant['issued_utc'])),patch.object(w.subprocess,'Popen',return_value=child) as spawn:
+            self.assertIs(w.spawn_checked_wrapper(self.root,grant,argv,env,console),child)
+        spawn.assert_called_once_with(argv,cwd=self.root,env=env,stdout=console,stderr=subprocess.STDOUT)
+        self.assertEqual(grant,saved);self.assertEqual(env,{'PATH':'unchanged'})
+
+    def test_posix_original_filesystem_root_cannot_contain_owned_profile(self):
+        fixture=profile_fixture.ProfileControls();fixture.setUp()
+        def convert(value):
+            if isinstance(value,str):return value.replace('D:/fixture','/Volumes/Test/Fixture').replace('C:/user/persistent','/')
+            if isinstance(value,dict):return {k:convert(v) for k,v in value.items()}
+            if isinstance(value,list):return [convert(v) for v in value]
+            return value
+        receipt=profile.validate_profile_journal(fixture.job,convert(fixture.claim),convert(fixture.events),path_platform='macos')
+        self.assertFalse(receipt['profile_restored']);self.assertIn('Profile roots overlap',str(receipt['errors']))
 
 
 class GrantControls(unittest.TestCase):

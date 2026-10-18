@@ -147,6 +147,26 @@ def child_environment(parent, descriptor):
     return env
 
 
+def utc_now():
+    return dt.datetime.now(dt.timezone.utc)
+
+
+def check_grant_time(grant, now=None):
+    """Recheck ORIGINAL issued/expires fields; never renew or reserialize authority."""
+    current = utc_now() if now is None else now
+    issued = dt.datetime.fromisoformat(grant['issued_utc'])
+    expires = dt.datetime.fromisoformat(grant['expires_utc'])
+    need(issued.tzinfo is not None and expires.tzinfo is not None and issued <= current < expires
+         and 0 < (expires-issued).total_seconds() <= 900,
+         'Grant expired or not bounded to fifteen minutes')
+
+
+def spawn_checked_wrapper(root, grant, argv, env, console):
+    # The last worker boundary after all prelaunch/prepare/observation IO.
+    check_grant_time(grant)
+    return subprocess.Popen(argv, cwd=root, env=env, stdout=console, stderr=subprocess.STDOUT)
+
+
 def validate_grant(grant, expected_sha, raw, root, now=None):
     """A proposed schema, not an existing native API or permission source."""
     require_runtime()
@@ -158,10 +178,7 @@ def validate_grant(grant, expected_sha, raw, root, now=None):
     need(grant['schema_version'] == 1 and type(grant['schema_version']) is int and
          grant['launch_authorized'] is True, 'Fresh Root execution grant required')
     need(re.fullmatch('[a-f0-9]{32}', grant['nonce'] or ''), 'Fresh unique nonce required')
-    current = now or dt.datetime.now(dt.timezone.utc)
-    issued = dt.datetime.fromisoformat(grant['issued_utc']); expires = dt.datetime.fromisoformat(grant['expires_utc'])
-    need(issued.tzinfo is not None and expires.tzinfo is not None and issued <= current < expires
-         and 0 < (expires-issued).total_seconds() <= 900, 'Grant expired or not bounded to fifteen minutes')
+    check_grant_time(grant, now)
     need(grant['project'] == str(root.resolve()), 'Grant project binding differs')
     need(grant['host'] == host_identity(), 'Per-host/UID grant differs')
     need(grant['python_runtime'] == runtime_identity(), 'Actual Python runtime bytes/version differ from grant')
@@ -267,7 +284,9 @@ def validate_jobs(root, grant):
 def claim_and_prepare(root, grant, authority, directories, snapshot_path, claimed):
     """Real canonical transactions. A partial claim failure remains owned/preserved."""
     for folder in directories:
-        record = queue.claim(folder, grant['worker'], root, authority)
+        check_grant_time(grant)
+        record = queue.claim(folder, grant['worker'], root, authority,
+                             before_reserve=lambda: check_grant_time(grant))
         claimed.append(dict(directory=str(folder), claim=record))
     return prepare(root, directories, snapshot_path, 'mac-'+grant['nonce'],
                    authority.path, authority.expected)
@@ -425,7 +444,7 @@ def execute(root, grant, grant_sha):
         env = child_environment(parent, descriptor_path); argv = checked_command(root, descriptor, grant['timeout_seconds'])
         baseline = life.processes()
         with (batch/'checked-wrapper-console.log').open('x', encoding='utf-8') as console:
-            child = subprocess.Popen(argv, cwd=root, env=env, stdout=console, stderr=subprocess.STDOUT)
+            child = spawn_checked_wrapper(root, grant, argv, env, console)
             result.update(launch_performed=True, wrapper_pid=child.pid, argv=argv)
             tree = NormalOwnedTree(child.pid, baseline)
             identity = life.kernel_process_identity(child.pid)

@@ -1692,10 +1692,47 @@ namespace Game.UI.Runtime
             PlaceDistrictHalo(root, local, color);
         }
 
+        /// <summary>
+        /// Hot band measured from the stroke. It stays inside the 19px reach, so the gap does not move.
+        /// </summary>
+        private const float GlowCoreBand = 6f;
+
+        /// <summary>
+        /// White mix at the stroke. v73 (<c>575998cbd</c>) put a 0.22 lift on the 4px ink and drew it
+        /// over the halo. This halo is painted last and opaque, so the core carries that heat itself.
+        /// </summary>
+        private const float GlowCoreLift = 0.38f;
+
+        /// <summary>
+        /// v73's outer stroke is <see cref="DistrictNeon"/> with no white lift: the peak-normalized
+        /// district hue. The flat halo tint pulled that hue 5% toward white.
+        /// </summary>
+        private static Color DistrictGlowEdge(Color zone)
+        {
+            return DistrictNeon(zone, 0f);
+        }
+
+        private static Color DistrictGlowCore(Color zone)
+        {
+            return Color.Lerp(DistrictGlowEdge(zone), Color.white, GlowCoreLift);
+        }
+
+        private static float GlowLuminance(Color color)
+        {
+            return color.r * 0.299f + color.g * 0.587f + color.b * 0.114f;
+        }
+
+        private static float GlowSaturation(Color color)
+        {
+            float max = Mathf.Max(color.r, Mathf.Max(color.g, color.b));
+            float min = Mathf.Min(color.r, Mathf.Min(color.g, color.b));
+            return max > 0.001f ? (max - min) / max : 0f;
+        }
+
         private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
         {
             const float pad = 22f;
-            Sprite halo = BuildDistrictHalo(localPoints, pad);
+            Sprite halo = BuildDistrictHalo(localPoints, pad, color);
             if (halo == null || root == null)
                 return;
             BoundsOf(localPoints, 0f, out float minX, out float minY, out float maxX, out float maxY);
@@ -1704,16 +1741,15 @@ namespace Game.UI.Runtime
             image.sprite = halo;
             image.type = Image.Type.Simple;
             image.material = null;
-            Color glow = DistrictNeon(color, 0.05f);
-            glow.a = 1f;
-            image.color = glow;
+            // The sprite holds the district hue. A tint here would wash the core and the edge again.
+            image.color = Color.white;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
             image.rectTransform.localScale = Vector3.one;
             image.rectTransform.SetAsLastSibling();
         }
 
-        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad)
+        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad, Color color)
         {
             if (localPoints == null || localPoints.Length < 3)
                 return null;
@@ -1724,11 +1760,12 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Solid out to the reach the gap math subtracts. The 22px pad still
-            // holds the capture rect. No fade inside the reach, so the bloom
-            // stays as thick as the painted halo.
+            // Alpha stays solid out to the reach the gap math subtracts. The 22px pad
+            // still holds the capture rect. Intensity changes inside that reach:
+            // a brightened core on the stroke, then the saturated district hue.
             float reach = TheatreSeatGeometry.DistrictGlowReach;
-            float shoulder = TheatreSeatGeometry.DistrictGlowReach;
+            Color edge = DistrictGlowEdge(color);
+            Color core = DistrictGlowCore(color);
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -1739,12 +1776,25 @@ namespace Game.UI.Runtime
                 {
                     var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
                     float dist = DistanceToPolygonEdge(point, localPoints);
-                    float band = 1f;
-                    float span = reach - shoulder;
-                    if (dist > shoulder)
-                        band = span > 0.01f ? 1f - Mathf.Clamp01((dist - shoulder) / span) : 0f;
-                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(band * 255f), 0, 255);
-                    pixels[target + x] = new Color32(255, 255, 255, alpha);
+                    if (dist > reach)
+                    {
+                        // Keep the hue in the clear texels so bilinear filtering does not darken the rim.
+                        pixels[target + x] = new Color32(
+                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.r * 255f), 0, 255),
+                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.g * 255f), 0, 255),
+                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.b * 255f), 0, 255),
+                            0);
+                        continue;
+                    }
+
+                    float along = GlowCoreBand > 0.01f ? Mathf.Clamp01(dist / GlowCoreBand) : 1f;
+                    along = along * along * (3f - 2f * along);
+                    Color rgb = Color.Lerp(core, edge, along);
+                    pixels[target + x] = new Color32(
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.r * 255f), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.g * 255f), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.b * 255f), 0, 255),
+                        255);
                 }
             }
 
@@ -3182,7 +3232,9 @@ namespace Game.UI.Runtime
         /// What the camera composites for the soft halo. Reach is
         /// <see cref="TheatreSeatGeometry.DistrictGlowReach"/> times the outline scale.
         /// Alpha is the image tint. The material is the shader actually on the halo,
-        /// not the multiply shader on the fill.
+        /// not the multiply shader on the fill. <c>coreAlpha</c> is the sprite alpha on
+        /// the stroke, <c>brightness</c> is that core's luminance, and <c>saturation</c>
+        /// is the district hue painted out to the reach.
         /// </summary>
         private static void LogDistrictGlow(RectTransform outline)
         {
@@ -3198,10 +3250,25 @@ namespace Game.UI.Runtime
             string shader = "none";
             if (halo != null && halo.material != null && halo.material.shader != null)
                 shader = halo.material.shader.name;
+            float coreAlpha = 0f;
+            float brightness = 0f;
+            float saturation = 0f;
+            if (halo != null)
+            {
+                Color zone = RegionZoneColor(OutlineMapId(outline));
+                Color edge = DistrictGlowEdge(zone);
+                coreAlpha = 1f;
+                brightness = GlowLuminance(DistrictGlowCore(zone));
+                saturation = GlowSaturation(edge);
+            }
+
             Debug.Log("[DistrictGlow] " + OutlineMapId(outline) + ShotTag()
                 + " reach=" + F(localReach * scale)
                 + " alpha=" + F(alpha)
-                + " material=" + shader);
+                + " material=" + shader
+                + " coreAlpha=" + coreAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " brightness=" + brightness.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " saturation=" + saturation.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture));
         }
 
         private static string ShotTag()

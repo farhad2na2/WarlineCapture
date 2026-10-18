@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "state": "FrozenR2_Disabled_NoCCCollectionAuthorization",
+  "created_utc": "2026-10-18T23:02:37.714606+00:00",
+  "preserved_r1_commit": "83d350b207b47dcca79c11050c40662b6b1d3a62",
+  "source_commit_unchanged": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "requested_scope": "Exactly the two Root-requested metadata/launch checking gaps; no Assets/GUI/code-control execution",
+  "validation": {
+    "scope": "ActualR2GuardFunctions_MetadataMutationControls_AndSourceWiringOnly",
+    "metadata_cases_passed": 7,
+    "source_wiring_checks_passed": 5,
+    "failures": 0,
+    "native_queries": 0,
+    "Unity_launches": 0,
+    "controller_execute_called": false,
+    "cases": [
+      {
+        "case": "unchanged",
+        "passed": true,
+        "rejected": false,
+        "reason": null
+      },
+      {
+        "case": "grant_changed_after_read",
+        "passed": true,
+        "rejected": true,
+        "reason": "Grant bytes changed after read"
+      },
+      {
+        "case": "controller_changed_after_read",
+        "passed": true,
+        "rejected": true,
+        "reason": "Controller bytes changed before Popen"
+      },
+      {
+        "case": "plan_changed_after_read",
+        "passed": true,
+        "rejected": true,
+        "reason": "Plan bytes changed before Popen"
+      },
+      {
+        "case": "restoration_changed_after_read",
+        "passed": true,
+        "rejected": true,
+        "reason": "Restoration helper changed before Popen"
+      },
+      {
+        "case": "lifecycle_helper_changed",
+        "passed": true,
+        "rejected": true,
+        "reason": "Lifecycle helper changed before Popen"
+      },
+      {
+        "case": "expired_grant",
+        "passed": true,
+        "rejected": true,
+        "reason": "Grant expired or invalid"
+      }
+    ]
+  },
+  "preserved_original_compile_result_sha256": "27a60a842c05b4e887d3fc1617ec15dad433b1a307aa5d57185b9aff0f893f14",
+  "native_collection_started": false,
+  "CSharp_controls_repeated": false,
+  "files": {
+    "controller-r1-to-r2.diff": {
+      "sha256": "5ea0b8f3fb3ddc65df54b2c99aae4e565e396a9dca2dcd1740737c744a402e99",
+      "bytes": 7622
+    },
+    "layout-restoration.py.proposal": {
+      "sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf",
+      "bytes": 4244
+    },
+    "metadata-guard-controls.log": {
+      "sha256": "7a9785b41fb89fe6847ad202160377e3ec4dd77fc22f9ca431def46b9ff7fed8",
+      "bytes": 1294
+    },
+    "metadata-guard-controls.py": {
+      "sha256": "65d456bcf3ebc5c672c4296bf98eb151477e5721bd8609c6aa10f732cbacc447",
+      "bytes": 3924
+    },
+    "plan.disabled.json": {
+      "sha256": "3a4338240d761e19aba8425ae5abfb8684427d852de8dee14e6616328fe7c494",
+      "bytes": 9204
+    },
+    "requested-CC-controller.py.proposal": {
+      "sha256": "5c97eea4009815ae2eee58fed2d3c969ff5a3ebf9323f23d4726adf0d5801e3d",
+      "bytes": 13372
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "scope": "ActualR2GuardFunctions_MetadataMutationControls_AndSourceWiringOnly",
+  "metadata_cases_passed": 7,
+  "source_wiring_checks_passed": 5,
+  "failures": 0,
+  "native_queries": 0,
+  "Unity_launches": 0,
+  "controller_execute_called": false,
+  "cases": [
+    {
+      "case": "unchanged",
+      "passed": true,
+      "rejected": false,
+      "reason": null
+    },
+    {
+      "case": "grant_changed_after_read",
+      "passed": true,
+      "rejected": true,
+      "reason": "Grant bytes changed after read"
+    },
+    {
+      "case": "controller_changed_after_read",
+      "passed": true,
+      "rejected": true,
+      "reason": "Controller bytes changed before Popen"
+    },
+    {
+      "case": "plan_changed_after_read",
+      "passed": true,
+      "rejected": true,
+      "reason": "Plan bytes changed before Popen"
+    },
+    {
+      "case": "restoration_changed_after_read",
+      "passed": true,
+      "rejected": true,
+      "reason": "Restoration helper changed before Popen"
+    },
+    {
+      "case": "lifecycle_helper_changed",
+      "passed": true,
+      "rejected": true,
+      "reason": "Lifecycle helper changed before Popen"
+    },
+    {
+      "case": "expired_grant",
+      "passed": true,
+      "rejected": true,
+      "reason": "Grant expired or invalid"
+    }
+  ]
+}

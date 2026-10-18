@@ -210,6 +210,9 @@ namespace Game.UI.Runtime
                 DrawZoneLeader(fit, slots[i]);
             }
 
+            for (int i = 0; i < slots.Count; i++)
+                LogTerritory(slots[i]);
+
             var hits = new GameObject("TheaterHits", typeof(RectTransform)).GetComponent<RectTransform>();
             hits.SetParent(fit, false);
             Stretch(hits);
@@ -1033,6 +1036,48 @@ namespace Game.UI.Runtime
             if (slots == null)
                 return;
             TryApplyArrangedSeats(slots, plateWidth, plateHeight, fa);
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TheatreZoneSlot slot = slots[i];
+                slot.Hex = AsTerritory(slot.Hex, slot.Card, slot.MapId);
+                slots[i] = slot;
+            }
+        }
+
+        /// <summary>
+        /// Seated district outline with the approved-1 bays. The card rect is unchanged.
+        /// </summary>
+        private static Vector2[] AsTerritory(Vector2[] hex, Rect card, string mapId)
+        {
+            if (hex == null || hex.Length < 3)
+                return hex;
+            var shape = new TheatreSeatGeometry.Vec2[hex.Length];
+            for (int i = 0; i < hex.Length; i++)
+                shape[i] = new TheatreSeatGeometry.Vec2(hex[i].x, hex[i].y);
+            var box = new TheatreSeatGeometry.Box(card.x, card.y, card.width, card.height);
+            TheatreSeatGeometry.Vec2[] terrain = TheatreSeatGeometry.TerritoryAround(shape, box, mapId);
+            if (terrain == null || terrain.Length < 3)
+                return hex;
+            var points = new Vector2[terrain.Length];
+            for (int i = 0; i < terrain.Length; i++)
+                points[i] = new Vector2(terrain[i].X, terrain[i].Y);
+            return points;
+        }
+
+        private static void LogTerritory(TheatreZoneSlot slot)
+        {
+            if (slot.Hex == null || slot.Hex.Length < 3)
+                return;
+            var shape = new TheatreSeatGeometry.Vec2[slot.Hex.Length];
+            for (int i = 0; i < slot.Hex.Length; i++)
+                shape[i] = new TheatreSeatGeometry.Vec2(slot.Hex[i].x, slot.Hex[i].y);
+            var card = new TheatreSeatGeometry.Box(slot.Card.x, slot.Card.y, slot.Card.width, slot.Card.height);
+            bool inside = slot.Card.width >= 1f && TheatreSeatGeometry.CardInsideTerritory(card, shape);
+            Debug.Log("[Territory] map=" + slot.MapId
+                + " vertices=" + slot.Hex.Length.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                + " alpha=" + TheatreSeatGeometry.TerritoryBorderAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " feather=" + TheatreSeatGeometry.TerritoryFeather.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                + " inside=" + (inside ? "1" : "0"));
         }
 
         /// <summary>Width reserved on the trailing edge. Matches the detail panel when the plate is wide enough.</summary>
@@ -1659,37 +1704,16 @@ namespace Game.UI.Runtime
             for (int i = 0; i < screenPoints.Length; i++)
                 local[i] = new Vector2(screenPoints[i].x - minX + ZoneHexPad, screenPoints[i].y - minY + ZoneHexPad);
             V3PolygonGraphic polygon = root.GetComponent<V3PolygonGraphic>();
-            Color fill = DistrictMultiplyTint(color);
-            polygon.Configure(local, fill);
-            ApplyDistrictMultiply(root.gameObject);
-            Color neon = DistrictNeon(color, 0.08f);
-            Color outer = DistrictNeon(color, 0f);
-            outer.a = 1f;
-            Color glow = neon;
-            glow.a = 1f;
-            Color ink = DistrictNeon(color, selected ? 0.22f : 0.12f);
-            ink.a = 1f;
-            // 4px core stays inside the 3–4.5 capture band. The 16px outer neon and
-            // the 10px mid glow stay. The soft halo is painted last, on the default
-            // UI material, so it blooms over that stroke instead of hiding under it.
-            const float stroke = 4f;
-            const float outerThickness = 16f;
-            const float midThickness = 10f;
-            DrawHexEdges(root, local, outer, outerThickness, ZoneStrokeSprite());
-            DrawHexEdges(root, local, glow, midThickness, ZoneStrokeSprite());
-            DrawHexEdges(root, local, ink, stroke, ZoneSolidSprite());
-            DrawHexLattice(root, local, color);
-            for (int i = 0; i < local.Length; i++)
-            {
-                var cap = new GameObject("HexCap", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                cap.transform.SetParent(root, false);
-                cap.sprite = ZoneCapSprite();
-                cap.color = ink;
-                cap.raycastTarget = false;
-                PlaceHexPoint(cap.rectTransform, local[i], stroke + 3f);
-            }
-
-            PlaceDistrictHalo(root, local, color);
+            string mapId = name.StartsWith("ZoneOutline_", StringComparison.Ordinal)
+                ? name.Substring("ZoneOutline_".Length)
+                : string.Empty;
+            Color tint = TerritoryTint(mapId, color);
+            tint.a = selected
+                ? Mathf.Min(0.42f, TheatreSeatGeometry.TerritoryFillAlpha + 0.08f)
+                : TheatreSeatGeometry.TerritoryFillAlpha;
+            polygon.Configure(local, tint);
+            polygon.material = null;
+            PlaceDistrictHalo(root, local, tint);
         }
 
         /// <summary>
@@ -1731,7 +1755,7 @@ namespace Game.UI.Runtime
 
         private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
         {
-            const float pad = 22f;
+            float pad = TheatreSeatGeometry.TerritoryFeather;
             Sprite halo = BuildDistrictHalo(localPoints, pad, color);
             if (halo == null || root == null)
                 return;
@@ -1741,7 +1765,7 @@ namespace Game.UI.Runtime
             image.sprite = halo;
             image.type = Image.Type.Simple;
             image.material = null;
-            // The sprite holds the district hue. A tint here would wash the core and the edge again.
+            // White so the sprite's own alpha is the feather. A neon tint here is the withdrawn glow.
             image.color = Color.white;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
@@ -1760,15 +1784,16 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Alpha stays solid out to the reach the gap math subtracts. The 22px pad
-            // still holds the capture rect. Intensity changes inside that reach:
-            // a brightened core on the stroke, then the saturated district hue.
-            float reach = TheatreSeatGeometry.DistrictGlowReach;
-            Color edge = DistrictGlowEdge(color);
-            Color core = DistrictGlowCore(color);
+            float reach = TheatreSeatGeometry.TerritoryFeather;
+            if (reach < 1f)
+                reach = 1f;
+            float peak = TheatreSeatGeometry.TerritoryBorderAlpha;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
+            byte red = (byte)Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255);
+            byte green = (byte)Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255);
+            byte blue = (byte)Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255);
             for (int y = 0; y < height; y++)
             {
                 int target = (height - 1 - y) * width;
@@ -1776,25 +1801,13 @@ namespace Game.UI.Runtime
                 {
                     var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
                     float dist = DistanceToPolygonEdge(point, localPoints);
-                    if (dist > reach)
-                    {
-                        // Keep the hue in the clear texels so bilinear filtering does not darken the rim.
-                        pixels[target + x] = new Color32(
-                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.r * 255f), 0, 255),
-                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.g * 255f), 0, 255),
-                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.b * 255f), 0, 255),
-                            0);
-                        continue;
-                    }
-
-                    float along = GlowCoreBand > 0.01f ? Mathf.Clamp01(dist / GlowCoreBand) : 1f;
+                    bool interior = PointInsidePolygon(point, localPoints);
+                    float along = interior ? 1f : Mathf.Clamp01(dist / reach);
                     along = along * along * (3f - 2f * along);
-                    Color rgb = Color.Lerp(core, edge, along);
-                    pixels[target + x] = new Color32(
-                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.r * 255f), 0, 255),
-                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.g * 255f), 0, 255),
-                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.b * 255f), 0, 255),
-                        255);
+                    float alpha = peak * (1f - along);
+                    if (interior)
+                        alpha = 0f;
+                    pixels[target + x] = new Color32(red, green, blue, (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 255f), 0, 255));
                 }
             }
 
@@ -3526,7 +3539,7 @@ namespace Game.UI.Runtime
         {
             if (outline == null)
                 return;
-            float localReach = TheatreSeatGeometry.DistrictGlowReach;
+            float localReach = TheatreSeatGeometry.TerritoryFeather;
             Transform haloNode = outline.Find("ZoneHalo");
             Image halo = haloNode != null ? haloNode.GetComponent<Image>() : null;
             float scale = outline.lossyScale.x;
@@ -3541,11 +3554,10 @@ namespace Game.UI.Runtime
             float saturation = 0f;
             if (halo != null)
             {
-                Color zone = RegionZoneColor(OutlineMapId(outline));
-                Color edge = DistrictGlowEdge(zone);
-                coreAlpha = 1f;
-                brightness = GlowLuminance(DistrictGlowCore(zone));
-                saturation = GlowSaturation(edge);
+                Color zone = TerritoryTint(OutlineMapId(outline), RegionZoneColor(OutlineMapId(outline)));
+                coreAlpha = TheatreSeatGeometry.TerritoryBorderAlpha;
+                brightness = GlowLuminance(zone);
+                saturation = GlowSaturation(zone);
             }
 
             Debug.Log("[DistrictGlow] " + OutlineMapId(outline) + ShotTag()
@@ -5760,6 +5772,24 @@ namespace Game.UI.Runtime
             region = default;
             centre = new Vector2(0.5f, 0.5f);
             return false;
+        }
+
+        /// <summary>
+        /// District tint sampled from approved-1. Saturation stays in the capture band.
+        /// Alpha is applied by the caller so the fill stays a veil, not a neon plate.
+        /// </summary>
+        private static Color TerritoryTint(string mapId, Color fallback)
+        {
+            switch ((mapId ?? string.Empty).ToUpperInvariant())
+            {
+                case "CC": return new Color(0.68f, 0.36f, 0.28f, 1f);
+                case "MP": return new Color(0.80f, 0.50f, 0.24f, 1f);
+                case "IB": return new Color(0.58f, 0.48f, 0.22f, 1f);
+                case "AP": return new Color(0.30f, 0.56f, 0.50f, 1f);
+                case "DB": return new Color(0.74f, 0.56f, 0.30f, 1f);
+                default:
+                    return fallback.a > 0f ? fallback : new Color(0.74f, 0.56f, 0.30f, 1f);
+            }
         }
 
         private static Color RegionZoneColor(string mapId)

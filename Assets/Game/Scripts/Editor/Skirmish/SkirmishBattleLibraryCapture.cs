@@ -1027,7 +1027,7 @@ namespace Game.Editor
                 if (TheatreSeatGeometry.SeatHolds(cards[i], shapes[i], shapes))
                     continue;
                 throw new InvalidOperationException(
-                    "Theatre zone card straddles a district edge locale=" + locale +
+                    "Theatre zone card is outside its territory locale=" + locale +
                     " card=ZoneCard_" + mapIds[i] + ".");
             }
         }
@@ -1370,24 +1370,29 @@ namespace Game.Editor
                     ". Expected a deep saturated tint.");
             }
 
-            bool stroke = false;
-            bool glow = false;
             for (int i = 0; i < outline.childCount; i++)
             {
                 Transform child = outline.GetChild(i);
-                if (child == null || child.name != "HexEdge" || child is not RectTransform edge || !edge.gameObject.activeInHierarchy)
+                if (child == null || !child.gameObject.activeInHierarchy || child is not RectTransform edge)
                     continue;
-                float thickness = edge.sizeDelta.y;
-                if (thickness >= 3f && thickness <= 4.5f)
-                    stroke = true;
-                if (thickness >= 8f)
-                    glow = true;
-            }
-
-            if (!stroke || !glow)
-            {
-                throw new InvalidOperationException(
-                    "Theatre polygon for " + mapId + " is missing its hex stroke or glow locale=" + locale + ".");
+                bool outlineStroke = child.name == "HexEdge" || child.name == "HexCap" || child.name == "HexCell";
+                if (!outlineStroke)
+                    continue;
+                Image ink = edge.GetComponent<Image>();
+                if (ink == null || !ink.enabled)
+                    continue;
+                float thickness = Mathf.Max(edge.sizeDelta.x, edge.sizeDelta.y);
+                float maxChannel = Mathf.Max(ink.color.r, Mathf.Max(ink.color.g, ink.color.b));
+                float minChannel = Mathf.Min(ink.color.r, Mathf.Min(ink.color.g, ink.color.b));
+                float strokeSaturation = maxChannel <= 0.001f ? 0f : (maxChannel - minChannel) / maxChannel;
+                if (thickness >= 3f && ink.color.a >= 0.75f && strokeSaturation >= 0.55f)
+                {
+                    throw new InvalidOperationException(
+                        "Theatre polygon for " + mapId + " still draws a saturated hard hex outline locale=" + locale +
+                        " stroke=" + child.name +
+                        " sat=" + strokeSaturation.ToString("0.00") +
+                        " alpha=" + ink.color.a.ToString("0.00") + ".");
+                }
             }
 
             if (clip == null)

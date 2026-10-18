@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-10-18T19:04:24.078618+00:00",
+  "scope": "ReadOnly_ExactlyThreeGeneratedSettings_NoNativeLaunchOrRestoration",
+  "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "native_source_commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "native_source_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+  },
+  "r6_authorization_consumed": true,
+  "r6_operationalControlPassed": false,
+  "r6_errors": [
+    "Source changed",
+    "Project settings changed",
+    "User settings changed"
+  ],
+  "r6_wrapper_exit": 0,
+  "r6_wrapper_reaped": true,
+  "r6_owned_shutdown_closed": true,
+  "r6_result": {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/controller-result.json",
+    "sha256": "525ecbacefd179467b23a1506c5d0a82467e6ef447f9a5cdad90d50eb287b392",
+    "size": 20135992
+  },
+  "r6_logs": [
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/unity.log",
+      "sha256": "3fbd39270222bd69825de146799c91c9d85c3dd5bbd3683d6694e225a4ed2955",
+      "size": 13577937
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/wrapper.log",
+      "sha256": "d50a50242e1b04337dd7b6620d2f0d15c0cc997986e91484d367f7ff8c247392",
+      "size": 805
+    }
+  ],
+  "three_additions": [
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/ProjectSettings/ProjectAuditorSettings.asset",
+      "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+      "size": 1036,
+      "project_relative_path": "ProjectSettings/ProjectAuditorSettings.asset",
+      "inode": 13128784,
+      "device": 16777239,
+      "birthtime": 1792348936.4403343,
+      "mtime_ns": 1792348936440483743,
+      "mode": "0o644",
+      "absent_in_r6_before": true,
+      "present_in_r6_after": true
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/UserSettings/AI.Generators/DragAndDropCache.asset",
+      "sha256": "7438ab184664f10c468643a50b70de9a5d995e5dc420fdaaa64e3348ebc5a1c3",
+      "size": 490,
+      "project_relative_path": "UserSettings/AI.Generators/DragAndDropCache.asset",
+      "inode": 13128396,
+      "device": 16777239,
+      "birthtime": 1792348919.5425224,
+      "mtime_ns": 1792348919543570070,
+      "mode": "0o644",
+      "absent_in_r6_before": true,
+      "present_in_r6_after": true
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/UserSettings/Layouts/default-6000.dwlt",
+      "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+      "size": 4500760,
+      "project_relative_path": "UserSettings/Layouts/default-6000.dwlt",
+      "inode": 13128755,
+      "device": 16777239,
+      "birthtime": 1792348934.0481186,
+      "mtime_ns": 1792348934076617839,
+      "mode": "0o644",
+      "absent_in_r6_before": true,
+      "present_in_r6_after": true
+    }
+  ],
+  "project_auditor": {
+    "classification": "ObservedRepeatableDefaultCandidate_ExactPinnedConfig_NotUniversalDefaultProof",
+    "observed_generations": 2,
+    "r5_preserved_file": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-f35540b5d91d4bb6b1bb2f18e368ecce/settings-restoration-15a32b3a999a47d996d3ad98b71847ae/ProjectAuditorSettings.asset",
+      "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+      "size": 1036
+    },
+    "r5_r6_bytes_equal": true,
+    "content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &1\nMonoBehaviour:\n  m_ObjectHideFlags: 53\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 0}\n  m_Name: \n  m_EditorClassIdentifier: UnityEditor.ProjectAuditorModule:Unity.ProjectAuditor.Editor:ProjectAuditorSettings\n  Rules:\n    rules: []\n  DiagnosticParams:\n    paramsStack:\n    - PlatformGroup:\n        m_String: Unknown\n      m_SerializedParams:\n      - Key: StreamingClipThresholdBytes\n        Value: 218294\n      - Key: LongDecompressedClipThresholdBytes\n        Value: 204800\n      - Key: LongCompressedMobileClipThresholdBytes\n        Value: 204800\n      - Key: LoadInBackGroundClipSizeThresholdBytes\n        Value: 204800\n      - Key: StreamingAssetsFolderSizeLimit\n        Value: 50\n      - Key: TextureStreamingMipmapsSizeLimit\n        Value: 4000\n      - Key: SpriteAtlasEmptySpaceLimit\n        Value: 50\n    CurrentParamsIndex: 0\n",
+    "owner_module": {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEditor.ProjectAuditorModule.dll",
+      "sha256": "07416ed029b8fba844e945af3620369a6d9e7e99022c1b34dc3b7329de826b68",
+      "size": 596992
+    },
+    "owner_api_xml": {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEditor.ProjectAuditorModule.xml",
+      "sha256": "1c0a760e7cb7180b968c5a1ecae39a821d207dcb7a7ddee889b0adb2d6bd38a2",
+      "size": 95414
+    },
+    "api_evidence": {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEditor.ProjectAuditorModule.xml",
+      "lines": "43-49,59-63",
+      "fact": "AnalysisParams(copyParamsFromGlobal) documents registering DiagnosticParams defaults and saving changes; values are customizable"
+    },
+    "limits": [
+      "Actual r6 generation call stack not recorded",
+      "No source-level proof that these seven numerical values are universal defaults across editors/platforms/projects",
+      "No controlled third generation or native mutation performed"
+    ],
+    "baseline_proposal": "Potential explicit tracked project-configuration baseline only after coordinator source review and new candidate commit; never ignore this path or retain old candidate identity"
+  },
+  "drag_drop_cache": {
+    "classification": "EmptyEditorUICache_SavedDuringPackageInitialization_NotGameplayConfig",
+    "content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &1\nMonoBehaviour:\n  m_ObjectHideFlags: 53\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: ee35c10b054e47e0ad87656f211688fc, type: 3}\n  m_Name: \n  m_EditorClassIdentifier: Unity.AI.Generators.UI::Unity.AI.Generators.UI.Utilities.DragAndDropCache\n  entries:\n    serializedData: []\n",
+    "owner_source": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Utilities/DragAndDropCache.cs",
+      "sha256": "1e78ac46d940ba797e99f59a7fd3700dd4c5d9c16470104436eb8b60ad6c8974",
+      "size": 515
+    },
+    "owner_meta": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Utilities/DragAndDropCache.cs.meta",
+      "sha256": "0aa3c95fd3e7737461fd7e3890452d5a121ae319ec39eb787f6f124ca65d0e55",
+      "size": 83
+    },
+    "initializer_source": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Utilities/ExternalFileDragDrop.cs",
+      "sha256": "cbe45f5f00ff93e04a94f82b3c2d17bf8c40c19d2ff5e6271c3ad8d3392b6357",
+      "size": 18053
+    },
+    "package_manifest": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/package.json",
+      "sha256": "037eb12b300b7cd51d7cc6d7896aacef0f0b36eb918e25d93230d61d29501a19",
+      "size": 2004
+    },
+    "owner_evidence": {
+      "file_path_attribute_lines": "9-10",
+      "save_method_lines": "15-18",
+      "initialize_on_load_save_lines": "ExternalFileDragDrop.cs:42-53"
+    },
+    "entries_observed_empty": true,
+    "future_nonempty_entries": "Must not be automatically discarded or normalized"
+  },
+  "layout": {
+    "classification": "MachineAndSessionDependentEditorUIState_NotPortableProjectDefault",
+    "size": 4500760,
+    "yaml_objects": 26,
+    "dominant_object_class": "UnityEditor.TestRunner.dll::UnityEditor.TestTools.TestRunner.TestRunnerWindow",
+    "dominant_object_bytes": 4399999,
+    "native_log_evidence": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/unity.log",
+      "lines": "54404-54406",
+      "fact": "Unity loaded user-global preferences layout and saved both project UserSettings layout and user-global preferences layout"
+    },
+    "global_preferences_file_inspected_or_modified_by_this_task": false,
+    "global_preferences_before_after_restoration_proof": "NotCaptured_PendingOutsideProjectScope",
+    "baseline_proposal": "Do not commit inherited4.5MB layout or normalize its serialized fields; use exact local per-run byte backup plus separately reviewed narrow restoration, if authorized"
+  },
+  "assembly_scope": {
+    "before_count": 192,
+    "after_count": 192,
+    "all_recorded_bytes_identical": true,
+    "meaning": "RetainedAssembliesOnly_NoFreshCompilerExecutionOrInputConsumptionProof"
+  },
+  "actions_performed": {
+    "unity_launches": 0,
+    "claims_created": 0,
+    "native_source_mutations": 0,
+    "native_settings_mutations": 0,
+    "library_copies": 0,
+    "restorations": 0,
+    "settings_blanket_exemptions": 0,
+    "r6_result_upgrades": 0
+  },
+  "review_status": "PreparedForRootReview_NotExecutionAuthorization"
+}

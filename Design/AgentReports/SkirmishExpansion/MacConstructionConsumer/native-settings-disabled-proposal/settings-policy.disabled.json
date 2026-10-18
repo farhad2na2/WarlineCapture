@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "execution_authorized": false,
+  "scope": "DisabledSettingsPolicyProposal_ExactThreePathsOnly",
+  "prior_run_result_immutable": true,
+  "old_launch_authority_reusable": false,
+  "candidate_baseline_option": {
+    "status": "Proposed_NotSelectedOrApplied",
+    "project_auditor": {
+      "path": "ProjectSettings/ProjectAuditorSettings.asset",
+      "exact_candidate_sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+      "required": "Review exact configuration; if adopted, create a distinct source commit/candidate and update strict preflight manifest honestly; preserve original a9/r6 baseline",
+      "forbidden": "Untracked-path allowlist, source-manifest exclusion or retroactive old-candidate pass"
+    },
+    "user_settings": {
+      "paths": [
+        "UserSettings/AI.Generators/DragAndDropCache.asset",
+        "UserSettings/Layouts/default-6000.dwlt"
+      ],
+      "required": "Keep outside shared source baseline; capture exact existence/bytes/hash/mode before each separately authorized run",
+      "portability_claim": false,
+      "byte_stability_already_proven": false
+    }
+  },
+  "restoration_option": {
+    "status": "Proposed_RequiresSeparateScopedAuthorizationAndReviewedImplementation",
+    "closed_path_set": [
+      {
+        "path": "ProjectSettings/ProjectAuditorSettings.asset",
+        "currently_observed_sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+        "currently_observed_size": 1036
+      },
+      {
+        "path": "UserSettings/AI.Generators/DragAndDropCache.asset",
+        "currently_observed_sha256": "7438ab184664f10c468643a50b70de9a5d995e5dc420fdaaa64e3348ebc5a1c3",
+        "currently_observed_size": 490
+      },
+      {
+        "path": "UserSettings/Layouts/default-6000.dwlt",
+        "currently_observed_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+        "currently_observed_size": 4500760
+      }
+    ],
+    "never_execute_from_this_json": true,
+    "required_sequence": [
+      "Before any future run, obtain new exact candidate/controller/test/review receipt plus expiring single-run Root authorization; consumed r6 authorization is invalid",
+      "Snapshot full source, ProjectSettings and UserSettings without filtering any path; record original existence and exact bytes of any restore-authorized path into fresh owned evidence directory",
+      "Retain original wrapper Popen and birth-verified descendants through actual exit/reaping and two absence samples; protect unrelated SCN13 and refuse restoration while any Editor owns target project",
+      "Capture immutable RAW after snapshots and raw settings bytes before any restoration; any unexpected path, symlink/reparse, missing identity or original source change fails closed",
+      "Restore only separately authorized paths/states; verify current identity and exact approved post-run hash first. If actual post-run hash is new/unreviewed, fail and preserve rather than overwrite it",
+      "Preserve current post-run file by exclusive no-overwrite same-volume move into the owned evidence directory; restore only exact saved pre-run bytes/existence through reviewed race-resistant atomic operations; never merge YAML or delete evidence",
+      "Capture restored full snapshots separately and require exact pre-run byte/existence equality for all source/settings; preserve raw drift and any earlier failure latch even when post-restoration equality passes",
+      "Report RawSettingsDrift, PostRestorationEquality and OriginalStrictOperationalResult separately; a future policy acceptance requires fresh review, cannot change r6 false to true"
+    ],
+    "no_blanket_exemption": true,
+    "no_unknown_hash_auto_restore": true,
+    "global_gui_preferences": "Native log shows a global layout save; machine-global restoration is not proved or authorized by this three-project-path proposal"
+  },
+  "next_run_contract_prepared": false,
+  "reason_no_runnable_contract": "Current a9 strict preflight rejects generated untracked ProjectAuditor; future candidate adoption, exact restoration implementation/controller, GUI preference policy and new Root authorization remain unresolved. A runnable command would imply authority/identities that do not yet exist.",
+  "required_fresh_native_gates": [
+    "Exact source HEAD,parent,branch,complete status and all source/tool hashes",
+    "Current Hub/auth/module/SDK pins and independent capacity/project ownership checks",
+    "Actual wrapper command/project/log/timeout and tool-session/controller/wrapper birth handles",
+    "Fresh complete before/raw-after/restored-after manifests as applicable, no Library transfer",
+    "Original Popen exit/reaping and full owned-worker shutdown evidence",
+    "Actual marker/negative counts plus honest compiler/environment/frame/normal/device proof limits"
+  ],
+  "all_mission_queue_paid_android_device_credit": false
+}

@@ -1,0 +1,21 @@
+{
+  "observed_utc": "2026-10-18T19:04:46.930551+00:00",
+  "validation": "DisabledPolicyAndExactNativePreservationChecksPassed",
+  "inspected_settings_paths": [
+    "ProjectSettings/ProjectAuditorSettings.asset",
+    "UserSettings/AI.Generators/DragAndDropCache.asset",
+    "UserSettings/Layouts/default-6000.dwlt"
+  ],
+  "three_settings_bytes_identity_and_mtime_unchanged": true,
+  "r6_result_and_full_logs_unchanged": true,
+  "r5_preserved_auditor_file_unchanged": true,
+  "four_native_source_pins_unchanged": true,
+  "launches_claims_source_mutations_restorations": 0,
+  "not_independent_peer_review": true,
+  "root_policy_review_pending": true,
+  "report_pins": {
+    "inspection.json": "2517d7e8fab9c1abd90056e350c7acea0ef7b5f3c5823d38489f06980f08c0a4",
+    "settings-policy.disabled.json": "9230b44a7762fcbf32debcbb39011a720f80d94fefe892d83bb814e7622f7722",
+    "README.md": "4ff26d3e09ca42ede92311ce4f2b992adeaab825c8cafe3ee0519492e6d07df0"
+  }
+}

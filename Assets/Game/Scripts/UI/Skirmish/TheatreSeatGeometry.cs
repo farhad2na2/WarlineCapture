@@ -4220,28 +4220,13 @@ namespace Game.UI.Runtime
         /// <summary>Peak alpha of the feathered border. The fill sits just under this.</summary>
         public const float TerritoryBorderAlpha = 0.36f;
 
-        /// <summary>Fill alpha over the theatre painting. RGB stays a sampled district tint.</summary>
-        public const float TerritoryFillAlpha = 0.30f;
+        /// <summary>Fill alpha over the theatre painting. Low enough that the map stays visible.</summary>
+        public const float TerritoryFillAlpha = 0.20f;
 
         /// <summary>
-        /// How far each sample steps toward the district centre, as a fraction of the
-        /// ray from the centre to the seated outline. The samples are not spaced like
-        /// a hex, and a sample beside the card or the zoom pill stays on the outline.
-        /// Order is Desert Base, Coastal City, the ridge, the basin, Airfield Plains.
-        /// </summary>
-        private static readonly float[][] TerrainCuts =
-        {
-            new[] { 0.36f, 0.08f, 0.28f, 0.44f, 0.14f, 0.22f, 0.40f, 0.10f, 0.32f, 0.18f, 0.26f, 0.12f, 0.38f, 0.16f, 0.30f, 0.20f },
-            new[] { 0.14f, 0.40f, 0.18f, 0.10f, 0.46f, 0.22f, 0.12f, 0.34f, 0.16f, 0.28f, 0.42f, 0.08f, 0.24f, 0.36f, 0.14f, 0.20f },
-            new[] { 0.10f, 0.30f, 0.44f, 0.16f, 0.12f, 0.36f, 0.20f, 0.08f, 0.40f, 0.18f, 0.14f, 0.32f, 0.22f, 0.46f, 0.12f, 0.26f },
-            new[] { 0.32f, 0.12f, 0.20f, 0.38f, 0.10f, 0.28f, 0.44f, 0.16f, 0.08f, 0.34f, 0.22f, 0.14f, 0.30f, 0.18f, 0.42f, 0.24f },
-            new[] { 0.18f, 0.26f, 0.10f, 0.36f, 0.44f, 0.14f, 0.22f, 0.30f, 0.12f, 0.40f, 0.16f, 0.24f, 0.34f, 0.08f, 0.28f, 0.20f }
-        };
-
-        /// <summary>
-        /// Irregular territory on the seated district. Deep cuts land on the open side
-        /// of the card. The card still rests inside by <see cref="InsideMargin"/>, and
-        /// the area stays on the 40000 floor.
+        /// Irregular territory on the seated district. The border is a smooth curve, the
+        /// card still rests inside by <see cref="InsideMargin"/>, and the area stays on
+        /// the 40000 floor.
         /// </summary>
         public static Vec2[] TerritoryAround(Vec2[] hex, Box card, string mapId)
         {
@@ -4249,8 +4234,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Same outline, with the neighbouring seated districts and the zoom pill so a
-        /// lobe cannot cross either.
+        /// Same outline, with the neighbouring seated districts and the zoom pill so the
+        /// curve cannot cross either.
         /// </summary>
         public static Vec2[] TerritoryAround(Vec2[] hex, Box card, string mapId, Vec2[][] others, Box cue)
         {
@@ -4270,24 +4255,181 @@ namespace Game.UI.Runtime
             return RestsInside(card, territory, InsideMargin);
         }
 
-        private static float[] TerrainCutsFor(string mapId)
-        {
-            int index = IndexOf(mapId);
-            if (index < 0 || index >= TerrainCuts.Length)
-                index = 0;
-            return TerrainCuts[index];
-        }
-
         /// <summary>
-        /// Starts from the seated outline, which already holds the card, and accepts a
-        /// terrain bite or a lobe only when the card, the area floor, the neighbours,
-        /// and the zoom pill still hold.
+        /// Smooth organic border. A low-frequency wave sets the radius inside the seated
+        /// hex, and a closed Catmull-Rom spline draws the curve. Tight rays stay on the
+        /// hex so the card and the zoom pill are not cut. The samples are not a sawtooth.
         /// </summary>
         private static Vec2[] BuildLegalTerrain(Vec2[] hex, Box card, string mapId, Vec2[][] others, Box cue)
         {
-            float[] cuts = TerrainCutsFor(mapId);
-            float cx = 0f;
-            float cy = 0f;
+            CentroidOf(hex, out float cx, out float cy);
+            int district = IndexOf(mapId);
+            if (district < 0)
+                district = 0;
+            float phase = (district + 1) * 0.91f;
+            Box pill = cue.W > 1f
+                ? new Box(cue.X - CueHexStroke, cue.Y - CueHexStroke, cue.W + CueHexStroke * 2f, cue.H + CueHexStroke * 2f)
+                : default;
+            float[] depth = { 0.16f, 0.10f, 0.06f };
+            for (int step = 0; step < depth.Length; step++)
+            {
+                Vec2[] shape = SmoothTerritory(hex, card, cx, cy, phase, depth[step], pill, others, true);
+                if (SmoothWhy(shape, card, hex, others, pill) == null && RadialRoughness(shape) <= 0.22f)
+                    return shape;
+            }
+
+            float[] bay = { 0.18f, 0.10f };
+            for (int step = 0; step < bay.Length; step++)
+            {
+                Vec2[] shape = BuildEdgeWave(hex, card, cx, cy, phase, bay[step], pill, others);
+                if (SmoothWhy(shape, card, hex, others, pill) == null && RadialRoughness(shape) <= 0.22f)
+                    return shape;
+            }
+
+            Vec2[] filleted = FilletOpenCorners(hex, card, pill, others);
+            if (filleted != null && filleted.Length > hex.Length
+                && SmoothWhy(filleted, card, hex, others, pill) == null
+                && RadialRoughness(filleted) <= 0.35f)
+                return filleted;
+
+            return hex;
+        }
+
+        /// <summary>Rounds seated corners that sit well clear of the card. Tight corners stay.</summary>
+        private static Vec2[] FilletOpenCorners(Vec2[] hex, Box card, Box pill, Vec2[][] others)
+        {
+            if (hex == null || hex.Length < 3)
+                return null;
+            var shape = new List<Vec2>(hex.Length * 3);
+            bool cut = false;
+            int count = hex.Length;
+            for (int i = 0; i < count; i++)
+            {
+                Vec2 previous = hex[(i - 1 + count) % count];
+                Vec2 corner = hex[i];
+                Vec2 next = hex[(i + 1) % count];
+                float spare = card.W >= 1f ? ClearOfRect(corner, card) - 26f : 40f;
+                if (pill.W > 1f)
+                {
+                    float pillSpare = ClearOfRect(corner, pill) - 30f;
+                    if (pillSpare < spare)
+                        spare = pillSpare;
+                }
+
+                if (spare < 8f || InsideNeighbour(corner, hex, others))
+                {
+                    shape.Add(corner);
+                    continue;
+                }
+
+                var lead = new Vec2(previous.X * 0.28f + corner.X * 0.72f, previous.Y * 0.28f + corner.Y * 0.72f);
+                var trail = new Vec2(corner.X * 0.72f + next.X * 0.28f, corner.Y * 0.72f + next.Y * 0.28f);
+                var bow = new Vec2((lead.X + trail.X) * 0.5f, (lead.Y + trail.Y) * 0.5f);
+                if ((card.W >= 1f && (ClearOfRect(lead, card) < 16f || ClearOfRect(trail, card) < 16f || ClearOfRect(bow, card) < 16f))
+                    || InsideNeighbour(lead, hex, others) || InsideNeighbour(trail, hex, others) || InsideNeighbour(bow, hex, others))
+                {
+                    shape.Add(corner);
+                    continue;
+                }
+
+                shape.Add(lead);
+                shape.Add(bow);
+                shape.Add(trail);
+                cut = true;
+            }
+
+            return cut ? shape.ToArray() : null;
+        }
+
+        /// <summary>
+        /// Keeps every seated corner and bows each open edge inward on a sine arc.
+        /// Tight edges stay straight, so the card and the pill are not cut.
+        /// </summary>
+        private static Vec2[] BuildEdgeWave(
+            Vec2[] hex,
+            Box card,
+            float cx,
+            float cy,
+            float phase,
+            float depth,
+            Box pill,
+            Vec2[][] others)
+        {
+            if (hex == null || hex.Length < 3)
+                return null;
+            var shape = new List<Vec2>(hex.Length * 5);
+            int count = hex.Length;
+            bool bowed = false;
+            for (int i = 0; i < count; i++)
+            {
+                Vec2 start = hex[i];
+                Vec2 end = hex[(i + 1) % count];
+                shape.Add(start);
+                var mid = new Vec2((start.X + end.X) * 0.5f, (start.Y + end.Y) * 0.5f);
+                float spare = card.W >= 1f ? ClearOfRect(mid, card) - 30f : 80f;
+                if (pill.W > 1f)
+                {
+                    float pillSpare = ClearOfRect(mid, pill) - 36f;
+                    if (pillSpare < spare)
+                        spare = pillSpare;
+                }
+
+                if (spare < 12f)
+                    continue;
+                float wave = 0.45f + 0.55f * (float)Math.Sin(i * 1.7f + phase);
+                if (wave < 0.2f)
+                    wave = 0.2f;
+                float bulge = spare * 0.35f * wave;
+                float cap = Distance(mid, new Vec2(cx, cy)) * depth;
+                if (cap > 22f)
+                    cap = 22f;
+                if (bulge > cap)
+                    bulge = cap;
+                if (bulge < 8f)
+                    continue;
+                float nx = cx - mid.X;
+                float ny = cy - mid.Y;
+                float normal = (float)Math.Sqrt(nx * nx + ny * ny);
+                if (normal < 1f)
+                    continue;
+                nx /= normal;
+                ny /= normal;
+                var arc = new Vec2[5];
+                bool clear = true;
+                for (int s = 1; s <= 5; s++)
+                {
+                    float t = s / 6f;
+                    float lift = (float)Math.Sin(Math.PI * t) * bulge;
+                    var point = new Vec2(
+                        start.X + (end.X - start.X) * t + nx * lift,
+                        start.Y + (end.Y - start.Y) * t + ny * lift);
+                    if (card.W >= 1f && ClearOfRect(point, card) < 18f)
+                        clear = false;
+                    if (pill.W > 1f && ClearOfRect(point, pill) < 24f)
+                        clear = false;
+                    if (InsideNeighbour(point, hex, others))
+                        clear = false;
+                    arc[s - 1] = point;
+                }
+
+                if (!clear)
+                    continue;
+                for (int s = 0; s < arc.Length; s++)
+                    shape.Add(arc[s]);
+                bowed = true;
+            }
+
+            if (!bowed)
+                return null;
+            return shape.ToArray();
+        }
+
+        private static void CentroidOf(Vec2[] hex, out float cx, out float cy)
+        {
+            cx = 0f;
+            cy = 0f;
+            if (hex == null || hex.Length == 0)
+                return;
             for (int i = 0; i < hex.Length; i++)
             {
                 cx += hex[i].X;
@@ -4296,158 +4438,369 @@ namespace Game.UI.Runtime
 
             cx /= hex.Length;
             cy /= hex.Length;
-            int district = IndexOf(mapId);
-            if (district < 0)
-                district = 0;
-            float phase = (district + 1) * 0.41f;
-            Box pill = cue.W > 1f
-                ? new Box(cue.X - CueHexStroke, cue.Y - CueHexStroke, cue.W + CueHexStroke * 2f, cue.H + CueHexStroke * 2f)
-                : default;
-            var shape = new List<Vec2>(hex.Length + cuts.Length);
-            for (int i = 0; i < hex.Length; i++)
-                shape.Add(hex[i]);
-            float[] scales = { 1f, 0.72f, 0.48f };
-            for (int scaleIndex = 0; scaleIndex < scales.Length; scaleIndex++)
+        }
+
+        private static Vec2[] SmoothTerritory(Vec2[] hex, Box card, float cx, float cy, float phase, float depth, Box pill, Vec2[][] others, bool spline)
+        {
+            const int count = 36;
+            const float tau = 6.2831853f;
+            var angle = new float[count];
+            var reach = new float[count];
+            var limit = new float[count];
+            for (int i = 0; i < count; i++)
             {
-                float scale = scales[scaleIndex];
-                for (int i = 0; i < cuts.Length; i++)
+                angle[i] = (i + 0.5f) / count * tau;
+                float dx = (float)Math.Cos(angle[i]);
+                float dy = (float)Math.Sin(angle[i]);
+                Vec2 boundary = BoundaryAt(hex, cx, cy, dx, dy);
+                float far = Distance(new Vec2(cx, cy), boundary);
+                if (far < 1f)
+                    far = 1f;
+                float open = card.W >= 1f ? ClearOfRect(boundary, card) : 999f;
+                float spare = open - 28f;
+                if (spare < 0f)
+                    spare = 0f;
+                if (pill.W > 1f)
                 {
-                    float turn = (i + 0.37f + phase) / cuts.Length * 6.2831853f;
-                    float dx = (float)Math.Cos(turn);
-                    float dy = (float)Math.Sin(turn);
-                    Vec2 boundary = BoundaryAt(hex, cx, cy, dx, dy);
-                    float reach = Distance(new Vec2(cx, cy), boundary);
-                    if (reach < 1f)
-                        continue;
-                    float open = ClearOfRect(boundary, card);
-                    float pillClear = pill.W > 1f ? ClearOfRect(boundary, pill) : 999f;
-                    if (pillClear < 42f || open < 22f)
-                        continue;
-                    float cut = cuts[i] * scale;
-                    if (open < 40f)
-                        cut *= open / 40f;
-                    if (cut > 0.46f)
-                        cut = 0.46f;
-                    float gap = GapToOthers(boundary, hex, others);
-                    float outward = 0f;
-                    if (gap > 18f && open > 26f)
-                    {
-                        outward = gap - 12f;
-                        float cap = reach * 0.18f;
-                        if (outward > cap)
-                            outward = cap;
-                        if (outward > 26f)
-                            outward = 26f;
-                    }
-
-                    // A lobe and a bite on the same ray cancel the silhouette. Prefer the bite.
-                    float dist = reach * (1f - cut);
-                    if (cut < 0.12f && outward > 8f)
-                        dist = reach + outward;
-                    Vec2 point = new Vec2(cx + dx * dist, cy + dy * dist);
-                    if (!AcceptTerrainPoint(shape, point, cx, cy, card, hex, others, pill))
-                        continue;
+                    float pillSpare = ClearOfRect(boundary, pill) - 36f;
+                    if (pillSpare < spare)
+                        spare = pillSpare > 0f ? pillSpare : 0f;
                 }
+
+                float cap = far * depth;
+                if (spare > cap)
+                    spare = cap;
+                reach[i] = spare > 2f ? far - 1.5f : far;
+                limit[i] = reach[i] - spare;
+                float floor = far * 0.64f;
+                if (limit[i] < floor)
+                    limit[i] = floor;
+                if (limit[i] > reach[i])
+                    limit[i] = reach[i];
             }
 
-            if (shape.Count <= hex.Length)
+            BlurCircular(limit, 2);
+            for (int i = 0; i < count; i++)
             {
-                // One shallow bite on the open side, so a tight district is still not a hex.
-                int far = FarthestSample(hex, card, pill);
-                if (far >= 0)
+                if (limit[i] > reach[i])
+                    limit[i] = reach[i];
+                float floor = reach[i] * 0.64f;
+                if (limit[i] < floor)
+                    limit[i] = floor;
+            }
+
+            var controls = new Vec2[count];
+            for (int i = 0; i < count; i++)
+            {
+                float wave = 0.55f
+                    + 0.30f * (float)Math.Sin(2f * angle[i] + phase)
+                    + 0.15f * (float)Math.Sin(3f * angle[i] + phase * 1.7f);
+                if (wave < 0f)
+                    wave = 0f;
+                if (wave > 1f)
+                    wave = 1f;
+                float radius = reach[i] - (reach[i] - limit[i]) * wave;
+                controls[i] = new Vec2(
+                    cx + (float)Math.Cos(angle[i]) * radius,
+                    cy + (float)Math.Sin(angle[i]) * radius);
+            }
+
+            Vec2[] curved = spline ? CatmullRomClosed(controls, 2) : controls;
+            for (int i = 0; i < curved.Length; i++)
+            {
+                float dx = curved[i].X - cx;
+                float dy = curved[i].Y - cy;
+                float len = (float)Math.Sqrt(dx * dx + dy * dy);
+                if (len < 0.001f)
+                    continue;
+                float ux = dx / len;
+                float uy = dy / len;
+                Vec2 boundary = BoundaryAt(hex, cx, cy, ux, uy);
+                float far = Distance(new Vec2(cx, cy), boundary);
+                float ang = (float)Math.Atan2(dy, dx);
+                if (ang < 0f)
+                    ang += tau;
+                float near = SampleRing(limit, angle, ang);
+                if (near > far)
+                    near = far;
+                float use = len;
+                if (use > far)
+                    use = far;
+                if (use < near)
+                    use = near;
+                var point = new Vec2(cx + ux * use, cy + uy * use);
+                if (card.W >= 1f && ClearOfRect(point, card) < 22f)
+                    point = PushToClear(cx, cy, ux, uy, use, far, card, 22f);
+                if (pill.W > 1f && ClearOfRect(point, pill) < 30f)
+                    point = PushToClear(cx, cy, ux, uy, Distance(new Vec2(cx, cy), point), far, pill, 30f);
+                curved[i] = point;
+            }
+
+            PullOutOfNeighbours(curved, cx, cy, hex, others, card);
+            RelaxOffBlock(curved, cx, cy, hex, card, 18f);
+            RelaxOffBlock(curved, cx, cy, hex, pill, 28f);
+            PullOutOfNeighbours(curved, cx, cy, hex, others, card);
+            RelaxOffBlock(curved, cx, cy, hex, card, 18f);
+            return curved;
+        }
+
+        /// <summary>Walks a sample toward the seated outline until it clears the block.</summary>
+        private static void RelaxOffBlock(Vec2[] shape, float cx, float cy, Vec2[] hex, Box block, float gap)
+        {
+            if (shape == null || block.W < 1f || block.H < 1f)
+                return;
+            var grown = new Box(block.X - gap, block.Y - gap, block.W + gap * 2f, block.H + gap * 2f);
+            for (int pass = 0; pass < 8; pass++)
+            {
+                bool hit = false;
+                for (int i = 0; i < shape.Length; i++)
                 {
-                    Vec2 vertex = hex[far];
-                    float dx = vertex.X - cx;
-                    float dy = vertex.Y - cy;
-                    float len = (float)Math.Sqrt(dx * dx + dy * dy);
-                    if (len > 1f)
-                    {
-                        Vec2 point = new Vec2(cx + dx / len * (len * 0.82f), cy + dy / len * (len * 0.82f));
-                        AcceptTerrainPoint(shape, point, cx, cy, card, hex, others, pill);
-                    }
+                    Vec2 next = shape[(i + 1) % shape.Length];
+                    bool close = ClearOfRect(shape[i], block) < gap || SegmentHitsRect(shape[i], next, grown);
+                    if (!close)
+                        continue;
+                    hit = true;
+                    shape[i] = StepTowardHex(shape[i], cx, cy, hex, 0.5f);
                 }
+
+                if (!hit)
+                    return;
             }
-
-            return OrderByAngle(shape, cx, cy);
         }
 
-        private static bool AcceptTerrainPoint(
-            List<Vec2> shape,
-            Vec2 point,
-            float cx,
-            float cy,
-            Box card,
-            Vec2[] hex,
-            Vec2[][] others,
-            Box pill)
+        private static Vec2 StepTowardHex(Vec2 point, float cx, float cy, Vec2[] hex, float gain)
         {
-            var trial = new List<Vec2>(shape.Count + 1);
-            for (int i = 0; i < shape.Count; i++)
-                trial.Add(shape[i]);
-            trial.Add(point);
-            Vec2[] ordered = OrderByAngle(trial, cx, cy);
-            if (card.W >= 1f && card.H >= 1f && !RestsInside(card, ordered, InsideMargin))
-                return false;
-            if (PolygonArea(ordered) + 0.5f < 40000f && PolygonArea(hex) + 0.5f >= 40000f)
-                return false;
-            if (EntersOther(point, hex, others) || NewEdgeEntersOther(ordered, point, hex, others))
-                return false;
-            if (pill.W > 1f && HexEdgeHits(ordered, pill))
-                return false;
-            shape.Clear();
-            for (int i = 0; i < ordered.Length; i++)
-                shape.Add(ordered[i]);
-            return true;
+            float dx = point.X - cx;
+            float dy = point.Y - cy;
+            float len = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (len < 0.001f)
+                return point;
+            float ux = dx / len;
+            float uy = dy / len;
+            Vec2 boundary = BoundaryAt(hex, cx, cy, ux, uy);
+            float far = Distance(new Vec2(cx, cy), boundary);
+            float use = len + (far - len) * gain;
+            if (use > far)
+                use = far;
+            if (use < len)
+                use = len;
+            return new Vec2(cx + ux * use, cy + uy * use);
         }
 
-        private static int FarthestSample(Vec2[] hex, Box card, Box pill)
+        private static void PullOutOfNeighbours(Vec2[] shape, float cx, float cy, Vec2[] own, Vec2[][] others, Box card)
         {
-            int far = -1;
-            float best = -1f;
-            for (int i = 0; i < hex.Length; i++)
+            if (shape == null || others == null)
+                return;
+            for (int pass = 0; pass < 6; pass++)
             {
-                if (pill.W > 1f && ClearOfRect(hex[i], pill) < 42f)
-                    continue;
-                float open = ClearOfRect(hex[i], card);
-                if (open <= best)
-                    continue;
-                best = open;
-                far = i;
-            }
+                bool hit = false;
+                for (int i = 0; i < shape.Length; i++)
+                {
+                    if (!InsideNeighbour(shape[i], own, others))
+                        continue;
+                    var pulled = new Vec2(
+                        shape[i].X + (cx - shape[i].X) * 0.18f,
+                        shape[i].Y + (cy - shape[i].Y) * 0.18f);
+                    if (card.W >= 1f && ClearOfRect(pulled, card) < 16f)
+                        continue;
+                    hit = true;
+                    shape[i] = pulled;
+                }
 
-            return best >= 22f ? far : -1;
+                if (!hit)
+                    return;
+            }
         }
 
-        private static bool NewEdgeEntersOther(Vec2[] shape, Vec2 point, Vec2[] own, Vec2[][] others)
+        private static Vec2 PushToClear(float cx, float cy, float ux, float uy, float inner, float outer, Box block, float gap)
         {
-            if (shape == null)
+            float lo = inner;
+            float hi = outer;
+            if (hi < lo)
+                hi = lo;
+            for (int step = 0; step < 8; step++)
+            {
+                float mid = (lo + hi) * 0.5f;
+                var trial = new Vec2(cx + ux * mid, cy + uy * mid);
+                if (ClearOfRect(trial, block) < gap)
+                    lo = mid;
+                else
+                    hi = mid;
+            }
+
+            return new Vec2(cx + ux * hi, cy + uy * hi);
+        }
+
+        private static float RadialRoughness(Vec2[] shape)
+        {
+            if (shape == null || shape.Length < 4)
+                return 99f;
+            float cx = 0f;
+            float cy = 0f;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                cx += shape[i].X;
+                cy += shape[i].Y;
+            }
+
+            cx /= shape.Length;
+            cy /= shape.Length;
+            var radius = new float[shape.Length];
+            float mean = 0f;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                float dx = shape[i].X - cx;
+                float dy = shape[i].Y - cy;
+                radius[i] = (float)Math.Sqrt(dx * dx + dy * dy);
+                mean += radius[i];
+            }
+
+            mean /= shape.Length;
+            if (mean < 1f)
+                return 99f;
+            float worst = 0f;
+            int count = radius.Length;
+            for (int i = 0; i < count; i++)
+            {
+                float second = Math.Abs(radius[(i - 1 + count) % count] - 2f * radius[i] + radius[(i + 1) % count]);
+                if (second > worst)
+                    worst = second;
+            }
+
+            return worst / mean;
+        }
+
+        private static bool SmoothHolds(Vec2[] shape, Box card, Vec2[] hex, Vec2[][] others, Box pill)
+        {
+            return SmoothWhy(shape, card, hex, others, pill) == null;
+        }
+
+        private static string SmoothWhy(Vec2[] shape, Box card, Vec2[] hex, Vec2[][] others, Box pill)
+        {
+            if (shape == null || shape.Length < 6)
+                return "short";
+            if (card.W >= 1f && card.H >= 1f && !RestsInside(card, shape, InsideMargin))
+                return "inside";
+            if (PolygonArea(shape) + 0.5f < 40000f && PolygonArea(hex) + 0.5f >= 40000f)
+                return "area";
+            if (pill.W > 1f && HexEdgeHits(shape, pill))
+                return "pill";
+            if (CrossesOther(shape, hex, others))
+                return "neighbour";
+            return null;
+        }
+
+        /// <summary>True when a sample or an edge midpoint sits inside a neighbouring district.</summary>
+        private static bool CrossesOther(Vec2[] shape, Vec2[] own, Vec2[][] others)
+        {
+            if (shape == null || others == null)
                 return false;
             for (int i = 0; i < shape.Length; i++)
             {
-                if (Distance(shape[i], point) > 0.1f)
-                    continue;
-                Vec2 prev = shape[(i - 1 + shape.Length) % shape.Length];
+                Vec2 point = shape[i];
                 Vec2 next = shape[(i + 1) % shape.Length];
-                Vec2 midA = new Vec2((prev.X + point.X) * 0.5f, (prev.Y + point.Y) * 0.5f);
-                Vec2 midB = new Vec2((next.X + point.X) * 0.5f, (next.Y + point.Y) * 0.5f);
-                return EntersOther(midA, own, others) || EntersOther(midB, own, others);
+                var mid = new Vec2((point.X + next.X) * 0.5f, (point.Y + next.Y) * 0.5f);
+                if (InsideNeighbour(point, own, others) || InsideNeighbour(mid, own, others))
+                    return true;
             }
 
             return false;
         }
 
-        private static Vec2[] OrderByAngle(List<Vec2> points, float cx, float cy)
+        private static bool InsideNeighbour(Vec2 point, Vec2[] own, Vec2[][] others)
         {
-            points.Sort(delegate(Vec2 a, Vec2 b)
+            for (int i = 0; i < others.Length; i++)
             {
-                float aa = (float)Math.Atan2(a.Y - cy, a.X - cx);
-                float bb = (float)Math.Atan2(b.Y - cy, b.X - cx);
-                return aa.CompareTo(bb);
-            });
-            var ordered = new Vec2[points.Count];
-            for (int i = 0; i < points.Count; i++)
-                ordered[i] = points[i];
-            return ordered;
+                Vec2[] shape = others[i];
+                if (shape == null || shape.Length < 3 || ReferenceEquals(shape, own))
+                    continue;
+                if (PointInPolygon(point, shape))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void BlurCircular(float[] values, int passes)
+        {
+            if (values == null || values.Length < 3 || passes < 1)
+                return;
+            var next = new float[values.Length];
+            for (int pass = 0; pass < passes; pass++)
+            {
+                int n = values.Length;
+                for (int i = 0; i < n; i++)
+                {
+                    float prev = values[(i - 1 + n) % n];
+                    float follow = values[(i + 1) % n];
+                    next[i] = prev * 0.25f + values[i] * 0.5f + follow * 0.25f;
+                }
+
+                for (int i = 0; i < n; i++)
+                    values[i] = next[i];
+            }
+        }
+
+        private static float SampleRing(float[] values, float[] angles, float ang)
+        {
+            int n = values.Length;
+            const float tau = 6.2831853f;
+            if (ang < angles[0])
+                ang += tau;
+            for (int i = 0; i < n; i++)
+            {
+                float start = angles[i];
+                float end = i + 1 < n ? angles[i + 1] : angles[0] + tau;
+                if (ang + 0.0001f < start || ang > end + 0.0001f)
+                    continue;
+                float span = end - start;
+                float t = span > 0.0001f ? (ang - start) / span : 0f;
+                if (t < 0f)
+                    t = 0f;
+                if (t > 1f)
+                    t = 1f;
+                return values[i] + (values[(i + 1) % n] - values[i]) * t;
+            }
+
+            return values[0];
+        }
+
+        private static Vec2 Catmull(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, float t)
+        {
+            float t2 = t * t;
+            float t3 = t2 * t;
+            float x = 0.5f * ((2f * p1.X)
+                + (-p0.X + p2.X) * t
+                + (2f * p0.X - 5f * p1.X + 4f * p2.X - p3.X) * t2
+                + (-p0.X + 3f * p1.X - 3f * p2.X + p3.X) * t3);
+            float y = 0.5f * ((2f * p1.Y)
+                + (-p0.Y + p2.Y) * t
+                + (2f * p0.Y - 5f * p1.Y + 4f * p2.Y - p3.Y) * t2
+                + (-p0.Y + 3f * p1.Y - 3f * p2.Y + p3.Y) * t3);
+            return new Vec2(x, y);
+        }
+
+        private static Vec2[] CatmullRomClosed(Vec2[] controls, int steps)
+        {
+            int n = controls.Length;
+            if (steps < 1)
+                steps = 1;
+            var curved = new Vec2[n * steps];
+            int write = 0;
+            for (int i = 0; i < n; i++)
+            {
+                Vec2 p0 = controls[(i - 1 + n) % n];
+                Vec2 p1 = controls[i];
+                Vec2 p2 = controls[(i + 1) % n];
+                Vec2 p3 = controls[(i + 2) % n];
+                for (int s = 0; s < steps; s++)
+                {
+                    curved[write] = Catmull(p0, p1, p2, p3, s / (float)steps);
+                    write++;
+                }
+            }
+
+            return curved;
         }
 
         /// <summary>Pushes any sample that crowds the card back out to the seated outline.</summary>

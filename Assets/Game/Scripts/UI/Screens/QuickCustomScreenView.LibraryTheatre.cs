@@ -1749,6 +1749,9 @@ namespace Game.UI.Runtime
             polygon.Configure(local, tint);
             polygon.material = null;
             PlaceDistrictHalo(root, local, tint);
+            Color dash = tint;
+            dash.a = 0.5f;
+            PlaceSoftDashes(root, local, dash);
         }
 
         /// <summary>
@@ -1811,6 +1814,40 @@ namespace Game.UI.Runtime
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
             image.rectTransform.localScale = Vector3.one;
             image.rectTransform.SetAsLastSibling();
+        }
+
+        /// <summary>
+        /// Thin broken edge along the smooth border. Alpha stays under the hard-hex
+        /// stroke test, and the name is not HexEdge.
+        /// </summary>
+        private static void PlaceSoftDashes(RectTransform root, Vector2[] localPoints, Color color)
+        {
+            if (root == null || localPoints == null || localPoints.Length < 6)
+                return;
+            const float thickness = 2f;
+            for (int i = 0; i < localPoints.Length; i += 2)
+            {
+                Vector2 a = localPoints[i];
+                Vector2 b = localPoints[(i + 1) % localPoints.Length];
+                float dx = b.x - a.x;
+                float dy = b.y - a.y;
+                float length = Mathf.Sqrt(dx * dx + dy * dy);
+                if (length < 1.5f)
+                    continue;
+                var edge = new GameObject("TerritoryDash", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                edge.transform.SetParent(root, false);
+                edge.sprite = ZoneSolidSprite();
+                edge.type = Image.Type.Simple;
+                edge.color = color;
+                edge.raycastTarget = false;
+                RectTransform rect = edge.rectTransform;
+                rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.sizeDelta = new Vector2(length, thickness);
+                rect.anchoredPosition = new Vector2((a.x + b.x) * 0.5f, -((a.y + b.y) * 0.5f));
+                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(-(b.y - a.y), b.x - a.x) * Mathf.Rad2Deg);
+                rect.localScale = Vector3.one;
+            }
         }
 
         private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad, Color color)
@@ -4207,6 +4244,7 @@ namespace Game.UI.Runtime
                     continue;
             }
 
+            ReseatFramedCards(regions);
         }
 
         private const float ZoneNameFontCeiling = 32f;
@@ -4776,6 +4814,91 @@ namespace Game.UI.Runtime
                 countNode.SetAsLastSibling();
             if (countNode != null && countNode.TryGetComponent<TMP_Text>(out var count))
                 FitCopyInside(count, 11f);
+            EnsureCardFrame(card, cardW, cardH);
+        }
+
+        /// <summary>
+        /// Last pass on every zone card. The shared name lock writes 20px and can
+        /// overflow the strip; this puts the title back in the strip at a size that
+        /// fits, and fits the count inside its column.
+        /// </summary>
+        private static void ReseatFramedCards(Transform regions)
+        {
+            if (regions == null)
+                return;
+            for (int i = 0; i < regions.childCount; i++)
+            {
+                Transform child = regions.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
+                    continue;
+                float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+                float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+                float stripH = NameStripHeight(cardH);
+                float stripY = Mathf.Max(0f, cardH - stripH);
+                EnsureCardFrame(card, cardW, cardH);
+                if (card.Find("NameShade") is RectTransform shade)
+                {
+                    PlaceTopLeft(shade, 0f, stripY, Mathf.Max(8f, cardW), stripH);
+                    KeepAuthoredSize(shade);
+                }
+
+                if (card.Find("ZoneName") is RectTransform title && title.TryGetComponent(out TMP_Text titleText))
+                {
+                    PlaceTopLeft(title, 2f, stripY, Mathf.Max(8f, cardW - 4f), stripH);
+                    title.localScale = Vector3.one;
+                    KeepAuthoredSize(title);
+                    bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                    titleText.alignment = farsi ? TextAlignmentOptions.BottomRight : TextAlignmentOptions.BottomLeft;
+                    titleText.isRightToLeftText = farsi && ZoneNameIsFarsi(titleText);
+                    titleText.characterSpacing = 0f;
+                    SeatNameCopyInStrip(titleText, stripH);
+                    ClampNameInsideCard(title, cardW, cardH);
+                    title.SetAsLastSibling();
+                }
+
+                if (card.Find("ZoneCount") is RectTransform countRect && countRect.TryGetComponent(out TMP_Text countLabel))
+                {
+                    float countW = ZoneCountColumn(countLabel, cardW);
+                    const float countH = 18f;
+                    const float pad = 2f;
+                    bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                    float countX = farsi ? Mathf.Max(pad, cardW - pad - countW) : pad;
+                    float countY = Mathf.Max(pad, stripY - countH - 2f);
+                    if (countX + countW > cardW - pad)
+                        countW = Mathf.Max(8f, cardW - pad - countX);
+                    PlaceTopLeft(countRect, countX, countY, countW, countH);
+                    KeepAuthoredSize(countRect);
+                    countLabel.alignment = TextAlignmentOptions.Center;
+                    countLabel.characterSpacing = 0f;
+                    FitCopyInside(countLabel, 11f);
+                    countRect.SetAsLastSibling();
+                }
+            }
+        }
+
+        private static void EnsureCardFrame(RectTransform card, float cardW, float cardH)
+        {
+            if (card == null || cardW < 8f || cardH < 8f)
+                return;
+            RectTransform frame = card.Find("ZoneFrame") as RectTransform;
+            Image image;
+            if (frame == null)
+            {
+                image = new GameObject("ZoneFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                image.transform.SetParent(card, false);
+                frame = image.rectTransform;
+            }
+            else if (!frame.TryGetComponent(out image))
+                image = frame.gameObject.AddComponent<Image>();
+            image.sprite = ZoneFrameSprite();
+            image.type = Image.Type.Sliced;
+            image.color = Color.white;
+            image.raycastTarget = false;
+            PlaceTopLeft(frame, 0f, 0f, cardW, cardH);
+            frame.localScale = Vector3.one;
+            KeepAuthoredSize(frame);
+            if (card.Find("ThumbFrame") is RectTransform thumb)
+                frame.SetSiblingIndex(thumb.GetSiblingIndex() + 1);
         }
 
         /// <summary>
@@ -4869,10 +4992,10 @@ namespace Game.UI.Runtime
             return shade;
         }
 
-        /// <summary>Bottom strip, never more than 22% of the card. Capture rejects a share above 0.25.</summary>
+        /// <summary>Bottom strip, 24% of the card. Capture rejects a share above 0.25.</summary>
         private static float NameStripHeight(float cardH)
         {
-            float strip = cardH * 0.22f;
+            float strip = cardH * 0.24f;
             if (strip < 1f)
                 strip = 1f;
             if (strip > cardH)
@@ -4919,6 +5042,10 @@ namespace Game.UI.Runtime
             float floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : LatinNameFloor;
             if (ZoneNameIsFarsi(name))
                 floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : TheatreSeatGeometry.NameFontFloor;
+            // A 20px pair does not fit a 24% strip on a 140px tile. Stepping under
+            // that floor keeps the line inside the strip instead of overflowing it.
+            if (stripH < 46f && floor > 12f)
+                floor = 12f;
             // Tracking stays at 0. Leading may close until two lines sit in the strip.
             // Character spacing at −48 was what turned the titles into 'MONTAS'.
             float[] lead = { 0f, -16f, -32f, -48f, -64f, -80f, -96f, -112f };
@@ -5303,7 +5430,10 @@ namespace Game.UI.Runtime
             }
 
             if (names.Count == 0)
+            {
+                ReseatFramedCards(regions);
                 return;
+            }
             float chosen = ZoneNameFontFloor;
             bool fitted = false;
             for (float candidate = ZoneNameFontCeiling; candidate >= ZoneNameFontFloor - 0.01f; candidate -= 1f)
@@ -5317,6 +5447,7 @@ namespace Game.UI.Runtime
 
             ApplyZoneNameSize(names, chosen, wrapOverflow: !fitted);
             FitPortraitNameBoxes(regions);
+            ReseatFramedCards(regions);
         }
 
         private static bool ZoneCardIsCompact(TMP_Text name)
@@ -6396,13 +6527,13 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.90f, 0.42f, 0.16f, 1f);
-                case "MP": return new Color(0.62f, 0.32f, 0.78f, 1f);
-                case "IB": return new Color(0.22f, 0.48f, 0.86f, 1f);
-                case "AP": return new Color(0.28f, 0.70f, 0.36f, 1f);
-                case "DB": return new Color(0.92f, 0.72f, 0.18f, 1f);
+                case "CC": return new Color(0.68f, 0.38f, 0.20f, 1f);
+                case "MP": return new Color(0.52f, 0.36f, 0.66f, 1f);
+                case "IB": return new Color(0.28f, 0.48f, 0.70f, 1f);
+                case "AP": return new Color(0.30f, 0.58f, 0.28f, 1f);
+                case "DB": return new Color(0.62f, 0.50f, 0.22f, 1f);
                 default:
-                    return fallback.a > 0f ? fallback : new Color(0.92f, 0.72f, 0.18f, 1f);
+                    return fallback.a > 0f ? fallback : new Color(0.62f, 0.50f, 0.22f, 1f);
             }
         }
 
@@ -6410,11 +6541,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.90f, 0.42f, 0.16f, 1f);
-                case "MP": return new Color(0.62f, 0.32f, 0.78f, 1f);
-                case "IB": return new Color(0.22f, 0.48f, 0.86f, 1f);
-                case "AP": return new Color(0.28f, 0.70f, 0.36f, 1f);
-                default: return new Color(0.92f, 0.72f, 0.18f, 1f);
+                case "CC": return new Color(0.68f, 0.38f, 0.20f, 1f);
+                case "MP": return new Color(0.52f, 0.36f, 0.66f, 1f);
+                case "IB": return new Color(0.28f, 0.48f, 0.70f, 1f);
+                case "AP": return new Color(0.30f, 0.58f, 0.28f, 1f);
+                default: return new Color(0.62f, 0.50f, 0.22f, 1f);
             }
         }
 
@@ -6747,7 +6878,42 @@ namespace Game.UI.Runtime
         private static Sprite _zonePill;
         private static Sprite _zoneVignette;
         private static Sprite _nameVeil;
+        private static Sprite _zoneFrame;
         private static Sprite _zoneThinArc;
+
+        private static Sprite ZoneFrameSprite()
+        {
+            if (_zoneFrame != null)
+                return _zoneFrame;
+            const int size = 16;
+            const int rim = 3;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            var ink = new Color32(28, 22, 16, 235);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    bool edge = x < rim || y < rim || x >= size - rim || y >= size - rim;
+                    pixels[y * size + x] = edge ? ink : new Color32(0, 0, 0, 0);
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zoneFrame = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, size, size),
+                new Vector2(0.5f, 0.5f),
+                100f,
+                0,
+                SpriteMeshType.FullRect,
+                new Vector4(rim, rim, rim, rim),
+                false);
+            _zoneFrame.hideFlags = HideFlags.HideAndDontSave;
+            return _zoneFrame;
+        }
 
         private static Sprite ZonePillSprite()
         {

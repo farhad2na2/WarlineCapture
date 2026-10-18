@@ -1609,7 +1609,7 @@ namespace Game.UI.Runtime
                 : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
                 ? new[] { 64f, 40f, 30f, 188f, 80f, 84f, 104f, 52f } /* v34: taller MAP/GRID toggle row (approved-2), description 96->80 */ // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
-                : new[] { TheatreSummaryHeight, 40f, 84f, 272f };
+                : new[] { TheatreSummaryHeight, 40f, 84f, RecommendedCompactHeight }; // v41b compact Recommended next row (was 272)
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);

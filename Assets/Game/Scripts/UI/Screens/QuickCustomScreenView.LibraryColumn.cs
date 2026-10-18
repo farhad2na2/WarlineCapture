@@ -920,7 +920,7 @@ namespace Game.UI.Runtime
             if (_recommendedPanel != null)
             {
                 _recommendedPanel.SetParent(column, false);
-                FitLayout(_recommendedPanel, 0f, 272f, 0f);
+                FitLayout(_recommendedPanel, 0f, RecommendedCompactHeight, 0f);
             }
 
             if (_briefingPreview != null)
@@ -1020,7 +1020,7 @@ namespace Game.UI.Runtime
             index = StackColumnChild(_statRow, index, 84f, battlefield && _statRow != null);
             index = StackColumnChild(_medalRow, index, 104f, battlefield && _medalRow != null);
             index = StackColumnChild(_difficultyRow, index, 116f, battlefield && _difficultyRow != null);
-            StackColumnChild(_recommendedPanel, index, 272f, !battlefield && _recommendedPanel != null);
+            StackColumnChild(_recommendedPanel, index, RecommendedCompactHeight, !battlefield && _recommendedPanel != null);
             if (_medalGrid != null)
             {
                 _medalGrid.gameObject.SetActive(false);
@@ -1455,11 +1455,18 @@ namespace Game.UI.Runtime
             if (panelWidth < 80f)
                 panelWidth = 360f;
             float textWidth = Mathf.Max(140f, panelWidth - 16f);
-            const float headingHeight = 32f;
-            const float captionHeight = 64f;
-            const float previewCap = 160f;
-            const float frameHeight = 168f;
-            float previewY = headingHeight + captionHeight + 6f;
+            // v41b (Game PM v90 review): compact row - small thumbnail beside the id/objective copy (2 lines, >=14px)
+            // instead of the 160px image block under the caption.
+            const float headingHeight = 30f;
+            const float thumbW = 96f;
+            const float thumbH = 72f;
+            const float frameW = thumbW + 4f;
+            const float frameHeight = thumbH + 4f;
+            const float rowGap = 10f;
+            float previewY = headingHeight + 2f;
+            float frameX = fa ? 8f + textWidth - frameW : 8f;
+            float captionX = fa ? 8f : 8f + frameW + rowGap;
+            float captionW = Mathf.Max(80f, textWidth - frameW - rowGap);
             bool showPreview = texture != null;
             Image frame = _recommendedPanel.Find("PreviewFrame")?.GetComponent<Image>();
             if (frame == null)
@@ -1475,7 +1482,7 @@ namespace Game.UI.Runtime
             frame.enabled = showPreview;
             frame.gameObject.SetActive(showPreview);
             if (showPreview)
-                PlaceTopLeft(frame.rectTransform, 8f, previewY, textWidth, frameHeight);
+                PlaceTopLeft(frame.rectTransform, frameX, previewY, frameW, frameHeight);
             if (!showPreview)
             {
                 if (preview != null)
@@ -1494,8 +1501,8 @@ namespace Game.UI.Runtime
                 preview.color = Color.white;
                 preview.raycastTarget = false;
                 preview.enabled = true;
-                PlaceTopLeft(preview.rectTransform, 12f, previewY + 4f, Mathf.Max(80f, textWidth - 8f), previewCap);
-                CoverCrop(preview, Mathf.Max(80f, textWidth - 8f), previewCap);
+                PlaceTopLeft(preview.rectTransform, frameX + 2f, previewY + 2f, thumbW, thumbH);
+                CoverCrop(preview, thumbW, thumbH);
                 preview.transform.SetSiblingIndex(frame.transform.GetSiblingIndex() + 1);
             }
 
@@ -1511,32 +1518,47 @@ namespace Game.UI.Runtime
                     headingText.textWrappingMode = TextWrappingModes.NoWrap;
                     headingText.overflowMode = TextOverflowModes.Overflow;
                     headingText.enableAutoSizing = true;
-                    headingText.fontSizeMin = 20f;
-                    headingText.fontSizeMax = 26f;
+                    headingText.fontSizeMin = 16f;
+                    headingText.fontSizeMax = 22f;
                     headingText.maxVisibleLines = 1;
                 }
             }
 
             if (_recommendedPanel.Find("Body") is RectTransform body)
             {
-                PlaceTopLeft(body, 8f, headingHeight, textWidth, captionHeight);
+                if (showPreview)
+                    PlaceTopLeft(body, captionX, previewY, captionW, frameHeight);
+                else
+                    PlaceTopLeft(body, 8f, previewY, textWidth, frameHeight);
                 body.SetAsLastSibling();
                 TMP_Text bodyText = body.GetComponent<TMP_Text>();
                 if (bodyText != null)
                 {
-                    bodyText.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+                    bodyText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                     bodyText.isRightToLeftText = fa;
                     bodyText.textWrappingMode = TextWrappingModes.Normal;
-                    bodyText.overflowMode = TextOverflowModes.Overflow;
+                    bodyText.overflowMode = TextOverflowModes.Ellipsis;
                     bodyText.enableAutoSizing = true;
-                    bodyText.fontSizeMin = 18f;
-                    bodyText.fontSizeMax = 24f;
-                    bodyText.maxVisibleLines = 3;
+                    bodyText.fontSizeMin = 14f;
+                    bodyText.fontSizeMax = 18f;
+                    bodyText.maxVisibleLines = 2;
+                    V3LocalizedTextBindingView bodyBinding = bodyText.GetComponent<V3LocalizedTextBindingView>();
+                    if (bodyBinding != null)
+                        bodyBinding.ConfigureFontBounds(14f, 18f);
                     if (!string.IsNullOrWhiteSpace(bodyText.text))
                         bodyText.text = UpperLatin(bodyText.text);
                 }
             }
+
+            TMP_Text loggedBody = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
+            Debug.Log("[RecommendedNext] layout=compact scenario=" + (scenarioId ?? string.Empty) +
+                " thumb=" + (showPreview ? thumbW.ToString("0") + "x" + thumbH.ToString("0") : "none") +
+                " bodyFont=" + (loggedBody != null ? loggedBody.fontSize.ToString("0.0") : "-") +
+                " bodyMin=" + (loggedBody != null ? loggedBody.fontSizeMin.ToString("0.0") : "-") +
+                " panelW=" + panelWidth.ToString("0") + " locale=" + (fa ? "fa-IR" : "en"));
         }
+
+        private const float RecommendedCompactHeight = 112f; // v41b: heading 30 + 76px thumbnail row + padding (was 272)
 
         private void FitRecommendedPreview()
         {

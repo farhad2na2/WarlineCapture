@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-10-18T12:19:19.857899+00:00",
+  "evidence_origin": "Direct message from Windows coordinator Find Skirmish handoffs; Mac has not independently opened the Windows log.",
+  "coordinator_thread": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
+  "tested_consumer_commit": "a6eb49e148afcbe131e35585327fa460cb12126c",
+  "result": "Passed (Windows-reported)",
+  "exit_code": 0,
+  "elapsed_seconds": 94,
+  "source_rows": 41789,
+  "dll_rows": 192,
+  "final_unchanged_artifact_barrier": "Passed (Windows-reported)",
+  "player_transactions": 4,
+  "player_sequence": "Reserve -> PlacementRequest -> PlacementOutcome -> Finalize",
+  "enemy_operations": 0,
+  "project_root": "D:/Projects/WarlineCapture",
+  "evidence_directory": "Logs/SkirmishProduction/Offline/MacConstructionConsumerReview-r2_20261018/",
+  "log": "ACTUAL_S005_FULL_INSPECTION-r2.log",
+  "log_sha256": "82885b6ec683d343d60834c1803ef328da254d568d32b90c271a283299a810b8",
+  "terminal_receipt": "ACTUAL_S005_FULL_INSPECTION_TERMINAL-r2.json",
+  "descriptor": "ACTUAL_S005_DESCRIPTOR.json",
+  "candidate": "5d5279572301b41c87b8f8767129e987dffba7ed92652e5c16434437e349f50e",
+  "build": "19ee2c48f4911f866c46a4ff2e0c3841713e86bf78aac3ca96b12d70eb4b86dd",
+  "failed_evidence": "Initial projection import error preserved separately by Windows; corrected explicit repository CI import used unchanged exact consumer.",
+  "limits": [
+    "Post-terminal read-only admission of closed recorded attempt. No original evidence modified.",
+    "Enemy lifecycle is not exercised by this actual trace.",
+    "No paid_resources, queue, whole-mission, normal-input acceptance or player/device qualification.",
+    "Windows has staged six C# successor paths and started a new candidate capture; old win/receipt must not transfer to successor."
+  ],
+  "qualified": {
+    "paid_resources": false,
+    "queue": false,
+    "mission": false,
+    "player_device": false
+  }
+}

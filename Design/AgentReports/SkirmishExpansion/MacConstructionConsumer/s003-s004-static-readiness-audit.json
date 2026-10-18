@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T12:18:57.647355+00:00",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "scope": "Read-only static source audit. No compiler, Unity, normal-input journey, Android build or player/device test run. No source/assets changed.",
+  "coordinator_assignment": "S003/S004 existing physical source, authored setup, startup catalog coverage, unresolved gates and next normal-validation recommendation after S002.",
+  "missions": {
+    "S003": {
+      "identity": {
+        "definition": "skirmish.s003",
+        "scenario": "scenario.skirmish.s003",
+        "version": 2,
+        "authored_content_hash": "skirmish.s003.v2",
+        "dispatch_index": 5,
+        "army": "Air Mobile",
+        "start": "Field Base",
+        "certified_size": "Standard (1)"
+      },
+      "physical_source": "Default production selection: packaged definition has no CampaignMap, preset has no map, scene compatibility catalog resolves opmap.skirmish.desert_base_01. Candidate build define can override this; record actual selected definition/source/build in native evidence.",
+      "source_identity_hash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+      "map_content_hash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+      "starting_structures": "Standard Field backbone: 7 per faction. No starting Helipad or Satellite Dish; player must build air infrastructure.",
+      "catalog_audit": "No analogous S002 Ground/Established missing-dish gap identified: Air profile role producers include IntelStation, Helipad and Airport, which runtime production catalog adds from available authored buildings. Static path coverage only; native entity/prefab publication is unproved.",
+      "open_gates": [
+        "Record current compiled setup/source/build identity, exact preserved layout selection and native launch/startup counts on both sides.",
+        "Normal-input construction and affordable helicopter purchase followed by takeoff, return, touchdown/refuel and relaunch remain unproved on current candidate. Historical pad/truck probes ended before helicopter purchase; preserve these failures.",
+        "Current seed/locale/difficulty/ARIA coverage, checkpoint reconstruction, result/return, visual review and real player/device acceptance remain separate gates."
+      ],
+      "historical_scope": "September historical wins and startup timeouts are retained evidence, not a current v2 full acceptance matrix."
+    },
+    "S004": {
+      "identity": {
+        "definition": "skirmish.s004",
+        "scenario": "scenario.skirmish.s004",
+        "version": 2,
+        "authored_content_hash": "skirmish.s004.v2",
+        "dispatch_index": 6,
+        "army": "Air Mobile",
+        "start": "Established Base",
+        "certified_size": "Standard (1), Unity serialized byte array 01"
+      },
+      "physical_source": "Preserved coded S004 fallback Resources/SkirmishS004OperationMap resolves existing CityEdgeAirfield, despite shared desert logical operation-map ID. Do not replace with S003 geometry based on ID alone.",
+      "source_identity_hash": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+      "map_content_hash": "e5a78e5b35d94ed9908a0969bbeca3e513d17fdea01265e566ee00916725d914",
+      "source_operation_map_id": "opmap.skirmish.cityedgeairfield_prepared",
+      "source_content_hash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+      "starting_structures": "Standard Established Air: Field 7 + approach Watchtower + Satellite Dish + Helipad = 10 per faction. Large/War refinery-module conditions are outside this Standard count.",
+      "catalog_audit": "Air producer overlay covers IntelStation/Dish and Helipad; no obvious same S002 startup catalog omission. Runtime publication, usable owned storage and legal physical footprints still require native evidence.",
+      "open_gates": [
+        "Current candidate typed aircraft infrastructure, full-army legal placement/routes, both factions capacity and pad recovery need source-fit evidence. Do not enlarge geometry or alter fixed budgets.",
+        "Historical Oct4 Editor report leaves visual density/user review open; do not treat earlier mockup direction as permission to create new physical derivatives.",
+        "Current normal flight/refuel/relaunch, seed/locale/ARIA matrix, checkpoint recovery, complete result/return and player/device acceptance remain pending."
+      ],
+      "historical_scope": "Oct4 report playerReady=false, historical EN ARIA and FA manual wins on recorded older source, visual density gate open. Old wrapper timeout retained as failure."
+    }
+  },
+  "physical_guid_resolution": {
+    "S003": [
+      {
+        "guid": "d755eb43b9cb04aa292e471ace113ecf",
+        "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/opmap_skirmish_desert_base_01_runtime.unity"
+      },
+      {
+        "guid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+        "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity"
+      }
+    ],
+    "S004": [
+      {
+        "guid": "915718fcf0cd7422db987b388cd0d925",
+        "path": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity"
+      },
+      {
+        "guid": "cd836ff2ddd2a440e81db4a20332d266",
+        "path": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity"
+      },
+      {
+        "guid": "7c338e0bc78684837a39eed484be918e",
+        "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset"
+      },
+      {
+        "guid": "8f750533817554c5e8ec1d550cdd0554",
+        "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset"
+      }
+    ]
+  },
+  "logical_binding": "Both are coded BaseAssault missions. RequiresBinding and preserved packaged legacy checks retain these paths; absence of a generic missionLogicalBinding asset is not by itself a failure. S004 fallback source/content identities are explicitly pinned. Native JsonUtility layout fingerprint/compiler execution was not rerun here.",
+  "publication": "Publication manifest Status=2 (Playable) for both, with notes explicitly leaving air/refuel and counted ARIA open. Battle catalog uses its own enum and Status=1, dispatch indices 5/6, version2. These authored flags do not prove current readiness.",
+  "recommendation": {
+    "next_normal_regression": "S003 Standard/Regular after S002 startup repair passes. Same compatibility source selection and simpler Field startup make a bounded regression of the shared launch/prefab path with fewer starting-structure variables. First verify selected physical/source/build identity, startup structures/storage and normal result/return; this is a proposed test, not a pass.",
+    "next_air_lifecycle_candidate": "S004 Standard is the stronger subsequent targeted aircraft lifecycle candidate because Established supplies a home Helipad and uses preserved CityEdgeAirfield. Validate infrastructure/route/footprint fit first; prior S003 paid-pad/truck probes exhausted time/resources before purchase. Do not infer S004 lifecycle success from that advantage.",
+    "ownership": "Windows retains C# changes, S002 native repair and S006; Mac does not start a second dense Unity lane. Agree native lane availability before execution."
+  },
+  "gates": {
+    "static_review_completed": true,
+    "current_native_validation": false,
+    "normal_input_acceptance": false,
+    "android_build": false,
+    "player_device_acceptance": false,
+    "mission_ready_claimed": false
+  },
+  "citations": [
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 20,
+      "text": "contentVersion: 2"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 23,
+      "text": "armyProfileConfig: {fileID: 11400000, guid: c4e8a1b27d9f4e6a9c0d5f3b8a217604, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 24,
+      "text": "startPackageConfig: {fileID: 11400000, guid: b8548c84df564fc4ab8587d9151b3de0, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 32,
+      "text": "mapLayout: {fileID: 11400000, guid: e30ba39ba711469090738221819567dc, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 36,
+      "text": "allowedCertifiedSizeIds:"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "line": 20,
+      "text": "contentVersion: 2"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "line": 23,
+      "text": "armyProfileConfig: {fileID: 11400000, guid: c4e8a1b27d9f4e6a9c0d5f3b8a217604, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "line": 24,
+      "text": "startPackageConfig: {fileID: 11400000, guid: 8032585b22bd4dbfb4d0c58ead392aaf, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "line": 32,
+      "text": "mapLayout: {fileID: 11400000, guid: 5e9a2d74c1b84f60a3e7d8c0b5f19463, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "line": 36,
+      "text": "allowedCertifiedSizeIds: 01"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS004Environment.cs",
+      "line": 19,
+      "text": "public static OperationMapDefinition LoadMapForSession(EntityManager em)"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS004Environment.cs",
+      "line": 34,
+      "text": "return IsActive(em) ? Resources.Load<OperationMapDefinition>(\"SkirmishS004OperationMap\") : null;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs",
+      "line": 60,
+      "text": "var map = SkirmishS004Environment.LoadMapForSession(entityManager) ?? (preset != null ? preset.operationMap : null);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs",
+      "line": 373,
+      "text": "if (!MatchSceneView.OperationMapLaunchResolver.TryResolve("
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapDenseCityCandidateRuntimeOverride.cs",
+      "line": 16,
+      "text": "internal const string BuildDefine = \"WARLINE_DENSE_CITY_CANDIDATE\";"
+    },
+    {
+      "path": "Assets/Game/Scenes/Match.unity",
+      "line": 196,
+      "text": "operationMapCatalog: {fileID: 11400000, guid: 5f8cd53e9416439f9974a805ef924db2, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset",
+      "line": 16,
+      "text": "- {fileID: 11400000, guid: 55e36a8d7e7a84e2b9893cee052b0e61, type: 2}"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 18,
+      "text": "sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 19,
+      "text": "contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 129,
+      "text": "sourceSceneReference:"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 49,
+      "text": "authoredSubSceneGuid: c00140f2e94a04c3084c8dcb0c18cbd0"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishS004OperationMap.asset",
+      "line": 18,
+      "text": "sourceIdentityHash: 3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishS004OperationMap.asset",
+      "line": 19,
+      "text": "contentHash: e5a78e5b35d94ed9908a0969bbeca3e513d17fdea01265e566ee00916725d914"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishS004OperationMap.asset",
+      "line": 22,
+      "text": "sourceOperationMapId: opmap.skirmish.cityedgeairfield_prepared"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishS004OperationMap.asset",
+      "line": 87,
+      "text": "sourceSceneReference:"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishS004OperationMap.asset",
+      "line": 49,
+      "text": "authoredSubSceneGuid: cd836ff2ddd2a440e81db4a20332d266"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "line": 27,
+      "text": "public static bool PreservesPackagedLegacyBinding(SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "line": 52,
+      "text": "return true; // S002/S003 retain their existing explicit no-CampaignMap path."
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
+      "line": 84,
+      "text": "public static bool RequiresBinding(SkirmishResolvedSetup setup)=>setup!=null &&"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs",
+      "line": 25,
+      "text": "public static bool RequiresSourceBoundDefinition(string id)=>Canonical(id)&&"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 562,
+      "text": "// Field backbone (7 per side): designated Barracks, Ground Staging, and the"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 576,
+      "text": "AddMirrored(structures, definition, SkirmishStructureIds.SatelliteDish, \"service.player\", \"service.enemy\", 0f, 14f);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 579,
+      "text": "if (GrantsEstablishedHelipad(definition, preserveLegacyBinding))"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 37,
+      "text": "var buildings = new List<GameObject>(baseline.Spawnables);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 46,
+      "text": "var availableBuildings = new Dictionary<string, GameObject>(StringComparer.Ordinal);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 61,
+      "text": "string producerKey = ProducerPrefabKey(overlay.Producer);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs",
+      "line": 78,
+      "text": "\"Unit_Veh_Drone\", SkirmishProducerKind.IntelStation, SkirmishReadinessStage.Established),"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs",
+      "line": 75,
+      "text": "\"Unit_Veh_Helicopter_Transport\", SkirmishProducerKind.Helipad, SkirmishReadinessStage.Established),"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs",
+      "line": 96,
+      "text": "\"Unit_Veh_Jet_02\", SkirmishProducerKind.Airport, SkirmishReadinessStage.FullArsenal),"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset",
+      "line": 23,
+      "text": "- CatalogId: S003"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset",
+      "line": 29,
+      "text": "- CatalogId: S004"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset",
+      "line": 27,
+      "text": "Notes: S003 Game View evidence + matching Regular Standard hashes. Air flight/refuel"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset",
+      "line": 33,
+      "text": "Notes: S004 Game View evidence + matching Regular Standard hashes. Established"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBattleCatalog.asset",
+      "line": 56,
+      "text": "- ScenarioId: S003"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBattleCatalog.asset",
+      "line": 79,
+      "text": "- ScenarioId: S004"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBattleCatalog.asset",
+      "line": 75,
+      "text": "PlayableScenarioIndex: 5"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBattleCatalog.asset",
+      "line": 101,
+      "text": "PlayableScenarioIndex: 6"
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "line": 53,
+      "text": "| Skirmish DB | Shared desert/dense-city world; preserve S004's current CityEdgeAirfield binding |"
+    }
+  ],
+  "historical_evidence_paths": [
+    "Design/AgentReports/SkirmishExpansion/S003/runs.csv",
+    "Design/AgentReports/SkirmishExpansion/S003/INPUT_EVIDENCE_AUDIT_2026-09-25.md",
+    "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md",
+    "Design/AgentReports/SkirmishExpansion/S004/EditorReady20261004/editor-readiness.json",
+    "Design/AgentReports/SkirmishExpansion/S004/PlayerReady20261004/release-gates.txt"
+  ],
+  "source_sha256": {
+    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset": "9bd4caeaaf587a0a77938ebaaf224b3c4eebff8a245b559dcccdd113ea17c129",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_AirMobile.asset": "05b48fc6a0398081b800c924c98228150eb139b5c99596e86484fc72072e5abf",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_AirMobile.asset.meta": "b617a6b52de6b39e192707032aa1f47a79ae2b23fe7fdf6d0dc4beb513a46343",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset": "1740ac38ae155acbd08b34c5ac3e9902973e4e7097f6124eb39f08509c5f460c",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset.meta": "288f20f746c020d52c9121dcd265ad01c79af111c1b5d0504e72c63475bfea23",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset": "ba22dc27165807e102eb4fc757b70c3545499b85e34719bda8a2fc4b34a467ab",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset.meta": "35e8b79e1bb35508e377544e5797f025d3db9bfb83dd7ecf1d6afc621614dc1e",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset": "a9ff73f6a6852e76f013cf91ab31e59d3b1318b2ced4656f7da61c5c70e988f1",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset.meta": "a6e3e84e0afa32e2b7f63ac0e81fc417649ec6c2222c57d05e6ea329bc44042d",
+    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishLayout_S004.asset": "c3b55adc48e1fe8ff5d4845510bc005f821af1c9c46eaf7f5c13210a3d5a2c9d",
+    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishLayout_S004.asset.meta": "49f7a353858ae2af27a4e74d5df948a68cfb45bf36fc97476b9a4d6a3f4812e7",
+    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset": "c2ffbdb5b7ddef82fdc89dfc9a115e0fd2036e81617d6a887288460b6b9a2dde",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishS004Environment.cs": "3bc3caf37b0d9c529bf003340f5b75c76fb63452def1b5738b1550b528959697",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs": "59f82a096a30fdde771ae5bfea61b18d41df8c29b8effb6d800ecc0cf2f16bd8",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs": "03e807ecb53f47e5ac0c5c94f60efc0fd91fcd2d8a9135d6198818dcdff2b7bf",
+    "Assets/Game/Scripts/Composition/OperationMapDenseCityCandidateRuntimeOverride.cs": "095b3892633f0d4c4cfe532082f838ad2c93911b35332a6def596e2d54e165a0",
+    "Assets/Game/Scenes/Match.unity": "cc8a67dee8510f38f3a35fdcac1b4045893debe92cbc8a50eb824f2fdd530bc0",
+    "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset": "dd0f215650aab0648e9aa48fff37d957cc5552d2e19d2d72a759a0ec050d69d0",
+    "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset": "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0",
+    "Assets/Game/Resources/SkirmishS004OperationMap.asset": "5c47f6d88b5277d6d0b4a68474104d82b23e3dee2c46cf3a3bb7cb8a336613f4",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs": "4c324fae4dffb0efece9772dd46ddc895792ac639ed055d3b2051d36da0df99c",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs": "6a09a7a84a05e1617c12784ceba57a9849ee4fa3add73f944583f9501ef844a3",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs": "a2e4ec7d26fdd8dfe834a62dccaf5f8a324505e9035ca9af2387a66881a20273",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset": "d9ebb8264c09438555aa1bc9eeaca10e027c1eb949a3aa1a66604b0953dd562d",
+    "Assets/Game/Resources/SkirmishBattleCatalog.asset": "e5d37c633b63d2ad706cfaf35eb18598377d38ca47eebba70ffe59a01f9e1340",
+    "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+    "Design/AgentReports/SkirmishExpansion/S003/runs.csv": "262399c7992fdaa3bf3f928cd8dbb484ed52b6b2af3e9ba799f572c2f53a4c3c",
+    "Design/AgentReports/SkirmishExpansion/S003/INPUT_EVIDENCE_AUDIT_2026-09-25.md": "9ec4a49e10bfebd2244cdf3b82a59e97f18edab45e60a328a2bc3672402443f2",
+    "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md": "120e9a0e5cd1e5a924369f7fed8e6a88eac074a3420e30097990a21a8032e2b0",
+    "Design/AgentReports/SkirmishExpansion/S004/EditorReady20261004/editor-readiness.json": "2c5025088e6c04788f7705bd92b232d84898314005321368861754791a124c0f",
+    "Design/AgentReports/SkirmishExpansion/S004/PlayerReady20261004/release-gates.txt": "b3aa1ee15aaf00ab3bd7da8b874f0d2adc37e406b99fed7b5eeb34892dbcecd6",
+    "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/opmap_skirmish_desert_base_01_runtime.unity": "dff6fe019f46d52621f3e58ab9cf64aaf6941701e08ffff120f961572e6ab263",
+    "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/opmap_skirmish_desert_base_01_runtime.unity.meta": "b65295f8710ddc195745b220d9326858c7f38be4fc9c44e11b7679273823aa98",
+    "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity": "231b1c4e2edd0aed7bc0d066908d75b311005c175e7d9bb7f1e0076b86b21ffb",
+    "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity.meta": "44f0ba1b5c8f8038d7e4dcda9669c7ea6be1e32d6165635f41c0b0e88036e40d",
+    "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity": "7bca9503149ad86fd2eedc36d4b4f46b2f24cae3c04970d1aa408ddccdc4f179",
+    "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity.meta": "2e129633e1fc0ac624db6d4605b00cc63600f1632c0deec38882c79da6ce2704",
+    "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity": "277bfb4fcecab8a068bc68d6b645ba4a18ca8e7f7b27308c98ddd895ea8e42e5",
+    "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity.meta": "49076336878a59fab8805f4584e52af188d630ea829c5922f062c3ca286b6d26",
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset": "d98e28903078910ece470e365a4e57be62e97e908f225cfa43afcd6e3a2ac429",
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset.meta": "bfb261378df2202d0c8acbf6e4e52eb378ca50b9ebab821130646047fcdd99e2",
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset": "2275bb52b0ba4f27f0919ca1a31783838e39049895d0ca5e9e01192453b6cc73",
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset.meta": "4ae1c8034bafef0ade8bc325c59fc7c6295f45947ee8fe386cd9067aa858d24b"
+  }
+}

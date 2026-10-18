@@ -1,0 +1,41 @@
+{
+  "constructed_only": true,
+  "native_run": false,
+  "result": {
+    "result": "ConsistentRecordedTransportQueueToDelivery",
+    "recorded_join_consistent": true,
+    "qualified": false,
+    "paid_resources_qualified": false,
+    "normal_mission_ready": false,
+    "queue_success_enabled": false,
+    "whole_attempt_conservation": false,
+    "normal_720_credit": 0,
+    "player_device_accepted": false,
+    "source_bytes_verified": false,
+    "build_bytes_verified": false,
+    "native_capture_authenticated": false,
+    "source_manifest_completeness_measured": false,
+    "native_compiler_input_consumption_closure": "Pending",
+    "aircraft_fuel_spend_attributed": false,
+    "fuel_scope": "FactionPooledFuel",
+    "scope": "RecordedTransportQueueToDeliveryOnly",
+    "policy_scope": "MacA9TypedProducerContractOnly_PendingIndependentWindowsCompatibilityReview",
+    "reservation": 7,
+    "actor": [
+      33,
+      2
+    ],
+    "producer": 34,
+    "committed_materials": 440,
+    "observed_post_delivery_rows": 0,
+    "unadmitted_post_delivery_operations": [],
+    "unadmitted_non_target_production_rows": 0,
+    "pending": [
+      "Actual native wrapper/provenance and normal-input/camera qualification",
+      "Airport construction admission",
+      "Non-target and post-delivery production lifecycle",
+      "Physical Fuel history and whole-attempt conservation",
+      "Victory/result/return and manual/ARIA/device acceptance"
+    ]
+  }
+}

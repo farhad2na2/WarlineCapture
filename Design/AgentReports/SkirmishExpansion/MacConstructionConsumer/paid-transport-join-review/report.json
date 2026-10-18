@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "state": "IsolatedReviewOnlyDraft_NotIntegrated_OwnershipProposalPending",
+  "created_utc": "2026-10-18T18:24:24.949578+00:00",
+  "branch": "codex/mac-paid-production-join-review",
+  "base_commit": "07bdf5a6cacb677df7d2778b17dbc7f567b78f37",
+  "purpose": "Discharge aggregate-spend ambiguity with recorded Queue440/BindProducer/StartNativeQueue/Deliver joins to paid Airport/Plane entity generations",
+  "entry": [
+    "rtk",
+    "proxy",
+    "python3",
+    "-B",
+    "Tools/CI/skirmish_paid_transport_join_admission.py",
+    "--project",
+    "<actual project>",
+    "--descriptor",
+    "<actual owned hash-bound descriptor>"
+  ],
+  "source_contract": "MacA9TypedProducerContractOnly_PendingIndependentWindowsCompatibilityReview",
+  "literal_local_producer_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs": "1931e5073ecbbcfdd18e82ddae70bf6aa609f99733ba54aa84572c3411a7877f",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.Native.cs": "d46c0eb8fc3eb9436d0588b1020f856422eb9bd31b76e9e56493578fc79273e4",
+    "Assets/Game/Scripts/Systems/BuildingProductionUpdateCompositionSystemHelper.cs": "b520961e2139c99c5925895f436bfefc0254b0068571ddb9464349f1b9eb659c",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMaterialsService.cs": "a7da50462d1390425cb4406d0a715ba22ff42a3a15831d2511403d3348938c20",
+    "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+  },
+  "current_windows_compatibility": "PendingIndependentRootReview_NoHashNormalizationOrScopeTransfer",
+  "shared_reader": "Frozen fb0306; no edit; f1d ABI compatibility was separately proved, not copied into this draft",
+  "files": [
+    {
+      "path": "Tools/CI/skirmish_paid_transport_join_admission.py",
+      "bytes": 22599,
+      "sha256": "4978ec715266c36536df3ded817f5a21f269a86ad2406870fc0f1f7b43632447"
+    },
+    {
+      "path": "Tools/CI/skirmish_paid_transport_join_admission_test.py",
+      "bytes": 18221,
+      "sha256": "32d3322902d9733d649bc6134da1b026644abb0b16765422d842aa58de061bf6"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/paid-transport-join-review/mac-constructed-controls.log",
+      "bytes": 3516,
+      "sha256": "9d76f72792a6369c99a905d4f4e10adf42ef1d99e8795f154b584aab0073db73"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/paid-transport-join-review/constructed-result.json",
+      "bytes": 1448,
+      "sha256": "713308b6a4b0bf8cc803eff42a9ff9968156dd64c8b144a51193dd1a79ab5e10"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/paid-transport-join-review/descriptor-template.json",
+      "bytes": 664,
+      "sha256": "2cd147ad342d814ea64045d83fd685dd760711ad5d925dff3f0f57c657db9e9f"
+    }
+  ],
+  "verification": {
+    "mac_constructed_controls_passed": 29,
+    "symlink_cases": "Actual file and parent symlink refusal on Mac",
+    "windows_controls": "NotRun_PendingPeer",
+    "native_Unity_runs": 0,
+    "new_job_claims": 0,
+    "native_evidence_created": 0,
+    "r6_authority_consumed": 0,
+    "frozen_r6_controller_unchanged": true,
+    "source_assets_edited": false
+  },
+  "proof_limits": [
+    "Pure validate checks constructed/in-memory recorded boundaries only",
+    "inspect verifies declared artifact/source/DLL bytes and canonical claim ownership using frozen Reader; no native-origin authentication or source-manifest completeness claim",
+    "Only target Queue-to-delivery span is admitted; non-target and post-delivery lifecycle remains explicitly unadmitted",
+    "Literal default TransportPlane prefab is scoped to this reviewed contract; alternate actual bindings require review, not a wildcard",
+    "Actual wrapper exit, normal visible input, legal staging/Follow/cruise/PNGs and source/compiler consumption remain separate gates",
+    "Airport construction, physical Fuel history, whole-attempt conservation, normal Victory/result/return and player/device acceptance are not granted"
+  ],
+  "credit": {
+    "qualified": false,
+    "paid_resources_qualified": false,
+    "normal_mission_ready": false,
+    "queue_success_enabled": false,
+    "normal_720_credit": 0,
+    "aircraft_fuel_spend_attributed": false
+  },
+  "origin": "Prepared from already-local producer files; no Windows raw source-patch transfer or runtime integration"
+}

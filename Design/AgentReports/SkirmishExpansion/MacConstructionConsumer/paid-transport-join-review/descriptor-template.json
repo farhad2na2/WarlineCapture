@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "job": {
+    "path": "<actual owned job path>",
+    "sha256": "<actual byte SHA256>"
+  },
+  "claim": {
+    "path": "<actual owned claim path>",
+    "sha256": "<actual byte SHA256>"
+  },
+  "immutable_claim": {
+    "path": "<actual owned immutable_claim path>",
+    "sha256": "<actual byte SHA256>"
+  },
+  "native_events": {
+    "path": "<actual owned native_events path>",
+    "sha256": "<actual byte SHA256>"
+  },
+  "candidate_manifest": {
+    "path": "<actual owned candidate_manifest path>",
+    "sha256": "<actual byte SHA256>"
+  },
+  "lineage": {
+    "path": "<actual owned lineage path>",
+    "sha256": "<actual byte SHA256>"
+  }
+}

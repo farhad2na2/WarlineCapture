@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T11:34:36.559893+00:00",
+  "coordinator_thread": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
+  "mac_thread": "01a14eb5-1aac-7f81-a5f5-b2ed0653c978",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "branch": "codex/mac-construction-ledger-admission",
+  "purpose": "Standalone read-only admission of recorded construction boundaries. Review handback only; no production inspector integration.",
+  "owned_files": [
+    "Tools/CI/skirmish_construction_ledger_admission.py",
+    "Tools/CI/skirmish_construction_ledger_admission_test.py",
+    "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/"
+  ],
+  "test_command": "rtk proxy python3 Tools/CI/skirmish_construction_ledger_admission_test.py",
+  "tests": {
+    "passed": 31,
+    "fixtures": "Constructed Python fixtures only, not native evidence. Fixture-only pins are monkeypatched in tests; CLI uses 12 literal reviewed source/policy pins.",
+    "log": "constructed-tests.log"
+  },
+  "cli": {
+    "command": "rtk proxy python3 Tools/CI/skirmish_construction_ledger_admission.py --project <actual-candidate-root> --descriptor <descriptor.json>",
+    "descriptor": {
+      "schema_version": 1,
+      "job": {
+        "path": "<job-directory>/job.json",
+        "sha256": "<sha256>"
+      },
+      "claim": {
+        "path": "<job-directory>/claim.json",
+        "sha256": "<sha256>"
+      },
+      "immutable_claim": {
+        "path": "<job-directory>/<attempt-id>/claim.json",
+        "sha256": "<sha256>"
+      },
+      "native_events": {
+        "path": "<job-directory>/<attempt-id>/adapter-native-events.jsonl",
+        "sha256": "<sha256>"
+      },
+      "candidate_manifest": {
+        "path": "<existing-source-build-snapshot.json>",
+        "sha256": "<sha256>"
+      }
+    }
+  },
+  "validated_scope": [
+    "Job/claim/copy/canonical attempt folder and complete envelope sequence ownership",
+    "Source and compiled-build identity derivation, actual pinned source and DLL bytes, final unchanged-artifact/path barrier",
+    "Native setup/config/session/world joins and ledger lifecycle/count/owned sink/zero capture faults",
+    "Player cost-policy reserve, placement correlation, finalize, rollback and deferred-refund arithmetic",
+    "Enemy request debit, refund debt and settlement, no-debit reenqueue, actor/request delivery correlation, spend-before-debt replacement",
+    "Typed finite fields, exact versioned schemas, bounded reads and path escape/reparse rejection"
+  ],
+  "limits": [
+    "Real Windows construction traces were still being produced at handoff; no real trace run performed.",
+    "In-memory validate_construction_ledger is a consistency API only. inspect() adds real artifact/source/build checks.",
+    "Whole-attempt conservation is not claimed: fabrication, exchange, rewards, repair and other origins can interleave.",
+    "Only supplied source-manifest completeness is checked; scope/authenticity still belongs to the native producer and existing operational verifier.",
+    "Caller-written/fabricated evidence cannot be authenticated by consistency and hashes alone.",
+    "Player wall member identities and alternate construction entrypoints remain uncovered.",
+    "Enemy pad source fit, reserve-policy thresholds, hidden intent fields and actor health are not present in these events and cannot be proved here.",
+    "Unsettled player reservations fail closed; enemy outstanding debt/materials are reported separately and never treated as paid-resource credit.",
+    "Reused player transaction IDs after an unobserved helper reset fail closed; no reset event exists in this reviewed schema.",
+    "16 MiB per artifact/source/DLL, 25000 journal rows/source rows, 4096 construction transactions, 1024 DLL rows; larger inputs fail closed.",
+    "Canonical absolute claim paths refer to the actual candidate project. No cross-machine path rewrite or relocated-claim admission.",
+    "Windows reparse handling is implemented but has only been executed on macOS; native Windows verification remains pending."
+  ],
+  "acceptance": {
+    "coordinator_review": "pending",
+    "real_trace_admission": "pending",
+    "windows_execution": "pending",
+    "production_integration": "not performed",
+    "native_validation": "not performed",
+    "android_build": "not performed",
+    "paid_resources_qualified": false,
+    "mission_ready": false,
+    "player_device_acceptance": "not performed"
+  },
+  "next": "Coordinator should review/cherry-pick after frozen Windows run cleanup, run on current traces, and retain any failed receipts. Changes to pinned producer/policy bytes require explicit source review and updated literal pins. Keep active producer/assets untouched."
+}

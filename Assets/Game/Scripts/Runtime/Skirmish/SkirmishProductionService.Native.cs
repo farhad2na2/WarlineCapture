@@ -14,9 +14,11 @@ namespace Game.Runtime
         {
             if (producerId <= 0 || !TryGetReservation(em, session, id, out int index, out var receipt) ||
                 receipt.Phase != SkirmishReservationPhase.Reserved || receipt.ProducerRuntimeId != 0) return false;
+            var ledgerBefore=BeginLedger(em,session,receipt.FactionId,id);
             receipt.ProducerRuntimeId = producerId;
             var receipts = em.GetBuffer<SkirmishProductionReservation>(session);
             receipts[index] = receipt;
+            EndLedger(em,session,ledgerBefore,"BindProducer",id);
             return true;
         }
 
@@ -37,9 +39,11 @@ namespace Game.Runtime
         {
             if (!em.Exists(session) || !NativeAttemptActive(em, session, attemptId) || !TryGetReservation(em, session, id, out int index, out var receipt) ||
                 receipt.ProducerRuntimeId == 0 || receipt.Phase != SkirmishReservationPhase.Reserved) return;
+            var startBefore=BeginLedger(em,session,receipt.FactionId,id);
             receipt.Phase = SkirmishReservationPhase.Producing;
             var receipts = em.GetBuffer<SkirmishProductionReservation>(session);
             receipts[index] = receipt;
+            EndLedger(em,session,startBefore,"StartNativeQueue",id);
         }
 
         internal static bool AdoptNativeMember(EntityManager em, Entity session, uint id, int producerId, Entity member, FixedString64Bytes attemptId)
@@ -53,6 +57,7 @@ namespace Game.Runtime
             if (!SkirmishRoleOverlayCatalog.TryGet(setup.RoleOverlays, receipt.Role, out var overlay)) return false;
             var sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             int supply = receipt.SupplyCost / receipt.MemberCount;
+            var ledgerBefore=BeginLedger(em,session,receipt.FactionId,id);
             ReadStocks(em, session, receipt.FactionId, out int materials, out int fuel, out var capacity, out uint next);
             SkirmishCapacityLedger.PromoteLive(ref capacity, receipt.Category, 1, supply);
             SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, member);
@@ -78,6 +83,7 @@ namespace Game.Runtime
             WriteStocks(em, session, receipt.FactionId, materials, fuel, capacity, next);
             if (em.HasComponent<SkirmishResearchStateComponent>(session))
                 SkirmishResearchEffects.ApplyCompleted(em, session, receipt.FactionId);
+            EndLedger(em,session,ledgerBefore,"Deliver",id,null,member);
             return true;
         }
 

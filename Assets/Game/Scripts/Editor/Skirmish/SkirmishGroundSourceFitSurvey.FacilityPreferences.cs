@@ -221,12 +221,25 @@ namespace Game.Editor
             var originalCompounds=CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]);
             var report=new JObject{["scope"]="BoundedLogicalPreferences_SourceQaHintsThenCanonicalNativeReplay",
                 ["sourceFitCertified"]=false,["cameraAccepted"]=false,["normalMissionReady"]=false,["maximumPreferenceAssignments"]=9};
+            var logicalPadInput=ReadReviewedFacilityPadInput(mission);
+            int frameAttempt=logicalPadInput==null?3:(int)logicalPadInput["fixedLogicalFrameAttempt"];
             JObject compounds;string error;
             bool frameReady=apGroundJointPreferencesRequested
                 ?TryNextApJointLogicalFrame(before,originalCompounds,owner.Layout,source,grid,out compounds,out error)
-                :TryNextRefinementLogicalFrame(before,originalCompounds,3,owner.Layout,source,grid,out compounds,out error);
+                :TryNextRefinementLogicalFrame(before,originalCompounds,frameAttempt,owner.Layout,source,grid,out compounds,out error);
             if(!frameReady)
             {report["refused"]=error;return report;}
+            if(logicalPadInput!=null)
+            {
+                RunReviewedFacilityPadInputControls();
+                var budgetBefore=new JArray(budgets.Select(ApPreferenceBudgetKey));
+                Require(TryEncodeReviewedFacilityPads(JsonUtility.ToJson(owner.Layout),logicalPadInput,grid,compounds,out string next,out string refused),refused);
+                JsonUtility.FromJsonOverwrite(next,owner.Layout);
+                Require(JToken.DeepEquals(budgetBefore,new JArray(budgets.Select(ApPreferenceBudgetKey))),"Logical pads cannot alter any canonical budget");
+                report["reviewedLogicalPadInput"]=logicalPadInput.DeepClone();report["reviewedLogicalPadCompounds"]=compounds.DeepClone();
+                report["reviewedLogicalPadAppliedLayoutJson"]=next;report["reviewedLogicalPadBudgets"]=budgetBefore;
+                report["fixedReviewedPadCandidate"]=true;
+            }
             if(apGroundJointPreferencesRequested)
             {
                 report["apJointPadInput"]=ApplyApJointPadInput(mission,owner.Layout,source,grid,budgets);
@@ -250,7 +263,8 @@ namespace Game.Editor
                 em,gridEntity,grid,surface,inventory,true,true,clearance,true,serviceAuthority:(mpGroundBaPilotRequested||ApPairServiceAuthority(owner.Definition))?owner.Definition:null);
             report["independentSourceQaCapacityHints"]=inventory;
             var hints=(JArray)inventory["normalFacilityRelocationProposals"];
-            var assignments=BuildPreferenceAssignments(owner.Layout,maxBudget.Structures,hints,grid,compounds);
+            var assignments=logicalPadInput==null?BuildPreferenceAssignments(owner.Layout,maxBudget.Structures,hints,grid,compounds):
+                new JArray(new JObject{["score"]=0,["pads"]=new JArray()});
             report["preferenceAssignments"]=assignments;
             string baseline=JsonUtility.ToJson(owner.Layout),definition=JsonUtility.ToJson(owner.Definition);
             var results=new JArray();report["nativePreferenceReplays"]=results;
@@ -610,6 +624,91 @@ namespace Game.Editor
                 }
             }
             Debug.Log("[APJointPreferenceBranchControls] result=Passed controls=20 actualCanonicalSizes=3 cardinalStagingSeeds=4 syntheticBeamOnly=1 nativeQueries=0 sourceFitCertified=0 missionReady=0");
+        }
+
+        static JObject ReadReviewedFacilityPadInput(JObject mission)
+        {
+            string path=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT"),digest=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256");
+            if(string.IsNullOrEmpty(path)&&string.IsNullOrEmpty(digest))return null;
+            Require(!apGroundJointPreferencesRequested&&!string.IsNullOrEmpty(path)&&!string.IsNullOrEmpty(digest),"Exclusive exact generic pad input required");
+            string allowed=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction"))+System.IO.Path.DirectorySeparatorChar;
+            Require(System.IO.Path.IsPathRooted(path)&&System.IO.Path.GetFullPath(path).StartsWith(allowed,StringComparison.OrdinalIgnoreCase)&&Hash(path)==digest,"Exact owned Logs input required");
+            var input=JObject.Parse(System.IO.File.ReadAllText(path));
+            Require((int?)input["schema"]==1&&(string)input["scope"]=="ReviewedLogicalPadProposal_NotPlacement"&&
+                (string)input["catalogId"]==(string)mission["catalog_id"]&&(string)input["definitionId"]==(string)mission["definition_id"]&&
+                JToken.DeepEquals(input["sourcePins"],mission["source_candidate"])&&JToken.DeepEquals(input["canonical_size_rows"],mission["canonical_size_rows"])&&
+                (int?)input["maximumPreferenceAssignments"]==9&&(bool?)input["sourceFitCertified"]==false&&(bool?)input["missionAccepted"]==false,"Exact subject/source/budgets required");
+            Require((int?)input["fixedLogicalFrameAttempt"]>=1&&(int?)input["fixedLogicalFrameAttempt"]<=3,"Existing finite frame attempt required");
+            Require(Hash(path)==digest,"Reviewed logical-pad input changed during read");
+            input["observedInputPath"]=System.IO.Path.GetFullPath(path);input["observedInputSha256"]=digest;return input;
+        }
+        static bool TryEncodeReviewedFacilityPads(string original,JObject input,GridConfig grid,JObject compounds,out string next,out string error)
+        {
+            next=original;error=null;
+            try
+            {
+                var data=JObject.Parse(original);var pads=(JArray)data["pads"];var changes=input["padOverrides"]as JArray;
+                Require(changes!=null&&changes.Count>0&&changes.Count<=8,"Bounded pad input required");var seen=new HashSet<string>(StringComparer.Ordinal);
+                foreach(JObject change in changes)
+                {
+                    string id=(string)change["padId"];Require(!string.IsNullOrEmpty(id)&&seen.Add(id),"Unique pad input required");
+                    var matches=pads.OfType<JObject>().Where(p=>(string)p["PadId"]==id).ToArray();Require(matches.Length==1,"One actual typed pad required");var pad=matches[0];
+                    Require((int?)change["faction"]==(int?)pad["FactionId"]&&(int?)change["kind"]==(int?)pad["Kind"]&&(string)change["anchorId"]==(string)pad["AnchorId"]&&(string)change["roleId"]==(string)pad["RoleId"],"Stable typed ownership required");
+                    var after=(JObject)change["after"];string[] fields={"CenterX","CenterZ","WidthMetres","DepthMetres"};
+                    Require(after.Properties().Select(p=>p.Name).OrderBy(p=>p).SequenceEqual(fields.OrderBy(p=>p)),"Only logical dimensions/centre may change");
+                    foreach(string field in fields)Require(JToken.DeepEquals(pad[field],change["before"][field]),"Exact pad precondition required");
+                    double x=(double)after["CenterX"],z=(double)after["CenterZ"],w=(double)after["WidthMetres"],h=(double)after["DepthMetres"];
+                    Require(new[]{x,z,w,h}.All(v=>!double.IsNaN(v)&&!double.IsInfinity(v))&&w>0&&h>0&&grid.CellSize>0,"Finite positive pad/grid required");
+                    double x0=x-w/2,z0=z-h/2,x1=x+w/2,z1=z+h/2;
+                    foreach(double cell in new[]{(x0-grid.Origin.x)/grid.CellSize,(x1-grid.Origin.x)/grid.CellSize,(z0-grid.Origin.z)/grid.CellSize,(z1-grid.Origin.z)/grid.CellSize})
+                        Require(Math.Abs(cell-Math.Round(cell))<.00001,"Raw bounds must align to native grid");
+                    Require(x0>=grid.Origin.x&&z0>=grid.Origin.z&&x1<=grid.Origin.x+grid.Width*grid.CellSize&&z1<=grid.Origin.z+grid.Height*grid.CellSize,"Raw bounds inside source grid required");
+                    var rect=(JArray)compounds[((int)pad["FactionId"]).ToString(System.Globalization.CultureInfo.InvariantCulture)];
+                    Require(x0>=(double)rect[0]&&z0>=(double)rect[1]&&x1<=(double)rect[2]&&z1<=(double)rect[3],"Raw bounds inside legal compound required");
+                    Require(x0>=(double)data["originX"]&&z0>=(double)data["originZ"]&&x1<=(double)data["originX"]+(double)data["worldWidthMetres"]&&z1<=(double)data["originZ"]+(double)data["worldDepthMetres"],"Raw bounds inside logical frame required");
+                    if((int)pad["Kind"]==(int)SkirmishLegalPadKind.AirReturn)
+                        Require(x0<=(double)pad["CenterX"]-(double)pad["WidthMetres"]/2&&z0<=(double)pad["CenterZ"]-(double)pad["DepthMetres"]/2&&x1>=(double)pad["CenterX"]+(double)pad["WidthMetres"]/2&&z1>=(double)pad["CenterZ"]+(double)pad["DepthMetres"]/2,"Original air return retained");
+                    foreach(string field in fields)pad[field]=after[field].DeepClone();
+                }
+                next=data.ToString(Newtonsoft.Json.Formatting.None);return true;
+            }
+            catch(Exception failure){next=original;error=failure.Message;return false;}
+        }
+
+        public static void RunReviewedFacilityPadInputControls()
+        {
+            var pad=new JObject{["PadId"]="pad.fixture",["FactionId"]=2,["Kind"]=(int)SkirmishLegalPadKind.AirReturn,
+                ["AnchorId"]="anchor.fixture",["RoleId"]="air.fixture",["CenterX"]=20.2,["CenterZ"]=20.2,["WidthMetres"]=16,["DepthMetres"]=16};
+            var original=new JObject{["originX"]=0,["originZ"]=0,["worldWidthMetres"]=100,["worldDepthMetres"]=100,
+                ["anchors"]=new JArray("stable-anchor"),["routes"]=new JArray("stable-route"),["pads"]=new JArray(pad)};
+            var fields=new[]{"CenterX","CenterZ","WidthMetres","DepthMetres"};
+            var before=new JObject();foreach(var field in fields)before[field]=pad[field].DeepClone();
+            var change=new JObject{["padId"]="pad.fixture",["faction"]=2,["kind"]=(int)SkirmishLegalPadKind.AirReturn,
+                ["anchorId"]="anchor.fixture",["roleId"]="air.fixture",["before"]=before,
+                ["after"]=new JObject{["CenterX"]=20.5,["CenterZ"]=20.5,["WidthMetres"]=17,["DepthMetres"]=17}};
+            var input=new JObject{["padOverrides"]=new JArray(change)};
+            var grid=new GridConfig{Width=100,Height=100,CellSize=1,Origin=float3.zero};
+            var compounds=new JObject{["2"]=new JArray(0,0,100,100)};string text=original.ToString();int count=0;
+            Require(TryEncodeReviewedFacilityPads(text,input,grid,compounds,out string positive,out _)&&
+                JToken.DeepEquals(JObject.Parse(positive)["anchors"],original["anchors"])&&JToken.DeepEquals(JObject.Parse(positive)["routes"],original["routes"]),
+                "Actual encoder must preserve all anchors/routes");count++;
+            void Refuse(Action<JObject> edit,string reason)
+            {
+                var bad=(JObject)input.DeepClone();edit(bad);
+                Require(!TryEncodeReviewedFacilityPads(text,bad,grid,compounds,out string rejected,out _)&&rejected==text,reason);count++;
+            }
+            Refuse(v=>((JArray)v["padOverrides"]).Add(v["padOverrides"][0].DeepClone()),"Duplicate pad refuses unchanged");
+            Refuse(v=>v["padOverrides"][0]["anchorId"]="foreign","Foreign owner refuses unchanged");
+            Refuse(v=>v["padOverrides"][0]["before"]["CenterX"]=21,"Stale original refuses unchanged");
+            Refuse(v=>v["padOverrides"][0]["after"]["CenterX"]=20.6,"Fractional raw edge refuses");
+            Refuse(v=>v["padOverrides"][0]["after"]["CenterX"]=100.5,"Outside source refuses");
+            Refuse(v=>v["padOverrides"][0]["after"]["WidthMetres"]=15,"Air area contraction refuses");
+            Refuse(v=>v["padOverrides"][0]["after"]["RoleId"]="foreign","Extra mutation field refuses");
+            var narrow=new JObject{["2"]=new JArray(15,15,25,25)};
+            Require(!TryEncodeReviewedFacilityPads(text,input,grid,narrow,out string rejectedCompound,out _)&&rejectedCompound==text,"Outside compound refuses");count++;
+            var small=(JObject)original.DeepClone();small["worldWidthMetres"]=25;
+            Require(!TryEncodeReviewedFacilityPads(small.ToString(),input,grid,compounds,out string rejectedFrame,out _)&&rejectedFrame==small.ToString(),"Outside frame refuses");count++;
+            Debug.Log("[ReviewedFacilityPadInputControls] result=Passed controls="+count+" nativeQueries=0 sourceFitCertified=0");
         }
 
         public static void RunFacilityPreferenceControls()

@@ -1,4 +1,5 @@
 using Game.Components;
+using Unity.Entities;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -38,6 +39,7 @@ namespace Game.Runtime
             if (_activeTransactionId != 0)
                 return FactionConstructionResourceMutationResult.InvalidState;
 
+            var ledgerBefore=_factionResources.CaptureConstructionLedger(this);
             FactionConstructionResourceMutationResult result =
                 _factionResources.TrySpendConstructionResources(creditsCost, materialsCost);
             if (result != FactionConstructionResourceMutationResult.Applied)
@@ -46,6 +48,7 @@ namespace Game.Runtime
             _activeTransactionId = transactionId;
             _activeCreditsCost = Mathf.Max(0, creditsCost);
             _activeMaterialsCost = Mathf.Max(0, materialsCost);
+            SkirmishConstructionLedger.End(ledgerBefore,"PlayerReserve",transactionId,creditsCost,materialsCost);
             return result;
         }
 
@@ -54,7 +57,10 @@ namespace Game.Runtime
             if (transactionId <= 0 || transactionId != _activeTransactionId)
                 return FactionConstructionResourceMutationResult.InvalidState;
 
+            var ledgerBefore=_factionResources.CaptureConstructionLedger(this);
+            int credits=_activeCreditsCost,materials=_activeMaterialsCost;
             Settle(transactionId);
+            SkirmishConstructionLedger.End(ledgerBefore,"PlayerFinalize",transactionId,credits,materials);
             return FactionConstructionResourceMutationResult.Applied;
         }
 
@@ -65,15 +71,37 @@ namespace Game.Runtime
                 transactionId != _activeTransactionId)
                 return FactionConstructionResourceMutationResult.InvalidState;
 
+            var ledgerBefore=_factionResources.CaptureConstructionLedger(this);
+            int credits=_activeCreditsCost,materials=_activeMaterialsCost;
             FactionConstructionResourceMutationResult result =
                 _factionResources.TryRestoreConstructionResources(
                     _activeCreditsCost,
                     _activeMaterialsCost);
             if (result != FactionConstructionResourceMutationResult.Applied)
+            {
+                SkirmishConstructionLedger.End(ledgerBefore,"PlayerRollbackDeferred",transactionId,credits,materials);
                 return result;
+            }
 
             Settle(transactionId);
+            SkirmishConstructionLedger.End(ledgerBefore,"PlayerRollback",transactionId,credits,materials);
             return result;
+        }
+
+        internal void ObservePlacement(BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement,int id,
+            BuildingPlacementCommitCompositionSystemHelper.CommitOutcome? outcome=null)
+        {
+            if(SkirmishConstructionLedger.Observer==null)return;
+            try
+            {
+                var before=_factionResources.CaptureConstructionLedger(this);
+                Entity actor=outcome.HasValue&&outcome.Value.AutoSelectBuilding!=null?outcome.Value.AutoSelectBuilding.CombatEntity:Entity.Null;
+                SkirmishConstructionLedger.End(before,outcome.HasValue?"PlayerPlacementOutcome":"PlayerPlacementRequest",id,
+                    _activeCreditsCost,_activeMaterialsCost,placement.Definition?.Prefab!=null?placement.Definition.Prefab.name:null,
+                    new Unity.Mathematics.int2(placement.OriginCell.x,placement.OriginCell.y),placement.AutoRotateVertical,
+                    outcome.HasValue?outcome.Value.CommittedInstanceCount:0,outcome.HasValue?outcome.Value.ExpectedInstanceCount:0,actor);
+            }
+            catch(System.Exception error)when(!(error is System.OutOfMemoryException)){SkirmishConstructionLedger.UnsupportedPlacement();}
         }
 
         private void Settle(int transactionId)

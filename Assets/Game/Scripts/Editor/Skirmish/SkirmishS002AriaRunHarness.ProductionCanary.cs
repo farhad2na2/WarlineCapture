@@ -553,6 +553,58 @@ namespace Game.Editor
             productionCanary.Record("TerminalReturnOwnerCompleted", facts);
         }
 
+        internal static void RequirePaidObserverGroupAvailable(bool enabled, bool legacy)
+        {
+            if (!enabled) return;
+            if (legacy) throw new InvalidDataException("Native queued ledger requires expanded setup");
+            if (Game.Runtime.SkirmishProductionService.ProductionLedgerObserver != null)
+                throw new InvalidOperationException("Production ledger already observed");
+            if (Game.Runtime.SkirmishResearchService.ResearchLedgerObserver != null)
+                throw new InvalidOperationException("Research ledger already observed");
+            if (Game.Runtime.SkirmishConstructionLedger.Observer != null)
+                throw new InvalidOperationException("Construction ledger already observed");
+        }
+        internal static void GuardPaidObserverReservation(bool enabled, bool legacy, Action reserve)
+        {
+            RequirePaidObserverGroupAvailable(enabled, legacy);
+            reserve();
+        }
+        internal static void StartPaidObserverGroup(bool enabled, Action production, Action research,
+            Action construction, Action closeConstruction, Action closeResearch, Action closeProduction)
+        {
+            if (!enabled) return;
+            try { production(); research(); construction(); }
+            catch
+            {
+                ClosePaidObserverGroup(closeConstruction, closeResearch, closeProduction, () => { });
+                throw;
+            }
+        }
+        internal static void ClosePaidObserverGroup(Action construction, Action research,
+            Action production, Action restore)
+        {
+            try
+            {
+                try { construction(); }
+                finally { try { research(); } finally { production(); } }
+            }
+            finally { restore(); }
+        }
+        internal static bool ReleasePaidProductionObserver(
+            Action<Game.Runtime.SkirmishProductionService.ProductionLedgerObservation> owned)
+        {
+            if (owned == null || Game.Runtime.SkirmishProductionService.ProductionLedgerObserver != owned) return false;
+            Game.Runtime.SkirmishProductionService.ProductionLedgerObserver = null;
+            return true;
+        }
+        internal static bool ReleasePaidResearchObserver(
+            Action<Game.Runtime.SkirmishResearchService.ResearchLedgerObservation> owned)
+        {
+            if (owned == null || Game.Runtime.SkirmishResearchService.ResearchLedgerObserver != owned) return false;
+            Game.Runtime.SkirmishResearchService.ResearchLedgerObserver = null;
+            return true;
+        }
+
         private sealed class ProductionCanaryContext
         {
             internal readonly SkirmishProductionCanaryRequest Request;
@@ -589,6 +641,7 @@ namespace Game.Editor
 
             internal ProductionCanaryContext(SkirmishProductionCanaryRequest request)
             {
+                RequirePaidObserverGroupAvailable(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",request.IsLegacyPreset);
                 Request = request;
                 EnsureScenesClean();
                 var restorableBaseline=PrepareProductionRestorableSceneBaseline();
@@ -605,12 +658,15 @@ namespace Game.Editor
                 }
                 events = Path.Combine(request.ArtifactDirectory, "adapter-native-events.jsonl");
                 // Exclusive ownership, including concurrent public method invocations.
-                request.ReserveAdapterStart();
+                GuardPaidObserverReservation(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",request.IsLegacyPreset,request.ReserveAdapterStart);
                 using (File.Open(events, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
                 Record("ContextCaptured", new JObject { ["source_sha256"] = (string)request.Job["candidate_sha256"],
                     ["compiled_dll_manifest_sha256"] = (string)request.Job["build_sha256"], ["scene_count"] = sceneSetup.Length,
                     ["restorable_scene_baseline"] = restorableBaseline });
                 RecordProfileStage("ProfileBeforeDispatch");
+                StartPaidObserverGroup(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",
+                    StartPaidProductionLedger,StartPaidResearchLedger,StartConstructionLedger,
+                    StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger);
             }
 
             internal void Record(string kind, JObject facts)
@@ -623,6 +679,232 @@ namespace Game.Editor
                     ["facts"] = facts ?? new JObject() };
                 File.AppendAllText(events, row.ToString(Formatting.None) + "\n", new UTF8Encoding(false));
                 ObserveProductionBatchNativeEvent(kind,facts);
+            }
+
+
+            private Action<Game.Runtime.SkirmishResearchService.ResearchLedgerObservation> researchLedgerSink;
+            private int researchLedgerCount;
+            private bool researchLedgerFailed;
+            private long researchLedgerFaultStart;
+            private void StartPaidResearchLedger()
+            {
+                if(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")!="1")return;
+                if(Request.IsLegacyPreset || Game.Runtime.SkirmishResearchService.ResearchLedgerObserver!=null)
+                    throw new InvalidOperationException("Owned research ledger unavailable");
+                researchLedgerFaultStart=Game.Runtime.SkirmishResearchService.ResearchLedgerObservationFaults;
+                researchLedgerSink=ObservePaidResearch;
+                Record("NativeResearchLedgerStarted",new JObject { ["ledger_schema"]=1,["scope"]="ResearchCommittedOriginsPartial",["remaining_time_history_measured"]=false,["progress_rows_emitted"]=false,["paid_resources_qualified"]=false });
+                Game.Runtime.SkirmishResearchService.ResearchLedgerObserver=researchLedgerSink;
+            }
+            private static JObject ResearchPointJson(Game.Runtime.SkirmishResearchService.ResearchLedgerPoint point)
+            {
+                var item=point.Item;
+                return new JObject { ["bank_index"]=point.BankEntity.Index,["bank_version"]=point.BankEntity.Version,
+                    ["bank"]=JObject.FromObject(point.Bank),["materials"]=point.Materials,["fuel"]=point.Fuel,
+                    ["next_research_id"]=point.NextResearchId,["state"]=JObject.FromObject(point.State),
+                    ["research"]=!point.HasItem?null:new JObject { ["id"]=item.ResearchId,["kind"]=item.Kind.ToString(),
+                        ["phase"]=item.Phase.ToString(),["faction"]=item.FactionId,["producer"]=item.Producer.ToString(),
+                        ["paid"]=item.MaterialsPaid,["remaining_seconds"]=item.RemainingSeconds } };
+            }
+            private void ObservePaidResearch(Game.Runtime.SkirmishResearchService.ResearchLedgerObservation row)
+            {
+                if(researchLedgerFailed)return;
+                try
+                {
+                    if(++researchLedgerCount>4096)throw new InvalidDataException("Research ledger bounded capture failed");
+                    var em=row.Manager;var native=em.GetComponentData<SkirmishExpandedSessionComponent>(row.Session);
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(row.Session).Setup;
+                    var identity=SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,setup.DefinitionId,setup.ContentVersion,
+                        setup.DifficultyId.ToString(),setup.SizeId.ToString(),setup.Seed,GameLocalization.CurrentLocaleCode,setup.SetupHash,setup.ContentHash);
+                    Request.VerifyNativeSetupIdentity(identity);
+                    Record("NativeResearchTransaction",new JObject { ["ledger_schema"]=1,["scope"]="ResearchCommittedOriginsPartial",
+                        ["ledger_sequence"]=researchLedgerCount,["operation"]=row.Operation,
+                        ["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["native_session_id"]=native.SessionId.ToString(),["native_setup_identity"]=identity,
+                        ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),
+                        ["before"]=ResearchPointJson(row.Before),["after"]=ResearchPointJson(row.After),
+                        ["decision"]=row.HasDecision?JObject.FromObject(row.Decision):null,
+                        ["remaining_time_history_measured"]=false,["paid_resources_qualified"]=false });
+                }
+                catch(Exception error)when(!(error is OutOfMemoryException))
+                {
+                    researchLedgerFailed=true;
+                    try{Record("NativeResearchLedgerFailure",new JObject { ["exception_type"]=error.GetType().FullName });}
+                    catch(Exception failure)when(!(failure is OutOfMemoryException)){}
+                }
+            }
+            private void StopPaidResearchLedger()
+            {
+                if(researchLedgerSink==null)return;
+                bool owned=ReleasePaidResearchObserver(researchLedgerSink);
+                researchLedgerSink=null;
+                try{Record("NativeResearchLedgerClosed",new JObject { ["ledger_schema"]=1,["scope"]="ResearchCommittedOriginsPartial",
+                    ["transactions"]=researchLedgerCount,["capture_failed"]=researchLedgerFailed,["sink_owned"]=owned,
+                    ["observer_faults"]=Game.Runtime.SkirmishResearchService.ResearchLedgerObservationFaults-researchLedgerFaultStart,
+                    ["remaining_time_history_measured"]=false,["progress_rows_emitted"]=false,
+                    ["paid_resources_qualified"]=false });}
+                catch(Exception error)when(!(error is OutOfMemoryException)){}
+            }
+
+            private System.Action<Game.Runtime.SkirmishProductionService.ProductionLedgerObservation> paidLedgerSink;
+            private int paidLedgerCount;
+            private bool paidLedgerFailed;
+            private long paidLedgerFaultStart;
+            private void StartPaidProductionLedger()
+            {
+                if(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")!="1")return;
+                if(Request.IsLegacyPreset)throw new InvalidDataException("Native queued ledger requires expanded setup");
+                if(Game.Runtime.SkirmishProductionService.ProductionLedgerObserver!=null)
+                    throw new InvalidOperationException("Production ledger already observed");
+                paidLedgerFaultStart=Game.Runtime.SkirmishProductionService.ProductionLedgerObservationFaults;
+                paidLedgerSink=ObservePaidProduction;
+                Record("NativeProductionLedgerStarted",new JObject { ["ledger_schema"]=1,
+                    ["scope"]="ProductionCommittedOriginsPartial",["paid_resources_qualified"]=false });
+                Game.Runtime.SkirmishProductionService.ProductionLedgerObserver=paidLedgerSink;
+            }
+            private static JObject PaidPoint(Game.Runtime.SkirmishProductionService.ProductionLedgerPoint point)
+            {
+                var bank=point.Bank; var receipt=point.Reservation;
+                return new JObject { ["faction"]=point.Faction,["bank_index"]=point.BankIndex,["bank_version"]=point.BankVersion,
+                    ["materials"]=point.Materials,["fuel"]=point.Fuel,["bank"]=JObject.FromObject(bank),
+                    ["reservation"]=!point.HasReservation?null:new JObject {
+                        ["id"]=receipt.ReservationId,["role"]=receipt.Role.ToString(),["faction"]=receipt.FactionId,
+                        ["phase"]=receipt.Phase.ToString(),["producer"]=receipt.ProducerRuntimeId,
+                        ["paid"]=receipt.MaterialsPaid,["members"]=receipt.MemberCount,["delivered"]=receipt.DeliveredMembers,
+                        ["remaining"]=receipt.RemainingMembers,["supply"]=receipt.SupplyCost } };
+            }
+            private void ObservePaidProduction(Game.Runtime.SkirmishProductionService.ProductionLedgerObservation row)
+            {
+                if(paidLedgerFailed)return;
+                try
+                {
+                    if(++paidLedgerCount>4096)throw new InvalidDataException("Production ledger bounded capture failed");
+                    var em=row.Manager;var state=em.GetComponentData<SkirmishExpandedSessionComponent>(row.Session);
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(row.Session).Setup;
+                    var identity=SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,setup.DefinitionId,
+                        setup.ContentVersion,setup.DifficultyId.ToString(),setup.SizeId.ToString(),setup.Seed,
+                        GameLocalization.CurrentLocaleCode,setup.SetupHash,setup.ContentHash);
+                    Request.VerifyNativeSetupIdentity(identity);
+                    var facts=new JObject { ["ledger_schema"]=1,["scope"]="ProductionCommittedOriginsPartial",
+                        ["ledger_sequence"]=paidLedgerCount,["operation"]=row.Operation,["member_ordinal"]=row.MemberOrdinal,
+                        ["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["native_session_id"]=state.SessionId.ToString(),["native_setup_identity"]=identity,
+                        ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),
+                        ["before"]=PaidPoint(row.Before),["after"]=PaidPoint(row.After),
+                        ["decision"]=!row.HasDecision?null:new JObject { ["materials"]=row.Decision.MaterialsCost,
+                            ["fuel"]=row.Decision.FuelCost,["refund"]=row.Decision.RefundedMaterials,
+                            ["accepted"]=row.Decision.Accepted,["reason"]=row.Decision.Reason.ToString(),
+                            ["reservation"]=row.Decision.ReservationId },
+                        ["actor"]=!row.HasActorOwner?null:new JObject { ["index"]=row.Actor.Index,["version"]=row.Actor.Version,
+                            ["session"]=row.ActorOwner.SessionId.ToString(),["stable_id"]=row.ActorOwner.StableObjectId.ToString(),
+                            ["faction"]=row.ActorOwner.FactionId,["reservation"]=row.ActorOwner.ReservationId,
+                            ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(row.Actor),
+                            ["is_structure"]=row.ActorOwner.IsStructure,["capacity_released"]=row.ActorOwner.CapacityReleased,
+                            ["role"]=em.GetComponentData<SkirmishUnitRoleComponent>(row.Actor).Role.ToString(),
+                            ["source_key"]=em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.ToString() },
+                        ["paid_resources_qualified"]=false };
+                    Record("NativeProductionTransaction",facts);
+                }
+                catch(Exception error) when (!(error is OutOfMemoryException))
+                {
+                    paidLedgerFailed=true;
+                    try { Record("NativeProductionLedgerFailure",new JObject { ["exception_type"]=error.GetType().FullName }); }
+                    catch(Exception failure) when (!(failure is OutOfMemoryException)) { }
+                }
+            }
+            private void StopPaidProductionLedger()
+            {
+                if(paidLedgerSink==null)return;
+                bool same=ReleasePaidProductionObserver(paidLedgerSink);
+                paidLedgerSink=null;
+                long faults=Game.Runtime.SkirmishProductionService.ProductionLedgerObservationFaults-paidLedgerFaultStart;
+                try { Record("NativeProductionLedgerClosed",new JObject { ["ledger_schema"]=1,
+                    ["scope"]="ProductionCommittedOriginsPartial",["transactions"]=paidLedgerCount,["capture_failed"]=paidLedgerFailed,
+                    ["observer_faults"]=faults,["sink_owned"]=same,["paid_resources_qualified"]=false,
+                    ["uncovered_operations"]=new JArray("Construction","Research","Repair","FabricationExchangeReward","PhysicalFuelHistory") }); }
+                catch(Exception error) when (!(error is OutOfMemoryException)) { }
+            }
+
+            private Action<Game.Runtime.SkirmishConstructionLedger.Observation> constructionLedgerSink;
+            private long constructionLedgerFaultStart;
+            private int constructionLedgerCount;
+            private bool constructionLedgerFailed;
+            private readonly System.Collections.Generic.Dictionary<object,int> constructionOwnerSequences=new System.Collections.Generic.Dictionary<object,int>();
+            private void StartConstructionLedger()
+            {
+                if(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")!="1")return;
+                if(Request.IsLegacyPreset || Game.Runtime.SkirmishConstructionLedger.Observer!=null)throw new InvalidOperationException("Owned construction ledger unavailable");
+                constructionLedgerFaultStart=Game.Runtime.SkirmishConstructionLedger.Faults;
+                constructionLedgerSink=ObserveConstructionLedger;
+                Record("NativeConstructionLedgerStarted",new JObject { ["ledger_schema"]=1,["scope"]="ConstructionCommittedBoundariesPartial",["paid_resources_qualified"]=false });
+                Game.Runtime.SkirmishConstructionLedger.OpenOwned(constructionLedgerSink);
+            }
+            private static JObject ConstructionPoint(Game.Runtime.SkirmishConstructionLedger.Point p)
+            {
+                var i=p.EnemyIntent;var r=p.Request;
+                return new JObject { ["bank_index"]=p.BankEntity.Index,["bank_version"]=p.BankEntity.Version,
+                    ["economy"]=JObject.FromObject(p.Economy),["bank"]=JObject.FromObject(p.Bank),
+                    ["session_index"]=p.Session.Index,["session_version"]=p.Session.Version,
+                    ["enemy_intent"]=!p.HasEnemyIntent?null:new JObject { ["version"]=i.Version,["session"]=i.SessionId.ToString(),
+                        ["phase"]=i.Phase,["action"]=i.ActionKey.ToString(),["pad"]=i.PadId.ToString(),["building"]=i.BuildingId.ToString(),
+                        ["origin_x"]=i.Origin.x,["origin_y"]=i.Origin.y,["width"]=i.Footprint.x,["depth"]=i.Footprint.y,
+                        ["paid"]=i.MaterialsPaid,["request_id"]=i.RequestId,["candidate"]=i.CandidateIndex,["desired_count"]=i.DesiredCount,
+                        ["result_stable_id"]=i.ResultStableObjectId.ToString(),["retry_after"]=i.RetryAfter },
+                    ["request"]=!p.HasRequest?null:new JObject { ["id"]=r.RequestId,["kind"]=r.RequestKind,["status"]=r.Status,
+                        ["building"]=r.BuildingId.ToString(),["faction"]=r.FactionId,["materials"]=r.MaterialsCost,
+                        ["preferred_x"]=r.PreferredOrigin.x,["preferred_y"]=r.PreferredOrigin.y,["actual_x"]=r.ActualOrigin.x,["actual_y"]=r.ActualOrigin.y,
+                        ["actual_width"]=r.ActualFootprint.x,["actual_depth"]=r.ActualFootprint.y,["runtime_id"]=r.BuildingRuntimeId,
+                        ["plan_index"]=r.PlanEntity.Index,["plan_version"]=r.PlanEntity.Version,["authored_grant"]=r.AuthoredStartingGrant,
+                        ["allow_nonbuildable"]=r.AllowNonBuildableEnemy,["require_origin"]=r.RequirePreferredOrigin } };
+            }
+            private void ObserveConstructionLedger(Game.Runtime.SkirmishConstructionLedger.Observation row)
+            {
+                if(constructionLedgerFailed)return;
+                try
+                {
+                    if(++constructionLedgerCount>4096)throw new InvalidDataException("Construction ledger bounded capture failed");
+                    var em=row.After.Manager;var session=row.After.Session;
+                    if(session==Entity.Null)throw new InvalidDataException("Actual owned construction session required");
+                    var native=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    var identity=SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,setup.DefinitionId,setup.ContentVersion,
+                        setup.DifficultyId.ToString(),setup.SizeId.ToString(),setup.Seed,GameLocalization.CurrentLocaleCode,setup.SetupHash,setup.ContentHash);
+                    Request.VerifyNativeSetupIdentity(identity);
+                    var actor=row.ActorOwner;
+                    int ownerSequence=0;
+                    if(row.TransactionOwner!=null && !constructionOwnerSequences.TryGetValue(row.TransactionOwner,out ownerSequence))
+                    {ownerSequence=constructionOwnerSequences.Count+1;constructionOwnerSequences.Add(row.TransactionOwner,ownerSequence);}
+                    Record("NativeConstructionTransaction",new JObject { ["ledger_schema"]=1,["scope"]="ConstructionCommittedBoundariesPartial",
+                        ["ledger_sequence"]=constructionLedgerCount,["operation"]=row.Operation,
+                        ["native_session_id"]=native.SessionId.ToString(),["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),["native_setup_identity"]=identity,
+                        ["before"]=ConstructionPoint(row.Before),["after"]=ConstructionPoint(row.After),
+                        ["transaction_owner_sequence"]=ownerSequence,["transaction_id"]=row.TransactionId,["credits_quoted"]=row.CreditsQuoted,["materials_quoted"]=row.MaterialsQuoted,
+                        ["prefab_name"]=row.PrefabName,["origin_x"]=row.Origin.x,["origin_y"]=row.Origin.y,["rotated"]=row.Rotated,
+                        ["committed_count"]=row.CommittedCount,["expected_count"]=row.ExpectedCount,
+                        ["actor"]=!row.HasActorOwner?null:new JObject { ["index"]=row.Actor.Index,["version"]=row.Actor.Version,
+                            ["session"]=actor.SessionId.ToString(),["stable_id"]=actor.StableObjectId.ToString(),["faction"]=actor.FactionId,["is_structure"]=actor.IsStructure,
+                            ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(row.Actor),["source_key"]=em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.ToString() },
+                        ["paid_resources_qualified"]=false });
+                }
+                catch(Exception error)when(!(error is OutOfMemoryException))
+                {
+                    constructionLedgerFailed=true;
+                    try{Record("NativeConstructionLedgerFailure",new JObject { ["exception_type"]=error.GetType().FullName });}
+                    catch(Exception failure)when(!(failure is OutOfMemoryException)){}
+                }
+            }
+            private void StopConstructionLedger()
+            {
+                if(constructionLedgerSink==null)return;
+                bool owned=Game.Runtime.SkirmishConstructionLedger.CloseOwned(constructionLedgerSink);
+                constructionLedgerSink=null;
+                try{Record("NativeConstructionLedgerClosed",new JObject { ["ledger_schema"]=1,["scope"]="ConstructionCommittedBoundariesPartial",
+                    ["transactions"]=constructionLedgerCount,["capture_failed"]=constructionLedgerFailed,["sink_owned"]=owned,
+                    ["observer_faults"]=Game.Runtime.SkirmishConstructionLedger.Faults-constructionLedgerFaultStart,
+                    ["uncovered_operations"]=new JArray("PlayerWallMemberIdentities","AlternateConstructionEntryPoints","RepairEconomyFuelOrigins","WholeAttemptConservation"),
+                    ["paid_resources_qualified"]=false });}
+                catch(Exception error)when(!(error is OutOfMemoryException)){}
             }
 
             private ProfileByteJournal profileByteJournal;
@@ -801,6 +1083,11 @@ namespace Game.Editor
             internal void Restore()
             {
                 if (restored) return;
+                ClosePaidObserverGroup(StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger,RestoreCanaryState);
+            }
+
+            private void RestoreCanaryState()
+            {
                 Record("RestoreStarting", new JObject());
                 // Preserve any unexpected dirty scene for investigation; never discard.
                 EnsureScenesClean();

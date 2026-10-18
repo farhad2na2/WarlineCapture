@@ -8,6 +8,67 @@ namespace Game.Runtime
 {
     public static class SkirmishResearchService
     {
+        public sealed class ResearchLedgerPoint
+        {
+            public Entity BankEntity;
+            public FactionTacticalMaterialsComponent Bank;
+            public int Materials,Fuel;
+            public uint NextResearchId;
+            public SkirmishResearchStateComponent State;
+            public bool HasItem;
+            public SkirmishResearchQueueItem Item;
+        }
+        public sealed class ResearchLedgerObservation
+        {
+            public EntityManager Manager;
+            public Entity Session;
+            public string Operation;
+            public ResearchLedgerPoint Before,After;
+            public bool HasDecision;
+            public SkirmishResearchDecision Decision;
+        }
+        public static System.Action<ResearchLedgerObservation> ResearchLedgerObserver;
+        public static long ResearchLedgerObservationFaults {get;private set;}
+        private static ResearchLedgerPoint ResearchPoint(EntityManager em,Entity session,byte faction,uint id)
+        {
+            if(!em.HasComponent<SkirmishSharedMaterialsInitialized>(session))
+                throw new System.InvalidOperationException("Research ledger requires actual shared materials");
+            Entity bank=Entity.Null;
+            using(var query=em.CreateEntityQuery(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent)))
+            using(var entities=query.ToEntityArray(Allocator.Temp))
+                foreach(var candidate in entities)
+                    if(em.GetComponentData<FactionEconomy>(candidate).FactionId==faction)
+                    {
+                        if(bank!=Entity.Null)throw new System.InvalidOperationException("Duplicate research materials bank");
+                        bank=candidate;
+                    }
+            if(bank==Entity.Null || !TryReadState(em,session,faction,out var state))
+                throw new System.InvalidOperationException("Missing actual research bank/state");
+            var point=new ResearchLedgerPoint {BankEntity=bank,Bank=em.GetComponentData<FactionTacticalMaterialsComponent>(bank),
+                Materials=SkirmishMaterialsService.Read(em,session,faction),Fuel=SkirmishStartingSupplyService.ReadFuel(em,session,faction),
+                State=state,NextResearchId=em.GetComponentData<SkirmishResearchStateComponent>(session).NextResearchId};
+            if(id!=0 && TryGet(em,session,id,out _,out var item)){point.HasItem=true;point.Item=item;}
+            return point;
+        }
+        private static ResearchLedgerPoint BeginResearchLedger(EntityManager em,Entity session,byte faction,uint id)
+        {
+            if(ResearchLedgerObserver==null)return null;
+            try{return ResearchPoint(em,session,faction,id);}
+            catch(System.Exception error)when(!(error is System.OutOfMemoryException)){ResearchLedgerObservationFaults++;return null;}
+        }
+        private static void EndResearchLedger(EntityManager em,Entity session,ResearchLedgerPoint before,string operation,uint id,
+            SkirmishResearchDecision? decision=null)
+        {
+            if(before==null || ResearchLedgerObserver==null)return;
+            try
+            {
+                ResearchLedgerObserver(new ResearchLedgerObservation {Manager=em,Session=session,Operation=operation,
+                    Before=before,After=ResearchPoint(em,session,before.State.FactionId,id),HasDecision=decision.HasValue,
+                    Decision=decision.GetValueOrDefault()});
+            }
+            catch(System.Exception error)when(!(error is System.OutOfMemoryException)){ResearchLedgerObservationFaults++;}
+        }
+
         public static void EnsureSession(EntityManager em, Entity session, SkirmishResolvedSetup setup)
         {
             if (!em.HasComponent<SkirmishResearchStateComponent>(session))
@@ -87,6 +148,7 @@ namespace Game.Runtime
             decision = new SkirmishResearchDecision { Kind = kind, Field = "research" };
             if (!TryPrepare(em, session, kind, factionId, out decision, out SkirmishProducerKind producer, out int cost, out float seconds))
                 return false;
+            var ledgerBefore=BeginResearchLedger(em,session,factionId,0);
             if (!TryDebitMaterials(em, session, factionId, cost))
             {
                 decision.Reason = SkirmishReasonCode.InsufficientMaterials;
@@ -115,6 +177,7 @@ namespace Game.Runtime
             decision.ResearchId = id;
             decision.Phase = SkirmishResearchPhase.Queued;
             AriaCommandEvidence.Accepted("Research", factionId);
+            EndResearchLedger(em,session,ledgerBefore,"Queue",id,decision);
             return true;
         }
 
@@ -148,12 +211,14 @@ namespace Game.Runtime
                 return false;
             }
 
+            var ledgerBefore=BeginResearchLedger(em,session,item.FactionId,researchId);
             item.Phase = SkirmishResearchPhase.Researching;
             DynamicBuffer<SkirmishResearchQueueItem> started = em.GetBuffer<SkirmishResearchQueueItem>(session);
             started[index] = item;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.Phase = SkirmishResearchPhase.Researching;
+            EndResearchLedger(em,session,ledgerBefore,"Start",researchId,decision);
             return true;
         }
 
@@ -187,6 +252,7 @@ namespace Game.Runtime
                 return false;
             }
 
+            var ledgerBefore=BeginResearchLedger(em,session,item.FactionId,researchId);
             item.Phase = SkirmishResearchPhase.Completed;
             item.RemainingSeconds = 0f;
             DynamicBuffer<SkirmishResearchQueueItem> completed = em.GetBuffer<SkirmishResearchQueueItem>(session);
@@ -199,6 +265,7 @@ namespace Game.Runtime
             decision.Phase = SkirmishResearchPhase.Completed;
             decision.ReadinessAfter = state.Readiness;
             decision.LevelAfter = LevelOf(state, item.Kind);
+            EndResearchLedger(em,session,ledgerBefore,"Complete",researchId,decision);
             return true;
         }
 
@@ -226,6 +293,7 @@ namespace Game.Runtime
             }
 
             int refund = SkirmishResearchCosts.RefundMaterials(item.MaterialsPaid, item.Phase);
+            var ledgerBefore=BeginResearchLedger(em,session,item.FactionId,researchId);
             CreditMaterials(em, session, item.FactionId, refund);
             item.Phase = SkirmishResearchPhase.Cancelled;
             DynamicBuffer<SkirmishResearchQueueItem> cancelled = em.GetBuffer<SkirmishResearchQueueItem>(session);
@@ -234,6 +302,7 @@ namespace Game.Runtime
             decision.Reason = SkirmishReasonCode.None;
             decision.Phase = SkirmishResearchPhase.Cancelled;
             decision.RefundedMaterials = refund;
+            EndResearchLedger(em,session,ledgerBefore,"Cancel",researchId,decision);
             return true;
         }
 
@@ -254,8 +323,10 @@ namespace Game.Runtime
                     continue;
                 if (item.Phase != SkirmishResearchPhase.Queued && item.Phase != SkirmishResearchPhase.Researching)
                     continue;
+                var ledgerBefore=BeginResearchLedger(em,session,item.FactionId,item.ResearchId);
                 item.Phase = SkirmishResearchPhase.Lost;
                 buffer[i] = item;
+                EndResearchLedger(em,session,ledgerBefore,"Lost",item.ResearchId);
                 lost++;
             }
 

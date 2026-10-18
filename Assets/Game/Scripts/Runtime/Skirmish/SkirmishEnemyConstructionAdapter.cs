@@ -94,6 +94,7 @@ namespace Game.Runtime
             if(!em.HasComponent<SkirmishEnemyConstructionIntentV1Component>(session))
                 em.AddComponentData(session,new SkirmishEnemyConstructionIntentV1Component{Version=1,SessionId=quote.SessionId});
             var oldIntent=em.GetComponentData<SkirmishEnemyConstructionIntentV1Component>(session);
+            var ledgerBefore=SkirmishConstructionLedger.Begin(em,bank,session);
             if(!Enqueue(em,session,quote.BuildingId,quote.Origin,quote.MaterialsCost,out int requestId))return false;
             if(oldDebt>0)RemoveExact(em,session,oldIntent.RequestId,oldIntent.BuildingId,oldIntent.Origin);
             em.SetComponentData(bank,economy);em.SetComponentData(bank,materials);
@@ -103,6 +104,7 @@ namespace Game.Runtime
                 MaterialsPaid=quote.MaterialsCost,DesiredCount=quote.DesiredCount,RequestId=requestId,CandidateIndex=quote.CandidateIndex,
                 FailedResearchId=oldIntent.FailedResearchId,PreviousProducerStableId=oldIntent.PreviousProducerStableId,
                 PlanRevision=planRevision,RequestedAt=now,RejectionCount=oldIntent.BuildingId.Equals(quote.BuildingId)?(byte)Math.Min(3,oldIntent.RejectionCount+(oldDebt>0?1:0)):(byte)0});
+            SkirmishConstructionLedger.End(ledgerBefore,"EnemyRequest",requestId,0,quote.MaterialsCost,quote.BuildingId.ToString(),quote.Origin);
             return true;
         }
         static bool TryProjectBank(EntityManager em,Entity session,int cost,int reserve,
@@ -142,7 +144,7 @@ namespace Game.Runtime
                 if(request.Status==BuildingRuntimeSpawnRequest.Pending)return;
                 if(request.Status==BuildingRuntimeSpawnRequest.Succeeded)
                 { RecordNativeResult(em,request);return; }
-                i.Phase=(byte)SkirmishEnemyConstructionPhase.RefundPending;em.SetComponentData(session,i);
+                var debtBefore=SkirmishConstructionLedger.Begin(em,SkirmishMaterialsService.FindEconomy(em,2),session);i.Phase=(byte)SkirmishEnemyConstructionPhase.RefundPending;em.SetComponentData(session,i);SkirmishConstructionLedger.End(debtBefore,"EnemyRefundDebt",i.RequestId,0,i.MaterialsPaid);
                 RemoveExact(em,session,i.RequestId,i.BuildingId,i.Origin);Refund(em,session,ref i,now);return;
             }
             // Transient request buffer is intentionally absent after Continue. Only
@@ -151,8 +153,8 @@ namespace Game.Runtime
                 throw new InvalidOperationException("Accepted construction lost its native result before adoption.");
             if(!SavedIntentFits(setup,i) || !TryConfigured(em,i.BuildingId.ToString(),out var row) || row.CanRequest!=1 ||
                 row.MaterialsCost!=i.MaterialsPaid || math.any(row.FootprintCells!=i.Footprint))
-            { i.Phase=(byte)SkirmishEnemyConstructionPhase.RefundPending;em.SetComponentData(session,i);Refund(em,session,ref i,now);return; }
-            if(Enqueue(em,session,i.BuildingId,i.Origin,i.MaterialsPaid,out int id)){i.RequestId=id;em.SetComponentData(session,i);}
+            { var debtBefore=SkirmishConstructionLedger.Begin(em,SkirmishMaterialsService.FindEconomy(em,2),session);i.Phase=(byte)SkirmishEnemyConstructionPhase.RefundPending;em.SetComponentData(session,i);SkirmishConstructionLedger.End(debtBefore,"EnemyRefundDebt",i.RequestId,0,i.MaterialsPaid);Refund(em,session,ref i,now);return; }
+            if(Enqueue(em,session,i.BuildingId,i.Origin,i.MaterialsPaid,out int id)){var recreated=SkirmishConstructionLedger.Begin(em,SkirmishMaterialsService.FindEconomy(em,2),session);i.RequestId=id;em.SetComponentData(session,i);SkirmishConstructionLedger.End(recreated,"EnemyReenqueue",id,0,i.MaterialsPaid);}
         }
         // Native processing calls this BEFORE accepting an exact enemy-paid row.
         // Null PlanEntity and unrelated Campaign/player requests preserve legacy behavior.
@@ -218,8 +220,10 @@ namespace Game.Runtime
             var actual=em.GetComponentData<SkirmishAttemptOwnedComponent>(found);
             if(!actual.SessionId.Equals(i.SessionId)||actual.FactionId!=2||actual.IsStructure!=1||actual.StableObjectId.IsEmpty)
                 throw new InvalidOperationException("Native construction result owner mismatch.");
+            var deliveredBefore=SkirmishConstructionLedger.Begin(em,SkirmishMaterialsService.FindEconomy(em,2),r.PlanEntity);
             i.ResultStableObjectId=actual.StableObjectId;i.Phase=(byte)SkirmishEnemyConstructionPhase.Delivered;
             em.SetComponentData(r.PlanEntity,i);
+            SkirmishConstructionLedger.End(deliveredBefore,"EnemyDelivered",r.RequestId,0,i.MaterialsPaid,i.BuildingId.ToString(),i.Origin,false,1,1,found);
         }
         internal static void CleanupAttempt(EntityManager em,FixedString64Bytes attempt)
         {
@@ -272,9 +276,11 @@ namespace Game.Runtime
             Entity bank=SkirmishMaterialsService.FindEconomy(em,2);if(bank==Entity.Null)return;
             var economy=em.GetComponentData<FactionEconomy>(bank);var materials=em.GetComponentData<FactionTacticalMaterialsComponent>(bank);
             if(FactionConstructionResourceUtilitySystemHelper.TryRollback(ref economy,ref materials,0,i.MaterialsPaid)!=FactionConstructionResourceMutationResult.Applied)return;
+            var refundBefore=SkirmishConstructionLedger.Begin(em,bank,session);
             em.SetComponentData(bank,economy);em.SetComponentData(bank,materials);
             i.MaterialsPaid=0;i.Phase=(byte)SkirmishEnemyConstructionPhase.Rejected;i.RejectionCount=(byte)Math.Min(3,i.RejectionCount+1);i.RetryAfter=now+4;
             em.SetComponentData(session,i);
+            SkirmishConstructionLedger.End(refundBefore,"EnemyRefund",i.RequestId);
         }
         static bool Enqueue(EntityManager em,Entity session,FixedString128Bytes building,int2 origin,int cost,out int id)
         {

@@ -8,6 +8,85 @@ namespace Game.Runtime
 {
     public static partial class SkirmishProductionService
     {
+
+        // Optional observation only; no bank/decision/component is written here.
+        // The owned Editor context installs one sink. Ordinary capture failures
+        // invalidate its ledger, but cannot change the transaction's result.
+        public sealed class ProductionLedgerPoint
+        {
+            public int Faction, BankIndex, BankVersion, Materials, Fuel;
+            public FactionTacticalMaterialsComponent Bank;
+            public bool HasReservation;
+            public SkirmishProductionReservation Reservation;
+        }
+        public sealed class ProductionLedgerObservation
+        {
+            public EntityManager Manager;
+            public Entity Session, Actor;
+            public string Operation;
+            public int MemberOrdinal;
+            public ProductionLedgerPoint Before, After;
+            public bool HasDecision;
+            public SkirmishProductionDecision Decision;
+            public SkirmishAttemptOwnedComponent ActorOwner;
+            public bool HasActorOwner;
+        }
+        public static System.Action<ProductionLedgerObservation> ProductionLedgerObserver;
+        public static long ProductionLedgerObservationFaults { get; private set; }
+        private static ProductionLedgerPoint LedgerPoint(EntityManager em, Entity session, byte faction, uint id)
+        {
+            if (!em.HasComponent<SkirmishSharedMaterialsInitialized>(session))
+                throw new System.InvalidOperationException("Shared materials ledger required");
+            Entity bank = Entity.Null;
+            using (var query = em.CreateEntityQuery(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent)))
+            using (var entities = query.ToEntityArray(Allocator.Temp))
+                foreach (var candidate in entities)
+                    if (em.GetComponentData<FactionEconomy>(candidate).FactionId == faction)
+                    {
+                        if (bank != Entity.Null) throw new System.InvalidOperationException("Duplicate materials bank");
+                        bank = candidate;
+                    }
+            if (bank == Entity.Null) throw new System.InvalidOperationException("Missing materials bank");
+            var result = new ProductionLedgerPoint { Faction=faction, BankIndex=bank.Index, BankVersion=bank.Version,
+                Bank=em.GetComponentData<FactionTacticalMaterialsComponent>(bank),
+                Materials=SkirmishMaterialsService.Read(em,session,faction),
+                Fuel=SkirmishStartingSupplyService.ReadFuel(em,session,faction) };
+            if (id!=0 && TryGetReservation(em,session,id,out _,out var reservation))
+            { result.HasReservation=true; result.Reservation=reservation; }
+            return result;
+        }
+        private static ProductionLedgerPoint BeginLedger(EntityManager em,Entity session,byte faction,uint id)
+        {
+            if (ProductionLedgerObserver==null) return null;
+            try { return LedgerPoint(em,session,faction,id); }
+            catch (System.Exception error) when (!(error is System.OutOfMemoryException))
+            { ProductionLedgerObservationFaults++; return null; }
+        }
+        private static void EndLedger(EntityManager em,Entity session,ProductionLedgerPoint before,string operation,
+            uint id,SkirmishProductionDecision? decision=null,Entity actor=default,int memberOrdinal=-1)
+        {
+            if (before==null || ProductionLedgerObserver==null) return;
+            try
+            {
+                var row=new ProductionLedgerObservation { Manager=em,Session=session,Actor=actor,Operation=operation,
+                    Before=before,After=LedgerPoint(em,session,(byte)before.Faction,id),MemberOrdinal=memberOrdinal,
+                    HasDecision=decision.HasValue,Decision=decision.GetValueOrDefault() };
+                if (actor!=Entity.Null && em.Exists(actor) && em.HasComponent<SkirmishAttemptOwnedComponent>(actor))
+                { row.HasActorOwner=true;row.ActorOwner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor); }
+                ProductionLedgerObserver(row);
+            }
+            catch (System.Exception error) when (!(error is System.OutOfMemoryException))
+            { ProductionLedgerObservationFaults++; }
+        }
+
+        private static void EndDirectLedgerMembers(EntityManager em,Entity session,byte faction,uint id,
+            System.Collections.Generic.List<Entity> members)
+        {
+            if(members==null)return;
+            for(int i=0;i<members.Count;i++)
+                EndLedger(em,session,BeginLedger(em,session,faction,id),"DirectMember",id,null,members[i],i);
+        }
+
         public static bool TryProduce(
             EntityManager em,
             Entity session,
@@ -59,6 +138,7 @@ namespace Game.Runtime
                 return false;
             }
 
+            var directLedgerBefore=BeginLedger(em,session,factionId,0);
             materials -= decision.MaterialsCost;
             fuel -= decision.FuelCost;
             nextReservation++;
@@ -81,6 +161,9 @@ namespace Game.Runtime
             });
 
             WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
+            EndLedger(em,session,directLedgerBefore,"DirectDebit",reservationId,decision);
+            var directDispatchBefore=BeginLedger(em,session,factionId,reservationId);
+            var directMembers=directDispatchBefore==null?null:new System.Collections.Generic.List<Entity>();
 
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             string prefabKey = PrefabKey(setup, roleKind);
@@ -111,11 +194,14 @@ namespace Game.Runtime
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
                 owned.ReservationId = reservationId;
                 em.SetComponentData(member, owned);
+                if(directMembers!=null)directMembers.Add(member);
             }
 
             SkirmishCapacityLedger.PromoteLive(ref snapshot, category, decision.MemberCount, decision.SupplyCost);
             WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
             MarkReservation(em, session, reservationId, SkirmishReservationPhase.Live);
+            EndLedger(em,session,directDispatchBefore,"DirectDispatch",reservationId,decision);
+            EndDirectLedgerMembers(em,session,factionId,reservationId,directMembers);
 
             using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishRosterProjectionSystem.Apply(em, ownedQuery, sessionId, setup);
@@ -159,6 +245,7 @@ namespace Game.Runtime
                 return false;
             }
 
+            var ledgerBefore=BeginLedger(em,session,factionId,0);
             materials -= decision.MaterialsCost;
             fuel -= decision.FuelCost;
             nextReservation++;
@@ -180,6 +267,7 @@ namespace Game.Runtime
             });
             WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
             AriaCommandEvidence.Accepted("Production", factionId);
+            EndLedger(em,session,ledgerBefore,"Queue",decision.ReservationId,decision);
             return true;
         }
 
@@ -287,9 +375,11 @@ namespace Game.Runtime
                 return false;
             }
 
+            var queuedStartBefore=BeginLedger(em,session,reservation.FactionId,reservationId);
             reservation.Phase = SkirmishReservationPhase.Producing;
             DynamicBuffer<SkirmishProductionReservation> started = em.GetBuffer<SkirmishProductionReservation>(session);
             started[index] = reservation;
+            EndLedger(em,session,queuedStartBefore,"StartQueued",reservationId);
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             return true;
@@ -342,6 +432,7 @@ namespace Game.Runtime
                 Quantity = reservation.MemberCount,
                 SupplyCost = reservation.SupplyCost
             };
+            var queuedMembers=ProductionLedgerObserver==null?null:new System.Collections.Generic.List<Entity>();
             System.Collections.Generic.Dictionary<string, Entity> prefabLookup =
                 SkirmishScenarioSpawnSystem.BuildPrefabEntityLookup(em);
             for (int i = 0; i < reservation.MemberCount; i++)
@@ -359,11 +450,15 @@ namespace Game.Runtime
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
                 owned.ReservationId = reservationId;
                 em.SetComponentData(member, owned);
+                if(queuedMembers!=null)queuedMembers.Add(member);
             }
 
+            var dispatchBefore=BeginLedger(em,session,reservation.FactionId,reservationId);
             SkirmishCapacityLedger.PromoteLive(ref snapshot, reservation.Category, UndeliveredMembers(reservation), UndeliveredSupply(reservation));
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             MarkReservation(em, session, reservationId, SkirmishReservationPhase.Live);
+            EndLedger(em,session,dispatchBefore,"QueuedDirectDispatch",reservationId);
+            EndDirectLedgerMembers(em,session,reservation.FactionId,reservationId,queuedMembers);
 
             using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishRosterProjectionSystem.Apply(em, ownedQuery, sessionId, setup);
@@ -418,6 +513,7 @@ namespace Game.Runtime
                 return false;
             }
 
+            var ledgerBefore=BeginLedger(em,session,reservation.FactionId,reservationId);
             materials += refund;
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Cancelled;
@@ -427,6 +523,7 @@ namespace Game.Runtime
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.RefundedMaterials = refund;
+            EndLedger(em,session,ledgerBefore,"Cancel",reservationId,decision);
             return true;
         }
 
@@ -458,6 +555,7 @@ namespace Game.Runtime
                 return false;
             }
 
+            var ledgerBefore=BeginLedger(em,session,reservation.FactionId,reservationId);
             materials += UndeliveredPayment(reservation);
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Cancelled;
@@ -469,6 +567,7 @@ namespace Game.Runtime
             decision.ReservationId = reservationId;
             decision.MaterialsCost = reservation.MaterialsPaid;
             decision.RefundedMaterials = UndeliveredPayment(reservation);
+            EndLedger(em,session,ledgerBefore,"FailedDispatchRefund",reservationId,decision);
             return true;
         }
 
@@ -498,6 +597,7 @@ namespace Game.Runtime
 
                 if (reservation.Phase != SkirmishReservationPhase.Producing)
                     continue;
+                var ledgerBefore=BeginLedger(em,session,factionId,reservation.ReservationId);
                 ReadStocks(em, session, factionId, out int materials, out int fuel, out var snapshot, out uint next);
                 SkirmishCapacityLedger.TryReleaseReserved(
                     ref snapshot, reservation.Category, UndeliveredMembers(reservation), UndeliveredSupply(reservation));
@@ -506,6 +606,7 @@ namespace Game.Runtime
                 reservation.RemainingMembers = System.Math.Max(0, reservation.RemainingMembers - UndeliveredMembers(reservation));
                 buffer = em.GetBuffer<SkirmishProductionReservation>(session);
                 buffer[i] = reservation;
+                EndLedger(em,session,ledgerBefore,"ProducerLost",reservation.ReservationId);
                 changed++;
             }
 
@@ -573,6 +674,7 @@ namespace Game.Runtime
                 return false;
 
             byte factionId = owned.FactionId == 0 ? (byte)1 : owned.FactionId;
+            var deathBefore=BeginLedger(em,session,factionId,owned.ReservationId);
             ReadStocks(em, session, factionId, out int materials, out int fuel, out var snapshot, out uint nextReservation);
             if (!SkirmishCapacityLedger.TryReleaseDeath(ref snapshot, role.Category, role.SupplyCost))
                 return false;
@@ -583,6 +685,7 @@ namespace Game.Runtime
             em.SetComponentData(unit, owned);
             WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
             DecrementReservation(em, session, owned.ReservationId);
+            EndLedger(em,session,deathBefore,"DeathRelease",owned.ReservationId,null,unit);
             using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             SkirmishArmyGroupSystem.RefreshAlive(em, session, ownedQuery, sessionId);

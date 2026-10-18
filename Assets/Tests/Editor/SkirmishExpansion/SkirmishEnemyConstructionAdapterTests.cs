@@ -15,6 +15,73 @@ namespace Game.Tests.Editor
     // of real geometry/prefab delivery or a normal-input mission playthrough.
     public sealed class SkirmishEnemyConstructionAdapterTests
     {
+        static void WithConstructionLedger(Action<System.Collections.Generic.List<SkirmishConstructionLedger.Observation>> body)
+        {
+            Assert.IsNull(SkirmishConstructionLedger.Observer);
+            var rows=new System.Collections.Generic.List<SkirmishConstructionLedger.Observation>();
+            Action<SkirmishConstructionLedger.Observation> sink=rows.Add;SkirmishConstructionLedger.Observer=sink;
+            try{body(rows);}finally{if(SkirmishConstructionLedger.Observer==sink)SkirmishConstructionLedger.Observer=null;}
+        }
+        [Test] public void ConstructionLedgerPendingDoesNotEmitFrameRows()
+        {
+            WithConstructionLedger(rows=>{
+                RequestPaysOnceAndNeverTreatsPendingAsDelivery();
+                Assert.AreEqual(1,rows.Count);Assert.AreEqual("EnemyRequest",rows[0].Operation);
+                Assert.AreEqual(1000,rows[0].Before.Bank.Current);Assert.AreEqual(800,rows[0].After.Bank.Current);
+                Assert.IsTrue(rows[0].After.HasRequest);Assert.AreEqual(rows[0].TransactionId,rows[0].After.EnemyIntent.RequestId);
+            });
+        }
+        [Test] public void ConstructionLedgerFailureDebtRefundOnce()
+        {
+            WithConstructionLedger(rows=>{
+                using var f=new Fixture();Assert.IsTrue(f.Request());f.Failed();
+                SkirmishEnemyConstructionAdapter.Tick(f.Em,f.Session);
+                CollectionAssert.AreEqual(new[]{"EnemyRequest","EnemyRefundDebt","EnemyRefund"},rows.ConvertAll(x=>x.Operation));
+                Assert.AreEqual(1000,f.Materials);
+                SkirmishEnemyConstructionAdapter.Tick(f.Em,f.Session);Assert.AreEqual(3,rows.Count);
+            });
+        }
+        [Test] public void ConstructionLedgerDeliveryAndContinueAreNotNewDebits()
+        {
+            WithConstructionLedger(rows=>{
+                using(var f=new Fixture()){
+                    Assert.IsTrue(f.Request());var actor=f.Succeeded();
+                    Assert.AreEqual("EnemyDelivered",rows[1].Operation);Assert.AreEqual(actor,rows[1].Actor);
+                    Assert.IsTrue(rows[1].HasActorOwner);Assert.AreEqual(800,f.Materials);
+                    Assert.AreEqual(rows[1].Before.Bank.Current,rows[1].After.Bank.Current);
+                }
+                rows.Clear();ContinueRecreatesOnlyPersistedPaidRequestWithoutSecondDebit();
+                CollectionAssert.AreEqual(new[]{"EnemyRequest","EnemyReenqueue"},rows.ConvertAll(x=>x.Operation));
+                Assert.AreEqual(rows[1].Before.Bank.Current,rows[1].After.Bank.Current);
+            });
+        }
+        [Test] public void ConstructionLedgerDebtReplacementRetainsActualChecks()
+        {
+            WithConstructionLedger(rows=>{
+                FullBankDebtAdmitsLegalNextConstructionAndSettlesExactlyOnce();
+                Assert.IsTrue(rows.Exists(x=>x.Operation=="EnemyRefundDebt"));
+                Assert.GreaterOrEqual(rows.FindAll(x=>x.Operation=="EnemyRequest").Count,2);
+                rows.Clear();FailedDebtReplacementEnqueuePreservesOriginalDebtBankAndRows();
+                Assert.AreEqual(1,rows.FindAll(x=>x.Operation=="EnemyRequest").Count);
+            });
+        }
+        [Test] public void ConstructionLedgerSinkFailureDoesNotChangeEnemyDecision()
+        {
+            Assert.IsNull(SkirmishConstructionLedger.Observer);long faults=SkirmishConstructionLedger.Faults;
+            Action<SkirmishConstructionLedger.Observation> sink=_=>throw new InvalidOperationException("injected observer failure");
+            SkirmishConstructionLedger.Observer=sink;
+            try{RequestPaysOnceAndNeverTreatsPendingAsDelivery();Assert.Greater(SkirmishConstructionLedger.Faults,faults);}
+            finally{if(SkirmishConstructionLedger.Observer==sink)SkirmishConstructionLedger.Observer=null;}
+            RequestPaysOnceAndNeverTreatsPendingAsDelivery();
+        }
+        public static void RunConstructionLedgerEnemyControls()
+        {
+            var t=new SkirmishEnemyConstructionAdapterTests();t.ConstructionLedgerPendingDoesNotEmitFrameRows();
+            t.ConstructionLedgerFailureDebtRefundOnce();t.ConstructionLedgerDeliveryAndContinueAreNotNewDebits();
+            t.ConstructionLedgerDebtReplacementRetainsActualChecks();t.ConstructionLedgerSinkFailureDoesNotChangeEnemyDecision();
+            Debug.Log("[ConstructionLedgerEnemyControls] result=Passed controls=5 nativeGeometryMeasured=0 paidResourcesQualified=0");
+        }
+
         public static void RunFocusedValidation()
         {
             var t=new SkirmishEnemyConstructionAdapterTests();

@@ -1,0 +1,1147 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T12:35:32.748606+00:00",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "scope": "Read-only S003 air infrastructure/source-fit follow-up. Source/committed-evidence review and arithmetic only; no Unity/compiler/native test/source/assets edits. Consumer code remains frozen a6eb49e.",
+  "conclusion": "Next S003 Standard/Regular startup regression remains useful, but air lifecycle is not ready to claim. Concrete gates are earned Materials/time, actual native pad-to-production-slot binding, home/egress/service reachability, paid faction fuel haul and complete ordinary-input return/touchdown/second sortie. Smallest next step is a source-pinned native observation of existing bindings and paid supply sequence, not map/budget modification.",
+  "mission_identity": {
+    "catalog": "S003",
+    "definition": "skirmish.s003",
+    "version": 2,
+    "army": "Air Mobile",
+    "start": "Field",
+    "certified_sizes_serialized": [
+      1
+    ],
+    "size_warning": "All three canonical matrix vectors audited below; only Standard is in current allowedCertifiedSizeIds. War/Large arithmetic is planning data, not launch certification or permission to switch sizes to make an air test affordable.",
+    "physical_default": "Compatibility DesertBase existing Campaign physical source; future candidate define can override. Pin actual selected source/build before native run.",
+    "source_identity_hash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+    "source_content_hash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c"
+  },
+  "logical_infrastructure": {
+    "selected_pads": [
+      {
+        "PadId": "pad.skirmish.db.staging_player",
+        "AnchorId": "anchor.skirmish.db.staging_player",
+        "RoleId": "staging.player",
+        "Kind": 2,
+        "CenterX": 985,
+        "CenterZ": 345,
+        "WidthMetres": 20,
+        "DepthMetres": 14,
+        "FactionId": 1,
+        "kind_name": "GroundStaging",
+        "projected_center_static_only": {
+          "x": 1007.2059,
+          "z": 326.0147
+        },
+        "projected_forward_extent": 33.9508,
+        "projected_across_extent": 10.0
+      },
+      {
+        "PadId": "pad.skirmish.db.staging_enemy",
+        "AnchorId": "anchor.skirmish.db.staging_enemy",
+        "RoleId": "staging.enemy",
+        "Kind": 2,
+        "CenterX": 1369,
+        "CenterZ": 345,
+        "WidthMetres": 20,
+        "DepthMetres": 14,
+        "FactionId": 2,
+        "kind_name": "GroundStaging",
+        "projected_center_static_only": {
+          "x": 1627.8378,
+          "z": 126.6876
+        },
+        "projected_forward_extent": 33.9508,
+        "projected_across_extent": 10.0
+      },
+      {
+        "PadId": "pad.skirmish.db.spawn_vehicle_player",
+        "AnchorId": "anchor.skirmish.db.staging_player",
+        "RoleId": "spawn.vehicle.player",
+        "Kind": 4,
+        "CenterX": 1050,
+        "CenterZ": 345,
+        "WidthMetres": 14,
+        "DepthMetres": 12,
+        "FactionId": 1,
+        "kind_name": "VehicleSpawn",
+        "projected_center_static_only": {
+          "x": 1112.2608,
+          "z": 292.2745
+        },
+        "projected_forward_extent": 23.7655,
+        "projected_across_extent": 8.5714
+      },
+      {
+        "PadId": "pad.skirmish.db.spawn_vehicle_enemy",
+        "AnchorId": "anchor.skirmish.db.staging_enemy",
+        "RoleId": "spawn.vehicle.enemy",
+        "Kind": 4,
+        "CenterX": 1305,
+        "CenterZ": 345,
+        "WidthMetres": 14,
+        "DepthMetres": 12,
+        "FactionId": 2,
+        "kind_name": "VehicleSpawn",
+        "projected_center_static_only": {
+          "x": 1524.3992,
+          "z": 159.9088
+        },
+        "projected_forward_extent": 23.7655,
+        "projected_across_extent": 8.5714
+      },
+      {
+        "PadId": "pad.skirmish.db.rally_player",
+        "AnchorId": "anchor.skirmish.db.staging_player",
+        "RoleId": "rally.player",
+        "Kind": 5,
+        "CenterX": 1029,
+        "CenterZ": 345,
+        "WidthMetres": 10,
+        "DepthMetres": 8,
+        "FactionId": 1,
+        "kind_name": "Rally",
+        "projected_center_static_only": {
+          "x": 1078.32,
+          "z": 303.1752
+        },
+        "projected_forward_extent": 16.9754,
+        "projected_across_extent": 5.7143
+      },
+      {
+        "PadId": "pad.skirmish.db.rally_enemy",
+        "AnchorId": "anchor.skirmish.db.staging_enemy",
+        "RoleId": "rally.enemy",
+        "Kind": 5,
+        "CenterX": 1325,
+        "CenterZ": 345,
+        "WidthMetres": 10,
+        "DepthMetres": 8,
+        "FactionId": 2,
+        "kind_name": "Rally",
+        "projected_center_static_only": {
+          "x": 1556.7238,
+          "z": 149.5271
+        },
+        "projected_forward_extent": 16.9754,
+        "projected_across_extent": 5.7143
+      },
+      {
+        "PadId": "pad.skirmish.db.service_player",
+        "AnchorId": "anchor.skirmish.db.service_player",
+        "RoleId": "service.player",
+        "Kind": 8,
+        "CenterX": 949,
+        "CenterZ": 420.6,
+        "WidthMetres": 12,
+        "DepthMetres": 10,
+        "FactionId": 1,
+        "kind_name": "Service",
+        "projected_center_static_only": {
+          "x": 965.5341,
+          "z": 396.1151
+        },
+        "projected_forward_extent": 20.3705,
+        "projected_across_extent": 7.1429
+      },
+      {
+        "PadId": "pad.skirmish.db.service_enemy",
+        "AnchorId": "anchor.skirmish.db.service_enemy",
+        "RoleId": "service.enemy",
+        "Kind": 8,
+        "CenterX": 1405,
+        "CenterZ": 269.4,
+        "WidthMetres": 12,
+        "DepthMetres": 10,
+        "FactionId": 2,
+        "kind_name": "Service",
+        "projected_center_static_only": {
+          "x": 1669.5097,
+          "z": 56.5872
+        },
+        "projected_forward_extent": 20.3705,
+        "projected_across_extent": 7.1429
+      },
+      {
+        "PadId": "pad.skirmish.db.air_player",
+        "AnchorId": "anchor.skirmish.db.air_player",
+        "RoleId": "air.player",
+        "Kind": 6,
+        "CenterX": 919,
+        "CenterZ": 462.6,
+        "WidthMetres": 16,
+        "DepthMetres": 16,
+        "FactionId": 1,
+        "kind_name": "AirReturn",
+        "projected_center_static_only": {
+          "x": 926.2207,
+          "z": 440.2506
+        },
+        "projected_forward_extent": 27.1606,
+        "projected_across_extent": 11.4286
+      },
+      {
+        "PadId": "pad.skirmish.db.air_enemy",
+        "AnchorId": "anchor.skirmish.db.air_enemy",
+        "RoleId": "air.enemy",
+        "Kind": 6,
+        "CenterX": 1435,
+        "CenterZ": 227.4,
+        "WidthMetres": 16,
+        "DepthMetres": 16,
+        "FactionId": 2,
+        "kind_name": "AirReturn",
+        "projected_center_static_only": {
+          "x": 1708.823,
+          "z": 12.4517
+        },
+        "projected_forward_extent": 27.1606,
+        "projected_across_extent": 11.4286
+      }
+    ],
+    "route_summary": [
+      {
+        "RouteId": "route.skirmish.db.main",
+        "Kind": 1,
+        "LengthMetres": 384.0,
+        "InfantryTransitSeconds": 96.0,
+        "GroundTransitSeconds": 48.0,
+        "AirTransitSeconds": 24.0,
+        "InfantryFirstContactSeconds": 48.0,
+        "GroundFirstContactSeconds": 24.0,
+        "ProvisionalTimes": 1,
+        "WidthMetres": 12,
+        "AllowsVehicles": 1,
+        "AllowsAircraft": 1
+      },
+      {
+        "RouteId": "route.skirmish.db.flank_a",
+        "Kind": 2,
+        "LengthMetres": 666.094,
+        "InfantryTransitSeconds": 166.5235,
+        "GroundTransitSeconds": 83.26175,
+        "AirTransitSeconds": 41.630875,
+        "InfantryFirstContactSeconds": 83.26175,
+        "GroundFirstContactSeconds": 41.630875,
+        "ProvisionalTimes": 1,
+        "WidthMetres": 6,
+        "AllowsVehicles": 1,
+        "AllowsAircraft": 0
+      },
+      {
+        "RouteId": "route.skirmish.db.flank_b",
+        "Kind": 3,
+        "LengthMetres": 607.8468,
+        "InfantryTransitSeconds": 151.9617,
+        "GroundTransitSeconds": 75.98085,
+        "AirTransitSeconds": 37.990425,
+        "InfantryFirstContactSeconds": 75.98085,
+        "GroundFirstContactSeconds": 37.990425,
+        "ProvisionalTimes": 1,
+        "WidthMetres": 12,
+        "AllowsVehicles": 1,
+        "AllowsAircraft": 1
+      }
+    ],
+    "projection": "Projection calculated directly from checked layout worldBinding and TryProjectLocalToMap formula; coordinates are static arithmetic, not terrain/collider/path/occupancy or native placement proof. Authored16x16 AirReturn becomes ~27.1606forward x11.4286across in this mapped frame.",
+    "typed_semantics": "Kind6 is AirReturn, not proof of an actual Helipad building/production slot. Kind8 Service marks a logical area, not a native refuel connection. Main and south route permit aircraft; north does not. ProvisionalTimes=1 for authored route timing. No dedicated measured Helipad-to-service egress success is established by these route rows.",
+    "legacy_constraint": "S003 preserved BaseAssault path does not require generic mission logical binding; SkirmishTypedSpawnConstraint.TryForLaunch returns true with no constraint. Do not assume generic typed mask is enforcing these pad extents in S003 or change shared layout and silently bypass its reviewed semantic fingerprint."
+  },
+  "existing_physical_air_metadata": {
+    "anchors": [
+      {
+        "id": "anchor.skirmish.desert_base_01.runway.faction_1.lane_0",
+        "kind": 9,
+        "faction": 1,
+        "lane": 0,
+        "position": {
+          "x": 886.8202,
+          "y": 0.6849844,
+          "z": 314.50977
+        },
+        "radius": 90.65007
+      },
+      {
+        "id": "anchor.skirmish.desert_base_01.helipad.faction_1.lane_0",
+        "kind": 10,
+        "faction": 1,
+        "lane": 0,
+        "position": {
+          "x": 999.9,
+          "y": 0.73,
+          "z": 359.99994
+        },
+        "radius": 7.200793
+      },
+      {
+        "id": "anchor.skirmish.desert_base_01.helipad.faction_1.lane_1",
+        "kind": 10,
+        "faction": 1,
+        "lane": 1,
+        "position": {
+          "x": 1006.83,
+          "y": 0.73,
+          "z": 393.25995
+        },
+        "radius": 7.200793
+      },
+      {
+        "id": "anchor.skirmish.desert_base_01.helipad.faction_1.lane_2",
+        "kind": 10,
+        "faction": 1,
+        "lane": 2,
+        "position": {
+          "x": 975.8001,
+          "y": 0.73,
+          "z": 393.32996
+        },
+        "radius": 7.200793
+      }
+    ],
+    "finding": "Default compatibility source has3Helipad anchors for faction1, no faction2Helipad anchors in this serialized definition. Its existing faction1runway is not symmetric army air fit evidence.",
+    "binding_gate": "OperationMapHelipadReadModelUtility requires valid in-grid metadata and a unique same-faction runtime building/slot at each actual Helipad anchor, within .25m position tolerance; no building reused. Failure causes Bind to clear the destination. Successful bind removes unbound Helipad rows for factions owned by map metadata. Skirmish producer-presence check uses attempt-owned living structure identities, a different test. Thus visible pad/producer and public air offer do not prove actual slot/home/egress binding.",
+    "inference_limit": "This is a conditional failure route on the current source path, not a reproduced S003 failure. Must observe actual active metadata generation, runtime slot buffer, any existing source pad owners and placed pad before diagnosing. Do not delete/move authored Campaign pads or suppress fail-closed matching to make it pass."
+  },
+  "canonical_size_budgets": [
+    {
+      "size_id": "Standard",
+      "readiness": 1,
+      "deadline_seconds": 1080,
+      "player_infantry": 12,
+      "player_ground": 2,
+      "player_air": 0,
+      "player_supply": 20,
+      "player_logistics_support": 2,
+      "player_starting_structures": 7,
+      "materials_each": 450,
+      "oil_each": 120,
+      "usable_fuel_each": 350,
+      "materials_capacity_each": 800,
+      "oil_capacity_each": 500,
+      "fuel_capacity_each": 800,
+      "tactical_air_cap_each": 2,
+      "supply_cap_each": 128,
+      "logistics_support_cap_each": 6,
+      "delivery_carrier_cap_each": 2,
+      "player_built_structure_cap_each": 20,
+      "barrier_segment_cap_each": 40,
+      "refinery_modules_each": 1,
+      "status": "Planned",
+      "light_air_minimum_620_starting_balance": -170,
+      "existing_probe_chain_860_starting_balance": -410,
+      "existing_probe_chain_minimum_additional_net_income": 410
+    },
+    {
+      "size_id": "War",
+      "readiness": 1,
+      "deadline_seconds": 1500,
+      "player_infantry": 20,
+      "player_ground": 3,
+      "player_air": 0,
+      "player_supply": 32,
+      "player_logistics_support": 3,
+      "player_starting_structures": 7,
+      "materials_each": 675,
+      "oil_each": 180,
+      "usable_fuel_each": 525,
+      "materials_capacity_each": 1200,
+      "oil_capacity_each": 750,
+      "fuel_capacity_each": 1200,
+      "tactical_air_cap_each": 4,
+      "supply_cap_each": 200,
+      "logistics_support_cap_each": 8,
+      "delivery_carrier_cap_each": 2,
+      "player_built_structure_cap_each": 30,
+      "barrier_segment_cap_each": 60,
+      "refinery_modules_each": 1,
+      "status": "Planned",
+      "light_air_minimum_620_starting_balance": 55,
+      "existing_probe_chain_860_starting_balance": -185,
+      "existing_probe_chain_minimum_additional_net_income": 185
+    },
+    {
+      "size_id": "LargeWar",
+      "readiness": 1,
+      "deadline_seconds": 1800,
+      "player_infantry": 24,
+      "player_ground": 4,
+      "player_air": 0,
+      "player_supply": 40,
+      "player_logistics_support": 3,
+      "player_starting_structures": 7,
+      "materials_each": 900,
+      "oil_each": 240,
+      "usable_fuel_each": 700,
+      "materials_capacity_each": 1600,
+      "oil_capacity_each": 1000,
+      "fuel_capacity_each": 1600,
+      "tactical_air_cap_each": 6,
+      "supply_cap_each": 320,
+      "logistics_support_cap_each": 10,
+      "delivery_carrier_cap_each": 2,
+      "player_built_structure_cap_each": 40,
+      "barrier_segment_cap_each": 80,
+      "refinery_modules_each": 1,
+      "status": "Planned",
+      "light_air_minimum_620_starting_balance": 280,
+      "existing_probe_chain_860_starting_balance": 40,
+      "existing_probe_chain_minimum_additional_net_income": 0
+    }
+  ],
+  "economy_arithmetic": {
+    "fixed_material_costs": {
+      "readiness_established": 240,
+      "helipad": 80,
+      "attack_heli_light": 300,
+      "additional_logistics_truck": 100,
+      "additional_tanker": 140
+    },
+    "minimal_readiness_pad_light_air": 620,
+    "existing_probe_chain": 860,
+    "scope": "Per faction and one paid order each; excludes additional troops/defenses, losses, caps/reservations, production time, repairs and income. Existing starting logistics actors may reduce extra purchases only if native public ownership and required role/service are actually verified; do not silently count all support as a committed truck/tanker.",
+    "historical_failure": "Two dedicated normal-touch probes placed pad and bought truck but match ended at stage10 before aircraft. Reported stock170afterpad70aftertruck150later is not a direct breakdown of every spend/income. canQueueAir=false alone does not identify producer vs readiness vs Materials/cap failure.",
+    "no_shortcuts": "Do not alter fixed450/675/900 grants, readiness or role costs/deadlines/caps, grant extra starting Helipad/aircraft, use a larger uncertified size or inject stock/outcomes. Establish and protect ordinary oil haul/fabrication income and choose a bounded route/test sequence before committing the sortie."
+  },
+  "fuel_and_service": {
+    "meaning": "OwnAirFuel is SkirmishStartingSupplyService.ReadFuel for faction1, not an aircraft onboard tank. VehicleFuelConsumptionSystem drains eligible owned storage with outbound/civilian reserves excluded; safety return reacts to shared usable stock. Other units can spend the same pool.",
+    "queue_fuel": "Reviewed role overlays set FuelCost0; this is queue-price semantics. It neither guarantees flight range nor requires a positive onboard fuel tank. A queue denial should be read from actual EvaluateQueue decision/field, not inferred from raw stock or canQueueAir alone.",
+    "required_proof": "Paid tanker delivery and actual storage debit/credit/reservation chain with no free refill, selected aircraft home/position/return approach and touchdown, plausible route reserve, then ordinary second takeoff with shared stock decrease. Existing probe compares global stock rise after touchdown; that observation alone cannot attribute refuel to the selected aircraft or distinguish concurrent haul/drains.",
+    "recovery_gates": [
+      "Pad occupied or destroyed",
+      "Producer dies while aircraft queued",
+      "Fuel source/storage/tanker unavailable",
+      "Lost aircraft",
+      "Stop/Replay cleanup",
+      "Match ends before landing or income threshold"
+    ]
+  },
+  "historical_committed_evidence": {
+    "run_summaries": [
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/2d495057325712f8629ee1851a24329a0d3289ede6f0023c7bcbe0254c48c6c1/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "-1",
+            "code_hash": "2d495057325712f8629ee1851a24329a0d3289ede6f0023c7bcbe0254c48c6c1",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/34e4f75800be531ffc850f0593e850f9626ff4872299bd9a35e136046b6b274f/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "-1",
+            "code_hash": "34e4f75800be531ffc850f0593e850f9626ff4872299bd9a35e136046b6b274f",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/42505003d70930b2e77b262120f012c60a739a17a9764bf1f8f98f925247c84f/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "-1",
+            "code_hash": "42505003d70930b2e77b262120f012c60a739a17a9764bf1f8f98f925247c84f",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/4c66d6347b82cb547bef5cadcd9c8010b4f5bb81aa848938280272b5c6b0f826/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Victory",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "-1",
+            "code_hash": "4c66d6347b82cb547bef5cadcd9c8010b4f5bb81aa848938280272b5c6b0f826",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/54b22995839762c3a12ed78af0e3cbbf5b9647731a2e1c373b96e7bcc25d25b0/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Victory",
+            "normal_speed": "0",
+            "input_violations": "-1",
+            "human_interventions": "0",
+            "code_hash": "54b22995839762c3a12ed78af0e3cbbf5b9647731a2e1c373b96e7bcc25d25b0",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/5d54dae93b503ed154c97989de22c8293580ad7dc7bea3afa7fb441b199d4921/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "1",
+            "code_hash": "5d54dae93b503ed154c97989de22c8293580ad7dc7bea3afa7fb441b199d4921",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/630ab2d902dec4276f1ef0a92737618c1163ac9a96c7018c4e74b4d3f3465cc7/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "0",
+            "code_hash": "630ab2d902dec4276f1ef0a92737618c1163ac9a96c7018c4e74b4d3f3465cc7",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/656ed0d50c84bc0be44412e1fe3f5548b1a841d9d74e917212ab509b52b614d5/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "-1",
+            "code_hash": "656ed0d50c84bc0be44412e1fe3f5548b1a841d9d74e917212ab509b52b614d5",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/7309174b14eeb530173a5d0ca691770d08af189dc406bd42ca3930880fd9da1e/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Victory",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "0",
+            "code_hash": "7309174b14eeb530173a5d0ca691770d08af189dc406bd42ca3930880fd9da1e",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/acc6ee7016e7ff59fe99244cdd2150fd83c65c45c72eb09ec55a4e6a2a1ebc8d/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Abort",
+            "normal_speed": "1",
+            "input_violations": "0",
+            "human_interventions": "0",
+            "code_hash": "acc6ee7016e7ff59fe99244cdd2150fd83c65c45c72eb09ec55a4e6a2a1ebc8d",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/afe7ff5257019d07a6edd73492815254101b1b86ea91761387831d2842f5c6e8/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "130366",
+            "locale": "fa-IR",
+            "result": "Defeat",
+            "normal_speed": "0",
+            "input_violations": "-1",
+            "human_interventions": "0",
+            "code_hash": "afe7ff5257019d07a6edd73492815254101b1b86ea91761387831d2842f5c6e8",
+            "config_hash": "0e1b4e66247b7c2109e9f51c97f917d5d38580b2fbc5e163e6d6787e77f650b4"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/b5c4bc38efb2cc66231b1245a16c3084fea40893ca19b2a9c2163cfc3043a7aa/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "fa-IR",
+            "result": "Victory",
+            "normal_speed": "1",
+            "input_violations": "0",
+            "human_interventions": "0",
+            "code_hash": "b5c4bc38efb2cc66231b1245a16c3084fea40893ca19b2a9c2163cfc3043a7aa",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/c9e2f36d1fc88b34a0b828e83fb3bd9d90ba7e80e1813e4dd7e0c73dca13eb04/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Victory",
+            "normal_speed": "1",
+            "input_violations": "0",
+            "human_interventions": "0",
+            "code_hash": "c9e2f36d1fc88b34a0b828e83fb3bd9d90ba7e80e1813e4dd7e0c73dca13eb04",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Victory",
+            "normal_speed": "1",
+            "input_violations": "-1",
+            "human_interventions": "-1",
+            "code_hash": "ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186/runs.csv",
+        "rows": [
+          {
+            "definition_version": "2",
+            "seed": "104732",
+            "locale": "en",
+            "result": "Victory",
+            "normal_speed": "0",
+            "input_violations": "0",
+            "human_interventions": "0",
+            "code_hash": "f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186",
+            "config_hash": "8bf2489a034696aaf43f22dee3cab5210ec7630246a9ae882a596e1fbc7763a1"
+          }
+        ]
+      }
+    ],
+    "actor_sample_summary": [
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/54b22995839762c3a12ed78af0e3cbbf5b9647731a2e1c373b96e7bcc25d25b0/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 4803,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/5d54dae93b503ed154c97989de22c8293580ad7dc7bea3afa7fb441b199d4921/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 3635,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/630ab2d902dec4276f1ef0a92737618c1163ac9a96c7018c4e74b4d3f3465cc7/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 112,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/7309174b14eeb530173a5d0ca691770d08af189dc406bd42ca3930880fd9da1e/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 4754,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/acc6ee7016e7ff59fe99244cdd2150fd83c65c45c72eb09ec55a4e6a2a1ebc8d/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 1439,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/afe7ff5257019d07a6edd73492815254101b1b86ea91761387831d2842f5c6e8/s003-aria-rs-130366-fa-1.jsonl.actors.jsonl",
+        "records": 3225,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/b5c4bc38efb2cc66231b1245a16c3084fea40893ca19b2a9c2163cfc3043a7aa/s003-aria-rs-104732-fa-1.jsonl.actors.jsonl",
+        "records": 5087,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/c9e2f36d1fc88b34a0b828e83fb3bd9d90ba7e80e1813e4dd7e0c73dca13eb04/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 5061,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      },
+      {
+        "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186/s003-aria-rs-104732-en-1.jsonl.actors.jsonl",
+        "records": 5118,
+        "roles": [
+          "ApcArmored",
+          "Car",
+          "LogisticsTruck",
+          "Rifle",
+          "Rocketeer"
+        ],
+        "air_true_records": 0,
+        "scope": "Only recorded actor samples; no claim about unrecorded intervals/entities."
+      }
+    ],
+    "ea0c_trace": {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/s003-aria-rs-104732-en-1.jsonl",
+      "rows": 409,
+      "schema_keys": [
+        "clockElapsed",
+        "clockPaused",
+        "elapsed",
+        "enemyBaseHp",
+        "leadX",
+        "leadZ",
+        "outcome",
+        "pathFollowing",
+        "pathRequests",
+        "phase",
+        "playerBaseHp",
+        "playerUnits",
+        "reason",
+        "simulationActive"
+      ],
+      "terminal": {
+        "elapsed": 819.762,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 1,
+        "clockElapsed": 819.762,
+        "clockPaused": 1,
+        "playerBaseHp": -1,
+        "enemyBaseHp": 0,
+        "playerUnits": 0,
+        "pathRequests": 0,
+        "pathFollowing": 0,
+        "leadX": -1,
+        "leadZ": -1
+      },
+      "limitation": "Committed base trace has no per-aircraft return/home/service fields. Narrative reports paid air recruitment/public attack at819.762Victory but ledger row has input/interventions-1; not counted and not complete lifecycle proof."
+    },
+    "later_narrative": "Progress report records native visible touched pad at1027,332.5 with usable renderers and one later2749candidate FA counted normal win with no aircraft. Dedicated104732/130366air probes failed before purchase. Full /private/tmp native logs/screenshots cited there are historical claims, not independently read or rerun by this audit; no current candidate acceptance transferred.",
+    "negative_scope": "All baseline-tracked candidate actor streams listed here were inspected for their recorded air flag and role set. Absence of samples is not proof aircraft can never spawn; older trace schema coverage is limited."
+  },
+  "smallest_legal_next_step": {
+    "first": "At a root-approved exact frozen candidate and free native lane, run an explicitly diagnostic observational source-fit/startup pass for S003Standard/Regular; preserve current source/settings and legacy binding. Record both factions native grid/occupancy, typed source/active metadata generation, structures/staging/service, actual3source pad owner/slot joins and any new touched pad slot/home relation, actual recipe/readiness/cost/cap decisions and public controls. Do not spawn/teleport/grant/force outcomes; if diagnostic injection is used by an existing probe keep it separate from normal acceptance.",
+    "then": "Use normal input to protect the starting base and establish verified oil haul/fabrication/fuel delivery; wait for actual free Materials and queue/cap acceptance, purchase readiness/pad/light air through normal controls, use a measured short legal sortie/return/land/paid service/second sortie and complete result/return. Existing seed104732 or130366 remains exact declared candidate; preserve failures and end early with a concrete decision/field when infeasible.",
+    "logical_change_only_after_native_observation": "If actual pad/service/egress placement fails, propose the smallest mission-owned logical anchor/route/placement adjustment on existing Campaign geometry with measured both-side grid/collider/army fit. Current report does not authorize implementation. Preserve shared S002/S003 map and coded semantic binding; any successor must be explicitly reviewed and revalidated. If no existing source supports fit, record unresolved source-fit gate or select an existing allowed Campaign source through approved binding work, never create physical derivatives.",
+    "release_gate": "A successful small diagnostic or sortie does not establish full mission readiness, all sizes/seed/locale matrix, visual approval, checkpoint, Android or real player/device acceptance."
+  },
+  "citations": [
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 20,
+      "text": "contentVersion: 2"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "line": 36,
+      "text": "allowedCertifiedSizeIds:"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 74,
+      "text": "RoleId: air.player"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 62,
+      "text": "RoleId: service.player"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 336,
+      "text": "- PadId: pad.skirmish.db.air_player"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 246,
+      "text": "- PadId: pad.skirmish.db.staging_player"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 207,
+      "text": "AllowsAircraft: 0"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 184,
+      "text": "ProvisionalTimes: 1"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "line": 401,
+      "text": "SourceHash: db.deploy-anchors.v1"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 18,
+      "text": "sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 19,
+      "text": "contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+      "line": 106,
+      "text": "- anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "line": 14,
+      "text": "AirReturn = 6,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "line": 176,
+      "text": "public bool TryProjectLocalToMap(float localX, float localZ, out float mapX, out float mapZ)"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "line": 52,
+      "text": "return true; // S002/S003 retain their existing explicit no-CampaignMap path."
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs",
+      "line": 32,
+      "text": "if(!SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup))return true;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/OperationMapHelipadReadModelUtility.cs",
+      "line": 90,
+      "text": "error = $\"Active operation-map helipad `{anchor.Id}` has no unique runtime production-slot owner.\";"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/OperationMapHelipadReadModelUtility.cs",
+      "line": 141,
+      "text": "destination.RemoveAt(rowIndex);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/OperationMapHelipadReadModelUtility.cs",
+      "line": 19,
+      "text": "destination.Clear();"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.ActiveMetadata.cs",
+      "line": 69,
+      "text": "error = \"Active operation-map identity does not match its metadata blob.\";"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "line": 1262,
+      "text": "OperationMapHelipadReadModelUtility.Bind(em, buffer, in grid);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "line": 36,
+      "text": "kept.Add(Overlay(SkirmishRoleIds.AttackHeliLight, SkirmishRoleKind.AttackHeliLight, 240, 18, 22f, 300,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "line": 109,
+      "text": "Overlay(SkirmishRoleIds.LogisticsTruck, SkirmishRoleKind.LogisticsTruck, 160, 0, 0f, 100,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "line": 111,
+      "text": "Overlay(SkirmishRoleIds.Tanker, SkirmishRoleKind.Tanker, 160, 0, 0f, 140,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "line": 215,
+      "text": "FuelCost = 0,"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset",
+      "line": 22,
+      "text": "materialsCost: 80"
+    },
+    {
+      "path": "Assets/Game/Scripts/Contracts/MissionConstructionCostPolicy.cs",
+      "line": 13,
+      "text": "\"saga.ch01.m02.establish_base\" or \"skirmish.base_assault\" => MaterialsOnly,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Contracts/MissionConstructionCostPolicy.cs",
+      "line": 26,
+      "text": "if (policy == MaterialsOnly) return materials > 0;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishResearchContracts.cs",
+      "line": 26,
+      "text": "public const int ReadinessEstablishedMaterials = 240;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
+      "line": 423,
+      "text": ": SkirmishResearchCosts.ReadinessEstablishedMaterials;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "line": 101,
+      "text": "view.AirQueueOffered = view.PadReady && !view.AirRecruitPending && view.OwnAttackAirLive == 0 &&"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "line": 139,
+      "text": "view.OwnAirFuel = SkirmishStartingSupplyService.ReadFuel(em, session, 1);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStrategyScoring.cs",
+      "line": 138,
+      "text": "SkirmishProductionDecision decision = SkirmishProductionEligibility.Evaluate("
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs",
+      "line": 93,
+      "text": "int fuel = overlay.FuelCost * squads;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs",
+      "line": 98,
+      "text": "decision.Reason = SkirmishReasonCode.InsufficientMaterials;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs",
+      "line": 115,
+      "text": "decision.Reason = SkirmishReasonCode.InsufficientCapacity;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "line": 695,
+      "text": "private static bool HasProducer("
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "line": 323,
+      "text": "AirReserved = snapshot.AirReserved,"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+      "line": 161,
+      "text": "storage.StoredFuelBarrels = math.max(0f, storage.StoredFuelBarrels - drained);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
+      "line": 33,
+      "text": "usableFuelByFaction[storage.OwnerFactionId] += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
+      "line": 64,
+      "text": "air.ReturningHome = 1;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "line": 307,
+      "text": "if (!HasCommittedTanker())"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "line": 391,
+      "text": "if (reserve <= 0) { EndHelipadProbe(false, \"aircraftFuelRouteUnavailable\"); return; }"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "line": 404,
+      "text": "\" tankerRefuelAdded=\" + (model.OwnAirFuel - airProbeTouchdownFuel) + \" roundTripReserve=\" + reserve);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "line": 435,
+      "text": "EndHelipadProbe(true, \"paidDeliveryTakeoffReturnTouchdownFuelAndSecondSortie\");"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md",
+      "line": 227,
+      "text": "- Native supply-08 completed at normal speed with actual Victory/MainBaseDestroyed at 819.762 seconds (candidate ea0c0e2). It is **not counted**: input violations and interventions remain unmeasured (-1). No operator stopped this run. Physical oil haul, fabrication beyond the initial oil grant, paid readiness, Helipad, aircraft recruitment, public attack and base damage occurred. This does not prove landing/refuelling/second sortie or full human acceptance."
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md",
+      "line": 324,
+      "text": "Dedicated normal-touch aircraft probes `/private/tmp/s003-aircraft-cycle-native-01.log` (seed 104732) and `/private/tmp/s003-aircraft-cycle-native-02.log` (seed 130366) both placed a visible home helipad and bought a paid logistics truck, then ended before helicopter purchase. The second probe's public readback shows Materials 170 after pad, 70 after truck, later 150 from natural income, with `canQueueAir=False`, no air pending/live and usable fuel remaining; the normal match ended at stage 10. No resource or outcome injection was used. These are failed aircraft-lifecycle evidence, not proof of takeoff, return, touchdown or relaunch. An authored normal-play scenario that can afford and protect the air cycle is still needed."
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md",
+      "line": 316,
+      "text": "- **B \u2014 visible model:** Native diagnosis found the shared `SkirmishVisualSpawnService.AttachMissing` attaching a second visual to a newly adopted building and writing its deployment-anchor transform over the touched placement pose. The building runtime already owns the committed visual. The service now skips `RuntimeBuildingCombatInfo` entities. A regression covers the committed helipad pose/visual and an ordinary tank. `/private/tmp/s003-helipad-native-en-placement-01.log` passed `[SkirmishS003HelipadProbe] result=Passed reason=committedModelAtTouchedSiteAndUnselected` with 70 normal-touch samples. Its readback found `Helipad_15` at (1027.00, 0.01, 332.50), within 2 m of the touched site, active with two usable renderers and a real `Model` mesh. The unselected screenshot `/private/tmp/s003-helipad-unselected.png` was visually inspected and shows the actual marked helipad. The first native probe `/private/tmp/s003-helipad-native-unselected-01.log` also passed. Destruction/Replay visual lifecycle remains to be observed directly."
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md",
+      "line": 322,
+      "text": "Current-candidate Persian 2400\u00d71080 normal ARIA run `/private/tmp/s003-helipad-native-fa-05.log` exited 0. Candidate `2749c6e918093215d02262254ce281afac33eab71e13d678a11899802074ab88`, S003 Regular Standard seed 130366, produced a natural `Victory/MainBaseDestroyed` at 309.231 seconds. The frozen result and a normal Replay touch passed; 60/60 gestures completed, 262 touch samples, 50 accepted commands, zero unexpected samples, receipt violations or interventions. Its immutable `runs.csv` row has `normal_speed=1`, `input_violations=0`, `human_interventions=0`; `countedWin=1`. This is one Editor win, not the full matrix or device acceptance. The actor trace contains APC, Car, LogisticsTruck, Rifle and Rocketeer roles, and no aircraft."
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/HELIPAD_AGENT_HANDOFF_2026-09-25.md",
+      "line": 91,
+      "text": "Trace ordinary helicopter purchase -> real paid delivery -> owning/home pad binding -> takeoff -> attack -> return -> touchdown -> service -> second takeoff. Reuse shared owners. Check actual fuel semantics first: AircraftFuelSafetyReturnSystem currently examines usable faction storage; do not invent an onboard fuel mechanic or free refill."
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S003/HELIPAD_AGENT_HANDOFF_2026-09-25.md",
+      "line": 95,
+      "text": "Handle occupied pad, destroyed pad, queued aircraft whose producer dies, unavailable fuel, lost aircraft, Stop and Replay using existing policies with clear bounded recovery. Do not reset resources or force a terminal outcome to make the test work."
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "line": 53,
+      "text": "| Skirmish DB | Shared desert/dense-city world; preserve S004's current CityEdgeAirfield binding |"
+    }
+  ],
+  "source_sha256": {
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset": "a9ff73f6a6852e76f013cf91ab31e59d3b1318b2ced4656f7da61c5c70e988f1",
+    "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset": "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0",
+    "Assets/Game/Resources/SkirmishExpansion/InitialSetupMatrix.csv": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset": "9bd4caeaaf587a0a77938ebaaf224b3c4eebff8a245b559dcccdd113ea17c129",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs": "0850b0e5a90937d4f8f5fb8b435cda2df1e630a2bc1046d5ce556868e8ee88df",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs": "44d814fe29405323e081202a2088600bfcf918d6f496e6f1486a0883423ad403",
+    "Assets/Game/Scripts/Systems/OperationMapHelipadReadModelUtility.cs": "3f3305aa67d3394227cbbf61fe4611b09c67144be08b7baef7dbedc2b2ec7b87",
+    "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.ActiveMetadata.cs": "63ce20cf9e4b7bc2c19b0a2e975a84a3d552fe711074749e0f29f87f92d0640c",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "24fb0a5dd66a0c02371ed58b043500ec4f9b63f087d1652c2cd4bf2f97da68e5",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs": "9f39a6f373ed5574fa0513d297db947d014c3f502474ab3197bcf27d877748b2",
+    "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset": "3689f7caf4b8c7bdaa18ed44b272d6663d3056a31ca205aedc124c4f085eea52",
+    "Assets/Game/Scripts/Contracts/MissionConstructionCostPolicy.cs": "96c8df5a3574af4d3b647d51f0c82065f0cd3ddbcf7a0ab0064d868b8579ad88",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishResearchContracts.cs": "87b9b75969dcfb37d64c5b4552aa926a4a2e0c475b14a9c4cf187b011d49c237",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs": "440c51e8774b3b19bdaf8fc975250a84727c2258eeeeb653e680e393b3c0d2c1",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs": "68554955326328f72cb05d5324aafb8fcfe79ec36e68934932be76753bef7554",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishStrategyScoring.cs": "bc6ee4883e562a06a2383557b8d57ee3f0da95853f9d64b9285da15579c91d8c",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs": "8b11221ca57a1f4849f0c8935b2cc664ad5623a3145bc54c00526c9ddd7908a1",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs": "1931e5073ecbbcfdd18e82ddae70bf6aa609f99733ba54aa84572c3411a7877f",
+    "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs": "a3e538ba1531019f19540607c36fad81e344cc7da259d2965b9e83f29ff4c154",
+    "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs": "63506cbf731ef8000111368275ac58b0dc346591726504d38ac7003d5cb73fcd",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+    "Design/AgentReports/SkirmishExpansion/S003/IMPLEMENTATION_PROGRESS_2026-09-24.md": "120e9a0e5cd1e5a924369f7fed8e6a88eac074a3420e30097990a21a8032e2b0",
+    "Design/AgentReports/SkirmishExpansion/S003/HELIPAD_AGENT_HANDOFF_2026-09-25.md": "5b4d0ac6d4fb68df5c350a18fc74ac58c540b2f90a4e6db46975ca2afaa77a10",
+    "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/2d495057325712f8629ee1851a24329a0d3289ede6f0023c7bcbe0254c48c6c1/runs.csv": "c93c707ce4acffcb9243ec42af45c998ab0d3b21ff7c1b6eec1b7b45bb25a633",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/34e4f75800be531ffc850f0593e850f9626ff4872299bd9a35e136046b6b274f/runs.csv": "aced91da960abe50a8b88f52e8e1889475e3d66d50ee63c14921b104288e9d56",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/42505003d70930b2e77b262120f012c60a739a17a9764bf1f8f98f925247c84f/runs.csv": "e7482f30b9d604677659a5740195c255ba3a8fee066c44c193fb766a5ca86d3a",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/4c66d6347b82cb547bef5cadcd9c8010b4f5bb81aa848938280272b5c6b0f826/runs.csv": "646215bbb944da422999ae1abcf3da1a16b2666c6239dafccf57adcaec647c5b",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/54b22995839762c3a12ed78af0e3cbbf5b9647731a2e1c373b96e7bcc25d25b0/runs.csv": "e646b35788f546e325569e948ac49fbbe4d9131988a180b0516b2ce4865f71f4",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/54b22995839762c3a12ed78af0e3cbbf5b9647731a2e1c373b96e7bcc25d25b0/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "f9d07be756fd29775604c45b2ffec7a9d94c8e26a9adfa66d1cb2dfa5e2999ee",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/5d54dae93b503ed154c97989de22c8293580ad7dc7bea3afa7fb441b199d4921/runs.csv": "0c94a11da24278b1bf91818760ccd67f1976fa6ddaa37562f2d56dfdaf9c68aa",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/5d54dae93b503ed154c97989de22c8293580ad7dc7bea3afa7fb441b199d4921/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "4cced94797b706d8bb5288ddb3c626869a6d9ef127be88ab8ec228892a5dc44b",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/630ab2d902dec4276f1ef0a92737618c1163ac9a96c7018c4e74b4d3f3465cc7/runs.csv": "71ca506a8916e74bca5e646d6a2bddad4abfaf76c9fd22b30059bc5fd45de64b",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/630ab2d902dec4276f1ef0a92737618c1163ac9a96c7018c4e74b4d3f3465cc7/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "d8cf6c3ce03396ebeb4543e9bd096caefd967a8d0a62b1c462479134fd8cb4f5",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/656ed0d50c84bc0be44412e1fe3f5548b1a841d9d74e917212ab509b52b614d5/runs.csv": "14187e02657ce10b6adc2c10c14c8c767e04e7590a2afc8241c94dc94e26995d",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/7309174b14eeb530173a5d0ca691770d08af189dc406bd42ca3930880fd9da1e/runs.csv": "5140d7626df48e57dbf6563d29e522cdb2ce19a16db19ecbd196d9b26c0e0f7b",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/7309174b14eeb530173a5d0ca691770d08af189dc406bd42ca3930880fd9da1e/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "de9321b45ffee18d4038bb01a4d44e3457e57aacc006efaad61a272f61d498a5",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/acc6ee7016e7ff59fe99244cdd2150fd83c65c45c72eb09ec55a4e6a2a1ebc8d/runs.csv": "5c99e1112412fe503820b73efb0041665e25fed9a00a2c27e13982d19e535d6d",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/acc6ee7016e7ff59fe99244cdd2150fd83c65c45c72eb09ec55a4e6a2a1ebc8d/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "2d2f91d7a4e91d95b688da1ff62e5687b900296a55b95e596ae03b6443cb0e24",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/afe7ff5257019d07a6edd73492815254101b1b86ea91761387831d2842f5c6e8/runs.csv": "0d4cddae3c77f74de6823e30072d618d1ea576978a6af2323ad33746041866cf",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/afe7ff5257019d07a6edd73492815254101b1b86ea91761387831d2842f5c6e8/s003-aria-rs-130366-fa-1.jsonl.actors.jsonl": "8cd07669b22e76e78e912d3baff8c7a4a9a0e3a74e5e55a6c1395935c8805e25",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/b5c4bc38efb2cc66231b1245a16c3084fea40893ca19b2a9c2163cfc3043a7aa/runs.csv": "05530496255b8532b7d1cba5c944cf2060c8ca08005ccf6abff59a2de3de7f18",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/b5c4bc38efb2cc66231b1245a16c3084fea40893ca19b2a9c2163cfc3043a7aa/s003-aria-rs-104732-fa-1.jsonl.actors.jsonl": "0a68c9aa22c5b8c308deb9873c161995efe458742b39ee0aac1729c315ddae87",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/c9e2f36d1fc88b34a0b828e83fb3bd9d90ba7e80e1813e4dd7e0c73dca13eb04/runs.csv": "56b55d42d99d29b0a68dea01327ae0e0be0a1bf32d99aa773da2ece14af8b30b",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/c9e2f36d1fc88b34a0b828e83fb3bd9d90ba7e80e1813e4dd7e0c73dca13eb04/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "7811afe2fe712579fc30f52d4692cdcfb98448330ad942fecf7c79852620e459",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/runs.csv": "a0a2041c1f90050e4def65e26024772fcee659cc8b6f15b69dac78c01d6403bf",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186/runs.csv": "95cb563eeb5552b3b90a82e9ee476e4b99976d93d643684d387497a4acc6b302",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "e56f604f4a01ebc48ef1152702eb5d3a33e290c010e9bbc3af59cf54e8cc118d",
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/s003-aria-rs-104732-en-1.jsonl": "9c48573c9eb0964d350ea86b39a384d446562baaff01040752501080e28cd211"
+  },
+  "validation": {
+    "baseline_and_final_bytes_checked": true,
+    "native_run": false,
+    "logical_or_physical_assets_changed": false,
+    "mission_ready_claimed": false
+  }
+}

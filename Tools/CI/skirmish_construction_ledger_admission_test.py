@@ -2,6 +2,8 @@
 import copy
 import hashlib
 import json
+import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -294,6 +296,26 @@ class ArtifactTests(unittest.TestCase):
     def refresh(self,key,name):
         self.descriptor[key]=self.ref(name);self.write('descriptor.json',json.dumps(self.descriptor))
 
+    def directory_alias(self,alias,target):
+        """Real in-fixture aliases; junction creation needs no Windows symlink privilege."""
+        self.assertTrue(target.is_dir())
+        self.assertTrue(target.resolve().is_relative_to(self.root))
+        self.assertTrue(alias.parent.resolve().is_relative_to(self.root))
+        self.assertNotEqual(alias,target)
+        self.assertFalse(alias.exists())
+        if os.name=='nt':
+            subprocess.run(['cmd.exe','/d','/c','mklink','/J',str(alias),str(target)],
+                           check=True,capture_output=True,text=True,timeout=15)
+        else:
+            alias.symlink_to(target,target_is_directory=True)
+        def remove_alias():
+            if os.name=='nt':
+                # Remove the junction itself, never traverse its target.
+                if alias.exists():os.rmdir(alias)
+            elif alias.is_symlink():alias.unlink()
+        self.addCleanup(remove_alias)
+        return alias
+
     def test_pinned_constructed_file_admission(self):
         r=self.inspect();self.assertTrue(r['source_bytes_verified']);self.assertEqual(r['artifact_barrier'],'UnchangedPinnedArtifacts');self.assertFalse(r['paid_resources_qualified'])
 
@@ -317,8 +339,10 @@ class ArtifactTests(unittest.TestCase):
             with self.assertRaises(ValueError):self.inspect()
 
     def test_symlink_traversal_and_escape(self):
-        (self.root/'alias').symlink_to(self.file('events.jsonl'))
-        for path in ('alias','../events.jsonl','/private/tmp/no-such-artifact','//?/C:/events.jsonl'):
+        alias=self.directory_alias(self.root/'alias',self.folder)
+        with self.assertRaisesRegex(ValueError,'symlink/junction/reparse'):
+            admission.Reader(self.root).read(dict(path=str(alias/'adapter-native-events.jsonl'),sha256=self.ref('events.jsonl')['sha256']))
+        for path in ('../events.jsonl','/private/tmp/no-such-artifact','//?/C:/events.jsonl'):
             with self.subTest(path=path), self.assertRaises((ValueError,OSError)):admission.Reader(self.root).read(dict(path=path,sha256=self.ref('events.jsonl')['sha256']))
 
     def test_final_barrier_rejects_change_after_validation(self):
@@ -332,9 +356,11 @@ class ArtifactTests(unittest.TestCase):
         original=admission.validate_construction_ledger
         def mutate(*args):
             result=original(*args)
-            p=self.file('events.jsonl');p.rename(self.root/'saved.jsonl');p.symlink_to(self.root/'saved.jsonl');return result
+            saved=self.folder.with_name('saved-attempt');self.folder.rename(saved)
+            self.directory_alias(self.folder,saved)
+            return result
         with patch.object(admission,'validate_construction_ledger',side_effect=mutate):
-            with self.assertRaises(ValueError):self.inspect()
+            with self.assertRaisesRegex(ValueError,'symlink/junction/reparse'):self.inspect()
 
     def test_build_bytes_and_derived_identity_fail_closed(self):
         self.write('Library/ScriptAssemblies/fixture.dll','modified compiled bytes')

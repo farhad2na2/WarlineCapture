@@ -40,6 +40,6 @@ test_unknown_event_and_capture_fault_are_retained (__main__.ArtifactTests) ... o
 test_wrong_immutable_claim_even_rehashed (__main__.ArtifactTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 0.142s
+Ran 40 tests in 0.108s
 
 OK

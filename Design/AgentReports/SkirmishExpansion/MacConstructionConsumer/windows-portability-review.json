@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T11:54:42.095105+00:00",
+  "evidence_origin": "Windows coordinator latest commentary; original Windows output not fetched by Mac. Keep original Windows logs on the coordinator.",
+  "original_windows_run": {
+    "passed": 38,
+    "test_setup_errors": 2,
+    "error": "WinError 1314 creating file symlinks without required privilege",
+    "scope": "Initial 40-test constructed suite"
+  },
+  "requested_change": "Use real directory aliases, macOS directory symlinks and unprivileged Windows NTFS junctions; reject initial aliases and replacement before final artifact barrier; all targets inside fixture.",
+  "implementation": "Only Python test fixture helper changed; cmd.exe /d /c mklink /J on Windows, directory symlink on macOS; cleanup removes alias without target traversal. Production Reader unchanged.",
+  "mac_revised_run": {
+    "passed": 40,
+    "skipped": 0,
+    "log": "constructed-tests.log"
+  },
+  "windows_revised_run": "pending coordinator rerun",
+  "mission_ready": false,
+  "paid_resources_qualified": false
+}

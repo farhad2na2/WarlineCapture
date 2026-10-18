@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T15:12:23.502107+00:00",
+  "enabled": false,
+  "native_execution_authorized": false,
+  "launch_performed": false,
+  "supersedes": {
+    "commit": "68eced6aee772c99f883c091394ffc4e6dd53c4e",
+    "report": "mac-probe35-controller-review-r4.json",
+    "status": "RejectedForTwoConcreteOwnershipCapacityHoles",
+    "positive_readonly_receipt": "mac-probe35-readonly-preflight-observations.json remains partial/historical, not full tree/orphan closure"
+  },
+  "peer_receipt": {
+    "origin": "Windows coordinator sealed finding report; Mac has not opened original Windows report",
+    "path": "Logs/SkirmishProduction/Offline/MacProbe35ControllerPeerReview_20261018/SOURCE_API_FINDINGS.json",
+    "sha256": "6fee4e218d49d36ff36f93c90179a35b864ff05025ecb3160ab30288d70391b6"
+  },
+  "preserved_pre_fix_witnesses": {
+    "scope": "ConstructedPureCounterexamples_NoNativeSpawn",
+    "controller_sha256": "e49b6ba4402c7b19fad0452a56b26b2ede3fef22646b944599d3d7e0450e508d",
+    "peer_receipt_sha256": "6fee4e218d49d36ff36f93c90179a35b864ff05025ecb3160ab30288d70391b6",
+    "orphan_100cpu_wrongly_admitted": true,
+    "surviving_owned_worker_final_remaining_wrongly_empty": true,
+    "operationalControlPassed_wrongly_true": true
+  },
+  "implementation_pins": {
+    "Tools/CI/mac_tanker_probe35_controller.py": "b71f212b946dae511656e24d85e559d77869b13aea84f78c1b7fa0ce278a0a8e",
+    "Tools/CI/mac_tanker_probe35_controller_test.py": "adde204da519be731ac446ac82d82bc37e175dcf8aac95ed29741ba380eae28f"
+  },
+  "changes": [
+    "Kernel-verified executable and microsecond process birth, bound to ps snapshot; full parent graph without unrelated argv collection",
+    "Observe every descendant of the owned wrapper, regardless of executable name; retain ownership across reparenting and exec, distinguish PID reuse and protect pre-existing identities",
+    "Require two complete observed-owned-tree absence snapshots before postchecks, then final full-graph/birth recheck; no broad or narrow termination calls added",
+    "Capacity counts verified Unity/Bee/dotnet worker roots and generic descendants even without a present Editor; unresolved identity/owner conservatively defers; known idle attached Editor/worker group remains allowed",
+    "Editor project binding cached only for exact kernel birth, so transient argv loss retains live ownership without adopting a new/reused generation or granting unknown target lifecycle credit",
+    "Executable-path lookup failure cannot prove PID absence: kernel PID info is rechecked; only kernel PID-missing results count as absence"
+  ],
+  "tests": {
+    "kind": "Python controller constructed controls only",
+    "passed": 42,
+    "exit": 0,
+    "command": [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/CI",
+      "-p",
+      "mac_tanker_probe35_controller_test.py",
+      "-v"
+    ],
+    "log": {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/mac-probe35-controller-r5/python-controller-tests.log",
+      "sha256": "534aaaf02f5388b64d1ff21c044437dad6a1535417a743c017846f6eb33fbc02"
+    },
+    "initial_authoring_failures": "First35-case draft had2 fixture mistakes: duplicatePID in protected-process case and wrong expectedrecord count. Fixture corrections retained in tool transcript; no production guard relaxed.",
+    "platform": "macOS; Windows source/pure-suite peer execution pending"
+  },
+  "actual_read_only_kernel": {
+    "self_identity_verified": true,
+    "proc_bsdinfo_size": 136,
+    "complete_parent_graph_rows": 456,
+    "primary_header_pins": {
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/proc_info.h": "e427fa96b348537b21552b9de71e01039410bcad2cedee5584c5e5fddafd70fc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/param.h": "10d7a9553d341c5bc0b473444802920a7ec2e6222281eeaeb61b32dfff29c4b4",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libproc.h": "246d87709fc6b9157ce5cf3c475656ac48e0e1ae8bbdc46cf45acd34294448cd"
+    }
+  },
+  "actual_benign_OS_lifecycle": {
+    "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/mac-probe35-controller-r5/actual-benign-os-lifecycle.json",
+    "sha256": "bce82ec6a09e347aa99fd7ea6325131f1e56f3d4afdc722df7eab72856b89fc3",
+    "scope": "ActualBenignPythonLifecycle_NoUnityEditor",
+    "reparented_child_survivor_refused": true,
+    "natural_exit_absence_passed": true,
+    "Unity_launch": false,
+    "controller_sha256": "b71f212b946dae511656e24d85e559d77869b13aea84f78c1b7fa0ce278a0a8e"
+  },
+  "current_capacity": {
+    "result": "Deferred_NoLaunch",
+    "reason": "Editor/worker CPU workload active; preserve it"
+  },
+  "protected_native_processes": [
+    {
+      "pid": 17186,
+      "parent": 17179,
+      "start_sec": 1792336116,
+      "start_usec": 328459,
+      "kind": "editor",
+      "cpu": 100.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "verified": true
+    },
+    {
+      "pid": 17189,
+      "parent": 17186,
+      "start_sec": 1792336116,
+      "start_usec": 620785,
+      "kind": "shared_service",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+      "verified": true
+    },
+    {
+      "pid": 17198,
+      "parent": 17186,
+      "start_sec": 1792336120,
+      "start_usec": 587776,
+      "kind": "worker",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner",
+      "verified": true
+    },
+    {
+      "pid": 17199,
+      "parent": 17186,
+      "start_sec": 1792336120,
+      "start_usec": 588155,
+      "kind": "worker",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+      "verified": true
+    },
+    {
+      "pid": 17257,
+      "parent": 17186,
+      "start_sec": 1792336132,
+      "start_usec": 880700,
+      "kind": "editor",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "verified": true
+    },
+    {
+      "pid": 17258,
+      "parent": 17186,
+      "start_sec": 1792336132,
+      "start_usec": 881349,
+      "kind": "worker",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+      "verified": true
+    },
+    {
+      "pid": 17311,
+      "parent": 17186,
+      "start_sec": 1792336133,
+      "start_usec": 716410,
+      "kind": "worker",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+      "verified": true
+    },
+    {
+      "pid": 17422,
+      "parent": 17257,
+      "start_sec": 1792336143,
+      "start_usec": 301130,
+      "kind": "worker",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+      "verified": true
+    },
+    {
+      "pid": 55563,
+      "parent": 1,
+      "start_sec": 1792004545,
+      "start_usec": 746735,
+      "kind": "hub",
+      "cpu": 0.0,
+      "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "verified": true
+    }
+  ],
+  "actual_default_plan": {
+    "enabled": false,
+    "launch_performed": false,
+    "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+    "source_pins": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+    },
+    "argv_template": [
+      "rtk",
+      "proxy",
+      "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/invoke_unity_macos.sh",
+      "--project",
+      "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+      "--timeout",
+      "3600",
+      "--log",
+      "<new-owned-log>",
+      "--",
+      "-buildTarget",
+      "Android",
+      "-quit",
+      "-executeMethod",
+      "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation"
+    ],
+    "cold_timeout_seconds": 3600,
+    "required_authorization_schema": {
+      "schema_version": 1,
+      "launch_authorized": false,
+      "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+      "commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+      "controller_sha256": "b71f212b946dae511656e24d85e559d77869b13aea84f78c1b7fa0ce278a0a8e",
+      "review_receipt_sha256": "<reviewed-receipt-sha256>",
+      "scope": "Synthetic35Only_NoMissionCredit",
+      "timeout_seconds": 3600
+    },
+    "native_compiler_input_consumption_closure": "Pending",
+    "normal_mission_ready": false
+  },
+  "actual_frozen_projection": {
+    "commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+    "parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "branch": "codex/mac-native-tanker-probe35",
+    "pins": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+    },
+    "wrapper_sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608"
+  },
+  "limitations": [
+    "Polling proves closure of observed, kernel-bound descendants; it does not invent ancestry for an unseen orphan. New unattributed native orphan refuses proof and is never adopted/killed",
+    "Even idle worker with unresolved owner defers capacity; shared verified service roots are preserved and their CPU is counted",
+    "Any observed owned survivor, including service processes, prevents owned-tree closure; no licensing/Hub/Editor cleanup is attempted",
+    "A missing/unverified identity is not terminal and cannot prove absence; the controller reports failed/incomplete proof, never restarts or terminates it",
+    "The benign Python OS lifecycle is not a Unity wrapper/Editor/nativeWorld/fixture run",
+    "Full SDK byte census/source-build import/compiler-consumption closure and actual native35 execution remain pending"
+  ],
+  "preserved_native_projection": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973; four3e source/meta pins unchanged; no implicit rebase",
+  "native_Unity35_controls": "NOT_RUN",
+  "native_compiler_input_consumption_closure": "Pending",
+  "actual_native_frame_reload": "Pending",
+  "normal_mission_ready": false,
+  "queue_success_enabled": false,
+  "paid_resources_qualified": false,
+  "Android_build": false,
+  "player_device": false,
+  "result": "Python42AndBenignOSProcessLifecyclePassed_ControllerSourcePeerPending_NoNativeLaunch"
+}

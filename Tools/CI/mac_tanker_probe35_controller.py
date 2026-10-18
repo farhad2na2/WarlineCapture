@@ -6,6 +6,9 @@ GUI wrapper can launch Unity. No C# changes, cache copy, Editor reuse, process
 termination, global ENV mutation or normal mission/device qualification.
 """
 import argparse
+import ctypes
+import errno
+import math
 import hashlib
 import json
 import os
@@ -87,54 +90,270 @@ def redact_command(command):
     return re.sub(r'(?i)(-{1,2}(?:cbmEditorLicense|cbmMachineId|accessToken|refreshToken|password|serial|token)(?:=|\s+))[^\s]+',r'\1<redacted>',command)
 
 
+# Layout and constants verified against the installed macOS SDK proc_info.h,
+# param.h and libproc.h. Loaded lazily so pure Windows review remains possible.
+class _BsdInfo(ctypes.Structure):
+    _fields_=[(name,ctypes.c_uint32) for name in (
+        'flags','status','xstatus','pid','ppid','uid','gid','ruid','rgid','svuid','svgid','reserved')]+[
+        ('comm',ctypes.c_char*16),('name',ctypes.c_char*32)]+[
+        (name,ctypes.c_uint32) for name in ('nfiles','pgid','pjobc','tdev','tpgid')]+[
+        ('nice',ctypes.c_int32),('start_sec',ctypes.c_uint64),('start_usec',ctypes.c_uint64)]
+_LIBPROC=None
+
+
+def kernel_process_identity(pid):
+    """Read executable + microsecond birth identity; never send a signal."""
+    global _LIBPROC
+    if sys.platform!='darwin':return {'status':'Unverified'}
+    if _LIBPROC is None:
+        _LIBPROC=ctypes.CDLL('/usr/lib/libproc.dylib',use_errno=True)
+        _LIBPROC.proc_pidinfo.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_uint64,ctypes.c_void_p,ctypes.c_int]
+        _LIBPROC.proc_pidinfo.restype=ctypes.c_int
+        _LIBPROC.proc_pidpath.argtypes=[ctypes.c_int,ctypes.c_void_p,ctypes.c_uint32]
+        _LIBPROC.proc_pidpath.restype=ctypes.c_int
+    def info():
+        value=_BsdInfo();ctypes.set_errno(0)
+        count=_LIBPROC.proc_pidinfo(pid,3,0,ctypes.byref(value),ctypes.sizeof(value))
+        return value if count==ctypes.sizeof(value) and value.pid==pid else None
+    first=info()
+    if first is None:return {'status':'Missing' if ctypes.get_errno()==errno.ESRCH else 'Unverified'}
+    path=ctypes.create_string_buffer(4096);ctypes.set_errno(0)
+    count=_LIBPROC.proc_pidpath(pid,path,len(path))
+    if count<=0:
+        # A missing executable path alone is NOT proof that its PID vanished
+        # (for example during exec or zombie observation). Recheck the PID.
+        existing=info()
+        return {'status':'Missing' if existing is None and ctypes.get_errno()==errno.ESRCH else 'Unverified'}
+    second=info()
+    if second is None:return {'status':'Missing' if ctypes.get_errno()==errno.ESRCH else 'Unverified'}
+    if (first.start_sec,first.start_usec)!=(second.start_sec,second.start_usec):return {'status':'Unverified'}
+    executable=os.fsdecode(path.value)
+    if not Path(executable).is_absolute():return {'status':'Unverified'}
+    return dict(status='Verified',pid=pid,ppid=second.ppid,start_sec=second.start_sec,
+                start_usec=second.start_usec,executable=executable)
+
+
+def display_start(seconds):
+    t=time.localtime(seconds)
+    return '%s %s %d %02d:%02d:%02d %d'%(
+        ('Mon','Tue','Wed','Thu','Fri','Sat','Sun')[t.tm_wday],
+        ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')[t.tm_mon-1],
+        t.tm_mday,t.tm_hour,t.tm_min,t.tm_sec,t.tm_year)
+
+
+def native_kind(row):
+    executable=row.get('executable') or row.get('comm') or row.get('command','')
+    verified=row.get('identity_verified') is True
+    if executable=='/Applications/Unity Hub.app/Contents/MacOS/Unity Hub':return 'hub' if verified else 'uncertain_worker'
+    name=Path(executable).name.lower()
+    if executable.endswith('/Unity.app/Contents/MacOS/Unity'):return 'editor' if verified else 'uncertain_worker'
+    shared={'unity.licensing.client','unitypackagemanager','unitycrashhandler64'}
+    if '/Applications/Unity/Hub/Editor/' in executable and name in shared:
+        return 'shared_service' if verified else 'uncertain_worker'
+    looks_worker=(name.startswith(('unityshadercompiler','assetimportworker','bee_backend'))
+                  or '/Applications/Unity/Hub/Editor/' in executable)
+    return ('worker' if verified else 'uncertain_worker') if looks_worker else None
+
+
+def process_key(row):
+    need(row.get('identity_verified') is True and isinstance(row.get('executable'),str)
+         and Path(row['executable']).is_absolute(),'Unverified process executable/birth identity')
+    need(type(row.get('pid')) is int and row['pid']>0 and type(row.get('start_sec')) is int
+         and row['start_sec']>0 and type(row.get('start_usec')) is int and 0<=row['start_usec']<1000000,
+         'Invalid process birth identity')
+    return row['pid'],row['start_sec'],row['start_usec']
+
+
 def processes():
+    # Keep the complete parent graph, but do NOT collect unrelated argv. Kernel
+    # executable/birth queries bind ps metadata to the actual process generation.
     rows=[]
-    for line in run(['ps','-axo','pid=,ppid=,lstart=,%cpu=,rss=,command=']).splitlines():
-        fields=line.strip().split(None,9)
-        if len(fields)!=10:continue
-        pid,ppid,*_=fields;command=fields[9]
-        if 'Unity' not in command and WRAPPER not in command and 'bee_backend' not in command:continue
-        rows.append(dict(pid=int(pid),ppid=int(ppid),started=' '.join(fields[2:7]),cpu=float(fields[7]),rss_kib=int(fields[8]),command=redact_command(command)))
+    for line in run(['ps','-axo','pid=,ppid=,lstart=,%cpu=,rss=,comm=']).splitlines():
+        if not line.strip():continue
+        f=line.strip().split(None,9);need(len(f)==10,'Incomplete process inventory row')
+        row=dict(pid=int(f[0]),ppid=int(f[1]),started=' '.join(f[2:7]),cpu=float(f[7]),rss_kib=int(f[8]),comm=f[9])
+        need(row['pid']>=0 and row['ppid']>=0 and math.isfinite(row['cpu']) and row['cpu']>=0
+             and row['rss_kib']>=0,'Invalid process inventory metadata')
+        identity=kernel_process_identity(row['pid'])
+        if identity['status']=='Missing':continue # Authoritative kernel absence, not an observation timeout.
+        row['identity_verified']=identity['status']=='Verified'
+        if row['identity_verified']:
+            row.update({k:identity[k] for k in ('ppid','start_sec','start_usec','executable')})
+            row['identity_verified']=display_start(row['start_sec'])==row['started']
+        row['command']=row.get('executable') or row['comm'];row['arguments_observed']=False
+        rows.append(row)
+    selected=[r['pid'] for r in rows if native_kind(r) in ('editor','worker','uncertain_worker')]
+    if selected:
+        args=subprocess.run(['ps','-ww','-p',','.join(map(str,selected)),'-o','pid=,lstart=,command='],
+            capture_output=True,text=True,timeout=30,env=dict(os.environ,LC_ALL='C'))
+        need(args.returncode in (0,1),'Process argv observation failed')
+        observed={}
+        for line in args.stdout.splitlines():
+            f=line.strip().split(None,6);need(len(f)==7,'Incomplete selected argv observation')
+            observed[(int(f[0]),' '.join(f[1:6]))]=redact_command(f[6])
+        for row in rows:
+            value=observed.get((row['pid'],row['started']))
+            if value is not None:row.update(command=value,arguments_observed=True)
     return rows
 
 
-def editor(row):return '/Unity.app/Contents/MacOS/Unity' in row['command']
+def editor(row):return native_kind(row)=='editor'
+
+
+def hub(row):return native_kind(row)=='hub'
+
+
+def argv_of(row):
+    need(row.get('arguments_observed',True) is True,'Process arguments/owner unavailable')
+    return shlex.split(row['command'])
 
 
 def project_of(row):
-    argv=shlex.split(row['command'])
-    return str(Path(argv[argv.index('-projectPath')+1]).resolve()) if '-projectPath' in argv else None
+    argv=argv_of(row)
+    if '-projectPath' not in argv:return None
+    n=argv.index('-projectPath');need(n+1<len(argv),'Incomplete project ownership argument')
+    return str(Path(argv[n+1]).resolve())
+
+
+def descendant_pids(rows,seeds):
+    result=set(seeds)
+    for _ in rows:
+        added={r['pid'] for r in rows if r['ppid'] in result}
+        if added<=result:break
+        result|=added
+    return result
+
+
+def evidence_rows(rows,owned=()):
+    known=set(owned)
+    return [r for r in rows if native_kind(r) is not None or
+            r.get('identity_verified') is True and process_key(r) in known]
+
+
+def check_capacity_sample(rows,root,log_sizes):
+    need(any(hub(r) for r in rows),'Hub must remain open with verified executable identity')
+    need(not any(native_kind(r)=='uncertain_worker' for r in rows),'Unity/Bee worker identity unresolved; preserve it')
+    editors={r['pid'] for r in rows if editor(r)}
+    seeds={r['pid'] for r in rows if native_kind(r) in ('editor','worker','shared_service')}
+    relevant=descendant_pids(rows,seeds)
+    need(all(r.get('identity_verified') is True for r in rows if r['pid'] in relevant),
+         'Native descendant identity unresolved; capacity not established')
+    need(sum(r['cpu'] for r in rows if r['pid'] in relevant)<10,'Editor/worker CPU workload active; preserve it')
+    attached=descendant_pids(rows,editors)
+    need(not any(native_kind(r)=='worker' and r['pid'] not in attached for r in rows),
+         'Orphan Unity/Bee worker owner unresolved; preserve it')
+    for r in rows:
+        if not editor(r):continue
+        need(project_of(r) is not None,'Editor project owner unresolved; preserve it')
+        need(project_of(r)!=str(root.resolve()),'Existing Editor owns test project')
+        argv=argv_of(r)
+        if '-logFile' in argv:
+            n=argv.index('-logFile');need(n+1<len(argv),'Incomplete Editor log argument')
+            p=Path(argv[n+1])
+            if not p.is_absolute():p=Path(project_of(r))/p
+            if p.is_file():
+                size=p.stat().st_size
+                need(str(p) not in log_sizes or log_sizes[str(p)]==size,'Other Editor log changing; capacity not established')
+                log_sizes[str(p)]=size
 
 
 def capacity(root):
     samples=[];log_sizes={}
     for n in range(3):
-        rows=processes();samples.append(rows)
-        need(any('/Unity Hub.app/Contents/MacOS/Unity Hub' in r['command'] for r in rows),'Hub must remain open')
-        editor_ids={r['pid'] for r in rows if editor(r)}
-        native_descendants=set(editor_ids)
-        for _ in rows:
-            added={r['pid'] for r in rows if r['ppid'] in native_descendants}
-            if added<=native_descendants:break
-            native_descendants|=added
-        need(sum(r['cpu'] for r in rows if r['pid'] in native_descendants)<10,'Editor/worker CPU workload active; preserve it')
-        for r in rows:
-            if not editor(r):continue
-            need(project_of(r)!=str(root.resolve()),'Existing Editor owns test project')
-            need(r['cpu']<10,'Other Editor has active CPU workload; preserve it')
-            argv=shlex.split(r['command'])
-            if '-logFile' in argv:
-                p=Path(argv[argv.index('-logFile')+1])
-                if p.is_file():
-                    size=p.stat().st_size
-                    need(str(p) not in log_sizes or log_sizes[str(p)]==size,'Other Editor log changing; capacity not established')
-                    log_sizes[str(p)]=size
+        rows=processes();check_capacity_sample(rows,root,log_sizes);samples.append(evidence_rows(rows))
         if n<2:time.sleep(2)
     free=shutil.disk_usage(root).free;need(free>=25*1024**3,'Insufficient 25GiB cold-import disk headroom')
     vm=run(['vm_stat']);pressure=run(['memory_pressure','-Q'])
     m=re.search(r'System-wide memory free percentage: (\d+)%',pressure)
     need(m and int(m.group(1))>=15,'Memory capacity not established')
     return dict(samples=samples,free_bytes=free,vm_stat=vm,memory_pressure=pressure)
+
+
+class OwnedProcessTree:
+    """Full observed tree, bound to kernel birth identities, never process names.
+
+    Ownership survives reparenting and exec. PID reuse is a different birth and
+    cannot inherit ownership. Missing/ambiguous identity never proves shutdown.
+    """
+    def __init__(self,wrapper_pid,baseline):
+        self.wrapper_pid=wrapper_pid;self.root_key=None;self.records={};self.saw_target_editor=False;self.identity_transitions=[];self.project_bindings={}
+        self.baseline={r['pid']:process_key(r) if r.get('identity_verified') is True else None for r in baseline}
+        for row in baseline:
+            if editor(row) and row.get('arguments_observed',True) is True:
+                project=project_of(row)
+                if project is not None:self.project_bindings[process_key(row)]=project
+
+    def remember(self,row):
+        key=process_key(row)
+        record=self.records.setdefault(key,dict(birth=list(key),first_observation=dict(row),executable_history=[]))
+        if row['executable'] not in record['executable_history']:record['executable_history'].append(row['executable'])
+        record['last_observation']=dict(row)
+        return key
+
+    def observe(self,rows,root):
+        table={r['pid']:r for r in rows};need(len(table)==len(rows),'Duplicate process PID inventory')
+        if self.root_key is None:
+            need(self.wrapper_pid in table,'Wrapper identity not observed; no owned lifecycle proof')
+            row=table[self.wrapper_pid];key=process_key(row)
+            need(self.baseline.get(row['pid'])!=key,'Pre-existing process cannot be wrapper-owned')
+            self.root_key=self.remember(row)
+        live=set()
+        for key in list(self.records):
+            row=table.get(key[0])
+            if row is None:continue
+            actual=process_key(row) # Unknown identity must fail closed, not mean absent.
+            if actual==key:live.add(self.remember(row))
+            else:
+                transition=dict(kind='PIDReused_NotAdopted',previous_birth=list(key),current_birth=list(actual),executable=row['executable'])
+                if transition not in self.identity_transitions:self.identity_transitions.append(transition)
+        for _ in rows:
+            added=False
+            live_pids={key[0] for key in live}
+            for row in rows:
+                if row['ppid'] not in live_pids:continue
+                key=process_key(row)
+                if key in live:continue
+                need(row['pid'] not in self.baseline or self.baseline[row['pid']] is not None
+                     and self.baseline[row['pid']]!=key,'Pre-existing/unresolved process cannot be adopted')
+                live.add(self.remember(row));added=True
+            if not added:break
+        for row in rows:
+            if not editor(row):continue
+            key=process_key(row);project=self.project_bindings.get(key)
+            if row.get('arguments_observed',True) is True:
+                current=project_of(row)
+                if current is not None:
+                    need(project is None or project==current,'Editor project binding changed within one kernel birth')
+                    project=current;self.project_bindings[key]=project
+            if project is None:
+                # A known owned birth can await its first argv observation, but
+                # cannot establish target lifecycle credit until it is bound.
+                need(key in live,'Unowned Editor project arguments unresolved')
+                continue
+            if project==str(root.resolve()):
+                need(key in live,'Test project Editor is not wrapper-owned')
+                self.saw_target_editor=True
+        # A new orphan worker cannot be attributed to us or safely dismissed.
+        # Preserve it as unresolved; do not adopt it or terminate it.
+        attached=descendant_pids(rows,{r['pid'] for r in rows if editor(r)})
+        for row in rows:
+            if native_kind(row) not in ('worker','uncertain_worker') or row['pid'] in attached:continue
+            key=process_key(row)
+            need(key in live or self.baseline.get(row['pid'])==key,'New orphan native worker has unresolved ownership')
+        return [r for r in rows if r.get('identity_verified') is True and process_key(r) in live]
+
+    def evidence(self):return list(self.records.values())
+
+
+def owned_shutdown_barrier(tree,root,timeout=15):
+    deadline=time.monotonic()+timeout;empty=0;samples=[];survivors=[];rows=[]
+    while True:
+        rows=processes();survivors=tree.observe(rows,root)
+        samples.append(dict(owned_survivors=survivors,protected_native_processes=evidence_rows(rows)))
+        empty=empty+1 if not survivors else 0
+        if empty>=2:return dict(closed=True,observed_absence_samples=empty,samples=samples,survivors=[]),rows
+        if time.monotonic()>=deadline:return dict(closed=False,observed_absence_samples=empty,samples=samples,survivors=survivors),rows
+        time.sleep(1)
 
 
 def android_module(editor_install):
@@ -219,7 +438,7 @@ def assess(before,after,text,exitcode,remaining,parent_unchanged,hub_live):
                    (before['project_settings']==after['project_settings'],'Project settings changed'),
                    (before['user_settings']==after['user_settings'],'User settings changed'),
                    (bool(after['build_manifest']),'Actual compiled DLLs missing'),
-                   (not remaining,'Owned Editor shutdown incomplete'),(parent_unchanged,'Parent environment changed'),(hub_live,'Hub closed')]:
+                   (not remaining,'Observed owned process tree shutdown incomplete'),(parent_unchanged,'Parent environment changed'),(hub_live,'Hub closed')]:
         if not ok:errors.append(why)
     android_rsp=[]
     for ref in after['response_file_pins']:
@@ -241,13 +460,13 @@ def execute(auth_path):
     folder=root/'Logs/SkirmishProduction/MacProbe35'/('run-'+uuid.uuid4().hex);folder.mkdir(parents=True,exist_ok=False)
     result=dict(schema_version=1,launch_authorized=True,authorization=auth,
                 operationalControlPassed=False,launch_performed=False)
-    path=folder/'controller-result.json';child=None;before=None;owned={}
+    path=folder/'controller-result.json';child=None;before=None;tree=None
     try:
         result['preflight']=git_preflight(root)
         result['capacity']=capacity(root);result['tooling']=tools_state(root)
         before=state_snapshot(root);result['before']=before
         result['fresh_capacity']=capacity(root);git_preflight(root)
-        beforep=processes();result['processes_before']=beforep
+        beforep=processes();result['processes_before']=evidence_rows(beforep)
         log=folder/'unity.log';need(not log.exists(),'Fresh log required')
         argv=command(root,log,auth['timeout_seconds']);result['argv']=argv
         env=dict(parent)
@@ -259,34 +478,35 @@ def execute(auth_path):
         with (folder/'wrapper.log').open('x') as output:
             child=subprocess.Popen(argv,cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
             result['launch_performed']=True;result['wrapper_pid']=child.pid
+            tree=OwnedProcessTree(child.pid,beforep)
             while child.poll() is None:
-                rows=processes()
-                parents={child.pid}|set(owned)
-                for _ in rows:
-                    added={r['pid'] for r in rows if r['ppid'] in parents}
-                    if added<=parents:break
-                    parents|=added
-                for r in rows:
-                    if editor(r) and project_of(r)==str(root.resolve()) and r['pid'] not in {p['pid'] for p in beforep}:
-                        need(r['ppid'] in parents,'Test project process is not wrapper-owned')
-                        owned[r['pid']]=r
+                tree.observe(processes(),root)
                 time.sleep(1)
             result['wrapper_exit']=child.returncode
-        result['observed_owned_processes']=list(owned.values());need(bool(owned),'No owned Editor lifecycle observed')
+        need(tree.saw_target_editor,'No owned target Editor lifecycle observed')
+        shutdown,finalp=owned_shutdown_barrier(tree,root);result['owned_shutdown']=shutdown
+        result['observed_owned_processes']=tree.evidence()
+        need(shutdown['closed'],'Observed owned process tree still live; preserve all processes')
         after=state_snapshot(root);result['after']=after
-        finalp=processes();result['processes_after']=finalp
-        remaining=[r for r in finalp if editor(r) and project_of(r)==str(root.resolve())]
+        # A second complete graph/birth check after source/build postchecks
+        # catches late known-child activity; names alone never prove absence.
+        finalp=processes();remaining=tree.observe(finalp,root)
+        result['processes_after']=evidence_rows(finalp,tree.records)
         text=log.read_text(errors='replace') if log.exists() else ''
         result.update(assess(before,after,text,child.returncode,remaining,dict(os.environ)==parent,
-            any('/Unity Hub.app/Contents/MacOS/Unity Hub' in r['command'] for r in finalp)))
+            any(hub(r) for r in finalp)))
         result['logs']=[checked_file(p) for p in (log,folder/'wrapper.log') if p.is_file()]
     except BaseException as error:
         result['controller_error']=type(error).__name__+': '+str(error)
-        result['owned_shutdown']='Pending' if child is not None and child.poll() is None else 'WrapperExited_NoControllerTermination'
+        result.setdefault('owned_shutdown',dict(closed=False,status='Pending' if child is not None and child.poll() is None else 'NoAbsenceProof_NoControllerTermination'))
         result['operationalControlPassed']=False
         # Never terminate a borrowed/unknown Editor, Hub, licensing client or even a still-owned wrapper here.
         # The mandatory wrapper owns its explicit timeout and its own Editor process tree.
     finally:
+        if tree is not None:
+            result['observed_owned_processes']=tree.evidence()
+            result['owned_process_identity_transitions']=tree.identity_transitions
+            result['observed_owned_editor_project_bindings']=[dict(birth=list(k),project=v) for k,v in tree.project_bindings.items() if k in tree.records]
         result['parent_environment_unchanged']=dict(os.environ)==parent
         result.setdefault('readiness',dict(normal_mission=False,paid_resources_qualified=False,queue_success_enabled=False,Android_build=False,player_device=False))
         result.setdefault('proofCompleteness',dict(native_compiler_input_consumption_closure='Pending',native_in_process_environment_witness='Pending'))

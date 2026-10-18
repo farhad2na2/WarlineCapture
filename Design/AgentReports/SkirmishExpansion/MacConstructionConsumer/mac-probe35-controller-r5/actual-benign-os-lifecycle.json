@@ -1,0 +1,91 @@
+{
+  "scope": "ActualBenignPythonLifecycle_NoUnityEditor",
+  "controller_sha256": "b71f212b946dae511656e24d85e559d77869b13aea84f78c1b7fa0ce278a0a8e",
+  "parent_pid": 17741,
+  "child_pid": 17742,
+  "parent_exit": 0,
+  "full_generic_tree_observed": true,
+  "child_reparented_to": 1,
+  "survivor_refused_shutdown": true,
+  "two_natural_exit_absence_samples": 2,
+  "records": [
+    {
+      "birth": [
+        17741,
+        1792336337,
+        613304
+      ],
+      "first_observation": {
+        "pid": 17741,
+        "ppid": 17737,
+        "started": "Sun Oct 18 17:12:17 2026",
+        "cpu": 0.0,
+        "rss_kib": 10832,
+        "comm": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "identity_verified": true,
+        "start_sec": 1792336337,
+        "start_usec": 613304,
+        "executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "command": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python"
+      ],
+      "last_observation": {
+        "pid": 17741,
+        "ppid": 17737,
+        "started": "Sun Oct 18 17:12:17 2026",
+        "cpu": 0.0,
+        "rss_kib": 10832,
+        "comm": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "identity_verified": true,
+        "start_sec": 1792336337,
+        "start_usec": 613304,
+        "executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "command": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        17742,
+        1792336337,
+        631326
+      ],
+      "first_observation": {
+        "pid": 17742,
+        "ppid": 17741,
+        "started": "Sun Oct 18 17:12:17 2026",
+        "cpu": 0.0,
+        "rss_kib": 8368,
+        "comm": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "identity_verified": true,
+        "start_sec": 1792336337,
+        "start_usec": 631326,
+        "executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "command": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python"
+      ],
+      "last_observation": {
+        "pid": 17742,
+        "ppid": 1,
+        "started": "Sun Oct 18 17:12:17 2026",
+        "cpu": 0.0,
+        "rss_kib": 8368,
+        "comm": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "identity_verified": true,
+        "start_sec": 1792336337,
+        "start_usec": 631326,
+        "executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "command": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python",
+        "arguments_observed": false
+      }
+    }
+  ],
+  "no_signals_or_termination": true,
+  "Unity_launch": false
+}

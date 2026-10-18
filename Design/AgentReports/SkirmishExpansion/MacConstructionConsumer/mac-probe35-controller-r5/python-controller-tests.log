@@ -1,0 +1,47 @@
+test_active_orphan_shader_bee_and_unity_dotnet_roots_refused (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_actual_current_android_rsp_separate_from_compiler_consumption (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_actual_unity_cli_auth_envelope_uses_data_logged_in (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_auth_rejects_wrong_top_level_login_errors_or_untyped_success (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_authorization_exact_scope_and_hash (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_baseline_other_process_cannot_be_borrowed (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_busy_or_owned_editor_never_terminated (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_collector_keeps_full_parent_graph_without_unrelated_arguments (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_command_has_only_checked_gui_wrapper_and_explicit_android (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_default_is_disabled_without_native_command (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_exact_final_marker_and_two_expected_negative_errors (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_execute_requires_separate_authorization (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_generic_non_unity_busy_descendant_is_counted (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_kernel_and_ps_birth_mismatch_is_unverified (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_kernel_birth_tuple_distinguishes_microsecond_pid_reuse (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_known_idle_other_editor_and_attached_workers_remain_allowed (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_known_owned_editor_missing_argv_stays_live_until_kernel_absence (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_known_protected_editor_missing_argv_is_not_adopted (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_mac_hub_android_module_is_sibling_of_unity_app (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_missing_duplicate_or_early_marker_nonzero_and_timeout (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_missing_executable_path_is_not_kernel_pid_absence (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_new_owned_birth_may_reuse_a_departed_baseline_pid (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_new_owned_editor_needs_later_argv_before_target_lifecycle_credit (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_new_unattributed_orphan_is_not_silently_assumed_unrelated (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_only_kernel_pid_absence_reports_missing (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_owned_identity_unreadable_does_not_prove_absence (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_pid_reuse_does_not_adopt_or_terminate_unrelated_generation (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_process_evidence_redacts_license_and_auth_credentials (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_process_inventory_parses_spaceful_commands (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_reparented_owned_child_and_new_child_retain_full_tree_ownership (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_reused_editor_pid_cannot_reuse_old_project_binding (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_same_birth_exec_transition_remains_owned_and_visible (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_scoped_controls_can_pass_with_explicit_pending_closure (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_sdk_alias_only_resolves_inside_explicit_android_root (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_shutdown_requires_two_complete_observed_absence_samples (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_source_settings_output_shutdown_env_hub_failures (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_surviving_owned_children_refuse_shutdown_for_all_names (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_uncertain_or_idle_unattributed_worker_conservatively_deferred (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_unexpected_failure_compile_exception_or_import_error (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_unrelated_new_target_editor_is_refused_without_cleanup (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_unresolved_native_descendant_identity_cannot_be_called_idle (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+test_worker_load_blocks_even_with_idle_parent_editor (mac_tanker_probe35_controller_test.ControllerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 42 tests in 0.016s
+
+OK

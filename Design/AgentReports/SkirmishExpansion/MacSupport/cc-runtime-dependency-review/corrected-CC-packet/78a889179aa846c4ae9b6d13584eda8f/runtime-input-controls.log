@@ -1,0 +1,93 @@
+{
+  "scope": "ActualRuntimeInputGuardMetadataCases_AndSourceWiring_NoNativeRun",
+  "cases_passed": 11,
+  "source_wiring_groups_passed": 3,
+  "failures": 0,
+  "actual_runtime_inputs_admitted": 18,
+  "native_queries": 0,
+  "Unity_launches": 0,
+  "controller_execute_called": false,
+  "cases": [
+    {
+      "case": "actual_18_input_manifest",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "fixture_unchanged",
+      "passed": true,
+      "rejected": false,
+      "reason": null,
+      "mismatch_paths": []
+    },
+    {
+      "case": "missing_file",
+      "passed": true,
+      "rejected": true,
+      "reason": null,
+      "mismatch_paths": [
+        "Design/0.dat"
+      ]
+    },
+    {
+      "case": "same_size_hash_drift",
+      "passed": true,
+      "rejected": true,
+      "reason": null,
+      "mismatch_paths": [
+        "Design/0.dat"
+      ]
+    },
+    {
+      "case": "size_drift",
+      "passed": true,
+      "rejected": true,
+      "reason": null,
+      "mismatch_paths": [
+        "Design/0.dat"
+      ]
+    },
+    {
+      "case": "manifest_bytes_changed",
+      "passed": true,
+      "rejected": true,
+      "reason": "Runtime input manifest bytes changed",
+      "mismatch_paths": null
+    },
+    {
+      "case": "unsafe_path",
+      "passed": true,
+      "rejected": true,
+      "reason": "Unsafe or duplicate runtime input path",
+      "mismatch_paths": null
+    },
+    {
+      "case": "duplicate_path",
+      "passed": true,
+      "rejected": true,
+      "reason": "Unsafe or duplicate runtime input path",
+      "mismatch_paths": null
+    },
+    {
+      "case": "symlink_file",
+      "passed": true,
+      "rejected": true,
+      "reason": "Runtime input alias refused",
+      "mismatch_paths": null
+    },
+    {
+      "case": "membership_omission",
+      "passed": true,
+      "rejected": true,
+      "reason": "Exact reviewed runtime input membership required",
+      "mismatch_paths": null
+    },
+    {
+      "case": "foreign_source_epoch",
+      "passed": true,
+      "rejected": true,
+      "reason": "Runtime input manifest own-source mismatch",
+      "mismatch_paths": null
+    }
+  ]
+}

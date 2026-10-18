@@ -1,0 +1,83 @@
+--- reviewed-r2/controller
++++ corrected/controller
+@@ -24,8 +24,29 @@
+  need(life.digest(HERE/"plan.disabled.json")==g["plan_sha256"]==plan_sha_at_read,"Plan bytes changed before Popen")
+  need(life.digest(HERE/"layout-restoration.py.proposal")==plan["restoration_contract"]["helper_sha256"],"Restoration helper changed before Popen")
+  need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper changed before Popen")
++ need(life.digest(HERE/"runtime-inputs.json")==plan["runtime_inputs_sha256"]==g["runtime_inputs_sha256"],"Runtime manifest changed before Popen")
+  grant_time(g)
+  return {"grant_sha256":grant_sha_at_read,"plan_sha256":plan_sha_at_read,"controller_sha256":controller_sha_at_read,"restoration_sha256":plan["restoration_contract"]["helper_sha256"]}
++def inspect_runtime_inputs(plan):
++ path=HERE/"runtime-inputs.json";data=path.read_bytes();manifest_sha=hashlib.sha256(data).hexdigest()
++ need(manifest_sha==plan["runtime_inputs_sha256"],"Runtime input manifest bytes changed")
++ m=json.loads(data)
++ need(type(m.get("schema_version")) is int and m["schema_version"]==1 and m.get("scope")=="RequestedCCAndSharedControls_ExplicitRuntimeDiskInputs","Runtime input manifest schema/scope")
++ need(m.get("source_commit")==plan["source_commit"] and m.get("source_candidate_sha256")==plan["candidate_sha256"] and m.get("selector")=="CC","Runtime input manifest own-source mismatch")
++ need(type(m.get("expected_input_count")) is int and m["expected_input_count"]==18 and isinstance(m.get("inputs"),list) and len(m["inputs"])==18,"Exact reviewed runtime input membership required")
++ rows=[];errors=[];seen=set()
++ for pin in m["inputs"]:
++  rel=pin.get("path");need(isinstance(rel,str) and rel not in seen and not Path(rel).is_absolute() and str(Path(rel))==rel and ".." not in Path(rel).parts and ":" not in rel and "\\" not in rel and Path(rel).parts[0] in ("Assets","Packages","ProjectSettings","Tools","Design"),"Unsafe or duplicate runtime input path")
++  seen.add(rel);need(isinstance(pin.get("sha256"),str) and len(pin["sha256"])==64 and all(c in "0123456789abcdef" for c in pin["sha256"]) and type(pin.get("bytes")) is int and pin["bytes"]>=0,"Runtime input pin shape")
++  p=ROOT/rel;need(not p.is_symlink() and all(not x.is_symlink() for x in p.parents) and p.resolve().is_relative_to(ROOT.resolve()),"Runtime input alias refused")
++  row={"path":rel,"exists":p.is_file(),"sha256":None,"bytes":None}
++  if p.is_file():
++   st=p.stat();raw=p.read_bytes();end=p.stat()
++   need((st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns)==(end.st_dev,end.st_ino,end.st_size,end.st_mtime_ns),"Runtime input changed during read")
++   row.update(sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw))
++  if not row["exists"] or row["sha256"]!=pin["sha256"] or row["bytes"]!=pin["bytes"]:errors.append(rel)
++  rows.append(row)
++ return {"manifest_sha256":manifest_sha,"inputs":rows,"errors":errors}
+ def execute_reviewed(grant_path):
+  plan_bytes=(HERE/"plan.disabled.json").read_bytes();plan_sha_at_read=hashlib.sha256(plan_bytes).hexdigest();plan=json.loads(plan_bytes)
+  grant_bytes=Path(grant_path).read_bytes();grant_sha_at_read=hashlib.sha256(grant_bytes).hexdigest();g=json.loads(grant_bytes)
+@@ -37,6 +58,7 @@
+  need(g.get("plan_sha256")==plan_sha_at_read and g.get("controller_sha256")==controller_sha_at_read,"Grant code/plan pins differ")
+  need(isinstance(g.get("review_receipt_sha256"),str) and len(g["review_receipt_sha256"])==64,"Reviewed receipt required")
+  need(g.get("restore_exact_owned_layout") is True,"Exact layout restoration scope required")
++ need(g.get("runtime_inputs_sha256")==plan["runtime_inputs_sha256"],"Grant runtime input manifest mismatch")
+  grant_time(g)
+  result={"runid":plan["planned_run_id"],"scope":"FreshCCCollectionOnly_Unqualified","wrapper_started":False,"wrapper_reaped":False,"qualified":False,"prior_compile29_operational_failure_preserved":True,"operational_collection_control_passed":False}
+  lease=Path("/private/tmp/warline-mac-normal-worker.host-lock");identity=None;child=None;tree=None;safe=False;prebytes=None;before=None;before_gui=None
+@@ -47,13 +69,15 @@
+   need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper drift")
+   fd=os.open(lease,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600);os.write(fd,result["runid"].encode());st=os.fstat(fd);identity=(st.st_dev,st.st_ino);os.close(fd)
+   need(subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()==plan["source_commit"],"Source commit changed")
+-  need(subprocess.check_output(["git","status","--porcelain","--untracked-files=normal"],cwd=ROOT,text=True).strip()=="?? ProjectSettings/ProjectAuditorSettings.asset","Unexpected source state")
++  status=subprocess.check_output(["git","status","--porcelain","--untracked-files=all"],cwd=ROOT,text=True).splitlines()
++  need(set(status)=={"?? ProjectSettings/ProjectAuditorSettings.asset","?? Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt"},"Unexpected source/data membership")
+   need(not (ROOT/"Temp/UnityLockfile").exists(),"Target project locked")
+   save("capacity-before.json",life.capacity(ROOT));tools_before=life.tools_state(ROOT);save("tools-before.json",tools_before)
+   need(life.digest(ROOT/"Tools/CI/invoke_unity_macos.sh")==plan["wrapper_sha256"],"Wrapper drift")
+   restore.no_owner();prebytes=restore.TARGET.read_bytes();need(restore.sha(prebytes)==restore.BEFORE,"Exact restored before layout required")
+   with (HERE/"owned-layout-preimage.bytes").open("xb") as f:f.write(prebytes);f.flush();os.fsync(f.fileno())
+   before_gui=layout_rows();save("global-GUI-before.json",before_gui)
++  runtime_before=inspect_runtime_inputs(plan);save("runtime-inputs-before.json",runtime_before);need(not runtime_before["errors"],"Missing/mismatched explicit runtime input before native preparation")
+   before=life.state_snapshot(ROOT);save("state-before.json",before)
+   need(before["candidate_sha256"]==plan["candidate_sha256"] and len(before["source_manifest"])==plan["source_file_count"],"Own full source epoch changed")
+   need(life.digest(ROOT/"Library/ScriptAssemblies/Game.Editor.dll")==plan["existing_control_proof"]["GameEditorDLL_sha256"],"Prior actual control DLL changed; stop for review")
+@@ -69,6 +93,7 @@
+   need(not Path(plan["unity_log"]).exists() and not Path(plan["wrapper_log"]).exists(),"New logs required")
+   save("launch-intent.json",{"command":plan["command"],"env":plan["environment"],"grant_sha256":grant_sha_at_read,"prior_actual_control_evidence":plan["existing_control_proof"]})
+   with Path(plan["wrapper_log"]).open("xb") as log:
++   runtime_launch=inspect_runtime_inputs(plan);save("runtime-inputs-at-launch.json",runtime_launch);need(not runtime_launch["errors"] and runtime_launch["inputs"]==runtime_before["inputs"],"Runtime input changed before Popen")
+    result["immediate_launch_pins"]=verify_immediate_launch_pins(g,grant_path,grant_sha_at_read,plan_sha_at_read,controller_sha_at_read,plan)
+    child=subprocess.Popen(plan["command"],cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT);result.update(wrapper_started=True,wrapper_pid=child.pid,controller_pid=os.getpid());save("live-original-handle.json",result)
+    tree=life.OwnedProcessTree(child.pid,baseline)
+@@ -100,6 +125,8 @@
+    except BaseException as e:life.lifecycle_error(result,"layout_restoration",e)
+   if child is not None and safe and before is not None:
+    try:
++    runtime_after=inspect_runtime_inputs(plan);save("runtime-inputs-after.json",runtime_after)
++    result["runtime_inputs_unchanged"]=not runtime_after["errors"] and runtime_after["inputs"]==runtime_before["inputs"]
+     tools_after=life.tools_state(ROOT);save("tools-after.json",tools_after)
+     result["actual_tool_pins_unchanged"]=tools_before["actual_tool_pins"]==tools_after["actual_tool_pins"]
+     result["auth_observations"]={"before_logged_in":tools_before["auth_logged_in"],"after_logged_in":tools_after["auth_logged_in"]}
+@@ -117,7 +144,7 @@
+     result["compiler_identity_unchanged"]=life.digest(ROOT/"Library/ScriptAssemblies/Game.Editor.dll")==plan["existing_control_proof"]["GameEditorDLL_sha256"] and life.digest(rsp)==plan["existing_control_proof"]["GameEditorRSP_sha256"]
+     shared=all(text.count(m)==1 for m in plan["expected_shared_markers"])
+     compile_errors=bool(__import__("re").search(r"error CS[0-9]+|Scripts have compiler errors|Aborting",text))
+-    result["operational_collection_control_passed"]=all([result.get("wrapper_exit")==0,result.get("wrapper_reaped"),safe,result.get("target_editor_observed"),result.get("source_unchanged"),result.get("project_settings_unchanged"),result.get("user_settings_unchanged"),result.get("all_global_layouts_restored_unchanged"),result.get("layout_restoration",{}).get("restored"),result.get("exact_marker_count")==1,result.get("exact_unqualified_report_scope"),result.get("compiler_identity_unchanged"),result.get("actual_tool_pins_unchanged"),result.get("auth_observations",{}).get("before_logged_in") is True,result.get("auth_observations",{}).get("after_logged_in") is True,shared,not compile_errors,not result.get("lifecycle_errors"),not result.get("error")])
++    result["operational_collection_control_passed"]=all([result.get("wrapper_exit")==0,result.get("wrapper_reaped"),safe,result.get("target_editor_observed"),result.get("source_unchanged"),result.get("project_settings_unchanged"),result.get("user_settings_unchanged"),result.get("all_global_layouts_restored_unchanged"),result.get("layout_restoration",{}).get("restored"),result.get("exact_marker_count")==1,result.get("exact_unqualified_report_scope"),result.get("compiler_identity_unchanged"),result.get("runtime_inputs_unchanged"),result.get("actual_tool_pins_unchanged"),result.get("auth_observations",{}).get("before_logged_in") is True,result.get("auth_observations",{}).get("after_logged_in") is True,shared,not compile_errors,not result.get("lifecycle_errors"),not result.get("error")])
+    except BaseException as e:life.lifecycle_error(result,"post_evidence",e)
+   if identity and safe:
+    st=lease.stat();need((st.st_dev,st.st_ino)==identity and lease.read_text()==result["runid"],"Lease identity changed; preserve")

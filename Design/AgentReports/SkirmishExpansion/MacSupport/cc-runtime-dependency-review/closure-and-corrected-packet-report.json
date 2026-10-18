@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "state": "FrozenCorrectedPacket_RuntimeInputsAdmitted_NoNativeRetryAuthorized",
+  "created_utc": "2026-10-18T23:22:40.556305+00:00",
+  "failed_prior_CC_terminal_commit": "3185317a237900511ed29c3821dbe8b55780f90a",
+  "prior_result_unchanged_sha256": "f71935c5fb64366a9e8dfcf91e763eceb517f234bb190d1d50263e41dddae445",
+  "runtime_io_review": {
+    "actual_partial_static_defs": 229,
+    "conservative_reachable_method_names": 41,
+    "explicit_files_admitted": 18,
+    "outside_Assets_Packages_ProjectSettings_census": 5,
+    "Asset_membership_superset_rows": 41596,
+    "prefab_search_membership_rows": 189,
+    "peer_review_required": true,
+    "limits": "Explicit disk I/O closure with data/branch provenance and full Assets superset; not Roslyn semantic proof or complete Unity-generated Library/baking graph. No native fit transferred."
+  },
+  "exact_authorized_data_stage": {
+    "scope": "AuthorizedExactExistingLogicalDraftDataOnly_NoNativeRetry",
+    "started_utc": "2026-10-18T23:17:43.312607+00:00",
+    "file_staged": true,
+    "source_code_changed": false,
+    "native_launched": false,
+    "grant95cb_already_consumed": true,
+    "staging_passed": true,
+    "transfer_commit": "d54a65d9b959267390d1ef0c9784d6a055a3abaa",
+    "destination": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+    "bytes": 10728,
+    "raw_sha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+    "own_source_candidate_before": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "own_source_candidate_after": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "source_files": 41741,
+    "compiled_relevant_scope_equivalence": true,
+    "full_runtime_input_manifest_gate_pending": true,
+    "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+    "git_status": "?? ProjectSettings/ProjectAuditorSettings.asset\n?? Tools/CI/SkirmishProductionDrafts/GroundPilots/",
+    "finished_utc": "2026-10-18T23:18:31.851164+00:00"
+  },
+  "control29_reuse_scope": {
+    "scope": "MeasuredRelevantCodeMembershipAndEmittedIdentityOnly_NotBlanketSceneOrWindowsEquivalence",
+    "control29_proof_source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+    "new_own_source_candidate": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "CSharp_asmdef_asmref_Packages_ProjectSettings_membership_identical": true,
+    "relevant_rows": 4127,
+    "actual_GameEditor_RSP_sha256": "40a64da9f387e3311828aaf99a983896f26bdfa423d7507a96e508c916e3875e",
+    "same_RSP_as_actual29": true,
+    "GameEditorDLL_sha256": "fdd5596dcef8aa4e39b1f12c786457851625feb821dcbf0f83231f2d44ed3f07",
+    "same_GameEditorDLL_as_actual29": true,
+    "all_retained_build_manifest_identical": true,
+    "all_actual_rsp_inputs_match_control29_source_pins": true,
+    "CSharp29_repeated": false,
+    "native_baked_scene_fit_transferred": false,
+    "ignored_cache_meta_delta_retained": true,
+    "new_Tools_data": "Exact already-authored10728B3755 file only; actual caller Hash verifies it; not read by pure29controls"
+  },
+  "correction": "New runtime-inputs.json whole-file digest bound to separate new grant and plan; each18path existence/hash/size and safe paths checked before preparation, immediatelyprePopen, after; aftergate required in aggregate. --untracked-files=all accepts exactly ProjectAuditor and authorized3755file. Original failedCC/sourceaddition preserved.",
+  "new_own_source_epoch": {
+    "candidate_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "file_count": 41741,
+    "delta": "One preserved generatedSceneDependencyCache meta ff1e..., no old row removed/changed; explicitly declared by Root, no original stability waiver."
+  },
+  "corrected_packet": {
+    "nonce": "78a889179aa846c4ae9b6d13584eda8f",
+    "directory": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f",
+    "method": "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+    "env": {
+      "WARLINE_GROUND_SOURCE_SURVEY_GROUPS": "CC",
+      "WARLINE_GROUND_SOURCE_SURVEY_OUTPUT": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/RequestedSourceSurvey/78a889179aa846c4ae9b6d13584eda8f/report.json"
+    },
+    "timeout_seconds": 3600,
+    "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+    "runtime_inputs_sha256": "9e6f3efbca516f54d188f6f8ae35392b70f69c8a828b727e5a6b9a24c661235b",
+    "controller_sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7",
+    "plan_sha256": "a60b25b282a22dd496179af391add6cafc75cc5804fa0864fb41989da83b51d2",
+    "restoration_code_sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf",
+    "grant_authorized": false,
+    "native_output_parent_absent": true
+  },
+  "metadata_validation": {
+    "scope": "ActualRuntimeInputGuardMetadataCases_AndSourceWiring_NoNativeRun",
+    "cases_passed": 11,
+    "source_wiring_groups_passed": 3,
+    "failures": 0,
+    "actual_runtime_inputs_admitted": 18,
+    "native_queries": 0,
+    "Unity_launches": 0,
+    "controller_execute_called": false,
+    "cases": [
+      {
+        "case": "actual_18_input_manifest",
+        "passed": true,
+        "rejected": false
+      },
+      {
+        "case": "fixture_unchanged",
+        "passed": true,
+        "rejected": false,
+        "reason": null,
+        "mismatch_paths": []
+      },
+      {
+        "case": "missing_file",
+        "passed": true,
+        "rejected": true,
+        "reason": null,
+        "mismatch_paths": [
+          "Design/0.dat"
+        ]
+      },
+      {
+        "case": "same_size_hash_drift",
+        "passed": true,
+        "rejected": true,
+        "reason": null,
+        "mismatch_paths": [
+          "Design/0.dat"
+        ]
+      },
+      {
+        "case": "size_drift",
+        "passed": true,
+        "rejected": true,
+        "reason": null,
+        "mismatch_paths": [
+          "Design/0.dat"
+        ]
+      },
+      {
+        "case": "manifest_bytes_changed",
+        "passed": true,
+        "rejected": true,
+        "reason": "Runtime input manifest bytes changed",
+        "mismatch_paths": null
+      },
+      {
+        "case": "unsafe_path",
+        "passed": true,
+        "rejected": true,
+        "reason": "Unsafe or duplicate runtime input path",
+        "mismatch_paths": null
+      },
+      {
+        "case": "duplicate_path",
+        "passed": true,
+        "rejected": true,
+        "reason": "Unsafe or duplicate runtime input path",
+        "mismatch_paths": null
+      },
+      {
+        "case": "symlink_file",
+        "passed": true,
+        "rejected": true,
+        "reason": "Runtime input alias refused",
+        "mismatch_paths": null
+      },
+      {
+        "case": "membership_omission",
+        "passed": true,
+        "rejected": true,
+        "reason": "Exact reviewed runtime input membership required",
+        "mismatch_paths": null
+      },
+      {
+        "case": "foreign_source_epoch",
+        "passed": true,
+        "rejected": true,
+        "reason": "Runtime input manifest own-source mismatch",
+        "mismatch_paths": null
+      }
+    ]
+  },
+  "future_gate": "Source stability remains strict79d5. Earlier failure occurred before CC source-world load; any further newgeneratedmeta still fails. No guessed pins, cleanup or exception added.",
+  "native_runs_after_failed95cb": 0,
+  "CSharp29_repeated": false,
+  "historical_survey11_payload_or_bridge": false,
+  "normal_paid_queue_APK_device_credit": false
+}

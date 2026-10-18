@@ -1,0 +1,95 @@
+{
+  "scope": "RuntimeInputClosure_DataOnlyStage_CorrectedDisabledPacket",
+  "files": [
+    {
+      "path": "actual-source-callsite-inventory.json",
+      "bytes": 33688,
+      "sha256": "926a21cb6ee1eb01e1306f0646784a13a0a555c33496edb06dc37f52dd9ff07e"
+    },
+    {
+      "path": "closure-and-corrected-packet-report.json",
+      "bytes": 7716,
+      "sha256": "a40aa7d7b4d7852eea8439b985b9117371b2fc3a076b02dcdd068451ef34c3f8"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/controller-r2-to-corrected.diff",
+      "bytes": 10303,
+      "sha256": "1189b6bf8269cf3a5bf5beb0e39f1440ecb4c37cd542821be2199b811d18690e"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/layout-restoration.py.proposal",
+      "bytes": 4244,
+      "sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/plan.disabled.json",
+      "bytes": 10585,
+      "sha256": "a60b25b282a22dd496179af391add6cafc75cc5804fa0864fb41989da83b51d2"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/requested-CC-controller.py.proposal",
+      "bytes": 16554,
+      "sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/runtime-input-controls.log",
+      "bytes": 2136,
+      "sha256": "203c7b35d6f179ef7146e9b096eb150d4682b9d7e6920799cbf579366734daaa"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/runtime-input-controls.py",
+      "bytes": 4493,
+      "sha256": "7165d2292fecd629075c4596c51a0a4c92c632eb59dc4a0f1f50f27ac47c55e9"
+    },
+    {
+      "path": "corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/runtime-inputs.json",
+      "bytes": 8227,
+      "sha256": "9e6f3efbca516f54d188f6f8ae35392b70f69c8a828b727e5a6b9a24c661235b"
+    },
+    {
+      "path": "exact-input-staging/absence-and-provenance-before.json",
+      "bytes": 672,
+      "sha256": "93f5e9ea61a8b6038a96801c0ee75b33776fb5fc6e0dd3671565241ef02bd40f"
+    },
+    {
+      "path": "exact-input-staging/capacity-before.json",
+      "bytes": 3651,
+      "sha256": "eadd291f821d4f968a17bc635be79adc526ab61ea62edf7116560cf1465fb4d8"
+    },
+    {
+      "path": "exact-input-staging/compiled-scope-equivalence.json",
+      "bytes": 278169,
+      "sha256": "850ba7ebdb7ca56dcff0513fba05a781dccff5c08579daf666de2410c330f4de"
+    },
+    {
+      "path": "exact-input-staging/result.json",
+      "bytes": 1165,
+      "sha256": "da6998c3d7d8a525cee6c8e0ce8160d225b0809bff1f2e3e0bc48bd853d704a2"
+    },
+    {
+      "path": "exact-input-staging/staging-controller.py.txt",
+      "bytes": 7572,
+      "sha256": "66083061f91df1d54aba00c26cd5d5541328a547f54b77123d5be2af4aadc29a"
+    },
+    {
+      "path": "exact-input-staging/state-after-stage.json",
+      "bytes": 9435186,
+      "sha256": "9bfd5d47609b9caa3ca43f8b971aff13814322e580c5dc3995b8b93a16ce717e"
+    },
+    {
+      "path": "exact-input-staging/state-before-stage.json",
+      "bytes": 9435186,
+      "sha256": "9bfd5d47609b9caa3ca43f8b971aff13814322e580c5dc3995b8b93a16ce717e"
+    },
+    {
+      "path": "exact-input-staging/transfer-manifest.raw.json",
+      "bytes": 712,
+      "sha256": "1bf590e163410e39d9c794d29a0769bbf8835ffb5fd1be5ef57de300a99e60de"
+    },
+    {
+      "path": "runtime-input-manifest.proposal.json",
+      "bytes": 9350694,
+      "sha256": "499a7537b806f24fa3c82749d3f921c9b252875c99d91ae5236afe59e2f47b9a"
+    }
+  ]
+}

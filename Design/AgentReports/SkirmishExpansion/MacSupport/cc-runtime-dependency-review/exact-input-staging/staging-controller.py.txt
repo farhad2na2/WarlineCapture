@@ -1,0 +1,49 @@
+from pathlib import Path
+import json,subprocess,hashlib,sys,datetime,os
+sys.path.insert(0,"/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI")
+import mac_tanker_probe35_controller as life
+root=Path("/Volumes/T7/Projects/WarlineCapture-mac-native-s003");primary=Path("/Volumes/T7/Projects/WarlineCapture");review=Path("/private/tmp/warline-mac-probe35-lifecycle-review")
+out=primary/"Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/exact-input-staging";out.mkdir()
+ref="d54a65d9b959267390d1ef0c9784d6a055a3abaa";prefix="Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-input-transfer/";rel="Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt";expected="3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e"
+def need(x,s):
+ if not x:raise RuntimeError(s)
+def save(name,obj):
+ with (out/name).open("x") as f:json.dump(obj,f,indent=2);f.write("\n")
+def git(*args):return subprocess.check_output(["git",*args],cwd=root,text=True).strip()
+result={"scope":"AuthorizedExactExistingLogicalDraftDataOnly_NoNativeRetry","started_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"file_staged":False,"source_code_changed":False,"native_launched":False,"grant95cb_already_consumed":True}
+try:
+ need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper drift")
+ need(git("rev-parse","HEAD")=="36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63","Own source commit changed")
+ need(not Path("/private/tmp/warline-mac-normal-worker.host-lock").exists() and not (root/"Temp/UnityLockfile").exists(),"Project/host owned; preserve")
+ save("capacity-before.json",life.capacity(root));need(not any(life.editor(r) or life.native_kind(r) in ("worker","uncertain_worker") for r in life.processes()),"Native owner exists")
+ dest=root/rel;need(not dest.exists() and not dest.is_symlink(),"Destination already exists; do not overwrite")
+ need(all(not p.is_symlink() for p in dest.parents),"Destination alias refused")
+ raw_manifest=subprocess.check_output(["git","show",ref+":"+prefix+"manifest.json"],cwd=review);manifest=json.loads(raw_manifest)
+ raw=subprocess.check_output(["git","show",ref+":"+prefix+"SkirmishLayout_CC_BA_G_Candidate.asset.txt"],cwd=review)
+ need(hashlib.sha256(raw).hexdigest()==expected and len(raw)==10728,"Transfer bytes/size mismatch")
+ need(manifest["rawSha256"]==expected and manifest["bytes"]==10728 and manifest["destinationRuntimePath"]==rel,"Transfer manifest mismatch")
+ inv=root/"Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json";inventory=json.loads(inv.read_text());need(inventory["layoutSnapshots"]["CC"]["candidateDraftPath"]==rel and inventory["layoutSnapshots"]["CC"]["candidateDraftSha256"]==expected,"Own actual caller authority differs")
+ before=life.state_snapshot(root);save("state-before-stage.json",before);need(before["candidate_sha256"]=="79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8" and len(before["source_manifest"])==41741,"Current own epoch differs")
+ (out/"transfer-manifest.raw.json").write_bytes(raw_manifest)
+ save("absence-and-provenance-before.json",{"destination":str(dest),"exists":False,"raw_transfer_commit":ref,"raw_Gitshow_not_checkout":True,"raw_sha256":expected,"bytes":len(raw),"own_inventory_sha256":life.digest(inv),"own_caller_path_and_hash_match":True,"native_source_candidate_before":before["candidate_sha256"],"parent_directory_members_before":sorted(p.name for p in dest.parent.iterdir()) if dest.parent.exists() else []})
+ need(not any(life.editor(r) or life.native_kind(r) in ("worker","uncertain_worker") for r in life.processes()) and not (root/"Temp/UnityLockfile").exists(),"Owner changed before stage")
+ need(not dest.exists(),"Destination changed before stage")
+ dest.parent.mkdir(parents=True,exist_ok=True)
+ with dest.open("xb") as f:f.write(raw);f.flush();os.fsync(f.fileno())
+ need(dest.read_bytes()==raw and life.digest(dest)==expected,"Actual staged bytes mismatch")
+ result["file_staged"]=True;after=life.state_snapshot(root);save("state-after-stage.json",after)
+ need(before["source_manifest"]==after["source_manifest"],"Unexpected Assets/Packages/Settings change during data stage")
+ prior=primary/"Design/AgentReports/SkirmishExpansion/MacSupport/requested-group-compile/0269ee578c4d4ad8bed7111065ed5f0c/state-after-wrapper.json";control=json.loads(prior.read_text());a={v["path"]:v["sha256"] for v in control["source_manifest"]};b={v["path"]:v["sha256"] for v in after["source_manifest"]}
+ relevant=lambda p:p.endswith((".cs",".asmdef",".asmref")) or p.startswith(("Packages/","ProjectSettings/"))
+ relevant_before={p:h for p,h in a.items() if relevant(p)};relevant_after={p:h for p,h in b.items() if relevant(p)}
+ rsp=root/"Library/Bee/artifacts/1300b0aE.dag/Game.Editor.rsp";rsptext=rsp.read_text();csharp_paths=[l.strip().strip('"') for l in rsptext.splitlines() if not l.startswith('-') and l.strip().strip('"').endswith('.cs')]
+ source_rows=[]
+ for p in csharp_paths:
+  f=root/p;source_rows.append({"path":p,"actual_sha256":life.digest(f),"control29_source_snapshot_sha256":a.get(p),"matches":f.is_file() and a.get(p)==life.digest(f)})
+ equivalence={"scope":"MeasuredRelevantCodeMembershipAndEmittedIdentityOnly_NotBlanketSceneOrWindowsEquivalence","control29_proof_source_commit":"36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63","new_own_source_candidate":after["candidate_sha256"],"CSharp_asmdef_asmref_Packages_ProjectSettings_membership_identical":relevant_before==relevant_after,"relevant_rows":len(relevant_after),"actual_GameEditor_RSP_sha256":life.digest(rsp),"same_RSP_as_actual29":life.digest(rsp)=="40a64da9f387e3311828aaf99a983896f26bdfa423d7507a96e508c916e3875e","GameEditorDLL_sha256":life.digest(root/"Library/ScriptAssemblies/Game.Editor.dll"),"same_GameEditorDLL_as_actual29":life.digest(root/"Library/ScriptAssemblies/Game.Editor.dll")=="fdd5596dcef8aa4e39b1f12c786457851625feb821dcbf0f83231f2d44ed3f07","all_retained_build_manifest_identical":control["build_manifest"]==after["build_manifest"],"actual_rsp_CSharp_inputs":source_rows,"all_actual_rsp_inputs_match_control29_source_pins":all(v["matches"] for v in source_rows),"CSharp29_repeated":False,"native_baked_scene_fit_transferred":False,"ignored_cache_meta_delta_retained":True,"new_Tools_data":"Exact already-authored10728B3755 file only; actual caller Hash verifies it; not read by pure29controls"}
+ save("compiled-scope-equivalence.json",equivalence)
+ need(all(equivalence[k] for k in ["CSharp_asmdef_asmref_Packages_ProjectSettings_membership_identical","same_RSP_as_actual29","same_GameEditorDLL_as_actual29","all_retained_build_manifest_identical","all_actual_rsp_inputs_match_control29_source_pins"]),"Actual relevant compiled scope not equivalent; no proof reuse")
+ result.update(staging_passed=True,transfer_commit=ref,destination=str(dest),bytes=len(raw),raw_sha256=life.digest(dest),own_source_candidate_before=before["candidate_sha256"],own_source_candidate_after=after["candidate_sha256"],source_files=len(after["source_manifest"]),compiled_relevant_scope_equivalence=True,full_runtime_input_manifest_gate_pending=True,source_commit=git("rev-parse","HEAD"),git_status=git("status","--porcelain","--untracked-files=normal"))
+except BaseException as e:result.update(staging_passed=False,error=type(e).__name__+": "+str(e))
+finally:
+ result["finished_utc"]=datetime.datetime.now(datetime.timezone.utc).isoformat();save("result.json",result);print(json.dumps(result,indent=2),flush=True)

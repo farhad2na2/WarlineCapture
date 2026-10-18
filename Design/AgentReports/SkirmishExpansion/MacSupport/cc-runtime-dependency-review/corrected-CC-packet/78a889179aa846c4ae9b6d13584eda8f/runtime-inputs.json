@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "scope": "RequestedCCAndSharedControls_ExplicitRuntimeDiskInputs",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "source_candidate_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+  "selector": "CC",
+  "expected_input_count": 18,
+  "inputs": [
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "bytes": 5519,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+      "sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+      "bytes": 1397,
+      "pin_provenance": "Actual current CC source asset references and original failed report before missing draft; typed source/raw evidence retained",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+      "bytes": 10653,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+      "sha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+      "bytes": 1534110,
+      "pin_provenance": "Actual current CC source asset references and original failed report before missing draft; typed source/raw evidence retained",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+      "sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+      "bytes": 9364,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+      "sha256": "f84d4301477a588cc7c324170aec2d767729d32730d81493bc1336b09e5ef08f",
+      "bytes": 2501562,
+      "pin_provenance": "CC immutable source metadata; source scene is identity provenance, authoredSubScene and Support are collector load targets",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity.meta",
+      "sha256": "f07b2e83e504b519389c8ac740a8bbe7c6423f6b9e3acf6f108a18b39256d6b8",
+      "bytes": 152,
+      "pin_provenance": "Actual .meta GUID mapping pinned by complete Assets census",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+      "sha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+      "bytes": 4030,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab",
+      "sha256": "1041515d1178ae44769023fa3834d8603b25f95de776b8142e6683c9c1c9fed2",
+      "bytes": 18438,
+      "pin_provenance": "Actual PilotLogicalCandidates.cs176-183 FindAssets in Skirmish prefabs, exactname/identity required",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishExpansionCatalog.asset",
+      "sha256": "e206b57a16d0876d504dab66cf5f8f93de13fa96844c5b2e30a234637885e6a8",
+      "bytes": 2355,
+      "pin_provenance": "Actual Configs/Skirmish/SkirmishExpansionCatalogConfig.cs16/47; referenced profile/role assets covered by complete Assets superset",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity",
+      "sha256": "637752a992d6a08bf4bcc273b2a05a57ad33d1c15032b73752b13309a27c07f5",
+      "bytes": 10785,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+      "sha256": "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975",
+      "bytes": 375895414,
+      "pin_provenance": "CC immutable source metadata; source scene is identity provenance, authoredSubScene and Support are collector load targets",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity.meta",
+      "sha256": "44f0ba1b5c8f8038d7e4dcda9669c7ea6be1e32d6165635f41c0b0e88036e40d",
+      "bytes": 152,
+      "pin_provenance": "Actual .meta GUID mapping pinned by complete Assets census",
+      "pin_kind": "ObservedOwnInputPin_RequiresNextGrantBinding_NotHistoricalAuthority"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+      "sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+      "bytes": 119329,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+      "sha256": "854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b",
+      "bytes": 110006,
+      "pin_provenance": "PilotLogicalCandidates.cs32 and PilotRouteDetours.cs23 literal expected hash; reads facts JSON, not historical survey payload",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+      "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+      "bytes": 90201,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "bytes": 39505,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+      "sha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+      "bytes": 10728,
+      "pin_provenance": "Original inventory + actual source callsites; see source-pinned callsite inventory",
+      "pin_kind": "ExpectedExistingProtocolRawHash"
+    }
+  ],
+  "asset_membership_superset": "Complete Assets/Packages/ProjectSettings snapshot79d5/41741 must pass separately; includes serialized GUID/prefab/catalog/profile inputs and preserved generated cache meta.",
+  "missing_draft_provenance": "Exact10728B3755 raw Gitshow d54a65d9 matching original inventory caller pin, independently staged/verified with no source or geometry changes.",
+  "native_library_or_fit_equivalence": false
+}

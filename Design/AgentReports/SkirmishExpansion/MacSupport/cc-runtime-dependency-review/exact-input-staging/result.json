@@ -1,0 +1,21 @@
+{
+  "scope": "AuthorizedExactExistingLogicalDraftDataOnly_NoNativeRetry",
+  "started_utc": "2026-10-18T23:17:43.312607+00:00",
+  "file_staged": true,
+  "source_code_changed": false,
+  "native_launched": false,
+  "grant95cb_already_consumed": true,
+  "staging_passed": true,
+  "transfer_commit": "d54a65d9b959267390d1ef0c9784d6a055a3abaa",
+  "destination": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+  "bytes": 10728,
+  "raw_sha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+  "own_source_candidate_before": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+  "own_source_candidate_after": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+  "source_files": 41741,
+  "compiled_relevant_scope_equivalence": true,
+  "full_runtime_input_manifest_gate_pending": true,
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "git_status": "?? ProjectSettings/ProjectAuditorSettings.asset\n?? Tools/CI/SkirmishProductionDrafts/GroundPilots/",
+  "finished_utc": "2026-10-18T23:18:31.851164+00:00"
+}

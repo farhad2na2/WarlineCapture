@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "state": "DisabledCorrectedRuntimeInputs_NewNonce_NoRetryAuthorized",
+  "launch_authorized": false,
+  "planned_run_id": "78a889179aa846c4ae9b6d13584eda8f",
+  "created_utc": "2026-10-18T23:20:34.798421+00:00",
+  "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "branch": "codex/mac-requested-cc-controls",
+  "candidate_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+  "source_file_count": 41741,
+  "existing_control_proof": {
+    "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+    "evidence_commit": "531fcd42e920a5433a68922e7b067cca13104130",
+    "result_sha256": "27a60a842c05b4e887d3fc1617ec15dad433b1a307aa5d57185b9aff0f893f14",
+    "marker_once": true,
+    "actual_controls": 29,
+    "native_queries": 0,
+    "source_worlds": 0,
+    "operational_aggregate": "FAILED_GlobalGUI_NotRelabelled",
+    "GameEditorDLL_sha256": "fdd5596dcef8aa4e39b1f12c786457851625feb821dcbf0f83231f2d44ed3f07",
+    "GameEditorRSP_sha256": "40a64da9f387e3311828aaf99a983896f26bdfa423d7507a96e508c916e3875e",
+    "do_not_repeat_unchanged_29": true,
+    "relevant_scope_equivalence_sha256": "850ba7ebdb7ca56dcff0513fba05a781dccff5c08579daf666de2410c330f4de",
+    "scope_reuse": "4127relevantrows,856RSPinputs,fullretainedDLLmanifest and sameGameEditorDLL/RSP actual proof; generated cache meta retained as own newepoch, no native scene/Windows equivalence."
+  },
+  "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+  "environment": {
+    "WARLINE_GROUND_SOURCE_SURVEY_GROUPS": "CC",
+    "WARLINE_GROUND_SOURCE_SURVEY_OUTPUT": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/RequestedSourceSurvey/78a889179aa846c4ae9b6d13584eda8f/report.json"
+  },
+  "wrapper": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/invoke_unity_macos.sh",
+  "wrapper_sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+  "timeout_seconds": 3600,
+  "wrapper_log": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/wrapper.log",
+  "unity_log": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/unity-CC.log",
+  "command": [
+    "rtk",
+    "proxy",
+    "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/invoke_unity_macos.sh",
+    "--project",
+    "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "--timeout",
+    "3600",
+    "--log",
+    "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/unity-CC.log",
+    "--",
+    "-quit",
+    "-executeMethod",
+    "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey"
+  ],
+  "expected_marker": "[SkirmishRequestedSourceGroupSurvey] result=CollectedUnqualified requested=CC measured=CC sourceGroups=1 sourceFitCertified=0 serviceCertified=0 cameraAccepted=0 normalMissionReady=0 output=/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/RequestedSourceSurvey/78a889179aa846c4ae9b6d13584eda8f/report.json",
+  "expected_shared_markers": [
+    "[SkirmishPilotLogicalAuthoringControls] result=Passed controls=8 fitCertified=0",
+    "[SkirmishPilotCompoundReservationControls] result=Passed controls=6 sourceFitCertified=0"
+  ],
+  "grant_proposal": {
+    "launch_authorized": false,
+    "nonce": "78a889179aa846c4ae9b6d13584eda8f",
+    "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+    "candidate_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "issued_utc": null,
+    "expires_utc": null,
+    "review_receipt_sha256": null,
+    "controller_sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7",
+    "plan_sha256": null,
+    "allowed_runs": 1,
+    "method": "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+    "allowed_selector": "CC",
+    "native_fit_or_readiness_credit": false,
+    "permission_source": "Pending exact coordinator review/delegation; this proposal is not a grant",
+    "runtime_inputs_sha256": "9e6f3efbca516f54d188f6f8ae35392b70f69c8a828b727e5a6b9a24c661235b",
+    "restore_exact_owned_layout": true
+  },
+  "capacity": {
+    "minimum_free_bytes": 26843545600,
+    "minimum_memory_pressure_free_percent": 15,
+    "maximum_native_workers_on_host": 1,
+    "no_other_editor_or_unresolved_worker": true,
+    "fresh_three_samples": true,
+    "unchanged_policy_source": "Reviewed lifecycle1ffe capacity helper; no threshold weakening"
+  },
+  "fresh_gates": [
+    "Verify explicit exact unexpired new grant and controller/plan hashes immediately before Popen; no grant inferred from this preparation or compile29.",
+    "Acquire established /private/tmp/warline-mac-normal-worker.host-lock exclusively; no adoption or stale reclaim.",
+    "Fresh kernel process ownership (no Editor/compiler/uncertain worker/conflicting heavy job), target Temp/UnityLockfile absent, capacity, Hub open/signed-in, real SDK/package/wrapper pins.",
+    "Full source/membership/settings/graph/globalGUI capture must match own source37157 and41,740 including exact preserved ProjectAuditor addition22c699; no existing source edits or runtime helper transfer.",
+    "Actual Game.Editor DLL/RSP match prior actual control proof; if unexpectedly rebuilt/changed, stop for review instead of repeating29 or asserting equivalence.",
+    "Global target must be exact restored531c07 and preimage archived, all other layout/prefs pinned unchanged; no file-owner/lsof conflict.",
+    "Output parent for fresh requested survey nonce must not exist; wrapper logs remain outside it. Reject symlinks/reparse parents.",
+    "Run only the synchronous requested CC entry in a fresh owned GUI Editor/domain, not materialized/refinement entries; materializedPilotRequested defaultsfalse. Shared logical controls still depend on MP/IB source assets/measuredfacts and GroundStaging prefab; one measuredgroup is not one-source-input universe.",
+    "All18explicitruntimeinputs incl5Tools/Design files must exist and match reviewed runtime-inputs.json before preparation, immediateprePopen and post-shutdown; manifest digest bound to newgrant. Exactuntracked ProjectAuditor+3755only, --untracked-files=all."
+  ],
+  "restoration_contract": {
+    "helper_sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf",
+    "path": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/layout-restoration.py.proposal",
+    "target": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+    "saved_before_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "only_allowed_observed_post_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+    "already_before_noop_allowed": true,
+    "finally_order": [
+      "Wait/reap exact original Popen wrapper, retain failure evidence.",
+      "Owned shutdown barrier requires two absence samples/zero survivors, target Editor actually observed; verify Hub still open.",
+      "Only then capture post-global layout fact, preserve after bytes, call exact restoration helper in finally after fresh no-Editor/file-owner checks.",
+      "Helper refuses changed-again hash/inode/mtime or unknown owner; never overwrite another state, never terminate processes. Atomically replace only target with exact531 bytes and verify byte equality; journal reason/outcome.",
+      "Complete full source/settings/globalGUI post snapshots AFTER restoration plus raw pre-restoration fact; other preferences/layouts must remain unchanged.",
+      "Release only own exact host lease after verified shutdown; restore failure keeps aggregate failed and stops collection successor."
+    ]
+  },
+  "result_gates": [
+    "Wrapper0+reap+owned shutdown, exact once new CollectedUnqualified marker, shared8/6 markers; missing/error/timeout fails.",
+    "Parse durable new report schema/kind/scope/runid/output path, requested/attempted/measured exactlyCC and exactlyone matching completed row, zeroerrors. Preserve failures/partials.",
+    "Inspect actual nativeQueryStatus/grid/surface/route/service/packing outputs. Decoded-grid fallback may be collection-complete but is NOT native-fit; report it explicitly.",
+    "All source/project/UserSettings/membership unchanged and globalGUI restored exact under authorized finally; no Csc/newsource epoch silently accepted.",
+    "Native/source/strictservice/camera/normal/paid/queue/APK/device/player gates remain separate false. No historical survey11 hash/payload compatibility/transfer/bridge."
+  ],
+  "source_changes": 0,
+  "native_launched": false,
+  "controller_proposal": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/requested-CC-controller.py.proposal",
+    "sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7",
+    "syntax_checked_only": true,
+    "executed": false
+  },
+  "review_successor": {
+    "revision": "CorrectedRuntimeInputs",
+    "preserved_failed_run_nonce": "95cb29751c1c4268849b19b709e1d08c",
+    "failed_terminal_commit": "3185317a237900511ed29c3821dbe8b55780f90a",
+    "data_transfer_commit": "d54a65d9b959267390d1ef0c9784d6a055a3abaa",
+    "only_new_scope": "Exact existing3755logicaldata + explicit runtime input hash/membership gates before preparation/immediateprePopen/after; declared79d5 sourcecachemeta epoch; new nonce/grant pending",
+    "launch_authorized": false
+  },
+  "runtime_inputs_sha256": "9e6f3efbca516f54d188f6f8ae35392b70f69c8a828b727e5a6b9a24c661235b",
+  "source_epoch_delta": "Exactly one preserved SceneDependencyCache meta ff1e... added by failed95cb, no oldsource row changed/deleted. Root directs explicit79d5 nextsource epoch; not waiver of failed95cb.",
+  "unresolved_native_side_effect_gate": "Earlier run stopped before CC source-world Load. Any additional generated metadata from later source-world loading remains a source-stability failure under this packet; no expected hash invented or exclusion added."
+}

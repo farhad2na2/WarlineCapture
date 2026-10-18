@@ -1,0 +1,12 @@
+{
+  "destination": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+  "exists": false,
+  "raw_transfer_commit": "d54a65d9b959267390d1ef0c9784d6a055a3abaa",
+  "raw_Gitshow_not_checkout": true,
+  "raw_sha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+  "bytes": 10728,
+  "own_inventory_sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+  "own_caller_path_and_hash_match": true,
+  "native_source_candidate_before": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+  "parent_directory_members_before": []
+}

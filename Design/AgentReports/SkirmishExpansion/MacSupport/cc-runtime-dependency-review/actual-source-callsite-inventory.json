@@ -1,0 +1,892 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T23:13:37.038548+00:00",
+  "scope": "ActualOwnSource_CCAndSharedControls_ExplicitFileIOAndConservativePartialMethodReferences_ForPeerReview",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "compiled_GameEditorDLL_sha256": "fdd5596dcef8aa4e39b1f12c786457851625feb821dcbf0f83231f2d44ed3f07",
+  "analysis_files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "sha256": "d1d016b7c010901d3f19e73164b5ccd3d43395bf8bc6f3ba98fa5d36ab8f63b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AircraftRootProvenance.cs",
+      "sha256": "98cb45beef1c3ac1741de75823bc6331af7e00c94d0f067e7e3550bee4fe4c25"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120AllSourceGroups.cs",
+      "sha256": "ccb334aa6188e82d2f117db09b3aa18948a899be2c66d6ba1f7bf533b9c37866"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Materialization.cs",
+      "sha256": "6fbe67eb0cdbcff5708339a40b9a6e1359b2686b28117c8cb9e70ea015b60795"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Refinement.cs",
+      "sha256": "1d5a2bb0bc87d1a110de026dd395874466c3c383aecf57e2b9d1a344fe9e12fa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120RefinementControls.cs",
+      "sha256": "11ee97c1f4531a4bfe9389cd138f79efd8996f225c5a79844a89d7d44a28e828"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedCompoundSearch.cs",
+      "sha256": "fb92f8feaa7b086506750e3a447a9296da78f1f5ce542ed76b9446ccda3a4c6c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs",
+      "sha256": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedRouteRepair.cs",
+      "sha256": "4a3e5598ef762eb58def87a7b721a996a207d28d7d09799195dac002fb134c5a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.CodedBaCameraCensus.cs",
+      "sha256": "ae0d571ec3b292a50910e60005599805169957771df413ea5e390c328168c12f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EndpointCandidates.cs",
+      "sha256": "0856f408d8d612e6222c58b5ba1a49322becdce8d9fc8bb451b55606e502a287"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs",
+      "sha256": "de5c3cd105cbd961bba6a8c56d61ded3232ab0644bfc0445b66b71c274b687ae"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs",
+      "sha256": "daa7e606a7450a0af3a6287e0ead40f17abf3c14dab48715fb7edaf3e7ca3035"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.Controls.cs",
+      "sha256": "50646833c3a33fa760ee70329c31038471223b995c46bdfb4b66d58e39a2433b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs",
+      "sha256": "6c589e26e359423e728f8f11fa7aaa09f5068f157e70854ec2b67dcbadfcb971"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs",
+      "sha256": "aad0003e7f795091a84d0146afb2009e61664b28e25a29a9a20cfb79c916f109"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.JointLogicalPadAllocation.cs",
+      "sha256": "5998df8de6153881836a8d5c575f7df3a971420aea358c537171a17f60fc1ce4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalFrameSearch.cs",
+      "sha256": "0fe1ac536de64270bedc4645f549f8dc7f6e8b7b9b9c6d919db4cc1cb74f595c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+      "sha256": "c00fddd9eb6b6b5b53f56912ed1966de42605ba3a4ba8887d31202214a344576"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "sha256": "9cf3916bca26e3951293e23e425c8267c69076e65a8b93e26b82033078ca5b3f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs",
+      "sha256": "f38b4e937a8388f77ff9b9c8dc469a0f92610a6c116edeb1baf8b574fcc2a7a7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotRouteDetours.cs",
+      "sha256": "eddef40e3c501d1f520f28959ac8128c99f5966aa797d4c6d95ec979742adc40"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementApproaches.cs",
+      "sha256": "033d87f0d2cff55183a4aa2a0aa9c3bb84ce9026eb40d62646eade56e76c8825"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs",
+      "sha256": "afd09342084fc5b5139af2c54dce7780fa7d14337ccbaa541300b5671051fd5c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs",
+      "sha256": "5914837e976596a9e4415c756c7479aff62888635a95357c2f4f61f0b43b87fc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "sha256": "780ae780f42e28f7996701f3bbe1ab7a0bb26669d59539fe5d7b91979de6618e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "sha256": "808c794027640122fecd37114940c4c2e76600c93155eb84b7bd6a4bf48cf2a2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "sha256": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.StrictLogicalCandidates.cs",
+      "sha256": "24ce948546cffc599b2aeb9f2c522ca1678e88b173f577e89a1973dedc8dddca"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c"
+    }
+  ],
+  "static_method_definitions": 229,
+  "reachable_method_names": 41,
+  "reachable_nodes": [
+    {
+      "name": "RunRequestedSourceGroupSurvey",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "start_line": 93,
+      "end_line": 139,
+      "references_to_known_partial_methods": [
+        "CollectRequestedSourceSurveyGroup",
+        "Hash",
+        "NewRequestedSourceSurveyReport",
+        "ParseRequestedSourceSurveyGroup",
+        "RegistryHierarchies",
+        "RequestedSourceSurveyOutput",
+        "RequestedSourceSurveyScopeComplete",
+        "Require",
+        "RunPilotCompoundReservationControls",
+        "RunPilotLogicalAuthoringControls",
+        "SurveyGroup"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 101,
+          "text": "Require(!Directory.Exists(parent) && !File.Exists(parent) && !File.Exists(output), \"Fresh unique run path required\");"
+        },
+        {
+          "line": 103,
+          "text": "if (directory.Exists) Require((File.GetAttributes(directory.FullName) & FileAttributes.ReparsePoint) == 0,"
+        },
+        {
+          "line": 106,
+          "text": "using (var stream = new FileStream(output, FileMode.CreateNew, FileAccess.Write, FileShare.Read))"
+        },
+        {
+          "line": 114,
+          "text": "var input = JObject.Parse(File.ReadAllText(Inventory));"
+        },
+        {
+          "line": 115,
+          "text": "Require((int?)input[\"schema\"] == 1 && Hash((string)input[\"budgetAuthority\"]) == (string)input[\"matrixAssetSha256\"], \"Pinned matrix changed\");"
+        },
+        {
+          "line": 118,
+          "text": "report[\"inventorySha256\"] = Hash(Inventory);"
+        },
+        {
+          "line": 131,
+          "text": "using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false), 1024, true))"
+        }
+      ]
+    },
+    {
+      "name": "SurveyGroup",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 175,
+      "end_line": 329,
+      "references_to_known_partial_methods": [
+        "CollectMaterializedPilotCandidates",
+        "CreatePilotLogicalCandidate",
+        "FindNativePrefab",
+        "Hash",
+        "Load",
+        "MeasureDecodedSurface",
+        "ProbePilotFailedRouteDetours",
+        "ProbePilotNormalFacilityRelocation",
+        "ProbePilotNormalTerrainFallback",
+        "ProbePilotServiceAccess",
+        "PublishMissingPinnedSurface",
+        "QueryPath",
+        "RecordPilotPlacementGates",
+        "Require",
+        "StreamingWorld",
+        "SurveyForcePacking",
+        "SurveyLogicalEndpointCandidates"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 179,
+          "text": "Require(Hash(path) == (string)pin[\"assetSha256\"], \"Current source bytes differ: \" + group);"
+        },
+        {
+          "line": 180,
+          "text": "var source = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(path);"
+        },
+        {
+          "line": 183,
+          "text": "row[\"sourcePath\"] = path; row[\"sourceAssetSha256\"] = Hash(path);"
+        },
+        {
+          "line": 186,
+          "text": "string surfacePath = AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID);"
+        },
+        {
+          "line": 187,
+          "text": "string gridPath = AssetDatabase.GUIDToAssetPath(source.GridMetadata.AssetGuid);"
+        },
+        {
+          "line": 188,
+          "text": "row[\"surfacePath\"] = surfacePath; row[\"surfaceAssetSha256\"] = Hash(surfacePath);"
+        },
+        {
+          "line": 189,
+          "text": "row[\"gridPath\"] = gridPath; row[\"gridAssetSha256\"] = Hash(gridPath);"
+        },
+        {
+          "line": 195,
+          "text": "foreach (var request in requests) Require(Hash((string)request[\"packetPath\"]) == (string)request[\"packetSha256\"], \"Packet changed\");"
+        },
+        {
+          "line": 204,
+          "text": "Require(Hash(layoutPath) == (string)snapshot[\"templateAssetSha256\"], \"Existing projected template changed\");"
+        },
+        {
+          "line": 205,
+          "text": "Require(Hash((string)snapshot[\"candidateDraftPath\"]) == (string)snapshot[\"candidateDraftSha256\"], \"Logical candidate bytes changed\");"
+        },
+        {
+          "line": 206,
+          "text": "layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(layoutPath);"
+        },
+        {
+          "line": 208,
+          "text": "row[\"layoutTemplatePath\"] = layoutPath; row[\"layoutTemplateSha256\"] = Hash(layoutPath);"
+        },
+        {
+          "line": 214,
+          "text": "Load(world, source.NavigationMetadata.AuthoredSubSceneGuid);"
+        },
+        {
+          "line": 215,
+          "text": "Load(world, AssetDatabase.AssetPathToGUID(Support));"
+        },
+        {
+          "line": 245,
+          "text": "var catalog = SkirmishExpansionCatalogConfig.Load(); Require(catalog != null, \"Actual profile catalog missing\");"
+        },
+        {
+          "line": 274,
+          "text": "var prefabs = AssetDatabase.FindAssets(key + \" t:Prefab\", new[] { \"Assets/Game/Prefabs/Buildings\", \"Assets/Game/Prefabs/Skirmish\" })"
+        },
+        {
+          "line": 275,
+          "text": ".Select(AssetDatabase.GUIDToAssetPath).Select(p => AssetDatabase.LoadAssetAtPath<GameObject>(p)).Where(p => p != null && p.name == key).ToArray();"
+        },
+        {
+          "line": 280,
+          "text": "result[\"prefabPath\"] = AssetDatabase.GetAssetPath(prefab); result[\"prefabSha256\"] = Hash(AssetDatabase.GetAssetPath(prefab));"
+        }
+      ]
+    },
+    {
+      "name": "SurveyLogicalEndpointCandidates",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EndpointCandidates.cs",
+      "start_line": 75,
+      "end_line": 121,
+      "references_to_known_partial_methods": [
+        "EndpointEligibility",
+        "EndpointLegal",
+        "FindNativePrefab",
+        "QueryPath",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "Require",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 507,
+      "end_line": 507,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "QueryPath",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 466,
+      "end_line": 504,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "FindNativePrefab",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 453,
+      "end_line": 463,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "EndpointLegal",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EndpointCandidates.cs",
+      "start_line": 132,
+      "end_line": 140,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "EndpointEligibility",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EndpointCandidates.cs",
+      "start_line": 123,
+      "end_line": 131,
+      "references_to_known_partial_methods": [
+        "EndpointLegal"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "SurveyForcePacking",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 331,
+      "end_line": 403,
+      "references_to_known_partial_methods": [
+        "FindNativePrefab",
+        "PilotFootprintInsideProjectedPad"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "PilotFootprintInsideProjectedPad",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "start_line": 369,
+      "end_line": 391,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "StreamingWorld",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 430,
+      "end_line": 445,
+      "references_to_known_partial_methods": [
+        "Ground30DiagnosticSystems",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "Ground30DiagnosticSystems",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.MemoryDiagnostic.cs",
+      "start_line": 200,
+      "end_line": 211,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RecordPilotPlacementGates",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "start_line": 216,
+      "end_line": 249,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": true,
+      "guard_reason": "Same CC layoutStatus first guard returns.",
+      "explicit_io_sites": []
+    },
+    {
+      "name": "PublishMissingPinnedSurface",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 144,
+      "end_line": 173,
+      "references_to_known_partial_methods": [
+        "Hash",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 149,
+          "text": "var data=AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(assetPath);"
+        },
+        {
+          "line": 167,
+          "text": "row[\"runtimeDecodedSurfaceAssetSha256\"]=Hash(assetPath);"
+        }
+      ]
+    },
+    {
+      "name": "Hash",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 505,
+      "end_line": 506,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 505,
+          "text": "static string Hash(string path)"
+        },
+        {
+          "line": 506,
+          "text": "{ using var stream = File.OpenRead(path); using var sha = SHA256.Create(); return BitConverter.ToString(sha.ComputeHash(stream)).Replace(\"-\", \"\").ToLowerInvariant(); }"
+        }
+      ]
+    },
+    {
+      "name": "ProbePilotServiceAccess",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "start_line": 189,
+      "end_line": 214,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": true,
+      "guard_reason": "CC snapshot sets layoutStatus=UnmeasuredReuseCandidate, not ExplicitUnqualifiedLogicalCompoundCandidate; first guard returns.",
+      "explicit_io_sites": []
+    },
+    {
+      "name": "ProbePilotNormalTerrainFallback",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "start_line": 351,
+      "end_line": 368,
+      "references_to_known_partial_methods": [
+        "Require",
+        "SurveyForcePacking"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "ProbePilotNormalFacilityRelocation",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "start_line": 22,
+      "end_line": 290,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": true,
+      "guard_reason": "CC group and newLogicalCandidateMaterialized absent/false; first group guard returns.",
+      "explicit_io_sites": []
+    },
+    {
+      "name": "ProbePilotFailedRouteDetours",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotRouteDetours.cs",
+      "start_line": 18,
+      "end_line": 72,
+      "references_to_known_partial_methods": [
+        "FindNativePrefab",
+        "Hash",
+        "QueryPath",
+        "RecordPilotRouteIndependence",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 23,
+          "text": "Require(Hash(PilotFacts) == \"854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b\","
+        },
+        {
+          "line": 25,
+          "text": "var facts = JObject.Parse(File.ReadAllText(PilotFacts));"
+        },
+        {
+          "line": 47,
+          "text": "[\"sourceFactsSha256\"] = Hash(PilotFacts), [\"nativeLegQueries\"] = probes,"
+        }
+      ]
+    },
+    {
+      "name": "RecordPilotRouteIndependence",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 142,
+      "end_line": 179,
+      "references_to_known_partial_methods": [
+        "ComparePilotApproaches",
+        "Require",
+        "TryAssembleExactNativeLegs",
+        "TryReadAuthoredEndpointZones"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "TryReadAuthoredEndpointZones",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 22,
+      "end_line": 45,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "TryAssembleExactNativeLegs",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 181,
+      "end_line": 202,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "ComparePilotApproaches",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 204,
+      "end_line": 243,
+      "references_to_known_partial_methods": [
+        "EndpointCellInZone",
+        "RasterizePilotCenterline",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RasterizePilotCenterline",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 245,
+      "end_line": 260,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "EndpointCellInZone",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 19,
+      "end_line": 20,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "MeasureDecodedSurface",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 405,
+      "end_line": 428,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 407,
+          "text": "var asset = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID));"
+        }
+      ]
+    },
+    {
+      "name": "Load",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 446,
+      "end_line": 452,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 446,
+          "text": "static void Load(World world, string guid)"
+        }
+      ]
+    },
+    {
+      "name": "CreatePilotLogicalCandidate",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "start_line": 28,
+      "end_line": 141,
+      "references_to_known_partial_methods": [
+        "Hash",
+        "PilotAnchor",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 32,
+          "text": "Require(Hash(PilotFacts) == \"854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b\", \"Measured pilot facts changed\");"
+        },
+        {
+          "line": 33,
+          "text": "var facts = JObject.Parse(File.ReadAllText(PilotFacts));"
+        },
+        {
+          "line": 36,
+          "text": "string actualSourceSha = string.IsNullOrEmpty(actualSourcePath) ? null : Hash(actualSourcePath);"
+        }
+      ]
+    },
+    {
+      "name": "PilotAnchor",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "start_line": 143,
+      "end_line": 145,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "CollectMaterializedPilotCandidates",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotMaterialization.cs",
+      "start_line": 118,
+      "end_line": 169,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": true,
+      "guard_reason": "Fresh-domain materializedPilotRequested=false; function returns at first guard; no materialization entry called.",
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RunPilotLogicalAuthoringControls",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs",
+      "start_line": 147,
+      "end_line": 187,
+      "references_to_known_partial_methods": [
+        "CreatePilotLogicalCandidate",
+        "Hash",
+        "Require",
+        "RunPilotRouteIndependenceControls"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 149,
+          "text": "var input = JObject.Parse(File.ReadAllText(Inventory)); int controls = 0;"
+        },
+        {
+          "line": 153,
+          "text": "var source = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)pin[\"path\"]);"
+        },
+        {
+          "line": 155,
+          "text": "var report = new JObject { [\"sourceAssetSha256\"] = Hash((string)pin[\"path\"]) };"
+        },
+        {
+          "line": 176,
+          "text": "var candidates = AssetDatabase.FindAssets(\"Building_GroundStaging t:Prefab\", new[] { \"Assets/Game/Prefabs/Skirmish\" })"
+        },
+        {
+          "line": 177,
+          "text": ".Select(AssetDatabase.GUIDToAssetPath).Select(AssetDatabase.LoadAssetAtPath<GameObject>)"
+        }
+      ]
+    },
+    {
+      "name": "RunPilotRouteIndependenceControls",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs",
+      "start_line": 262,
+      "end_line": 276,
+      "references_to_known_partial_methods": [
+        "ComparePilotApproaches",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RunPilotCompoundReservationControls",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "start_line": 423,
+      "end_line": 451,
+      "references_to_known_partial_methods": [
+        "PilotCompoundContains",
+        "PilotRoundPadCells",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "PilotRoundPadCells",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "start_line": 468,
+      "end_line": 475,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "PilotCompoundContains",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "start_line": 477,
+      "end_line": 478,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RequestedSourceSurveyScopeComplete",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "start_line": 36,
+      "end_line": 50,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RequestedSourceSurveyOutput",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "start_line": 81,
+      "end_line": 91,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "RegistryHierarchies",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+      "start_line": 81,
+      "end_line": 139,
+      "references_to_known_partial_methods": [
+        "FindNativePrefab",
+        "Load",
+        "Require",
+        "StreamingWorld"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": [
+        {
+          "line": 83,
+          "text": "using var world = StreamingWorld(); Load(world, AssetDatabase.AssetPathToGUID(Support));"
+        }
+      ]
+    },
+    {
+      "name": "ParseRequestedSourceSurveyGroup",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "start_line": 14,
+      "end_line": 22,
+      "references_to_known_partial_methods": [
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "NewRequestedSourceSurveyReport",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "start_line": 24,
+      "end_line": 34,
+      "references_to_known_partial_methods": [],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    },
+    {
+      "name": "CollectRequestedSourceSurveyGroup",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+      "start_line": 53,
+      "end_line": 79,
+      "references_to_known_partial_methods": [
+        "ParseRequestedSourceSurveyGroup",
+        "RequestedSourceSurveyScopeComplete",
+        "Require"
+      ],
+      "inactive_for_reviewed_CC_path": false,
+      "guard_reason": null,
+      "explicit_io_sites": []
+    }
+  ],
+  "external_loaders": [
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "sha256": "baefc65b6672de32d6fa7b944410348d4de23bb648e65502ffcba293bbb5decf",
+      "loader_sites": [
+        {
+          "line": 16,
+          "text": "public const string ResourceName = \"SkirmishExpansionCatalog\";"
+        },
+        {
+          "line": 47,
+          "text": "return Resources.Load<SkirmishExpansionCatalogConfig>(ResourceName);"
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupMatrixTable.cs",
+      "sha256": "50a15854409d02f2ea70f25d97b74b1cbda03fe5414c3373a5e6ad7806483dcc",
+      "loader_sites": [
+        {
+          "line": 78,
+          "text": "public const string RelativeCsvPath = \"Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv\";"
+        },
+        {
+          "line": 79,
+          "text": "public const string PackagedResourceName = \"SkirmishExpansion/InitialSetupMatrix\";"
+        },
+        {
+          "line": 84,
+          "text": "if (!File.Exists(path))"
+        },
+        {
+          "line": 91,
+          "text": "return TryLoadFromText(File.ReadAllText(path), out rows, out error);"
+        },
+        {
+          "line": 100,
+          "text": "var asset = UnityEngine.Resources.Load<UnityEngine.TextAsset>(PackagedResourceName);"
+        }
+      ]
+    }
+  ],
+  "interpretation": [
+    "Lexical method/reference coverage is conservative review aid, not a Roslyn semantic graph or actual native execution trace. Peer review required before treating explicit runtime input inventory complete.",
+    "Data-driven Hash/File.OpenRead/ReadAllText inputs resolve from original inventory, CC requests/layoutSnapshots, matrix and PilotFacts; explicit manifest follows.",
+    "Full Assets source manifest remains a complete superset for AssetDatabase/GUID/Resources/prefab lookups. Dynamic native selections/reflection BuildStructures and baked scene dependencies still need actual runtime evidence; do not invent a finite measured prefab list.",
+    "Inactive materialization/refinement paths are documented, never used to retrieve historical survey11. No Windows helper/fit authority imported."
+  ],
+  "native_runs": 0,
+  "source_edits": 0,
+  "historical_payload_retrieval": false
+}

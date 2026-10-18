@@ -1669,6 +1669,28 @@ namespace Game.Editor
                 ?? card.Find("ThumbFrame/Thumbnail")?.GetComponent<RawImage>();
             if (thumb == null || thumb.texture == null || thumb.color.r < 0.95f || thumb.color.g < 0.95f || thumb.color.b < 0.95f)
                 throw new InvalidOperationException("Theatre zone thumbnail is missing or tinted for " + mapId + " locale=" + locale + ".");
+            if (thumb.texture.name == "SkirmishLibraryPlaceholder")
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone thumbnail is the placeholder for " + mapId + " locale=" + locale + ".");
+            }
+
+            Image art = card.Find("ThumbFrame/CardArt")?.GetComponent<Image>()
+                ?? card.Find("CardArt")?.GetComponent<Image>();
+            string spriteName = art != null && art.sprite != null ? art.sprite.name : string.Empty;
+            if (!IsDistrictPlateSpriteName(spriteName, mapId))
+            {
+                throw new InvalidOperationException(
+                    "Theatre card art for " + mapId + " is not the district plate locale=" + locale +
+                    " sprite=" + (string.IsNullOrEmpty(spriteName) ? "none" : spriteName) + ".");
+            }
+
+            Transform disc = card.Find("RingDisc");
+            if (disc != null && disc.gameObject.activeInHierarchy)
+            {
+                throw new InvalidOperationException(
+                    "Theatre card for " + mapId + " still draws the bullseye disc locale=" + locale + ".");
+            }
 
             Image fill = card.Find("ProgressRing/ProgressFill")?.GetComponent<Image>();
             TMP_Text count = card.Find("ZoneCount")?.GetComponent<TMP_Text>()
@@ -1731,6 +1753,19 @@ namespace Game.Editor
                     "Theatre progress arc for " + mapId + " is " + fill.fillAmount.ToString("0.00") +
                     " locale=" + locale + ". Expected " + ratio.ToString("0.00") + ".");
             }
+        }
+
+        private static bool IsDistrictPlateSpriteName(string spriteName, string mapId)
+        {
+            if (string.IsNullOrEmpty(spriteName) || string.IsNullOrEmpty(mapId))
+                return false;
+            if (spriteName.IndexOf("placeholder", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            if (spriteName.IndexOf("bullseye", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            if (spriteName.IndexOf("disc", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            return spriteName.IndexOf("skirmish.plate." + mapId, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static void RejectStatusInsideCard(RectTransform card, TMP_Text count, string locale, string mapId)

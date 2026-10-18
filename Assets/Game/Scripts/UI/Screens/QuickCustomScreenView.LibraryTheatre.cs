@@ -2096,7 +2096,7 @@ namespace Game.UI.Runtime
             var medallion = new GameObject("ThumbFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask)).GetComponent<Image>();
             medallion.transform.SetParent(card.transform, false);
             medallion.sprite = ZoneSolidSprite();
-            medallion.color = slot.Zone;
+            medallion.color = Color.white;
             medallion.raycastTarget = false;
             Mask mask = medallion.GetComponent<Mask>();
             mask.showMaskGraphic = true;
@@ -2147,36 +2147,11 @@ namespace Game.UI.Runtime
         {
             if (preview == null)
                 return;
+            Sprite plate = DistrictPlateSprite(mapId);
             preview.color = Color.white;
             preview.uvRect = new Rect(0f, 0f, 1f, 1f);
-            Texture2D plate = PaintedPlate(mapId);
-            if (plate != null)
-            {
-                preview.texture = plate;
-                CoverCrop(preview, ZoneThumbSize, ZoneThumbSize);
-                return;
-            }
-
-            Texture2D painted = LoadTheatreBase();
-            preview.texture = painted;
-            if (painted == null)
-                return;
-
-            int index = 0;
-            for (int i = 0; i < SkirmishBattleLibraryArt.MapIds.Length; i++)
-            {
-                if (!string.Equals(SkirmishBattleLibraryArt.MapIds[i], mapId, StringComparison.OrdinalIgnoreCase))
-                    continue;
-                index = i;
-                break;
-            }
-
-            Rect region = SkirmishBattleLibraryArt.TheaterRegions[index];
-            Vector2 centre = SkirmishBattleLibraryArt.TheaterLabelCentres[index];
-            float side = Mathf.Min(region.width, region.height) * 0.92f;
-            float x = Mathf.Clamp(centre.x - side * 0.5f, region.x, Mathf.Max(region.x, region.xMax - side));
-            float y = Mathf.Clamp(centre.y - side * 0.5f, region.y, Mathf.Max(region.y, region.yMax - side));
-            preview.uvRect = new Rect(x, 1f - (y + side), side, side);
+            preview.texture = plate != null ? plate.texture : null;
+            preview.enabled = plate != null && plate.texture != null;
         }
 
         private void SelectTheaterRegion(string mapId)
@@ -4125,25 +4100,12 @@ namespace Game.UI.Runtime
                 portraitH = Mathf.Max(8f, statusY - gap - portraitTop);
             float portraitW = innerW;
 
-            RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
-            if (thumb != null)
-            {
-                PlaceTopLeft(thumb, pad, portraitTop, portraitW, portraitH);
-                thumb.localScale = Vector3.one;
-                KeepAuthoredSize(thumb);
-                if (thumb.Find("Thumbnail") is RectTransform preview)
-                {
-                    Stretch(preview);
-                    preview.localScale = Vector3.one;
-                    KeepAuthoredSize(preview);
-                    RawImage picture = preview.GetComponent<RawImage>();
-                    if (picture != null && picture.texture != null)
-                        CoverCrop(picture, portraitW, portraitH);
-                }
-            }
+            PaintDistrictCard(card, cardW, cardH);
+            Transform bullseye = card.Find("RingDisc");
+            if (bullseye != null)
+                DestroyUi(bullseye.gameObject);
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
-            RectTransform disc = null;
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -4155,10 +4117,6 @@ namespace Game.UI.Runtime
                 float ringY = ringBottom - ringSide;
                 if (ringY < portraitTop)
                     ringY = portraitTop;
-                disc = EnsureRingDisc(card);
-                PlaceTopLeft(disc, ringX, ringY, ringSide, ringSide);
-                disc.localScale = Vector3.one;
-                KeepAuthoredSize(disc);
                 PlaceTopLeft(ring, ringX, ringY, ringSide, ringSide);
                 ring.localScale = Vector3.one;
                 KeepAuthoredSize(ring);
@@ -4179,14 +4137,13 @@ namespace Game.UI.Runtime
                 countNode.SetParent(card, false);
             if (countNode is RectTransform countRect)
                 PlaceTopLeft(countRect, pad, statusY, innerW, Mathf.Max(1f, statusH));
+            RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
                 thumb.SetAsFirstSibling();
-            if (disc != null)
-                disc.SetSiblingIndex(thumb != null ? thumb.GetSiblingIndex() + 1 : 0);
             if (ring != null)
-                ring.SetSiblingIndex(disc != null ? disc.GetSiblingIndex() + 1 : (thumb != null ? thumb.GetSiblingIndex() + 1 : 0));
+                ring.SetSiblingIndex(thumb != null ? thumb.GetSiblingIndex() + 1 : 0);
             if (shade != null)
-                shade.SetSiblingIndex(ring != null ? ring.GetSiblingIndex() + 1 : (disc != null ? disc.GetSiblingIndex() + 1 : 0));
+                shade.SetSiblingIndex(ring != null ? ring.GetSiblingIndex() + 1 : (thumb != null ? thumb.GetSiblingIndex() + 1 : 0));
             if (card.Find("NameFade") is RectTransform fade && shade != null)
                 fade.SetSiblingIndex(shade.GetSiblingIndex() + 1);
             if (name != null)
@@ -4320,22 +4277,6 @@ namespace Game.UI.Runtime
             image.raycastTarget = false;
             image.color = Color.white;
             return fade;
-        }
-
-        /// <summary>Dark circle drawn behind the progress ring so the arc reads on the photo.</summary>
-        private static RectTransform EnsureRingDisc(RectTransform card)
-        {
-            RectTransform disc = card.Find("RingDisc") as RectTransform;
-            if (disc != null)
-                return disc;
-            var image = new GameObject("RingDisc", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            image.transform.SetParent(card, false);
-            image.sprite = ZoneDiscSprite();
-            image.type = Image.Type.Simple;
-            image.preserveAspect = true;
-            image.raycastTarget = false;
-            image.color = new Color(0.05f, 0.04f, 0.03f, 0.92f);
-            return image.rectTransform;
         }
 
         /// <summary>Full-brightness zone hue, pulled a little toward white so a half arc stays obvious.</summary>
@@ -4489,6 +4430,9 @@ namespace Game.UI.Runtime
                 + " ringRect=" + RectText(ring)
                 + " ringScale=" + ScaleText(ring)
                 + " ringWorld=" + F(WorldSpan(ring)));
+            Image art = card.Find("ThumbFrame/CardArt")?.GetComponent<Image>();
+            string spriteName = art != null && art.sprite != null ? art.sprite.name : "none";
+            Debug.Log("[CardArt] map=" + mapId + " drawn=" + spriteName);
         }
 
         private static string SizeText(RectTransform rect)

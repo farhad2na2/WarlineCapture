@@ -503,11 +503,12 @@ namespace Game.UI.Runtime
             edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
         }
 
-        private const float LibraryPinMedalSize = 30f; // v36: approved-2 medal circles (~30px; was 22)
+        private const float LibraryPinMedalSize = 36f; // v37: approved-2 medal circles (~36px at 16:9+; was 30)
 
         /// <summary>Medal circle size for a pin of this height: 30px, shrinking on short cards (4:3) so the art keeps room.</summary>
-        private static float PinMedalSize(float pinHeight) => Mathf.Clamp(pinHeight * 0.16f, 20f, LibraryPinMedalSize);
+        private static float PinMedalSize(float pinHeight) => Mathf.Clamp(pinHeight * 0.185f, 20f, LibraryPinMedalSize);
         private const float PinGutter = 14f;
+        private const float PinWideRowGap = 24f; // v37: min clear gap between staggered rows at 16:9 and wider
         private const float ObjectiveListWidth = 224f;
         private const float PinRailReserve = ObjectiveListWidth + 8f + 14f;
 
@@ -577,8 +578,9 @@ namespace Game.UI.Runtime
 
             // A: 2 cols x 3 rows, odd rows shifted right by k*w.  width = (2+k)w + g, height = 3h + 2g.
             float wA = Mathf.Min((availWidth - g) / (2f + k), (availHeight - 2f * g) / 3f / aspect, PinMaxWidth);
-            // B: 3 cols x 2 rows, odd columns dropped by k*h.  width = 3w + 2g, height = (2+k)h + g.
-            float wB = Mathf.Min((availWidth - 2f * g) / 3f, (availHeight - g) / (2f + k) / aspect, PinMaxWidth);
+            // B: 3 cols x 2 rows, odd columns dropped by k*h.  width = 3w + 2g, height = (2+k)h + rg (rg = 24px row gap; cards shrink to fit).
+            float rg = PinWideRowGap;
+            float wB = Mathf.Min((availWidth - 2f * g) / 3f, (availHeight - rg) / (2f + k) / aspect, PinMaxWidth);
             bool wide = wB > wA;
             float w = Mathf.Max(80f, wide ? wB : wA);
             float h = w * aspect;
@@ -591,11 +593,11 @@ namespace Game.UI.Runtime
                 column = ordinal % 3;
                 row = ordinal / 3;
                 float blockW = 3f * w + 2f * g;
-                float blockH = (2f + k) * h + g;
+                float blockH = (2f + k) * h + rg;
                 float x0 = left + (availWidth - blockW) * 0.5f;
                 float y0 = top + (availHeight - blockH) * 0.5f;
                 x = x0 + column * (w + g);
-                y = y0 + row * (h + g) + (column % 2 == 1 ? k * h : 0f);
+                y = y0 + row * (h + rg) + (column % 2 == 1 ? k * h : 0f);
             }
             else
             {
@@ -613,11 +615,18 @@ namespace Game.UI.Runtime
             return true;
         }
 
-        /// <summary>v36: subtle route lines joining pin centres in battle order, drawn behind the cards.</summary>
+        /// <summary>v37: approved-2 route lines joining pin centres in battle order, behind the cards: a 4px bright gold core
+        /// over a 7px dark outline so they read on sand. All outlines sit below all cores.</summary>
         private void AddPinRoutes(System.Collections.Generic.List<RectTransform> pins)
         {
             if (_libraryPins == null || pins == null || pins.Count < 2)
                 return;
+            AddPinRouteLayer(pins, "PinRoute", 4f, new Color(1f, 0.84f, 0.36f, 0.95f));
+            AddPinRouteLayer(pins, "PinRouteOutline", 7f, new Color(0.12f, 0.07f, 0.02f, 0.85f));
+        }
+
+        private void AddPinRouteLayer(System.Collections.Generic.List<RectTransform> pins, string name, float thickness, Color colour)
+        {
             for (int i = pins.Count - 1; i >= 1; i--)
             {
                 RectTransform a = pins[i - 1];
@@ -630,15 +639,15 @@ namespace Game.UI.Runtime
                 float length = d.magnitude;
                 if (length < 1f)
                     continue;
-                var line = new GameObject("PinRoute" + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                var line = new GameObject(name + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 line.transform.SetParent(_libraryPins, false);
                 line.raycastTarget = false;
-                line.color = new Color(0.96f, 0.78f, 0.32f, 0.38f);
+                line.color = colour;
                 RectTransform r = line.rectTransform;
                 r.anchorMin = a.anchorMin;
                 r.anchorMax = a.anchorMax;
                 r.pivot = new Vector2(0.5f, 0.5f);
-                r.sizeDelta = new Vector2(length, 3f);
+                r.sizeDelta = new Vector2(length, thickness);
                 r.anchoredPosition = (pa + pb) * 0.5f;
                 r.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
                 line.transform.SetAsFirstSibling();

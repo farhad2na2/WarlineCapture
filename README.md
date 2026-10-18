@@ -1,6 +1,8 @@
 # WarlineCapture
 
-Last documentation audit: 2026-07-10
+Last documentation update: 2026-10-18
+
+Status reviewed against repository history through 2026-10-16 and current development reports. Evidence applies to the source and scenario recorded in each report; it is not blanket release acceptance.
 
 `WarlineCapture` is a Unity 6 DOTS/ECS mobile-first 3D RTS project for large-scale grid-based movement, base building, tactical combat, district consequence systems, configurable AI, and Campaign/Operations/Skirmish game modes.
 
@@ -8,14 +10,15 @@ The current codebase has a substantial tactical simulation: units, buildings, re
 
 ## Project Setup
 
-- Unity editor version: `6000.5.2f1` (`ProjectSettings/ProjectVersion.txt`)
+- Unity editor version: **`6000.5.8f1`**, revision `5cb7df797b7d` ([ProjectVersion.txt](ProjectSettings/ProjectVersion.txt))
+- Primary target: Android, mobile landscape; English and Persian/Farsi presentation.
 - Persistent app/menu scene: `Assets/Game/Scenes/Menu.unity`
 - Match scene: `Assets/Game/Scenes/Match.unity`
 - Match subscene: `Assets/Game/Scenes/Match/MatchSubScene.unity`
 - Main gameplay code: `Assets/Game/Scripts`
 - Main design docs: `Design`
 - Demo scenes: `Assets/Game/Scenes/Demo.unity` and `Assets/Game/Scenes/Demo2.unity`
-- Unity MCP status: Unity 6.5 starts the AI Assistant relay and exposes MCP tools through the editor bridge. Tool execution still requires an accepted Codex connection in `Project Settings > AI > Unity MCP Server`, and native Codex MCP tools may require a fresh Codex session after approval.
+- Editor integration: **Unity CLI + Unity Pipeline**, using CLI commands for connected Editor discovery and interaction. The deprecated AI Assistant in-Editor MCP bridge is not the development workflow. See [Unity CLI workflow](#unity-cli-workflow).
 
 ## Packages
 
@@ -25,7 +28,10 @@ The current codebase has a substantial tactical simulation: units, buildings, re
 - Universal Render Pipeline: `17.5.0`
 - Unity Collections: `6.5.0`
 - Unity Serialization: `6.5.0`
-- Unity AI Assistant / MCP package: `2.13.0-pre.2`
+- Unity Pipeline: `0.6.0-exp.1` (connected Editor integration)
+- Unity AI Assistant: `2.13.0-pre.2` (installed package; not the agent integration path)
+- Unity Addressables: `3.1.0`
+- Unity Test Framework: `1.7.0`
 - Unity Timeline: `1.8.12`
 
 ## Product Direction
@@ -47,14 +53,30 @@ The first Campaign is provisionally titled `Shattered Relay`. It follows a local
 
 ### Current Product Maturity
 
-| Area | Current status | Authority |
+| Area | Completed or implemented progress | Remaining scope / authority |
 |---|---|---|
-| Tactical Match simulation | Substantial implemented foundation with feature-specific gaps and readiness gates. | `Design/GAME_DESIGN_REFERENCE.md` and the feature maturity matrix. |
-| ARIA match assistant | ECS-backed vertical slice complete and validated for the documented bounded feature set. | `Design/ARIA_Assistant_ECS_Design.md` and its implementation tracker. |
-| Campaign story and content | Detailed high-level product, narrative, FPE, presentation, feature exposure, and 25-mission chapter design complete. | GDD v0.2 and the connected Campaign authorities below. |
-| Campaign runtime product layer | Not yet a complete playable 25-mission product; objective/result/reward/progression/story-sequence/persistence work remains. | `Design/Gameplay_Features_High_Level_Spec.md` and feature maturity matrix. |
-| Architecture and performance | Early-development hardening complete. The 68-task Core Architecture Maturity Lane is ready to start; 18 release-certification tasks remain deferred and release performance is not yet certified. | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`, `Design/Architecture/post_hardening_architecture_maturity_tracker.md`, and `Design/Architecture/pre_release_performance_certification_backlog.md`. |
-| Overall project percentage | Not currently authoritative because the project-state source still needs PM refresh. | `Design/Project_State_Source.json` and generated dashboard. |
+| Tactical Match simulation | ECS-based movement, commands, combat, construction, production, logistics, AI, transport, aircraft, radar and minimap foundations. | Feature-specific lifecycle, balance and mobile acceptance remain bounded by the [feature maturity matrix](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md). |
+| Campaign | M1–M5 internal EN/FA baseline; later chapters have mission, map and narrative implementation work, including finale presentation and voices. All 25 missions have reviewed opening captures in the latest visual audit. | Opening captures do not establish complete mission wins. Preserve per-mission normal-input, recovery, localization, player and device gates; see the [roadmap](Design/Roadmap/README.md) and [visual audit progress](Design/AgentReports/CampaignVisualAudit20261011/fixes/PROGRESS.md). |
+| ARIA | Guided M1–M5 touch-driver baseline wins in both locales, small-Skirmish baseline evidence, and expanded Skirmish planning/input work. | Broader independent tactics, seeds, interruptions, cross-mode and device coverage remain open. See [ARIA implementation evidence](Design/AgentReports/AriaWatchPlay/implementation-status.md). |
+| Skirmish | Small Base Assault internal Editor baseline; shared expanded mission bindings, objectives, recovery, authoring and qualification tooling are implemented. | The 120-entry catalog is a production target, not 120 accepted battles. S005 currently reports `technicallyReady=false` and `playerReady=false`; see its [current readiness record](Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json). |
+| Operations | O001–O003 prototypes and bounded onboarding, escort/repair controls, results and practice-flow improvements. | The 60-mission plan and complete city-run acceptance remain open. [Mobile-flow implementation](Design/AgentReports/Operations/mobile-ready-o001-o003/README.md) is not a full-mode readiness claim. |
+| Architecture and performance | Early-development hardening closed; post-hardening Phases 0–2 accepted, including the AM-025 feature-readiness closeout. | AM-027 is the next maturity task in the [accepted handoff](Design/Architecture/am025_feature_resume_handoff.md). Release certification and device evidence remain deferred or pending. |
+| Overall completion | Substantial implemented systems and documented internal baselines. | No current authoritative percentage or ship forecast: the project-state source still contains a May estimate. |
+
+### Unity CLI Workflow
+
+Use the Unity CLI directly with the installed `com.unity.pipeline` package for connected Editor work. Keep Unity Hub open and signed in. From the repository root, the discovery commands are:
+
+```sh
+rtk proxy unity pipeline list
+rtk proxy unity status --project-path "$PWD"
+rtk proxy unity list --project-path "$PWD"
+rtk proxy unity command --project-path "$PWD"
+```
+
+Use the commands and schemas exposed by the connected Editor. The AI Assistant MCP connection/approval procedure previously described here is obsolete for this workflow.
+
+Unity execution still follows [AGENTS.md](AGENTS.md): on macOS, every executeMethod validation, test run, prefab build and capture must use `Tools/CI/invoke_unity_macos.sh`, wrapped by RTK, with GUI licensing, an explicit timeout/log and verified pass markers. Do not invoke the Editor executable directly, pass `-batchmode`, or substitute Unity CLI `build`, `run` or `test` for the checked wrappers. On Windows, use the checked PowerShell wrappers described in `AGENTS.md`. Preserve full validation logs and process ownership.
 
 ## Source Of Truth
 
@@ -271,25 +293,39 @@ AI-native development case-study materials for this project live under `Slides/`
 
 ## Project Status Snapshot
 
-Status sources:
+The current development focus is expanding Skirmish through reusable systems and source-qualified missions, refining Campaign environments and presentation, improving bilingual mobile controls, and retaining strict validation evidence.
 
-- Generated tracker: `Design/Project_State_Dashboard.md`
-- Tracker source: `Design/Project_State_Source.json`
-- Current lane tasks: `Design/AgentTasks/*_current.md`
-- Recent handoffs and validation reports: `Design/AgentReports/`
+### Completed Development Milestones
 
-The generated dashboard and tracker source currently need a PM refresh before the root README should quote percent complete, forecasts, or blocker state. `Design/Project_State_Source.json` still carries a `2026-05-21` estimate, and `Design/Progress_Tracker.png` is older than the generated dashboard and is not regenerated by `Tools/ProjectState/generate_project_state_dashboard.py`.
+- **Campaign and ARIA baseline:** M1–M5 have internal English/Farsi Editor evidence, including ten guided Campaign touch-driver wins. This is the established development baseline; later shared changes require their affected regressions. See the [roadmap](Design/Roadmap/README.md).
+- **Small Skirmish loop:** setup, battle, paid recruitment/construction, logistics, explicit outcomes, replay and return were exercised through normal-speed controls. The first [Base Assault closeout](Design/Roadmap/Skirmish_Prototype/COMPLETION.md) records 309 checks and bilingual victories; the roadmap records the subsequent two-battle baseline. These do not certify the expanded catalog.
+- **Architecture foundations:** menu/match bootstrap separation, assembly and namespace boundaries, and early architecture/performance hardening are established. The [post-hardening tracker](Design/Architecture/post_hardening_architecture_maturity_tracker.md) records accepted Phases 0–2 and the remaining maturity work.
+- **Campaign visual audit:** the [latest audit closeout notes](Design/AgentReports/CampaignVisualAudit20261011/fixes/PROGRESS.md) record final-source opening captures for all 25 missions, zero required-placement failures, and packed-source parity/determinism checks. Full normal-input completion and Android acceptance remain separate.
 
-Until the project-state source and progress image are refreshed, use the lane current-task files plus recent reports as the actionable status source. Do not treat the old 33% estimate, old forecast, old Gate 4 blocker text, or old progress image as current.
+### Recent Work: October 2026
 
-Current premise direction:
+| Period | Development delivered | Evidence and limits |
+|---|---|---|
+| October 9–12 | Campaign ground surfaces, district palettes, roads/paving, scenery, runway presentation, destination identity, lighting and opening cameras; shared building placement excludes roads, sidewalks and scenery. | [Campaign visual audit](Design/AgentReports/CampaignVisualAudit20261011/fixes/PROGRESS.md). Visual/startup validation does not certify the full mission. |
+| October 11–14 | Skirmish fog visibility, assault selection/attack tracking, paid production, transport boarding/unloading, pause/Save/Continue recovery and aircraft lifecycle work. Source-specific ARIA and manual wins are retained with failures. | [S005 current evidence](Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json). Historical wins do not qualify a changed candidate; full current gates remain open. |
+| October 12–14 | Static marketing site, portrait-first horizontal squad scrolling, HUD zoom retaining manual camera focus, and bilingual Campaign-finale comic voices. | Repository commits `5e69c0e6c`, `529bf749b`, `0e4828c66` and `b3c9a6944`; these are delivered implementation slices, not release certification. |
+| October 14–16 | Config-only Skirmish batch authoring, logical mission bindings, shared Base Assault/Frontline Control/Breakthrough/Convoy Escort objective work, repair/recovery, protected counterpart admission and source/qualification tooling. | [Production handoff](Design/Roadmap/Skirmish_Expansion/SCALABLE_MISSION_PRODUCTION_HANDOFF.md) defines the remaining acceptance. The [six ground pilots](Design/AgentReports/SkirmishExpansion/GroundPilots/bounded-original-six-20261015/README.md) collected 18 size configurations, all unqualified because complete accepted facility placement was missing. |
+| October 15 | Main-menu layout polish and Persian mirroring, with archived mockups and six native captures. | [Latest layout findings](Design/AgentReports/MenuUiUxAudit/After/20261015-144919/findings.md) retain Persian overflow flags and three small targets at 2400×1080; this is not a clean all-aspect acceptance. |
+| October 16 | Bilingual match HUD portrait, instruction and countdown polish; ARIA offscreen approach navigation, public progress tracking and blocked-session diagnostics; targeted HUD timing, defense filtering and owned-validation memory guards. | [HUD summary](Design/AgentReports/MatchHudPolish20261016/SUMMARY.json) records passing automated checks and EN/FA previews at three sizes. [ARIA map approach checks](Design/AgentReports/SkirmishExpansion/ARIA_MAP_APPROACH_20261016.md) preserve zero camera-triggered orders; complete native battle acceptance remains pending. |
 
-- `Design/AAA_Mobile_Game_Design_Document_v0_2.md`
-  Active product direction: story-first local command in fictional Sahrin, followed by Campaign, Operations, and Skirmish.
-- `Design/Campaign_Narrative_Bible.md`
-  Active fiction: Ash Line terrorist cells, Vanguard Brigade conventional escalation, civilian legitimacy, Commander/ARIA arcs, and the `Shattered Relay` mystery.
-- `Design/Command_Offensive_Premise_Alignment.md`
-  Supporting proactive-operation framing, subordinate to the v0.2 GDD and narrative bible.
+### Work In Progress And Acceptance Gates
+
+- **Expanded Skirmish:** qualify existing Campaign sources, simultaneous legal facilities, army packing, readable cameras and the required per-mission manual/ARIA matrices. Preserve S001–S120 identities and five logical map groups. The [current S005 record](Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json) still has full native gates open, including distinct-flank and lifecycle coverage and the failed/unqualified ten-Replay desktop memory gate.
+- **Map reuse:** the 120 Skirmishes and 60 Operations are mission counts. Follow the [Campaign map reuse policy](Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md): author logical bounds, typed anchors/routes, objectives, spawns and legal gameplay placements on existing physical sources. A mission assignment does not authorize new terrain, roads, bridges, runways or physical derivatives.
+- **UI:** the latest HUD automated checks pass, while human visual review, a complete normal-input mission with ARIA/result/return, and device acceptance remain pending. The attempted HUD mission check stopped before Play entry on aircraft geometry metadata guards; the failure is preserved in its [summary](Design/AgentReports/MatchHudPolish20261016/SUMMARY.json).
+- **Operations and Support:** finish the normal player journey and cross-mode evidence before expanding availability. Smoke Screen, Precision Strike, Paratroopers and Supply Drop have an [approved implementation handoff](Design/AgentReports/SupportSystem/README.md); that approval does not establish runtime or player readiness.
+- **Performance and release:** preserve accepted frame/GC/package budgets, resolve remaining residency/replay-memory questions, and obtain target-device, sustained-performance and independent-player evidence before release claims. See the [release certification backlog](Design/Architecture/pre_release_performance_certification_backlog.md).
+
+Report **visual review**, **automated checks**, **normal-input mission playthroughs**, and **real player/device acceptance** separately. Keep failed and superseded evidence; a screenshot, compiler pass, injected result or older-source win cannot close another gate.
+
+Status sources are the [development roadmap](Design/Roadmap/README.md), relevant current-task files, source-pinned reports under `Design/AgentReports/`, and newer direct owner assignments. Some planning documents retain older status paragraphs; check their dated amendments and the newer implementation evidence.
+
+`Design/Project_State_Source.json` still carries a `2026-05-21` estimate. Its generated [dashboard](Design/Project_State_Dashboard.md), old 33% value, forecast and `Design/Progress_Tracker.png` must not be presented as current progress. Refresh the owning source before regenerating the dashboard with `python3 Tools/ProjectState/generate_project_state_dashboard.py`; the progress image is not regenerated by that script.
 
 ## Agent And Contributor Entry Points
 
@@ -383,47 +419,16 @@ Current UI execution rule:
 
 ## Gameplay Roadmap Summary
 
-The planned product layer above the current RTS simulation is the mode/session, objective, result, reward, progression, persistence, and district consequence layer. Active gameplay priorities come from `Design/AgentTasks/gameplay_current.md` or newer direct PM/user instruction.
+Mode launch, objectives, mission results, progression/persistence and district consequence systems now have implemented slices. Continue from current code and per-feature evidence rather than restarting the older foundational work queue. The [development roadmap](Design/Roadmap/README.md), [Skirmish production handoff](Design/Roadmap/Skirmish_Expansion/SCALABLE_MISSION_PRODUCTION_HANDOFF.md), [Operations plan](Design/Roadmap/Operations/PLAN.md) and newer owner assignments govern delivery.
 
-Highest-priority gameplay capability areas:
+Current priorities are:
 
-- `GameModeConfig`, `ScenarioSetupConfig`, and launch request/payload data for Campaign, Operations, and Skirmish.
-- Menu-to-match route requests through `MenuBootstrapSystem`, `MatchStartSystem`, `MatchBootstrapSystem`, and narrow startup systems.
-- Objective ECS components, buffers, configs, and `ObjectiveSystem` slices.
-- `MissionResultSystem`, star-goal configs, and `RewardSystem` slices.
-- `ProfileProgressionSystem` plus shell-edge persistence for profile progress, unlocks, settings, and last Skirmish setup.
-- Campaign chapter flow systems and config assets.
-- `OperationDistrictSystem` plus district consequence configs/data.
-- `AIProfileConfig`, `EncounterTemplateConfig`, and balance configs.
-
-Recommended gameplay implementation order when PM assigns this layer:
-
-1. Skirmish config and launch payload, using `Design/Skirmish_Mode_Implementation_Spec.md` as the active implementation contract. Runtime internals may keep QuickCustom naming until migration.
-2. Launch payload routing through the current menu/match bootstrap split. Do not restore `GameBootstrap`.
-3. First objective component/config/system slices.
-4. Mission result, star scoring, and rewards.
-5. Profile progression, unlocks, and save/load through shell-edge persistence.
-6. Campaign Chapter 1 playable loop.
-7. Operations district actions and end-of-day simulation.
-8. AI profiles, encounter templates, and balance configs.
-
-Initial objective types should include:
-
-- Destroy all enemies.
-- Survive duration.
-- Build required structure.
-- Produce required unit.
-- Protect civilians.
-- Keep unit losses below threshold.
-
-Initial reward types should include:
-
-- Commander XP.
-- Money/resources.
-- Unit unlock.
-- Building unlock.
-- Campaign stars.
-- Operation trust/security/intel changes.
+1. Qualify expanded Skirmish missions on existing Campaign maps using shared bindings, objectives, source-fit checks and resumable normal-input qualification.
+2. Complete shared army-role, aircraft, logistics, recovery and enemy-AI behavior where required by the authored mission; preserve fixed setup budgets and publication gates.
+3. Extend ARIA through visible controls with separate command acceptance and actual gameplay outcome evidence, while preserving manual handback and camera-only guidance.
+4. Close Campaign and Operations mission/result/return, localization and save/recovery gaps for the exact content being exposed.
+5. Deliver Support incrementally through its approved handoff, then complete cross-mode integration and per-mission coverage before enabling it.
+6. Keep rewards, unlocks, persistence, product entitlements and device performance consistent with their owning contracts; broader progression and release qualification remain separate milestones.
 
 ## Architecture
 
@@ -434,7 +439,7 @@ Current architecture source files:
 - `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`
   Completed early-development architecture/performance remediation program and evidence source.
 - `Design/Architecture/post_hardening_architecture_maturity_tracker.md`
-  Ready Core Architecture Lane with release-only phases held inactive until beta/release stabilization.
+  Phases 0–2 accepted; AM-027 is next. Release-only phases remain held inactive until their activation gates pass.
 - `Design/Architecture/pre_release_performance_certification_backlog.md`
   Deferred release qualification for sustained Android, thermal, residency, streaming, map comparison, and full visual evidence.
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
@@ -456,7 +461,7 @@ Current architecture source files:
 - `Design/Architecture/performance_regression_contract.md`
   Performance validation rules and metrics.
 
-Current refactor note: the architecture/performance hardening tracker is the execution authority. Assembly separation and the game-script namespace migration are established guardrails; GC evidence, bounded hot-path work, managed-edge review, source-growth enforcement, and device residency remain active or tracked concerns. Treat the README and contracts as no-new-debt guidance; copy neither tracker percentages nor transient task status into this README.
+Current refactor note: the early-development hardening tracker is the historical closeout authority; the post-hardening maturity tracker and accepted AM-025 handoff govern the remaining maturity work. Assembly separation and the game-script namespace migration are established guardrails; GC evidence, bounded hot-path work, managed-edge review, source-growth enforcement, and device residency remain active or tracked concerns. Treat the README and contracts as no-new-debt guidance; copy neither tracker percentages nor transient task status into this README.
 
 Code and systems architecture overview:
 

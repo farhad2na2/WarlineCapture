@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:12:42.878989+00:00",
+  "enabled": false,
+  "native_execution_authorized": false,
+  "launch_performed": false,
+  "supersedes_controller_commit": "402560598",
+  "prior_report": "mac-probe35-controller-review.json",
+  "change": "Redact ephemeral licensing/auth CLI arguments before any process evidence is returned or persisted. Preserve exact PID/parent/start/project path ownership. No Unity or recovery invocation.",
+  "files": {
+    "Tools/CI/mac_tanker_probe35_controller.py": "fe8033fcf73703a0f0753c021ebf81ab23342a618bf5c01703a3963618c80011",
+    "Tools/CI/mac_tanker_probe35_controller_test.py": "16a0c23deec1b88ca693c642e2f5e682e825b5fb0ccc59024f8ab7db17ea09a7"
+  },
+  "pure_tests_passed": 15,
+  "validation": "14 prior pure controls plus credential-redaction control pass; native controls never launched",
+  "unchanged_scope": "All separate authorization/native projection/capacity/strict35/OS restoration gates and honest Pending proof fields from original report retained",
+  "result": "DisabledController15ConstructedPassed_PeerReviewPending",
+  "normal_mission_ready": false,
+  "Android_build": false,
+  "player_device": false
+}

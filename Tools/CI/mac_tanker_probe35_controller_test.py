@@ -73,6 +73,12 @@ class ControllerTests(unittest.TestCase):
         worker=dict(hub,pid=3,ppid=2,cpu=100,command='UnityShaderCompiler')
         with patch.object(c,'processes',return_value=[hub,e,worker]),patch.object(c.time,'sleep'),self.assertRaises(ValueError):c.capacity(Path(c.ROOT))
 
+    def test_process_evidence_redacts_license_and_auth_credentials(self):
+        command='/Applications/Unity.app/Contents/MacOS/Unity -projectPath /tmp/owned -cbmEditorLicense secret1 -cbmMachineId secret2 --token=secret3 -parentPid 2'
+        clean=c.redact_command(command)
+        for value in ('secret1','secret2','secret3'):self.assertNotIn(value,clean)
+        self.assertIn('-projectPath /tmp/owned',clean);self.assertIn('-parentPid 2',clean)
+
     def test_process_inventory_parses_spaceful_commands(self):
         text=' 2 1 Sun Oct 18 14:00:00 2026 0.0 1024 /Applications/Unity Hub.app/Contents/MacOS/Unity Hub\n'
         with patch.object(c,'run',return_value=text):

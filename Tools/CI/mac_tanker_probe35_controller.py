@@ -81,6 +81,12 @@ def git_preflight(root):
     return {'commit':COMMIT,'parent':PARENT,'branch':BRANCH,'pins':PINS,'wrapper_sha256':WRAPPER_SHA}
 
 
+def redact_command(command):
+    # Worker command lines can contain ephemeral licensing credentials. They are
+    # irrelevant to process/project ownership and must never enter evidence logs.
+    return re.sub(r'(?i)(-{1,2}(?:cbmEditorLicense|cbmMachineId|accessToken|refreshToken|password|serial|token)(?:=|\s+))[^\s]+',r'\1<redacted>',command)
+
+
 def processes():
     rows=[]
     for line in run(['ps','-axo','pid=,ppid=,lstart=,%cpu=,rss=,command=']).splitlines():
@@ -88,7 +94,7 @@ def processes():
         if len(fields)!=10:continue
         pid,ppid,*_=fields;command=fields[9]
         if 'Unity' not in command and WRAPPER not in command and 'bee_backend' not in command:continue
-        rows.append(dict(pid=int(pid),ppid=int(ppid),started=' '.join(fields[2:7]),cpu=float(fields[7]),rss_kib=int(fields[8]),command=command))
+        rows.append(dict(pid=int(pid),ppid=int(ppid),started=' '.join(fields[2:7]),cpu=float(fields[7]),rss_kib=int(fields[8]),command=redact_command(command)))
     return rows
 
 

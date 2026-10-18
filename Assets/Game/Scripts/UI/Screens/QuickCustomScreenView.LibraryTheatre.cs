@@ -2316,8 +2316,12 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
-            if ((cue.isRightToLeftText || source.IndexOf("بزرگنمایی", StringComparison.Ordinal) >= 0)
-                && TryFitFaCue(cue, source, boxW, boxH))
+            // rect.width can still be the layout width from before PlaceTopLeft. The
+            // seated tab is sizeDelta. A stale narrow rect is what dropped 16:9 and 20:9
+            // out of the 22–26 attempts and into the 16px search.
+            float seatedW = rect.sizeDelta.x > 1f ? rect.sizeDelta.x : boxW;
+            float seatedH = rect.sizeDelta.y > 1f ? rect.sizeDelta.y : boxH;
+            if (CueCopyIsFarsi(cue, source) && TryFitFaCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
                 return;
             const float cueCeiling = 26f;
             const float cueFloor = 16f;
@@ -2378,18 +2382,31 @@ namespace Game.UI.Runtime
                             continue;
                     }
 
+                    cue.ForceMeshUpdate();
+                    // Two line boxes at 1.65em, minus the leading. A short tab used to
+                    // accept the split and then overflow the rect the capture measures.
+                    float pair = size * 1.65f * 2f + cue.lineSpacing * size * 0.01f;
+                    if (pair > boxH + 2f || cue.isTextTruncated || cue.isTextOverflowing)
+                    {
+                        cue.text = source;
+                        cue.maxVisibleLines = 1;
+                        continue;
+                    }
+
                     HoldCueSize(cue, size);
                     ZoomCueFitReason = "fa-two-line";
                     return true;
                 }
             }
 
-            float[] tracking = { -36f, -72f, -108f };
+            // FitsNameLine turns auto-size on. On a 36px tab that flag stays set for every
+            // 22–26 size, so this attempt was returning false and the 16px search drew 17–18.
+            float[] tracking = { -12f, -24f, -36f, -48f, -72f, -108f };
             for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
             {
                 for (int i = 0; i < tracking.Length; i++)
                 {
-                    if (!FitsNameLine(cue, source, size, boxW, tracking[i]))
+                    if (!FaCueLineFits(cue, source, size, boxW, boxH, tracking[i]))
                         continue;
                     cue.lineSpacing = 0f;
                     cue.maxVisibleLines = 1;
@@ -2403,6 +2420,130 @@ namespace Game.UI.Runtime
             cue.characterSpacing = 0f;
             cue.text = source;
             return false;
+        }
+
+        /// <summary>
+        /// Farsi when the cue is marked right-to-left, the phrase still contains the
+        /// zoom word, or the glyphs are already Arabic presentation forms. The locale
+        /// alone must not lock an English line that has not been translated yet.
+        /// </summary>
+        private static bool CueCopyIsFarsi(TMP_Text cue, string source)
+        {
+            if (cue != null && cue.isRightToLeftText)
+                return true;
+            if (!string.IsNullOrEmpty(source) && source.IndexOf("بزرگنمایی", StringComparison.Ordinal) >= 0)
+                return true;
+            return ContainsArabicLetter(source);
+        }
+
+        /// <summary>
+        /// One Farsi line at a locked size. Auto-size stays off: turning it on marked
+        /// every 22–26px size as overflowing on a 36px tab, and the 16px search then
+        /// drew 17–18. A line that fits the width but not the height grows the tab.
+        /// </summary>
+        private static bool FaCueLineFits(TMP_Text cue, string source, float size, float boxW, float boxH, float spacing)
+        {
+            if (cue == null || size < 1f || boxW < 8f || boxH < 8f)
+                return false;
+            PaintFaCueLine(cue, source, size, spacing);
+            if (FaCueLineClears(cue, size, boxW, boxH))
+                return true;
+            float line = MeasuredNameWidth(cue);
+            if (line <= 0.5f || line > boxW + 2f)
+                return false;
+            return GrowFaCueForLine(cue, source, size, spacing);
+        }
+
+        private static void PaintFaCueLine(TMP_Text cue, string source, float size, float spacing)
+        {
+            cue.enableAutoSizing = false;
+            cue.lineSpacing = 0f;
+            cue.characterSpacing = spacing;
+            cue.fontSizeMin = size;
+            cue.fontSizeMax = size;
+            cue.fontSize = size;
+            cue.maxVisibleLines = 1;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.text = source;
+            cue.ForceMeshUpdate();
+        }
+
+        /// <summary>
+        /// Noto Arabic's line box is about 1.65em, taller than the preferred height TMP
+        /// reports. Both have to sit in the tab, and the mesh must not be truncated.
+        /// </summary>
+        private static bool FaCueLineClears(TMP_Text cue, float size, float boxW, float boxH)
+        {
+            float line = MeasuredNameWidth(cue);
+            float stacked = cue.preferredHeight;
+            if (stacked < 0.5f)
+                stacked = cue.GetPreferredValues(cue.text).y;
+            return line > 0.5f
+                && line <= boxW + 2f
+                && stacked <= boxH + 2f
+                && size * 1.65f <= boxH + 2f
+                && !cue.isTextTruncated
+                && !cue.isTextOverflowing;
+        }
+
+        /// <summary>
+        /// Grows the tab upward, bottom still on the card, until the locked line fits.
+        /// 38 crosses the stroke on the 16:9 Desert Base tab; 37 still clears it.
+        /// </summary>
+        private static bool GrowFaCueForLine(TMP_Text cue, string source, float size, float spacing)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return false;
+            Rect spot = PlateRect(cue.rectTransform);
+            if (spot.height >= 51.5f || spot.width < 8f)
+                return false;
+            string selected = CueSelectedMap(parent, spot.x);
+            if (string.IsNullOrEmpty(selected))
+                return false;
+            float[] heights = { 52f, 48f, 44f, 40f, 38f, 37f };
+            for (int i = 0; i < heights.Length; i++)
+            {
+                if (heights[i] <= spot.height + 0.5f)
+                    continue;
+                if (size * 1.65f > heights[i] + 2f)
+                    continue;
+                float top = spot.y + spot.height - heights[i];
+                if (top < 1f)
+                    continue;
+                var grown = new Rect(spot.x, top, spot.width, heights[i]);
+                if (FaCueTabBlocked(parent, grown, selected))
+                    continue;
+                PlaceTopLeft(cue.rectTransform, grown.x, grown.y, grown.width, grown.height);
+                KeepAuthoredSize(cue.rectTransform);
+                SyncCuePlate(parent, grown);
+                PaintFaCueLine(cue, source, size, spacing);
+                if (FaCueLineClears(cue, size, grown.width, grown.height))
+                    return true;
+                PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+                KeepAuthoredSize(cue.rectTransform);
+                SyncCuePlate(parent, spot);
+                PaintFaCueLine(cue, source, size, spacing);
+            }
+
+            return false;
+        }
+
+        private static string CueSelectedMap(RectTransform parent, float cueX)
+        {
+            if (parent == null)
+                return null;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform zone)
+                    continue;
+                if (Mathf.Abs(zone.anchoredPosition.x - cueX) > 2f)
+                    continue;
+                return child.name.Substring("ZoneCard_".Length);
+            }
+
+            return null;
         }
 
         private static void HoldCueSize(TMP_Text cue, float size)
@@ -2533,7 +2674,10 @@ namespace Game.UI.Runtime
         {
             if (parent == null || spot.height >= 51.5f || spot.height < 8f)
                 return spot;
-            float[] heights = { 52f, 48f, 44f };
+            // 48 is often blocked and the seat then keeps 36. 40 and 38 still clear the
+            // stroke on several wide plates. The 16:9 Desert Base tab stops at 37:
+            // 38 crosses the stroke, and a 22px Farsi line needs that extra pixel.
+            float[] heights = { 52f, 48f, 44f, 40f, 38f, 37f };
             for (int i = 0; i < heights.Length; i++)
             {
                 if (heights[i] <= spot.height + 0.5f)

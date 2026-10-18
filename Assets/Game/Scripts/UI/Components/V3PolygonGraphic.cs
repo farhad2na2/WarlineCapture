@@ -13,6 +13,22 @@ namespace Game.UI.Runtime
         [SerializeField] private Color outlineColor = Color.clear;
         [SerializeField] private float outlineWidth;
 
+        public int PointCount => points != null ? points.Length : 0;
+
+        /// <summary>Configured vertex in mesh space (y down becomes y up), matching <see cref="OnPopulateMesh"/>.</summary>
+        public Vector2 LocalPoint(int index)
+        {
+            if (points == null || index < 0 || index >= points.Length)
+                return Vector2.zero;
+            float scaleX = authoredSize.x > 0f ? rectTransform.rect.width / authoredSize.x : 1f;
+            float scaleY = authoredSize.y > 0f ? rectTransform.rect.height / authoredSize.y : 1f;
+            Vector2 point = points[index];
+            return new Vector2(point.x * scaleX, -point.y * scaleY);
+        }
+
+        /// <summary>Shoelace area of the configured fill, in the graphic's local pixels.</summary>
+        public float FilledArea { get; private set; }
+
         public void Configure(Vector2[] topLeftPoints, Color fill)
         {
             points = topLeftPoints ?? Array.Empty<Vector2>();
@@ -21,6 +37,7 @@ namespace Game.UI.Runtime
             outlineWidth = 0f;
             color = fill;
             raycastTarget = false;
+            FilledArea = Shoelace(points);
             SetVerticesDirty();
         }
 
@@ -37,7 +54,23 @@ namespace Game.UI.Runtime
             outlineWidth = Mathf.Max(0f, configuredOutlineWidth);
             color = fill;
             raycastTarget = false;
+            FilledArea = Shoelace(points);
             SetVerticesDirty();
+        }
+
+        private static float Shoelace(Vector2[] source)
+        {
+            if (source == null || source.Length < 3)
+                return 0f;
+            float sum = 0f;
+            for (int i = 0; i < source.Length; i++)
+            {
+                Vector2 a = source[i];
+                Vector2 b = source[(i + 1) % source.Length];
+                sum += a.x * b.y - b.x * a.y;
+            }
+
+            return Mathf.Abs(sum) * 0.5f;
         }
 
         protected override void OnPopulateMesh(VertexHelper vertexHelper)

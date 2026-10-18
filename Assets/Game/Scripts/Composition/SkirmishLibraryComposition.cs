@@ -26,6 +26,19 @@ namespace Game.Composition
         public int CountFor(string mapId, string objectiveId) =>
             _ledger.CountFor(mapId, objectiveId);
 
+        public int CountTier(SkirmishDifficultyId difficulty)
+        {
+            SkirmishMedalDifficultyTotals totals = _ledger.TotalsByDifficulty();
+            switch (difficulty)
+            {
+                case SkirmishDifficultyId.Recruit: return totals.Recruit;
+                case SkirmishDifficultyId.Regular: return totals.Regular;
+                case SkirmishDifficultyId.Veteran: return totals.Veteran;
+                case SkirmishDifficultyId.Commander: return totals.Commander;
+                default: return 0;
+            }
+        }
+
         public void Refresh()
         {
             if (_reload == null)
@@ -51,6 +64,11 @@ namespace Game.Composition
 
     internal static class SkirmishLibraryComposition
     {
+        static SkirmishLibraryComposition()
+        {
+            SkirmishLibraryWallet.ReadCredits = ProfileCreditReader.TryRead;
+        }
+
         public static SkirmishLibraryViewModel Create(IReadOnlyList<SkirmishBattleCatalogEntry> catalog) =>
             new(
                 catalog,
@@ -84,6 +102,27 @@ namespace Game.Composition
                 MapWidthMetres = definition.MapLayout != null ? definition.MapLayout.WorldWidthMetres : 0f,
                 MapDepthMetres = definition.MapLayout != null ? definition.MapLayout.WorldDepthMetres : 0f
             };
+        }
+
+        private static class ProfileCreditReader
+        {
+            public static bool TryRead(out int credits)
+            {
+                credits = 0;
+                try
+                {
+                    PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
+                    if (profile == null)
+                        return false;
+                    credits = profile.credits;
+                    return true;
+                }
+                catch (Exception)
+                {
+                    credits = 0;
+                    return false;
+                }
+            }
         }
     }
 }

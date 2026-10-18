@@ -17,6 +17,7 @@ namespace Game.UI.Runtime
         public const string ObjectivePrefsKey = "Warline.Skirmish.Library.Objective";
         public const string LayoutPrefsKey = "Warline.Skirmish.Library.Layout";
         public const string DifficultyPrefsKey = "Warline.Skirmish.Library.Difficulty";
+        /// <summary>Authored catalog size. Progress totals use playable scenarios, not this stand-in.</summary>
         public const int DevOverallPublishedCount = 120;
 
         private static readonly string[] MapOrder = { "DB", "CC", "MP", "IB", "AP" };
@@ -213,8 +214,46 @@ namespace Game.UI.Runtime
                 _interactionDepth--;
             }
 
-            if (_level == SkirmishLibraryLevel.Battlefield)
-                Raise(SkirmishLibraryInteractionKind.Clicked, _selectedMapId, UIAudioEventKind.ScreenForward);
+            if (_level != SkirmishLibraryLevel.Battlefield)
+                return;
+            if (!SelectedScenarioCanLaunch())
+            {
+                string pick = FirstOwnedMissingRegular(_selectedMapId);
+                if (string.IsNullOrEmpty(pick))
+                {
+                    string recommended = FindRecommended();
+                    if (ScenarioBelongsToMap(recommended, _selectedMapId))
+                        pick = recommended;
+                }
+
+                if (string.IsNullOrEmpty(pick))
+                    pick = FirstScenarioOnObjective(_selectedMapId, _selectedObjectiveId);
+                if (!string.IsNullOrEmpty(pick))
+                    SelectScenarioId(pick);
+            }
+
+            Raise(SkirmishLibraryInteractionKind.Clicked, _selectedMapId, UIAudioEventKind.ScreenForward);
+        }
+
+        private bool SelectedScenarioOnMap()
+        {
+            return ScenarioBelongsToMap(_selectedScenarioId, _selectedMapId);
+        }
+
+        private bool SelectedScenarioCanLaunch()
+        {
+            if (!TryFind(_selectedScenarioId, out SkirmishBattleCatalogEntry entry) || !SelectedScenarioOnMap())
+                return false;
+            ResolveAccess(entry, out SkirmishCardAccess access, out _, out _);
+            return access == SkirmishCardAccess.Playable;
+        }
+
+        private bool ScenarioBelongsToMap(string scenarioId, string mapId)
+        {
+            if (!TryFind(scenarioId, out SkirmishBattleCatalogEntry entry))
+                return false;
+            string map = CanonicalMap(entry.MapId) ?? entry.MapId;
+            return string.Equals(map, mapId, StringComparison.OrdinalIgnoreCase);
         }
 
         public void BackToTheater()
@@ -349,6 +388,7 @@ namespace Game.UI.Runtime
                     PlatePreviewKey = SkirmishLibraryPreviewAssets.ResolvePlateKey(MapOrder[i]),
                     PublishedCount = CountPublished(MapOrder[i], null),
                     WonCount = _medals.CountFor(MapOrder[i]),
+                    ZoneScenarioCount = CountPublished(MapOrder[i], null),
                     Medals = new SkirmishMedalTotals
                     {
                         Recruit = totals.Recruit,
@@ -364,7 +404,7 @@ namespace Game.UI.Runtime
 
             SkirmishMedalTotals overallMedals = TotalsAcrossCatalog();
             int earned = overallMedals.Recruit + overallMedals.Regular + overallMedals.Veteran + overallMedals.Commander;
-            int published = _showPlanned ? DevOverallPublishedCount : CountPublished(null, null);
+            int published = CountPublished(null, null);
             return new SkirmishTheaterState
             {
                 Pins = pins.ToArray(),
@@ -802,24 +842,14 @@ namespace Game.UI.Runtime
 
         private SkirmishMedalTotals TotalsAcrossCatalog()
         {
-            var totals = new SkirmishMedalTotals();
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < _catalog.Count; i++)
+            // Theatre overall tiers are the ledger rows, not the selected district's pin.
+            return new SkirmishMedalTotals
             {
-                string scenarioId = _catalog[i].ScenarioId;
-                if (!seen.Add(scenarioId))
-                    continue;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Recruit))
-                    totals.Recruit++;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Regular))
-                    totals.Regular++;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Veteran))
-                    totals.Veteran++;
-                if (_medals.Has(scenarioId, SkirmishDifficultyId.Commander))
-                    totals.Commander++;
-            }
-
-            return totals;
+                Recruit = _medals.CountTier(SkirmishDifficultyId.Recruit),
+                Regular = _medals.CountTier(SkirmishDifficultyId.Regular),
+                Veteran = _medals.CountTier(SkirmishDifficultyId.Veteran),
+                Commander = _medals.CountTier(SkirmishDifficultyId.Commander)
+            };
         }
 
         private int CountPublished(string mapId, string objectiveId)
@@ -1116,6 +1146,7 @@ namespace Game.UI.Runtime
             public bool Has(string catalogId, SkirmishDifficultyId difficulty) => false;
             public int CountFor(string mapId) => 0;
             public int CountFor(string mapId, string objectiveId) => 0;
+            public int CountTier(SkirmishDifficultyId difficulty) => 0;
             public void Refresh() { }
         }
     }

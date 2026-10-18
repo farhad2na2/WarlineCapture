@@ -51,6 +51,7 @@ namespace Game.UI.Runtime
 
         private void WireScenarioChoices()
         {
+            LoadLibraryMemory();
             if (string.IsNullOrEmpty(_selectedScenarioId))
                 _selectedScenarioId = PlayerPrefs.GetString(LastScenarioIdPrefsKey, string.Empty);
             WireLibrarySearch();
@@ -82,6 +83,7 @@ namespace Game.UI.Runtime
                 return;
 
             _selectedScenarioId = entry.ScenarioId;
+            RememberLibrarySelection(entry);
             if (entry.IsPlayable)
             {
                 _config.ScenarioIndex = entry.PlayableScenarioIndex;
@@ -93,7 +95,6 @@ namespace Game.UI.Runtime
             Bind(_config);
             if (entry.IsPlayable)
                 _configStore?.Apply(ReadConfigFromControls());
-            TouchLibrary(library => library.SelectScenarioId(entry.ScenarioId));
         }
 
         private static UiSkirmishLibrarySelection LibrarySelection(SkirmishBattleCatalogEntry entry) => new UiSkirmishLibrarySelection
@@ -112,9 +113,10 @@ namespace Game.UI.Runtime
         public void SelectMapCollection(string mapId)
         {
             _mapFilter = mapId ?? string.Empty;
+            EnsureLibraryViewModel();
+            _libraryViewModel.SelectMapCollection(_mapFilter);
             EnsureLibraryCards();
             PresentScenarioChoices();
-            TouchLibrary(library => library.SelectMapCollection(_mapFilter));
         }
 
         public bool ReturnLibraryToScenario(string scenarioId)
@@ -156,13 +158,17 @@ namespace Game.UI.Runtime
         private void EnsureLibraryViewModel()
         {
             if (_libraryViewModel != null)
+            {
+                WireLibraryNotifications();
                 return;
+            }
             if (_catalogEntries.Count == 0)
                 ReloadCatalogEntries();
             _libraryViewModel = _libraryFactory != null
                 ? _libraryFactory(_catalogEntries)
                 : SkirmishLibraryViewModel.CreateUnbound(_catalogEntries);
             _libraryViewModel.RestoreFromPrefs();
+            WireLibraryNotifications();
         }
 
         private void TouchLibrary(Action<ISkirmishLibraryViewModel> action)
@@ -267,14 +273,6 @@ namespace Game.UI.Runtime
                 {
                     UiLocalizedText.Set(scenarioDescription, briefing.Brief);
                 }
-                else if (!selected.IsPlayable)
-                {
-                    UiLocalizedText.Set(
-                        scenarioDescription,
-                        fa
-                            ? "این نبرد هنوز آماده نیست. یکی از نبردهای Ready را انتخاب کن."
-                            : "This battle is still in development. Select a Ready battle to deploy.");
-                }
                 else
                 {
                     UiLocalizedText.Set(
@@ -288,10 +286,11 @@ namespace Game.UI.Runtime
             }
 
             if (battleLibrarySearch != null && battleLibrarySearch.placeholder is TMP_Text searchHint)
-                UiLocalizedText.Set(searchHint, fa ? "جست‌وجوی نبرد (S004، کویر، ...)" : "Search battles (S004, Desert, ...)");
+                UiLocalizedText.Set(searchHint, fa ? "جستجوی نبرد (S004, کویر, ...)" : "Search battles (S004, Desert, ...)");
 
             PresentCompiledBriefing(selected, fa);
-            _savedMatchAvailable = selected.IsPlayable && UiShellRuntimeGateway.HasSavedSkirmish(selected.ScenarioId);
+            _savedMatchAvailable = !_suppressSavedMatch && selected.IsPlayable &&
+                UiShellRuntimeGateway.HasSavedSkirmish(selected.ScenarioId);
             if (launchButton != null)
             {
                 launchButton.interactable = selected.IsPlayable;
@@ -305,6 +304,7 @@ namespace Game.UI.Runtime
             }
             if (_savedMatchAvailable)
                 UiLocalizedText.Set(scenarioDescription, fa ? "یک نبرد ذخیره‌شده داری. ادامه بده، یا «نبرد جدید» را بزن تا از ابتدا شروع کنی." : "You have a saved match. Continue it, or choose New Match to start again.");
+            PresentBattleLibrary();
         }
 
         private static string AuthoredButtonDefault(TMP_Text label, string fallback)
@@ -373,6 +373,7 @@ namespace Game.UI.Runtime
 
         private void OnLibrarySearchChanged(string value)
         {
+            _librarySearchApplied = false;
             _searchFilter = value ?? string.Empty;
             EnsureLibraryViewModel();
             SkirmishLibraryFilter filter = _libraryViewModel.Filter;
@@ -405,7 +406,7 @@ namespace Game.UI.Runtime
                 Button button = _mapTabButtons[last];
                 _mapTabButtons.RemoveAt(last);
                 if (button != null)
-                    Destroy(button.gameObject);
+                    DestroyUi(button.gameObject);
             }
 
             for (int i = 0; i < MapCollectionIds.Length; i++)
@@ -517,7 +518,7 @@ namespace Game.UI.Runtime
                 Button button = _libraryButtons[last];
                 _libraryButtons.RemoveAt(last);
                 if (button != null)
-                    Destroy(button.gameObject);
+                    DestroyUi(button.gameObject);
             }
 
             for (int i = 0; i < _visibleEntries.Count; i++)

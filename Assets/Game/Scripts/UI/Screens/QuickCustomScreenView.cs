@@ -302,42 +302,33 @@ namespace Game.UI.Runtime
             flowSystem.ApplyCurrentConfig(this, _configStore);
         }
 
+        public bool LibraryLaunchRequested { get; private set; }
+
         public void LaunchMatch()
         {
             if (baseAssaultPreset)
             {
                 EnsureLibraryCards();
+                EnsureLibraryViewModel();
                 if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable || !MatchesLibrarySelection(selected))
                     return;
                 _config.ScenarioIndex = selected.PlayableScenarioIndex;
                 if (_savedMatchAvailable)
                 {
+                    UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
                     if (!UiShellRuntimeGateway.TryResumeSavedSkirmish(_selectedScenarioId))
                         PresentResumeFailure();
                     return;
                 }
 
-                if (!LibraryAllowsLaunch(selected.ScenarioId))
+                if (_libraryViewModel == null || !_libraryViewModel.Launch())
                     return;
+                LibraryLaunchRequested = true;
+                Debug.Log("[SkirmishBattleLibrary] launch requested scenario=" + _selectedScenarioId);
+                PresentLaunchTransition(_selectedScenarioId);
             }
 
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);
-        }
-
-        private bool LibraryAllowsLaunch(string scenarioId)
-        {
-            try
-            {
-                ISkirmishLibraryViewModel library = Library;
-                if (!library.SelectScenarioId(scenarioId))
-                    return true;
-                return library.Launch();
-            }
-            catch (Exception exception)
-            {
-                Debug.LogWarning("Skirmish library launch check skipped: " + exception.Message);
-                return true;
-            }
         }
 
         private void WireEvents()

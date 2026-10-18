@@ -7353,7 +7353,7 @@ MonoBehaviour:
     - key: ui.skirmish.s004.subtitle
       value: "Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base card"
     - key: ui.skirmish.s004.title
-      value: "Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base (ui.skirmish.s004.title)"
+      value: Air Mobile
     - key: ui.skirmish.s005.description
       value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
     - key: ui.skirmish.s005.purpose
@@ -7361,7 +7361,7 @@ MonoBehaviour:
     - key: ui.skirmish.s005.subtitle
       value: "Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base card"
     - key: ui.skirmish.s005.title
-      value: "Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base (ui.skirmish.s005.title)"
+      value: Combined Arms
     - key: ui.skirmish.s006.description
       value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
     - key: ui.skirmish.s006.purpose
@@ -7369,7 +7369,7 @@ MonoBehaviour:
     - key: ui.skirmish.s006.subtitle
       value: "Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base card"
     - key: ui.skirmish.s006.title
-      value: "Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base"
+      value: Combined Arms
     - key: ui.skirmish.s007.description
       value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
     - key: ui.skirmish.s007.purpose
@@ -8360,6 +8360,14 @@ MonoBehaviour:
       value: "Industrial basin battles"
     - key: ui.skirmish.theater.mp.subtitle
       value: "Armor approach battles"
+    - key: ui.skirmish.library.battles_won
+      value: Battles won
+    - key: ui.skirmish.theatre_battles_one
+      value: '{0} battle'
+    - key: ui.skirmish.theatre_battles_other
+      value: '{0} battles'
+    - key: ui.skirmish.theatre_battles_won
+      value: '{0} won'
     - key: ui.skirmish.theater.mp.title
       value: "ARMOR APPROACH"
     - key: ui.skirmish.time_remaining
@@ -23601,7 +23609,7 @@ MonoBehaviour:
     - key: ui.skirmish.s004.subtitle
       value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
     - key: ui.skirmish.s004.title
-      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+      value: "\u0647\u0648\u0627\u06CC\u06CC"
     - key: ui.skirmish.s005.description
       value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
     - key: ui.skirmish.s005.purpose
@@ -23609,7 +23617,7 @@ MonoBehaviour:
     - key: ui.skirmish.s005.subtitle
       value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
     - key: ui.skirmish.s005.title
-      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+      value: "\u062A\u0631\u06A9\u06CC\u0628\u06CC"
     - key: ui.skirmish.s006.description
       value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
     - key: ui.skirmish.s006.purpose
@@ -23617,7 +23625,7 @@ MonoBehaviour:
     - key: ui.skirmish.s006.subtitle
       value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
     - key: ui.skirmish.s006.title
-      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+      value: "\u062A\u0631\u06A9\u06CC\u0628\u06CC"
     - key: ui.skirmish.s007.description
       value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
     - key: ui.skirmish.s007.purpose
@@ -24640,6 +24648,14 @@ MonoBehaviour:
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
     - key: ui.skirmish.theater.mp.subtitle
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.library.battles_won
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u0628\u0631\u062F\u0647"
+    - key: ui.skirmish.theatre_battles_one
+      value: "{0} \u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.theatre_battles_other
+      value: "{0} \u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.theatre_battles_won
+      value: "{0} \u0628\u0631\u062F\u0647"
     - key: ui.skirmish.theater.mp.title
       value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
     - key: ui.skirmish.time_remaining

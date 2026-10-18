@@ -1,6 +1,26 @@
 {
   "entries": [
     {
+      "key": "ui.skirmish.library.battles_won",
+      "source": "Battles won",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای برده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.library.zone_progress",
+      "source": "ZONE PROGRESS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیشرفت منطقه"
+        }
+      ]
+    },
+    {
       "key": "ui.skirmish.theater.mp.title",
       "source": "ARMOR APPROACH",
       "translations": [
@@ -432,11 +452,11 @@
     },
     {
       "key": "ui.skirmish.s004.title",
-      "source": "Desert Base · Base Assault · Air Mobile · Established Base (ui.skirmish.s004.title)",
+      "source": "Air Mobile",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه کویری یورش پایگاه هوایی پایگاه آماده"
+          "value": "هوایی"
         }
       ]
     },
@@ -472,11 +492,11 @@
     },
     {
       "key": "ui.skirmish.s005.title",
-      "source": "Desert Base · Base Assault · Combined Arms · Field Base (ui.skirmish.s005.title)",
+      "source": "Combined Arms",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه کویری یورش پایگاه ترکیبی پایگاه میدانی"
+          "value": "ترکیبی"
         }
       ]
     },
@@ -512,11 +532,11 @@
     },
     {
       "key": "ui.skirmish.s006.title",
-      "source": "Desert Base · Base Assault · Combined Arms · Established Base",
+      "source": "Combined Arms",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه کویری یورش پایگاه ترکیبی پایگاه آماده"
+          "value": "ترکیبی"
         }
       ]
     },
@@ -5107,6 +5127,36 @@
         {
           "locale": "fa-IR",
           "value": "هدف اسکورت کاروان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theatre_battles_one",
+      "source": "{0} battle",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theatre_battles_other",
+      "source": "{0} battles",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.theatre_battles_won",
+      "source": "{0} won",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} برده"
         }
       ]
     }

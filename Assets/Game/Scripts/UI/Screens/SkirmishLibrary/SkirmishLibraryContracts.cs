@@ -47,8 +47,12 @@ namespace Game.UI.Runtime
         public string TitleLocKey;
         public string SubtitleLocKey;
         public string PlatePreviewKey;
+        /// <summary>Playable scenarios on this map. Zone cards, grid row labels and Zone Progress all use this denominator.</summary>
         public int PublishedCount;
+        /// <summary>Playable scenarios on this map that have any medal. Shared numerator for the zone card, grid rows and Zone Progress.</summary>
         public int WonCount;
+        /// <summary>Same playable total as <see cref="PublishedCount"/>. The zone card does not use a catalog-including-planned count.</summary>
+        public int ZoneScenarioCount;
         public SkirmishMedalTotals Medals;
         public bool HasOwnedPlayable;
         public bool IsRecommended;
@@ -215,5 +219,15 @@ namespace Game.UI.Runtime
         public static string TheaterPin(string mapId) => "TheaterPin_" + (mapId ?? string.Empty);
         public static string ObjectiveTab(string objectiveId) => "ObjectiveTab_" + (objectiveId ?? string.Empty);
         public static string BattleCard(string scenarioId) => "BattleCard_" + (scenarioId ?? string.Empty);
+    }
+
+    public delegate bool SkirmishCreditReader(out int credits);
+
+    /// <summary>
+    /// Composition installs the profile wallet. The screen never opens the save itself.
+    /// </summary>
+    public static class SkirmishLibraryWallet
+    {
+        public static SkirmishCreditReader ReadCredits { get; set; }
     }
 }

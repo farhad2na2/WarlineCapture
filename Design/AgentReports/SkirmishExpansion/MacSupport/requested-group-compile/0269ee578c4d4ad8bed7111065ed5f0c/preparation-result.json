@@ -1,0 +1,20 @@
+{
+  "runid": "0269ee578c4d4ad8bed7111065ed5f0c",
+  "started_utc": "2026-10-18T22:48:18.334504+00:00",
+  "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "scope": "NewMacOwnEpoch_CompilationAnd29ControlsOnly_NoCCCollection",
+  "authority": "Windows coordinator delegated exact two source+metas/own compile29 and clarified unrelated SCN13 original handle not required; no native CC collection",
+  "native_started": false,
+  "imported": false,
+  "preserved_preexisting_untracked": {
+    "path": "ProjectSettings/ProjectAuditorSettings.asset",
+    "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+    "meaning": "Existing R6 addition remains source input for NEW job; original R6 drift failure unchanged, no restoration/waiver"
+  },
+  "before_head": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "before_branch": "codex/mac-native-tanker-probe35",
+  "preparation_passed": true,
+  "source_files": 41736,
+  "source_candidate": "4be1b986d75a29a805ac01087a44e0e1e228ca70f8adb8945fe8eea1bf9bae4b",
+  "compile_authorized": true
+}

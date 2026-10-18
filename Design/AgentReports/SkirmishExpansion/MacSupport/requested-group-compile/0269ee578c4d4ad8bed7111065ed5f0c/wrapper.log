@@ -1,0 +1,6 @@
+[UnityInvokeMac] LicensingMode: gui (batchmode disabled on macOS)
+[UnityInvokeMac] UnityExe: /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity
+[UnityInvokeMac] ProjectPath: /Volumes/T7/Projects/WarlineCapture-mac-native-s003
+[UnityInvokeMac] LogFile: /Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/requested-group-compile/0269ee578c4d4ad8bed7111065ed5f0c/unity-controls.log
+[UnityInvokeMac] TimeoutSeconds: 1800
+[UnityInvokeMac] Arguments: -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile /Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/requested-group-compile/0269ee578c4d4ad8bed7111065ed5f0c/unity-controls.log -quit -executeMethod Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurveyControls

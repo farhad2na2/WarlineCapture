@@ -1,0 +1,69 @@
+import sys,os,json,subprocess,hashlib,datetime,uuid,tarfile,re
+from pathlib import Path
+sys.path.insert(0,"/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI")
+import mac_tanker_probe35_controller as life
+root=Path("/Volumes/T7/Projects/WarlineCapture-mac-native-s003")
+primary=Path("/Volumes/T7/Projects/WarlineCapture")
+runid=uuid.uuid4().hex
+out=primary/"Design/AgentReports/SkirmishExpansion/MacSupport/requested-group-compile"/runid
+out.mkdir(parents=True)
+Path("/private/tmp/warline-cc-controls-current.json").write_text(json.dumps({"out":str(out),"runid":runid}))
+def write(name,obj):
+ p=out/name
+ with p.open("x") as f: json.dump(obj,f,indent=2); f.write("\n")
+ return str(p)
+def git(*args): return subprocess.check_output(["git",*args],cwd=root,text=True).strip()
+def need(x,s):
+ if not x: raise RuntimeError(s)
+result={"runid":runid,"started_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"root":str(root),"scope":"NewMacOwnEpoch_CompilationAnd29ControlsOnly_NoCCCollection","authority":"Windows coordinator delegated exact two source+metas/own compile29 and clarified unrelated SCN13 original handle not required; no native CC collection","native_started":False,"imported":False}
+write("authorization-scope.json",result)
+try:
+ need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper drift")
+ need(not Path("/private/tmp/warline-mac-normal-worker.host-lock").exists(),"Host lease already owned")
+ need(root.is_dir() and not root.is_symlink() and not (root/"Library").is_symlink(),"Invalid isolated checkout")
+ need(git("rev-parse","HEAD")=="a9eb0b4814ebb9c6c0d81ebb851df0917b970973","Isolated HEAD changed")
+ status=git("status","--porcelain","--untracked-files=normal")
+ need(status=="?? ProjectSettings/ProjectAuditorSettings.asset","Unexpected isolated checkout changes: "+status)
+ need(life.digest(root/"ProjectSettings/ProjectAuditorSettings.asset")=="22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85","Historical ProjectAuditor addition changed")
+ result["preserved_preexisting_untracked"]={"path":"ProjectSettings/ProjectAuditorSettings.asset","sha256":"22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85","meaning":"Existing R6 addition remains source input for NEW job; original R6 drift failure unchanged, no restoration/waiver"}
+ need(not (root/"Temp/UnityLockfile").exists(),"Target Unity lock present; preserve and resolve owner")
+ cap=life.capacity(root); need(not any(life.editor(r) or life.native_kind(r)=="worker" for r in life.processes()),"Native Editor/worker exists")
+ write("capacity-before.json",cap); tools=life.tools_state(root); write("tools-before.json",tools)
+ result["before_head"]=git("rev-parse","HEAD"); result["before_branch"]=git("branch","--show-current")
+ state=life.state_snapshot(root); write("state-preintegration.json",state)
+ layouts=Path("/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts")
+ globalrows=[life.checked_file(p) for p in sorted(layouts.rglob("*")) if p.is_file() and not p.is_symlink()]
+ write("global-layouts-before.json",globalrows)
+ with tarfile.open(out/"settings-preimages.tar.gz","x:gz") as t:
+  for folder in ["ProjectSettings","UserSettings"]:
+   if (root/folder).exists(): t.add(root/folder,arcname=folder)
+  if layouts.exists(): t.add(layouts,arcname="global-layouts")
+ graph=[]
+ for base in [root/"Assets",root/"Packages",root/"Library/PackageCache"]:
+  for ext in ["*.asmdef","*.asmref"]:
+   for p in sorted(base.rglob(ext)):
+    if p.is_file(): graph.append(life.checked_file(p))
+ write("assembly-graph-before.json",graph)
+ proposals={"SkirmishGroundSourceFitSurvey.RequestedGroup.cs":"780ae780f42e28f7996701f3bbe1ab7a0bb26669d59539fe5d7b91979de6618e","SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs":"5914837e976596a9e4415c756c7479aff62888635a95357c2f4f61f0b43b87fc"}
+ existingguids=set()
+ for p in (root/"Assets").rglob("*.meta"):
+  if p.is_file():
+   m=re.search(r"^guid: ([a-f0-9]{32})$",p.read_text(errors="replace"),re.M)
+   if m: existingguids.add(m.group(1))
+ pending=[]
+ for name,h in proposals.items():
+  target=root/"Assets/Game/Scripts/Editor/Skirmish"/name
+  need(not target.exists() and not Path(str(target)+".meta").exists(),"Target source/meta already exists")
+  blob=subprocess.check_output(["git","show","7d16455303363fdfdde06d6f76c23b5416750cb3:Design/AgentReports/SkirmishExpansion/MacSupport/s026-requested-group-proposal/"+name+".proposal"],cwd=primary)
+  need(hashlib.sha256(blob).hexdigest()==h,"Proposal bytes changed")
+  guid=uuid.uuid4().hex
+  need(guid not in existingguids,"GUID collision"); existingguids.add(guid)
+  meta=("fileFormatVersion: 2\nguid: "+guid+"\n").encode()
+  pending.extend([(target,blob),(Path(str(target)+".meta"),meta)])
+ write("four-file-preimages-and-proposed-pins.json",[{"path":str(p.relative_to(root)),"preimage_exists":False,"after_sha256":hashlib.sha256(b).hexdigest(),"bytes":len(b),"guid_collision_checked":str(p).endswith(".meta")} for p,b in pending])
+ # End at a concrete reviewable admitted packet. Import/compile controller is a separate step.
+ result.update(preparation_passed=True,source_files= len(state["source_manifest"]),source_candidate=state["candidate_sha256"],compile_authorized=True,imported=False,native_started=False)
+except BaseException as e:
+ result.update(preparation_passed=False,error=type(e).__name__+": "+str(e))
+finally:
+ write("preparation-result.json",result); print(json.dumps({"out":str(out),**result},indent=2),flush=True)

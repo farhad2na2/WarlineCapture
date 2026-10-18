@@ -1,0 +1,103 @@
+import sys,os,json,subprocess,hashlib,datetime,uuid,time,re,stat
+from pathlib import Path
+sys.path.insert(0,"/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI")
+import mac_tanker_probe35_controller as life
+root=Path("/Volumes/T7/Projects/WarlineCapture-mac-native-s003"); primary=Path("/Volumes/T7/Projects/WarlineCapture")
+c=json.loads(Path("/private/tmp/warline-cc-controls-current.json").read_text()); out=Path(c["out"]); runid=c["runid"]
+def write(name,obj):
+ p=out/name
+ with p.open("x") as f: json.dump(obj,f,indent=2); f.write("\n")
+ return str(p)
+def git(*args): return subprocess.check_output(["git",*args],cwd=root,text=True).strip()
+def need(x,s):
+ if not x: raise RuntimeError(s)
+def globalrows():
+ base=Path("/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts")
+ return [life.checked_file(p) for p in sorted(base.rglob("*")) if p.is_file() and not p.is_symlink()]
+def core(rows): return {r["path"]:r["sha256"] for r in rows}
+result={"scope":"NewMacOwnEpoch_CompilationAnd29ControlsOnly_NoCCCollection","runid":runid,"controller_pid":os.getpid(),"started_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"operationalControlPassed":False,"source_imported":False,"wrapper_started":False,"wrapper_reaped":False,"native_CC_collection":False,"claims":0}
+lease=Path("/private/tmp/warline-mac-normal-worker.host-lock"); lease_identity=None; child=None; tree=None; safe=False
+try:
+ prep=json.loads((out/"preparation-result.json").read_text()); need(prep["preparation_passed"] is True,"Preparation failed")
+ need(life.digest(Path(life.__file__))=="1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6","Lifecycle helper drift")
+ need(git("rev-parse","HEAD")==prep["before_head"],"HEAD changed since preparation")
+ need(git("status","--porcelain","--untracked-files=normal")=="?? ProjectSettings/ProjectAuditorSettings.asset","Preexisting checkout membership changed")
+ need(not (root/"Temp/UnityLockfile").exists(),"Target project lock exists")
+ fd=os.open(lease,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600); os.write(fd,runid.encode()); st=os.fstat(fd); lease_identity=(st.st_dev,st.st_ino); os.close(fd)
+ capacity=life.capacity(root); write("capacity-integration.json",capacity)
+ rows=life.processes(); need(not any(life.editor(r) or life.native_kind(r)=="worker" for r in rows),"Live native project owner")
+ pins=[]; additions=[]; seen=set()
+ for f in (root/"Assets").rglob("*.meta"):
+  if f.is_file():
+   m=re.search(r"^guid: ([a-f0-9]{32})$",f.read_text(errors="replace"),re.M)
+   if m:seen.add(m.group(1))
+ proposal={"SkirmishGroundSourceFitSurvey.RequestedGroup.cs":"780ae780f42e28f7996701f3bbe1ab7a0bb26669d59539fe5d7b91979de6618e","SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs":"5914837e976596a9e4415c756c7479aff62888635a95357c2f4f61f0b43b87fc"}
+ pending=[]
+ for name,h in proposal.items():
+  dest=root/"Assets/Game/Scripts/Editor/Skirmish"/name; need(not dest.exists() and not Path(str(dest)+".meta").exists(),"Target source/meta exists")
+  b=subprocess.check_output(["git","show","7d16455303363fdfdde06d6f76c23b5416750cb3:Design/AgentReports/SkirmishExpansion/MacSupport/s026-requested-group-proposal/"+name+".proposal"],cwd=primary);need(hashlib.sha256(b).hexdigest()==h,"Frozen proposal mismatch")
+  guid=uuid.uuid4().hex; need(guid not in seen,"Meta GUID collision");seen.add(guid)
+  pending.extend([(dest,b),(Path(str(dest)+".meta"),("fileFormatVersion: 2\nguid: "+guid+"\n").encode())])
+ for p,b in pending:pins.append({"path":str(p.relative_to(root)),"sha256":hashlib.sha256(b).hexdigest(),"bytes":len(b),"preimage_exists":False,"content":b.decode() if str(p).endswith(".meta") else None})
+ write("integration-four-file-pins.json",pins)
+ subprocess.run(["git","switch","-c","codex/mac-requested-cc-controls"],cwd=root,check=True)
+ for p,b in pending:
+  with p.open("xb") as f:f.write(b)
+ result["source_imported"]=True
+ additions=[r["path"] for r in pins]
+ subprocess.run(["git","add","--",*additions],cwd=root,check=True)
+ subprocess.run(["git","commit","-m","Add reviewed requested-group survey and pure controls on Mac epoch"],cwd=root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+ result["commit"]=git("rev-parse","HEAD");result["branch"]=git("branch","--show-current")
+ need(set(git("diff-tree","--no-commit-id","--name-only","-r","HEAD").splitlines())==set(additions),"Committed scope differs")
+ before=life.state_snapshot(root);write("state-before-wrapper.json",before)
+ prior=json.loads((out/"state-preintegration.json").read_text()); a=core(prior["source_manifest"]);b=core(before["source_manifest"])
+ delta={"added":sorted(b.keys()-a.keys()),"removed":sorted(a.keys()-b.keys()),"changed":sorted(k for k in a.keys()&b.keys() if a[k]!=b[k])};write("source-integration-delta.json",delta)
+ need(delta=={"added":sorted(additions),"removed":[],"changed":[]},"Unexpected source integration delta")
+ need(core(before["project_settings"])==core(prior["project_settings"]) and core(before["user_settings"])==core(prior["user_settings"]),"Settings changed during preparation")
+ globals_before=globalrows();need(core(globals_before)==core(json.loads((out/"global-layouts-before.json").read_text())),"Global GUI changed during preparation")
+ need(life.digest(root/"Tools/CI/invoke_unity_macos.sh")=="53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608","Wrapper drift")
+ write("tools-launch.json",life.tools_state(root));write("capacity-launch.json",life.capacity(root))
+ baseline=life.processes();need(not any(life.editor(r) or life.native_kind(r)=="worker" for r in baseline),"Conflicting native Editor/worker")
+ need(not (root/"Temp/UnityLockfile").exists(),"Project locked at launch")
+ log=out/"unity-controls.log";stdout=out/"wrapper.log";need(not log.exists() and not stdout.exists(),"Log path already exists")
+ cmd=["rtk","proxy",str(root/"Tools/CI/invoke_unity_macos.sh"),"--project",str(root),"--timeout","1800","--log",str(log),"--","-quit","-executeMethod","Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurveyControls"]
+ result.update(command=cmd,before_source_candidate=before["candidate_sha256"],before_retained_build=before["build_sha256"],timeout_seconds=1800,log=str(log),wrapper_log=str(stdout),controller_sha256=life.digest(Path(__file__)))
+ write("launch-intent.json",result)
+ with stdout.open("xb") as stream:
+  child=subprocess.Popen(cmd,cwd=root,stdout=stream,stderr=subprocess.STDOUT,env=dict(os.environ,LC_ALL="C"))
+  result.update(wrapper_started=True,wrapper_pid=child.pid,launch_time_ns=time.time_ns());write("live-handle.json",result)
+  tree=life.OwnedProcessTree(child.pid,baseline)
+  try:tree.observe(life.processes(),root)
+  except BaseException as e:life.lifecycle_error(result,"initial_observation",e)
+  life.wait_original_wrapper(child,tree,root,result)
+ shutdown,rows=life.owned_shutdown_barrier(tree,root);result["shutdown"]=shutdown;result["process_tree"]=tree.evidence();result["saw_target_editor"]=tree.saw_target_editor;safe=shutdown["closed"]
+ after=life.state_snapshot(root);write("state-after-wrapper.json",after);write("global-layouts-after.json",globalrows())
+ result["source_unchanged"]=core(before["source_manifest"])==core(after["source_manifest"])
+ result["project_settings_unchanged"]=core(before["project_settings"])==core(after["project_settings"])
+ result["user_settings_unchanged"]=core(before["user_settings"])==core(after["user_settings"])
+ result["global_GUI_unchanged"]=core(globals_before)==core(globalrows())
+ result["after_source_candidate"]=after["candidate_sha256"]; result["after_build_sha256"]=after["build_sha256"]
+ text=log.read_text(errors="replace") if log.exists() else "";marker="[RequestedSourceGroupSurveyControls] result=Passed controls=29 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0"
+ result["marker_count"]=text.count(marker);result["compiler_error_lines"]=[l for l in text.splitlines() if re.search(r"error CS[0-9]+|Scripts have compiler errors|Aborting",l)]
+ rsp=[]
+ for p in sorted((root/"Library/Bee/artifacts").glob("*/Game.Editor.rsp")):
+  t=p.read_text(errors="replace");rsp.append({**life.checked_file(p),"source_membership":{name:name in t for name in proposal},"content":t})
+ write("Game.Editor-response-files-after.json",rsp)
+ dll=root/"Library/ScriptAssemblies/Game.Editor.dll";result["GameEditorDLL"]=life.checked_file(dll) if dll.exists() else None
+ result["fresh_GameEditorDLL_mtime"]=dll.exists() and dll.stat().st_mtime_ns>=result["launch_time_ns"]
+ result["both_sources_in_actual_RSP"]=any(all(r["source_membership"].values()) for r in rsp)
+ result["actual_compiler_log_lines"]=[l for l in text.splitlines() if any(v in l for v in ["Csc","Game.Editor.dll","Compilation succeeded","ScriptCompilation","compilation time"])]
+ result["operationalControlPassed"]=all([result.get("wrapper_exit")==0,result.get("wrapper_reaped"),safe,tree.saw_target_editor,result["source_unchanged"],result["project_settings_unchanged"],result["user_settings_unchanged"],result["global_GUI_unchanged"],result["marker_count"]==1,not result["compiler_error_lines"],result["fresh_GameEditorDLL_mtime"],result["both_sources_in_actual_RSP"],not result.get("lifecycle_errors")])
+except BaseException as e:
+ result["error"]=type(e).__name__+": "+str(e)
+ if child is not None and not result.get("wrapper_reaped"):
+  if tree is not None:life.wait_original_wrapper(child,tree,root,result)
+  else:result["wrapper_exit"]=child.wait();result["wrapper_reaped"]=True
+ if child is None:safe=True
+finally:
+ if lease_identity and safe:
+  st=lease.stat();need((st.st_dev,st.st_ino)==lease_identity and lease.read_text()==runid,"Owned lease identity changed")
+  lease.unlink();result["host_lease_released"]=True
+ result["finished_utc"]=datetime.datetime.now(datetime.timezone.utc).isoformat();write("result.json",result)
+ print(json.dumps({k:v for k,v in result.items() if k not in ["process_tree","shutdown","actual_compiler_log_lines"]},indent=2),flush=True)
+ sys.exit(0 if result["operationalControlPassed"] else 1)

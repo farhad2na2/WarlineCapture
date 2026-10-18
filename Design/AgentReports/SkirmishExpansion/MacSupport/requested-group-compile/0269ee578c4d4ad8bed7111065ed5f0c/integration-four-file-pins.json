@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+    "sha256": "780ae780f42e28f7996701f3bbe1ab7a0bb26669d59539fe5d7b91979de6618e",
+    "bytes": 9186,
+    "preimage_exists": false,
+    "content": null
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs.meta",
+    "sha256": "173c938756de58b483e8554b96fa594a5dba9e504071ebf35486e8b9a15fcc37",
+    "bytes": 60,
+    "preimage_exists": false,
+    "content": "fileFormatVersion: 2\nguid: d9301dd797614e9b98199a57acb2f845\n"
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs",
+    "sha256": "5914837e976596a9e4415c756c7479aff62888635a95357c2f4f61f0b43b87fc",
+    "bytes": 5837,
+    "preimage_exists": false,
+    "content": null
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs.meta",
+    "sha256": "0d3fc5332af3532716801af7d49b4bb4c2279e6f4fc97d1f3cc6590a67bd8919",
+    "bytes": 60,
+    "preimage_exists": false,
+    "content": "fileFormatVersion: 2\nguid: 71ff66e6f2e44d0ba5eb12c9caa776fc\n"
+  }
+]

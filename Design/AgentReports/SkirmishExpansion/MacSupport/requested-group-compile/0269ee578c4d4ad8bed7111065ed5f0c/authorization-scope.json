@@ -1,0 +1,9 @@
+{
+  "runid": "0269ee578c4d4ad8bed7111065ed5f0c",
+  "started_utc": "2026-10-18T22:48:18.334504+00:00",
+  "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "scope": "NewMacOwnEpoch_CompilationAnd29ControlsOnly_NoCCCollection",
+  "authority": "Windows coordinator delegated exact two source+metas/own compile29 and clarified unrelated SCN13 original handle not required; no native CC collection",
+  "native_started": false,
+  "imported": false
+}

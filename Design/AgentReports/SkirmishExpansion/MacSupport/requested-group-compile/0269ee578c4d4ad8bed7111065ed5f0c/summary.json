@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "reported_utc": "2026-10-18T22:53:23.195190+00:00",
+  "scope": "NewMacOwnEpoch_CompilationAnd29ControlsOnly_NoCCCollection",
+  "result": "CompileAnd29ControlsPASS_OperationalGUIControlFAILED",
+  "runid": "0269ee578c4d4ad8bed7111065ed5f0c",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "source_parent": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "source_branch": "codex/mac-requested-cc-controls",
+  "source_proposal": "7d16455303363fdfdde06d6f76c23b5416750cb3",
+  "source_delta": "Exactly two reviewed .cs plus collision-checked two .meta additions; no existing file changed/deleted",
+  "candidate_sha256": "37157ae86b3c9bc167c516e3792d591e0ea361495a1ea61345f88443c60c8f06",
+  "source_files": 41740,
+  "actual_compiler_proof": {
+    "log_Csc_GameEditor": true,
+    "log_ILPostProcess_CopyFiles": true,
+    "actual_rsp_contains_both_sources": true,
+    "GameEditorDLL": {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/ScriptAssemblies/Game.Editor.dll",
+      "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/ScriptAssemblies/Game.Editor.dll",
+      "sha256": "fdd5596dcef8aa4e39b1f12c786457851625feb821dcbf0f83231f2d44ed3f07",
+      "size": 9295872
+    },
+    "fresh_dll_mtime": true,
+    "after_build_sha256": "aaa39606e9fe93a0217cfbb5b20b50615910412c9fe6b103ea4413968e4e6fe0",
+    "control_marker_count": 1,
+    "controls": 29,
+    "native_queries": 0,
+    "source_worlds": 0,
+    "CS_errors": []
+  },
+  "terminal": {
+    "original_tool_session": 3731,
+    "controller_exit": 1,
+    "wrapper_exit": 0,
+    "wrapper_reaped": true,
+    "target_Editor_seen": true,
+    "shutdown_closed": true,
+    "absence_samples": 2,
+    "host_lease_released": true
+  },
+  "invariants": {
+    "source_unchanged": true,
+    "project_settings_unchanged": true,
+    "user_settings_unchanged": true,
+    "global_GUI_unchanged": false,
+    "operationalControlPassed": false
+  },
+  "GUI_failure": {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+    "before_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "after_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+    "read_only_diagnosis": "Four YAML diff hunks: two m_rawData ID entries removed; two m_ExpandedIDs lists become empty. No interpretation as harmless, waiver, restoration or isolation proof."
+  },
+  "prior_failures": "Original r6 settings drift and failed preparation396b7545 preserved; no rebaseline/retry of either",
+  "current_scope_consumed": "One newly authorized owning compile29 attempt completed; no further run inferred",
+  "acceptance": {
+    "CC_native_collection": false,
+    "historical_survey11_compatibility": false,
+    "Windows_source_equivalence": false,
+    "strict_service_or_source_fit": false,
+    "normal_mission_or_paid_or_queue": false,
+    "APK_or_device_or_player": false
+  },
+  "local_preimages": "settings-preimages.tar.gz stays local; inventory pins its original hash and size. No settings restoration performed."
+}

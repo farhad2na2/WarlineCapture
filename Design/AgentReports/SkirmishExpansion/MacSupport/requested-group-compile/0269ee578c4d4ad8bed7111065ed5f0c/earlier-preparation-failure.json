@@ -1,0 +1,11 @@
+{
+  "runid": "396b7545accd4c6bb6b0d2c70fa15d52",
+  "started_utc": "2026-10-18T22:47:45.571244+00:00",
+  "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "scope": "NewMacOwnEpoch_CompilationAnd29ControlsOnly_NoCCCollection",
+  "authority": "Windows coordinator delegated exact two source+metas/own compile29 and clarified unrelated SCN13 original handle not required; no native CC collection",
+  "native_started": false,
+  "imported": false,
+  "preparation_passed": false,
+  "error": "RuntimeError: Isolated checkout dirty"
+}

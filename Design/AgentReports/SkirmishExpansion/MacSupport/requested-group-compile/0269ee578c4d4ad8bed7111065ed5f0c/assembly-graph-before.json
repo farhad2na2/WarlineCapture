@@ -1,0 +1,2084 @@
+[
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Editor/ProjectTools.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Editor/ProjectTools.Editor.asmdef",
+    "sha256": "5a6de8f6aac8cd66e6242ecb2160fc4ea3d2216294f656f14999a5154d0b48ff",
+    "size": 442
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Authorings/Game.Authoring.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Authorings/Game.Authoring.asmdef",
+    "sha256": "2a9406d8ed8007c05b2602ae3a5bc43f503fb0924f928c87a5b5ede1529482a8",
+    "size": 895
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Catalog/Contracts/Game.Catalog.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Catalog/Contracts/Game.Catalog.Contracts.asmdef",
+    "sha256": "8142bc76ae9afdbe2622b7ffd6b5384e9cd73039d95970490019adb56c08a029",
+    "size": 378
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Components/Game.Components.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Components/Game.Components.asmdef",
+    "sha256": "37202a4740993abaa19ff29f09d482e1b6b2fc2414f0fa9fb4277826ea996979",
+    "size": 621
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Composition/Game.Composition.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Composition/Game.Composition.asmdef",
+    "sha256": "ebb2ee20bb7f6cd4c4a8e7540d53bc9a8a40cab9977be0442ac8938a6b54b965",
+    "size": 1387
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Configs/Game.Configs.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Configs/Game.Configs.asmdef",
+    "sha256": "78542ac6909ee604a6993028f87c7ac61b3da5aa18473ac40cc181afb2d2d5d2",
+    "size": 812
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Contracts/Game.Tactical.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Contracts/Game.Tactical.Contracts.asmdef",
+    "sha256": "30fac3098673e5bd8d9f7503157f43cf2870e9035a87f5d8afc59030c1151b5e",
+    "size": 380
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+    "sha256": "ea33d806db2c6af67a5b1464a6566ee32d5209d51cb4c2e25806b66a1c66dc8b",
+    "size": 1848
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Game.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Game.Runtime.asmdef",
+    "sha256": "8975499d6c536f7c8ea7e1f245e5964f5e61e785d111866c94256985889a16e5",
+    "size": 1133
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Missions/Contracts/Game.Missions.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Missions/Contracts/Game.Missions.Contracts.asmdef",
+    "sha256": "35e65800a48d49bbd49b8ca248050006c532c7dd40c07151c3f722a79cab3db1",
+    "size": 419
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Narrative/Contracts/Game.Narrative.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Narrative/Contracts/Game.Narrative.Contracts.asmdef",
+    "sha256": "e9691a342d92b123af23fb4ea7a2e6205997dd7320f088d0e3a948bd068428bf",
+    "size": 382
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef",
+    "sha256": "2240a77813c8f59ba9ec71545d96971c097ab59c8138d6095dea9ae3298e2278",
+    "size": 452
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Capture/Game.Operations.Capture.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Capture/Game.Operations.Capture.asmdef",
+    "sha256": "a1f830e7ace7090a479229d99de9e76eb42586dcec653c9b114a4a03b82d6573",
+    "size": 612
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Content/Game.Operations.Content.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Content/Game.Operations.Content.asmdef",
+    "sha256": "c1690d3ea4bd437b2c95489dfdbe1c49f8914c3f59617194a3e4eeacde83ee78",
+    "size": 525
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef",
+    "sha256": "0e8796eb34363fdbfd89ae836c813a20e4ac01741ff571eda6efb398dffcc4e4",
+    "size": 383
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Loop/Game.Operations.Loop.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Loop/Game.Operations.Loop.asmdef",
+    "sha256": "295579a3eca4c3ef1ed337482bd6ad03e480ce41103635ff6aa190ffe6e2ee25",
+    "size": 487
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Strategic/Game.Operations.Strategic.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Strategic/Game.Operations.Strategic.asmdef",
+    "sha256": "5121a793c22450af8317a5a63fba0be8e3c058dafd5791e1c1c52aba89d0c26b",
+    "size": 424
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Tactical/Game.Operations.Tactical.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Operations/Tactical/Game.Operations.Tactical.asmdef",
+    "sha256": "0b64146df232552d427f43fa1edbb98af87fa828440516823939fcbef84d97a5",
+    "size": 422
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Rendering/Contracts/Game.Rendering.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Rendering/Contracts/Game.Rendering.Contracts.asmdef",
+    "sha256": "9cd88cb2f0ae956c453f2bf188b5ae8e94bfb8681f21d0c00fd52efdf9f33286",
+    "size": 441
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
+    "sha256": "d6148f39800348e5b254abbc9a4dd8691639f221d3701af7245fea2b6efb1b2d",
+    "size": 947
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Skirmish/Contracts/Game.Skirmish.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Skirmish/Contracts/Game.Skirmish.Contracts.asmdef",
+    "sha256": "5f7afa2d827cc6192b4a0ad500736deecd8253c206261d184048c4984c25a4d5",
+    "size": 379
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef",
+    "sha256": "ef6041b67ae15400c3ff8b1f95e62caf1434318e4005b775ab7ef891c3688d25",
+    "size": 593
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef",
+    "sha256": "eca3a23a40b6c667c6ef6b790bdd727cd1b386315f9b4711e1461c205c651e67",
+    "size": 603
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
+    "sha256": "684178e0705c008be375ebf4a92bd02fd835cc404de9028fa704245acfc07df0",
+    "size": 407
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
+    "sha256": "b05d7a62f96bb19f02bbd89530e3956fec5af16210aaaa4b2a34a9f2c3174dc2",
+    "size": 878
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/ScenarioLab/Game.UI.ScenarioLab.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/ScenarioLab/Game.UI.ScenarioLab.Runtime.asmdef",
+    "sha256": "5047fd7ccee8f5862486a0997d22ef6bbd02e7103af36aa383927a16fd692228",
+    "size": 913
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
+    "sha256": "fd27284ed422462b1de1dd294e21ae09e6a487a06d1954d957bf046c3c0de254",
+    "size": 511
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
+    "sha256": "a0c8e9f71755e4af053a5b7467c06fe23e596cb2e62ee894c0bf1f024b075feb",
+    "size": 1068
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Kevin Iglesias/Human Animations/Scripts/KevinIglesias.HumanAnimations.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Kevin Iglesias/Human Animations/Scripts/KevinIglesias.HumanAnimations.asmdef",
+    "sha256": "76ca9c4d7c737270e4f17b0b9100f2d8b8af31469de60686ea7d319059774dd3",
+    "size": 363
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Scripts/KevinIglesias.HumanSoldierDemo.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Scripts/KevinIglesias.HumanSoldierDemo.asmdef",
+    "sha256": "6fafe0b958cf87b5fc76a6e42b435b8c3b90ab5fec8664da1ab40051bcfc15b6",
+    "size": 409
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Piloto Studio/Scripts/PilotoStudio.Samples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Piloto Studio/Scripts/PilotoStudio.Samples.asmdef",
+    "sha256": "346f1f33e787a8506178b0d564b46a0aea742b941d0ff9673f449f443e0534ab",
+    "size": 413
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/InterfaceCore/Scripts/UnityUIExtensions/Synty.InterfaceCore.UnityUIExtensions.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/InterfaceCore/Scripts/UnityUIExtensions/Synty.InterfaceCore.UnityUIExtensions.asmdef",
+    "sha256": "d0459e17c23280ff6789237a63f3407f9a4a7f2cafffa8b50a8cc5089a11be8e",
+    "size": 430
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/Synty.InterfaceMilitaryCombatHUD.Samples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/Synty.InterfaceMilitaryCombatHUD.Samples.asmdef",
+    "sha256": "064213895d359c666abe0c859df0eb9fc6b291f6d4da1da2d55433fb80c1f873",
+    "size": 462
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/PolygonGeneric/Scripts/Synty.PolygonGeneric.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/PolygonGeneric/Scripts/Synty.PolygonGeneric.asmdef",
+    "sha256": "c92a3fcd9f38078866c9be73b5a4597223ac67bbd6b116b70a8943af42dc951b",
+    "size": 354
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/PolygonGeneric/Shaders/InterfaceOverrides/Editor/Synty.PolygonGeneric.InterfaceOverrides.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/PolygonGeneric/Shaders/InterfaceOverrides/Editor/Synty.PolygonGeneric.InterfaceOverrides.Editor.asmdef",
+    "sha256": "f17d20c9f03827398c398ef9fb51e7936b35aee137c7e63b2e7b3676b2f7120e",
+    "size": 402
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/SyntyPackageHelper/Editor/Synty.PackageHelper.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Synty/SyntyPackageHelper/Editor/Synty.PackageHelper.Editor.asmdef",
+    "sha256": "80bcae5433c5d81c0b919090958118b29ee23b3f15ef0604673cd38bb86cb562",
+    "size": 382
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/Editor/Game.Tests.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/Editor/Game.Tests.Editor.asmdef",
+    "sha256": "6f60a3a6e2db030d2ff0a4c8c1959b47d34a6b2983c7ffdbc25e46b3e8ad5249",
+    "size": 1777
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/Editor/Operations/Game.Operations.Tests.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/Editor/Operations/Game.Operations.Tests.Editor.asmdef",
+    "sha256": "0db8326395388e024dd13c3a01fee7efe3e8466ec637e793e2e743464cc2eb65",
+    "size": 693
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/MapPreparationNative/Game.Tests.MapPreparation.Native.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/MapPreparationNative/Game.Tests.MapPreparation.Native.asmdef",
+    "sha256": "f1b9cfe23714eaa9f2e76b0ebdef0596d1dd99e0e3ce687f4b02b9aefaf0d095",
+    "size": 798
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/PlayMode/Game.Tests.PlayMode.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Tests/PlayMode/Game.Tests.PlayMode.asmdef",
+    "sha256": "c35bca9d659b63b7f8ba1647b7d3ae2d31c714bcefc414edf65e2ac56f71c5a8",
+    "size": 1531
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/com.sniveler-code.gpu-animation/Editor/sniveler-code.gpu-animation.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/com.sniveler-code.gpu-animation/Editor/sniveler-code.gpu-animation.Editor.asmdef",
+    "sha256": "c9e82eee4e6c95fe9f33a5577e20b1cbd4b184b7ff7093f400b28470d2d87652",
+    "size": 469
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/com.sniveler-code.gpu-animation/Runtime/sniveler-code.gpu-animation.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/com.sniveler-code.gpu-animation/Runtime/sniveler-code.gpu-animation.asmdef",
+    "sha256": "3324d20ffa85f9aa1ae702156275fc6a5becf86f65be9d5e4d5d78c6aed8a9ee",
+    "size": 737
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a/Scripts/Editor/RTLTMPro-Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a/Scripts/Editor/RTLTMPro-Editor.asmdef",
+    "sha256": "902e485a3830162d6be277185402cd24a97f9bb8f1ce51aeb1e199b5f3fc1b29",
+    "size": 590
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a/Scripts/Runtime/RTLTMPro.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a/Scripts/Runtime/RTLTMPro.asmdef",
+    "sha256": "cd582bafb5347299cc80a769ce90869b988b5024722b0747590ccf1830d42c00",
+    "size": 505
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a/Tests/RTLTMPro-Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a/Tests/RTLTMPro-Tests.asmdef",
+    "sha256": "c468e04db0db22fd690d7be003b2c9b6f96886d9cce52a60e0bbfc1359b07c90",
+    "size": 374
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.2d.sprite@053a968eab56/Editor/Unity.2D.Sprite.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.2d.sprite@053a968eab56/Editor/Unity.2D.Sprite.Editor.asmdef",
+    "sha256": "357045511141c4042f764a3dc3d1ebcf13e3b82aa2da616505210327f5776dd0",
+    "size": 432
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.2d.sprite@053a968eab56/Tests/Editor/Unity.2D.Sprite.Package.EditorTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.2d.sprite@053a968eab56/Tests/Editor/Unity.2D.Sprite.Package.EditorTests.asmdef",
+    "sha256": "5f6f537232d6250f62f4b53aec6f323d9ce427ae014dab7bdbde776e493b6b76",
+    "size": 410
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Editor/AutoGroupGenerator/Unity.AutoGroupGenerator.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Editor/AutoGroupGenerator/Unity.AutoGroupGenerator.Editor.asmdef",
+    "sha256": "99b779980b68ad5fe30d571d788101090f1be807480d4f21b6f528a4d0e7a036",
+    "size": 586
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Editor/Unity.Addressables.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Editor/Unity.Addressables.Editor.asmdef",
+    "sha256": "d1b8e4541557be25697d3cd9b21733bed2269a425afa689cc179cff4a0dbfd89",
+    "size": 1218
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Unity.ResourceManager.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Unity.ResourceManager.asmdef",
+    "sha256": "8d4ddbeb8039435e62e5006f30fe0ba7546c08d73c9022bc2152343773818f24",
+    "size": 852
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/Unity.Addressables.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/Unity.Addressables.asmdef",
+    "sha256": "cb95e136ef4d3b17f33bae873fe7e4e59dde75ff98de935c6fc262e264ab266e",
+    "size": 689
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Editor/DocExampleCode/Unity.Addressables.DocExampleCode.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Editor/DocExampleCode/Unity.Addressables.DocExampleCode.Editor.Tests.asmdef",
+    "sha256": "945a0f77ac893ec456fb01bd6843904ae21bbaed817c8c51bd57c36bf8139d60",
+    "size": 1407
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Editor/Unity.Addressables.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Editor/Unity.Addressables.Editor.Tests.asmdef",
+    "sha256": "37d2ec1fa5efea78fe452b1029882a05930e7cb3ef45e9bd1575607e0465344e",
+    "size": 1778
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Runtime/ResourceManager/Unity.ResourceManager.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Runtime/ResourceManager/Unity.ResourceManager.Tests.asmdef",
+    "sha256": "9702790a7e07e35f95caa12b5a60ad669e3304a30941ffe5560cacaffcce9233",
+    "size": 610
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Runtime/Unity.Addressables.Runtime.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce/Tests/Runtime/Unity.Addressables.Runtime.Tests.asmdef",
+    "sha256": "710d1b526a72c89be4f0a1fa14534ecbce149b53af5bd5111823afb022c662b7",
+    "size": 1214
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Annotations/Unity.AI.Assistant.Annotations.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Annotations/Unity.AI.Assistant.Annotations.Editor.asmdef",
+    "sha256": "8032056cdb830359dbf47b07264e18c73e3753149a75e2aa050157b8a73ff85b",
+    "size": 422
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Api/Unity.AI.Assistant.API.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Api/Unity.AI.Assistant.API.Editor.asmdef",
+    "sha256": "d721a874c8cfa39e2f6d07c7ffe606ba1d735e1d60db7ef562252a9bc69e9962",
+    "size": 547
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/AssetGenerators/Unity.AI.Assistant.AssetGenerators.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/AssetGenerators/Unity.AI.Assistant.AssetGenerators.Editor.asmdef",
+    "sha256": "ee1120a5d7a9bf6413f99853f41e0845ee0f790168237f212c44d779d61403cc",
+    "size": 846
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Integrations/Profiler/Unity.AI.Assistant.Integrations.Profiler.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Integrations/Profiler/Unity.AI.Assistant.Integrations.Profiler.Editor.asmdef",
+    "sha256": "9f21f372255341344e4cb7d8ac1815f9bd1132acf79d99252a4e9e14d2c2db6a",
+    "size": 628
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Integrations/Sample/Unity.AI.Assistant.Integrations.Sample.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Integrations/Sample/Unity.AI.Assistant.Integrations.Sample.asmdef",
+    "sha256": "305ce6646b825ec76e31b39d5598d2d3be49f8fabb9a796f4a00c44963d9ae5e",
+    "size": 643
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/RunCommand/AgentExtensionAssembly/Unity.AI.Assistant.Agent.Dynamic.Extension.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/RunCommand/AgentExtensionAssembly/Unity.AI.Assistant.Agent.Dynamic.Extension.Editor.asmdef",
+    "sha256": "b0c8d108836d281701da52a00ef136d66646cf5ac999fc1eef9409b39e71f5af",
+    "size": 453
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Unity.AI.Assistant.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Unity.AI.Assistant.Editor.asmdef",
+    "sha256": "6b3e6142117af4fecddf1ce010d19b8f29a8bf8085fec1ed34d21f384d58e3da",
+    "size": 971
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/InternalBridge/Unity.AI.Assistant.Bridge.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/InternalBridge/Unity.AI.Assistant.Bridge.Editor.asmdef",
+    "sha256": "a7e9039b241bf4821bc3ba6b51b93d42d6f47899c48a4a17b02ac8a33cc2de4b",
+    "size": 564
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/UI/Unity.AI.Assistant.UI.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/UI/Unity.AI.Assistant.UI.Editor.asmdef",
+    "sha256": "6320d82f2748ea4e31f4d79043ee295029b24413949e8d3275687a7227ce2347",
+    "size": 1417
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Unity.AI.Search.Editor/ThirdParty/HuggingfaceHub/HFDownloader.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Unity.AI.Search.Editor/ThirdParty/HuggingfaceHub/HFDownloader.asmdef",
+    "sha256": "5df44fc639680152ed78b9a9351904b82abd49b39837e2f4100a8c5b5f0b41a8",
+    "size": 401
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Unity.AI.Search.Editor/Unity.AI.Search.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Unity.AI.Search.Editor/Unity.AI.Search.Editor.asmdef",
+    "sha256": "b3b6e8395bcd4e312f9bdac3907f60915ada11a88a9929a910d3afe574cdc357",
+    "size": 855
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Animate/Motion/Runtime/Scripts/Unity.AI.Animate.Motion.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Animate/Motion/Runtime/Scripts/Unity.AI.Animate.Motion.Runtime.asmdef",
+    "sha256": "04aa9ee686e8b8f50a26d5b190068077d2e97b7d2803b496d7ef33c519058f6b",
+    "size": 382
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Animate/Unity.AI.Animate.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Animate/Unity.AI.Animate.asmdef",
+    "sha256": "64db99b76aa5c8df2fad0f97969cf808b4217db2b44fbba599c75ffd0341f31d",
+    "size": 1293
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Assistant.Tools/Unity.AI.Assistant.Tools.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Assistant.Tools/Unity.AI.Assistant.Tools.Editor.asmdef",
+    "sha256": "03e32ac9977c23d6fe1d43e9b2605de7a5753b98190a1b8bd67f1f2299aff6d6",
+    "size": 1054
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Asset/Unity.AI.Generators.Asset.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Asset/Unity.AI.Generators.Asset.asmdef",
+    "sha256": "f51c34549166a530bd26fe44f38dee8df3f9428fa32ffad0ba1cb0325bd54d33",
+    "size": 656
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Contexts/Unity.AI.Generators.Contexts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Contexts/Unity.AI.Generators.Contexts.asmdef",
+    "sha256": "ab86adecebca06519e6de0b2af847d7c03a1a60b9e37a6433871964c16ebd394",
+    "size": 412
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.IO/Srp/Unity.AI.Generators.IO.Srp.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.IO/Srp/Unity.AI.Generators.IO.Srp.asmdef",
+    "sha256": "4ca438783ec2f96ff32b9aae2f2d1bff8d3c64c4b19ff0e283fde707680caab7",
+    "size": 594
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.IO/Unity.AI.Generators.IO.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.IO/Unity.AI.Generators.IO.asmdef",
+    "sha256": "8a9497286f67e4c7bc7fc4d10155e1fc7e4366bd009bb8c380e1ea0834d879f0",
+    "size": 650
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Redux/Unity.AI.Generators.Redux.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Redux/Unity.AI.Generators.Redux.asmdef",
+    "sha256": "f802a1344ebcca0fa21a84d459d4dab68dffb398ad1fa940b81434b29ea5c1b4",
+    "size": 558
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Sdk/Unity.AI.Generators.Sdk.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Sdk/Unity.AI.Generators.Sdk.asmdef",
+    "sha256": "d762e8056a8233b2fd54bb9788bd1e42089092a55289e3474a032fb2e657860b",
+    "size": 670
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Tools/Unity.AI.Generators.Tools.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.Tools/Unity.AI.Generators.Tools.asmdef",
+    "sha256": "6673a1f76b3adcd5bcef00733dad8b752b5759ddfa98d320f4a94a342cf13158",
+    "size": 1023
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Components/AIDropdownIntegrations/Unity.AI.Toolkit.UI.AIDropdownIntegrations.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Components/AIDropdownIntegrations/Unity.AI.Toolkit.UI.AIDropdownIntegrations.asmdef",
+    "sha256": "c4718b5734702f0290a07248a9ea8d35caa3d58e4e4c57ed9c5360c73db2596f",
+    "size": 598
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Unity.AI.Generators.UI.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Generators.UI/Unity.AI.Generators.UI.asmdef",
+    "sha256": "93e57111dbcf62171ab169298390df7b69f79c196798b244a20aea0e5f044469",
+    "size": 961
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Image/Unity.AI.Image.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Image/Unity.AI.Image.asmdef",
+    "sha256": "d2353e6201014f3491fdf6927b40f6c341e1a331392c947493ec9be1868008bb",
+    "size": 1405
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Unity.AI.MCP.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Unity.AI.MCP.Editor.asmdef",
+    "sha256": "2bdf682052329e9308ee0bc054c75b1ca6293bebc4c10c9cc16537de5dfe0a99",
+    "size": 915
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Runtime/Unity.AI.MCP.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Runtime/Unity.AI.MCP.Runtime.asmdef",
+    "sha256": "3174ae48feb775e489f54ba38f94c352f3f80c41bd1deefbd768f8ae6fceeca4",
+    "size": 374
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Mesh/Unity.AI.Mesh.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Mesh/Unity.AI.Mesh.asmdef",
+    "sha256": "8dc39584c345c745723983b45112dc026d5b85a66157bc3f9473f16f7e2b2275",
+    "size": 1435
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.ModelSelector/Unity.AI.ModelSelector.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.ModelSelector/Unity.AI.ModelSelector.asmdef",
+    "sha256": "1caa91b7e0292223d720c0450672d50609564530bdcb7b579350c86f43ec006d",
+    "size": 882
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Pbr/Srp/Unity.AI.Material.Srp.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Pbr/Srp/Unity.AI.Material.Srp.asmdef",
+    "sha256": "80eeb2e4ce8a86f7bd05f159a41363f664cdaf67891097c5ca33f90d135045ed",
+    "size": 426
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Pbr/Unity.AI.Pbr.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Pbr/Unity.AI.Pbr.asmdef",
+    "sha256": "73ef184f3cdc47d2c20c62c9d9826a06d4b7757f14538e138ecac0e31a937de9",
+    "size": 1204
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Sound/Unity.AI.Sound.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Sound/Unity.AI.Sound.asmdef",
+    "sha256": "c05a8dfbf5b014d73bb64064d090afa4b135e152493249c8a8a3f94633079021",
+    "size": 1240
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Accounts/Unity.AI.Toolkit.Accounts.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Accounts/Unity.AI.Toolkit.Accounts.asmdef",
+    "sha256": "d25ba3ff492c2804e2ddc74389ec6bf07ac3ac4dfc1c6133c95f25d279aff733",
+    "size": 695
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Asset/Unity.AI.Toolkit.Asset.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Asset/Unity.AI.Toolkit.Asset.asmdef",
+    "sha256": "341d3f9f5409d24a00efbb89040a6097d2fb8e5756e3fdd7e4132d004c05777f",
+    "size": 394
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/Unity.AI.Toolkit.Async.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/Unity.AI.Toolkit.Async.asmdef",
+    "sha256": "ed6afdfeae70a82a96c98f31efa91b708e43af6b97cf4764a337485d65158d08",
+    "size": 401
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Compliance/Unity.AI.Toolkit.Compliance.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Compliance/Unity.AI.Toolkit.Compliance.asmdef",
+    "sha256": "80d4a374dd05e0a998b3a424db47a20e3624af5d95e2c3ece0e90b421bdd14b5",
+    "size": 410
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.GenerationContextMenu/Unity.AI.Toolkit.GenerationContextMenu.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.GenerationContextMenu/Unity.AI.Toolkit.GenerationContextMenu.asmdef",
+    "sha256": "3d3f1a91c3e2254f340f269013bdd4a856d61d2c3fc326d19c2960e5c4595a55",
+    "size": 485
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.GenerationObjectPicker/Unity.AI.Toolkit.GenerationObjectPicker.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.GenerationObjectPicker/Unity.AI.Toolkit.GenerationObjectPicker.asmdef",
+    "sha256": "8aa77cdcb6adec6f81bb42aeae59d4bba6ce3c222cf532caf4607d8102e04f2b",
+    "size": 738
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Utility/Unity.AI.Toolkit.Utility.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Utility/Unity.AI.Toolkit.Utility.asmdef",
+    "sha256": "470f984bc5c9c7d9b365d63e027d2189b941c1d5af54d16b5dd8f454498d815c",
+    "size": 404
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/Unity.AI.Tracing.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/Unity.AI.Tracing.asmdef",
+    "sha256": "1721b22ec36ec0e7aae8c74266da8affc74e8dcfaefc38fb2f69146f50f4345c",
+    "size": 399
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Runtime/Unity.AI.Assistant.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Runtime/Unity.AI.Assistant.Runtime.asmdef",
+    "sha256": "ffc71c220ab3487b61cd6d23bcfed62c917017a2d9b0e2274e44bbace9f31fb7",
+    "size": 555
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Editor/Unity.Burst.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Editor/Unity.Burst.Editor.asmdef",
+    "sha256": "c8776d2022164d6caea997ce40a8ee26d74ffb8656be7b163c1facfcaef7fe17",
+    "size": 140
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Runtime/Unity.Burst.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Runtime/Unity.Burst.asmdef",
+    "sha256": "8d9da1885ac6a80f20783729def7a696f89c42d37abf04b2105dabb5de172027",
+    "size": 355
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Unity.Burst.CodeGen/Unity.Burst.CodeGen.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Unity.Burst.CodeGen/Unity.Burst.CodeGen.asmdef",
+    "sha256": "5fd74ad478b9e0482c2c689d92b3e91a5dd6961cfbbf33ce062c67706b6f74c0",
+    "size": 464
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e/Editor/Entities/Unity.PlasticSCM.Editor.Entities.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e/Editor/Entities/Unity.PlasticSCM.Editor.Entities.asmdef",
+    "sha256": "b1bbb8854d20302253e8f8e5aa362e2b6f476345cb858da77e519e49d33b9076",
+    "size": 545
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e/Editor/Unity.PlasticSCM.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e/Editor/Unity.PlasticSCM.Editor.asmdef",
+    "sha256": "cace4b007ef59a215b6b60821b277c3594bb02cb76732939482a53f4cda914be",
+    "size": 510
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e/Editor/UnityInternals/Unity.CollabProxy.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e/Editor/UnityInternals/Unity.CollabProxy.Editor.asmdef",
+    "sha256": "aa9d1eb04c24e9c5906192f4a70ce67eb7b67653df8f22a556e1ee895ef05998",
+    "size": 419
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/DocCodeSamples.Tests/DocCodeSamples.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/DocCodeSamples.Tests/DocCodeSamples.Tests.asmdef",
+    "sha256": "85d6740c2c2a0f2c756afa1f173b6a62ab9179f58928456b1a2a8538fcdb7dcb",
+    "size": 476
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections/Unity.Collections.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections/Unity.Collections.asmdef",
+    "sha256": "42fde97e4bffbf8f21dc253531f118de14ce92a469374c51a4a330152b680509",
+    "size": 934
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.BurstCompatibilityGen/Unity.Collections.BurstCompatibilityGen.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.BurstCompatibilityGen/Unity.Collections.BurstCompatibilityGen.asmdef",
+    "sha256": "35348a9e480a18f5960ea70a91c05e27e2e7aa1e9284d50538f23ade4a1861d0",
+    "size": 460
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.CodeGen/Unity.Collections.CodeGen.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.CodeGen/Unity.Collections.CodeGen.asmdef",
+    "sha256": "badce162048e4e20c744b1d4c69b48033f2480799eb34e15c106e0f03b11cc67",
+    "size": 492
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.Editor/Unity.Collections.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.Editor/Unity.Collections.Editor.asmdef",
+    "sha256": "97e11d3337c886aafce9c840e3658333c9b93c497d58a260e7a0d8cffcee1825",
+    "size": 387
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.LowLevel.ILSupport/source~/Unity.Collections.LowLevel.ILSupport/Unity.Collections.LowLevel.ILSupport.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.LowLevel.ILSupport/source~/Unity.Collections.LowLevel.ILSupport/Unity.Collections.LowLevel.ILSupport.asmdef",
+    "sha256": "44c980f62c7cd04d50dd95481f81122e6f4ffce0bae70e236be511f5a328792f",
+    "size": 291
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.LowLevel.ILSupport/source~/Unity.Collections.LowLevel.ILSupport.CodeGen/Unity.Collections.LowLevel.ILSupport.CodeGen.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.LowLevel.ILSupport/source~/Unity.Collections.LowLevel.ILSupport.CodeGen/Unity.Collections.LowLevel.ILSupport.CodeGen.asmdef",
+    "sha256": "cb38e5366a77feff49f040ec6631c27301138e2db5054de6e4cd6e7bbc968bdf",
+    "size": 442
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.PerformanceTests/Unity.Collections.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.PerformanceTests/Unity.Collections.PerformanceTests.asmdef",
+    "sha256": "4eb3ac4d0b11975db144d8870fb5dc5318c1e88fda478932bfd6c92f9bd9871c",
+    "size": 666
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.Tests/Unity.Collections.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.Tests/Unity.Collections.Tests.asmdef",
+    "sha256": "81043c30ce9d864e2940574d4ad31deeedd3a52f4ea9f9d6297e9c7d3a1357e3",
+    "size": 791
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.Tests.Playmode/Unity.Collections.Tests.Playmode.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.Tests.Playmode/Unity.Collections.Tests.Playmode.asmdef",
+    "sha256": "faccf9ebb9c247a21eb8af5ed7dc11077c6f02bdb035ed28db196437bde55705",
+    "size": 655
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Editor/Unity.Entities.Graphics.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Editor/Unity.Entities.Graphics.Editor.asmdef",
+    "sha256": "660144574574df38229f51c24ae26847b1f39b8e0988beabe41b6614d7674c7d",
+    "size": 479
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Unity.Entities.Graphics/Unity.Entities.Graphics.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Unity.Entities.Graphics/Unity.Entities.Graphics.asmdef",
+    "sha256": "4e34f4baf9b43db0742f9f97f6dd7e2ac44f0543f5c728d851277268af9f2d31",
+    "size": 2165
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Unity.Entities.Graphics.PerformanceTests/Unity.Entities.Graphics.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Unity.Entities.Graphics.PerformanceTests/Unity.Entities.Graphics.PerformanceTests.asmdef",
+    "sha256": "374dfb4f5ae3fef22b7d6af9767a0a0c2871d63e47cda53f1e3794aa7f2c6e22",
+    "size": 928
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Unity.Entities.Graphics.Tests/Unity.Entities.Graphics.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701/Unity.Entities.Graphics.Tests/Unity.Entities.Graphics.Tests.asmdef",
+    "sha256": "fe543e6b7521d129b8af410892b4899df9380cffb36a8d3cd0657eded3573b0d",
+    "size": 1891
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/DocCodeSamples.Tests/DocCodeSamples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/DocCodeSamples.Tests/DocCodeSamples.asmdef",
+    "sha256": "48a5704f8645f389f4464d2bc90d8833860b784a6447dafa09d7147d7188d79b",
+    "size": 787
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Burst.Tests/Unity.Burst.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Burst.Tests/Unity.Burst.Tests.asmdef",
+    "sha256": "aa51bf1242b7cb80115e9c7050db764cb815451b9c2a295121356e21e2624902",
+    "size": 620
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Core.Editor/Unity.Core.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Core.Editor/Unity.Core.Editor.asmdef",
+    "sha256": "651c002b480da2f895eeb5df253bc4198051aca2e80873448572029b3e7f987d",
+    "size": 342
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Deformations/Unity.Deformations.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Deformations/Unity.Deformations.asmdef",
+    "sha256": "8e33da8bbd34ecd1aab6c98f5feb24bc837d10c92cd498e463e0739588f3d6d7",
+    "size": 439
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/Unity.Entities.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/Unity.Entities.asmdef",
+    "sha256": "0a5ee04bb268d6fe885354d7f6f740dca7f58740f21452b7c0234d6fa0e1c0bc",
+    "size": 1362
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Build/Unity.Entities.Build.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Build/Unity.Entities.Build.asmdef",
+    "sha256": "9d47f0a82ff6731dc27bff808566fa2e0564a9a5c53a84114b26fe979a7826a0",
+    "size": 483
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.CodeGen/Unity.Entities.CodeGen.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.CodeGen/Unity.Entities.CodeGen.asmdef",
+    "sha256": "223232ad4e6dd5a89b1559edf5ef3b95fc9ee85960a07bf1c567832c576294cb",
+    "size": 661
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.CodeGen.Tests/Unity.Entities.CodeGen.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.CodeGen.Tests/Unity.Entities.CodeGen.Tests.asmdef",
+    "sha256": "b50870d6aa52166d2f37793f1fcc23700d78bc2131c0f2f7d033fd7c3b9c3fac",
+    "size": 917
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/ContentProvider/Selection/Unity.Entities.Editor.Properties.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/ContentProvider/Selection/Unity.Entities.Editor.Properties.asmdef",
+    "sha256": "46ea2c8e389f16bcfd9306823b61aa796d464f93a3b1c7162cd4a596826fcbd1",
+    "size": 487
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/Unity.Entities.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/Unity.Entities.Editor.asmdef",
+    "sha256": "b51e084ad15440282d9909ef3da2b10d5d17569f358c3c9676ee0e6d8a0d27d2",
+    "size": 1358
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/Unity.InternalAPIEditorBridge.002/Unity.InternalAPIEditorBridge.002.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/Unity.InternalAPIEditorBridge.002/Unity.InternalAPIEditorBridge.002.asmdef",
+    "sha256": "d92957ce69263f96f9f241d039eca5688987b9c4a65a1f8a701c3a7594682667",
+    "size": 346
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/Unity.InternalAPIEngineBridge.002/Unity.InternalAPIEngineBridge.002.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor/Unity.InternalAPIEngineBridge.002/Unity.InternalAPIEngineBridge.002.asmdef",
+    "sha256": "802229f13129ec44ead16a7e045118e55a679f66279350761b605c35b2e9dcfc",
+    "size": 309
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor.PerformanceTests/Unity.Entities.Editor.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor.PerformanceTests/Unity.Entities.Editor.PerformanceTests.asmdef",
+    "sha256": "3d0210165ff954fb6b4047114911568a531d067e24b250165c1d320cafdc14e8",
+    "size": 904
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor.Tests/Unity.Entities.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Editor.Tests/Unity.Entities.Editor.Tests.asmdef",
+    "sha256": "74ab0696eb48e4bf74ac6ab28752a4227b68f33b1c13275a051d0ffb42efc6cf",
+    "size": 1199
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid/Unity.Entities.Hybrid.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid/Unity.Entities.Hybrid.asmdef",
+    "sha256": "706efa1d9630748b1d0d09ac5c63fa06573316c07a1b2963eace683d7f771d09",
+    "size": 1091
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.EndToEnd.Tests/Unity.Entities.Hybrid.EndToEnd.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.EndToEnd.Tests/Unity.Entities.Hybrid.EndToEnd.Tests.asmdef",
+    "sha256": "a5de3855418e61a4aa5438b5c84abbc7eb27bb8c9389db8798d1bb0207f2e09e",
+    "size": 581
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.HybridComponents/Unity.Entities.Hybrid.HybridComponents.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.HybridComponents/Unity.Entities.Hybrid.HybridComponents.asmdef",
+    "sha256": "a7cf0e736b5ee6affc417aa9102ccdf103c48df0f30a69eb71dcbc3468893a7e",
+    "size": 2336
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.PerformanceTests/Unity.Entities.Hybrid.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.PerformanceTests/Unity.Entities.Hybrid.PerformanceTests.asmdef",
+    "sha256": "ff06e731ef392ff0c1a83651ed3b077bea45fd7b37954d21760c843ff932698d",
+    "size": 1080
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.Tests/Baking/ExcludedAssemblyTest/Unity.Entities.Hybrid.Tests.ExcludedAssembly.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.Tests/Baking/ExcludedAssemblyTest/Unity.Entities.Hybrid.Tests.ExcludedAssembly.asmdef",
+    "sha256": "2b6c7ce6e6254f2311eaa52e59d77040973a0c93590e2fe4fbd3c3626f00aa4e",
+    "size": 549
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.Tests/Baking/SeparateAssembly/Unity.Entities.Hybrid.Tests.SeparateAssembly.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.Tests/Baking/SeparateAssembly/Unity.Entities.Hybrid.Tests.SeparateAssembly.asmdef",
+    "sha256": "d7c6c25ac3da645cbefdc86a0ef86ebe8ab59d4e10dbabd6e465ff03efba5f9c",
+    "size": 537
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.Tests/Unity.Entities.Hybrid.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Hybrid.Tests/Unity.Entities.Hybrid.Tests.asmdef",
+    "sha256": "e378ebe8f86ba80819675729c2b9fb7ce8d5bd38f113041080ae55d6ecfdd777",
+    "size": 1140
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.PerformanceTests/Unity.Entities.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.PerformanceTests/Unity.Entities.PerformanceTests.asmdef",
+    "sha256": "b893d34b53cd1bd714c7b8f492e69bb91f7347757ea0f355ade8384fd9a04d27",
+    "size": 755
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.TestComponents/Unity.TestComponents.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.TestComponents/Unity.TestComponents.asmdef",
+    "sha256": "f3aa631454d3a333810c5492b5650d8be9d47e92421062a6bba87f33c49c2311",
+    "size": 361
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/Content/ContentDeliveryTests/Unity.Entities.ContentDeliveryGlobalState.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/Content/ContentDeliveryTests/Unity.Entities.ContentDeliveryGlobalState.Tests.asmdef",
+    "sha256": "eabbad06b0ad637908564fd91d46f3c3c0d42bca22b174b3dd1350ef044096b1",
+    "size": 736
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/ExplicitlyDisabledSystem/Unity.Entities.Tests.ExplicitlyDisabledSystem.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/ExplicitlyDisabledSystem/Unity.Entities.Tests.ExplicitlyDisabledSystem.asmdef",
+    "sha256": "28fbdd8e6ef3dcc6761aa81279ef465357f2e27231fbd85c285848b5bdd15485",
+    "size": 523
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/InAnotherAssembly/Unity.Entities.Tests.InAnotherAssembly.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/InAnotherAssembly/Unity.Entities.Tests.InAnotherAssembly.asmdef",
+    "sha256": "9d5c1c61921ca137b68fb23cf65052f9377e385da397cc4e3557712328a92ea5",
+    "size": 464
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/InAnotherEmptyAssembly/Unity.Entities.Tests.InAnotherEmptyAssembly.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/InAnotherEmptyAssembly/Unity.Entities.Tests.InAnotherEmptyAssembly.asmdef",
+    "sha256": "2a99b3e8e810deb08420d33254e1a74e338c9f37b4b737cf177b5578ec3a7bf9",
+    "size": 465
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/Unity.Entities.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.Tests/Unity.Entities.Tests.asmdef",
+    "sha256": "d2a28db4e7eb6c5000759c8ad8dbb52723fe8fd55ffd520a8400c1b042bd9b58",
+    "size": 1414
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.UI/Unity.Entities.UI.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.UI/Unity.Entities.UI.asmdef",
+    "sha256": "1329b4c694d84342592528270c88bc9b18c637f97f3fb8ea7a4aa050ef04dc8a",
+    "size": 379
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.UI.Editor/Unity.Entities.UI.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities.UI.Editor/Unity.Entities.UI.Editor.asmdef",
+    "sha256": "71793d2855c41af0581bd573e15e905e1ecbb7a5da8cf512250245c0b7dde7ad",
+    "size": 509
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Mathematics.Extensions/Unity.Mathematics.Extensions.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Mathematics.Extensions/Unity.Mathematics.Extensions.asmdef",
+    "sha256": "f7cda67f2d78167235d6acd4dc9a94543aca3709fa07e7edeb7953cf680b0fa3",
+    "size": 446
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Mathematics.Extensions.Hybrid/Unity.Mathematics.Extensions.Hybrid.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Mathematics.Extensions.Hybrid/Unity.Mathematics.Extensions.Hybrid.asmdef",
+    "sha256": "2fbe6badfdc4aa2ecb55f770abc6dfb5e951c091d9b2dafe645d38d433ae80ed",
+    "size": 494
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Mathematics.Extensions.Tests/Unity.Mathematics.Extensions.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Mathematics.Extensions.Tests/Unity.Mathematics.Extensions.Tests.asmdef",
+    "sha256": "2fad4b53fb93c5c2e3caa740e96ea62dba22ffeb33a34b835fbd0459099d4670",
+    "size": 563
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/Unity.Scenes.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/Unity.Scenes.asmdef",
+    "sha256": "f566883655f9f8469e80b51d515195487a87ba4f364125d6adb5c214857af2a2",
+    "size": 638
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/Unity.Scenes.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/Unity.Scenes.Editor.asmdef",
+    "sha256": "1873fc50461ed106e739dbe7ddc25de2232ba9a70453dc6f3a3c466cb68f4536",
+    "size": 1015
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor.PerformanceTests/Unity.Scenes.Editor.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor.PerformanceTests/Unity.Scenes.Editor.PerformanceTests.asmdef",
+    "sha256": "acbbccdb039026bbab846b8516a7f03b25178781057815d0e1b8e85374ba2b8d",
+    "size": 971
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor.Tests/TypeDependencyCacheTestAssembly/TypeDependencyCacheTestAssembly.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor.Tests/TypeDependencyCacheTestAssembly/TypeDependencyCacheTestAssembly.asmdef",
+    "sha256": "d2243161982e9f5f1e0492bb0a9f5aa2d34c4013df65b03bcc475762004b7497",
+    "size": 924
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor.Tests/Unity.Scenes.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor.Tests/Unity.Scenes.Editor.Tests.asmdef",
+    "sha256": "ea6b5cf7fcc0494eb12bce8926195822e6b49d2d223a54cf6a434eb0753472dd",
+    "size": 919
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Hybrid.Tests/Editmode/Content/Unity.Scenes.Hybrid.Tests.Editmode.Content.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Hybrid.Tests/Editmode/Content/Unity.Scenes.Hybrid.Tests.Editmode.Content.asmdef",
+    "sha256": "154de96946848e47c3aff582318d10c7c06c714d392d2b1470f6db3d169f118e",
+    "size": 964
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Hybrid.Tests/Editmode/Unity.Scenes.Hybrid.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Hybrid.Tests/Editmode/Unity.Scenes.Hybrid.Tests.asmdef",
+    "sha256": "d4c847b58d87843368ce087c0d9f3309d710febf553f73301b615d1417183a0b",
+    "size": 1033
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Hybrid.Tests/Playmode/Unity.Scenes.Hybrid.Tests.Playmode.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Hybrid.Tests/Playmode/Unity.Scenes.Hybrid.Tests.Playmode.asmdef",
+    "sha256": "52a526a3a638c19750a8708a68f1520b2e72b3678d71a9bd77c382e5ffbbdfa1",
+    "size": 833
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.PerformanceTests/Unity.Scenes.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.PerformanceTests/Unity.Scenes.PerformanceTests.asmdef",
+    "sha256": "ffba6e8469b8e3d1af23ccf443b2e8797842b2838bd685be691dbe8834cbaa17",
+    "size": 638
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Tests/Unity.Scenes.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Tests/Unity.Scenes.Tests.asmdef",
+    "sha256": "348480501a5c88a76c74173488af1f73b118be2a078b837e0af525f45e82ec8b",
+    "size": 673
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms/Unity.Transforms.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms/Unity.Transforms.asmdef",
+    "sha256": "9281aeb6221a5c52f1c0ab3b9ef8e0909316ac08f263b109b96a0ac19253cc24",
+    "size": 488
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.Hybrid/Unity.Transforms.Hybrid.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.Hybrid/Unity.Transforms.Hybrid.asmdef",
+    "sha256": "8b15a5a7d0ba06cbe7631cd245b535c00af3ad1dcca1ebceef384360c0086a15",
+    "size": 528
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.Hybrid.Tests/Unity.Transforms.Hybrid.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.Hybrid.Tests/Unity.Transforms.Hybrid.Tests.asmdef",
+    "sha256": "d22367f3c99db99978c82bb4029c02fca5cfbebe75dc91aed61f99e1a068c2a7",
+    "size": 864
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.PerformanceTests/Unity.Transforms.PerformanceTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.PerformanceTests/Unity.Transforms.PerformanceTests.asmdef",
+    "sha256": "bf3d54c1b38ac38d8f188aca03f25b32dbb115b952d9e04f5793c806af15a95b",
+    "size": 729
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.Tests/Unity.Transforms.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Transforms.Tests/Unity.Transforms.Tests.asmdef",
+    "sha256": "6a104bfbd067425c7c0fa97fe1d929b0666c1abd9ddb1030bea2d04e4a0e8caa",
+    "size": 629
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ide.rider@e4950c6d131b/Rider/Editor/com.unity.ide.rider.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ide.rider@e4950c6d131b/Rider/Editor/com.unity.ide.rider.asmdef",
+    "sha256": "ba3779f93596d72aec54440f35e2d7832fdb1a60706a0d8bd22e2bf710ab3d05",
+    "size": 1168
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6/Editor/com.unity.ide.visualstudio.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6/Editor/com.unity.ide.visualstudio.asmdef",
+    "sha256": "4eef7a45958c27a91295d8bdc51e63154e31457568dac7dadec52d6d4a961a10",
+    "size": 389
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/DocCodeSamples.Tests/DocCodeSamples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/DocCodeSamples.Tests/DocCodeSamples.asmdef",
+    "sha256": "f500a3c7146afa6021cc991a5de3798cdb8855231f7d43bde57a120ebfd00f28",
+    "size": 440
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/InputForUI/InputSystemForUI.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/InputForUI/InputSystemForUI.asmdef",
+    "sha256": "13973c63308f211aab698b09d2c8a006617ab6fde6c7683613c4fb5474ad568f",
+    "size": 364
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Unity.InputSystem.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Unity.InputSystem.asmdef",
+    "sha256": "6482e194ea960e1d4aef82c9012c5032f76880174d5caaadf8c834d9af2385cf",
+    "size": 3098
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/InGameHints/Unity.InputSystem.InGameHints.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/InGameHints/Unity.InputSystem.InGameHints.asmdef",
+    "sha256": "3f7902ed21ede989ceab90ee2716a4c8babc1116026d7ae305d312794c1183ca",
+    "size": 439
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/InputRecorder/Unity.InputSystem.Recorder.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/InputRecorder/Unity.InputSystem.Recorder.asmdef",
+    "sha256": "dc6ccf3a880a024ae846dfa21f898a157612ded29b5924a50ff7dc864dd244db",
+    "size": 388
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/ProjectWideActions/ProjectWideActions.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/ProjectWideActions/ProjectWideActions.asmdef",
+    "sha256": "15d786ae35dff8de26f06fe48668dc581254d0515b29a1d78a8d89125364e23f",
+    "size": 404
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/RebindingUI/Unity.InputSystem.RebindingUI.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/RebindingUI/Unity.InputSystem.RebindingUI.asmdef",
+    "sha256": "e92f7fcc5b6c2008a8d923b91a374f8b912d81cb9e8947138cbf70515c977ba0",
+    "size": 393
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/UIvsGameInput/Unity.InputSystem.UIvsGameInput.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/UIvsGameInput/Unity.InputSystem.UIvsGameInput.asmdef",
+    "sha256": "a27392a53ee94c8ff847b5396a0a790c7a912da13cf781895193086c012e9593",
+    "size": 455
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/Visualizers/Unity.InputSystem.Visualizers.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Samples~/Visualizers/Unity.InputSystem.Visualizers.asmdef",
+    "sha256": "347e1743347d74df4d42dba1922352a926d9d4c653cb2c8d682854d081f3d5b7",
+    "size": 393
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/IntegrationTests/Unity.InputSystem.IntegrationTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/IntegrationTests/Unity.InputSystem.IntegrationTests.asmdef",
+    "sha256": "7974a2255f6aa18cf0ef3c0003b43fbc3452ad289486cc4bbe8bfe61a69d509e",
+    "size": 498
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/TestFixture/Unity.InputSystem.TestFramework.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/TestFixture/Unity.InputSystem.TestFramework.asmdef",
+    "sha256": "699f22f5ce819a0d7c87163df88be18f9b8f1279dc10045d7acaf47d7851a884",
+    "size": 642
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.mathematics@981956d94fb6/Tests/Editor/Unity.Mathematics.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.mathematics@981956d94fb6/Tests/Editor/Unity.Mathematics.Editor.Tests.asmdef",
+    "sha256": "b1d59078312ea9ceb3bc8e8007479153aa1f5c1fac191184dab3f8f069504d56",
+    "size": 436
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.mathematics@981956d94fb6/Unity.Mathematics/Unity.Mathematics.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.mathematics@981956d94fb6/Unity.Mathematics/Unity.Mathematics.asmdef",
+    "sha256": "afcd6c097f4960a0a9966244124e4a57b1ecb6f21db89318081d310add1cad00",
+    "size": 58
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Common/Unity.Multiplayer.Center.Common.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Common/Unity.Multiplayer.Center.Common.asmdef",
+    "sha256": "23c9ac68f1ca0207669735dd8ed718235cf9449ee3fc476cf00665d3e075c99b",
+    "size": 47
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Editor/Unity.Multiplayer.Center.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Editor/Unity.Multiplayer.Center.Editor.asmdef",
+    "sha256": "b87c944aeda00fe3d75f54f85e8422e4cc29d5f6b86d76adb878d039693a6d45",
+    "size": 457
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Tests/Editor/Unity.Multiplayer.Center.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Tests/Editor/Unity.Multiplayer.Center.Editor.Tests.asmdef",
+    "sha256": "d591042b5bc30fa14420256fd04968744ffa31e0c65fe17a05c5cf502e260921",
+    "size": 669
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Tests/Runtime/Unity.Multiplayer.Center.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Tests/Runtime/Unity.Multiplayer.Center.Tests.asmdef",
+    "sha256": "c9dfe92ebb8ded8a9c0726056bf26708d6725c1b3e41fdb863e6bc9ffd55e6fe",
+    "size": 690
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Tests/Editor/Unity.Nuget.Mono-Cecil.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Tests/Editor/Unity.Nuget.Mono-Cecil.Editor.Tests.asmdef",
+    "sha256": "c57680241b5502ddde2edada012fc1be7591a7a7f803daa0a6feb8264bd205b2",
+    "size": 423
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/CodeGen/Unity.Pipeline.CodeGen.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/CodeGen/Unity.Pipeline.CodeGen.asmdef",
+    "sha256": "856e4f0f96c3a966fe51b36c7dc36d25d08998a70d027f2037568bde2e546b58",
+    "size": 521
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/Unity.Pipeline.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/Unity.Pipeline.Editor.asmdef",
+    "sha256": "fbfaba3bb56855222d71d53485369214d1b963a1c1ae72560d1f448ead8d67df",
+    "size": 507
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/IlInterpreter/Unity.Pipeline.IlInterpreter.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/IlInterpreter/Unity.Pipeline.IlInterpreter.asmdef",
+    "sha256": "2c8f9a98c575d5f1310189ef3e78e94042171b611b5a546cf0464995cd9c177f",
+    "size": 361
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Unity.Pipeline.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Unity.Pipeline.asmdef",
+    "sha256": "f3e1acae1bca75f21a15660261f4c7a54cce69345fc858af588cfa9e61861623",
+    "size": 855
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Samples~/HotReload/Unity.Pipeline.Samples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Samples~/HotReload/Unity.Pipeline.Samples.asmdef",
+    "sha256": "6f2afaa5452ce469420b82717f28d303df7c6907f16962ec3ccdc8a057f8de56",
+    "size": 418
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Tests/Editor/Unity.Pipeline.Tests.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Tests/Editor/Unity.Pipeline.Tests.Editor.asmdef",
+    "sha256": "7cc93bd8ff313306aa2324d20f25b21f7a18b94d2405757e283502e9332b93f2",
+    "size": 762
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Tests/Runtime/Unity.Pipeline.Tests.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Tests/Runtime/Unity.Pipeline.Tests.Runtime.asmdef",
+    "sha256": "bf5efae222cc525f92574b342429c452a2b304ddc88477c606675c5e6bedfec6",
+    "size": 563
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Addons/Unity.ProBuilder.AddOns.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Addons/Unity.ProBuilder.AddOns.Editor.asmdef",
+    "sha256": "9dd5a24e9bdad47e717c1e8b9fa2b03749c64b078ed714e3d6e8b82fd2fa7c9f",
+    "size": 654
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/AssetIdRemapUtility/Editor/Unity.ProBuilder.AssetIdRemapUtility.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/AssetIdRemapUtility/Editor/Unity.ProBuilder.AssetIdRemapUtility.asmdef",
+    "sha256": "72558adbfbd0830f264379dac82fd53a9d335295ff9956bf1d1cf4d2886dbd6b",
+    "size": 219
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Editor/Unity.ProBuilder.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Editor/Unity.ProBuilder.Editor.asmdef",
+    "sha256": "989259c9f606a9df2381e210730a8af739e994eef78bed42ec08b38f27010c89",
+    "size": 506
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/CSG/Unity.ProBuilder.Csg.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/CSG/Unity.ProBuilder.Csg.asmdef",
+    "sha256": "c08c43d341fe5cf9d071d20188dcfc171a75d93f4fa724288093f4b55b705449",
+    "size": 305
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/KdTree/Unity.ProBuilder.KdTree.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/KdTree/Unity.ProBuilder.KdTree.asmdef",
+    "sha256": "72e0162a4918f1cae57214dba4134996e51f11b315b622ad887531f085229af5",
+    "size": 308
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/Poly2Tri/Unity.ProBuilder.Poly2Tri.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/Poly2Tri/Unity.ProBuilder.Poly2Tri.asmdef",
+    "sha256": "f9d28321a25b6b3d2798a8ac3dd3972ce2dc84649e8d14134c378ab02685081a",
+    "size": 310
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/StlExporter/Unity.ProBuilder.Stl.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/External/StlExporter/Unity.ProBuilder.Stl.asmdef",
+    "sha256": "56aa3515a0c2f5e0f5c17b2b92381d11fbc935280d72d7ef659553c23b5dee27",
+    "size": 305
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Runtime/Unity.ProBuilder.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Runtime/Unity.ProBuilder.asmdef",
+    "sha256": "b9d947e62093aa51c6ce8fb9a9f54ab31f177669c9f82e0b3de36914646e1c55",
+    "size": 1059
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Samples~/Editor/Unity.ProBuilder.Examples.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Samples~/Editor/Unity.ProBuilder.Examples.Editor.asmdef",
+    "sha256": "2c5a3e6963f91d1d0de0855e6c5ddf6340b7f0eec9d7e404f5de83ac7e1f475d",
+    "size": 431
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Samples~/Runtime/Unity.ProBuilder.Examples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335/Samples~/Runtime/Unity.ProBuilder.Examples.asmdef",
+    "sha256": "44ae487cd88ddb968e5899dab25073678d1615db1f1b492ca161bb6baa66c884",
+    "size": 354
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.profiling.core@8a49f7027d06/Runtime/Unity.Profiling.Core.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.profiling.core@8a49f7027d06/Runtime/Unity.Profiling.Core.asmdef",
+    "sha256": "34f65b55a2c1bfb48dae1a4379ce00641b198c02a1d84c1b1db1956d3f0e103a",
+    "size": 305
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/InternalBridge/Unity.InternalAPIEngineBridge.RenderPipelines.Core.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/InternalBridge/Unity.InternalAPIEngineBridge.RenderPipelines.Core.Editor.asmdef",
+    "sha256": "5dd5854d035e08c074423fcf722ba6b705d36441f1ddf763a9c9106511cc8218",
+    "size": 412
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/PathTracing/Unity.PathTracing.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/PathTracing/Unity.PathTracing.Editor.asmdef",
+    "sha256": "00e767c567a38657f2f2d7101b6da2564478e71197d582404c8d2dd396d45f88",
+    "size": 750
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/UnifiedRayTracing/Unity.UnifiedRayTracing.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/UnifiedRayTracing/Unity.UnifiedRayTracing.Editor.asmdef",
+    "sha256": "3067d868656adfed63aeca320167eb43eed550899c9d9ad4076261f60b655e8a",
+    "size": 392
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/Unity.RenderPipelines.Core.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor/Unity.RenderPipelines.Core.Editor.asmdef",
+    "sha256": "a9a5da7e13e6ee7459e8014c1fb61349fc2e671c38dbcc9ba94a79419b5e02f3",
+    "size": 1565
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor-PrivateShared/Unity.RenderPipelines.Core.Editor.Shared.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Editor-PrivateShared/Unity.RenderPipelines.Core.Editor.Shared.asmdef",
+    "sha256": "2ef9a812d6f01b1f094577e32f88bdf694081b3204d1c26269bdb036c9ba760c",
+    "size": 741
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/GPUDriven/Unity.RenderPipelines.GPUDriven.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/GPUDriven/Unity.RenderPipelines.GPUDriven.Runtime.asmdef",
+    "sha256": "5433e09342c0d7c8270f00efe9fd427d868b062f6fa5ab3ad209df0d57454168",
+    "size": 571
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/Lighting/SurfaceCache/Unity.SurfaceCache.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/Lighting/SurfaceCache/Unity.SurfaceCache.Runtime.asmdef",
+    "sha256": "01a177d8c6ebea9cb300a9357ae438d9093002df321e0ebbd46edd079b93ab46",
+    "size": 559
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/PathTracing/Unity.PathTracing.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/PathTracing/Unity.PathTracing.Runtime.asmdef",
+    "sha256": "0dd03b98aa2e5176d90654318c13b12fa3e5ee0d76291c97dc2897007832bf3e",
+    "size": 1050
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/UnifiedRayTracing/Unity.UnifiedRayTracing.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/UnifiedRayTracing/Unity.UnifiedRayTracing.Runtime.asmdef",
+    "sha256": "b73c4788793fdb91d600c3aef8ad0e8ad7d8633f2e66604453b3aeb606acfefa",
+    "size": 627
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/Unity.RenderPipelines.Core.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime/Unity.RenderPipelines.Core.Runtime.asmdef",
+    "sha256": "0e572634a88cd79dfe2fd005c9c4c47e02b43b373b27154257dc048299139904",
+    "size": 1789
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime-PrivateShared/InternalBridge/Unity.InternalAPIEngineBridge.RenderPipelines.Core.Runtime.Shared.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime-PrivateShared/InternalBridge/Unity.InternalAPIEngineBridge.RenderPipelines.Core.Runtime.Shared.asmdef",
+    "sha256": "19f0b8d844420f9933893d96181a484fc51c005f4649092fe50fc524c36d7ac2",
+    "size": 398
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime-PrivateShared/Unity.RenderPipelines.Core.Runtime.Shared.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Runtime-PrivateShared/Unity.RenderPipelines.Core.Runtime.Shared.asmdef",
+    "sha256": "645ceb4139444ab1c0af4660d4c69c76d501cae894756e93de5986d76aebeee5",
+    "size": 524
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Samples~/Common/Scripts/Editor/Unity.RenderPipelines.Core.Samples.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Samples~/Common/Scripts/Editor/Unity.RenderPipelines.Core.Samples.Editor.asmdef",
+    "sha256": "5bd6bd428555d44c196ae1fa75252d2248a42a366ebf1f5d3274e19af1724907",
+    "size": 755
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Samples~/Common/Scripts/Unity.RenderPipelines.Core.Samples.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Samples~/Common/Scripts/Unity.RenderPipelines.Core.Samples.Runtime.asmdef",
+    "sha256": "0abaad75756a16dba1861038af2c0051375876eb8cb2cb7e6e627a58fd9cf1a7",
+    "size": 635
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/ShaderLibrary/Unity.RenderPipelines.Core.ShaderLibrary.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/ShaderLibrary/Unity.RenderPipelines.Core.ShaderLibrary.asmdef",
+    "sha256": "b2051214e095e0a69f63aa2af6bdb53c93d60ff39e63895d4e702e17b60e4c82",
+    "size": 58
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Editor/PathTracing/Unity.PathTracing.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Editor/PathTracing/Unity.PathTracing.Editor.Tests.asmdef",
+    "sha256": "62ab8dd76858254cd71e7fcb28e0f794f17c3ac466b04879bc70b0704b3458d0",
+    "size": 654
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Editor/UnifiedRayTracing/Unity.UnifiedRayTracing.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Editor/UnifiedRayTracing/Unity.UnifiedRayTracing.Editor.Tests.asmdef",
+    "sha256": "2556fd1c8242070c2acc3a4013dedd2cd3e610efb20ff450fa83a95758249d1d",
+    "size": 611
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Editor/Unity.RenderPipelines.Core.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Editor/Unity.RenderPipelines.Core.Editor.Tests.asmdef",
+    "sha256": "de121c29077e65cc7e1241c8ca20334ee0d457df08effdbe41a494bf979b25c4",
+    "size": 1069
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Runtime/PathTracing/Unity.PathTracing.Runtime.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Runtime/PathTracing/Unity.PathTracing.Runtime.Tests.asmdef",
+    "sha256": "ea0fa1d282ea1f4065f74485ea3d545ccd3de036276a9cad651146d8e14e7ba5",
+    "size": 634
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Runtime/Unity.RenderPipelines.Core.Runtime.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789/Tests/Runtime/Unity.RenderPipelines.Core.Runtime.Tests.asmdef",
+    "sha256": "ee0ee2ae14e5d4320540fe24602a3ef5fcde9af2eb27ab853ee7163655c41814",
+    "size": 944
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3/Runtime/Unity.RenderPipelines.Universal.Config.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3/Runtime/Unity.RenderPipelines.Universal.Config.Runtime.asmdef",
+    "sha256": "16d7112f7cab59f0b035f1175ac45b1da87891c3e3addf44ab2b7844083498b5",
+    "size": 431
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3/Tests/Editor/Unity.RenderPipelines.Universal.Config.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3/Tests/Editor/Unity.RenderPipelines.Universal.Config.Editor.Tests.asmdef",
+    "sha256": "dad523781af9338033ac45f2b88f00ceb21d540cf2bd363b039a72f73e401caf",
+    "size": 547
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Editor/2D/Overrides/Unity.RenderPipelines.Universal.2D.Editor.Overrides.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Editor/2D/Overrides/Unity.RenderPipelines.Universal.2D.Editor.Overrides.asmdef",
+    "sha256": "005ad00f599f1a6bf362d86b52e7cdfe6b8e0ef0fb8b950b8b67387c9ff4070d",
+    "size": 2019
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Editor/Unity.RenderPipelines.Universal.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Editor/Unity.RenderPipelines.Universal.Editor.asmdef",
+    "sha256": "fbbbe1a3f455bba375e90bd80fe4244015260a3cbaf8200a4d18651dde8e7cef",
+    "size": 2666
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Runtime/2D/Unity.RenderPipelines.Universal.2D.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Runtime/2D/Unity.RenderPipelines.Universal.2D.Runtime.asmdef",
+    "sha256": "b7790fec98b481ed56c8b517bf785446e76a218bccd5e053cb0679bc8739fb04",
+    "size": 1855
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Runtime/Unity.RenderPipelines.Universal.Runtime.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Runtime/Unity.RenderPipelines.Universal.Runtime.asmdef",
+    "sha256": "49e310e554ca62ca9ca26d072d0e0bce90713561474920c2a96b3086b03925d9",
+    "size": 2198
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Samples~/URPPackageSamples/SharedAssets/Scripts/SampleAssembly.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Samples~/URPPackageSamples/SharedAssets/Scripts/SampleAssembly.asmdef",
+    "sha256": "d6ddb1e904f7da17f48f366418780980b8a5c71d61db6dd4175b35d587a4234e",
+    "size": 562
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/ShaderLibrary/Unity.RenderPipelines.Universal.ShaderLibrary.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/ShaderLibrary/Unity.RenderPipelines.Universal.ShaderLibrary.asmdef",
+    "sha256": "abc54315cacf6aa2745122d8ce98fcd07b67126bb23e8896c8e74ba95aacf96e",
+    "size": 372
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Shaders/Unity.RenderPipelines.Universal.Shaders.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Shaders/Unity.RenderPipelines.Universal.Shaders.asmdef",
+    "sha256": "feb04e96c50ab6c25caf6005e91cf86f644794366ad46f7267b4a88118f11863",
+    "size": 347
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Tests/Editor/Unity.RenderPipelines.Universal.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Tests/Editor/Unity.RenderPipelines.Universal.Editor.Tests.asmdef",
+    "sha256": "cec106e5ae7b898653b3cf9fdeb13418c51d3d4a4e8373d32f1ac928cf3a7c3f",
+    "size": 1155
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Tests/Runtime/Unity.RenderPipelines.Universal.Runtime.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e/Tests/Runtime/Unity.RenderPipelines.Universal.Runtime.Tests.asmdef",
+    "sha256": "9785799f484eb48266452db1bbff5adbab5c0e46d3399f44b2cd4585d0288da0",
+    "size": 1046
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Editor/Unity.ScriptableBuildPipeline.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Editor/Unity.ScriptableBuildPipeline.Editor.asmdef",
+    "sha256": "1bad4faf8c605b1046ae566f5bb5a55bfc369b940e3a6c6ce86422d8948db68c",
+    "size": 1339
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Runtime/Unity.ScriptableBuildPipeline.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Runtime/Unity.ScriptableBuildPipeline.asmdef",
+    "sha256": "b717b7243048dab1f66f7604f93099aaa578f5bee0383db79c10d1b44112df7d",
+    "size": 48
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Tests/Editor/Unity.ScriptableBuildPipeline.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Tests/Editor/Unity.ScriptableBuildPipeline.Editor.Tests.asmdef",
+    "sha256": "3c92b4e59f12c65fc425b34ed9393d2dc265c702faea9990074d9f88c26a0288",
+    "size": 911
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Tests/Runtime/TestAssets/Unity.ScriptableBuildPipelineTests.Runtime.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Tests/Runtime/TestAssets/Unity.ScriptableBuildPipelineTests.Runtime.Tests.asmdef",
+    "sha256": "5b014835b9d87706b72b46b55d6219a4eb7d1bc327bc9a49eee5235abe48ebdd",
+    "size": 554
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Tests/Runtime/Unity.ScriptableBuildPipeline.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040/Tests/Runtime/Unity.ScriptableBuildPipeline.Tests.asmdef",
+    "sha256": "6a75649c2a71d645971fa8428345bf63b3ace5cfb4931bad4d770819489882e7",
+    "size": 588
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Editor/Unity.Searcher.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Editor/Unity.Searcher.Editor.asmdef",
+    "sha256": "892101b73e6fb562f52862e195f7db9f93f08d62fa2917e5b0f0881022fbcd7f",
+    "size": 140
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Samples~/Editor/Unity.Searcher.EditorSamples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Samples~/Editor/Unity.Searcher.EditorSamples.asmdef",
+    "sha256": "ec335e22be8a79e56b7dafdce1c8039740d229f206ea6247f9dbf18b57c700ad",
+    "size": 255
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Samples~/Scripts/Unity.Searcher.ScriptsSamples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Samples~/Scripts/Unity.Searcher.ScriptsSamples.asmdef",
+    "sha256": "2384f63f6ab3c8ee3c5d9c81dd42efc36936443543602c98e6d6283564d846cb",
+    "size": 156
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Tests/Editor/Unity.Searcher.EditorTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00/Tests/Editor/Unity.Searcher.EditorTests.asmdef",
+    "sha256": "28dd4c9bd29cd0f6ffc45a0368ce6b49747f2f201ea15559c5dc258043d7803b",
+    "size": 384
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Editor/Unity.Serialization.Editor/Unity.Serialization.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Editor/Unity.Serialization.Editor/Unity.Serialization.Editor.asmdef",
+    "sha256": "02aa3a337d53242007cec0e5700d0a419121247c200f3c2e1d668b2c314b7b7b",
+    "size": 550
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Runtime/Unity.Serialization/Unity.Serialization.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Runtime/Unity.Serialization/Unity.Serialization.asmdef",
+    "sha256": "fa83f2572183988d9f4f02636baf61daa0d77d18080ff3b066ee2f36a506c786",
+    "size": 629
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Tests/Unity.Serialization.Editor.Tests/Unity.Serialization.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Tests/Unity.Serialization.Editor.Tests/Unity.Serialization.Editor.Tests.asmdef",
+    "sha256": "dcae9788d36500cf84194d1e60e8c886b65fc32c60712ece39c857fd8189fd5d",
+    "size": 277
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Tests/Unity.Serialization.Tests/Unity.Serialization.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18/Tests/Unity.Serialization.Tests/Unity.Serialization.Tests.asmdef",
+    "sha256": "771a1646c679f0d8651b94d4d5d14ce311b8899f8734c295fd721fdb14a9b68c",
+    "size": 569
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86/Editor/Unity.Settings.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86/Editor/Unity.Settings.Editor.asmdef",
+    "sha256": "aeb1b6c1cb510c9bb0775b1e4978c999f0f8bea261d88ee5b47326b5e2b13e4a",
+    "size": 327
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86/Samples~/Unity.Settings.Example.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86/Samples~/Unity.Settings.Example.asmdef",
+    "sha256": "4e321fad009534043105a87d9767ab079663b2cccc49d0d04349b8aa31a67c84",
+    "size": 366
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86/Tests/Editor/Unity.Settings.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86/Tests/Editor/Unity.Settings.Editor.Tests.asmdef",
+    "sha256": "154843c5a5d7e4c68e339e8395d8dfd903eb2031392b3caf0ac514f4f6b24459",
+    "size": 483
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Editor/InternalBridge/Unity.InternalAPIEditorBridge.ShaderGraph.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Editor/InternalBridge/Unity.InternalAPIEditorBridge.ShaderGraph.Editor.asmdef",
+    "sha256": "2eac0978410d46d4d33be25e9371fd982a5062498338b91ce9f53ce3d031930e",
+    "size": 404
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Editor/Unity.ShaderGraph.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Editor/Unity.ShaderGraph.Editor.asmdef",
+    "sha256": "f8f9eded976b98014c0e5f078a725218de293bbdaab3001ed90247aff7cefad7",
+    "size": 1173
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Editor/Utilities/Unity.ShaderGraph.Utilities.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Editor/Utilities/Unity.ShaderGraph.Utilities.asmdef",
+    "sha256": "ecbeefb690c522e67d9da0968b0c70f6dbaf46060ef152ea8e9442b6b111fe36",
+    "size": 326
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Samples~/UGUIShaders/Scripts/Editor/Unity.UI.Shaders.Sample.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Samples~/UGUIShaders/Scripts/Editor/Unity.UI.Shaders.Sample.Editor.asmdef",
+    "sha256": "469842e9ea785decfbe21c0ecbfff32d3286ec84fb05828e0db694b1ab218346",
+    "size": 806
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Samples~/UGUIShaders/Scripts/Runtime/Unity.UI.Shaders.Sample.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Samples~/UGUIShaders/Scripts/Runtime/Unity.UI.Shaders.Sample.asmdef",
+    "sha256": "92918b58c9f7ccf48a496c5165529d67b39c6a2a250563c85cf8239bc50dda9b",
+    "size": 623
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/ShaderGraphLibrary/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/ShaderGraphLibrary/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.asmdef",
+    "sha256": "4cdd823b4179b9a5fb890b9b2e9799cb049c2194b93f581dec3c7e26484084f9",
+    "size": 327
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Tests/Editor/Unity.ShaderGraph.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee/Tests/Editor/Unity.ShaderGraph.Editor.Tests.asmdef",
+    "sha256": "0e0b3b611cd72e386562cdaae8687a47794e6d49661cddde354330696639dc8f",
+    "size": 720
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0/Editor/Unity.PerformanceTesting.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0/Editor/Unity.PerformanceTesting.Editor.asmdef",
+    "sha256": "3f36bdff203c07766f0849a2af0a376f8ba5bc53b91c902d5b7410adbb0f50a6",
+    "size": 632
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0/Runtime/Unity.PerformanceTesting.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0/Runtime/Unity.PerformanceTesting.asmdef",
+    "sha256": "272df25d8b091a6d8f9d245b28dbd62b0e2c9d35b7b3ddd0b7ab72108806d835",
+    "size": 586
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/10_LongRunningTests/PlayModeTests_10/PlayModeTests_10.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/10_LongRunningTests/PlayModeTests_10/PlayModeTests_10.asmdef",
+    "sha256": "20c3dd5f9e7575ec5e67581d37113db69b4e8924835b436befcaaac1210156fa",
+    "size": 103
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/10_LongRunningTests_Solution/PlayModeTests_10s/PlayModeTests_10s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/10_LongRunningTests_Solution/PlayModeTests_10s/PlayModeTests_10s.asmdef",
+    "sha256": "bc6f1886c6b0970bce73ff300539b334efd13fa7715f4a4c2087eab581eae273",
+    "size": 104
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/11_SceneBasedTests/EditModeTests_11/EditModeTests_11.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/11_SceneBasedTests/EditModeTests_11/EditModeTests_11.asmdef",
+    "sha256": "8ad32e15ae142927bc42e880ee184bbea294a5529050050714e65e1a93576edb",
+    "size": 152
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/11_SceneBasedTests_Solution/EditModeTests_11s/EditModeTests_11s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/11_SceneBasedTests_Solution/EditModeTests_11s/EditModeTests_11s.asmdef",
+    "sha256": "d6204eac881a0b351da6f6d2662be194de079e2272efe5ec09e4168e5f78938e",
+    "size": 153
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/12_BuildSetupCleanup/PlayModeTests_12/PlayModeTests_12.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/12_BuildSetupCleanup/PlayModeTests_12/PlayModeTests_12.asmdef",
+    "sha256": "de5b5cbc4199c3aaae47b56c814643899b6a1debbc3499d5608a1ce535cb215b",
+    "size": 103
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/12_BuildSetupCleanup_Solution/PlayModeTests_12s/PlayModeTests_12s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/12_BuildSetupCleanup_Solution/PlayModeTests_12s/PlayModeTests_12s.asmdef",
+    "sha256": "8b1e8c15f728165fec4f23c7b38cb664e8e047d7f3082b7bbed54491061fea30",
+    "size": 104
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/13_DomainReload/Tests_13/Tests_13.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/13_DomainReload/Tests_13/Tests_13.asmdef",
+    "sha256": "526a9e5f8692c5c922da8fd2dab7cb959ed5395b9481a7cebe9dd9a910c922bf",
+    "size": 446
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/13_DomainReload_Solution/Tests_13s/Tests_13s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/13_DomainReload_Solution/Tests_13s/Tests_13s.asmdef",
+    "sha256": "68f6a4546027feeb8f5e598bf13b2c44eaedc24681debb209d888f0f22965733",
+    "size": 447
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/14_PreserveTestState/Tests_14/Tests_14.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/14_PreserveTestState/Tests_14/Tests_14.asmdef",
+    "sha256": "59f92e67e53e226c8dcbb8ad5561a56fbb3dfe392402568584ee9c961ef7eea2",
+    "size": 446
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/14_PreserveTestState_Solution/Tests_14s/Tests_14s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/14_PreserveTestState_Solution/Tests_14s/Tests_14s.asmdef",
+    "sha256": "d2ec897113dfa69fb64122f2f6f3f3ba01014a0076958a90a7bdbe1defad0265",
+    "size": 447
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases/MyGame_15/MyGame_15.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases/MyGame_15/MyGame_15.asmdef",
+    "sha256": "be1aea385f4d9594b0f3e99ae59b181c3f3f9e639a7a33e77e188363e318a162",
+    "size": 28
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases/Tests_15/Tests_15.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases/Tests_15/Tests_15.asmdef",
+    "sha256": "e79a544e1432546fb8c22748cc91f987bf34e6b0b41208fd248975bd331b8554",
+    "size": 468
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases_Solution/MyGame_15s/MyGame_15s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases_Solution/MyGame_15s/MyGame_15s.asmdef",
+    "sha256": "62956efbbb04b8a18259224c1609537746021cbeffe8bfe258540263a28bd4d0",
+    "size": 29
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases_Solution/Tests_15s/Tests_15s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/15_TestCases_Solution/Tests_15s/Tests_15s.asmdef",
+    "sha256": "ea1f11d9a1c07b82cac53589d9e4ca07dc94969728ec72cc76afc5c1987c32c2",
+    "size": 470
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes/MyGame_16/MyGame_16.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes/MyGame_16/MyGame_16.asmdef",
+    "sha256": "c159b33e0129c8fbcdeefabd63d0ee04e0b3fa178efb9e9085eb046d80244867",
+    "size": 28
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes/Tests_16/Tests_16.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes/Tests_16/Tests_16.asmdef",
+    "sha256": "770f95b741872b9eea43ef75e6fdc41798075ae5e02312c4232e547ea54c2974",
+    "size": 468
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes_Solution/MyGame_16s/MyGame_16s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes_Solution/MyGame_16s/MyGame_16s.asmdef",
+    "sha256": "0a0a390858920e9e0177926a7370a79ac58de02090b6a3fb3a1523e283e48844",
+    "size": 29
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes_Solution/Tests_16s/Tests_16s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/16_CustomAttributes_Solution/Tests_16s/Tests_16s.asmdef",
+    "sha256": "1ce780bbba7ce541b5a93bb5093a29e1575419a9fcf0e237282ec85e3f11a3fb",
+    "size": 470
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically/MyGame_17/MyGame_17.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically/MyGame_17/MyGame_17.asmdef",
+    "sha256": "896c3e2360e6a7fa50dd4e974c0a11561dbe8e6bfb65424b026fefa5537412ce",
+    "size": 28
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically/Tests_17/Tests_17.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically/Tests_17/Tests_17.asmdef",
+    "sha256": "a4e8faff43ca4b8c4ae6a06fcce533ca160370ce9e28013bfa2110aae6cb1b4f",
+    "size": 468
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically_Solution/MyGame_17s/MyGame.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically_Solution/MyGame_17s/MyGame.asmdef",
+    "sha256": "ca165aa015bfd24b1a4047214d346061ee7a2dc3b679a8badd2415c8e29139b0",
+    "size": 29
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically_Solution/Tests_17s/Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/17_RunningTestsProgrammatically_Solution/Tests_17s/Tests.asmdef",
+    "sha256": "df2357805b8d653838f38b63692e6b64d59a0a3a197ba4e476cee1e02f4bd992",
+    "size": 470
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/1_RunningTest_Project/MyExercise_1/MyExercise_1.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/1_RunningTest_Project/MyExercise_1/MyExercise_1.asmdef",
+    "sha256": "0b15507f3334fbff1fd4d99a13f7502999c8aa3ab351093ab31c09c2c690396e",
+    "size": 31
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/1_RunningTest_Project_Solution/MyExercise_1s/MyExercise_1s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/1_RunningTest_Project_Solution/MyExercise_1s/MyExercise_1s.asmdef",
+    "sha256": "9b09339e94f0695239aa04c7e805442001a0bddf2f29beeb00f123300c30228c",
+    "size": 32
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/1_RunningTest_Project_Solution/Tests_1s/Tests_1s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/1_RunningTest_Project_Solution/Tests_1s/Tests_1s.asmdef",
+    "sha256": "043ca9e1cb0269c2be85a260a8017ddabbc7036f11bd2af2295a4e48673ebfda",
+    "size": 471
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert/MyExercise_2/MyExercise_2.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert/MyExercise_2/MyExercise_2.asmdef",
+    "sha256": "ff6252e588bd49b183367ae6bfab121949841f3c36e4001e27314357111d8df3",
+    "size": 31
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert/Tests_2/Tests_2.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert/Tests_2/Tests_2.asmdef",
+    "sha256": "eefa3463650414f249acccce6ddfb3704453a862f889f4714dc537f1ec6de70b",
+    "size": 469
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert_Solution/MyExercise_2s/MyExercise_2s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert_Solution/MyExercise_2s/MyExercise_2s.asmdef",
+    "sha256": "ca132e7b520852757e324828a43981de40756d9b91ac10aeebcbb9526efa2ecc",
+    "size": 32
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert_Solution/Tests_2s/Tests_2s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/2_ActArrangeAssert_Solution/Tests_2s/Tests_2s.asmdef",
+    "sha256": "53b2fcd96e77f929cd1d900ab695729c53f4e2bebc598651c9975e6973a8e8d4",
+    "size": 471
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion/MyExercise_3/MyExercise_3.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion/MyExercise_3/MyExercise_3.asmdef",
+    "sha256": "cf78c5dab51a2c8a45315bba1c437c62bf2f0928905633b120c3d3d3dd7fb42e",
+    "size": 31
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion/Tests_3/Tests_3.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion/Tests_3/Tests_3.asmdef",
+    "sha256": "5068d150d52bbd91e925677eeae829c969e878561276e3771bbcfc2ecc296b27",
+    "size": 469
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion_Solution/MyExercise_3s/MyExercise_3s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion_Solution/MyExercise_3s/MyExercise_3s.asmdef",
+    "sha256": "3eca4bbc89ccd481c10058eeaec1f32148e279ec3b72de4bb4620019766d0b4d",
+    "size": 32
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion_Solution/Tests_3s/Tests_3s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/3_SemanticTestAssertion_Solution/Tests_3s/Tests_3s.asmdef",
+    "sha256": "e1969125c77c69266cd5864d9b9be86d163beb0cb63f07faa443111b2788ff0e",
+    "size": 471
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison/MyExercise_4/MyExercise_4.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison/MyExercise_4/MyExercise_4.asmdef",
+    "sha256": "92ce90aca43002ef3d573d75583cc784e320d39c44a33ea49b63b5d444fcb382",
+    "size": 345
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison/Tests_4/Tests_4.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison/Tests_4/Tests_4.asmdef",
+    "sha256": "5a3d0033555816d6a4298944730fac878cc24488a33cad00f7cdc594b9103168",
+    "size": 469
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison_Solution/MyExercise_4s/MyExercise_4s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison_Solution/MyExercise_4s/MyExercise_4s.asmdef",
+    "sha256": "b0a64f498ee0d83d34d751977929bad9632dd91673542dbd69b5ce39f5ab96b7",
+    "size": 32
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison_Solution/Tests_4s/Tests_4s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/4_CustomComparison_Solution/Tests_4s/Tests_4s.asmdef",
+    "sha256": "5f7405c8d5067de87831a4f2a879acf2cc9059b639e91e20626fd9d02e3e3d3b",
+    "size": 471
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs/MyExercise_5/MyExercise_5.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs/MyExercise_5/MyExercise_5.asmdef",
+    "sha256": "86a5a3800a4eaa5c56ccbe377397d752fe48bfbf03654845ef4cadbac50141b1",
+    "size": 31
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs/Tests_5/Tests_5.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs/Tests_5/Tests_5.asmdef",
+    "sha256": "a7e90b8868417b1cd6266890e02224c493e47bd2594bcc1dcb8617256d18af33",
+    "size": 469
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs_Solution/MyExercise_5s/MyExercise_5s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs_Solution/MyExercise_5s/MyExercise_5s.asmdef",
+    "sha256": "9f3db1e6dc615593ffc71f0fa4c968771a4e9680e604a3304eb298ef567dff7b",
+    "size": 32
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs_Solution/Tests_5s/Tests_5s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/5_AssertingLogs_Solution/Tests_5s/Tests_5s.asmdef",
+    "sha256": "b7507717eefd3c02cc0ba467c01650f39b228e4b6799786453d3fef14eaff952",
+    "size": 471
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown/MyExercise_6/MyExercise_6.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown/MyExercise_6/MyExercise_6.asmdef",
+    "sha256": "9b87facada5bf7ae63df8b0436f0b1e3e3716811657f4949af549c84f41de24d",
+    "size": 31
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown/Tests_6/Tests_6.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown/Tests_6/Tests_6.asmdef",
+    "sha256": "8e9b76b8f3b5ec26a7590b26a40684af9c2732f3ccb2ed104a93008ac6390226",
+    "size": 469
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown_Solution/MyExercise_6s/MyExercise_6s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown_Solution/MyExercise_6s/MyExercise_6s.asmdef",
+    "sha256": "7a63e58a81c3bda523c59f85f40a6ebe3379519ce9c4e91ac1215f6c924e0919",
+    "size": 32
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown_Solution/Tests_6s/Tests_6s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/6_SetUpTearDown_Solution/Tests_6s/Tests_6s.asmdef",
+    "sha256": "b48083ead3e3a36c28394afb42d33d9d017ea28549caf3c7fc5d90f6271141a9",
+    "size": 471
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/7_PlayModeTests_Solution/PlayModeTests_7/PlayModeTests_7.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/7_PlayModeTests_Solution/PlayModeTests_7/PlayModeTests_7.asmdef",
+    "sha256": "aca053d7a410f2b5efb8a6caa9ef2086fcf4250bdbd64c8f175ca988337a7a8e",
+    "size": 102
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/8_PlayModeTests_InPlayer/PlayModeTests_8/PlayModeTests_8.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/8_PlayModeTests_InPlayer/PlayModeTests_8/PlayModeTests_8.asmdef",
+    "sha256": "16d670ae97c6fa6a2e9aa2519c738c39c68483ac080c808af36b66cd86ae688c",
+    "size": 102
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/9_UnityTestAttribute/PlayModeTests_9/PlayModeTests_9.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/9_UnityTestAttribute/PlayModeTests_9/PlayModeTests_9.asmdef",
+    "sha256": "7535db5d281c9c336c6af560e4b3fc519aafc715cc109a183c220cff14ffdde3",
+    "size": 102
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/9_UnityTestAttribute_Solution/PlayModeTests_9s/PlayModeTests_9s.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/Samples~/9_UnityTestAttribute_Solution/PlayModeTests_9s/PlayModeTests_9s.asmdef",
+    "sha256": "0a80827393fbc52d04dac0dd45bcdfef93076405f8476b24c90b3c98e6591d33",
+    "size": 103
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/UnityEditor.TestRunner.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/UnityEditor.TestRunner.asmdef",
+    "sha256": "559eb71dddb30a373c513a5b48170eb1d259336d0d99cd5bc4677bee3e3a5c53",
+    "size": 729
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/UnityEngine.TestRunner.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/UnityEngine.TestRunner.asmdef",
+    "sha256": "6035f551ceffde897ec5eff666ca2e5cafcd5fb492fb7f84a53514e45d06214d",
+    "size": 551
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/DocCodeExamples/DocCodeExamples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/DocCodeExamples/DocCodeExamples.asmdef",
+    "sha256": "fda38afd6d65827c95eb8cb44423e84256cea1853e635dd1f60b68fbba5ca6d3",
+    "size": 508
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Editor/Unity.Timeline.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Editor/Unity.Timeline.Editor.asmdef",
+    "sha256": "0ed73f5669c51ef8799b38469d5ee88aba2c1297daef44451d5de088fbc8ef0d",
+    "size": 548
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Runtime/Unity.Timeline.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Runtime/Unity.Timeline.asmdef",
+    "sha256": "064fbcc550ae80ad01e3983d582139e6c47e561c7524df8a22dd0d49435643b9",
+    "size": 489
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Annotation/Editor/Timeline.Samples.Annotation.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Annotation/Editor/Timeline.Samples.Annotation.Editor.asmdef",
+    "sha256": "4f22853a66e669f89381a2e17eafb88f92a07df9a53e4ce4d236a3abaa3369b9",
+    "size": 515
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Annotation/Timeline.Samples.Annotation.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Annotation/Timeline.Samples.Annotation.asmdef",
+    "sha256": "6439ca7385581cb5ae68a943b5efd95b570557682a2795609913c5a73bf203fa",
+    "size": 388
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Text/Editor/Timeline.Samples.Text.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Text/Editor/Timeline.Samples.Text.Editor.asmdef",
+    "sha256": "e8f8bb734bc0d387ff4442971db0d31fc9c0e15a6652b1c24c16a98424e1f44e",
+    "size": 822
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Text/Timeline.Samples.Text.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Text/Timeline.Samples.Text.asmdef",
+    "sha256": "494d1d7502d0730fa0167810aad571914117c18c0b499758f936961f3a22f08e",
+    "size": 793
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/TimeDilation/Timeline.Samples.TimeDilation.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/TimeDilation/Timeline.Samples.TimeDilation.asmdef",
+    "sha256": "1b9e6a37f63c8b5e30321dccf66c75bf247096d0fb6cf10ef28eafdc76756911",
+    "size": 439
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Tween/Editor/Timeline.Samples.Tween.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Tween/Editor/Timeline.Samples.Tween.Editor.asmdef",
+    "sha256": "5a563fffbfa41c5fa6541b0d687723bbf6beca865e39e477bec3f6dc8c717a97",
+    "size": 510
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Tween/Timeline.Samples.Tween.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Tween/Timeline.Samples.Tween.asmdef",
+    "sha256": "42f988e85d6c87e0bdae21dd5072c9f7248dd7e7ee566f417f3da3ce99c4f453",
+    "size": 457
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Utilities/Editor/Timeline.Samples.Utilities.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Utilities/Editor/Timeline.Samples.Utilities.Editor.asmdef",
+    "sha256": "1569adbcdd6ccec97d4f308b8fda99d198aa720bcd38fa4b205ceeb8afdb7e54",
+    "size": 416
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Utilities/Timeline.Samples.Utilities.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Utilities/Timeline.Samples.Utilities.asmdef",
+    "sha256": "d432d0096211ad780cdfa6de194c6f9df106f7efcde15d79813a55e5b1dc78ab",
+    "size": 334
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Video/Editor/Timeline.Samples.Video.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Video/Editor/Timeline.Samples.Video.Editor.asmdef",
+    "sha256": "9a002c62ff2029cc69e117b71d10b2336a9a2fcba12a49a5a98663cc57448547",
+    "size": 510
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Video/Timeline.Samples.Video.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/Customization/Video/Timeline.Samples.Video.asmdef",
+    "sha256": "0676ee17a48f94f6674d51f3b9fafc02cd012e186edeeaa431d330143dc083b7",
+    "size": 383
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/GameplaySequenceDemo/Info/Scripts/Samples.GameplaySequence.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5/Samples~/GameplaySequenceDemo/Info/Scripts/Samples.GameplaySequence.asmdef",
+    "sha256": "b9800e27be467a115caafc88a55ce30f7525dc8945782f911d12864364622bf8",
+    "size": 380
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Editor/Analytics/UnityEditor.UI.Analytics.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Editor/Analytics/UnityEditor.UI.Analytics.asmdef",
+    "sha256": "857309dff4206dbb4182e36706cabb73fd2376a373556a0f8db807eebe4cf559",
+    "size": 438
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Editor/TMP/Unity.TextMeshPro.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Editor/TMP/Unity.TextMeshPro.Editor.asmdef",
+    "sha256": "9f1c1226bb8b9639969683c27e1e2a9d6fdb58976bc3d07c1b48422ba2d86010",
+    "size": 1222
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Editor/UGUI/UnityEditor.UI.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Editor/UGUI/UnityEditor.UI.asmdef",
+    "sha256": "5e77894ab373d3c4a9ac030bf88aea2e51bce612bd529dcceebe5301b93fe575",
+    "size": 659
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/InternalBridge/Unity.InternalAPIEngineBridge.004.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/InternalBridge/Unity.InternalAPIEngineBridge.004.asmdef",
+    "sha256": "5b06bbb47d7ed2b23bf2d967052f90668ed84e613c1ca8cc04f071aa168b2911",
+    "size": 49
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/TMP/Unity.TextMeshPro.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/TMP/Unity.TextMeshPro.asmdef",
+    "sha256": "1630b20f8f0030af5ac996a6f60793076c8285bedffabc9bcbbfe70a3d5811ca",
+    "size": 700
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UnityEngine.UI.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UnityEngine.UI.asmdef",
+    "sha256": "9cb2d9ab449842401295e78f89b0d8b2fd719f3ba777044f1813df7aab121716",
+    "size": 1398
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Editor/Common/UnityEditor.UI.Common.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Editor/Common/UnityEditor.UI.Common.Tests.asmdef",
+    "sha256": "0b9914fc368533d7175736b39370635240ad9091cc51a8f162b89a0d46555699",
+    "size": 641
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Editor/TMP/Unity.TextMeshPro.Editor.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Editor/TMP/Unity.TextMeshPro.Editor.Tests.asmdef",
+    "sha256": "2658cd7d173acf6a438fe313c0fe7ddb4048978c7106abe416d2c53ec20d68f8",
+    "size": 333
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Editor/UGUI/UnityEditor.UI.EditorTests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Editor/UGUI/UnityEditor.UI.EditorTests.asmdef",
+    "sha256": "e23f3138beea6afb88295f96db573aef88c17cdb3e6fd1eed258cb1599f9a609",
+    "size": 266
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Runtime/TMP/Unity.TextMeshPro.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Runtime/TMP/Unity.TextMeshPro.Tests.asmdef",
+    "sha256": "68df83703968e125ebe49d4a740aa2a68130f65e404ae38c3701023f500ef692",
+    "size": 268
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Runtime/UGUI/UnityEngine.UI.Tests.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158/Tests/Runtime/UGUI/UnityEngine.UI.Tests.asmdef",
+    "sha256": "1e85c6c496121adb729b966a69a28786cba6f92c37a7d61afa48ca739cbba859",
+    "size": 1089
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/DocCodeExamples/Unity.VisualScripting.DocCodeExamples.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/DocCodeExamples/Unity.VisualScripting.DocCodeExamples.asmdef",
+    "sha256": "4ab2569dcb443840e0a7ed032a057fc8132e41794c676ed2602399a13a7b3533",
+    "size": 497
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/SettingsProvider/Unity.VisualScripting.SettingsProvider.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/SettingsProvider/Unity.VisualScripting.SettingsProvider.Editor.asmdef",
+    "sha256": "3d01ac09fc8c146d4af27b278878ab7af08f16de499f7c33c5e70453689c6542",
+    "size": 584
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.Core/Unity.VisualScripting.Core.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.Core/Unity.VisualScripting.Core.Editor.asmdef",
+    "sha256": "73e9c5ccaf57a2d45a52a57a823f754a04a03e436767e60432c184cac2bf944d",
+    "size": 431
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.Flow/Unity.VisualScripting.Flow.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.Flow/Unity.VisualScripting.Flow.Editor.asmdef",
+    "sha256": "a63c190705ca1824d7b1370c78c14b96e99058ba7906d337bb379fbc6abb339c",
+    "size": 722
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.Shared/Unity.VisualScripting.Shared.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.Shared/Unity.VisualScripting.Shared.Editor.asmdef",
+    "sha256": "cca32750b0d36e471bbf62f9d5f06542d3a09066318614e5a9c18df5ccfc054e",
+    "size": 621
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.State/Unity.VisualScripting.State.Editor.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Editor/VisualScripting.State/Unity.VisualScripting.State.Editor.asmdef",
+    "sha256": "d93ffb845dac69695742cb43304012f643ab84d6e1bd23fd9eafd14635be3383",
+    "size": 426
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Runtime/VisualScripting.Core/Unity.VisualScripting.Core.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Runtime/VisualScripting.Core/Unity.VisualScripting.Core.asmdef",
+    "sha256": "8fb448b0b58b455aa198f3c198350e9318943f27d259c65928b16de3db8cb2bb",
+    "size": 1034
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Runtime/VisualScripting.Flow/Unity.VisualScripting.Flow.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Runtime/VisualScripting.Flow/Unity.VisualScripting.Flow.asmdef",
+    "sha256": "927e5f189b52d19244469cfdb76111913cb8cf389094b95d844dce6535c39667",
+    "size": 1668
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Runtime/VisualScripting.State/Unity.VisualScripting.State.asmdef",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189/Runtime/VisualScripting.State/Unity.VisualScripting.State.asmdef",
+    "sha256": "74e504d88cc45c5e79874e4337e6102a39c1d9337eda229d44ad71f65fca47f4",
+    "size": 268
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Runtime/Editor/Unity.Burst.ForEditor.asmref",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea/Runtime/Editor/Unity.Burst.ForEditor.asmref",
+    "sha256": "08a6361211b620623537302a6df2d2cb2e775f3d588ca22787af65bd27f24c59",
+    "size": 34
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.PerformanceTests.Internal/Unity.Collections.PerformanceTests.Internal.asmref",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2/Unity.Collections.PerformanceTests.Internal/Unity.Collections.PerformanceTests.Internal.asmref",
+    "sha256": "23a22c72ad079aaa496df080bc52c1f22f804131250e97b4da0281cd0472ecb1",
+    "size": 47
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Core/Unity.Core.asmref",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Core/Unity.Core.asmref",
+    "sha256": "035e00cce5ce299f09f6097fe27a04ee77a62fec479cb07b4526d4773b5304b2",
+    "size": 37
+  },
+  {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref",
+    "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref",
+    "sha256": "5cfbd735806c917ecef626d4ebd3d400fb43a905029274c3bbb6f60e8213f1d1",
+    "size": 63
+  }
+]

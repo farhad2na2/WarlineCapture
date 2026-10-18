@@ -1,0 +1,56 @@
+[
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-2022.dwlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-2022.dwlt",
+    "sha256": "4ff0b57fbae064c10935bc7cb8fc547af6468038dc664bc0cfcae66c2e55ce68",
+    "size": 36170
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+    "sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "size": 4500940
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/2 by 3.wlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/2 by 3.wlt",
+    "sha256": "b3f3aedccc59faa03d3da618ec7affc6c31b9fcb51dc0b8e0379a9db701839f6",
+    "size": 15054
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/4 Split.wlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/4 Split.wlt",
+    "sha256": "fd2732c2314fa8d8cd3d059fce70723795daaed61b802cac40bca2043c9a41c2",
+    "size": 20328
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Default.wlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Default.wlt",
+    "sha256": "c4bdf2e1164b3ce0da96394dba56391bcea672123fc88a5b93920e2da4a79e0f",
+    "size": 17892
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Profiler.dwlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Profiler.dwlt",
+    "sha256": "1e0351b777667d651999300087b88f22456d89374da602251da74fa041b4052f",
+    "size": 5114
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Tall.wlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Tall.wlt",
+    "sha256": "33db9b2c3620c90e438a3e919a8c3ed0e4a5e60407c05c96af5b97a4a2427ad0",
+    "size": 14548
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Wide.wlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/default/Wide.wlt",
+    "sha256": "c76ae023ee238a6781da0ba2dfb3b23a107cbe0ef8e5562e978ee8ec87b16fb4",
+    "size": 15055
+  },
+  {
+    "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/safe_mode/Default.wlt",
+    "resolved_path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/safe_mode/Default.wlt",
+    "sha256": "c4bdf2e1164b3ce0da96394dba56391bcea672123fc88a5b93920e2da4a79e0f",
+    "size": 17892
+  }
+]

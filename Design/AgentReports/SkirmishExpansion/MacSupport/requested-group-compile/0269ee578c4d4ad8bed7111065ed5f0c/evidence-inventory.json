@@ -1,0 +1,179 @@
+{
+  "scope": "Exact raw evidence pins; local preimage archive not published",
+  "files": [
+    {
+      "name": "Game.Editor-response-files-after.json",
+      "bytes": 123768,
+      "sha256": "61c057c9f13e0f9e2b19f43b28364d850312ebe5fcb1a3bcc19a1e27f849f2b9",
+      "published": true
+    },
+    {
+      "name": "assembly-graph-before.json",
+      "bytes": 165069,
+      "sha256": "a093bebd2158bb58dbb6ff7850e2639ab6e8053da403579cd44cf16937dad818",
+      "published": true
+    },
+    {
+      "name": "authorization-scope.json",
+      "bytes": 458,
+      "sha256": "3b36c114e8886f32a58460a174ecc749bf50dbc7b25b987465717963fc08e46f",
+      "published": true
+    },
+    {
+      "name": "capacity-before.json",
+      "bytes": 3648,
+      "sha256": "e47dfcb86e0a6a6b91236096fa975446e8b839ffddeeaeadce977fa574238613",
+      "published": true
+    },
+    {
+      "name": "capacity-integration.json",
+      "bytes": 3648,
+      "sha256": "7d800660d28f099ac34c8c34692d62ee67e748aced37b6eb5e14807a55bf46bf",
+      "published": true
+    },
+    {
+      "name": "capacity-launch.json",
+      "bytes": 3648,
+      "sha256": "b802fa1d7c39b4de51665ed5b8c8c53c77b880497f0d9bacc692cec20d264988",
+      "published": true
+    },
+    {
+      "name": "controller.py.txt",
+      "bytes": 9992,
+      "sha256": "4eca79b03fe4b3dd140a449f2152c14c27eee9f0192a6158ccb7bef688d5329c",
+      "published": true
+    },
+    {
+      "name": "earlier-preparation-failure.json",
+      "bytes": 541,
+      "sha256": "ce447d5d7ed9a920fbf43965d188090db8bb8f6803474b9524b19e42c1bd854f",
+      "published": true
+    },
+    {
+      "name": "four-file-preimages-and-proposed-pins.json",
+      "bytes": 1149,
+      "sha256": "aafd9376483285a4b029c69c25249a7796936913542fd1c69fe10bdad24d1e9b",
+      "published": true
+    },
+    {
+      "name": "global-layout-delta.json",
+      "bytes": 875,
+      "sha256": "c278076a7a15d0ccce1168c32b77c5deb6100c5c9cb0a7a57b0b1d351354d09f",
+      "published": true
+    },
+    {
+      "name": "global-layout-diagnosis.json",
+      "bytes": 1426,
+      "sha256": "7ceace6be1c76ddc5a02bc79b887a184435d9f5364a1312878f5906fdbd49922",
+      "published": true
+    },
+    {
+      "name": "global-layouts-after.json",
+      "bytes": 2776,
+      "sha256": "3a63b588a3f5c0a74973a72ae7f1e8a0cc80fd3f3ad858f4bca19fff8b2aa7a7",
+      "published": true
+    },
+    {
+      "name": "global-layouts-before.json",
+      "bytes": 2776,
+      "sha256": "d6dbbe9493f54ee391d790271ca0ac95a5fb15f585d63fa1561a0a20e1b57230",
+      "published": true
+    },
+    {
+      "name": "integration-four-file-pins.json",
+      "bytes": 1183,
+      "sha256": "5b57b9f956250025fece14c75de5e00b775840a007ad035cf1e8d17331f0c1ed",
+      "published": true
+    },
+    {
+      "name": "launch-intent.json",
+      "bytes": 1681,
+      "sha256": "bf858c5c192fe85e07f1424494c779a0e803cfd26f8222dcc3a6c676584d4f3d",
+      "published": true
+    },
+    {
+      "name": "live-handle.json",
+      "bytes": 1745,
+      "sha256": "be8605de3a27637079785ac147fb7e81a977bd360615392bbd1135541b579bee",
+      "published": true
+    },
+    {
+      "name": "preparation-controller.py.txt",
+      "bytes": 5532,
+      "sha256": "44eb3c59b5e5d98e11fd1853adf8149e9d9f5a832e3a58376c9dc2bae83b32a8",
+      "published": true
+    },
+    {
+      "name": "preparation-result.json",
+      "bytes": 1065,
+      "sha256": "ed8e4291e41e02ef367773198568e1b997214b7117c00933e71cf9db00a4ef22",
+      "published": true
+    },
+    {
+      "name": "result.json",
+      "bytes": 281194,
+      "sha256": "27a60a842c05b4e887d3fc1617ec15dad433b1a307aa5d57185b9aff0f893f14",
+      "published": true
+    },
+    {
+      "name": "settings-preimages.tar.gz",
+      "bytes": 571816,
+      "sha256": "da7b8d320362ab7164983521aa201b721651e602e4a4029b449c606380379909",
+      "published": false
+    },
+    {
+      "name": "source-integration-delta.json",
+      "bytes": 446,
+      "sha256": "60bb2343429862e198df25d6bf949338bc270e6699e563312a87189ee9a12b33",
+      "published": true
+    },
+    {
+      "name": "state-after-wrapper.json",
+      "bytes": 9434984,
+      "sha256": "427530d0ac646e9712404624c11a7591af3d56b194e1e5d4aa36abb9655db388",
+      "published": true
+    },
+    {
+      "name": "state-before-wrapper.json",
+      "bytes": 9434984,
+      "sha256": "bca3a2a2c153b5a6f1f858ef498c4d050e45dc9269ace2d4b072f7fa399fbb1f",
+      "published": true
+    },
+    {
+      "name": "state-preintegration.json",
+      "bytes": 9434168,
+      "sha256": "36082d7f43d83dbcecadc8954c6c7f13f0c7e231f2f31a50362680ef848f87f2",
+      "published": true
+    },
+    {
+      "name": "summary.json",
+      "bytes": 3110,
+      "sha256": "8c77c0e0130dfcf2d8dd76dfa53212d85937ee9f00b95267671d2329aae3e466",
+      "published": true
+    },
+    {
+      "name": "tools-before.json",
+      "bytes": 6409,
+      "sha256": "65e39f07e9821fb8880578d98b4a39212efecdea62e5eef3e4c4dc51c61254ee",
+      "published": true
+    },
+    {
+      "name": "tools-launch.json",
+      "bytes": 6409,
+      "sha256": "65e39f07e9821fb8880578d98b4a39212efecdea62e5eef3e4c4dc51c61254ee",
+      "published": true
+    },
+    {
+      "name": "unity-controls.log",
+      "bytes": 245573,
+      "sha256": "20700bfbb9cbadab0eed3e4a7785b0ab2287662cfd21107416509c9c82fb6350",
+      "published": true
+    },
+    {
+      "name": "wrapper.log",
+      "bytes": 837,
+      "sha256": "0caf7b652f477ca32462be9827b1c62f44c9e6a5015f5fc3dbdaf79bf795b0d0",
+      "published": true
+    }
+  ]
+}

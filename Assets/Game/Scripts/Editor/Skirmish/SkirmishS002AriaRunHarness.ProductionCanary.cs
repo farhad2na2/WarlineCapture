@@ -553,6 +553,84 @@ namespace Game.Editor
             productionCanary.Record("TerminalReturnOwnerCompleted", facts);
         }
 
+        internal static JObject PaidPoint(Game.Runtime.SkirmishProductionService.ProductionLedgerPoint point)
+            {
+                var bank=point.Bank; var receipt=point.Reservation;
+                return new JObject { ["faction"]=point.Faction,["bank_index"]=point.BankIndex,["bank_version"]=point.BankVersion,
+                    ["materials"]=point.Materials,["fuel"]=point.Fuel,["bank"]=JObject.FromObject(bank),
+                    ["reservation"]=!point.HasReservation?null:new JObject {
+                        ["id"]=receipt.ReservationId,["role"]=receipt.Role.ToString(),["faction"]=receipt.FactionId,
+                        ["phase"]=receipt.Phase.ToString(),["producer"]=receipt.ProducerRuntimeId,
+                        ["paid"]=receipt.MaterialsPaid,["members"]=receipt.MemberCount,["delivered"]=receipt.DeliveredMembers,
+                        ["remaining"]=receipt.RemainingMembers,["supply"]=receipt.SupplyCost } };
+            }
+
+        internal static JObject ResearchPointJson(Game.Runtime.SkirmishResearchService.ResearchLedgerPoint point)
+            {
+                var item=point.Item;
+                return new JObject { ["bank_index"]=point.BankEntity.Index,["bank_version"]=point.BankEntity.Version,
+                    ["bank"]=JObject.FromObject(point.Bank),["materials"]=point.Materials,["fuel"]=point.Fuel,
+                    ["next_research_id"]=point.NextResearchId,["state"]=JObject.FromObject(point.State),
+                    ["research"]=!point.HasItem?null:new JObject { ["id"]=item.ResearchId,["kind"]=item.Kind.ToString(),
+                        ["phase"]=item.Phase.ToString(),["faction"]=item.FactionId,["producer"]=item.Producer.ToString(),
+                        ["paid"]=item.MaterialsPaid,["remaining_seconds"]=item.RemainingSeconds } };
+            }
+
+        internal static JObject ConstructionPoint(Game.Runtime.SkirmishConstructionLedger.Point p)
+            {
+                var i=p.EnemyIntent;var r=p.Request;
+                return new JObject { ["bank_index"]=p.BankEntity.Index,["bank_version"]=p.BankEntity.Version,
+                    ["economy"]=JObject.FromObject(p.Economy),["bank"]=JObject.FromObject(p.Bank),
+                    ["session_index"]=p.Session.Index,["session_version"]=p.Session.Version,
+                    ["enemy_intent"]=!p.HasEnemyIntent?null:new JObject { ["version"]=i.Version,["session"]=i.SessionId.ToString(),
+                        ["phase"]=i.Phase,["action"]=i.ActionKey.ToString(),["pad"]=i.PadId.ToString(),["building"]=i.BuildingId.ToString(),
+                        ["origin_x"]=i.Origin.x,["origin_y"]=i.Origin.y,["width"]=i.Footprint.x,["depth"]=i.Footprint.y,
+                        ["paid"]=i.MaterialsPaid,["request_id"]=i.RequestId,["candidate"]=i.CandidateIndex,["desired_count"]=i.DesiredCount,
+                        ["result_stable_id"]=i.ResultStableObjectId.ToString(),["retry_after"]=i.RetryAfter },
+                    ["request"]=!p.HasRequest?null:new JObject { ["id"]=r.RequestId,["kind"]=r.RequestKind,["status"]=r.Status,
+                        ["building"]=r.BuildingId.ToString(),["faction"]=r.FactionId,["materials"]=r.MaterialsCost,
+                        ["preferred_x"]=r.PreferredOrigin.x,["preferred_y"]=r.PreferredOrigin.y,["actual_x"]=r.ActualOrigin.x,["actual_y"]=r.ActualOrigin.y,
+                        ["actual_width"]=r.ActualFootprint.x,["actual_depth"]=r.ActualFootprint.y,["runtime_id"]=r.BuildingRuntimeId,
+                        ["plan_index"]=r.PlanEntity.Index,["plan_version"]=r.PlanEntity.Version,["authored_grant"]=r.AuthoredStartingGrant,
+                        ["allow_nonbuildable"]=r.AllowNonBuildableEnemy,["require_origin"]=r.RequirePreferredOrigin } };
+            }
+
+        internal static JObject PaidProductionDecisionJson(Game.Runtime.SkirmishProductionService.ProductionLedgerObservation row)
+        {
+            return !row.HasDecision?null:new JObject { ["materials"]=row.Decision.MaterialsCost,
+                            ["fuel"]=row.Decision.FuelCost,["refund"]=row.Decision.RefundedMaterials,
+                            ["accepted"]=row.Decision.Accepted,["reason"]=row.Decision.Reason.ToString(),
+                            ["reservation"]=row.Decision.ReservationId };
+        }
+
+        internal static JObject PaidProductionActorJson(Game.Runtime.SkirmishProductionService.ProductionLedgerObservation row)
+        {
+            var em=row.Manager;
+            return !row.HasActorOwner?null:new JObject { ["index"]=row.Actor.Index,["version"]=row.Actor.Version,
+                            ["session"]=row.ActorOwner.SessionId.ToString(),["stable_id"]=row.ActorOwner.StableObjectId.ToString(),
+                            ["faction"]=row.ActorOwner.FactionId,["reservation"]=row.ActorOwner.ReservationId,
+                            ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(row.Actor),
+                            ["is_structure"]=row.ActorOwner.IsStructure,["capacity_released"]=row.ActorOwner.CapacityReleased,
+                            ["role"]=em.GetComponentData<SkirmishUnitRoleComponent>(row.Actor).Role.ToString(),
+                            ["source_key"]=em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.ToString() };
+        }
+
+        internal static JObject PaidResearchDecisionJson(Game.Runtime.SkirmishResearchService.ResearchLedgerObservation row)
+        {
+            return row.HasDecision?JObject.FromObject(row.Decision):null;
+        }
+
+        internal static JObject PaidConstructionActorJson(Game.Runtime.SkirmishConstructionLedger.Observation row)
+        {
+            var em=row.After.Manager;var actor=row.ActorOwner;
+            return !row.HasActorOwner?null:new JObject { ["index"]=row.Actor.Index,["version"]=row.Actor.Version,
+                            ["session"]=actor.SessionId.ToString(),["stable_id"]=actor.StableObjectId.ToString(),["faction"]=actor.FactionId,["is_structure"]=actor.IsStructure,
+                            ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(row.Actor),["source_key"]=em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.ToString() };
+        }
+
+        internal static string SerializeProductionNativeRecord(JObject row)
+            =>row.ToString(Formatting.None);
+
         internal static void RequirePaidObserverGroupAvailable(bool enabled, bool legacy)
         {
             if (!enabled) return;
@@ -677,7 +755,7 @@ namespace Game.Editor
                     ["worker"] = (string)Request.Claim["worker"], ["frame"] = Time.frameCount,
                     ["utc"] = DateTimeOffset.UtcNow.ToString("O"), ["kind"] = kind,
                     ["facts"] = facts ?? new JObject() };
-                File.AppendAllText(events, row.ToString(Formatting.None) + "\n", new UTF8Encoding(false));
+                File.AppendAllText(events, SerializeProductionNativeRecord(row) + "\n", new UTF8Encoding(false));
                 ObserveProductionBatchNativeEvent(kind,facts);
             }
 
@@ -696,16 +774,7 @@ namespace Game.Editor
                 Record("NativeResearchLedgerStarted",new JObject { ["ledger_schema"]=1,["scope"]="ResearchCommittedOriginsPartial",["remaining_time_history_measured"]=false,["progress_rows_emitted"]=false,["paid_resources_qualified"]=false });
                 Game.Runtime.SkirmishResearchService.ResearchLedgerObserver=researchLedgerSink;
             }
-            private static JObject ResearchPointJson(Game.Runtime.SkirmishResearchService.ResearchLedgerPoint point)
-            {
-                var item=point.Item;
-                return new JObject { ["bank_index"]=point.BankEntity.Index,["bank_version"]=point.BankEntity.Version,
-                    ["bank"]=JObject.FromObject(point.Bank),["materials"]=point.Materials,["fuel"]=point.Fuel,
-                    ["next_research_id"]=point.NextResearchId,["state"]=JObject.FromObject(point.State),
-                    ["research"]=!point.HasItem?null:new JObject { ["id"]=item.ResearchId,["kind"]=item.Kind.ToString(),
-                        ["phase"]=item.Phase.ToString(),["faction"]=item.FactionId,["producer"]=item.Producer.ToString(),
-                        ["paid"]=item.MaterialsPaid,["remaining_seconds"]=item.RemainingSeconds } };
-            }
+
             private void ObservePaidResearch(Game.Runtime.SkirmishResearchService.ResearchLedgerObservation row)
             {
                 if(researchLedgerFailed)return;
@@ -723,7 +792,7 @@ namespace Game.Editor
                         ["native_session_id"]=native.SessionId.ToString(),["native_setup_identity"]=identity,
                         ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),
                         ["before"]=ResearchPointJson(row.Before),["after"]=ResearchPointJson(row.After),
-                        ["decision"]=row.HasDecision?JObject.FromObject(row.Decision):null,
+                        ["decision"]=PaidResearchDecisionJson(row),
                         ["remaining_time_history_measured"]=false,["paid_resources_qualified"]=false });
                 }
                 catch(Exception error)when(!(error is OutOfMemoryException))
@@ -762,17 +831,7 @@ namespace Game.Editor
                     ["scope"]="ProductionCommittedOriginsPartial",["paid_resources_qualified"]=false });
                 Game.Runtime.SkirmishProductionService.ProductionLedgerObserver=paidLedgerSink;
             }
-            private static JObject PaidPoint(Game.Runtime.SkirmishProductionService.ProductionLedgerPoint point)
-            {
-                var bank=point.Bank; var receipt=point.Reservation;
-                return new JObject { ["faction"]=point.Faction,["bank_index"]=point.BankIndex,["bank_version"]=point.BankVersion,
-                    ["materials"]=point.Materials,["fuel"]=point.Fuel,["bank"]=JObject.FromObject(bank),
-                    ["reservation"]=!point.HasReservation?null:new JObject {
-                        ["id"]=receipt.ReservationId,["role"]=receipt.Role.ToString(),["faction"]=receipt.FactionId,
-                        ["phase"]=receipt.Phase.ToString(),["producer"]=receipt.ProducerRuntimeId,
-                        ["paid"]=receipt.MaterialsPaid,["members"]=receipt.MemberCount,["delivered"]=receipt.DeliveredMembers,
-                        ["remaining"]=receipt.RemainingMembers,["supply"]=receipt.SupplyCost } };
-            }
+
             private void ObservePaidProduction(Game.Runtime.SkirmishProductionService.ProductionLedgerObservation row)
             {
                 if(paidLedgerFailed)return;
@@ -791,17 +850,8 @@ namespace Game.Editor
                         ["native_session_id"]=state.SessionId.ToString(),["native_setup_identity"]=identity,
                         ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),
                         ["before"]=PaidPoint(row.Before),["after"]=PaidPoint(row.After),
-                        ["decision"]=!row.HasDecision?null:new JObject { ["materials"]=row.Decision.MaterialsCost,
-                            ["fuel"]=row.Decision.FuelCost,["refund"]=row.Decision.RefundedMaterials,
-                            ["accepted"]=row.Decision.Accepted,["reason"]=row.Decision.Reason.ToString(),
-                            ["reservation"]=row.Decision.ReservationId },
-                        ["actor"]=!row.HasActorOwner?null:new JObject { ["index"]=row.Actor.Index,["version"]=row.Actor.Version,
-                            ["session"]=row.ActorOwner.SessionId.ToString(),["stable_id"]=row.ActorOwner.StableObjectId.ToString(),
-                            ["faction"]=row.ActorOwner.FactionId,["reservation"]=row.ActorOwner.ReservationId,
-                            ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(row.Actor),
-                            ["is_structure"]=row.ActorOwner.IsStructure,["capacity_released"]=row.ActorOwner.CapacityReleased,
-                            ["role"]=em.GetComponentData<SkirmishUnitRoleComponent>(row.Actor).Role.ToString(),
-                            ["source_key"]=em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.ToString() },
+                        ["decision"]=PaidProductionDecisionJson(row),
+                        ["actor"]=PaidProductionActorJson(row),
                         ["paid_resources_qualified"]=false };
                     Record("NativeProductionTransaction",facts);
                 }
@@ -839,24 +889,7 @@ namespace Game.Editor
                 Record("NativeConstructionLedgerStarted",new JObject { ["ledger_schema"]=1,["scope"]="ConstructionCommittedBoundariesPartial",["paid_resources_qualified"]=false });
                 Game.Runtime.SkirmishConstructionLedger.OpenOwned(constructionLedgerSink);
             }
-            private static JObject ConstructionPoint(Game.Runtime.SkirmishConstructionLedger.Point p)
-            {
-                var i=p.EnemyIntent;var r=p.Request;
-                return new JObject { ["bank_index"]=p.BankEntity.Index,["bank_version"]=p.BankEntity.Version,
-                    ["economy"]=JObject.FromObject(p.Economy),["bank"]=JObject.FromObject(p.Bank),
-                    ["session_index"]=p.Session.Index,["session_version"]=p.Session.Version,
-                    ["enemy_intent"]=!p.HasEnemyIntent?null:new JObject { ["version"]=i.Version,["session"]=i.SessionId.ToString(),
-                        ["phase"]=i.Phase,["action"]=i.ActionKey.ToString(),["pad"]=i.PadId.ToString(),["building"]=i.BuildingId.ToString(),
-                        ["origin_x"]=i.Origin.x,["origin_y"]=i.Origin.y,["width"]=i.Footprint.x,["depth"]=i.Footprint.y,
-                        ["paid"]=i.MaterialsPaid,["request_id"]=i.RequestId,["candidate"]=i.CandidateIndex,["desired_count"]=i.DesiredCount,
-                        ["result_stable_id"]=i.ResultStableObjectId.ToString(),["retry_after"]=i.RetryAfter },
-                    ["request"]=!p.HasRequest?null:new JObject { ["id"]=r.RequestId,["kind"]=r.RequestKind,["status"]=r.Status,
-                        ["building"]=r.BuildingId.ToString(),["faction"]=r.FactionId,["materials"]=r.MaterialsCost,
-                        ["preferred_x"]=r.PreferredOrigin.x,["preferred_y"]=r.PreferredOrigin.y,["actual_x"]=r.ActualOrigin.x,["actual_y"]=r.ActualOrigin.y,
-                        ["actual_width"]=r.ActualFootprint.x,["actual_depth"]=r.ActualFootprint.y,["runtime_id"]=r.BuildingRuntimeId,
-                        ["plan_index"]=r.PlanEntity.Index,["plan_version"]=r.PlanEntity.Version,["authored_grant"]=r.AuthoredStartingGrant,
-                        ["allow_nonbuildable"]=r.AllowNonBuildableEnemy,["require_origin"]=r.RequirePreferredOrigin } };
-            }
+
             private void ObserveConstructionLedger(Game.Runtime.SkirmishConstructionLedger.Observation row)
             {
                 if(constructionLedgerFailed)return;
@@ -882,9 +915,7 @@ namespace Game.Editor
                         ["transaction_owner_sequence"]=ownerSequence,["transaction_id"]=row.TransactionId,["credits_quoted"]=row.CreditsQuoted,["materials_quoted"]=row.MaterialsQuoted,
                         ["prefab_name"]=row.PrefabName,["origin_x"]=row.Origin.x,["origin_y"]=row.Origin.y,["rotated"]=row.Rotated,
                         ["committed_count"]=row.CommittedCount,["expected_count"]=row.ExpectedCount,
-                        ["actor"]=!row.HasActorOwner?null:new JObject { ["index"]=row.Actor.Index,["version"]=row.Actor.Version,
-                            ["session"]=actor.SessionId.ToString(),["stable_id"]=actor.StableObjectId.ToString(),["faction"]=actor.FactionId,["is_structure"]=actor.IsStructure,
-                            ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(row.Actor),["source_key"]=em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.ToString() },
+                        ["actor"]=PaidConstructionActorJson(row),
                         ["paid_resources_qualified"]=false });
                 }
                 catch(Exception error)when(!(error is OutOfMemoryException))

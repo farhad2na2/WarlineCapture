@@ -14,6 +14,210 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishExpandedEconomyTests
     {
+        private static Newtonsoft.Json.Linq.JArray paidDtoSamples;
+        private static Newtonsoft.Json.Linq.JObject PaidDtoRoundTrip(Newtonsoft.Json.Linq.JObject value)
+        {
+            foreach (var scalar in System.Linq.Enumerable.OfType<Newtonsoft.Json.Linq.JValue>(value.Descendants()))
+                if (scalar.Type == Newtonsoft.Json.Linq.JTokenType.Float)
+                {
+                    double number = Convert.ToDouble(scalar.Value, System.Globalization.CultureInfo.InvariantCulture);
+                    Assert.IsFalse(double.IsNaN(number) || double.IsInfinity(number), "Finite fixture DTO numbers required");
+                }
+            string encoded = PaidHarness.SerializeProductionNativeRecord(value);
+            var decoded = Newtonsoft.Json.Linq.JObject.Parse(encoded);
+            Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(value, decoded), "Exact installed native JSON token roundtrip required");
+            return decoded;
+        }
+        private static void PaidDtoSample(string family, string operation,
+            Newtonsoft.Json.Linq.JObject before, Newtonsoft.Json.Linq.JObject after,
+            Newtonsoft.Json.Linq.JObject decision, Newtonsoft.Json.Linq.JObject actor)
+        {
+            var sample = new Newtonsoft.Json.Linq.JObject {
+                ["fixture_family"] = family, ["operation"] = operation,
+                ["before"] = before, ["after"] = after, ["decision"] = decision, ["actor"] = actor,
+                ["normalEnvelopeExercised"] = false, ["normalJournal"] = false, ["paid_resources"] = false };
+            var decoded = PaidDtoRoundTrip(sample);
+            Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Object, decoded["before"]["bank"].Type);
+            Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Integer, decoded["after"]["bank"]["Current"].Type);
+            if (paidDtoSamples != null) paidDtoSamples.Add(decoded);
+        }
+        private static void PaidProductionDtoRows(
+            System.Collections.Generic.List<SkirmishProductionService.ProductionLedgerObservation> rows)
+        {
+            foreach (var row in rows)
+            {
+                var before = PaidHarness.PaidPoint(row.Before);
+                var after = PaidHarness.PaidPoint(row.After);
+                Assert.AreEqual(row.Before.Bank, before["bank"].ToObject(row.Before.Bank.GetType()));
+                Assert.AreEqual(row.After.Bank, after["bank"].ToObject(row.After.Bank.GetType()));
+                Assert.AreEqual(row.Before.Materials, (int)before["materials"]);
+                Assert.AreEqual(row.After.Materials, (int)after["materials"]);
+                Assert.AreEqual(row.After.HasReservation,
+                    after["reservation"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                if (row.After.HasReservation)
+                {
+                    Assert.AreEqual(row.After.Reservation.ReservationId, (uint)after["reservation"]["id"]);
+                    Assert.AreEqual(row.After.Reservation.Phase.ToString(), (string)after["reservation"]["phase"]);
+                }
+                var actor = PaidHarness.PaidProductionActorJson(row);
+                Assert.AreEqual(row.HasActorOwner, actor != null);
+                if (actor != null)
+                {
+                    Assert.AreEqual(row.Actor.Index, (int)actor["index"]);
+                    Assert.AreEqual(row.Actor.Version, (int)actor["version"]);
+                    Assert.AreEqual(row.ActorOwner.StableObjectId.ToString(), (string)actor["stable_id"]);
+                    Assert.AreEqual(row.ActorOwner.CapacityReleased, (byte)actor["capacity_released"]);
+                }
+                var decision = PaidHarness.PaidProductionDecisionJson(row);
+                Assert.AreEqual(row.HasDecision, decision != null);
+                if (decision != null) Assert.AreEqual(row.Decision.MaterialsCost, (int)decision["materials"]);
+                PaidDtoSample("production", row.Operation, before, after, decision, actor);
+            }
+        }
+        [Test]
+        public void PaidDtoDirectAndDeathUseRealCommittedPointsAndActorIdentity()
+        {
+            WithCommittedProductionLedger((em, session, rows) => {
+                var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryProduce(em, session, SkirmishRoleIds.Tank, 1, authored.ArmyGround, out var produced));
+                Entity member = FindReservedUnit(em, produced.ReservationId);
+                Assert.IsTrue(SkirmishProductionService.TryReleaseDeath(em, session, member));
+                CollectionAssert.AreEqual(new[] { "DirectDebit", "DirectDispatch", "DirectMember", "DeathRelease" }, rows.ConvertAll(r => r.Operation));
+                PaidProductionDtoRows(rows);
+            });
+        }
+        [Test]
+        public void PaidDtoQueuedDispatchSerializesRealNullAndLiveReservations()
+        {
+            WithCommittedProductionLedger((em, session, rows) => {
+                var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Rifle, 1, authored.ArmyGround, out var queued));
+                Assert.IsTrue(SkirmishProductionService.TryStartQueued(em, session, queued.ReservationId, out _));
+                Assert.IsTrue(SkirmishProductionService.TryDispatchQueued(em, session, queued.ReservationId, authored.ArmyGround, out _));
+                Assert.IsFalse(rows[0].Before.HasReservation);
+                Assert.AreEqual(SkirmishReservationPhase.Live, rows[2].After.Reservation.Phase);
+                PaidProductionDtoRows(rows);
+            });
+        }
+        [Test]
+        public void PaidDtoResearchUsesRealStateDecisionAndNoProgressRows()
+        {
+            WithResearchLedger((em, session, rows) => {
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.InfantryWeapons, 1, out var queued));
+                Assert.AreEqual(0, SkirmishResearchService.Tick(em, session, 1, false));
+                Assert.AreEqual(2, rows.Count);
+                float remaining = LedgerResearchItem(em, session, queued.ResearchId).RemainingSeconds;
+                Assert.AreEqual(1, SkirmishResearchService.Tick(em, session, remaining, false));
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.VehicleProtection, 1, out var cancelled));
+                Assert.IsTrue(SkirmishResearchService.TryCancel(em, session, cancelled.ResearchId, out _));
+                CollectionAssert.AreEqual(new[] { "Queue", "Start", "Complete", "Queue", "Cancel" }, rows.ConvertAll(r => r.Operation));
+                foreach (var row in rows)
+                {
+                    var before = PaidHarness.ResearchPointJson(row.Before);
+                    var after = PaidHarness.ResearchPointJson(row.After);
+                    Assert.AreEqual(row.After.Bank, after["bank"].ToObject(row.After.Bank.GetType()));
+                    Assert.AreEqual(row.After.State, after["state"].ToObject(row.After.State.GetType()));
+                    Assert.AreEqual(row.After.NextResearchId, (uint)after["next_research_id"]);
+                    Assert.AreEqual(row.After.HasItem, after["research"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                    var decision = PaidHarness.PaidResearchDecisionJson(row);
+                    Assert.AreEqual(row.HasDecision, decision != null);
+                    if (decision != null) Assert.AreEqual(row.Decision, decision.ToObject(row.Decision.GetType()));
+                    PaidDtoSample("research", row.Operation, before, after, decision, null);
+                }
+            });
+        }
+        [Test]
+        public void PaidDtoEnemyConstructionUsesRealRequestRefundAndDeliveryPoints()
+        {
+            Assert.IsNull(SkirmishConstructionLedger.Observer);
+            var rows = new System.Collections.Generic.List<SkirmishConstructionLedger.Observation>();
+            Action<SkirmishConstructionLedger.Observation> sink = row => {
+                var before = PaidHarness.ConstructionPoint(row.Before);
+                var after = PaidHarness.ConstructionPoint(row.After);
+                Assert.AreEqual(row.After.Bank, after["bank"].ToObject(row.After.Bank.GetType()));
+                Assert.AreEqual(row.After.Economy, after["economy"].ToObject(row.After.Economy.GetType()));
+                Assert.AreEqual(row.After.HasRequest, after["request"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                Assert.AreEqual(row.After.HasEnemyIntent, after["enemy_intent"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                var actor = PaidHarness.PaidConstructionActorJson(row);
+                Assert.AreEqual(row.HasActorOwner, actor != null);
+                if (actor != null) Assert.AreEqual(row.Actor.Index, (int)actor["index"]);
+                PaidDtoSample("construction", row.Operation, before, after, null, actor);
+                rows.Add(row);
+            };
+            long faults = SkirmishConstructionLedger.Faults;
+            SkirmishConstructionLedger.OpenOwned(sink);
+            try
+            {
+                using (var f = new SkirmishEnemyConstructionAdapterTests.Fixture())
+                {
+                    Assert.IsTrue(f.Request()); f.Failed();
+                    SkirmishEnemyConstructionAdapter.Tick(f.Em, f.Session);
+                    CollectionAssert.AreEqual(new[] { "EnemyRequest", "EnemyRefundDebt", "EnemyRefund" }, rows.ConvertAll(r => r.Operation));
+                }
+                rows.Clear();
+                using (var f = new SkirmishEnemyConstructionAdapterTests.Fixture())
+                {
+                    Assert.IsTrue(f.Request()); f.Succeeded();
+                    CollectionAssert.AreEqual(new[] { "EnemyRequest", "EnemyDelivered" }, rows.ConvertAll(r => r.Operation));
+                }
+                Assert.AreEqual(faults, SkirmishConstructionLedger.Faults, "Serializer assertion/sink exceptions must not be hidden as observation faults");
+            }
+            finally { Assert.IsTrue(SkirmishConstructionLedger.CloseOwned(sink), "Preserve unexpected foreign sink"); }
+        }
+        [Test]
+        public void PaidDtoCompactSerializerRefusesNonfiniteFixtureRoundTrip()
+        {
+            var bad = new Newtonsoft.Json.Linq.JObject { ["fixture_nonfinite"] = double.NaN };
+            Assert.Throws<AssertionException>(() => PaidDtoRoundTrip(bad));
+        }
+        public static void RunPaidNativeDtoConformanceControls()
+        {
+            Assert.IsNull(paidDtoSamples);
+            string path = Environment.GetEnvironmentVariable("WARLINE_PAID_DTO_CONFORMANCE_OUTPUT");
+            Assert.IsFalse(string.IsNullOrEmpty(path)); Assert.IsTrue(System.IO.Path.IsPathRooted(path));
+            path = System.IO.Path.GetFullPath(path);
+            string root = System.IO.Path.GetFullPath("Logs/SkirmishProduction") + System.IO.Path.DirectorySeparatorChar;
+            Assert.IsTrue(path.StartsWith(root, StringComparison.OrdinalIgnoreCase));
+            Assert.IsFalse(System.IO.File.Exists(path)); Assert.IsTrue(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path)));
+            for (string current = System.IO.Path.GetDirectoryName(path); !string.IsNullOrEmpty(current); current = System.IO.Path.GetDirectoryName(current))
+                Assert.AreEqual(0, (int)(System.IO.File.GetAttributes(current) & System.IO.FileAttributes.ReparsePoint));
+            var samples = new Newtonsoft.Json.Linq.JArray();
+            var report = new Newtonsoft.Json.Linq.JObject {
+                ["schema"] = 1, ["scope"] = "PaidNativeDtoConformanceFixture_NoNormalJournal",
+                ["result"] = "Incomplete", ["samples"] = samples,
+                ["normalEnvelopeExercised"] = false, ["normalJournal"] = false,
+                ["compactRecordSerializerShared"] = true, ["paid_resources"] = false, ["qualified"] = false };
+            paidDtoSamples = samples;
+            try
+            {
+                var t = new SkirmishExpandedEconomyTests();
+                t.PaidDtoDirectAndDeathUseRealCommittedPointsAndActorIdentity();
+                t.PaidDtoQueuedDispatchSerializesRealNullAndLiveReservations();
+                t.PaidDtoResearchUsesRealStateDecisionAndNoProgressRows();
+                t.PaidDtoEnemyConstructionUsesRealRequestRefundAndDeliveryPoints();
+                t.PaidDtoCompactSerializerRefusesNonfiniteFixtureRoundTrip();
+                foreach (string family in new[] { "production", "research", "construction" })
+                    Assert.IsTrue(System.Linq.Enumerable.Any(samples, x => (string)x["fixture_family"] == family));
+                var counts = new Newtonsoft.Json.Linq.JObject();
+                foreach (string family in new[] { "production", "research", "construction" })
+                    counts[family] = System.Linq.Enumerable.Count(samples, x => (string)x["fixture_family"] == family);
+                report["sampleCountsByFamily"] = counts;
+                report["sampleCount"] = samples.Count; report["controls"] = 5; report["result"] = "CollectedFixtureOnly";
+            }
+            catch (Exception error) when (!(error is OutOfMemoryException))
+            {
+                report["result"] = "Failed"; report["exceptionType"] = error.GetType().FullName; throw;
+            }
+            finally
+            {
+                paidDtoSamples = null;
+                using var stream = new System.IO.FileStream(path, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read);
+                using var writer = new System.IO.StreamWriter(stream, new System.Text.UTF8Encoding(false));
+                writer.Write(PaidHarness.SerializeProductionNativeRecord(report));
+            }
+            Debug.Log("[PaidNativeDtoConformanceControls] result=Collected controls=5 families=3 normalEnvelope=0 normalJournal=0 paidResourcesQualified=0");
+        }
+
         private sealed class PaidRegistryFixture : IDisposable
         {
             internal readonly Action<SkirmishProductionService.ProductionLedgerObservation> production = row => { };

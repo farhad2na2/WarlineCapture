@@ -142,9 +142,18 @@ def android_module(editor_install):
     return Path(editor_install)/'PlaybackEngines/AndroidPlayer'
 
 
+def auth_logged_in(value):
+    # Actual installed CLI envelope; no account or token values enter evidence.
+    exact(value,{'command','data','errors','success','warnings'})
+    need(value['command']=='auth' and value['success'] is True and value['errors']==[]
+         and isinstance(value['warnings'],list) and isinstance(value['data'],dict)
+         and value['data'].get('loggedIn') is True,'Unity CLI auth envelope does not confirm signed-in state')
+    return True
+
+
 def tools_state(root):
     auth=parse(run(['unity','auth','status','--format','json']))
-    need(auth.get('loggedIn') is True,'Unity CLI auth not confirmed signed in')
+    auth_logged_in(auth)
     base=Path('/Applications/Unity/Hub/Editor/6000.5.8f1')
     android=android_module(base)
     required=[base/'modules.json',base/'metadata.hub.json',base/'Unity.app/Contents/Info.plist',Path('/Applications/Unity Hub.app/Contents/Info.plist'),

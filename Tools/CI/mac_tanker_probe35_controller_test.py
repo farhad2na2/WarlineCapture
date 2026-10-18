@@ -83,6 +83,16 @@ class ControllerTests(unittest.TestCase):
         text=' 2 1 Sun Oct 18 14:00:00 2026 0.0 1024 /Applications/Unity Hub.app/Contents/MacOS/Unity Hub\n'
         with patch.object(c,'run',return_value=text):
             rows=c.processes();self.assertEqual(rows[0]['pid'],2);self.assertEqual(rows[0]['started'],'Sun Oct 18 14:00:00 2026')
+    def test_actual_unity_cli_auth_envelope_uses_data_logged_in(self):
+        value=dict(command='auth',data={'loggedIn':True},errors=[],success=True,warnings=[])
+        self.assertTrue(c.auth_logged_in(value))
+    def test_auth_rejects_wrong_top_level_login_errors_or_untyped_success(self):
+        value=dict(command='auth',data={'loggedIn':True},errors=[],success=True,warnings=[])
+        for key,replacement in [('command','other'),('success',False),('success',1),('errors',['failed']),('warnings',None),('data',{'loggedIn':False}),('data',{'loggedIn':'true'}),('data',{})]:
+            bad=copy.deepcopy(value);bad[key]=replacement
+            with self.subTest(key=key,replacement=replacement),self.assertRaises(ValueError):c.auth_logged_in(bad)
+        with self.assertRaises(ValueError):c.auth_logged_in({'loggedIn':True})
+
     def test_mac_hub_android_module_is_sibling_of_unity_app(self):
         root=Path('/Applications/Unity/Hub/Editor/6000.5.8f1')
         self.assertEqual(c.android_module(root),root/'PlaybackEngines/AndroidPlayer')

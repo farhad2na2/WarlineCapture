@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:32:06.182027+00:00",
+  "enabled": false,
+  "native_execution_authorized": false,
+  "launch_performed": false,
+  "supersedes_controller_code": "d79d134287414e6bc59671a423aa3bbe3e9cded2",
+  "prior_report": "mac-probe35-controller-review-r3.json",
+  "change": "Parse the verified installed Unity CLI auth envelope with data.loggedIn. The previous top-level lookup would incorrectly refuse all native launch preparation. Exact envelope/success/command/no-errors/typed-login checks retained; no account or credential values recorded.",
+  "files": {
+    "Tools/CI/mac_tanker_probe35_controller.py": "e49b6ba4402c7b19fad0452a56b26b2ede3fef22646b944599d3d7e0450e508d",
+    "Tools/CI/mac_tanker_probe35_controller_test.py": "0813f9fb37773e1218254544cf9f6847f2e8ab6eb2f86cea244723aca8b68eab"
+  },
+  "pure_tests_passed": 18,
+  "actual_read_only_auth": {
+    "argv": [
+      "unity",
+      "auth",
+      "status",
+      "--format",
+      "json"
+    ],
+    "exit_code": 0,
+    "keys": [
+      "command",
+      "data",
+      "errors",
+      "success",
+      "warnings"
+    ],
+    "command": "auth",
+    "success": true,
+    "errors_empty": true,
+    "loggedIn_path": "data.loggedIn",
+    "typed_boolean": true,
+    "loggedIn": true,
+    "actual_controller_parser_accepted": true,
+    "Hub_sign_in_witness": "Separate Hub open/GUI licensing state; CLI login is not renamed Hub login"
+  },
+  "source_and_native_scope": "Controller/test/report only. Exact nativea9+3e C# projection, checked wrapper and frozen external helper pins unchanged. Native/SDK compilation and build not invoked.",
+  "validation": "18 pure controls pass; corrected parser also accepted actual installed CLI read-only response. Whole tools_state SDK byte census remains deferred behind capacity.",
+  "result": "DisabledController18ConstructedPassed_ActualAuthEnvelopeAccepted_PeerReviewPending",
+  "native_compiler_input_consumption_closure": "Pending",
+  "normal_mission_ready": false,
+  "Android_build": false,
+  "player_device": false
+}

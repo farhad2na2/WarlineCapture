@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-10-18T13:02:21.788076+00:00",
+  "task": "Prepare a separate clean Mac native worktree on exact stable5f; conditional rebuildable cache seeding only after complete native inventory is free; no Editor/build/mission launch until new stable candidate provided.",
+  "status": "IN PROGRESS: source/sampling/disk prerequisite audit complete. Worktree creation and cache copy not started because free-native-lane prerequisite remains false.",
+  "stable_base": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "worktree": {
+    "created": false,
+    "reason": "Confirmed live SCN13 wrapper92987/Editor92995; coordinator explicitly gates native worktree preparation/cache copy on free complete Editor inventory.",
+    "proposal_root": "/Users/farhad/.codex/worktrees/mac-construction-ledger/WarlineCapture",
+    "proposal_source_commit_frozen": "6d6359c81b525b3d3b72a701b5d5ea4393b5c48b",
+    "dirty_base_and_SCN13": "Not edited or reused for native validation.",
+    "next": "Recheck full Editor/wrapper inventory. Once free, create or reuse a separate clean attached managed worktree at exact5f, confirm filesystem/space before imports, and await exact new stable main before any native execution. Do not adopt active or dirty checkouts."
+  },
+  "live_native_owner_at_audit": {
+    "wrapper_pid": 92987,
+    "editor_pid": 92995,
+    "root": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
+    "method": "Game.Editor.SkirmishBattleLibraryFlowCapture.RunFocusedValidation",
+    "log": "/private/tmp/scn13-flow.log",
+    "status": "Verified live; preserve owner. Old83106/83113 capture failed, but successor keeps machine occupied."
+  },
+  "disk_audit": {
+    "home_free_bytes_at_measurement": 14763474944,
+    "T7_free_bytes_at_measurement": 105587081216,
+    "base_Library_allocated_KiB": 10297488,
+    "active_SCN13_Library_allocated_KiB": 10621480,
+    "idle_PR65b_Library_allocated_KiB": 10762460,
+    "decision": "Home source+~10GiBLibrary would leave inadequate import/build headroom. Re-audit actual native worktree location before creation/copy. External T7 has more headroom, but no new placement/move/symlink/cache copy has been performed. Do not bypass path/reparse admission with a Library symlink.",
+    "donors": [
+      {
+        "root": "/Volumes/T7/Projects/WarlineCapture",
+        "state": "No Editor owns this exact root at audit; dirty source preserved. Editor.log/prev report6000.5.2f1, so not yet verified same6000.5.8cache donor."
+      },
+      {
+        "root": "/Volumes/T7/Projects/WarlineCapture-wt-p1-pr65b",
+        "state": "No Editor owns exact root at audit, ProjectVersion6000.5.8f1 and10.27GiBLibrary, but no EditorInstance/logversion receipt found. Cache version not independently proven; no copy."
+      },
+      {
+        "root": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
+        "state": "Live Editor6000.5.8 verified. Cannot copy active Library; may reassess only after terminal/idle ownership and same-version proof."
+      }
+    ],
+    "cache_copy_contract": "Only if free lane, sufficient measured headroom and verified terminal same-version donor: copy rebuildable Library content only to separately owned native root; do not copy Temp, lock files, EditorInstance, process/IPC ownership or validation evidence. Reconfirm donor still idle, preserve its source/evidence. Cache reuse earns no readiness; fresh normal UPM/Pipeline/Android/import and actual source/build identity checks remain mandatory."
+  },
+  "sampling_authority": {
+    "result": "PreparedUnqualified",
+    "native_runs": 0,
+    "queue_success_enabled": false,
+    "kind": "Baseline720",
+    "slots": 720,
+    "source_authority_pins": 22,
+    "plan_sha256": "ed272f92260d235459712fda21e4a233bd4f7305fd0cb659ef06e42925cde6f6",
+    "plan_path": "/private/tmp/warline-mac-support-20261018/native-prep-baseline720.json",
+    "S003_slots": [
+      {
+        "catalog_id": "S003",
+        "seed": 104732,
+        "locale": "EN",
+        "size": "Standard",
+        "difficulty": "Regular",
+        "control_mode": "aria"
+      },
+      {
+        "catalog_id": "S003",
+        "seed": 104732,
+        "locale": "FA",
+        "size": "Standard",
+        "difficulty": "Regular",
+        "control_mode": "aria"
+      },
+      {
+        "catalog_id": "S003",
+        "seed": 130366,
+        "locale": "EN",
+        "size": "Standard",
+        "difficulty": "Regular",
+        "control_mode": "aria"
+      },
+      {
+        "catalog_id": "S003",
+        "seed": 130366,
+        "locale": "FA",
+        "size": "Standard",
+        "difficulty": "Regular",
+        "control_mode": "aria"
+      },
+      {
+        "catalog_id": "S003",
+        "seed": 155924,
+        "locale": "EN",
+        "size": "Standard",
+        "difficulty": "Regular",
+        "control_mode": "aria"
+      },
+      {
+        "catalog_id": "S003",
+        "seed": 155924,
+        "locale": "FA",
+        "size": "Standard",
+        "difficulty": "Regular",
+        "control_mode": "aria"
+      }
+    ],
+    "first_EN_slot": {
+      "catalog_id": "S003",
+      "seed": 104732,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    "packet": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+    "packet_role": "Canonical expandedS003, not handoff work ordinal5 or S005. Recommended laterWar remains gated.",
+    "schema": "S003 is ordinary expanded schema1 with complete sampling plan; protected schema2/3 applies onlyS001/S025/S073. Do not dispatch an illustrative job, fabricate native setup/config hashes or claim queue credit from a plan."
+  },
+  "future_native_configuration": {
+    "entry": "Game.Editor.SkirmishProductionNativeIdentityCensus.ExportReviewedMatrixSliceFromEnvironment",
+    "environment": [
+      "WARLINE_NATIVE_IDENTITY_REQUEST",
+      "WARLINE_NATIVE_IDENTITY_REQUEST_SHA256",
+      "WARLINE_NATIVE_IDENTITY_OUTPUT"
+    ],
+    "prerequisites": "Actual clean approved root with exact candidate/source/build snapshot and current compiled DLLs, complete SHA-pinned720plan plus source packet pins, exact reviewed S003 slot with packet path/hash. Census evidence must be absolute under that root Logs/SkirmishProduction and non-reparse.",
+    "actual_census": "ExportPersistent packaged S003 definition, actual compiler Standard/Regular/seed, native setup/content/config SHA and definition asset SHA, actual locale en/FA mapping fa-IR. Restore prior locale in finally and recheck source/build/request/plan pins. NOT RUN.",
+    "static_definition_identity": {
+      "catalog": "S003",
+      "definition": "skirmish.s003",
+      "version": 2,
+      "scenario": "scenario.skirmish.s003",
+      "operation_map_id": "opmap.skirmish.desert_base_01",
+      "layout": "layout.skirmish.db.ba"
+    },
+    "physical_source": "Existing Campaign source via preserved S003 compatibility resolution; default source identity2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900/content2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c. Actual define/Addressables/source metadata generation can change resolution and must be joined natively before fit/normal journey. Bounds/authoredPlayable do not certify it.",
+    "post_new_commit": "Only after Windows repair controls and exact new stable main provided, update clean native worktree at terminal boundary, redo package/import/compile and complete source/build/native config pins; do not transfer5f or closed-S005 receipts."
+  },
+  "profile_locale_and_settings_restore": [
+    "Use owned per-attempt save-profile and record original/owned byte journals, original environment/effective root, original locale and Editor scene/settings baseline. Preserve unrelated player saves and dirty scenes.",
+    "Normal journey clears diagnostic flags including helipad/cycle/startup/recovery-only modes; use actual presented locale/normal input, not an inherited probe environment.",
+    "After owned Play/compile/update ends, restore Editor options/candidate scope and production profile/locale/environment/scene state in existing cleanup seam. Retain context and fail if restore fails. Require actual ProfileBeforeRestore/ProfileAfterRestore plus ContextRestored and unchanged original bytes/settings receipts; mere finally execution or temp directory is not proof.",
+    "Keep source, project target/defines, package lock, wrapper logs, exit/pass markers and final unchanged artifact barriers for fresh candidate. No injected outcomes or old-candidate wins."
+  ],
+  "target_readiness": {
+    "editor_version": "6000.5.8f1",
+    "editor_installed": true,
+    "android_player_present": true,
+    "android_module_paths_present": {
+      "SDK": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK",
+      "NDK": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK",
+      "OpenJDK": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK"
+    },
+    "actual_build_target": "Not inspected through Editor; cache/build profile is not target certification.",
+    "UPM_Pipeline_Android_import": "Not run; native lane occupied.",
+    "Unity_launch": "Not performed",
+    "mission_or_build_ready": false
+  },
+  "source_sha256": {
+    "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874",
+    "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BT.md": "266dadd1b80c13dad1ed640c9a34cf2aa68721f8cf514ce57c01cca0a482706b",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_CE.md": "56e5af7a83ef9e63a1723733f7462bf9fff57c3c7ccdffdf4a30021e2e02f378",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_FC.md": "bca718e725c0fa9b7e34172742882db2b202d62116a228a1443820683732e5da",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BT.md": "74a674a06b2be733795f73d6ae586745c2e6b1aa3680c9675bd86d40348938d3",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_CE.md": "d0390d46e133159f857f7c768766eca177fc8b860dd9e92a0e174b6335199f2c",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_FC.md": "d58000a4e6df306f15c6100c5f313b964128de1a92be38a4bc704112fc373864",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BT.md": "4826ac5e0df2e1f9d3143980f22ca50fe6906b09185cd1c8438da940ede43283",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_CE.md": "1c8fe561d7f12bdfa679f646cec76db762b8efacd6f9fdea058ec4eee8d9d598",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_FC.md": "360daeb60270b2a2eaac6f0150169dd638df412fe3457af49bea43bdae9ad857",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BA.md": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BT.md": "37c4339d8dc04f37fad29ecf77ed42db4183fa6c32494475c7bd634052f97b08",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_CE.md": "b2271c088c5aba6ad99b97e23b7aad9885b61696ace3620d39e732123b7751f6",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_FC.md": "26c191bb0fe880a26c3d5bd0cfaef4b5c22892e539b7cf8ee1cbde3c56a9741e",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BT.md": "2a213f44779fb125e29f8d9de74644a553c68fd001ae2879a68a64591b473ee8",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_CE.md": "e06743489475be561348c1eeea8f9360a0bfb2b31a4f31ba1fb37d5bfc0f5324",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_FC.md": "4a6b5a80eac93485fd6d8e58723ebc4eea18831ef0ada635b70aba4114e30678",
+    "Tools/CI/skirmish_production_matrix_authority.py": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionMatrixAuthority.cs": "0baa1631733e25c549a70daee4a6f68414554387bb5742068b2fd30113663abd",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs": "a651cc6cb42b58654aa5be042b2ccdad0dbb89fe41fab909f47fd3176c1e9089",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs": "e113a199acc0d132f2af7667afe28ed31e1a4e04fd7c7594a5e6ba1478e88ebc",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishLegacyProductionIdentity.cs": "70774070707e989deaacebadcb22d9760e4c3de68f03d5a30df7bd2a69348af0",
+    "Tools/CI/prepare_skirmish_batch_canary_jobs.py": "f33cd58d00665517aac5e6760299b9056fde1b18f6af3d4bdb170c0b443e65f0",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "e6efcd87fd7b2494b0506e9354e3f904a747d5c2fffd12e167903c59972ab9c3",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs": "b0fe98b3d3b14395c54f4aed5b6c68529f7c8837c8ed87cfed341ad6b3896ed7",
+    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset": "9bd4caeaaf587a0a77938ebaaf224b3c4eebff8a245b559dcccdd113ea17c129",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset": "a9ff73f6a6852e76f013cf91ab31e59d3b1318b2ced4656f7da61c5c70e988f1",
+    "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset": "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0",
+    "ProjectSettings/ProjectVersion.txt": "09292e3f32140b54a6f8b5b377812ef2a19fd855ee0a3cb30d2a5fa5f421b10a",
+    "Packages/manifest.json": "6ed24229bb0eaf72dd0b654ab6f985b4eb25293c3e9cb0336a759352e3fe7683",
+    "Packages/packages-lock.json": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51"
+  },
+  "readiness_credit": false
+}

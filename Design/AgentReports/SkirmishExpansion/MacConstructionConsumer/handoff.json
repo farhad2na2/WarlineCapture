@@ -53,7 +53,7 @@
     "Enemy exposed intent history continuity and duplicate action rejection, with native cleanup refund transition preserved."
   ],
   "limits": [
-    "Real Windows construction traces were still being produced at handoff; no real trace run performed.",
+    "This Mac has not performed real-trace admission. Windows reports four pure M5 player rows passed; full byte/source/build admission pending.",
     "In-memory validate_construction_ledger is a consistency API only. inspect() adds real artifact/source/build checks.",
     "Whole-attempt conservation is not claimed: fabrication, exchange, rewards, repair and other origins can interleave.",
     "Only supplied source-manifest completeness is checked; scope/authenticity still belongs to the native producer and existing operational verifier.",
@@ -64,12 +64,12 @@
     "Reused player transaction IDs after an unobserved helper reset fail closed; no reset event exists in this reviewed schema.",
     "Parsed artifacts/journals: 16 MiB and 25000 journal rows. Source/DLL pins: streamed with 64 KiB chunks, 512 MiB individual bound and 8 GiB total budget, 131072 source rows, 1024 DLL rows. Larger inputs fail closed.",
     "Canonical absolute claim paths refer to the actual candidate project. No cross-machine path rewrite or relocated-claim admission.",
-    "Windows reparse handling is implemented but has only been executed on macOS; native Windows verification remains pending."
+    "Windows constructed tests exercised actual junction/reparse controls successfully. Full real-source/artifact admission remains a separate Windows gate."
   ],
   "acceptance": {
     "coordinator_review": "pending",
     "real_trace_admission": "Coordinator reports four real M5 player rows pass pure validation; full source/build/artifact admission pending.",
-    "windows_execution": "Initial coordinator run had 38 passes/two symlink fixture errors; portable fixtures and latest normalization correction require coordinator Windows rerun.",
+    "windows_execution": "PASS: Windows coordinator reports exact a6eb49e, 45 constructed tests, no skips, including real unprivileged junction/reparse controls. See windows-constructed-test-result.json.",
     "production_integration": "not performed",
     "native_validation": "not performed",
     "android_build": "not performed",
@@ -92,5 +92,11 @@
     "Focused corruption reproducers at f8a5c91 accepted erased prior enemy intent and skipped settlement phase. Consumer now requires exposed intent continuity except native PaidPending-to-RefundPending cleanup, and rejects duplicate enemy action keys. Five regression tests cover lost history, skipped settlement, spliced fields, valid native cleanup and next distinct action.",
     "Windows coordinator reported two WinError1314 file-symlink fixture failures. Tests now create real directory symlinks on macOS and unprivileged NTFS junctions on Windows, with targets contained in fixture temp root. Both initial alias and final-barrier replacement assert the actual production reparse-rejection message; no skip, machine privilege change or checker relaxation.",
     "Native request key normalization mismatch repaired using pinned ASCII BoundaryKeyEquals semantics, preserving raw DTOs and literal actor source equality. Added normalization owners to literal pins. One explicit LF/CRLF pin pair for enqueue owner verified against Git and Windows supplied hash; no arbitrary EOL canonicalization. See request-key-normalization-review.json, including retained pre-fix rejection and 15-owner byte/barrier checks."
-  ]
+  ],
+  "platform_test_receipts": {
+    "mac": "constructed-tests.log",
+    "windows": "windows-constructed-test-result.json",
+    "windows_full_log_sha256": "1581acd7e69e051a43c46051e4bf4f5bf5820f8df7d0b95820ceb01564e73af1",
+    "tested_code_commit": "a6eb49e148afcbe131e35585327fa460cb12126c"
+  }
 }

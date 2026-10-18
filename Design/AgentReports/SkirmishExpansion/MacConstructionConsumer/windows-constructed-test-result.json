@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-10-18T12:11:41.773399+00:00",
+  "evidence_origin": {
+    "type": "Direct Windows coordinator message received in this Mac chat",
+    "thread_id": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
+    "independent_mac_log_read": false
+  },
+  "tested_commit": "a6eb49e148afcbe131e35585327fa460cb12126c",
+  "suite_scope": "Constructed Python consistency/corruption/path fixtures executed on native Windows, not Unity gameplay or device acceptance.",
+  "reported_execution_environment": "Exact fetched commit copied as nine added paths into isolated Logs review projection; live C# source unchanged.",
+  "result": "Passed",
+  "tests": 45,
+  "skips": 0,
+  "actual_windows_controls": [
+    "Initial real unprivileged NTFS junction path rejection",
+    "Owned attempt-directory junction replacement rejected by final artifact barrier"
+  ],
+  "reported_log": {
+    "filename": "WINDOWS_CONSTRUCTED_TESTS.log",
+    "sha256": "1581acd7e69e051a43c46051e4bf4f5bf5820f8df7d0b95820ceb01564e73af1",
+    "location": "Windows coordinator review projection; full path not supplied",
+    "full_log_copied_to_mac": false
+  },
+  "original_failures": "Retained as reported in windows-portability-review.json; original full Windows logs remain owned by coordinator.",
+  "real_evidence_gate": {
+    "M5_player_rows": "Coordinator reports four real player rows pass pure validation",
+    "full_source_build_artifact_admission": "Windows work in progress; no completed receipt supplied yet"
+  },
+  "code_freeze": "No consumer code changes while Windows actual proof is in progress; Mac retains consumer ownership.",
+  "qualified": false,
+  "paid_resources_qualified": false,
+  "mission_ready": false,
+  "suite_path": "Tools/CI/skirmish_construction_ledger_admission_test.py",
+  "exact_windows_invocation": "Not supplied with the direct test-result message."
+}

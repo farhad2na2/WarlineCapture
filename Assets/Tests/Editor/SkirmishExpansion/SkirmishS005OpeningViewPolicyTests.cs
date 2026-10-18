@@ -22,15 +22,15 @@ namespace Game.Tests.Editor
             public readonly Entity Session,Actor;
             public readonly SkirmishResolvedSetup Setup;
             public readonly SkirmishMissionViewProfile View;
-            public Fixture(int seed=155926)
+            public Fixture(int seed=155926,string catalogId="S005")
             {
                 var definition=UnityEditor.AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>(
-                    "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset");
+                    "Assets/Game/Configs/SkirmishExpansion/Scenarios/"+catalogId+"/SkirmishScenario_"+catalogId+".asset");
                 Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out _));
                 Assert.IsTrue(SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,seed,
                     new SkirmishContentManifest {RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out Setup,out var reasons),string.Join(";",reasons));
-                View=SkirmishMissionViewProfile.CreateS005EngineeringCandidate(definition);
-                View.OpeningFocusPolicy=SkirmishMissionOpeningFocusPolicy.S005FirstOpeningOwnedRifle;
+                View=catalogId=="S005"?SkirmishMissionViewProfile.CreateS005EngineeringCandidate(definition):UnityEngine.Object.Instantiate(SkirmishMissionViewProfile.Load(catalogId));
+                if(catalogId=="S005")View.OpeningFocusPolicy=SkirmishMissionOpeningFocusPolicy.S005FirstOpeningOwnedRifle;
                 Session=Em.CreateEntity();
                 var native=new SkirmishExpandedSessionComponent {CatalogId=Setup.CatalogId,DefinitionId=Setup.DefinitionId,
                     ContentVersion=Setup.ContentVersion,SetupHash=Setup.SetupHash,ObjectiveKind=Setup.ObjectiveKind,SessionId="s005-opening-fixture",
@@ -194,6 +194,144 @@ namespace Game.Tests.Editor
                 f.View.MaximumGroundCenterSlantDistance=candidate.MaximumGroundCenterSlantDistance;
                 Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueValidated(f.Em,f.Session,f.View,out string error),"seed "+seed+": "+error);
             }
+        }
+        [Test] public void GenericProfileIdentityIsDataDrivenAndDoesNotAdmitAnUnboundLegacyProfile()
+        {
+            using var f=new Fixture();
+            f.View.ActiveOperationMapId="opmap.fixture";f.View.ActiveMapContentHash="content";f.View.ActiveMapSourceIdentityHash="source";
+            f.View.OpeningFocusPolicy=SkirmishMissionOpeningFocusPolicy.FirstOpeningOwnedRifleGroup;
+            for(int i=1;i<=120;i++)
+            {
+                f.View.CatalogId="S"+i.ToString("D3");f.View.DefinitionId="skirmish."+f.View.CatalogId.ToLowerInvariant();
+                Assert.IsTrue(f.View.IsValid,f.View.CatalogId);
+            }
+            f.View.ActiveMapSourceIdentityHash=null;Assert.IsFalse(f.View.IsValid);
+            f.View.ActiveMapSourceIdentityHash="source";f.View.CatalogId="S121";Assert.IsFalse(f.View.IsValid);
+        }
+        [Test] public void ActiveMapProfileRejectsWrongSourceContentGenerationAndDefinition()
+        {
+            using var f=new Fixture();var definition=f.Em.GetComponentObject<SkirmishLaunchDefinitionRecord>(f.Session).Definition;
+            f.View.ActiveOperationMapId=f.Setup.OperationMapId;f.View.ActiveMapContentHash="actual-content";f.View.ActiveMapSourceIdentityHash="actual-source";
+            f.View.OpeningFocusPolicy=SkirmishMissionOpeningFocusPolicy.FirstOpeningOwnedRifleGroup;
+            Assert.IsNotNull(definition.ObjectiveConfig);
+            Assert.AreEqual(definition.ObjectiveConfig.Kind,f.Setup.ObjectiveKind,"Active-map fixture must retain the actual compiled objective.");
+            f.View.ObjectiveKind=f.Setup.ObjectiveKind;
+            using var builder=new BlobBuilder(Allocator.Temp);ref var root=ref builder.ConstructRoot<OperationMapBlob>();
+            root.OperationMapId=f.Setup.OperationMapId;root.ContentHash="actual-content";root.SourceIdentityHash="actual-source";
+            var blob=builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+            try
+            {
+                var map=f.Em.CreateEntity();f.Em.AddComponentData(map,new ActiveOperationMapComponent {OperationMapId=f.Setup.OperationMapId,Generation=7});
+                var metadata=new OperationMapMetadataComponent {Blob=blob,Generation=7,PhysicalSourceValidated=1};f.Em.AddComponentData(map,metadata);
+                Assert.IsTrue(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View));
+                f.View.ObjectiveKind=SkirmishObjectiveKind.None;
+                Assert.IsFalse(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View),"Wrong objective cannot pass active-map source identity.");
+                f.View.ObjectiveKind=f.Setup.ObjectiveKind;
+                Assert.IsTrue(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View),"Restoring the actual objective must restore the positive match.");
+                f.View.ActiveMapContentHash="foreign";Assert.IsFalse(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View));f.View.ActiveMapContentHash="actual-content";
+                f.View.ActiveMapSourceIdentityHash="foreign";Assert.IsFalse(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View));f.View.ActiveMapSourceIdentityHash="actual-source";
+                metadata.Generation=8;f.Em.SetComponentData(map,metadata);Assert.IsFalse(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View));
+                metadata.Generation=7;metadata.PhysicalSourceValidated=0;f.Em.SetComponentData(map,metadata);Assert.IsFalse(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View));
+                metadata.PhysicalSourceValidated=1;f.Em.SetComponentData(map,metadata);f.View.DefinitionVersion++;Assert.IsFalse(SkirmishMissionViewProfileApplication.MatchesSource(f.Em,f.Setup,definition,f.View));
+            }
+            finally {blob.Dispose();}
+        }
+        [Test] public void GenericOpeningUsesOnlyCompleteActualActivePlayerRifleGroup()
+        {
+            foreach(byte faction in new byte[]{1,2})for(int mutation=0;mutation<4;mutation++)
+            {
+                using var f=new Fixture();f.Setup.PlayerFaction=faction;
+                for(int i=0;i<f.Setup.Forces.Length;i++)if(f.Setup.Forces[i].RoleKind==SkirmishRoleKind.Rifle&&f.Setup.Forces[i].FactionId==1)f.Setup.Forces[i].FactionId=faction;
+                var own=f.Em.GetComponentData<SkirmishAttemptOwnedComponent>(f.Actor);string prefix=own.StableObjectId.ToString();prefix=prefix.Substring(0,prefix.LastIndexOf('.')+1).Replace(".1.","."+faction+".");
+                var members=new Entity[4];
+                for(int i=0;i<4;i++)
+                {
+                    var actor=i==0?f.Actor:f.Em.Instantiate(f.Actor);members[i]=actor;own.FactionId=faction;own.StableObjectId=new FixedString64Bytes(prefix+i);
+                    f.Em.SetComponentData(actor,own);f.Em.SetComponentData(actor,new Faction {Id=faction});f.Em.SetComponentData(actor,LocalTransform.FromPosition(100+i*2,2,200+i*4));
+                    if(!f.Em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))f.Em.AddComponentData(actor,new SkirmishArmyGroupMembershipComponent {GroupId=77,Domain=SkirmishPopulationCategory.Infantry});
+                }
+                f.Em.AddBuffer<SkirmishArmyGroupRecord>(f.Session).Add(new SkirmishArmyGroupRecord {GroupId=77,FactionId=faction,Role=SkirmishRoleKind.Rifle,Domain=SkirmishPopulationCategory.Infantry,MemberCount=4,AliveCount=4});
+                f.View.OpeningFocusPolicy=SkirmishMissionOpeningFocusPolicy.FirstOpeningOwnedRifleGroup;
+                if(mutation==1)f.Em.DestroyEntity(members[3]);
+                if(mutation==2){var paid=f.Em.GetComponentData<SkirmishAttemptOwnedComponent>(members[2]);paid.ReservationId=1;f.Em.SetComponentData(members[2],paid);}
+                if(mutation==3)f.Em.SetComponentData(members[2],new Faction {Id=(byte)(3-faction)});
+                var native=f.Em.GetComponentData<SkirmishExpandedSessionComponent>(f.Session);
+                bool found=SkirmishS005OpeningViewPolicy.TryFindOpeningFocus(f.Em,f.Session,native,f.Setup,f.View,out _,out var center);
+                Assert.AreEqual(mutation==0,found);
+                if(found)Assert.Less(math.distance(center,new float3(103,2,206)),.0001f);
+                Assert.AreEqual(0,f.Em.GetBuffer<SkirmishArmyGroupRecord>(f.Session)[0].Selected);
+                Assert.AreEqual(SkirmishGroupOrderKind.None,f.Em.GetBuffer<SkirmishArmyGroupRecord>(f.Session)[0].LastOrder);
+            }
+        }
+        [Test] public void S002ProfilePinsExistingDefinitionLayoutAndActualCompatibilitySourceOnly()
+        {
+            var definition=UnityEditor.AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset");
+            var view=SkirmishMissionViewProfile.Load("S002");Assert.IsNotNull(view);Assert.IsTrue(view.IsValid);
+            Assert.IsNull(definition.CampaignMap,"Camera opt-in must not bind a new physical Campaign source.");
+            var setup=new SkirmishResolvedSetup {CatalogId=definition.CatalogId,DefinitionId=definition.DefinitionId,ContentVersion=definition.ContentVersion,
+                OperationMapId=definition.OperationMapId,LayoutId=definition.MapLayoutId,ObjectiveKind=definition.ObjectiveConfig.Kind};
+            Assert.IsTrue(view.MatchesActiveMap(setup,definition,view.ActiveOperationMapId,view.ActiveMapContentHash,view.ActiveMapSourceIdentityHash));
+            Assert.IsFalse(view.Matches(setup,definition),"Active map profile cannot bypass actual native map identity through the old Campaign-only API.");
+            setup.CatalogId="S003";Assert.IsFalse(view.MatchesActiveMap(setup,definition,view.ActiveOperationMapId,view.ActiveMapContentHash,view.ActiveMapSourceIdentityHash));
+        }
+        [Test] public void ProtectedLegacySessionDoesNotQueueOptInOpeningFocus()
+        {
+            using var f=new Fixture();var native=f.Em.GetComponentData<SkirmishExpandedSessionComponent>(f.Session);native.IsLegacy=1;f.Em.SetComponentData(f.Session,native);
+            Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(f.Em,f.Session,out _));
+            Assert.IsFalse(f.Em.HasComponent<SkirmishS005OpeningFocusOwner>(f.Session));
+        }
+        [Test] public void ActualS002SpawnReachesPublicProfileAndOpeningQueueOnlyAfterCompleteSource()
+        {
+            using var f=new Fixture(155923,"S002");f.Em.DestroyEntity(f.Actor);
+            Assert.IsFalse(SkirmishMissionViewProfileApplication.TryResolve(f.Em,out _));
+            using var builder=new BlobBuilder(Allocator.Temp);ref var root=ref builder.ConstructRoot<OperationMapBlob>();
+            root.OperationMapId=f.View.ActiveOperationMapId;root.ContentHash=f.View.ActiveMapContentHash;root.SourceIdentityHash=f.View.ActiveMapSourceIdentityHash;
+            var blob=builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+            try
+            {
+                var map=f.Em.CreateEntity();f.Em.AddComponentData(map,new ActiveOperationMapComponent {OperationMapId=f.View.ActiveOperationMapId,Generation=9});
+                var metadata=new OperationMapMetadataComponent {Blob=blob,Generation=9,PhysicalSourceValidated=0};f.Em.AddComponentData(map,metadata);
+                Assert.IsFalse(SkirmishMissionViewProfileApplication.TryResolve(f.Em,out _));
+                metadata.PhysicalSourceValidated=1;f.Em.SetComponentData(map,metadata);
+                Assert.IsTrue(SkirmishMissionViewProfileApplication.TryResolve(f.Em,out var resolved));Assert.AreEqual("S002",resolved.CatalogId);
+                Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(f.Em,f.Session,f.Setup,out var reason,out _),reason.ToString());
+                // EditMode spawn uses the existing bare-entity fallback, not a rendered prefab.
+                // Complete only the fixture actor components; original IDs/groups come from real spawn.
+                using(var actorsQuery=f.Em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent)))
+                using(var actors=actorsQuery.ToEntityArray(Allocator.Temp))
+                    for(int i=0;i<actors.Length;i++)
+                    {
+                        var actor=actors[i];if(f.Em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role!=SkirmishRoleKind.Rifle)continue;
+                        Assert.IsTrue(f.Em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor));
+                        f.Em.AddComponent<SkirmishSharedActorTag>(actor);f.Em.AddComponentData(actor,new UnitHealth {Current=100,Max=100});
+                        f.Em.AddComponentData(actor,LocalTransform.FromPosition(100+i*2,2,200+i*4));
+                    }
+                Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(f.Em,f.Session,out var error),error);
+                var owner=f.Em.GetComponentData<SkirmishS005OpeningFocusOwner>(f.Session);
+                Assert.AreEqual("role.rifle.1.0.0",owner.ActorId.ToString());Assert.IsTrue(SkirmishS005OpeningViewPolicy.OwnsIntroduction(f.Em,f.Session));
+                using var requests=f.Em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));var entity=requests.GetSingletonEntity();
+                var request=f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity);Assert.AreEqual(1,request.Requested);Assert.AreEqual(resolved.NormalHeight,request.Perspective.x);
+                request.Requested=0;f.Em.SetComponentData(entity,request);
+                Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(f.Em,f.Session,out error),error);Assert.AreEqual(0,f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity).Requested);
+                var native=f.Em.GetComponentData<SkirmishExpandedSessionComponent>(f.Session);native.CatalogId="S003";f.Em.SetComponentData(f.Session,native);
+                Assert.IsFalse(SkirmishS005OpeningViewPolicy.OwnsIntroduction(f.Em,f.Session));
+                foreach(var group in f.Em.GetBuffer<SkirmishArmyGroupRecord>(f.Session))
+                {Assert.AreEqual(0,group.Selected);Assert.AreEqual(SkirmishGroupOrderKind.None,group.LastOrder);}
+            }
+            finally {blob.Dispose();}
+        }
+        public static void RunGenericOwnedOpeningValidation()
+        {
+            var t=new SkirmishS005OpeningViewPolicyTests();
+            Game.Editor.SkirmishS002AriaRunHarness.RunCodedOpeningSettleControls();
+            t.ActualS002SpawnReachesPublicProfileAndOpeningQueueOnlyAfterCompleteSource();
+            t.GenericProfileIdentityIsDataDrivenAndDoesNotAdmitAnUnboundLegacyProfile();
+            t.ActiveMapProfileRejectsWrongSourceContentGenerationAndDefinition();
+            t.GenericOpeningUsesOnlyCompleteActualActivePlayerRifleGroup();
+            t.S002ProfilePinsExistingDefinitionLayoutAndActualCompatibilitySourceOnly();
+            t.ProtectedLegacySessionDoesNotQueueOptInOpeningFocus();
+            RunFocusedValidation();
+            Debug.Log("[GenericOwnedOpeningViewControls] result=Passed newControls=6 legacyControls=9 nativeVisualAccepted=0");
         }
         public static void RunFocusedValidation()
         {

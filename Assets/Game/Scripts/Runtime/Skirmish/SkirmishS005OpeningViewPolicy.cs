@@ -16,18 +16,19 @@ namespace Game.Runtime
         public float3 ActualActorWorld,GroundRequest;
         public int RequestedFrame;
     }
-    // Normal S005 presentation only. Uses actual own opening actors; no orders,
+    // Opt-in normal mission presentation; the established S005 profile remains compatible. Uses actual own opening actors; no orders,
     // selection changes, camera transform writes or hidden enemy observations.
     public static class SkirmishS005OpeningViewPolicy
     {
         public static bool TryQueueAfterActualSpawn(EntityManager em,Entity session,out string error)
         {
-            error="Actual S005 opening camera identity unavailable.";
+            error="Actual opening camera identity unavailable.";
             if(!em.Exists(session)||!em.HasComponent<SkirmishResolvedSetupRecord>(session))return false;
+            if(em.HasComponent<SkirmishExpandedSessionComponent>(session)&&em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy!=0){error=null;return true;}
             var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            if(setup==null)return false;
-            if(setup.CatalogId!="S005"){error=null;return true;}
-            var candidate=SkirmishMissionViewProfile.Load("S005");
+            if(setup==null||setup.PlayerFaction<=0||setup.PlayerFaction>byte.MaxValue)return false;
+
+            var candidate=SkirmishMissionViewProfile.Load(setup.CatalogId);
             if(candidate==null||candidate.OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.None)
                 return TryQueueScopedCandidate(em,session,candidate,out error);
             if(!SkirmishMissionViewProfileApplication.TryResolve(em,out var profile))return false;
@@ -43,17 +44,17 @@ namespace Game.Runtime
         }
         internal static bool TryQueueValidated(EntityManager em,Entity session,SkirmishMissionViewProfile profile,out string error)
         {
-            error="Pinned S005 normal profile and fresh actual opening Rifle required.";
-            if(!em.Exists(session)||profile==null||!profile.IsValid||profile.CatalogId!="S005"||profile.AuthoredNonBaseAssault||profile.AuthoredGenericBaseAssault||
-                profile.OpeningFocusPolicy!=SkirmishMissionOpeningFocusPolicy.S005FirstOpeningOwnedRifle||
+            error="Pinned normal profile and fresh actual owned opening Rifle group required.";
+            if(!em.Exists(session)||profile==null||!profile.IsValid||profile.AuthoredNonBaseAssault||profile.AuthoredGenericBaseAssault||
+                (profile.OpeningFocusPolicy!=SkirmishMissionOpeningFocusPolicy.S005FirstOpeningOwnedRifle&&profile.OpeningFocusPolicy!=SkirmishMissionOpeningFocusPolicy.FirstOpeningOwnedRifleGroup)||
                 !em.HasComponent<SkirmishExpandedSessionComponent>(session)||!em.HasComponent<SkirmishResolvedSetupRecord>(session)||
                 !em.HasComponent<SkirmishLaunchDefinitionRecord>(session)||!em.HasComponent<SkirmishObjectiveClockComponent>(session))return false;
             var native=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             var record=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
-            if(native.IsLegacy!=0||native.CatalogId.ToString()!="S005"||native.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||
+            if(native.IsLegacy!=0||native.CatalogId.ToString()!=profile.CatalogId||
                 native.SpawnComplete!=1||native.Phase!=SkirmishSessionPhase.Playing||record==null||!record.Matches(setup,native)||
-                !profile.Matches(setup,record.Definition))return false;
+                !SkirmishMissionViewProfileApplication.MatchesSource(em,setup,record.Definition,profile))return false;
             if(em.HasComponent<SkirmishS005OpeningFocusOwner>(session))
             {
                 if(!OwnsIntroduction(em,session))return false;
@@ -82,9 +83,16 @@ namespace Game.Runtime
         internal static bool TryFindOpeningFocus(EntityManager em,Entity session,in SkirmishExpandedSessionComponent native,
             SkirmishResolvedSetup setup,SkirmishMissionViewProfile profile,out string id,out float3 position)
         {
-            if(string.IsNullOrEmpty(profile.OpeningFocusStableActorId))
-                return TryFindOpeningRifle(em,native,setup,out id,out position);
-            id=profile.OpeningFocusStableActorId;position=default;
+            if(profile.OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.FirstOpeningOwnedRifleGroup)
+            {
+                if(!TryFindOpeningRifle(em,native,setup,out id,out position))return false;
+            }
+            else
+            {
+                if(string.IsNullOrEmpty(profile.OpeningFocusStableActorId))
+                    return TryFindOpeningRifle(em,native,setup,out id,out position);
+                id=profile.OpeningFocusStableActorId;position=default;
+            }
             if(!IsOriginalRifleId(setup,id)||!em.HasBuffer<SkirmishArmyGroupRecord>(session))return false;
             using var query=em.CreateEntityQuery(new EntityQueryDesc {
                 All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},
@@ -104,7 +112,7 @@ namespace Game.Runtime
             foreach(var record in em.GetBuffer<SkirmishArmyGroupRecord>(session,true))
             {
                 if(record.GroupId!=group)continue;
-                if(record.FactionId!=1||record.Role!=SkirmishRoleKind.Rifle||record.Domain!=SkirmishPopulationCategory.Infantry||
+                if(record.FactionId!=setup.PlayerFaction||record.Role!=SkirmishRoleKind.Rifle||record.Domain!=SkirmishPopulationCategory.Infantry||
                     record.MemberCount!=SkirmishRoleIds.InfantrySquadMembers||record.AliveCount!=SkirmishRoleIds.InfantrySquadMembers)return false;
                 records++;
             }
@@ -127,16 +135,16 @@ namespace Game.Runtime
             if(setup?.Forces==null)return false;
             for(int i=0;i<setup.Forces.Length;i++)
             {
-                var force=setup.Forces[i];if(force.FactionId!=1||force.RoleKind!=SkirmishRoleKind.Rifle)continue;
+                var force=setup.Forces[i];if(force.FactionId!=setup.PlayerFaction||force.RoleKind!=SkirmishRoleKind.Rifle)continue;
                 for(int member=0;member<force.Quantity;member++)
-                    if(id==force.RoleId+".1."+i.ToString(System.Globalization.CultureInfo.InvariantCulture)+"."+member.ToString(System.Globalization.CultureInfo.InvariantCulture))return true;
+                    if(id==force.RoleId+"."+setup.PlayerFaction.ToString(System.Globalization.CultureInfo.InvariantCulture)+"."+i.ToString(System.Globalization.CultureInfo.InvariantCulture)+"."+member.ToString(System.Globalization.CultureInfo.InvariantCulture))return true;
             }
             return false;
         }
         static bool ValidOriginalRifle(EntityManager em,Entity actor,SkirmishAttemptOwnedComponent own,SkirmishResolvedSetup setup)
         {
-            if(own.FactionId!=1||own.IsStructure!=0||own.ReservationId!=0||own.CapacityReleased!=0||!IsOriginalRifleId(setup,own.StableObjectId.ToString())||
-                !em.HasComponent<SkirmishSharedActorTag>(actor)||!em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=1||
+            if(own.FactionId!=setup.PlayerFaction||own.IsStructure!=0||own.ReservationId!=0||own.CapacityReleased!=0||!IsOriginalRifleId(setup,own.StableObjectId.ToString())||
+                !em.HasComponent<SkirmishSharedActorTag>(actor)||!em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=setup.PlayerFaction||
                 !em.HasComponent<SkirmishUnitRoleComponent>(actor)||!em.HasComponent<UnitHealth>(actor)||!em.HasComponent<LocalTransform>(actor)||
                 em.HasComponent<Disabled>(actor)||em.HasComponent<Parent>(actor)||em.HasComponent<PostTransformMatrix>(actor)||
                 em.HasComponent<UnitTransportPassenger>(actor)||em.HasComponent<UnitTransportCargoPassenger>(actor)||
@@ -152,8 +160,8 @@ namespace Game.Runtime
             if(setup?.Forces==null)return false;
             for(int i=0;i<setup.Forces.Length;i++)
             {
-                var force=setup.Forces[i];if(force.FactionId!=1||force.RoleKind!=SkirmishRoleKind.Rifle||force.Quantity<=0)continue;
-                id=force.RoleId+".1."+i.ToString(System.Globalization.CultureInfo.InvariantCulture)+".0";break;
+                var force=setup.Forces[i];if(force.FactionId!=setup.PlayerFaction||force.RoleKind!=SkirmishRoleKind.Rifle||force.Quantity<=0)continue;
+                id=force.RoleId+"."+setup.PlayerFaction.ToString(System.Globalization.CultureInfo.InvariantCulture)+"."+i.ToString(System.Globalization.CultureInfo.InvariantCulture)+".0";break;
             }
             if(id==null)return false;
             using var query=em.CreateEntityQuery(new EntityQueryDesc {All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},
@@ -163,8 +171,8 @@ namespace Game.Runtime
             {
                 var owned=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
                 if(owned.SessionId!=native.SessionId||owned.StableObjectId.ToString()!=id)continue;
-                if(found!=Entity.Null||owned.FactionId!=1||owned.IsStructure!=0||owned.ReservationId!=0||owned.CapacityReleased!=0||
-                    !em.HasComponent<SkirmishSharedActorTag>(actor)||!em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=1||
+                if(found!=Entity.Null||owned.FactionId!=setup.PlayerFaction||owned.IsStructure!=0||owned.ReservationId!=0||owned.CapacityReleased!=0||
+                    !em.HasComponent<SkirmishSharedActorTag>(actor)||!em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=setup.PlayerFaction||
                     !em.HasComponent<SkirmishUnitRoleComponent>(actor)||!em.HasComponent<UnitHealth>(actor)||!em.HasComponent<LocalTransform>(actor)||
                     em.HasComponent<Disabled>(actor)||em.HasComponent<Parent>(actor)||em.HasComponent<PostTransformMatrix>(actor)||
                     em.HasComponent<UnitTransportPassenger>(actor)||em.HasComponent<UnitTransportCargoPassenger>(actor)||
@@ -179,7 +187,10 @@ namespace Game.Runtime
         {
             if(!em.Exists(session)||!em.HasComponent<SkirmishS005OpeningFocusOwner>(session)||!em.HasComponent<SkirmishExpandedSessionComponent>(session))return false;
             var native=em.GetComponentData<SkirmishExpandedSessionComponent>(session);var owner=em.GetComponentData<SkirmishS005OpeningFocusOwner>(session);
-            return native.IsLegacy==0&&native.CatalogId.ToString()=="S005"&&native.ObjectiveKind==SkirmishObjectiveKind.BaseAssault&&
+            if(!em.HasComponent<SkirmishResolvedSetupRecord>(session)||!em.HasComponent<SkirmishLaunchDefinitionRecord>(session))return false;
+            var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            var record=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
+            return native.IsLegacy==0&&record!=null&&record.Matches(setup,native)&&
                 owner.Attempt==native.SessionId&&owner.SetupHash==native.SetupHash;
         }
     }

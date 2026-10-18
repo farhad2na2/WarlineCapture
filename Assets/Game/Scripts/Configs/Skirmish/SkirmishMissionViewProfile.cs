@@ -10,6 +10,9 @@ namespace Game.Configs
         public SkirmishMissionOpeningFocusPolicy OpeningFocusPolicy;
         // Optional scoped S005 hint; empty preserves the established first-actor policy.
         public string OpeningFocusStableActorId;
+        // Optional exact active-map lane; never changes the scenario physical source.
+        public string ActiveOperationMapId, ActiveMapContentHash, ActiveMapSourceIdentityHash;
+        public bool UsesActiveMapIdentity => !string.IsNullOrEmpty(ActiveOperationMapId);
         // Scoped override preserves aircraft heading when this ground candidate rotates.
         public bool UseSeparateAircraftYaw;
         public float AircraftYaw;
@@ -46,19 +49,30 @@ namespace Game.Configs
             return value;
         }
         public bool Matches(SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition) =>
-            IsValid && setup != null && definition != null && setup.CatalogId == CatalogId && definition.CatalogId == CatalogId &&
+            !UsesActiveMapIdentity && IsValid && setup != null && definition != null && setup.CatalogId == CatalogId && definition.CatalogId == CatalogId &&
             setup.DefinitionId == DefinitionId && setup.ContentVersion == DefinitionVersion && definition.ContentVersion == DefinitionVersion &&
             definition.CampaignMap != null && definition.CampaignMap.ContentHash == CampaignSourceContentHash &&
             definition.MapLayout != null && definition.MapLayout.ContentHash == LayoutContentHash &&
             setup.LayoutId == definition.MapLayoutId && setup.OperationMapId == definition.OperationMapId &&
             (!(AuthoredNonBaseAssault || AuthoredGenericBaseAssault) || setup.ObjectiveKind == ObjectiveKind && definition.ObjectiveConfig != null && definition.ObjectiveConfig.Kind == ObjectiveKind);
+        public bool MatchesActiveMap(SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition,
+            string mapId,string contentHash,string sourceIdentityHash) =>
+            UsesActiveMapIdentity && IsValid && setup!=null && definition!=null &&
+            setup.CatalogId==CatalogId && definition.CatalogId==CatalogId &&
+            setup.DefinitionId==DefinitionId && definition.DefinitionId==DefinitionId &&
+            setup.ContentVersion==DefinitionVersion && definition.ContentVersion==DefinitionVersion &&
+            setup.OperationMapId==ActiveOperationMapId && definition.OperationMapId==ActiveOperationMapId && mapId==ActiveOperationMapId &&
+            definition.MapLayout!=null && setup.LayoutId==definition.MapLayoutId && definition.MapLayout.LayoutId==setup.LayoutId &&
+            definition.MapLayout.OperationMapId==setup.OperationMapId && definition.MapLayout.ContentHash==LayoutContentHash &&
+            setup.ObjectiveKind==ObjectiveKind && definition.ObjectiveConfig!=null && definition.ObjectiveConfig.Kind==ObjectiveKind &&
+            contentHash==ActiveMapContentHash && sourceIdentityHash==ActiveMapSourceIdentityHash;
         public bool IsValid => System.Enum.IsDefined(typeof(SkirmishMissionOpeningFocusPolicy),OpeningFocusPolicy) &&
-            (OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.None||!AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault&&CatalogId=="S005"&&DefinitionId=="skirmish.s005") &&
+            (OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.FirstOpeningOwnedRifleGroup&&UsesActiveMapIdentity||OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.None||!AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault&&CatalogId=="S005"&&DefinitionId=="skirmish.s005") &&
             SchemaVersion == 1 && ContentVersion > 0 && DefinitionVersion > 0 &&
             ValidIdentity &&
             (string.IsNullOrEmpty(OpeningFocusStableActorId) || OpeningFocusPolicy==SkirmishMissionOpeningFocusPolicy.S005FirstOpeningOwnedRifle) &&
             (!UseSeparateAircraftYaw || !AuthoredNonBaseAssault && !AuthoredGenericBaseAssault && CatalogId=="S005" && float.IsFinite(AircraftYaw)) &&
-            !string.IsNullOrWhiteSpace(CampaignSourceContentHash) &&
+            (UsesActiveMapIdentity ? !AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault&&!string.IsNullOrWhiteSpace(ActiveMapContentHash)&&!string.IsNullOrWhiteSpace(ActiveMapSourceIdentityHash) : !string.IsNullOrWhiteSpace(CampaignSourceContentHash)) &&
             !string.IsNullOrWhiteSpace(LayoutContentHash) && Positive(MinHeight) && Positive(MaxHeight) && MaxHeight >= MinHeight &&
             NormalHeight >= MinHeight && NormalHeight <= MaxHeight && BuildHeight >= NormalHeight && BuildHeight <= MaxHeight &&
             Positive(Pitch) && Pitch < 90 && float.IsFinite(Yaw) && Positive(NormalFieldOfView) && NormalFieldOfView < 179 &&
@@ -72,9 +86,9 @@ namespace Game.Configs
         {
             get
             {
-                if (!AuthoredNonBaseAssault && !AuthoredGenericBaseAssault) return CatalogId == "S005" && DefinitionId == "skirmish.s005";
+                if (!AuthoredNonBaseAssault && !AuthoredGenericBaseAssault && !UsesActiveMapIdentity) return CatalogId == "S005" && DefinitionId == "skirmish.s005";
                 if (AuthoredNonBaseAssault && AuthoredGenericBaseAssault) return false;
-                bool kind = AuthoredGenericBaseAssault ? ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
+                bool kind = UsesActiveMapIdentity ? !AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault : AuthoredGenericBaseAssault ? ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
                     SkirmishMissionDispatch.RequiresSourceBoundDefinition(CatalogId) :
                     ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.FrontlineControl ||
                     ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.Breakthrough || ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.ConvoyEscort;

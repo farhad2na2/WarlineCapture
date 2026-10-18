@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:28:23.852746+00:00",
+  "scope": "MacIsolatedShippingReaderCompatibility_ConstructedOnly",
+  "shipping_commit": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+  "repair_commit": "c68daad9f6f8804d57e48e8ae76c8b684df82a29",
+  "source_pins": {
+    "Tools/CI/skirmish_repair_ledger_admission_test.py": {
+      "revision": "c68daad9f6f8804d57e48e8ae76c8b684df82a29",
+      "sha256": "0fbd662f4e6c4c58b5f75c761d4ca2cbc6b1fe966195bb05748d89a4c6aa0fca"
+    },
+    "Tools/CI/s005_windows_source_snapshot.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba"
+    },
+    "Tools/CI/skirmish_production_queue.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd"
+    },
+    "Tools/CI/skirmish_production_matrix_authority.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85"
+    },
+    "Tools/CI/skirmish_counterpart_authority.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "eb1181034507a5bd1313e3eacc9c20aa4229409c26a551306d37a23e715650fc"
+    },
+    "Tools/CI/audit_skirmish_native_contacts.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92"
+    },
+    "Tools/CI/skirmish_native_identity.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5"
+    },
+    "Tools/CI/skirmish_construction_ledger_admission_test.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "3feaa1e4a81a1d2b62e3c1640e8bb37f3ca7cec0da4aaf7eb9f415f5843f2b8e"
+    },
+    "Tools/CI/skirmish_construction_ledger_admission.py": {
+      "revision": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+      "sha256": "f1d9279dc628034e6267475f00c6bfe709ea1c4e78f0e959494a2a5667cb2b24"
+    },
+    "Tools/CI/skirmish_repair_ledger_admission.py": {
+      "revision": "c68daad9f6f8804d57e48e8ae76c8b684df82a29",
+      "sha256": "26edcc7deb4425aeac9363c2baa7b34a45976be3777c31252c04e9ee17c3f072"
+    }
+  },
+  "historical_reader_sha256": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36",
+  "Reader_and_shared_helpers_AST": "Identical",
+  "whole_module_AST": "Identical after excluding only BASELINE and one Canary literal pin value",
+  "commands": [
+    "python3 -B skirmish_construction_ledger_admission_test.py",
+    "python3 -B skirmish_repair_ledger_admission_test.py"
+  ],
+  "statuses": {
+    "skirmish_construction_ledger_admission_test": 0,
+    "skirmish_repair_ledger_admission_test": 0
+  },
+  "tests_passed": {
+    "construction": 45,
+    "repair": 49
+  },
+  "logs": {
+    "skirmish_construction_ledger_admission_test": {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/shipping-reader-compatibility-mac/skirmish_construction_ledger_admission_test.log",
+      "sha256": "49e0bd8606ff4948a9e57905212dbf65f43d6f45652c1ba5f502619bc7fcf871"
+    },
+    "skirmish_repair_ledger_admission_test": {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/shipping-reader-compatibility-mac/skirmish_repair_ledger_admission_test.log",
+      "sha256": "58f75c47a8d2bffd9b17c5c0ccd9d64a88e7e6c298649b8cb4ce2bd72275a53a"
+    }
+  },
+  "retained_initial_failure": {
+    "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/shipping-reader-compatibility-mac/initial-isolation-setup-failure.log",
+    "reason": "Initial isolated setup omitted audit_skirmish_native_contacts transitive import. Corrected by exact Git AST import closure; no consumer changes.",
+    "sha256": "0fc0583177614120c4e1a25c54a972da834d323634debe15cc4c716e83162e82"
+  },
+  "no_production_source_changes": true,
+  "no_native_project_changes": true,
+  "no_controller_dependency_changes": true,
+  "native_or_normal_journal_admission": false,
+  "paid_resources_qualified": false,
+  "queue_success_enabled": false,
+  "mission_ready": false,
+  "original_tmp_receipt_sha256": "3b7dd6bc432933988d09a71d26be69c2d1650d8781a516a78b4071573e01bb14",
+  "native_projection_preserved": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "controller_code_preserved": "d79d134287414e6bc59671a423aa3bbe3e9cded2; unchanged controller001fa0fa58464caaa0d7f2adf2fea585b0867ad7fa7148d6683966b7b0e7b059"
+}

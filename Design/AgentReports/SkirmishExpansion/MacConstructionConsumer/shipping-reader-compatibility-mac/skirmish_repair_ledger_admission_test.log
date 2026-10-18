@@ -1,0 +1,54 @@
+test_bad_dto_types_numbers_and_missing_owner (__main__.AdmissionTests) ... ok
+test_completion_damage_cancels_instead_of_healing (__main__.AdmissionTests) ... ok
+test_completion_damage_uses_rescaled_percentage (__main__.AdmissionTests) ... ok
+test_completion_does_not_reset_seen_interrupt (__main__.AdmissionTests) ... ok
+test_completion_health_research_nearest_integer_rescale_is_valid (__main__.AdmissionTests) ... ok
+test_debit_completion_and_partial_work (__main__.AdmissionTests) ... ok
+test_debt_and_actual_retry_not_reward (__main__.AdmissionTests) ... ok
+test_default_none_is_only_exact_zero_receipt (__main__.AdmissionTests) ... ok
+test_destroyed_working_and_debt (__main__.AdmissionTests) ... ok
+test_disposition_without_observed_debit (__main__.AdmissionTests) ... ok
+test_duplicate_completion_refund_and_debit (__main__.AdmissionTests) ... ok
+test_duplicate_json_keys_and_nonfinite (__main__.AdmissionTests) ... ok
+test_each_bank_field_unauthorized_mutation (__main__.AdmissionTests) ... ok
+test_envelope_and_scope_corruptions (__main__.AdmissionTests) ... ok
+test_exact_widened_float_position (__main__.AdmissionTests) ... ok
+test_foreign_session_actor_bank_facility_generation (__main__.AdmissionTests) ... ok
+test_full_partial_cancel_and_explicit_request_increment (__main__.AdmissionTests) ... ok
+test_local_boundary_accrual_and_cancel_history (__main__.AdmissionTests) ... ok
+test_new_repair_after_settlement (__main__.AdmissionTests) ... ok
+test_new_repair_may_change_facility_positions_and_quote (__main__.AdmissionTests) ... ok
+test_one_material_quote_and_no_refund (__main__.AdmissionTests) ... ok
+test_possible_or_repeated_debt_rejected (__main__.AdmissionTests) ... ok
+test_prior_receipt_must_bind_actual_point_even_for_first_observed_debit (__main__.AdmissionTests) ... ok
+test_refund_cannot_create_reward_or_currency (__main__.AdmissionTests) ... ok
+test_saturation_and_version_wrap (__main__.AdmissionTests) ... ok
+test_settled_actor_generation_cannot_change_faction_or_bank (__main__.AdmissionTests) ... ok
+test_settled_actor_generation_cannot_rename_stable_id (__main__.AdmissionTests) ... ok
+test_stable_actor_rebind (__main__.AdmissionTests) ... ok
+test_truncation_failure_and_unknown_event (__main__.AdmissionTests) ... ok
+test_unobserved_progress_regression (__main__.AdmissionTests) ... ok
+test_unrecorded_disposition_or_receipt_erasure (__main__.AdmissionTests) ... ok
+test_wrong_arithmetic_and_extra_schema (__main__.AdmissionTests) ... ok
+test_bounded_oversized_file (__main__.ArtifactTests) ... ok
+test_build_bytes_and_derived_identity_fail_closed (__main__.ArtifactTests) ... ok
+test_candidate_hash_cannot_be_caller_only (__main__.ArtifactTests) ... ok
+test_empty_source_allowed_but_empty_artifact_or_dll_refused (__main__.ArtifactTests) ... ok
+test_final_barrier_rechecks_source_and_dll_bytes (__main__.ArtifactTests) ... ok
+test_final_barrier_rejects_change_after_validation (__main__.ArtifactTests) ... ok
+test_final_barrier_rejects_reparse_replacement (__main__.ArtifactTests) ... ok
+test_large_source_streams_and_final_barrier_rechecks_it (__main__.ArtifactTests) ... ok
+test_literal_policy_pins_cannot_be_caller_replaced (__main__.ArtifactTests) ... ok
+test_mutated_artifact_or_source (__main__.ArtifactTests) ... ok
+test_pinned_constructed_file_admission (__main__.ArtifactTests) ... ok
+test_rehashed_journal_outside_attempt_is_rejected (__main__.ArtifactTests) ... ok
+test_source_row_bound_covers_measured_project (__main__.ArtifactTests) ... ok
+test_symlink_traversal_and_escape (__main__.ArtifactTests) ... ok
+test_truncated_journal_even_rehashed (__main__.ArtifactTests) ... ok
+test_unknown_event_and_capture_fault_are_retained (__main__.ArtifactTests) ... ok
+test_wrong_immutable_claim_even_rehashed (__main__.ArtifactTests) ... ok
+
+----------------------------------------------------------------------
+Ran 49 tests in 0.168s
+
+OK

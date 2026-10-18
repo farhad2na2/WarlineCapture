@@ -41,6 +41,8 @@ def verify(rows, owner):
     found = [r for r in rows if r["ProcessId"] == owner["process"]["ProcessId"]]
     if not found:
         return None
+    if len(found) != 1 or any(not found[0].get(k) for k in ("Name", "ExecutablePath", "CommandLine", "CreationDate")):
+        raise ValueError("Owned PID identity unavailable; not evidence of absence")
     row = found[0]
     if identity(row) != identity(owner["process"]):
         raise ValueError("Owned PID identity changed; no process stopped")
@@ -67,7 +69,7 @@ def descendants(rows, parent):
                 changed = True
     for row in selected.values():
         if row["Name"].casefold() in {"unity hub.exe", "unityhub.exe", "unity.licensing.client.exe",
-                                      "chatgpt.exe", "codex.exe", "explorer.exe"}:
+                                      "chatgpt.exe", "codex.exe", "explorer.exe", "unitypackagemanager.exe"}:
             raise ValueError("Protected process in proposed tree; no process stopped")
         if row is not parent and row["Name"].casefold() == "unity.exe":
             if norm(option(argv(row["CommandLine"]), "-projectPath")) != norm(ROOT):
@@ -160,6 +162,94 @@ def write(path, value):
     with path.open("a", encoding="utf-8") as stream:
         stream.write(json.dumps(dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(), **value)) + "\n")
 
+PROTECTED = {'unitypackagemanager.exe', 'unity hub.exe', 'unity.licensing.client.exe'}
+
+def cancellation_event(path, kind, **facts):
+    with Path(path).open('a', encoding='utf-8') as f:
+        f.write(json.dumps(dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                                kind=kind, **facts)) + '\n')
+
+def current(api, rows, owner):
+    matches = [r for r in rows if r['ProcessId'] == owner['process']['ProcessId']]
+    if not matches:
+        return None
+    if len(matches) != 1 or any(not matches[0].get(k) for k in
+            ('Name', 'ExecutablePath', 'CommandLine', 'CreationDate')):
+        raise ValueError('Owned PID identity unavailable; not evidence of absence')
+    verified = api['verify'](rows, owner)
+    if verified is None:
+        raise ValueError('Present owned PID was not verified')
+    return verified
+
+def plan(api, rows, row):
+    try:
+        tree = api['descendants'](rows, row)
+        protected = any(str(r.get('Name', '')).casefold() in PROTECTED for r in tree)
+        return protected, 'Protected descendant' if protected else None
+    except (ValueError, TypeError, KeyError, OSError, AttributeError) as error:
+        # A forbidden child can never authorize /T. Only the separately verified root.
+        return True, str(error)
+
+def stop_owned(api, owner, output, reason, *, run=None, sleep=None):
+    run = run or subprocess.run
+    sleep = sleep or time.sleep
+    # Same frozen owner verification supplied by the existing controller, twice fresh.
+    rows = api['census']()
+    row = current(api, rows, owner)
+    if row is None:
+        cancellation_event(output, 'AlreadyExitedBeforeRecovery', cancelled=False)
+        return 0
+    root_only, protected_reason = plan(api, rows, row)
+    identity = api['identity'](row)
+    rows = api['census']()
+    row = current(api, rows, owner)
+    if row is None:
+        cancellation_event(output, 'ExitedBeforeCancellation', cancelled=False)
+        return 0
+    if api['identity'](row) != identity:
+        raise ValueError('Owned identity changed before cancellation')
+    fresh_root_only, fresh_reason = plan(api, rows, row)
+    root_only = root_only or fresh_root_only
+    protected_reason = fresh_reason or protected_reason
+    if not api['authorization']():
+        raise ValueError('Cancellation authorization revoked; no process stopped')
+    command = ['rtk', 'proxy', 'taskkill.exe', '/PID', str(row['ProcessId'])]
+    command += ([] if root_only else ['/T']) + ['/F']
+    # Observation only: retain the full parent-linked tree even when the strict
+    # descendant validator refuses it. These rows never authorize killing a child.
+    observed = {row['ProcessId']}
+    while True:
+        expanded = observed | {r['ProcessId'] for r in rows if type(r.get('ProcessId')) is int
+                               and r.get('ParentProcessId') in observed}
+        if expanded == observed:
+            break
+        observed = expanded
+    public_tree = [{k: r.get(k) for k in ('ProcessId', 'ParentProcessId', 'Name',
+                    'ExecutablePath', 'CreationDate')} for r in rows if r.get('ProcessId') in observed]
+    cancellation_event(output, 'CancellationIntent', reason=reason, pid=row['ProcessId'],
+          identity=identity, rootOnly=root_only, protectedReason=protected_reason,
+          command=command, observedTree=public_tree, missionReady=False)
+    result = run(command, capture_output=True, text=True, timeout=30)
+    cancellation_event(output, 'CancellationCommandResult', exit=result.returncode,
+          stdout=result.stdout, stderr=result.stderr, rootOnly=root_only)
+    # A successful command is not a shutdown observation. NULL CIM fields are unknown,
+    # not absence. Require two fresh absent samples; never retry a kill using a PID alone.
+    absent = 0
+    for _ in range(20):
+        rows = api['census']()
+        matches = [r for r in rows if r['ProcessId'] == owner['process']['ProcessId']]
+        absent = absent + 1 if not matches else 0
+        if absent == 2:
+            cancellation_event(output, 'OwnedRootShutdownVerified', commandExit=result.returncode,
+                  cancelled=True, rootOnly=root_only, protectedProcessesNotTargeted=True,
+                  descendantShutdownClaim=False, missionReady=False)
+            return 3  # Resource-cancelled validation remains failed.
+        sleep(.25)
+    cancellation_event(output, 'OwnedRootShutdownPending', commandExit=result.returncode,
+          rootOnly=root_only, missionReady=False)
+    raise RuntimeError('Owned shutdown unverified after bounded fresh observations')
+
+
 def watch(owner_path, output, reserve_override_id=None):
     owner = json.loads(owner_path.read_bytes())
     if norm(owner["project"]) != norm(ROOT) or not Path(owner["log"]).resolve().is_relative_to(ROOT / "Logs/SkirmishProduction"):
@@ -200,29 +290,7 @@ def watch(owner_path, output, reserve_override_id=None):
             write(output, {"kind": "Resource", "freeRamBytes": ram, "freeCommitBytes": commit,
                            "ownedEditorMemory": process_memory(kernel, handle, created(initial))})
             if low(ram, commit, ram_floor, commit_floor):
-                rows = census()
-                current = verify(rows, owner)
-                if current is None:
-                    write(output, {"kind": "ExitedDuringObservation", "cancelled": False})
-                    return 0
-                tree = descendants(rows, current)
-                if not authorization():
-                    raise ValueError("Cancellation authorization revoked; no process stopped")
-                # Recheck the exact root after the tree census, immediately before taskkill.
-                latest = census()
-                immediate = verify(latest, owner)
-                if immediate is None:
-                    write(output, {"kind": "ExitedBeforeCancellation", "cancelled": False})
-                    return 0
-                tree = descendants(latest, immediate)
-                public = [{k: r.get(k) for k in ("ProcessId", "ParentProcessId", "Name", "ExecutablePath", "CreationDate")}
-                          for r in tree]
-                write(output, {"kind": "CancellationIntent", "tree": public, "missionReady": False})
-                result = subprocess.run(["rtk", "proxy", "taskkill.exe", "/PID", str(current["ProcessId"]), "/T", "/F"],
-                                        capture_output=True, text=True, timeout=30)
-                write(output, {"kind": "CancelledAtResourceFloor", "exit": result.returncode,
-                               "stdout": result.stdout, "stderr": result.stderr, "missionReady": False})
-                return 3 if result.returncode == 0 else 2
+                return stop_owned(globals(), owner, output, "Actual resource floor crossed")
             time.sleep(2)
     finally:
         kernel.CloseHandle(handle)

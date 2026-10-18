@@ -631,6 +631,58 @@ namespace Game.Editor
         internal static string SerializeProductionNativeRecord(JObject row)
             =>row.ToString(Formatting.None);
 
+
+        private static Newtonsoft.Json.Linq.JValue RepairFiniteNumber(double value)
+        {
+            if(!double.IsFinite(value))throw new InvalidOperationException("Repair ledger numeric observation must be finite");
+            return new Newtonsoft.Json.Linq.JValue(value);
+        }
+        private static JArray RepairPositionJson(Unity.Mathematics.float3 value)
+            =>new JArray(RepairFiniteNumber((double)value.x),RepairFiniteNumber((double)value.y),RepairFiniteNumber((double)value.z));
+
+        internal static JObject RepairStateJson(VehicleRepairStateComponent s)
+        {
+            return new JObject {["session_index"]=s.Session.Index,["session_version"]=s.Session.Version,
+                ["bank_index"]=s.MaterialsBank.Index,["bank_version"]=s.MaterialsBank.Version,
+                ["facility_index"]=s.ServiceFacility.Index,["facility_version"]=s.ServiceFacility.Version,
+                ["attempt_id"]=s.AttemptId.ToString(),["actor_stable_id"]=s.ActorStableId.ToString(),
+                ["facility_stable_id"]=s.ServiceFacilityStableId.ToString(),["pad_id"]=s.PadId.ToString(),
+                ["faction"]=s.Faction,["request_id"]=s.RequestId,["setup_hash"]=s.SetupHash,["phase"]=s.Phase.ToString(),
+                ["paid"]=s.PaidMaterials,["refund_due"]=s.RefundDue,["refunded"]=s.RefundedMaterials,
+                ["duration_ticks"]=s.DurationTicks,["remaining_ticks"]=s.RemainingTicks,
+                ["fraction_numerator"]=s.FractionNumerator,["fraction_denominator"]=s.FractionDenominator,
+                ["last_clock_seconds"]=RepairFiniteNumber(s.LastClockSeconds),["fractional_ticks"]=RepairFiniteNumber(s.FractionalTicks),
+                ["incoming_damage"]=s.IncomingDamage,["new_movement"]=s.NewMovement,
+                ["accepted_position"]=RepairPositionJson(s.AcceptedPosition),
+                ["pad_position"]=RepairPositionJson(s.PadPosition),
+                ["facility_position"]=RepairPositionJson(s.ServiceFacilityPosition),
+                ["last_health"]=s.LastHealth,["last_maximum"]=s.LastMaximum};
+        }
+        internal static JObject RepairPointJson(VehicleFieldRepairService.RepairLedgerPoint p)
+        {
+            return new JObject {["actor_index"]=p.Actor.Index,["actor_version"]=p.Actor.Version,
+                ["bank_index"]=p.BankEntity.Index,["bank_version"]=p.BankEntity.Version,
+                ["bank"]=p.HasBank?JObject.FromObject(p.Bank):null,["state"]=p.HasState?RepairStateJson(p.State):null,
+                ["health"]=p.HasHealth?new JObject {["current"]=p.Health.Current,["maximum"]=p.Health.Max}:null,
+                ["owner"]=!p.HasOwner?null:new JObject {["attempt_id"]=p.Owner.SessionId.ToString(),
+                    ["stable_id"]=p.Owner.StableObjectId.ToString(),["faction"]=p.Owner.FactionId,
+                    ["is_structure"]=p.Owner.IsStructure,["capacity_released"]=p.Owner.CapacityReleased}};
+        }
+        internal static void GuardRepairObserverReservation(bool enabled,bool legacy,Action reserve)
+        {
+            if(enabled && (legacy || VehicleFieldRepairService.RepairLedgerObserver!=null))
+                throw new InvalidOperationException("Owned expanded repair capture unavailable");
+            reserve();
+        }
+        internal static void StartRepairObserverScope(bool enabled,Action earlier,Action repair,Action closeRepair,Action closeEarlier)
+        {
+            if(!enabled){earlier();return;}
+            try {earlier();repair();}
+            catch {try {if(enabled)closeRepair();} finally {closeEarlier();}throw;}
+        }
+        internal static void CloseRepairObserverScope(Action repair,Action earlier)
+        {try {repair();}finally {earlier();}}
+
         internal static void RequirePaidObserverGroupAvailable(bool enabled, bool legacy)
         {
             if (!enabled) return;
@@ -719,6 +771,7 @@ namespace Game.Editor
 
             internal ProductionCanaryContext(SkirmishProductionCanaryRequest request)
             {
+                GuardRepairObserverReservation(RepairCaptureEnabled,request.IsLegacyPreset,()=>{});
                 RequirePaidObserverGroupAvailable(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",request.IsLegacyPreset);
                 Request = request;
                 EnsureScenesClean();
@@ -736,15 +789,17 @@ namespace Game.Editor
                 }
                 events = Path.Combine(request.ArtifactDirectory, "adapter-native-events.jsonl");
                 // Exclusive ownership, including concurrent public method invocations.
-                GuardPaidObserverReservation(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",request.IsLegacyPreset,request.ReserveAdapterStart);
+                GuardRepairObserverReservation(RepairCaptureEnabled,request.IsLegacyPreset,()=>
+                    GuardPaidObserverReservation(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",request.IsLegacyPreset,request.ReserveAdapterStart));
                 using (File.Open(events, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
                 Record("ContextCaptured", new JObject { ["source_sha256"] = (string)request.Job["candidate_sha256"],
                     ["compiled_dll_manifest_sha256"] = (string)request.Job["build_sha256"], ["scene_count"] = sceneSetup.Length,
                     ["restorable_scene_baseline"] = restorableBaseline });
                 RecordProfileStage("ProfileBeforeDispatch");
-                StartPaidObserverGroup(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",
+                StartRepairObserverScope(RepairCaptureEnabled,()=>StartPaidObserverGroup(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",
                     StartPaidProductionLedger,StartPaidResearchLedger,StartConstructionLedger,
-                    StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger);
+                    StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger),StartRepairLedger,StopRepairLedger,
+                    ()=>ClosePaidObserverGroup(StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger,()=>{}));
             }
 
             internal void Record(string kind, JObject facts)
@@ -759,6 +814,61 @@ namespace Game.Editor
                 ObserveProductionBatchNativeEvent(kind,facts);
             }
 
+
+
+            private static bool RepairCaptureEnabled=>Environment.GetEnvironmentVariable("WARLINE_REPAIR_RESOURCE_LEDGER")=="1";
+            private Action<VehicleFieldRepairService.RepairLedgerObservation> repairLedgerSink;
+            private int repairLedgerCount;
+            private long repairLedgerFaultStart;
+            private bool repairLedgerFailed;
+            private void StartRepairLedger()
+            {
+                if(!RepairCaptureEnabled)return;
+                GuardRepairObserverReservation(true,Request.IsLegacyPreset,()=>{});
+                repairLedgerFaultStart=VehicleFieldRepairService.RepairLedgerFaults;
+                repairLedgerSink=ObserveRepairLedger;
+                Record("NativeRepairLedgerStarted",new JObject {["ledger_schema"]=1,["scope"]="RepairCommittedBoundariesPartial",
+                    ["unchanged_debt_retries_measured"]=false,["progress_history_measured"]=false,["paid_resources_qualified"]=false});
+                VehicleFieldRepairService.OpenRepairLedgerOwned(repairLedgerSink);
+            }
+            private void ObserveRepairLedger(VehicleFieldRepairService.RepairLedgerObservation row)
+            {
+                if(repairLedgerFailed)return;
+                try
+                {
+                    if(++repairLedgerCount>4096)throw new InvalidDataException("Repair capture bound exceeded");
+                    var em=row.Manager;var native=em.GetComponentData<SkirmishExpandedSessionComponent>(row.Session);
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(row.Session).Setup;
+                    var identity=SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,setup.DefinitionId,setup.ContentVersion,
+                        setup.DifficultyId.ToString(),setup.SizeId.ToString(),setup.Seed,GameLocalization.CurrentLocaleCode,setup.SetupHash,setup.ContentHash);
+                    Request.VerifyNativeSetupIdentity(identity);
+                    if(row.PolicyState.AttemptId!=native.SessionId || row.PolicyState.SetupHash!=native.SetupHash)
+                        throw new InvalidDataException("Repair receipt native identity differs");
+                    Record("NativeRepairTransaction",new JObject {["ledger_schema"]=1,["scope"]="RepairCommittedBoundariesPartial",
+                        ["ledger_sequence"]=repairLedgerCount,["operation"]=row.Operation,
+                        ["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["native_session_id"]=native.SessionId.ToString(),["native_setup_identity"]=identity,
+                        ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),
+                        ["before"]=RepairPointJson(row.Before),["after"]=RepairPointJson(row.After),
+                        ["policy_state"]=RepairStateJson(row.PolicyState),["unchanged_debt_retries_measured"]=false,["progress_history_measured"]=false,["paid_resources_qualified"]=false});
+                }
+                catch(Exception error)when(!(error is OutOfMemoryException))
+                {
+                    repairLedgerFailed=true;
+                    try {Record("NativeRepairLedgerFailure",new JObject {["exception_type"]=error.GetType().FullName});}
+                    catch(Exception failure)when(!(failure is OutOfMemoryException)){}
+                }
+            }
+            private void StopRepairLedger()
+            {
+                if(repairLedgerSink==null)return;
+                bool owned=VehicleFieldRepairService.CloseRepairLedgerOwned(repairLedgerSink);repairLedgerSink=null;
+                try {Record("NativeRepairLedgerClosed",new JObject {["ledger_schema"]=1,["scope"]="RepairCommittedBoundariesPartial",
+                    ["transactions"]=repairLedgerCount,["sink_owned"]=owned,["capture_failed"]=repairLedgerFailed,
+                    ["observer_faults"]=VehicleFieldRepairService.RepairLedgerFaults-repairLedgerFaultStart,
+                    ["unchanged_debt_retries_measured"]=false,["progress_history_measured"]=false,["paid_resources_qualified"]=false});}
+                catch(Exception error)when(!(error is OutOfMemoryException)){}
+            }
 
             private Action<Game.Runtime.SkirmishResearchService.ResearchLedgerObservation> researchLedgerSink;
             private int researchLedgerCount;
@@ -1114,7 +1224,7 @@ namespace Game.Editor
             internal void Restore()
             {
                 if (restored) return;
-                ClosePaidObserverGroup(StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger,RestoreCanaryState);
+                CloseRepairObserverScope(StopRepairLedger,()=>ClosePaidObserverGroup(StopConstructionLedger,StopPaidResearchLedger,StopPaidProductionLedger,RestoreCanaryState));
             }
 
             private void RestoreCanaryState()

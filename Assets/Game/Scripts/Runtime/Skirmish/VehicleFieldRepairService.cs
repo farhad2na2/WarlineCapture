@@ -14,6 +14,91 @@ namespace Game.Runtime
     // It never moves a vehicle, changes Fuel, uncovers fog or heals on acceptance.
     public static class VehicleFieldRepairService
     {
+
+        // Observational only. Installed only by an explicit owned capture scope.
+        public sealed class RepairLedgerPoint
+        {
+            public Entity Actor,BankEntity;
+            public bool HasBank,HasState,HasOwner,HasHealth;
+            public FactionTacticalMaterialsComponent Bank;
+            public VehicleRepairStateComponent State;
+            public SkirmishAttemptOwnedComponent Owner;
+            public UnitHealth Health;
+        }
+        public sealed class RepairLedgerObservation
+        {
+            public EntityManager Manager;
+            public Entity Session;
+            public string Operation;
+            public RepairLedgerPoint Before,After;
+            public VehicleRepairStateComponent PolicyState;
+        }
+        public static Action<RepairLedgerObservation> RepairLedgerObserver {get;private set;}
+        public static long RepairLedgerFaults {get;private set;}
+        public static void OpenRepairLedgerOwned(Action<RepairLedgerObservation> sink)
+        {
+            if(sink==null)throw new ArgumentNullException(nameof(sink));
+            if(RepairLedgerObserver!=null)throw new InvalidOperationException("Repair ledger already observed");
+            RepairLedgerObserver=sink;
+        }
+        public static bool CloseRepairLedgerOwned(Action<RepairLedgerObservation> sink)
+        {
+            if(sink==null || RepairLedgerObserver!=sink)return false;
+            RepairLedgerObserver=null;return true;
+        }
+        private sealed class RepairLedgerWindow
+        {
+            public Action<RepairLedgerObservation> Sink;
+            public RepairLedgerPoint Before;
+            public VehicleRepairStateComponent PolicyState;
+        }
+        private static RepairLedgerPoint CaptureRepairPoint(EntityManager em,Entity actor,Entity bank)
+        {
+            var p=new RepairLedgerPoint {Actor=actor,BankEntity=bank,
+                HasBank=em.Exists(bank)&&em.HasComponent<FactionTacticalMaterialsComponent>(bank),
+                HasState=em.Exists(actor)&&em.HasComponent<VehicleRepairStateComponent>(actor),
+                HasOwner=em.Exists(actor)&&em.HasComponent<SkirmishAttemptOwnedComponent>(actor),
+                HasHealth=em.Exists(actor)&&em.HasComponent<UnitHealth>(actor)};
+            if(p.HasBank)p.Bank=em.GetComponentData<FactionTacticalMaterialsComponent>(bank);
+            if(p.HasState)p.State=em.GetComponentData<VehicleRepairStateComponent>(actor);
+            if(p.HasOwner)p.Owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+            if(p.HasHealth)p.Health=em.GetComponentData<UnitHealth>(actor);
+            return p;
+        }
+        private static RepairLedgerWindow BeginRepairLedger(EntityManager em,Entity actor,in VehicleRepairStateComponent policy)
+        {
+            var sink=RepairLedgerObserver;if(sink==null)return null;
+            try{return new RepairLedgerWindow {Sink=sink,Before=CaptureRepairPoint(em,actor,policy.MaterialsBank),PolicyState=policy};}
+            catch(Exception error)when(!(error is OutOfMemoryException)){RepairLedgerFaults++;return null;}
+        }
+        private static RepairLedgerWindow BeginDeferredRepairLedger(EntityManager em,Entity actor,in VehicleRepairStateComponent policy)
+        {
+            if(RepairLedgerObserver==null)return null;
+            // A failed retry that rewrites the same debt is not a new committed paid boundary.
+            try
+            {
+                if(em.HasComponent<VehicleRepairStateComponent>(actor))
+                {
+                    var prior=em.GetComponentData<VehicleRepairStateComponent>(actor);
+                    if(prior.Phase==VehicleRepairPhase.AccountingFailure && prior.RefundDue==policy.RefundDue &&
+                        prior.RefundedMaterials==policy.RefundedMaterials)return null;
+                }
+            }
+            catch(Exception error)when(!(error is OutOfMemoryException)){RepairLedgerFaults++;return null;}
+            return BeginRepairLedger(em,actor,policy);
+        }
+        private static void EndRepairLedger(EntityManager em,RepairLedgerWindow window,string operation)
+        {
+            if(window==null)return;
+            try
+            {
+                if(RepairLedgerObserver!=window.Sink)throw new InvalidOperationException("Repair observer ownership changed");
+                window.Sink(new RepairLedgerObservation {Manager=em,Session=window.PolicyState.Session,Operation=operation,
+                    Before=window.Before,After=CaptureRepairPoint(em,window.Before.Actor,window.Before.BankEntity),PolicyState=window.PolicyState});
+            }
+            catch(Exception error)when(!(error is OutOfMemoryException)){RepairLedgerFaults++;}
+        }
+
         public static void NotifyIncomingDamage(EntityManager em,Entity actor)
         {
             if(!em.Exists(actor)||!em.HasComponent<VehicleRepairStateComponent>(actor))return;
@@ -104,7 +189,8 @@ namespace Game.Runtime
                 FractionDenominator=plan.FractionDenominator,DurationTicks=plan.DurationTicks,RemainingTicks=plan.DurationTicks,
                 PaidMaterials=plan.Materials,LastClockSeconds=context.Clock.ElapsedSeconds,
                 LastHealth=context.Health.Current,LastMaximum=context.Health.Max};
-            em.SetComponentData(context.Bank,materials);Set(em,actor,state);error=null;return true;
+            var repairLedger=BeginRepairLedger(em,actor,state);
+            em.SetComponentData(context.Bank,materials);Set(em,actor,state);EndRepairLedger(em,repairLedger,"DebitCommitted");error=null;return true;
         }
 
         public static bool Tick(EntityManager em,Entity actor,out string error)
@@ -138,34 +224,37 @@ namespace Game.Runtime
                 VehicleRepairRules.TookDamage(state.LastHealth,state.LastMaximum,context.Health.Current,context.Health.Max))
                 return Cancel(em,actor,ref state,false);
             state.LastHealth=context.Health.Current;state.LastMaximum=context.Health.Max;
+            RepairLedgerWindow completionLedger=null;
             if(state.RemainingTicks==0)
             {
+                completionLedger=BeginRepairLedger(em,actor,state);
                 int heal=VehicleRepairRules.CompletionHeal(state.FractionNumerator,state.FractionDenominator,context.Health.Current,context.Health.Max);
                 var hp=context.Health;hp.Current+=heal;em.SetComponentData(actor,hp);state.Phase=VehicleRepairPhase.Completed;
             }
-            em.SetComponentData(actor,state);return true;
+            em.SetComponentData(actor,state);EndRepairLedger(em,completionLedger,"Completed");return true;
         }
 
         private static bool Cancel(EntityManager em,Entity actor,ref VehicleRepairStateComponent state,bool destroyed)
         {
             state.RefundDue=VehicleRepairRules.Refund(state.PaidMaterials,state.DurationTicks-state.RemainingTicks,destroyed);
             state.Phase=destroyed?VehicleRepairPhase.Destroyed:VehicleRepairPhase.Cancelled;
-            if(state.RefundDue==0){em.SetComponentData(actor,state);return true;}
+            if(state.RefundDue==0){var ledger=BeginRepairLedger(em,actor,state);em.SetComponentData(actor,state);EndRepairLedger(em,ledger,destroyed?"Destroyed":"CancelledNoRefund");return true;}
             return RetryRefund(em,actor,ref state);
         }
         private static bool RetryRefund(EntityManager em,Entity actor,ref VehicleRepairStateComponent state)
         {
             if(!ReceiptIdentity(em,actor,state,out _,out _))return false;
-            if(state.RefundedMaterials==state.RefundDue){state.Phase=VehicleRepairPhase.Cancelled;em.SetComponentData(actor,state);return true;}
+            if(state.RefundedMaterials==state.RefundDue){var settledLedger=BeginRepairLedger(em,actor,state);state.Phase=VehicleRepairPhase.Cancelled;em.SetComponentData(actor,state);EndRepairLedger(em,settledLedger,"RefundSettled");return true;}
             if(!em.Exists(state.MaterialsBank)||!em.HasComponent<FactionTacticalMaterialsComponent>(state.MaterialsBank))
-            {state.Phase=VehicleRepairPhase.AccountingFailure;em.SetComponentData(actor,state);return false;}
+            {var deferredLedger=BeginDeferredRepairLedger(em,actor,state);state.Phase=VehicleRepairPhase.AccountingFailure;em.SetComponentData(actor,state);EndRepairLedger(em,deferredLedger,"RefundDeferred");return false;}
             var materials=em.GetComponentData<FactionTacticalMaterialsComponent>(state.MaterialsBank);
             int remaining=state.RefundDue-state.RefundedMaterials;
             if(materials.FactionId!=state.Faction||FactionTacticalMaterialsUtilitySystemHelper.TryRefundRepair(ref materials,remaining)!=FactionTacticalMaterialsMutationResult.Applied)
-            {state.Phase=VehicleRepairPhase.AccountingFailure;em.SetComponentData(actor,state);return false;}
+            {var deferredLedger=BeginDeferredRepairLedger(em,actor,state);state.Phase=VehicleRepairPhase.AccountingFailure;em.SetComponentData(actor,state);EndRepairLedger(em,deferredLedger,"RefundDeferred");return false;}
             // Shared Materials refund owner; never a reward grant.
+            var repairLedger=BeginRepairLedger(em,actor,state);
             em.SetComponentData(state.MaterialsBank,materials);state.RefundedMaterials+=remaining;
-            state.Phase=VehicleRepairPhase.Cancelled;em.SetComponentData(actor,state);return true;
+            state.Phase=VehicleRepairPhase.Cancelled;em.SetComponentData(actor,state);EndRepairLedger(em,repairLedger,"RefundCommitted");return true;
         }
 
         private static bool AccrueWork(EntityManager em,ref VehicleRepairStateComponent state,out string error)

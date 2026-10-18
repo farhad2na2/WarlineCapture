@@ -7,6 +7,94 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishSharedProductionRecipeTests
     {
+
+        public static void RunStartingStructureCatalogValidation()
+        {
+            var tests = new SkirmishSharedProductionRecipeTests();
+            tests.PackagedS002StartingStructuresResolveWithoutAddingProductionRoles();
+            tests.MissingAuthoredStartingStructureRefusesWithoutMutatingCatalogs();
+            Debug.Log("[SkirmishStartingStructureCatalogControls] result=Passed controls=2 normalMissionPassed=0");
+        }
+
+        [Test]
+        public void PackagedS002StartingStructuresResolveWithoutAddingProductionRoles()
+        {
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string error), error);
+            var definition = Resources.Load<SkirmishScenarioDefinitionConfig>(SkirmishExpansionCatalogFactory.PackagedS002DefinitionPath);
+            Assert.NotNull(definition);
+            var manifest = new Game.Skirmish.Contracts.SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishSetupCompiler.TryCompile(definition,
+                Game.Skirmish.Contracts.SkirmishDifficultyId.Regular,
+                Game.Skirmish.Contracts.SkirmishSizeId.Standard, 155923, manifest, matrix,
+                out var setup, out var reasons), string.Join("; ", reasons));
+            var baseline = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Skirmish/Construction.asset");
+            var scene = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset");
+            var satellite = scene.Spawnables.Find(p => p != null && p.name == "Building_Satelite_Dish");
+            Assert.NotNull(satellite);
+            Assert.IsFalse(baseline.Spawnables.Contains(satellite));
+            var before = baseline.Spawnables.ToArray();
+            int roleCount = setup.RoleOverlays.Length;
+            using var catalog = SkirmishProductionCatalog.Create(setup, baseline, scene);
+            Assert.IsTrue(catalog.Config.Spawnables.Contains(satellite));
+            Assert.IsFalse(catalog.TryRole("Unit_Veh_Drone", out _));
+            var definitions = new BuildingDefinitionPrefabSystemHelper();
+            definitions.ConfigureAuthoringMetadataResolvers(
+                Game.Composition.BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+                Game.Composition.BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
+            definitions.RebuildSpawnablesLookup(catalog.Config.Spawnables, catalog.Config.UnitPrefabRegistryConfig.UnitSpawnPrefabs);
+            try
+            {
+                definitions.RebuildConfiguredSpawnableDefinitions(null, o => Object.DestroyImmediate(o));
+                foreach (var structure in setup.Structures)
+                {
+                    string key = Game.Skirmish.Contracts.SkirmishStructureIds.VisualKey(structure.StructureId);
+                    var prefab = catalog.Config.Spawnables.Find(p => p != null && p.name == key);
+                    Assert.NotNull(prefab, key);
+                    Assert.IsTrue(Game.Composition.BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata(prefab, out var metadata), key);
+                    Assert.IsTrue(definitions.TryGetConfiguredDefinition(prefab, out var actual), key);
+                    Assert.AreSame(prefab, actual.Prefab, key);
+                    Assert.AreEqual(Mathf.Max(1, metadata.MaxHealth), actual.MaxHealth, key);
+                    Assert.AreEqual(metadata.Role, actual.Role, key);
+                    Assert.AreEqual(Mathf.Max(0, metadata.MaterialsCost), actual.MaterialsCost, key);
+                    Assert.Greater(actual.FootprintCells.x, 0, key);
+                    Assert.Greater(actual.FootprintCells.y, 0, key);
+                }
+            }
+            finally { definitions.ClearConfiguredSpawnableDefinitions(o => Object.DestroyImmediate(o)); }
+            Assert.AreEqual(roleCount, catalog.Config.RuntimeProductionRecipes.Count);
+            CollectionAssert.AreEqual(before, baseline.Spawnables);
+            Assert.AreEqual(roleCount, setup.RoleOverlays.Length);
+        }
+
+        [Test]
+        public void MissingAuthoredStartingStructureRefusesWithoutMutatingCatalogs()
+        {
+            var baseline = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Skirmish/Construction.asset");
+            var scene = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset");
+            var before = baseline.Spawnables.ToArray();
+            int sceneCount = scene.Spawnables.Count;
+            var missingSatelliteScene = Object.Instantiate(scene);
+            try
+            {
+                Assert.Greater(missingSatelliteScene.Spawnables.RemoveAll(p => p != null && p.name == "Building_Satelite_Dish"), 0);
+                var setup = new SkirmishResolvedSetup {
+                    Structures = new[] { new SkirmishResolvedStructureEntry {
+                        StructureId = Game.Skirmish.Contracts.SkirmishStructureIds.SatelliteDish, FactionId = 1 } },
+                    RoleOverlays = System.Array.Empty<Game.Skirmish.Contracts.SkirmishRoleOverlay>()
+                };
+                var error = Assert.Throws<System.InvalidOperationException>(
+                    () => SkirmishProductionCatalog.Create(setup, baseline, missingSatelliteScene));
+                StringAssert.Contains("Building_Satelite_Dish", error.Message);
+                CollectionAssert.AreEqual(before, baseline.Spawnables);
+                Assert.AreEqual(sceneCount, scene.Spawnables.Count);
+            }
+            finally { Object.DestroyImmediate(missingSatelliteScene); }
+        }
+
         public static void RunProducerMessageValidation()
         {
             var tests = new SkirmishSharedProductionRecipeTests();

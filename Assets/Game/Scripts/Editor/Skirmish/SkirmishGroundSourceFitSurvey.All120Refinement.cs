@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using Game.Components;
 using Game.Configs;
+using Game.Runtime;
+using Game.Runtime.Pathfinding;
+using Game.Skirmish.Contracts;
 using Newtonsoft.Json.Linq;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -28,6 +31,7 @@ namespace Game.Editor
             var report=new JObject{["schema"]=1,["catalogId"]=id,["scope"]="NormalAllocatorLogicalAuthoring_NotMissionAcceptance",
                 ["fullIndexSha256"]=All120RefinementIndexSha,["sourceFitCertified"]=false,["cameraAccepted"]=false,
                 ["normalMissionReady"]=false,["result"]="Incomplete"};
+            if(recordedFacilityEgressInput!=null){report["scope"]="RecordedCompleteFacilities_EgressEdgesOnly";report["historicalReport"]=recordedFacilityEgressInput["sourceReport"].DeepClone();report["facilityMeasurements"]=0;report["fullRoutesMeasured"]=false;}
             try
             {
                 if(authority["protected_binding"].Type!=JTokenType.Null)
@@ -320,6 +324,213 @@ namespace Game.Editor
             }
         }
 
+
+        static JObject recordedFacilityEgressInput;
+        public static void RunRecordedFacilityRouteEgressProbe()
+        {
+            Require(recordedFacilityEgressInput==null&&!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating&&ground30MemoryWriter==null,
+                "Idle exclusive recorded-facility probe required");
+            string path=Environment.GetEnvironmentVariable("WARLINE_RECORDED_ROUTE_PROBE_INPUT");
+            string hash=Environment.GetEnvironmentVariable("WARLINE_RECORDED_ROUTE_PROBE_SHA256");
+            string allowed=Path.GetFullPath(Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction"))+Path.DirectorySeparatorChar;
+            bool Owned(string p)=>!string.IsNullOrEmpty(p)&&Path.IsPathRooted(p)&&Path.GetFullPath(p).StartsWith(allowed,StringComparison.OrdinalIgnoreCase);
+            Require(Owned(path)&&Hash(path)==hash,"Pinned owned probe input required");
+            var input=JObject.Parse(File.ReadAllText(path));var reference=(JObject)input["sourceReport"];
+            string priorPath=(string)reference["path"];
+            Require((int?)input["schema"]==1&&(string)input["scope"]=="RecordedCompleteFacilities_EgressEdgesOnly"&&
+                (bool?)input["sourceFitCertified"]==false&&(bool?)input["missionAccepted"]==false&&
+                (int?)input["pass"]==2&&(int?)input["maximumEndpointCandidates"]==9&&
+                (int?)input["maximumConfigurationGroups"]==3&&(int?)input["maximumNativeQueries"]==324&&Owned(priorPath)&&
+                Hash(priorPath)==(string)reference["sha256"],"Exact diagnostic scope and prior report required");
+            var prior=JObject.Parse(File.ReadAllText(priorPath));
+            void Recheck()
+            {
+                Require(Hash(path)==hash&&Hash(priorPath)==(string)reference["sha256"],"Input/report changed during probe");
+                Require(input["dependencyPins"] is JObject&&((JObject)input["dependencyPins"]).Count>0,"Explicit unchanged geometry dependencies required");
+                foreach(var pin in ((JObject)input["dependencyPins"]).Properties())
+                    Require(pin.Name.StartsWith("Assets/",StringComparison.Ordinal)&&Hash(pin.Name)==(string)pin.Value,"Geometry dependency drift: "+pin.Name);
+            }
+            Recheck();input["_prior"]=prior;
+            Require((string)input["catalogId"]==Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG"),"Exact requested own catalog required");
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(r=>(string)r["catalog_id"]==(string)input["catalogId"]);
+            Require(authority["protected_binding"].Type==JTokenType.Null,"Protected generic authoring refused");
+            try{recordedFacilityEgressInput=input;RunAll120SimultaneousLogicalRefinement();Recheck();}
+            finally{recordedFacilityEgressInput=null;}
+            Debug.Log("[RecordedFacilityRouteEgressProbe] result=Collected facilityMeasurements=0 fullRoutesMeasured=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+
+        static JArray RecordedFacilitySignature(JObject row,SkirmishStaticAuthoringBudget budget,GridConfig grid)
+        {
+            Require((string)row["catalogId"]==budget.CatalogId&&(string)row["size"]==budget.Size.ToString(),"Exact recorded catalog/size required");
+            Require((bool?)row["completeFacilities"]==true&&(bool?)row["allActorsInsidePads"]==true,"Complete actual typed facilities/packing required");
+            var actual=row["normalFacilityRelocationProposals"] as JArray;
+            Require(actual!=null&&actual.Count==budget.Structures.Count()&&actual.OfType<JObject>().Count()==actual.Count&&
+                actual.OfType<JObject>().Select(x=>(int)x["faction"]+"/"+(string)x["structureId"]).Distinct().Count()==actual.Count,"Exact unique complete facility roster required");
+            foreach(var structure in budget.Structures)
+            {
+                var x=actual.OfType<JObject>().Single(r=>(int)r["faction"]==structure.FactionId&&(string)r["structureId"]==structure.StructureId);
+                Require((bool?)x["entireConfigurationFound"]==true,"Partial facility configuration refused");
+                Require(Hash((string)x["prefabPath"])==(string)x["prefabSha256"],"Original facility prefab changed");
+                var rect=x["resolvedEffectiveRect"] as JObject;
+                Require(rect!=null&&rect.Properties().Select(p=>p.Name).OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(new[]{"depth","width","x","z"})&&
+                    rect.Properties().All(p=>p.Value.Type==JTokenType.Integer),"Exact integer effective rectangle required");
+                int rx=(int)rect["x"],rz=(int)rect["z"],w=(int)rect["width"],h=(int)rect["depth"];
+                Require(rx>=0&&rz>=0&&w>0&&h>0&&(long)rx+w<=grid.Width&&(long)rz+h<=grid.Height,"Effective facility rectangle outside source grid");
+            }
+            return new JArray(actual.OfType<JObject>().OrderBy(x=>(int)x["faction"]).ThenBy(x=>(string)x["structureId"],StringComparer.Ordinal)
+                .Select(x=>new JObject{["faction"]=x["faction"],["structureId"]=x["structureId"],["rect"]=x["resolvedEffectiveRect"].DeepClone()}));
+        }
+        static bool SameRecordedFacilitySignature(JArray first,JArray next)
+            =>JToken.DeepEquals(first,next);
+
+        static void RunRecordedFacilityEgressInputControls(JObject row,SkirmishStaticAuthoringBudget budget,GridConfig grid)
+        {
+            var expected=RecordedFacilitySignature(row,budget,grid);int controls=1;
+            void Refuses(Action<JObject> change,string reason)
+            {
+                var copy=(JObject)row.DeepClone();change(copy);bool refused=false;
+                try{RecordedFacilitySignature(copy,budget,grid);}
+                catch(InvalidOperationException e){refused=e.Message.Contains(reason);}
+                Require(refused,"Recorded input control did not refuse: "+reason);controls++;
+            }
+            Refuses(r=>r["catalogId"]="Foreign","catalog/size");
+            Refuses(r=>r["completeFacilities"]=false,"Complete actual");
+            Refuses(r=>r["allActorsInsidePads"]=false,"Complete actual");
+            Refuses(r=>((JArray)r["normalFacilityRelocationProposals"]).RemoveAt(0),"unique complete");
+            Refuses(r=>{var a=(JArray)r["normalFacilityRelocationProposals"];a[1]=a[0].DeepClone();},"unique complete");
+            Refuses(r=>r["normalFacilityRelocationProposals"][0]["entireConfigurationFound"]=false,"Partial facility");
+            Refuses(r=>r["normalFacilityRelocationProposals"][0]["prefabSha256"]=new string('0',64),"prefab changed");
+            Refuses(r=>r["normalFacilityRelocationProposals"][0]["resolvedEffectiveRect"]["width"]=0,"outside source grid");
+            var different=(JArray)expected.DeepClone();different[0]["rect"]["x"]=(int)different[0]["rect"]["x"]+1;
+            Require(!SameRecordedFacilitySignature(expected,different)&&SameRecordedFacilitySignature(expected,(JArray)expected.DeepClone()),
+                "Different effective configuration cannot share queries; exact clone may share");controls++;
+            Require(controls==10&&JToken.DeepEquals(expected,RecordedFacilitySignature(row,budget,grid)),"Ten controls and unchanged original recorded rows required");
+            Debug.Log("[RecordedFacilityEgressInputControls] result=Passed controls=10 nativeQueries=0 sourceFitCertified=0");
+        }
+
+        static JObject MeasureRecordedFacilityEgress(JObject mission,GroundObjective30CandidateOwner owner,
+            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface)
+        {
+            var input=recordedFacilityEgressInput;var prior=(JObject)input["_prior"];
+            Require((string)input["catalogId"]==(string)mission["catalog_id"]&&(string)input["definitionId"]==(string)mission["definition_id"]&&
+                JToken.DeepEquals(input["canonical_size_rows"],mission["canonical_size_rows"])&&
+                JToken.DeepEquals(input["sourcePins"],mission["source_candidate"])&&JToken.DeepEquals(prior["sourcePins"],input["sourcePins"]),
+                "Own subject/source/three canonical budget authority required");
+            Require((string)prior["catalogId"]==(string)mission["catalog_id"]&&(bool?)prior["sourcePinsRecheckedAfterMeasurement"]==true&&
+                (bool?)prior["cleanupVerified"]==true,"Historical own measured source/cleanup required, not fit");
+            var old=((JArray)prior["missions"]).OfType<JObject>().Single(r=>(string)r["catalogId"]==(string)mission["catalog_id"]);
+            var diagnostics=(JObject)old["measurement"];var replays=(JArray)diagnostics["nativePreferenceReplays"];
+            Require(replays.Count==1&&(int?)replays[0]["candidate"]==0,"One exact recorded candidate required");
+            var measured=(JObject)replays[0]["measurement"];
+            var pass=((JArray)measured["passes"]).OfType<JObject>().Single(p=>(int)p["pass"]==(int)input["pass"]);
+            var sizes=((JArray)pass["sizes"]).OfType<JObject>().ToArray();
+            Require((bool?)pass["discoveryOnly"]==false&&sizes.Length==3&&sizes.Select(s=>(string)s["size"]).OrderBy(s=>s,StringComparer.Ordinal)
+                .SequenceEqual(new[]{"LargeWar","Standard","War"}),"Three own final typed measured sizes required");
+            var ng=(JObject)prior["nativeGridIdentity"]["grid"];
+            Require((int)ng["width"]==grid.Width&&(int)ng["height"]==grid.Height&&(float)ng["cellSize"]==grid.CellSize&&
+                (float)ng["originXZ"][0]==grid.Origin.x&&(float)ng["originXZ"][1]==grid.Origin.z,"Exact native source grid required");
+            Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error),error);
+            string original=JsonUtility.ToJson(owner.Layout);
+            try
+            {
+                JsonUtility.FromJsonOverwrite((string)measured["proposedLayoutJson"],owner.Layout);
+                var budgets=new System.Collections.Generic.List<SkirmishStaticAuthoringBudget>();
+                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                {
+                    Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,size,1,
+                        new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var b,out var reasons)&&b.ExactCanonicalQuantities,
+                        "Exact own canonical budget required: "+string.Join(";",reasons));budgets.Add(b);
+                }
+                Require(new JArray(budgets.Select(ApPreferenceBudgetKey)).ToString(Newtonsoft.Json.Formatting.None)==
+                    diagnostics["reviewedLogicalPadBudgets"].ToString(Newtonsoft.Json.Formatting.None),"Complete actual own budgets changed");
+                RunRecordedFacilityEgressInputControls(sizes.Single(s=>(string)s["size"]=="Standard"),budgets[0],grid);
+                var configurations=new System.Collections.Generic.List<JObject>();
+                foreach(var b in budgets)
+                {
+                    var row=sizes.Single(s=>(string)s["size"]==b.Size.ToString());
+                    var current=RecordedFacilitySignature(row,b,grid);
+                    var group=configurations.SingleOrDefault(g=>SameRecordedFacilitySignature((JArray)g["signature"],current));
+                    if(group==null)
+                    {
+                        group=new JObject{["configuration"]=configurations.Count,["signature"]=current,["facilities"]=row["normalFacilityRelocationProposals"].DeepClone(),
+                            ["sizes"]=new JArray(),["recordedInputs"]=new JArray()};configurations.Add(group);
+                    }
+                    ((JArray)group["sizes"]).Add(b.Size.ToString());
+                    var artifact=((JArray)old["sizeArtifacts"]).OfType<JObject>().Single(a=>(int)a["pass"]==(int)input["pass"]&&(string)a["size"]==b.Size.ToString());
+                    ((JArray)group["recordedInputs"]).Add(new JObject{["catalogId"]=b.CatalogId,["size"]=b.Size.ToString(),["pass"]=input["pass"],
+                        ["historicalSizeArtifactRef"]=artifact.DeepClone(),["facilityCount"]=((JArray)row["normalFacilityRelocationProposals"]).Count});
+                }
+                Require(TryPreflightAuthoredRouteEndpoints(owner.Layout,grid,out _),"Recorded shared endpoint policy required");
+                var baseline=JObject.Parse(JsonUtility.ToJson(owner.Layout));
+                Require(owner.Layout.TryGetPad(1,SkirmishLegalPadKind.GroundStaging,out var pad),"Actual unchanged typed player staging required");
+                var typed=PilotExactAxisAlignedPadCells(owner.Layout,pad,grid);
+                var profiles=new System.Collections.Generic.List<RouteProfile>();var keys=new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+                foreach(var force in budgets.SelectMany(b=>b.Forces))
+                {
+                    var prefab=FindNativePrefab(em,force.RuntimePrefabKey);
+                    Require(prefab!=Entity.Null&&em.HasComponent<UnitFootprint>(prefab),"Actual own canonical prefab required");
+                    if(em.HasComponent<UnitAirMovement>(prefab))continue;
+                    Require(em.HasComponent<UnitMovementBehavior>(prefab),"Actual ground movement behavior required");
+                    var size=em.GetComponentData<UnitFootprint>(prefab).Size;var behavior=em.GetComponentData<UnitMovementBehavior>(prefab);
+                    if(keys.Add(Ground30PathQueryKey(force.FactionId,size,behavior,default,default)))
+                        profiles.Add(new RouteProfile{Prefab=prefab,Faction=force.FactionId,Size=size,Behavior=behavior});
+                }
+                Require(keys.Count==4&&keys.OrderBy(k=>k,StringComparer.Ordinal).SequenceEqual(((JArray)input["expectedProfileKeys"]).Values<string>().OrderBy(k=>k,StringComparer.Ordinal)),
+                    "All four actual expected faction/footprint/behavior profiles required");
+                var candidates=(JArray)input["candidateCells"];
+                Require(candidates.Count==9&&candidates.OfType<JArray>().Count()==9&&candidates.Select(c=>c.ToString()).Distinct().Count()==9,"Nine unique candidate cells required");
+                Require(configurations.Count>0&&configurations.Count<=3,"At most three actual complete blocker configurations required");
+                var measuredGroups=new JArray();int totalCalls=0;
+                foreach(var configuration in configurations)
+                {
+                    using var blockers=new Unity.Collections.NativeBitArray(grid.Width*grid.Height,Unity.Collections.Allocator.Persistent,Unity.Collections.NativeArrayOptions.ClearMemory);
+                    Ground30OccupyFacilities((JArray)configuration["facilities"],grid,blockers);var trials=new JArray();int calls=0;
+                    foreach(JArray candidate in candidates)
+                    {
+                        Require(candidate.Count==2&&candidate.All(v=>v.Type==JTokenType.Integer),"Integer cell pair required");
+                        var cell=new int2((int)candidate[0],(int)candidate[1]);
+                        var trial=new JObject{["candidate"]=trials.Count,["cell"]=candidate.DeepClone(),["queries"]=new JArray()};trials.Add(trial);
+                        if(!profiles.All(p=>{var min=UnitFootprintUtility.GetMinCell(cell,p.Size);return PilotCompoundContains(typed,new RectInt(min.x,min.y,p.Size.x,p.Size.y));}))
+                        {trial["status"]="RefusedFullFootprintOutsideExistingTypedPad";continue;}
+                        var data=(JObject)baseline.DeepClone();var anchors=(JArray)data["anchors"];var routes=(JArray)data["routes"];
+                        string fresh="anchor."+owner.Layout.LayoutId+".recorded-egress";
+                        Require(!anchors.OfType<JObject>().Any(a=>(string)a["AnchorId"]==fresh),"Fresh diagnostic anchor identity required");
+                        float x=grid.Origin.x+(cell.x+.5f)*grid.CellSize,z=grid.Origin.z+(cell.y+.5f)*grid.CellSize;
+                        Require(owner.Layout.TryProjectLocalToMap(x,z,out var px,out var pz)&&Math.Abs(px-x)<.001f&&Math.Abs(pz-z)<.001f,
+                            "Source-aligned projection required; no invented inverse frame");
+                        anchors.Add(new JObject{["AnchorId"]=fresh,["RoleId"]="route.egress.player",["WorldX"]=x,["WorldZ"]=z,
+                            ["NormalizedU"]=(x-owner.Layout.OriginX)/owner.Layout.WorldWidthMetres,["NormalizedV"]=(z-owner.Layout.OriginZ)/owner.Layout.WorldDepthMetres});
+                        foreach(JObject route in routes)((JArray)route["WaypointAnchorIds"])[0]=fresh;
+                        JsonUtility.FromJsonOverwrite(data.ToString(Newtonsoft.Json.Formatting.None),owner.Layout);
+                        Require(TryPreflightAuthoredRouteEndpoints(owner.Layout,grid,out var policy),"Unchanged shared endpoint policy must admit");trial["endpointPolicy"]=policy;
+                        bool exact=true;
+                        foreach(var route in owner.Layout.Routes)foreach(var p in profiles)
+                        {
+                            Require(route.AllowsVehicles,"All current approaches must retain four-profile coverage");
+                            float nx=0,nz=0;Require(owner.Layout.TryGetAnchorById(route.WaypointAnchorIds[1],out var next)&&owner.Layout.TryProjectLocalToMap(next.WorldX,next.WorldZ,out nx,out nz),"Unchanged first waypoint required");
+                            var target=GridUtils.WorldToCell(grid,new float3(nx,0,nz));var from=p.Faction==2?target:cell;var to=p.Faction==2?cell:target;
+                            Require(++calls<=108&&++totalCalls<=324&&totalCalls<=2048,"Per-configuration108/total324 diagnostic cap; existing2048 cap unchanged");
+                            var q=new JObject{["routeId"]=route.RouteId,["profileKey"]=Ground30PathQueryKey(p.Faction,p.Size,p.Behavior,default,default),
+                                ["fromCell"]=new JArray(from.x,from.y),["toCell"]=new JArray(to.x,to.y)};
+                            QueryPath(em,gridEntity,grid,surface,p.Prefab,from,to,q,p.Faction,blockers);((JArray)trial["queries"]).Add(q);
+                            exact&=(string)q["status"]=="NativeQueryFoundExactGoal"&&(int?)q["failureCode"]==0;
+                        }
+                        Require(JToken.DeepEquals(data["pads"],baseline["pads"])&&JToken.DeepEquals(new JArray(anchors.Take(anchors.Count-1)),baseline["anchors"]),"Original pads/coded anchors unchanged");
+                        trial["allFirstEdgesExact"]=exact;trial["status"]=exact?"AllFirstEdgesExact_FullRoutesPending":"RefusedNonexactFirstEdge";
+                    }
+                    measuredGroups.Add(new JObject{["configuration"]=configuration["configuration"],["sizes"]=configuration["sizes"].DeepClone(),
+                        ["recordedInputs"]=configuration["recordedInputs"].DeepClone(),["facilityConfiguration"]=configuration["signature"].DeepClone(),
+                        ["trials"]=trials,["nativeQueries"]=calls,["maximumNativeQueries"]=108});
+                }
+                return new JObject{["scope"]="RecordedCompleteFacilities_EgressEdgesOnly",["configurations"]=measuredGroups,
+                    ["profileKeys"]=new JArray(keys.OrderBy(k=>k,StringComparer.Ordinal)),["nativeQueries"]=totalCalls,
+                    ["maximumEndpointCandidates"]=9,["maximumConfigurationGroups"]=3,["maximumNativeQueriesPerGroup"]=108,["maximumNativeQueries"]=324,["existingNativeAuthoringCap"]=2048,
+                    ["facilityMeasurements"]=0,["fullRoutesMeasured"]=false,["distinctApproachesMeasured"]=false,["sourceFitCertified"]=false,["normalMissionReady"]=false};
+            }
+            finally{JsonUtility.FromJsonOverwrite(original,owner.Layout);Require(JsonUtility.ToJson(owner.Layout)==original,"Exact caller layout restoration required");}
+        }
+
         static void CollectAll120Refinement(JObject[] authorities,JObject report,string artifactPrefix,bool counterpart=false)
         {
             Require(authorities.Length>0&&authorities.Length<=48,"Bounded sequential source rows required");
@@ -383,6 +594,12 @@ namespace Game.Editor
                             else if(groundBa)Require(counterpart?TryCreateProtectedExpandedBaseAssaultCandidate(candidate,source,out owner,out error):TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
                             else Require(TryCreateGroundObjective30Candidate(candidate,source,out owner,out error),error);
                             var sizeArtifacts=new JArray();row["sizeArtifacts"]=sizeArtifacts;
+                            if(recordedFacilityEgressInput!=null)
+                            {
+                                row["measurement"]=MeasureRecordedFacilityEgress(All120MeasurementMission(authority,candidateTemplate),owner,em,gridEntity,grid,surface);
+                                row["result"]="CollectedUnqualified";
+                                continue;
+                            }
                             row["measurement"]=RefineLoadedCandidate(All120MeasurementMission(authority,candidateTemplate),owner,source,em,gridEntity,grid,surface,artifactPrefix+"."+id,checkpoint=>
                             {
                                 string sizePath=artifactPrefix+"."+id+".pass"+(int)checkpoint["pass"]+"."+(string)checkpoint["size"]+".size.json";

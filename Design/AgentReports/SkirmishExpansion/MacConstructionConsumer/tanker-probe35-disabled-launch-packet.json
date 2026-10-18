@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T13:33:22.299053+00:00",
+  "kind": "DisabledFocusedControlsLaunchReviewPacket",
+  "enabled": false,
+  "native_execution_authorized": false,
+  "launch_performed": false,
+  "purpose": "Review exact proposal and eventual checked macOS focused35 synthetic controls only. This JSON packet cannot launch anything.",
+  "source": {
+    "exact_proposal_commit": "3e66c20ae612ea1a3a040afbce4394c513284095",
+    "isolated_local_branch": "codex/mac-tanker-probe35-review",
+    "branch_ref_verified": true,
+    "source_review_worktree": "/Users/farhad/.codex/worktrees/mac-construction-ledger/WarlineCapture",
+    "current_review_branch": "codex/mac-construction-ledger-admission",
+    "source_files_byte_equal_to_proposal": true,
+    "sha256": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+    },
+    "wrapper_sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+    "no_source_edit": true
+  },
+  "peer_review_receipt": {
+    "origin": "Direct Windows coordinator message; Mac has not opened original peer report",
+    "result": "SOURCE_API_PEER PASS",
+    "sha256": "6ffca2b31d1690e890d1d6cc56b558774eee1718e139dcd73769abc7024a95e8",
+    "scope": "Source/API closure of old outer-callback blocker only; not C# compile, native import/GUID/reload/frame or normal mission acceptance."
+  },
+  "reserved_native_root": {
+    "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "head": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+    "branch": "codex/mac-native-s003",
+    "clean": true,
+    "reserved": true,
+    "proposal_not_installed": true,
+    "Library_present": false,
+    "change_gate": "Do not check out proposal, fast-forward, copy files or execute here until root supplies exact approved new stable main/candidate. App attachment unsupported; external unmanaged status already authorized."
+  },
+  "environment_before_any_future_launch": {
+    "editor_version": "6000.5.8f1",
+    "GUI_licensing_only": true,
+    "Hub": "Keep open and signed in; CLI auth loggedIn=true observed earlier, recheck at execution.",
+    "heavy_lane": "P2c Editor99809/worker99918 preserved. CLI basic ready is connection discovery only; sampled100%CPU, then detailed read-only editor_status timed out after30seconds (COMMAND_FAILED). No idle/play/import classification is inferred from the timeout. Heavy capacity not established, cache/native execution deferred.",
+    "donor": "Only verified terminal/idle6000.5.8 Library cache; no Temp/locks/EditorInstance/IPC/Pipeline ownership/evidence copy. No Library symlink shortcuts.",
+    "disk": "Source checkout56.88GiB and T7~41GiB free at prior measurement; remeasure actual target and import/build headroom. Managed home review root has no Library and is not native-import readiness.",
+    "package_import": "Require normal UPM/Pipeline/package lock, all required source/LFS bytes, Android module/import/build-target validation as applicable and successful actual compiler before a focused run. None established by this packet."
+  },
+  "disabled_command_template": {
+    "executable": false,
+    "argv": [
+      "rtk",
+      "proxy",
+      "<approved-real-project>/Tools/CI/invoke_unity_macos.sh",
+      "--project",
+      "<approved-real-project>",
+      "--timeout",
+      "600",
+      "--log",
+      "<new-unique-absolute-full-log-path>",
+      "--",
+      "-quit",
+      "-executeMethod",
+      "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation"
+    ],
+    "timeout": "600seconds proposed focused warm-project budget only; choose explicit import-appropriate timeout at execution.",
+    "quit": "Allowed here because this idle synchronous fixture does not enter Play Mode. This differs from RunFocusedAriaAndExit, which forbids early-quit.",
+    "no_alternate_route": "No direct Unity executable, -batchmode, Unity CLI build/run/test, IPC reset or unrelated Editor reuse.",
+    "reuse": "Not prepared; do not dispatch this fixture into P2c or any unrelated active Editor."
+  },
+  "admission_before_launch": [
+    "Root explicitly authorizes exact candidate/project and native focused execution after Windows terminal boundary; current permission is packet preparation only.",
+    "Verify real isolated branch/root, exact final source/meta byte pins and wrapper, candidate/source snapshot, actual fresh compiled Game.Editor/Game.Tests.Editor DLL identities and matching reference set. Do not borrow old native receipts or rewrite producer/claim paths.",
+    "Full process/project inventory plus bounded load/status observations; one heavy job per machine. Preserve unrelated Editors and donor; do not terminate them to gain capacity.",
+    "Idle Edit Mode only, no compiling/updating/Playing; focused entry enforces idle fixture. Verify existing harness active/pending-quit state is absent; controls refuse borrowing another harness.",
+    "New full log path must not exist; save exact invocation/environment/source/build/settings before run and compare after. Preserve partial/failed output and actual exit."
+  ],
+  "expected_controls": {
+    "entry": "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation",
+    "declared_cases": 35,
+    "required_final_marker": "[SkirmishAircraftProbeTankerOwnership] result=Passed fixture=SyntheticWorldAndOwnedEditorDispatch normalMissionReady=0",
+    "expected_negative_fixture_messages": [
+      "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerCaptureRejected",
+      "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerContextChanged"
+    ],
+    "negative_log_policy": "These two intentional failure paths are asserted using strict expected-log handling; do not globally ignore errors or accept a run from their presence. Final success marker is emitted only after expected/error scope evaluation. Unexpected errors/missing logs/compile failures refuse the run.",
+    "coverage": [
+      "Current/stale/foreign actor and exact-root reservation ownership",
+      "World disposal and exact Entity handle replay across worlds",
+      "Immutable session stamps and permanent invalidation",
+      "Actual expired parent callback retirement on failed capture/loss",
+      "Stale-frame and reload protection for later launch",
+      "Healthy delegated parent suspension and unchanged resource/input observations"
+    ]
+  },
+  "postrun_checks": [
+    "Wrapper exit0 AND exact final marker in full same-run log; missing marker/timeout/nonzero/project lock/unexpected error is failed or incomplete. Exit0 alone is insufficient.",
+    "Preserve full log and source/build/settings before-after identities, test-framework/runtime versions and exact observed control counts. No old-candidate transfer.",
+    "Check callback/session/input/world resources restored after fixtures and no borrowed application profile/world/UI state; this is not a normal-input journey.",
+    "Record compile/import/GUID/native reload/frame observations separately; actual domain reload/normal player-frame behavior needs its own approved native evidence beyond synthetic fixture controls."
+  ],
+  "acceptance": {
+    "source_API_peer": "Windows-reported PASS",
+    "CSharpCompile": "pending",
+    "UPM_import_GUID": "pending",
+    "focused35_native_controls": "not run",
+    "actual_native_domain_reload_frame_acceptance": "pending",
+    "normal_mission": "not run",
+    "Android_build": "not run",
+    "player_device": "not run",
+    "queue_success_enabled": false,
+    "mission_ready": false
+  }
+}

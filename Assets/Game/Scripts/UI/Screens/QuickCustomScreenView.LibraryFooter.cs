@@ -22,6 +22,21 @@ namespace Game.UI.Runtime
             SetFilterLabel(_libraryFilters.Find("StartField"), fa ? "میدانی" : "FIELD");
             SetFilterLabel(_libraryFilters.Find("StartEstablished"), fa ? "آماده" : "ESTABLISHED");
             SetFilterLabel(_libraryFilters.Find("MissingMedal"), fa ? "بدون مدال" : "MISSING MEDAL");
+            // v41 audit: the active filters show the selected state (they toggle real SkirmishLibraryFilter fields).
+            TintFilter("ArmyGround", _armyFilter == "G");
+            TintFilter("ArmyAir", _armyFilter == "A");
+            TintFilter("ArmyCombined", _armyFilter == "C");
+            TintFilter("StartField", _startFilter == "F");
+            TintFilter("StartEstablished", _startFilter == "E");
+            TintFilter("MissingMedal", _missingMedalOnly);
+        }
+
+        private void TintFilter(string name, bool active)
+        {
+            Transform slot = _libraryFilters != null ? _libraryFilters.Find(name) : null;
+            Button button = slot != null ? slot.GetComponent<Button>() : null;
+            if (button != null)
+                TintButton(button, active, true);
         }
 
         private void SetFilterLabel(Transform button, string label)
@@ -465,6 +480,14 @@ namespace Game.UI.Runtime
 
             BindFooter(resetButton, OnLibraryFilters, fa ? "پالایه" : "FILTERS");
             BindFooter(_libraryFavouritesButton, OnLibraryFavourites, fa ? "برگزیده‌ها" : "FAVOURITES");
+            // v41 audit (no-stub rule): there is no favourites data in the catalog, ledger or view model, so the
+            // button only lit itself. Shown in its disabled state until a real favourites store exists.
+            if (_libraryFavouritesButton != null)
+            {
+                _favouritesLit = false;
+                _libraryFavouritesButton.interactable = false;
+                AttachDisabledTap(_libraryFavouritesButton, UIAudioEventKind.ButtonDisabledTap);
+            }
             BindFooter(_libraryAdvancedButton, OnLibraryAdvanced, fa ? "پیشرفته" : "ADVANCED");
             if (battlefield)
             {
@@ -538,7 +561,7 @@ namespace Game.UI.Runtime
             if (localSound)
                 AttachAudio(button, UIAudioEventKind.ButtonSecondaryClick);
             else
-                ClearButtonAudio(button);
+                AttachDisabledTap(button, UIAudioEventKind.ButtonDisabledTap); // v41 audit: enabled click is the view model's sound; disabled START/QUICK BATTLE taps are heard
         }
 
         private static void ClearButtonAudio(Button button)

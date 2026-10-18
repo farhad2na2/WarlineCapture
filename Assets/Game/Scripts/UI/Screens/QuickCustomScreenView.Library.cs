@@ -1465,6 +1465,7 @@ namespace Game.UI.Runtime
             button.targetGraphic = graphic;
             var state = rect.gameObject.AddComponent<SkirmishLibraryButtonStateView>();
             state.Bind(graphic);
+            AttachDisabledTap(button, UIAudioEventKind.ButtonDisabledTap); // v41 audit: disabled taps are heard
             return button;
         }
 
@@ -1750,6 +1751,20 @@ namespace Game.UI.Runtime
             if (audio == null)
                 audio = button.gameObject.AddComponent<UIButtonAudioEventView>();
             audio.Configure(kind);
+        }
+
+        /// <summary>
+        /// v41 audit: sound for taps on a non-interactable library button only (the enabled click stays silent here
+        /// because the view model already raises its own interaction sound).
+        /// </summary>
+        private static void AttachDisabledTap(Button button, UIAudioEventKind disabledKind)
+        {
+            if (button == null)
+                return;
+            UIButtonAudioEventView audio = button.GetComponent<UIButtonAudioEventView>();
+            if (audio == null)
+                audio = button.gameObject.AddComponent<UIButtonAudioEventView>();
+            audio.Configure(UIAudioEventKind.None, disabledKind);
         }
 
         private static void AliasControl(Component owner, string controlName)

@@ -441,8 +441,11 @@ namespace Game.UI.Runtime
                 string.Equals(_libraryViewModel.Battlefield.MapId, mapId, StringComparison.OrdinalIgnoreCase);
             if (!sameBattlefield)
                 _libraryViewModel.SelectMapCollection(mapId);
-            if (_libraryViewModel.Battlefield.Layout != SkirmishBattlefieldLayout.Grid)
+            bool gridAlready = _libraryViewModel.Battlefield.Layout == SkirmishBattlefieldLayout.Grid;
+            if (!gridAlready)
                 _libraryViewModel.SetLayout(SkirmishBattlefieldLayout.Grid);
+            else if (sameBattlefield)
+                UIAudioEventGateway.Raise(UIAudioEventKind.TabSelect); // v41 audit: re-tapping the selected tab was silent
             _mapFilter = mapId;
             PresentScenarioChoices();
         }
@@ -605,7 +608,7 @@ namespace Game.UI.Runtime
             bool storeRoute = card.Access == SkirmishCardAccess.NotOwned;
             button.interactable = playable || storeRoute || card.IsSelected;
             if (!button.interactable)
-                AttachAudio(button, UIAudioEventKind.CardLocked);
+                AttachDisabledTap(button, UIAudioEventKind.CardLocked); // v41 audit: AttachAudio set the click sound, but a non-interactable button only plays its disabled-tap sound
         }
 
         private static bool IsGridLibraryCard(TMP_Text text)

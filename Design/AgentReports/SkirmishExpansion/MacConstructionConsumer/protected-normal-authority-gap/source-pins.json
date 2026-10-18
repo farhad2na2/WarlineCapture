@@ -1,0 +1,80 @@
+{
+  "published_commit": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "source_refs": {
+    "Tools/CI/skirmish_production_queue.py": {
+      "sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "lines": "92-114,157-164",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_production_queue.py#L92"
+    },
+    "Tools/CI/skirmish_counterpart_authority.py": {
+      "sha256": "eb1181034507a5bd1313e3eacc9c20aa4229409c26a551306d37a23e715650fc",
+      "lines": "33-43,91-112",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_counterpart_authority.py#L33"
+    },
+    "Tools/CI/skirmish_native_identity.py": {
+      "sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "lines": "13-14,31-70",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_native_identity.py#L13"
+    },
+    "Tools/CI/skirmish_production_operational_inspector.py": {
+      "sha256": "c8835e1f769ee53d5acc561e2d3798052393c43518bd614e554fc4a9f19ee93f",
+      "lines": "270-307,342-399",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_production_operational_inspector.py#L270"
+    },
+    "Tools/CI/collect_skirmish_batch_inspection.py": {
+      "sha256": "a0cf68aa9a5059c159c6de0418a8f67b3362ef405c3cd89f8caacbe12f355162",
+      "lines": "35-72",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/collect_skirmish_batch_inspection.py#L35"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProtectedCounterpartAuthority.cs": {
+      "sha256": "92ec8e0843cf136e6b8e815048ea3d07323e972cbd071cebecd1861e25f2ad38",
+      "lines": "125-151,191-207",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Editor/Skirmish/SkirmishProtectedCounterpartAuthority.cs#L125"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProtectedExpandedCounterpartAuthoring.cs": {
+      "sha256": "cc705761459c289a1107de09c7e3f4f889a9e9acf328510ed31edbb73bf01e5c",
+      "lines": "22-82",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Editor/Skirmish/SkirmishProtectedExpandedCounterpartAuthoring.cs#L22"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": {
+      "sha256": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+      "lines": "188-206,237-242",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs#L188"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs": {
+      "sha256": "350ae09fb6d0b16cd8578ed5c81f98bdb79d3be129a0ffb275a802daeceeba3e",
+      "lines": "25-60",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionLegacy.cs#L25"
+    },
+    "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs": {
+      "sha256": "5ff385b9b3dea0d8afe71d780071427031fd688a8b8da7f4ce8edb3c9d80dc76",
+      "lines": "26-46,103-107,135-181",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs#L26"
+    },
+    "Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchProjection.cs": {
+      "sha256": "9be5b6e1693054fcfd16c7242e67cf9ebc53077c83276c6d4087e2ddcf2a1bf8",
+      "lines": "22-44,117-129",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchProjection.cs#L22"
+    },
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs": {
+      "sha256": "4c324fae4dffb0efece9772dd46ddc895792ac639ed055d3b2051d36da0df99c",
+      "lines": "27-57",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs#L27"
+    },
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishLaunchDefinitionRecord.cs": {
+      "sha256": "2d19f21e7b2a8ff2aba4d003aeec9ffea627a9e91885984aa2c663fa9bf09cac",
+      "lines": "21-40,53-84",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Runtime/Skirmish/SkirmishLaunchDefinitionRecord.cs#L21"
+    },
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs": {
+      "sha256": "77cfcefc69a2167d79e9a21a77ae6ce107a51e57d13f9f6e8445743f0a002dd4",
+      "lines": "47-55,74-83,110-135",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs#L47"
+    },
+    "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.Scenarios.cs": {
+      "sha256": "4d47304377e8fc1876ea39eb3c18acfcfe54c4368a668cf1bb652ad18369adf9",
+      "lines": "64-96,219-227",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.Scenarios.cs#L64"
+    }
+  }
+}

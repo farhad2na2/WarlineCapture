@@ -205,6 +205,22 @@ def read_only_observer_receipt(job,claim,native):
     return answer
 
 
+def sampling_scope(job):
+    """Classify existing request contracts; never upgrade development evidence."""
+    schema=job.get("schema_version")
+    catalog=job.get("catalog_id")
+    protected=catalog in ("S001","S025","S073")
+    need(type(schema) is int,"Typed production job schema required")
+    if schema==3:
+        need(protected,"Schema3 development counterpart requires a protected catalog")
+        return "DevelopmentCounterpartZeroBaselineCredit"
+    if schema==2:
+        need(protected,"Schema2 legacy preset requires a protected catalog")
+        return "LegacyPresetZeroBaselineCredit"
+    need(schema==1 and not protected,"New normal counterpart dispatch authority requires separate review")
+    return "ExpandedNormalUnqualified"
+
+
 def ownership(value):
     need(value["preview_census_complete"] is True and type(value["actual_preview_count"]) is int and
         value["actual_preview_count"]==value["measured_preview_count"],"Unknown preview ownership")
@@ -271,6 +287,7 @@ def inspect(project,spec,*,wrapper_platform='windows'):
             need(isinstance(item,dict) and set(item)==ATTEMPT,"Exact attempt refs required")
             jp,job=read.obj(item["job"]);cp,claim=read.obj(item["claim"]);ip,immutable=read.obj(item["immutable_claim"])
             need(jp==read.path(entry["job_path"]) and cp==read.path(entry["claim_path"]),"Descriptor job/claim path splice")
+            evidence_scope=sampling_scope(job)
             job_sha=fingerprint(job)
             need(claim==immutable and claim["job_sha256"]==job_sha,"Canonical/immutable claim differs")
             folder=Path(claim["artifact_directory"])
@@ -383,7 +400,9 @@ def inspect(project,spec,*,wrapper_platform='windows'):
                 observer_errors.append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"errors":observer.get("errors",["Observer receipt differs from inspected subject"]) if isinstance(observer,dict) else ["Malformed observer receipt"]})
             result["attempts"].append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"catalog_id":job["catalog_id"],
                 "run_id":run["run_id"],"session":session,"native_config_sha256":config,"outcome":outcome,"result":"NormalCompletedUnqualified",
-                "wins":int(outcome=="Victory"),"input_audit":contact_audit,"qualified":False})
+                "wins":int(outcome=="Victory" and evidence_scope=="ExpandedNormalUnqualified"),
+                "actual_native_wins":int(outcome=="Victory"),"evidence_scope":evidence_scope,
+                "sampling_coverage_credit":0,"input_audit":contact_audit,"qualified":False})
         read.stable()
         # Credit this one facet only after EVERY declared normal attempt and all stable reads succeed.
         result["admission"]["profile_receipts"]=profile_receipts
